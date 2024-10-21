@@ -1,125 +1,288 @@
-Return-Path: <linux-kernel+bounces-374725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C837A9A6F04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC209A6F0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57A23B23B3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0778A1C21955
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B751DF754;
-	Mon, 21 Oct 2024 16:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442E91CBEB0;
+	Mon, 21 Oct 2024 16:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="OCjT4gO+"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="vxQ5XsXo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F8uPGvKK"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FE31DACA1
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D5F1CBEA1;
+	Mon, 21 Oct 2024 16:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526665; cv=none; b=EtOCMNTUNO8suu/xKO1yT+9pxAeEBNw7m3YcB9nRzMRkGleGv3HHjlnbIovMqyy6SBxV/v1kMimPmecfEqprZO/x/4Semfg/6lAEpIjkSdkTre/EEDBih8goh9tQSgfyNkJ9F4WlWMxpKFTwjbgAIWmFt7hu+aPCNrHmCAALR4g=
+	t=1729526719; cv=none; b=ZmwJ2LnzD/Y9hHfIZCnhVbTjRvUTJQsOWYqZxLMm3WPPAsaax6oAmccGyjQU5NpaIfR+F6TntMKgOWdDz5oU7g13HjtnW0jepXmcegmMYsW/dPWVsCCXbKGUURHxZrQoPes+Uuy2TkTt9mY18yzje25177slokYjpH2KGbd+hkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526665; c=relaxed/simple;
-	bh=fgBxXU6/mvfxSEzp9Z5Mz10C8iq6DE4jqzKSltRUPVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ncf9VWcv8lTTTkElQQxH1utsUh5ahidEi3wcsyrWeOKLB4LKc8gZysHid/y1H5XTKmJe9qSLby8Qm/VMZfNglIZbeyOvFJUKmaGvpbVrprAb0JxcI/uvvaOIFFdixtbNYZuOgmcK4SkhaGMjIezY1Vp8nAeq51EieKD8ySwmMko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=OCjT4gO+; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b15d330ce1so242817985a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1729526663; x=1730131463; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l84e0UnSnb5/wXRcsEl1eXO6u1LE4VmYmgz6RFMIs3w=;
-        b=OCjT4gO+WfiDnOM3STiAoLa60z9lfEK9rQuCCSM4G+KTOg/XBQghr8x1UcELjQY+p+
-         eF15xtpLLHKALJsNR1rOhZzdwZC03Rs9RObEEI9yGnaVjbGyCwS+xTo9uj90biPeCSf2
-         OxUzV2LTTRKG0xR8SYJL+CzrmAc+opbkvN5zHNs6RhDzwf0Oo3VbP5js6oF4ubd6VFcF
-         MEvh77msnmZiu3muh3OgqDOTD3QzPElbQjLQJvIt08TaQYx1tLUob359JeHLj4mTSStQ
-         cPQsbEJu9jprMRvUYdv/OpHo1Aqr48Ab4RSVNb+98+MLAFZ9rqdJtYg3mQHvMkZqzA8/
-         GaTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729526663; x=1730131463;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l84e0UnSnb5/wXRcsEl1eXO6u1LE4VmYmgz6RFMIs3w=;
-        b=QDQ99UygbXz1V6PfNjohLddWdizH5sYOE2MwqRPPIJYKNyvgWBfU77DO9C1O9/MEov
-         zNBjp062R247MhtluFu5zE6L9f/RS/UVGqkhsdUZ+xM/HVU7usSJHQvVRT2egbMnAAbs
-         eFzfxe4ED3TO4bl+MJHVPvZ2r+6QGHLKcSmswSw6d8I360CRkrUlYtppewN0A3LzABEg
-         cafRVHP6y8msQggKAdk8qco6hFSe1aPgZatd6NNl+uR+Tsd6BhwduyyF8AWuHkua7UOJ
-         I1B+mQgdI3znxtZFsI+xI+UXFoTB7X/MyU5qsye1myHnnpYzChWdIZP8JO11LpVM52DG
-         jXZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3CPoeC96JLKkefsGzua5pT88/NMS1s228v/2dO6xiQh5YpNMMzYnCZeXWlbKRPsDWucs2/U/Xb46fV+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLBQaZ+E3pBwZs7Je+fcTbLkv6zL1qYqgkIwwcSAo22VQez+23
-	+nZXHkRldZpg/LKv2KvsmXVDx0W+z24SBmmkixMpwePSqyCOd9QqNP2YP9CgDjM=
-X-Google-Smtp-Source: AGHT+IF6+iVm5LbiJbyoiX1o00pqae4N2gKWe1rpx48Z3dEJTuR25irME1treebcR3ivdgDlUf6STg==
-X-Received: by 2002:a05:622a:47ca:b0:458:4e4c:b692 with SMTP id d75a77b69052e-460aed8cb72mr174768891cf.36.1729526662589;
-        Mon, 21 Oct 2024 09:04:22 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3d71664sm19231821cf.71.2024.10.21.09.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 09:04:21 -0700 (PDT)
-Date: Mon, 21 Oct 2024 12:04:23 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	dan.j.williams@intel.com, ira.weiny@intel.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	rafael@kernel.org, lenb@kernel.org, rppt@kernel.org,
-	akpm@linux-foundation.org, alison.schofield@intel.com,
-	Jonathan.Cameron@huawei.com, rrichter@amd.com, ytcoode@gmail.com,
-	haibo1.xu@intel.com, dave.jiang@intel.com
-Subject: Re: [PATCH v2 2/3] x86: probe memblock size advisement value during
- mm init
-Message-ID: <ZxZ7h335O9hgB20l@PC2K9PVX.TheFacebook.com>
-References: <20241016192445.3118-1-gourry@gourry.net>
- <20241016192445.3118-3-gourry@gourry.net>
- <7b877356-f5c5-4996-904b-6c3b71389255@redhat.com>
- <ZxZpTlnhYPqg-tGh@PC2K9PVX.TheFacebook.com>
+	s=arc-20240116; t=1729526719; c=relaxed/simple;
+	bh=bwYkQ3sWDCi32JQEcQ6eLwG1gLM9hPV5hAJeIZmKDcE=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=uSBpsS2ZkeG926KvE9TukR5bz6ACJfviaH8m2q+RoDD9zBjgs0LlyMjrXzLbHt2WiGkzH1S+c1rzABoSZkqsvu7hQc3MAp4icMGTUCh8qxDqhCC3r7fz8lCfWyMwnmzuTEDZhIph2xJOFqfgQdyP+P53GCR0RWFspOJuPILh52Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=vxQ5XsXo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F8uPGvKK; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9AF1A11400C8;
+	Mon, 21 Oct 2024 12:05:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 21 Oct 2024 12:05:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1729526715; x=1729613115; bh=+BVtPjQ3pduOT1KYrMmhkoLb12zHyfqI
+	06iQvVn/JV4=; b=vxQ5XsXo5BQQPOpRDIcpPBEfW8yeOboeRW4tHiJZqYoJAOy4
+	zDGGmbOC5wAmK1W7QlXz5PTgGTVjq51O9UuTK+wEF5Tm1iymSJKKo7pDndlA+TN4
+	YXPcGVtT3bnkADERD5hTQYhFu25WnB+y1Wkg8fvRI4fUn2RandHQev4pDvH1JABT
+	iTZL/gR2iwB8JX1mkSyfSqGgZnPXANnVaIvjV0FQEbZeESZjWEprV5xdlfn51tck
+	AgFYk+rseMFyqXEmXm6+Z1ypj4ZGjg4bGKK+fW8gMQfvIytpgpsDGPDZZyxUp1kd
+	sMYI1XwJCrgnkBgYRsXuRE8yn+t+4Xg1MrKmvA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729526715; x=
+	1729613115; bh=+BVtPjQ3pduOT1KYrMmhkoLb12zHyfqI06iQvVn/JV4=; b=F
+	8uPGvKKy7SyE8HfcJ688Fa126xdBhq+jNNgCuShBg83Y7Dyl7T5vKyoeTfkBm2VT
+	Cdn1trxVr0W1LVycuzD9Km4XHSRBAMELguXTH5/il7OQB8LtGwfSOJQE9PPazGcR
+	/hNyOclP17uxtkEPGy7G+goS/oVvUCnUJLvQzl3B/itnF3VpRjWUgBz7Fdgtwtlf
+	hWafKWtQ/bpDR+9HK9Rfdao6UhVSdhTYQrAabBEOrhHcRyuxqHdeoUiwI1u4XHd5
+	iTbNB366KEGeb9dsslh3dSNq/6YV7I4SWXX+vaQc56OTMuZScP743k7yNsHg2E5O
+	ytvgiYl4YzfhBjdq7ryqg==
+X-ME-Sender: <xms:unsWZ-1Umi3dWC0GTA0i7W3RqJk7ASsOdVco1Qvq70RjJKNwFQMwGg>
+    <xme:unsWZxEzdSvV6_CoxCUlckmIOxsZZs4JsghiwqQrhNxVpP4mFuga5ovwS5zgBBYwN
+    j7UrwFLm9OSKVVbBiQ>
+X-ME-Received: <xmr:unsWZ25c1JUKY-CPn6kh-zvB7f_TIjpiJbbhFvohffiD09CZ8DovVpKGtDm3iNugurryo-0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledgleejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertdertdej
+    necuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghhdrnh
+    gvtheqnecuggftrfgrthhtvghrnhepgeefgffhgffhhfejgfevkefhueekvefftefhgfdt
+    uddtfeffueehleegleeiuefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphhtthho
+    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgriihorhessghlrggtkh
+    ifrghllhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
+    pdhrtghpthhtoheplhhiuhhhrghnghgsihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhguhiesghhr
+    vgihhhhouhhsvgdrnhgvthdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
+    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:u3sWZ_2awXR6lRVDtC07vkDFoJ4bFdsjg46IgCMemdfYPVpN4TpGHA>
+    <xmx:u3sWZxEQLiuh127m3nc0Df0HllU2xVQbFUKFYgKQwtYuLxzi73yyYQ>
+    <xmx:u3sWZ4-5ntMsNQMcEvfHIAKa7WLbPsJqlaCMWnlFy7oORPGCUppSRA>
+    <xmx:u3sWZ2kNvTkl4FML3z2Rsy1x68Aq8SCz2jdGgJRBOWSL98tYDCduLg>
+    <xmx:u3sWZ5_I7IrhMKwyk91mcB23WCZoW6_cUtI1X2iRLFFkAcHbeIrMb4qT>
+Feedback-ID: i53714940:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 12:05:14 -0400 (EDT)
+Received: by vermin.localdomain (Postfix, from userid 1000)
+	id 7173C1C0461; Mon, 21 Oct 2024 09:05:11 -0700 (PDT)
+Received: from vermin (localhost [127.0.0.1])
+	by vermin.localdomain (Postfix) with ESMTP id 70B2E1C00DD;
+	Mon, 21 Oct 2024 18:05:11 +0200 (CEST)
+From: Jay Vosburgh <jv@jvosburgh.net>
+To: Hangbin Liu <liuhangbin@gmail.com>
+cc: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>,
+    Nikolay Aleksandrov <razor@blackwall.org>,
+    Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] bonding: add ns target multicast address to slave device
+In-reply-to: <20241021083052.2865-1-liuhangbin@gmail.com>
+References: <20241021083052.2865-1-liuhangbin@gmail.com>
+Comments: In-reply-to Hangbin Liu <liuhangbin@gmail.com>
+   message dated "Mon, 21 Oct 2024 08:30:52 -0000."
+X-Mailer: MH-E 8.6+git; nmh 1.7+dev; Emacs 29.0.50
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxZpTlnhYPqg-tGh@PC2K9PVX.TheFacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 21 Oct 2024 18:05:11 +0200
+Message-ID: <58777.1729526711@vermin>
 
-On Mon, Oct 21, 2024 at 10:46:38AM -0400, Gregory Price wrote:
-> On Mon, Oct 21, 2024 at 01:12:26PM +0200, David Hildenbrand wrote:
-> > 
-> > > +	/* Consider hotplug advisement value (if set) */
-> > > +	order = memblock_probe_size_order();
-> > 
-> > "size_order" is a very weird name. Just return a size?
-> > 
-> > memory_block_advised_max_size()
-> > 
-> > or sth like that?
-> > 
-> 
-> There isn't technically an overall "max block size", nor any alignment
-> requirements - so order was a nice way of enforcing 2-order alignment
-> while also having the ability to get a -1/-EBUSY/whatever out.
-> 
-> I can change it if it's a big sticking point - but that's my reasoning.
-> 
+Hangbin Liu <liuhangbin@gmail.com> wrote:
 
-maybe change to
+>Commit 4598380f9c54 ("bonding: fix ns validation on backup slaves")
+>tried to resolve the issue where backup slaves couldn't be brought up when
+>receiving IPv6 Neighbor Solicitation (NS) messages. However, this fix only
+>worked for drivers that receive all multicast messages, such as the veth
+>interface.
+>
+>For standard drivers, the NS multicast message is silently dropped because
+>the slave device is not a member of the NS target multicast group.
+>
+>To address this, we need to make the slave device join the NS target
+>multicast group, ensuring it can receive these IPv6 NS messages to validate
+>the slave=E2=80=99s status properly.
+>
+>Fixes: 4e24be018eb9 ("bonding: add new parameter ns_targets")
+>Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 
-memory_block_advise_max_size
-memory_block_probe_max_size
+	This seems fairly involved; would it be simpler to have
+bond_hw_addr_swap() and/or bond_change_active_slave() insure that the
+MAC multicast list is configured in the backup interface if arp_validate
+is set appropriately and there's a NS target configured?  That will make
+the MAC multicast list more inclusive than necessary, but I think the
+implementation will be much less involved.
 
-but still take in / return an order?
+	-J
 
-~Gregory
+>---
+>Another way is to set IFF_ALLMULTI flag for slaves. But I think that
+>would affect too much.
+>---
+> drivers/net/bonding/bond_main.c    | 11 ++++++++
+> drivers/net/bonding/bond_options.c | 44 +++++++++++++++++++++++++++++-
+> include/net/bond_options.h         |  2 ++
+> 3 files changed, 56 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_ma=
+in.c
+>index b1bffd8e9a95..04ccbd41fb0c 100644
+>--- a/drivers/net/bonding/bond_main.c
+>+++ b/drivers/net/bonding/bond_main.c
+>@@ -2350,6 +2350,11 @@ int bond_enslave(struct net_device *bond_dev, struc=
+t net_device *slave_dev,
+> 	if (bond_mode_can_use_xmit_hash(bond))
+> 		bond_update_slave_arr(bond, NULL);
+>=20
+>+#if IS_ENABLED(CONFIG_IPV6)
+>+	if (slave_dev->flags & IFF_MULTICAST)
+>+		/* set target NS maddrs for new slave */
+>+		slave_set_ns_maddr(bond, slave_dev, true);
+>+#endif
+>=20
+> 	if (!slave_dev->netdev_ops->ndo_bpf ||
+> 	    !slave_dev->netdev_ops->ndo_xdp_xmit) {
+>@@ -2503,6 +2508,12 @@ static int __bond_release_one(struct net_device *bo=
+nd_dev,
+> 	/* recompute stats just before removing the slave */
+> 	bond_get_stats(bond->dev, &bond->bond_stats);
+>=20
+>+#if IS_ENABLED(CONFIG_IPV6)
+>+	if (slave_dev->flags & IFF_MULTICAST)
+>+		/* clear all target NS maddrs */
+>+		slave_set_ns_maddr(bond, slave_dev, false);
+>+#endif
+>+
+> 	if (bond->xdp_prog) {
+> 		struct netdev_bpf xdp =3D {
+> 			.command =3D XDP_SETUP_PROG,
+>diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond=
+_options.c
+>index 95d59a18c022..823cb93d2853 100644
+>--- a/drivers/net/bonding/bond_options.c
+>+++ b/drivers/net/bonding/bond_options.c
+>@@ -1234,17 +1234,41 @@ static int bond_option_arp_ip_targets_set(struct b=
+onding *bond,
+> }
+>=20
+> #if IS_ENABLED(CONFIG_IPV6)
+>+/* convert IPv6 address to link-local solicited-node multicast mac addres=
+s */
+>+static void ipv6_addr_to_solicited_mac(const struct in6_addr *addr,
+>+				       unsigned char mac[ETH_ALEN])
+>+{
+>+	mac[0] =3D 0x33;
+>+	mac[1] =3D 0x33;
+>+	mac[2] =3D 0xFF;
+>+	mac[3] =3D addr->s6_addr[13];
+>+	mac[4] =3D addr->s6_addr[14];
+>+	mac[5] =3D addr->s6_addr[15];
+>+}
+>+
+> static void _bond_options_ns_ip6_target_set(struct bonding *bond, int slo=
+t,
+> 					    struct in6_addr *target,
+> 					    unsigned long last_rx)
+> {
+>+	unsigned char target_maddr[ETH_ALEN], slot_maddr[ETH_ALEN];
+> 	struct in6_addr *targets =3D bond->params.ns_targets;
+> 	struct list_head *iter;
+> 	struct slave *slave;
+>=20
+>+	if (!ipv6_addr_any(target))
+>+		ipv6_addr_to_solicited_mac(target, target_maddr);
+> 	if (slot >=3D 0 && slot < BOND_MAX_NS_TARGETS) {
+>-		bond_for_each_slave(bond, slave, iter)
+>+		if (!ipv6_addr_any(&targets[slot]))
+>+			ipv6_addr_to_solicited_mac(&targets[slot], slot_maddr);
+>+		bond_for_each_slave(bond, slave, iter) {
+> 			slave->target_last_arp_rx[slot] =3D last_rx;
+>+			/* remove the previous maddr on salve */
+>+			if (!ipv6_addr_any(&targets[slot]))
+>+				dev_mc_del(slave->dev, slot_maddr);
+>+			/* add new maddr on slave if target is set */
+>+			if (!ipv6_addr_any(target))
+>+				dev_mc_add(slave->dev, target_maddr);
+>+		}
+> 		targets[slot] =3D *target;
+> 	}
+> }
+>@@ -1290,6 +1314,24 @@ static int bond_option_ns_ip6_targets_set(struct bo=
+nding *bond,
+>=20
+> 	return 0;
+> }
+>+
+>+void slave_set_ns_maddr(struct bonding *bond, struct net_device *slave_de=
+v,
+>+			bool add)
+>+{
+>+	struct in6_addr *targets =3D bond->params.ns_targets;
+>+	unsigned char slot_maddr[ETH_ALEN];
+>+	int i;
+>+
+>+	for (i =3D 0; i < BOND_MAX_NS_TARGETS; i++) {
+>+		if (!ipv6_addr_any(&targets[i])) {
+>+			ipv6_addr_to_solicited_mac(&targets[i], slot_maddr);
+>+			if (add)
+>+				dev_mc_add(slave_dev, slot_maddr);
+>+			else
+>+				dev_mc_del(slave_dev, slot_maddr);
+>+		}
+>+	}
+>+}
+> #else
+> static int bond_option_ns_ip6_targets_set(struct bonding *bond,
+> 					  const struct bond_opt_value *newval)
+>diff --git a/include/net/bond_options.h b/include/net/bond_options.h
+>index 473a0147769e..c6c5c1333f37 100644
+>--- a/include/net/bond_options.h
+>+++ b/include/net/bond_options.h
+>@@ -160,6 +160,8 @@ static inline void __bond_opt_init(struct bond_opt_val=
+ue *optval,
+> void bond_option_arp_ip_targets_clear(struct bonding *bond);
+> #if IS_ENABLED(CONFIG_IPV6)
+> void bond_option_ns_ip6_targets_clear(struct bonding *bond);
+>+void slave_set_ns_maddr(struct bonding *bond, struct net_device *slave_de=
+v,
+>+			bool add);
+> #endif
+>=20
+> #endif /* _NET_BOND_OPTIONS_H */
+>--=20
+>2.46.0
+>
+
+---
+	-Jay Vosburgh, jv@jvosburgh.net
 
