@@ -1,64 +1,91 @@
-Return-Path: <linux-kernel+bounces-373593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865499A593A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 676DA9A5936
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84F72823C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:23:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A694282477
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2431CF28C;
-	Mon, 21 Oct 2024 03:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDF61990C8;
+	Mon, 21 Oct 2024 03:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WBfaHN2N"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cIQxkgo6"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB8F450EE;
-	Mon, 21 Oct 2024 03:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729481000; cv=none; b=sLFAruepbdT0et9NhT2xW53NdV7GrpxJUGk/Ix7MbLd5MFKRE2QjsFG97fTuuVD/PKt/vlwQVKpjqjsu7MmbY51hfnhsyP9QUdqFQidrvQxHSFCmgP0pvRxRwjB65qGMBBLf+b732sCIV5xt3asem4rGoBwzAXJ30rBsHOKmx/E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729481000; c=relaxed/simple;
-	bh=FBMEXsB2qzeZlTQOmTKM5Xf8X7yqy8bE7p2PQNX/XG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kD5DeWPSKs3dN7GwJ2XNQmOsEBfaDgZWwqROud6wXkXp8vPKJVKq3xOe56VIMaVyrphLpoTqs/ioo8mYiANHDFYJ9JkkOFw1FKntoh5ZPF1R6JApt2Ko5Q2lQtFa1GCFpTlM3db516ChRTVypcKYxocotEmgUk8riQrIGJmz9NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WBfaHN2N; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1729480954;
-	bh=a3700QODi51nDA2tPcEBFNTNF0pUu84KZh3aJFSeGFs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=WBfaHN2N9eRX1y2pwscRFW1lgtNvjxdiWVTHdf35wdf8GqKKaWoXUpg6VOmCmFgVQ
-	 B8/s1SFshM9ilPqysCFXfrfbtN+fONuGluvKIVh96WUOIYCHQnGDFhvQiyuHZzLDQh
-	 IcW4TgPXqtRpYG0JypFCYsO6FNS+N2mKgjcpfBcA=
-X-QQ-mid: bizesmtp80t1729480909t12cb70e
-X-QQ-Originating-IP: l/rpe0HqxzmODTO5fBNlat18nEut6xgckmAPugpHy7Q=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 21 Oct 2024 11:21:47 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3419970537500328848
-From: WangYuli <wangyuli@uniontech.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yushengjin@uniontech.com,
-	zhangdandan@uniontech.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] fs/pipe: Introduce a check to skip sleeping processes during pipe read/write
-Date: Mon, 21 Oct 2024 11:21:45 +0800
-Message-ID: <C984DC21381D181A+20241021032145.23328-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE575A41;
+	Mon, 21 Oct 2024 03:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729480953; cv=fail; b=dtrVxCdg/2cCukaOPNnXvwrIc2CWh7LAh4Gkx4cstDbFe/sp9Kp9eHS53Y0IS8PZ5hQvfMekB1rZkJfZM0LMvY/b1eJuCDtUbD1i03yLe350gzDd8QX6Nbo4J6p7g+dMJf4P686QVQF3pK327hExoeD42aMBQvlh23w6p4x1VuY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729480953; c=relaxed/simple;
+	bh=EZwGNkejqfaeCmT600uJDovchmHTGIC5N963pSnIDtQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e3oFklDmFicwy8hlWMhBN98HvhH7U/fgQ02eou1kdAiMBeAYgnbVJE8iqmpvOKnRqAUwDUygTEmrM+AAMegImGCquflLVN2OGzubdk/K6YLX3o+7LJJeO9F9x/L+pa0oMTZDZQu8LQTXrsIofVg5eT0sAOfETVklklcHyMp6hlw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cIQxkgo6; arc=fail smtp.client-ip=40.107.92.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JodJR1kqMKI296TWSYuBvyYd3K0Ib/jRWPz9q64Ox4pja0xK7soFVcJb2Q4mU63KDwjJ8NtC/GHj4er93KPA7XcXm2KqMFn0FY60QuYgvHWQ7WQSIE/pgNwpoiH8k9M6szMRjDhjv4hk0ewWdn522rsST29jpSAjv9SyhhTfoFzJ116JmJV4s5ZB/BqHcdI3c8Iqkp6RzcagrAX1FmWoPD2zWrUmu7jDMtbEyZNLSxOKcsa0Egoe6yeP6PVZ+XPoqIiut5vXk0Z0bmJoCyKsckbhUYloFpVfqV/Vl28PCtWd6TM9Nx3KHvmO4ivSww2p/GrfI3TBb8U8TprkLH/vaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oMwRTI0AEy9dhZt36gXBmoWSTVSJIJTFp/R5jsdpdZM=;
+ b=gIVFM1RPSuHQrIQYSh5f09fmJGwPNrG89Zz9D9qp9Wh5DyaxXNJdwNOLbEYRxOkF5wOefKwdweyBpjPS5sEUFtUGwxZbKkJNs4hYbIQfd6Z8hEY3AV6ViBSbTGbkeD+v6gHR65r9MM21g5HbKR9j1SMeR8S+x2Ll/x8bu8AdG3HXsIPktoD9l4LgQ9pd9nxD1ti3HMPTdA3VKgRUM0qgYomwbNf1OVnvkFqtqgd/H81YLBZqRWGMPVBIV32MmgRNiMS1M+Wep1pA94Yip7xXaDXrwiDhCsydPGT9smoRbH0riB9dS8rR9snhfq+/Pyf3V51PEC3WiHB/WmH3xk8TJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oMwRTI0AEy9dhZt36gXBmoWSTVSJIJTFp/R5jsdpdZM=;
+ b=cIQxkgo6SwLJ1zTeRSbYoFqS//a55U9IvAQz4Zor4ZA+fV3MbPHk+nw8rFgG+5Zk0qwo0Uwp7S/YYM94hzTk6vt/wd7pT6UlQVNQAyF8Dzg/wnLI1JPjLmdnVuvpw+nLTklgBY8/TkSKB/Re6ruTgSqF35xOSmXhWkgMOoi79AkvnPV11dGB5ilhaiWGhYro8fg9VaOj97aUy08sBaMLJaezZjLFlvBypY7f2maqUU8zEioh6SkQXA/P5AK1R0jU6vfZJTyp4GU05ftWGlHNLmpVsejStrPlAFNbQRbrk69a6T4vUolJf2UP0KVyZiO+2/T7ZgVfEK9XnBo7VFZeYA==
+Received: from MW4PR03CA0122.namprd03.prod.outlook.com (2603:10b6:303:8c::7)
+ by CH3PR12MB8260.namprd12.prod.outlook.com (2603:10b6:610:12a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 03:22:26 +0000
+Received: from CY4PEPF0000FCC4.namprd03.prod.outlook.com
+ (2603:10b6:303:8c:cafe::b0) by MW4PR03CA0122.outlook.office365.com
+ (2603:10b6:303:8c::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28 via Frontend
+ Transport; Mon, 21 Oct 2024 03:22:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000FCC4.mail.protection.outlook.com (10.167.242.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Mon, 21 Oct 2024 03:22:25 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 20 Oct
+ 2024 20:22:16 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 20 Oct 2024 20:22:15 -0700
+Received: from jjang.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 20 Oct 2024 20:22:15 -0700
+From: Joseph Jang <jjang@nvidia.com>
+To: <shuah@kernel.org>, <alexandre.belloni@bootlin.com>, <avagin@google.com>,
+	<jjang@nvidia.com>, <amir73il@gmail.com>, <brauner@kernel.org>,
+	<mochs@nvidia.com>, <kobak@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<linux-rtc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>
+Subject: [PATCH v2 1/2] selftest: rtc: Add to check rtc alarm status for alarm related test
+Date: Sun, 20 Oct 2024 20:22:13 -0700
+Message-ID: <20241021032213.1915224-1-jjang@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,208 +93,253 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OBUGnm9pFasAA903kNgODajRPmlwrHOCP20qB2SRsSc0NlzWC3JaZSni
-	JIdS5qRuaeiC7vbCryWdQQu+tfKw2BveSdDlRsOz9PQKD9/bYXiCAfBYd4vvopW9G2KxUdr
-	p5hJd9IEWQFtSSHm8uMMUwVLaLvphrHE6/SsNrbPJHi2JtmrEf/e+3YewfOmRQURHqgtc9F
-	IYvXxWqcXuddTR8A7Ma0TucjYNOb8HC5Gzrlgs2Gpnoj0qTPBiKa4DHU4SW8VNqtwOHLgHV
-	DxByxi1ZF8my4+KSQyW6etPOcwOM+MxZMnCD/cX4Q0QsX/JGPqoHSsJkZTLWLNyvT0r/gEc
-	v3O5HFNbu1TENmTbAr6e/Rpr304wZPLmCnBPiVTdVDep+GVoJrS+rTLJkKdAOtXelbvcmxm
-	hGWpMWcOc7eOWtrAFohRsVRkan6OLLsIskLmOs9S63t1L0DPVQsuzRmldu6r4gm04uNgaLC
-	pR5fDftxqno5EJs1715e5zdRY7zsSmDVaEx5hBlsT4O8db7S5F+XiRHt44lvElNtJla4DwK
-	ewDEWYDnBuahxVTFBUCa1PsDfybtMpEFC1nHzLhiYlPM4zFd5JxPF2xQM53CDXcWHKdzSua
-	dnc8sA1/tIao7D3sxGaoisC8Xfc9N07yLXFOPZpTcvA/WBeRmInebn1UdW6oTUWBHnRKHgC
-	ilodygZxP6yn/m529W0z+ncTAmdNzJtq5v0fw05E61Lq+MNguRLeTtQ1q+OgJmudvihSZWK
-	KJwPs346grhZTmyXoK4PzXYuRJCRkjsf6Kt3o43gEFgOW5s59mO8VcV+GNaG9QKjbiEBiNK
-	tTtR4YDFQeLcVQGMehROJIZRm3eesEiD3s3Ieq0BBzmGkVDCJf92tMy/cd2EXzftOk9DY/4
-	N29qx9EQAWpOdyXAQ7Yor2mf98kiaMrRYyxB+wiqVKGMzxa7+8azueCbdLgR3m1BVpQ0XYr
-	A8g7ScYS8ustAhbYHD5SNAKlxrQY5oYXJldFh60TRmSpwU4nkBRdpgu4fT92CgFaXRBVGEZ
-	fuKYARUy8IKTQcYhzfFT1BmP9ijhw=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC4:EE_|CH3PR12MB8260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c8b86da-7a26-4582-ed5c-08dcf17f95f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3I2uRPzI5Hc3X/+o/PPYt8dtDo2sb5QIIeJ5hp+0d3I1u7FSC2NIy8lpJJE2?=
+ =?us-ascii?Q?cuCrepALCRZENGpXepbO1K2ZE3N/GuSk2FfGooZ5aTyZD9LhinwDQnU4XDWi?=
+ =?us-ascii?Q?5Ep24znfDgVEukPa7Bz8YWUsmh5MLTl10HmczcxrBWMnwqtftQjraisod1yd?=
+ =?us-ascii?Q?6/zl8UOJckmxaFOisMXz7GuDlDFvbiYw1b4jViT7VTc4UjtzExxYPM4lpB75?=
+ =?us-ascii?Q?VsCy8Q25zPLDsRKbCC8VRqnSfxjcr1oqYf20LINbbJDX3GSfaI4AvI1jXYsr?=
+ =?us-ascii?Q?zd0h0nang83XYK5bGMAMxLmCYpWUErsFC5cM1e3o/M8JjiQ5lS3IMa4N4ExH?=
+ =?us-ascii?Q?ci2o2qJq3TyeWma7yLKS7W0r0u9hbcSbx+3DIjVakhh5h+SxF79iGfp+uYKb?=
+ =?us-ascii?Q?UXa/HDfJXFDCaJIz6N4ARZ8hHyn6RmUzLiL93lCoxrbilRHSdEawofu0jB8Z?=
+ =?us-ascii?Q?pPwTMlkpMW/6+D5qCwhwAjkcD96HQYJX0Z96JymmNe5WVcEZSD2hsCioi4Zy?=
+ =?us-ascii?Q?CeADOUljT9qIrPxC3zQKxLvXQjotUj4ujOPIJbOawpemh96wgbXXziIeAU1+?=
+ =?us-ascii?Q?7MJ6mdvbQ2/aoAuJDAYILSDT9DN/BRJEh+tfmaaWKX3kGQXs2ka6ylYU26D+?=
+ =?us-ascii?Q?zJZjUvu+Yt5v6ieAndzPgAs58bb34zttL51EGU7y/AXQ3Ym+chRYb5FSJFKY?=
+ =?us-ascii?Q?plYrqCIonnSNh9/n9rbshu7pYExst33leJWvSjXSLNmCgKAKyOpERg1k3ZAc?=
+ =?us-ascii?Q?0pLG1zNefipA7xVDlN94j/+dqEXYJ+0v4D1u3RS/LwkMGOQOrpU0+BsmX1Wk?=
+ =?us-ascii?Q?ee/JM6tpgb8IRXrMaidbnlkVXVhA1ropq3meUKdSM8b9ykGdZl4aM3GTOD0q?=
+ =?us-ascii?Q?MQEeziVsELnmtrcNDL5Sn3BTpo2vAG3jzR2jckMSUPIHushioAaR4MgUrPE6?=
+ =?us-ascii?Q?VPgRtQ1kvsfnt/sVMaPfEQC6bc2+rNGYMRGJP7aUYQzYnOyu4Y0qE5qNMwO5?=
+ =?us-ascii?Q?b7OYMFRJaG+H7OtX3NbnzKTmAPELfk/iV2+ZifP1thSsRMZpixbIzhbathHw?=
+ =?us-ascii?Q?yF4vd8lmAgYiooXaL+xTfO7nUHR+i4hNpTkD6KoFumpsCENH2e6RHqfi6M1B?=
+ =?us-ascii?Q?xy+LkDm++LcAeHI542y5ZnXCGwhTMAC+X+opNwI20XoyaMIs2akPQlWU3PPH?=
+ =?us-ascii?Q?+vhFnbS09ufLMDNDx3VkEENA+lH0HN7v6wJclScWgchnLjdVt43U5noyX3tR?=
+ =?us-ascii?Q?ZwYn1SyQy2xTf1E8RDDnOP2BQNFnaic5HRXcrzkR8y2JgrogB05eaUUBwBLz?=
+ =?us-ascii?Q?BiSUmFHSE5w7K3bYDrgPm4991E+G5k/6l4j4FWR5jf7eJo+Sab5Fkq5E3H/d?=
+ =?us-ascii?Q?UbJVf9LCf0ZCnwvDPeTf7DAMd3/jpE0nfmNECG3Y9ZfJpbkVFFHhWs1Va1Ku?=
+ =?us-ascii?Q?9WjXjI2neKU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 03:22:25.8034
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c8b86da-7a26-4582-ed5c-08dcf17f95f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8260
 
-When a user calls the read/write system call and passes a pipe
-descriptor, the pipe_read/pipe_write functions are invoked:
+In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+code. This design may miss detecting real problems when the
+efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
 
-1. pipe_read():
-  1). Checks if the pipe is valid and if there is any data in the
-pipe buffer.
-  2). Waits for data:
-    *If there is no data in the pipe and the write end is still open,
-the current process enters a sleep state (wait_event()) until data
-is written.
-    *If the write end is closed, return 0.
-  3). Reads data:
-    *Wakes up the process and copies data from the pipe's memory
-buffer to user space.
-    *When the buffer is full, the writing process will go to sleep,
-waiting for the pipe state to change to be awakened (using the
-wake_up_interruptible_sync_poll() mechanism). Once data is read
-from the buffer, the writing process can continue writing, and the
-reading process can continue reading new data.
-  4). Returns the number of bytes read upon successful read.
+In order to make rtctest more explicit and robust, we propose to use
+RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+running alarm related tests. If the kernel does not support RTC_PARAM_GET
+ioctl interface, we will fallback to check the error number of
+(RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
 
-2. pipe_write():
-  1). Checks if the pipe is valid and if there is any available
-space in the pipe buffer.
-  2). Waits for buffer space:
-    *If the pipe buffer is full and the reading process has not
-read any data, pipe_write() may put the current process to sleep
-until there is space in the buffer.
-    *If the read end of the pipe is closed (no process is waiting
-to read), an error code -EPIPE is returned, and a SIGPIPE signal may
-be sent to the process.
-  3). Writes data:
-    *If there is enough space in the pipe buffer, pipe_write() copies
-data from the user space buffer to the kernel buffer of the pipe
-(using copy_from_user()).
-    *If the amount of data the user requests to write is larger than
-the available space in the buffer, multiple writes may be required,
-or the process may wait for new space to be freed.
-  4). Wakes up waiting reading processes:
-    *After the data is successfully written, pipe_write() wakes up
-any processes that may be waiting to read data (using the
-wake_up_interruptible_sync_poll() mechanism).
-  5). Returns the number of bytes successfully written.
+Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+as optional")
 
-Check if there are any waiting processes in the process wait queue
-by introducing wq_has_sleeper() when waking up processes for pipe
-read/write operations.
-
-If no processes are waiting, there's no need to execute
-wake_up_interruptible_sync_poll(), thus avoiding unnecessary wake-ups.
-
-Unnecessary wake-ups can lead to context switches, where a process
-is woken up to handle I/O events even when there is no immediate
-need.
-
-Only wake up processes when there are actually waiting processes to
-reduce context switches and system overhead by checking
-with wq_has_sleeper().
-
-Additionally, by reducing unnecessary synchronization and wake-up
-operations, wq_has_sleeper() can decrease system resource waste and
-lock contention, improving overall system performance.
-
-For pipe read/write operations, this eliminates ineffective scheduling
-and enhances concurrency.
-
-It's important to note that enabling this option means invoking
-wq_has_sleeper() to check for sleeping processes in the wait queue
-for every read or write operation.
-
-While this is a lightweight operation, it still incurs some overhead.
-
-In low-load or single-task scenarios, this overhead may not yield
-significant benefits and could even introduce minor performance
-degradation.
-
-UnixBench Pipe benchmark results on Zhaoxin KX-U6780A processor:
-
-With the option disabled: Single-core: 841.8, Multi-core (8): 4621.6
-With the option enabled:  Single-core: 877.8, Multi-core (8): 4854.7
-
-Single-core performance improved by 4.1%, multi-core performance
-improved by 4.8%.
-
-Co-developed-by: Shengjin Yu <yushengjin@uniontech.com>
-Signed-off-by: Shengjin Yu <yushengjin@uniontech.com>
-Co-developed-by: Dandan Zhang <zhangdandan@uniontech.com>
-Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
-Tested-by: Dandan Zhang <zhangdandan@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Reviewed-by: Koba Ko <kobak@nvidia.com>
+Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+Signed-off-by: Joseph Jang <jjang@nvidia.com>
 ---
- fs/Kconfig | 13 +++++++++++++
- fs/pipe.c  | 21 +++++++++++++++------
- 2 files changed, 28 insertions(+), 6 deletions(-)
+Changes in v2:
+- Changed to use $(top_srcdir) instead of hardcoding the path.
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 949895cff872..068f4f886a58 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -430,4 +430,17 @@ source "fs/unicode/Kconfig"
- config IO_WQ
- 	bool
+ tools/testing/selftests/rtc/Makefile  |  2 +-
+ tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+index 55198ecc04db..6e3a98fb24ba 100644
+--- a/tools/testing/selftests/rtc/Makefile
++++ b/tools/testing/selftests/rtc/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-CFLAGS += -O3 -Wl,-no-as-needed -Wall
++CFLAGS += -O3 -Wl,-no-as-needed -Wall -I$(top_srcdir)/usr/include
+ LDLIBS += -lrt -lpthread -lm
  
-+config PIPE_SKIP_SLEEPER
-+	bool "Skip sleeping processes during pipe read/write"
-+	default n
-+	help
-+	  This option introduces a check whether the sleep queue will
-+	  be awakened during pipe read/write.
+ TEST_GEN_PROGS = rtctest
+diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+index 63ce02d1d5cc..2b12497eb30d 100644
+--- a/tools/testing/selftests/rtc/rtctest.c
++++ b/tools/testing/selftests/rtc/rtctest.c
+@@ -25,6 +25,12 @@
+ 
+ static char *rtc_file = "/dev/rtc0";
+ 
++enum rtc_alarm_state {
++	RTC_ALARM_UNKNOWN,
++	RTC_ALARM_ENABLED,
++	RTC_ALARM_DISABLED,
++};
 +
-+	  It often leads to a performance improvement. However, in
-+	  low-load or single-task scenarios, it may introduce minor
-+	  performance overhead.
-+
-+	  If unsure, say N.
-+
- endmenu
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..c085333ae72c 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -247,6 +247,15 @@ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
- 	return tail;
+ FIXTURE(rtc) {
+ 	int fd;
+ };
+@@ -82,6 +88,24 @@ static void nanosleep_with_retries(long ns)
+ 	}
  }
  
-+static inline bool
-+pipe_check_wq_has_sleeper(struct wait_queue_head *wq_head)
++static enum rtc_alarm_state get_rtc_alarm_state(int fd)
 +{
-+	if (IS_ENABLED(CONFIG_PIPE_SKIP_SLEEPER))
-+		return wq_has_sleeper(wq_head);
-+	else
-+		return true;
++	struct rtc_param param = { 0 };
++	int rc;
++
++	/* Validate kernel reflects unsupported RTC alarm state */
++	param.param = RTC_PARAM_FEATURES;
++	param.index = 0;
++	rc = ioctl(fd, RTC_PARAM_GET, &param);
++	if (rc < 0)
++		return RTC_ALARM_UNKNOWN;
++
++	if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
++		return RTC_ALARM_DISABLED;
++
++	return RTC_ALARM_ENABLED;
 +}
 +
- static ssize_t
- pipe_read(struct kiocb *iocb, struct iov_iter *to)
- {
-@@ -377,7 +386,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * _very_ unlikely case that the pipe was full, but we got
- 		 * no data.
- 		 */
--		if (unlikely(was_full))
-+		if (unlikely(was_full) && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+ 	int rc;
+ 	long iter_count = 0;
+@@ -197,11 +221,16 @@ TEST_F(rtc, alarm_alm_set) {
+ 	fd_set readfds;
+ 	time_t secs, new;
+ 	int rc;
++	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
  
-@@ -398,9 +407,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		wake_next_reader = false;
- 	mutex_unlock(&pipe->mutex);
+ 	if (self->fd == -1 && errno == ENOENT)
+ 		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+ 	ASSERT_NE(-1, self->fd);
  
--	if (was_full)
-+	if (was_full && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
--	if (wake_next_reader)
-+	if (wake_next_reader && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	if (ret > 0)
-@@ -573,7 +582,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 * become empty while we dropped the lock.
- 		 */
- 		mutex_unlock(&pipe->mutex);
--		if (was_empty)
-+		if (was_empty && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
-@@ -598,10 +607,10 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * Epoll nonsensically wants a wakeup whether the pipe
- 	 * was already empty or not.
- 	 */
--	if (was_empty || pipe->poll_usage)
-+	if ((was_empty || pipe->poll_usage) && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
--	if (wake_next_writer)
-+	if (wake_next_writer && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
- 		int err = file_update_time(filp);
++	alarm_state = get_rtc_alarm_state(self->fd);
++	if (alarm_state == RTC_ALARM_DISABLED)
++		SKIP(return, "Skipping test since alarms are not supported.");
++
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -210,6 +239,11 @@ TEST_F(rtc, alarm_alm_set) {
+ 
+ 	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+ 	if (rc == -1) {
++		/*
++		 * Report error if rtc alarm was enabled. Fallback to check ioctl
++		 * error number if rtc alarm state is unknown.
++		 */
++		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+ 		ASSERT_EQ(EINVAL, errno);
+ 		TH_LOG("skip alarms are not supported.");
+ 		return;
+@@ -255,11 +289,16 @@ TEST_F(rtc, alarm_wkalm_set) {
+ 	fd_set readfds;
+ 	time_t secs, new;
+ 	int rc;
++	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+ 
+ 	if (self->fd == -1 && errno == ENOENT)
+ 		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+ 	ASSERT_NE(-1, self->fd);
+ 
++	alarm_state = get_rtc_alarm_state(self->fd);
++	if (alarm_state == RTC_ALARM_DISABLED)
++		SKIP(return, "Skipping test since alarms are not supported.");
++
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -270,6 +309,11 @@ TEST_F(rtc, alarm_wkalm_set) {
+ 
+ 	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+ 	if (rc == -1) {
++		/*
++		 * Report error if rtc alarm was enabled. Fallback to check ioctl
++		 * error number if rtc alarm state is unknown.
++		 */
++		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+ 		ASSERT_EQ(EINVAL, errno);
+ 		TH_LOG("skip alarms are not supported.");
+ 		return;
+@@ -307,11 +351,16 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+ 	fd_set readfds;
+ 	time_t secs, new;
+ 	int rc;
++	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+ 
+ 	if (self->fd == -1 && errno == ENOENT)
+ 		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+ 	ASSERT_NE(-1, self->fd);
+ 
++	alarm_state = get_rtc_alarm_state(self->fd);
++	if (alarm_state == RTC_ALARM_DISABLED)
++		SKIP(return, "Skipping test since alarms are not supported.");
++
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -320,6 +369,11 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+ 
+ 	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+ 	if (rc == -1) {
++		/*
++		 * Report error if rtc alarm was enabled. Fallback to check ioctl
++		 * error number if rtc alarm state is unknown.
++		 */
++		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+ 		ASSERT_EQ(EINVAL, errno);
+ 		TH_LOG("skip alarms are not supported.");
+ 		return;
+@@ -365,11 +419,16 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+ 	fd_set readfds;
+ 	time_t secs, new;
+ 	int rc;
++	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+ 
+ 	if (self->fd == -1 && errno == ENOENT)
+ 		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+ 	ASSERT_NE(-1, self->fd);
+ 
++	alarm_state = get_rtc_alarm_state(self->fd);
++	if (alarm_state == RTC_ALARM_DISABLED)
++		SKIP(return, "Skipping test since alarms are not supported.");
++
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -380,6 +439,11 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+ 
+ 	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+ 	if (rc == -1) {
++		/*
++		 * Report error if rtc alarm was enabled. Fallback to check ioctl
++		 * error number if rtc alarm state is unknown.
++		 */
++		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+ 		ASSERT_EQ(EINVAL, errno);
+ 		TH_LOG("skip alarms are not supported.");
+ 		return;
 -- 
-2.45.2
+2.34.1
 
 
