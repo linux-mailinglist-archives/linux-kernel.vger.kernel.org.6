@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-373995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C849A6063
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A627D9A6065
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6439B1C216CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7C41C209E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8062A1E3775;
-	Mon, 21 Oct 2024 09:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDE51E283D;
+	Mon, 21 Oct 2024 09:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R8x4cMH/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jCucMIuB"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A14E1E2832;
-	Mon, 21 Oct 2024 09:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFC81E2608
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503702; cv=none; b=nAu83kNm731ZbKhzuDuOdWIjOJn5c8kARGkfKcpRGSLqpQsCbi/VGq+3dVFnI2duqgUTH4wfe1jYr09/dr51oKXhuwO38DX5N1pBngzqKfdsVZTzTqVNvJTsCFg8rndpFlWXeuNhj8vxTyzHBxD2InlA85vxlgGg/A5kwvnPc4Q=
+	t=1729503722; cv=none; b=pFsQYVxSB/UCnhGscDmRgA+Tm5cPgL5jiDgGLV/zVJqlLhEPj3qPCIRWGy1gWQN2JtujfY19RAuC/k2/KrBTPoRlS62we4kV3NJtEYRG22DliX/pNzPBAZzgYvRi72F2qZ8tHKVTIAa8xqMI0482LKfmIY3PagFOIc3YT4VbiSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503702; c=relaxed/simple;
-	bh=P54tLI5YsgAA8zPPDJIZ/yBTq6jfjUxrUYiQ3cLFdzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFhAeUURTUrR72lB3xGGJOqmOFNHvWZVvQp06UUjOvKkMYfRlnVIhKL3Nv6nQ1rmsTy4X608BZvbm24nCRsBQuSpwLSjAPld7HXGw/zaGZJdHPzDpq8quyJy2ntSJq41TlNXdOasRcGjXC6WYz1xLb3vK71SfgXb61OBmuHSq4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R8x4cMH/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2L6QB032130;
-	Mon, 21 Oct 2024 09:41:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=gppHrh53X6WMLkwMFn96MT3da38sjn
-	e7HSCAYAud/+U=; b=R8x4cMH/31KpcjL1SPm1sMbhJFR1aB3OQp0vYpA+nxwLN6
-	ZLFYTLS32wfKmJg0JMeEAHn3oUf/Z4d2mAedhDHXY8klVwY2whifCpwAOx1gKsUO
-	O+XIruG5kxiMs8zhtMkyRdvynzWP/OpGnx8EkrwyLe/eBqEXCYvsG9Oe+G69wUgF
-	WbMi/oiLKoGG0N+7q1iLJCOp503HoTBbNNN7kAPNltETUDjTSY/Lp3ibABKZGHCT
-	IWo/QIFJ2htpdVuTfC8uIaGnl2yowqFhgsWJdJW326AuJPAOuDgzSZr3NSt2gsnl
-	GEEdR5RDMSJM2QlRVnRbMmUgnkhqPQRx3KQbu0Ig==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5fsqxcw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 09:41:39 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L87U9l028885;
-	Mon, 21 Oct 2024 09:41:39 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42cqfxdp7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 09:41:39 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49L9fZbv54854130
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Oct 2024 09:41:35 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 71AB22004B;
-	Mon, 21 Oct 2024 09:41:35 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D59D82004E;
-	Mon, 21 Oct 2024 09:41:34 +0000 (GMT)
-Received: from osiris (unknown [9.171.37.192])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 21 Oct 2024 09:41:34 +0000 (GMT)
-Date: Mon, 21 Oct 2024 11:41:33 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 03/11] s390/mm/gmap: Refactor gmap_fault() and add
- support for pfault
-Message-ID: <20241021094133.6950-A-hca@linux.ibm.com>
-References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
- <20241015164326.124987-4-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1729503722; c=relaxed/simple;
+	bh=uD5mT3DV8yNGDcs1WRENn5nkfh+IdY3U21VkoTJy1yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M7ZIL2KoRyF+z4t65mZZ3rAByTFw5LAw3psMUHsgzNT/Opeoem8A27n70ksywUgKuIhZCOHOMM8fB9ayKTmOWbNZjbw8N72oIVItxPBxrwa7v+E2KKV7zLdznYGbpJcbhjfRbhVp00rIhtu1XToFuQYiLBxnv3bc+yxZK5+W4XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jCucMIuB; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a0200145-deaa-4db1-810a-827b4b11103c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729503717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6l9K0VABXE+0LeImmfqPp/nt0looAfEbAGIBgXZDPI=;
+	b=jCucMIuBRLRE4hZMwwRR9BBJT7sIplWy8LiattcyQH+egx1uMiD9e52iFp1QG3SOcil1qQ
+	gNC+9B25VGIAiHtOFBKlgJw8FT7sh7tbcJoFJPfEpR/vO/XqLc6ABIZ4uqyB0wPzelphwG
+	8Gl/MyQWxKjOkOscJiOMJi9Ul0/4sKk=
+Date: Mon, 21 Oct 2024 17:41:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015164326.124987-4-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Km2xh2AANfqiAEv46XevX-K-Bi7EIU9s
-X-Proofpoint-ORIG-GUID: Km2xh2AANfqiAEv46XevX-K-Bi7EIU9s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501
- spamscore=0 mlxlogscore=754 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410210068
+Subject: Re: drm/lsdc: Request PCI BAR
+To: Philipp Stanner <pstanner@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241021091116.14368-1-pstanner@redhat.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20241021091116.14368-1-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 15, 2024 at 06:43:18PM +0200, Claudio Imbrenda wrote:
-> When specifying FAULT_FLAG_RETRY_NOWAIT as flag for gmap_fault(), the
-> gmap fault will be processed only if it can be resolved quickly and
-> without sleeping. This will be needed for pfault.
-> 
-> Refactor gmap_fault() to improve readability.
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+Hi,  thanks
+
+On 2024/10/21 17:11, Philipp Stanner wrote:
+> lsdc currently just ioremaps its PCI BAR with pcim_iomap(). Performing
+> a region regquest additionally can make the driver more robust.
+>
+> Replace pcim_iomap() with the managed function pcim_iomap_region() which
+> performs the request and ioremaps the BAR.
+>
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+
+
+Reviewed-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+
+
 > ---
->  arch/s390/mm/gmap.c | 119 +++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 100 insertions(+), 19 deletions(-)
-...
+>   drivers/gpu/drm/loongson/lsdc_drv.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/loongson/lsdc_drv.c b/drivers/gpu/drm/loongson/lsdc_drv.c
+> index adc7344d2f80..592d01b6767e 100644
+> --- a/drivers/gpu/drm/loongson/lsdc_drv.c
+> +++ b/drivers/gpu/drm/loongson/lsdc_drv.c
+> @@ -230,9 +230,9 @@ lsdc_create_device(struct pci_dev *pdev,
+>   	lsdc_gem_init(ddev);
+>   
+>   	/* Bar 0 of the DC device contains the MMIO register's base address */
+> -	ldev->reg_base = pcim_iomap(pdev, 0, 0);
+> -	if (!ldev->reg_base)
+> -		return ERR_PTR(-ENODEV);
+> +	ldev->reg_base = pcim_iomap_region(pdev, 0, "lsdc");
+> +	if (IS_ERR(ldev->reg_base))
+> +		return ldev->reg_base;
+>   
+>   	spin_lock_init(&ldev->reglock);
+>   
 
-> +static int fixup_user_fault_nowait(struct mm_struct *mm, unsigned long address,
-> +				   unsigned int fault_flags, bool *unlocked)
-> +{
-> +	struct vm_area_struct *vma;
-> +	unsigned int test_flags;
-> +	vm_fault_t fault;
-> +	int rc;
-> +
-> +	fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
-                                                ^^^^^^^^^^^^^^^^^^^^^^^
+-- 
+Best regards,
+Sui
 
-This is not necessary, because of
-
-> +	if (fault_flags & FAULT_FLAG_RETRY_NOWAIT) {
-> +		rc = fixup_user_fault_nowait(gmap->mm, vmaddr, fault_flags, &unlocked);
-
-this.
-
-In any case:
-Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
 
