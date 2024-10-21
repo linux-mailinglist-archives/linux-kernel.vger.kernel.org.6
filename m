@@ -1,103 +1,253 @@
-Return-Path: <linux-kernel+bounces-373562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8FF9A58DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:27:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205929A58DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294FA1C20EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1041C21178
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA917C9B;
-	Mon, 21 Oct 2024 02:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6474322334;
+	Mon, 21 Oct 2024 02:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMDLsoee"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oijx0f1D"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A4A3D994
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19BF14263;
+	Mon, 21 Oct 2024 02:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729477626; cv=none; b=l+6XpwBYxbwqfrsb4QtAhkzkIcdm8a7YTLOHZ2CvVvlpknAHqwjgDJU4Y5Pn6bESkYZIolMFA6vv0RKbMFUmR0E+xYia2bXzOFZy05QPKUNOyZK2zEs0bHJ4l5s46OOIEqbsSZAkU5j9PW3gSKIfoXd5+JbC5cmVLhH5YKA3mVg=
+	t=1729477746; cv=none; b=fxMOs8C7LgOvgWuVN4qf4DIboIXG0byPyY4CwjyzgAOyoJou+lRDGz2e/0qmwOyXKN+EtuE0gL9wS3M53leOEq5rfHFheNPpkTQexjjUeH1yW/LAogHfy/w0nS3RRTbM3Rma7qfrcSNqVXAmpfZ8ZuSsTSEgIdX5b8+RbLhKwzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729477626; c=relaxed/simple;
-	bh=wChIIOljRZMbMsClGwWazXIABPZWJ1X/9rhsdtrKznQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxjuXeTPSftq1RokazghgvyPWvxm9efy5IQhexkMbBhkifaYEt8alWht8NBBrKHAG4XP1mj3hOwo4JjBzjm87kD1II1LUgZ7Id57mBWYc061JbSQr12elC7N1PgyHDtN4MSEi9Vh3hE+yZjFlVe6nv95/loBSHxQ4x6nrf83/ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMDLsoee; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729477623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+sjMziFfxbGDr6d+iWUv4ZQCz7jkJM/gB/nV/7pRVlc=;
-	b=SMDLsoeedojgzwHeaYgr1chxujM4zCfqTXgwfHIaj7R08DmqT8fjMpk7JhrKSAgD5lu47A
-	fxG2Zs1VKlPT7SgVG+x1QqGMgNVKqYv+kxBc6OnCQImPx/aou/n28nGrwR1wiDnEXdDQl8
-	ehZh6/qjR7XnqSsMdmx6ryUMyCSOEgI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-353-mJgu-wZ7M3C4MjtQVk-IAw-1; Sun,
- 20 Oct 2024 22:27:02 -0400
-X-MC-Unique: mJgu-wZ7M3C4MjtQVk-IAw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEDDE195609D;
-	Mon, 21 Oct 2024 02:26:59 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.25])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F4C119560A3;
-	Mon, 21 Oct 2024 02:26:53 +0000 (UTC)
-Date: Mon, 21 Oct 2024 10:26:48 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-	dhowells@redhat.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iov_iter: don't require contiguous pages in
- iov_iter_extract_bvec_pages
-Message-ID: <ZxW76N4hU2_4Zs3E@fedora>
-References: <20241011132047.1153249-1-hch@lst.de>
+	s=arc-20240116; t=1729477746; c=relaxed/simple;
+	bh=6qtTmtydCnKundBDR3axy9UipvrlBvJigyFpZp6xJmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drE9upNdPn5CZmd3UsEJwbIO8LPU0gvZvuiifLfSw0E5e+qPZoNTTTUog5cGE4XoArevH5CXKZddLYwMWQZa/njnPWsRaLrg2lBP7g7SZOES0bbQ20r4ifnM6HQVnS2ZeN1BhwOeETW6fI0jVEq28AgvYMuTpCj1nW1yGgUktws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oijx0f1D; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c9978a221so45593385ad.1;
+        Sun, 20 Oct 2024 19:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729477744; x=1730082544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZutcxFkjMK9a7hZ9nx5BY2GReswDRsLPMQDv9l5Ojv0=;
+        b=Oijx0f1DcLyDWl9EuJvvaV5ocpwOIAJ6bbPLyUlcYe/PEJHOJXFlWklHvMkRLbAzC4
+         QwSZsse8Q9RQWWKUvIZTUqXVl3bh6l2l21ByFQBjnzmEZvI6J0mLQa47mIYZNiXgKu45
+         Vv3/mmKSJpaTLPsYfbt1sI9VwQsWwtg9aWypDfFbWM0Zb6NA+fvvF9DyISxYwN1lOxt5
+         vz1bSUSU2HNXyzN5s5PmMpoAHEs+nu1FGZtm6tXnB3/mkhDu650T21mMw/87i0b1Abzm
+         gpnZNr6gvRL27XmWxFFm/fa0I2V5C3HkFl41DhxHDa1zPub5db5+8Vzg/rPnqxUqyxYH
+         9zkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729477744; x=1730082544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZutcxFkjMK9a7hZ9nx5BY2GReswDRsLPMQDv9l5Ojv0=;
+        b=ANPt+ZDULiLUiD0LJ+yuW84+OvB+jcyvE6tHLxkkqBozQcDMxPkBlvGS42EOaRbWcC
+         vxI/HhGBRS8PYAsqxq4xbuAtW8FJlbWAF+wrqVpjgrK1FtfkX9yIepRlsrWdSDOgN1fF
+         S/mmYfHT/9fjLA2gaqgJC4VIWX7dHtybdiUGpiMpDD0UKN89kQSnQ87+gkW2DGkXAoWy
+         PP74hZ5bBv6rx+BjRdFGv0PHpAS0P4F6B3AIj2Uf2eEHWMGmM1UpsP7zpUar6/xhIx6x
+         4jJjEiLboqosfGaWTsY1F7kLOLW9t8eLi/dYPsgl6xXGtyUD6H+O1pq/U+sqGAFOzy67
+         w4Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLfLlN+XI6hxqZZTDlt0kUvhTJw4Isdiwnqaxuzrc0w1pF1hKoQCt8Jib8kTyFfWh4Zq6XndUhICYrdkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ADXAKjOWE2ImrWBD19Smlu59YQbKIAja839RSpW9N6Zc+wPI
+	p6pFqhML8bpd2bzIw4L0wa/lCPHS/7yEtCkoQglw6V27m4tL5nkk369QYKOU
+X-Google-Smtp-Source: AGHT+IHfPJlH8pcT5tWiZ4wh/zQbi0gGxk2PgXlCe0H6l5Xp9QtDEZWpIvSjBiL3t2GQjFPikNb30g==
+X-Received: by 2002:a05:6a21:e91:b0:1d6:fb3e:78cf with SMTP id adf61e73a8af0-1d92c57c430mr13782764637.41.1729477743878;
+        Sun, 20 Oct 2024 19:29:03 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabb8418sm1551056a12.67.2024.10.20.19.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 19:29:03 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Michael Chan <michael.chan@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: bnxt: use ethtool string helpers
+Date: Sun, 20 Oct 2024 19:29:01 -0700
+Message-ID: <20241021022901.318647-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011132047.1153249-1-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 03:20:22PM +0200, Christoph Hellwig wrote:
-> The iov_iter_extract_pages interface allows to return physically
-> discontiguous pages, as long as all but the first and last page
-> in the array are page aligned and page size.  Rewrite
-> iov_iter_extract_bvec_pages to take advantage of that instead of only
-> returning ranges of physically contiguous pages.
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> [hch: minor cleanups, new commit log]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> 
-> v3:
->  - open code the iterator
->  - improve commit log and comments
+Avoids having to use manual pointer manipulation.
 
-Hello Jens,
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 110 ++++++++----------
+ 1 file changed, 50 insertions(+), 60 deletions(-)
 
-Gentle ping...
-
-
-
-thanks,
-Ming
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index f71cc8188b4e..84d468ad3c8e 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -713,18 +713,17 @@ static void bnxt_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
+ 		for (i = 0; i < bp->cp_nr_rings; i++) {
+ 			if (is_rx_ring(bp, i)) {
+ 				num_str = NUM_RING_RX_HW_STATS;
+-				for (j = 0; j < num_str; j++) {
+-					sprintf(buf, "[%d]: %s", i,
++				for (j = 0; j < num_str; j++)
++					ethtool_sprintf(
++						&buf, "[%d]: %s", i,
+ 						bnxt_ring_rx_stats_str[j]);
+-					buf += ETH_GSTRING_LEN;
+-				}
+ 			}
+ 			if (is_tx_ring(bp, i)) {
+ 				num_str = NUM_RING_TX_HW_STATS;
+ 				for (j = 0; j < num_str; j++) {
+-					sprintf(buf, "[%d]: %s", i,
++					ethtool_sprintf(
++						&buf, "[%d]: %s", i,
+ 						bnxt_ring_tx_stats_str[j]);
+-					buf += ETH_GSTRING_LEN;
+ 				}
+ 			}
+ 			num_str = bnxt_get_num_tpa_ring_stats(bp);
+@@ -736,81 +735,72 @@ static void bnxt_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
+ 			else
+ 				str = bnxt_ring_tpa_stats_str;
+ 
+-			for (j = 0; j < num_str; j++) {
+-				sprintf(buf, "[%d]: %s", i, str[j]);
+-				buf += ETH_GSTRING_LEN;
+-			}
++			for (j = 0; j < num_str; j++)
++				ethtool_sprintf(&buf, "[%d]: %s", i, str[j]);
+ skip_tpa_stats:
+ 			if (is_rx_ring(bp, i)) {
+ 				num_str = NUM_RING_RX_SW_STATS;
+-				for (j = 0; j < num_str; j++) {
+-					sprintf(buf, "[%d]: %s", i,
++				for (j = 0; j < num_str; j++)
++					ethtool_sprintf(
++						&buf, "[%d]: %s", i,
+ 						bnxt_rx_sw_stats_str[j]);
+-					buf += ETH_GSTRING_LEN;
+-				}
+ 			}
+ 			num_str = NUM_RING_CMN_SW_STATS;
+-			for (j = 0; j < num_str; j++) {
+-				sprintf(buf, "[%d]: %s", i,
+-					bnxt_cmn_sw_stats_str[j]);
+-				buf += ETH_GSTRING_LEN;
+-			}
+-		}
+-		for (i = 0; i < BNXT_NUM_RING_ERR_STATS; i++) {
+-			strscpy(buf, bnxt_ring_err_stats_arr[i], ETH_GSTRING_LEN);
+-			buf += ETH_GSTRING_LEN;
++			for (j = 0; j < num_str; j++)
++				ethtool_sprintf(&buf, "[%d]: %s", i,
++						bnxt_cmn_sw_stats_str[j]);
+ 		}
++		for (i = 0; i < BNXT_NUM_RING_ERR_STATS; i++)
++			ethtool_puts(&buf, bnxt_ring_err_stats_arr[i]);
++
++		if (bp->flags & BNXT_FLAG_PORT_STATS)
++			for (i = 0; i < BNXT_NUM_PORT_STATS; i++)
++				ethtool_puts(&buf,
++					     bnxt_port_stats_arr[i].string);
+ 
+-		if (bp->flags & BNXT_FLAG_PORT_STATS) {
+-			for (i = 0; i < BNXT_NUM_PORT_STATS; i++) {
+-				strcpy(buf, bnxt_port_stats_arr[i].string);
+-				buf += ETH_GSTRING_LEN;
+-			}
+-		}
+ 		if (bp->flags & BNXT_FLAG_PORT_STATS_EXT) {
+ 			u32 len;
+ 
+ 			len = min_t(u32, bp->fw_rx_stats_ext_size,
+ 				    ARRAY_SIZE(bnxt_port_stats_ext_arr));
+-			for (i = 0; i < len; i++) {
+-				strcpy(buf, bnxt_port_stats_ext_arr[i].string);
+-				buf += ETH_GSTRING_LEN;
+-			}
++			for (i = 0; i < len; i++)
++				ethtool_puts(&buf,
++					     bnxt_port_stats_ext_arr[i].string);
++
+ 			len = min_t(u32, bp->fw_tx_stats_ext_size,
+ 				    ARRAY_SIZE(bnxt_tx_port_stats_ext_arr));
+-			for (i = 0; i < len; i++) {
+-				strcpy(buf,
+-				       bnxt_tx_port_stats_ext_arr[i].string);
+-				buf += ETH_GSTRING_LEN;
+-			}
++			for (i = 0; i < len; i++)
++				ethtool_puts(
++					&buf,
++					bnxt_tx_port_stats_ext_arr[i].string);
++
+ 			if (bp->pri2cos_valid) {
+-				for (i = 0; i < 8; i++) {
+-					strcpy(buf,
+-					       bnxt_rx_bytes_pri_arr[i].string);
+-					buf += ETH_GSTRING_LEN;
+-				}
+-				for (i = 0; i < 8; i++) {
+-					strcpy(buf,
+-					       bnxt_rx_pkts_pri_arr[i].string);
+-					buf += ETH_GSTRING_LEN;
+-				}
+-				for (i = 0; i < 8; i++) {
+-					strcpy(buf,
+-					       bnxt_tx_bytes_pri_arr[i].string);
+-					buf += ETH_GSTRING_LEN;
+-				}
+-				for (i = 0; i < 8; i++) {
+-					strcpy(buf,
+-					       bnxt_tx_pkts_pri_arr[i].string);
+-					buf += ETH_GSTRING_LEN;
+-				}
++				for (i = 0; i < 8; i++)
++					ethtool_puts(
++						&buf,
++						bnxt_rx_bytes_pri_arr[i].string);
++
++				for (i = 0; i < 8; i++)
++					ethtool_puts(
++						&buf,
++						bnxt_rx_pkts_pri_arr[i].string);
++
++				for (i = 0; i < 8; i++)
++					ethtool_puts(
++						&buf,
++						bnxt_tx_bytes_pri_arr[i].string);
++
++				for (i = 0; i < 8; i++)
++					ethtool_puts(
++						&buf,
++						bnxt_tx_pkts_pri_arr[i].string);
+ 			}
+ 		}
+ 		break;
+ 	case ETH_SS_TEST:
+ 		if (bp->num_tests)
+-			memcpy(buf, bp->test_info->string,
+-			       bp->num_tests * ETH_GSTRING_LEN);
++			for (i = 0; i < bp->num_tests; i++)
++				ethtool_puts(&buf, bp->test_info->string[i]);
+ 		break;
+ 	default:
+ 		netdev_err(bp->dev, "bnxt_get_strings invalid request %x\n",
+-- 
+2.47.0
 
 
