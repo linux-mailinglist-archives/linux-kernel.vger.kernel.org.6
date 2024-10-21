@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-373829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EB69A5D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A18D9A5D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A241C23587
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8BC2822D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261E01E0DE9;
-	Mon, 21 Oct 2024 07:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551641E0DDB;
+	Mon, 21 Oct 2024 07:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LB912OwV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiNqqyiv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D44440C;
-	Mon, 21 Oct 2024 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE8E440C;
+	Mon, 21 Oct 2024 07:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496614; cv=none; b=nJtl6kQN63c2luMDCSHMf08JSkf7PdLktj0ehMsTs8/A9Jy7g34qlURaCja9EwncQ4rBYjb9/2of7z5H3KvV+MMqoWrWPnTsO0DBP7ZySKp7eO5HDvJkZbdU7Vu69XYwAMH6i5apYtNQyHvI47I9Bv5yrC8tYzSSySi1/tsOZpk=
+	t=1729496620; cv=none; b=pq8S34td29ZUou6YiDJ11JwNo9f+8EtdyONx9FhibrGMb81ZaVeYmarZgUDiAFcl/pKjF5SXXked1mCepFuyc0EggqyauIHs6hgU2nBEnSB5oMrFFgD6eCK7hL0qldLQ36oPPHJZs27IncdzqWzwQJeHbHziFF09mjSgHdNdmEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496614; c=relaxed/simple;
-	bh=NH5HPey058GB0TD3/kCCLHNV5gW+T94GSK3qrZ1VWiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YlPKj5AuQMW82QTeKgVmUiizzjiyRPM5TpKQJ1T4jPVFlApKff55dGjq7fEo4GNshcXTCGhw7j0nROkKR0gzkLoWW5uizvz3YtqICllldKr5Nc/Nje/S4MdkFdeaiqqidKG8UyjANVR6IiPk/+w6P9XMM+iSYjBg4hJJpO+VA5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LB912OwV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC73CC4CEC3;
-	Mon, 21 Oct 2024 07:43:32 +0000 (UTC)
+	s=arc-20240116; t=1729496620; c=relaxed/simple;
+	bh=jVUvL+nwzIhExDvhRX8qXKXjV5D8t+xunCafnMybz/A=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fN0wKXnDXX7D1vXVOp2T/FAnnRLlNUfIu3phKvt6W+lDf1elBM59SeIMTvhraRFfSLNC9ypeaU0OjNddIUjv3PisLomMUUsqX2Pi86B1fZbleouUYSylE9fhvxQJdJvImDaU8THv5TlY21e6XwEkI+yfRXz9mrsCcxSWTG3FwGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiNqqyiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A332C4CECD;
+	Mon, 21 Oct 2024 07:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729496614;
-	bh=NH5HPey058GB0TD3/kCCLHNV5gW+T94GSK3qrZ1VWiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LB912OwVWVQBbCAUgaq4D1R/4Og6UCpREUBV4dKCf+HA9Zj1HV8KK0m4R4hcz7jJT
-	 K2DNo2u9RJOAMvm8oGHCeIjoGOc82wg+Z/uAMrQF59mRFlxLrw/Dvtusk+/XPgHAbG
-	 RwLfXTRZ8inyMo7QDAGkTp+Dl7LRT2sq8HZFZAyC/KHUw+3NxIc7+0N5f5fnHOPiYA
-	 JpntmH9LClGKULiEDJwj1TkRzVY4R7wUl3i92nI205HTbxF3n2HVNy8GCQqdtHNXo0
-	 aK46AjjWGwMFbpvJyvMWjlIdRfUwNt4W4wF1axsJUEV95dtWi6NYIoSBaoE0PD6Mhv
-	 qL42rpN3KVVAA==
-Date: Mon, 21 Oct 2024 09:43:30 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
-	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v3 09/15] dt-bindings: display:
- panel-simple-lvds-dual-ports: Reference lvds-dual-ports.yaml
-Message-ID: <3qrtknxsgxzyhwivd7d4eqqg7v6twgtczxotg7rhkdumjkl3p7@u2fso5hexiu4>
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-10-victor.liu@nxp.com>
+	s=k20201202; t=1729496620;
+	bh=jVUvL+nwzIhExDvhRX8qXKXjV5D8t+xunCafnMybz/A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MiNqqyivYG2b+sSOANKdt73+QK7Tru8NNJg4rTayYdGd2a3SHPqpwxp2eLlZBMf9s
+	 7cFZn00Cu1+hWjNO0yNXzGdj5BKIbjJiZK7WzXEWzcUo+TESD/uxfV3rOcNBsF+kX+
+	 15FrDGxpIOeKNwHsIg8VvzE+72gG7kddsK+nOFIEJpWQYMlThRnyIAJXgm5z8NXt1K
+	 nPPSvggesWtOKTgOmMskGJqdJaK48Mdny/ah58v/6IJXrEnlKW+cja3jo12tLbUKqB
+	 dtlJ7S9EBpF24Rxp9jr1Fkxud3ixoyFYJeu0LkhZ4oMYDzm9laF7FOFt47UhtVFkYc
+	 Qer8Y/g+vcFRw==
+Date: Mon, 21 Oct 2024 16:43:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] fgraph: Allocate ret_stack_list with proper size
+Message-Id: <20241021164336.79a90af16419aa6e3f065bf3@kernel.org>
+In-Reply-To: <20241018215212.23f13f40@rorschach>
+References: <20241018215212.23f13f40@rorschach>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241021064446.263619-10-victor.liu@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 02:44:40PM +0800, Liu Ying wrote:
-> This schema documents LVDS panels with dual links.  lvds-dual-ports.yaml
-> documents dual-link LVDS display common properties.  Reference the ports
-> property defined in lvds-dual-ports.yaml to save lines.
+On Fri, 18 Oct 2024 21:52:12 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> The ret_stack_list is an array of ret_stack shadow stacks for the function
+> graph usage. When the first function graph is enabled, all tasks in the
+> system get a shadow stack. The ret_stack_list is a 32 element array of
+> pointers to these shadow stacks. It allocates the shadow stack in batches
+> (32 stacks at a time), assigns them to running tasks, and continues until
+> all tasks are covered.
+> 
+> When the function graph shadow stack changed from an array of
+> ftrace_ret_stack structures to an array of longs, the allocation of
+> ret_stack_list went from allocating an array of 32 elements to just a
+> block defined by SHADOW_STACK_SIZE. Luckily, that's defined as PAGE_SIZE
+> and is much more than enough to hold 32 pointers. But it is way overkill
+> for the amount needed to allocate.
+> 
+> Change the allocation of ret_stack_list back to a kcalloc() of
+> FTRACE_RETSTACK_ALLOC_SIZE pointers.
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> 
+> Fixes: 42675b723b484 ("function_graph: Convert ret_stack to a series of longs")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
-> v3:
-> * New patch.  (Dmitry)
+>  kernel/trace/fgraph.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
-> index 10ed4b57232b..e80fc7006984 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
-> @@ -22,6 +22,7 @@ description: |
->    If the panel is more advanced a dedicated binding file is required.
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 43f4e3f57438..41e7a15dcb50 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1162,7 +1162,8 @@ static int start_graph_tracing(void)
+>  	unsigned long **ret_stack_list;
+>  	int ret;
 >  
->  allOf:
-> +  - $ref: /schemas/display/lvds-dual-ports.yaml#
->    - $ref: panel-common.yaml#
+> -	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+> +	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
+> +				 sizeof(*ret_stack_list), GFP_KERNEL);
+>  
+>  	if (!ret_stack_list)
+>  		return -ENOMEM;
+> -- 
+> 2.45.2
+> 
 
-So dual link panels common binding does not fit here? sorry, this is
-just introducing mess and confusion.
 
-Best regards,
-Krzysztof
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
