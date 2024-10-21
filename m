@@ -1,114 +1,241 @@
-Return-Path: <linux-kernel+bounces-373760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340F69A5C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC44C9A5C58
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E951C21700
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5801C21D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272A61D0F73;
-	Mon, 21 Oct 2024 07:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370201D0E30;
+	Mon, 21 Oct 2024 07:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DAvK2dOn"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXzoQUyA"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB101D0F51
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F65C193418;
+	Mon, 21 Oct 2024 07:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494882; cv=none; b=eOw6gs8VWiZBCZIKn0j1qRrqi5/99YRv/FroIoBi0wTOt+ZsaCgUJJQNQaGG6B4SLJkFHwgy27CO4HWA96tAW43Pb4cE1YjFEYNhQ3SCs8FtUi5uEuVKcJ8l0NOeJtgwqdAND/3YDI4TxOeVsVRsrI+XBCNmqr9fBomKfLROyFM=
+	t=1729494963; cv=none; b=TtQkl/eGit+45+dNloLAjrXoecTzyNNvyNu/jw7mzc5L71kHs99p5LdhaaFwxgA/WDT6SHvuni7DSA7BWcfRGNIefYehoUfluV2x1ee0eDDjZEQ/AQrlCzZmFZyzYuDUTY0VE4JxycsGEVEiUnzERUMdga8+UnyfB+dzqB2CDuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494882; c=relaxed/simple;
-	bh=B/kiukLnjmLkwZ+94r2toJOSjF2D/tL5XVrmGqc1MPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N89GcBg+tBS8cQcu0S6XEaw7Db5EWMTcSBx7wk3IWeIPxiGnBI+kMz6f9EM2KY1zDoJGLS/5bz51mk43xKxxyUv07Rjc7chmwzh5aUExwJScvYMkh9mi9kaso22dFhbzTsC3KBDz/jrbGh0WPJlKB9miKLvu4WZZyHJP5pmr6Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DAvK2dOn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314c452180so33889785e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:14:40 -0700 (PDT)
+	s=arc-20240116; t=1729494963; c=relaxed/simple;
+	bh=stmi8jNPm+XSpfCOyseBZ1GAQeQm/1gSsdudIfusCVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXNs/n40zxImOqhhYwRSv7E3w5/9JVVCCt0qG2rHvxAOzjj+5mudrYO26C6ZaGGPP+Ytbf5D6XBH2R+GixIn+NhrlXdVtzhhxKPiW8OlfDSJCsZa0Ee0KxmVhk65IWhWmlgcraEN3pcrhU0qXLWBSqWWDRwrJdD4A4w+0NtBzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXzoQUyA; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c8b557f91so41421445ad.2;
+        Mon, 21 Oct 2024 00:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729494879; x=1730099679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yf+ojeeNe2s2EnjRYvZ3se/a+vEw/qUmLYKHSRFy53w=;
-        b=DAvK2dOnwcsqPpCaooEwW41R8LlZI5HR+W+8pXzCDpTxIBcETnx98S3WCksW1bg+/k
-         QKNrz14SlW9cJ7irfMgj1vmS7l8/rrEi6R4KTsexdfMagNR6T83lTWYjgy4tRf3CR0pf
-         QEN/c24UzOnNGwHevcGo2kvyDxObN/0Rpcm0+e4V0Qz7s25Mnf6Rl8FZkcLpN8ytXl8B
-         Rltc04Sg1twaSRtOI6LGIc/31KU45JxfBkoembbrc4I0iXzfRPsDXxioyqXZDjgXvvec
-         Woe8L0Rd34oMZjTdmkHkzbZuIW3fMF/xNePUlj0UchNImtUYMyNHE4UbM6LyMPc6sahq
-         vFRQ==
+        d=gmail.com; s=20230601; t=1729494961; x=1730099761; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=05HpxlcvEDSLHnaT2VzQ3T5z3IDIHapxjdfQdH0wXWM=;
+        b=cXzoQUyAivCmrOefo2Ek6Ycr9tA9qEk55D/73in8+on3uX3onLfdc5D4ztVcTX+RIS
+         SceLIba14zOOQspUv/fGHpKj1kPnEqwzsxxVzdYHbuPwNBONQbrYqzMRSPq+UX9YPh7k
+         h7vAI9J9BN7kpJ3Ilezro5uAl0aKaBKoB7bQR0+6B0EG5dQjDg3HOoRlqGczH9ZGzZxa
+         gky8CJZEP7gcdr6tMYfPrJfQ8AzPdaektBDPVI4szQjxYHrJPDm1aAfKmwOmKuPczaSc
+         241QeMEmVg2KLUuviIaox7gqgzzH0N3e5APh7rTo/g4pOKY0fdmNR7/JguVgzkuoWBKZ
+         ckiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729494879; x=1730099679;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yf+ojeeNe2s2EnjRYvZ3se/a+vEw/qUmLYKHSRFy53w=;
-        b=hbCABOiHg6em2veOT7o+WMh/bUZ/8WLrWJSnMWKQ2c1TvgAnBEu2vNIjoKOmCoAZk9
-         4oCpJPfSKsciYQi3ANBQIdTehVD0cw3uiZXlA2d2T7ZR6AuMuFgNH9DR2rp86Lb02YBO
-         X3JJpjixhEwQ/XXka+N6QsTXEK6LmgV/s+gMAwfrNLpoKx8iOA+hBuz3sEejdNynXHLi
-         hIu1EjTTOmmSu/s1cKo3JhWJB9WCdbe9ko1rLd+7gsv1BsrogaA4zeuWiqitGcbthM5e
-         Hl0eyVq86uTMDGAh1wogZz6iCvtx1valo8vW/kZZFoHWX01hRgvM9u7PokH0Ji0M34FA
-         +BhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJNm+zfBlNUUlcsRbDzkG17A7HHVEzVjJsvPrSMMb/DhUHVYNQ9+bwWxvQSC7b5wTfINDMjSaTVIGMMXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHSJ5BOq1hn0numG+wv+2994AWVIe1EYRdGvzMgdueC/cGaZH7
-	D4f23idesbKAhjmaq3QGmXS/12KdsZK3jlBC7uGqjyi24fpJNJyh0rheIM7lJno=
-X-Google-Smtp-Source: AGHT+IEPnNFxpsQ6/0LGtCAUXpArXCe+i1x1xSkSu3b8PKwSHkfh/ReWZyvmXlCiQ3qXBkcty/eYLw==
-X-Received: by 2002:a5d:5392:0:b0:374:c6b6:c656 with SMTP id ffacd0b85a97d-37ecf066385mr6551876f8f.21.1729494878922;
-        Mon, 21 Oct 2024 00:14:38 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b40b:61e8:fa25:f97b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b94066sm3525366f8f.71.2024.10.21.00.14.38
+        d=1e100.net; s=20230601; t=1729494961; x=1730099761;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=05HpxlcvEDSLHnaT2VzQ3T5z3IDIHapxjdfQdH0wXWM=;
+        b=NQU8iHhWg13AFK3iNRVKHkNIf1P6TF51mJs9MUtVR1vLtJ7oX8fq87bYSojy0eVoY0
+         TAoXy6G8NlQp1DRZGmPG9wqwky7On3WFghcewOTNOs+oL/TGWojy0/fde6bCDyBwxB0D
+         6R9f1D7hdP5g87Tn5pAftlZxzUSDIGyAjjWBL70aufVXPOLpP1ErdWRlLyUQYzEMpPuf
+         El8Not0rnGnWfaCqNcpZ+BZdfvumfZd/IkXOnUMgAg5NlmBR4ngNpGbQa0W2ppefmepO
+         vWUipcAqXudUxyksR5hQaVcnjpKKyH2t+lXPqRlzT3SkLMipIN21DEwXMBF57U/N+nZt
+         95sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuBI+UG5Ul4UQw+KlcPBln1mYFpE9kUfbQRIC4HTunozBON/wVmnN/cptK/whNmI29MjUp71vgO/4g/LyPqfDbNvH/@vger.kernel.org, AJvYcCXaomVoyzfOlkXPmasjBuDeMS4Dps0g6p8cdnnrVXPHKcLkLWIhYgM78d+R1tpNqhl6K8bvCQAsTQD9flY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFELzWJSFm/xpribR5wSJSkN47igUBM280OJciIyIqmKsWYx79
+	Y41Wume1TA8LD0rAKpRS2JELZYsr6pa/8TrmRUKgHN6h/EibgMjK
+X-Google-Smtp-Source: AGHT+IHQ6d23cgASsji3tJL0vdjnxisyG0rD0fKe2yjezrz/zLFxRHCByh95SmRmJGuE+/5NRp8jIg==
+X-Received: by 2002:a17:903:2307:b0:20c:f3cf:50e6 with SMTP id d9443c01a7336-20e5a8ee77bmr157351215ad.38.1729494960747;
+        Mon, 21 Oct 2024 00:16:00 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:13a:f00:56be:6d28:be7e:522d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f363esm19579395ad.269.2024.10.21.00.15.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:14:38 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Srikar Dronamraju <srikar@linux.ibm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rcu: Fix remaining rcu_momentary_dyntick_idle() references
-Date: Mon, 21 Oct 2024 09:14:37 +0200
-Message-ID: <172949485237.6376.15649815993285480384.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240925054619.568209-1-srikar@linux.ibm.com>
-References: <20240925054619.568209-1-srikar@linux.ibm.com>
+        Mon, 21 Oct 2024 00:15:58 -0700 (PDT)
+From: Tatsuya S <tatsuya.s2862@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v4] tracing: Fix function name for trampoline
+Date: Mon, 21 Oct 2024 07:14:53 +0000
+Message-ID: <20241021071454.34610-2-tatsuya.s2862@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The issue that unrelated function name is shown on stack trace like
+following even though it should be trampoline code address is caused by
+the creation of trampoline code in the area where .init.text section
+of module was freed after module is loaded.
 
+bash-1344    [002] .....    43.644608: <stack trace>
+=> (MODULE INIT FUNCTION)
+=> vfs_write
+=> ksys_write
+=> do_syscall_64
+=> entry_SYSCALL_64_after_hwframe
 
-On Wed, 25 Sep 2024 11:16:18 +0530, Srikar Dronamraju wrote:
-> There is one last reference to rcu_momentary_dyntick_idle() after
-> Commit 32a9f26e5e26 ("rcu: Rename rcu_momentary_dyntick_idle() into rcu_momentary_eqs()")
-> 
-> Rename the same so that we are uniform.
-> 
-> 
+To resolve this, when function address of stack trace entry is in
+trampoline, output without looking up symbol name.
 
-I applied it but changed the subject as it targets the GPIO tree and not
-RCU.
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+---
+V3 -> V4: Change header file to define FTRACE_TRAMPOLINE_MARKER.
+	  Rename category name of commit message.
+V2 -> V3: Instead of saving the trampoline address, marker was introduced.
+V1 -> V2: Instead of checking trampoline when displaying "trace" results,
+	  it stores trampoline when generating the stacktrace entry.
 
-[1/1] rcu: Fix remaining rcu_momentary_dyntick_idle() references
-      commit: a0b6594e411dcae0cc563f5157cf062e93603388
+ kernel/trace/trace.c        | 33 +++++++++++++++++++++++++--------
+ kernel/trace/trace.h        |  7 +++++++
+ kernel/trace/trace_output.c |  4 ++++
+ 3 files changed, 36 insertions(+), 8 deletions(-)
 
-Best regards,
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index a8f52b6527ca..3d86937da610 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
+ #endif
+ 
+ #ifdef CONFIG_STACKTRACE
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs);
+ static inline void ftrace_trace_stack(struct trace_array *tr,
+@@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 				      int skip, struct pt_regs *regs);
+ 
+ #else
+-static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
++static inline void __ftrace_trace_stack(struct trace_array *tr,
++					struct trace_buffer *buffer,
+ 					unsigned int trace_ctx,
+ 					int skip, struct pt_regs *regs)
+ {
+@@ -2928,7 +2930,8 @@ struct ftrace_stacks {
+ static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+ static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+ 
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs)
+ {
+@@ -2975,6 +2978,20 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+ 		nr_entries = stack_trace_save(fstack->calls, size, skip);
+ 	}
+ 
++#ifdef CONFIG_DYNAMIC_FTRACE
++	/* Mark entry of stack trace as trampoline code */
++	if (tr->ops && tr->ops->trampoline) {
++		unsigned long tramp_start = tr->ops->trampoline;
++		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
++		unsigned long *calls = fstack->calls;
++
++		for (int i = 0; i < nr_entries; i++) {
++			if (calls[i] >= tramp_start && calls[i] < tramp_end)
++				calls[i] = FTRACE_TRAMPOLINE_MARKER;
++		}
++	}
++#endif
++
+ 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+ 				    struct_size(entry, caller, nr_entries),
+ 				    trace_ctx);
+@@ -3005,7 +3022,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+ 		return;
+ 
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+ }
+ 
+ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+@@ -3014,7 +3031,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+ 
+ 	if (rcu_is_watching()) {
+-		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 		return;
+ 	}
+ 
+@@ -3031,7 +3048,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 		return;
+ 
+ 	ct_irq_enter_irqson();
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 	ct_irq_exit_irqson();
+ }
+ 
+@@ -3048,8 +3065,8 @@ void trace_dump_stack(int skip)
+ 	/* Skip 1 to skip this function. */
+ 	skip++;
+ #endif
+-	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+-			     tracing_gen_ctx(), skip, NULL);
++	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
++				tracing_gen_ctx(), skip, NULL);
+ }
+ EXPORT_SYMBOL_GPL(trace_dump_stack);
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index c866991b9c78..30d6675c78cf 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -2176,4 +2176,11 @@ static inline int rv_init_interface(void)
+ }
+ #endif
+ 
++/*
++ * This is used only to distinguish
++ * function address from trampoline code.
++ * So this value has no meaning.
++ */
++#define FTRACE_TRAMPOLINE_MARKER  ((unsigned long) INT_MAX)
++
+ #endif /* _LINUX_KERNEL_TRACE_H */
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 868f2f912f28..c14573e5a903 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -1246,6 +1246,10 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+ 			break;
+ 
+ 		trace_seq_puts(s, " => ");
++		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
++			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
++			continue;
++		}
+ 		seq_print_ip_sym(s, (*p) + delta, flags);
+ 		trace_seq_putc(s, '\n');
+ 	}
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.47.0
+
 
