@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-374264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F019A679A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 390BE9A67A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A102283D64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30D0283D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6C1EBFFC;
-	Mon, 21 Oct 2024 12:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKCIKkCt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E0C1E4113;
+	Mon, 21 Oct 2024 12:09:12 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3F71EABB1;
-	Mon, 21 Oct 2024 12:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1291DC19E;
+	Mon, 21 Oct 2024 12:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512484; cv=none; b=pDgGDd57fX+hh7VmqFtUGKrnG/35IrEEwtviV3flBw1qZq9pNaP5H/AYQmtsRNEbwxl3/xE8/Y8uDpNvTZm+/4mU+mvNuuP406HoYZvVPqaPQ2t+PHjcJmDUlAFf+ePHOHqoUU2NtfQtvmgqfIILjSgX8GWJJUoHoY+uFdMVcKc=
+	t=1729512551; cv=none; b=DGkTZ8xoDG1XFjwPEFLYq89e7vlIU7z1xxPUO2VYgKNVotc9DVCL5AgFmDyfJa+hLnOaBRvTD0fkdMVQ5hwkF2rHCND2Y/81xqvGFQike8aFld2Ue5+9EUaUCocbvRFwr66nxo2RS10ax2pVy4PjjEQI5bitoyKOSPyUJlD+i9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512484; c=relaxed/simple;
-	bh=IG9XDXEq+BLfchmvTYcHZHyseUpd2sq/XSmsM6ziurs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dG5pz1cZ9UMVl2UVyXjOhl93U0iL3a5FK7Ovv3ue6lRNLgkt9poke8geTEAbd8HcK7ZbI8V8JK+wNHkM+5+O/Guxa5DUZWH2j4PIAME+Ph7IL7PJf1pucra9KDURBmmsymvn+vrWf91mwnDmURuwXfJfJNPZArf4bcRW6ximm1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKCIKkCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9B5C4CEC3;
-	Mon, 21 Oct 2024 12:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729512483;
-	bh=IG9XDXEq+BLfchmvTYcHZHyseUpd2sq/XSmsM6ziurs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKCIKkCtOnttc8iy62OKInHm6/+gTzQulfFw1e7TZBQCZRTV2Ht5whxS44PYWdB82
-	 XiCOxHg1BKuVkuOv0jyW21Bre7UXm8qlfJh/o956sFapSNFgEK6kDGZ1VBuD8rF95b
-	 ek5VJWc+UbN4Py1IZ4pmdATgQegMAuVIUOQN/5hBr+sSjdkfbZdPbHAk97E1xzYVRT
-	 abaEbZe5JtH/rukigwEeUomqIlfewU+q7D42uTT5KefNMZ4xDCd3nUsTMN9jU/HOW1
-	 iIS7QHg2jxjjFf7haQgDugGAfHj2G8CW58PzrUMH+KwZOw5skZZUpXHoVVnMmUMZXj
-	 iwazIMxD7j9Ig==
-Date: Mon, 21 Oct 2024 13:07:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: iio: adc: ad7380: fix ad7380-4
- reference supply
-Message-ID: <20241021-opium-wannabe-28e314e7cd8d@spud>
-References: <20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com>
- <20241021-ad7380-fix-supplies-v2-1-2ca551b3352a@baylibre.com>
+	s=arc-20240116; t=1729512551; c=relaxed/simple;
+	bh=2sEnULcFJb/3dGio6LTiieNbuni/u28TOJxXiDgo9Pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YFiPV+wQor0lWB/uUQjGKYl1WfLDr9bWZfl3PQvdhwkhg/4+DNVfqFNsc4wU39W7G1ex05YkjXFb94DeUd3PWfkljQb7ENFIEJYgXETh9496+KyNgGapv+E5lTbsG1KNjMQj+hk8e7GK8nU+dxri9VVhUbesGK2FQJJsAak66vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XXDZz3Mbnz1SCSX;
+	Mon, 21 Oct 2024 20:07:39 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id B27FF1A0188;
+	Mon, 21 Oct 2024 20:09:00 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 21 Oct 2024 20:08:59 +0800
+Message-ID: <56099e59-586d-4013-8262-a21a3ae473a4@huawei.com>
+Date: Mon, 21 Oct 2024 20:08:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3CQy50hiodQh6fxs"
-Content-Disposition: inline
-In-Reply-To: <20241021-ad7380-fix-supplies-v2-1-2ca551b3352a@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better
+ scalability
+To: Oleg Nesterov <oleg@redhat.com>
+CC: <ak@linux.intel.com>, <mhiramat@kernel.org>, <andrii@kernel.org>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240927094549.3382916-1-liaochang1@huawei.com>
+ <20241001142935.GC23907@redhat.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20241001142935.GC23907@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
 
---3CQy50hiodQh6fxs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 12:00:09PM +0200, Julien Stephan wrote:
-> ad7380-4 is the only device from ad738x family that doesn't have an
-> internal reference. Moreover its external reference is called REFIN in
-> the datasheet while all other use REFIO as an optional external
-> reference. If refio-supply is omitted the internal reference is
-> used.
->=20
-> Fix the binding by adding refin-supply and makes it required for
-> ad7380-4 only.
->=20
-> Fixes: 1a291cc8ee17 ("dt-bindings: iio: adc: ad7380: add support for ad73=
-8x-4 4 channels variants")
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+在 2024/10/1 22:29, Oleg Nesterov 写道:
+> On 09/27, Liao Chang wrote:
+>>
+>> The uprobe handler allocates xol slot from xol_area and quickly release
+>> it in the single-step handler. The atomic operations on the xol bitmap
+>> and slot_count lead to expensive cache line bouncing between multiple
+>> CPUs.
+> 
+> Liao, could you please check if this series
+> 
+> 	[PATCH 0/2] uprobes: kill xol_area->slot_count
+> 	https://lore.kernel.org/all/20241001142416.GA13599@redhat.com/
+> 
+> makes any difference performance-wise in your testing?
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+OK, I am ready to test this patch on my arm64 machine.
 
---3CQy50hiodQh6fxs
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Oleg.
+> 
+> 
 
------BEGIN PGP SIGNATURE-----
+-- 
+BR
+Liao, Chang
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxZEHgAKCRB4tDGHoIJi
-0tIfAQCQZDqmd/HZBsyPscpNXfoYg9pdSBN8BomB/P3G6ypm7AEA1XvE1WBzyI/C
-PqfpRwu6kuPdCnST3NwocwOrBIQOEQ0=
-=Y5UJ
------END PGP SIGNATURE-----
-
---3CQy50hiodQh6fxs--
 
