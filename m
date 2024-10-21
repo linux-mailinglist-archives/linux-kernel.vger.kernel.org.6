@@ -1,45 +1,62 @@
-Return-Path: <linux-kernel+bounces-374307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94579A6844
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:26:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017399A6848
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9558A28164A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 807761F26BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8146B1F4712;
-	Mon, 21 Oct 2024 12:22:24 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD661F8F0F;
+	Mon, 21 Oct 2024 12:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YcnYyxUl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEBC1F8EF4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554741F4714;
+	Mon, 21 Oct 2024 12:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513344; cv=none; b=L7CZWLqINp+SsD5ufT/vLsRIx+gL5ZOKUMoTErKuRDT+c+WcjJnqilJb8Vs+1nwWXJP1Mqx1Lx6zzeXV3nkQ676QfJuQN5YlchnVVbtXGZ5mqql+C7f27hJuSTNcp/ubRwufeoYB5nGTzfizLraTj6XGbNICbHXGgFL4AtL0zEE=
+	t=1729513361; cv=none; b=DnAkOc8UbCP5K6fWouhUeHrIBxhSR8FMui/6c1GXDmJAebF9966gajIZxNniTQ+g08gHbpXxCCszXzoWFnu3foKWdrBkV96gDRF3BCK2uXuvxaRtiGeYsZMzW2/yT9+gIs3yWT1GGsNXAg9SFMZuOa1/GaQzTkp+n8gNkWIRR3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513344; c=relaxed/simple;
-	bh=9R3YmXDHWIRc6Eh0htjnmyFUrHACkQQOeU/5t5RnlqM=;
+	s=arc-20240116; t=1729513361; c=relaxed/simple;
+	bh=LknK+bmwz1HcsCHFGbTuacYGi4dNazdLQR43QwJVFHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b2ZAlrHGLli9oAbKrZvfCcib3NHKNNNHYu3GwaPVkT9EhhSAzBLpg+DdEZYP5CyfU9J6wOQq0NGcbmRirX+zkdJYi0k5IGgnQmU4Z/MH6qtXzjmKpIE3J8hpuskR/MqUW7jTrRqiO3tbgGEKtEZSt10YIyGXxxoKO7kIoL7VH5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XXDtJ2shXz2Fb4l;
-	Mon, 21 Oct 2024 20:20:56 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 18BB41401F1;
-	Mon, 21 Oct 2024 20:22:17 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 21 Oct 2024 20:22:15 +0800
-Message-ID: <c95252f7-12a7-49b8-8bf6-2ff3ada845ff@huawei.com>
-Date: Mon, 21 Oct 2024 20:22:14 +0800
+	 In-Reply-To:Content-Type; b=fJLQnEgLG/URZPR990t/k2U0qJOE2a15o13KZrlrh5J4btKa8rrda+ybitrWQRVdRrEuelq7GUc5XeTFMO/IL9NpGi+Rp3sjCe6zW9359+Xtiv8BlNU/gEX55YShiJnqsTrIwjDhbAZ0h9xHfm2sYy5Ujn4zS3IBv9jvadxQ3t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YcnYyxUl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LA97ZH012545;
+	Mon, 21 Oct 2024 12:22:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YGbUV117vz4ntpz8yuZW40y8LXipHeKy2mpnqNfZXQU=; b=YcnYyxUlmzb6auXI
+	BBHfeF3ekkVIaQiACdD7yVHuymE0HapdRVEtE1LIokt8ieGO+HisGA/YSj9K9xEA
+	6WVDBwVk6R5pt9dsLzDjZnicGbf0HyvyiPtd8d2xTAbEdgq24lQDTftv8HKyI5PW
+	o8j7rFJhh7jbHjHgdTca3ZZp7tDKD2L7Uo2xnmuy3Wie/SSWa0uWRZQ5eDoD1HJU
+	snTrRdXUC7zoy/m0MNMgAn34wKJvwzvVFEjkZSg5AW5HfpUWtYIhX//aCrHYo+QN
+	QHf3T1riGocog/q3FQmw/1SCNpbbwTIGW3RUp24R0Myw8N99E8vINd7FaoaFn/qj
+	7FCOGQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj4nhx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 12:22:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LCMPlS016807
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 12:22:25 GMT
+Received: from [10.206.106.133] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
+ 2024 05:22:17 -0700
+Message-ID: <e2531d90-dbcb-4ba5-b153-fb8ca2ba7734@quicinc.com>
+Date: Mon, 21 Oct 2024 17:52:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,211 +64,218 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH drm-dp 3/4] drm/hisilicon/hibmc: add dp kapi moduel in
- hibmc drivers
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
- <20240930100610.782363-4-shiyongbang@huawei.com>
- <eslfc3ejjjpbw5wuf4khcoixeaitpb47iwf6kug7cryplcxcui@sieiyekdpczn>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <eslfc3ejjjpbw5wuf4khcoixeaitpb47iwf6kug7cryplcxcui@sieiyekdpczn>
+Subject: Re: [PATCH v3 1/8] media: dt-bindings: media: camss: Add
+ qcom,sc7280-camss binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-2-quic_vikramsa@quicinc.com>
+ <q63w23zeoteagtw3px4sk3il4567plydgdhckmvpiksm6qc5i2@3rcdrr5uribq>
+Content-Language: en-US
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+In-Reply-To: <q63w23zeoteagtw3px4sk3il4567plydgdhckmvpiksm6qc5i2@3rcdrr5uribq>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qWAEw5uzhWxzsU_YX5UU8K6UwinM0zt6
+X-Proofpoint-ORIG-GUID: qWAEw5uzhWxzsU_YX5UU8K6UwinM0zt6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1011
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410210088
 
-Hi Dmitry,
-There're some format problems with the previous replies. Send it again here.
-Thanks for your advices, I'll resolve the problems you mentioned.
+Hi Krzysztof,
 
-> On Mon, Sep 30, 2024 at 06:06:09PM +0800, shiyongbang wrote:
->> From: baihan li <libaihan@huawei.com>
->>
->> Build a kapi level that hibmc driver can enable dp by
->> calling these kapi functions.
->>
->> Signed-off-by: baihan li <libaihan@huawei.com>
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |  2 +-
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    | 20 ++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c  | 12 ++---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h  | 48 +++++++++++++++++++
->>   4 files changed, 75 insertions(+), 7 deletions(-)
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> index 94d77da88bbf..693036dfab52 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> @@ -1,5 +1,5 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
->> -	       dp/dp_aux.o dp/dp_link.o
->> +	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
->>   
->>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> new file mode 100644
->> index 000000000000..a6353a808cc4
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> @@ -0,0 +1,20 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
+Thanks for your review. I will address the alignment issue as per DTS 
+coding style and will submit v4 for review.
+
+Thanks,
+Vikram
+
+On 10/11/2024 8:19 PM, Krzysztof Kozlowski wrote:
+> On Fri, Oct 11, 2024 at 07:39:25PM +0530, Vikram Sharma wrote:
+>> @@ -0,0 +1,440 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
 >> +
->> +#ifndef DP_CONFIG_H
->> +#define DP_CONFIG_H
+> Drop blank line (that's a new finding, I would not complain except that
+> I expect new version, see further).
+>
+>> +    soc {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
 >> +
->> +#define DP_BPP 24
->> +#define DP_SYMBOL_PER_FCLK 4
->> +#define DP_MIN_PULSE_NUM 0x9
->> +#define DP_MSA1 0x20
->> +#define DP_MSA2 0x845c00
->> +#define DP_OFFSET 0x1e0000
->> +#define DP_HDCP 0x2
->> +#define DP_INT_RST 0xffff
->> +#define DP_DPTX_RST 0x3ff
->> +#define DP_CLK_EN 0x7
->> +#define DP_SYNC_EN_MASK 0x3
->> +#define DP_LINK_RATE_CAL 27
-> I think some of these defines were used in previous patches. Please make
-> sure that at each step the code builds without errors.
+>> +        camss: camss@acaf000 {
+>> +            compatible = "qcom,sc7280-camss";
+>> +
+>> +            clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_0_CSID_CLK>,
+> Alignment did not improve. Please carefully read DTS coding style.
+>
+>> +                <&clock_camcc CAM_CC_IFE_1_CSID_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_2_CSID_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_0_CSID_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_1_CSID_CLK>,
+>> +                <&clock_camcc CAM_CC_CSIPHY0_CLK>,
+>> +                <&clock_camcc CAM_CC_CSI0PHYTIMER_CLK>,
+>> +                <&clock_camcc CAM_CC_CSIPHY1_CLK>,
+>> +                <&clock_camcc CAM_CC_CSI1PHYTIMER_CLK>,
+>> +                <&clock_camcc CAM_CC_CSIPHY2_CLK>,
+>> +                <&clock_camcc CAM_CC_CSI2PHYTIMER_CLK>,
+>> +                <&clock_camcc CAM_CC_CSIPHY3_CLK>,
+>> +                <&clock_camcc CAM_CC_CSI3PHYTIMER_CLK>,
+>> +                <&clock_camcc CAM_CC_CSIPHY4_CLK>,
+>> +                <&clock_camcc CAM_CC_CSI4PHYTIMER_CLK>,
+>> +                <&gcc GCC_CAMERA_AHB_CLK>,
+>> +                <&gcc GCC_CAMERA_HF_AXI_CLK>,
+>> +                <&clock_camcc CAM_CC_CPAS_AHB_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_0_AXI_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_0_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_1_AXI_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_1_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_2_AXI_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_2_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_2_CPHY_RX_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_0_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_0_CPHY_RX_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_1_CLK>,
+>> +                <&clock_camcc CAM_CC_IFE_LITE_1_CPHY_RX_CLK>;
+>> +
+>> +            clock-names = "camnoc_axi",
+>> +                "csi0",
+> Alignment did not improve. Please carefully read DTS coding style.
+>
+>> +                "csi1",
+>> +                "csi2",
+>> +                "csi3",
+>> +                "csi4",
+>> +                "csiphy0",
+>> +                "csiphy0_timer",
+>> +                "csiphy1",
+>> +                "csiphy1_timer",
+>> +                "csiphy2",
+>> +                "csiphy2_timer",
+>> +                "csiphy3",
+>> +                "csiphy3_timer",
+>> +                "csiphy4",
+>> +                "csiphy4_timer",
+>> +                "gcc_camera_ahb",
+>> +                "gcc_camera_axi",
+>> +                "soc_ahb",
+>> +                "vfe0_axi",
+>> +                "vfe0",
+>> +                "vfe0_cphy_rx",
+>> +                "vfe1_axi",
+>> +                "vfe1",
+>> +                "vfe1_cphy_rx",
+>> +                "vfe2_axi",
+>> +                "vfe2",
+>> +                "vfe2_cphy_rx",
+>> +                "vfe0_lite",
+>> +                "vfe0_lite_cphy_rx",
+>> +                "vfe1_lite",
+>> +                "vfe1_lite_cphy_rx";
+>> +
+>> +            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &cnoc2 SLAVE_CAMERA_CFG 0>,
+>> +                <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>;
+> Alignment did not improve. Please carefully read DTS coding style.
 >
 >> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
->> index 4091723473ad..ca7edc69427c 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
->> @@ -64,12 +64,12 @@ static void hibmc_dp_set_tu(struct hibmc_dp_dev *dp, struct dp_mode *mode)
->>   	rate_ks = dp->link.cap.link_rate * DP_LINK_RATE_CAL;
->>   	value = (pixel_clock * bpp * 5000) / (61 * lane_num * rate_ks);
->>   
->> -	if (value % 10 == 9) { /* 10: div, 9: carry */
->> -		tu_symbol_size = value / 10 + 1; /* 10: div */
->> +	if (value % 10 == 9) { /* 9 carry */
->> +		tu_symbol_size = value / 10 + 1;
->>   		tu_symbol_frac_size = 0;
->>   	} else {
->> -		tu_symbol_size = value / 10; /* 10: div */
->> -		tu_symbol_frac_size = value % 10 + 1; /* 10: div */
->> +		tu_symbol_size = value / 10;
->> +		tu_symbol_frac_size = value % 10 + 1;
->>   	}
->>   
->>   	drm_info(dp->dev, "tu value: %u.%u value: %u\n",
->> @@ -158,7 +158,7 @@ static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct dp_mode *mode)
->>   	dp_write_bits(dp->base + DP_VIDEO_CTRL,
->>   		      DP_CFG_STREAM_HSYNC_POLARITY, mode->h_pol);
->>   
->> -	/* MSA mic 0 and 1*/
->> +	/* MSA mic 0 and 1 */
->>   	writel(DP_MSA1, dp->base + DP_VIDEO_MSA1);
->>   	writel(DP_MSA2, dp->base + DP_VIDEO_MSA2);
->>   
->> @@ -167,7 +167,7 @@ static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct dp_mode *mode)
->>   	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_RGB_ENABLE, 0x1);
->>   	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_VIDEO_MAPPING, 0);
->>   
->> -	/*divide 2: up even */
->> +	/* divide 2: up even */
->>   	if (timing_delay % 2)
->>   		timing_delay++;
->>   
-> This should be squashed into the previous commits.
+>> +            interconnect-names = "ahb", "hf_0";
+>> +
+>> +            interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
+> Alignment did not improve. Please carefully read DTS coding style.
 >
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
->> new file mode 100644
->> index 000000000000..6b07642d55b8
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
->> @@ -0,0 +1,48 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +                <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
+>> +                <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
 >> +
->> +#ifndef DP_KAPI_H
->> +#define DP_KAPI_H
->> +
->> +#include <linux/types.h>
->> +#include <drm/drm_device.h>
->> +#include <drm/drm_encoder.h>
->> +#include <drm/drm_connector.h>
->> +#include <drm/drm_print.h>
->> +#include <linux/delay.h>
-> Sort the headers, please.
+>> +            interrupt-names = "csid0",
+>> +                "csid1",
+>> +                "csid2",
+>> +                "csid_lite0",
+> Alignment did not improve. Please carefully read DTS coding style.
 >
+>> +                "csid_lite1",
+>> +                "csiphy0",
+>> +                "csiphy1",
+>> +                "csiphy2",
+>> +                "csiphy3",
+>> +                "csiphy4",
+>> +                "vfe0",
+>> +                "vfe1",
+>> +                "vfe2",
+>> +                "vfe_lite0",
+>> +                "vfe_lite1";
 >> +
->> +struct hibmc_dp_dev;
+>> +            iommus = <&apps_smmu 0x800 0x4e0>;
 >> +
->> +struct dp_mode {
->> +	u32 h_total;
->> +	u32 h_active;
->> +	u32 h_blank;
->> +	u32 h_front;
->> +	u32 h_sync;
->> +	u32 h_back;
->> +	bool h_pol;
->> +	u32 v_total;
->> +	u32 v_active;
->> +	u32 v_blank;
->> +	u32 v_front;
->> +	u32 v_sync;
->> +	u32 v_back;
->> +	bool v_pol;
->> +	u32 field_rate;
->> +	u32 pixel_clock; // khz
-> Why do you need a separate struct for this?
-
-I can try to use drm_mode function and refactor this struct, but they're insufficient for our scenarios.
-Here's change template bellow:
-struct dp_mode {
-         sturct videomode mode;
-         u32 h_total;
-         u32 h_blank;
-         u32 v_total;
-         u32 v_blank;
-         u32 field_rate;
-};
-static void dp_mode_cfg(struct dp_mode *dp_mode, struct drm_display_mode *mode)
-{
-         dp_mode->field_rate = drm_mode_vrefresh(mode);
-         drm_display_mode_to_videomode(mode, &dp_mode->vmode);
-         dp_mode->h_total = mode->htotal;
-         dp_mode->h_blank = mode->htotal - mode->hdisplay;
-         dp_mode->v_total = mode->vtotal;
-         dp_mode->v_blank = mode->vtotal - mode->vdisplay;
-
-}
-
-
->> +};
->> +
->> +struct hibmc_dp {
->> +	struct hibmc_dp_dev *dp_dev;
->> +	struct drm_device *drm_dev;
->> +	struct drm_encoder encoder;
->> +	struct drm_connector connector;
->> +	void __iomem *mmio;
->> +};
->> +
->> +int hibmc_dp_kapi_init(struct hibmc_dp *dp);
->> +void hibmc_dp_kapi_uninit(struct hibmc_dp *dp);
->> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct dp_mode *mode);
->> +void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
-> It looks like this should also be defined earlier.
+>> +            power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
+>> +                <&camcc CAM_CC_IFE_1_GDSC>,
+> Alignment did not improve. Please carefully read DTS coding style.
 >
+>> +                <&camcc CAM_CC_IFE_2_GDSC>,
+>> +                <&camcc CAM_CC_TITAN_TOP_GDSC>;
 >> +
->> +#endif
->> -- 
->> 2.33.0
->>
+>> +            power-domains-names = "ife0", "ife1", "ife2", "top";
+>> +
+>> +            reg = <0x0 0x0acb3000 0x0 0x1000>,
+>> +                <0x0 0x0acba000 0x0 0x1000>,
+>> +                <0x0 0x0acc1000 0x0 0x1000>,
+> Alignment did not improve. Please carefully read DTS coding style.
+>
+>> +                <0x0 0x0acc8000 0x0 0x1000>,
+>> +                <0x0 0x0accf000 0x0 0x1000>,
+>> +                <0x0 0x0ace0000 0x0 0x2000>,
+>> +                <0x0 0x0ace2000 0x0 0x2000>,
+>> +                <0x0 0x0ace4000 0x0 0x2000>,
+>> +                <0x0 0x0ace6000 0x0 0x2000>,
+>> +                <0x0 0x0ace8000 0x0 0x2000>,
+>> +                <0x0 0x0acaf000 0x0 0x4000>,
+>> +                <0x0 0x0acb6000 0x0 0x4000>,
+>> +                <0x0 0x0acbd000 0x0 0x4000>,
+>> +                <0x0 0x0acc4000 0x0 0x4000>,
+>> +                <0x0 0x0accb000 0x0 0x4000>;
+>> +
+>> +            reg-names = "csid0",
+>> +                "csid1",
+>> +                "csid2",
+>> +                "csid_lite0",
+> Alignment did not improve. Please carefully read DTS coding style.
+>
+>> +                "csid_lite1",
+>> +                "csiphy0",
+>> +                "csiphy1",
+>> +                "csiphy2",
+> Best regards,
+> Krzysztof
+>
 
