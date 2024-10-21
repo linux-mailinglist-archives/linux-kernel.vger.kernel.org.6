@@ -1,193 +1,387 @@
-Return-Path: <linux-kernel+bounces-374524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788B79A6B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:06:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E116C9A6B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345DE28164E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B361C2086A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24B01F943D;
-	Mon, 21 Oct 2024 14:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5CF1F9A8E;
+	Mon, 21 Oct 2024 14:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="pdGRBy7X"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iu8ALFKA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5A01DF754;
-	Mon, 21 Oct 2024 14:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519505; cv=none; b=AHm20M+KxJ0088z/syDipwtANSs8tbX5zAUdVERMrWoO5u1SPyysZmmAc/X4CwZfd7gxhJsJNOrJ2QGxCy9SrTuhw6mOf9DpcO8sk1IVrOVSFfTyZH+uxScy+K/Z63jedzBBPoFYm91icdz0YDbQXlweD+3PgfVof9VfcdZNMDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519505; c=relaxed/simple;
-	bh=C05g4q8NdYBCSJK1fcpzMahjm+yq9IbNNxfA3gK1GdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KcTGt9fNj06MLwiq9yG+GPoSY5LruHJfNIhmE2s6V37QNJAZ3b+TpVLwK5AjqjXE4LtXkmy9spXiq3WVB90rsxJvfHJbk7ALxMmtWJGjABw001aUruWn8Y9aSvUUAHYpBEoLJtLTbt3lKbFT79L9p9+XihtcVBGB+lPKzjXkukg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=pdGRBy7X; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729519466; x=1730124266; i=deller@gmx.de;
-	bh=KHEHhgl3vT2qa4XlTJ64Ck+WkTzRu0oSpPZLUl326jE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pdGRBy7XwsouqsLdYc7G5M1qa5UoGswFupmj2UQAxuH9EXyJcv/gkpHgXthvvrv+
-	 2LelATXe8AQUx9w0qtwANm35+1wxOmLjclJ1RMhK/W4gI212eXYDYUgZWKwwG93wT
-	 mLjaXJi3US4JsYwffySS/FrgSaE/X3uOmk9x7oi43dZlrIFmiDHA4xnjLK3mxwheC
-	 uFSlCNvvtBsR9f30IuTsA3uzlZZC22aE27oK009fe5gd8Pz88UGH5nJOaKis+x0Xv
-	 8Zz+dCpt31rR0fjgY6g0KRjXUgRWlkpLETnHg22ocjdHlIYtMQsEUTF1Bq9cZOMDK
-	 dOix/CnkEr+jJ7tfQA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3lY1-1t2blp04OZ-004rkb; Mon, 21
- Oct 2024 16:04:26 +0200
-Message-ID: <aef97e2b-f845-4b2e-bb35-cf89e4a7af6c@gmx.de>
-Date: Mon, 21 Oct 2024 16:04:22 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223FE1F9A8F;
+	Mon, 21 Oct 2024 14:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729519517; cv=fail; b=imBbbcZcAOSAFUoo/r6SMI83RZuNqLF2d0g5Zf4sAQjZIGnTCQGsUQWjtKaQKfxHuIa+5N/fR2Ubqm4oYroB+sMqTRMjVrkTkgwVOl2h+JeBXyoooKQc0q186K/Yus14suEqKUfRdOSTIVzftIZrJ51hjfBE/YI2rTmBISKmbg4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729519517; c=relaxed/simple;
+	bh=o3uEcmrUhndbyBrTfWB/276eCnehUHTySx5OlXFGNOU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JsS7gGPwtbIQnen2Z15BWVMEogOykLm94ugk+OdOXduUlMNsLMwv4Z6mawvUme+7ZUtPZscUD3i5lPu+tYSkqSOrjpTg/9Z+88sJctYTcTpcwIBoIGAg5aLstJNA2f32Pyf5VtRwU8jlC0dJ+pBkaXv03mrp1mIWR1earZJ4S4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iu8ALFKA; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729519516; x=1761055516;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=o3uEcmrUhndbyBrTfWB/276eCnehUHTySx5OlXFGNOU=;
+  b=iu8ALFKAi6Tdk9/PbhOS393FUZBST7oWSw7xbxB50wGQYopSCQaS34wk
+   hYXlXi1NdDhHN/nSTHGey7twk7hKek1foBSg9HZLs97Xs7pwl7W4E13bL
+   xiwe6D9yo+75YSY5i/wQmgRgcC9jwuDNzJzheqlp/k+MDcxJgcOakX01I
+   yJnnajPHufJT+FeFob0cw62ORdgGu+ITUL9wQxtsJJ1wpq+1896/ESpRo
+   w0xyTuuYkOQpPMNmXvPDoT/XmKkkNpAl/UIJ+rqZWJ/CriBq/WILBkp+x
+   N/yQJPwVSMekzLGnTa3Gzd9L8GkvahmJgjbHfjafWAKZc93RGLLADaXTR
+   A==;
+X-CSE-ConnectionGUID: oZHFE0WEQ921U/ICCpUsPQ==
+X-CSE-MsgGUID: ZLTOZJsqQmSH7xKFcEYPTA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46469245"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46469245"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:04:50 -0700
+X-CSE-ConnectionGUID: GEueAy7rRCW7cp2tLE1xbg==
+X-CSE-MsgGUID: KC7MElVEQZmjXs8vQbCHYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="84326996"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 07:04:50 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 21 Oct 2024 07:04:49 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 07:04:49 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.45) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 21 Oct 2024 07:04:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HZxPrGsjDeGLXNsWlDxXuwZIISSbEf9bvlZhu9csytQSwUlpyCcU+1DOuVFIct5JDKmdJJIMrmwpssSjhlBiipxDChvSHzHlQqj967CFQa5Z0MZke6wS27MtopVTPyMOJQwMMPvDyOZ+L4M5VNj9qsfPBJDsv7Ft27+LDPxscv0ZmjAu5gytyYbL/+Vs5su7iHH/n8ZdL2WslQ6erVtjGhBJgEXVrLqyn8bFjLH/XCmV7+mu8QG4SS21l83yNm833xGBlrA8DaGEs1qAXNGGURRbY6wXPbLNgFYGV2wQLnUoEBzbTcWgY+XvqNy9QQyAiswa+r0fah8mf6O2DFvTxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QGVqqoYTCXZwUFWdpB9g6VvlDgkp9dZynb6xH58jP7s=;
+ b=IFcfx8vCA7wVC7OU3/H+N3lkFZ9i3QYzn87v/yfX6r4GvR3eG5ubrRluPfdotI+eUSZAvvGMtBcMVpl6+gtI/yz7gc7z60lUJfdauv0/nlP6C4srXrBgXpzoyVjw8hbI/rasSPk87c6T8//KuIZ1B1wmpqNXehVoLLRpHgi5G6LSE+L+fV4L+OVWY9uZDVq+J4Yz9ly0ic19lbQ6uFIvXxq7VuTWAYBozzffebytj7di/RutzfKUN10DTfnqmr7ScWk/uMp+tjrGZ3cXzvzTY3A/SA/pDZifKh6X+AWO7n6T7vPJ1wvnQ4WJkrGoIhxjg5v/Jd1MeZiOzEDZM7t3LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SA1PR11MB5924.namprd11.prod.outlook.com (2603:10b6:806:23b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 14:04:44 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 14:04:44 +0000
+Date: Mon, 21 Oct 2024 09:04:36 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ira Weiny
+	<ira.weiny@intel.com>
+CC: "Li, Ming4" <ming4.li@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Fan
+ Ni" <fan.ni@samsung.com>, Navneet Singh <navneet.singh@intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, "Dan
+ Williams" <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 21/28] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <67165f7447c77_8cb17294f0@iweiny-mobl.notmuch>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-21-c261ee6eeded@intel.com>
+ <4337ddd9-312b-4fb7-9597-81e8b00d57cb@intel.com>
+ <6706de3530f5c_40429294b8@iweiny-mobl.notmuch>
+ <20241010155014.00004bdd@Huawei.com>
+ <67117e57479b3_2cee2942d@iweiny-mobl.notmuch>
+ <20241018100307.000008a9@Huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241018100307.000008a9@Huawei.com>
+X-ClientProxiedBy: MW4PR03CA0307.namprd03.prod.outlook.com
+ (2603:10b6:303:dd::12) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 3/5] selftests/bpf: don't mask result of
- bpf_csum_diff() in test_verifier
-To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Eduard Zingerman <eddyz87@gmail.com>,
- Eric Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- Martin KaFai Lau <martin.lau@linux.dev>, Mykola Lysenko <mykolal@fb.com>,
- netdev@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
- Paolo Abeni <pabeni@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-4-puranjay@kernel.org>
- <31b8ea3b-f765-43c0-9cee-49bc13064f04@gmx.de> <mb61p1q09d2eb.fsf@kernel.org>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <mb61p1q09d2eb.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uk4z+Tqi+SiUY+nEn2TK7BhJ0ZpV9jMDshA/W528bXZKEkkNaZ4
- JMf6Xd5p8sIfmm0L7rAKVRwVSVhtl7pa5iVTSrBl3GnC87Ntt6iq3mm6dfEIr2y6Xg4P88K
- xYEWaOPOOk1C9ckmm7/bKS/YRRCfbB7+0zs6RN229wxmZ0PoCLh+Dzn0kKkHvhMIxWtIDzY
- K5e9rOgqkCvYC5qThd6Tg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wcd4v2NSwZw=;UtD5g5TLmzKEUxPdvj7ZFt7oKDD
- IGWXP+UcG1t6DSUGhW3EVgEYfaojtGkv77LssLRlsRuRBYPP4wlLq+Pd2ZLo/vy9h5pTkl8Ff
- Ivp3PnHsJJ/h/PqNWEWvAHToWOYeIqh0F5TWBNooPK4O8nOOweiMTrqubXfZ0Xl+eW0vwnXVN
- sBXsPUgiZ8ffSTTjek3vXQ1Yx7AaEDbZcqdXwzCbSaij4cB08EXsxC3SZhC94Kv6kFtr9pfif
- Fwy1oCgwuv6ptvD6ypc4tD1BduiXSWNXf0lyTZUyjn+bw3IQXLoambBXhbgjFGrSY5B1uvL+p
- 0QTPfShfMrb42BBn6gk5hM/XyNUSD4klSYpa6sp7xRVQJ1l4ho3741Mpcl39CWVQn/zHDu6nx
- MWxcNZXlXaWloQY9qcnLatEC0lEeisq60RGZyJEpteN4TlmFktfyfER6EuHQZiXFFYuugHEOz
- JfLNDi15xWmN+qHfVmiXipV95hCY8xikSvJzDRny8enhOG5drVDhBsmzqK936we2kPp5IH7E4
- o4BQ9rkE4V+XK8ODIfrROaPDSbk078vFAIrTx0I8WbbzwOI2v+HRqujta3MJu5dLQjj4MC3MW
- 18w7i/hhYtHXkp7LZxVj/a/eXLmPfAu7GouPWMLcQJ9//4MLRT9aAzhDiGB0yT43OVVJyqLhl
- AAdb872De7AD0mXWCaiFykeZeRRorT0AP65KRwECzAlOfuCKDJk5v+tVjZVIoFTZEUW0xpgZ/
- t25VbUyIr22rln/DPHMrfXuhNbK6sMY14p9sPS0Oze0w1w2+SZeUYGl+8s6AzrTws1d82uxP3
- CR+UQIiXd0roAPrshDWivJbg==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB5924:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a52e199-6c77-42bf-ee1b-08dcf1d95095
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9Rmv7GU1UdmoNM80QfqEhJOBJiUiZy8ANKQgTwVTNfJUDkIPe/eGLuZD/ka9?=
+ =?us-ascii?Q?nT8s7Pcm7S992Bp9+FlQztep/pltdZAvAo4dGvZuDaFPdKn1ilFGO7jswwYr?=
+ =?us-ascii?Q?Yar/eFHT8mSJslnzDLHXTVD4NRrNKIdu6e0HebgHXdG6EvF9BQdjXMiTxowD?=
+ =?us-ascii?Q?R05YfQMfI/LgO/OmgWLqBeQ0Cz8sHvhJ2POB+o6MEE+sT1BaKuOtCcgbJAa7?=
+ =?us-ascii?Q?b+peVrI2kJGn+p4/l0PqbICh6bIISp0VYEz9dlwPJyuhHVQApcs0LZVz6i92?=
+ =?us-ascii?Q?QfOacazS/3vaqjmNojhwe8qTcLF3esnicKEVDww1H1KkemI3Dtzvv9PnrI3A?=
+ =?us-ascii?Q?ueymIkeg59PijbAIAVBOI7Bo+4Kamdkw+W8bLreYTcB7+r5/J5/9OGHOWhdS?=
+ =?us-ascii?Q?yrGm+Q5KpTCKFuGNxrBpDTha3feJsBuakZ4F59R19KiXdDK9f7wJEkWQhu12?=
+ =?us-ascii?Q?Mr5Zv0d6tGsVepUm0f3FhOlgh/ABbWAPfIoWM7y289SYQrZZkHUNlRnUYWCa?=
+ =?us-ascii?Q?cE4MwsyRFjOrTbzZKLdfPPuv9SelbNzOItDiYmnWmvgNyy2BSbUnAXaouGlI?=
+ =?us-ascii?Q?WEx1XVusKAdZzKYpDRcqZgKsjwcjGDiZP/nSrf88FgZryf1gHDeXWDZkdQJ+?=
+ =?us-ascii?Q?dHlOJbc6pUO8HjusyxAnj1zFGmy8k/IF/nrdbOSH7Rt3RDwZz+4WS2UkQcaN?=
+ =?us-ascii?Q?LIWinu/kUhHJHbMkM3k0mB4ptADpb3Az2oXkdYo2iqAk5fM4H0Jc/dBWC+1K?=
+ =?us-ascii?Q?iU9q3P6Zivy0rr0vl3dbJIpCprtoGhibkJ4M8yJtEuPyEPsRmKCRFDg0NadD?=
+ =?us-ascii?Q?+wOOumdpcp8e8PAsq8P68ViCN4fH9KCJwuwb+qwtBaoh2uXD3E0VWDHTmwES?=
+ =?us-ascii?Q?pS0Cf2u2zYJQb7rbqkijnG1cspbrHQ4gAaJDwapuBWX7D/Y+OB+qvl3Y9J6o?=
+ =?us-ascii?Q?zwL4jGdImCiM8TGMHBdHCViHXmgZDYYzX5+oH8EyLwVHf0dOTxO2mZNlEtxd?=
+ =?us-ascii?Q?9np9pZVvfmf7tNaiR/LbsI+cWCAWkqzmgy3jb7kT0r5LsmbyCTPygcaWLwLE?=
+ =?us-ascii?Q?nsWztgu3bFbh/2iJ6Fe9otSHhGUioNdPICpeBDJBNy+p99QPCx0tQ/TQsMlY?=
+ =?us-ascii?Q?XeVIxyZZ8n6VSHgO2zShFPoHbnuCMeSgV3XDeCqqPvolMRezDgtGLMLRbjhK?=
+ =?us-ascii?Q?EDhW2sh6pQyDQFL5UWfbSIHT6o1imn0bo8lxghnKGJyoUp7/RPn2UnvDOvS6?=
+ =?us-ascii?Q?KCd7VvxjOsC9ZNR41CndDiJ19qb4whGd5AfjeJ+dgQYjfBAzVO/4/rm/4N3d?=
+ =?us-ascii?Q?kDpAseMFFYJ/gAFmzxyl8bi3?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7Zh6beXqdh3xyqh8TzpLXRxY6d9GwwqoIR7EWDCrvfNOXPAnDYxK3OKA1TJ8?=
+ =?us-ascii?Q?o3euwWhf2fN2Kqf/w2arCFqRFA0JbBHoGIIG9Q7v8DV226/wWxORWbJ75ehD?=
+ =?us-ascii?Q?bA4f9Y17Zy0/wtLI7VPHyIijdRxO1G0nU+NnKoo2/ijcwrlNghH2ZaYbeafV?=
+ =?us-ascii?Q?sBgb9fKmwsYqGzF3QjTq+G9nN0HhTK4D5OO2ZS6F7XfGDjmuIC9SvXVJYlnw?=
+ =?us-ascii?Q?kEbrItJBg9xhtx2WeYyZRxGSwOBZTDrrrKLckIWpkszB2h8zJEVFgcjZc1n8?=
+ =?us-ascii?Q?mrlEWmbsyaF8KmE/PiE2WORjaCIBi7bNO7hNLf6fgEmXgOMX/Wqc5IY7A9+T?=
+ =?us-ascii?Q?Ui3gVfOp0yYa29n9g1KGaZg28YfrGai+r3ZmcLzhB3h0Zi0KJnQxsLv4AmM8?=
+ =?us-ascii?Q?qdC6iKIgnSflJqueJYXs+y0giepkc977AiJdPbCYRcUvCenJ+3nrgt+hCK8A?=
+ =?us-ascii?Q?JQOjYKhVXm28mS2fp3zliGYywLcLnz3/iUKe6GqXpNRJPyyxeuCV71hGVgWx?=
+ =?us-ascii?Q?tF98trb+1efkSp5Xpeh0qcuoWlIdfcHhLAHRV6VGxDL3M5XVzw8Zm0EGiOiT?=
+ =?us-ascii?Q?SBY2dGRt5bzyUlySNnu4neucMBO9wOkwh2gAypd3cbpSF6VjJ7ZS7Y10xY74?=
+ =?us-ascii?Q?Lfw6Jzs8wfkHNwW/F6vIGb1TotLxVI6cCjN21c0RW1i+E4I47XaXcNnI7iNB?=
+ =?us-ascii?Q?8Vk7LWcmE7LZzSbzBZZGN0AQ5smjsnVb1dpt6fS5Px4NFBmtBCTzs69d+9aT?=
+ =?us-ascii?Q?9R2z1UoAsRzQArCgvp0sz2x8qfHyHgsOmhst2wui/8b8rmAKBN6qwpLIrbNJ?=
+ =?us-ascii?Q?1lo/iwRA2ef8gbQT3xVtfGlBgbgzAF5O8CV5LY/+PBSnVFiHPJbe0rnrUzcW?=
+ =?us-ascii?Q?g0OymDEhHbYrFYtmOO56k+Po7LXCGtIvZvlD8JFtwA3tap5cn7Z6xdFe1iCs?=
+ =?us-ascii?Q?mA3U4ygd9L6WTPelU2R7fiuB0rNSX2RObPkvgVevSFJpI220LbIJP7pf/rZI?=
+ =?us-ascii?Q?aOHXtbm+nLYc0mN7ZJ3ZDCq6lARx0LF5asFE7hVtziqO0KcbrmhMt9IOQC1B?=
+ =?us-ascii?Q?oZAcoLT7MKCQLpGoECaD1+vTg+f81pGs4JRAaqqt/J4aH7aPLa1pR7y7bgjE?=
+ =?us-ascii?Q?fgMlZ1367NQ/Ii4ufvQKOpSG3tOxsceqpclV41OcKiJJtHnus3ryK3MlwIc7?=
+ =?us-ascii?Q?Nbo5zz1X0QYpYFOPkCZzhTggEcSr16yhCIlaocmHYVaQ2l/Bn+bVhUEQQLL1?=
+ =?us-ascii?Q?xzP6lqmunKrhm7LHnaUxLSFB+JM1O2x5L/A5FTw+fuL8kM7KvZK3ptr+ru8K?=
+ =?us-ascii?Q?5r+s12B9YCvC51MEXoTAu42O3SqBPUGA6SsoEbsp9dtLdbkIqR4f+xBcbkZ1?=
+ =?us-ascii?Q?7E00aqMDMN6gPx7/HkdI/X4QIn72bLY0K7lvhZX7nyNWuxuwsP1zdtUds71K?=
+ =?us-ascii?Q?2aftEHGTee0h9doGr33e2nJ7ZrP285kzfrBme2/OKVYGiYreGzIWFPa5Bn5r?=
+ =?us-ascii?Q?R7VdA75GkLUzfzdhXufdGN/Urw+m2dlNAGtAdDO+jThwcdRq+c41cnrcOKhA?=
+ =?us-ascii?Q?9pZaEz4S2QjeAp2UP0XhMzI++6Un336PWpcYhtJP?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a52e199-6c77-42bf-ee1b-08dcf1d95095
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 14:04:44.5046
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VIa/nJxg+ES1147eeIxb+NngAymS7nFtnmfPVSSnwTeOKvs68PwVIJRRoSzhCPKVukV3gDhkofvD+SKk71vPtQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5924
+X-OriginatorOrg: intel.com
 
-On 10/21/24 15:14, Puranjay Mohan wrote:
-> Helge Deller <deller@gmx.de> writes:
->
->> On 10/21/24 14:21, Puranjay Mohan wrote:
->>> The bpf_csum_diff() helper has been fixed to return a 16-bit value for
->>> all archs, so now we don't need to mask the result.
->>>
->>> ...
->>> --- a/tools/testing/selftests/bpf/progs/verifier_array_access.c
->>> +++ b/tools/testing/selftests/bpf/progs/verifier_array_access.c
->>> @@ -368,8 +368,7 @@ __naked void a_read_only_array_2_1(void)
->>>    	r4 =3D 0;						\
->>>    	r5 =3D 0;						\
->>>    	call %[bpf_csum_diff];				\
->>> -l0_%=3D:	r0 &=3D 0xffff;					\
->>> -	exit;						\
->>> +l0_%=3D:	exit;						\
->>
->> Instead of dropping the masking, would it make sense to
->> check here if (r0 >> 16) =3D=3D 0 ?
->
-> We define the expected value in R0 to be 65507(0xffe3) in the line at th=
-e top:
-> __success __retval(65507)
->
-> So, we should just not do anything to R0 and it should contain this valu=
-e
-> after returning from bpf_csum_diff()
->
-> This masking hack was added in:
->
-> 6185266c5a853 ("selftests/bpf: Mask bpf_csum_diff() return value to 16 b=
-its in test_verifier")
->
-> because without the fix in patch 2 bpf_csum_diff() would return the
-> following for this test:
->
-> x86                    :    -29 : 0xffffffe3
-> generic (arm64, riscv) :  65507 : 0x0000ffe3
+Jonathan Cameron wrote:
+> On Thu, 17 Oct 2024 16:15:03 -0500
+> Ira Weiny <ira.weiny@intel.com> wrote:
+> 
+> > Jonathan Cameron wrote:
+> > > On Wed, 9 Oct 2024 14:49:09 -0500
+> > > Ira Weiny <ira.weiny@intel.com> wrote:
+> > >   
+> > > > Li, Ming4 wrote:  
+> > > > > On 10/8/2024 7:16 AM, ira.weiny@intel.com wrote:    
+> > > > > > From: Navneet Singh <navneet.singh@intel.com>
+> > > > > >    
+> > 
+> > [snip]
+> > 
 
-You're right.
-Thanks for explaining.
+[snip]
 
-Helge
+> > 
+> > So...  for clarity among all of us here is the new function.  I'm not thrilled
+> > with the use of a goto but I think it is ok here.
+> 
+> Easy enough to avoid and I don't think it hurts readability much to do so.
+
+I disagree...  See below.
+
+> 
+> Your code should work though.
+> 
+> > 
+> > Ira
+> > 
+> > static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,      
+> >                                struct xarray *extent_array, int cnt)           
+> > {                                                                              
+> >        struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;                    
+> >        struct cxl_mbox_dc_response *p;                                         
+> >        struct cxl_mbox_cmd mbox_cmd;                                           
+> >        struct cxl_extent *extent;                                              
+> >        unsigned long index;                                                    
+> >        u32 pl_index;                                                           
+> >        int rc;                                                                 
+> >                                                                                
+> >        size_t pl_size = struct_size(p, extent_list, cnt);                      
+> >        u32 max_extents = cnt;                                              
+> >                                                                                
+> >        /* May have to use more bit on response. */                             
+> >        if (pl_size > cxl_mbox->payload_size) {                                 
+> >                max_extents = (cxl_mbox->payload_size - sizeof(*p)) /           
+> >                              sizeof(struct updated_extent_list);               
+> >                pl_size = struct_size(p, extent_list, max_extents);
+>              
+> >        }                                                                       
+> >                                                                                
+> >        struct cxl_mbox_dc_response *response __free(kfree) =                   
+> >                                                kzalloc(pl_size, GFP_KERNEL);   
+> >        if (!response)                                                          
+> >                return -ENOMEM;                                                 
+> >                                                                                
+> >        pl_index = 0;                                                           
+> >        if (cnt == 0)                                                           
+> >                goto send_zero_accepted;
+> >        xa_for_each(extent_array, index, extent) {                              
+> >                response->extent_list[pl_index].dpa_start = extent->start_dpa;  
+> >                response->extent_list[pl_index].length = extent->length;        
+> >                pl_index++;                                                     
+> >                response->extent_list_size = cpu_to_le32(pl_index);    
+> 
+> Why set this here - to me makes more sense to set it only once but I can
+> see the logic either way.
+
+I put it here to group it with the changing of pl_index.  It is extra work.
+
+Since I'm resending I'll make the quick change.
+
+>          
+> >   
+> >                if (pl_index == max_extents) {                                  
+> >                        mbox_cmd = (struct cxl_mbox_cmd) {                      
+> >                                .opcode = opcode,                               
+> >                                .size_in = struct_size(response, extent_list,   
+> >                                                       pl_index),               
+> >                                .payload_in = response,                         
+> >                        };                                                      
+> >                                                                                
+> >                        response->flags = 0;                                    
+> >                        if (pl_index < cnt)                                     
+> >                                response->flags &= CXL_DCD_EVENT_MORE;          
+> >                                                                                
+> >                        rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);        
+> >                        if (rc)                                                 
+> >                                return rc;                                      
+> >                        cnt -= pl_index;                                        
+> >                        pl_index = 0;                                          
+> >                }                                                               
+> >        }                                                                       
+> >                                                                                
+> >        if (!pl_index)                                                          
+> >                return 0;                                                       
+> >                                                                                
+> > send_zero_accepted:                                                            
+> >        mbox_cmd = (struct cxl_mbox_cmd) {                                      
+> >                .opcode = opcode,                                               
+> >                .size_in = struct_size(response, extent_list,                   
+> >                                       pl_index),                               
+> >                .payload_in = response,                                         
+> >        };                                                                      
+> >                                                                                
+> >        response->flags = 0;                                                    
+> >        return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);                      
+> > }                
+> 
+> 
+> Alternative form for what you have...
+
+Sure but lots of indentation on the common path which I have grown
+to avoid...  :-/
+
+Looking at this fresh...  A helper function works best.
+
+
+
+static int send_one_response(struct cxl_mailbox *cxl_mbox,
+                             struct cxl_mbox_dc_response *response,
+                             int opcode, u32 extent_list_size, u8 flags)
+{
+        struct cxl_mbox_cmd mbox_cmd = (struct cxl_mbox_cmd) {
+                .opcode = opcode,
+                .size_in = struct_size(response, extent_list, extent_list_size),
+                .payload_in = response,
+        };
+
+        response->extent_list_size = cpu_to_le32(extent_list_size);
+        response->flags = flags;
+        return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
+}
+
+static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
+                                struct xarray *extent_array, int cnt)
+{
+        struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
+        struct cxl_mbox_dc_response *p;
+        struct cxl_extent *extent;
+        unsigned long index;
+        u32 pl_index;
+
+        size_t pl_size = struct_size(p, extent_list, cnt);
+        u32 max_extents = cnt;
+
+        /* May have to use more bit on response. */
+        if (pl_size > cxl_mbox->payload_size) {
+                max_extents = (cxl_mbox->payload_size - sizeof(*p)) /
+                              sizeof(struct updated_extent_list);
+                pl_size = struct_size(p, extent_list, max_extents);
+        }
+
+        struct cxl_mbox_dc_response *response __free(kfree) =
+                                                kzalloc(pl_size, GFP_KERNEL);
+        if (!response)
+                return -ENOMEM;
+
+        if (cnt == 0)
+                return send_one_response(cxl_mbox, response, opcode, 0, 0);
+
+        pl_index = 0;
+        xa_for_each(extent_array, index, extent) {
+                response->extent_list[pl_index].dpa_start = extent->start_dpa;
+                response->extent_list[pl_index].length = extent->length;
+                pl_index++;
+
+                if (pl_index == max_extents) {
+                        u8 flags = 0;
+                        int rc;
+
+                        if (pl_index < cnt)
+                                flags &= CXL_DCD_EVENT_MORE;
+                        rc = send_one_response(cxl_mbox, response, opcode,
+                                               pl_index, flags);
+                        if (rc) 
+                                return rc;
+                        cnt -= pl_index;
+                        pl_index = 0;
+                }
+        }
+
+        if (!pl_index) /* nothing more to do */
+                return 0;
+        return send_one_response(cxl_mbox, response, opcode, pl_index, 0);
+}
 
