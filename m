@@ -1,87 +1,127 @@
-Return-Path: <linux-kernel+bounces-375070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16659A9080
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:01:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26ECE9A9084
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5FE1F2248B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B930BB2236A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18521DF732;
-	Mon, 21 Oct 2024 20:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862371DD55B;
+	Mon, 21 Oct 2024 20:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRygKCiY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iwuYN0p3"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDDC1DDC2E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A65E19E968;
+	Mon, 21 Oct 2024 20:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729540889; cv=none; b=Zjw728Ndu42nFh84nRb8Y48dwwaXAz2uwaSWQUwJYevzSuxGqO+gWI+xbXMiLNk2VNUCzl+BWQQXgQEW9Y3Ln2vgqttaNSHqGsan3iMXXpQUqW/FLRtRERSoYgeJNmq+RXbMpzAkqOUJoLAMhyBRFxZ2PGXwOVGoHrMKVm0alpI=
+	t=1729540987; cv=none; b=SEAuJzpA8lBkb8d+48d+v6DwZkUwMECCgp0ZWidZiMIIHXx0mqmVz+QyZZpyR00R1OrtP1w96REKTwzFzunYdDxz4gqqb3YFr/DbE6umOhuvL/YmNSMIhEuFvlPVZZeKi8sLG1j0eCBuC1wUHmN8EP3ZR7J4Qu7wjwiYJ2yZfTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729540889; c=relaxed/simple;
-	bh=CESHfBqOqt52DB4sox2hdR2wAyKL5ctaHenVPNh5MWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlakuH2WwJTJdYZEEf//TdkeoXntcZzoJwsaK6hMhamnl9IobHIL3LO2/n0frwXBoRoESNg8UnNuSJj756kPcKsZ6Cr8kBj1IEvA0PB1MIN6kByXnKz5kmx88Gq5WUAGtW3KI8+519z0NP25nSIBwpz3dpzQtD4typBj4XS5q7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRygKCiY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2437C4CEC7;
-	Mon, 21 Oct 2024 20:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729540888;
-	bh=CESHfBqOqt52DB4sox2hdR2wAyKL5ctaHenVPNh5MWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PRygKCiYtqubqKi9VJFzccKsMTCMGGFkhYg7tNyjQGMVbQYsTqCAEdScNC/sV8Dal
-	 t+a+RBvk+rjXJsQpQavHkACCQozupzsjB9yTbccyuS8TX1XzBDS4qtHO4x5V5ssO9M
-	 ym0zPLP8wZvvxhUNZkEFNCyYMr7BsQCczK7eEZ7gsX7D83Rggs6NGJXAxsn9uusioF
-	 Jg3dLJpe5wOi0Fv/O/8YQ4efm8BMDDR2uzjCE/SOagL3zA862UlGtB7/oEmri2dqtA
-	 B+jIljmW5NEdyzcupSdBmLzG/8ITKwpFDyz/M9XtkXrEq7ydPdqgpDQdltp/yq54E5
-	 ZkUd/8E/wlhlQ==
-Date: Mon, 21 Oct 2024 10:01:27 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: introduce LLC awareness to the default idle
- selection policy
-Message-ID: <ZxazF56XRJ3CJ0mN@slm.duckdns.org>
-References: <20241021071304.27856-1-arighi@nvidia.com>
+	s=arc-20240116; t=1729540987; c=relaxed/simple;
+	bh=UvWylO9B6Jf2VwFrBEacupcT8ysDV+xcoKNh/mgpwck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eHbS1Fo9RM9FWIxLs2sMqN/Uafp9SQbcqMP5iIiOagl1QBy/qssCKtHKnUVlnJxyDNxckglPWqj8EYXfzV2OVQJPWbYjuAmaxuzy7Q2JZLOyyfVwCkTKTosThCArhjuQyyLo4WeNBi8ZJ4uEuQa5M20DaliaZXpI8+u4YYV7gmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iwuYN0p3; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XXR7Y5Bd9zlgMVX;
+	Mon, 21 Oct 2024 20:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729540983; x=1732132984; bh=6P+xsL+aOkZWfgD+SKkmyPNz
+	41unPwat0uepuJTOhnc=; b=iwuYN0p3zXpaL0/n1r6ezyZsCMYTNvJHSOgUOCSW
+	UtyCTjMn4HEQ3wXjVdvV5xR1IN+uSJydZx4wIWmHGe+Oz6zNg81Gbws9PFoVcCJB
+	2Evb12xyJQ19URiOE2Kv+UiEZADruYT+sqQmYT+2gSPhhIyY08L0cOi2YQJcBV+8
+	wMo15HImrBPrUPlwqkAnVV8nWXt31LAlyyMQlPVLFyA1nPope8B4eHIa9tyHOU1L
+	OMCnZ/RuUsIf4Po/cqu3IUaMByzY+VczMPh+4xF67+cOY4Fp/OBeeEfD7bHMVaIF
+	HX/zImHtVlhLpx51HEo3unUeEw85Ci6iQ5BXYB283GzAuQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Cnyap0vg_rY8; Mon, 21 Oct 2024 20:03:03 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XXR7V1fRVzlgMVW;
+	Mon, 21 Oct 2024 20:03:01 +0000 (UTC)
+Message-ID: <c58e4fce-0a74-4469-ad16-f1edbd670728@acm.org>
+Date: Mon, 21 Oct 2024 13:02:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021071304.27856-1-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] scsi: ufs: core: Use reg_lock to protect HCE register
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021120313.493371-1-avri.altman@wdc.com>
+ <20241021120313.493371-5-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241021120313.493371-5-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/21/24 5:03 AM, Avri Altman wrote:
+> Use the host register lock to serialize access to the Host Controller
+> Enable (HCE) register as well, instead of the host_lock.
+> 
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> ---
+>   drivers/ufs/core/ufshcd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 4eee737a4fd5..3cc8ffc6929f 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -4795,9 +4795,9 @@ void ufshcd_hba_stop(struct ufs_hba *hba)
+>   	 * Obtain the host lock to prevent that the controller is disabled
+>   	 * while the UFS interrupt handler is active on another CPU.
+>   	 */
+> -	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	spin_lock_irqsave(&hba->reg_lock, flags);
+>   	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
+> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +	spin_unlock_irqrestore(&hba->reg_lock, flags);
+>   
+>   	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
+>   					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
 
-Overall, I think this is a great idea. 
+Hi Avri,
 
-On Mon, Oct 21, 2024 at 09:13:04AM +0200, Andrea Righi wrote:
-...
-> +	/*
-> +	 * Determine the task's LLC domain.
-> +	 */
-> +	sd = rcu_dereference(per_cpu(sd_llc, prev_cpu));
-> +	if (sd)
-> +		cpumask_and(llc_cpus, sched_domain_span(sd), p->cpus_ptr);
-> +	else
-> +		cpumask_copy(llc_cpus, p->cpus_ptr);
+How about proceeding as follows for ufshcd_hba_stop():
+* Remove the comment above the ufshcd_writel() call and add a
+   disable_irq() call instead.
+* Call enable_irq() after ufshcd_writel() has finished and before
+   ufshcd_wait_for_register() is called.
+* Do not hold any lock around the ufshcd_writel() call.
 
-However, I wonder whether we can be a bit more efficient here. Always
-copying cpumasks can become noticeable in larger machines. It should be
-possible to cover most common cases without copying cpumasks - e.g. tasks
-which don't have any cpumask restrictions or affine within a single LLC
-(including tasks restricted to one CPU) don't need to compute a new cpumask
-each time. They can use either sched_domain_span() or p->cpus_ptr directly.
+Although the legacy interrupt is disabled by some but not all
+ufshcd_hba_stop() callers, I think it is safe to nest disable_irq()
+calls. From kernel/irq/manage.c:
 
-Thanks.
+void __disable_irq(struct irq_desc *desc)
+{
+	if (!desc->depth++)
+		irq_disable(desc);
+}
 
--- 
-tejun
+Thanks,
+
+Bart.
 
