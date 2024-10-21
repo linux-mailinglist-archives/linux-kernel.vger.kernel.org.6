@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-374414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DCC9A69D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCCC9A69D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027CD283A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E64FC1F217F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191DC1F4FC1;
-	Mon, 21 Oct 2024 13:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00B51F429E;
+	Mon, 21 Oct 2024 13:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF5QUNjW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGOxoxxa"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DB81E906C;
-	Mon, 21 Oct 2024 13:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867F1F427E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516465; cv=none; b=HgazJ/u07m5m09wmPnrV9duYqsBtCp7JXRDfGtKlBN4sMpu3mibx69Zlil1fxkSp+7+S7PzRyWG3Ogkd+V6PyRbBuqSL0s6pvJhbjwqkHfAzISSmaK6TvwQfHu1GXVOWgGPy4fvtwUezvsjk4fQI57r1Apw7osg++dXanrfdGAs=
+	t=1729516479; cv=none; b=Kb+XRFachCIdPGePwuggGf2s0lvFwMor2WBRyx2ZUlrOICqTh+EbNQV4jdVpcs6ylarYkEI6evyxuE7+0gr7tZkwOs7TQp1xj6Zs44LpUib1LmS2eYOPF9sYlYOPSm2uEC1XmYcdtu21+OrUQWNh4Ksrr+iuGwb8hyDpB/teRF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516465; c=relaxed/simple;
-	bh=OPT5AbxfJYRmwQf7O59ti/U6BN1gWoe3PBxjcsD4Oy8=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YX+qF1u9jGoOo7XR8yGiaM9Kq3g6u452q5H2fe3LbKkBdGOrDbcTRR5gAzJe6wbydM2TJhrgANlk18BEwR4NtbNGnA4OEV4OwZP3vPqo4t58mZG9zYiv1XKQz4OFubKws8b/WPDSLcfllviI0CZVs29fjYczs8usc9INJSC+C5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF5QUNjW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79886C4CEC3;
-	Mon, 21 Oct 2024 13:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729516464;
-	bh=OPT5AbxfJYRmwQf7O59ti/U6BN1gWoe3PBxjcsD4Oy8=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=mF5QUNjWAyemP13yIZEigUjZDcIaiI5NUuT9BJZruFdXivO7jvXVXWO7agFbF6RFJ
-	 rQQK7CtjCfUwj38GJUU+V900DEyszmzR1UgexjDtiaEOKWjTi2U2BjkBSd8PQ6mB23
-	 wrQzlhhV4c6+VcF2JDS0nrAEN6ZuLcHwTE3lKJRof57QqDUK4Z7AVvPfeTsNQBP723
-	 ZDFTSeF0uPpwYy1rU4HGJUkV8pimDA2THaRbHtKLZTEo9bNiv+7NM14s+gKA6o/vdQ
-	 p0qGd2jAO4y6Hbs7ST9aewCMth3kCSXlnH9ZDEsmcLFBh31VadoyqtvFdgI8XRRxLa
-	 0CZfZfoHFY5lQ==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Helge Deller <deller@gmx.de>, Albert Ou <aou@eecs.berkeley.edu>, Alexei
- Starovoitov <ast@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Daniel Borkmann
- <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eduard
- Zingerman <eddyz87@gmail.com>, Eric Dumazet <edumazet@google.com>, Hao Luo
- <haoluo@google.com>, Jakub Kicinski <kuba@kernel.org>, "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>, Jiri Olsa
- <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, KP Singh
- <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org, Martin
- KaFai Lau <martin.lau@linux.dev>, Mykola Lysenko <mykolal@fb.com>,
- netdev@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni
- <pabeni@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, Shuah Khan
- <shuah@kernel.org>, Song Liu <song@kernel.org>, Stanislav Fomichev
- <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next 3/5] selftests/bpf: don't mask result of
- bpf_csum_diff() in test_verifier
-In-Reply-To: <31b8ea3b-f765-43c0-9cee-49bc13064f04@gmx.de>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-4-puranjay@kernel.org>
- <31b8ea3b-f765-43c0-9cee-49bc13064f04@gmx.de>
-Date: Mon, 21 Oct 2024 13:14:04 +0000
-Message-ID: <mb61p1q09d2eb.fsf@kernel.org>
+	s=arc-20240116; t=1729516479; c=relaxed/simple;
+	bh=ZNT6dErQm5dUkUtKaX2wR+uSRQ/CgST7uPEYAR7/AZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6ScDdtWF7X0cKddOB3w+8UJygTL4hr+oU8SwPr3zRTSbjq8FHe0Zy22sIr41gLSDD+RnGqn2pgg8ebPBJTUqkOEtsu6DdSeeecoLyUR2s80K6IRI2f6S0uvxd63Tln1csghMugzsOzQjIOaJ5Qohd3E6RzmdB9J1L8oCbflPQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LGOxoxxa; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e5a15845easo37966127b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729516474; x=1730121274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+SABp5bMa8b+ka5LQY2m+GgmsBuAwrypkhPoy4YrVo=;
+        b=LGOxoxxaFzzKIn06jykezQME8nrYyqY0n0yC830hJDL4t9z9iM+tKuxi8eSLLI8mxZ
+         NydxU67nrR3DPCmMTPqwV5Xnhy94P0d0gEhk0wOheNqvGkQL6smAR0hQXPe+Bp6AuDk5
+         KOp03GN1Nu+TZl38uzkdO7ko+kyjdCQc28zlMcnaEePX1/LJE4KaUvXYvKj7mLG+NErE
+         wC30VzMnGGrKquEeK/KPPLCioZiUbb7llPX3yRwTdECF6gDi2EEH/8OH0YJ2pmoqyBrq
+         HAFX1n0aYcC5bj/LfRuDYa9Ac8rH/wzX5c7FCLkz2rkazK0cIn4JJadY8Kg7iqsVT36s
+         WxwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729516474; x=1730121274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+SABp5bMa8b+ka5LQY2m+GgmsBuAwrypkhPoy4YrVo=;
+        b=o7RpWmUJma/saYHvn03FilWKijYUNdwLbUie+KWzagLHdNk5HFxULlAbR8bqjqAxfo
+         zrXdV2FuH3oGABmRN+muYFOK+4I6ykBUx7qmiyG0gJl1Dj/EhhFtVjWxHMO9qdMpj4Bt
+         0iZ87p8nvHAjvPNnQU6svcQGeQtknG1N0H2YzKHGhFNCipG4qVAUJhcXaBhzgtJyjtHS
+         hMSneJomzVN+LYfN96vWi86kfu6DTFN1OgxaxfnuwyXAzWMushjiaqAfRkMmLcZEyXlp
+         2jxwWCn1VPd7l87B/5V68FEkp6TpLE7KkVhO9Hn8D1OJclljkKNnFvXeC0sYXBF4ZzAO
+         vhAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQRAkZU3LKaPXfL0h5ze4OiCo3miYJYBGZM1F1zlYO532Fzc+cVh5gYcqibywaSWNO60yry78bguYzk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+/OPyPyjpLpaIKKEbdyUye+j/fWklnunlKK01BFmMKbPY4qLo
+	GDd57XmM8d4qZsfOCloKyzJ+vQty6qwXTQPBtNn5g9EGLxX+GFeX9qF+0dLK79uRDR2L+FjWyTu
+	y27l9IecbzcOb/vyZRDnTpMTSH52z9rVnPtUjew==
+X-Google-Smtp-Source: AGHT+IGS44A0LdF6F2vfatWoI0HEnmQZmlrki8Eve3Hnu3YdtW2VBHa3nNHJLmWNeIOMMpmk2ozUlE0zwWWxt/VJwcI=
+X-Received: by 2002:a05:690c:d81:b0:6e2:d2a:e998 with SMTP id
+ 00721157ae682-6e5bf73cc21mr98859307b3.2.1729516474442; Mon, 21 Oct 2024
+ 06:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org> <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
+In-Reply-To: <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 21 Oct 2024 16:14:23 +0300
+Message-ID: <CAA8EJprQ2538TKhA1NTzH5JVP5QH7qLNeFOWsbNoYz6QXd257A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
---=-=-=
-Content-Type: text/plain
-
-Helge Deller <deller@gmx.de> writes:
-
-> On 10/21/24 14:21, Puranjay Mohan wrote:
->> The bpf_csum_diff() helper has been fixed to return a 16-bit value for
->> all archs, so now we don't need to mask the result.
->>
->> ...
->> --- a/tools/testing/selftests/bpf/progs/verifier_array_access.c
->> +++ b/tools/testing/selftests/bpf/progs/verifier_array_access.c
->> @@ -368,8 +368,7 @@ __naked void a_read_only_array_2_1(void)
->>   	r4 = 0;						\
->>   	r5 = 0;						\
->>   	call %[bpf_csum_diff];				\
->> -l0_%=:	r0 &= 0xffff;					\
->> -	exit;						\
->> +l0_%=:	exit;						\
+On Mon, 21 Oct 2024 at 14:07, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
 >
-> Instead of dropping the masking, would it make sense to
-> check here if (r0 >> 16) == 0 ?
+> On 21.10.2024 12:30 PM, Dmitry Baryshkov wrote:
+> > Add support for the RPMh, TCSR, Global, Display and GPU clock
+> > controllers as present on the Qualcomm SAR2130P platform.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> > Changes in v2:
+> > - Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+> >   gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+> >   gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+> >   gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+> >   subsytems bringup (Taniya)
+> > - Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+> > - Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+> >   (Taniya)
+> > - Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+> >   gcc_parent_map_5 (LKP)
+> > - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+>
+> Please address the remaining comments from me too
 
-We define the expected value in R0 to be 65507(0xffe3) in the line at the top:
-__success __retval(65507)
-
-So, we should just not do anything to R0 and it should contain this value
-after returning from bpf_csum_diff()
-
-This masking hack was added in:
-
-6185266c5a853 ("selftests/bpf: Mask bpf_csum_diff() return value to 16 bits in test_verifier")
-
-because without the fix in patch 2 bpf_csum_diff() would return the
-following for this test:
-
-x86                    :    -29 : 0xffffffe3
-generic (arm64, riscv) :  65507 : 0x0000ffe3
+Oops. Excuse me.
 
 
-Thanks,
-Puranjay
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZxZTnRQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2ndk3AP0XXZde0lRtwFVwJrCkF/VkxqH1qoIW
-YzgfJHIpSZzNAAEA0eN6ggg1/3zV3pUq6bqFbBaa+ah8TtqqUbVVefg8aAI=
-=vDn9
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+With best wishes
+Dmitry
 
