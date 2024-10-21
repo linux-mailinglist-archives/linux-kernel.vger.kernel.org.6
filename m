@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-373740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC04F9A5BC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:55:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3109A5BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE8C1C211FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F231282638
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCEC1D0E3F;
-	Mon, 21 Oct 2024 06:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947141D04BB;
+	Mon, 21 Oct 2024 06:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAq8B577"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="F71kmBZ5"
+Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F471D0B98;
-	Mon, 21 Oct 2024 06:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2A41D0F68;
+	Mon, 21 Oct 2024 06:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729493713; cv=none; b=ujQJKAV6CoBlGyI/Q5Ftz5zrgS+lGdnYAtLzpPo7s78UdcTlvgEeI21Ve/K/ESwCkxbEHVxxo060auEexcEo87bmLo0it3TCTU+iewI50nMoe5xMD5QjIv7ZeD7m+U/hfd2GfxpAe8ViiiI20wm79QRgtgAykRp9H3/dQjhDWJY=
+	t=1729493750; cv=none; b=ju6vxXKhaQkm4nKgOlat2aMcYbBRCEycTlWWj2K9Ig4O+H+XW7/YfPQ0X6RoETsbztmcVIcu9oSSQx9onoh9EE1uTKcE8XlmDcloMa25AymJoqyBm/74A3mBZd62/c+kDXKxfh5w7PrYhk8pjAlpAidKNnPywUzJu2rd1qRuiR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729493713; c=relaxed/simple;
-	bh=8PCol88A2ncEPIJmEoeILZX16B39Y6hAq9nQ5qaD65Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKUWSWNzdM1JCMtKKoOAeyMF6v5qC5M8erivHAzzq/h1EPc6cKS3WwOc+ZH/UGjBtMZBjWBRnLJpmSJBf9xlod4GW/XAY6nCQoG/SgVu4MJrWZnytz7X00ARP/+gRALLb+qKR0Vm3eXD3R0sFldyW+Htdv6VO6Fxw7g3rLcouWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAq8B577; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155EBC4CEC3;
-	Mon, 21 Oct 2024 06:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729493712;
-	bh=8PCol88A2ncEPIJmEoeILZX16B39Y6hAq9nQ5qaD65Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dAq8B577+0ECrnl1hxg57JvaIAERfsMygM1RTe73txDgtUVOofRuD9unBnx4hmSeZ
-	 EIQ5qQQPxBsulq9iTwBntYRm/SUYdCu6/HxYgi+lK9WjTb7A+Ls0aRl5aSPmMotDwt
-	 N3T/9ZHy09RxzzPqnDa95Hr/vjirO4UDi0ghvjFN8diNiDnFtTcLhqgkCCl0rX6x93
-	 wdBRWkuYTfAr3C81FnS3swCEYFUtATB4ivCt6mYDhSSl8TSAI0ZdFS8O1xFMZmAxY8
-	 KrIi4Edm8wGXgrUXAP/ZgLI5X6A/bHmLP9XCRQnDOerrdfgsZC2W/acdwYH+nvrpU6
-	 rn7KqZeh9D7Eg==
-Date: Mon, 21 Oct 2024 08:55:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	Dang Huynh <danct12@riseup.net>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Subject: Re: [PATCH RFC 00/14] Add MSM8917/PM8937/Redmi 5A
-Message-ID: <gh55k7a3b6rmkloq45mkfcms5g3x6stelzoikag3uo7idvkb7g@ncslfa5tzsnf>
-References: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
+	s=arc-20240116; t=1729493750; c=relaxed/simple;
+	bh=arkWI03su4YSBSMmr5PkdZjKRvultl8DVI/Ao8Lq9UQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/1qYbmbtMPmZxl6JJ1xkJI3HE6/4D+M/Ehr/9vhQE2kq78rABiEdMBGF3yjhtc3/PKl1aHTCy5PXiOYSwl52sGEvgnTanZGCtG4x4LPaPhsVfjuW4WzIlk2mECxkrk8XGssjNobMp8/ZXnUIRGvdl4uJo0d5AeiWMHK7DYV5iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=F71kmBZ5; arc=none smtp.client-ip=185.70.40.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1729493740; x=1729752940;
+	bh=arkWI03su4YSBSMmr5PkdZjKRvultl8DVI/Ao8Lq9UQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=F71kmBZ5RES2Ir+IWSGNZDbm78U1UiT1fbYk0BVQxwXV3CfipwjYeWB6dN3WtMQTm
+	 dmK6v2GCZ5Obtz51Ri8F94paK6LNY54/kv/QWr57jVdCd7sU7/OWUwTfoTryRrxyqU
+	 EAQ33pIbKn5Qe2HDgwQAnut7GQTL21RaqeQkD0hKEuP9B9kPNldkcezZTez4Hk9gU7
+	 fApobs8rITw0PG91KlrICVVkyHC6htMV/vGKtqelCzpoHgaNHbyK6LGXmMxcPKDNQ5
+	 qwKE0b8wABFGDC3qIz7YyG5KaqbyRSl8zCXoSWY8Zx4B73F0dJJEvVb5Rq9ufoehFx
+	 BN74jFVgsNYtQ==
+Date: Mon, 21 Oct 2024 06:55:35 +0000
+To: koachan@protonmail.com
+From: Koakuma <koachan@protonmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] sparc/build: Remove all usage of -fcall-used* flags
+Message-ID: <iBnrR9d4gRwtBGXlD_1AXH2OXuzLp6oR4PGkk4pg7KUVIsfs0G1zvzJTrO8o4y5ZHBWHdYOifN2_ZhbnrVd9jUTwJjeA5sdQhIcHp1o4xd0=@protonmail.com>
+In-Reply-To: <20240716-sparc-cflags-v2-1-40bdc4484d10@protonmail.com>
+References: <20240716-sparc-cflags-v2-0-40bdc4484d10@protonmail.com> <20240716-sparc-cflags-v2-1-40bdc4484d10@protonmail.com>
+Feedback-ID: 6608610:user:proton
+X-Pm-Message-ID: 1a094c75eebe4bf961b497dbdf4c0791a94cc949
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,23 +59,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
 
-On Sat, Oct 19, 2024 at 01:50:37PM +0200, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
-ote:
-> This patch series add support for MSM8917 soc with PM8937 and
-> Xiaomi Redmi 5A (riva).
+Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org> wrote:
 
-Please always give some hint why this is not suitable for merging (you
-tagged this as RFC). Every patch is for "comments", so if you mark it as
-RFC means it is not ready.
+> From: Koakuma koachan@protonmail.com
+>
+>
+> Remove all usage of -fcall-used* flags so that all flags used are
+> portable between GCC and clang.
+>
+> The reasoning is as follows:
+>
+> In the (normal) 32-bit ABI, %g5 and %g7 is normally reserved, and in
+> the 64-bit ABI, %g7 is the reserved one.
+> Linux turns them into volatile registers by the way of -fcall-used-*,
+> but on the other hand, omitting the flags shouldn't be harmful;
+> compilers will now simply refuse to touch them, and any assembly
+> code that happens to touch them would still work like usual (because
+> Linux' conventions already treats them as volatile anyway).
+>
+> Signed-off-by: Koakuma koachan@protonmail.com
+>
+> ---
+> arch/sparc/Makefile | 4 ++--
+> arch/sparc/vdso/Makefile | 2 +-
+> 2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+> index 757451c3ea1d..7318a8b452c3 100644
+> --- a/arch/sparc/Makefile
+> +++ b/arch/sparc/Makefile
+> @@ -29,7 +29,7 @@ UTS_MACHINE :=3D sparc
+> # versions of gcc. Some gcc versions won't pass -Av8 to binutils when you
+> # give -mcpu=3Dv8. This silently worked with older bintutils versions but
+> # does not any more.
+> -KBUILD_CFLAGS +=3D -m32 -mcpu=3Dv8 -pipe -mno-fpu -fcall-used-g5 -fcall-=
+used-g7
+> +KBUILD_CFLAGS +=3D -m32 -mcpu=3Dv8 -pipe -mno-fpu
+> KBUILD_CFLAGS +=3D -Wa,-Av8
+>
+> KBUILD_AFLAGS +=3D -m32 -Wa,-Av8
+> @@ -45,7 +45,7 @@ export BITS :=3D 64
+> UTS_MACHINE :=3D sparc64
+>
+> KBUILD_CFLAGS +=3D -m64 -pipe -mno-fpu -mcpu=3Dultrasparc -mcmodel=3Dmedl=
+ow
+> -KBUILD_CFLAGS +=3D -ffixed-g4 -ffixed-g5 -fcall-used-g7 -Wno-sign-compar=
+e
+> +KBUILD_CFLAGS +=3D -ffixed-g4 -ffixed-g5 -Wno-sign-compare
+> KBUILD_CFLAGS +=3D -Wa,--undeclared-regs
+> KBUILD_CFLAGS +=3D $(call cc-option,-mtune=3Dultrasparc3)
+> KBUILD_AFLAGS +=3D -m64 -mcpu=3Dultrasparc -Wa,--undeclared-regs
+> diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
+> index 243dbfc4609d..e009443145af 100644
+> --- a/arch/sparc/vdso/Makefile
+> +++ b/arch/sparc/vdso/Makefile
+> @@ -46,7 +46,7 @@ CFL :=3D $(PROFILING) -mcmodel=3Dmedlow -fPIC -O2 -fasy=
+nchronous-unwind-tables -m64
+> -fno-omit-frame-pointer -foptimize-sibling-calls \
+> -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
+>
+> -SPARC_REG_CFLAGS =3D -ffixed-g4 -ffixed-g5 -fcall-used-g5 -fcall-used-g7
+> +SPARC_REG_CFLAGS =3D -ffixed-g4 -ffixed-g5
+>
+> $(vobjs): KBUILD_CFLAGS :=3D $(filter-out $(RANDSTRUCT_CFLAGS) $(GCC_PLUG=
+INS_CFLAGS) $(SPARC_REG_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+>
+>
+> --
+> 2.45.2
 
-Some maintainers ignore RFC patches because of that. There is a lot of
-stuff here, so it's also easier for me to skip it, if this is not ready.
-
-Best regards,
-Krzysztof
-
+Hmm, hello, is there anything else I should do for this patch
+(and the series as a whole)?
 
