@@ -1,181 +1,254 @@
-Return-Path: <linux-kernel+bounces-374369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8489A6925
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:54:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE5E9A6957
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4EC1C213EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E01B242BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F4C1D1F5D;
-	Mon, 21 Oct 2024 12:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FF11F6678;
+	Mon, 21 Oct 2024 12:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tZfQf9Sb"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcibBnNE"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A8C1E3DF3
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCB11EF0BD;
+	Mon, 21 Oct 2024 12:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515251; cv=none; b=hVCjCtovUpCyvoap/k2TGDC2uTatDHZyj3CNQ9LzQg1TlG63jitAFwN4lAfBQSo1bQkauWa67+umx/4iQ1QGuYSBxgXjsCN5sgjoI9MRBTrGgBnLv9+EIW+w1HTasK53C10PpTJ9oqrTFNHcnXwx3nYQWWOz/Y+lCyN1FL74se0=
+	t=1729515388; cv=none; b=Kt03PJebd6y7F6jeK8kHNdyezn0AIZg61eiRBujIrV02xDCzy8FErFbZz7LiynYo1s/k2m2Zy3BFbdvqf0M0R85x3jLkObHTi1iE34cs9zJvNMa5Ss8Yp3SasnzUh0dUoCGIg3XXnRwYAP8tmdEaYNyytZcXkVuONc5RG6+bXxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515251; c=relaxed/simple;
-	bh=DyWxLKiydqEOonS9mZeITo4s7rpB/FLXd8owqshBsQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDUkYnan7QiXCyEpB+IraqMoRE/QUzMq5yc6MztKcarZRDXIb2ixHnZ+mE8aV/xvc6lOZIf9A2xiRNe6l9WQDlAg3HeyDj2dDbTZUn3s44X5mkO36w52LdkiUrl288j4jmMNBp/qqiDSLylH/UzFmcLBt+iYSA4UHSrPc9Mj2qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tZfQf9Sb; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539fe76e802so4987470e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:54:09 -0700 (PDT)
+	s=arc-20240116; t=1729515388; c=relaxed/simple;
+	bh=tREfQ8541ViLxlvxsaW//+lYmAxknmpPB0HiETw3Z44=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fxPpHC4oo3uRWiGlRRru1s+NJo8JKIpbEPw0TaznxXC9v1+c9CnutaZTVUt6d1jOv9jN54peJSqemdMVYCQnnQIEJdxvRM7TSYGMcoUkGAxtp5IEGbh3G3PrhFIXMfY32Lw82sKsEh+AhCId+lZgFN+lT9556siax2+N3PQYXpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcibBnNE; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d495d217bso4401370f8f.0;
+        Mon, 21 Oct 2024 05:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729515247; x=1730120047; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2s35/3heGmToRyOYXVolNum+L9YFMF7ccDrRpO5RZ0=;
-        b=tZfQf9Sb4iEvkWs6NrfaZAdVp90KSBkmjG1l8VVQUSfk7GatsBY2qih3+zRSzeG+LN
-         7J8yWxdP0IoFPLBt+KnhXDT5mWFmwFPsFYZcRIdCOWzODF+512cEI93+/4Kn2sAvkiPB
-         87PxOUU/utf+4U1p0iP+HlW4kC7RSr4E/Bdm75BreaSoNslnugwsrWVeLJYTqzYeSbOz
-         UEA3PmkmPNbtffcTqLhrX5FVLDHBBfk1b4bCNsS0FHyxaJOo9ZBkjGVpmcjge45nQChx
-         Qiwl6bVf371tmPuCcofcNq+vQ9+MvZgM26/q8x5lPVHn31p9PQuj9uD7OvvJw5lGpcvV
-         peqw==
+        d=gmail.com; s=20230601; t=1729515384; x=1730120184; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhc+3nVtkGPP0v2rGu9F3yIVesKnyRlfDvzJ34+Itug=;
+        b=YcibBnNE7Ht4R6nChQMhi0+KcCf8YBQMzE8pHLAWqYGc/dxCBx0Jnhc0Xn1tJlOwMf
+         H1h8MhpJd7rowfe2Ilz5kwBbIaMgRO7bzox0mWigIa+VsbF7XD1ADVgQ3lReBG7O0zDB
+         WSsZqPn/d+IV5DVievQtG3VUe0X7TI8VLJ10qpiHjB+9CXlBfWAOcuIECRyT6TgU1kWg
+         tqEd6w/zIugwkTjbJWNSudmTKpnoNKiU0g2BCTDgT89uafutU3uS2Mi6FmyhBHTKDjPv
+         CC+bpCCWoJ4WwJvEfohz0bFP0qS3JTTnQGLp1zs9jFnppTwevb6zio6XOl1XiCHWgPnh
+         WeZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729515247; x=1730120047;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I2s35/3heGmToRyOYXVolNum+L9YFMF7ccDrRpO5RZ0=;
-        b=gOFlz36wGauJBx+n2C214BdwUPpWCDPBKbtAUwdt1K3bogyWvuFfp/uZZbaCd5T05X
-         Cqk5qvbfrFDfZG/Bmrdd0hv0cF/znJ/dAh27NK0PgenbKP4y2EwvHfgVz0/Hx7pS1/sV
-         vuwHpAhjFePiX7tKg2AC3/hv76d5lsLFylHbQ3EVAkXZA+vbG2lheJFdtYW1VsQlNeoz
-         WpLQomIN0b+dG0wWWnV6wN1DAiu5P1461ZcwRGG/VMghq7JIS8M+RZI6VI5LqKavcYjL
-         4j5EEcFHFosUKmGOJSnHOOLMRm2RY2j3vbPfAqVGz32VttO2DwzZWg9/AR45U3rNuMox
-         ip3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVAkE7DmHiMJmxZLSD4au1TFkAdCpzDREQ3Ws8fugOkXauK1eqp+9Lt1b/RlETAIJ9uu/z6wQnpN0if26U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeeoS3z+U3p+Xwzpmkw93ZhrcnCZrQr5Pn/DLto8soisek6cKU
-	gROAy2U6yHps50ZzB16VSUweew1YvKZh9ExaCN1wSaWT8t1wlDab3wzC2OjSAuUPhwnec56MFKV
-	ON9w=
-X-Google-Smtp-Source: AGHT+IEz4ViWfBMtEMxwNV3/I552f0CNAjJ7YSgMEZYhkW6iNBJSB8GpfuJiztKEovvTD9JY1l14kw==
-X-Received: by 2002:a05:6512:3e1f:b0:539:8bc6:694a with SMTP id 2adb3069b0e04-53a154f8ec6mr4583475e87.43.1729515247279;
-        Mon, 21 Oct 2024 05:54:07 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef80:b7f5:199d:c177:8c47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b12dsm1924908a12.77.2024.10.21.05.54.06
+        d=1e100.net; s=20230601; t=1729515384; x=1730120184;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xhc+3nVtkGPP0v2rGu9F3yIVesKnyRlfDvzJ34+Itug=;
+        b=XHRVcijYy+/4M+JrK/pPc9k3B9Vvodo2ULoVzWE90Q2nk9DoiorSoAVC0Gj/ojnwKE
+         JTL0+0d5Wx8wXyTuGLorr51dmtKqaCK6kAloOGYSjeV1V/AUonFsscNEUXZNrt0mCBGL
+         McuQD9dJefwYPea9PsRmj3zp6QJhH4km4RGfUZdqdUNLbcKxaRQlJQoMCJTeC+08LApC
+         +Dka+Mmv3+cpr3O6l+6C70NLK+iFNicfT2EOHVkkdyUUgyvQ1J3d2dcvBed5oSLZL1Vj
+         Gpy86agVjRtlGqC7phkQmMOvujXg/9hWlbpSl3K/XeIOjKK1NcSmhagtmgnxMVOZxJvQ
+         /eWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgKN8OrEXFdnrT4+tsYid3Y+xDOC+3X/+Vi9FOPXKNumfvJnmOqHYJfQEg0vZNrMfYW1/IBKQhPE=@vger.kernel.org, AJvYcCV1/2X3+ZTsu7dWlqEtUvUz+5EKd4B6TMJU8rEwtKObBaAXPYT9D+oWoAQ2x0pZMBagEy+SGdB1qyYOMcs=@vger.kernel.org, AJvYcCX8k0UbCYhhSAkHOWv3t2rq3utD4uReGygKkSIuSlNvG1xBMMGlsummcU7edJHRYDgWZqweg1cLxKgF5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR9FCopMrNBy/OXZCVQc/fA5mwBJP6SaHTLvh1aV6JXETjXaLg
+	F0ligv6Dtfr/ehHnZoQyw7Disl1JdIQHtl4LyLEJXYL36grC+mRI
+X-Google-Smtp-Source: AGHT+IEY7dgaL98xp8q/i7zhd1J1244T9rxDFtW77fOOBStYR1g5sQLeQia3h8s37foBheGBFNwU6g==
+X-Received: by 2002:adf:fa8d:0:b0:37d:5359:6753 with SMTP id ffacd0b85a97d-37ea21d8a0emr10055282f8f.15.1729515384264;
+        Mon, 21 Oct 2024 05:56:24 -0700 (PDT)
+Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b93e76sm4281751f8f.82.2024.10.21.05.56.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:54:06 -0700 (PDT)
-Date: Mon, 21 Oct 2024 14:54:00 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: x1e80100-crd: enable otg on usb
- ports
-Message-ID: <ZxZO6Prrm2ITUZMQ@linaro.org>
-References: <20241011231624.30628-1-jonathan@marek.ca>
- <20241011231624.30628-2-jonathan@marek.ca>
+        Mon, 21 Oct 2024 05:56:23 -0700 (PDT)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH v5 0/5] iio: fix possible race condition during access of
+ available info lists
+Date: Mon, 21 Oct 2024 14:54:13 +0200
+Message-Id: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011231624.30628-2-jonathan@marek.ca>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPVOFmcC/3XPwWrDMAwG4FcpPs9DluPG6anvMXZwZbUVtE2xh
+ 9kIefepOYVCbvol9AlNpnIRruawm0zhJlXGh4bwsTN0TY8LW8maDQJ2EAGtyGgLp2xTS3LT8sa
+ psqWTz5gcu9MQjS4/C5/ld4G/vjVfpf6M5W+509yru5AOwG+RzVmw1ANRnwdChuPlrvNPGu/mR
+ TZcM/0mg8pgFwAwh7gf+J3xK8aFTcYrk8gzxDMGffed6dZM3GQ6ZYKnmGjvYohhzczz/A+TNxe
+ PkQEAAA==
+X-Change-ID: 20240802-iio-read-avail-release-cb3d2a1e1b98
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Alisa-Dariana Roman <alisa.roman@analog.com>, 
+ Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, 
+ Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+X-Mailer: b4 0.14.2
 
-+Cc Abel and Johan
+Some iio drivers currently share an available info list buffer that
+might be changed while iio core prints it to sysfs. This could cause the
+buffer shared with iio core to be corrupted. However, note that I was
+able to trigger the race condition only by adding a delay between each
+sysfs_emit_at calls in the iio_format_list() to force the concurrent
+access to the shared available list buffer.
 
-FYI, this landed in qcom for-next last week for CRD and T14s.
+This patch set extends the iio APIs and fixes some affected drivers.
 
-On Fri, Oct 11, 2024 at 07:16:22PM -0400, Jonathan Marek wrote:
-> The 3 USB ports on x1e80100-crd are OTG-capable, remove the dr_mode
-> override to enable OTG.
-> 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Summary:
+- Patch 1: iio core: introduce a iio info release callback to let
+  drivers share a copy of their available info list and later free it.
 
-This is a bit problematic, because dr_mode = "otg" seems to imply
-gadget/peripheral mode by default and we are currently unable to detect
-the role at runtime until the ADSP is started. Being in peripheral mode
-by default will break USB installers; they won't be able find the rootfs
-via USB. Unfortunately, they wouldn't be able to detect it once in the
-rootfs either, because usually you first need to copy the ADSP firmware
-from Windows (at least on the laptops).
+- Patch 2:
+    - inkern: make consumers copy and release the available info lists
+      of their producers, necessary after patch 1.
+    - iio-mux, iio-rescale, dpot-dac, ingenic-battery: adapt consumers
+      to inkern API change by freeing the now copied available lists of
+      their producers.
 
-I think the best quick fix would be to set
+- Patch 3: pac1921: handle the current scale available info via the
+  read_avail+read_avail_release_resource APIs instead of using an ad-hoc
+  ext_info attribute. The latter was used to avoid the risk of a race in
+  the available list.
 
-	role-switch-default-mode = "host";
+- Patch 4,5: ad7192, as73211: fix the possible race in the drivers by
+  copying/releasing the affected available lists.
 
-for now to restore the old behavior in initrd, while still allowing to
-switch to peripheral mode once detected by the ADSP later.
+Tested:
+- pac1921: could not reproduce the race condition with the new APIs,
+  even with additional delays among the sysfs_emit_at calls during a
+  shunt resistor write. No new issue found after the change.
 
-It would be nice to have gadget mode in initrd as well, since e.g.
-postmarketOS needs that to set up the USB debug shell. But I'm not sure
-how we could support that:
+- iio-mux, iio-rescale, dpot-dac: tested with pac1921 as producer, which
+  was adapted to produce a mock raw available info list.
+  The tests did not cover the driver features but focused on assessing
+  the function call sequence. For example the following traced function
+  graph shows a read of the dpot mocked out voltage (with ftrace
+  filters: pac1921* iio* dpot* kmemdup_array* kfree*):
 
- - We could designate some of the ports as "peripheral by default" and
-   some as "host by default". E.g. usb_1_ss0 is also used for EDL and
-   Fastboot on CRD, so it's more likely to be used in peripheral mode.
-   But there still would be users confused about why they cannot plug in
-   their USB installer into one of the ports...
+ 3)               |  iio_read_channel_info_avail [industrialio]() {
+ 3)               |    dpot_dac_read_avail [dpot_dac]() {
+ 3)               |      iio_read_avail_channel_raw [industrialio]() {
+ 3)               |        iio_channel_read_avail [industrialio]() {
+ 3)               |          pac1921_read_avail [pac1921]() {
+ 3)   5.208 us    |            kmemdup_array();
+ 3) + 11.459 us   |          }
+ 3)   3.167 us    |          kmemdup_array();
+ 3)               |          pac1921_read_avail_release_res [pac1921]() {
+ 3)   1.709 us    |            kfree();
+ 3)   4.458 us    |          }
+ 3) + 25.750 us   |        }
+ 3) + 31.792 us   |      }
+ 3) + 35.000 us   |    }
+ 3) + 37.083 us   |    iio_format_list [industrialio]();
+ 3)               |    dpot_dac_read_avail_release_res [dpot_dac]() {
+ 3)   1.583 us    |      kfree();
+ 3)   4.250 us    |    }
+ 3) + 84.292 us   |  }
 
- - Long term, I wonder if there is any way we could reuse the reduced
-   ADSP firmware from UEFI for USB detection until we start the full one
-   later? Perhaps it provides a similar interface?
+- ingenic-battery: also tested with mock available info produced by the
+  pac1921 driver. Following the traced graph part that should correspond
+  to the ingenic_battery_set_scale() flow (which is not traceable with
+  the additional ingenic* ftrace filter for some reason):
 
-Thanks,
-Stephan
+ 2)               |  ingenic_battery_probe [ingenic_battery]() {
+                ...
+ 2)               |    iio_read_max_channel_raw [industrialio]() {
+ 2)               |      iio_channel_read_avail [industrialio]() {
+ 2)               |        pac1921_read_avail [pac1921]() {
+ 2)   4.333 us    |          kmemdup_array();
+ 2) + 10.834 us   |        }
+ 2)   3.500 us    |        kmemdup_array();
+ 2)               |        pac1921_read_avail_release_res [pac1921]() {
+ 2)   1.791 us    |          kfree();
+ 2)   4.625 us    |        }
+ 2) + 26.291 us   |      }
+ 2)   1.583 us    |      kfree();
+ 2) + 35.750 us   |    }
+ 2)               |    iio_read_avail_channel_attr_retvals [industrialio]() {
+ 2)               |      iio_channel_read_avail [industrialio]() {
+ 2)               |        pac1921_read_avail [pac1921]() {
+ 2)   3.250 us    |          kmemdup_array();
+ 2)   8.209 us    |        }
+ 2)   3.458 us    |        kmemdup_array();
+ 2)               |        pac1921_read_avail_release_res [pac1921]() {
+ 2)   1.542 us    |          kfree();
+ 2)   4.292 us    |        }
+ 2) + 21.417 us   |      }
+ 2) + 26.333 us   |    }
+ 2)               |    iio_write_channel_attribute [industrialio]() {
+ 2)   4.375 us    |      pac1921_write_raw [pac1921]();
+ 2)   9.625 us    |    }
+ 2)   1.666 us    |    kfree();
+ 2) * 47810.08 us |  }
 
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> index eb6b735c41453..bc66f4713b231 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> @@ -1568,10 +1568,6 @@ &usb_1_ss0 {
->  	status = "okay";
->  };
->  
-> -&usb_1_ss0_dwc3 {
-> -	dr_mode = "host";
-> -};
-> -
->  &usb_1_ss0_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss0_hs_in>;
->  };
-> @@ -1600,10 +1596,6 @@ &usb_1_ss1 {
->  	status = "okay";
->  };
->  
-> -&usb_1_ss1_dwc3 {
-> -	dr_mode = "host";
-> -};
-> -
->  &usb_1_ss1_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss1_hs_in>;
->  };
-> @@ -1632,10 +1624,6 @@ &usb_1_ss2 {
->  	status = "okay";
->  };
->  
-> -&usb_1_ss2_dwc3 {
-> -	dr_mode = "host";
-> -};
-> -
->  &usb_1_ss2_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss2_hs_in>;
->  };
-> -- 
-> 2.45.1
-> 
+Not tested:
+- ad7192, as73211
+
+Link: https://lore.kernel.org/linux-iio/20240724-iio-pac1921-v4-0-723698e903a3@gmail.com/
+
+Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+---
+Changes in v5:
+- Patch 2: inkern, ingenic-battery: add read_avail_retvals() helpers to
+  safely use the cleanup free pattern and update commit message accordingly.
+- Update ingenic-battery test trace log in cover letter after retest:
+  iio_read_avail_channel_attribute() -> iio_read_avail_channel_attr_retvals().
+- Link to v4: https://lore.kernel.org/r/20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com
+
+Changes in v4:
+- Patch 2: inkern, ingenic-battery: use cleanup free instead of the
+  "goto out" pattern
+- Link to v3: https://lore.kernel.org/r/20241015-iio-read-avail-release-v3-0-ac3e08f25cb3@gmail.com
+
+Changes in v3:
+- Rebased on top of iio-togreg
+- Squash and reorder commits to allow bisection without memleaks
+- Edit summary in cover letter to match new patch order
+- Patch 2: inkern: add comment to clarify the need of the producer's buffer copy
+- Patch 5: as73211: update comment on mutex declaration
+- Link to v2: https://lore.kernel.org/r/20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com
+
+Changes in v2:
+- Patch 4: as73211: remove one blank line
+- Patch 6: consumers: fix typo in commit message
+- Patch 7: ingenic-battery: add missing header include
+- Link to v1: https://lore.kernel.org/r/20241003-iio-read-avail-release-v1-0-c70cc7d9c2e0@gmail.com
+
+---
+Matteo Martelli (5):
+      iio: core: add read_avail_release_resource callback to fix race
+      iio: consumers: copy/release available info from producer to fix race
+      iio: pac1921: use read_avail+release APIs instead of custom ext_info
+      iio: ad7192: copy/release available filter frequencies to fix race
+      iio: as73211: copy/release available integration times to fix race
+
+ drivers/iio/adc/ad7192.c               |  22 +++++-
+ drivers/iio/adc/pac1921.c              | 128 ++++++++++++---------------------
+ drivers/iio/afe/iio-rescale.c          |   8 +++
+ drivers/iio/dac/dpot-dac.c             |   8 +++
+ drivers/iio/industrialio-core.c        |  14 +++-
+ drivers/iio/inkern.c                   |  99 ++++++++++++++++++++-----
+ drivers/iio/light/as73211.c            |  25 +++++--
+ drivers/iio/multiplexer/iio-mux.c      |   8 +++
+ drivers/power/supply/ingenic-battery.c |  22 +++---
+ include/linux/iio/consumer.h           |  28 +++++++-
+ include/linux/iio/iio.h                |   4 ++
+ 11 files changed, 248 insertions(+), 118 deletions(-)
+---
+base-commit: c3e9df514041ec6c46be83801b1891392f4522f7
+change-id: 20240802-iio-read-avail-release-cb3d2a1e1b98
+
+Best regards,
+-- 
+Matteo Martelli <matteomartelli3@gmail.com>
+
 
