@@ -1,175 +1,185 @@
-Return-Path: <linux-kernel+bounces-374749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130DB9A6F5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 601A09A6F61
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C43E1F25CAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB451F2605A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCEC199939;
-	Mon, 21 Oct 2024 16:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B09D1E00A1;
+	Mon, 21 Oct 2024 16:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AGCbbQcU"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YiR8cQUS"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171021991C2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560C029408
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729527804; cv=none; b=SZUDfx4/fWQnwMKcAwPOSpECXMHe742nhAV8d5+kDED10I3wKD9Tm6wxvY7MTV4q9x1Ih7A93qlhX91ekrca7RprvW4SVHMiDUwVtj33lYpM7MWSHb1DRGxuNZ437e46Fz3adrQHwAdyz/EOWzLL8z2YOyQ+dnlrWjwPldThS9I=
+	t=1729528038; cv=none; b=ZRsREmkVGMgvHqXjDNEzq1xGUhTvFUDgXZLgmJ2gjhYm0b+26tnTPnjsxVEk3zDEM5zZsyANFpFIrr5cpS9Zgn8/3OggMvDiSlMVHOlMKHqA+DzAS7Pnh/x1hS1rfjJwCncGkdnOOlST0yJF1icCdFCcjZAdyWFm/koikoH/j4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729527804; c=relaxed/simple;
-	bh=JVqXq55LQdHL10is0MvisiD3g8F8n1bWChdE8ZjOpqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNmIuzkMB2Lmk5kvEB/MO04tMuZ9WTv9vsytTh/vVxxCg+oZixfwizqEfcTGnM4s8uuEkhG44JkWOmnzThSGpORm3zveEI+G/7O6ElohYCTOiP14wTookuGAT7hTJ+Mz0NNupd1snHl8ITGbYIDZPp8Dm/IeyM2GJuR46qOVBvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AGCbbQcU; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a0c40849cso728804366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:23:21 -0700 (PDT)
+	s=arc-20240116; t=1729528038; c=relaxed/simple;
+	bh=0rQz22T6NMm7kN/dMoWSjJNMVc8mP5ecqAz4V5mlu20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cUesHR3LJPorBa+Rj/IelgpddUJyBo0BWowbP3e9SO30suOSh460/AQWcNI0yNhXSKkE0v0xv+aO1ybLyALZ+dImb73FqDYIOY4bKZIqnHmkhUIZ8pg06tOzwQMPmyMK1W9oxFxE0TN1azSSbsup4u4CF//qabd9Rtvfz7QAzR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YiR8cQUS; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f53973fdso3693146e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729527800; x=1730132600; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Lr/AUAtx/FQMtUh6AmIuvX+izsQVav8JTwTXqT9niQc=;
-        b=AGCbbQcU3shfyQuaz/8Dg6P1REInYUfWdNspAWhoL+IbeEcCVV1J7sMe0BD8VzWSff
-         esWhZirrZR5Ovo/EaLEKmTJiVbVEmtliobJQ7wPDHxOIHESWFttoxQSHjN2CPz/2rtlt
-         KM9ebGlpVCwPEiYSwly7ui5fls0C+eDp9Ld0sqFf9kYsshV7zQn5lWoWWBNaf13eBy4j
-         Xw4z9IjNi1qth7uAqlpo1imtIWOwvp8S7yq3oO/5oFuy6DXSpJcEzgtEiKRi8EmIuck1
-         eD52coLuhws0A87Q5YLOXSaRgvN/zmrKVSOA+AbECKavzdiqpdiH00dLPaJp2kDfPUd9
-         u0jQ==
+        d=broadcom.com; s=google; t=1729528034; x=1730132834; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0rQz22T6NMm7kN/dMoWSjJNMVc8mP5ecqAz4V5mlu20=;
+        b=YiR8cQUSrYh9d49oKon0YJQRkWs5qk+ZZUxq435CdFz/RFWG7sF5dSnCywNry6nHrY
+         wAwv5C0gpm8CeBCjQKcOJW8ZalqmdpaEoSECv7eUQzXTcIRiTmCZQKPgnZLg6B3rsZiR
+         wlhxHh/ysGgGBLLUS1Vs+f22WGIHgq84S1CIo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729527800; x=1730132600;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lr/AUAtx/FQMtUh6AmIuvX+izsQVav8JTwTXqT9niQc=;
-        b=OQpVQiKKwuhDhAld8/Cvq24XlomPj9hppFRBBhAg+VKDDZFaQdFbD+2pWJrC0wWFVe
-         p7yS6lVaaCXApjUelBe/XDnfscB96Q0BBIoWHDlRPgQiCKLEQNRPzgwGz0oBShjX1osI
-         RM7MMZyh/kGGIcWSu3Vu1Qew2HtefKe3woNEhC4Y6NZjS/pHmo/w/8r22/Z4iliMDycK
-         WnGDRmtWu8MNB6Mj9fpF/Q8vd2ONuRnSEseG6zoxOoEXMm7ZmKCO+0LVsG0YEPd1+vSi
-         1kkfrhE/fia7OPg0UtizsdI8dnXbfkrTx7Er7i4kVBHMoeGQ1khnNt7NRVHqfCT44ERo
-         zRrA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Sj6vRg/fIrAG6Yy2mea0HyY/A2Ozui7BlCPWan0+1I3RQHLuQplY+2T1Gw0yAPTYYPTI84RA+Yu42lU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPLVyDO26b7EyC8O2Du55xc2JP9rIqJ8L03e3k7A/345X/V4vO
-	kAyJVeWx1cLICwCz8JvVlQaWQeXUY8mYJ+ZpjlhiQBOh26vYki74xSLSeENNJ4M=
-X-Google-Smtp-Source: AGHT+IGr0R5dZljnxHV96zyk0UIMCnazXHXjSfRrcJo+cGBtb2Xy0gcW6CKVZ25Le/NX8RyC9vegyw==
-X-Received: by 2002:a17:907:a4a:b0:a9a:5a14:b8d8 with SMTP id a640c23a62f3a-a9aa8a05ebcmr63573166b.43.1729527800271;
-        Mon, 21 Oct 2024 09:23:20 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91306fc0sm220180266b.91.2024.10.21.09.23.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 09:23:19 -0700 (PDT)
-Date: Mon, 21 Oct 2024 18:23:19 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-	willy@infradead.org, liam.howlett@oracle.com,
-	pasha.tatashin@soleen.com, souravpanda@google.com,
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <ZxZ_99yLDhRMNr3p@tiehlicka>
-References: <ZxKWBfQ_Lps93fY1@tiehlicka>
- <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
- <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
- <ZxYCK0jZVmKSksA4@tiehlicka>
- <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
- <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com>
- <ZxZ0eh95AfFcQSFV@tiehlicka>
- <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
- <ZxZ52Kcd8pskQ-Jd@tiehlicka>
- <CAJuCfpFr2CAKvfyTCY2tkVHWG1kb4N2jhNe5=2nFWH0HhoU+yg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1729528034; x=1730132834;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0rQz22T6NMm7kN/dMoWSjJNMVc8mP5ecqAz4V5mlu20=;
+        b=MebpBBke/paAPrup4GQoDdnf5WkA4hM05HCTAO7s/mqfE5qo907czep9GS2zX70hNr
+         j0+3XU4VsvErEGwd5kJRlEtO7tDgVdba3BX7GSi4N/5ofow2A6RTsffOx0ljpdgEJmxn
+         KslhQvScOauen0H22mb6eV+blN28Q7RaqlqmYy2m4WgA96IGH08gj9RCi5XGDFSH5XvL
+         AvYHkhSIwFoLDqwsxcbgfaMakSYmBvCBcT2LEX8Tj3kyl2Fhk8iDiqbHWMyfFUwmf4To
+         g738ziSrWZXlm4jpM3uCPdcvrPb4OYqT2BEwtdlV6MbdPJUWGTykNyrUp40UA/m997ex
+         1vVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6d74B7kD0T0D/O/tV92Pz4nCDlOHWlEzvb/cxelht04Q05fq+RhsO2Do/cb1oGa4N7MiOLtsQqljSxBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOCDcY6bUqNq2BmXUfgtIal9qZvBl0c0bbCdgIA2CYkgETIjlA
+	hS6dyOz+uYJllVOwYjDNiUP5x/Pc+5rFd9tpIkHlIl4P2DcadETMqSzrE+ielFOMkLYAWHGNRe4
+	J9mDLhBWVJ49G6DYtilDTbf8zYVkdKWDDjPXq
+X-Google-Smtp-Source: AGHT+IHpg9TTbFP8KyxWMPnxnJ0ow12EM5GCaSbDNDSFZfphT/pjNLiiQbHQ7lz6/pgRC+UVSY3guAj8ObsKNF7yxJQ=
+X-Received: by 2002:a05:6512:691:b0:539:fcaa:d0ca with SMTP id
+ 2adb3069b0e04-53b13184a8emr58911e87.13.1729528034371; Mon, 21 Oct 2024
+ 09:27:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpFr2CAKvfyTCY2tkVHWG1kb4N2jhNe5=2nFWH0HhoU+yg@mail.gmail.com>
+References: <20241018200522.12506-1-rosenp@gmail.com>
+In-Reply-To: <20241018200522.12506-1-rosenp@gmail.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Mon, 21 Oct 2024 21:57:03 +0530
+Message-ID: <CAH-L+nOkmzy0KEQBbXqEYVnws5_H-Y4JMN1K8sVD_DGyfQf9qg@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: mv643xx: use ethtool_puts
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000002426ec0624ff201a"
 
-On Mon 21-10-24 09:16:14, Suren Baghdasaryan wrote:
-> On Mon, Oct 21, 2024 at 8:57 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Mon 21-10-24 08:41:00, Suren Baghdasaryan wrote:
-> > > On Mon, Oct 21, 2024 at 8:34 AM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
-> > > > [...]
-> > > > > Yeah, I thought about adding new values to "mem_profiling" but it's a
-> > > > > bit complicated. Today it's a tristate:
-> > > > >
-> > > > > mem_profiling=0|1|never
-> > > > >
-> > > > > 0/1 means we disable/enable memory profiling by default but the user
-> > > > > can enable it at runtime using a sysctl. This means that we enable
-> > > > > page_ext at boot even when it's set to 0.
-> > > > > "never" means we do not enable page_ext, memory profiling is disabled
-> > > > > and sysctl to enable it will not be exposed. Used when a distribution
-> > > > > has CONFIG_MEM_ALLOC_PROFILING=y but the user does not use it and does
-> > > > > not want to waste memory on enabling page_ext.
-> > > > >
-> > > > > I can add another option like "pgflags" but then it also needs to
-> > > > > specify whether we should enable or disable profiling by default
-> > > > > (similar to 0|1 for page_ext mode). IOW we will need to encode also
-> > > > > the default state we want. Something like this:
-> > > > >
-> > > > > mem_profiling=0|1|never|pgflags_on|pgflags_off
-> > > > >
-> > > > > Would this be acceptable?
-> > > >
-> > > > Isn't this overcomplicating it? Why cannot you simply go with
-> > > > mem_profiling={0|never|1}[,$YOUR_OPTIONS]
-> > > >
-> > > > While $YOUR_OPTIONS could be compress,fallback,ponies and it would apply
-> > > > or just be ignored if that is not applicable.
-> > >
-> > > Oh, you mean having 2 parts in the parameter with supported options being:
-> > >
-> > > mem_profiling=never
-> > > mem_profiling=0
-> > > mem_profiling=1
-> > > mem_profiling=0,pgflags
-> > > mem_profiling=1,pgflags
-> > >
-> > > Did I understand correctly? If so then yes, this should work.
-> >
-> > yes. I would just not call it pgflags because that just doesn't really
-> > tell what the option is to anybody but kernel developers. You could also
-> > have an option to override the default (disable profiling) failure strategy.
-> 
-> Ok, how about "compressed" instead? Like this:
-> 
-> mem_profiling=0,compressed
+--0000000000002426ec0624ff201a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good to me. And just to repeat, I do not really care about
-specific name but let's just stay away from something as specific as
-page flags because that is really not helping to understand the purpose
-but rather the underlying mechanism which is not telling much to most
-users outside of kernel developers.
+On Sat, Oct 19, 2024 at 1:35=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Allows simplifying get_strings and avoids manual pointer manipulation.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
--- 
-Michal Hocko
-SUSE Labs
+LGTM
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+
+
+--=20
+Regards,
+Kalesh A P
+
+--0000000000002426ec0624ff201a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIOnFKU8G4TYxgeBojqkGL0Zt7ogYQA/McrN1JKqPDM+BMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAyMTE2MjcxNFowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC2T5ARG+sS
+ifAmWqxqp16FySauwKmGuN9BwKhC+ctabxIqyz3yAwBbC1mjvf2ozJouCByE4OQYERfIJ9Hgi4dB
++nz5NRPI7uwI5MX7bu98mYLbtFxMURI7qlfW56iHfC1Z9CcR2JezLeukJIsCTogFOeigQE/OTPKN
+FUIYCGFF1myXbv4EimYQlgkaXCZ+uZBJcUzVdjVAlEgVbFHERx0z1iOGSr9RuUO9G8LyGYjSczpF
+6ojXQOyDm1q62QX1KZ4194EkmoscrQaGm2hCSXziETlds/tW7lTQDi2z1WEzWn/srYPsqanOticb
+qojM+b0TT0USRuvzsBVaQC/d/4bO
+--0000000000002426ec0624ff201a--
 
