@@ -1,162 +1,156 @@
-Return-Path: <linux-kernel+bounces-374758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F85D9A6F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:32:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A659A6F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A751C2318C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533A61F24F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4BC199EB2;
-	Mon, 21 Oct 2024 16:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969751CCB4A;
+	Mon, 21 Oct 2024 16:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LSd9bRRY"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ux3dDeKq"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77A14A90
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E05176ADE;
+	Mon, 21 Oct 2024 16:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528353; cv=none; b=Gmn+3cSVuyg6k3KJNlNyFRVcq3HdnwiY9hEYhq74HfKjeA7xQtZW6c/YK1BHTuk0CA+scGXxuhUW5o3XKjoB/e+zAoKfUPieztss1pomr0TOaQbQpK5pJljakFQz+HCMe7dMVRDrOpA2NPbPK4Jg4eOIly7+nuzbxzPiDV2JvW8=
+	t=1729528375; cv=none; b=HxuyYST2+ejpQfq6hsG6XLQoDUDuvxOw79ua7Hs/aVcc8fDBKPb77DSdzim/OIXIF+W5tusA8bLzOe06ISS5X+uQRmDgupWVmYj585zLj1krUJVVAjr8jLqB44BuhehI0Y+mulO7oLeaY8ZQf0El3Rt7v9bvB35CFT1+UvBY9uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528353; c=relaxed/simple;
-	bh=E3lS7p+zqLiyYZBkWceRW3zq+hXvF7xLouOfzARj1rU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctHRKClYYdAYT34desBGdTPFQIGqK5c2CnJ0+hGEroELOOZKghmc+uG58UD0OdAZaZ1KPrZ+Us8/jBPBs42T06IG3BSv+Lxtm91w+eoSBiwi/wPnAayKh4sJYGPHO1WZN+adnzd0BLSWGsCAwdD9NM/nubcH3PQgPTpHz0j5RIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LSd9bRRY; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b1467af9dbso346839185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:32:31 -0700 (PDT)
+	s=arc-20240116; t=1729528375; c=relaxed/simple;
+	bh=Yihx4OBCFOrFynTc74Tq18dgCbePHWLDh/fIeU6Vj9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e23t00oczr3I53x+KrqF/AalQ77Vkh7tv/8S2O1Ve98GK1H0BLglvA8IWJv41NGgCYPTKqLxnWbPpW5LM/2fy8RrIkigAFsQ1LKYSEmuNa+8avriDFPEYCJiLKc+vd3cdI5KSFZ5NFweKrs8/E2+vgDCjCrQIAv79ut82SXvjd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ux3dDeKq; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5eb5be68c7dso2360488eaf.0;
+        Mon, 21 Oct 2024 09:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729528350; x=1730133150; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GHfRv1yebnwDS+0649iwM+sezGHIHt8yRwmS2Zjf4z8=;
-        b=LSd9bRRYtc+RZmYvr977e71g76AJRuirqw9kQC8XTenWCKzgIa0rdsc9pXeYqrYOBL
-         v79HZIEYAd57h7t2yi9jE5C035JOc4uwMgkUvBA/KU8nmebVjdeqb+RjCsVax3hV5mRm
-         D1WKpGPHy92lLWErRnfm30ECca4ssQnYOw5Hs=
+        d=gmail.com; s=20230601; t=1729528373; x=1730133173; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MrzY8FX0o3tCNAy1+JzEq7soWHSgKMYxkffvY3oKiR4=;
+        b=Ux3dDeKqrF5zrYHMENBOY41pzTWuCrFV/0CtL+TwNG3TV7vkj5NhX6IYiaQMOV7Zgx
+         d9/PYZNa5GpDLs8lg6o1YJMmqmJTpgGC+OR8SxwsGOK56ulWc2oTBPKfftVWB15jFJ+G
+         jsfoIE6Vxcu8GhOu1KK7Mxv5Sfl4LSZ/0c+KCtqJN/3668DlcTAoaqoO8MMRfq3GEFmu
+         /bF6q/OPfRAu3TYB7WQUMyRYkNq1cXAPG2Z3980zcedHjXnDQrLukIo15FT/a5C71hSp
+         9RgrqjgCACnL4NpvKMp+dfX+FYmS3J5SYfKH30WQgatravSWoKNj+TL7tsSaD7mdpl9J
+         uJ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729528350; x=1730133150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GHfRv1yebnwDS+0649iwM+sezGHIHt8yRwmS2Zjf4z8=;
-        b=t20UKlJIDzNzPWtW8sI8cw6BjhvE7PSVrnTP2QoMXZ3/sa1rLn60D7AdDwg3M7T5nu
-         YSqWO94dNSkKDIRGEklFV/AwtoGl+yCkdASQhUvy9L5Zjs/ZbJAFa4sEqR5yVGVDmfD9
-         GbESfclyBLfeFRya5lYwpL2sJIbZNkcH1B7EUWhqbLMIpgwU24J6+vwTTu14k12/PKNG
-         V8sGUuuysvCrseCXBOVDjMjiVL5DBY8IlViSo+7rsIZyhvqS4asbT501NWdPjyuw18N3
-         dF+qOV+/Hs3AlmyjVzgor/yrlrCkGXVcNqgpLMjaQLFYY8XfobMPO1wYIHNx2/mPsmW7
-         jBSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwophwnlkLdW44Zz/C8q8MKw2dlaS6BvgxYOwgjJl2qFk/WzdivI4NGsEOXMYkiFZB0mWffiAdyKAUUJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMdREfIXl0GlVOmeufUTq6HLiMC1ovIMrg5o+7rgRtRZBaxmvQ
-	bIdHFrSgjsLZ8IFkH3/APvLjmwdhZUd7VrF2/h2gQ0p1lc9/+R1/jdJoxHZn5OLUwX5gHd17VQf
-	E
-X-Google-Smtp-Source: AGHT+IF2ndIsKYZ615eG2r9/sHSdksxj4pxybb+WSp/kSj8q4070u+VV6MOvXqQbugvlBagjMw1tgQ==
-X-Received: by 2002:a05:6e02:1389:b0:3a3:41cf:f594 with SMTP id e9e14a558f8ab-3a4cb398915mr8414045ab.12.1729528338472;
-        Mon, 21 Oct 2024 09:32:18 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400aead41sm12467675ab.47.2024.10.21.09.32.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 09:32:17 -0700 (PDT)
-Message-ID: <a85b21a6-e1f6-4b46-9eb7-c1d687888e16@linuxfoundation.org>
-Date: Mon, 21 Oct 2024 10:32:16 -0600
+        d=1e100.net; s=20230601; t=1729528373; x=1730133173;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MrzY8FX0o3tCNAy1+JzEq7soWHSgKMYxkffvY3oKiR4=;
+        b=TNK12d9c4Av02+KXutWjIoqjEJlqEVz+tJTayY3smtwXai0p0APqQmFLAu1E9HX/3b
+         amF4a/qoBrjAwj6S5nHZIr0DWhL9GhHO+NqPRrhWfO+12k3CZn/GxkZA3peCakjDNwtm
+         ZY/OWvhnDAIWyYxI+U3vyQQGcnMEY7xx0Tvc6/TVBe+zyzixhfMUcEODDmVoKPi1FSGx
+         95hqutG28DLk0ON/KeUchmgWlCRfk/2KvPXq/T21ePaxM/RxtR/L7FE+C9drJERMqANG
+         n8+Rzk68qGeYgO9EKa39W8gor0m+HXpBOwCLb+wzLRD9FpS4NYHeAL44eKU0CntT6prI
+         ZDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg4s//DFRZOnsn6OZddoFik6whezC4uCFdBGys324KaIEwTa0TutGjx6SNZ404rUKn64iTfAp622rtffw2spVl+ds=@vger.kernel.org, AJvYcCVkOhryZwJnZeqUUO5zDMNj8H/hRiLY9kNfhYwlrQUXo96ySvqqSdPYic9AoiU9yE8rbstrwQoeIZFwJkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpQ375eU+SxAUwQvRr84Yk/DGiVL+6+pvCsDrgyXAb1NnhoC2E
+	i2Bq1CuE6s656PeVdmvYDVSm+0laqljxF2u8NB/MF70L+9NnjUjAyjk0O6w5f+EhUPyVE9RiMHV
+	/ONrESzkdKVB0cKAWRhdEBiHJtHo=
+X-Google-Smtp-Source: AGHT+IEn4t4ywdyEIc2ujFckXZRJ4voSSqvPHcqIRxybRnnDS2ybHZCLMiQBypVRPSAS4yG7uPp2TmoQ7GzRkKjgoYg=
+X-Received: by 2002:a05:6820:c91:b0:5e1:de92:6b66 with SMTP id
+ 006d021491bc7-5eb8b3b2219mr8861843eaf.2.1729528373020; Mon, 21 Oct 2024
+ 09:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: fix -Wunused-result in linux.c
-To: David Laight <David.Laight@ACULAB.COM>,
- "'Liam R. Howlett'" <Liam.Howlett@oracle.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "vbabka@suse.cz" <vbabka@suse.cz>,
- "sidhartha.kumar@oracle.com" <sidhartha.kumar@oracle.com>,
- "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241011225155.27607-1-skhan@linuxfoundation.org>
- <ddepbtajvjqoftjqanab7dpcx62pjrl4s3cowhciocevfa43wa@sncxpv75hpjp>
- <13ddebb3e15b4a94b466c6ee5f3f2f42@AcuMS.aculab.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <13ddebb3e15b4a94b466c6ee5f3f2f42@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-2-tudor.ambarus@linaro.org> <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
+ <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org> <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+In-Reply-To: <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 21 Oct 2024 11:32:40 -0500
+Message-ID: <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
+ controllers w/ hw queues
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com, 
+	javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org, 
+	luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com, 
+	bjorn@rivosinc.com, ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	marcan@marcan.st, neal@gompa.dev, alyssa@rosenzweig.io, broonie@kernel.org, 
+	andre.draszik@linaro.org, willmcvicker@google.com, peter.griffin@linaro.org, 
+	kernel-team@android.com, vincent.guittot@linaro.org, 
+	daniel.lezcano@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/21/24 10:10, David Laight wrote:
-> From: Liam R. Howlett
->> Sent: 15 October 2024 02:11
->>
->> * Shuah Khan <skhan@linuxfoundation.org> [241011 18:52]:
->>> Fix the following -Wunused-result warnings on posix_memalign()
->>> return values and add error handling.
->>>
->>> ./shared/linux.c:100:25: warning: ignoring return value of ‘posix_memalign’ declared with attribute
->> ‘warn_unused_result’ [-Wunused-result]
->>>    100 |          posix_memalign(&p, cachep->align, cachep->size);
->>>        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>> ../shared/linux.c: In function ‘kmem_cache_alloc_bulk’:
->>> ../shared/linux.c:198:33: warning: ignoring return value of ‘posix_memalign’ declared with attribute
->> ‘warn_unused_result’ [-Wunused-result]
->>>    198 |          posix_memalign(&p[i], cachep->align,
->>>        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>    199 |                                cachep->size);
->>>        |                                ~~~~~~~~~~~~~
->>>
->>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
->>
->> Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
->>
->>> ---
->>>   tools/testing/shared/linux.c | 14 +++++++++-----
->>>   1 file changed, 9 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
->>> index 17263696b5d8..66dbb362385f 100644
->>> --- a/tools/testing/shared/linux.c
->>> +++ b/tools/testing/shared/linux.c
->>> @@ -96,10 +96,13 @@ void *kmem_cache_alloc_lru(struct kmem_cache *cachep, struct list_lru *lru,
->>>   		p = node;
->>>   	} else {
->>>   		pthread_mutex_unlock(&cachep->lock);
->>> -		if (cachep->align)
->>> -			posix_memalign(&p, cachep->align, cachep->size);
->>> -		else
->>> +		if (cachep->align) {
->>> +			if (posix_memalign(&p, cachep->align, cachep->size) < 0)
->>> +				return NULL;
->>> +		} else {
->>>   			p = malloc(cachep->size);
->>> +		}
->>> +
-> 
-> You really ought to be checking malloc() as well.
-> Perhaps:
-> 		if (...) {
-> 			if (posix_memalign(...) < 0)
-> 				p = NULL;
-> 		} else {
-> 			p = malloc(...);
-> 		}
-> 		if (!p)
-> 			return NULL;
-> 
-> Or just use a hack to get the compiler to STFU :-)
+> On 10/18/24 8:49 AM, Tudor Ambarus wrote:
 
-Yes you are right. I will spin another version to cover
-the malloc and I just noticed another posix_memalign()
-with -Wunused-result that compiler didn't flag in
-kmem_cache_alloc_bulk() to fix as well in the next version.
+> The active request is considered completed when TX completes. But it seems
+> that TX is not in direct relation with RX,
 
-thanks,
--- Shuah
+TX and RX are assumed independent operations (which they are).
+TX is sending a message/request to the remote successfully. 'Success'
+can be indicated by any of the three methods  TXDONE_BY_{POLLING, IRQ,
+ACK}.
+You seem to assume it should always be an ACK where we receive an
+acknowledgment/response packet, which is not the case.
+
+...
+
+>> Correct, and it is not meant to be.
+>> You are assuming there is always an RX in response to a TX, which is
+
+> Not really. If there's no response expected, clients can set req->rx to NULL.
+
+You are assuming the default behaviour is that there is a reply
+associated with a TX, otherwise "clients can set req->rx to NULL".
+This api can be _used_ only for protocols that expect a response for
+each TX. For other protocols,  it is simply a passthrough wrapper (by
+doing things like req->rx = NULL). For handling this special case of
+Tx->Rx, maybe a higher level common helper function would be better.
+
+...
+
+>> reasons, it is left to the user to tie an incoming RX to some previous
+>> TX, or not.
+
+> Is there a specific driver that I can look at in order to understand the
+> case where RX is not tied to TX?
+
+ Many...
+ * The remote end owns sensors and can asynchronously send, say
+thermal, notifications to Linux.
+ * On some platform the RX may be asynchronous, that is sent later
+with some identifying tag of the past TX.
+ * Just reverse the roles of local and remote - remote sends us a
+request (RX for us) and we are supposed to send a response (TX).
+
+> Also, if you think there's a better way to enable controllers to manage
+> their hardware queues, please say.
+>
+Tying RX to TX has nothing to do with hardware queues. There can be a
+hardware queue and the protocol can still be
+"local-to-remote-broadcast".
+
+While I don't think we need the "Rx is in relation to some past Tx"
+api, I am open to ideas to better utilize h/w queues.
+
+The h/w TX queue/fifo may hold, say, 8 messages while the controller
+transmits them to the remote. Currently it is implemented by
+.last_tx_done() returning true as long as fifo is not full.
+The other option, to have more than one TX in-flight, only complicates
+the mailbox api without fetching any real benefits because the
+protocol would still need to handle cases like Tx was successful but
+the remote rejected the request or the Rx failed on the h/w fifo
+(there could be rx-fifo too, right). Is where I am at right now.
+
+Regards,
+Jassi
 
