@@ -1,406 +1,239 @@
-Return-Path: <linux-kernel+bounces-373913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064779A5ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 576839A5EE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801D61F2210E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8BE71F22A4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA3F1E25E9;
-	Mon, 21 Oct 2024 08:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4E71E25E6;
+	Mon, 21 Oct 2024 08:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDUJQqWD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0CQHXqQM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NF95bJGv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0CQHXqQM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NF95bJGv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C2D1E231B;
-	Mon, 21 Oct 2024 08:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24A91E230F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729500033; cv=none; b=mmk0/jubHW4RczoqPSnjGKpED9HexRS58Z0DIU27kgFUBGAKRmmvuoevq6CucdypwrbDhfLaymZQeJCjBP1Q8WLviae2R0K7EXUGYRrSng5i4J8GfQq8NIbjvCDFbTbJUpWSWQzHX+XE5UKiX2P6MJ/ZE5HX/pfZImC285FLtg4=
+	t=1729500153; cv=none; b=ZiNykzEKn8zDbB6cc947IBHPUXAUVe3onbn7P0TMcyg+G8QtwgDb1fZ+srBnGExYUOCJTONOY4FAEvcuraD/QxAI9AAqiZyBJk5FSMMpK6gU2L1KTB8IK8vsmvbOyj/ac4fOi8kFDOM8z6dQDLnEeznH9TtL7TcseVsRTlK69e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729500033; c=relaxed/simple;
-	bh=wc4wJgzYhvweNVMWDXnvU8zI2GvWoXz+6IUSI2+grRs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XCghVAV+F9HPNO6ZtCE0X9QTDJ/ozYk9S5yEOsHiLHMOYtt2BvT5h6xJYuzitvWp0pZNYQ8mklXDDRmbbgsQaKLmr1Z0dWY1h7FtCt0xO33kxcNWjkwYnn0rrxhVSJDLSLQTWnnRnoPZLlgdVPSRCHk0DfU6qkpm4BuVSN/OzWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDUJQqWD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40885C4CEC3;
-	Mon, 21 Oct 2024 08:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729500032;
-	bh=wc4wJgzYhvweNVMWDXnvU8zI2GvWoXz+6IUSI2+grRs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sDUJQqWDsxr73S9SLuu6VpBUDpyixrTCALYyecQbTjfi71DLGjx2z7wftgZMOAK7k
-	 WkgJ2hfz3fOv23pS6HJvWXPiN2/Ky36mO+QFSDu9Aegchj4HM5RggqRm7I+QuHaBlT
-	 +jjDuZ98ACecS5Wv7HC/o56TxvvbvNk0XNak4C8txuH7YwQJZM8dOYskBxez3g6lIA
-	 At3M2Fdzto41rD6m5dMp6fLUtDRl+FL3p1NBOXHnAGIheGYJv1eix2UbJiEeXkRems
-	 9Pq0bsW32SvxQ+k5RZo7XDG8TE8D7+YVlc7rXLVxDBiGui/DXG8QhRe+raHzhxKjpi
-	 yfybU5i1qYdTQ==
-Date: Mon, 21 Oct 2024 17:40:26 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: <corbet@lwn.net>, <rostedt@goodmis.org>, <mark.rutland@arm.com>,
- <linux@armlinux.org.uk>, <ardb@kernel.org>, <yangtiezhu@loongson.cn>,
- <arnd@arndb.de>, <kees@kernel.org>, <rmk+kernel@armlinux.org.uk>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm: Add KPROBES_ON_FTRACE supported
-Message-Id: <20241021174026.6133c7e847c8e94b9cd7e169@kernel.org>
-In-Reply-To: <20240618035242.3491691-1-ruanjinjie@huawei.com>
-References: <20240618035242.3491691-1-ruanjinjie@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729500153; c=relaxed/simple;
+	bh=1duPT3NFY1Uam++z2V5RlDgBefaG5FriJtJhFnxhTA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rb0yOjGiP0ibvySuqnQCIxkPhoea/HDz2JVBJTW0Y03VUml6yGiqkM3V9Oqx6eNzzp78JzamNwPblGnqb3LD1fjSyyL2hP1esuHKPMoIv/FDRBh4msCM1G6C+01XnKCoiBp9zuDHF1cDf0UQk1r+MDjEZG/RYp9uCvI2oAkFT88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0CQHXqQM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NF95bJGv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0CQHXqQM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NF95bJGv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 827A721F84;
+	Mon, 21 Oct 2024 08:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729500122; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CiPZkubNmINxMQVazD1LCNNylGzDSrlCNaC6D5880y0=;
+	b=0CQHXqQMD4/ER/XRUDOMrcR4Op804mMlOtjT9Lz1svs4FLFSH8OFugK5qO2m+hja9k4PvJ
+	iybyPrZxmy6cb4y6T2iq4xRLxKLqX/5tbo3BtCPVY8fQBWrSZ4PWbDdU/VzU1oboxdn0Bj
+	BRUnRFIq6qv3FSbHcM0PtD2ophkqfpk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729500122;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CiPZkubNmINxMQVazD1LCNNylGzDSrlCNaC6D5880y0=;
+	b=NF95bJGvsJg9oSGYlmbkI0B7kIYQxARMRU8ubgzM8hFi8irLXauXWkiZjji5Nkhe3BKRMY
+	dP9XFfzwmIbh3dDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0CQHXqQM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NF95bJGv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729500122; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CiPZkubNmINxMQVazD1LCNNylGzDSrlCNaC6D5880y0=;
+	b=0CQHXqQMD4/ER/XRUDOMrcR4Op804mMlOtjT9Lz1svs4FLFSH8OFugK5qO2m+hja9k4PvJ
+	iybyPrZxmy6cb4y6T2iq4xRLxKLqX/5tbo3BtCPVY8fQBWrSZ4PWbDdU/VzU1oboxdn0Bj
+	BRUnRFIq6qv3FSbHcM0PtD2ophkqfpk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729500122;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CiPZkubNmINxMQVazD1LCNNylGzDSrlCNaC6D5880y0=;
+	b=NF95bJGvsJg9oSGYlmbkI0B7kIYQxARMRU8ubgzM8hFi8irLXauXWkiZjji5Nkhe3BKRMY
+	dP9XFfzwmIbh3dDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60BFB136DC;
+	Mon, 21 Oct 2024 08:42:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 33yxFtoTFmc/aAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 21 Oct 2024 08:42:02 +0000
+Message-ID: <d937fd92-249e-4660-a59a-ee85b6ec4691@suse.cz>
+Date: Mon, 21 Oct 2024 10:42:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] 9p: Avoid creating multiple slab caches with the same
+ name
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ Jason Gunthorpe <jgg@nvidia.com>, Pedro Falcato <pedro.falcato@gmail.com>
+References: <20240807094725.2193423-1-pedro.falcato@gmail.com>
+ <20241018172804.GA2151929@nvidia.com>
+ <CAKbZUD0Z_Kyumx3ourywUYhfksGNgJWrCpjAdnxtsbwS4vMRkA@mail.gmail.com>
+ <1cb07628-269c-4d6c-9936-f3a2b233165f@leemhuis.info>
+ <b6852c2d-3371-47a4-bfeb-049f4048e88a@suse.cz>
+ <ZxL3FsmjGrTT_EV9@codewreck.org>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZxL3FsmjGrTT_EV9@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 827A721F84
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[leemhuis.info,linux-foundation.org,kernel.org,crudebyte.com,lists.linux.dev,vger.kernel.org,nvidia.com,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Hi Jinjie,
-
-Sorry for reviewing so late. I have some comments below.
-
-On Tue, 18 Jun 2024 11:52:42 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-
-> Add support for kprobes on ftrace call sites to avoid much of the overhead
-> with regular kprobes. Try it with simple steps:
+On 10/19/24 02:02, Dominique Martinet wrote:
+> Vlastimil Babka wrote on Fri, Oct 18, 2024 at 11:38:04PM +0200:
+>> > In that case: Linus, given the circumstances I wonder if it would be
+>> > best if you could merge the patch at the start of this thread
+>> > (https://lore.kernel.org/all/20240807094725.2193423-1-pedro.falcato@gmail.com/
+>> > ) directly, which can also be found as 79efebae4afc22 in -next if you
+>> > prefer to cherry-pick it from there  Either now or after 24 to 36 hours,
+>> > which would give Eric a chance to ACK/NACK this if he sees this mail.
 > 
-> 	cd /sys/kernel/debug/tracing/
-> 	echo 'p:myprobe sys_clone r0=%r0 r1=%r1 r2=%r2' > kprobe_events
-> 	echo 1 > events/kprobes/enable
-> 	echo  1 > events/kprobes/myprobe/enable
-> 	cat trace
-> 	# tracer: nop
-> 	#
-> 	# entries-in-buffer/entries-written: 2/2   #P:4
-> 	#
-> 	#                                _-----=> irqs-off/BH-disabled
-> 	#                               / _----=> need-resched
-> 	#                              | / _---=> hardirq/softirq
-> 	#                              || / _--=> preempt-depth
-> 	#                              ||| / _-=> migrate-disable
-> 	#                              |||| /     delay
-> 	#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-> 	#              | |         |   |||||     |         |
-> 	              sh-75      [000] .....    33.793362: myprobe: (sys_clone+0xc/0xa0) r0=0x1200011 r1=0x0 r2=0x0
-> 	              sh-75      [000] .....    34.817804: myprobe: (sys_clone+0xc/0xa0) r0=0x1200011 r1=0x0 r2=0x0
+> Sorry to everyone involved, I've just sent the merge request - I wasn't
+> much at computer in the past few weeks so wanted to wait until I got
+> back home to send it just in case, as I didn't realize this was a recent
+> regression that caused actual harm (it sounded like an old warning that
+> someone just recently happened to hit, and sounded easy enough to work
+> around locally if there is only one specific setup involved); I should
+> have sent the fix separately or at least corrected myself about the
+> schedule.
 > 
-> 	cat /sys/kernel/debug/kprobes/list
-> 		c03453e8  k  sys_clone+0xc    [FTRACE]
-> 					       ^^^^^^
+>> >>> It is causing regressions in my environment
+>> >>> #regzbot introduced: 4c39529663b9
+>> > 
+>> > If anyone wonders, that is 4c39529663b931 ("slab: Warn on duplicate
+>> > cache names when DEBUG_VM=y") [v6.12-rc1]. That's also why I'm CCing
+>> > Vlastimil, so he knows about this.
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406160646.J89U1UKK-lkp@intel.com/
-> ---
-> v2:
-> - Fix the allmodconfig compile issue by renaming "NOP" to "FTRACE_NOP".
-> ---
->  .../debug/kprobes-on-ftrace/arch-support.txt  |  2 +-
->  arch/arm/Kconfig                              |  1 +
->  arch/arm/include/asm/ftrace.h                 | 17 ++++++
->  arch/arm/kernel/ftrace.c                      | 19 +------
->  arch/arm/probes/Makefile                      |  1 +
->  arch/arm/probes/ftrace.c                      | 53 +++++++++++++++++++
->  arch/arm/probes/kprobes/core.c                | 32 +++++++++++
->  7 files changed, 106 insertions(+), 19 deletions(-)
->  create mode 100644 arch/arm/probes/ftrace.c
+> (that might have been nice to have as a Fixes tag for eventual backport,
+> but at least that commit doesn't appear to have been picked up by stable
+> so it's probably fine as is)
+
+Yeah it's missing the tag because I believe Pedro sent the 9p fix before
+sending the new warning patch itself, so there was even no commit ID yet.
+The plan was to introduce the warning only after all pre-existing in-tree
+code that would triggers it was fixed. I just assumed the fix would be
+mainlined before/at the same time as the warning itself, but forgot to
+check. In any case if I see e.g. autosel picking the warning patch for
+stable, I'll object.
+
+Thanks,
+Vlastimil
+
 > 
-> diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> index 02febc883588..4ecd7d53e859 100644
-> --- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> +++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> @@ -8,7 +8,7 @@
->      -----------------------
->      |       alpha: | TODO |
->      |         arc: | TODO |
-> -    |         arm: | TODO |
-> +    |         arm: |  ok  |
->      |       arm64: | TODO |
->      |        csky: |  ok  |
->      |     hexagon: | TODO |
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 9f09a16338e3..036381c5d42f 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -114,6 +114,7 @@ config ARM
->  	select HAVE_KERNEL_LZO
->  	select HAVE_KERNEL_XZ
->  	select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
-> +	select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
+> Thanks,
 
-You should write this as
-
-select HAVE_KPROBES_ON_FTRACE if HAVE_KPROBES
-
-to clear that this needs more restrictions than Kprobes or not.
-
->  	select HAVE_KRETPROBES if HAVE_KPROBES
->  	select HAVE_MOD_ARCH_SPECIFIC
->  	select HAVE_NMI
-> diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
-> index 5be3ddc96a50..ecf5590f3657 100644
-> --- a/arch/arm/include/asm/ftrace.h
-> +++ b/arch/arm/include/asm/ftrace.h
-> @@ -22,6 +22,23 @@ struct dyn_arch_ftrace {
->  #endif
->  };
->  
-> +/*
-> + * The compiler emitted profiling hook consists of
-> + *
-> + *   PUSH    {LR}
-> + *   BL	     __gnu_mcount_nc
-> + *
-> + * To turn this combined sequence into a NOP, we need to restore the value of
-> + * SP before the PUSH. Let's use an ADD rather than a POP into LR, as LR is not
-> + * modified anyway, and reloading LR from memory is highly likely to be less
-> + * efficient.
-> + */
-> +#ifdef CONFIG_THUMB2_KERNEL
-> +#define	FTRACE_NOP		0xf10d0d04	/* add.w sp, sp, #4 */
-> +#else
-> +#define	FTRACE_NOP		0xe28dd004	/* add   sp, sp, #4 */
-> +#endif
-> +
->  static inline unsigned long ftrace_call_adjust(unsigned long addr)
->  {
->  	/* With Thumb-2, the recorded addresses have the lsb set */
-> diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
-> index e61591f33a6c..0bb372f5aa1d 100644
-> --- a/arch/arm/kernel/ftrace.c
-> +++ b/arch/arm/kernel/ftrace.c
-> @@ -25,23 +25,6 @@
->  #include <asm/stacktrace.h>
->  #include <asm/patch.h>
->  
-> -/*
-> - * The compiler emitted profiling hook consists of
-> - *
-> - *   PUSH    {LR}
-> - *   BL	     __gnu_mcount_nc
-> - *
-> - * To turn this combined sequence into a NOP, we need to restore the value of
-> - * SP before the PUSH. Let's use an ADD rather than a POP into LR, as LR is not
-> - * modified anyway, and reloading LR from memory is highly likely to be less
-> - * efficient.
-> - */
-> -#ifdef CONFIG_THUMB2_KERNEL
-> -#define	NOP		0xf10d0d04	/* add.w sp, sp, #4 */
-> -#else
-> -#define	NOP		0xe28dd004	/* add   sp, sp, #4 */
-> -#endif
-> -
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  
->  static int __ftrace_modify_code(void *data)
-> @@ -60,7 +43,7 @@ void arch_ftrace_update_code(int command)
->  
->  static unsigned long ftrace_nop_replace(struct dyn_ftrace *rec)
->  {
-> -	return NOP;
-> +	return FTRACE_NOP;
->  }
->  
->  void ftrace_caller_from_init(void);
-> diff --git a/arch/arm/probes/Makefile b/arch/arm/probes/Makefile
-> index 8b0ea5ace100..b3c355942a21 100644
-> --- a/arch/arm/probes/Makefile
-> +++ b/arch/arm/probes/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o uprobes/
->  obj-$(CONFIG_KPROBES)		+= decode.o kprobes/
-> +obj-$(CONFIG_KPROBES_ON_FTRACE)	+= ftrace.o
->  ifdef CONFIG_THUMB2_KERNEL
->  obj-$(CONFIG_KPROBES)		+= decode-thumb.o
->  else
-> diff --git a/arch/arm/probes/ftrace.c b/arch/arm/probes/ftrace.c
-> new file mode 100644
-> index 000000000000..0f54b8e5d2a6
-> --- /dev/null
-> +++ b/arch/arm/probes/ftrace.c
-> @@ -0,0 +1,53 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/kprobes.h>
-> +
-> +/* Ftrace callback handler for kprobes -- called under preepmt disabled */
-> +void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
-> +			   struct ftrace_ops *ops, struct ftrace_regs *regs)
-
-nit: ftrace_regs argument should be 'fregs' to distinguish from pt_regs.
-
-> +{
-
-To avoid accessing regs inside fregs, use ftrace_get_regs() here.
-
-struct pt_regs *regs = ftrace_get_regs(fregs);
-
-And check regs is not NULL.
-
-> +	struct kprobe *p;
-> +	struct kprobe_ctlblk *kcb;
-
-----
-	int bit;
-
-	if (unlikely(kprobe_ftrace_disabled))
-		return;
-
-	bit = ftrace_test_recursion_trylock(ip, parent_ip);
-	if (bit < 0)
-		return;
-----
-
-See arch/x86/kernel/kprobes/ftrace.c 
-
-> +
-> +	p = get_kprobe((kprobe_opcode_t *)ip);
-> +	if (unlikely(!p) || kprobe_disabled(p))
-> +		return;
-> +
-> +	kcb = get_kprobe_ctlblk();
-> +	if (kprobe_running()) {
-> +		kprobes_inc_nmissed_count(p);
-> +	} else {
-> +		unsigned long orig_ip = instruction_pointer(&(regs->regs));
-> +
-> +		instruction_pointer_set(&(regs->regs), ip);
-> +
-> +		__this_cpu_write(current_kprobe, p);
-> +		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> +		if (!p->pre_handler || !p->pre_handler(p, &(regs->regs))) {
-> +			/*
-> +			 * Emulate singlestep (and also recover regs->pc)
-> +			 * as if there is a nop
-> +			 */
-> +			instruction_pointer_set(&(regs->regs),
-> +						(unsigned long)p->addr + MCOUNT_INSN_SIZE);
-
-Hm, x86 implementation is somewhat wrong (not good). This instruction
-pointer should be updated only if p->post_handler is there...
-
-> +			if (unlikely(p->post_handler)) {
-> +				kcb->kprobe_status = KPROBE_HIT_SSDONE;
-> +				p->post_handler(p, &(regs->regs), 0);
-> +			}
-> +			instruction_pointer_set(&(regs->regs), orig_ip);
-> +		}
-> +
-> +		/*
-> +		 * If pre_handler returns !0, it changes regs->pc. We have to
-> +		 * skip emulating post_handler.
-> +		 */
-> +		__this_cpu_write(current_kprobe, NULL);
-> +	}
-
-And 
-
-out:
-	ftrace_test_recursion_unlock(bit);
-
-> +}
-> +NOKPROBE_SYMBOL(kprobe_ftrace_handler);
-> +
-> +int arch_prepare_kprobe_ftrace(struct kprobe *p)
-> +{
-> +	p->ainsn.insn = NULL;
-> +	return 0;
-> +}
-> diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
-> index d8238da095df..45ccf8bea5e4 100644
-> --- a/arch/arm/probes/kprobes/core.c
-> +++ b/arch/arm/probes/kprobes/core.c
-> @@ -45,6 +45,38 @@ DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
->  DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->  
->  
-> +kprobe_opcode_t *arch_adjust_kprobe_addr(unsigned long addr, unsigned long offset,
-> +					 bool *on_func_entry)
-> +{
-
-Here @addr is a symbol address and @offset is the probe offset from symbol.
-
-> +#ifdef CONFIG_KPROBES_ON_FTRACE
-> +	unsigned long nop_offset = 0;
-
-In the above comment in ftrace.h, the mcount callsite code should be
-
-<FUNCTION>:
- PUSH {LR}
- FTRACE_NOP
-
-Thus if the @offset is 0 or 4, then we should check the function's entry
-sequence (2 instructions) should be the above pattern, and if so,
-the offset should be skipped and the address should be @addr + 4.
-If there is no such pattern, do not change it, return @addr + @offset.
-
-So, something like,
-
-#define ARM_MCOUNT_OFFSET 4
-
-if (offset <= ARM_MCOUNT_OFFSET) {
-	if (copy_from_kernel_nofault())
-		goto out;
-	if (insn != FTRACE_PUSH_LR)
-		goto out;
-	if (copy_from_kernel_nofault())
-		goto out;
-	if (insn != FTRACE_NOP)
-		goto out;
-	if (!offset)
-		
-	offset = ARM_MCOUNT_OFFSET;
-	*on_func_entry = true;
-}
-out:
-	return addr + offset;
-
-Thank you,
-
-> +	u32 insn = 0;
-> +
-> +	/*
-> +	 * Since 'addr' is not guaranteed to be safe to access, use
-> +	 * copy_from_kernel_nofault() to read the instruction:
-> +	 */
-> +	if (copy_from_kernel_nofault(&insn, (void *)(addr + nop_offset),
-> +				     sizeof(u32)))
-> +		return NULL;
-> +
-> +	while (insn != FTRACE_NOP) {
-> +		nop_offset += 4;
-> +		if (copy_from_kernel_nofault(&insn, (void *)(addr + nop_offset),
-> +					     sizeof(u32)))
-> +			return NULL;
-> +	}
-> +
-> +	*on_func_entry = offset <= nop_offset;
-> +	if (*on_func_entry)
-> +		offset = nop_offset;
-> +#else
-> +	*on_func_entry = !offset;
-> +#endif
-> +
-> +	return (kprobe_opcode_t *)(addr + offset);
-> +}
-> +
->  int __kprobes arch_prepare_kprobe(struct kprobe *p)
->  {
->  	kprobe_opcode_t insn;
-> -- 
-> 2.34.1
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
