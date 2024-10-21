@@ -1,308 +1,124 @@
-Return-Path: <linux-kernel+bounces-374138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE899A65F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:10:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BC59A65FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7B2B21B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:53:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8A7AB22529
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9551F4737;
-	Mon, 21 Oct 2024 10:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7621F584A;
+	Mon, 21 Oct 2024 10:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDSUheKL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MwoAI8l5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849D61E4113
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2621EBA17;
+	Mon, 21 Oct 2024 10:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507680; cv=none; b=Y0mBaccMxuZo8pQabwmn+WGo4knV4vtNC1GEFFDem8qLprSkMMRyCa7kQI6MMMK6bLQqJi2dADzjG2WbeAJoMQz4nOIal1Kymeix6gUBpCzhoyPFdzO4hbCfATWynmXD0SASu5ryEeKsNqWk1rq3bQkBbaF3LEv8DmnAtIxTPJ8=
+	t=1729507701; cv=none; b=Z4UliePByGI4d2tWdVb4eEDiEVdSpZ4Gp4dUFIwsV4/fbAKaaqAI5YkaRmBYRh+mFE8eUDtMfhootwjCUGBz4wxe56hcl3ViXEfKY9LKCWSjlKUjCQ8eibgjPZuqCRwuzXA7Itwea7EJt6hug4lZk6XB3zRA7DSK9F108fRSc+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507680; c=relaxed/simple;
-	bh=SMjnTSr9VUwof+iEmcpuQvv4HwVDZQDp/zIe72N2lng=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cgVCtIMYixCciCzXD3KaMtF3ctQhnUCvkSzTTPk3nB/1kU/RLxfQVPWzp3UXwizw99OunvcmtpMTSfy8upeLMvJK5BurfUdRx7Y7/baXMxuWfhWbNYb9Ih5uQeCWa1e4JpryRoG6BnLIsmYXS8qB8n/kCsUN5+gKaIBoLK711Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDSUheKL; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729507679; x=1761043679;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=SMjnTSr9VUwof+iEmcpuQvv4HwVDZQDp/zIe72N2lng=;
-  b=lDSUheKL+Rv4TgTjN2o/sHyXPqvm+LVgw6pTJ2a5zOZJWm8MglV3ufxG
-   Ub1sAWs1GnNcchTe2Lhtdq28u/RVB0JrgUpc/f+i7oMd6EduZy8IPzt/W
-   V3B4I1PwyYzfb/cCapzIoiBFL8fN3xheUkH0fm/GxSrpc+oi94Y+9zEXT
-   98DBpT/YJKtwSup23waWaSjwHiurV5/QalXVt130atEOf64PuSC1p2UDH
-   KtUcG9IHgTx1FZUx8Ua+qD/bHieGFf0frnmL2ujM2DrZlyPRMGXHBEgJx
-   ZTGX3lnANyKxSRwSYYT95mOjNWPeqctOb79E280Z7xWYNEp3DMSv+3F2v
-   g==;
-X-CSE-ConnectionGUID: +AL8rRPITk+YMqnD2e5yRQ==
-X-CSE-MsgGUID: 0OHYH3EjRFSRjktn+WLiUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="32790128"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="32790128"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:47:58 -0700
-X-CSE-ConnectionGUID: byBY8t8sQvej1lNomSCrIg==
-X-CSE-MsgGUID: CBSbkv8PT1uk8WECIH9HMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79645959"
-Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.239]) ([10.245.246.239])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:47:55 -0700
-Message-ID: <64aa70d30c25a95bce34c2eeff38dd3e23d48d17.camel@linux.intel.com>
-Subject: Re: [PATCH v3] locking/ww_mutex: Adjust to lockdep nest_lock
- requirements
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Boqun Feng <boqun.feng@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: intel-xe@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>, Will
- Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Maarten
- Lankhorst <maarten@lankhorst.se>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com
-Date: Mon, 21 Oct 2024 12:47:42 +0200
-In-Reply-To: <ZxE3t2ztVYo1ol9T@boqun-archlinux>
-References: <20241017151007.92215-1-thomas.hellstrom@linux.intel.com>
-	 <ZxE3t2ztVYo1ol9T@boqun-archlinux>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1729507701; c=relaxed/simple;
+	bh=Po2snFgeTrzgadxSlfIpIeFgxFSFGjUIBP2VrnUvZI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EzpJ4znbMGVDXY5DujlpIQfwRtrfTjEugC0hZgwb/E7AQvkL5h3fgD74v4VTNONQrEfmfR3CWj8398yzo/imtJKaeEMb31GyTHXOMoIG7cXZlGEAYmzKdc9kitsGGNT2K2ZrZxeeWl2HT7tJll/WLSsmxbz6X4W44x12MXH8SZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MwoAI8l5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XJWSXDEmTz10iT7O0Zf08zwnUMKpBRU/Y+jJiekO3bk=; b=MwoAI8l5epAYqpSlT2cz4vWB4k
+	zdlEE+AwQcCYSnta1RjpMCw/ZHNlAbzUyb9FhZ2nkWcr21MrGummeFi7s17GEto6lm4JQmUhx1ahP
+	9RjKOghZzq00Z/ahNdIcQ35E4Pad6feHEcAw2j3nMQBofPwYRMoTyCcYnn58O4inXmZo3hPVhu54y
+	3rTtZ8il+AfjsRW4GzpHqxuoC9RqA+BW2SknPwiHfy8U4TltqD5Q3TcFrPOqdEvO4UYRBz4t4/9Lb
+	N+ZZvYlYxoEJm+PKlDuohbcjhJHPsKeFGVWgMFlZ1az+O9Kt2C+0t3VnIMsJ0tirPEQJ8VUKOLl48
+	2egPlGjw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t2pxP-00000007tNc-2GyP;
+	Mon, 21 Oct 2024 10:48:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3251730073F; Mon, 21 Oct 2024 12:48:15 +0200 (CEST)
+Date: Mon, 21 Oct 2024 12:48:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH v2 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
+ lifetime (with timeout)
+Message-ID: <20241021104815.GC6791@noisy.programming.kicks-ass.net>
+References: <20241008002556.2332835-1-andrii@kernel.org>
+ <20241008002556.2332835-3-andrii@kernel.org>
+ <20241018101647.GA36494@noisy.programming.kicks-ass.net>
+ <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
 
-On Thu, 2024-10-17 at 09:13 -0700, Boqun Feng wrote:
-> On Thu, Oct 17, 2024 at 05:10:07PM +0200, Thomas Hellstr=C3=B6m wrote:
-> > When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
-> > the
-> > number of acquired lockdep_maps of mutexes of the same class, and
-> > also
-> > keeps a pointer to the first acquired lockdep_map of a class. That
-> > pointer
-> > is then used for various comparison-, printing- and checking
-> > purposes,
-> > but there is no mechanism to actively ensure that lockdep_map stays
-> > in
-> > memory. Instead, a warning is printed if the lockdep_map is freed
-> > and
-> > there are still held locks of the same lock class, even if the
-> > lockdep_map
-> > itself has been released.
-> >=20
-> > In the context of WW/WD transactions that means that if a user
-> > unlocks
-> > and frees a ww_mutex from within an ongoing ww transaction, and
-> > that
-> > mutex happens to be the first ww_mutex grabbed in the transaction,
-> > such a warning is printed and there might be a risk of a UAF.
-> >=20
-> > Note that this is only problem when lockdep is enabled and affects
-> > only
-> > dereferences of struct lockdep_map.
-> >=20
-> > Adjust to this by adding a fake lockdep_map to the acquired context
-> > and
-> > make sure it is the first acquired lockdep map of the associated
-> > ww_mutex class. Then hold it for the duration of the WW/WD
-> > transaction.
-> >=20
-> > This has the side effect that trying to lock a ww mutex *without* a
-> > ww_acquire_context but where a such context has been acquire, we'd
-> > see
-> > a lockdep splat. The test-ww_mutex.c selftest attempts to do that,
-> > so
-> > modify that particular test to not acquire a ww_acquire_context if
-> > it
-> > is not going to be used.
-> >=20
-> > v2:
-> > - Lower the number of locks in the test-ww_mutex
-> > =C2=A0 stress(STRESS_ALL) test to accommodate the dummy lock
-> > =C2=A0 introduced in this patch without overflowing lockdep held lock
-> > =C2=A0 references.
-> >=20
-> > v3:
-> > - Adjust the ww_test_normal locking-api selftest to avoid
-> > =C2=A0 recursive locking (Boqun Feng)
-> > - Initialize the dummy lock map with LD_WAIT_SLEEP to agree with
-> > =C2=A0 how the corresponding ww_mutex lockmaps are initialized
-> > =C2=A0 (Boqun Feng)
-> >=20
->=20
-> Thanks!
->=20
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Maarten Lankhorst <maarten@lankhorst.se>
-> > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-kernel@vger.kernel.org
->=20
-> Feel free to use these tags if you need.
->=20
-> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
->=20
-> > Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
-> > Acked-by: maarten.lankhorst@linux.intel.com=C2=A0#v1
->=20
-> Tested-by: Boqun Feng <boqun.feng@gmail.com>
+On Fri, Oct 18, 2024 at 11:22:09AM -0700, Andrii Nakryiko wrote:
 
+> > So... after a few readings I think I'm mostly okay with this. But I got
+> > annoyed by the whole HPROBE_STABLE with uprobe=NULL weirdness. Also,
+> > that data_race() usage is weird, what is that about?
+> 
+> People keep saying that evil KCSAN will come after me if I don't add
+> data_race() for values that can change under me, so I add it to make
+> it explicit that it's fine. But I can of course just drop data_race(),
+> as it has no bearing on correctness.
 
-Peter, Can you add these 3 tags when picking, or do you want me to send
-a v4 with the tags included.
+AFAICT this was READ_ONCE() vs xchg(), and that should work. Otherwise I
+have to yell at KCSAN people again :-)
 
-Thanks,
-Thomas
+> > And then there's the case where we end up doing:
+> >
+> >   try_get_uprobe()
+> >   put_uprobe()
+> >   try_get_uprobe()
+> >
+> > in the dup path. Yes, it's unlikely, but gah.
+> >
+> >
+> > So how about something like this?
+> 
+> Yep, it makes sense to start with HPROBE_GONE if it's already NULL, no
+> problem. I'll roll those changes in.
+> 
+> I'm fine with the `bool get` flag as well. Will incorporate all that
+> into the next revision, thanks!
+> 
+> The only problem I can see is in the assumption that `srcu_idx < 0` is
+> never going to be returned by srcu_read_lock(). Paul says that it can
+> only be 0 or 1, but it's not codified as part of a contract.
 
+Yeah, [0,1] is the current range. Fundamentally that thing is an array
+index, so negative values are out and generally safe to use as 'error'
+codes. Paul can't we simply document that the SRCU cookie is always a
+positive integer (or zero) and the negative space shall not be used?
 
+> So until we change that, probably safer to pass an extra bool
+> specifying whether srcu_idx is valid or not, is that OK?
 
->=20
-> Peter, since the v2 of this is actually picked in tip/locking/core, I
-> assume you are going to drop that pick this v3? Let me know how you
-> want
-> to proceed, since I have a PR based on tip/locking/core.
->=20
-> Regards,
-> Boqun
->=20
-> > ---
-> > =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14=
- ++++++++++++++
-> > =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
-> > =C2=A0lib/locking-selftest.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 4 ++--
-> > =C2=A03 files changed, 21 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-> > index bb763085479a..45ff6f7a872b 100644
-> > --- a/include/linux/ww_mutex.h
-> > +++ b/include/linux/ww_mutex.h
-> > @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
-> > =C2=A0#endif
-> > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > =C2=A0	struct lockdep_map dep_map;
-> > +	/**
-> > +	 * @first_lock_dep_map: fake lockdep_map for first locked
-> > ww_mutex.
-> > +	 *
-> > +	 * lockdep requires the lockdep_map for the first locked
-> > ww_mutex
-> > +	 * in a ww transaction to remain in memory until all
-> > ww_mutexes of
-> > +	 * the transaction have been unlocked. Ensure this by
-> > keeping a
-> > +	 * fake locked ww_mutex lockdep map between
-> > ww_acquire_init() and
-> > +	 * ww_acquire_fini().
-> > +	 */
-> > +	struct lockdep_map first_lock_dep_map;
-> > =C2=A0#endif
-> > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> > =C2=A0	unsigned int deadlock_inject_interval;
-> > @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
-> > ww_acquire_ctx *ctx,
-> > =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
-> > =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
-> > =C2=A0			 &ww_class->acquire_key, 0);
-> > +	lockdep_init_map_wait(&ctx->first_lock_dep_map, ww_class-
-> > >mutex_name,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ww_class->mutex_key, 0,
-> > LD_WAIT_SLEEP);
-> > =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-> > +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx-
-> > >dep_map, _RET_IP_);
-> > =C2=A0#endif
-> > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> > =C2=A0	ctx->deadlock_inject_interval =3D 1;
-> > @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
-> > ww_acquire_ctx *ctx)
-> > =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
-> > =C2=A0{
-> > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
-> > =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
-> > =C2=A0#endif
-> > =C2=A0#ifdef DEBUG_WW_MUTEXES
-> > diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-
-> > ww_mutex.c
-> > index 10a5736a21c2..5d58b2c0ef98 100644
-> > --- a/kernel/locking/test-ww_mutex.c
-> > +++ b/kernel/locking/test-ww_mutex.c
-> > @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
-> > =C2=A0	int ret;
-> > =C2=A0
-> > =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
-> > -	ww_acquire_init(&ctx, &ww_class);
-> > +	if (flags & TEST_MTX_CTX)
-> > +		ww_acquire_init(&ctx, &ww_class);
-> > =C2=A0
-> > =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
-> > =C2=A0	init_completion(&mtx.ready);
-> > @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
-> > =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
-> > TIMEOUT);
-> > =C2=A0	}
-> > =C2=A0	ww_mutex_unlock(&mtx.mutex);
-> > -	ww_acquire_fini(&ctx);
-> > +	if (flags & TEST_MTX_CTX)
-> > +		ww_acquire_fini(&ctx);
-> > =C2=A0
-> > =C2=A0	if (ret) {
-> > =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion failure\n",
-> > @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
-> > =C2=A0	if (ret)
-> > =C2=A0		return ret;
-> > =C2=A0
-> > -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus,
-> > STRESS_ALL);
-> > +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus,
-> > STRESS_ALL);
-> > =C2=A0	if (ret)
-> > =C2=A0		return ret;
-> > =C2=A0
-> > diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-> > index 6f6a5fc85b42..6750321e3e9a 100644
-> > --- a/lib/locking-selftest.c
-> > +++ b/lib/locking-selftest.c
-> > @@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
-> > =C2=A0{
-> > =C2=A0	int ret;
-> > =C2=A0
-> > -	WWAI(&t);
-> > -
-> > =C2=A0	/*
-> > =C2=A0	 * None of the ww_mutex codepaths should be taken in the
-> > 'normal'
-> > =C2=A0	 * mutex calls. The easiest way to verify this is by using
-> > the
-> > @@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
-> > =C2=A0	ww_mutex_base_unlock(&o.base);
-> > =C2=A0	WARN_ON(o.ctx !=3D (void *)~0UL);
-> > =C2=A0
-> > +	WWAI(&t);
-> > +
-> > =C2=A0	/* nest_lock */
-> > =C2=A0	o.ctx =3D (void *)~0UL;
-> > =C2=A0	ww_mutex_base_lock_nest_lock(&o.base, &t);
-> > --=20
-> > 2.46.0
-> >=20
+I think Changeing the SRCU documentation to provide us this guarantee
+should be an achievable goal.
 
+> (and I assume you want me to drop verbose comments for various states, right?)
+
+I axed the comments because I made them invalid and didn't care enough
+to fix them up. If you like them feel free to amend them to reflect the
+new state of things.
 
