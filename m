@@ -1,190 +1,187 @@
-Return-Path: <linux-kernel+bounces-373842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9D39A5D8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBFE9A5D92
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A2D1F2187A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6CAE1F21049
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9DA1E0E16;
-	Mon, 21 Oct 2024 07:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98221E0E05;
+	Mon, 21 Oct 2024 07:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tN4Rl7Jf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lcpea5Iv"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D471E0DD7;
-	Mon, 21 Oct 2024 07:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3CD1D1308;
+	Mon, 21 Oct 2024 07:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729497051; cv=none; b=MpkfQMpArNzZxmBjfg4VYavDnABXILRfksulDBVrjdxBkNFu7EV7oLMqVlbekn5EYSFyS6R2uNVeEz44rzHFoT4xqZC5dDWjM7oNL8f71a57jYObtmApWp0meM4N/xceN6/AfdWyR4Y67YjrdaAgWhuT3H6N2hnfAm4j0r3Kjy8=
+	t=1729497095; cv=none; b=aq8XbtJ4WqfiB6hkl87H6tWkAiDIpSztpzpJ9pbTkYONRizCROCbJ5IeFaA+m2xnyc72iUcyyJohlTfb3vBU1lBbwFNb0bpWnwQKJ6XNGrbQEsZSpo2+wyz842ib5dJCJ9byVzcyu7nn4cnAk0PsG4yiQ2prpqrnbF8AKC4HvnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729497051; c=relaxed/simple;
-	bh=5yG1wAUGt/ltY2yssfS8ZkIcj1BmS/igZ8q9ZvX+qCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lh9pO/vvn3o8y0W/nfJek/guCcLM2Zs7VQaRRRnlDu+KWa48ANAGw09/1gDyyn31PRlyEu8OeCeR6ONLiPJGyHlRvf2qyk9DghpRCPcCtWQPo8g3EKxuadVihq6dit2QC8fl6NITwWK7U/urojxQYe4pnixWw1WZJQMlWZA0SLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tN4Rl7Jf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECA4C4CEC3;
-	Mon, 21 Oct 2024 07:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729497051;
-	bh=5yG1wAUGt/ltY2yssfS8ZkIcj1BmS/igZ8q9ZvX+qCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tN4Rl7JfV8AzD26b8U3sBe9Ud+AlD5PCsT1c/FiXxb9a3LsIVnLKfxbamrTl7f0ML
-	 U3MBOVQCQH2rxywGWVk0acPs6qZyra1JAMtIpoxwHB9tb9Sr9vTSuG/7CpwZCYLa0H
-	 L1x35Tnrx1y8X8DwUl9NgV3LOszGfQojQpaDrHj0uebncjy1SPqU50HIpo1rx2v1w6
-	 F5F126ViY2CR0Ie5H+sxbfSJqoZbv4MQnDmvTFkqNTl1mCYaLJiP0q3WqlFDCWxF5T
-	 mn/l+9+0I4xY90BHNfW8Wk/ybC2qE7uWKfaicHAbljDoTX4k9TRUWTr6g0s0/zEqhW
-	 7VIuqXNZrQuog==
-Message-ID: <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
-Date: Mon, 21 Oct 2024 09:50:42 +0200
+	s=arc-20240116; t=1729497095; c=relaxed/simple;
+	bh=B/+QQSXeVAV8qhjBIr60FMU2TxAWb7d3IKRFyK1/9xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HtE5gGcOLeHk3lb6O7ec8c1k0b15hZuxv1n/g4ItGUDbHNTtW0vneLBHztJIb37QEWLRSRwxRkWRMaIvG+7lVrzIsCVrfHCdv4yyfI1aHAxMahvIPjjo3ocHUEo0enDunyq8maLz1tlGsVnii8WJtJjWMhmGSRX29mhxb8AfSMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lcpea5Iv; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso38390991fa.3;
+        Mon, 21 Oct 2024 00:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729497091; x=1730101891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QYx22NJnU8m5zMVc9qXfVExwyrt1nX+c8Lx7LpR9E7U=;
+        b=Lcpea5Iv7dcABLRONIvriWaYX5bxGRLvo6tk/o6z5pv3evYDtqM7MZJjkxCudrXKZg
+         1lXBZNuRroQ1qNgC1/vfW5BYdJvYr+KJ3FWW2byXsozeBcH1/MSIHGxZ5IZAXx6eKTNU
+         QGZVnNtvkjxo7m768PcLQzR5x5u3zMaSFtHf266Z0xjwEXCTSK+0MmAjY1KZeU8XG3Hq
+         yodUPqv1QbD0V5MhYV7PMriaF88J4dkaK4SkjeDsnwwwbPbkmsie4ve2MU2ZwURAU3xW
+         lMFwNYF6YRK7cTRNwep4vxa1/VtnwZS0fc/0SlS7PMcUo72w21E90LnJqXzJitmWblvM
+         88Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729497091; x=1730101891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QYx22NJnU8m5zMVc9qXfVExwyrt1nX+c8Lx7LpR9E7U=;
+        b=hu8QsPKt/LKi2qpqluww48eb+NEGmGjzmnrNiaa3fbFLkKvH/f4yIjYv3rN4wuMNOP
+         +siCkknYlBoyzwM/50hE97OQYqYmljPePuq4aAhdIG/l5RuJCTdCssVNeB5Q/hFd81/7
+         eOqXgXsTi6p91+XDJ5D7HGNcY9V30n4JT2rwDqaI7B9ZNISr5N6r3nABCEthQlP+vXs+
+         UlIt293q30W9TrSD7sTkNpsdkZXwhWMm/u04ZI9LQwlp8BHoo/q7PiiuG8IPev6u5rGk
+         IdDvtsPwNWnPM5pLXhwZwtxD+USAISQ/0LN1G/J6TS+JhFc6fZ7D4MAfBiWX+zNKOk6k
+         Klqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAh8DhdGoCG6NHTYcHaE0E5lo78HgDvRH+bk+QBZpb1fCuSc2D4xVFZTkp6kPcW3wumIq7cRUumSSCw6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4E//IVlSXNVW1AKaEly/Sgb4Rsi6wSUFqhKYv3BRe0bG2S0YS
+	CGy2SEU3NKcvRsMV7i7vE2hkuP+FNOsKTIPBi0e+qMVRYp+8vl0DBLKhB+H3FZsxeSPQrdpqmWa
+	WFUXtpG+hM0Q7UrmNCBcIlf4m+A0=
+X-Google-Smtp-Source: AGHT+IFLOGfRY6ct8GZX60Bpp0Uwa+HWCtZXKnr+ZCoywSARUvYnfkMVWHh22+t6nOSTCIzfAZgCV7d8s1MikHvXzeI=
+X-Received: by 2002:a2e:be0f:0:b0:2f7:4f84:50a2 with SMTP id
+ 38308e7fff4ca-2fb832020b6mr43469821fa.31.1729497090839; Mon, 21 Oct 2024
+ 00:51:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
- Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
- <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
- "marcel@holtmann.org" <marcel@holtmann.org>,
- "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
- <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
- <20241021064129.trchqa2oickna7pc@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241021064129.trchqa2oickna7pc@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241008054615.43062-1-yang.li85200@gmail.com>
+ <20241016095626.8162-1-yang.li85200@gmail.com> <CAJF2gTQ5D8fU9rSs7V28S9c5+ZPuQSJW7inQtoFsM6X6gBgOKg@mail.gmail.com>
+In-Reply-To: <CAJF2gTQ5D8fU9rSs7V28S9c5+ZPuQSJW7inQtoFsM6X6gBgOKg@mail.gmail.com>
+From: yang li <yang.li85200@gmail.com>
+Date: Mon, 21 Oct 2024 15:51:18 +0800
+Message-ID: <CA+N+=zvG62nrmz=f1n1hCztu8k=KBg24_ZZKCWbn2Bhzd7cUdQ@mail.gmail.com>
+Subject: Re: [PATCH v2] csky: fix csky_cmpxchg_fixup not working
+To: Guo Ren <guoren@kernel.org>
+Cc: linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/10/2024 08:41, Marco Felsch wrote:
-> On 24-10-07, Krzysztof Kozlowski wrote:
->> On 07/10/2024 14:58, POPESCU Catalin wrote:
->>>>>>
->>>>>> +  vcc-supply:
->>>>>> +    description:
->>>>>> +      phandle of the regulator that provides the supply voltage.
->>>>>> +
->>>>>> +  reset-gpios:
->>>>>> +    description:
->>>>>> +      Chip powerdown/reset signal (PDn).
->>>>>> +
->>>>> Hi Catalin,
->>>>>
->>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
->>>>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
->>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
->>>
->>> Hi Sherry,
->>>
->>> Regulators and reset controls being refcounted, we can then implement 
->>> powerup sequence in both bluetooth/wlan drivers and have the drivers 
->>> operate independently. This way bluetooth driver would has no dependance 
->>> on the wlan driver for :
->>>
->>> - its power supply
->>>
->>> - its reset pin (PDn)
->>>
->>> - its firmware (being downloaded as part of the combo firmware)
->>>
->>> For the wlan driver we use mmc power sequence to drive the chip reset 
->>> pin and there's another patchset that adds support for reset control 
->>> into the mmc pwrseq simple driver.
->>>
->>>> Please wrap your replies.
->>>>
->>>> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
->>>
->>> Hi Krzysztof,
->>>
->>> I'm not familiar with power sequencing, but looks like way more 
->>> complicated than reset controls. So, why power sequencing is recommended 
->>> here ? Is it b/c a supply is involved ?
->>
->> Based on earlier message:
->>
->> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
->> that both wifi and BT controller will be powered on and off at the same
->> time."
->>
->> but maybe that's not needed. No clue, I don't know the hardware. But be
->> carefully what you write in the bindings, because then it will be ABI.
-> 
-> We noticed the new power-sequencing infrastructure which is part of 6.11
-> too but I don't think that this patch is wrong. The DT ABI won't break
-> if we switch to the power-sequencing later on since the "reset-gpios"
-> are not marked as required. So it is up to the driver to handle it
-> either via a separate power-sequence driver or via "power-supply" and
-> "reset-gpios" directly.
+Hi Guo Ren:
+In C language, your conclusion is correct, but in assembly language,
+ global_symbol !=3D &global_symbol
+I did the following experiment:
 
-That's not the point. We expect correct hardware description. If you say
-now it has "reset-gpios" but later say "actually no, because it has
-PMU", I respond: no. Describe the hardware, not current Linux.
+liyang@liyang-virtual-machine:~/Desktop/test$ ls
+main.c  test.s
+liyang@liyang-virtual-machine:~/Desktop/test$ cat test.s
 
-Best regards,
-Krzysztof
+.globl test_symbol
+test_symbol:
+        nop
+liyang@liyang-virtual-machine:~/Desktop/test$ cat main.c
+#include <stdio.h>
 
+extern unsigned long test_symbol;
+int main(void)
+{
+        printf("test_symbol =3D 0x%lx\n",(unsigned long)test_symbol);
+        printf("&test_symbol =3D 0x%lx\n",(unsigned long)&test_symbol);
+
+        printf("main =3D 0x%lx\n",(unsigned long)main);
+        printf("&main =3D 0x%lx\n",(unsigned long)&main);
+}
+liyang@liyang-virtual-machine:~/Desktop/test$ gcc main.c test.s --static -o=
+ test
+liyang@liyang-virtual-machine:~/Desktop/test$ ls
+main.c  test  test.s
+liyang@liyang-virtual-machine:~/Desktop/test$ readelf test -s | grep test_s=
+ymbol
+   884: 000000000040170c     0 NOTYPE  GLOBAL DEFAULT    7 test_symbol
+liyang@liyang-virtual-machine:~/Desktop/test$ readelf test -s | grep main -=
+w
+  1605: 0000000000401685   135 FUNC    GLOBAL DEFAULT    7 main
+liyang@liyang-virtual-machine:~/Desktop/test$ ./test
+test_symbol =3D 0x4b853001f0f90
+&test_symbol =3D 0x40170c
+main =3D 0x401685
+&main =3D 0x401685
+
+The above test can lead to the conclusion that:
+Both c_symbol and &c_symbol represent the address of a symbol, but
+&ASM_symbol represents the address of a symbol while ASM_symbol
+ represents the opcode stored at that address.
+
+On Thu, Oct 17, 2024 at 2:05=E2=80=AFPM Guo Ren <guoren@kernel.org> wrote:
+>
+> On Wed, Oct 16, 2024 at 5:56=E2=80=AFPM Yang Li <yang.li85200@gmail.com> =
+wrote:
+> >
+> > In the csky_cmpxchg_fixup function, it is incorrect to use the global
+> >  variable csky_cmpxchg_stw to determine the address where the exception
+> >  occurred.The global variable csky_cmpxchg_stw stores the opcode at the
+> >  time of the exception, while &csky_cmpxchg_stw shows the address where
+> >  the exception occurred.
+> >
+> > Signed-off-by: Yang Li <yang.li85200@gmail.com>
+> > ---
+> > V1 -> V2:Eliminate compilation warnings
+> >
+> >  arch/csky/mm/fault.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
+> > index a885518ce1dd..5226bc08c336 100644
+> > --- a/arch/csky/mm/fault.c
+> > +++ b/arch/csky/mm/fault.c
+> > @@ -45,8 +45,8 @@ static inline void csky_cmpxchg_fixup(struct pt_regs =
+*regs)
+> >         if (trap_no(regs) !=3D VEC_TLBMODIFIED)
+> >                 return;
+> >
+> > -       if (instruction_pointer(regs) =3D=3D csky_cmpxchg_stw)
+> > -               instruction_pointer_set(regs, csky_cmpxchg_ldw);
+> > +       if (instruction_pointer(regs) =3D=3D (unsigned long)&csky_cmpxc=
+hg_stw)
+> > +               instruction_pointer_set(regs, (unsigned long)&csky_cmpx=
+chg_ldw);
+> csky_cmpxchg_ldw(stw) is a label symbol, not a variable.
+>
+> arch/csky/kernel/atomic.S:
+> GLOBAL(csky_cmpxchg_ldw)
+> GLOBAL(csky_cmpxchg_stw)
+>
+> Your modification does not affect the ASM output.
+>
+> (gdb) p main
+> $1 =3D {void (void)} 0x5fa <main>
+> (gdb) p &main
+> $2 =3D (void (*)(void)) 0x5fa <main>
+>
+> >         return;
+> >  }
+> >  #endif
+> > --
+> > 2.34.1
+> >
+>
+>
+> --
+> Best Regards
+>  Guo Ren
 
