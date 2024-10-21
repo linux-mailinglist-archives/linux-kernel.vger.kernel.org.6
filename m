@@ -1,356 +1,262 @@
-Return-Path: <linux-kernel+bounces-374263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34FA9A6796
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:07:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EB29A679C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C7F1F234A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0388C283B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FA81EBFFC;
-	Mon, 21 Oct 2024 12:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322CC1EF086;
+	Mon, 21 Oct 2024 12:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRxIrMDl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGvATs0r"
 Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39B61EBA07;
-	Mon, 21 Oct 2024 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC6A1EC00C;
+	Mon, 21 Oct 2024 12:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512463; cv=none; b=o1khD54Ts3gXOLtradHRzKA2K1zqnQtKMqKM2hDQlRghtDNaqDmMZVIBL+K3BYgwFVEWVyjPRVNk2gWAeRqoHBhjzbxQd+avliiaqSH/pzTrw1F8mQXe9fkQMI90xG06KICfGl7mBM/G5mJjFLYO2rQ5bBUtdYnSAWIRboN1yL8=
+	t=1729512492; cv=none; b=B/S1kT6q04Q3wz1msTVQQhIZr+2i1/IVTBm01VppbGi2v3yqqeuEpn9TRi47GBWbfmwKXz5qtbOObmGHMNSZ/UdIlrdJt6z3JD56S9h5tuggMOAhqeJDSPeCKzRUKrVTc4o+mHwajuxnpAb/Rw+Beoz9v/vT9s2lmi42hN0LIXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512463; c=relaxed/simple;
-	bh=PHEPMTwEG8K0yoY+ApGct91QOJs6BMRkynyynPeCVus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajVhyFejo6jJZ/ZmpEdzL0MCbHW9WvBiRfU3WxQ10NMSbTHkW9+pAhk/g8NWxgsY1KFHJcoUfh0xABzusVSIa+N9i2k9d5RJMhhPGV3PVYan5ODU6TwnZQDW31lrT9/4SgLvXoiPMLWYp+mjH8Sgp1raAGRF84+8lsdy8YF0bI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRxIrMDl; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1729512492; c=relaxed/simple;
+	bh=XZQ15byiRHFSEmL0XmDrb9ChBh012tumz8Vjr8jix0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qzmFNtM3a2p7neo0kRfFhB5Yrhe5iiYOrWW69VYMTRlSbowwSqoOOiDlVTlpHefbiIqy4xtqQRgXmtqYzCiC1+IQ+L8BOVpGS8cPRYsdvx0cEk+O4fBRTXyUQ+19r48uy/UGGfI61ilbdcanX8lvMXlBkajQx1BPshk8Df45HTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGvATs0r; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4dbb4a89so451895f8f.3;
-        Mon, 21 Oct 2024 05:07:40 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d461162b8so2875295f8f.1;
+        Mon, 21 Oct 2024 05:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729512459; x=1730117259; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ggnS5dJViY/ewx+1Ep5/8nYWDcCBjkP4ou0qwiymtpo=;
-        b=hRxIrMDlR/ROUN9K0maTnTYhczDVVRcR/dldHs8YpOlwg3amW1ROX1JQMs1Yz6lB0w
-         HNKLgXntOftcIk4uyHR+q4z/qUriffBWAqD8T4F+Pa+i+2wDUCR0zehNFNZ/E6fesTXO
-         II7oxXvdBBURHwZvJOkhdTUXjxOwUUausny5E5JyMDaw9l5lY4f79EYqKcMCJ+xRt2I0
-         nLsL9GgiH4WcbpPeZCGxwdO6bA36u9kDpSGlw+SdhWVVIapP+UrrSKn9pU6+D9OvJfys
-         1TtLTWrFjbyUImde3WMACiOWunvEAFpJJ6L9oimwAcOWjk+qBZSwiEq/evhA3e9vs3Vf
-         SKfA==
+        d=gmail.com; s=20230601; t=1729512488; x=1730117288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZemY4EZK2PuJ50nG/MQJ5LD4cFzmRkhrJ//3Woas8sI=;
+        b=FGvATs0rP6dV5i3pMHe1HHn5MmnfSIEjx2iHkolp7OaJZfES7SlUtWB6iI1l3lcUcF
+         29SyQeZjrSBgHpusWJckH8Fq1afHwtUMCaPldKjVKhdbMpzj00XLgz0CdbsVeMyuEVoJ
+         WaejGYXnCJOwoOb+CMiXAvj3onPH4RvMEHPzEqirU2EwcDr8/TOJdKNPUscPF65dzGfZ
+         Xbl755J8jYj1BaNely+wYOXf8c5wDJknGlkI2B/9FizVOTSprAdgDtpG7Lkg46Fes/94
+         gCWZHbMVHAp18ttwmkNCIf5CWcyiCTERUpg7awSBqkdaTrDIhO5sJUwoqVMchOeizfhn
+         H5/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729512459; x=1730117259;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ggnS5dJViY/ewx+1Ep5/8nYWDcCBjkP4ou0qwiymtpo=;
-        b=lAv5nrCt9plFEOZr43JwNTh/GKUr5PsJcpJP1LLYKOeGMl83Sgdgfjb5JVISNkR0FN
-         2+5pq9OkDcn3ms0GeZmiRw/l8sxa7ftqhip/7EAYEDhU1ErY/VKMwQMiF6uQdMlodOBH
-         NFI5Sr3zE0rSSPR80PDWCKupUBmr4kQI050xi8O5eGMrZyJS2OUvqAwSVYTeD/DLQtIr
-         6CDRtFkcMJjjAicmaBPcAlvRQcQrlIjzB3JNZgEhNtwVZLF2gaODgHugnJDcCaw6pO77
-         cx6uUsZ/T0gLpXeZkotkc0XmCh2VMHpK5zQEdE37CpFcq22mDT3Iy6yRlK8wWtyualj9
-         dRQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe1PzJmjOk5UVM3xWiX4EKoZVcMs8x743pwbf9K7BAcj+CUg4DUVzNTaHF3VIw9uC9JJKWq9nhira/etc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr8sGABffEN6wasv+5fSf3Ymbb6wbqmqOQGwOrL/0ii5FHksK3
-	goNNsVEWJz3rIqgjcbdjxt5wiPmNF+HUblfiQCjnBjNnDW9sKYKT
-X-Google-Smtp-Source: AGHT+IGiyvzyxdGmyXpYIwGz53akQzjbxPTQtNjzX3RpBkfN//5e+SEPo1D6yHvvzKeR8Zh1X89fTA==
-X-Received: by 2002:a5d:5342:0:b0:37d:4aa2:5cfe with SMTP id ffacd0b85a97d-37eab4eba1cmr2748591f8f.6.1729512459001;
-        Mon, 21 Oct 2024 05:07:39 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc401sm54371895e9.43.2024.10.21.05.07.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:07:38 -0700 (PDT)
-Date: Mon, 21 Oct 2024 15:07:35 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] net: dsa: vsc73xx: implement transmit via
- control interface
-Message-ID: <20241021120735.xpriovox6tzof45l@skbuf>
-References: <20241020205452.2660042-1-paweldembicki@gmail.com>
- <20241020205452.2660042-1-paweldembicki@gmail.com>
+        d=1e100.net; s=20230601; t=1729512488; x=1730117288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZemY4EZK2PuJ50nG/MQJ5LD4cFzmRkhrJ//3Woas8sI=;
+        b=ZvLmiDpsDuSY5pUA1+XZd3rh2uwCQbsLb4DbvdH7ttWcCfBBXhSVfFdaD1SUk5HQOP
+         vuet1dcsqrCJ70XyPBH5Vm8x15D8QwuVg22WAt6P/WsMM2L75GuQLB1Ciw5bLzAy/UlI
+         7WVc4+qCUfUxSSOwaSzgWgMGIPOr6uguaNEUQzunRbsdf65E1g5aaPSYKytJwSJOg1za
+         mr2/QYdgLoM1YhczeCbiJpFut7p882euZ2K+2ZTzGlmjRnhSFZoruTcUcLMCNLdLHRUv
+         EsrzaVkdbSUOSbrysj6TZ4hYHf4Yr74jMBZ4C4Mv17VJarxTaCunQ81UxZSJD7Da+YZK
+         Hq4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXSNnRFJ4KtwypvhVxNZ3o+HmBvkODef7iZneELQJrTLXwaHKWJcjCVmyJ709Lbw1al7KCXPp9HvXWsTZAx@vger.kernel.org, AJvYcCXjcYCboU3CBmgo6+PN+uCrh1XgMI7OJ9287PhGIj4xNOQHThIGDDSt+X8dhxPOjSRpusgyaLLVWbp6jA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+5izPtpFuCJVf/AOB6MncUSz4gB5QJt3Ne7H3KnXZ+SQZyfRa
+	yoW7Ekpeuy0onqIbxjbgQWhTygVMK59hlVHH4xXedLawZyusS7UoB3Ldg8JGmkMrF2pveXnLE+6
+	aWhF74mBaEEoT5/h0SJe61E1+5RuPYuQ=
+X-Google-Smtp-Source: AGHT+IGg2tqLH5eS+yrnkTURTKWlpXBnYV+Axkv195iqvSiNDc45YtjK+y7U85yaXNpJW0kdTR/biC+tRtZ0m0joiYU=
+X-Received: by 2002:adf:fcd1:0:b0:37d:3115:9845 with SMTP id
+ ffacd0b85a97d-37ea2174d48mr5832369f8f.18.1729512486305; Mon, 21 Oct 2024
+ 05:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020205452.2660042-1-paweldembicki@gmail.com>
- <20241020205452.2660042-1-paweldembicki@gmail.com>
+References: <20240925100303.9112-1-alex.vinarskis@gmail.com>
+ <20240925100303.9112-2-alex.vinarskis@gmail.com> <2xb4vqlt2gdrmioyx7tjaw2vfw55pmhvz54q7f2ldrkikzzxge@737bp5ms6gwc>
+ <CAMcHhXoKdXODc+4Bs-o2WXvxXiWpJHLBupnoqLyTa9m5KrNWbA@mail.gmail.com>
+In-Reply-To: <CAMcHhXoKdXODc+4Bs-o2WXvxXiWpJHLBupnoqLyTa9m5KrNWbA@mail.gmail.com>
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Date: Mon, 21 Oct 2024 14:07:54 +0200
+Message-ID: <CAMcHhXojS-6J6HsJTBw5feKaM_wzi-tmVhNA+R4sdujYk32cTw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] HID: i2c-hid: introduce re-power-on quirk
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 20, 2024 at 10:54:50PM +0200, Pawel Dembicki wrote:
-> Some types of packets can be forwarded only to and from the PI/SI
-> interface. For more information, see Chapter 2.7.1 (CPU Forwarding) in
-> the datasheet.
-> 
-> This patch implements the routines required for link-local transmission.
-> This kind of traffic can't be transferred through the RGMII interface in
-> vsc73xx.
-> 
-> It uses a method similar to the sja1005 driver, where the DSA tagger
-> checks if the packet is link-local and uses a special deferred transmit
-> route for that kind of packet.
-> 
-> The vsc73xx uses an "Internal Frame Header" (IFH) in communication via the
-> PI/SI interface. Every packet must be prefixed with an IFH. The hardware
-> fixes the checksums, so there's no need to calculate the FCS in the
-> driver.
-> 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-> ---
->  drivers/net/dsa/vitesse-vsc73xx-core.c | 172 +++++++++++++++++++++++++
->  drivers/net/dsa/vitesse-vsc73xx.h      |   1 +
->  include/linux/dsa/vsc73xx.h            |  20 +++
->  net/dsa/tag_vsc73xx_8021q.c            |  73 +++++++++++
->  4 files changed, 266 insertions(+)
->  create mode 100644 include/linux/dsa/vsc73xx.h
-> 
-> diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
-> index f18aa321053d..21ab3f214490 100644
-> --- a/drivers/net/dsa/vitesse-vsc73xx-core.c
-> +++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
-> @@ -73,6 +73,9 @@
->  #define VSC73XX_CAT_PR_USR_PRIO	0x75
->  #define VSC73XX_CAT_VLAN_MISC	0x79
->  #define VSC73XX_CAT_PORT_VLAN	0x7a
-> +#define VSC73XX_CPUTXDAT	0xc0
-> +#define VSC73XX_MISCFIFO	0xc4
-> +#define VSC73XX_MISCSTAT	0xc8
->  #define VSC73XX_Q_MISC_CONF	0xdf
->  
->  /* MAC_CFG register bits */
-> @@ -166,6 +169,14 @@
->  #define VSC73XX_CAT_PORT_VLAN_VLAN_USR_PRIO GENMASK(14, 12)
->  #define VSC73XX_CAT_PORT_VLAN_VLAN_VID GENMASK(11, 0)
->  
-> +/* MISCFIFO Miscellaneous Control Register */
-> +#define VSC73XX_MISCFIFO_REWIND_CPU_TX	BIT(1)
-> +#define VSC73XX_MISCFIFO_CPU_TX		BIT(0)
-> +
-> +/* MISCSTAT Miscellaneous Status */
-> +#define VSC73XX_MISCSTAT_CPU_TX_DATA_PENDING	BIT(8)
-> +#define VSC73XX_MISCSTAT_CPU_TX_DATA_OVERFLOW	BIT(7)
-> +
->  /* Frame analyzer block 2 registers */
->  #define VSC73XX_STORMLIMIT	0x02
->  #define VSC73XX_ADVLEARN	0x03
-> @@ -363,6 +374,9 @@
->  #define VSC73XX_MDIO_POLL_SLEEP_US	5
->  #define VSC73XX_POLL_TIMEOUT_US		10000
->  
-> +#define VSC73XX_IFH_MAGIC		0x52
-> +#define VSC73XX_IFH_SIZE		8
-> +
->  struct vsc73xx_counter {
->  	u8 counter;
->  	const char *name;
-> @@ -375,6 +389,31 @@ struct vsc73xx_fdb {
->  	bool valid;
->  };
->  
-> +/* Internal frame header structure */
-> +struct vsc73xx_ifh {
-> +	union {
-> +		u32 datah;
-> +		struct {
-> +		u32 wt:1, /* Frame was tagged but tag has removed from frame */
-> +		    : 1,
-> +		    frame_length:14, /* Frame Length including CRC */
-> +		    : 11,
-> +		    port:5; /* SRC port of switch */
+Again, in plain text.
+P.S. Ive noticed patches do not apply cleanly on the latest tree
+anymore. Will resubmit v2 once I have the feedback.
 
-Please indent the struct field members.
+On Mon, 14 Oct 2024 at 02:16, Aleksandrs Vinarskis
+<alex.vinarskis@gmail.com> wrote:
+>
+> On Wed, 25 Sept 2024 at 13:54, Benjamin Tissoires <bentiss@kernel.org> wrote:
+> >
+> > On Sep 25 2024, Aleksandrs Vinarskis wrote:
+> > > It appears some keyboards from vendor 'QTEC' will not work properly until
+> > > suspend & resume.
+> > >
+> > > Empirically narrowed down to solution of re-sending power on command
+> > > _after_ initialization was completed before the end of initial probing.
+> > >
+> > > Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> > > ---
+> > >  drivers/hid/i2c-hid/i2c-hid-core.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> > > index 632eaf9e11a6..087ca2474176 100644
+> > > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> > > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+> > > @@ -50,6 +50,7 @@
+> > >  #define I2C_HID_QUIRK_BAD_INPUT_SIZE         BIT(3)
+> > >  #define I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET  BIT(4)
+> > >  #define I2C_HID_QUIRK_NO_SLEEP_ON_SUSPEND    BIT(5)
+> > > +#define I2C_HID_QUIRK_RE_POWER_ON            BIT(6)
+> > >
+> > >  /* Command opcodes */
+> > >  #define I2C_HID_OPCODE_RESET                 0x01
+> > > @@ -1048,7 +1049,11 @@ static int i2c_hid_core_register_hid(struct i2c_hid *ihid)
+> > >               return ret;
+> > >       }
+> > >
+> > > -     return 0;
+> > > +     /* At least some QTEC devices need this after initialization */
+> > > +     if (ihid->quirks & I2C_HID_QUIRK_RE_POWER_ON)
+> > > +             ret = i2c_hid_set_power(ihid, I2C_HID_PWR_ON);
+> >
+> > I'd rather not have this in i2c-hid-core.c, TBH.
+> >
+> > We do have a nice split separation of i2c-hid which allows to add vendor
+> > specific i2c-hid-of drivers. We currently have 2 (goodix and elan) and a
+> > third wouldn't be much of an issue.
+>
+> Hi,
+>
+> Thanks for the input.
+> I did some further digging, as I did not understand how to implement
+> your suggestion right away, and in addition I think I am a bit short
+> on data about this keyboard to create a dedicated driver. I am still
+> not 100% sure how to proceed, so would like to share my findings
+> first, perhaps you would have something else to add.
+>
+> Firstly, I am not quite sure what/who is the 'QTEC' manufacturer. I
+> could not find it online by VID. In DSDT tables it's listed as
+> 'QTEC0001', which sounds very generic. Only existing reference to QTEC
+> that I could find in the kernel was in this [1] patch, where it
+> appears to be a combo Elan touchpad+keyboard device, at least based on
+> VID, though it was listed in ACPI as 'QTEC0001' as well. This is not
+> the case with this device, as VID is a new, never seen before value.
+> Which in turn means we could not use ACPI ID matching in case of a
+> dedicated driver.
+>
+> For reference, XPS 9345 has also a somewhat combo solution - the
+> keyboard has a separate touchbar-like Functions keys row. I opened up
+> the device to inspect it - keyboard's IC is marked as ECE117, which
+> appears to be a Microchip keyboard IC [2]. Touchbar is routed to the
+> motherboard via a different connector, which may be routed back to the
+> same IC via the keyboard's connector (based on the amount of wires in
+> the keyboard-motherboard connector being way more than just
+> sda/scl/gnd/3v3/5v), but I cannot be sure without in-detail electrical
+> tests. This puzzles me a bit, as in addition, IC's datasheet refers to
+> being connected to 'host EC' rather than just host - perhaps then
+> otherwise, the onboard EC (present on this laptop, but no drivers
+> available for linux at present) is acting like a bridge that is
+> presented as this 'combo' device. Either way, neither of this explains
+> what is actually from QTEC, and rather points it to be an embedded
+> firmware from Dell, if I interpret my findings correctly, but please
+> correct me if you think otherwise.
+>
+> Finally, during the BIOS update, one of the stages mentioned 'updating
+> ELAN touchbar firmware' (not keyboard). Which confirms suspicion that
+> the 'combo' device may be created by onboard EC, since any press of
+> keyboard's usual or Function keys sends data from the same 'QTEC'
+> keyboard as if it was one device, and it certainly does not identify
+> as ELAN.
+>
+> >
+> > I'm not really happy of this admittely simple solution in this patch
+> > because:
+> > - what if QTEC "fixes" that behavior in the future?
+>
+> That is a very valid point indeed. Especially with PID being rather
+> useless, and ACPI ID apparently being shared with other devices, this
+> may become an issue, as only VID stays unique - at least for now.
+> However, I did not fully understand how making a dedicated driver is
+> advantageous over a quirk, if we are limited by VID matching either
+> way? Or did you mean to only have that keyboard selectable by dt via
+> compatible?
+>
+> > - what if you actually need to enable/disable regulators like goodix and
+> >   elan do
+>
+> At least at the moment it seems there is no need for that.
+>
+> >
+> > So to me, a better solution would be to create a i2c-hid-of-qtec.c,
+> > assign a new compatible for this keyboard, and try to fix up the initial
+> > powerup in .power_up in that particular driver. This way, we can extend
+>
+> If I managed to narrow down the issue correctly, fixing the
+> '.power_up' stage won't resolve the particular issue unfortunately. As
+> per my original patch, re-running power on command has to be done
+> _after_ device registration (which in turn is after power up phase).
+> If I would be to move re-power up any earlier, eg, between power up
+> and `i2c_hid_init_irq`, it would have no effect again, the keyboard
+> won't work until suspend & resume. In other words it appears that the
+> process of registering hid what 'breaks' the controller, and power-up
+> command has to be resent only after it. This is also how I discovered
+> the solution in the first place - suspending the laptop and resuming
+> it magically 'fixed' the keyboard. Given that due to lack of
+> schematics no regulators are defined in device tree at the moment, I
+> deduced that it was software init that broke the keyboard, and
+> pm_resume 'fixed' it, which then allowed me to narrow it down to the
+> proposed patch. But again, please correct me if you think I
+> interpreted it wrong.
+>
+> I thus tried to implement this quirk similarly to existing
+> `I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET`, which is used for ELAN
+> touchscreens and is present in this core file, and not in
+> i2c-hid-of-elan.c. I do agree that making a dedicated i2c-hid-of-
+> driver is cleaner, though I am not sure I understood full advantage of
+> it in this context, and not sure it will actually solve a particular
+> issue as its not the problem with power up itself. On the other hand,
+> perhaps as you mentioned enabling/disabling regulators first would in
+> turn fix this weird behaviour? Though sadly I have no way to test it,
+> since only got a  using a dummy regulator for this keyboard...
+>
+> Would like to hear your thoughts,
 
-> +		};
-> +	};
-> +	union {
-> +		u32 datal;
+Hi,
 
-Is the union with datah/datal actually useful in any way? Just a comment
-about high word/low word should suffice?
+A kind reminder.
+Would really like to see this land, as is or after appropriate changes
+if still required.
 
-Is there any field that crosses the word boundary? Or is the IFH nicely
-arranged?
+Thanks,
+Alex
 
-Does CPU endianness affect the correct bit layout?
-
-> +		struct {
-> +		u32 vid:16, /* VLAN ID */
-> +		    : 3,
-> +		    magic:9, /* IFH magic field */
-> +		    lpa:1, /* SMAC is subject of learning */
-> +		    : 1,
-> +		    priority:2; /* Switch categorizer assigned priority */
-> +		};
-> +	};
-> +};
-
-__packed
-
-> +
->  /* Counters are named according to the MIB standards where applicable.
->   * Some counters are custom, non-standard. The standard counters are
->   * named in accordance with RFC2819, RFC2021 and IEEE Std 802.3-2002 Annex
-> @@ -683,6 +722,133 @@ static int vsc73xx_phy_write(struct dsa_switch *ds, int phy, int regnum,
->  	return 0;
->  }
->  
-> +static int vsc73xx_tx_fifo_busy_check(struct vsc73xx *vsc, int port)
-> +{
-> +	int ret, err;
-> +	u32 val;
-> +
-> +	ret = read_poll_timeout(vsc73xx_read, err,
-> +				err < 0 ||
-> +				!(val & VSC73XX_MISCSTAT_CPU_TX_DATA_PENDING),
-> +				VSC73XX_POLL_SLEEP_US,
-> +				VSC73XX_POLL_TIMEOUT_US, false, vsc,
-> +				VSC73XX_BLOCK_MAC, port, VSC73XX_MISCSTAT,
-> +				&val);
-> +	if (ret)
-> +		return ret;
-> +	return err;
-> +}
-> +
-> +static int
-> +vsc73xx_write_tx_fifo(struct vsc73xx *vsc, int port, u32 data0, u32 data1)
-> +{
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_MAC, port, VSC73XX_CPUTXDAT, data0);
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_MAC, port, VSC73XX_CPUTXDAT, data1);
-> +
-> +	return vsc73xx_tx_fifo_busy_check(vsc, port);
-> +}
-> +
-> +static int
-> +vsc73xx_inject_frame(struct vsc73xx *vsc, int port, struct sk_buff *skb)
-> +{
-> +	struct vsc73xx_ifh *ifh;
-> +	u32 length, i, count;
-> +	u32 *buf;
-> +	int ret;
-> +
-> +	if (skb->len + VSC73XX_IFH_SIZE < 64)
-> +		length = 64;
-> +	else
-> +		length = skb->len + VSC73XX_IFH_SIZE;
-
-length = min_t(u32, 64, skb->len + VSC73XX_IFH_SIZE)?
-Also, what does 64 represent? ETH_ZLEN + ?
-
-> +
-> +	count = DIV_ROUND_UP(length, 8);
-> +	buf = kzalloc(count * 8, GFP_KERNEL);
-
-this can return NULL
-
-> +	memset(buf, 0, sizeof(buf));
-> +
-> +	ifh = (struct vsc73xx_ifh *)buf;
-> +	ifh->frame_length = skb->len;
-> +	ifh->magic = VSC73XX_IFH_MAGIC;
-> +
-> +	skb_copy_and_csum_dev(skb, (u8 *)(buf + 2));
-
-Do you really _have_ to allocate dynamically a buffer and copy the skb
-to it? Can't you write_tx_fifo() based on a pointer from skb->data, and
-allocate the IFH as a separate on-stack structure?
-
-For the checksum calculation, you could add the same logic as ocelot_defer_xmit():
-
-	if (skb->ip_summed == CHECKSUM_PARTIAL && skb_checksum_help(skb))
-		return NULL;
-
-> +
-> +	for (i = 0; i < count; i++) {
-> +		ret = vsc73xx_write_tx_fifo(vsc, port, buf[2 * i],
-> +					    buf[2 * i + 1]);
-> +		if (ret) {
-> +			/* Clear buffer after error */
-> +			vsc73xx_update_bits(vsc, VSC73XX_BLOCK_MAC, port,
-> +					    VSC73XX_MISCFIFO,
-> +					    VSC73XX_MISCFIFO_REWIND_CPU_TX,
-> +					    VSC73XX_MISCFIFO_REWIND_CPU_TX);
-> +			goto err;
-> +		}
-> +	}
-> +
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_MAC, port, VSC73XX_MISCFIFO,
-> +		      VSC73XX_MISCFIFO_CPU_TX);
-> +
-> +	skb_tx_timestamp(skb);
-
-When is the packet transmission actually started? At VSC73XX_MISCFIFO_CPU_TX
-time? skb_tx_timestamp() should be done prior to that. PHY TX
-timestamping is also hooked into this call, and will be completely
-broken if it is racing with the packet transmission.
-
-> +
-> +	skb->dev->stats.tx_packets++;
-> +	skb->dev->stats.tx_bytes += skb->len;
-> +err:
-> +	kfree(buf);
-> +	return ret;
-> +}
-> +
-> +#define work_to_xmit_work(w) \
-> +		container_of((w), struct vsc73xx_deferred_xmit_work, work)
-> +
-> +static void vsc73xx_deferred_xmit(struct kthread_work *work)
-> +{
-> +	struct vsc73xx_deferred_xmit_work *xmit_work = work_to_xmit_work(work);
-> +	struct dsa_switch *ds = xmit_work->dp->ds;
-> +	struct sk_buff *skb = xmit_work->skb;
-> +	int port = xmit_work->dp->index;
-> +	struct vsc73xx *vsc = ds->priv;
-> +	int ret;
-> +
-> +	if (vsc73xx_tx_fifo_busy_check(vsc, port)) {
-> +		dev_err(vsc->dev, "port %d failed to inject skb\n",
-> +			port);
-> +
-> +		/* Clear buffer after error */
-> +		vsc73xx_update_bits(vsc, VSC73XX_BLOCK_MAC, port,
-> +				    VSC73XX_MISCFIFO,
-> +				    VSC73XX_MISCFIFO_REWIND_CPU_TX,
-> +				    VSC73XX_MISCFIFO_REWIND_CPU_TX);
-> +
-> +		kfree_skb(skb);
-> +		return;
-> +	}
-> +
-> +	ret = vsc73xx_inject_frame(vsc, port, skb);
-> +
-
-extraneous blank line
-
-> +	if (ret) {
-> +		dev_err(vsc->dev, "port %d failed to inject skb\n",
-
-dev_err_ratelimited(... %pe, ERR_PTR(ret))?
-
-> +			port);
-> +		return;
-> +	}
-
-Is this hardware procedure completely reentrant (can it simultaneously
-inject packets towards multiple ports) or should there be a spinlock
-serializing the access?
-
-> +
-> +	consume_skb(skb);
-> +	kfree(xmit_work);
-> +}
+> Thanks in advance,
+> Alex
+>
+> [1] https://patchwork.kernel.org/project/linux-input/patch/20190415161108.16419-1-jeffrey.l.hugo@gmail.com/#22595417
+> [2] https://ww1.microchip.com/downloads/en/DeviceDoc/00001860D.pdf
+>
+> > the driver for the regulators, and we can also fix this issue while being
+> > sure we do not touch at anything else.
+> >
+> > Anyway, glad to see the bringup of the new arm based XPS-13 taking
+> > shape!
+> >
+> > Cheers,
+> > Benjamin
+> >
+> >
+> > > +
+> > > +     return ret;
+> > >  }
+> > >
+> > >  static int i2c_hid_core_probe_panel_follower(struct i2c_hid *ihid)
+> > > --
+> > > 2.43.0
+> > >
 
