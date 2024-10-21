@@ -1,231 +1,148 @@
-Return-Path: <linux-kernel+bounces-374141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8A09A6542
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:55:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401B09A6211
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A027282CBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:55:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6279BB29354
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EF81F8185;
-	Mon, 21 Oct 2024 10:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2C51E47C8;
+	Mon, 21 Oct 2024 10:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="V38btIJa"
-Received: from mail-m1286.netease.com (mail-m1286.netease.com [103.209.128.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9d3x7O9"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A76D1E571E;
-	Mon, 21 Oct 2024 10:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1E01E4113;
+	Mon, 21 Oct 2024 10:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507771; cv=none; b=X5RZKQEboBCZnILtAfotQj0rK3UlhtTzIbXcJJrhoSErZkEPg4pPw74O6VMOpFQ7VasvGIaC8Atoj7n6L11g0qfVX8ueQr5OEsmboXhcLFHihtcz6qZ0zy2jhep3tPpjHnG3MVQNBD8hb1/fYxcyhEnbFicGhDbx6M/6xP4+TBM=
+	t=1729505361; cv=none; b=YoCss2oFtlnL1oYcxEM8x77hzQ1A2onKWSLtiB1C0idA9U1rDqnDCK5eDV7s+xmW7LB5YnPhcklHgZ5pmmj9QKc870JbYcH1HAj+6Ecqg9G9KcC1jlgivoihXOhC0GN2vTxGnTwEg4aXrZ1PFA+ljbyiKj96A2LLCW8TtNfqdtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507771; c=relaxed/simple;
-	bh=2E+rcCfCM4mlFpCuCzzP1ezoQuwzWfKc7+SZIOWUlPQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DOq/2aBqjVy/IWEklBFsrq2wiqDOAywMNgWAPPRjEIWqdl0nVFVoMvithGTVnXAPIcOffGPDuQs2/GVPkNoD2mh6hjXQuiZ5mf/tKUMCjALT/dziGi5+cGbYy3w2aiaVGLfX4TZeb6IPjf/p3LjVCcfsBrKGq1PSJfmOFqhAhxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=V38btIJa; arc=none smtp.client-ip=103.209.128.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=V38btIJakVMMe4dDZ7E9LyioghrUde8fStgdte4jHGxwc+2EhgCGN0sjjP27GgFTzEIKpv44PwwmVP00KwPN+kvnp8fM2cX187Apk2Rw9geRwTmVRErIA1f54NhKN/GR8ZCTcyH3FRTM65pLwwDiDSCTEVHcZdLbPmIwyC1vK9Q=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=KtWr2riFT/2Ittypx/eroyOm6tXa4t9/AcYin97fqlY=;
-	h=date:mime-version:subject:message-id:from;
-Received: from lintao?rock-chips.com (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with SMTP id DA0B62A0123;
-	Mon, 21 Oct 2024 08:43:26 +0800 (CST)
-Message-ID: <90ff835d-f3b2-4b7c-aa1a-575e231a57e6@rock-chips.com>
-Date: Mon, 21 Oct 2024 08:43:26 +0800
+	s=arc-20240116; t=1729505361; c=relaxed/simple;
+	bh=2XWylLirGe485hFoO5ABdA5oJnm8V+XCxwoKVzuF+gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Usl4v0BmSOgbYXmUeb2Syw8zQqXaXCIQ7G7bFYark7PkndFWzB+pHO+b7Y7cV88eRvw0Y8TjB+O3skQCEOkpt0vmYr1jsWOlJt4D54a1AnRY0rqBbd+PgkV0sG9a10m5GK8lNNq7BlsZOxvcyzDVPU+97kze0hVkznPJkkH7RX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9d3x7O9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b5affde14so29088865ad.3;
+        Mon, 21 Oct 2024 03:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729505359; x=1730110159; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Yeq8CDDkDOrSnhrxHij8VmLVC6Z1DWY5RzKY0fBvsb4=;
+        b=m9d3x7O9GYbzld+8ZtHzUGSO5USfu9EZDhAoPK541lhWjrQV0tUlgnfJcGS5Cj+2dB
+         pzm1zlVunTv7EfAwKCsMUdPWr0fXs6lXDaEi5dgGf6aLL6NmKBLzT6EPZtToiksFaiq6
+         OfrUiDDJ1Ha1fTBab8RY3EvW8ovD9Zi3EpB5CAACMCdQtS7YgY+ECh+w/bqr0QNXzP5b
+         7VXmqiVzNL1RW0xdqaueCQ4xAliotogxdH5MweuS9EJC++YobyKRT5OYhI8gpoi7bewQ
+         d68/DqvAvUZJzJr/Rz/XPEfJYOYII7LtfP+b+NhyDop9WmSvocrX5E2Odi8vSk1SwX4g
+         HGCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729505359; x=1730110159;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yeq8CDDkDOrSnhrxHij8VmLVC6Z1DWY5RzKY0fBvsb4=;
+        b=H00ViAWP286YGPWfrP1Vt7IH27k8Z45Y03Y8U36s8x/iJBnOXtztTwY3axts9Jv5c9
+         IUBogigjDVb23UBueW8awewZhRqcLgUAjwxDGhEX0XljGUx+ylJ/GP9kmcBHJT2rdFvw
+         6JFONuVLCcW1pYKp2uhcRK3jx5G2u1xQynUd+qFnyE465wgZc5+PytIqRUl6UkDiT6rQ
+         e37Hy89LOzL0hr+M35WW0elMWeuCA4ztLXOpMTcEljJk0+Qy2T8C7ICrV/e7vPH4LLPz
+         ge25U/T/mhBahAyVc9lZ0Wd/luewGy+iTbqwGlupUH2iKIJQNyfNIM5+T26bjTJvmf/L
+         zrQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW24rCU7nXuXigYuUuvq/xuPA0QldNqcKF6npbM6eIvDRs6Ra0AQ6zQ0Hv+ME/yzshSxblbEpbO/v3y3IU4@vger.kernel.org, AJvYcCX1VoeNL1gVGYHE7z8WqBmg1BRVWaT8Y6Tolz4cXbJTWK9qtHk+bDk6UnY+wnFIm+0oopufR6L4EzsV23gY@vger.kernel.org, AJvYcCXl+FkT4Eag1j0M8W1EG7aJvQgeI9agjmyRyKBSYr65pEkV9Ck+MRzfBddX9ZL6DNQ8f58+7cE3PvUb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuHrTiSCbTTYcaaU6PM54pwBQyAkdmW3JJag40VAX9GoRxAYMU
+	PzWOLyH96+vom+OSIbiS8qdJ5WVXq7ScTkmGzXGhwqb6dDzqAWtH
+X-Google-Smtp-Source: AGHT+IGBVSe3fGC8jwkNg83HVZynlz+8eS6hkHiMJMQb3ltPpok70fN7+VYi13IU+PQuxS5Q2gB9RQ==
+X-Received: by 2002:a17:903:2342:b0:20c:7a0b:74a5 with SMTP id d9443c01a7336-20e5a9055e3mr143289685ad.39.1729505358749;
+        Mon, 21 Oct 2024 03:09:18 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0e0ecsm22543135ad.109.2024.10.21.03.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 03:09:18 -0700 (PDT)
+Date: Mon, 21 Oct 2024 18:08:59 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-serial <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
+Message-ID: <tm7jtf3swggiilznwo3xcqjlhd2a7cguwk3nay3bhmaxo23mf5@qw2fyjwapoxe>
+References: <20241021072606.585878-1-inochiama@gmail.com>
+ <20241021072606.585878-3-inochiama@gmail.com>
+ <29d8e2a6-d0e7-0f74-1f5c-4f285ec1e9ee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
- <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
- <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
- <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
- <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
- <CAPDyKFogrPEEe1A3Kghjj3-SSJT2xEoKfo_hU7KZk+d9bZxEYQ@mail.gmail.com>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <CAPDyKFogrPEEe1A3Kghjj3-SSJT2xEoKfo_hU7KZk+d9bZxEYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU8aQ1YaTh1LTxkaH0odH0pWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a92ac87724003aakunmda0b62a0123
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nxw6FDo6MDIsTCkCQz4vHy0K
-	MDoKCkhVSlVKTElCT0xKT0pKTk5DVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNISEg3Bg++
+In-Reply-To: <29d8e2a6-d0e7-0f74-1f5c-4f285ec1e9ee@linux.intel.com>
 
-在 2024/10/18 18:03, Ulf Hansson 写道:
-> On Fri, 18 Oct 2024 at 11:20, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>
->> Hi Ulf,
->>
->> 在 2024/10/18 17:07, Ulf Hansson 写道:
->>> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>>>
->>>> Hi Ulf
->>>>
->>>> 在 2024/10/9 21:15, Ulf Hansson 写道:
->>>>> [...]
->>>>>
->>>>>> +
->>>>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
->>>>>> +{
->>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->>>>>
->>>>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
->>>>> genpd provider drivers.
->>>>>
->>>>>> +
->>>>>> +       clk_disable_unprepare(host->ref_out_clk);
->>>>>> +
->>>>>> +       /*
->>>>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
->>>>>
->>>>> Can you elaborate on why we must not power-off the power-domain when
->>>>> level is less than 5?
->>>>>
->>>>
->>>> Because ufshcd driver assume the controller is active and the link is on
->>>> if level is less than 5. So the default resume policy will not try to
->>>> recover the registers until the first error happened. Otherwise if the
->>>> level is >=5, it assumes the controller is off and the link is down,
->>>> then it will restore the registers and link.
->>>>
->>>> And the level is changeable via sysfs.
->>>
->>> Okay, thanks for clarifying.
->>>
->>>>
->>>>> What happens if we power-off anyway when the level is less than 5?
->>>>>
->>>>>> +        * This flag will be passed down to platform power-domain driver
->>>>>> +        * which has the final decision.
->>>>>> +        */
->>>>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
->>>>>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
->>>>>> +       else
->>>>>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
->>>>>
->>>>> The genpd->flags is not supposed to be changed like this - and
->>>>> especially not from a genpd consumer driver.
->>>>>
->>>>> I am trying to understand a bit more of the use case here. Let's see
->>>>> if that helps me to potentially suggest an alternative approach.
->>>>>
->>>>
->>>> I was not familiar with the genpd part, so I haven't come up with
->>>> another solution. It would be great if you can guide me to the right
->>>> way.
->>>
->>> I have been playing with the existing infrastructure we have at hand
->>> to support this, but I need a few more days to be able to propose
->>> something for you.
->>>
->>
->> Much appreciate.
->>
->>>>
->>>>>> +
->>>>>> +       return ufshcd_runtime_suspend(dev);
->>>>>> +}
->>>>>> +
->>>>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
->>>>>> +{
->>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>> +       int err;
->>>>>> +
->>>>>> +       err = clk_prepare_enable(host->ref_out_clk);
->>>>>> +       if (err) {
->>>>>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
->>>>>> +               return err;
->>>>>> +       }
->>>>>> +
->>>>>> +       reset_control_assert(host->rst);
->>>>>> +       usleep_range(1, 2);
->>>>>> +       reset_control_deassert(host->rst);
->>>>>> +
->>>>>> +       return ufshcd_runtime_resume(dev);
->>>>>> +}
->>>>>> +
->>>>>> +static int ufs_rockchip_system_suspend(struct device *dev)
->>>>>> +{
->>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>> +
->>>>>> +       /* Pass down desired spm_lvl to Firmware */
->>>>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
->>>>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
->>>>>
->>>>> Can you please elaborate on what goes on here? Is this turning off the
->>>>> power-domain that the dev is attached to - or what is actually
->>>>> happening?
->>>>>
->>>>
->>>> This smc call is trying to ask firmware not to turn off the power-domian
->>>> that the UFS is attached to and also not to turn off the power of UFS
->>>> conntroller.
->>>
->>> Okay, thanks for clarifying!
->>>
->>> A follow up question, don't you need to make a corresponding smc call
->>> to inform the FW that it's okay to turn off the power-domain at some
->>> point?
->>>
->>
->> Yes. Each time entering sleep, we teach FW if it need to turn off or
->> keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
->> off and 1 means on.
+On Mon, Oct 21, 2024 at 11:52:38AM +0300, Ilpo J�rvinen wrote:
+> On Mon, 21 Oct 2024, Inochi Amaoto wrote:
 > 
-> I see. So you need to make the call each time when entering the system suspend?
+> > SG2044 relys on an internal divisor when calculating bitrate, which
+> > means a wrong clock for the most common bitrates. So add a quirk for
+> > this uart device to skip the set rate call and only relys on the
+> > internal UART divisor.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 > 
-> Or would it be okay to just make it once, when the spm_lvl is changed?
+> Reviewed-by: Ilpo J�rvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> I wonder though does this mean the numbers userspace can read from kernel 
+> are bogus and if something can be done about that?
+> 
 
-Thers is no nofity when changing spm_lvl.
+I am not sure whether the clock rate can be read by the userspace.
+At least it report the right baud speed by using stty.
+
+Regards,
+Inochi
 
 > 
-> Another way to deal with it, would be to make the smc call each time
-> the power-domain is turned-on, based on spm_lvl too of course.
-> 
-> Would that work?
-
-Yes, that works. Another option is to cache power-domain states and
-check spm_lvl locally. If it doesn't change, we skip smc call.
-
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> 
+> > ---
+> >  drivers/tty/serial/8250/8250_dw.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+> > index ab9e7f204260..51894c93c8a3 100644
+> > --- a/drivers/tty/serial/8250/8250_dw.c
+> > +++ b/drivers/tty/serial/8250/8250_dw.c
+> > @@ -750,7 +750,7 @@ static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {
+> >  	.quirks = DW_UART_QUIRK_CPR_VALUE | DW_UART_QUIRK_IS_DMA_FC,
+> >  };
+> >  
+> > -static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
+> > +static const struct dw8250_platform_data dw8250_skip_set_rate_data = {
+> >  	.usr_reg = DW_UART_USR,
+> >  	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
+> >  };
+> > @@ -760,7 +760,8 @@ static const struct of_device_id dw8250_of_match[] = {
+> >  	{ .compatible = "cavium,octeon-3860-uart", .data = &dw8250_octeon_3860_data },
+> >  	{ .compatible = "marvell,armada-38x-uart", .data = &dw8250_armada_38x_data },
+> >  	{ .compatible = "renesas,rzn1-uart", .data = &dw8250_renesas_rzn1_data },
+> > -	{ .compatible = "starfive,jh7100-uart", .data = &dw8250_starfive_jh7100_data },
+> > +	{ .compatible = "sophgo,sg2044-uart", .data = &dw8250_skip_set_rate_data },
+> > +	{ .compatible = "starfive,jh7100-uart", .data = &dw8250_skip_set_rate_data },
+> >  	{ /* Sentinel */ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, dw8250_of_match);
+> > 
 
 
