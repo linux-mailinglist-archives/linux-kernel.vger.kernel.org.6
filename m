@@ -1,216 +1,126 @@
-Return-Path: <linux-kernel+bounces-374464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F949A6A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9DC9A6A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74687B28351
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE46283AF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDE91F9418;
-	Mon, 21 Oct 2024 13:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D47A1F8EEF;
+	Mon, 21 Oct 2024 13:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4lhC3mE"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJKxisrY"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B2D1F9434
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C853B1E0B96;
+	Mon, 21 Oct 2024 13:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517987; cv=none; b=Qgv0mI+zP1/MYmXTUmDM7wSXpf25pyFfAXwspDV/BuAes/oVNGLag8Ei3D2esdHOiL15xsPG/tnXYVFUGhcNM0vtC6uOnGQ6hU7zlm8dgQLEr77PB+eUeMUp4EtaKyt/4vH859dAaVtyDlj6raB1fCxN7E5RpEKWO25EwoljaVA=
+	t=1729517974; cv=none; b=O/4P4Isj006nLpOLel44w1kRwaTIVk2lU0BW30iIHVwKPweacfx+SnRxbzLOqydFMgo9B0w9fgbWdp6P4lQ+jDHJeMT/8wPzZCa9IlNgJgKMyoXIzllzLwIgcq7AANwPiTWAueC2QBxrPstfYLQpbi9VgojWNRkEfDM9EbaR0rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517987; c=relaxed/simple;
-	bh=fFNrNbgbi0OoM+ELyEvhCsZ8eEjyMJ2HZ/5DmY7rB94=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U0xMVwjZ6nQMnMYPw8A8fjeeTlrM5EHOOhzZZ9D/J1t/O9XlGbX2r4l87Vw29qgfbH8WoX2m6pm9Vd36iq7eeYZUBpE5Wejc2hxNWO+CMj8OuWfuaekL0l+T6ygs6m/wTvtf4xSLxF9yFGwrPp6bSzh9GVuMx+8wtpY4eX4gOng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4lhC3mE; arc=none smtp.client-ip=209.85.167.172
+	s=arc-20240116; t=1729517974; c=relaxed/simple;
+	bh=/uf3LOD2IKo2V1k+yHU+4rCBEzY3dlhJTjfG6TZcxR0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5T+ALvkK4nsJN+7anWsoNQkdJP6E5KQCA/euTZXMibCGXq8NyJ5tGm1AuFaJ8DvbhzyK//iOoX6zh/bidgoraGOE8EWDwnTeoL0poYVPVA4XWeFaqsYoQhS24/63Yvxihe9zQilty1/OF/MS6IG+pZgSZx9+x0z61KZNPor+8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJKxisrY; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e6075cba82so909178b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:39:45 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso3602941f8f.3;
+        Mon, 21 Oct 2024 06:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729517984; x=1730122784; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4A+ztF8SaPFSnt/8L4dXb5Yz21kqLHs5QfVa2rY521g=;
-        b=W4lhC3mEK3NBgQ8xz1yh8s9eaaWgS6S3+7RkV1qzt6qyzv96yLsNlY1Xk0WES/GnLE
-         GSsfbWPqu4aeUGyzkDonmOg38YcVpNipMwCI6oqFk906bhqA2YsuWTwWvxdPbU9o7QUB
-         OoUQ3yqVsawK9xBHRzqcjw8gyS0VNicTF8U1vPuClAB9G8Q4DV8qkwAAkIJy6Yforyom
-         RDLcLiMTF6hpvQPdK/sOIMjz43wYdWnaMMttwlhuEYSvI8wnV/brrg3y8ve+iDdt7n7Z
-         u7IsdQW3/9mfn19m12bqKX3qlclbjulbntqx8MKyGaiiqgIeQnUGzqfKA1VbUrN4+91W
-         GRzA==
+        d=gmail.com; s=20230601; t=1729517971; x=1730122771; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qW983cpZTtlZpg1IF4URdP/C7ezGJs7rx0iCFccBLDU=;
+        b=bJKxisrY0IHF6Cr4+11aUezxyKuYub2bAKpi7e+vlQVD4Q7/7mq1z/9F0+is7+kUeK
+         Yp7lPMAIBsnDYE7yhg8i1nad1gqZ9Rt5KQ4ONq3C504V3zrnPNQJKylTaw9LfMPlyGZr
+         gtmLHRu/JKyBFJPtsMPufaKEOeUg0q+TNOisMBX2UWRha9jF06Vzl+owi/5QvJ4IBn2u
+         h5kWSchkdLQqmHUih144Kz7hq4VtWuuAsHIOtTdbk8pv6l2d/GjWV22udvNNr/vs9EhW
+         FaHFczHaVUaflXbSATchF0jkR5i8tFHAgk5Ee+jjQs4WaOKRIzYBSLCF0te/J4mAIFnw
+         KMKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729517984; x=1730122784;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4A+ztF8SaPFSnt/8L4dXb5Yz21kqLHs5QfVa2rY521g=;
-        b=T1k5pXJ1oI4hRDjmUEDNjnD42gN1UGO6aVe30dE3v7JU62gbHHi/awU0mWF9M3rf4f
-         b4Atkdl/G+yWRrAHHgOU/EcL1U/t2OG9nHZgsebsG0Uyxqw0MWI8An6h3zmcv7hTC1rM
-         uKGKWd89s0Xy4ULfNWKT+WE3T8h+A9nGV8u5owYo3ALdAB9nEtr7GDuI2SKcpL3OkCRG
-         n+Z/LLmrTxf1GM02KZib4y5DP5ecSKJWk/vfLk7gAdIxU4UCmicgxq7K54qywp5zB7gM
-         ExO0T16lfo4mJXQplXQbeHJ9A4fooSLSzPzE7LKqw+TM6wQn/O4x6qvIAK9dXqaHlcv/
-         OE+g==
-X-Gm-Message-State: AOJu0YxIOu+Gu6E2mhF+SmuOx45dU4MWQKLzh6Pbo7xe7GNdaV0IHP4t
-	u8792UQWGVnZb+8b3S9XPe/mM45Q7Myj5wfwD8mWoiegZ/Tts4f/Z5/yLRgs
-X-Google-Smtp-Source: AGHT+IGgD4WTnUsc2NOdTUD1mkAc3r69esN90aIlM2BwuwyvNvXM2MAcjJ3ua8NUhC1wjvW/jOND2A==
-X-Received: by 2002:a05:6870:440e:b0:277:f51d:3ed3 with SMTP id 586e51a60fabf-2892c2def2emr9147876fac.16.1729517983868;
-        Mon, 21 Oct 2024 06:39:43 -0700 (PDT)
-Received: from localhost.localdomain ([66.198.16.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b165a5c4c0sm166894485a.83.2024.10.21.06.39.43
+        d=1e100.net; s=20230601; t=1729517971; x=1730122771;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qW983cpZTtlZpg1IF4URdP/C7ezGJs7rx0iCFccBLDU=;
+        b=fxeut/UwuHkF/vJIi8EY55bxNi4j3Wak7NDeSuaEkYuA6SujNZpFYnELW6egH9XLn3
+         XKUpE2Sv0x2z2k0k/2tRCCO3nnflFnmLE5Run42I7FULyM0/rzWb2mMok1/ZGV6yPwLT
+         f5qFEtSIi88WsFySUdvCjX+ZNFrmSLoqc928uhZm9T96/k0XSPdfgzvEBW4mZKENhTVC
+         XpahCHkeEEWV22d3Ixe89oE94DIGv7R9g4Al8QC0IoLV2K/hFOzXkGovKjDUOj6HdaAG
+         Tk1hXzQyinsbYY9Rf0lu8ZwmVVZyz2J99oi/sahrV1PAhTVQ5eiJOgZIxHoCMCjWlQyF
+         3wLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEwoidzYTsx+KLyk3vFClyi/Khi+UXA5asA63r1GV4RCq9czaDOzlleDMfsVl7DTTKBVMI9UqU@vger.kernel.org, AJvYcCXFAVQHO95jh0NLCCWW3LI3hCiqqs22FvXZUBRPhvrmBJ+7tMzzQSVFXjemjC9iZpnAxGlK/q1vmYOK@vger.kernel.org, AJvYcCXxr2jiZwhTn6Jt+SIti6o2/9zhP9MYJUYlZf880j+8A+t1Jt4YTNB5Kh0mqKz1gCVYhX1PnrxtZFfk7Mxb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCUaDPRb4nF+d7Xis8ZH5uVyZ/82JE05Eoisw04L286CvIKgUz
+	HL/L4O7yBBq5G0X62tXif9vA8zVJcO1NM2Wvv+NF4zzQhLbHGQ2t
+X-Google-Smtp-Source: AGHT+IH3QllBtkXK0c4TbYUbZZNT5mP3kTYyg2B2b7gHrcHd/jXQrDGes7Nj/6Gy+PFB3NGzv8QQow==
+X-Received: by 2002:adf:f8c7:0:b0:37c:d57d:71cd with SMTP id ffacd0b85a97d-37ebd3a30dcmr6846705f8f.52.1729517970676;
+        Mon, 21 Oct 2024 06:39:30 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a365b9sm4387289f8f.11.2024.10.21.06.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:39:43 -0700 (PDT)
-From: avimalin@gmail.com
-X-Google-Original-From: vimal.agrawal@sophos.com
-To: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org,
-	dirk.vandermerwe@sophos.com
-Cc: vimal.agrawal@sophos.com
-Subject: [PATCH v5 2/2] misc:minor basic kunit tests
-Date: Mon, 21 Oct 2024 13:39:26 +0000
-Message-Id: <20241021133926.23774-1-vimal.agrawal@sophos.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241017141329.95508-1-vimal.agrawal@sophos.com>
-References: <20241017141329.95508-1-vimal.agrawal@sophos.com>
+        Mon, 21 Oct 2024 06:39:30 -0700 (PDT)
+Message-ID: <67165992.df0a0220.170dc.b117@mx.google.com>
+X-Google-Original-Message-ID: <ZxZZjvWdbk4wVfOl@Ansuel-XPS.>
+Date: Mon, 21 Oct 2024 15:39:26 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH 0/4] net: dsa: Add Airoha AN8855 support
+References: <20241021130209.15660-1-ansuelsmth@gmail.com>
+ <20241021133605.yavvlsgp2yikeep4@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021133605.yavvlsgp2yikeep4@skbuf>
 
-From: Vimal Agrawal <vimal.agrawal@sophos.com>
+On Mon, Oct 21, 2024 at 04:36:05PM +0300, Vladimir Oltean wrote:
+> On Mon, Oct 21, 2024 at 03:01:55PM +0200, Christian Marangi wrote:
+> > It's conceptually similar to mediatek switch but register and bits
+> > are different.
+> 
+> Is it impractical to use struct regmap_field to abstract those
+> differences away and reuse the mt7530 driver's control flow? What is the
+> relationship between the Airoha and Mediatek IP anyway? The mt7530
+> maintainers should also be consulted w.r.t. whether code sharing is in
+> the common interest (I copied them).
 
-basic kunit tests for misc minor
+Some logic are similar for ATU or VLAN handling but then they added bits
+in the middle of the register and moved some in other place.
 
-Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
-Reviewed-by: Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>
----
-v2: Split from previous patch
-v3:
-v4: Match patch version for whole patch series
-v5: Moved kunit test code to drivers/misc/. Used corporate id in from: and Signed-off-by:
+Happy of being contradicted but from what I checked adapting the mtk
+code would introduce lots of condition and wrapper and I feel it would
+be actually worse than keeping the 2 codebase alone.
 
- drivers/misc/Makefile           |  1 +
- drivers/misc/misc_minor_kunit.c | 69 +++++++++++++++++++++++++++++++++
- lib/Kconfig.debug               | 11 ++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 drivers/misc/misc_minor_kunit.c
+Would love some help by mt7530 to catch some very common case.
 
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index a9f94525e181..22112861084c 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -22,6 +22,7 @@ obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
- obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
- obj-$(CONFIG_ENCLOSURE_SERVICES) += enclosure.o
- obj-$(CONFIG_KGDB_TESTS)	+= kgdbts.o
-+obj-$(CONFIG_TEST_MISC_MINOR)	+= misc_minor_kunit.o
- obj-$(CONFIG_SGI_XP)		+= sgi-xp/
- obj-$(CONFIG_SGI_GRU)		+= sgi-gru/
- obj-$(CONFIG_SMPRO_ERRMON)	+= smpro-errmon.o
-diff --git a/drivers/misc/misc_minor_kunit.c b/drivers/misc/misc_minor_kunit.c
-new file mode 100644
-index 000000000000..293e0fb7e43e
---- /dev/null
-+++ b/drivers/misc/misc_minor_kunit.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <kunit/test.h>
-+#include <kunit/test-bug.h>
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+
-+/* dynamic minor (2) */
-+static struct miscdevice dev_dynamic_minor = {
-+	.minor  = 2,
-+	.name   = "dev_dynamic_minor",
-+};
-+
-+/* static minor (LCD_MINOR) */
-+static struct miscdevice dev_static_minor = {
-+	.minor  = LCD_MINOR,
-+	.name   = "dev_static_minor",
-+};
-+
-+/* misc dynamic minor */
-+static struct miscdevice dev_misc_dynamic_minor = {
-+	.minor  = MISC_DYNAMIC_MINOR,
-+	.name   = "dev_misc_dynamic_minor",
-+};
-+
-+static void kunit_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
-+	misc_deregister(&dev_dynamic_minor);
-+}
-+
-+static void kunit_static_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_static_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, LCD_MINOR, dev_static_minor.minor);
-+	misc_deregister(&dev_static_minor);
-+}
-+
-+static void kunit_misc_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_misc_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	misc_deregister(&dev_misc_dynamic_minor);
-+}
-+
-+static struct kunit_case test_cases[] = {
-+	KUNIT_CASE(kunit_dynamic_minor),
-+	KUNIT_CASE(kunit_static_minor),
-+	KUNIT_CASE(kunit_misc_dynamic_minor),
-+	{}
-+};
-+
-+static struct kunit_suite test_suite = {
-+	.name = "misc_minor_test",
-+	.test_cases = test_cases,
-+};
-+kunit_test_suite(test_suite);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Vimal Agrawal");
-+MODULE_DESCRIPTION("misc minor testing");
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..5a5d27284e0a 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2488,6 +2488,17 @@ config TEST_RHASHTABLE
- config TEST_IDA
- 	tristate "Perform selftest on IDA functions"
- 
-+config TEST_MISC_MINOR
-+	tristate "Basic misc minor Kunit test" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Kunit test for the misc minor.
-+	  It tests misc minor functions for dynamic and misc dynamic minor.
-+	  This include misc_xxx functions
-+
-+	  If unsure, say N.
-+
- config TEST_PARMAN
- 	tristate "Perform selftest on priority array manager"
- 	depends on PARMAN
 -- 
-2.17.1
-
+	Ansuel
 
