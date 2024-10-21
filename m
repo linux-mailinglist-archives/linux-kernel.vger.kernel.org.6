@@ -1,134 +1,158 @@
-Return-Path: <linux-kernel+bounces-373754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED1D9A5C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C6B9A5C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBFF1C217B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:08:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E461C2199E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DC01D0F66;
-	Mon, 21 Oct 2024 07:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8271D0F54;
+	Mon, 21 Oct 2024 07:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zqbzj7H9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w2bqYB2D";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="x5pkQ8Dc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ohGxU7if";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cTdeW+gC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741431940A2;
-	Mon, 21 Oct 2024 07:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29AA1940A2;
+	Mon, 21 Oct 2024 07:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494481; cv=none; b=Sh3J5PoCRbz5UqNQ6wQ+v1q9n7Yem4JgE9zqEOvJ5o+1z7g2dN0LpAkksX0WBZYakkhxBdicNQqyMY0+cXLItNdTLr6cjkm+HfwXCicuyYQlXY/Oo2DlGz1033crIeVzQcry3DTwS5QqGCgZW9cTXjVIHIDxSOUzfem3T0HX74c=
+	t=1729494527; cv=none; b=MXNFh606rjLeJQEsdTNGVxsQTmApC8tF8getUnnAhT4T0ODP9vH2vBTAX+Wpyd6oXeZYUUvL9RsATlrsSgAXDmEtkYFR9iIwp1Gsq5g2KyYbL7ojHx9UcRAhKDJ6S+kiToVfMQ0KuvXWL2MssywshKi0LU8YI+BchWSMZDOI9Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494481; c=relaxed/simple;
-	bh=jgiYG0Ek2ZJK/rdl0cvnO5WUT2lSdDlxtVCEzXGPlM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTR9E5tLPUNOyYlcdg76F7JiIMtpkHyLb/TKfXjvIDOdyFmOXMo5jGsYAEm6gdwpVCLtLN2Z6/kjLQyRwA7CmH2YeCAPVJVJHk0DiRYBv+mz2pZSRJy321HQ4/qNTblUTEY0pUYYUV98go56UvOgUmSo0T0acF/JLvLNXl7ttHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zqbzj7H9; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729494480; x=1761030480;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jgiYG0Ek2ZJK/rdl0cvnO5WUT2lSdDlxtVCEzXGPlM4=;
-  b=Zqbzj7H9jmiLeBxOO1POiwka8dTsXSkpqs3dKp8tIt6BO2uXbIiRfHY9
-   ZVQX2znsXohsULOua7yFS/TH8AsRymg4Squ4Y/rki25lKKosaPQqqcV5V
-   4Szt8fkyXC7AjQ8dsMKSLAQZ+ltTNmgZOu0ppinENVwf1Q9obaOgz7esH
-   Akxx90Y1PbW2U77oupo8VBCKa/QabzBr4FdQsg0XYVi9H2zZu6xNCluAW
-   9TMDjf7CR6TdOJe0gD1Kp9Ze1vFUUlyTetCCdbL8HAKf68xqh0AJOT0RM
-   yLtKkQlfGni/AD/+WcPQIEYcLy+wcBJX6U57kM29uwYkuP+Zwq0JvFJvr
-   g==;
-X-CSE-ConnectionGUID: QGQz3Dt1S8GZyVQUZmByZg==
-X-CSE-MsgGUID: XBBnkWyUQ4O5lC6FOH7+Yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="28398053"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="28398053"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:07:59 -0700
-X-CSE-ConnectionGUID: g8ZTj4VQRKGVGBiGDjDB5g==
-X-CSE-MsgGUID: S4MppS4yTayb9wJK/YalEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="83433920"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:07:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t2mW7-00000005P6t-2fsQ;
-	Mon, 21 Oct 2024 10:07:51 +0300
-Date: Mon, 21 Oct 2024 10:07:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Subject: Re: [PATCH 2/3] printf: Add print format (%pra) for struct range
-Message-ID: <ZxX9x82ME7GRnVl9@smile.fi.intel.com>
-References: <20241018-cxl-pra-v1-0-7f49ba58208b@intel.com>
- <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
+	s=arc-20240116; t=1729494527; c=relaxed/simple;
+	bh=DJ/LMXa8DNzbZlDTMg9MkBRugetCEuzG8+gEMP8AGOs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QdPHABZBkMild53OJrz3xrbndwTjh3hJKqj8gdkN5LsWzwHO46Gqedo8WP4w4P4ZkfvvA15VR6/kvOcmbbEuZXfw1Et3lQuEVP6CYdm8emlEYQhvh7egyOOemZ6u7YupJ/CMUX8MU0JGExMCImW1jSwVuwLNorR5IgrTISnwwUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w2bqYB2D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=x5pkQ8Dc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ohGxU7if; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cTdeW+gC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D172121FC9;
+	Mon, 21 Oct 2024 07:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729494523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mbDBxoWKkQMhSe40y2KcT39f+Czf7BLV/i78/Xk1dFs=;
+	b=w2bqYB2DWayNdgQk+kyqKcswbyy/uH0bbsnlOPnCbFPofbdkVJVhO/fxbZJ45Gog7GWQ1l
+	CeF7+zPwps+wIHuJyRR3+Jdp0FG8IJ4j8l/SyQMxuGdXFEzgMDn1ccSQ5ES0+4TuE5fhAA
+	2B5bJuvS7UI67EOxo9/QRbDTueW1W2w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729494523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mbDBxoWKkQMhSe40y2KcT39f+Czf7BLV/i78/Xk1dFs=;
+	b=x5pkQ8DcWQZ9Xo7oSzwc/bG0e1xBnLr50pLwGwb2j6Z7jf1rNiwG1vqAfXWIfz9k8FKhb+
+	90lHIsZN83qz/dAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729494522; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mbDBxoWKkQMhSe40y2KcT39f+Czf7BLV/i78/Xk1dFs=;
+	b=ohGxU7ifBTz6z8C+KkJBBWIcKtYQiOWSp8/Ov/Ung0jP6WBKqWjhWkj04JdCVUQxPS9vl1
+	Sz9UZiLZM0z7v7P40jwwnb64W2p9jBX1/sFNwFXrwf9+8Bq23CEhGu/mxuKlAjERD91S4G
+	1ocwmihwI+a1SWFnlv+p5PbLyFXSeu4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729494522;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mbDBxoWKkQMhSe40y2KcT39f+Czf7BLV/i78/Xk1dFs=;
+	b=cTdeW+gC1dpK6vVuBhBoNKqwBKQ9oUSI4DF6rjcPn9TsQuTF0XJK9woqG3liqPCeZMsdld
+	Ar7Mrl+AI0BpxBAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 699FB136DC;
+	Mon, 21 Oct 2024 07:08:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id weFNGPr9FWcXSgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 21 Oct 2024 07:08:42 +0000
+Date: Mon, 21 Oct 2024 09:09:42 +0200
+Message-ID: <874j56j5jd.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Andrey Shumilin <shum.sdl@nppct.ru>
+Cc: Clemens Ladisch <clemens@ladisch.de>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	lvc-patches@linuxtesting.org,
+	khoroshilov@ispras.ru,
+	ykarpov@ispras.ru,
+	vmerzlyakov@ispras.ru,
+	vefanov@ispras.ru
+Subject: Re: [PATCH] ALSA: firewire-lib: Avoid division by zero in apply_constraint_to_size()
+In-Reply-To: <20241018060018.1189537-1-shum.sdl@nppct.ru>
+References: <20241018060018.1189537-1-shum.sdl@nppct.ru>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 18, 2024 at 02:46:25PM -0500, Ira Weiny wrote:
-> The use of struct range in the CXL subsystem is growing.  In particular,
-> the addition of Dynamic Capacity devices uses struct range in a number
-> of places which are reported in debug and error messages.
+On Fri, 18 Oct 2024 08:00:18 +0200,
+Andrey Shumilin wrote:
 > 
-> To wit requiring the printing of the start/end fields in each print
-> became cumbersome.  Dan Williams mentions in [1] that it might be time
-> to have a print specifier for struct range similar to struct resource
+> The step variable is initialized to zero. It is changed in the loop,
+> but if it's not changed it will remain zero. Add a variable check
+> before the division.
 > 
-> A few alternatives were considered including '%par', '%r', and '%pn'.
-> %pra follows that struct range is similar to struct resource (%p[rR])
-> but needs to be different.  Based on discussions with Petr and Andy
-> '%pra' was chosen.[2]
+> The observed behavior was introduced by commit 826b5de90c0b
+> ("ALSA: firewire-lib: fix insufficient PCM rule for period/buffer size"),
+> and it is difficult to show that any of the interval parameters will
+> satisfy the snd_interval_test() condition with data from the
+> amdtp_rate_table[] table.
 > 
-> Andy also suggested to keep the range prints similar to struct resource
-> though combined code.  Add hex_range() to handle printing for both
-> pointer types.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Finally introduce DEFINE_RANGE() as a parallel to DEFINE_RES_*() and use
-> it in the tests.
+> Fixes: 826b5de90c0b ("ALSA: firewire-lib: fix insufficient PCM rule for period/buffer size")
+> Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
 
-...
-
->  	case 'R':
->  	case 'r':
-> -		return resource_string(buf, end, ptr, spec, fmt);
-> +		return resource_and_range(fmt, buf, end, ptr, spec);
-
-Since you are going to have a new version, I think this should be _or_ instead
-of _and_.
+Applied now.  Thanks.
 
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Takashi
 
