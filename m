@@ -1,209 +1,272 @@
-Return-Path: <linux-kernel+bounces-373522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6B29A5831
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBF49A5832
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EDB4B226B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EAC1F20C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AEB1547ED;
-	Mon, 21 Oct 2024 00:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ED879CC;
+	Mon, 21 Oct 2024 00:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFFk4W0d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3365fCb"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E05A14830F;
-	Mon, 21 Oct 2024 00:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF901FDD;
+	Mon, 21 Oct 2024 00:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729470599; cv=none; b=ClkoqdmqW/rwpgIF5W1bq7oCsGhwBg9CmmrG/k1jXEBaDvnzsiSs7kDKbxcFrUCapQROWKcVAfZPRuNbaYdc/YNHtElREYspXrD/ZVg0MFtNZKzn/i/NFvtgux/G6XptOS4uMeBZQsLw5nA/xSk5Z75Mjj+qJR2WT+wiluPguZk=
+	t=1729471179; cv=none; b=B/v0ruG3V3mmudo6XKucRmyDSU5i/B79+b7VTFJ+5AzIniHGbtIaAexsqMET7MkK/kB1A40taou9MWwxakqphZEKnTugNa04EGckIxQzOEGbxmvcB+nu3HrgPnAGWvjhWrYkmWoiTR+1ga811XFztOPmPRrlr7zL7CUQF1r6yKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729470599; c=relaxed/simple;
-	bh=2edVn3yzlgvTIcU4OYne6VaRBmOeBMvpuDRrHbVNdrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oGoohfC3AJJKp+I9JdTM7rGeMiA+bimxvlVQmu+SCee0SBRdI8Yx7uMvS6fYNV7/XBxrGbCsaEc5lopM6st+ffv7FFT2U1nJ5KjEoUO8vmvebafRLXt7DO4xuetHDIJa4OCSukXJDopmhxQLLWr0QHCpC1TZ3Km/7I/hH/qWFP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFFk4W0d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B75C4CEE5;
-	Mon, 21 Oct 2024 00:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729470598;
-	bh=2edVn3yzlgvTIcU4OYne6VaRBmOeBMvpuDRrHbVNdrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NFFk4W0dyvHD7M3v36IIWTb5ySBBZX5uZ/VLRYiArPPR5++D/baWB8d+lyfAaBOhk
-	 rztTLk/6ilOUZBWwQxzKVpNgy7hbS+bAqO2cV8DFYmzWDyAaKEezQcPZFBrYh8vShT
-	 roh7zUz+tjlNZy+E9vuB5Q59JQnN14hGjhkd5gjyQeUJqlHGIc+Uf3/5EwjEZ4O6Ps
-	 TvEpzXEcAb/PHAsselt3G1remC4TFMm//VXM0Ciyn11PZQ9zsIxfN5iARYumUTBA9J
-	 8pJ0BrJoKwcW+JUENnQzEDWoyb2qcx6NpA2gan0ia3pz9LbggvtIVcVcrMMhn+Rn2b
-	 w+zTkdQuRqfwg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH 15/15] f2fs: switch to using the crc32 library
-Date: Sun, 20 Oct 2024 17:29:35 -0700
-Message-ID: <20241021002935.325878-16-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241021002935.325878-1-ebiggers@kernel.org>
-References: <20241021002935.325878-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1729471179; c=relaxed/simple;
+	bh=L6ST1QJasl3mtJ4houSLt1c+e9IqlVPIqwr3tSn6irI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RLeXzmoUFnQ2ztTyarYafKHjlHViZ6XxpXU+AUqsHwrAv4FiAE3ya5kdlYXVvGJPS9HSt1ietejT0xjWe13ob2pd5GTNHz9Geh+T8RYsiQ7OkcepuIgeru2QjntxH6pgAIqbl/2JCsCfbs48SKpmKWFHT1CmGWnbdIEATl3Av/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3365fCb; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e983487a1so2718791b3a.2;
+        Sun, 20 Oct 2024 17:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729471177; x=1730075977; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANyKrgYNgnyauX32Pt4wK4DRXcpk6uScKLfjJ4dSe4c=;
+        b=L3365fCbdXz+hv3ziCmrcX03FFAIv3NmZWB/VmfwR1bgICvWKkCbfUE6lZ0eY/D8zP
+         HGfMw9JUdt40QbLrEDIy12EDrWhaI+Sv4Utb8nkbaOIZhP9gkcFmYPyRmrXFgdfJWOEs
+         D7QQRbF2U5440OKt334OOwdeYah3bQuXDuN92h98SVKMsMcvNtJpHVkS2UWizTT2ZqgD
+         hCTxOFd5zuh39JyVTJ2LroJ+JQHmRsH3gn9xHuI9wP/tPbhoY03OI0172o2XoT7olpQY
+         f0WCgEuVmZdGf46xSD7nijdhQSMktNuGyxstsThp5dn+88cjS/JEV83qbu2NHnRJmdVy
+         oFew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729471177; x=1730075977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ANyKrgYNgnyauX32Pt4wK4DRXcpk6uScKLfjJ4dSe4c=;
+        b=o1IzvUQ15boQcdO1O6HC3M8RmiFRlb7xN4Lrz/lY2KFr802BHgiu+yDF/DyGdxHME9
+         BkRaLfzPkC9Is93bby3oyBRka0hOz119pPu7AFAwUz8UhQwH8GTgwpTq9qaXIEk5Bq1h
+         EET4E2AkOVHeGPEDcDIvwqUcldBe8mHZkGMpHZqj/GszjuzoIb9kO7gCxnrWsmg9PrGc
+         fxf+TzoqhgO02OSSBDgtSyB3PdReEH8nLlrPSHKBzXbzLYeplhquDnxg8t0kmBZKCT0V
+         Mt1U7vlwe8qmKzw2Pnw0icbLfW41JUPUWPHucqSWw8kH+rx4IRvLWJ37pqv/0CKKkQbK
+         Zy+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUAktLbv4o8BDLHOBJ8FicTrKPH4p432JJB/IRBi0yneYZQp+YN8vHGcSXlmfKTadY89z8hCs4OsyRfuCE=@vger.kernel.org, AJvYcCVngf5sIsp7spxy1G7a9TGzDdudGcop69iNv4qbWX/xlEAph608UsuBuMkjKcVzCOnKJV3C@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT3g6oJOxqK+1X03b3x3ShdbrFpDslSjbcD7beOpEHRrNp7Gsa
+	3Chg+djavFfwQV1CkEA+GZGnezdoEsIezOO/kCHArY/PBhYSSwDNRwDq7Lj7eKOMO7lXHIeHRRr
+	0m/lo30z+Ut/VIj0ywnPIYnOxzhg=
+X-Google-Smtp-Source: AGHT+IF02fpeRCAfdflN0uMgWfoX/IQlvyaz7kAhF7WaR7s8HnCe0eDc0Hm59uenuc76hvenr3Pr6VU8HFUJ/hjN/g0=
+X-Received: by 2002:a05:6a00:b48:b0:71e:82b4:6e6e with SMTP id
+ d2e1a72fcca58-71ea31d3056mr14318470b3a.4.1729471176585; Sun, 20 Oct 2024
+ 17:39:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241020125119.14751-1-qiang.zhang1211@gmail.com> <ZxWO6BmRutOC0RnZ@pavilion.home>
+In-Reply-To: <ZxWO6BmRutOC0RnZ@pavilion.home>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Mon, 21 Oct 2024 08:39:24 +0800
+Message-ID: <CALm+0cW=1PAVhjHKM+aXLHHzsD0+7pbVDvmm+kxvff7r=Di2tA@mail.gmail.com>
+Subject: Re: [PATCH] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Eric Biggers <ebiggers@google.com>
+>
+> Le Sun, Oct 20, 2024 at 08:51:19PM +0800, Zqiang a =C3=A9crit :
+> > Currently, running rcutorture test with torture_type=3Drcu fwd_progress=
+=3D8
+> > n_barrier_cbs=3D8 nocbs_nthreads=3D8 nocbs_toggle=3D100 onoff_interval=
+=3D60
+> > test_boost=3D2, will trigger the following warning:
+> >
+> > WARNING: CPU: 19 PID: 100 at kernel/rcu/tree_nocb.h:1061 rcu_nocb_rdp_d=
+eoffload+0x292/0x2a0
+> > RIP: 0010:rcu_nocb_rdp_deoffload+0x292/0x2a0
+> > [18839.537322] Call Trace:
+> > [18839.538006]  <TASK>
+> > [18839.538596]  ? __warn+0x7e/0x120
+> > [18839.539491]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
+> > [18839.540757]  ? report_bug+0x18e/0x1a0
+> > [18839.541805]  ? handle_bug+0x3d/0x70
+> > [18839.542837]  ? exc_invalid_op+0x18/0x70
+> > [18839.543959]  ? asm_exc_invalid_op+0x1a/0x20
+> > [18839.545165]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
+> > [18839.546547]  rcu_nocb_cpu_deoffload+0x70/0xa0
+> > [18839.547814]  rcu_nocb_toggle+0x136/0x1c0
+> > [18839.548960]  ? __pfx_rcu_nocb_toggle+0x10/0x10
+> > [18839.550073]  kthread+0xd1/0x100
+> > [18839.550958]  ? __pfx_kthread+0x10/0x10
+> > [18839.552008]  ret_from_fork+0x2f/0x50
+> > [18839.553002]  ? __pfx_kthread+0x10/0x10
+> > [18839.553968]  ret_from_fork_asm+0x1a/0x30
+> > [18839.555038]  </TASK>
+> >
+> > CPU0                               CPU2                          CPU3
+> > //rcu_nocb_toggle             //nocb_cb_wait                   //rcutor=
+ture
+> >
+> > // deoffload CPU1             // process CPU1's rdp
+> > rcu_barrier()
+> >     rcu_segcblist_entrain()
+> >         rcu_segcblist_add_len(1);
+> >         // len =3D=3D 2
+> >         // enqueue barrier
+> >         // callback to CPU1's
+> >         // rdp->cblist
+> >                              rcu_do_batch()
+> >                                  // invoke CPU1's rdp->cblist
+> >                                  // callback
+> >                                  rcu_barrier_callback()
+> >                                                              rcu_barrie=
+r()
+> >                                                                mutex_lo=
+ck(&rcu_state.barrier_mutex);
+> >                                                                // still=
+ see len =3D=3D 2
+> >                                                                // enque=
+ue barrier callback
+> >                                                                // to CP=
+U1's rdp->cblist
+> >                                                                rcu_segc=
+blist_entrain()
+> >                                                                    rcu_=
+segcblist_add_len(1);
+> >                                                                    // l=
+en =3D=3D 3
+> >                                  // decrement len
+> >                                  rcu_segcblist_add_len(-2);
+> >                              kthread_parkme()
+> >
+> > // CPU1's rdp->cblist len =3D=3D 1
+> > // Warn because there is
+> > // still a pending barrier
+> > // trigger warning
+> > WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
+> > cpus_read_unlock();
+> >
+> >                                                                 // wait=
+ CPU1 comes online
+> >                                                                 // invo=
+ke barrier callback on
+> >                                                                 // CPU1=
+ rdp's->cblist
+> >                                                                 wait_fo=
+r_completion(&rcu_state.barrier_completion);
+> > // deoffload CPU4
+> > cpus_read_lock()
+> >   rcu_barrier()
+> >     mutex_lock(&rcu_state.barrier_mutex);
+> >     // block on barrier_mutex
+> >     // wait rcu_barrier() on
+> >     // CPU3 to unlock barrier_mutex
+> >     // but CPU3 unlock barrier_mutex
+> >     // need to wait CPU1 comes online
+> >     // when CPU1 going online will block on cpus_write_lock
+> >
+> > The above scenario will not only trigger WARN_ON_ONCE(), but also
+> > trigger deadlock, this commit therefore check rdp->cblist length
+> > before invoke kthread_parkme(), and the kthread_parkme() is not
+> > invoke until length reaches zero.
+> >
+> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > ---
+> >  kernel/rcu/tree_nocb.h | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> > index 8648233e1717..a2b0ebdefee3 100644
+> > --- a/kernel/rcu/tree_nocb.h
+> > +++ b/kernel/rcu/tree_nocb.h
+> > @@ -893,6 +893,12 @@ static inline bool nocb_cb_wait_cond(struct rcu_da=
+ta *rdp)
+> >       return !READ_ONCE(rdp->nocb_cb_sleep) || kthread_should_park();
+> >  }
+> >
+> > +static inline bool nocb_cblist_empty(struct rcu_data *rdp)
+> > +{
+> > +     return !(rcu_rdp_is_offloaded(rdp) &&
+>
+> But the rdp has to be offloaded when nocb_cb_wait() is running, and that
+> include the times when it is parking and when it is unparking.
+>
+> > +             WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist)));
+>
+> And like your scenario above shows, it's possible to reach here with
+> callbacks. So this check shouldn't be a warning at that point?
 
-Now that the crc32() library function takes advantage of
-architecture-specific optimizations, it is unnecessary to go through the
-crypto API.  Just use crc32().  This is much simpler, and it improves
-performance due to eliminating the crypto API overhead.
+Yes, the WARN_ON_ONCE() should be removed.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/Kconfig |  3 +--
- fs/f2fs/f2fs.h  | 19 +------------------
- fs/f2fs/super.c | 15 ---------------
- 3 files changed, 2 insertions(+), 35 deletions(-)
+>
+> > +}
+> > +
+> >  /*
+> >   * Invoke any ready callbacks from the corresponding no-CBs CPU,
+> >   * then, if there are no more, wait for more to appear.
+> > @@ -907,7 +913,7 @@ static void nocb_cb_wait(struct rcu_data *rdp)
+> >
+> >       swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+> >                                           nocb_cb_wait_cond(rdp));
+> > -     if (kthread_should_park()) {
+> > +     if (kthread_should_park() && nocb_cblist_empty(rdp)) {
+>
+> What about this instead? If the second barrier is queued before
+> the final check to rcu_segcblist_ready_cbs() in nocb_cb_wait(), this
+> will be noticed and ->nocb_cb_sleep will remain false. If otherwise rcu_b=
+arrier()
+> is called after that final rcu_segcblist_ready_cbs() check, it will obser=
+ve
+> the final decrement to zero and won't entrain the callback.
+>
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 16865475120b..0de07d44646c 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+> @@ -891,7 +891,19 @@ static void nocb_cb_wait(struct rcu_data *rdp)
+>         swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+>                                             nocb_cb_wait_cond(rdp));
+>         if (kthread_should_park()) {
+> -               kthread_parkme();
+> +               /*
+> +                * kthread_park() must be preceded by an rcu_barrier().
+> +                * But yet another rcu_barrier() might have sneaked in be=
+tween
+> +                * the barrier callback execution and the callbacks count=
+er
+> +                * decrement.
+> +                */
+> +               if (rdp->nocb_cb_sleep) {
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 68a1e23e1557c..5916a02fb46dd 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -2,12 +2,11 @@
- config F2FS_FS
- 	tristate "F2FS filesystem support"
- 	depends on BLOCK
- 	select BUFFER_HEAD
- 	select NLS
--	select CRYPTO
--	select CRYPTO_CRC32
-+	select CRC32
- 	select F2FS_FS_XATTR if FS_ENCRYPTION
- 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
- 	select FS_IOMAP
- 	select LZ4_COMPRESS if F2FS_FS_LZ4
- 	select LZ4_DECOMPRESS if F2FS_FS_LZ4
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 33f5449dc22d5..1fc5c2743c8d4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1761,13 +1761,10 @@ struct f2fs_sb_info {
- 
- 	/* For write statistics */
- 	u64 sectors_written_start;
- 	u64 kbytes_written;
- 
--	/* Reference to checksum algorithm driver via cryptoapi */
--	struct crypto_shash *s_chksum_driver;
--
- 	/* Precomputed FS UUID checksum for seeding other checksums */
- 	__u32 s_chksum_seed;
- 
- 	struct workqueue_struct *post_read_wq;	/* post read workqueue */
- 
-@@ -1941,25 +1938,11 @@ static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-  * Inline functions
-  */
- static inline u32 __f2fs_crc32(struct f2fs_sb_info *sbi, u32 crc,
- 			      const void *address, unsigned int length)
- {
--	struct {
--		struct shash_desc shash;
--		char ctx[4];
--	} desc;
--	int err;
--
--	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
--
--	desc.shash.tfm = sbi->s_chksum_driver;
--	*(u32 *)desc.ctx = crc;
--
--	err = crypto_shash_update(&desc.shash, address, length);
--	BUG_ON(err);
--
--	return *(u32 *)desc.ctx;
-+	return crc32(crc, address, length);
- }
- 
- static inline u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
- 			   unsigned int length)
- {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 87ab5696bd482..003d3bcb0caa2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1670,12 +1670,10 @@ static void f2fs_put_super(struct super_block *sb)
- 
- 	f2fs_destroy_post_read_wq(sbi);
- 
- 	kvfree(sbi->ckpt);
- 
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi->raw_super);
- 
- 	f2fs_destroy_page_array_cache(sbi);
- 	f2fs_destroy_xattr_caches(sbi);
- #ifdef CONFIG_QUOTA
-@@ -4419,19 +4417,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
- 		spin_lock_init(&sbi->inode_lock[i]);
- 	}
- 	mutex_init(&sbi->flush_lock);
- 
--	/* Load the checksum driver */
--	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
--	if (IS_ERR(sbi->s_chksum_driver)) {
--		f2fs_err(sbi, "Cannot load crc32 driver.");
--		err = PTR_ERR(sbi->s_chksum_driver);
--		sbi->s_chksum_driver = NULL;
--		goto free_sbi;
--	}
--
- 	/* set a block size */
- 	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
- 		f2fs_err(sbi, "unable to set blocksize");
- 		goto free_sbi;
- 	}
-@@ -4872,12 +4861,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
- 	kvfree(options);
- free_sb_buf:
- 	kfree(raw_super);
- free_sbi:
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- 
- 	/* give only one another chance */
- 	if (retry_cnt > 0 && skip_recovery) {
-@@ -5080,7 +5067,5 @@ module_init(init_f2fs_fs)
- module_exit(exit_f2fs_fs)
- 
- MODULE_AUTHOR("Samsung Electronics's Praesto Team");
- MODULE_DESCRIPTION("Flash Friendly File System");
- MODULE_LICENSE("GPL");
--MODULE_SOFTDEP("pre: crc32");
--
--- 
-2.47.0
+For the non-nocb cpus set during boot, the corresponding
+rcuop kthread, we should park directly, otherwise
+WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp)) will be triggered.
 
+Should the conditions be like this?
+if(!rcu_rdp_is_offloaded(rdp) || rdp->nocb_cb_sleep)
+
+
+Thanks
+Zqiang
+
+> +                       rcu_nocb_lock_irqsave(rdp, flags);
+> +                       WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
+> +                       rcu_nocb_unlock_irqrestore(rdp, flags);
+> +
+> +                       kthread_parkme();
+> +               }
+>         } else if (READ_ONCE(rdp->nocb_cb_sleep)) {
+>                 WARN_ON(signal_pending(current));
+>                 trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEm=
+pty"));
 
