@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-374653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4789A6E17
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EE59A6E1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9BD61C21D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C3C1F24269
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064F139566;
-	Mon, 21 Oct 2024 15:27:57 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FFD1741D2;
+	Mon, 21 Oct 2024 15:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO7rNIDL"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728B53D68;
-	Mon, 21 Oct 2024 15:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F01815666C;
+	Mon, 21 Oct 2024 15:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524477; cv=none; b=szncLd/u4i8CF+ZWpT6mHwKnyeyBKIdbbGggc54hzUMLM2i/rSZl3Lndz8G4aiUBDsS9UUTR13xsZXQ4C/fG06jYKOZmNi24XID2Zo4tqcVKpLVoDhxCAK3lgXRu5wg+Oa3GcdFty5B0ShQhsTzrPR0QchLN9k/SVs+3W04Quyo=
+	t=1729524554; cv=none; b=A2oiqBOwT+FJ0B9F+Y//bnsAOyJK09UwqTFRFLE0Y9FCB5burvr/ThSeyEwRIsynfvdocs4VJ7Vk7AepLwQRdvyDNsmrj/xFLrhFpP8lkGYGyleC739xsHWoMO0a1QfPPbyxCpvYb1j+XNv9+eBWj3pFzPyW9xibEc7EUkEWa0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524477; c=relaxed/simple;
-	bh=EhKv4lbBzS7rCDbkK2yFUL6LgmmXbVphH6XU8q+Ffr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OYU9GqMQ/cNdbOhMVaz6MsW5z5Um5ttsvpWaLy5j+pgXtmy0+66IPlOHq9vo/WToLT4dU/r6Mmy3YHSanGZm8zT/kctOj4I4lMELkW7zPPEvOSpEb6uJ4Nyfi6vODwKxbTaHyWLfb1prUV199HmpWB7nOOJC21SjrZ9C80Uf2e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	s=arc-20240116; t=1729524554; c=relaxed/simple;
+	bh=djjbLzgO5ZMu5YQoFhWKRk/U8zzfkcKjEWieuZBAClY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ttgqfbeq09/8Ijyi5mN8DD6IQt9cqqSlTKovHOfp51v+FHl+9ZZ51D3RyDiXxmCCvkciVDXXQR2O4fr2lLIwm/reg3HadVLcuiUkE/Wleo7Xfnr8ENRTMS4EKW+LFMYPwvAWe5UxwuWuEAn8DLda6GeFWLKH/WJSZQd1hak14o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO7rNIDL; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d49a7207cso3387912f8f.0;
-        Mon, 21 Oct 2024 08:27:55 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea8ecacf16so3143942a12.1;
+        Mon, 21 Oct 2024 08:29:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729524551; x=1730129351; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxtlyOqwd5QS2va759UuCoBJi2MrqRuIrYTgMMaR/b4=;
+        b=IO7rNIDLWncvvdsXHPxdrnY5GcTg+G44GfCr7yChLpvrERFfVHseljB1GfTkH7CNdk
+         /JF+KT3xIdLDwsNFoN7VID1YswBba4axz3PUn9+qAKDcbHHMHCb/PKkxcpMbbUwcBMkh
+         c6IHS69fhVp30KQslcfwGVN9yYyEm12VKlI87UbR1cPjACRVH7KcVficCZKPZyNjnz1B
+         W5RsEd3BE0/PzQHM3Rr4yzQ3mkc5EYY6okWJTcDBBPLY3DScB/BK0i4RTPtoZzLSuR4d
+         U2hIE4RnyCcDkfrxRjq9OYffCFsAzYDb1yvd39LYPHjv3i1KWb8itQA+vjtVA8YApmAo
+         kbHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729524474; x=1730129274;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPNYpFd/xwLgKe8tmdP26yJlWnsjulWDdXDNr81wB04=;
-        b=eDYaqTr+/o1wUa8fWzy5vCdcI1BNY02Ssl29IMitizpaVxl3JA8TpadC25ZVjLJEos
-         0chzN3CgNnYdlccoG6ftImCz4nouBmqwX28RW+Xana/R1Ru3j7m2ZJyI2WzKTtZBQMBg
-         liZDOpe4kVKREiRIinbeGYBbhOM3pqlkbjvnCmRYFxeX4j5yEXU3mLev50lrIosHHjfw
-         3emB7/mqblIhYFx35RM185yUrUT60nGubjmQbTDyZH8Y7b9hKgdCoFw41xJTcKkcTtkf
-         jcqSFMXRVanZGLl3ZjhfLiC5iJDJU+GvgTgrrhlUfOotfv2P1lxXAf42OrSVAAXprtD6
-         TDeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZAy0P5FLH97hkXH8hCSUCAskRYTG0nfyJkUGQesAOhYaW6Er6lM4nh4O4ryKuC7wLLdCvQqABsj3AjA==@vger.kernel.org, AJvYcCVqevv/umQXndzcTOdqoM+rDdZeQGrG/2a0RDv3Hlc7j0PdpLXDAWDUFj3u0cy5KRN99PndjHiYrET7qK5Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwunRJlEqBul2RfByM1A5PNgvCAGgNA0pcQmvEJB11fDJWx7e3H
-	Kx8grIodj0an3pxbuqAi3qKlslvY22tFYzZrUMnsoB32JSJhCY/F
-X-Google-Smtp-Source: AGHT+IHxOPVkphc+4ylvQkg4yvf6bqARGxtQ8CDPo9/Vc1nfBMf6q+Zr8IupvM0DYrzPxucpArfPyg==
-X-Received: by 2002:adf:f6d2:0:b0:37c:d299:b5f0 with SMTP id ffacd0b85a97d-37eab6ec6camr7295086f8f.59.1729524473533;
-        Mon, 21 Oct 2024 08:27:53 -0700 (PDT)
-Received: from [10.100.102.74] (89-138-78-158.bb.netvision.net.il. [89.138.78.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a487bdsm4611998f8f.32.2024.10.21.08.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 08:27:53 -0700 (PDT)
-Message-ID: <6edb988e-2ec0-49b4-b859-e8346137ba68@grimberg.me>
-Date: Mon, 21 Oct 2024 18:27:51 +0300
+        d=1e100.net; s=20230601; t=1729524551; x=1730129351;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OxtlyOqwd5QS2va759UuCoBJi2MrqRuIrYTgMMaR/b4=;
+        b=Rz9iXDdvlBg4+DdyzvzeJ1xMcZnH8N7HAaV5NjZdW669t5KKZO8wPLWwh+t/JXV21m
+         vkQ5q/xR9OMYoqWoNZk5MyEo8VBfxYuUtJJoH4VjcKOKemt6tGfccaPzy/vsFeZBO5tQ
+         8vwD21KWFBsv4Lh+ZEyb3tOE/Fl11vdvrK4kc+T2sAbM0s3rP5TvOff59q/O2necYiA+
+         AKT8wrOkCVcZBrzWRXj6So3Gj7VXoZryR/SQRkcbl03knLyA9in8TttNEIVN368HoDK/
+         aSTdoDCqbPtf539WKx9VhvS6g3ExaK72S//rwvIAXwU0bpxKmp3atXSysjU5TG0/QUIi
+         QUrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0sSN5brhAUc6CouIPp3nKgxYsEPef5DkErMmoTi6ZjrGM0FgoNgE5UGbxi94l2Np2SbbzqYGW2oWNUQf9fA==@vger.kernel.org, AJvYcCXqRKIg402sYT2bNF90mXfOD8ygavZqvQt2P96HJbz7erAhZzuU7bNZkLk/NZO6xQTDkLXnFXH/M6Ts590i@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdb5NQTlW4GbxVj4E3lJIWnAQg8envCZLGl+BZsp3qHC3SBQDs
+	NEL5gAoXYH2v3mYYxfWwMBf6yqibMsf3EMNuQ2cFWNs7wlIs/H739LbZAMwx/9SHGocoCIJunZU
+	LS7lKsx3573qvYv7/N7zOTJyoN3g=
+X-Google-Smtp-Source: AGHT+IFAHg5lxUbwjuA68v6eKNTB7ETnc5cSGTv3ajBN8pBqKTJGGulmN6cIpeuwYwUVOLdoIKqdrrR2BgDFamzakSw=
+X-Received: by 2002:a05:6300:4041:b0:1d9:2bed:c7e8 with SMTP id
+ adf61e73a8af0-1d92c56cd8dmr18534677637.35.1729524551544; Mon, 21 Oct 2024
+ 08:29:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-To: Ming Lei <ming.lei@redhat.com>
-Cc: zhuxiaohui <zhuxiaohui400@gmail.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
- <ZxWwvF0Er-Aj-rtX@fedora> <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
- <ZxYRXvyxzlFP_NPl@fedora> <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me>
- <ZxZm5HcsGCYoQ6Mv@fedora>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <ZxZm5HcsGCYoQ6Mv@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241021151036.34383-1-aha310510@gmail.com> <E6F9687B-700A-4A02-8A7F-4C9ED648D746@gmail.com>
+In-Reply-To: <E6F9687B-700A-4A02-8A7F-4C9ED648D746@gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 22 Oct 2024 00:29:01 +0900
+Message-ID: <CAO9qdTHjjJ53F0Vw=SSnLka1B5QLD1Sj6ZRM6g=AFtiLGKQ-+A@mail.gmail.com>
+Subject: Re: [PATCH v2] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+To: Alan Huang <mmpgouride@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+Alan Huang <mmpgouride@gmail.com> wrote:
+>
+> On Oct 21, 2024, at 23:10, Jeongjun Park <aha310510@gmail.com> wrote:
+> >
+> > The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
+> > To fix this, we need to add validation on a.data_type in
+> > alloc_lru_idx_fragmentation().
+> >
+> > Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+> > Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> > fs/bcachefs/alloc_background.h | 3 +++
+> > 1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
+> > index f8e87c6721b1..91eb96b19a76 100644
+> > --- a/fs/bcachefs/alloc_background.h
+> > +++ b/fs/bcachefs/alloc_background.h
+> > @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
+> > static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
+> >      struct bch_dev *ca)
+> > {
+> > + if (a.data_type > BCH_DATA_NR)
+>
+> This should be  >= ?
 
+Oh, that's right. I checked it myself and it's the maximum value + 1, so
+I think I should use >=.
 
+Thanks for letting me know!
 
-On 21/10/2024 17:36, Ming Lei wrote:
-> On Mon, Oct 21, 2024 at 02:30:01PM +0300, Sagi Grimberg wrote:
->>
->>
->> On 21/10/2024 11:31, Ming Lei wrote:
->>> On Mon, Oct 21, 2024 at 10:05:34AM +0300, Sagi Grimberg wrote:
->>>>
->>>> On 21/10/2024 4:39, Ming Lei wrote:
->>>>> On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
->>>>>> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
->>>>>>
->>>>>> It is observed that nvme connect to a nvme over fabric target will
->>>>>> always fail when 'nohz_full' is set.
->>>>>>
->>>>>> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
->>>>>> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
->>>>>> and when nvme connect to a remote target, it may fails on this stack:
->>>>>>
->>>>>>            blk_mq_alloc_request_hctx+1
->>>>>>            __nvme_submit_sync_cmd+106
->>>>>>            nvmf_connect_io_queue+181
->>>>>>            nvme_tcp_start_queue+293
->>>>>>            nvme_tcp_setup_ctrl+948
->>>>>>            nvme_tcp_create_ctrl+735
->>>>>>            nvmf_dev_write+532
->>>>>>            vfs_write+237
->>>>>>            ksys_write+107
->>>>>>            do_syscall_64+128
->>>>>>            entry_SYSCALL_64_after_hwframe+118
->>>>>>
->>>>>> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
->>>>>> blk_mq_ctx on the hw queue.
->>>>>>
->>>>>> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
->>>>>> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
->>>>>> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
->>>>>> is not isolated.
->>>>> blk_mq_alloc_request_hctx()
->>>>> 	...
->>>>> 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
->>>>> 	...
->>>>>
->>>>> It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
->>>>> online CPUs, both are same actually from this viewpoint.
->>>>>
->>>>> It is one long-time problem for nvme fc.
->>>> For what nvmf is using blk_mq_alloc_request_hctx() is not important. It just
->>>> needs a tag from that hctx. the request execution is running where
->>>> blk_mq_alloc_request_hctx() is running.
->>> I am afraid that just one tag from the specified hw queue isn't enough.
->>>
->>> The connection request needs to be issued to the hw queue & completed.
->>> Without any online CPU for this hw queue, the request can't be completed
->>> in case of managed-irq.
->> None of the consumers of this API use managed-irqs. the networking stack
->> takes care of steering irq vectors to online cpus.
-> OK, it looks not necessary to AND with cpu_online_mask in
-> blk_mq_alloc_request_hctx, and the behavior is actually from commit
-> 20e4d8139319 ("blk-mq: simplify queue mapping & schedule with each possisble CPU").
+Regards,
 
-it is a long time ago...
+Jeongjun Park
 
 >
-> But it is still too tricky as one API, please look at blk_mq_get_tag(), which may
-> allocate tag from other hw queue, instead of the specified one.
-
-I don't see how it can help here.
-
+> > + return 0;
+> > +
+> > if (!data_type_movable(a.data_type) ||
+> >    !bch2_bucket_sectors_fragmented(ca, a))
+> > return 0;
+> > --
 >
-> It is just lucky for connection request because IO isn't started
-> yet at that time, and the allocation always succeeds in the 1st try of
-> __blk_mq_get_tag().
-
-It's not lucky, we reserve a per-queue tag for exactly this flow 
-(connect) so we
-always have one available. And when the connect is running, the driver 
-should
-guarantee nothing else is running.
 
