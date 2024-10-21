@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-374548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6539A6BCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15A99A6BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003231F22230
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64631C21DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC2B1F80AE;
-	Mon, 21 Oct 2024 14:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A051F891E;
+	Mon, 21 Oct 2024 14:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ckxi9FKy"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qXFYG/M1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="292U25mV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qXFYG/M1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="292U25mV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9B1EBA1A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1107B1D173A;
+	Mon, 21 Oct 2024 14:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519951; cv=none; b=A2GXPWsxCW1TvZETmYYCAHjT/wlFC0Wf7AogE2ojxPgmJmK8CEwOEAHU7KjJWy7esPtFlTka3wOGSMOlX3R60WLt2DWmgSeKVvheRQvqWWdt6GttxRh7tzStSF6X5XlIbYbQrMvUUFlH9PiV7hJA95gKZkWIZnkjolsxVthYqRs=
+	t=1729520020; cv=none; b=jXzzeVoAI0QJ3Ejs4oIkJiONykKsJfY9qqx98yAHxg6GaOvJyFzueN+kbkI3YiHi4ZKlALMdgF+igul4yTfScczrpktReGJHmi7TyxgU7z+JRL/N3jvk+X6yzAceCX6nht7AARHEejJoLlfRbQTynl7e5J8cK2XTZdSjKlJyO74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519951; c=relaxed/simple;
-	bh=AjRBeWb78ciyAh/UJgkExb5iegYw7iPJuNoHvXMqzPM=;
+	s=arc-20240116; t=1729520020; c=relaxed/simple;
+	bh=55zMCuXzSEAvfzXHJj2MHyQminjLF9zOcHArGyQPvy8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMq/BQCsD9ZTChWX1AaEdDdafQqfWOueq8g0pxaW/q5cc4rK4FSSKJImlmHO1wEAzVuBteZB3QmFxFX1dGdS7qxyrW30zAkrykR+pIf4R/F0f5v765nriGUuLFZPOqI3tkCmfdYKxlxmRrppgwx/iI/a7LJ4ThxRNOdUmYjmsqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ckxi9FKy; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so15228005e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729519947; x=1730124747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ka3hxjKCObqVUOT391ctRJJwZEb+Srznv1xzHAnMKN0=;
-        b=ckxi9FKy96iEikdmKdIbuAR3uS6ggeUuTxA87aEwkHAkfNxdzaREs/IpAFy1XQq99y
-         KycD6AuXT+5A/DLRC7OojeOVlo0qUOPmASWKdoAmvmZAJJ0Nh9htwPUv2xmiPIsD1CfA
-         1jrqJMny/JgC4JBuBMm8/jvEoZSW5xVGMzvuJaDfX4TMSxiQbdyLAbcTubEsfjwaUgur
-         16CuZH9HsSg3OppR0+7K2NDSQhaTPXhbuR00HcIP1m9uX/2Ph4k6HhSCK1vE86lv1L32
-         aXVIxm41hiAWPA16nl6Mop28jA+8y7vrhUvNUI8fHamwgntJVGNNBGM0EVnSzaaoWA2o
-         xuzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729519947; x=1730124747;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ka3hxjKCObqVUOT391ctRJJwZEb+Srznv1xzHAnMKN0=;
-        b=MO0g7aUjR7c08JqQn5Edci1UdhA6lI4VItR6trIpkeTXHJ/QniLRYxqqkKnvtvi7cr
-         oGiPFQIwQHLb1WJqZ69EKtBgOR0xIfaCQwPyjPiphiu24IOdeOYhoTO8P+Dj0jcQbzyJ
-         Osu9WxyjepZ5faF5ECqV44iSbgRC1a7TSDVf9JqOxl1A5g+hIF8n2E1IGk7ff2eJQRaW
-         x+FjZ5IOtwGHvZjItoPpb2C46QSPYGLu7iHi5R8M/rMrx7yUih3xg9iRd5kJgTQ4ACz4
-         0IoxQkv9ZuVUt4v5GNmlBD/QNlnUAk7H+YTsOePof9A5kSu23wkcO+Jf8su9t5S8SuUj
-         fjGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAn0JeFaI3gEVayWRFV4oLImy6Y+tON9Kpl/QMgB5Kp96MvIs9FG0LDqKQItY5eDi04WLiFOp38yUxDY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsElAuozn5YkBoChx2csMx2Iz1ckCd6tfuSQz2mC+xlEaapQxg
-	WHCDjJ7qOrbIZyHATQ1nM2yVF6hXeCvDYvk4JUAb7gy+QFePS9O8ioMqJuZTjEI=
-X-Google-Smtp-Source: AGHT+IFcvfX6oTke7Befxo55YoeCvk1P+g46qIpdYMHQ60AIWXOL2m9OTz9hasK+rZXnuFhMfl7DfQ==
-X-Received: by 2002:a05:600c:4f47:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-4317b8d662amr1183245e9.7.1729519945586;
-        Mon, 21 Oct 2024 07:12:25 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm4428320f8f.104.2024.10.21.07.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:12:24 -0700 (PDT)
-Message-ID: <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
-Date: Mon, 21 Oct 2024 15:12:21 +0100
+	 In-Reply-To:Content-Type; b=QuCs0galiL6OMgaikCCBcZVKgdWA/TVD3P+4h47QbfZ7RnlIrKMQCQHl1e7N/+7VDA43aPs21GfkhE6Pn14rtXXpOTTo7NbR78L2Vn4cUMnAWysRcHYzQU48Pv/2cc6iAMiot/6j7jGIfLmSN2At4Y7PkQbdSgGBLG6rzfmdznE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qXFYG/M1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=292U25mV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qXFYG/M1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=292U25mV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 26A7521E7C;
+	Mon, 21 Oct 2024 14:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729520015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fyhbF/edolYkSSJeB9ofnUaVvEXdp0SuMQyMEkHiIVs=;
+	b=qXFYG/M1qE1BVtBLwWkeblrQiBVDTDUZevQAJvwOXeVkm52aPUAsVY5ixIESQjIj+a0yTA
+	CcYkoVxKoZhsoe70jnhB8Zv/ZGm+4TapaCBy/aIhaGr3srJdudKpdTvTaKunjxmWFLDnng
+	YbE4grGgwSfuAPf/jmB4cBwBnlV+Nm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729520015;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fyhbF/edolYkSSJeB9ofnUaVvEXdp0SuMQyMEkHiIVs=;
+	b=292U25mVoWOZYFQelSghDKj01ojNgCy7hp7TwaRMyAMMUM7rIIWpA9aVHZDGZdYajamZ4N
+	Aa0qgMD19s1YxiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729520015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fyhbF/edolYkSSJeB9ofnUaVvEXdp0SuMQyMEkHiIVs=;
+	b=qXFYG/M1qE1BVtBLwWkeblrQiBVDTDUZevQAJvwOXeVkm52aPUAsVY5ixIESQjIj+a0yTA
+	CcYkoVxKoZhsoe70jnhB8Zv/ZGm+4TapaCBy/aIhaGr3srJdudKpdTvTaKunjxmWFLDnng
+	YbE4grGgwSfuAPf/jmB4cBwBnlV+Nm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729520015;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fyhbF/edolYkSSJeB9ofnUaVvEXdp0SuMQyMEkHiIVs=;
+	b=292U25mVoWOZYFQelSghDKj01ojNgCy7hp7TwaRMyAMMUM7rIIWpA9aVHZDGZdYajamZ4N
+	Aa0qgMD19s1YxiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7F87139E0;
+	Mon, 21 Oct 2024 14:13:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ErIbNI5hFmc4UQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 21 Oct 2024 14:13:34 +0000
+Message-ID: <470886d2-9f6f-4486-a935-daea4c5bea09@suse.cz>
+Date: Mon, 21 Oct 2024 16:13:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,300 +96,272 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
- <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+Subject: Re: [PATCH v2 2/5] mm: add PTE_MARKER_GUARD PTE marker
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
+ Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ linux-kselftest@vger.kernel.org, Sidhartha Kumar
+ <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
+ Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>
+References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
+ <081837b697a98c7fa5832542b20f603d49e0b557.1729440856.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <081837b697a98c7fa5832542b20f603d49e0b557.1729440856.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,infradead.org,kernel.org,redhat.com,kvack.org,vger.kernel.org,linux.dev,linaro.org,jurassic.park.msu.ru,gmail.com,alpha.franken.de,HansenPartnership.com,gmx.de,zankel.net,arndb.de,chromium.org,nvidia.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL3py1j7x8bxoj6nr7eaeb97sq)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Hi, Krzysztof,
-
-On 10/21/24 12:52 PM, Krzysztof Kozlowski wrote:
-> On 17/10/2024 18:36, Tudor Ambarus wrote:
->> ACPM (Alive Clock and Power Manager) is a firmware that operates on the
->> APM (Active Power Management) module that handles overall power management
->> activities. ACPM and masters regard each other as independent
->> hardware component and communicate with each other using mailbox messages
->> and shared memory.
->>
->> The mailbox channels are initialized based on the configuration data
->> found at a specific offset into the shared memory (mmio-sram). The
->> configuration data consists of channel id, message and queue lengths,
->> pointers to the RX and TX queues which are also part of the SRAM, and
->> whether RX works by polling or interrupts. All known clients of this
->> driver are using polling channels, thus the driver implements for now
->> just polling mode.
->>
->> Add support for the exynos acpm core driver. Helper drivers will follow.
->> These will construct the mailbox messages in the format expected by the
->> firmware.
+On 10/20/24 18:20, Lorenzo Stoakes wrote:
+> Add a new PTE marker that results in any access causing the accessing
+> process to segfault.
 > 
-> I skimmed through the driver and I do not understand why this is
-> firmware. You are implementing a mailbox provider/controller.
-
-In my case the mailbox hardware is used just to raise the interrupt to
-the other side. Then there's the SRAM which contains the channels
-configuration data and the TX/RX queues. The enqueue/deque is done
-in/from SRAM. This resembles a lot with drivers/firmware/arm_scmi/, see:
-
-drivers/firmware/arm_scmi/shmem.c
-drivers/firmware/arm_scmi/transports/mailbox.c
-
-After the SRAM and mailbox/transport code I'll come up with two helper
-drivers that construct the mailbox messages in the format expected by
-the firmware. There are 2 types of messages recognized by the ACPM
-firmware: PMIC and DVFS. The client drivers will use these helper
-drivers to prepare a specific message. Then they will use the mailbox
-core to send the message and they'll wait for the answer.
-
-This layered structure and the use of SRAM resembles with arm_scmi and
-made me think that the ACPM driver it's better suited for
-drivers/firmware. I'm opened for suggestions though.
-
+> This is preferable to PTE_MARKER_POISONED, which results in the same
+> handling as hardware poisoned memory, and is thus undesirable for cases
+> where we simply wish to 'soft' poison a range.
 > 
-> I did not perform full review yet, just skimmed over the code. I will
-> take a look a bit later.
+> This is in preparation for implementing the ability to specify guard pages
+> at the page table level, i.e. ranges that, when accessed, should cause
+> process termination.
 > 
-
-No worries, thanks for doing it. I agree with all the suggestions from
-below and I'll address them after we get an agreement with Jassi on how
-to extend the mailbox core.
-
-More answers below.
-
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  drivers/firmware/Kconfig                    |   1 +
->>  drivers/firmware/Makefile                   |   1 +
->>  drivers/firmware/samsung/Kconfig            |  11 +
->>  drivers/firmware/samsung/Makefile           |   3 +
->>  drivers/firmware/samsung/exynos-acpm.c      | 703 ++++++++++++++++++++
+> Additionally, rename zap_drop_file_uffd_wp() to zap_drop_markers() - the
+> function checks the ZAP_FLAG_DROP_MARKER flag so naming it for this single
+> purpose was simply incorrect.
 > 
-> Please add directory to the Samsung Exynos SoC maintainer entry. I also
-> encourage adding separate entry for the driver where you would be listed
-> as maintainer.
+> We then reuse the same logic to determine whether a zap should clear a
+> guard entry - this should only be performed on teardown and never on
+> MADV_DONTNEED or the like.
 
-ok
+Since I would have personally put MADV_FREE among "or the like" here, it's
+surprising to me that it in fact it's tearing down the guard entries now. Is
+that intentional? It should be at least mentioned very explicitly. But I'd
+really argue against it, as MADV_FREE is to me a weaker form of
+MADV_DONTNEED - the existing pages are not zapped immediately but
+prioritized for reclaim. If MADV_DONTNEED leaves guard PTEs in place, why
+shouldn't MADV_FREE too?
 
+Seems to me rather currently an artifact of MADV_FREE implementation - if it
+encounters hwpoison entries it will tear them down because why not, we have
+detected a hw memory error and are lucky the program wants to discard the
+pages and not access them, so best use the opportunity and get rid of the
+PTE entries immediately (if MADV_DONTNEED doesn't do that too, it certainly
+could).
+
+But to extend this to guard PTEs which are result of an explicit userspace
+action feels wrong, unless the semantics is the same for MADV_DONTEED. The
+semantics chosen for MADV_DONTNEED makes sense, so MADV_FREE should behave
+the same?
+
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  include/linux/mm_inline.h |  2 +-
+>  include/linux/swapops.h   | 26 ++++++++++++++++++++++++--
+>  mm/hugetlb.c              |  3 +++
+>  mm/memory.c               | 18 +++++++++++++++---
+>  4 files changed, 43 insertions(+), 6 deletions(-)
 > 
-> There is no firmware tree, so this will be going via Samsung SoC.
+> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> index 355cf46a01a6..1b6a917fffa4 100644
+> --- a/include/linux/mm_inline.h
+> +++ b/include/linux/mm_inline.h
+> @@ -544,7 +544,7 @@ static inline pte_marker copy_pte_marker(
+>  {
+>  	pte_marker srcm = pte_marker_get(entry);
+>  	/* Always copy error entries. */
+> -	pte_marker dstm = srcm & PTE_MARKER_POISONED;
+> +	pte_marker dstm = srcm & (PTE_MARKER_POISONED | PTE_MARKER_GUARD);
+>  
+>  	/* Only copy PTE markers if UFFD register matches. */
+>  	if ((srcm & PTE_MARKER_UFFD_WP) && userfaultfd_wp(dst_vma))
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index cb468e418ea1..4d0606df0791 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -426,9 +426,15 @@ typedef unsigned long pte_marker;
+>   * "Poisoned" here is meant in the very general sense of "future accesses are
+>   * invalid", instead of referring very specifically to hardware memory errors.
+>   * This marker is meant to represent any of various different causes of this.
+> + *
+> + * Note that, when encountered by the faulting logic, PTEs with this marker will
+> + * result in VM_FAULT_HWPOISON and thus regardless trigger hardware memory error
+> + * logic.
+>   */
+>  #define  PTE_MARKER_POISONED			BIT(1)
+> -#define  PTE_MARKER_MASK			(BIT(2) - 1)
+> +/* Indicates that, on fault, this PTE will case a SIGSEGV signal to be sent. */
+> +#define  PTE_MARKER_GUARD			BIT(2)
+> +#define  PTE_MARKER_MASK			(BIT(3) - 1)
+>  
+>  static inline swp_entry_t make_pte_marker_entry(pte_marker marker)
+>  {
+> @@ -461,9 +467,25 @@ static inline swp_entry_t make_poisoned_swp_entry(void)
+>  }
+>  
+>  static inline int is_poisoned_swp_entry(swp_entry_t entry)
+> +{
+> +	/*
+> +	 * We treat guard pages as poisoned too as these have the same semantics
+> +	 * as poisoned ranges, only with different fault handling.
+> +	 */
+> +	return is_pte_marker_entry(entry) &&
+> +		(pte_marker_get(entry) &
+> +		 (PTE_MARKER_POISONED | PTE_MARKER_GUARD));
+> +}
+> +
+> +static inline swp_entry_t make_guard_swp_entry(void)
+> +{
+> +	return make_pte_marker_entry(PTE_MARKER_GUARD);
+> +}
+> +
+> +static inline int is_guard_swp_entry(swp_entry_t entry)
+>  {
+>  	return is_pte_marker_entry(entry) &&
+> -	    (pte_marker_get(entry) & PTE_MARKER_POISONED);
+> +		(pte_marker_get(entry) & PTE_MARKER_GUARD);
+>  }
+>  
+>  /*
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 906294ac85dc..50e3f6ed73ac 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -6353,6 +6353,9 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  				ret = VM_FAULT_HWPOISON_LARGE |
+>  				      VM_FAULT_SET_HINDEX(hstate_index(h));
+>  				goto out_mutex;
+> +			} else if (marker & PTE_MARKER_GUARD) {
+> +				ret = VM_FAULT_SIGSEGV;
+> +				goto out_mutex;
+>  			}
+>  		}
+>  
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 0f614523b9f4..551455cd453f 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1455,7 +1455,7 @@ static inline bool should_zap_folio(struct zap_details *details,
+>  	return !folio_test_anon(folio);
+>  }
+>  
+> -static inline bool zap_drop_file_uffd_wp(struct zap_details *details)
+> +static inline bool zap_drop_markers(struct zap_details *details)
+>  {
+>  	if (!details)
+>  		return false;
+> @@ -1476,7 +1476,7 @@ zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
+>  	if (vma_is_anonymous(vma))
+>  		return;
+>  
+> -	if (zap_drop_file_uffd_wp(details))
+> +	if (zap_drop_markers(details))
+>  		return;
+>  
+>  	for (;;) {
+> @@ -1671,7 +1671,15 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+>  			 * drop the marker if explicitly requested.
+>  			 */
+>  			if (!vma_is_anonymous(vma) &&
+> -			    !zap_drop_file_uffd_wp(details))
+> +			    !zap_drop_markers(details))
+> +				continue;
+> +		} else if (is_guard_swp_entry(entry)) {
+> +			/*
+> +			 * Ordinary zapping should not remove guard PTE
+> +			 * markers. Only do so if we should remove PTE markers
+> +			 * in general.
+> +			 */
+> +			if (!zap_drop_markers(details))
+>  				continue;
+>  		} else if (is_hwpoison_entry(entry) ||
+>  			   is_poisoned_swp_entry(entry)) {
+> @@ -4003,6 +4011,10 @@ static vm_fault_t handle_pte_marker(struct vm_fault *vmf)
+>  	if (marker & PTE_MARKER_POISONED)
+>  		return VM_FAULT_HWPOISON;
+>  
+> +	/* Hitting a guard page is always a fatal condition. */
+> +	if (marker & PTE_MARKER_GUARD)
+> +		return VM_FAULT_SIGSEGV;
+> +
+>  	if (pte_marker_entry_uffd_wp(entry))
+>  		return pte_marker_handle_uffd_wp(vmf);
+>  
 
-I noticed afterwards, thanks.
-
-> 
->>  include/linux/mailbox/exynos-acpm-message.h |  21 +
->>  6 files changed, 740 insertions(+)
->>  create mode 100644 drivers/firmware/samsung/Kconfig
->>  create mode 100644 drivers/firmware/samsung/Makefile
->>  create mode 100644 drivers/firmware/samsung/exynos-acpm.c
->>  create mode 100644 include/linux/mailbox/exynos-acpm-message.h
->>
->> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
->> index 71d8b26c4103..24edb956831b 100644
->> --- a/drivers/firmware/Kconfig
->> +++ b/drivers/firmware/Kconfig
->> @@ -267,6 +267,7 @@ source "drivers/firmware/meson/Kconfig"
->>  source "drivers/firmware/microchip/Kconfig"
->>  source "drivers/firmware/psci/Kconfig"
->>  source "drivers/firmware/qcom/Kconfig"
->> +source "drivers/firmware/samsung/Kconfig"
->>  source "drivers/firmware/smccc/Kconfig"
->>  source "drivers/firmware/tegra/Kconfig"
->>  source "drivers/firmware/xilinx/Kconfig"
->> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
->> index 7a8d486e718f..91efcc868a05 100644
->> --- a/drivers/firmware/Makefile
->> +++ b/drivers/firmware/Makefile
->> @@ -33,6 +33,7 @@ obj-y				+= efi/
->>  obj-y				+= imx/
->>  obj-y				+= psci/
->>  obj-y				+= qcom/
->> +obj-y				+= samsung/
->>  obj-y				+= smccc/
->>  obj-y				+= tegra/
->>  obj-y				+= xilinx/
->> diff --git a/drivers/firmware/samsung/Kconfig b/drivers/firmware/samsung/Kconfig
->> new file mode 100644
->> index 000000000000..f908773c1441
->> --- /dev/null
->> +++ b/drivers/firmware/samsung/Kconfig
->> @@ -0,0 +1,11 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +
->> +config EXYNOS_ACPM
->> +	tristate "Exynos ACPM (Alive Clock and Power Manager) driver support"
-> 
-> depends ARCH_EXYNOS || COMPILE_TEST
-
-oh yes.
-> 
-> Please also send a arm64 defconfig change making it a module.
-
-will do
-
-cut
-
->> +
->> +/**
->> + * struct exynos_acpm_shmem_chan - descriptor of a shared memory channel.
->> + *
->> + * @id:			channel ID.
->> + * @reserved:		reserved for future use.
->> + * @rx_rear:		rear pointer of RX queue.
->> + * @rx_front:		front pointer of RX queue.
->> + * @rx_base:		base address of RX queue.
->> + * @reserved1:		reserved for future use.
->> + * @tx_rear:		rear pointer of TX queue.
->> + * @tx_front:		front pointer of TX queue.
->> + * @tx_base:		base address of TX queue.
->> + * @qlen:		queue length. Applies to both TX/RX queues.
->> + * @mlen:		message length. Applies to both TX/RX queues.
->> + * @reserved2:		reserved for future use.
->> + * @polling:		true when the channel works on polling.
->> + */
->> +struct exynos_acpm_shmem_chan {
->> +	u32 id;
->> +	u32 reserved[3];
->> +	u32 rx_rear;
->> +	u32 rx_front;
->> +	u32 rx_base;
->> +	u32 reserved1[3];
->> +	u32 tx_rear;
->> +	u32 tx_front;
->> +	u32 tx_base;
->> +	u32 qlen;
->> +	u32 mlen;
->> +	u32 reserved2[2];
->> +	u32 polling;
-> 
-> Why are you storing addresses as u32? Shouldn't these be __iomem*?
-
-This structure defines the offsets in SRAM that describe the channel
-parameters. Instances of this struct shall be declared indeed as:
-	struct exynos_acpm_shmem_chan __iomem *shmem_chan;
-I missed that in v2, but will update in v2.
-
-> 
-> I also cannot find any piece of code setting several of above, e.g. tx_base
-
-I'm not writing any SRAM configuration fields, these fields are used to
-read/retrive the channel parameters from SRAM.
-
-cut
-
->> +
->> +	spin_lock_irqsave(&chan->tx_lock, flags);
->> +
->> +	tx_front = readl_relaxed(chan->tx.front);
->> +	idx = (tx_front + 1) % chan->qlen;
->> +
->> +	ret = exynos_acpm_wait_for_queue_slots(mbox_chan, idx);
->> +	if (ret)
->> +		goto exit;
->> +
->> +	exynos_acpm_prepare_request(mbox_chan, req);
->> +
->> +	/* Write TX command. */
->> +	__iowrite32_copy(chan->tx.base + chan->mlen * tx_front, tx->cmd,
->> +			 req->txlen / 4);
->> +
->> +	/* Advance TX front. */
->> +	writel_relaxed(idx, chan->tx.front);
->> +
->> +	/* Flush SRAM posted writes. */
->> +	readl_relaxed(chan->tx.front);
->> +
-> 
-> How does this flush work? Maybe you just miss here barries (s/relaxed//)?
-
-I think _relaxed() accessors should be fine in this driver as there are
-no DMA accesses involved. _relaxed() accessors are fully ordered for
-accesses to the same device/endpoint.
-
-I'm worried however about the posted writes, the buses the devices sit
-on may themselves have asynchronicity. So I issue a read from the same
-device to ensure that the write has occured.
-
-There is something that I haven't dimistified though. You'll notice that
-the writes from above are on SRAM. I enqueue on the TX queue then
-advance the head/front of the queue and then I read back to make sure
-that the writes occured. Below I write to the controller's interrupt
-register (different device/endpoint) to raise the interrupt for the
-counterpart and inform that TX queue advanced. I'm not sure whether I
-need a barrier here to make sure that the CPU does not reorder the
-accesses and raise the interrupt before advancing the TX queue. If
-someone already knows the answer, please say, I'll do some more reading
-in the meantime.
-
-> 
->> +	/* Generate ACPM interrupt. */
->> +	writel_relaxed(BIT(chan->id), exynos_acpm->regs + EXYNOS_ACPM_INTGR1);
->> +
->> +	/* Flush mailbox controller posted writes. */
->> +	readl_relaxed(exynos_acpm->regs + EXYNOS_ACPM_MCUCTRL);
->> +
->> +	spin_unlock_irqrestore(&chan->tx_lock, flags);
->> +
->> +	queue_work(exynos_acpm->wq, &work_data->work);
->> +
->> +	return -EINPROGRESS;
->> +exit:
->> +	spin_unlock_irqrestore(&chan->tx_lock, flags);
->> +	kfree(work_data);
->> +	return ret;
->> +}
-
-cut
-
->> +static const struct of_device_id exynos_acpm_match[] = {
->> +	{ .compatible = "google,gs101-acpm" },
-> 
-> Where are the bindings?
-
-will follow soon.
-
-cut
-
->> +static int exynos_acpm_probe(struct platform_device *pdev)
->> +{
-
-cut
-
->> +	exynos_acpm->pclk = devm_clk_get(dev, "pclk");
-> 
-> devm_clk_get_enabled
-
-ok
-
-> 
->> +	if (IS_ERR(exynos_acpm->pclk)) {
->> +		dev_err(dev, "Missing peripheral clock.\n");
-> 
-> return dev_err_probe()
-
-ok
-
-cut
->> +		.owner	= THIS_MODULE,
-> 
-> Drop
-
-oh yes, thanks!
-
-ta
 
