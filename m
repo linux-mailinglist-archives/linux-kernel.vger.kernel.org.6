@@ -1,94 +1,122 @@
-Return-Path: <linux-kernel+bounces-375204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775639A930B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:10:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E4B9A9309
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6EE51C22227
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A3F1C224EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090631FDFA7;
-	Mon, 21 Oct 2024 22:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/XZHNCm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CBD1E3DCB;
-	Mon, 21 Oct 2024 22:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF50E1FE0F2;
+	Mon, 21 Oct 2024 22:10:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FBB1FCC51;
+	Mon, 21 Oct 2024 22:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729548625; cv=none; b=ED+yf7S2rSKmI9sqO+V6+cSJ/Zci0uo1VZ+iOaIZDY5f99YOQOqmCiZv+3fshkJOj7Q7eCpxjEq7SwjTy2QFoPAiwXE1UYG2jz1I36hbjOqFqtGltQESiftZGrXcQalcGmZcm6kjiiPBg8eEUpHc42ThFdaHpdPQt1etzYjK3pk=
+	t=1729548618; cv=none; b=aUZzJcn+UyBJNRdxgf3tLrKy7B+OrWuzjcoA6lj7Wqv5Nfbsxpj4ArITG70RNvc2p8MLQm9PS96zEfi93x4xb+MH5c4fZyPNfQKkXWQP0aNSJ1isTa/kkHfMQsiS0fuBz46J6cm36WhmXfKoZC9wJGBMOzwXORzvp/TMEvC8iL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729548625; c=relaxed/simple;
-	bh=l6+nktX9SquPbNwgF/3Y+CsbSqozxpluEefMFET35BI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ME7YHKCcGL5VO4xkIhvLbj8brLylIc0q/wXOmOWK7KbILXqriS/GxtoyY9ibtNi9C/f5q42Sbz57c6qWrtjzABwI4VnWQjZszF7s/WZtTGD+f/e87Keq/W0L/q9wwojTGA1UMvp7gTE9r5VvzUWG5t6pYnkJ2U62Cw9cE4bY7WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/XZHNCm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDEBDC4CEC3;
-	Mon, 21 Oct 2024 22:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729548624;
-	bh=l6+nktX9SquPbNwgF/3Y+CsbSqozxpluEefMFET35BI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=K/XZHNCmHQd6iiwNIPHguPZ/mxpOSqtcso+adBKo8YFjWaWlo4D11ocTLx9Bp9e84
-	 ONrRnx0KF5/BemvsMsqpMWOgEGCZVoJabDJ1DTb6utyYLG3nXoSDlobx/ATTVdA9Wg
-	 K7p/xUQulqcWE1fLGOrgcWldSFCaIfwRx3006xCQ5tQvjRDY2A9dTkdnxM1XkBszeg
-	 xoOdED58bIwg9oDoYFj6Y6AEUx6iAvCFITjZwbxUzsq2zjxGbGHX+/v7wXh5HLgYQO
-	 8LoGU11cV9pzGH0NGV0LJNZ+r1mXjNX1bFQ8ppie8q6xodWrL7en1mqS8Qu5H84jB7
-	 e+I61LVy7buqA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FED3809A8A;
-	Mon, 21 Oct 2024 22:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729548618; c=relaxed/simple;
+	bh=jnXeoGKRGFTD/K1W6aKJIn+T/e/NqOSJnYi1PDW4t3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VUk4YsA5+IWpV4glWfVz7vYIB5vtbsdLAaY8btYKAqP+e31yruXW9MA4iVVfEnqWqbsLfXXCtuv9A7pD3S9wIu87lQPZYaUCZI5zmReT150rJCSNWL2kn6FyTX7UcQgsl6S+ojObvTkaPz76tq6Wv/TXkAuwr/qHIBYHHybcY5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31F46497;
+	Mon, 21 Oct 2024 15:10:45 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E833F71E;
+	Mon, 21 Oct 2024 15:10:13 -0700 (PDT)
+Message-ID: <0c02c5a3-9eea-495e-aa39-3aac862b5427@arm.com>
+Date: Mon, 21 Oct 2024 23:11:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v5 0/2] Implement mechanism to signal other threads
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172954863101.459649.18336368288073439741.git-patchwork-notify@kernel.org>
-Date: Mon, 21 Oct 2024 22:10:31 +0000
-References: <20241016084136.10305-1-puranjay@kernel.org>
-In-Reply-To: <20241016084136.10305-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, puranjay12@gmail.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal: gov_power_allocator: Granted power set to max
+ when nobody request power
+To: ZhengShaobo <zhengshaobo1@xiaomi.com>
+Cc: zhuzhangwei <chuci@xiaomi.com>, Zhang Rui <rui.zhang@intel.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ dingchongchong <dingchongchong@xiaomi.com>, chendejun
+ <chendejun@xiaomi.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
+Hello ZhengShaobo,
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Wed, 16 Oct 2024 08:41:34 +0000 you wrote:
-> This set implements a kfunc called bpf_send_signal_task() that is similar
-> to sigqueue() as it can send a signal along with a cookie to a thread or
-> thread group.
+On 10/21/24 13:11, ZhengShaobo wrote:
+> From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
 > 
-> The send_signal selftest has been updated to also test this new kfunc under
-> all contexts.
+> When total_req_power is 0, divvy_up_power() will set granted_power to 0,
+> and cdev will be limited to the lowest performance. If our polling delay
+> is set to 200ms, it means that cdev cannot perform better within 200ms
+> even if cdev has a sudden load. This will affect the performance of cdev
+> and is not as expected.
 > 
-> [...]
+> For this reason, if nobody requests power, then set the granted power to
+> the max_power.
+> 
+> Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
+> ---
+>   drivers/thermal/gov_power_allocator.c | 18 +++++++++++++-----
+>   1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
+> index 1b2345a697c5..4301516c0938 100644
+> --- a/drivers/thermal/gov_power_allocator.c
+> +++ b/drivers/thermal/gov_power_allocator.c
+> @@ -356,11 +356,19 @@ static void divvy_up_power(struct power_actor *power, int num_actors,
+>   	u32 extra_power = 0;
+>   	int i;
+>   
+> -	/*
+> -	 * Prevent division by 0 if none of the actors request power.
+> -	 */
+> -	if (!total_req_power)
+> -		total_req_power = 1;
+> +	if (!total_req_power) {
+> +		/*
+> +		 * Nobody requested anything, just give everybody
+> +		 * the maximum power
+> +		 */
+> +		for (i = 0; i < num_actors; i++) {
+> +			struct power_actor *pa = &power[i];
+> +
+> +			pa->granted_power = pa->max_power;
+> +		}
+> +
+> +		return;
+> +	}
+>   
+>   	for (i = 0; i < num_actors; i++) {
+>   		struct power_actor *pa = &power[i];
 
-Here is the summary with links:
-  - [bpf-next,v5,1/2] bpf: implement bpf_send_signal_task() kfunc
-    https://git.kernel.org/bpf/bpf-next/c/6280cf718db0
-  - [bpf-next,v5,2/2] selftests/bpf: Augment send_signal test with remote signaling
-    https://git.kernel.org/bpf/bpf-next/c/0e14189459f6
+Thank you for the patch. Good catch of that corner case.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+If there is no load on those devices, then the temperature should
+be low, lower than the 1st trip point. In that case we should
+reset the PID and call allow_maximum_power()...
 
+Although, what if the temperature is higher, e.g. due to
+ambient temperature and no load on the devices. Then we
+hit that corner case and your code would help.
 
+LGTM,
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
