@@ -1,106 +1,143 @@
-Return-Path: <linux-kernel+bounces-374557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F819A6BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:21:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E423E9A6BF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64055B22ABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A561E2818D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870981F8922;
-	Mon, 21 Oct 2024 14:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023341F9AA8;
+	Mon, 21 Oct 2024 14:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OV4va0C5"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UzftFcnM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1501F473C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817F11F473C;
+	Mon, 21 Oct 2024 14:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729520416; cv=none; b=C/KkJRIV8QghHgKBJ6EYTVkg/Q7p0QhisMyB59/XZ2gQotiRccCQNeWsAovGI1reaBLSJ6yElAe5m9+Tgau4Mrx1isweqTLC9MOF4QKAS0IuZmxEDcTvDPDF8pKGgYZOZfIb4KkYcF+sMxrrNhhPYSGKXx7R1ljKaQvXfF3Lx/0=
+	t=1729520423; cv=none; b=CD7jKfufg9ViVesZwFZG9Ef9mrOsRAPpXmAIBwEaHFHTN+GXdffnqBH3S9WSrnNXw0SlSmwaqEFyafAUQ4h9lulYPz/Xw1JmHKFIC6Wpy8/hJPKGZ74o/ej6T/VygDUJ490x0d0/JtT0SCMB+Lr4Fwz7z2qB75ddiOL1zKbqc9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729520416; c=relaxed/simple;
-	bh=A+YMALRUUtUo6qeutNBaZZwmbsqWTDSANoCqqNXzqQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFcL4gbJi+PJiNQc3akV+T/rFEg4/pugg0B0EeSlkrRAAdWBv4IemNONjMUDC8FpTzStQijotSgMvWv/F9OylsX3DmuBPnDaD8jGNdAvlUuCtG9vfrPPeP4rajQCZjrQqGloakbaukHwk90RbPtRBLHOJNtFcE10owl2wQAcH0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OV4va0C5; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d8901cb98so3573581f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729520413; x=1730125213; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A+YMALRUUtUo6qeutNBaZZwmbsqWTDSANoCqqNXzqQU=;
-        b=OV4va0C5pj8fSuqFWvcoGHNAsLBqmV1Qp0HDySeXjEjb776VH5fAonsuOJM2/j/23f
-         N5l8Pbev3g3bDqTFr7r4ds8aJ9dzYZWsC5/+rKIESz0j8V3kneAIgghkklwzKEJ4LoKp
-         2pkQlYvZH8P7lL9IFtXHm2OzmIB/qLB76ZI/OaBw6cL01LAcYsBzQ+L5vT07MsvTHT5h
-         nHUnqSCK+hBF+Vz5AbKSi2HAAQEplAKqIish4VnC86faWnjt18fxU3jgXIZNuyhvzDs8
-         ib6IVgA5DNAAEbolDkUGMV2gAIbD/60v2gHkU8aJz8UMZOYY24byozXXhVcGm4cRDCHa
-         TL/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729520413; x=1730125213;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A+YMALRUUtUo6qeutNBaZZwmbsqWTDSANoCqqNXzqQU=;
-        b=X4rawcR/4QoHiWWsmbuy+jhLT3i1nYCrgwjk/jvTeaZZ4IAUUMEFyrExiRX0Tdg5XP
-         cjmrYyVsdOP3DTyfaEmGFnGXn/9uZg4rLd9L1CtqDyDjh53Wp0rxMENKA/p0lj4/T+3s
-         giwAOAlceiV9sD+n056qwaoqbUi20SZLqGZQOIchmmnFPnv/u+CcS7SGf4xVInM3KFfs
-         gaXCNK9zjmyZHD0BCyFex9kYULE7y43AZal4aMMuXGPvO1O+xRMOiM41oS0MmWcyZNzv
-         eoE3bKEQBDCFxyIoBa97Dv3nVFQavzEyMfeAMqlSnhfaCKvtOZ+cB94f97XMPoRPNSPL
-         4GbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWt8nBIegbGpaIMYc1Ryi9hMKYqmhWAa3Ceh4QhLDmGUCAtL/e5LYrOmwkJefPZD6o/JzcgYOOKMvbCqTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUSyv3WSTrVbASmpM31H8SLngLu4X6A7eXrfuSSY/W8C3S1hqQ
-	iZXjYHjyngIcU5IQnrNreQGtBaZEoRztRZFK0SimKd7OCTSuXJYdG1stdkbm39Q=
-X-Google-Smtp-Source: AGHT+IF7W2XyOnxUqLb1FWpGOAxV/gojJBDVjqvpo1hiwSxRpKSQ1PYxo61kzClxUXyJQzB+jcFBJQ==
-X-Received: by 2002:adf:b609:0:b0:37c:ca20:52a with SMTP id ffacd0b85a97d-37ecef82581mr8228800f8f.8.1729520413077;
-        Mon, 21 Oct 2024 07:20:13 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9b8b9sm4439402f8f.92.2024.10.21.07.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:20:12 -0700 (PDT)
-Message-ID: <ece81819-3a00-4eef-b241-1adc82629ed4@linaro.org>
-Date: Mon, 21 Oct 2024 15:20:11 +0100
+	s=arc-20240116; t=1729520423; c=relaxed/simple;
+	bh=s+Pesid7NRqakfpMfcpLT6dSCI9G+GssV6W02f8Qe3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4u+9zYzkfTHIcoJ+JNKx3Xd88XtBPC2Uf/Jh3GXzrC++y6jSNuKk8mTknV87y8d7lrGVrVkvJUkmfsaeWxqkMF1HytNI9phkF4IfP/WDzUfuEPg/f7SGGPxbZfc0aykm0xM17aGMIa3XLQk9IWNOh/+l4Q5h4BGQVqF/tFc+Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UzftFcnM; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729520422; x=1761056422;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s+Pesid7NRqakfpMfcpLT6dSCI9G+GssV6W02f8Qe3M=;
+  b=UzftFcnMtekQO40fxikXuwBugU9W04h4XlAXxhAKRYgLBAJmj/SctlZz
+   f7baSemo1AUB07RXNWw9S7taATrC065UbTbdWZBcFZwINvmGKN8BcL33A
+   kIjgSWOYGQarvRufMCzBfXZPdtBWMcIDEovu3vSD94CYFoFz9GODxGzRi
+   ZblgI3vO5blFbKcvuysN6PAMlKv9KR7pLTGYwLoDi1IdaIrit2a03c/Kw
+   7S6zM8UMcR/yROuJJnq5XKfZfrvZF3vz/LWd31rI5M7VBE6PU3ZY+nCd4
+   toq7bMt8xMdnfjwwwW54zZjwCp247nd1Zrjj+h/tPXJ7Fq8oPemCG8Dgc
+   w==;
+X-CSE-ConnectionGUID: zzhuMOspSjStX3khw4ZKpw==
+X-CSE-MsgGUID: yY2AxqrNShKPFCrWnRCnWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46472114"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46472114"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:20:21 -0700
+X-CSE-ConnectionGUID: 1aMRdTogQoS0b809mkUqGQ==
+X-CSE-MsgGUID: JTwiPuZ1Rg+exI3PofddfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="79484811"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa009.jf.intel.com with SMTP; 21 Oct 2024 07:20:19 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Oct 2024 17:20:17 +0300
+Date: Mon, 21 Oct 2024 17:20:17 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: fix unreleased fwnode_handle in
+ typec_port_register_altmodes()
+Message-ID: <ZxZjIa8lB3Xvx3xN@kuha.fi.intel.com>
+References: <20241019-typec-class-fwnode_handle_put-v1-1-a3b5a0a02795@gmail.com>
+ <ZxZPS7jt4mI1TUG-@kuha.fi.intel.com>
+ <ZxZaRUmZS4upPvv8@kuha.fi.intel.com>
+ <d5733f9e-6eb5-4b03-b264-a3f9f35791f6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: atmel-quadspi: Add support for sama7g5 QSPI
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- broonie@kernel.org
-Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- ludovic.desroches@microchip.com, linux-spi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Varshini Rajendran <varshini.rajendran@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-References: <20211214133404.121739-1-tudor.ambarus@microchip.com>
- <eae501a6-d210-4576-afa0-010f9cc8c5fd@prolan.hu>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <eae501a6-d210-4576-afa0-010f9cc8c5fd@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5733f9e-6eb5-4b03-b264-a3f9f35791f6@gmail.com>
 
-Hi,
+On Mon, Oct 21, 2024 at 04:06:30PM +0200, Javier Carrasco wrote:
+> On 21/10/2024 15:42, Heikki Krogerus wrote:
+> > Hi,
+> > 
+> > On Mon, Oct 21, 2024 at 03:55:43PM +0300, Heikki Krogerus wrote:
+> >> On Sat, Oct 19, 2024 at 10:40:19PM +0200, Javier Carrasco wrote:
+> >>> The 'altmodes_node' fwnode_handle is never released after it is no
+> >>> longer required, which leaks the resource.
+> >>>
+> >>> Add the required call to fwnode_handle_put() when 'altmodes_node' is no
+> >>> longer required.
+> >>>
+> >>> Cc: stable@vger.kernel.org
+> >>> Fixes: 7b458a4c5d73 ("usb: typec: Add typec_port_register_altmodes()")
+> >>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> >>
+> >> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> >>
+> >>> ---
+> >>>  drivers/usb/typec/class.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> >>> index d61b4c74648d..1eb240604cf6 100644
+> >>> --- a/drivers/usb/typec/class.c
+> >>> +++ b/drivers/usb/typec/class.c
+> >>> @@ -2341,6 +2341,7 @@ void typec_port_register_altmodes(struct typec_port *port,
+> >>>  		altmodes[index] = alt;
+> >>>  		index++;
+> >>>  	}
+> >>> +	fwnode_handle_put(altmodes_node);
+> >>>  }
+> >>>  EXPORT_SYMBOL_GPL(typec_port_register_altmodes);
+> > 
+> > Sorry to go back to this, but I guess we should actually use those
+> > scope based helpers with fwnodes in this case. So instead of a
+> > dedicated fwnode_handle_put() call like that, just introduce
+> > altmodes_node like this:
+> > 
+> >         ...
+> >         struct fwnode_handle *altmodes_node __free(fwnode_handle) =
+> >                 device_get_named_child_node(&port->dev, "altmodes");
+> > 
+> >         if (IS_ERR(altmodes_node))
+> >                 return;
+> > 
+> >         fwnode_for_each_child_node(altmodes_node, child) {
+> >         ...
+> > 
+> > thanks,
+> > 
+> 
+> That would have to be a second patch, because it does not apply to all
+> affected stable kernels. I can send it separately, though.
 
-On 10/21/24 1:19 PM, Csókás Bence wrote:
-> This patch doesn't seem to have been merged. Is it no longer needed? Has
-> Claudiu's comment been addressed? Likely not, as the vendor kernel
-> (linux4microchip) still contains the un-amended commit.
+Great, thanks!
 
-Of course it's needed. I haven't sent a v2 at the time. Someone needs to
-take over and submit a v2 if it cares.
-
-Cheers,
-ta
+-- 
+heikki
 
