@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-374838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E868B9A70E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9DA9A70E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C371C21ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E521F21FF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBFC1EE029;
-	Mon, 21 Oct 2024 17:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CDA1C460D;
+	Mon, 21 Oct 2024 17:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k45W+BAr"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhLATNHG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05B01E3780;
-	Mon, 21 Oct 2024 17:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEA81E9077;
+	Mon, 21 Oct 2024 17:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729531106; cv=none; b=i7xEM7q8f6nQWcHujK+tw+IEa+Yo1a48nfyxFi3sXBBJH1LG7VhkmNHlj0nPUDJKM4E7r+TJGEoAOD6j9h0SxJLm5+bQ8Ud1ahdt15U1hHrB+46IQqgYQLoDy0L6zw151aEBt8+uoPd1j7TSAjLMKxlmD/sJWSUZxrZhMk874xY=
+	t=1729531122; cv=none; b=YBR59akbym10yR7Ah4B5wxQYHSAjB/gFMwhHAZSRwZxLdKM1+k94YD03YN44/o//pu9MaVCKwTT7MdgKftLo2maaiWI4wUtSOS5ahh/0+4Z2eORUZ6kVq9yeHk/YvXgfVelewf4kQmat5nfqVUaxawMKp2HeyHGy7zsKjcqFURU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729531106; c=relaxed/simple;
-	bh=V7TFdLX2hJz506Bk2w4njaCkNtCSH4Ab/bCQMimnPR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3nT0GrwPWHdpSzkOcB6a/XL7aTXgW4iIwmWfJugxA0yQRuF9Jw7gqfHaLJYz6GHr8PQVMfAPBfs7K+gWDPuWRmmITF3WHl8Sal4rlDBBHpqcgTd54pM6elmRxLEZWmRXMnYqdgsiukZNN7KwXcbJ90TUZyTf0qa0Z5POIgdM0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k45W+BAr; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7db54269325so3671334a12.2;
-        Mon, 21 Oct 2024 10:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729531104; x=1730135904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V7TFdLX2hJz506Bk2w4njaCkNtCSH4Ab/bCQMimnPR4=;
-        b=k45W+BAr9sYS2lSfTtB+2DQUElMXCp/mxWzY8dFoqfqt6ql4jGiPHWJxUlBtkk3RMN
-         s/kDO2iWykCuKg7Yzrjq3braWBM8neeNVxHL0K+DNuBicdtKV3lnnG2n/shW/Dc1ZuDI
-         Frk2cLa3Zrr36pHPYCoSuaBW2Hifyl6yErNxM0+MQQJcTSy2hAMSjLoaIUq+67BK4mGK
-         eEObe64XQaQO9VR7NfY+nTX75yKITdGmv5/DLXGDwQgkD1qBYoF1yPAf0QN8SkXpB+DY
-         JPAWIP4ZQzsT69uD/FLPSyGElO/JxRQFJcT9XtotHmdcBCLbZd54Mfq9o3d3/YU624Pb
-         ie2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729531104; x=1730135904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V7TFdLX2hJz506Bk2w4njaCkNtCSH4Ab/bCQMimnPR4=;
-        b=sMELOA2X9k53ss41KDnj90wQwwiHmPur2j6s2clZUsXRhcHTUThkbY8YAuCVqS1vjJ
-         RqOFj7Ac8yJVJzWbow5sdtwsdSUoAOZZxXFyoTzLEbMhVLrA0h6yrUBWOIgVcOoLZb5B
-         Z5C7WWgMMQqiyG2VOI0X5u5oxmd87ZGFMMxaqDEXZdNdHHAURKURSwEQkU86A1G/PcIB
-         Hnj0B5uWbphRvrwiLLL2YBKxb/IHpzDCnyoB9s1aHwr7SrlBc1PW+PxAQ0sUY5UTCq2T
-         SIYTvhtqfWAdaszFTm3eQDSD/ZWVQlViygkdvPdEs/nLwBDnoB2UVntZzLBaIJSJLx6s
-         KV9A==
-X-Forwarded-Encrypted: i=1; AJvYcCULx8tsrs7o60/G2ADJQ5oLT1oDtJh68SBT6riD9AJolrC4eabZHPw+06GPciFQELnv5ToEKvmFTI49ewgIgVDPLQ==@vger.kernel.org, AJvYcCVHD8dFXRUS2OApzcKU6488QPviJsMwymEq8ZvMDofCSnQY3ZPXJcX0YalRHr3f6ybgo7xvbOnd5WNzhEw6+BVw6ddq@vger.kernel.org, AJvYcCWxjVr0SO+Sk3bOSR3PJG44G8hZAxLch1RHhOt44/0DcKDZHkMzjtpkHxdGO4duDcj3fiMEqDnCPTmFeb+k@vger.kernel.org, AJvYcCXgKwBtcNDck7o8TAGxwhLqep8x5/Tk2wbkVr/HOKKPvGKb4KBWq870dzVnn9/EETjffbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ8gijyE/bKUuj8z49cniU0Z+p+32gS7ouujBBkr/aNL8wLkX5
-	0O1ua1/8BM5/Y9vaVJoShhjU/zr7hqlCWEGiqfCAi7tFYRLvT8ZhuejHvczoVO/SbxF0XzAe+n+
-	+8mSXbMsPMgOlK202jq/mcLYrO9A=
-X-Google-Smtp-Source: AGHT+IEtjRnzsFF0rccF8dhsyizMIfwjKbdz+eyx5/1jxrXi2lAdRxwdwQPa2usdahgePbWs7gtMmySSeSiKkVlwd2E=
-X-Received: by 2002:a05:6a21:6711:b0:1d9:261c:5937 with SMTP id
- adf61e73a8af0-1d92c59992cmr15712304637.33.1729531103939; Mon, 21 Oct 2024
- 10:18:23 -0700 (PDT)
+	s=arc-20240116; t=1729531122; c=relaxed/simple;
+	bh=iEW2Xt3WKhnH9cPRI2vcWhHXam6tOqb0R0Yv4gMNRKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G5bvpvEi2HNkoF64FkUET03yTVLpxLbjdAF/dJSmfqLB5fp7giL/2QvAS55oes5r9yE0+my80IqO0URT+GxzE8d6uNFCxrJjVxYKtVccSmiS4t7tjZYx1KCjNRJMlPe8Qp+f+v45A01FkMlHL9G1x9/xlwvlv/fZh2L9hmhaA3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhLATNHG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3097AC4CEC3;
+	Mon, 21 Oct 2024 17:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729531122;
+	bh=iEW2Xt3WKhnH9cPRI2vcWhHXam6tOqb0R0Yv4gMNRKE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hhLATNHGiGY1o8l1lzGTfiW0dVhXgdpV9p/siFokuBOWLxHUtXRm1GeFhKRoqaCKa
+	 p4PM76BCGqknIrjwugK9GTrelBzfuj+3Z9IcwFy/ZHyZFdalVh6PEkeQQpvuPi1Fwa
+	 PUURuoco48YS4cI/PRMQeXYAQka4MyCfx7MlzPpFvHs/wXmDcdOA4M/jUnQPLrvaVP
+	 XgYs21/3pJ+V0Ktz7XbKGj+s4noQdPFC7qCwgha5D2fYESrWj0eGbKPR8f0kskPcDt
+	 CrL9Yr1Gc4uzueSlHXb1tuRpRROvslFLbULDJNab5NaER1n4RQOJdPZJg7NT8/MCQq
+	 +paNZ9nx4TO4g==
+Message-ID: <e7bc3cfe-f7c0-4d8b-b89d-a2f260d34a76@kernel.org>
+Date: Mon, 21 Oct 2024 19:18:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815014629.2685155-1-liaochang1@huawei.com>
- <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com> <20240915151803.GD27726@redhat.com>
- <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com> <CAEf4BzbWLf3K4C7GT58nXZ0FJfnoeCdLeRvKtwA76oM9Jdm7jg@mail.gmail.com>
- <e62dbebc-d366-453a-b305-67f50baeff05@huawei.com>
-In-Reply-To: <e62dbebc-d366-453a-b305-67f50baeff05@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 21 Oct 2024 10:18:11 -0700
-Message-ID: <CAEf4BzYUdPJrgy1Dqinxk5ATPxA8WCTzQW3QcWobZpXjiYDZNw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
- contention on siglock
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Content-Language: en-GB
+To: Sasha Levin <sashal@kernel.org>
+Cc: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <ZxZ8MStt4e8JXeJb@sashalap>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 3:43=E2=80=AFAM Liao, Chang <liaochang1@huawei.com>=
- wrote:
->
->
->
-> =E5=9C=A8 2024/10/12 3:34, Andrii Nakryiko =E5=86=99=E9=81=93:
-> > On Tue, Sep 17, 2024 at 7:05=E2=80=AFPM Liao, Chang <liaochang1@huawei.=
-com> wrote:
-> >>
-> >> Hi, Peter and Masami
-> >>
-> >> I look forward to your inputs on these series. Andrii has proven they =
-are
-> >> hepful for uprobe scalability.
-> >>
-> >> Thanks.
-> >>
-> >> =E5=9C=A8 2024/9/15 23:18, Oleg Nesterov =E5=86=99=E9=81=93:
-> >>> Hi Liao,
-> >>>
-> >>> On 09/14, Liao, Chang wrote:
-> >>>>
-> >>>> Hi, Oleg
-> >>>>
-> >>>> Kindly ping.
-> >>>>
-> >>>> This series have been pending for a month. Is thre any issue I overl=
-ook?
-> >>>
-> >>> Well, I have already acked both patches.
-> >>>
-> >>> Please resend them to Peter/Masami, with my acks included.
-> >>>
-> >
-> > Hey Liao,
-> >
-> > I didn't see v4 from you for this patch set with Oleg's acks. Did you
-> > get a chance to rebase, add acks, and send the latest version?
->
-> Andrii,
->
-> I am ready to send v4 based on the latest kernel from next tree. Otherwis=
-e,
-> I haven't heard back from any of maintainers except Oleg, so I'm a bit un=
-sure
-> if I should make further changes to this series.
->
+Hi Sasha,
 
-Let's just rebase to the latest tip/perf/core and resend with Oleg's
-ack. Hopefully this should be enough.
+On 21/10/2024 18:07, Sasha Levin wrote:
 
-> >
-> >>> Oleg.
-> >>>
-> >>>
-> >>
-> >> --
-> >> BR
-> >> Liao, Chang
->
-> --
-> BR
-> Liao, Chang
->
+(...)
+
+> In an attempt to address the concerns, we're trying out a new "linus-next"
+> tree is being created and maintained with the following characteristics:
+> 
+>     1. Composed of pull requests sent directly to Linus
+> 
+>     2. Contains branches destined for imminent inclusion by Linus
+> 
+>     3. Higher code quality expectation (these are pull requests that
+>     maintainers expect Linus to pull)
+
+That's a good idea! Thank you for putting this in place!
+
+If you don't mind, I have some questions below.
+
+>     4. Continuous tree (not daily tags like in linux-next),
+>     facilitating easier bisection
+
+What will happen when a pull request is rejected?
+
+(...)
+
+> We also want to avoid altering the existing workflow. In particular:
+> 
+>     1. No increase in latency. If anything, the expectation is that
+>     the cadence of merges would be improved given that Linus will
+>     need to do less builds and tests.
+> 
+>     2. Require "sign up" for the tree like linux-next does. Instead,
+>     pull requests are monitored and grabbed directly from the
+>     mailing list.
+
+Out of curiosity: is it done automatically? Will it email someone when a
+conflict is found?
+
+(...)
+
+> Current testing:
+>   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
+>   - KernelCI: https://t.ly/KEW7F
+
+That's great to have more tests being executed! Who is going to monitor
+the results? This task can quickly take time if this person also has to
+check for false positives and flaky tests.
+
+Are the maintainers supposed to regularly monitor the results for the
+tests they are responsible for? Or will they be (automatically?) emailed
+when there is a regression?
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
