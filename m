@@ -1,149 +1,99 @@
-Return-Path: <linux-kernel+bounces-375186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074B59A9230
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:38:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80169A9232
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFC91C21F1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A07E282310
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E4E1FDFAA;
-	Mon, 21 Oct 2024 21:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7D1FCC7F;
+	Mon, 21 Oct 2024 21:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="cUpfxR2C"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CWbs23gt"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F4519923C;
-	Mon, 21 Oct 2024 21:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6899110A3E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 21:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729546722; cv=none; b=MSEXzFhJMBmiLD6H4VHmCkjqWyqc6emIlYTirOJ5YndmSl+xf5HxmD+UHSESySN7hlDhF6aGh1SvZ4IeJQng9oYNR1ekJzlzAvfgAZsuH/htB3PvA70MA8s3yn0VZwHurRnAfiLAJWX+5Lp00gejZw+SCQ+mwELtyNPzHuJe8l4=
+	t=1729546872; cv=none; b=dWoVBVXk3M5aRLCwQAhOyxdCbJtnp0TCkoveKytZbOtCqfvKew/4za/4jXiR12XSHQWAmxZOzXl97E8lAdl4izCAQRArVkIeJ2QlRLKGl+RmeWSDFocPPEN9QQseCE3Fgi8KhJyEAoZhXhh9YPPVoIsy6iPUkSZPmF85F5/hr3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729546722; c=relaxed/simple;
-	bh=e6H7BJ8xXPnGZ+uUcEghzfdEbPT6Ekjaxhj6LTCvoZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtSD5AWipbrMebQM2AveAzL/gKy7s5hkbQe9rr7FJpzr6JPMeH8G9Yr5r+TSlDHjFkWWT6WXYqozPh49pb/zmt3NUkGQywXYQK29m7sLQdgykfWbluz46Umo/TmUqtBymGeewyAW/2hh3MNrI2kg9YdNOMC9thPse8xp8Oq089U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=cUpfxR2C; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XXTFm1WmPz9slC;
-	Mon, 21 Oct 2024 23:38:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1729546716;
+	s=arc-20240116; t=1729546872; c=relaxed/simple;
+	bh=Vu2gsAxf0dhG5W2BO19GkT8dkXyehrOKBr4iwvk+XLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNkIkr0el9yRFYRHI6r6uZPMmzAnvHWqqWX7v3uuurgoCOdk7rmL+iwvqsyirQKT5jNptdqwqLCCsVFpFks7RIQS7+NTdwgBd3vSFpMiz+0N7XibnNzx/7arjAQ2WvByGv2Mz5HKSECiEDNn63G4vOLVSEYaPg1HJcNCupIw5OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CWbs23gt; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729546868;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVSaT45wEivXgjgRUfp0rCYvBpcYPPMEBNfUMCsLBuc=;
-	b=cUpfxR2CIJD/Pdq3wpAhz1dV5x5eZiwBnrNERO/+tXg1E9EjOhZCbK+1/gVavC517BhCNn
-	dT/ertIwyt7CNDVWAqqHfb7eEZ4eAH9+wSSpJ9i09LtTzGYrX9LFOMFdOCVH4k65qSNqQV
-	LZpxQp7n9ADOvADKc44r1DDRsKU4YtWCyYkqtL9CGpPrZMYWkzKzjKtslUYz6d4aJYG+r/
-	upkbmNFoMdB15cWO6Bbpe5uAAnpTRyqQZQlXgLYVmmUrbCVy2I3We+nSdPOknp2gRSy3or
-	oxOxIg9Z9u751ZQbSvlEYuZwfO7InA8k8qohGeA4d9Br/xaJrun3kYwZpOyzFw==
-Date: Tue, 22 Oct 2024 08:38:17 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>
-Subject: Re: (subset) [PATCH RFC v3 00/10] extensible syscalls: CHECK_FIELDS
- to allow for easier feature detection
-Message-ID: <20241021.213312-daft.handset.rotten.piers-MlL0KIs8tUv7@cyphar.com>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
- <20241021-kraut-fundgrube-cf1648e59df4@brauner>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0H5zrIEbBaEH50QdMDQ/dbUbUI4Gwpqx77GNINb7n3U=;
+	b=CWbs23gtMAEGFY0uLPOsBXaKS5B2A/2X6kJBc5VTUdu0YnwEVxeIfUHBu1nrbbCgMvhUEN
+	zgduNwXffadkcbE015K05T/ASJAgSN2ladFEgQi3iIYGOGeKkIDA5VOFHy88mUMvJrCHUD
+	kJL73W9i1bJv3Xw2OXcVOuzMiPL/VnQ=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: Use str_yes_no() helper function in btrfs_dump_free_space()
+Date: Mon, 21 Oct 2024 23:40:22 +0200
+Message-ID: <20241021214022.31010-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h3tktjkpfqy324lb"
-Content-Disposition: inline
-In-Reply-To: <20241021-kraut-fundgrube-cf1648e59df4@brauner>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Remove hard-coded strings by using the str_yes_no() and str_no_yes()
+helper functions.
 
---h3tktjkpfqy324lb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/btrfs/free-space-cache.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On 2024-10-21, Christian Brauner <brauner@kernel.org> wrote:
-> On Thu, 10 Oct 2024 07:40:33 +1100, Aleksa Sarai wrote:
-> > This is something that I've been thinking about for a while. We had a
-> > discussion at LPC 2020 about this[1] but the proposals suggested there
-> > never materialised.
-> >=20
-> > In short, it is quite difficult for userspace to detect the feature
-> > capability of syscalls at runtime. This is something a lot of programs
-> > want to do, but they are forced to create elaborate scenarios to try to
-> > figure out if a feature is supported without causing damage to the
-> > system. For the vast majority of cases, each individual feature also
-> > needs to be tested individually (because syscall results are
-> > all-or-nothing), so testing even a single syscall's feature set can
-> > easily inflate the startup time of programs.
-> >=20
-> > [...]
->=20
-> I think the copy_struct_to_user() is useful especially now that we'll gain
-> another user with pidfd_info.
+diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
+index f4bcb2530660..122dbfdec41e 100644
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -11,6 +11,7 @@
+ #include <linux/ratelimit.h>
+ #include <linux/error-injection.h>
+ #include <linux/sched/mm.h>
++#include <linux/string_choices.h>
+ #include "ctree.h"
+ #include "fs.h"
+ #include "messages.h"
+@@ -2936,12 +2937,11 @@ void btrfs_dump_free_space(struct btrfs_block_group *block_group,
+ 		if (info->bytes >= bytes && !block_group->ro)
+ 			count++;
+ 		btrfs_crit(fs_info, "entry offset %llu, bytes %llu, bitmap %s",
+-			   info->offset, info->bytes,
+-		       (info->bitmap) ? "yes" : "no");
++			   info->offset, info->bytes, str_yes_no(info->bitmap));
+ 	}
+ 	spin_unlock(&ctl->tree_lock);
+ 	btrfs_info(fs_info, "block group has cluster?: %s",
+-	       list_empty(&block_group->cluster_list) ? "no" : "yes");
++	       str_no_yes(list_empty(&block_group->cluster_list)));
+ 	btrfs_info(fs_info,
+ 		   "%d free space entries at or bigger than %llu bytes",
+ 		   count, bytes);
+-- 
+2.47.0
 
-Once we start extending pidfd_info, it might be necessary to add some
-more helpers to make it easier to figure out what bits to set in the
-returned request mask.
-
-> ---
->=20
-> Applied to the vfs.usercopy branch of the vfs/vfs.git tree.
-> Patches in the vfs.usercopy branch should appear in linux-next soon.
->=20
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->=20
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->=20
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->=20
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.usercopy
->=20
-> [01/10] uaccess: add copy_struct_to_user helper
->         https://git.kernel.org/vfs/vfs/c/424a55a4a908
-> [02/10] sched_getattr: port to copy_struct_to_user
->         https://git.kernel.org/vfs/vfs/c/112cca098a70
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---h3tktjkpfqy324lb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZxbJyQAKCRAol/rSt+lE
-b7sIAP0YX2wV7+qLsSDGBl/CJbBHWSDrGDfjYyfFqZgccsLn/QD+NAnYjMcT4lYG
-3CverJItao92YWo6NMR5TRTzVaVSBgw=
-=UAUt
------END PGP SIGNATURE-----
-
---h3tktjkpfqy324lb--
 
