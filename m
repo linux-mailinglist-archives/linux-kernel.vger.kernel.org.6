@@ -1,140 +1,194 @@
-Return-Path: <linux-kernel+bounces-373681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62489A5A2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B307A9A5A31
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4621F216BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307D71F21702
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC4B192D98;
-	Mon, 21 Oct 2024 06:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624681CF5FD;
+	Mon, 21 Oct 2024 06:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZisq0/3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2e3+F64"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08C9DF49
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5C31946D0;
+	Mon, 21 Oct 2024 06:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729491007; cv=none; b=t7S7xNRaQ7B7T0k6g7q4dmzE2ahseu0BU4WSy9jqu1WyP8uRjtNo7D+I1vyUislDj03gluXYoQoSzvMHEqcdxKXBJF1QiXLHI+pIeevOnaw0uJGH83v2dWAETheTHyXvP6k+3w5MCyxayBjaYrXaNOVZhGDrdL5hqhttIhXcGQg=
+	t=1729491047; cv=none; b=hAndFI9eR+aRjjdeJDNAJVlEXNnHzhBFyUpHLGT/RBjsLruEnMmvswrXIuh0B5MxkCjmo/Rl5eVrJaZZdWvuvzgYHuzsYEmCTv9priOzvm5drm0wdXsu15IqdzkhCfDDnoA1sahNUK6lUjS1L7FG6eHVKkWWqdhWANaMj5s+o5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729491007; c=relaxed/simple;
-	bh=QxWYi9E1NuDuGW03Ns2H5yfIOq02EgyAbp8wT02r0wg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6/qBorXp5e71jfMB9jHSwZpGACZJenM/Qf3nb3GIb8ZhAkNSBPWkoCAUPoy2YPkYm6WTnFLJLZlaVI/PexfNB/zVxByEYc48XA+hPUZdRWvF2ePBN/qbqfxWOXpnDWJj1vkoZBQRr7HLZYwW9YWD70mGYUlx9+yjxqutxSTqIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZisq0/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7642C4CEC3;
-	Mon, 21 Oct 2024 06:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729491006;
-	bh=QxWYi9E1NuDuGW03Ns2H5yfIOq02EgyAbp8wT02r0wg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AZisq0/377yayn1GcGT7Axf8F0O1GDnDnxlLm9ou11uJjkoN1Peu79a894Z2ZBUl4
-	 Eo1hGbKmHV5cF+HfB4mKm4nfmGTG0nwFaHDT2A0TOVmBnQfYv5iNvbW5ST3b88ZRfG
-	 Z0iN9v9eC8h5Hw30jNjrlrq+KaDYzzjQiv1JDFJA71eWJamRXa4ZGLoIsCZQ2l6SeM
-	 vFAPV37m1O0Xk96puQ4JNwR9acNS7IUyfnxE6anOP58VioG6Ydr40rzYmSoWgav6iA
-	 Z9CEet8izoSVjMUJxMAyeZg3ZFpGyLZIm6+2K5qAOkjxD4EyBEubBQOMgMtR3XZFJd
-	 +6sZXPXGEAl2w==
-Message-ID: <16555929-6e1b-4018-ab9a-8a8efa7ea695@kernel.org>
-Date: Mon, 21 Oct 2024 08:10:00 +0200
+	s=arc-20240116; t=1729491047; c=relaxed/simple;
+	bh=fc+HEIHCLf3cvwkrzW93vSxGWX+d0v9vT2JlNhSi5h4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F2HL/QKXMR6o8zNPFwF6kJYVxZNIdnWKxXCaNMKN62Eej9+lsal3VexjORouS5iC17xp2qPQAf4XOMAgCCCUQdl+AZsDdHRHzNX6Ylw5dabkqku8raf8pgqthI7GtJFKeMfO4CwPT6A1BcfUeEjXh6Kerjn2SxpZDAHaTGuvCE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2e3+F64; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso3199841b3a.2;
+        Sun, 20 Oct 2024 23:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729491044; x=1730095844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iQESqJ9aYfd46Wdo01VIZ5qOywZL6bQHldy6wnuTUU8=;
+        b=V2e3+F64zVJHXF4Gb7sE+JZQ9YBasSkHxFlietCqTDT3J+5nEdmad+D+AbT3xNGV2X
+         nZ9B1blDfFlS0faFdlQfRvMR0GJdjRWqmlAhusIpmNxZL6pCLAZtOzpmuKhTUL5tdqhL
+         YGFjyH9N9f1etxXxlsCmATkpf65Vhgvn96sqkobr6HKMo1q3NSFXdDxWXtrQYA2F+4N0
+         qABvZQMHSvD8COf3o1QeMaSWshcomOA6n+qQV6v2gb4kDfvi4lFc84nxO7MxRO4DhLPg
+         WzT4oeu+gshl2d7hJsRq34Fivqlp+0o8ziB3kGCCjjD/TL+SZTLVvPTHvSESPdFHRg3S
+         Mbdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729491044; x=1730095844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iQESqJ9aYfd46Wdo01VIZ5qOywZL6bQHldy6wnuTUU8=;
+        b=dKFcLiTGjdI2/mVcvt+99T41bEORN+pW5ItLOxmPIwPYl0ToCxmi8IBEG1iqMd/Vd5
+         YEyJ7igCa/Z/UjWJ4U/bIJXkyiiKXg0lnYO/QjqNgPKNnmrCKUvoKvITBngsFfpeN1Q7
+         VuDoG68ngvAUmAoV+rDoOb77bZ+Cn7XDPgz93WRpL5QcUjoL8D+VpFYKAUIH+X0XPMxD
+         kipoSdfM5aQ4ufaDQ9BiiSwfJ5R5urMYlMO3YwiZ8gm0/Ch4H7CwuUkoC83nLEJW6YwO
+         bhHds8Lf9HeviqllvOiwZphXtxpEvsnM6CF913I2namyFbsN1mUJupyeJ0xxJ9EYZ6qx
+         Lqjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9RAdN9/ANQ69zl3AwSMEpEBtEO47v2hb8SvVEjTd+7RVas3d6rneIdU0rSc6dFsqGd5InpiI0i3Uxlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzADeuMH5cYTE4f5cdqx7Q7Gr0W2Iej9SJny83GKf1UvqcnyQgH
+	n6HSvgxPi4+POjhVAopgnhVVRTSlmOvNvXhpoMGU4q+j5JjA1EBcmi2n8g==
+X-Google-Smtp-Source: AGHT+IFfcM3mmxhkbfvMBoyB5bFdlWr6KbbE9WM+AEcGbqCxvjfTNgq2Enq1ESlcFgxrfwc/MvRFcQ==
+X-Received: by 2002:a05:6a00:3d15:b0:71e:79a9:ec47 with SMTP id d2e1a72fcca58-71ea3118addmr16050357b3a.6.1729491043923;
+        Sun, 20 Oct 2024 23:10:43 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71ec13d7422sm2145735b3a.97.2024.10.20.23.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 23:10:43 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>
+Subject: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap for non-paged SKB data
+Date: Mon, 21 Oct 2024 14:10:23 +0800
+Message-Id: <20241021061023.2162701-1-0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: arm: mediatek: Add MT8186 Chinchou
- Chromebook
-To: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>,
- devicetree@vger.kernel.or, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- wenst@chromium.org, hsinyi@chromium.org, sean.wang@mediatek.com
-References: <20241021025938.676-1-xiazhengqiao@huaqin.corp-partner.google.com>
- <20241021025938.676-2-xiazhengqiao@huaqin.corp-partner.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241021025938.676-2-xiazhengqiao@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/10/2024 04:59, Zhengqiao Xia wrote:
-> Add an entry for the MT8186 based Chinchou Chromebook, also known as the
-> ASUS Chromebook CZ12 Flip (CZ1204F) and CZ12(CZ1204C).
-> 
-> Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+In case the non-paged data of a SKB carries protocol header and protocol
+payload to be transmitted on a certain platform that the DMA AXI address
+width is configured to 40-bit/48-bit, or the size of the non-paged data
+is bigger than TSO_MAX_BUFF_SIZE on a certain platform that the DMA AXI
+address width is configured to 32-bit, then this SKB requires at least
+two DMA transmit descriptors to serve it.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+For example, three descriptors are allocated to split one DMA buffer
+mapped from one piece of non-paged data:
+    dma_desc[N + 0],
+    dma_desc[N + 1],
+    dma_desc[N + 2].
+Then three elements of tx_q->tx_skbuff_dma[] will be allocated to hold
+extra information to be reused in stmmac_tx_clean():
+    tx_q->tx_skbuff_dma[N + 0],
+    tx_q->tx_skbuff_dma[N + 1],
+    tx_q->tx_skbuff_dma[N + 2].
+Now we focus on tx_q->tx_skbuff_dma[entry].buf, which is the DMA buffer
+address returned by DMA mapping call. stmmac_tx_clean() will try to
+unmap the DMA buffer _ONLY_IF_ tx_q->tx_skbuff_dma[entry].buf
+is a valid buffer address.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+The expected behavior that saves DMA buffer address of this non-paged
+data to tx_q->tx_skbuff_dma[entry].buf is:
+    tx_q->tx_skbuff_dma[N + 0].buf = NULL;
+    tx_q->tx_skbuff_dma[N + 1].buf = NULL;
+    tx_q->tx_skbuff_dma[N + 2].buf = dma_map_single();
+Unfortunately, the current code misbehaves like this:
+    tx_q->tx_skbuff_dma[N + 0].buf = dma_map_single();
+    tx_q->tx_skbuff_dma[N + 1].buf = NULL;
+    tx_q->tx_skbuff_dma[N + 2].buf = NULL;
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+On the stmmac_tx_clean() side, when dma_desc[N + 0] is closed by the
+DMA engine, tx_q->tx_skbuff_dma[N + 0].buf is a valid buffer address
+obviously, then the DMA buffer will be unmapped immediately.
+There may be a rare case that the DMA engine does not finish the
+pending dma_desc[N + 1], dma_desc[N + 2] yet. Now things will go
+horribly wrong, DMA is going to access a unmapped/unreferenced memory
+region, corrupted data will be transmited or iommu fault will be
+triggered :(
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+In contrast, the for-loop that maps SKB fragments behaves perfectly
+as expected, and that is how the driver should do for both non-paged
+data and paged frags actually.
 
-Best regards,
-Krzysztof
+This patch corrects DMA map/unmap sequences by fixing the array index
+for tx_q->tx_skbuff_dma[entry].buf when assigning DMA buffer address.
+
+Tested and verified on DWXGMAC CORE 3.20a
+
+Reported-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+Fixes: f748be531d70 ("stmmac: support new GMAC4")
+Signed-off-by: Furong Xu <0x1207@gmail.com>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 22 ++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index d3895d7eecfc..208dbc68aaf9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4304,11 +4304,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	if (dma_mapping_error(priv->device, des))
+ 		goto dma_map_err;
+ 
+-	tx_q->tx_skbuff_dma[first_entry].buf = des;
+-	tx_q->tx_skbuff_dma[first_entry].len = skb_headlen(skb);
+-	tx_q->tx_skbuff_dma[first_entry].map_as_page = false;
+-	tx_q->tx_skbuff_dma[first_entry].buf_type = STMMAC_TXBUF_T_SKB;
+-
+ 	if (priv->dma_cap.addr64 <= 32) {
+ 		first->des0 = cpu_to_le32(des);
+ 
+@@ -4327,6 +4322,23 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
+ 
++	/* In case two or more DMA transmit descriptors are allocated for this
++	 * non-paged SKB data, the DMA buffer address should be saved to
++	 * tx_q->tx_skbuff_dma[].buf corresponding to the last descriptor,
++	 * and leave the other tx_q->tx_skbuff_dma[].buf as NULL to guarantee
++	 * that stmmac_tx_clean() does not unmap the entire DMA buffer too early
++	 * since the tail areas of the DMA buffer can be accessed by DMA engine
++	 * sooner or later.
++	 * By saving the DMA buffer address to tx_q->tx_skbuff_dma[].buf
++	 * corresponding to the last descriptor, stmmac_tx_clean() will unmap
++	 * this DMA buffer right after the DMA engine completely finishes the
++	 * full buffer transmission.
++	 */
++	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
++	tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
++	tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
++	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
++
+ 	/* Prepare fragments */
+ 	for (i = 0; i < nfrags; i++) {
+ 		const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+-- 
+2.34.1
 
 
