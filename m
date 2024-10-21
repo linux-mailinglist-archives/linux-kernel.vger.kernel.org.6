@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-373791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3AD9A5CDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:26:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035799A5CEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDCEB1C2185E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 299F81C21A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9521D1721;
-	Mon, 21 Oct 2024 07:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75DB1D5142;
+	Mon, 21 Oct 2024 07:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EVUYjl+z"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4tEa+v3"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E41D0F69
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896BF1D1F51;
+	Mon, 21 Oct 2024 07:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495565; cv=none; b=b5vAvjMT/PHIAgHOF50lAAwgGFJolGG7GRkfbq1IYlCMTL5P9fDCJ3n+2cj12Kb+hH+fT5e+ERoZ9j/l4NCbGgpuQ0hYnZ+tcKfXudfQH0+JTJBz4GH6n2ldbdgcXCseDvRhiAQVpSP8sN1uwW7RhzeHWLC2Xyq+iZ9Thy2m9N0=
+	t=1729495609; cv=none; b=oSm3MwW49C5k+IYDxci3B+jpO07FOSRzEEgg4EMc9QgcmW2eJsZe2ODpe2ZTOD9RiJMzA2dI/t1MoLA2mJBOfI2UoX9SUGsJQgqCGjRPjApeYA01zHQMoE+H2+fO5mvwCKXF4LBejAGk7IoL4sQ7RQnLpd2aLhZl/dQs0XwSHug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495565; c=relaxed/simple;
-	bh=G3VWgEKJi01ZdmdbVMurfUduDugtTzi0L1djoFQtduk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JblMlGaCiSn/xU+ZNvHEQ8ZKw/KbBwJsHWoTl22PRJjUOmOBL/KNn8HssdnIHBNIqQBdykjOliSmwJT+XUMIqIgaM0rK2btxaBNlZIkjICHrXBO3TOWBwvAmuAkmnM9akXuU9bm7krmOFGIl+kpOxXxPe5jo2oj89EzSmOFjKVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EVUYjl+z; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so3390692a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:26:03 -0700 (PDT)
+	s=arc-20240116; t=1729495609; c=relaxed/simple;
+	bh=gcp91JUoPs0k9rrxG2Nw+dNiRa34pHWsEoX7HNT6/kU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RJFO6NH+L/+cn4dxCRkU51ghoAtHaJBAXC+lsrxeOURg+yS8VMuYF2wI38HHT7k1E+hDD+0c9/MrJ8r4xDNxkGu90r6+51quXFTYWEbXMIKghexpioP1xL5tWqtvzHKd7FT97hNWsskQtG+0XnluQ79IfGEeuvnqLUpUuqJzB74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4tEa+v3; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71ec997ad06so404335b3a.3;
+        Mon, 21 Oct 2024 00:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729495563; x=1730100363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=riSNOYHYyitn4HEz/ZUed6KwnUQgSADxWxrkcSLcPik=;
-        b=EVUYjl+ztFpbNrf7WMChhgh3MK+mbXLr4v6ty4+mdwBI4dcE5w8FyGyOuH1hNv1tqU
-         fUo94Z3mSE5LUMlzm1EjdWbAng1hxCynR9wXfnTXXOuHWosqSwjo/MLooy+or2lVQGkE
-         in2/oMycmV9B+4B/Bbf2tiZS7pggBxW+VwEciykWMKSC8DHfatJGA6UzdpeDSGE58PjE
-         GxrHtk29wQrm7/RA+uqxe2OYUpWAZKNcLOvpNVa35CVO4nrO+R0i+fbKBL9ZbIkRghqW
-         EpNK+Hwmda2olU5myqhURtca2xZnal29drHEgsiuBKKqI6geITRNKsI1NXhCI7ff0alJ
-         RVLQ==
+        d=gmail.com; s=20230601; t=1729495607; x=1730100407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4j1C+M3vH4yYgJravAN3BbrEjhxeaomVoGP3HhhhDJ0=;
+        b=c4tEa+v3KUS5WHDZbqCbKvK8VBzBG48AZoHoD6Mkxhf/Yn2fBm6MwHF+Un2xa2R3Hp
+         oxGNPg4tbrJg8LuTPfbPOih6zXl9HTKc0sLv5vMxPhIBipbknjWQBLR2aSOhYsS/dO+4
+         +LY6sPs6ATSXeMjqK+ylsbp7hd5pAYT+9YjQDv9pGAJMSq49OKtpCHLKksb7h/ip7KWO
+         vrhbQj3t6VTWKAOLPE8McCab9tFHnrXNm1AoBTViyhpztzTTGO8SPAG/iv7fPm3warRL
+         xhVktkQFTqc7VaoAkuP6DPsc4WrPqiWuiZRtEJpQsRwqsKvpHcfyWqTJ4NR+MM56tl40
+         Gv+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729495563; x=1730100363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=riSNOYHYyitn4HEz/ZUed6KwnUQgSADxWxrkcSLcPik=;
-        b=p0wIn5z80hQMUQd/FHXyFnfF6fVKyy7TXuRtk97Wg+KzZZtw7YQw3OP/jUGCNr5enY
-         iwNaE1dNg/7Mm38Lk4w7G3vSti9A+w9BIWUFO9XGuwsC0h/1ksMNSMHnujOw4oE0svHH
-         /FtOcuVY0uBwoaC1lLZobCbpeuJpEq4mLat/dnG3MKpz3qyB7gr5iJXU4JJyn1fATh5B
-         ZwwRvcqHLG+3pJz+0P6xjBzZi+eoKNaFfbaQvfqT7aU+k2npht3xNhsrJXTDdyAwKvlv
-         yUc463vMP7IYesVgOnBgNgTW5cKJyNlcghhy4A225hjDLu4SESd2jJOFquhkWBp2/ULS
-         7a+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEpsUqoWW+3B6xvr38+AQPyliYRatWW7bfc25C8wQ1LwSBv2ksHueWBTQkVxlh+qTbastevv97WFX7P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc9yvATAk+2KGuaJKO9JDr+NSOa3kKKOeYQT//kz8gGeSb3xtP
-	ewOdSCrQ1shHtHYX9LDe7v9Y/vjNz++1Jenha7s/4kPaTC2Ywddwmuuh+/mXu5fHeLN8/nKBXLA
-	DlCOFsKN6TvC375F3Ji4qPTNiBdSk9/XX4DIkLDFehWtQPKTU
-X-Google-Smtp-Source: AGHT+IFGf1Ktyy7MxB4aZc49mV0SYrg6hPff5eb+EBA6A4nZiQcncUr0r8w5/JXdPXS+OeuWFF4VbOJd2GiWctXxM+4=
-X-Received: by 2002:a05:6300:44:b0:1d8:b8da:d658 with SMTP id
- adf61e73a8af0-1d92c501706mr13794945637.27.1729495562919; Mon, 21 Oct 2024
- 00:26:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729495607; x=1730100407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4j1C+M3vH4yYgJravAN3BbrEjhxeaomVoGP3HhhhDJ0=;
+        b=X9aHg2iyPZQt2c47N1DHKOyCn7kIpLKzeJIWZ4+TOtP3JVzj7MNibIjIom/WkqPgcJ
+         nf0XavEwvUKAZ88QYRzWMDdLtIKwTGzzlzLBMAONsBG+OHMIwCFc6oSNyK45qc5XMu25
+         x8gag1q4LQ5T1HQH7WVS3Oshvg4knMu8ep8JiQp7NoOmXzpvq1oPztrx9suFCgt0XDvw
+         dCLfGATurAPebZSQuau5+cMZWdHSE3P/RW+GlAJUgjQ4lihqZJpJh1gJuckaj92tPwZ9
+         4BfJ+5R7eGAWUCjrKsh/kOzpuON8/DMK9USvqlaLsoyGcaUKvU0RtdKFTwJQeJCSMeCx
+         sS/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0hyLPxAnTeINapDotmg1ZVWXhPZ/tU0il+e/VjyqrsRYRa5mxq0zXrOkAxnV38kCEgZh3CmXQ6MTGnRZ0@vger.kernel.org, AJvYcCU6zCjeOFcGupog1zo0wMnaok6+gDyFC9Nsq7hKdHOd8J1Pe94tdV6irSFImz7qFGBc5w6kxKQ3GAjA@vger.kernel.org, AJvYcCU961du6twPw80qdVtDiBdT3/KxOEKP0FT3ivHmfe0lKJqXpj0NDRPvSvaDHHsJ1Il+dBb+edoHnr9iqjQV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkZwk07qZ1l+aR47cblojysnp6ferM+yrp+TG+FgJL5o3UDZJp
+	rsnZOwJoy6INBBEkMYq1Ru6aRUcT062ZMsWYXnJd34/c8a2j9mWV
+X-Google-Smtp-Source: AGHT+IHqb73yFzexKFbAhuZdRp0bva1gxzmjy3KtNaUbjHVdxYDfeC9SLwusYN3X4iYo7hlJCIpGAA==
+X-Received: by 2002:a05:6a00:c93:b0:71e:4c2f:5bed with SMTP id d2e1a72fcca58-71ea330c78dmr14610957b3a.20.1729495606604;
+        Mon, 21 Oct 2024 00:26:46 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1356a24sm2263650b3a.96.2024.10.21.00.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 00:26:46 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/2] serial: 8250_dw: Introduce SG2044 uart support.
+Date: Mon, 21 Oct 2024 15:26:04 +0800
+Message-ID: <20241021072606.585878-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007122350.75285-1-brgl@bgdev.pl>
-In-Reply-To: <20241007122350.75285-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 21 Oct 2024 09:25:48 +0200
-Message-ID: <CAMRc=MeVQVeXdMTk-ZjabkEv58VN=2vchcy3LZ24pEwwN1DTpw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mtd: rawnand: davinci: order headers alphabetically
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 7, 2024 at 2:24=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> For better readability, put all includes in alphabetical order.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/mtd/nand/raw/davinci_nand.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/d=
-avinci_nand.c
-> index 392678143a36..5510b39c0b98 100644
-> --- a/drivers/mtd/nand/raw/davinci_nand.c
-> +++ b/drivers/mtd/nand/raw/davinci_nand.c
-> @@ -10,15 +10,15 @@
->   *   Dirk Behme <Dirk.Behme@gmail.com>
->   */
->
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/platform_device.h>
->  #include <linux/err.h>
->  #include <linux/iopoll.h>
-> -#include <linux/mtd/rawnand.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
->  #include <linux/mtd/partitions.h>
-> -#include <linux/slab.h>
-> +#include <linux/mtd/rawnand.h>
->  #include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
->
->  #define NRCSR_OFFSET           0x00
->  #define NANDFCR_OFFSET         0x60
-> --
-> 2.43.0
->
+SG2044 relys on an internal divisor when calculating bitrate, which
+means a wrong clock for the most common bitrates. So a quirk is needed
+for this uart device to skip the set rate call and only relys on the
+internal UART divisor.
 
-It's been two weeks so gentle ping.
+Changed from v1:
+1. patch 1: improve the bindings commit message.
+2. patch 2: rename jh7100 quirk and rename the quirk to
+            dw8250_skip_set_rate_data.
 
-Bart
+Inochi Amaoto (2):
+  dt-bindings: serial: snps-dw-apb-uart: Add Sophgo SG2044 uarts
+  serial: 8250_dw: Add Sophgo SG2044 quirk
+
+ .../devicetree/bindings/serial/snps-dw-apb-uart.yaml         | 4 ++++
+ drivers/tty/serial/8250/8250_dw.c                            | 5 +++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+--
+2.47.0
+
 
