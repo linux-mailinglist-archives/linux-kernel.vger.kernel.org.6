@@ -1,167 +1,110 @@
-Return-Path: <linux-kernel+bounces-374871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA139A7154
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CAD9A715B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1951F230CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E261281222
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4851F4FA1;
-	Mon, 21 Oct 2024 17:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B211F470A;
+	Mon, 21 Oct 2024 17:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bBOhPFJZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lbet9VfK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCD5028C;
-	Mon, 21 Oct 2024 17:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E61EF945
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532932; cv=none; b=FpkLYQUKHiMNYojEg9Kel4hH7wMJDOqRy6OMVUKDfsRQ3Q4FyMlTgKYDYFcqzG4Y2MlykvmU2Hv0mbBjZ8xEz0pir8WyxXyAAlJB1X258KHZ1fA3119AOuKJse71cFsSKgzvSkb8qHk6HF0WGGDKJ0gTZsTKSbryUnU7lzSy3FU=
+	t=1729532965; cv=none; b=dzWARvH2Pai8mTmKLOV4bm9Nf3eg8o4eqzydEz8Z1D0dxS0Os1Xzep67OTwMlJSvto2JN4RbNHPcKD0rPNMLUQtu56EPfhrjHmze+cIeiNVUntiWYS0/+rZyvTjjIEyyRLrvGO5rlyzerile103922rLhk9thM29OcnpeYPtlyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532932; c=relaxed/simple;
-	bh=HDUE7vShHHJQGRZ7OyKpTLUDq3+cfNdFoYfU2fj+6hI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l7yp7XlNzrAWVpVxDBSkVtZUhbMVxMeRcy4DDayCHpo9jjKBeA12/pnHcL9GeHny9OQtjuOSGcO8lA3ZADegqMVgLTDxXZhtX9cB7BxVysVPPnp6iFR1Ed9tYYjTr7S2db3RXf0xG3sDi3DoIesiH3ySOWBLG+FidYFPnjrmo+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bBOhPFJZ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729532931; x=1761068931;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=HDUE7vShHHJQGRZ7OyKpTLUDq3+cfNdFoYfU2fj+6hI=;
-  b=bBOhPFJZdeXoZ4uTG+mk4NOXiLxjqDiGDdF1yYyPL7tPqET8ohJn0E6L
-   bb1WwlzfmM4UH4z+naQh8jU66zZjG+ndmBQcCuc0PuaD0HxzgYmnMkhmY
-   OfBHxkJk7k/myRWl+4lw9G3+bXHRSQWa0xe4eoq0WEd4Hva1oEQTqrDTw
-   O57WzEVg7DzFccpSCYrBm+/9Jzzf/pyMhJjxH0DXGyl6H5RSrQAz3xYhd
-   vFWr40Lg1ipzeh4oia0YSqsR6FmOUCDHJBwUYUSxfLFkKlWMf6yA7w2V1
-   PHFoVXsfro3KsPIYNsN2ariktdHLJFa0zokQD0AXR/5hk9P1+zpc/aDnA
-   Q==;
-X-CSE-ConnectionGUID: CSdy8FXmSp6JJdpgMmwKAg==
-X-CSE-MsgGUID: qC56AXOBRnq/2M5FcJk+Uw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32715258"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32715258"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:48:50 -0700
-X-CSE-ConnectionGUID: hkY7BdqQQDW4rDZ5kS6dMw==
-X-CSE-MsgGUID: sYb+WLBRSH2a7gv/WVNOow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="84199817"
-Received: from philliph-desk.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.220.26])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:48:49 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
-Cc: kurt@linutronix.de, Joe Damato <jdamato@fastly.com>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer
- <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, "moderated
- list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
- <linux-kernel@vger.kernel.org>, "open list:XDP (eXpress Data Path)"
- <bpf@vger.kernel.org>
-Subject: Re: [net-next v3 2/2] igc: Link queues to NAPI instances
-In-Reply-To: <20241018171343.314835-3-jdamato@fastly.com>
-References: <20241018171343.314835-1-jdamato@fastly.com>
- <20241018171343.314835-3-jdamato@fastly.com>
-Date: Mon, 21 Oct 2024 10:48:48 -0700
-Message-ID: <874j55gxdr.fsf@intel.com>
+	s=arc-20240116; t=1729532965; c=relaxed/simple;
+	bh=BxD8C7xTcBAN63V/mlr+/E0VotgQJ8JRxac3WheYrXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAzj1nDPTH/Ew1FWv997YTYrq7Dm6d+QgLuJiNo7OR6INKWgWtggBWYriKyfmobdWmxXHKD3w8roSyoziqJFa0b8f7/ZM6f46ekI8lBLbIM1lUKQW1c97A8D/Up+3tA+vBzUsA6IE+l4HxCprIIzsc4a/1pVYTgj8kkRVPM5h90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lbet9VfK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BBED140E0169;
+	Mon, 21 Oct 2024 17:49:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eFkionFefBcB; Mon, 21 Oct 2024 17:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729532956; bh=Il3NU2Avn2tAufiKH5z1ZgPu9oKW+yxxlqkT61wqoDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lbet9VfKie7EKg57sTccirvs6mZAIeT3mHswFrQho0/qb8Kdg/PRKgGulq66WrBij
+	 Qfg/F703G1XYEmaAW7U2NqHiUYv0poSqVN7qIbV+d59wKtSulXjx3ZOUhyhU5SendF
+	 fjBE/TxqiS7Usy8jNlt9d4GfjWCINTe68EQTtmm/hzF0gTq5djQmpbp+6Mg3BHaGMs
+	 YfSodLxj8yPVdmO//dYJPnuJO2f3TtC95NUSFyF/sDQprURWzbIuKxhGgryZNpAZoF
+	 k5v2jpxB98gHuaJcUBsU0cZkYuiGokfSeuGE76t9OTabyXt9SyLghiYfJFKTskTN1l
+	 2yn+snDV4G5gEjAAsD4nDol8hEtxlA1nD7AgnM8oRVXc/sYDslZm4x/jIjmELeEeM2
+	 zCc5aaTpjP1LN0rB7rmSsuFdv2FA77ywZ3bmkG59vG3UnV9NjFlitysZDrnS0WAHsd
+	 aEctWMUHHt0k55FDWKNR5RWZS28SUCgFDRAkcRpY8HZQFI4AV9Eqwf9jWuZka1Vhel
+	 CcErOBxOmMBnEjukA+K5oMX7A9nHJtlG7pvGdi31SDZxOncfBWFnYEpKRCAmrpGQg3
+	 7Ic3L2gjVQujZOlZFKMSc7sMFKnA5OR+yoRkdHb4PYE5LbFKqrZ/shikWgTqHz89OK
+	 ehPu3fpJXxLzaF1mYM//hnKo=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 78CB140E0194;
+	Mon, 21 Oct 2024 17:49:08 +0000 (UTC)
+Date: Mon, 21 Oct 2024 19:49:07 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v3 2/8] x86/sev: Add support for the RMPREAD instruction
+Message-ID: <20241021174907.GJZxaUE-vizLL1mSlF@fat_crate.local>
+References: <cover.1727709735.git.thomas.lendacky@amd.com>
+ <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+ <20241018124118.GCZxJXbvAIcEak1gue@fat_crate.local>
+ <7820cd89-f25a-4934-9597-d53e861d6e92@amd.com>
+ <20241021154117.GFZxZ2HbUPG9ux8bYr@fat_crate.local>
+ <b707bf9c-14b6-e210-2da8-c5d01d36d804@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b707bf9c-14b6-e210-2da8-c5d01d36d804@amd.com>
 
-Joe Damato <jdamato@fastly.com> writes:
+On Mon, Oct 21, 2024 at 12:10:55PM -0500, Tom Lendacky wrote:
+> The input value is a 64-bit value and on output the return code is in
+> EAX, a 32-bit value. So the use of the "=a" (ret) for output and "a"
+> (pfn << PAGE_SHIFT) for input is more accurate.
 
-> Link queues to NAPI instances via netdev-genl API so that users can
-> query this information with netlink. Handle a few cases in the driver:
->   1. Link/unlink the NAPIs when XDP is enabled/disabled
->   2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
->
-> Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
->
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                          --dump queue-get --json='{"ifindex": 2}'
->
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
->  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
->  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
->  {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
->  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
->  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
->
-> Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
-> is present for both rx and tx queues at the same index, for example
-> index 0:
->
-> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
->
-> To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
-> the grub command line option "maxcpus=2" to force
-> igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
->
-> Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
->
-> $ lscpu | grep "On-line CPU"
-> On-line CPU(s) list:      0,2
->
-> $ ethtool -l enp86s0  | tail -5
-> Current hardware settings:
-> RX:		n/a
-> TX:		n/a
-> Other:		1
-> Combined:	2
->
-> $ cat /proc/interrupts  | grep enp
->  144: [...] enp86s0
->  145: [...] enp86s0-rx-0
->  146: [...] enp86s0-rx-1
->  147: [...] enp86s0-tx-0
->  148: [...] enp86s0-tx-1
->
-> 1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
-> report 4 IRQs with unique NAPI IDs:
->
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                          --dump napi-get --json='{"ifindex": 2}'
-> [{'id': 8196, 'ifindex': 2, 'irq': 148},
->  {'id': 8195, 'ifindex': 2, 'irq': 147},
->  {'id': 8194, 'ifindex': 2, 'irq': 146},
->  {'id': 8193, 'ifindex': 2, 'irq': 145}]
->
-> Now we examine which queues these NAPIs are associated with, expecting
-> that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
-> have its own NAPI instance:
->
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                          --dump queue-get --json='{"ifindex": 2}'
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
->  {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
->
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+Oh, they differ in width. Ok.
 
+> It's not a complicated statement and is much clearer to me.
+> 
+> I can change it if you really want the "+a" thing (including changing
+> the ret variable to a u64), but would prefer not to do that.
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Nah, it'll get uglier if you do. Let's keep it this way.
 
+Thx.
 
-Cheers,
 -- 
-Vinicius
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
