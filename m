@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-373868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09649A5E16
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:07:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B289A5E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553681F24B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528D21C22207
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2D51E1A3B;
-	Mon, 21 Oct 2024 08:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D701E1A33;
+	Mon, 21 Oct 2024 08:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQHlQojE"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOfVhyXW"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE0D4C70;
-	Mon, 21 Oct 2024 08:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A951E0E11
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729498024; cv=none; b=fbcodlHEO0SVFT75560eAkvxnUD/7WE6USBJa87lpICpl2/56yRM/gS28pykaxAjUQU23XQGg+5bR868i9Yo2sIxCHaLTheKsx93urAgfSdXY+FCdzjS9+hGn029Lhw6ykuCsynUTExoW9uFLxR4KBDl6K2yY3La6BLLhYUiOK8=
+	t=1729498144; cv=none; b=PAKN3af6bRnOn3cS4WyGrO5mII+m7RfHWVGBwoga+XKHGueULyoUrNem+xOD7zyhN7LFg1JGGvWO+Af4ijOdIO6dmfd7VjtcaTNcvJVk/dN25E6nDT8TNAFPcIB8oWncSZR2UIldLTSPcEBmsj8IySDGPTgH9oBTEeGO1A0kkN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729498024; c=relaxed/simple;
-	bh=TPm28GAIFRdziprN+o6a/t85D5DRSJVU8jos66AGzzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TZEqZibCsDPY8z6hcf8F2JMjEjfQb+43V8qAt9F2cSLWUW53WKL160flhpe6ZCb8HrYFtLknVxtvO57ENl7aH5rWhctf0eemU4O3f4eCFtR2PdXAvuyl01uSyc7Jvj7AB2+oyGh/c6pwbhjZ/FfKeJlDS8JjsJfUOQxJ3tx2ook=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQHlQojE; arc=none smtp.client-ip=209.85.221.176
+	s=arc-20240116; t=1729498144; c=relaxed/simple;
+	bh=a7fKioebAhttUy/bhAWb0W65CzDUUk4uYoOWLox/uhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWMhoQKRz4Uku/elwOWLMaGxzzcHOGcDNm19U5pmQ439zQ202WNK0/t/1HtYd6w+gw9Gu001OytPn2Xouhe5Qd6r3TntyBUBlyoSnq7ap/yKI9bTnkcO2LCtkuNXWYT7OKdFH8Mq+EOjP2gzK4i5mD6VRE+nqZx2nctqEeg5doY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOfVhyXW; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d24099415so1081679e0c.3;
-        Mon, 21 Oct 2024 01:07:02 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so39499331fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729498022; x=1730102822; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TPm28GAIFRdziprN+o6a/t85D5DRSJVU8jos66AGzzg=;
-        b=hQHlQojEY6/1FO4WClnT4Pp+Sd4gZ+maEkKsp54Hhn5AFpEVOkG2jjaD/2PKjlGhWp
-         b6KipS8plxm1LtxPziONHl7mDOUGidZT9gZb/uNURR6P1t8QaNkgfNTJCCP7Ivv1WWck
-         ackXRF+6rTe8325fO+hMwpAJEccWMDbHS1by/csm3oOvAJChi/JDoUPFb+nH0pvZJLJt
-         a/8RSDnpQa+0VPwULaVjIYurl7fwYkBbcqU0po8rNriXvF6D+t53YYdyF6JPiuOn2rzD
-         QKyiY1u11ILn+05nVD9GbkIV95/CkBJoIh2+l00jQ2H0cs0v1hyZwMNg1VgAuxpQkhP6
-         wTww==
+        d=gmail.com; s=20230601; t=1729498140; x=1730102940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MgLMq6LBoZI6oopSlHmO6YDXt32997TqTP5A06Xl6xg=;
+        b=AOfVhyXWn0pNUZv7oJUzGr7R+cYdLOPm+9+CTUld2jb1ZbzZMJf08pQIyP1RzOVnSG
+         AzqiW/JUSRuZ039VWcdeEYQ9W6K+ptFPcWcdDkIXAUq7eDagkiHbCq8ldGK1eUA0/d9i
+         nmxPAbfGxCPvlaGfavBoooU+KSV8n9oxENcehltujgOBlFuTogrzSyWaJWCDzOgaq1G2
+         CX7323wK+pIoIzMpxu2QvVGBLdn4kySLB1CHADLZo5NSRfEEHj+kAVGThZaglgeVRolh
+         zRnXhYRUBUVxmF1mRUe5hbLzZCu6rKcEmKH/cQ+2zBvmra9f/Hz+qt979bZYCNq1jLyt
+         jT4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729498022; x=1730102822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TPm28GAIFRdziprN+o6a/t85D5DRSJVU8jos66AGzzg=;
-        b=afjwpQk2j0rQ6CtwEEFGUa49NM9KdKR509ev7pmAXY5p1D2DlTz3gDX0+wgZSBbtLM
-         0u0Ex3ktDZLNA7nS3hQXnQV1v2UiG1Jq6VrJrU8bcYVCOIb668SHUnun7IRCKO1KVniW
-         qISe8CMzw1xmqxdaq+lLHJz++U2IAc9I8zZHnyH1q3bLlxSJ69VbRfCvIdV00Fs/aXah
-         zZRi2Qgokk+9BIeyPWhUpVliSTJzPOUYZ4WMF7VAEVSQztL+seMfDkPaVnJPVVVBgvOF
-         /ngGoUaPZ0IixglmdvQY2b7E9ArMROZwLO9k1Dv8MawpMtwXBq7vB4cLp8g1vM/UzpfW
-         2g+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHY+SNMJpsPAiJoeTo0G/9NEuiFDAknr9X/p+6/j7Sbb077rPszLAMHLH6RPNQoScq0tMA2nVbLxvafOpbSBvfyW0=@vger.kernel.org, AJvYcCWRtYVDmSJyyIelG07hG7CVgJ4BahAeI3kTCadh9d96VTWt+tGUbnMXvU2R+s9q9s2djJ/3j8WrJ5O5OwA=@vger.kernel.org, AJvYcCXzeYaHPSI76+0MT2IKdAeuklHc3LzZMxup0bOdtrhnItEptR/wYu5MpzxgUxbFutxHIUZZ79fUvKg48gE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3MkOQjrQ5pFgvCT9JreE0S0T2q5F32j34hCFf5RvJk/meHw6J
-	Qh2G4HxvXLK1zG5TERVbNFIwz6qeMiDd2SP4Kv5Qgagi+4MXvSEfJ3NdXXZyB/9S3zMKj31/5Pe
-	8pnY8UHeNxwBp+2BIzecbr9qTxkQ=
-X-Google-Smtp-Source: AGHT+IHqPL6P6zIC4MNtte/Cng6GwpBgDEuZTV7YY1PBTGFtNg5vhQrj1+ytR4Hzq4iCbwKhypvOUP0pbmCT6HrIz/0=
-X-Received: by 2002:a05:6122:d8f:b0:509:e278:c28a with SMTP id
- 71dfb90a1353d-50dda1afa79mr7320734e0c.7.1729498020608; Mon, 21 Oct 2024
- 01:07:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729498140; x=1730102940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MgLMq6LBoZI6oopSlHmO6YDXt32997TqTP5A06Xl6xg=;
+        b=tvHoVEeyTpzTBDUgq9Zhi1hJW50Q093GxwEBN8OF0yMeeFfMh1pP52UB51lrQ5A0d4
+         SCrLkVGz8neqpOnjzmLnF5Oib7iRVN9wI4YLKUOzyzDolzzWh1Yexl2vOq/wpA9tprZr
+         yzA8A/vyrZDWaITQ2OsgKSKrWrJw7sFdNNyESs9zyRdKFs1ukflRoSdPazS9PCskjLcW
+         EwQJOMp42cNEIu/0Ag5Qu3Zq6puGFBAfyzkBViZBBZzBCea//DUQ3N1WfgMCzjGv2/7Y
+         KkQCmPNmEKEfitFP5Wsuq17/GxuK9oHAOgekJdlCr1M7EkzDE6CSs1vyPpTh7NIlycWY
+         AgLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpynfBIq70FZxB7g1MI3WLx4Nl6tYCupsQiSfxMTTmRawk2onH9J5sXY63TGBurYiVifIP+xPMIOi98cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM+vb0GYJh4QiQEOXHFcSeFX/govoVSEHAomT5Qr7pFLJLb8NY
+	QgYDV58sVKtffPe5xMxxEl06Hxxn9NwPYprsmGa2MrDFQuynWINGZId1ODgd
+X-Google-Smtp-Source: AGHT+IGm0I9oGoA3OhrkX1KUADo64ViH/3eQUSQekHaiP/bGYrIQVdLkfV11y0l2rlbfKlc95r5Daw==
+X-Received: by 2002:a05:6512:3da2:b0:536:54df:bff2 with SMTP id 2adb3069b0e04-53a1546fda4mr5124132e87.54.1729498140061;
+        Mon, 21 Oct 2024 01:09:00 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.230])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a913706a7sm175925366b.141.2024.10.21.01.08.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 01:08:59 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 1/3] percpu: Merge VERIFY_PERCPU_PTR() into its only user
+Date: Mon, 21 Oct 2024 10:07:36 +0200
+Message-ID: <20241021080856.48746-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241020223923.GB14328@pendragon.ideasonboard.com>
-In-Reply-To: <20241020223923.GB14328@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 21 Oct 2024 09:06:34 +0100
-Message-ID: <CA+V-a8uwWb982N71vRarPZ1VyeuY58=cWpSREmVc2cFccKzZaw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] media: ov5645: Add support for streams
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent,
+Merge VERIFY_PERCPU_PTR() into non-CONFIG_SMP per_cpu_ptr()
+to make macro similar to CONFIG_SMP per_cpu_ptr(). This will
+allow a follow-up patch to refactor common code to a macro.
 
-On Sun, Oct 20, 2024 at 11:39=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patches.
->
-> I think patch 01/10 should be dropped in favour of
-> https://lore.kernel.org/r/20241020164354.GG7770@pendragon.ideasonboard.co=
-m
-> ("[PATCH v2] media: v4l2-subdev: Refactor events"). Patches 02/10 to
-> 08/10 seem ready, should we merge them without waiting for 09/10 and
-> 10/10 ?
->
-Agreed, for patch 9/10 and 10/10 I'll give a nudge when the
-appropriate core patches have been merged in.
+No functional changes, non-CONFIG_SMP per_cpu_ptr() was
+the only user of VERIFY_PERCPU_PTR().
 
-Cheers,
-Prabhakar
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/percpu-defs.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index 8efce7414fad..7fa88c5f4b26 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -254,13 +254,13 @@ do {									\
+ 
+ #else	/* CONFIG_SMP */
+ 
+-#define VERIFY_PERCPU_PTR(__p)						\
++#define per_cpu_ptr(ptr, cpu)						\
+ ({									\
+-	__verify_pcpu_ptr(__p);						\
+-	(typeof(*(__p)) __kernel __force *)(__p);			\
++	(void)(cpu);							\
++	__verify_pcpu_ptr(ptr);						\
++	(typeof(*(ptr)) __kernel __force *)(ptr);			\
+ })
+ 
+-#define per_cpu_ptr(ptr, cpu)	({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
+ #define raw_cpu_ptr(ptr)	per_cpu_ptr(ptr, 0)
+ #define this_cpu_ptr(ptr)	raw_cpu_ptr(ptr)
+ 
+-- 
+2.47.0
+
 
