@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-373604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC48E9A5951
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:49:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8BB9A5953
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD53A1C209BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E401C20ABE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45736155321;
-	Mon, 21 Oct 2024 03:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6dGqZFc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31A7191F81;
+	Mon, 21 Oct 2024 03:50:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8B83BBEA
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10F514A90;
+	Mon, 21 Oct 2024 03:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729482547; cv=none; b=QX56QROSp8OsXp6G56JHnvXi1tjqOud5OdxK/os4hGFPG7FaZVin5PZ9mb8Mjx0XFyDJJBT2FA4tRQC8LPksRNItAM2xiV64ukTwb4P27w9H+T5N7gRAMI5M15K0hGq5963STNa4f0uKMUNATNJf9DemgjboIPYk6rE9FSJCl0A=
+	t=1729482612; cv=none; b=OyyTh5CTqtUTbPqO0WNgSfzCsbJe4tFtOHIm59MG9w6FTmbufZnqUFSxzznFQkOJU6HrcdEBluwznIi+gN49Sgd94uBmocLGbbqgrZQ5qI0D0VJEQ2N6GrxLXWblFblwCIcveJBbFuQMhllOdENiG0mS9YQ+oExBdJIfKvoIbnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729482547; c=relaxed/simple;
-	bh=31d7ORNUlp0kIwwTotWiGmSTWYon69BtiQ1QjPfL2AA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CKA8X4SwhcNRY60o2glNFFpqrswmLktRt6QqOQ2VyuMujPq+lg82kLAkLyIpfM1GmrSU9BvujeIgpwSsuFPY+qN7sxrKCj3LDovMFpDVbBPdhDaY4rXr7xoPmC3IxrS9J3ywL5Z6jTPRA54wO/jATTEIBIeUryGZzTAxSQZT9v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6dGqZFc; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729482546; x=1761018546;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=31d7ORNUlp0kIwwTotWiGmSTWYon69BtiQ1QjPfL2AA=;
-  b=a6dGqZFcKgoH2vZKP404HRuB7qzkTW9UT2Rw/wC4mAImeUjuhxFyJGug
-   SBLXsZGCIFJDsTqOYaXwPxA4VHQmDzBlVYQzO1scfaDmtSF42xgIeCDOx
-   6J9yog1L8VTePNcBjlwumByIp7GYvowf6QD1Due1UycaWl2VUM8/KR+Xe
-   wcPNkPlHzm4mwy0wD1JGW3t9qq8Rw2pFt4z2ctPa7bQ0uZAGJG49TOaSs
-   hy7C4xfgn6RQGPnPfnrrZO14YdE1FFOk6/WvWqAkQSKZjStcDoA/iVg0A
-   E1vlz26D9EivCYJkevE50tKhjHI1r6XyJ3JDamS7vvZ7NBRdIde5VIYt3
-   Q==;
-X-CSE-ConnectionGUID: VTe4ZAdwQtik+cRpjMb/3Q==
-X-CSE-MsgGUID: PfOi2EBHTkSXeM1uAmN+bA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28900684"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28900684"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 20:49:05 -0700
-X-CSE-ConnectionGUID: ICSjrCbYRyeEF9Bfm+9lOw==
-X-CSE-MsgGUID: ewORK1SQSKKhH7c4XTA2wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
-   d="scan'208";a="79740999"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 20:49:03 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: ebiederm@xmission.com
-Cc: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
-Date: Mon, 21 Oct 2024 11:45:53 +0800
-Message-ID: <20241021034553.18824-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1729482612; c=relaxed/simple;
+	bh=VBVq64KzIeORvBH6bdB4o5p4FZIgXwfweBCOqWHtGJ4=;
+	h=Subject:To:References:From:Cc:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cvnvquIzs8BeyMF3afQEq4zyVRBecX3GPpkWBCU96oLuarGTqqI9GN4IRagHPNhl2stebSigtK+QLWZbyvSyfIWLwx7cDk0Yx0+rFAVNSIrmh5W5mowgBxronOlzNq6V+q8VKu10lLEUa8S171FXRbbBIUIZyt0kj+mCYiTC0TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XX1Xb5Q1Pz4f3jkv;
+	Mon, 21 Oct 2024 11:49:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F345E1A092F;
+	Mon, 21 Oct 2024 11:50:03 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP4 (Coremail) with SMTP id gCh0CgBnm8dlzxVnYwe6Eg--.31108S2;
+	Mon, 21 Oct 2024 11:50:00 +0800 (CST)
+Subject: Re: [syzbot] [fuse?] kernel BUG in fuse_dev_do_write
+To: syzbot <syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com>,
+ joannelkoong@gmail.com, josef@toxicpanda.com
+References: <6715ae99.050a0220.10f4f4.003b.GAE@google.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Cc: hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, miklos@szeredi.hu, mszeredi@redhat.com,
+ syzkaller-bugs@googlegroups.com
+Message-ID: <4901e9a6-f870-c30a-d910-732843d91a0f@huaweicloud.com>
+Date: Mon, 21 Oct 2024 11:49:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <6715ae99.050a0220.10f4f4.003b.GAE@google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:gCh0CgBnm8dlzxVnYwe6Eg--.31108S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWrKF4xGF4UGF1UXr48Xrb_yoW5Jr17pr
+	W8GrZrKrWUtry8JF17XFyjgryqqr98Z3yUXFyUWFy8u3W5Jr1q9r4IqrWjgr4UGr48Xr10
+	qF15Ar1Fv3WkXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-The kexec destination addresses (incluing those for purgatory, the new
-kernel, boot params/cmdline, and initrd) are searched from the free area of
-memblock or RAM resources. Since they are not allocated by the currently
-running kernel, it is not guaranteed that they are accepted before
-relocating the new kernel.
+Hi,
 
-Accept the destination addresses for the new kernel, as the new kernel may
-not be able to or may not accept them by itself.
+On 10/21/2024 9:30 AM, syzbot wrote:
+> syzbot has bisected this issue to:
+>
+> commit 5d9e1455630d0f464f169bbd637dbb264cbd8ac8
+> Author: Josef Bacik <josef@toxicpanda.com>
+> Date:   Mon Sep 30 13:45:18 2024 +0000
+>
+>     fuse: convert fuse_notify_store to use folios
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=120dc25f980000
+> start commit:   15e7d45e786a Add linux-next specific files for 20241016
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=110dc25f980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=160dc25f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=65d101735df4bb19d2a3
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1623e830580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16582f27980000
+>
+> Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
+> Fixes: 5d9e1455630d ("fuse: convert fuse_notify_store to use folios")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> .
 
-Place the "accept" code immediately after the destination addresses pass
-sanity checks, so the code can be shared by both users of the kexec_load
-and kexec_file_load system calls.
+It seems fuse_notify_store invokes folio_zero_range() incorrectly. The
+third argument of folio_zero_range() should be the to-copy length
+instead of the total length. The following patch will fix the problem:
 
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- kernel/kexec_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 5edad55750b0..87e39c9343c4 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1668,7 +1668,7 @@ static int fuse_notify_store(struct fuse_conn *fc,
+unsigned int size,
+                err = fuse_copy_page(cs, &page, offset, this_num, 0);
+                if (!folio_test_uptodate(folio) && !err && offset == 0 &&
+                    (this_num == folio_size(folio) || file_size == end)) {
+-                       folio_zero_range(folio, this_num,
+folio_size(folio));
++                       folio_zero_range(folio, this_num,
+folio_size(folio) - this_num);
+                        folio_mark_uptodate(folio);
+                }
+                folio_unlock(folio);
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index c0caa14880c3..d97376eafc1a 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -210,6 +210,16 @@ int sanity_check_segment_list(struct kimage *image)
- 	}
- #endif
- 
-+	/*
-+	 * The destination addresses are searched from free memory ranges rather
-+	 * than being allocated from the current kernel, so they are not
-+	 * guaranteed to be accepted by the current kernel.
-+	 * Accept those initial pages for the new kernel since it may not be
-+	 * able to accept them by itself.
-+	 */
-+	for (i = 0; i < nr_segments; i++)
-+		accept_memory(image->segment[i].mem, image->segment[i].memsz);
-+
- 	return 0;
- }
- 
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
--- 
-2.43.2
+Will post a formal patch later.
+
 
 
