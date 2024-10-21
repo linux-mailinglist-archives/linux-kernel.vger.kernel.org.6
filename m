@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-373540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01699A5897
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:38:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485529A5899
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55F02824BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B91B8B218EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F8817BB6;
-	Mon, 21 Oct 2024 01:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC8E1946B;
+	Mon, 21 Oct 2024 01:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dc1bdN8V"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9B610A3E;
-	Mon, 21 Oct 2024 01:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AZeQqg/X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B100F1758B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729474685; cv=none; b=l+2SLK9x/M/mM6ad8GQuWsfJET8jVWx0wtNswcBbbnITQKivt0ws5eojuHxXxludotSbcIWh6qjzELwYfH0VFeVCEPxxskozZWV8vxwB0HS2jtkzADJn0DMZ1oIhrwngsTcBH753VKeupwA9aSqJbPE6GwDOGi9Epf2E3FxqSzo=
+	t=1729474768; cv=none; b=BmMQeQXGD4myiYrZdI9CoJv1q9EZFyn9uzfHuA6MVrxAj2gVP5AOUs1qf52zZdGgUrpvLzu9t/dTOOsSV0DrLENLMq7ajObn1G/f+eYrccH1fg4SLP3dM++zFp/ywFHu2SD32M8deDzbdKPQHUTqaQgYNmhTLz+KTZVF1nvLAqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729474685; c=relaxed/simple;
-	bh=bxM0ZLnlcZakhZciREqbmanZ3MijgpsLdgCyFRhr840=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hybb4iDSaplTyMVeFvR6gjHmomRtdALDJaxr1cVyTqFGu1d/cZa6eGkWwPeTyw6Rw/I1meMYmr+evZ0FE+HhcEdwn1a/694HdWNpLkWbcxPKpOd1wtWgo8d8YLz8ijDOPkQQdOAKSdOegKXw4bhJAkz3GGcXwBAPW3fh03Q70OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dc1bdN8V; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=upPl/
-	vJF+V+jNENLlbjlbuE9AJVSMOuiWd7sj3jAOxE=; b=dc1bdN8VSSUJMIstf7spe
-	RtDvdUWoIw0tzK7f3d3vWbPZ619PuH9MIac0NX0Z8kzhXY9wk44nrc46O20ZIYDs
-	tIYvO28vHdciTxftiSySrGpXU9BPRHsZGXKxlaku9tOsjbMo2aMFG3vMpJqrQ7KO
-	6oKLeFWFyqkY0h4BddFgKA=
-Received: from localhost.localdomain (unknown [47.252.33.72])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCHr_VEsBVn0pyDCQ--.33600S2;
-	Mon, 21 Oct 2024 09:37:13 +0800 (CST)
-From: mrpre <mrpre@163.com>
-To: edumazet@google.com,
-	jakub@cloudflare.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mrpre <mrpre@163.com>
-Subject: [PATCH] bpf: fix filed access without lock
-Date: Mon, 21 Oct 2024 09:37:05 +0800
-Message-ID: <20241021013705.14105-1-mrpre@163.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1729474768; c=relaxed/simple;
+	bh=/uzzaNJezF7oaSzA3AeyX2IArPjPGreLCAxbgk9jhz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMqAW9E/d0YMvqb/CJVGW3lMCmN7Crfv4v3YZeYDN0qgX7gBxSbmqT+0MEJ36gKGoreLtLCp3g1hmv1elJo9rzumOOfXLAA2J70FJZVLdGm5DsTyXTyOHjJ0hfBwtKhP+UCGdEqz80QMUZoFDnmTRrhvwlIvxvPvNfrsKaJFDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AZeQqg/X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729474765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQA277wjiIsEsX13SC3EOBQ9MmBhGxtmhKvxedw4Rlk=;
+	b=AZeQqg/Xmcc6nimbyHORQTzSExfIcaUc8WfNYlg2yd7VTKcbmsBsCcWinVam44JESJid8n
+	jjCAn+nhE2tjm7GxYooOj2jvz322XrQXAgHFYGRnY8yKOuEcSKcZGf/Y/UPaiFbov/4zmC
+	NM/rQG/wfa4Yk2X7hvWsSV3P2XxFNmk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-wQlEZ6TvMaiCF-M6LJjQ4Q-1; Sun,
+ 20 Oct 2024 21:39:24 -0400
+X-MC-Unique: wQlEZ6TvMaiCF-M6LJjQ4Q-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 63B2719560A2;
+	Mon, 21 Oct 2024 01:39:21 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.25])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87D5519560A2;
+	Mon, 21 Oct 2024 01:39:14 +0000 (UTC)
+Date: Mon, 21 Oct 2024 09:39:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: zhuxiaohui <zhuxiaohui400@gmail.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
+ ctx fallback
+Message-ID: <ZxWwvF0Er-Aj-rtX@fedora>
+References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHr_VEsBVn0pyDCQ--.33600S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr1rCFy7Ar1fKr4rKw48Zwb_yoW8GFyrpF
-	y7Cw109a1qyFWDAr4vyFWkJF13W3ySka4Uurn5W3y3Arsrur13tFWkKw4YyF1F9Fs2yF4a
-	qrWjgF1jka1DCwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piuyIUUUUUU=
-X-CM-SenderInfo: xpus2vi6rwjhhfrp/1tbiDwl-p2cVqsaoXQAAs1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The tcp_bpf_recvmsg_parser() function, running in user context,
-retrieves seq_copied from tcp_sk without holding the socket lock, and
-stores it in a local variable seq. However, the softirq context can
-modify tcp_sk->seq_copied concurrently, for example, n tcp_read_sock().
+On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
+> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+> 
+> It is observed that nvme connect to a nvme over fabric target will
+> always fail when 'nohz_full' is set.
+> 
+> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
+> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
+> and when nvme connect to a remote target, it may fails on this stack:
+> 
+>         blk_mq_alloc_request_hctx+1
+>         __nvme_submit_sync_cmd+106
+>         nvmf_connect_io_queue+181
+>         nvme_tcp_start_queue+293
+>         nvme_tcp_setup_ctrl+948
+>         nvme_tcp_create_ctrl+735
+>         nvmf_dev_write+532
+>         vfs_write+237
+>         ksys_write+107
+>         do_syscall_64+128
+>         entry_SYSCALL_64_after_hwframe+118
+> 
+> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
+> blk_mq_ctx on the hw queue.
+> 
+> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
+> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
+> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
+> is not isolated.
 
-As a result, the seq value is stale when it is assigned back to
-tcp_sk->copied_seq at the end of tcp_bpf_recvmsg_parser(), leading to
-incorrect behavior.
+blk_mq_alloc_request_hctx()
+	...
+	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
+	...
 
-Signed-off-by: mrpre <mrpre@163.com>
----
- net/ipv4/tcp_bpf.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
+online CPUs, both are same actually from this viewpoint.
 
-diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
-index e7658c5d6b79..7b44d4ece8b2 100644
---- a/net/ipv4/tcp_bpf.c
-+++ b/net/ipv4/tcp_bpf.c
-@@ -221,9 +221,9 @@ static int tcp_bpf_recvmsg_parser(struct sock *sk,
- 				  int flags,
- 				  int *addr_len)
- {
--	struct tcp_sock *tcp = tcp_sk(sk);
-+	struct tcp_sock *tcp;
-+	u32 seq;
- 	int peek = flags & MSG_PEEK;
--	u32 seq = tcp->copied_seq;
- 	struct sk_psock *psock;
- 	int copied = 0;
- 
-@@ -238,7 +238,8 @@ static int tcp_bpf_recvmsg_parser(struct sock *sk,
- 		return tcp_recvmsg(sk, msg, len, flags, addr_len);
- 
- 	lock_sock(sk);
--
-+	tcp = tcp_sk(sk);
-+	seq = tcp->copied_seq;
- 	/* We may have received data on the sk_receive_queue pre-accept and
- 	 * then we can not use read_skb in this context because we haven't
- 	 * assigned a sk_socket yet so have no link to the ops. The work-around
--- 
-2.43.5
+It is one long-time problem for nvme fc.
+
+
+Thanks,
+Ming
 
 
