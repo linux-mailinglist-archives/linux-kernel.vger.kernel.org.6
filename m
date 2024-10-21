@@ -1,75 +1,45 @@
-Return-Path: <linux-kernel+bounces-374317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E699A686F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:31:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777289A6869
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64801B285E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9051F22878
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE21F4713;
-	Mon, 21 Oct 2024 12:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sdHW6l5j"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF7D1EF94C;
+	Mon, 21 Oct 2024 12:29:59 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC12F1E7C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949BB1EB9FE
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513721; cv=none; b=kWc0rplDWCXWHdhJFMe72xbQIrbYpSVpIzI1szrdNcoBVAwRfM9EvgrEtB6GImSTxrp/p6vcYmRSkwxV06G/fu+mKC4UzyXIxY7fB7F1UXVWzneGr2X6CAM88XScx/x+yGoWQQ4O2E+GiEuk7iv89lEXZdWC0/teU6rAlddItUQ=
+	t=1729513798; cv=none; b=pLbeDnoSTDo0PLaFrV+4JGSl4DptPhiS6MgRhxt1gw+m/gx4fr6htcN/IfyOql3iZ1f3k46BbhVr5LM+tBfz6gC/CZ/CNPA90iJMvywQwsRZ2WBzl8P0bWb2k25G7NCpBazNGNPX9W/W2Wlh7B+H7rp9wfXCeMFTwXm+7Q7QzzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513721; c=relaxed/simple;
-	bh=DBP0OOsTE11Yj47xHdts1PZQNqjVqwOWeu36dsdeH00=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qZwVxurDo9vvX9j5DNpWzGlLX6embIqrrpF8+1ZTiTxQPgf7jg2Ab5kZMnVxlls2JjBIamj8UjNT/g6Tdx+26iexItUvJkAR0lvwL9YOFVY9ltRCRdG5a5kA9yT1gtuL8UyrQRzczRNy+SIoRJTFVx8cIYcJ03gh1kJcuxvTdEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sdHW6l5j; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so3086858f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513717; x=1730118517; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rFKVbBVSy5Twz2NJrd7MX/x/tbjvook+SkghctSTy6Y=;
-        b=sdHW6l5j/tEvrYSAfUUFeBZ0V0qQyQeBOS9Pd9QnQCIIGwgUDh+Z5U1yOkUa7eMp1T
-         F/LAOOFqXSW3tn1AmB2l/Xa3fcx1lCPJMc6BWQ9lJGtrTRBJiKHZxX+hvd01FLmhH3v7
-         nvLt+Q2A4iohVABaZbqf82J7ZLczGH5ZMrUjY9FhO6at/aeob55aWhglag+XHftABiMm
-         WzIvDXuJ8XCBkqPblquUw18pZMVawTSeolI6D72xUS0RgCRwyIQofGTkOceSZVwYva27
-         NpCVi5C/YlGfkR3QekzTsrm2CY3kE/FAVsdSicepS/IZRbVEbLbji0Y0hkb9ksHRB5s+
-         z25Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513717; x=1730118517;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rFKVbBVSy5Twz2NJrd7MX/x/tbjvook+SkghctSTy6Y=;
-        b=ZrWK6+AUAd1OjeShmuF/RljxxFrt98bWPPMouaTpK3MM3auhj/mFv8h/s0Z6S+jib2
-         8upWNZv9FlbwHSAOYEGbN1x5Utx0Q6CXSAJfjo9RY+yeBOwbxlsksIjy+1d8uclnY4Fd
-         g0XiuF3odx7L+iUWWzFjknCf+qCuXd5vM+9sYyMF3ZBRzHOQ8TMpYpycVIVdV3PRA4i4
-         MgtojiaL8X4QffT4bOvtFzOjdTnQxT7XhRftgrjuUUvukdZpnFIte3TUHy0afuFSGOIy
-         boXHBMCvsbBKWDdkZxYrnYIpMFKnc8l3C2gNeQXRN1AAil1A+aWM44kToL1rkSTu2RFd
-         4H6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3ueEA9LXSJQ8JVhw4vsloFQpbnfjX+GZrnjtGeuiZiwBMGdeebnZNEzNgNBuost7rB78Q83VX0txaZy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSOHeyB39kkmASBBi1kBUN9SGy362VaxYw2kk9rj00mYb0WEBz
-	T4/zSmSyl2pS9zOXh/PwuhWxHLWK6OlzepEIw6YcEoCiaqSFeIk8xec2mS9vDwk=
-X-Google-Smtp-Source: AGHT+IHd+FXgHes3NYjH4MUcohJQ4f1USWSGT5Tv0j4+9vI1t2uAw+Rm9IHAvbdkd+rWKuLb0d0vUA==
-X-Received: by 2002:a5d:4b05:0:b0:377:6073:48df with SMTP id ffacd0b85a97d-37eb489b413mr6556418f8f.58.1729513716937;
-        Mon, 21 Oct 2024 05:28:36 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc4ebsm55654815e9.41.2024.10.21.05.28.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:28:36 -0700 (PDT)
-Message-ID: <56b66841-e60b-4dd7-8b96-cf67628fc0e6@linaro.org>
-Date: Mon, 21 Oct 2024 14:28:34 +0200
+	s=arc-20240116; t=1729513798; c=relaxed/simple;
+	bh=7KLv4DbltNSHiSawjFU+nR2Pa3NZi/gLGyRx2ZzGFtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VG/5T0YQDkdiiemGe5Uwz3Gq0L3s/Rl5Sm53QjWjAYFjZ1g9hS1rOa1iowozHpD1iICka6R/Ybw6XVK/4iz0uWG5icG1L31RwavCxPspGHA2Qy1PYKNgnHm4kSlDxA/OvS8M4toP8a0TavNGRTnecgKUCL1axzfgkqYl6ywobnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XXF2J1lFCz1T8y7;
+	Mon, 21 Oct 2024 20:27:52 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C98A180105;
+	Mon, 21 Oct 2024 20:29:51 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 21 Oct 2024 20:29:49 +0800
+Message-ID: <2228fa6c-8409-46c2-8114-1840c8646708@huawei.com>
+Date: Mon, 21 Oct 2024 20:29:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,118 +47,361 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 2/2] drm/bridge: sii902x: Set input bus format based on
- bus-width
-To: Wadim Egorov <w.egorov@phytec.de>, andrzej.hajda@intel.com,
- rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, bbrezillon@kernel.org, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, upstream@lists.phytec.de
-References: <20241017085556.3045686-1-w.egorov@phytec.de>
- <20241017085556.3045686-3-w.egorov@phytec.de>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241017085556.3045686-3-w.egorov@phytec.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-5-shiyongbang@huawei.com>
+ <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On 17/10/2024 10:55, Wadim Egorov wrote:
-> Introduce a bus-width property to define the number of parallel RGB
-> input pins connected to the transmitter. The input bus formats are updated
-> accordingly. If the property is not specified, default to 24-bit bus-width.
-> 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> ---
-> v3: Ensure bus_width is set/defaults to 24 even if an endpoint is not defined
-> ---
->   drivers/gpu/drm/bridge/sii902x.c | 24 +++++++++++++++++++++++-
->   1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index 7f91b0db161e..9be9cc5b9025 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -180,6 +180,8 @@ struct sii902x {
->   	struct gpio_desc *reset_gpio;
->   	struct i2c_mux_core *i2cmux;
->   	bool sink_is_hdmi;
-> +	u32 bus_width;
-> +
->   	/*
->   	 * Mutex protects audio and video functions from interfering
->   	 * each other, by keeping their i2c command sequences atomic.
-> @@ -477,6 +479,8 @@ static u32 *sii902x_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->   						     u32 output_fmt,
->   						     unsigned int *num_input_fmts)
->   {
-> +
-> +	struct sii902x *sii902x = bridge_to_sii902x(bridge);
->   	u32 *input_fmts;
->   
->   	*num_input_fmts = 0;
-> @@ -485,7 +489,20 @@ static u32 *sii902x_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->   	if (!input_fmts)
->   		return NULL;
->   
-> -	input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-> +	switch (sii902x->bus_width) {
-> +	case 16:
-> +		input_fmts[0] = MEDIA_BUS_FMT_RGB565_1X16;
-> +		break;
-> +	case 18:
-> +		input_fmts[0] = MEDIA_BUS_FMT_RGB666_1X18;
-> +		break;
-> +	case 24:
-> +		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-> +		break;
-> +	default:
-> +		return NULL;
-> +	}
-> +
->   	*num_input_fmts = 1;
->   
->   	return input_fmts;
-> @@ -1167,6 +1184,11 @@ static int sii902x_probe(struct i2c_client *client)
->   		return PTR_ERR(sii902x->reset_gpio);
->   	}
->   
-> +	sii902x->bus_width = 24;
-> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
-> +	if (endpoint)
-> +		of_property_read_u32(endpoint, "bus-width", &sii902x->bus_width);
-> +
->   	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
->   	if (endpoint) {
->   		struct device_node *remote = of_graph_get_remote_port_parent(endpoint);
+Thanks, I will modify codes according to your comments, and I also
+replied some questions or reasons why I did it below.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
+>> From: baihan li <libaihan@huawei.com>
+>>
+>> To support DP interface displaying in hibmc driver. Add
+>> a encoder and connector for DP modual.
+>>
+>> Signed-off-by: baihan li <libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
+>>   4 files changed, 217 insertions(+), 2 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 693036dfab52..8cf74e0d4785 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o hibmc_drm_dp.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> new file mode 100644
+>> index 000000000000..7a50f1d81aac
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -0,0 +1,195 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +
+>> +#include <linux/io.h>
+>> +
+>> +#include <drm/drm_probe_helper.h>
+>> +#include <drm/drm_simple_kms_helper.h>
+>> +#include <drm/drm_atomic_helper.h>
+>> +#include <drm/drm_drv.h>
+>> +#include <drm/drm_edid.h>
+>> +
+>> +#include "hibmc_drm_drv.h"
+>> +#include "dp/dp_kapi.h"
+>> +
+>> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>> +{
+>> +	int count;
+>> +
+>> +	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+>> +				     connector->dev->mode_config.max_height);
+>> +	drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
+> What? Please parse EDID instead.
+
+I'll add aux over i2c r/w and get edid functions in next patch series.
+So we'll keep the same as the VGA part.
+
+>> +
+>> +	return count;
+>> +}
+>> +
+>> +static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> +	.get_modes = hibmc_dp_connector_get_modes,
+>> +};
+>> +
+>> +static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
+>> +	.reset = drm_atomic_helper_connector_reset,
+>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>> +	.destroy = drm_connector_cleanup,
+>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>> +};
+>> +
+>> +static void dp_mode_cfg(struct drm_device *dev, struct dp_mode *dp_mode,
+>> +			struct drm_display_mode *mode)
+>> +{
+>> +	dp_mode->field_rate = drm_mode_vrefresh(mode);
+>> +	dp_mode->pixel_clock = mode->clock / 1000; /* 1000: khz to hz */
+>> +
+>> +	dp_mode->h_total = mode->htotal;
+>> +	dp_mode->h_active = mode->hdisplay;
+>> +	dp_mode->h_blank = mode->htotal - mode->hdisplay;
+>> +	dp_mode->h_front = mode->hsync_start - mode->hdisplay;
+>> +	dp_mode->h_sync = mode->hsync_end - mode->hsync_start;
+>> +	dp_mode->h_back = mode->htotal - mode->hsync_end;
+>> +
+>> +	dp_mode->v_total = mode->vtotal;
+>> +	dp_mode->v_active = mode->vdisplay;
+>> +	dp_mode->v_blank = mode->vtotal - mode->vdisplay;
+>> +	dp_mode->v_front = mode->vsync_start - mode->vdisplay;
+>> +	dp_mode->v_sync = mode->vsync_end - mode->vsync_start;
+>> +	dp_mode->v_back = mode->vtotal - mode->vsync_end;
+> No need to copy the bits around. Please use drm_display_mode directly.
+>
+>> +
+>> +	if (mode->flags & DRM_MODE_FLAG_PHSYNC) {
+>> +		drm_info(dev, "horizontal sync polarity: positive\n");
+>> +		dp_mode->h_pol = 1;
+>> +	} else if (mode->flags & DRM_MODE_FLAG_NHSYNC) {
+>> +		drm_info(dev, "horizontal sync polarity: negative\n");
+>> +		dp_mode->h_pol = 0;
+>> +	} else {
+>> +		drm_err(dev, "horizontal sync polarity: unknown or not set\n");
+>> +	}
+>> +
+>> +	if (mode->flags & DRM_MODE_FLAG_PVSYNC) {
+>> +		drm_info(dev, "vertical sync polarity: positive\n");
+>> +		dp_mode->v_pol = 1;
+>> +	} else if (mode->flags & DRM_MODE_FLAG_NVSYNC) {
+>> +		drm_info(dev, "vertical sync polarity: negative\n");
+> No spamming, use DRM debugging macros.
+>
+>> +		dp_mode->v_pol = 0;
+>> +	} else {
+>> +		drm_err(dev, "vertical sync polarity: unknown or not set\n");
+>> +	}
+>> +}
+>> +
+>> +static int dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +{
+>> +	struct dp_mode dp_mode = {0};
+>> +	int ret;
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+>> +
+>> +	dp_mode_cfg(dp->drm_dev, &dp_mode, mode);
+>> +	ret = hibmc_dp_mode_set(dp, &dp_mode);
+>> +	if (ret)
+>> +		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void dp_enable(struct hibmc_dp *dp)
+>> +{
+>> +	hibmc_dp_display_en(dp, true);
+>> +}
+>> +
+>> +static void dp_disable(struct hibmc_dp *dp)
+>> +{
+>> +	hibmc_dp_display_en(dp, false);
+>> +}
+>> +
+>> +static int hibmc_dp_hw_init(struct hibmc_drm_private *priv)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = hibmc_dp_kapi_init(&priv->dp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	hibmc_dp_display_en(&priv->dp, false);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void hibmc_dp_hw_uninit(struct hibmc_drm_private *priv)
+>> +{
+>> +	hibmc_dp_kapi_uninit(&priv->dp);
+>> +}
+> Inline all these one-line wrappers, they serve no purpose.
+>
+>> +
+>> +static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
+>> +				    struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
+>> +
+>> +	if (dp_prepare(dp, mode))
+>> +		return;
+>> +
+>> +	dp_enable(dp);
+>> +}
+>> +
+>> +static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
+>> +				     struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +
+>> +	dp_disable(dp);
+>> +}
+>> +
+>> +static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+>> +	.atomic_enable = hibmc_dp_encoder_enable,
+>> +	.atomic_disable = hibmc_dp_encoder_disable,
+>> +};
+>> +
+>> +void hibmc_dp_uninit(struct hibmc_drm_private *priv)
+>> +{
+>> +	hibmc_dp_hw_uninit(priv);
+>> +}
+>> +
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv)
+>> +{
+>> +	struct drm_device *dev = &priv->dev;
+>> +	struct drm_crtc *crtc = &priv->crtc;
+>> +	struct hibmc_dp *dp = &priv->dp;
+>> +	struct drm_connector *connector = &dp->connector;
+>> +	struct drm_encoder *encoder = &dp->encoder;
+>> +	int ret;
+>> +
+>> +	dp->mmio = priv->mmio;
+>> +	dp->drm_dev = dev;
+>> +
+>> +	ret = hibmc_dp_hw_init(priv);
+>> +	if (ret) {
+>> +		drm_err(dev, "dp hw init failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	encoder->possible_crtcs = drm_crtc_mask(crtc);
+>> +	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
+> I think drm_simple_foo interfaces are being deprecated. Please copy
+> required code into the driver instead.
+>
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp encoder failed: %d\n", ret);
+>> +		goto err_init;
+>> +	}
+>> +
+>> +	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
+>> +
+>> +	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
+>> +				 DRM_MODE_CONNECTOR_DisplayPort);
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp connector failed: %d\n", ret);
+>> +		goto err_init;
+>> +	}
+>> +
+>> +	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
+>> +
+>> +	drm_connector_attach_encoder(connector, encoder);
+>> +
+>> +	return 0;
+>> +
+>> +err_init:
+>> +	hibmc_dp_hw_uninit(priv);
+>> +
+>> +	return ret;
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> index 9f9b19ea0587..c90a8db021b0 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> @@ -93,6 +93,10 @@ static const struct drm_mode_config_funcs hibmc_mode_funcs = {
+>>   
+>>   static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   {
+>> +#define DP_HOST_SERDES_CTRL		0x1f001c
+>> +#define DP_HOST_SERDES_CTRL_VAL		0x8A00
+>> +#define DP_HOST_SERDES_CTRL_MASK	0x7FFFE
+>> +
+> #defines outside of the function body.
+>
+>>   	struct drm_device *dev = &priv->dev;
+>>   	int ret;
+>>   
+>> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   		return ret;
+>>   	}
+>>   
+>> +	/* if DP existed, init DP */
+>> +	if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
+>> +	     DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
+>> +		ret = hibmc_dp_init(priv);
+>> +		if (ret)
+>> +			drm_err(dev, "failed to init dp: %d\n", ret);
+>> +	}
+>> +
+>>   	ret = hibmc_vdac_init(priv);
+>>   	if (ret) {
+>>   		drm_err(dev, "failed to init vdac: %d\n", ret);
+>> -		return ret;
+> Why?
+
+We have two display cables, if VGA cannot work, this change makes DP
+still work.
+
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -239,6 +250,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+>>   
+>>   static int hibmc_unload(struct drm_device *dev)
+>>   {
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>>   	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>>   
+>>   	drm_atomic_helper_shutdown(dev);
+>> @@ -247,6 +259,9 @@ static int hibmc_unload(struct drm_device *dev)
+>>   
+>>   	pci_disable_msi(to_pci_dev(dev->dev));
+>>   
+>> +	if (priv->dp.encoder.possible_crtcs)
+>> +		hibmc_dp_uninit(priv);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> index 6b566f3aeecb..aa79903fe022 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/i2c.h>
+>>   
+>>   #include <drm/drm_framebuffer.h>
+>> +#include "dp/dp_kapi.h"
+>>   
+>>   struct hibmc_connector {
+>>   	struct drm_connector base;
+>> @@ -37,6 +38,7 @@ struct hibmc_drm_private {
+>>   	struct drm_crtc crtc;
+>>   	struct drm_encoder encoder;
+>>   	struct hibmc_connector connector;
+> It seems this needs to be refactored too, to separate VGA connector /
+> encoder / CRTC to a child struct.
+>
+>> +	struct hibmc_dp dp;
+>>   };
+>>   
+>>   static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
+>> @@ -59,4 +61,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv);
+>>   
+>>   int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
+>>   
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv);
+>> +void hibmc_dp_uninit(struct hibmc_drm_private *priv);
+>> +
+>>   #endif
+>> -- 
+>> 2.33.0
+>>
 
