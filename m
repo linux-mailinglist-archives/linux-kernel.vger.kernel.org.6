@@ -1,87 +1,125 @@
-Return-Path: <linux-kernel+bounces-375138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790309A9170
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0B99A9174
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308582821D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:44:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E391F2331F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6525A1FE0E5;
-	Mon, 21 Oct 2024 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DBB1FCF7B;
+	Mon, 21 Oct 2024 20:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hl7X7F1C"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuHqHcqI"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEB01FDFAD;
-	Mon, 21 Oct 2024 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5A7433D8;
+	Mon, 21 Oct 2024 20:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729543466; cv=none; b=rFe4zG5gsmeZ3P3+x4QLBeybchhbZQr95qZo6hKHXmDtlKlV85BV9tksHW+cuvO7ja7nJo208oFmPTK0zLDHvdI9gOeKr9MQ0EAp+py7X+1c3Z/zvhS5GoEnHjgkrJrXqhNytPTlv9V5gI6W3bJ4hf+twNIbqgYvSgck++P3Dz4=
+	t=1729543535; cv=none; b=OJg/SJGKXxhuDmk/v9Si5UIcPb1U5oEtGIHC25OB0Zet5bIJOjunRTP278dWbGj10nWWECO/SPtyRgFlA86ATWC208qpU93sYi1X8QpxAVSwToPqn+wl6aXxrdbwK3o/UVdE3abNWI1DEQkJIsBaTawioZ9q2dVJ9uwcf8etITs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729543466; c=relaxed/simple;
-	bh=Vc/62rHZlgnbb6nr4BcJAdJ8aceL/E+lYtvbA9WT0js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FQRskyCRztbsUSmavwj1TZ8othQyZ69WfVgCZsVjIL3vd2dAtnjG4S2PBsgS/t9I4rWDLa9fzm/6C7o01M+l8DHqBRjPzURGddOajIPTZ7kD8H2yY5MDVVfiRBhXrTw/Xzcd61LwjtaGyUT9lTnl0pPgtOGU+Y8Re5OF0/H4kUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hl7X7F1C; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=LaFy/AKP/LLiFFshor6bfHvjvfOdSoy5BbdGuqUN/Dg=; b=Hl
-	7X7F1CXsThOB/zoFat18huu37ADDc0ROaz0bfq1H923Vk/jTCt9Gh/RoI6AbuT/CDG/2Mi36JTdAD
-	3FY4ZXAK4vhLZsKGvMJcO9z/0NB3SUk5MVXfTUoq/TKmWSDiVrhcLlAQPOre/FYwVe7tdfB/vj/nO
-	FRmA2ITHeV/WjfA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2zGB-00AlcB-GZ; Mon, 21 Oct 2024 22:44:15 +0200
-Date: Mon, 21 Oct 2024 22:44:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
-	netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: mv88e6xxx: use ethtool_puts
-Message-ID: <61c72b95-7e54-4534-9ac4-f108e8a0dabd@lunn.ch>
-References: <20241021010652.4944-1-rosenp@gmail.com>
- <CAH-L+nN0W_BffMR6s6Je9LufSs5ZtSHm13_O1aGhDnTjPNqouw@mail.gmail.com>
- <CAKxU2N9JGwfg37Qoj=gLj0_f+cd1dN_ek+GT402xOe-Y2M0xtg@mail.gmail.com>
+	s=arc-20240116; t=1729543535; c=relaxed/simple;
+	bh=T6uZ7CWQZiDgr9CvAkblBhr5k6pjIhO5SvXt8Bja7ww=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CbnjSR50+xVVAuG0yMOsJoqBsT9nHv/4N3/oXvCfz+ZhDM1cEKBPSQeI2daBAOQ4F5pr7EjA3LlVWGwpm5TO2PiDw0c+krDIOeLdsHLgUslM9t+9NJEK3UqvtMWtttEWCBNEPWPSftTJXTm/Gd6Sd83Y4+AhvVd/NEKQcfq6SWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuHqHcqI; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so57075215e9.2;
+        Mon, 21 Oct 2024 13:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729543532; x=1730148332; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=31c+iUZpCze9GrKtOf0yNYd4tZARsyqaVePW4ZzWUuA=;
+        b=GuHqHcqI7gbMwyt4H9CrrpKhurwq/gjzmysw+MEr/3stw/323B5gFKkW97QYQAh+oQ
+         iHxAQXfgv4oxPhuSiYjnvS9EUsMpO8IjWRGAimO4G0P7IQROdwZB9M6uPZo08pVWAuee
+         8IZqCz0WIo3rJFln6O2HXCWDp4XBh/8SBv3Qxy2kLu9Q1+RAXSx49NS810EK9NKHMvRO
+         gFh+m2AP3y2Vf2ZCZB7Pwum+Zsv90zNUetFGzMNOv+OLHZrqS8wGhyOHDDFaWkm1Tydl
+         xf/1n4ad8aw5g33+RrvEMOzpgaGvtWL9h9aY8zwMEJC4bNISy4xQDyH8+j3BNx3F/i8m
+         RtmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729543532; x=1730148332;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=31c+iUZpCze9GrKtOf0yNYd4tZARsyqaVePW4ZzWUuA=;
+        b=GscjiGBwKDS8FdjPkCwtUKXaLzilH5lepr4Npq4gmCwXSQ12lRnypKoAPKJkZGoF3A
+         kLCpGMzWTC4yQfJ7l0bKaBQy8BtGlAVl84crOkjDewB8mSK/dZR88oZ1ySUtGpM8WOg6
+         k56ksnw7VabID31+LrcxDr1hI+XP0aD5zJAmIGBUhZM1/2pRDo6scQokPH4QNLnduR0s
+         JBM87HxsPEVbw//Pt+ZPMdfoARV7UU82yQdupTf1mi3PMbilna8ZBN6r8mfc/RMBTLHf
+         irgsABE9sZjgxN+5UYfehcbPF+zhj3ze21DR726nNqC/vBuwtqATytwdBmuB1mYl1kfv
+         mK8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8/QCCfBXrSf0c0WH/LZgjArhWJwaSmAiBl6Bhdmam/S0CEBV8COvhtA7a0cea1zY9JUu5AG78hJgT9xw=@vger.kernel.org, AJvYcCWn/WbsX8PkZv3v9oZNVdl8lwsD4KARPUhBHD+dpTzFs3gRE3OND9QmInX+utMGJCBzHMAch5Rc@vger.kernel.org
+X-Gm-Message-State: AOJu0YywBgWMmTBsNwALS8ya79A7cylxTav/EdhmMReuWJB24X5EJSMF
+	gN1QEFksmY7Fd9XwRQ2Gfhul4N0ID99K3Zr76kOHoRbKK1qM8YRT
+X-Google-Smtp-Source: AGHT+IG/TIA2NgbxWXzFHzYbcpfUSaxs6CdZGsDMs9FhSA569eQkPCRgjkM/DqbaNcUu/SymVPSrPg==
+X-Received: by 2002:a05:600c:358b:b0:430:9fde:3b92 with SMTP id 5b1f17b1804b1-43161636661mr144311605e9.14.1729543531552;
+        Mon, 21 Oct 2024 13:45:31 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-023d-d91a-ee8e-da73.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:23d:d91a:ee8e:da73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570d49sm68483595e9.7.2024.10.21.13.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 13:45:30 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/2] usb: typec: fix unreleased fwnode_handle in
+ typec_port_register_altmodes()
+Date: Mon, 21 Oct 2024 22:45:28 +0200
+Message-Id: <20241021-typec-class-fwnode_handle_put-v2-0-3281225d3d27@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKxU2N9JGwfg37Qoj=gLj0_f+cd1dN_ek+GT402xOe-Y2M0xtg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGi9FmcC/42NQQ6CMBBFr0JmbU1bqIor72EIacsAk0BLWkQJ4
+ e5WTuDyvfy8v0HEQBjhnm0QcKFI3iWQpwxsr12HjJrEILksBBclm9cJLbODjpG1b+cbrNOuGbC
+ eXjMz+aW4tcpYJQykxhSwpc/Rf1aJe4qzD+txt4if/be8CCaYzo3SXHN5LdWjGzUNZ+tHqPZ9/
+ wJSPVDVygAAAA==
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729543530; l=1026;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=T6uZ7CWQZiDgr9CvAkblBhr5k6pjIhO5SvXt8Bja7ww=;
+ b=5Ux6xC5gHtpUIy7U2X7YcqaQRsNfC+Nmz452rlN8Bt1CbASY9RQheBoah439qLfYTUsTPmBwH
+ 20rqBvBV1pcCS6h0Eis0eKhO+ECNgC/eccqv0+GHX8yfKk8Nv3DNKPz
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Mon, Oct 21, 2024 at 11:56:47AM -0700, Rosen Penev wrote:
-> On Mon, Oct 21, 2024 at 9:27 AM Kalesh Anakkur Purayil
-> <kalesh-anakkur.purayil@broadcom.com> wrote:
-> >
-> > On Mon, Oct 21, 2024 at 6:37 AM Rosen Penev <rosenp@gmail.com> wrote:
-> > >
-> > > Allows simplifying get_strings and avoids manual pointer manipulation.
-> Looking more at these files, I see further pointer manipulation later
-> on. Specifically I have this change locally:
+The first patch simply adds the missing call to fwnode_handle_put() when
+the node is no longer required to make it compatible with stable kernels
+that don't support the cleanup attribute in its current form. The second
+patch adds the __free() macro to make the code more robust and avoid
+similar issues in the future.
 
-So lets mark this as change-requested.
-
-    Andrew
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Add patch for the automatic cleanup facility.
+- Link to v1: https://lore.kernel.org/r/20241019-typec-class-fwnode_handle_put-v1-1-a3b5a0a02795@gmail.com
 
 ---
-pw-bot: cr
+Javier Carrasco (2):
+      usb: typec: fix unreleased fwnode_handle in typec_port_register_altmodes()
+      usb: typec: use cleanup facility for 'altmodes_node'
+
+ drivers/usb/typec/class.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241019-typec-class-fwnode_handle_put-b3648f5bc51b
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
