@@ -1,131 +1,194 @@
-Return-Path: <linux-kernel+bounces-374459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06E59A6A89
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8329C9A6A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCC61F26E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036C31F22B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D451F940B;
-	Mon, 21 Oct 2024 13:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64641F8931;
+	Mon, 21 Oct 2024 13:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="F/vNCa5I"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gey7bTah"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91244198E69;
-	Mon, 21 Oct 2024 13:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2D31F9434;
+	Mon, 21 Oct 2024 13:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517921; cv=none; b=IxAhdl5j4P1BiDblkWBdtk1pZ2HjYg2GgK4Xs5RctoLdZJrDPo6SmDQejX/w34HNmvt8dZmt4GOZVrs6s20CuHbl+mTHtZtMcijRZdRz6XS4VmbKybEtxXYtS5h/hrD2+o/2e/VVwRnrlFA43wrvd43phSd6n+zE9IwyzRHVce8=
+	t=1729517937; cv=none; b=T/VIqYX+g8z6WVHK+/5e33R6etGLZqz4cqFaYjJ2DhLAVR1qA/GFJMwTJsGY42/uFH+8q65EmSjB+/jIWN2UuTzjDOxcNVrvyEMq6Zv5cE0Mo9r7LyGqtLKODG4AEYnPzov299kU+2RNzmVe6Z/JkFqsLCCscRkp8+O7Xkd59Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517921; c=relaxed/simple;
-	bh=roOl+m/JGSK6QNvnXNhS7xQMy5AOm4j/0OQxVJPmtfk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=kjYQNR9L+m+F8D61Pf8XedWhtZmJmwa5okL1JYQd+dz+vO72tl7TAVlH2WJxqWM3AmOdG3u5o0MMS5xURa/J+oiC88VcFy/++O365NJAZDM0QMK2UhL/DWW32+2yrzErA3kogOWUpYH74Wr6qeRQ/dz70dqPAwNeb2RMv5BjHZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=F/vNCa5I; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C195140E0194;
-	Mon, 21 Oct 2024 13:38:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Nf8-6GFGTMfa; Mon, 21 Oct 2024 13:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729517911; bh=j22jsymwrbA8Fif24m1BaObFbbLpxzT/M5Qj+YoLY+w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=F/vNCa5ID66B+2TrmMnD2QSJM9XRKZsVknuXce/BEue8UnCCJVlXtYkK6sp7cbFFv
-	 iaPrVhVtaxY/kHTsb1K5KfK+aveke6UpTcBYPG0gFBtIB8L91UuV+CwDriiLBUOoDf
-	 0vEiQbbilH6albLIIlEajJ/L8BYyLgH73riAIl4nvGc51SRrzrB4OJZEWLiQHC46cY
-	 rYPnfBOH33nJDTuDMh3NUsCdo+73fuPCVP9yEdVbJG2LvngKjMxqgTIVB8a1zc5FQA
-	 nzdy2s3LImu+ax95YXAKrgfRD2W1498zVIStPeHZsQl7XoSF67Y2R+1Qtr9B3mfQnI
-	 niEcRe6fF4jozutYRE64Kor6FY3pXFDd7LVAZ7kMEk5Z5E7Yumk1ntq0oLMfUJFaye
-	 QbQzid8W8MGwB5jQadLeOixMKfHxSC1bAQE7Q3DNAOxBQ7PLM9hKVy7vTe5NEm3yae
-	 BxIUYHm3ZkaICXTHB6glfiqwW7iu6gjCWFVhGDH/amXAkgyQvPeCCEM+B+eZRv00g7
-	 +zr+nxPqwCZ6qrYEIx3fe0YpWG30aImZBLwR8qN9NOaRhcmHS66ENojSYJBktLqNUQ
-	 e/FiuKpIgtoo1DwXVarmjzOPnK2M8/7psM3HhMiC2GH8+cPkx91zh+xi3SBVvOqOJY
-	 jpz2ojCjgRwrf8dQIFtDv2vY=
-Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8B6B640E01A5;
-	Mon, 21 Oct 2024 13:38:10 +0000 (UTC)
-Date: Mon, 21 Oct 2024 15:38:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Brice Goglin <brice.goglin@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Perry Yuan <Perry.Yuan@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_02/10=5D_x86/cpu/topology=3A_?=
- =?US-ASCII?Q?Add_CPU_type_to_struct_cpuinfo=5Ftopology?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241018203053.2x6oyws3dkxfw6rm@desk>
-References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com> <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com> <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local> <20241018203053.2x6oyws3dkxfw6rm@desk>
-Message-ID: <9534B53F-7B91-4525-97DC-889EC3836658@alien8.de>
+	s=arc-20240116; t=1729517937; c=relaxed/simple;
+	bh=iSHLE6plbfk96+SH2cugxJAwojra42eWwU6P8uM0BVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=uUOLajt4JajvYlVSARLmnGQWMe+JPGq2VDSPavk+I4iEQEk19cNUn1Mfp5+M29thnqGKlpTl66Qy913Q1WOdft3sWDsHsRbD+1Gjr0r2mHwkC2i1jGR7+TfHNQfYXuZpqVndVa/OSynGFgQ5Pyv3gFiGpfoOGMqUypUPuCPaVLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gey7bTah; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso22244066d6.1;
+        Mon, 21 Oct 2024 06:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729517933; x=1730122733; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L1L3Nl4I67AsUfDUqit1/x+zsIPymQ31QwezjFp1f6A=;
+        b=gey7bTah62anpxFWimpT4uYErOXwWW0VbQxk4fL1J+GeaxuVwVA139oelJIh+ryfAW
+         2ydZiuNk8W8hNEpNtrzL6VGKUCi4SSmoS8Kh77pReRwulLkNJqXhYc0XjuaVYD2qMw5u
+         yYGhsHO54pqQFgEmfxgzYP++BXDvYd98IHvWgbUjF5W9OVxZxjHuCq4rC00Btmq8a4tt
+         GUrGeANtZ3JLh8Z0w+2v7IrRmD+pbE+1QpagS65Pmonz+So39/cK2Rg99n7VnuSz3Q96
+         J6+vsK/19wK/l7zFTRUrzCxfzprAvL7e0tJrAMazaS4ywIoRG1W6bbyNcT921p+7nXSB
+         v4Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729517933; x=1730122733;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1L3Nl4I67AsUfDUqit1/x+zsIPymQ31QwezjFp1f6A=;
+        b=Dw8vvFcLD2vN1GdaCW5VHV46x+frRy0xGMyFSOa2epRlqAj2fE9K1eBDlISWGX64fu
+         W8n0H47ymC57q5M/DebcnFV6ClUeN/fQKvkIJhCHAqO9J9lqkaHyaRTWtnmJMgw1XT9R
+         YVSR1Xq3BTyj/zfLe/RL4V0K6N+GYS+2qGBITUVxoaxST9poxpcwa6ftINGOkHQllFx1
+         mnoUifYIX50o70mtPVCkDZjeJRhc0dGypeCY5SP9FuAWHP6GejWSmMBL2S8w/jCvGY8W
+         nhwTsRbBDJJvOg9JpltVxpPIAIuYueKnQ2rNftnQYFgX5S0bYKrwgjqO4Fn75b5Dr2f+
+         IT1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVEtdd4e0ZyXLMdyUWYcTJxEJmNdgLJ0gGNNOueCs16nm/FyYW+tHfBia9cL/kpfk4BfL8jivs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjPXMWYEVW+boadVSbwDLOmwm7IEjkVmQPbIgb6/e/FJ+YHwtC
+	T1z3rxakOD9zbZSAyf8GeayMZNB0D3Wc0hv5DEj507dK0GGFxb7lBXlyVipm
+X-Google-Smtp-Source: AGHT+IGOfWFAXHZZPNz4iIVVQsEALO7IWJnjzIiw1kF6Q2R8aZRu18TXHWhvmeyQAAlaD/iJlqrh8A==
+X-Received: by 2002:a05:6214:2dc1:b0:6cb:ee7b:7ac4 with SMTP id 6a1803df08f44-6cde14c3087mr172746966d6.3.1729517933378;
+        Mon, 21 Oct 2024 06:38:53 -0700 (PDT)
+Received: from localhost.localdomain ([66.198.16.131])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00999d14sm17058616d6.81.2024.10.21.06.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 06:38:52 -0700 (PDT)
+From: avimalin@gmail.com
+X-Google-Original-From: vimal.agrawal@sophos.com
+To: linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	quic_jjohnson@quicinc.com,
+	dan.carpenter@linaro.org,
+	dirk.vandermerwe@sophos.com
+Cc: vimal.agrawal@sophos.com,
+	stable@vger.kernel.org
+Subject: [PATCH v5 1/2] misc: misc_minor_alloc to use ida for all dynamic/misc dynamic minors
+Date: Mon, 21 Oct 2024 13:38:12 +0000
+Message-Id: <20241021133812.23703-1-vimal.agrawal@sophos.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241017141329.95508-1-vimal.agrawal@sophos.com>
+References: <20241017141329.95508-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On October 18, 2024 10:30:53 PM GMT+02:00, Pawan Gupta <pawan=2Ekumar=2Egup=
-ta@linux=2Eintel=2Ecom> wrote:
->I will drop "core", but can we keep "native"? "native" is used in SDM to
->define this field=2E Also model_id could be confused with model number=2E
->
->  From Intel SDM Vol=2E 2A:
->
->  Bits 23-00: Native model ID of the core=2E The core-type and native mod=
-el
->  ID can be used to uniquely identify the microarchitecture of the core=
-=2E
->  This native model ID is not unique across core types, and not related t=
-o
->  the model ID reported in CPUID leaf 01H, and does not identify the SOC=
-=2E
+From: Vimal Agrawal <vimal.agrawal@sophos.com>
 
-I'm still not clear on what "native" is supposed to mean here?
+misc_minor_alloc was allocating id using ida for minor only in case of
+MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+using ida_free causing a mismatch and following warn:
+> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > ida_free called for id=127 which is not allocated.
+> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+...
+> > [<60941eb4>] ida_free+0x3e0/0x41f
+> > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > [<605acb82>] misc_deregister+0x171/0x1b3
 
-The core is born this way and then it changes=2E=2E=2E so this is its nati=
-ve model ID? Weird=2E=2E=2E
+misc_minor_alloc is changed to allocate id from ida for all minors
+falling in the range of dynamic/ misc dynamic minors
 
->Yes, topo=2Ehw_cpu_type is initialized to TOPO_HW_CPU_TYPE_UNKNOWN=2E We =
-should
->not ideally need the vendor check at all=2E As long as topo=2Ehw_cpu_type=
- has
->the core type, returning it should be enough here=2E For Intel hw_cpu_typ=
-e
->also has the native_model_id, that is why we need the vendor check=2E
->
->If AMD or other vendors have similar use case, it makes sense to add the
->explicit vendor check=2E Please let me know if thats the likely case=2E
+Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
+Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
+Reviewed-by: Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>
+Cc: stable@vger.kernel.org
+---
+v2: Added Fixes:
+    Added missed case for static minor in misc_minor_alloc
+v3: Removed kunit changes as that will be added as second patch in this two patch series
+v4: Updated Signed-off-by: to match from:
+v5: Used corporate id in from: and Signed-off-by:
 
-Yes, it either needs to be vendor-agnostic or you need to accommodate all =
-vendors=2E Former sounds cleaner=2E=2E=2E
+ drivers/char/misc.c | 39 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index 541edc26ec89..2cf595d2e10b 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -63,16 +63,30 @@ static DEFINE_MUTEX(misc_mtx);
+ #define DYNAMIC_MINORS 128 /* like dynamic majors */
+ static DEFINE_IDA(misc_minors_ida);
+ 
+-static int misc_minor_alloc(void)
++static int misc_minor_alloc(int minor)
+ {
+-	int ret;
+-
+-	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+-	if (ret >= 0) {
+-		ret = DYNAMIC_MINORS - ret - 1;
++	int ret = 0;
++
++	if (minor == MISC_DYNAMIC_MINOR) {
++		/* allocate free id */
++		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
++		if (ret >= 0) {
++			ret = DYNAMIC_MINORS - ret - 1;
++		} else {
++			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
++					      MINORMASK, GFP_KERNEL);
++		}
+ 	} else {
+-		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
+-				      MINORMASK, GFP_KERNEL);
++		/* specific minor, check if it is in dynamic or misc dynamic range  */
++		if (minor < DYNAMIC_MINORS) {
++			minor = DYNAMIC_MINORS - minor - 1;
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else if (minor > MISC_DYNAMIC_MINOR) {
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else {
++			/* case of non-dynamic minors, no need to allocate id */
++			ret = 0;
++		}
+ 	}
+ 	return ret;
+ }
+@@ -219,7 +233,7 @@ int misc_register(struct miscdevice *misc)
+ 	mutex_lock(&misc_mtx);
+ 
+ 	if (is_dynamic) {
+-		int i = misc_minor_alloc();
++		int i = misc_minor_alloc(misc->minor);
+ 
+ 		if (i < 0) {
+ 			err = -EBUSY;
+@@ -228,6 +242,7 @@ int misc_register(struct miscdevice *misc)
+ 		misc->minor = i;
+ 	} else {
+ 		struct miscdevice *c;
++		int i;
+ 
+ 		list_for_each_entry(c, &misc_list, list) {
+ 			if (c->minor == misc->minor) {
+@@ -235,6 +250,12 @@ int misc_register(struct miscdevice *misc)
+ 				goto out;
+ 			}
+ 		}
++
++		i = misc_minor_alloc(misc->minor);
++		if (i < 0) {
++			err = -EBUSY;
++			goto out;
++		}
+ 	}
+ 
+ 	dev = MKDEV(MISC_MAJOR, misc->minor);
+-- 
+2.17.1
+
 
