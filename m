@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-374921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AC79A7204
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:11:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6409A7203
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5DF61C228D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936191C224AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4031FAC37;
-	Mon, 21 Oct 2024 18:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFEE1F9A8F;
+	Mon, 21 Oct 2024 18:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="luJdRIGR"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRiQBRdg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F941FA24A;
-	Mon, 21 Oct 2024 18:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5471991DB;
+	Mon, 21 Oct 2024 18:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729534249; cv=none; b=JOCEEcF+omaZE7YIPW6U6U0nzBktyZvvygI5awF6zZncroUFt7brYiNd1/6N7o0Reu4ql1ieJuOVlqmYuf1nCMnIXabVj+gotC07mik078ejYVpuEpMR4PKc4zMRV+e+TgV6YQzP+WxCS3OhMSXYbQt0Ho2hGeAsLNNPnvGjgmI=
+	t=1729534242; cv=none; b=riLPWNCF737ghym+XUrfJrBva7LPFBkMyRtZk47Gc3u7TaaRHqPRh4eHw1su/WWCyENRJpTg90vDDyReVEF24Fm+RxS4GkEGiHZKREezVW417cNdRvquJH0voLHY43oJRH7X9FkjmUfOlNsdz/D4Q4+kmPuAh4I3moUqMrmR7EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729534249; c=relaxed/simple;
-	bh=Ge2nrC7MFJDyNA/W1z9790rySUXfow//XCU/mTYaGPU=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pDLkTepAxVpH06kmXMtKvUJUFw8sQSbRXICdLPDew4m3/hiVI97I5k4g0DSXGphRZ4+GdDNZT3rvhisISegAHCPNLFFl2ViqyhKAzJBMgPGj+iMQmjE0Azvorw5GMpXg7zhR8umxhAXagRbSQ5BKpedN6rdTGNpzEA+tUTP4/Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=luJdRIGR; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=7gspbwr7pvdfhc2vd4vclq3x6y.protonmail; t=1729534239; x=1729793439;
-	bh=wutsRmZGLwRCQ8Ztmh5WTQAwGgnDBZjcHoDlibWncKA=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=luJdRIGR6FmS3zi6mgky63AcdSnXeh/21cbXFWtpNbZgnqrTvfgYZWlAFyY7fbIq6
-	 fSXQKAXOH7+SxIIX49yXYKCyYYhC32hhtVW8gCiK05DKhfFqELSpRMuc2BetrQSn6b
-	 NQu1pM8BNi4nxvVgGj2zzaO4l5YLEHOo2SPC1YAWGYMffeLQNXiX8QNNj6Xaa3OqCI
-	 /29GLlEemfTRMUD0Pa9++Nx5DGWjsY7oS4UltAIFHkAH0crwo1r3xI2emSO2EO3DwO
-	 0iLbf2twxbsJpzi+SMMWme9H6fRIOXdSq2FXX+yNesKHB9UznVYI1dCUteULmt4AIU
-	 2Ql1TUJjLaAQA==
-Date: Mon, 21 Oct 2024 18:10:36 +0000
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
-Subject: [PATCH v2] bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
-Message-ID: <20241021174151.37692-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 9f54eb99fe7fbed3b91dbc5acba2312d81a37194
+	s=arc-20240116; t=1729534242; c=relaxed/simple;
+	bh=CBgC9eWkV9C9p3t76X8O0OvYkMZi+9HgKwTurKO8Pns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1zbga/8fC9gEXXMT7IgoQ8RNqUAD9UB0OmPS60DXtVoBLJWIwY206UrD12+07oVfUuwqDDdvocs9nrIF3Mm+G2ajjbTrNfJY7Ob6rA91+7nB1OrxjXs/QxG8mWg0GsV+FcZeGxKAXVYNBy3eTck9tY6UB7VG9Vfsb4S92tiq9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRiQBRdg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE5CC4CEC3;
+	Mon, 21 Oct 2024 18:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729534241;
+	bh=CBgC9eWkV9C9p3t76X8O0OvYkMZi+9HgKwTurKO8Pns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sRiQBRdgAloQ7YO3QTyu2FqW6F38NLSc+H1/ZClGxfOyd5PWmuDWM5ruAYyxRWVAG
+	 3iZD3oYMnbslxRMvxqt1hZIsaYTfUr2D+6SMVJQGSbm/nsi20st7+mF5Lr/88iIF6f
+	 hkz1Ir2as6HZg25Dkp3w9mfHf77gJHvFRVsVVN9Nbu+2l1/iUaTqqFc3/WT17p8IpA
+	 C2ThGIfcDHYzB9gUe0m7giC8ZRo6442Kxw8uSXVR85ckdLyEXO0cMnHzTGl8fxGwa5
+	 IeqEOTDqE+mjJ+eElZbxPi18/F4MEgrba15JZ8UKPQ8WyW322Jlp9FDYapKDmczu4b
+	 lw28GMvBpL2GQ==
+Date: Mon, 21 Oct 2024 11:10:40 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Bart Van Assche <bvanassche@acm.org>, torvalds@linux-foundation.org,
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <ZxaZIJh61cM3fI76@bombadil.infradead.org>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <e27ab2c0-ddee-4fc2-a41e-70b4a7775127@acm.org>
+ <ZxaPnk-uC7-A-f_e@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZxaPnk-uC7-A-f_e@sashalap>
 
-Initialize freespace_initialized bits to 0 in member's flags and update
-member's cached version for each device in bch2_fs_initialize.
+On Mon, Oct 21, 2024 at 01:30:06PM -0400, Sasha Levin wrote:
+> On Mon, Oct 21, 2024 at 10:24:53AM -0700, Bart Van Assche wrote:
+> > On 10/21/24 9:07 AM, Sasha Levin wrote:
+> > > Current testing:
+> > >   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
+> > >   - KernelCI: https://t.ly/KEW7F
+> > 
+> > Hi Sasha,
+> > 
+> > Is blktests included in any of the above? If not, please consider
+> > including it. During the past few years we have noticed that the
+> > test failures reported by this test suite are most of the time caused
+> > by kernel bugs. Sometimes issues in the tests are discovered but this
+> > is rare. See also https://github.com/osandov/blktests/.
+> 
+> Hey Bart,
+> 
+> I don't plan on doing any tests on my own, but rather have our existing
+> CI infra (kernelci, LKFT, etc) deal with the actual testing part of
+> things.
+> 
+> AFAIK KernelCI if working on adding blktests support!
 
-It's possible for the bits to be set to 1 before fs is initialized and if
-call to bch2_trans_mark_dev_sbs (just before bch2_fs_freespace_init) fails
-bits remain to be 1 which can later indirectly trigger BUG condition in
-bch2_bucket_alloc_freelist during shutdown.
+We can automate blktests with kdevops today, if that's desirable let
+me know.
 
-Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3D2b6a17991a6af64f9489
-Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly initial=
-ized")
-Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
----
-
-Notes:
-    changes in v2:
-        - unconditionally set freespace initialized bits to false at
-          the top of bch2_fs_initialized instead of only if
-          bch2_trans_mark_dev_sbs fails
-
-    Link to v1: https://lore.kernel.org/linux-bcachefs/20241020170708.67044=
--2-pZ010001011111@proton.me/
-
- fs/bcachefs/recovery.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index 67bba156cce9..ed3dbe5802b5 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -1030,6 +1030,7 @@ int bch2_fs_initialize(struct bch_fs *c)
- =09struct bch_inode_unpacked root_inode, lostfound_inode;
- =09struct bkey_inode_buf packed_inode;
- =09struct qstr lostfound =3D QSTR("lost+found");
-+=09struct bch_member *m;
- =09int ret;
-=20
- =09bch_notice(c, "initializing new filesystem");
-@@ -1046,6 +1047,13 @@ int bch2_fs_initialize(struct bch_fs *c)
- =09=09SET_BCH_SB_VERSION_UPGRADE_COMPLETE(c->disk_sb.sb, bcachefs_metadata=
-_version_current);
- =09=09bch2_write_super(c);
- =09}
-+
-+=09for_each_member_device(c, ca) {
-+=09=09m =3D bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
-+=09=09SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
-+=09=09ca->mi =3D bch2_mi_to_cpu(m);
-+=09}
-+
- =09mutex_unlock(&c->sb_lock);
-=20
- =09c->curr_recovery_pass =3D BCH_RECOVERY_PASS_NR;
---=20
-2.47.0
-
-
+  Luis
 
