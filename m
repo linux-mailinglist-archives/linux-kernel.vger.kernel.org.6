@@ -1,182 +1,185 @@
-Return-Path: <linux-kernel+bounces-374791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A17B9A700E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375899A7010
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E23B20D65
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550591C216FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F211EABA9;
-	Mon, 21 Oct 2024 16:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9151D2F54;
+	Mon, 21 Oct 2024 16:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tg9AormP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uL3ruZF8"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CAF1E906E;
-	Mon, 21 Oct 2024 16:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1581C7B81;
+	Mon, 21 Oct 2024 16:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529309; cv=none; b=UGetsx5sq+PW2TxPr9K/hHF6NrsBCAITmbCWLsg06yDaTrziWK5VDpqH1h64PHkETqJl9CpBbI+xFqvEsy7940s3YQJzUQwliP52Dgcc5sy26FJk+7T+x8vtRyDBKfxzEYcEG6Vknea/dGLlG9h1+6bQxaeEm91qNzDNfdcxBr4=
+	t=1729529339; cv=none; b=BDaKqlAdH4NmTSNxZR7ZT2/uwndHL5IxqfXm+nqYmN+7mdZQ2oqS82tPstlWIp2Aj0efoXjBATvfGv7TFJToJA+f4Ufora3/IJZ7S1MK0pJ+WYEEgPrO2Rg/BOYvDeL3jOOmnzUQIVUZ0Hi0lcbcgZnIot3ZJXWbdU1KFpAFehc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529309; c=relaxed/simple;
-	bh=y88CpT+n2HdoRrfctihIvqBAw/nq7qai6p50KHNi9PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WGhCX1QpprnRrk6l+hSL165sU6ymX2Byj0RuyxSEsJ3Ft5DIhpgJ8QSAcAGV2PjGmhguypi70oYwvR6moEyvd0amXM4WHM2+kh4eww/xBV9BVECQnQx/9VvBtL3inaPEV++4p0d3dmj2U4duOfA2Xh6OaTs9zNMYGTu9VbiGKeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tg9AormP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FBBC4CEC3;
-	Mon, 21 Oct 2024 16:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729529309;
-	bh=y88CpT+n2HdoRrfctihIvqBAw/nq7qai6p50KHNi9PI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tg9AormP7oj96Nxs3Hyh2cbZX/WEiqqxEmm+RWJB8AzCWl7pwu7FKZAJ9YUiBY6Eb
-	 O5qRi6WYvMfb15NkUuyCjBItfUyi6LHK7tdujb5j6GnK6UpmsHZKq9fGfHl9JmMEXj
-	 7yxEwxfNiBvb77sZYvY9oIwdzMtfoELesLuwvXbdQccqJgu/nAHpW230oDq+To01+m
-	 5TMGNCrlyeXRT7nKObiVEhbU/mnXai4GaQLyC5pOQvtduRLrQgJY5K1PHGFAIwjicX
-	 YIQzR/+OqxkMjXvL7C8hfrN2m+jmJlPHkzddAOMtLEkAhokoODjGCEhF2/YNrc1RBz
-	 Ij944FdRnuh4g==
-Date: Mon, 21 Oct 2024 17:48:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Guodong Xu <guodong@riscstar.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>, rafal@milecki.pl,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	Drew Fustini <drew@beagleboard.org>,
-	Alexandru Stan <ams@frame.work>, Daniel Schaefer <dhs@frame.work>,
-	Sandie Cao <sandie.cao@deepcomputing.io>,
-	Yuning Liang <yuning.liang@deepcomputing.io>,
-	Huiming Qiu <huiming.qiu@deepcomputing.io>, linux@frame.work,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] riscv: dts: starfive: add DeepComputing FML13V01
- board device tree
-Message-ID: <20241021-crimson-translate-291eaba4e640@spud>
-References: <20241020134959.519462-1-guodong@riscstar.com>
- <20241020134959.519462-4-guodong@riscstar.com>
- <ae5gels34ozgzrcrwz53wj22hoy5cq3crn3dmkhitxlffmnavt@6lbmrcpjmqyd>
- <20241021-unroll-empower-3ab903615d6d@spud>
- <c048d270-7a07-4807-b816-0f4e0aeb67f7@kernel.org>
- <2b449955-6596-4c9a-9799-f15d186e260f@riscstar.com>
+	s=arc-20240116; t=1729529339; c=relaxed/simple;
+	bh=gR4UnDBoTyoO8LMDwZAKLoYw/q0TwI5fU2hybcdxb7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EFUwK2DTOMBVzafeyrHhsSGr1EfjYYWt8CKEttMISTCcAvk28mSbi0vPCgM5jlSLdeutlYF5SjyQIttvalTjG9B+8SkTqSseMYc+HKULYu8/Udvws51NZaBSbXdeewDICpjsXmQl/pi5D75V7jaESLbLkk9oEChVKZc2FnzPBTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uL3ruZF8; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729529334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VM62Ppuaj9ExI8TZbSZPXIH7o5k8upPR7JSKZv9bTk8=;
+	b=uL3ruZF8Uc9ag0vqVwIbqMohY2DljJYsG9RM8UBAGRKBWdOr+NyfYsKUAmSvoDI1+dLWub
+	Mp+UEO76kTcRiUCWEjmJ/4nLAJd9xpFC1t/3+Oe8icCNL7CNJUNoPSb6w6e2PtUNR3lpyR
+	86m09p40dBnsXw8qLGNxE8SLdcM8f2I=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	stable@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] mm: page_alloc: move mlocked flag clearance into free_pages_prepare()
+Date: Mon, 21 Oct 2024 16:48:36 +0000
+Message-ID: <20241021164837.2681358-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HM8xtjn6x2CDD6Fw"
-Content-Disposition: inline
-In-Reply-To: <2b449955-6596-4c9a-9799-f15d186e260f@riscstar.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Syzbot reported [1] a bad page state problem caused by a page
+being freed using free_page() still having a mlocked flag at
+free_pages_prepare() stage:
 
---HM8xtjn6x2CDD6Fw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  BUG: Bad page state in process syz.0.15  pfn:1137bb
+  page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
+  flags: 0x400000000080000(mlocked|node=0|zone=1)
+  raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
+  raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
+  page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+  page_owner tracks the page as allocated
+  page last allocated via order 0, migratetype Unmovable, gfp_mask
+  0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
+  3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
+   set_page_owner include/linux/page_owner.h:32 [inline]
+   post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+   prep_new_page mm/page_alloc.c:1545 [inline]
+   get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
+   __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
+   alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
+   kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+   kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+   kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
+   kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
+   vfs_ioctl fs/ioctl.c:51 [inline]
+   __do_sys_ioctl fs/ioctl.c:907 [inline]
+   __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+   do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  page last free pid 951 tgid 951 stack trace:
+   reset_page_owner include/linux/page_owner.h:25 [inline]
+   free_pages_prepare mm/page_alloc.c:1108 [inline]
+   free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
+   vfree+0x181/0x2e0 mm/vmalloc.c:3361
+   delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
+   process_one_work kernel/workqueue.c:3229 [inline]
+   process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
+   worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
+   kthread+0x2df/0x370 kernel/kthread.c:389
+   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-On Mon, Oct 21, 2024 at 08:44:16AM -0500, Alex Elder wrote:
-> On 10/21/24 7:47 AM, Krzysztof Kozlowski wrote:
-> > On 21/10/2024 13:16, Conor Dooley wrote:
-> > > On Mon, Oct 21, 2024 at 09:17:59AM +0200, Krzysztof Kozlowski wrote:
-> > > > On Sun, Oct 20, 2024 at 09:49:59PM +0800, Guodong Xu wrote:
-> > > > > From: Sandie Cao <sandie.cao@deepcomputing.io>
-> > > > > +&camss {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +&csi2rx {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > >=20
-> > > You can drop these two, I marked them disabled in the common file
-> > > earlier this week.
-> > > 1
-> > > > > +
-> > > > > +&gmac0 {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +&i2c0 {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +&pwm {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +&pwmdac {
-> > > > > +	status =3D "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +&spi0 {
-> > > > > +	status =3D "disabled";
-> > > >=20
-> > > > If your board has to disable all these, then they should not have b=
-een
-> > > > enabled in DTSI in the first place. Only blocks present and working=
- in
-> > > > the SoC (without amny external needs) should be enabled.
-> > > >=20
-> > > > I suggest to fix that aspect first.
-> > >=20
-> > > Eh, I don't think I agree. Having 5 disables here is a lesser evil th=
-an
-> > > reproducing 90% of jh7110-common.dtsi or shunting a bunch of stuff
-> > > around. Emil?
-> >=20
-> > Why reproducing 90%? Only enable would be here, no? Or you want to say
-> > the common DTSI has things which do not exist?
->=20
-> For what it's worth, I agree with Krzysztof.  In the (long) cover
-> page we pointed this out, and offered to do it in a followup patch.
-> But if requested we can do it now.
->=20
-> So in v6, a new patch would be inserted before the other three,
-> and it would:
-> - Remove the status =3D "okay" lines for those nodes that are not enabled
->   in this new platform, in "jh7110-common.dtsi"
-> - Add nodes where appropriate in:
->     jh7110-milkv-mars.dts
->     jh7110-pine64-star64.dts
->     jh7110-starfive-visionfive-2.dtsi
->   They'll look like this, to enable the ones disabled above, e.g.:
->     &gmac0 {
->         status =3D "okay";
->     };
->=20
->     &i2c0 {
->         status =3D "okay";
->     };
->=20
-> You guys should come to agreement, but I do think what Krzysztof says
-> is the right approach.  And unless convinced otherwise, this will be
-> what shows up in the next version of this series.
+The problem was originally introduced by
+commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
+clearance"): it was handling focused on handling pagecache
+and anonymous memory and wasn't suitable for lower level
+get_page()/free_page() API's used for example by KVM, as with
+this reproducer.
 
-Ultimately, it is up to Emil how he wants these laid out.
+Fix it by moving the mlocked flag clearance down to
+free_page_prepare().
 
---HM8xtjn6x2CDD6Fw
-Content-Type: application/pgp-signature; name="signature.asc"
+The bug itself if fairly old and harmless (aside from generating these
+warnings), so the stable backport is likely not justified.
 
------BEGIN PGP SIGNATURE-----
+Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
+Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: <stable@vger.kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+---
+ mm/page_alloc.c |  9 +++++++++
+ mm/swap.c       | 14 --------------
+ 2 files changed, 9 insertions(+), 14 deletions(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxaF1gAKCRB4tDGHoIJi
-0n25AP9w+mgLPG37PWo0lketQlmgfBvb0mnm/q/uq+DyENNPiwEA0d6noRdXHH1D
-VAVdOopja8BtMCTOjnpc/8inYN+MbQQ=
-=T8RS
------END PGP SIGNATURE-----
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index bc55d39eb372..24200651ad92 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 	bool skip_kasan_poison = should_skip_kasan_poison(page);
+ 	bool init = want_init_on_free();
+ 	bool compound = PageCompound(page);
++	struct folio *folio = page_folio(page);
+ 
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 
+@@ -1053,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 	if (memcg_kmem_online() && PageMemcgKmem(page))
+ 		__memcg_kmem_uncharge_page(page, order);
+ 
++	if (unlikely(folio_test_mlocked(folio))) {
++		long nr_pages = folio_nr_pages(folio);
++
++		__folio_clear_mlocked(folio);
++		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
++		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
++	}
++
+ 	if (unlikely(PageHWPoison(page)) && !order) {
+ 		/* Do not let hwpoison pages hit pcplists/buddy */
+ 		reset_page_owner(page, order);
+diff --git a/mm/swap.c b/mm/swap.c
+index 835bdf324b76..7cd0f4719423 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -78,20 +78,6 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
+ 		lruvec_del_folio(*lruvecp, folio);
+ 		__folio_clear_lru_flags(folio);
+ 	}
+-
+-	/*
+-	 * In rare cases, when truncation or holepunching raced with
+-	 * munlock after VM_LOCKED was cleared, Mlocked may still be
+-	 * found set here.  This does not indicate a problem, unless
+-	 * "unevictable_pgs_cleared" appears worryingly large.
+-	 */
+-	if (unlikely(folio_test_mlocked(folio))) {
+-		long nr_pages = folio_nr_pages(folio);
+-
+-		__folio_clear_mlocked(folio);
+-		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
+-		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
+-	}
+ }
+ 
+ /*
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
---HM8xtjn6x2CDD6Fw--
 
