@@ -1,92 +1,150 @@
-Return-Path: <linux-kernel+bounces-375292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95269A943E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49AC9A9441
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7172F283A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5E11F22F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEB61FF5E8;
-	Mon, 21 Oct 2024 23:37:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11F61FF5EB;
+	Mon, 21 Oct 2024 23:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlmJFdG4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7501FF5FD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132881E377A;
+	Mon, 21 Oct 2024 23:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729553826; cv=none; b=XnPN6mJSPOC9UohRn3YvqIPGCf/qnFsDGl+mpxKXyQnF86Kz3KaBs7rfX2BnCNCxQNoJR1shD7zM5riW7jvJE6hDUUiSbxlyHE+Dfiu7Gx+1IO3jr6O42UEQViSOiWDx8xSNvtTV3uv+XbHUO4BR3g/NRWh4EbOTjrNUOn2eltc=
+	t=1729553942; cv=none; b=M+Jak7geg24VekaJhbXA0rYzeREsj2js7egSbmcsDdbwkW8RoRGeABa5FOvPC/Fc/fWd3zlqLKZrw9AbetlZUmYkdVaTmOJijQdmnZ2alsrjp/76jT94CFhuI4GzpRlHH3VqtPIeacnnmTJl3oIJbputH1UVKtTy6iDmToBt6Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729553826; c=relaxed/simple;
-	bh=NL1X+hft2ruIZIMQYmjK5ShYEQWaMI2P10qy48QjC4c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EyFrYMuX06RF3XuRZPz+bm4HPoDZn903kAU196E4GtNysFhtTnEN9awU8CSpHg1bHT/ggLIY3OjZJLN1jt0gmhWd/u7XiGFxQTkykHPgGEoIf5cVuu0dVJmCzCIsU1fA9dK7ItJBGNFjoiMeNwe47VcBCNDzqmt0SaaA8t2fGls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso41228695ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:37:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729553824; x=1730158624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVFqvyN4Q/iFEFo+V00ETjOsELtiq4FSU+8ti5coBUg=;
-        b=nK7sMpnVVf9eBmuX/Q/EqGBo8Q9P4LLjOs+Hm4qXi16jbUnHELjLItDPb5cLR7KXLs
-         zbXM/Vp7RKOgPE4QiRCTmcEDosC2Fbg62MAyPCfeh0J5fqSpCC9PTvbkCA7SBbmOUU2E
-         dF0h/H3AWdFOmOul7uFOKZ2QHu6pwtz2Ii6FpMUmMyR9AKeD6pqyOs+DXrw3i/tCu7FH
-         lSDXO1c9iWikL8KZInDL4TB5HsZjqD0Ze76KwGZeEh+90A1lyU+L5DRyrmcTFkYdJIjh
-         Oxt9LhzFspNNbaEL3abyHGFyquPvyuZUkgKOAiUrp7wF3/sNbD/JdDlnyP07P1RCSanJ
-         dR5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX8Ubi6VbXBN6sQSD7gYwP9lJcAwBlgWnufvgODuvk3WQI97gR3NdTfes57fXqrjYMMSAPHI5emTP3A+A8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6bnDIKMbodSHV4TTsBWbgNBZjX8oXMXcAb27Ekdl5yzez+yX6
-	aNQiD/Y9fDcDk3OEgCZ7hKx7KONpzo/67pZnZgyzPGj8wDNaKc06kx7hpLx8PPitLF3yC/cotQO
-	QsghI+DAF7D+h4OCzeXLSLWI1SmcVTtaKdnfj469aTlfM++AFOz63F9o=
-X-Google-Smtp-Source: AGHT+IE0c0321kUM7kl4x3L7VjvrmYLXBEyNuBBR7zrzqRYflgEPoOW2FF3tQQVOY/6lcuFX5csUTbRz2Wr/gLiN3H39YtSA54tJ
+	s=arc-20240116; t=1729553942; c=relaxed/simple;
+	bh=8qnMmFH0MXE6Lj7BejyTMYR4Q9lLJBOkGOACB4p65Z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqqisjR2GRP/RnCBbPcDuaEHcKYj6DXfb0LNZtCMrb+wLS4a6tFZpYWZ/m7zfouKkrgHsesPqgR1igrUUlgTpldsuchla1qjTxpcJPVgoN6B4fzM2yfrf2BxfWbe5lrEhQ1sNjY6yiNFaGtEK+SyTt5Y+4KsstUQJbrc97XzW1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlmJFdG4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD8BC4CEC3;
+	Mon, 21 Oct 2024 23:39:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729553941;
+	bh=8qnMmFH0MXE6Lj7BejyTMYR4Q9lLJBOkGOACB4p65Z8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=SlmJFdG4UyEk0Tq6sBDLnlhUO1/r57NMe9kYQtlDl+5xbdB8lqr3cW2B7izWC83Pp
+	 xA0oRXEwpqi5zO5INQSfhIxg9z9p8J0pM/Qn0KQb7aYfPPQFD2C1dkNmjFDlUqu95b
+	 V9O8eNCSb6XS7oljJIxjxc4QcaYwYli/9BDwWUmMvvNv/B65dlLuR6ekWFJrkzTjnh
+	 tJ60U9kt81sXOuoYUBixo2po4MHPleB88ixwUbwX5/9RdNlbAQVMJyYAiCUpSTfxA5
+	 e/WpE97ZUWxLvdss8DXpPygy3K7ITFIFmut5JM422EbVjZEWBcqARwYuHFrQ0Yev72
+	 bzCDdhHO5vcOg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 261EBCE0F74; Mon, 21 Oct 2024 16:39:01 -0700 (PDT)
+Date: Mon, 21 Oct 2024 16:39:01 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <53b980b3-6bdb-4331-a627-f6e775d23eb1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ZxZ8MStt4e8JXeJb@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d99:b0:3a0:9cd5:92f7 with SMTP id
- e9e14a558f8ab-3a3f409feb5mr98836145ab.17.1729553824034; Mon, 21 Oct 2024
- 16:37:04 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:37:04 -0700
-In-Reply-To: <000000000000690606061ce1fe7e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6716e5a0.050a0220.10f4f4.00d2.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] INFO: task hung in ext4_stop_mmpd
-From: syzbot <syzbot+0dd5b81275fa083055d7@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, brauner@kernel.org, 
-	clang-built-linux@googlegroups.com, harshadshirwadkar@gmail.com, jack@suse.cz, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, nathan@kernel.org, 
-	ndesaulniers@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxZ8MStt4e8JXeJb@sashalap>
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Oct 21, 2024 at 12:07:13PM -0400, Sasha Levin wrote:
+> Hi folks,
+> 
+> The linux-next tree we all know and love is widely used by the kernel
+> community for integration work. It offers several advantages:
+> 
+> 	1. Early detection of conflicts between matinainer trees
+> 
+> 	2. Catching most new build errors/warnings
+> 
+> However, it faces significant testing challenges:
+> 
+> 	1. Contains a mix of "ready-to-go" code and experimental additions
+> 
+> 	2. A single "bad" piece of code can affect testing of everything else
+> 
+> 	3. Low barrier of entry, encouraging inclusion over exclusion
+> 
+> 	4. While linux-next offers early conflict resolution and
+> 	identifies build issues, it is very difficult to actually test
+> 	due to the abundance of runtime issues it tends to have
+> 
+> These factors combine to make linux-next a valuable tool for integration
+> but problematic for comprehensive testing.
+> 
+> During the Maintainer's Summit, Linus Torvalds expressed concerns about
+> the quality of testing that code receives before he pulls it. The
+> subsequent discussion side-tracked to the testability of linux-next, but
+> we didn't directly address Linus's original concern about pre-pull
+> testing quality.
 
-commit d3476f3dad4ad68ae5f6b008ea6591d1520da5d8
-Author: Jan Kara <jack@suse.cz>
-Date:   Mon Aug 5 20:12:41 2024 +0000
+I have to ask...
 
-    ext4: don't set SB_RDONLY after filesystem errors
+Wouldn't more people testing -next result in more pressure to fix
+linux-next problems quickly?  Or perhaps more pressure for people to
+avoid linux-next?  But this later would also apply to a new linus-next.
+Unless Linus were to start rejecting pull requests that had not been
+in linu[sx]-next for "long enough", whatever that might be.  ;-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10d04640580000
-start commit:   4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25
-dashboard link: https://syzkaller.appspot.com/bug?extid=0dd5b81275fa083055d7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fbd177980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108ea607980000
+							Thanx, Paul
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: ext4: don't set SB_RDONLY after filesystem errors
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> In an attempt to address the concerns, we're trying out a new "linus-next"
+> tree is being created and maintained with the following characteristics:
+> 
+> 	1. Composed of pull requests sent directly to Linus
+> 
+> 	2. Contains branches destined for imminent inclusion by Linus
+> 
+> 	3. Higher code quality expectation (these are pull requests that
+> 	maintainers expect Linus to pull)
+> 
+> 	4. Continuous tree (not daily tags like in linux-next),
+> 	facilitating easier bisection
+> 
+> The linus-next tree aims to provide a more stable and testable
+> integration point compared to linux-next, addressing the runtime issues
+> that make testing linux-next challenging and focusing on code that's
+> about to be pulled by Linus.
+> 
+> linus-next is (expected to be) particularly effective before the merge
+> window opens, as maintainers tend to send their pull requests early,
+> allowing for more thorough testing of to-be-merged changes.
+> 
+> We also want to avoid altering the existing workflow. In particular:
+> 
+> 	1. No increase in latency. If anything, the expectation is that
+> 	the cadence of merges would be improved given that Linus will
+> 	need to do less builds and tests.
+> 
+> 	2. Require "sign up" for the tree like linux-next does. Instead,
+> 	pull requests are monitored and grabbed directly from the
+> 	mailing list.
+> 
+> Tree location: `git://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git linus-next`
+> 
+> Current testing:
+>   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
+>   - KernelCI: https://t.ly/KEW7F
+> 
+> Feedback and suggestions for improving usability are welcome!
+> 
+> -- 
+> Thanks,
+> Sasha
+> 
 
