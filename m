@@ -1,140 +1,170 @@
-Return-Path: <linux-kernel+bounces-373626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC2C9A5986
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB799A598D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5613D1F22189
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614E12815AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FA11CF7AC;
-	Mon, 21 Oct 2024 04:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VZuJvR8W"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E698193432;
+	Mon, 21 Oct 2024 04:31:36 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BBE64A;
-	Mon, 21 Oct 2024 04:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7475286A8
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729484874; cv=none; b=OGj/U5qMCXv3FFgKPDVRJ7C0bq+DaPKlZRETfruZ+oGKnUKOmMjTrF+fT2042Yd4TSTy2GIu/+fGKLMO3ncvjLC6uOCKeLuuSNwoirlXFgkHX4E9hpkYaaNbO9utkATmng6lj8s+Y5/Kc2sTw+O5GLe3vE4RwwsGp/oF74ZVAz4=
+	t=1729485095; cv=none; b=bm9bRpL8n0c8dcw3M8RX5yX2TUCvaZyOGrl5kv/26PIbT8euBRPvwjPxiuxVNoHskuKyTwyWtXRyO4mR6HoptdaFVzueZK8cdFD/tUOo0zx1sFh0uglbEELNb7lhu0qdzrQ48sJyYTzOactvT+A7MmhsxjBTxm4jM5avvL33tQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729484874; c=relaxed/simple;
-	bh=DYrcd0vE13PYKuuSM0ei+tcojD6SfQl6vxfpJcWv7MM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=QfLx2lscbUGmfZnZWpCpkH+V9Y2WRP8XzeFDgx22igpB4McKaw2EVU0IoUIWl/h9QW0PxdJOI61xbook0X2FgIw8TzPxzTfN5ozYCePwg/OnypN4ezaezJvMMJFgLvQNxRlUxZKrdHH9VzazP7uuUlJTMGJZeCTuX04Tsqh7rvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VZuJvR8W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49KNgeFJ010479;
-	Mon, 21 Oct 2024 04:27:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+9YUTqdQfY38VeLdv6M4q/B8BOqDJe/tP1eA67Ej1L4=; b=VZuJvR8WzPlqjQ7W
-	L/RRCUGOzd2gEC26yuXgtMWg4aifRx+RULGpL0sgghC4gG+Rm62k5P7UZtsdqHTu
-	vDPY3yo3AmJcXlpvTFUSEM1SwU+cTpBl6qX6JlKStUBtMYi91vra8yR8WF1IkTiz
-	yctw4SwC3VoPnh1LGOA9eGQ62lYt4NlZ3jdKovd/YKHnnQGzY2ujtbL8n3jetbsM
-	jNweWhgeefp3SGC73mhCMWztqt9R7ZPMlx2yb+lVOhQ6mEXiGE99BRSGth/Wg/GR
-	l2SiKOrp1lRbiGrZW8UT0iwd4LCtab1U85iDYx1TDFzAHTWCK5Dz3YJFhoSwSWJw
-	B9+6cA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6w1k4eq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 04:27:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49L4RhxY026392
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 04:27:43 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 20 Oct
- 2024 21:27:39 -0700
-Message-ID: <145d9036-6cd8-4aeb-80d0-b3d86b84f2cf@quicinc.com>
-Date: Mon, 21 Oct 2024 12:27:36 +0800
+	s=arc-20240116; t=1729485095; c=relaxed/simple;
+	bh=84gzpIFyB5+3DljQK5nHfmTdEO9qvUXCbMKNqVGJq7c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Sj34PwhdDZb91hRjt/AVcu5DUkWFaZhUhbCHwzXqIAtu4xNSTWNpzmez4iVgJYFcClBydyGI2hJ05wW5dpAzVo+op7Tk7xGzLtImLg/8xjI2y1NjsZYvwRyXMOxrOcy4dS5TKOl4DXKrH01hitNiqYilVav61Tjv3EdQ6MNTlmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab3d46472so359660739f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:31:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729485093; x=1730089893;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aLYiM8y/B2Cv75nG0jidFAm4gU309fO5gyqPvxjsbGE=;
+        b=cFt+5I+J6Jx30VPScIHw6lSouRTNhwIEO5WyMuDSYdZNbAcHuJWJuOSNMXCIJRCCjN
+         jVUoTWKxpLRuibAL2PHCrASEMXYjpkfY1kFs3k8Pjqy96ehaAtMiZCTUFzguBjckyAfW
+         5gt7dT9y6Cc7RdBzfAtpRCOLZtiLvQjK/SiQkWXuzOojyHE1Z83ibd/MZSbVeZSslrJ5
+         aDY4bXatZbvNCiRKH07oa17Ic1J8Dq5IOIe+bSzATA5H4Sb6u4TBlNhyIVikPWJkOn+H
+         krMxFvU4E++Gz8f+bqLu/Q0A3s1YxndH8TYT0K38vxqUlmbUU+MhHgyFGNTMwWnmXc4T
+         GNLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt9mJh/q8QjI+ZvUdLWVz3wZTXCJlixPraCfzOr5lv5uZmp2uGPykQ1Q5Awv7fdAy1Vv+jA7c8mzFc/IQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi3f3hPryezX3idqNn8PmrG+0RMmWfCRLktQVQs3j1bg+H5dio
+	LO4XkTZm0mUoLr7xIl98vZ62TBCdSKK44dRcD9D6qsamTuvevx4i1iv7wGfwjw6vgYHiUULz4JG
+	13DsA+J5z+5YrNYhLRyBI4xNTN17rqMJbhMGKaixZe64lOqga1cm+JhU=
+X-Google-Smtp-Source: AGHT+IGxDY3JsK9gI8O8uovCqeuQZyosLW9LRfuErtayDUgvr9A0FSMsrRndI2Us+3vujGo/gpTbFEWuddnNZy1CrO1aFI/Xf6ZD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] pinctrl: qcom: Introduce Pinctrl for QCS8300
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
- <f9dace93-f6c7-40c2-a6d2-60ce8043aa72@lunn.ch>
- <5fa2080a-f59e-405e-ba52-69d7293e2739@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <5fa2080a-f59e-405e-ba52-69d7293e2739@quicinc.com>
+X-Received: by 2002:a05:6e02:190e:b0:3a0:5642:c78 with SMTP id
+ e9e14a558f8ab-3a3f4073e06mr79264655ab.15.1729485092771; Sun, 20 Oct 2024
+ 21:31:32 -0700 (PDT)
+Date: Sun, 20 Oct 2024 21:31:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6715d924.050a0220.10f4f4.003d.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit
+From: syzbot <syzbot+f074d2e31d8d35a6a38c@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8j1e8-Xs14l_QuLxRBl9YA-VKLOcQQgK
-X-Proofpoint-ORIG-GUID: 8j1e8-Xs14l_QuLxRBl9YA-VKLOcQQgK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=357 suspectscore=0 mlxscore=0
- phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210028
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=113e6430580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=78db40d8379956d9
+dashboard link: https://syzkaller.appspot.com/bug?extid=f074d2e31d8d35a6a38c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110560a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bdc25f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bf3787869b5a/disk-715ca9dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b938d885bc17/vmlinux-715ca9dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9c039de0dde2/bzImage-715ca9dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b049575f12e2/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f074d2e31d8d35a6a38c@syzkaller.appspotmail.com
+
+bcachefs (loop1): fatal error - emergency read only
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/journal.h:375!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: btree_update btree_interior_update_work
+RIP: 0010:bch2_journal_res_get fs/bcachefs/journal.h:375 [inline]
+RIP: 0010:bch2_trans_journal_res_get fs/bcachefs/btree_trans_commit.c:350 [inline]
+RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:668 [inline]
+RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:900 [inline]
+RIP: 0010:__bch2_trans_commit+0x9232/0x93c0 fs/bcachefs/btree_trans_commit.c:1121
+Code: fd 90 0f 0b e8 3f bb 78 fd 90 0f 0b e8 37 bb 78 fd 90 0f 0b e8 2f bb 78 fd 90 0f 0b e8 27 bb 78 fd 90 0f 0b e8 1f bb 78 fd 90 <0f> 0b e8 17 bb 78 fd 90 0f 0b e8 0f bb 78 fd 90 0f 0b e8 07 bb 78
+RSP: 0018:ffffc900001076c0 EFLAGS: 00010293
+RAX: ffffffff841c2c91 RBX: 0000000000000000 RCX: ffff88801cebbc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90000107890 R08: ffffffff841bcfc8 R09: 1ffff1100cd494a8
+R10: dffffc0000000000 R11: ffffed100cd494a9 R12: ffff888066a00000
+R13: ffff888066a4a500 R14: 0000000000000044 R15: ffff88803060c0d0
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff942fe8000 CR3: 000000007bcb8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ btree_update_nodes_written fs/bcachefs/btree_update_interior.c:728 [inline]
+ btree_interior_update_work+0x1492/0x2b10 fs/bcachefs/btree_update_interior.c:866
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_journal_res_get fs/bcachefs/journal.h:375 [inline]
+RIP: 0010:bch2_trans_journal_res_get fs/bcachefs/btree_trans_commit.c:350 [inline]
+RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:668 [inline]
+RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:900 [inline]
+RIP: 0010:__bch2_trans_commit+0x9232/0x93c0 fs/bcachefs/btree_trans_commit.c:1121
+Code: fd 90 0f 0b e8 3f bb 78 fd 90 0f 0b e8 37 bb 78 fd 90 0f 0b e8 2f bb 78 fd 90 0f 0b e8 27 bb 78 fd 90 0f 0b e8 1f bb 78 fd 90 <0f> 0b e8 17 bb 78 fd 90 0f 0b e8 0f bb 78 fd 90 0f 0b e8 07 bb 78
+RSP: 0018:ffffc900001076c0 EFLAGS: 00010293
+RAX: ffffffff841c2c91 RBX: 0000000000000000 RCX: ffff88801cebbc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90000107890 R08: ffffffff841bcfc8 R09: 1ffff1100cd494a8
+R10: dffffc0000000000 R11: ffffed100cd494a9 R12: ffff888066a00000
+R13: ffff888066a4a500 R14: 0000000000000044 R15: ffff88803060c0d0
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff942fff000 CR3: 000000002ce04000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 10/21/2024 10:32 AM, Jingyi Wang wrote:
-> 
-> 
-> On 10/19/2024 2:08 AM, Andrew Lunn wrote:
->> On Fri, Oct 18, 2024 at 11:19:30AM +0800, Jingyi Wang wrote:
->>> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
->>> QCS8300 SoC.
->>>
->>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->>
->> I'm curious why you are Cc: netdev for a pin controller patch?  Did
->> ./scripts/get_maintainer.pl say you should?
->>
-> The cc list was generated by the b4 tools.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-double checked with ./scripts/get_maintainer.pl, also get the list:
-netdev@vger.kernel.org (open list:PTP HARDWARE CLOCK SUPPORT:Keyword:(?:\b|_)ptp(?:\b|_))
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I think the list should be added for keyword match in the driver.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->>     Andrew
->>
->> ---
->> pw-bot: cr
-> 
-> Thanks,
-> Jingyi
-> 
-Thanks,
-Jingyi
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
