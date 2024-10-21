@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-373789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3DA9A5CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:24:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8E89A5CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D1A283B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97249283DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538A91D1E7C;
-	Mon, 21 Oct 2024 07:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2C1D1744;
+	Mon, 21 Oct 2024 07:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEwiuTsF"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bkTIECbv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5E31D1508;
-	Mon, 21 Oct 2024 07:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D894B1D0F54;
+	Mon, 21 Oct 2024 07:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495468; cv=none; b=W3MjBgtqgGH9N/XhVNmHkOjWBtiUTO83gHJRraDQ+LEjIrMhgp7vsT6SZom7stccojiJyCD7gdU0eEzHaZ6j3eaKnmgVqjc2k55X5/NoY41IiuIcSmh3dV/MGSK4PNWxtiMPq5u2b+8A/V56RIxbbjDeoCktTs1cKpuLRkHkPtc=
+	t=1729495501; cv=none; b=B6033z1QY7ed40KVWg9sbOSe3le/1wOoKWYBkLdowEzVTmeirog/GxyX2FjsgQxZh89SzFq2Tdjdwtjipkxrnj20jrceNr/4jM0nAIGWbhMOfx/ja4HEh/rw6GB/WUwWKT+NqWYjfE1ifkoHAWdoO+UctsujLNYuOLD49fzGAV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495468; c=relaxed/simple;
-	bh=tPfgtyN7dgDomitHwrm54UhfVoCZDqQwHSKnK1GiHTQ=;
+	s=arc-20240116; t=1729495501; c=relaxed/simple;
+	bh=Q/vHeCvRemXBDdF6JOsV/LJSic0sR7ukVpxi7m/3URA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BpDgC2MIr+iv3L29lNQU7xI1xqjdagOsj1wdoJMthCjr984faZeXLwwgTNZgNjd6yUAdFgjjl4uMChoiJ1uIsmyRguk+k8r/IatZZmysxKTWixQ2wqmHcVdn1/B5N/pfaKBEqw8PmP5QbH2oJ+1q4n6xF5mD56MJqVdQcYB1ns8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEwiuTsF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD4BC4CEC3;
-	Mon, 21 Oct 2024 07:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729495468;
-	bh=tPfgtyN7dgDomitHwrm54UhfVoCZDqQwHSKnK1GiHTQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0GY3skYhgowUQKueVSI0cYqT/YCPHtddbBGNuWZGOl3Rwht69oWCB7uqpwyrmoNLIZDn+peLei6860Wl/502g7Mk1r5UjCIrwfq3yQMr7YbJDrtHYMKXYPOpPh0JFkmPCwIQs5A/WHBHDCo9KzEyRj/dSBThK1vtMnYzZtNSmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bkTIECbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1E94C4CEC3;
+	Mon, 21 Oct 2024 07:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729495500;
+	bh=Q/vHeCvRemXBDdF6JOsV/LJSic0sR7ukVpxi7m/3URA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EEwiuTsFVTBRfLIJusYanBXVQdv4p7HYZyLBKLL2ib08doOHsDFIjbjtK9+LlvDQQ
-	 Z/9CGkfVkX3HL4bich4ORC4qgTSaqc5vLYtee7sVi+WEP6oQHSym85CNfAbl113evz
-	 kxCr9RiXDbkK2BwH8bEgy0kmZTapSMZXatlh5BmezNoivtFGVuk+moF0ghNJdsv2t+
-	 s+Xx/1jKHnad+MR7NsZ6ui1/G2nW9PT7lKCXaHCo6Cx5xN8PkcGdbjzpK2PjXtl2jT
-	 vpMCnddvYrQCLZ1RGe1dQBneqLlxBSYI2qkK28rbXvPXN/oyvhyGqwyyz3YlOF3nAA
-	 /e3ihWlHKpghA==
-Date: Mon, 21 Oct 2024 09:24:24 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Kalle Valo <kvalo@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6 1/6] regulator: dt-bindings: qcom,qca6390-pmu: add
- more properties for wcn6855
-Message-ID: <wozfwlvmjhf2mvd5xxt33owbi44y3igi4gbsx3uqgjfzlgjk25@rsnkh35sheq6>
-References: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
- <20241018-sc8280xp-pwrseq-v6-1-8da8310d9564@linaro.org>
+	b=bkTIECbvT/1ITopz/KTnSu6xS9L+g59e8y9t5fzgzv2o4c5Pkb8oSudj4pVnZHQcF
+	 Jr2C2FABZfw6oMfKZbFG9+nDpDLBafC+5iS/680Tk2ODH2+3R9R0iDjtr4dOIvQi4I
+	 h0UKZ17pBdik9LNNw8EDhjzXCJWg8VLlSFTlDkEg=
+Date: Mon, 21 Oct 2024 09:24:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mihai.Sain@microchip.com
+Cc: richard.genoud@bootlin.com, jirislaby@kernel.org,
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] tty: atmel_serial: Use
+ devm_platform_ioremap_resource()
+Message-ID: <2024102148-stamp-isolation-ae90@gregkh>
+References: <20241021064321.3440-1-mihai.sain@microchip.com>
+ <2024102151-showy-partake-a2aa@gregkh>
+ <PH8PR11MB6804FADFEFEA51A8B35F894482432@PH8PR11MB6804.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018-sc8280xp-pwrseq-v6-1-8da8310d9564@linaro.org>
+In-Reply-To: <PH8PR11MB6804FADFEFEA51A8B35F894482432@PH8PR11MB6804.namprd11.prod.outlook.com>
 
-On Fri, Oct 18, 2024 at 02:49:11PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Oct 21, 2024 at 07:16:31AM +0000, Mihai.Sain@microchip.com wrote:
+> > From: Greg KH <gregkh@linuxfoundation.org>
+> > Sent: Monday, October 21, 2024 10:00 AM
+> > To: Mihai Sain - M19926 <Mihai.Sain@microchip.com>
+> > Cc: richard.genoud@bootlin.com; jirislaby@kernel.org; Nicolas Ferre - M43238
+> > <Nicolas.Ferre@microchip.com>; alexandre.belloni@bootlin.com;
+> > claudiu.beznea@tuxon.dev; linux-kernel@vger.kernel.org; linux-
+> > serial@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > Subject: Re: [RFC PATCH] tty: atmel_serial: Use
+> > devm_platform_ioremap_resource()
+> > 
+> > On Mon, Oct 21, 2024 at 09:43:21AM +0300, Mihai Sain wrote:
+> > > Simplify the request port function by using a single call to
+> > > devm_platform_ioremap_resource().
+> > >
+> > > This will also enhance the printing from /proc/iomem:
+> > >
+> > > cat /proc/iomem | grep flexcom ; cat /proc/iomem | grep serial
+> > >
+> > > f0004000-f00041ff : f0004000.flexcom flexcom@f0004000
+> > > f8020000-f80201ff : f8020000.flexcom flexcom@f8020000
+> > > f0004200-f00043ff : f0004200.serial serial@200 f8020200-f80203ff :
+> > > f8020200.serial serial@200 fffff200-fffff3ff : fffff200.serial
+> > > serial@fffff200
+> > >
+> > > Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+> > > ---
+> > >  drivers/tty/serial/atmel_serial.c | 12 +++---------
+> > >  1 file changed, 3 insertions(+), 9 deletions(-)
+> > 
+> > Why is this a rfc?  What needs to be done before you want it merged?
 > 
-> Document two supplies that are used by this model and the optional
-> xo-clk signal.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  .../devicetree/bindings/regulator/qcom,qca6390-pmu.yaml      | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> I used the rfc tag in order to get the feedback from you and all stakeholders.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You need to ask for the feedback you are looking for, we don't know what
+you feel is wrong here.
 
-Best regards,
-Krzysztof
+> If the modifications are OK for you I will send a new patch without rfc tag.
 
+As we are drowning in real patches to review, I almost always just
+ignore RFC patches as I know that means that the submitter feels there
+is still more work to be done.  So please always take that in mind.
+Please ask for reviews from other developers in your company if you feel
+it is not ready for our review.
+
+thanks,
+
+greg k-h
 
