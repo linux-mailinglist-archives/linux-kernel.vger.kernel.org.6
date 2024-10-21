@@ -1,144 +1,81 @@
-Return-Path: <linux-kernel+bounces-375128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872259A914B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:34:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8334B9A914F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AA31C2199A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B277B1C2186A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40BD1FDFAD;
-	Mon, 21 Oct 2024 20:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0EF1FDFB1;
+	Mon, 21 Oct 2024 20:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY4nDpd3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYl8HpGz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1DE1494DB;
-	Mon, 21 Oct 2024 20:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936561FDF85;
+	Mon, 21 Oct 2024 20:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729542839; cv=none; b=QVRPYM1MnSZtN+4njRT24qQenmLHDqKFiIWwuwxRzfePHlm6UMqaLYVqgmei5QPLBbRF1J1zwzhPsFFAbYPQuoCQFe7s/4Jja+bcSbva7W755eZfhij2WN9UKn6DaUAU5HnrqZWTUOGNmEstkcCPQeO3IsSqM4paw7TCqTDzu94=
+	t=1729542859; cv=none; b=kNAbho3L0jRftnUic9nKf/h/JqJOiaH8wG0Znwg8bJso32KEjsgdK8wyAzeAComXSBNiOiuGCi3M+sm0W/J2WuHzOj5EBt6xbU/Wo81sTzUM2W+hejkSCnoTBXPEIXpEo6QazIT7Wub1leE9+Hnlv78xXny6qIuaLVb/in3Ft3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729542839; c=relaxed/simple;
-	bh=PUti+uJWhKGSDKiDdachxwWsPeCcSML5pWVjgslBJJI=;
+	s=arc-20240116; t=1729542859; c=relaxed/simple;
+	bh=gGROye+ol9CC+OcvT+hiRxGXLruEirN4yuJSLxK8H7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCxSaJRmLQ2subMO8oPjT+bxUiPAxwj9SIZlG21wRAVwmmlfe/P8f4hm5YIlzbXaVt6V6dPcgUqDLTXQe+orUDFzOq92xQVILXRkX+nu+Ilmf+smxpgNDEWlENu3kuzNFMe6JLdc2LAK/UIMOxQ0gyGN++2dWcwJlILJTMRLnYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EY4nDpd3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2266FC4CEC7;
-	Mon, 21 Oct 2024 20:33:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpt35h3M0X32TIHndXM4DEIVhwF3rMpUciVr6hM7OvjDE3WPJg5VgtkHjOUm+lRm846tjUJyUfvrUvk5wJDsiN+KY15dqsnTqrc6Or0wNkYVIcu5R3y3JUZhPrgPkTXCL5q0AtvDr7sg25vfdY0O5emGrJ23HEOqxegnnZrTGi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYl8HpGz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BCAC4CEC3;
+	Mon, 21 Oct 2024 20:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729542838;
-	bh=PUti+uJWhKGSDKiDdachxwWsPeCcSML5pWVjgslBJJI=;
+	s=k20201202; t=1729542858;
+	bh=gGROye+ol9CC+OcvT+hiRxGXLruEirN4yuJSLxK8H7s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EY4nDpd32222igTTRgePtEVwvwcoAqF6WMoPkuKlkDZqISe+dyC3vbZKnElrpbuAl
-	 y6Gi2G8kyT4EAchk3kWvbXpuOhN0vp0a9MPvwflNKEAsJ+CTXqn+RBadjiyS06saxI
-	 +GTHOMRmkJAEMI9iCz+CFxFfxEY2lvD8bcoKemiz0PK+RmlDvMVwKF/dWLktJnVPmt
-	 eyFBufV/zHZ0DujGDXyaiRgGpPD38dJ9OUmOjRgrxFk+IccpmmPnpWEVNnItutSjHo
-	 FoKdW7YxHv4iIJSYNyxsJWes0qgupDlrGyzkopzLsj0JdAPSxj13/eDg0Y3Ysj69ev
-	 aSE0fxF8mnMMw==
-Date: Mon, 21 Oct 2024 21:33:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Jan Richter <jarichte@redhat.com>, linux-kernel@vger.kernel.org,
-	Aishwarya.TCV@arm.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH] KVM: selftests: x86: Avoid using SSE/AVX instructions
-Message-ID: <5071a694-150b-4f6f-8e48-8b96998bdd23@sirena.org.uk>
-References: <20240920154422.2890096-1-vkuznets@redhat.com>
- <9a160e3d-501b-4759-9067-17cd822617ec@sirena.org.uk>
+	b=XYl8HpGzwgblkaLMC+CGcVzIQMJwAOrIRcGS3ymosoyWIayHP3wbdb6dNTiyOKFd2
+	 EJdGd6NCPbT4OqgM0mpJd2kBU4lpB8DS0bls9NNASywZPqOM4cQHK/9iKTOKIJeNfF
+	 8jqSGsEnSY2dEDJEgftIpC4KG1wm3PpenQDrHFz4bGEYtirKtmnintOGWIooREzlZ5
+	 czzkcXN/QRBxbQcyFxlMw7qbCdrYa0qqqbE2NzNq4voZGux3QyfWl9TJgZonap9MjK
+	 fGYLyqmXTso+XBOnh7CUv0xq+f1NEgrbUPFp/3prc1Q9ENtX2onylFxIOvtz5QrDnX
+	 66gX7PlptK/7w==
+Date: Mon, 21 Oct 2024 13:34:16 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Tobias Stoeckmann <tobias@stoeckmann.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: check symbol name offsets
+Message-ID: <Zxa6yEN-ywx259WO@bombadil.infradead.org>
+References: <2hhrajjoxixnkhtlhhqzjxki4iuhr362345wgrmg6uzbfhlupo@hgbjsb5wizir>
+ <ZxaxtnuAMuuTgN2I@bombadil.infradead.org>
+ <xq5kctkuanhzziv6cizkq5e3xgoxdnzzqft3wwu3kc7djgguem@l6kmhhd72lxr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b3t00YNSmqbEVgwS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a160e3d-501b-4759-9067-17cd822617ec@sirena.org.uk>
-X-Cookie: Do not write below this line.
+In-Reply-To: <xq5kctkuanhzziv6cizkq5e3xgoxdnzzqft3wwu3kc7djgguem@l6kmhhd72lxr>
 
+On Mon, Oct 21, 2024 at 10:20:38PM +0200, Tobias Stoeckmann wrote:
+> Hi Luis,
+> 
+> On Mon, Oct 21, 2024 at 12:55:34PM -0700, Luis Chamberlain wrote:
+> > And then you can make a series with 3 patches for this and your prior one,
+> > and you can just refer to the PoC in the fix.
+> 
+> Thanks for the hint to rebase on modules-next. There is no need for my
+> patches, because the checks have been written by Matthew Maurer, which
+> cover these cases.
+> 
+> So... Sorry for the noise and thanks to Matthew for writing them.
+> Clarifies that specs are correct and checks were missing. :)
 
---b3t00YNSmqbEVgwS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It does not mean that older kernels have them. And selftests are used to
+test older kernel, and so the question here is if a patch from Matthew
+should be backported, and if so which one? So your PoC test is still welcome.
 
-On Mon, Oct 21, 2024 at 07:32:17PM +0100, Mark Brown wrote:
-> On Fri, Sep 20, 2024 at 05:44:22PM +0200, Vitaly Kuznetsov wrote:
->=20
-> > Some distros switched gcc to '-march=3Dx86-64-v3' by default and while =
-it's
-> > hard to find a CPU which doesn't support it today, many KVM selftests f=
-ail
-> > with
->=20
-> This patch, which is queued in -next as 9a400068a1586bc4 targeted as a
-> fix, breaks the build on non-x86 architectures:
-
-This patch is now in Linus' tree, having been applied on Sunday and as a
-result appeared in -next today.
-
->=20
-> aarch64-linux-gnu-gcc -D_GNU_SOURCE=3D  -Wall -Wstrict-prototypes -Wunini=
-tialized=20
-> -O2 -g -std=3Dgnu99 -Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCON=
-FIG_64BIT
->  -fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin=
--strnlen -fno-stack-protector -fno-PIE -I/build/stage/linux/tools/testing/s=
-elftests/../../../tools/include -I/build/stage/linux/tools/testing/selftest=
-s/../../../tools/arch/arm64/include -I/build/stage/linux/tools/testing/self=
-tests/../../../usr/include/ -Iinclude -Iaarch64 -Iinclude/aarch64 -I ../rse=
-q -I..  -march=3Dx86-64-v2 -isystem /build/stage/build-work/usr/include -I/=
-build/stage/linux/tools/testing/selftests/../../../tools/arch/arm64/include=
-/generated/   -c aarch64/aarch32_id_regs.c -o /build/stage/build-work/kself=
-test/kvm/aarch64/aarch32_id_regs.o
-> cc1: error: unknown value =E2=80=98x86-64-v2=E2=80=99 for =E2=80=98-march=
-=E2=80=99
->=20
-> This is because:
->=20
-> > diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selft=
-ests/kvm/Makefile
-> > index 48d32c5aa3eb..3f1b24ed7245 100644
-> > --- a/tools/testing/selftests/kvm/Makefile
-> > +++ b/tools/testing/selftests/kvm/Makefile
-> > @@ -238,6 +238,7 @@ CFLAGS +=3D -Wall -Wstrict-prototypes -Wuninitializ=
-ed -O2 -g -std=3Dgnu99 \
-> >  	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
-> >  	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
-> >  	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
-> > +	-march=3Dx86-64-v2 \
-> >  	$(KHDR_INCLUDES)
-> >  ifeq ($(ARCH),s390)
-> >  	CFLAGS +=3D -march=3Dz10
->=20
-> unconditionally sets an architecture specific flag which is obviously
-> not going to work on anything except x86.  This should be set under an
-> architecture check like the similar S/390 flag that can be seen in the
-> context for the diff.
-
-
-
---b3t00YNSmqbEVgwS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcWurEACgkQJNaLcl1U
-h9DDhQf7B0Ld7EHcmwkrKIc7LAI+Xy4en/oQ6RxXnotJq3+hBzI9qNM722BR/j/C
-VcFyoodyHy3w2vROFuM1W4luP6gHzAWmP6BxZAKEeZR6oxu/hgJljrDQMrmF/QLF
-PeU4Mbj73J4LhfjpGVUgtAbeQ+e3GPfzL96EttpcDxBvpwv7tf9SnK2YvjgPL6Yk
-butevDwiCDxkyRn+GJwn3CPU4oFn0dwT9qOQutrc/xC8ie/mr2PXCOniIrJo3dVF
-jIJV9/mIEx2hfVRZGLL6RvCglZmHSSsrhRLSpmlVzhOA8DTxsHy/XO8B6sl0rlIC
-Chj2rvcnfQEQ79Svu9NBKnpAW3W4dA==
-=KcLo
------END PGP SIGNATURE-----
-
---b3t00YNSmqbEVgwS--
+  Luis
 
