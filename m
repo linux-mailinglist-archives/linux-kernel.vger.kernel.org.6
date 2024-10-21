@@ -1,161 +1,219 @@
-Return-Path: <linux-kernel+bounces-374713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A7D9A6EE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:57:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CFB9A6EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62146281699
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:57:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391871C228C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7081CBEA3;
-	Mon, 21 Oct 2024 15:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA091CCB41;
+	Mon, 21 Oct 2024 15:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="R02flJPg"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1wljKeU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283F4176ADE
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD501CBEA1
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526237; cv=none; b=OMD2+cweyDl1Dw5mGC/odKO06180P/tO1xI72KUwv/QjwsX8+SyHjcYbUIqCMY2lLf52TrnOJBSX4uskiVrpcBXaBQRb/MbCEFM8V/a9mYAPMS3RkwWxE63R7+k6KY0WNcGxAenyU4qtr3290l+2D9RHl9SVXPjompnCzzmYO18=
+	t=1729526256; cv=none; b=asJRl8dp9sxzzB1scAWIar70AM4gf+KiLZLbBxMSgz5vJdKx394aBZucciWGYbLeJAdX19dETHIn/ZchuhPIMpFUDmvhtkLhzyLwCmXF/cmNeNymFVyXcLa7lnZnxobfxhB+EuWL36fu9agKxRx4Z4mubreiq6MsokhV4W33ed8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526237; c=relaxed/simple;
-	bh=rDqF9HRJ9NrejWv1i63XVUmfDKFrWmrBwIErnzkWKXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naERy8BPbx3tmwGDiCmMWWytHMK2bJX7rlIY3WUZnZvERyGHV2aBX/gi3A+S+w4kpMA8QpMyk/qo3bRAHv/hH2AqPo+qVg6yiBDBG28+o7Mt2JtVcDG487/0uQtEclNuCl2rsonejiwcItUw4lPslMx5jx5wb3zhYBS7JfkPL0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=R02flJPg; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso298534566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729526233; x=1730131033; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dDw/eqUUNfsBtWyAEhbHkP16UO4fYbMtXP5eNWAHVM4=;
-        b=R02flJPgxKKoXJgbfqPm3Xvt/LhvLFXi1x2nmHJyx1ksn+V/SC53iFKbmG6wj4ood6
-         UqagCb5QdcTlqNLBwcssgli278rs3NEkoLehtBoTF2z6p+eDKOJskyG/ioazaOJKHdar
-         tfl85Qdb2YmxdlyzyLltoNmWOSkimuE8mBkxXjNW617+/vzKlxdeSzmyCPs14p0CVJoS
-         7ewQ9VsROm4PM5C1uIcumGkiLrzd3wQ+isV5shOpHYBmdfqr7eAxlnpLY7F4rVHaO4li
-         8eEZTylLSE1lARCk7GF8hKHSBLTKtZxeVZCyJrsYFJ17wfMBKbvqpXzNwtG2QbPx+W4P
-         fiDQ==
+	s=arc-20240116; t=1729526256; c=relaxed/simple;
+	bh=GuBVjdCswPOcpg5ScXk6aUTpFwNNKk4GkyHaPTJrCOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Swou2/BXBtAgWBr6Y/5dqpTZiMm3eXCwqqg77+gqNoaBHqLaoVdSW4oYnBR+Sz6aF46V+KLOEkjEkGKLJSAw7H9ee6xie0TPSubkNRTYXlkrjhgHzTRRdKN+iXyLw+ivJhwlypcQ+NeGC3brnr+s6qilrvu2pNW0IMo0JNZTc4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1wljKeU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729526253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1QlQ2dXZhMX0eKo544n2v7YaT6/JERR2+wEBtNN+cRE=;
+	b=D1wljKeUVlM1g6BvDZ0Po7vCMR/YZ6579iHo2q48FxJgnpwadn7f7311X7nYjGL0kagEZZ
+	elaBPQN4ix+y14RSg2WylCTnQTbeHqmngVbpOSwDBnuIobjzVHpeZPy4MkfEgjqhP4x4Oa
+	DGqiTNlME2JJjXjqQQhgVPchMmZm17M=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-pUwRQdmkNkOf-TPwXFDPaA-1; Mon, 21 Oct 2024 11:57:31 -0400
+X-MC-Unique: pUwRQdmkNkOf-TPwXFDPaA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315ad4938fso34059805e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:57:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729526233; x=1730131033;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dDw/eqUUNfsBtWyAEhbHkP16UO4fYbMtXP5eNWAHVM4=;
-        b=ASL15wdVXsN/IkhEnji8cDmKh8SStzy0O4EadlU66z+we2dyE4GUNMvXBXPH37651f
-         fTHB4dCpA0vyXCqkXWm58MaIqbVsi3rrlCvrgb/zJ9ivBornsldERcAKtkS7fzZdcol4
-         wcCpFpGjJ9U9ikYK4kW9bZFCDk/8CVBPupn/6qu+UfObt0A0FH6Coji1klA/CSCqaaBH
-         aviDkM4PD3cdR+WM/DsIWHE2CCgigq+sIYZyK/GTep4nrk0RzvPJyliT8L1UhUlMDZUv
-         VGA/HFrOhLP4kmzuwyFXTHrRQbgsYHfYTA5YtyEsz5A2hqq3gUbxDJ1aX0U9guxWkfcZ
-         mhjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAl3wVwwIRtFt/6AvCqbuxgKyqSgjB744/gRf1wkZ0wyl1uKOxBIpeqKVFACrBO4Uz4griTbGrm2oIgQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3qh/IPQGFZ+FPrXWtck8DeheZA48QYXKZiLS52zRaPGv7X7sM
-	/Kxi1ImXLf9Lc+PQ0y7RCb6nzQUI9+US4gmqrC+NwType6QKU9zKgIAjtSYE9jM=
-X-Google-Smtp-Source: AGHT+IH8rj3/sUlYj4idAmDktH+SYwN0X+O5bSIWGTSplCx3Kpe3omxzwpgCZW0mKkaRkknG0Ii7EA==
-X-Received: by 2002:a05:6402:42d6:b0:5c9:137b:b81b with SMTP id 4fb4d7f45d1cf-5ca0ae81126mr14584037a12.25.1729526233247;
-        Mon, 21 Oct 2024 08:57:13 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a654cfsm2065438a12.29.2024.10.21.08.57.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 08:57:12 -0700 (PDT)
-Date: Mon, 21 Oct 2024 17:57:12 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-	willy@infradead.org, liam.howlett@oracle.com,
-	pasha.tatashin@soleen.com, souravpanda@google.com,
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <ZxZ52Kcd8pskQ-Jd@tiehlicka>
-References: <ZxJcryjDUk_LzOuj@tiehlicka>
- <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
- <ZxKWBfQ_Lps93fY1@tiehlicka>
- <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
- <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
- <ZxYCK0jZVmKSksA4@tiehlicka>
- <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
- <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com>
- <ZxZ0eh95AfFcQSFV@tiehlicka>
- <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1729526250; x=1730131050;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1QlQ2dXZhMX0eKo544n2v7YaT6/JERR2+wEBtNN+cRE=;
+        b=Z7pfxOjo8JgrFi8h07cvUs/4m1WSTb7GWI3WcxpAoKwB+f8fxtpvLm+v2bCXG0A0QY
+         uPUKwPD3Fh/JY+pAx7Sue9lzXWJuwPVPfrRt5dcZXz9EUefGsHLkklrOGqV1ffkDjnBW
+         zBSk5ylWG7fVK0kv8aPXSdtamNkpG6zZDuJVIRJAWvs8T/McYzcFHsqwyCAwjYcSeTN/
+         b86pWeaUmgzsXGP5zjy7UsOI1wE+BbpENcPqQgJUJDjYkicG3xpRsBD618ZMq/uYKk8f
+         e75WxUqYYugXQ75vpNGctu+m2Fi1WKDW/VJ+nyCXGNdSRukH2+jMs6PqxM/O/aWfauhg
+         4lgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE17iCxUbv3Oppbwz/tsHRga7nJK2CqAu1Dngv9rhEUHHl1+CBg8LGcGscrcsq6zrGpbbmx6nqRPIukTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6WnH78+Z5sqIgDbXtY3oEcKZqGEFcO5KCAC+0kC3vuLP/RUos
+	w37DmrY0YhmY9lRY+LyBsV2PEJujEWHtyKwZsaKM3tLoh1bakZHBDvuet4yp6n/SUw1kF37vfQB
+	kn8lLQbAgaiFptU7Abe0N0hM5b0YqoLoA5LRPlFzR7HTP3bE38Cw2S0KnTcNaEQ==
+X-Received: by 2002:a05:600c:4ed2:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-43161622989mr74517175e9.4.1729526250554;
+        Mon, 21 Oct 2024 08:57:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7jzs7xFKTi3jP8Jjtc+4lpuyikIkraQffpHNepeehyLvEhQaPmfAsjgu+PgFf5PV6UVv76Q==
+X-Received: by 2002:a05:600c:4ed2:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-43161622989mr74517035e9.4.1729526250182;
+        Mon, 21 Oct 2024 08:57:30 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c728:1600:e899:f836:758b:6fef? (p200300cbc7281600e899f836758b6fef.dip0.t-ipconnect.de. [2003:cb:c728:1600:e899:f836:758b:6fef])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57102asm61064805e9.1.2024.10.21.08.57.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 08:57:29 -0700 (PDT)
+Message-ID: <eb380e90-f5f5-40d5-b0a7-54b2bb50f7a3@redhat.com>
+Date: Mon, 21 Oct 2024 17:57:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] x86: probe memblock size advisement value during
+ mm init
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-mm@kvack.org, dan.j.williams@intel.com, ira.weiny@intel.com,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+ rafael@kernel.org, lenb@kernel.org, rppt@kernel.org,
+ akpm@linux-foundation.org, alison.schofield@intel.com,
+ Jonathan.Cameron@huawei.com, rrichter@amd.com, ytcoode@gmail.com,
+ haibo1.xu@intel.com, dave.jiang@intel.com
+References: <20241016192445.3118-1-gourry@gourry.net>
+ <20241016192445.3118-3-gourry@gourry.net>
+ <7b877356-f5c5-4996-904b-6c3b71389255@redhat.com>
+ <ZxZpTlnhYPqg-tGh@PC2K9PVX.TheFacebook.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZxZpTlnhYPqg-tGh@PC2K9PVX.TheFacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 21-10-24 08:41:00, Suren Baghdasaryan wrote:
-> On Mon, Oct 21, 2024 at 8:34 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
-> > [...]
-> > > Yeah, I thought about adding new values to "mem_profiling" but it's a
-> > > bit complicated. Today it's a tristate:
-> > >
-> > > mem_profiling=0|1|never
-> > >
-> > > 0/1 means we disable/enable memory profiling by default but the user
-> > > can enable it at runtime using a sysctl. This means that we enable
-> > > page_ext at boot even when it's set to 0.
-> > > "never" means we do not enable page_ext, memory profiling is disabled
-> > > and sysctl to enable it will not be exposed. Used when a distribution
-> > > has CONFIG_MEM_ALLOC_PROFILING=y but the user does not use it and does
-> > > not want to waste memory on enabling page_ext.
-> > >
-> > > I can add another option like "pgflags" but then it also needs to
-> > > specify whether we should enable or disable profiling by default
-> > > (similar to 0|1 for page_ext mode). IOW we will need to encode also
-> > > the default state we want. Something like this:
-> > >
-> > > mem_profiling=0|1|never|pgflags_on|pgflags_off
-> > >
-> > > Would this be acceptable?
-> >
-> > Isn't this overcomplicating it? Why cannot you simply go with
-> > mem_profiling={0|never|1}[,$YOUR_OPTIONS]
-> >
-> > While $YOUR_OPTIONS could be compress,fallback,ponies and it would apply
-> > or just be ignored if that is not applicable.
+On 21.10.24 16:46, Gregory Price wrote:
+> On Mon, Oct 21, 2024 at 01:12:26PM +0200, David Hildenbrand wrote:
+>>
+>>
+>> Am 16.10.24 um 21:24 schrieb Gregory Price:
+>>> Systems with hotplug may provide an advisement value on what the
+>>> memblock size should be.  Probe this value when the rest of the
+>>> configuration values are considered.
+>>>
+>>> The new heuristic is as follows
+>>>
+>>> 1) set_memory_block_size_order value if already set (cmdline param)
+>>> 2) minimum block size if memory is less than large block limit
+>>> 3) [new] hotplug advise: lesser of advise value or memory alignment
+>>> 4) Max block size if system is bare-metal
+>>> 5) Largest size that aligns to end of memory.
+>>>
+>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>> Signed-off-by: Gregory Price <gourry@gourry.net>
+>>> ---
+>>>    arch/x86/mm/init_64.c | 16 ++++++++++++++++
+>>>    1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>>> index ff253648706f..b72923b12d99 100644
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -1439,6 +1439,7 @@ static unsigned long probe_memory_block_size(void)
+>>>    {
+>>>    	unsigned long boot_mem_end = max_pfn << PAGE_SHIFT;
+>>>    	unsigned long bz;
+>>> +	int order;
+>>>    	/* If memory block size has been set, then use it */
+>>>    	bz = set_memory_block_size;
+>>> @@ -1451,6 +1452,21 @@ static unsigned long probe_memory_block_size(void)
+>>>    		goto done;
+>>>    	}
+>>> +	/* Consider hotplug advisement value (if set) */
+>>> +	order = memblock_probe_size_order();
+>>
+>> "size_order" is a very weird name. Just return a size?
+>>
+>> memory_block_advised_max_size()
+>>
+>> or sth like that?
+>>
 > 
-> Oh, you mean having 2 parts in the parameter with supported options being:
-> 
-> mem_profiling=never
-> mem_profiling=0
-> mem_profiling=1
-> mem_profiling=0,pgflags
-> mem_profiling=1,pgflags
-> 
-> Did I understand correctly? If so then yes, this should work.
+> There isn't technically an overall "max block size", nor any alignment
+> requirements - so order was a nice way of enforcing 2-order alignment
+> while also having the ability to get a -1/-EBUSY/whatever out.
 
-yes. I would just not call it pgflags because that just doesn't really
-tell what the option is to anybody but kernel developers. You could also
-have an option to override the default (disable profiling) failure strategy.
+I see. But we (MM) just call it "order" then, like pageblock_order, 
+max_order, compound_order ... but here we use "size everywhere" so I 
+prefer to just sticking to that.
+
+> 
+> I can change it if it's a big sticking point - but that's my reasoning.
+
+Simply enforce it when setting the size. We call it "memory_block_size" 
+everywhere and it's also a power-of-2 etc and sanity-check that in 
+memory_dev_init().
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Cheers,
+
+David / dhildenb
+
 
