@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-375249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E6A9A93AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:05:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53539A93A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D5231F21C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3FC2834B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C1A20011D;
-	Mon, 21 Oct 2024 23:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BA21FF058;
+	Mon, 21 Oct 2024 23:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCkqY/ox"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UulntUYq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B530B1FF056;
-	Mon, 21 Oct 2024 23:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3F91E2840;
+	Mon, 21 Oct 2024 23:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729551840; cv=none; b=NxGMMim6TyGefCetv71EQFoTceHLjZYfYXHxAPtvB5DiaMMh1GyajC/0mBAT3ZojoIJW1vwBoy+0ATjr/PV6ZP1i+qEpqO2LERkmVUCSHuBr4glG3nP5vuGl+bpRg7Pp6Drp7o9n9R1UgePdKZWmbZ9EhqdmRV+1Y7c2ww3rm6A=
+	t=1729551838; cv=none; b=lEFN93u6VM1S54fAinj9HDwejPFowgRUEgStSPWLoW+/ydGEg5ym3tY+oKlv16JVfVMIxbfvHDpwNIrswGY9uXQn/oJoQySVVxUZu03oHaBKW27B2Qekp3VglcidRxCNwpW83T33DtQYgYnY9mk7lc4ntdg6CqTgfw53qX4+pJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729551840; c=relaxed/simple;
-	bh=xEoJneP1gRLSYSS8hkJXB6bpUcGSpxe3av0Sx+H3ICU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dn6xQ/xigIwfNtRji7n4jhgzLw7Tj0mrlnIA4YR69NRR7RePiYfoyAvq2uVY9o7H+vIWNC79iY2l+jiIzF8wRHFgoPIdXxRxFm9t8oCCIVPnMOxFQmoanj98+4STHpaR14HvtIECbjLSpbWRwnFjm8PT6Oz1BJ1t1p9hxWKbU68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCkqY/ox; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729551839; x=1761087839;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xEoJneP1gRLSYSS8hkJXB6bpUcGSpxe3av0Sx+H3ICU=;
-  b=hCkqY/oxlrjPzbGLXW3+yi2/V/e8avlMqsORAw49Fy9LuioOjXPy9cwW
-   nfVS051Ovrqm2Ra3PRZGJcSJyRZHf3aVf5WnWvl0ALWJRM5k8WB7mXm/i
-   VMmFJW4XkB0j4+7PLm8QJb6BzpDt/ssIkdX7vRx16TWAT7HVwbw3517/6
-   1O65Nn+K2/06FyuIohWblvp7+X1WYNjplnChHG9c9zkUrjMc7WMd3HZ9Q
-   9Jd6fV+obdJTrxNTHaSZnAhgxg7HI+diYxMFT1RP2JkK9twCUEmWjP8Nq
-   umdmk4cBCMrr6siodYE0Z4mOaxI8k9Tm/tVC/bJE/K+1VbI3OEui+pdtj
-   w==;
-X-CSE-ConnectionGUID: F91IqDO4Rem2CEQwWMuCTQ==
-X-CSE-MsgGUID: EpdZybyXQsmxmP9cR4MavA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="29159857"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="29159857"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 16:03:59 -0700
-X-CSE-ConnectionGUID: VaJe7yjxSHuG6IT+9eYllw==
-X-CSE-MsgGUID: DqOO+PwmQS+XChE9W0gfXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="110432442"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 21 Oct 2024 16:03:54 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t31RI-000SiV-1u;
-	Mon, 21 Oct 2024 23:03:52 +0000
-Date: Tue, 22 Oct 2024 07:03:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org,
-	kvm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com, nikunj@amd.com,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH v13 11/13] tsc: Switch to native sched clock
-Message-ID: <202410220640.W8Ynjt5W-lkp@intel.com>
-References: <20241021055156.2342564-12-nikunj@amd.com>
+	s=arc-20240116; t=1729551838; c=relaxed/simple;
+	bh=wD0hmRmTZUqp0PKJmH8+a/bou63wvSt5Pm+QZwl+y44=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6EP2j5i+kcf0WtSzy/q70UCDt39eKDiMaETgfKEpIYHbRenL+r69L4bBvwUAYdVKB69M63Kfl9kqzT9FLsHUdISHrMV2B3MoKSyVKpHFKcOXC/v/gYJFLq3HJdqbd1Lftp5ZWJS0YUJhtucvaXLpEJPhwMhMLi/wGKV1UMJmxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UulntUYq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LIeYoR020550;
+	Mon, 21 Oct 2024 23:03:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ByC03Gijfdpnx/8ym05Seg
+	S4GuWvCxyuXb4cbLMvcis=; b=UulntUYqrpc2JPpvWB+Vo+2aVJRvyLdr+Mlw2b
+	AUlBNjFreZpsVVVmWjm1JMiQRu3hAmun3E4lDbWG1Q7TYZ5Bp2WcG/67XVzGjyB1
+	XY1qk/MoxQ7jKHPXPYj+O/KlrgeeVXldMA/37Tr/h3ZATsyHbhmYDvAYh/azb67e
+	OtDVurWDQpuSXizF/wqThja3JnsPgCJ74koX9CLJamKHRK2nsCjRgh/fSHI0SNyg
+	pXEqIr8Yo2lNP3m4Rh2T+H4cAYZROmmCUbo/eAMjdrxcnYIcUEpXEhtZaDxpQURk
+	ulMZfbFXZf936kRPSWqWYMDvF6OKn13TZtENT8YCkscvyfgw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vxx8jd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 23:03:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LN3kpO010268
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 23:03:46 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 21 Oct 2024 16:03:46 -0700
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Tingguo Cheng
+	<quic_tingguoc@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>, Luca Weiss
+	<luca@lucaweiss.eu>,
+        =?UTF-8?q?Otto=20Pfl=C3=BCger?=
+	<otto.pflueger@abscue.de>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Abel Vesa" <abel.vesa@linaro.org>,
+        Jishnu Prakash
+	<quic_jprakash@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya
+ Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+Subject: [PATCH 0/3] pmdomain: qcom: Introduce power domains for SM8750
+Date: Mon, 21 Oct 2024 16:03:30 -0700
+Message-ID: <20241021230333.2632368-1-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021055156.2342564-12-nikunj@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5cSEt40YkRU0LFeiLdBS9pf6tWlVLQJ2
+X-Proofpoint-GUID: 5cSEt40YkRU0LFeiLdBS9pf6tWlVLQJ2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ clxscore=1011 malwarescore=0 mlxlogscore=756 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210163
 
-Hi Nikunj,
+Add power domains needed for the SM8750 SoC.
 
-kernel test robot noticed the following build warnings:
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
-[auto build test WARNING on 0a895c0d9b73d934de95aa0dd4e631c394bdd25d]
+Jishnu Prakash (2):
+  dt-bindings: power: Add additional RPMh levels
+  pmdomain: qcom: rpmhpd: Add rpmhpd support for SM8750
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikunj-A-Dadhania/x86-sev-Carve-out-and-export-SNP-guest-messaging-init-routines/20241021-140125
-base:   0a895c0d9b73d934de95aa0dd4e631c394bdd25d
-patch link:    https://lore.kernel.org/r/20241021055156.2342564-12-nikunj%40amd.com
-patch subject: [PATCH v13 11/13] tsc: Switch to native sched clock
-config: i386-buildonly-randconfig-002-20241022 (https://download.01.org/0day-ci/archive/20241022/202410220640.W8Ynjt5W-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410220640.W8Ynjt5W-lkp@intel.com/reproduce)
+Taniya Das (1):
+  dt-bindings: power: qcom,rpmpd: document the SM8750 RPMh Power Domains
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410220640.W8Ynjt5W-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> arch/x86/kernel/tsc.c:293:6: warning: no previous prototype for 'enable_native_sched_clock' [-Wmissing-prototypes]
-     293 | void enable_native_sched_clock(void) { }
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |  1 +
+ drivers/pmdomain/qcom/rpmhpd.c                | 26 +++++++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h        |  2 ++
+ 3 files changed, 29 insertions(+)
 
 
-vim +/enable_native_sched_clock +293 arch/x86/kernel/tsc.c
-
-   292	
- > 293	void enable_native_sched_clock(void) { }
-   294	#endif
-   295	
-
+base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.1
+
 
