@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-374273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5C49A67BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5606F9A67C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C311B22760
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474641F224D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C411E6DC2;
-	Mon, 21 Oct 2024 12:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41791E410E;
+	Mon, 21 Oct 2024 12:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rvHHPvks"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYKG4fR2"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43281E7648
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EDB1E49B;
+	Mon, 21 Oct 2024 12:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512938; cv=none; b=PqNN3q93pDMZQ1CtVfCDzjU7PUdXvBuSnh/7CmQXvDg6lUXAzvFG1VNcvyMEPZ97t2EsTG/h+ZMdPQrzs2O47H6mGwQzofBq0YNLKqXdhuJ2cDOgAqDVsTnDb9X85DkC6mWGHt0jSyihqhljlVKdGxvL16pEQ+LpjU5HQwMEDlI=
+	t=1729512994; cv=none; b=ToertbUyVtYEiOutqPFJmzwvtH64vDZDT/4XUItIlRGWlB3E8NzEB48HXv9usQQX/rCptUH+LmUMS96tSnnjinS16g6ab6IuGcdCiyUWYtziy4y+wkdHMW07X5oLYvta/wOMZ9aC/sF+xUWPxbGJB6zceYsqT3MnrFSeJC4tiUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512938; c=relaxed/simple;
-	bh=ubniCwvujlyUXuESJ+QlEf9nz56jGqzEaECw2Ab5mVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jX4EwPU6cif/A7PuRUDsnTwbvmO1VecQKSqd+by7STmVRBfm2hLiVPMiMWd+NEwAqF4bw6ceZlfew7YqyFHy7pTshKhXvbb3z3DKs/JBw7TLcAHpdOFr4bP1FJ89zXUTcSmT0+B9wn9vgjQPMxuY3w9KwlN8EUosvs+t1a8ub/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rvHHPvks; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso59375801fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:15:36 -0700 (PDT)
+	s=arc-20240116; t=1729512994; c=relaxed/simple;
+	bh=fsZPms+Xu6Pn4MLCPPidLYbUkDqNto6t1mxmBXbRzp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CtruzLTTf98B6XwlcM3pEhReTkJJDt4O1X7yCOZ/KiCPI5Lp6kg6i0dYkw8J5yqES5Omjw0sftVEzBYO8WeiHP96+qvd8QY58omaMebR6bfQUBz9C97A9gRS1EaMtGovp8FzpYZODDzvJGmYLa48JhbdbdUhZKyObw/6yd99Pvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYKG4fR2; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so5881975e87.1;
+        Mon, 21 Oct 2024 05:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729512935; x=1730117735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ixvYPjSjHOI3A6bs62BEm+orBMViEbYtWgKUxWp9vmA=;
-        b=rvHHPvkses1XqI9p3HHt+k8MomBAw29aI7JFnxRYtF3CcPzOf82nPnwY8v6ikZLZ20
-         vh9xG2kNM0YDJC/6pgW00qjYxc0oVGQihSwljavjDX2YxNV3yeBlKHKpVTBtCxQrT0Vr
-         K1PqW73E7ryxMH6KgMSGuNgCAldxjCZjnP9GzDL8pV1Cn0M0Tdkszu8n8o8PK8t/2QbY
-         4X3RspUfVdMsqS16GQ/LM4f/Sk+nFEejVi1DQtHLixbvCj4TJfctWpICTcebFEHYWHO9
-         XF1ABahq3A/0nlvMl3YhfUv7d9QL8ejPilJgZjmxkAw3KWTu3EcQjrdjSC/NCWiu87Vf
-         2F/g==
+        d=gmail.com; s=20230601; t=1729512990; x=1730117790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/1MCTmxbUO44rwyL5iC5PLrKibwoBMeTpyT0L8eV+g=;
+        b=KYKG4fR2w99r3q+lOzh3Xtz/+GkjX7A7Bqo2S0PJ0DC7TLq4eBleQEJKzzwK1YbRBb
+         2Qr86g8HN+mzzbSS+tEP7dEcKWRtW4Zmry6UHpQUWJyPyM/qtrPWhRmkGsfedrWbvC1A
+         eG2DA6NHvdvUFcmI6d4Bz++zS7cKz2/pMi4pZyyg3a+fr1bA28vAhsH9yicUKjQdWptF
+         ytKWMEJebMvxDiwbwMvEKKGVSBZuFY93sPzugiltkGLXOgh7QEqhhdxfahwfjDcT2hIQ
+         fWTM5t6nJypyDTAvNe/iWnQdBV8oV9M0HKKzSnAnO5cFI37Mj3T84LbYrcXh56v5LUQY
+         qPpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729512935; x=1730117735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ixvYPjSjHOI3A6bs62BEm+orBMViEbYtWgKUxWp9vmA=;
-        b=qDqOejx9WPhXuTdyIbEKBz0UYOJJ1Q20j+FhuUG/J7aYLoYDqBSKa358jwARqY9MHR
-         C9ej3PoF8qwmMZmXyOhVjN0wTvf1zaKMjJdcWttym/OWCWbkADr8HazGJf9UAxkHprpj
-         b1Vjwfw/vc7hj7OmOFYvDZEqjOPtsB1NIMPo+skCMiyxpN5lz04y98LJNLrMxG3mdPDB
-         xCtf8zZyu0i6cAuCW2UQ4shW5PyVGT/wk6MqxofOpHfNKf0eM0f+xhflt3Y907yfkJqw
-         VVPdn/CtVx7OVg5fP2H27cl+egRSjD84ZJph5rmwKuNVg3RwgzcOX0Nisot87yvMzK6A
-         MZSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLwfL3KCrTdoplB/bPxKtNR6hH1LqMIKHzBbrW+Az8jnaMH4IBztWp5sEcJ2K8p7yNjoiG5ajJTgcs1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHw44ppsliO3Oa935JjWejXN4FZZqI0pS45gwPYiN3E+ov+wvu
-	QjoxBnrPrKMIr6JlqosTFON4dups6K6P7kQKU0Cih+OGt4hWUlogwq4XQIK6YF52g4EXkVEcogb
-	AqX0=
-X-Google-Smtp-Source: AGHT+IEkcKoatMCDEuy5jqS04CW2sFmKYlfJWSMdE2NyRaxseViNDhyaFOJIPHQ/mBlzZ4JfzX+iAA==
-X-Received: by 2002:a05:651c:2124:b0:2fa:d7ea:a219 with SMTP id 38308e7fff4ca-2fb8320f101mr78774851fa.37.1729512934612;
-        Mon, 21 Oct 2024 05:15:34 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ad60d95sm4785161fa.33.2024.10.21.05.15.32
+        d=1e100.net; s=20230601; t=1729512990; x=1730117790;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H/1MCTmxbUO44rwyL5iC5PLrKibwoBMeTpyT0L8eV+g=;
+        b=IJPnw0rtZ5CpYsS3NFdIw1ssIMcLulBm1AxlNznerqkBImZvyZha+88Pfg+/IAWH1P
+         fLA94nws75KwGhqf5BRf2c8zFodkhW+90PsoRbf6CAQnokrhERfZJIIEM5158KrQ3uBb
+         IfhFxkbJPGys6Ku2qTeM04OFEfv6ReMwOyLxL1+01f+VsYpsehtuHBkj8/njqB1pz6lJ
+         U0N7Ny+UzDfsShTArBhYQOCMjridoHNxn7CNGjwMKhaNUJfHNAxkmZo96T/aMFBKYme1
+         zfNrNAgdxtPuo98Sto+sxy4cASMGBrEreC4zoFEofB6ZrKg4iiakBV30uW/b1aIHzGLh
+         dyLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEJE7pSTCmwKgvuMO6IMALeJrQbvTQ9VDe9U7htnUGROB+wN6GhSFPtsHoK/0nTOp6fop8qTHwuGieTW0a@vger.kernel.org, AJvYcCWjfKkdIXdBYun4h7P1z/mJKrhWC70Vi4hVXNQUkLJ5tqKyrL7GFKWaLs+x5SpIPsS9/XE6J81Dq1ov@vger.kernel.org, AJvYcCXalVnIqB33xprjCLTQbYjmJanD8tDuwNMt60rLDwXbbJ1oHGwrDtUjah+Nxa1epp61+jFiVUvVwS0y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAilq1QdYiBI3Vzr++ipbFZsvVJ+COszkpW0EELs9RLhnomWBM
+	MrsrlR1N4xlnQZ0kq1ZQs4QUqTdc1OtIQXYZtwxabADgXVS9nh9W
+X-Google-Smtp-Source: AGHT+IHR6MsGMRBzU5JPSi1HY55LtpEFaaIUqbCyIY5gOO8fE50iJxRU2yRt/DZvTwuMoUyyjo0iyg==
+X-Received: by 2002:a05:6512:1304:b0:539:f760:6031 with SMTP id 2adb3069b0e04-53a1520bd73mr5457779e87.4.1729512989592;
+        Mon, 21 Oct 2024 05:16:29 -0700 (PDT)
+Received: from zenbook.agu.edu.tr ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6ee6sm197068966b.4.2024.10.21.05.16.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:15:33 -0700 (PDT)
-Date: Mon, 21 Oct 2024 15:15:31 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com, 
-	thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, 
-	marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v3 06/15] drm: of: Add
- drm_of_lvds_get_dual_link_pixel_order_sink()
-Message-ID: <zaraulehid255ij3hs7hazd463ye4l5ju6sguoos243kda6552@lztoq22vzqyk>
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-7-victor.liu@nxp.com>
+        Mon, 21 Oct 2024 05:16:28 -0700 (PDT)
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Sam Shih <sam.shih@mediatek.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+	Yassine Oudjana <yassine.oudjana@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] MediaTek MT6735 syscon clock/reset controller support
+Date: Mon, 21 Oct 2024 15:16:14 +0300
+Message-ID: <20241021121618.151079-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021064446.263619-7-victor.liu@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 02:44:37PM +0800, Liu Ying wrote:
-> drm_of_lvds_get_dual_link_pixel_order() gets LVDS dual-link source pixel
-> order.  Similar to it, add it's counterpart function
-> drm_of_lvds_get_dual_link_pixel_order_sink() to get LVDS dual-link sink
-> pixel order.
-> 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v3:
-> * New patch.  (Dmitry)
-> 
->  drivers/gpu/drm/drm_of.c | 76 ++++++++++++++++++++++++++++++++++------
->  include/drm/drm_of.h     |  9 +++++
->  2 files changed, 74 insertions(+), 11 deletions(-)
-> 
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+These patches are part of a larger effort to support the MT6735 SoC family
+in mainline Linux. More patches can found here[1].
+
+This series adds support for clocks and resets of the following blocks:
+- IMGSYS (Camera)
+- MFGCFG (GPU)
+- VDECSYS (Video decoder)
+- VENCSYS (Video encoder, also has JPEG codec clocks)
+
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
+
+Yassine Oudjana (2):
+  dt-bindings: clock: mediatek: Add bindings for MT6735 syscon clock and
+    reset controllers
+  clk: mediatek: Add drivers for MT6735 syscon clock and reset
+    controllers
+
+ .../bindings/clock/mediatek,syscon.yaml       |  4 +
+ MAINTAINERS                                   | 10 +++
+ drivers/clk/mediatek/Kconfig                  | 32 ++++++++
+ drivers/clk/mediatek/Makefile                 |  4 +
+ drivers/clk/mediatek/clk-mt6735-imgsys.c      | 57 +++++++++++++
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c      | 61 ++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vdecsys.c     | 81 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vencsys.c     | 53 ++++++++++++
+ .../clock/mediatek,mt6735-imgsys.h            | 15 ++++
+ .../clock/mediatek,mt6735-mfgcfg.h            |  8 ++
+ .../clock/mediatek,mt6735-vdecsys.h           |  9 +++
+ .../clock/mediatek,mt6735-vencsys.h           | 11 +++
+ .../reset/mediatek,mt6735-mfgcfg.h            |  9 +++
+ .../reset/mediatek,mt6735-vdecsys.h           | 10 +++
+ 14 files changed, 364 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
 
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
