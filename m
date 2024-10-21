@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-375020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890C09A8FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B62259A8FD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402AE1F22BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6261F22A25
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2429318EFDE;
-	Mon, 21 Oct 2024 19:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4718C1D0DE8;
+	Mon, 21 Oct 2024 19:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QfyNN+2I"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="ayevwYMR"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140CE79CF
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AC979CF
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729539082; cv=none; b=XFGaUPvnAc/UCleV5tZFYu7m5TE/fFyYhq8aAlXBh36QkyyxdCBfyG1bXdephmD4dqXeRYUxB/AnflaX63luZl8uwQ7rZftiM1wVOFmsU5qDYmwsJSZiZ1GVEk0WNKg2npgbG6NyufnDIJ63SaWx2t7jVdXG275MFyK3UtsQWJo=
+	t=1729539152; cv=none; b=pwHCeRTQEQ3e3GZ9uF5F1vDRvgbAj5714RDGbhKRJucLieomCCT+2+i0DSMHr4WS1yZEUlyORSoEIfJzBe94WKKVjTkEfiUZSIX6olsEbfUF+5VdA2aOMe/4FtQEGCDdCBu6u4R3j50pjkvP77+MTQT9mp8qFinMEFSU21dUOH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729539082; c=relaxed/simple;
-	bh=3EWgHc592+Mga34PVRoNecbdBz5HVaYwI+iMGjqCWmY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rW2zrcx5oXKVLR+lqUgWC/Y3sqnaIv08Wtr5bdcUZach7GubNYJpmZg1lIPjt7oU7ZSVnrXL2V+pIrl2CtBHUdp1c6b1jcXI+h9ts76fWjQf9lAuqdMy3swODBWDs70THPFra6OaaBzybIxJSnClE+3acqr432T9MV3WGaUJ0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QfyNN+2I; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-28847f4207dso2177016fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:31:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729539079; x=1730143879; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p0/WpS2qRb6CVWNPpC7YhTrCcU9WXqsS6VwTJB//wjI=;
-        b=QfyNN+2Ie2+WZELmNMIq0J5aCsmiWWpcHFpETNguYEhDIkmYKCrb/8/fPfWC9Rt0HS
-         BlFMESGVT25sfIxcfp/oFpt5xUdDYaW9Fpju6udZ30RTPC+zZFBf5WrwOKUJ6l1EtkWm
-         9UaYCs6g1m8g2IiXMtGCljTVkcn0UueL4SwDKXM5sD0otsnGCDgkN+GD780BHet743Qj
-         RyJi4wT6LKVm5kbrP97E0g0cSOFtDJuFWePO9Ohgns/VA1n3Xv/6KCKBrfrNhWoIDGeZ
-         E9AvgZyM4zqX2OpReyy8dpiqEkNyDuduohC/FF43zpZDXFwWri0zKiKJ+RgTZuBTdw/I
-         FdFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729539079; x=1730143879;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p0/WpS2qRb6CVWNPpC7YhTrCcU9WXqsS6VwTJB//wjI=;
-        b=o4YbHLYNqTNOxMHOrWGSoqgT3Qh7+r3YRX4YFc4GfzOsUlfMOD+g7s3gkzGWcXduu7
-         96Zl1s01p7zOmhmZFJVnA8tHvrivIh33N/JXwvLCyOM7FXDScauBLEEyE/7IhzcwxEe4
-         cMfGGNbc+wJqxyM4Sl259aREwd3/p1a86nNbgY9G3Ofp6T0NimPxHI4+M4N2XxSSoud/
-         5XeMIwk8M1hbWHlY6BDT6ZPPErINQWYxNBh/zs8o0WhqyUB/a0wT8bIpHSI5NyMhzN+Z
-         ahJJrUbrmauc6YFF7DTpZe/+Jvokzb0Mn5ApyrHfEJYa+Lho03I3fP73yKnVXIRZcZNw
-         aejw==
-X-Forwarded-Encrypted: i=1; AJvYcCVR5uyX0wydMHfQdA4Ecc1riHmKXmwmm45CNVrZGSeTuhJ8Vq+tcpUtxRNZisVjwlLasBp28fSB7TK6lS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkjxiKtHEfOCzXKIzpUMPhVXdiaKodMfnNHRs1UjplAv6RQLeI
-	rNTsiMDomktB56qRXJaq1JNmrRb1aF7KNjPBSp3kMR/o01ipFixUBGADgcYbz7M=
-X-Google-Smtp-Source: AGHT+IEyOxjwwUrsOEmDwkwJPBUJStAekQGUL3vnae7jaD5J0VYvQNUnrEgaW0zebq3M2e+WlBTxRw==
-X-Received: by 2002:a05:6870:6488:b0:28c:8476:dd76 with SMTP id 586e51a60fabf-28cb00ff030mr178834fac.29.1729539079102;
-        Mon, 21 Oct 2024 12:31:19 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-28c792046ebsm1268246fac.11.2024.10.21.12.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 12:31:17 -0700 (PDT)
-Message-ID: <1dbc8e19-d6fd-42dd-b116-f08c408b6a5c@baylibre.com>
-Date: Mon, 21 Oct 2024 14:31:15 -0500
+	s=arc-20240116; t=1729539152; c=relaxed/simple;
+	bh=lvbUhXDFjOdI5unZDc8utq3G1xeo/THENAURmkXLtAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsxufHiVBUfylAsss7d2L9KTx4wu4v8x6q3LaZ22TnNLGmKBmzzWq6nzLYZVUMBItveXmiYi1oUVhJ2ladFwNRiPZ2ecNJqojxtWY7daL00YFeUZK4DJtRZc+F1A3D/as1+6Gdjd7kfYQvO45yQaSCh6HxJU8NR4nJeqmkIVrLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=ayevwYMR; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id BCC6D177106; Mon, 21 Oct 2024 19:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729539143; bh=lvbUhXDFjOdI5unZDc8utq3G1xeo/THENAURmkXLtAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ayevwYMRcN7dicEdONEvabO2FibzrRiry7l5ZKbLeqdEgM8C8FaRZoTMQVuPKL/7I
+	 Et2VA8ljzNLKY9zPdDYbbxvHuD+lIwdl6VPDDDUOIc0Vy/qMQKWzNLBlLQIU+o+R2p
+	 Ui+iR14IjhPFSVqK/T5jYQwr94mQkpEAtlg0OtsARJ/hVi/8OeArLGdJy79OTDrjug
+	 Nc3xHcIuUBcocj0T4z/yRBFvRmOrIPcszGXMf2RftseF0iS3mzW1wfM1ZFYAE4aE0O
+	 xea9b72iRodg9saIxHHB6StUI2eehfJbzhVw9GoMG6GZgm/uLFj8uBxiCYTPKUxeQD
+	 Rc99NetmJWMPQ==
+Date: Mon, 21 Oct 2024 19:32:23 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Yuran Pereira <yuran.pereira@hotmail.com>
+Subject: Re: [PATCH v2] KDB: Fix incorrect treatment of numbers in the CLI
+Message-ID: <20241021193223.GA834839@lichtman.org>
+References: <20241019195715.GA810861@lichtman.org>
+ <20241019204212.GA811391@lichtman.org>
+ <CAD=FV=UpKjTe78vexUXFThPXtx1KjhfR_u+1hpQpkh8ei-F5aA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] iio: adc: ad7606: fix issue/quirk with find_closest()
- for oversampling
-From: David Lechner <dlechner@baylibre.com>
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-References: <20241021130221.1469099-1-aardelean@baylibre.com>
- <20241021130221.1469099-3-aardelean@baylibre.com>
- <2842cbb5-680e-483a-af62-4c08e7818a85@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <2842cbb5-680e-483a-af62-4c08e7818a85@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UpKjTe78vexUXFThPXtx1KjhfR_u+1hpQpkh8ei-F5aA@mail.gmail.com>
 
-On 10/21/24 2:03 PM, David Lechner wrote:
-> On 10/21/24 8:02 AM, Alexandru Ardelean wrote:
->> There's a small issue with setting oversampling-ratio that seems to have
->> been there since the driver was in staging.
->> Trying to set an oversampling value of '2' will set an oversampling value
->> of '1'. This is because find_closest() does an average + rounding of 1 + 2,
->> and we get '1'.
->>
->> This is the only issue with find_closest(), at least in this setup. The
->> other values (above 2) work reasonably well. Setting 3, rounds to 2, so a
->> quick fix is to round 'val' to 3 (if userspace provides 2).
+On Mon, Oct 21, 2024 at 10:14:15AM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> This sounds like a bug in find_closest() instead of in this driver.
+> On Sat, Oct 19, 2024 at 1:42 PM Nir Lichtman <nir@lichtman.org> wrote:
+> >
+> > Problem: In many cases, KDB treats invalid commands as numbers and
+> > instead of printing a usage error, goes ahead and just prints the number
+> > in hex
+> >
+> > Example: This can be demonstrated when typing for example "aaazzz", this
+> > confuses KDB into thinking this is the hexadecimal 0xAAA
+> >
+> > Solution: Transition to using kstrtoul instead of simple_strtoul.
+> > This function is more strict with what it treats as a number
+> > and thus solves the issue.
+> > (also better practice as stated in the definition of simple_strtoul).
+> >
+> > v2: Removed redundant if condition I put in v1
+> >
+> > Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> > ---
+> >  kernel/debug/kdb/kdb_main.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> > index f5f7d7fb5936..4cbd5cd26821 100644
+> > --- a/kernel/debug/kdb/kdb_main.c
+> > +++ b/kernel/debug/kdb/kdb_main.c
+> > @@ -402,18 +402,15 @@ static void kdb_printenv(void)
+> >   */
+> >  int kdbgetularg(const char *arg, unsigned long *value)
+> >  {
+> > -       char *endp;
+> >         unsigned long val;
+> >
+> > -       val = simple_strtoul(arg, &endp, 0);
+> >
+> > -       if (endp == arg) {
+> > +       if (kstrtoul(arg, 0, &val) != 0) {
+> >                 /*
+> >                  * Also try base 16, for us folks too lazy to type the
+> >                  * leading 0x...
+> >                  */
+> > -               val = simple_strtoul(arg, &endp, 16);
+> > -               if (endp == arg)
+> > +               if (kstrtoul(arg, 16, &val) != 0)
 > 
-> If there is an exact match in the list, it seems reasonable to expect
-> that the exact match is returned by find_closest().
+> Instead of just fixing the one case, do you want to just take over the
+> old patch series that tried to do a more complete job:
 > 
+> https://lore.kernel.org/r/GV1PR10MB6563E0F8DB2D335BD9CFE4D3E8B4A@GV1PR10MB6563.EURPRD10.PROD.OUTLOOK.COM/
+> 
+> I think in general that series looked good but just had a few nits on
+> it, but the author (Yuran Pereira) never followed up with a v2. You
+> could take that series, fix the nits, add your signed-off-by, and post
+> a v2?
+> 
+> -Doug
 
-Likely also affected by this bug since they have values 1, 2 in the list:
+Interesting, will take a look.
 
-* rtq6056_adc_set_average()
-* si1133_scale_to_swgain()
 
 
