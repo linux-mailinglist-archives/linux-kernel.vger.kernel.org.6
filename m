@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-374846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06309A7101
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:25:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FA59A7105
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910F02811EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:25:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56AC3281D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593CF1EE02C;
-	Mon, 21 Oct 2024 17:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42E71EE006;
+	Mon, 21 Oct 2024 17:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gpakq6vZ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TAMzRuRr"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE85A1CBEBC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7771D1CBEBC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729531505; cv=none; b=SDl6Q4UDLGI5GsGN1AxJcfZw4Exs0t9FORAl++4r4pSJUJ0x7k7W/M6x4wkj/jcKkgBS4iQ6TnJ+6EiFA0vpGo3246Ep2TS2x4bSIqbi8mcvDM+vu8Mw76krDwNp4B3QkfWBTeS1i8suDJEiYWWwz6ocDU/wLPIhkAJq/GROkPs=
+	t=1729531561; cv=none; b=qIDbgMv2XYrHVR0Oiccw706eWnHPrtvaaLi8tj+9/81MfjnhUknuJV/8ElQvbOG6IrCNvGpLB8EcrRrDYBzxeTSjOZjIbt8HsU/joCS0BwBUej0eB02w5Jmg0XoOCmQj0ccenbJfzZXEIk7yQk72ccVClwIxkZg8NzYhKd3u11I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729531505; c=relaxed/simple;
-	bh=nQARAcWrfo/9LmkvGRivnzfml4EnVGsAepwTX070oRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=io5itH8p5f8E8PceUGkOzPkDVVHf/8J6+rKgWI9Ik1MUJyQHGNTKv4DSLN2EiiX1Ul/xMymwddlFXunTGrs8gWDwIseAl1TwKv9Y+siXnVi3uGeCemR4hc5tCaXQCusBZOvdNdbRb9lGck6hHolqzwmDV0zmHb2PHoYyXR4yHBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gpakq6vZ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b5affde14so32590885ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:25:02 -0700 (PDT)
+	s=arc-20240116; t=1729531561; c=relaxed/simple;
+	bh=Tcqm4CiS9liiFsGOBSsaNu4lLtEOPLjH8W7zf5UHea8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tvVYsI/ZRXDe+wOjkTnjkr8NLIqyofhGAO81CMFkh9LkExNDAzqm0t6eihh+WaWLEws67VkYibkGxf9RzBcicMi6AZAgPBKRcLFzWhD8MN+KKhpoz+YKdwds0S4UW2y5OxAjyIVyxQshhsoqG+rzMk/mCX5VyTukedZoyiFQXpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TAMzRuRr; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a99cc265e0aso691682566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:25:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1729531502; x=1730136302; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ic+5fqAmHgAWI4yHAimTZugqvKQtKtut588HcRDCks0=;
-        b=gpakq6vZRgHIGKpU1rKd6QNh4JucDxuKecD7Ndp+qipBUCcW5UPeWIL/+de3Mp0S7E
-         lgPcYTHXuf1bQE+8M80STWDT1Dmf3QU3s9jl9InTkOmd6zMlHyxvN9NZz9L1XmK4nHTP
-         H7cItNJIFdSpEJqtU+baVX9zfW9rP5kzzNM0s=
+        d=suse.com; s=google; t=1729531556; x=1730136356; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RFxEseBMRL9TJroZfrqPEG15hgUXenLAoHO1VI1TokI=;
+        b=TAMzRuRrLwHdKRLtwRpVhlgXmfl/+XvYz5/D9GO4mctM2y25/i9x4CurPO/LIeeMst
+         0uOId55rQPs+VMD7Rcea4x8d0sGdeK6+y2yL1qmYmcavMRmLTiYJ9knylZmS1fLh2lgF
+         080FQuBduGAOD7Qrbl9xtKMjG1n1mWWLGdeSo0aPkNVwMD7/b/pA/asuC4S0jtwcSoKT
+         h8l2HCvY1DJOezFZ2Ow+u3DKxftBbIWaQe1xbs06N2YLfg7B7TI5dX6kyr22ws3zlu7E
+         BdTWvhB2I4Z+SSofK54LndLGd4VlXGYSXQOQ4eHkGRzndnOMf+u0V0xEM8Kbz0npQNMf
+         5ubQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729531502; x=1730136302;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ic+5fqAmHgAWI4yHAimTZugqvKQtKtut588HcRDCks0=;
-        b=t2NvGc/Z/edcLUpvuEHU2i6f3szOuhOjseSM9U5dh1ZUqo/DlFVPvUIOMLR6z2+ZPK
-         wF3ajNwGH1r5ASZECdbikEWJIUGcVWSWtgHSJ810E0g2FVfM2v6u6263XG2lEq6w+P1j
-         HExABOrREcCrCo0vC13+9Br4bQpBrJfeCTaFMDsrIUt8q93k4GghscfiM8KkyV6ili0O
-         LeQa/Mr6Ng3at4li1L9TgcTfl5k8m0If6nr5qGYSk1XTcQMhL3lg9VLWEXg0qNbiJlRp
-         i7aZa9oF5vsldeCn5B/yiqKZ9ELUbAIbX6v+ys9AWo213d4IKQX7MSsaSqPdYFAxJkeO
-         5rQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTasMb+RTp4cp4MTodrWoU8DQQJWGJQ0N/IPWJI3qx2J4I9vapXqNHDlUuXIEUwQ4qPBLR5f3WWPfAhfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/SqmLJPSlMmqEcHBC6SAYDeKsu0xqp5pp1NVP4LH8QEouXoy1
-	xs6QPhT0zHL9VQjAELUA1I+nnoADfKroMKdEKGeqYyvCYf8f1fMwXte6npbDb4KFEPj4YTgaIMg
-	xgw==
-X-Google-Smtp-Source: AGHT+IFqNFifNwi9d9ISDyV5kP4tdZd4FNGcLs8ZW+bsa41pITrAJptzjTDLwRMqzhlCVmBXe3Tlrw==
-X-Received: by 2002:a17:902:d2c6:b0:20c:5909:cc48 with SMTP id d9443c01a7336-20e5a90514fmr163079455ad.40.1729531502157;
-        Mon, 21 Oct 2024 10:25:02 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f3754sm28341175ad.266.2024.10.21.10.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 10:25:01 -0700 (PDT)
-Message-ID: <8b812136-01b4-4df2-8b3c-dddf7027111c@broadcom.com>
-Date: Mon, 21 Oct 2024 10:25:00 -0700
+        d=1e100.net; s=20230601; t=1729531556; x=1730136356;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RFxEseBMRL9TJroZfrqPEG15hgUXenLAoHO1VI1TokI=;
+        b=TUqWHLAQOjg+BZR4cFZ4G4UfylY7THDadOLMaX5bFvQavn8PDcsazDPRVX0zkQxZHF
+         zP856MpvCISQvOsqSt5iqwKsLRtMh4Tm6fAnUoEeRWfa4suyXNGGvfBUqoGDl0ak3tib
+         auvkoKoNVpsn5bBffZ7fEmNAioFLbAAYIq3XZP4FL1TkL1pNquYN9MkfCdTjxzg3kSjE
+         hFlJ29HBnIqpIEujpeo2d+ULK9eiMKFStXeDJ81R1dFqMoKTTVVqOOaTQ4gQYAXBv284
+         xGEW2dS4M/6HztddpvQ71QnKi4yUNiXYcLBw2ed/GQq1mcYKe4h+CTudx84ceyGxGCTz
+         Bfsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLrbrHs/QRe3HeXCWxZKnjzPMrRkgEpa7bEFOZYo1NtQetb8MTfipBep7Gf3zLQA0fEzQWAhv/0DkDhEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUg3zPsWkLEs6MqrV6a5d9GBed3cPY3myAk8CUo3Eko6VmdZQ4
+	wnzNCagvIdeK4nHnCGMAHGk7RgRLgWPnzCloW1MwShpyXT83ye1cnextixUf+UA=
+X-Google-Smtp-Source: AGHT+IH4n4wPePD3+2JbCmoNPK4uvGmV017SEx6TMLsnKOM7T6k4IpmtJaKQsslH7wxKKLfXYiWQMg==
+X-Received: by 2002:a17:907:3ea1:b0:a99:529d:81ae with SMTP id a640c23a62f3a-a9a69ca14b7mr1332721566b.55.1729531556506;
+        Mon, 21 Oct 2024 10:25:56 -0700 (PDT)
+Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370723sm230139066b.100.2024.10.21.10.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 10:25:56 -0700 (PDT)
+Date: Mon, 21 Oct 2024 19:25:55 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>
+Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
+ free highatomic
+Message-ID: <ZxaOo59ZwXoCduhG@tiehlicka>
+References: <20241020051315.356103-1-yuzhao@google.com>
+ <ZxYNLb0CiZyw31_q@tiehlicka>
+ <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: arm_scmi: Reject clear channel request on A2P
-To: Cristian Marussi <cristian.marussi@arm.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com
-References: <20241021171544.2579551-1-cristian.marussi@arm.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241021171544.2579551-1-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
 
-On 10/21/24 10:15, Cristian Marussi wrote:
-> The clear channel transport operation is supposed to be called exclusively
-> on the P2A channel from the agent, since it relinquishes the ownership of
-> the channel to the platform, after this latter has initiated some sort of
-> P2A communication.
+On Mon 21-10-24 11:10:50, Yu Zhao wrote:
+> On Mon, Oct 21, 2024 at 2:13 AM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Sat 19-10-24 23:13:15, Yu Zhao wrote:
+> > > OOM kills due to vastly overestimated free highatomic reserves were
+> > > observed:
+> > >
+> > >   ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
+> > >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
+> > >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
+> > >
+> > > The second line above shows that the OOM kill was due to the following
+> > > condition:
+> > >
+> > >   free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
+> > >
+> > > And the third line shows there were no free pages in any
+> > > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+> > > 'H'. Therefore __zone_watermark_unusable_free() overestimated free
+> > > highatomic reserves. IOW, it underestimated the usable free memory by
+> > > over 1GB, which resulted in the unnecessary OOM kill.
+> >
+> > Why doesn't unreserve_highatomic_pageblock deal with this situation?
 > 
-> Make sure that, if it is ever called on a A2P, is logged and ignored.
-> 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> The current behavior of unreserve_highatomic_pageblock() seems WAI to
+> me: it unreserves highatomic pageblocks that contain *free* pages so
+> that those pages can become usable to others. There is nothing to
+> unreserve when they have no free pages.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+I do not follow. How can you have reserved highatomic pages of that size
+without having page blocks with free memory. In other words is this an
+accounting problem or reserves problem? This is not really clear from
+your description.
+
 -- 
-Florian
-
+Michal Hocko
+SUSE Labs
 
