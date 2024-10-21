@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-375024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47F79A8FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:33:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE669A8FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42106B2184F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F2F1F22F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E8D1FCC70;
-	Mon, 21 Oct 2024 19:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFF21FBF4C;
+	Mon, 21 Oct 2024 19:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucidpixels.com header.i=@lucidpixels.com header.b="QWCEMBXZ"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxvmOwlB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811E41D0DF6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D931D0F73;
+	Mon, 21 Oct 2024 19:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729539178; cv=none; b=Hkfvz5UIfaexNpZ68h/D54p5aYaGqKyR2rOaQrestMTgeNllHmQBhyLYlCjORO4x0hnuAvm381IrMD5+aLQYyQpfSAgaGK76LPgz2v+QU1hCuBsRNMlHF5wcA1n1MQOo4DlgAd38IbYgoYemt/GlPNkabao97turxztWyofJwRw=
+	t=1729539176; cv=none; b=qfNKsIcTXF8G6R0TIRGUD5U0WPT42EZ7xPMHdldKaN7HjMVioF+oIzDmX32LJdbz8/prrTl7U00bCenQYaWnN3h/k+T6xQB+8Q3JdGxLE3xCC3w8WsO4Cl/uRdkypN0VcDZEuPHPV2RfwHOHom/obW/26/PgG3S9lHmDRFDVFIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729539178; c=relaxed/simple;
-	bh=GZIsr1ez1OJMfAG+rUQxooZP8oFuxCR0ltmyRxrRdUs=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fJY/EyIHvMeXTq4UOiuNx7PtCVQmEPnf/a0PvNI5DxYrBCHZc0cZS0tq+ewJZ4f538/LnaO4uuEEuZ4/DvQ2ES6tCV3/O6+iyDWhNq8miieQBFP2DlyiL+FRZr0PvWmTdGXK7LHwWwNazznoJBgV4a5Fu2+pyWFTmH0lggKphw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucidpixels.com; spf=pass smtp.mailfrom=lucidpixels.com; dkim=pass (1024-bit key) header.d=lucidpixels.com header.i=@lucidpixels.com header.b=QWCEMBXZ; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucidpixels.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucidpixels.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b161fa1c7bso172837585a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lucidpixels.com; s=google; t=1729539174; x=1730143974; darn=vger.kernel.org;
-        h=content-language:thread-index:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2GVCppwJPW/3fej0GoZi9mGivzxigOusl3CHD2WD+4=;
-        b=QWCEMBXZBUnq/2nFacnu/Kw8AzUaRL6NW1/GpUCZQFvAcD04nek09NQniVY1plVfhB
-         IjiBBRvlIFpc5Tq+tcUJnjH57CfS5puIEN82jWl+vjy+cRDhMqAShOPyi9z7vGkyCATb
-         8zRmqP1kqntY3yeWPDuERBTaIeB+47DjR4dJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729539174; x=1730143974;
-        h=content-language:thread-index:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2GVCppwJPW/3fej0GoZi9mGivzxigOusl3CHD2WD+4=;
-        b=UzmVFxHYMUsiXsuNJ7PG1JPQhCe6jfyHPUlUHuiZIWX06vWOH46f9W6uNYX3+pwoI/
-         VKY1AsPzcQLxXrU8xfe3U1QTCECwrMXjEiRf+Eq/N/F2i24bnhyNrcr+G1j1w5yWgKlC
-         lo/aufYwIPivPl7ZoB1qLayjrpj90hHo9DInKTew68s8piRHoMsb6JNA2aMiP6nqjINX
-         LLLIFZGIgNgigHU7VDxXdIQqtBpvFPuZktaVh7RRUMfkJPnUdrwdOGEMg6BqpH5FP8o8
-         /t3XS92gdomeKP9Jpz0wGArIa+pzGQJSld0XLkdy0CR5kdZP7qjKT1nK7xp/z3LU8+8/
-         GEKw==
-X-Gm-Message-State: AOJu0YxQHFji36qDEtzwgZf47xcEbOOoqBUKX2RuXmbsZVRMlrjdLZTO
-	m2XA+bOkP0uEeatIPMe3J9PH7Nb1osUE76WRPUvk4iI/KPArZHXwgETRWA+S3Mo=
-X-Google-Smtp-Source: AGHT+IFJ3WqDcwIYE7co1JSkBL9YNNro7rq4BjC8xcyxEEpJDeP8WVitGSQTYHW0+4k012/JKdJaEw==
-X-Received: by 2002:a05:6214:5785:b0:6cb:3a1f:e47b with SMTP id 6a1803df08f44-6cde163e394mr146391696d6.52.1729539174295;
-        Mon, 21 Oct 2024 12:32:54 -0700 (PDT)
-Received: from WARPC (pool-96-241-42-78.washdc.fios.verizon.net. [96.241.42.78])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008fb113sm20601656d6.34.2024.10.21.12.32.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2024 12:32:53 -0700 (PDT)
-From: "Justin Piszcz" <jpiszcz@lucidpixels.com>
-To: "'Bjorn Helgaas'" <helgaas@kernel.org>
-Cc: "'LKML'" <linux-kernel@vger.kernel.org>,
-	<linux-nvme@lists.infradead.org>
-References: <CAO9zADza=73GsuzAcuyH-YfhS34qjkDtuJjGBReVGpfE6KN_ow@mail.gmail.com> <20241021191426.GA842491@bhelgaas>
-In-Reply-To: <20241021191426.GA842491@bhelgaas>
-Subject: RE: 6.1.0-17: nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0xffff
-Date: Mon, 21 Oct 2024 15:32:52 -0400
-Message-ID: <009a01db23f0$053c4240$0fb4c6c0$@lucidpixels.com>
+	s=arc-20240116; t=1729539176; c=relaxed/simple;
+	bh=gD0ZzmIV4/MlGmBFySRwVIU98Rh6f1sZhpdiCLGXqRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcgsnIuxCKeRfB8YDQ0P9aRBRHUo38TfgtwRuUnqPq5sF79YZG1msk/ucSv6HY6uxZoWZa/3ORPHejcxWcQqkeK01oNCirwquZOvbHmCCp+rdHivBqyUhX8mq3wIrJrlR0l7c05847/LVpPLSx426LCMdv7TZ6hZqeyV+Y+HKJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxvmOwlB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 565E5C4CEC3;
+	Mon, 21 Oct 2024 19:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729539175;
+	bh=gD0ZzmIV4/MlGmBFySRwVIU98Rh6f1sZhpdiCLGXqRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XxvmOwlBbLAX+xo8z1ab8vZL4BACarSmTkN6zt0cPNNSShyJMRr+DJyyfrMjdQ669
+	 pTRTgse8o7rOOFXN061RSxBGlZ8P6b2lC6ygE3Loj5BzBjBsW4wk4UCGkJRLHcjQ5i
+	 H4ZSC+i6vNs6XTKAmunYtdmYFzRImMJ7O800DbTt/ZCqqE9pWdIIDXuoTO47AgFmPl
+	 C6J2Z1J5Yk3vy5q4ynjhwstIeZv5TI7utkBC4W3RbeHoZiFw8JzjncjUFXgmAdbGzR
+	 sq66sy8LKoQcL1gfEw+IG2PbqaGVPyWNTJ+lc4ifiQEWSX4s00sudm6CaGXzmKGTJJ
+	 4SQucOUubnD4g==
+Date: Mon, 21 Oct 2024 14:32:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+	quic_jesszhan@quicinc.com, mchehab@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+	tomi.valkeinen@ideasonboard.com, quic_bjorande@quicinc.com,
+	geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de,
+	nfraprado@collabora.com, thierry.reding@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org,
+	marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH v3 08/15] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Message-ID: <20241021193254.GA1000195-robh@kernel.org>
+References: <20241021064446.263619-1-victor.liu@nxp.com>
+ <20241021064446.263619-9-victor.liu@nxp.com>
+ <y6xpffdtpd4baczoatbotghhes3owh44tzdqvdgv3id4jj6jhj@nrqjn6d3wndx>
+ <8f63ae16-f484-401c-a3e7-6c12a2343cc3@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJbLZb6GXTkCANLpCNg8vjWR72cxrGRg5IA
-Content-Language: en-us
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f63ae16-f484-401c-a3e7-6c12a2343cc3@nxp.com>
 
-
-
------Original Message-----
-From: Bjorn Helgaas <helgaas@kernel.org> 
-Sent: Monday, October 21, 2024 3:14 PM
-To: Justin Piszcz <jpiszcz@lucidpixels.com>
-Cc: LKML <linux-kernel@vger.kernel.org>; linux-nvme@lists.infradead.org
-Subject: Re: 6.1.0-17: nvme nvme0: controller is down; will reset:
-CSTS=0xffffffff, PCI_STATUS=0xffff
-
-On Fri, Jan 05, 2024 at 09:49:58AM -0500, Justin Piszcz wrote:
-> Hello,
+On Mon, Oct 21, 2024 at 04:19:52PM +0800, Liu Ying wrote:
+> On 10/21/2024, Krzysztof Kozlowski wrote:
+> > On Mon, Oct 21, 2024 at 02:44:39PM +0800, Liu Ying wrote:
+> >> Dual-link LVDS displays receive odd pixels and even pixels separately from
+> >> dual LVDS links.  One link receives odd pixels and the other receives even
+> >> pixels.  Some of those displays may also use only one LVDS link to receive
+> >> all pixels, being odd and even agnostic.  Document common properties for
+> >> those displays by extending LVDS display common properties defined in
+> >> lvds.yaml.
+> >>
+> >> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >> ---
+> >> v3:
+> >> * New patch.  (Dmitry)
+> >>
+> >>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
+> >>  1 file changed, 76 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >> new file mode 100644
+> >> index 000000000000..0ac4c06d0a17
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >> @@ -0,0 +1,76 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Dual-link LVDS Display Common Properties
+> >> +
+> >> +maintainers:
+> >> +  - Liu Ying <victor.liu@nxp.com>
+> >> +
+> >> +description: |
+> >> +  This binding documents common properties for LVDS displays with dual LVDS
+> > 
+> > s/This binding documents//
 > 
-> Distribution: Debian Stable x86-64
-> Kernel: 6.1.0-17
+> Ack.
 > 
-> Reporting this as requested from the kernel message, I have now
-> appended the recommended kernel boot parameters
-> nvme_core.default_ps_max_latency_us=0 pcie_aspm=off and will see if
-> this recurs.
-
-Hi Justin, did anything ever come of this report?  Is it reproducible?
-Did it seem to be related to suspend/resume?
-
-[ ..] 
-
+> > 
+> > But anyway there is a binding for common properties used in dual-link
+> > panels: panel-common-dual. How is it different? Why this is not suitable
+> > there? Why entirely different file name?
 > 
-> Regards,
-> Justin
+> This one references lvds.yaml, which allows data-mapping and data-mirror.
+> They are not something common for dual-link panels.
+> 
+> Also, this one is supposed to cover all dual-link LVDS displays including
+> display panels and display bridges, while pane-common-dual.yaml is for
+> panels only.
 
-Yes-- this turned out to be the result of the Intel i9 13900k/14900k known
-CPU failure/bug issue.  After working with Intel to replace the failing
-i9-14900k with a replacement unit, everything has been rock solid without
-any issues yet, running the new 0x12b microcode as of 10/21/2024.  This is
-the first time I have seen stack smashing/NVME errors due to a CPU failing
-but that is what it was, I have not seen a single instance of this error
-after replacing the CPU.
+That's all fine, but refactor what is there, don't just duplicate 
+things.
 
-Three is a more detailed account of the issue that I posted here:
-https://forum.level1techs.com/t/debian-linux-stable-on-pro-ws-w680-ace-ipmi-
-application-segfaults-kernel-panic/212854/8
+If we have the same property name defined (with a type) in 2 or more 
+places, then that's a problem.
 
-Regards,
-Justin
-
-
-
-
+Rob
 
