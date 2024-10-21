@@ -1,152 +1,328 @@
-Return-Path: <linux-kernel+bounces-373976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA389A601A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9029A601F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B90B28E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA3A1C219B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF001E32CA;
-	Mon, 21 Oct 2024 09:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="di5V5vWq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A201E3DC9;
+	Mon, 21 Oct 2024 09:32:47 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5B01E32C6;
-	Mon, 21 Oct 2024 09:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B511E376B;
+	Mon, 21 Oct 2024 09:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503127; cv=none; b=jM6cRkuIVDKs6Dd/TU+ptXDt6JgKYZXpATn5qId50QpZR//+Jul7prm8+M8aY5sUV/0h8QG3erv3VBkKxv/UmCjPa6tn/PrH3TQ3qyVmvrt5ojaCiVD0AeZuHEQ0D1z8rS/JaqTTfGQe+8kGEskUc8g4V4Frq5oX8gFwoUZWt5c=
+	t=1729503166; cv=none; b=MJ8tSAJFf88srdNoEuErvHzv1GhbgN01CcFRSlL9kJ4xaCwhFmyE6yOUhH0fVheTfPw/BKpcnD6kjUBmEy9qkG0WG00hpqrqIcaBI+TXJNb5BS7h4tGlbvZIiagNggDUswOObLy1GECdoSKnAegY4eKJqAVq/8NrAhPSlXKB7TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503127; c=relaxed/simple;
-	bh=o9GSQ+2j89yvUpyu6yj/PhTEqoO1iN3ay/vQtVCBN8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axAYZX82Z3uGZPIBurRewJBHELGfLWnK4EjWugcPKP4KKNi8SPLUO98hWvTIUrUB2x0ekOrN+2qjyryZlPvOS0zYwNhmo2plmydpsx2nzBw1X09QmoFWLtBe+POMhmfc1J2PUJPCw1qz1VlDm5BsmAJA1X/ZVDQ/5phdJ7e6j1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=di5V5vWq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F3ADC4CEC3;
-	Mon, 21 Oct 2024 09:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729503126;
-	bh=o9GSQ+2j89yvUpyu6yj/PhTEqoO1iN3ay/vQtVCBN8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=di5V5vWqwW+KJSZ7QJGLtQSJW0Cp6BUJCqjmfGS/DJ4h5D0mydS5i5fzg7+evEXUC
-	 +ZgXk+9SmieeSU+4VBrLXuTxQdT07bMalBh28OC7N0vUha/ZD5EpFsPDxuwm4hFtsY
-	 I9/A+bbqQX7QIqjBFs7l4vKNMmlxsSWXO1CcXtl3TdoOMHq9FgqacMomDbajJPW1xc
-	 mKHf5ZpCaVs7588P7ZgikGDOII4AyTOMT6pV7JbFltZQfU5WcamZLtT6f37aSo7WwR
-	 1MAeb/ORrpd7n/q1gfqWyxpoTNQGkFK22lXZXrCWJr2mHi6wAx3R1XWKsTFI2PP+xp
-	 IYjQuAhVIdouw==
-Date: Mon, 21 Oct 2024 11:32:03 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 1/6] drm/display: hdmi: add generic mode_valid helper
-Message-ID: <20241021-chubby-fascinating-labradoodle-144990@houat>
-References: <20241018-hdmi-mode-valid-v1-0-6e49ae4801f7@linaro.org>
- <20241018-hdmi-mode-valid-v1-1-6e49ae4801f7@linaro.org>
+	s=arc-20240116; t=1729503166; c=relaxed/simple;
+	bh=eIUXnt/ABmUvP35d3vsYEMPzCW8J7Xh+nToDlaB4hK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UxTpUholZvo/pdFwROE7m9YX0+r7wR2B0E3oNxt+D86sMqiSafraynwuBeXhplpnKhjvZ+4xtL8ctd3d/ODvZIugun3jjeK1Xv2EPcCa/2Xzgvuct7ELuZ9rM9CDw7M3S4P/5Ez1mHiPiWVrSVRpBPbTNQgleXo+kUN1aeWCYeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XX96L50bSzyTNV;
+	Mon, 21 Oct 2024 17:31:06 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id F327F1800DB;
+	Mon, 21 Oct 2024 17:32:35 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 21 Oct 2024 17:32:35 +0800
+Message-ID: <6f9840b3-66c4-485e-b6bb-baeaa641e720@huawei.com>
+Date: Mon, 21 Oct 2024 17:32:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ifj5lbqztqmt6mh7"
-Content-Disposition: inline
-In-Reply-To: <20241018-hdmi-mode-valid-v1-1-6e49ae4801f7@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v22 13/14] mm: page_frag: update documentation
+ for page_frag
+To: Bagas Sanjaya <bagasdotme@gmail.com>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
+	<alexander.duyck@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>
+References: <20241018105351.1960345-1-linyunsheng@huawei.com>
+ <20241018105351.1960345-14-linyunsheng@huawei.com>
+ <ZxTVRRecKRpna6Aj@archie.me>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <ZxTVRRecKRpna6Aj@archie.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
+On 2024/10/20 18:02, Bagas Sanjaya wrote:
 
---ifj5lbqztqmt6mh7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/6] drm/display: hdmi: add generic mode_valid helper
-MIME-Version: 1.0
+Thanks, will try my best to not miss any 'alloc' typo for doc patch
+next version:(
 
-On Fri, Oct 18, 2024 at 11:34:19PM +0300, Dmitry Baryshkov wrote:
-> Add drm_hdmi_connector_mode_valid(), generic helper for HDMI connectors.
-> It can be either used directly or as a part of the .mode_valid callback.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/display/drm_hdmi_helper.c | 25 +++++++++++++++++++++++++
->  include/drm/display/drm_hdmi_helper.h     |  4 ++++
->  2 files changed, 29 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/display/drm_hdmi_helper.c b/drivers/gpu/drm/=
-display/drm_hdmi_helper.c
-> index 74dd4d01dd9b..0ac5cb000ee2 100644
-> --- a/drivers/gpu/drm/display/drm_hdmi_helper.c
-> +++ b/drivers/gpu/drm/display/drm_hdmi_helper.c
-> @@ -256,3 +256,28 @@ drm_hdmi_compute_mode_clock(const struct drm_display=
-_mode *mode,
->  	return DIV_ROUND_CLOSEST_ULL(clock * bpc, 8);
->  }
->  EXPORT_SYMBOL(drm_hdmi_compute_mode_clock);
-> +
-> +/**
-> + * drm_hdmi_connector_mode_valid() - Check if mode is valid for HDMI con=
-nector
-> + * @connector: DRM connector to validate the mode
-> + * @mode: Display mode to validate
-> + *
-> + * Generic .mode_valid implementation for HDMI connectors.
-> + */
-> +enum drm_mode_status
-> +drm_hdmi_connector_mode_valid(const struct drm_connector *connector,
-> +			      const struct drm_display_mode *mode)
-> +{
-> +	const struct drm_connector_hdmi_funcs *funcs =3D connector->hdmi.funcs;
-> +	unsigned long long rate;
-> +
-> +	rate =3D drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
-> +	if (!rate)
-> +		return MODE_ERROR;
-> +
-> +	if (!funcs || !funcs->tmds_char_rate_valid)
-> +		return MODE_OK;
-> +
-> +	return funcs->tmds_char_rate_valid(connector, mode, rate);
-> +}
-> +EXPORT_SYMBOL(drm_hdmi_connector_mode_valid);
-
-As discussed in the discussion that sparked that change, I believe that
-we should use hdmi_clock_valid.
-
-AFAIU, your concern was that max_tmds_clock might get stale, but then it
-would not only prevent mode_valid from running but also the commit
-entirely.
-
-We don't have any evidence from that, so I'd rather try to keep
-consistency between the two. And we can always try to address whatever
-issue we might have if it turned out to be a bad idea :)
-
-Maxime
-
---ifj5lbqztqmt6mh7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxYfkwAKCRAnX84Zoj2+
-dmkBAX4jObYHXj/SHbJRC5WTl3MBXQxOAgkEQpbyhFO5V+xPAbvV698NYOoHdja5
-FBhM/noBfRcjFfvP1ocpWgpWF2Z6tm439LxZtf87jWDk62fy3ha3vmEp6ZNWbC44
-1jIzo18utA==
-=2ErT
------END PGP SIGNATURE-----
-
---ifj5lbqztqmt6mh7--
+> On Fri, Oct 18, 2024 at 06:53:50PM +0800, Yunsheng Lin wrote:
+>> diff --git a/Documentation/mm/page_frags.rst b/Documentation/mm/page_frags.rst
+>> index 503ca6cdb804..7fd9398aca4e 100644
+>> --- a/Documentation/mm/page_frags.rst
+>> +++ b/Documentation/mm/page_frags.rst
+>> @@ -1,3 +1,5 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +
+>>  ==============
+>>  Page fragments
+>>  ==============
+>> @@ -40,4 +42,176 @@ page via a single call.  The advantage to doing this is that it allows for
+>>  cleaning up the multiple references that were added to a page in order to
+>>  avoid calling get_page per allocation.
+>>  
+>> -Alexander Duyck, Nov 29, 2016.
+>> +
+>> +Architecture overview
+>> +=====================
+>> +
+>> +.. code-block:: none
+>> +
+>> +                      +----------------------+
+>> +                      | page_frag API caller |
+>> +                      +----------------------+
+>> +                                  |
+>> +                                  |
+>> +                                  v
+>> +    +------------------------------------------------------------------+
+>> +    |                   request page fragment                          |
+>> +    +------------------------------------------------------------------+
+>> +             |                                 |                     |
+>> +             |                                 |                     |
+>> +             |                          Cache not enough             |
+>> +             |                                 |                     |
+>> +             |                         +-----------------+           |
+>> +             |                         | reuse old cache |--Usable-->|
+>> +             |                         +-----------------+           |
+>> +             |                                 |                     |
+>> +             |                             Not usable                |
+>> +             |                                 |                     |
+>> +             |                                 v                     |
+>> +        Cache empty                   +-----------------+            |
+>> +             |                        | drain old cache |            |
+>> +             |                        +-----------------+            |
+>> +             |                                 |                     |
+>> +             v_________________________________v                     |
+>> +                              |                                      |
+>> +                              |                                      |
+>> +             _________________v_______________                       |
+>> +            |                                 |              Cache is enough
+>> +            |                                 |                      |
+>> + PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE         |                      |
+>> +            |                                 |                      |
+>> +            |               PAGE_SIZE >= PAGE_FRAG_CACHE_MAX_SIZE    |
+>> +            v                                 |                      |
+>> +    +----------------------------------+      |                      |
+>> +    | refill cache with order > 0 page |      |                      |
+>> +    +----------------------------------+      |                      |
+>> +      |                    |                  |                      |
+>> +      |                    |                  |                      |
+>> +      |              Refill failed            |                      |
+>> +      |                    |                  |                      |
+>> +      |                    v                  v                      |
+>> +      |      +------------------------------------+                  |
+>> +      |      |   refill cache with order 0 page   |                  |
+>> +      |      +----------------------------------=-+                  |
+>> +      |                       |                                      |
+>> + Refill succeed               |                                      |
+>> +      |                 Refill succeed                               |
+>> +      |                       |                                      |
+>> +      v                       v                                      v
+>> +    +------------------------------------------------------------------+
+>> +    |             allocate fragment from cache                         |
+>> +    +------------------------------------------------------------------+
+>> +
+>> +API interface
+>> +=============
+>> +As the design and implementation of page_frag API implies, the allocation side
+>> +does not allow concurrent calling. Instead it is assumed that the caller must
+>> +ensure there is not concurrent alloc calling to the same page_frag_cache
+>> +instance by using its own lock or rely on some lockless guarantee like NAPI
+>> +softirq.
+>> +
+>> +Depending on different aligning requirement, the page_frag API caller may call
+>> +page_frag_*_align*() to ensure the returned virtual address or offset of the
+>> +page is aligned according to the 'align/alignment' parameter. Note the size of
+>> +the allocated fragment is not aligned, the caller needs to provide an aligned
+>> +fragsz if there is an alignment requirement for the size of the fragment.
+>> +
+>> +Depending on different use cases, callers expecting to deal with va, page or
+>> +both va and page for them may call page_frag_alloc, page_frag_refill, or
+>> +page_frag_alloc_refill API accordingly.
+>> +
+>> +There is also a use case that needs minimum memory in order for forward progress,
+>> +but more performant if more memory is available. Using page_frag_*_prepare() and
+>> +page_frag_commit*() related API, the caller requests the minimum memory it needs
+>> +and the prepare API will return the maximum size of the fragment returned. The
+>> +caller needs to either call the commit API to report how much memory it actually
+>> +uses, or not do so if deciding to not use any memory.
+>> +
+>> +.. kernel-doc:: include/linux/page_frag_cache.h
+>> +   :identifiers: page_frag_cache_init page_frag_cache_is_pfmemalloc
+>> +		  __page_frag_alloc_align page_frag_alloc_align page_frag_alloc
+>> +		 __page_frag_refill_align page_frag_refill_align
+>> +		 page_frag_refill __page_frag_refill_prepare_align
+>> +		 page_frag_refill_prepare_align page_frag_refill_prepare
+>> +		 __page_frag_alloc_refill_prepare_align
+>> +		 page_frag_alloc_refill_prepare_align
+>> +		 page_frag_alloc_refill_prepare page_frag_alloc_refill_probe
+>> +		 page_frag_refill_probe page_frag_commit
+>> +		 page_frag_commit_noref page_frag_alloc_abort
+>> +
+>> +.. kernel-doc:: mm/page_frag_cache.c
+>> +   :identifiers: page_frag_cache_drain page_frag_free
+>> +		 __page_frag_alloc_refill_probe_align
+>> +
+>> +Coding examples
+>> +===============
+>> +
+>> +Initialization and draining API
+>> +-------------------------------
+>> +
+>> +.. code-block:: c
+>> +
+>> +   page_frag_cache_init(nc);
+>> +   ...
+>> +   page_frag_cache_drain(nc);
+>> +
+>> +
+>> +Allocation & freeing API
+>> +------------------------
+>> +
+>> +.. code-block:: c
+>> +
+>> +    void *va;
+>> +
+>> +    va = page_frag_alloc_align(nc, size, gfp, align);
+>> +    if (!va)
+>> +        goto do_error;
+>> +
+>> +    err = do_something(va, size);
+>> +    if (err) {
+>> +        page_frag_abort(nc, size);
+>> +        goto do_error;
+>> +    }
+>> +
+>> +    ...
+>> +
+>> +    page_frag_free(va);
+>> +
+>> +
+>> +Preparation & committing API
+>> +----------------------------
+>> +
+>> +.. code-block:: c
+>> +
+>> +    struct page_frag page_frag, *pfrag;
+>> +    bool merge = true;
+>> +    void *va;
+>> +
+>> +    pfrag = &page_frag;
+>> +    va = page_frag_alloc_refill_prepare(nc, 32U, pfrag, GFP_KERNEL);
+>> +    if (!va)
+>> +        goto wait_for_space;
+>> +
+>> +    copy = min_t(unsigned int, copy, pfrag->size);
+>> +    if (!skb_can_coalesce(skb, i, pfrag->page, pfrag->offset)) {
+>> +        if (i >= max_skb_frags)
+>> +            goto new_segment;
+>> +
+>> +        merge = false;
+>> +    }
+>> +
+>> +    copy = mem_schedule(copy);
+>> +    if (!copy)
+>> +        goto wait_for_space;
+>> +
+>> +    err = copy_from_iter_full_nocache(va, copy, iter);
+>> +    if (err)
+>> +        goto do_error;
+>> +
+>> +    if (merge) {
+>> +        skb_frag_size_add(&skb_shinfo(skb)->frags[i - 1], copy);
+>> +        page_frag_commit_noref(nc, pfrag, copy);
+>> +    } else {
+>> +        skb_fill_page_desc(skb, i, pfrag->page, pfrag->offset, copy);
+>> +        page_frag_commit(nc, pfrag, copy);
+>> +    }
+> 
+> Looks good.
+> 
+>> +/**
+>> + * page_frag_cache_is_pfmemalloc() - Check for pfmemalloc.
+>> + * @nc: page_frag cache from which to check
+>> + *
+>> + * Used to check if the current page in page_frag cache is allocated from the
+> "Check if ..."
+>> + * pfmemalloc reserves. It has the same calling context expectation as the
+>> + * allocation API.
+>> + *
+>> + * Return:
+>> + * true if the current page in page_frag cache is allocated from the pfmemalloc
+>> + * reserves, otherwise return false.
+>> + */
+>> <snipped>...
+>> +/**
+>> + * page_frag_alloc() - Allocate a page fragment.
+>> + * @nc: page_frag cache from which to allocate
+>> + * @fragsz: the requested fragment size
+>> + * @gfp_mask: the allocation gfp to use when cache need to be refilled
+>> + *
+>> + * Alloc a page fragment from page_frag cache.
+> "Allocate a page fragment ..."
+>> + *
+>> + * Return:
+>> + * virtual address of the page fragment, otherwise return NULL.
+>> + */
+>>  static inline void *page_frag_alloc(struct page_frag_cache *nc,
+>> <snipped>...
+>> +/**
+>> + * __page_frag_refill_prepare_align() - Prepare refilling a page_frag with
+>> + * aligning requirement.
+>> + * @nc: page_frag cache from which to refill
+>> + * @fragsz: the requested fragment size
+>> + * @pfrag: the page_frag to be refilled.
+>> + * @gfp_mask: the allocation gfp to use when cache need to be refilled
+>> + * @align_mask: the requested aligning requirement for the fragment
+>> + *
+>> + * Prepare refill a page_frag from page_frag cache with aligning requirement.
+> "Prepare refilling ..."
+>> + *
+>> + * Return:
+>> + * True if prepare refilling succeeds, otherwise return false.
+>> + */
+>> <snipped>...
+>> +/**
+>> + * __page_frag_alloc_refill_probe_align() - Probe allocing a fragment and
+>> + * refilling a page_frag with aligning requirement.
+>> + * @nc: page_frag cache from which to allocate and refill
+>> + * @fragsz: the requested fragment size
+>> + * @pfrag: the page_frag to be refilled.
+>> + * @align_mask: the requested aligning requirement for the fragment.
+>> + *
+>> + * Probe allocing a fragment and refilling a page_frag from page_frag cache with
+> "Probe allocating..."
+>> + * aligning requirement.
+>> + *
+>> + * Return:
+>> + * virtual address of the page fragment, otherwise return NULL.
+>> + */
+> 
+> Thanks.
+> 
 
