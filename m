@@ -1,42 +1,75 @@
-Return-Path: <linux-kernel+bounces-373756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1989A5C18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:09:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E0C9A5C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2191C21C2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24FC8B214E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCE11D0F66;
-	Mon, 21 Oct 2024 07:09:26 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79631D0E34;
+	Mon, 21 Oct 2024 07:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gLqXulqC"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4531940A2;
-	Mon, 21 Oct 2024 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC2C19342A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494565; cv=none; b=QctpYKHUdeBab30ISW1CPObPwj5NyesSGzCv3ZxdThn+bR6+hmgJKkU9mttHFCft7fo1NulKXUv3OuHnJbsxSnjfR/YpnRfDDHpeawmMeil4zpkDr8XPYFAUqM+PIJZxgfHhvcSCi8brqcLErdOZC2euNeRZA5gA68FK3hE5xOU=
+	t=1729494205; cv=none; b=Ka3hvj9689Z2CHoXuf4ZF/Btnio91LlE3BAgk6Qj+H5XBF524ML+ZDNEul3oPu/Ayy9g61B37f0l7BE15GzKOKQ9WkmEUnFLwz7l83nco34/gBZhDQhJuyHZeAGlpLA78h4x2cu5957/W9epucZAnm+uHLh6AmfkYFG4ItIJuxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494565; c=relaxed/simple;
-	bh=BuMoBbEJv0QBFc+iaOOPJLqEUE148FEUiylWOCRFXpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixuSOk8Vqe4ESX7iRrsAkuSMr1J7nppyjhaAiX5GUZrz85852WBMHW3dApq8Ez0zhcUpp+uHM9lZthfBSvEMaEEwVaYRG3+Ccfc3Knbf7MvY0GMANGYWV8HXlHwsI4dQsSH8tfIqf2QpPODJBlmNwDoB9FDZc3r8lmVDwPFMVo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.224] (ip5f5ae835.dynamic.kabel-deutschland.de [95.90.232.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 92D0261E5FE05;
-	Mon, 21 Oct 2024 09:01:15 +0200 (CEST)
-Message-ID: <67d34216-e98b-43d9-afd1-2e73ffb71968@molgen.mpg.de>
-Date: Mon, 21 Oct 2024 09:01:14 +0200
+	s=arc-20240116; t=1729494205; c=relaxed/simple;
+	bh=F379lElRVu7HxDvdPdpg/zlfKl2lEZSVfvN7KwlPbJU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=d9Jg/N3ckWukSgeldjeVFPDWs0/2G/ev3+RS3pIUNMT3qcTgQYTg+Cfq2ysljfH99e6vM0CRammaNTrdeTYmrXFIzzjZ95gIZlUJ2e0vLc2etvv0ry2nRePoh7TjdsDZwt9/EhHRVXA+WY9bc6Dg/qotR5MpLi7/aOPN5fTVsig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gLqXulqC; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43169902057so16220065e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729494201; x=1730099001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eu/L5acXZ6kehGrgQS4A47YGp+iRAXR0fN/lynNp/p8=;
+        b=gLqXulqCLFqZpofAV3228D5cryhproGdBFqTK4OkFK87+p8rgJyJrZbvVy+hbEBgjr
+         KgOSF1Fwrkb5nwcGvLfH14n9zTLHZqd1FzGaFX+dPvY26ZVEee17adamG48N3Kqyai82
+         l8m/CnioPKWdj/ZKpzDBoi0LgyjCssti6vGTtRoiw1BYpWF78QXMiSNWOOy6xTgqFvCb
+         zziRcA/IWMuesmMH/t46B6a6r5Ftnixq4HkSXP0rWR8zRusuBbCVbGOKxKgbCXaxAoV8
+         RqIOOtJVU40+BcaYzBjQItbtbdEuDT13mjX9pLtaVrFffqfTXOFf64T4xVTq42CWo5wx
+         q8gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729494201; x=1730099001;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Eu/L5acXZ6kehGrgQS4A47YGp+iRAXR0fN/lynNp/p8=;
+        b=w7xmF6ZgCqHGt3KBvwiaWo7tWR81Lw2PR+ajPgcZPp/N/ujBSmrdlPSUy0ntfaVhk6
+         iFhFngaeCnbRuaJLA0FHxRGeTikMvTuuVfS52d1g2++R0pZw4+mwT9euWc9vLQe4/7VG
+         5YgjY/o9l/3GphZg0JTtLF4w9ujty+IGs2wtxigwqNpmzenben+uZgEXcfLi33A0uFrV
+         R5Mc7xYeQOvv3pw3FXVWBXrGc/jY0uGtYJDqVzn4T5QDJePclBCQA9m0f0BUk0L0TPCM
+         BrhS2/jy060tONnc9XdqLzIDLBqKJmxbvRdVO2DkGLCmCCGR45bdoJUIa7dE7wyRAQnd
+         aidQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhbhv9gmwofToiR315hiAuI2LQ2b+1V21A2t9Tjub8aJg7WvUWGuQnh/ForbpSIvKicqiwQ0C+zkA4qJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4P7Bsp89dhDiAgUpIyeWiDiHg2cAhHL2k0p5sdfshaNfz2h5d
+	Icr5vs7Gvs8jT77h9jC5G8IkUi1caYhGfCvXYaGyIrTHSAe0c5LBpYhRi1VWTXk=
+X-Google-Smtp-Source: AGHT+IEquOXJtCpDCiaiEVjBG44xHRbUXWdwz8dQTIixualcOzusqdMk+kqWWUagIYBM+cOziodO3A==
+X-Received: by 2002:a05:600c:4e0b:b0:431:58cd:b260 with SMTP id 5b1f17b1804b1-4316168ee2emr84347465e9.25.1729494200651;
+        Mon, 21 Oct 2024 00:03:20 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57102asm45946315e9.1.2024.10.21.00.03.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 00:03:20 -0700 (PDT)
+Message-ID: <162926b8-38f9-4e64-bd55-bf379ba44a6f@linaro.org>
+Date: Mon, 21 Oct 2024 09:03:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,98 +77,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] i2c: npcm: Modify the client address assignment
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com, wsa@kernel.org,
- rand.sec96@gmail.com, wsa+renesas@sang-engineering.com,
- tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
- KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
- openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021062732.5592-1-kfting@nuvoton.com>
- <20241021062732.5592-3-kfting@nuvoton.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20241021062732.5592-3-kfting@nuvoton.com>
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/6] phy: qualcomm: qmp-combo: add support for SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241019-sar2130p-phys-v1-0-bf06fcea2421@linaro.org>
+ <20241019-sar2130p-phys-v1-3-bf06fcea2421@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241019-sar2130p-phys-v1-3-bf06fcea2421@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Tyrone,
-
-
-Thank you for your patch.
-
-Am 21.10.24 um 08:27 schrieb Tyrone Ting:
-> From: Tyrone Ting <kfting@nuvoton.com>
+On 19/10/2024 17:44, Dmitry Baryshkov wrote:
+> Extend the USB+DP combo QMP PHY driver to support the SAR2130P platform.
+> It mosly follows the SM8550 QMP PHY, but the QSERDES programming
+> differs, most likely because of the parent clock rate differences.
 > 
-> Store the client address earlier since it might get called in
-> the i2c_recover_bus() logic flow at the early stage of
-> npcm_i2c_master_xfer().
-
-Thank you for the description. For the summary/title it’d be great, if 
-you were more specific. For example:
-
-i2c: npcm: Assign client address earlier for `i2c_recover_bus()`
-
-It’d be great if you noted the commit, your patch fixes, so it’s clear 
-since when the problem has been present.
-
-> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-> Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+> NOTE: The DP part wasn't yet tested, but it is not possible to support
+> just the USB part of the PHY. DP part might require additional fixes
+> later.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->   drivers/i2c/busses/i2c-npcm7xx.c | 20 +++++++++++++++++++-
->   1 file changed, 19 insertions(+), 1 deletion(-)
+>   drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 100 ++++++++++++++++++++++++++++++
+>   1 file changed, 100 insertions(+)
 > 
-> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-> index c96a25d37c14..a9a9b21f1f0b 100644
-> --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> @@ -2155,6 +2155,16 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> index 643045c9024eaa5de81f64ecfd10ff8845faf120..05ec1a0226460d23873db1dfe9dcbc6ce1953b2e 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> @@ -400,6 +400,57 @@ static const struct qmp_phy_init_tbl qmp_v3_usb3_pcs_tbl[] = {
+>   	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
+>   };
 >   
->   	} while (time_is_after_jiffies(time_left) && bus_busy);
->   
-> +	/*
-> +	 * Previously, the 7-bit address was stored and being converted to
-> +	 * the address of event in the following call to npcm_i2c_master_start_xmit().
-> +	 *
-> +	 * Since there are cases that the i2c_recover_bus() gets called at the
-> +	 * early stage of npcm_i2c_master_xfer(), the address of event is stored
-> +	 * and then used in the i2c_recover_bus().
-> +	 */
-> +	bus->dest_addr = i2c_8bit_addr_from_msg(msg0);
+> +static const struct qmp_phy_init_tbl sar2130p_usb3_serdes_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE1, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE1, 0x0e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE1, 0x02),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE1, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE1, 0x36),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORECLK_DIV_MODE1, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE1, 0x2e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE1, 0x82),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE1, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MSB_MODE1, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE1, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE1, 0xd5),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE1, 0x05),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_HSCLK_SEL_1, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE1_MODE1, 0x25),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE2_MODE1, 0x02),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE1_MODE1, 0xb7),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE2_MODE1, 0x1e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE1_MODE0, 0xb7),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE2_MODE0, 0x1e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE0, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE0, 0x0e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE0, 0x02),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE0, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE0, 0x36),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE0, 0x12),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE0, 0x34),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE0, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MSB_MODE0, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE0, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE0, 0xd5),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE0, 0x05),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE1_MODE0, 0x25),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE2_MODE0, 0x02),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BG_TIMER, 0x0e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_EN_CENTER, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER1, 0x31),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER2, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_BUF_ENABLE, 0x0c),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_EN_SEL, 0x1a),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP_CFG, 0x14),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE_MAP, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORE_CLK_EN, 0x20),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CMN_CONFIG_1, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_1, 0xb6),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_2, 0x4b),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_3, 0x37),
+> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_ADDITIONAL_MISC, 0x0c),
+> +};
 > +
->   	/*
->   	 * Check the BER (bus error) state, when ber_state is true, it means that the module
->   	 * detects the bus error which is caused by some factor like that the electricity
-> @@ -2165,6 +2175,15 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->   	 * bus is busy.
->   	 */
->   	if (bus_busy || bus->ber_state) {
-> +		/*
-> +		 * Since the transfer might be a read operation, remove the I2C_M_RD flag
-> +		 * from the bus->dest_addr for the i2c_recover_bus() call later.
-> +		 *
-> +		 * The i2c_recover_bus() uses the address in a write direction to recover
-> +		 * the i2c bus if some error condition occurs.
-> +		 */
-> +		bus->dest_addr &= ~I2C_M_RD;
-> +
->   		iowrite8(NPCM_I2CCST_BB, bus->reg + NPCM_I2CCST);
->   		npcm_i2c_reset(bus);
->   		i2c_recover_bus(adap);
-> @@ -2172,7 +2191,6 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->   	}
+>   static const struct qmp_phy_init_tbl sm6350_usb3_rx_tbl[] = {
+>   	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+>   	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x0f),
+> @@ -1730,6 +1781,51 @@ static const struct qmp_combo_offsets qmp_combo_offsets_v5 = {
+>   	.dp_dp_phy	= 0x2200,
+>   };
 >   
->   	npcm_i2c_init_params(bus);
-> -	bus->dest_addr = slave_addr;
->   	bus->msgs = msgs;
->   	bus->msgs_num = num;
->   	bus->cmd_err = 0;
+> +static const struct qmp_phy_cfg sar2130p_usb3dpphy_cfg = {
+> +	.offsets		= &qmp_combo_offsets_v3,
+> +
+> +	.serdes_tbl		= sar2130p_usb3_serdes_tbl,
+> +	.serdes_tbl_num		= ARRAY_SIZE(sar2130p_usb3_serdes_tbl),
+> +	.tx_tbl			= sm8550_usb3_tx_tbl,
+> +	.tx_tbl_num		= ARRAY_SIZE(sm8550_usb3_tx_tbl),
+> +	.rx_tbl			= sm8550_usb3_rx_tbl,
+> +	.rx_tbl_num		= ARRAY_SIZE(sm8550_usb3_rx_tbl),
+> +	.pcs_tbl		= sm8550_usb3_pcs_tbl,
+> +	.pcs_tbl_num		= ARRAY_SIZE(sm8550_usb3_pcs_tbl),
+> +	.pcs_usb_tbl		= sm8550_usb3_pcs_usb_tbl,
+> +	.pcs_usb_tbl_num	= ARRAY_SIZE(sm8550_usb3_pcs_usb_tbl),
+> +
+> +	.dp_serdes_tbl		= qmp_v6_dp_serdes_tbl,
+> +	.dp_serdes_tbl_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl),
+> +	.dp_tx_tbl		= qmp_v6_dp_tx_tbl,
+> +	.dp_tx_tbl_num		= ARRAY_SIZE(qmp_v6_dp_tx_tbl),
+> +
+> +	.serdes_tbl_rbr		= qmp_v6_dp_serdes_tbl_rbr,
+> +	.serdes_tbl_rbr_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_rbr),
+> +	.serdes_tbl_hbr		= qmp_v6_dp_serdes_tbl_hbr,
+> +	.serdes_tbl_hbr_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr),
+> +	.serdes_tbl_hbr2	= qmp_v6_dp_serdes_tbl_hbr2,
+> +	.serdes_tbl_hbr2_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr2),
+> +	.serdes_tbl_hbr3	= qmp_v6_dp_serdes_tbl_hbr3,
+> +	.serdes_tbl_hbr3_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr3),
+> +
+> +	.swing_hbr_rbr		= &qmp_dp_v5_voltage_swing_hbr_rbr,
+> +	.pre_emphasis_hbr_rbr	= &qmp_dp_v6_pre_emphasis_hbr_rbr,
+> +	.swing_hbr3_hbr2	= &qmp_dp_v5_voltage_swing_hbr3_hbr2,
+> +	.pre_emphasis_hbr3_hbr2 = &qmp_dp_v5_pre_emphasis_hbr3_hbr2,
+> +
+> +	.dp_aux_init		= qmp_v4_dp_aux_init,
+> +	.configure_dp_tx	= qmp_v4_configure_dp_tx,
+> +	.configure_dp_phy	= qmp_v4_configure_dp_phy,
+> +	.calibrate_dp_phy	= qmp_v4_calibrate_dp_phy,
+> +
+> +	.regs			= qmp_v6_usb3phy_regs_layout,
+> +	.reset_list		= msm8996_usb3phy_reset_l,
+> +	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
+> +	.vreg_list		= qmp_phy_vreg_l,
+> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+> +};
+> +
+>   static const struct qmp_phy_cfg sc7180_usb3dpphy_cfg = {
+>   	.offsets		= &qmp_combo_offsets_v3,
+>   
+> @@ -3767,6 +3863,10 @@ static int qmp_combo_probe(struct platform_device *pdev)
+>   }
+>   
+>   static const struct of_device_id qmp_combo_of_match_table[] = {
+> +	{
+> +		.compatible = "qcom,sar2130p-qmp-usb3-dp-phy",
+> +		.data = &sar2130p_usb3dpphy_cfg,
+> +	},
+>   	{
+>   		.compatible = "qcom,sc7180-qmp-usb3-dp-phy",
+>   		.data = &sc7180_usb3dpphy_cfg,
+> 
 
-
-Kind regards,
-
-Paul
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
