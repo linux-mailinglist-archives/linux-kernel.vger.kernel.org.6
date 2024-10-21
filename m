@@ -1,397 +1,374 @@
-Return-Path: <linux-kernel+bounces-374546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910FA9A6BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6539A6BCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D673281562
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003231F22230
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565401F4726;
-	Mon, 21 Oct 2024 14:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC2B1F80AE;
+	Mon, 21 Oct 2024 14:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fs+EI15h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ckxi9FKy"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C221FA242
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9B1EBA1A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519891; cv=none; b=uPtKLYzpsi1lj8eIylE8rHde8fcwqejlKShTtL7yxEhX2ziHB2BPcUO1AGhoKrwZz5Bw5A70pzSUJhzQQ8bTd93wBVWGiK6IN4gy1NA9xLZmBvwWDMzVOHDaTOSF2XoyXRMdDJ7kAVa+V8aoJDG1ryCAEtZkkwwLYlnD+MZrRfE=
+	t=1729519951; cv=none; b=A2GXPWsxCW1TvZETmYYCAHjT/wlFC0Wf7AogE2ojxPgmJmK8CEwOEAHU7KjJWy7esPtFlTka3wOGSMOlX3R60WLt2DWmgSeKVvheRQvqWWdt6GttxRh7tzStSF6X5XlIbYbQrMvUUFlH9PiV7hJA95gKZkWIZnkjolsxVthYqRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519891; c=relaxed/simple;
-	bh=XkdqeatQDCxubXBfPkfBchjPnMYSbzeBn/G0Sha+xE0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WgMhdGtwE6vA+hDTg9svdXxsUZ4pFhXi4d1H4F5/kLg/0HueVS4xjCLGDBjJT3deB+L04E68Z8y/wpqhRXKvVx3y4M9sSXbm6/x9dNI6ZOzZeixvNzj2l63C97tWXeANrBZZ60/dvq74AonXPTJR8HT52QeJPbPXbw9ospZhzkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fs+EI15h; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729519889; x=1761055889;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=XkdqeatQDCxubXBfPkfBchjPnMYSbzeBn/G0Sha+xE0=;
-  b=Fs+EI15hBWGsLH0o/8FD7e9c9fB4cJ90xqH3fynBbbr2tHpRzJR3LsTA
-   Jh6Rw/97DOchkhUXShV0KZ9yolQEnL2iMdL3LebGFDpnCke/IQ2zEzE0x
-   Qt9QDIqt51OJ6GifzeQrOkAvbpghQgkPU0nrVjqKzqHSBvwVhr9vngDTD
-   Ddxi4nEE9AOPIOioSpYywKhHHgsSKgQNZO73IRAV9jM+ivAeqBbpYJ8Ok
-   6UWGbhOKrdqRJhOfdUcnDTeLTlwNAUnIm2YzsjH8HWme6dDaFUEhowws9
-   iHpN/zJxKKjqYVwlNz+mLLZ0dqbUiHt60s3BHnUU1aPS89oUd8EJ4c2mC
-   A==;
-X-CSE-ConnectionGUID: csYTh0xtS1WXlgMiw4b/Eg==
-X-CSE-MsgGUID: mGUjbL5UTDCQN7jR7cslbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="28445768"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="28445768"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:11:28 -0700
-X-CSE-ConnectionGUID: MuaBI2t+Sq+qsLRXTM36Fw==
-X-CSE-MsgGUID: O0WjhHM4SZKSfVvQ2Q2/3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="79484935"
-Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.222])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:11:25 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/edid: transition to passing struct cea_db * to
- cae_db_payload_len
-In-Reply-To: <CAJvTgAjb1h=1vn3MVNbTu=qrxf2zaG1RgF4jTM3uobTfpd9YRw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241011152929.10145-1-vamsikrishna.brahmajosyula@gmail.com>
- <87jze1y3mb.fsf@intel.com>
- <CAJvTgAjb1h=1vn3MVNbTu=qrxf2zaG1RgF4jTM3uobTfpd9YRw@mail.gmail.com>
-Date: Mon, 21 Oct 2024 17:11:21 +0300
-Message-ID: <87h695y29i.fsf@intel.com>
+	s=arc-20240116; t=1729519951; c=relaxed/simple;
+	bh=AjRBeWb78ciyAh/UJgkExb5iegYw7iPJuNoHvXMqzPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NMq/BQCsD9ZTChWX1AaEdDdafQqfWOueq8g0pxaW/q5cc4rK4FSSKJImlmHO1wEAzVuBteZB3QmFxFX1dGdS7qxyrW30zAkrykR+pIf4R/F0f5v765nriGUuLFZPOqI3tkCmfdYKxlxmRrppgwx/iI/a7LJ4ThxRNOdUmYjmsqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ckxi9FKy; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so15228005e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:12:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729519947; x=1730124747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ka3hxjKCObqVUOT391ctRJJwZEb+Srznv1xzHAnMKN0=;
+        b=ckxi9FKy96iEikdmKdIbuAR3uS6ggeUuTxA87aEwkHAkfNxdzaREs/IpAFy1XQq99y
+         KycD6AuXT+5A/DLRC7OojeOVlo0qUOPmASWKdoAmvmZAJJ0Nh9htwPUv2xmiPIsD1CfA
+         1jrqJMny/JgC4JBuBMm8/jvEoZSW5xVGMzvuJaDfX4TMSxiQbdyLAbcTubEsfjwaUgur
+         16CuZH9HsSg3OppR0+7K2NDSQhaTPXhbuR00HcIP1m9uX/2Ph4k6HhSCK1vE86lv1L32
+         aXVIxm41hiAWPA16nl6Mop28jA+8y7vrhUvNUI8fHamwgntJVGNNBGM0EVnSzaaoWA2o
+         xuzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729519947; x=1730124747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ka3hxjKCObqVUOT391ctRJJwZEb+Srznv1xzHAnMKN0=;
+        b=MO0g7aUjR7c08JqQn5Edci1UdhA6lI4VItR6trIpkeTXHJ/QniLRYxqqkKnvtvi7cr
+         oGiPFQIwQHLb1WJqZ69EKtBgOR0xIfaCQwPyjPiphiu24IOdeOYhoTO8P+Dj0jcQbzyJ
+         Osu9WxyjepZ5faF5ECqV44iSbgRC1a7TSDVf9JqOxl1A5g+hIF8n2E1IGk7ff2eJQRaW
+         x+FjZ5IOtwGHvZjItoPpb2C46QSPYGLu7iHi5R8M/rMrx7yUih3xg9iRd5kJgTQ4ACz4
+         0IoxQkv9ZuVUt4v5GNmlBD/QNlnUAk7H+YTsOePof9A5kSu23wkcO+Jf8su9t5S8SuUj
+         fjGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAn0JeFaI3gEVayWRFV4oLImy6Y+tON9Kpl/QMgB5Kp96MvIs9FG0LDqKQItY5eDi04WLiFOp38yUxDY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsElAuozn5YkBoChx2csMx2Iz1ckCd6tfuSQz2mC+xlEaapQxg
+	WHCDjJ7qOrbIZyHATQ1nM2yVF6hXeCvDYvk4JUAb7gy+QFePS9O8ioMqJuZTjEI=
+X-Google-Smtp-Source: AGHT+IFcvfX6oTke7Befxo55YoeCvk1P+g46qIpdYMHQ60AIWXOL2m9OTz9hasK+rZXnuFhMfl7DfQ==
+X-Received: by 2002:a05:600c:4f47:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-4317b8d662amr1183245e9.7.1729519945586;
+        Mon, 21 Oct 2024 07:12:25 -0700 (PDT)
+Received: from [192.168.0.157] ([82.76.204.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm4428320f8f.104.2024.10.21.07.12.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 07:12:24 -0700 (PDT)
+Message-ID: <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
+Date: Mon, 21 Oct 2024 15:12:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
+Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
+ tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-3-tudor.ambarus@linaro.org>
+ <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 21 Oct 2024, Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyul=
-a@gmail.com> wrote:
-> On Mon, Oct 21, 2024 at 7:12=E2=80=AFPM Jani Nikula <jani.nikula@linux.in=
-tel.com> wrote:
+Hi, Krzysztof,
+
+On 10/21/24 12:52 PM, Krzysztof Kozlowski wrote:
+> On 17/10/2024 18:36, Tudor Ambarus wrote:
+>> ACPM (Alive Clock and Power Manager) is a firmware that operates on the
+>> APM (Active Power Management) module that handles overall power management
+>> activities. ACPM and masters regard each other as independent
+>> hardware component and communicate with each other using mailbox messages
+>> and shared memory.
 >>
->> On Fri, 11 Oct 2024, Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajos=
-yula@gmail.com> wrote:
->> > Address the FIXME in cea_db_payload_len
->> >       Transition to passing struct cea_db * everywhere
+>> The mailbox channels are initialized based on the configuration data
+>> found at a specific offset into the shared memory (mmio-sram). The
+>> configuration data consists of channel id, message and queue lengths,
+>> pointers to the RX and TX queues which are also part of the SRAM, and
+>> whether RX works by polling or interrupts. All known clients of this
+>> driver are using polling channels, thus the driver implements for now
+>> just polling mode.
 >>
->> You've misunderstood the comment. The point is to pass struct cea_db *
->> around, not to stick to u8 * and drop calls to cea_db_payload_len().
+>> Add support for the exynos acpm core driver. Helper drivers will follow.
+>> These will construct the mailbox messages in the format expected by the
+>> firmware.
+> 
+> I skimmed through the driver and I do not understand why this is
+> firmware. You are implementing a mailbox provider/controller.
+
+In my case the mailbox hardware is used just to raise the interrupt to
+the other side. Then there's the SRAM which contains the channels
+configuration data and the TX/RX queues. The enqueue/deque is done
+in/from SRAM. This resembles a lot with drivers/firmware/arm_scmi/, see:
+
+drivers/firmware/arm_scmi/shmem.c
+drivers/firmware/arm_scmi/transports/mailbox.c
+
+After the SRAM and mailbox/transport code I'll come up with two helper
+drivers that construct the mailbox messages in the format expected by
+the firmware. There are 2 types of messages recognized by the ACPM
+firmware: PMIC and DVFS. The client drivers will use these helper
+drivers to prepare a specific message. Then they will use the mailbox
+core to send the message and they'll wait for the answer.
+
+This layered structure and the use of SRAM resembles with arm_scmi and
+made me think that the ACPM driver it's better suited for
+drivers/firmware. I'm opened for suggestions though.
+
+> 
+> I did not perform full review yet, just skimmed over the code. I will
+> take a look a bit later.
+> 
+
+No worries, thanks for doing it. I agree with all the suggestions from
+below and I'll address them after we get an agreement with Jassi on how
+to extend the mailbox core.
+
+More answers below.
+
 >>
-> Thank you for the response.
-> Would below be an acceptable change for the FIXME?
-> 1. Use a macro to extract length from  (db->tag_length & 0x1f)
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  drivers/firmware/Kconfig                    |   1 +
+>>  drivers/firmware/Makefile                   |   1 +
+>>  drivers/firmware/samsung/Kconfig            |  11 +
+>>  drivers/firmware/samsung/Makefile           |   3 +
+>>  drivers/firmware/samsung/exynos-acpm.c      | 703 ++++++++++++++++++++
+> 
+> Please add directory to the Samsung Exynos SoC maintainer entry. I also
+> encourage adding separate entry for the driver where you would be listed
+> as maintainer.
 
-No, why would you do that? We have the function.
+ok
 
-> 2. Pass struct cea_db * to all individual parsers
+> 
+> There is no firmware tree, so this will be going via Samsung SoC.
 
-Yes. Look at all callers of cea_db_payload_len() and propagate struct
-cea_db *db to them instead of u8 *db.
+I noticed afterwards, thanks.
 
-The related and relevant other FIXME comment is in drm_parse_cea_ext():
-
-	/* FIXME: convert parsers to use struct cea_db */
-
-That's where you should start. Some of the parsers already handle struct
-cea_db, and others need to use const u8 *data.
-
-Please don't cram all of this in one patch, probably start off function
-by function. It's easier to squash patches later than to split.
-Yes.
-
-> 3. Use db->data? / convert to u8 and use db[i] where needed.
-
-There's cea_db_data() for this. The slightly annoying part is that for
-extended tags and vendor blocks the "actual" data is at an offset. See
-for example drm_parse_hdmi_vsdb_video(). It's good that the len checks
-and db dereferences match, and that they match what's written in the
-spec, but it's a bit funny in the code. Maybe not something you need to
-worry about at this point.
-
-
-BR,
-Jani.
-
-
->
->> BR,
->> Jani.
+> 
+>>  include/linux/mailbox/exynos-acpm-message.h |  21 +
+>>  6 files changed, 740 insertions(+)
+>>  create mode 100644 drivers/firmware/samsung/Kconfig
+>>  create mode 100644 drivers/firmware/samsung/Makefile
+>>  create mode 100644 drivers/firmware/samsung/exynos-acpm.c
+>>  create mode 100644 include/linux/mailbox/exynos-acpm-message.h
 >>
->> >
->> > Precompute the payload length in drm_parse_cea_ext and pass to
->> > individual parsers to avoid casting struct cea_db pointer to u8
->> > pointer where length is needed.
->> >
->> > Since the type of payload length is inconsistent in the file,
->> > use u8, u16 where it was already in place, use int elsewhere.
->> >
->> > Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula=
-@gmail.com>
->> > ---
->> >  drivers/gpu/drm/drm_edid.c | 63 ++++++++++++++++----------------------
->> >  1 file changed, 27 insertions(+), 36 deletions(-)
->> >
->> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
->> > index 855beafb76ff..80442e8b8ac6 100644
->> > --- a/drivers/gpu/drm/drm_edid.c
->> > +++ b/drivers/gpu/drm/drm_edid.c
->> > @@ -4977,11 +4977,8 @@ static int cea_db_tag(const struct cea_db *db)
->> >       return db->tag_length >> 5;
->> >  }
->> >
->> > -static int cea_db_payload_len(const void *_db)
->> > +static int cea_db_payload_len(const struct cea_db *db)
->> >  {
->> > -     /* FIXME: Transition to passing struct cea_db * everywhere. */
->> > -     const struct cea_db *db =3D _db;
->> > -
->> >       return db->tag_length & 0x1f;
->> >  }
->> >
->> > @@ -5432,22 +5429,18 @@ static uint8_t hdr_metadata_type(const u8 *edi=
-d_ext)
->> >  }
->> >
->> >  static void
->> > -drm_parse_hdr_metadata_block(struct drm_connector *connector, const u=
-8 *db)
->> > +drm_parse_hdr_metadata_block(struct drm_connector *connector, const u=
-8 *db, const u16 payload_len)
->> >  {
->> > -     u16 len;
->> > -
->> > -     len =3D cea_db_payload_len(db);
->> > -
->> >       connector->hdr_sink_metadata.hdmi_type1.eotf =3D
->> >                                               eotf_supported(db);
->> >       connector->hdr_sink_metadata.hdmi_type1.metadata_type =3D
->> >                                               hdr_metadata_type(db);
->> >
->> > -     if (len >=3D 4)
->> > +     if (payload_len >=3D 4)
->> >               connector->hdr_sink_metadata.hdmi_type1.max_cll =3D db[4=
-];
->> > -     if (len >=3D 5)
->> > +     if (payload_len >=3D 5)
->> >               connector->hdr_sink_metadata.hdmi_type1.max_fall =3D db[=
-5];
->> > -     if (len >=3D 6) {
->> > +     if (payload_len >=3D 6) {
->> >               connector->hdr_sink_metadata.hdmi_type1.min_cll =3D db[6=
-];
->> >
->> >               /* Calculate only when all values are available */
->> > @@ -5457,20 +5450,18 @@ drm_parse_hdr_metadata_block(struct drm_connec=
-tor *connector, const u8 *db)
->> >
->> >  /* HDMI Vendor-Specific Data Block (HDMI VSDB, H14b-VSDB) */
->> >  static void
->> > -drm_parse_hdmi_vsdb_audio(struct drm_connector *connector, const u8 *=
-db)
->> > +drm_parse_hdmi_vsdb_audio(struct drm_connector *connector, const u8 *=
-db, u8 payload_len)
->> >  {
->> > -     u8 len =3D cea_db_payload_len(db);
->> > -
->> > -     if (len >=3D 6 && (db[6] & (1 << 7)))
->> > +     if (payload_len >=3D 6 && (db[6] & (1 << 7)))
->> >               connector->eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |=3D DRM_ELD=
-_SUPPORTS_AI;
->> >
->> > -     if (len >=3D 10 && hdmi_vsdb_latency_present(db)) {
->> > +     if (payload_len >=3D 10 && hdmi_vsdb_latency_present(db)) {
->> >               connector->latency_present[0] =3D true;
->> >               connector->video_latency[0] =3D db[9];
->> >               connector->audio_latency[0] =3D db[10];
->> >       }
->> >
->> > -     if (len >=3D 12 && hdmi_vsdb_i_latency_present(db)) {
->> > +     if (payload_len >=3D 12 && hdmi_vsdb_i_latency_present(db)) {
->> >               connector->latency_present[1] =3D true;
->> >               connector->video_latency[1] =3D db[11];
->> >               connector->audio_latency[1] =3D db[12];
->> > @@ -5695,7 +5686,7 @@ static void drm_edid_to_eld(struct drm_connector=
- *connector,
->> >               case CTA_DB_VENDOR:
->> >                       /* HDMI Vendor-Specific Data Block */
->> >                       if (cea_db_is_hdmi_vsdb(db))
->> > -                             drm_parse_hdmi_vsdb_audio(connector, (co=
-nst u8 *)db);
->> > +                             drm_parse_hdmi_vsdb_audio(connector, (co=
-nst u8 *)db, len);
->> >                       break;
->> >               default:
->> >                       break;
->> > @@ -6122,7 +6113,7 @@ static void drm_parse_ycbcr420_deep_color_info(s=
-truct drm_connector *connector,
->> >  }
->> >
->> >  static void drm_parse_dsc_info(struct drm_hdmi_dsc_cap *hdmi_dsc,
->> > -                            const u8 *hf_scds)
->> > +                            const u8 *hf_scds, int payload_len)
->> >  {
->> >       hdmi_dsc->v_1p2 =3D hf_scds[11] & DRM_EDID_DSC_1P2;
->> >
->> > @@ -6142,7 +6133,7 @@ static void drm_parse_dsc_info(struct drm_hdmi_d=
-sc_cap *hdmi_dsc,
->> >               /* Supports min 8 BPC if DSC 1.2 is supported*/
->> >               hdmi_dsc->bpc_supported =3D 8;
->> >
->> > -     if (cea_db_payload_len(hf_scds) >=3D 12 && hf_scds[12]) {
->> > +     if (payload_len >=3D 12 && hf_scds[12]) {
->> >               u8 dsc_max_slices;
->> >               u8 dsc_max_frl_rate;
->> >
->> > @@ -6188,13 +6179,13 @@ static void drm_parse_dsc_info(struct drm_hdmi=
-_dsc_cap *hdmi_dsc,
->> >               }
->> >       }
->> >
->> > -     if (cea_db_payload_len(hf_scds) >=3D 13 && hf_scds[13])
->> > +     if (payload_len >=3D 13 && hf_scds[13])
->> >               hdmi_dsc->total_chunk_kbytes =3D hf_scds[13] & DRM_EDID_=
-DSC_TOTAL_CHUNK_KBYTES;
->> >  }
->> >
->> >  /* Sink Capability Data Structure */
->> >  static void drm_parse_hdmi_forum_scds(struct drm_connector *connector,
->> > -                                   const u8 *hf_scds)
->> > +                                   const u8 *hf_scds, int payload_len)
->> >  {
->> >       struct drm_display_info *info =3D &connector->display_info;
->> >       struct drm_hdmi_info *hdmi =3D &info->hdmi;
->> > @@ -6247,8 +6238,8 @@ static void drm_parse_hdmi_forum_scds(struct drm=
-_connector *connector,
->> >
->> >       drm_parse_ycbcr420_deep_color_info(connector, hf_scds);
->> >
->> > -     if (cea_db_payload_len(hf_scds) >=3D 11 && hf_scds[11]) {
->> > -             drm_parse_dsc_info(hdmi_dsc, hf_scds);
->> > +     if (payload_len >=3D 11 && hf_scds[11]) {
->> > +             drm_parse_dsc_info(hdmi_dsc, hf_scds, payload_len);
->> >               dsc_support =3D true;
->> >       }
->> >
->> > @@ -6259,7 +6250,7 @@ static void drm_parse_hdmi_forum_scds(struct drm=
-_connector *connector,
->> >  }
->> >
->> >  static void drm_parse_hdmi_deep_color_info(struct drm_connector *conn=
-ector,
->> > -                                        const u8 *hdmi)
->> > +                                        const u8 *hdmi, const u8 payl=
-oad_len)
->> >  {
->> >       struct drm_display_info *info =3D &connector->display_info;
->> >       unsigned int dc_bpc =3D 0;
->> > @@ -6267,7 +6258,7 @@ static void drm_parse_hdmi_deep_color_info(struc=
-t drm_connector *connector,
->> >       /* HDMI supports at least 8 bpc */
->> >       info->bpc =3D 8;
->> >
->> > -     if (cea_db_payload_len(hdmi) < 6)
->> > +     if (payload_len < 6)
->> >               return;
->> >
->> >       if (hdmi[6] & DRM_EDID_HDMI_DC_30) {
->> > @@ -6320,18 +6311,17 @@ static void drm_parse_hdmi_deep_color_info(str=
-uct drm_connector *connector,
->> >
->> >  /* HDMI Vendor-Specific Data Block (HDMI VSDB, H14b-VSDB) */
->> >  static void
->> > -drm_parse_hdmi_vsdb_video(struct drm_connector *connector, const u8 *=
-db)
->> > +drm_parse_hdmi_vsdb_video(struct drm_connector *connector, const u8 *=
-db, const u8 payload_len)
->> >  {
->> >       struct drm_display_info *info =3D &connector->display_info;
->> > -     u8 len =3D cea_db_payload_len(db);
->> >
->> >       info->is_hdmi =3D true;
->> >
->> >       info->source_physical_address =3D (db[4] << 8) | db[5];
->> >
->> > -     if (len >=3D 6)
->> > +     if (payload_len >=3D 6)
->> >               info->dvi_dual =3D db[6] & 1;
->> > -     if (len >=3D 7)
->> > +     if (payload_len >=3D 7)
->> >               info->max_tmds_clock =3D db[7] * 5000;
->> >
->> >       /*
->> > @@ -6340,14 +6330,14 @@ drm_parse_hdmi_vsdb_video(struct drm_connector=
- *connector, const u8 *db)
->> >        * HDMI infoframe support was first added in HDMI 1.4. Assume th=
-e sink
->> >        * supports infoframes if HDMI_Video_present is set.
->> >        */
->> > -     if (len >=3D 8 && db[8] & BIT(5))
->> > +     if (payload_len >=3D 8 && db[8] & BIT(5))
->> >               info->has_hdmi_infoframe =3D true;
->> >
->> >       drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] HDMI: DVI dual %d=
-, max TMDS clock %d kHz\n",
->> >                   connector->base.id, connector->name,
->> >                   info->dvi_dual, info->max_tmds_clock);
->> >
->> > -     drm_parse_hdmi_deep_color_info(connector, db);
->> > +     drm_parse_hdmi_deep_color_info(connector, db, payload_len);
->> >  }
->> >
->> >  /*
->> > @@ -6410,12 +6400,13 @@ static void drm_parse_cea_ext(struct drm_conne=
-ctor *connector,
->> >       cea_db_iter_for_each(db, &iter) {
->> >               /* FIXME: convert parsers to use struct cea_db */
->> >               const u8 *data =3D (const u8 *)db;
->> > +             int len =3D cea_db_payload_len(db);
->> >
->> >               if (cea_db_is_hdmi_vsdb(db))
->> > -                     drm_parse_hdmi_vsdb_video(connector, data);
->> > +                     drm_parse_hdmi_vsdb_video(connector, data, len);
->> >               else if (cea_db_is_hdmi_forum_vsdb(db) ||
->> >                        cea_db_is_hdmi_forum_scdb(db))
->> > -                     drm_parse_hdmi_forum_scds(connector, data);
->> > +                     drm_parse_hdmi_forum_scds(connector, data, len);
->> >               else if (cea_db_is_microsoft_vsdb(db))
->> >                       drm_parse_microsoft_vsdb(connector, data);
->> >               else if (cea_db_is_y420cmdb(db))
->> > @@ -6425,7 +6416,7 @@ static void drm_parse_cea_ext(struct drm_connect=
-or *connector,
->> >               else if (cea_db_is_vcdb(db))
->> >                       drm_parse_vcdb(connector, data);
->> >               else if (cea_db_is_hdmi_hdr_metadata_block(db))
->> > -                     drm_parse_hdr_metadata_block(connector, data);
->> > +                     drm_parse_hdr_metadata_block(connector, data, le=
-n);
->> >               else if (cea_db_tag(db) =3D=3D CTA_DB_VIDEO)
->> >                       parse_cta_vdb(connector, db);
->> >               else if (cea_db_tag(db) =3D=3D CTA_DB_AUDIO)
->> >
->> > base-commit: 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
->>
->> --
->> Jani Nikula, Intel
-> Thanks,
-> Vamsi
+>> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+>> index 71d8b26c4103..24edb956831b 100644
+>> --- a/drivers/firmware/Kconfig
+>> +++ b/drivers/firmware/Kconfig
+>> @@ -267,6 +267,7 @@ source "drivers/firmware/meson/Kconfig"
+>>  source "drivers/firmware/microchip/Kconfig"
+>>  source "drivers/firmware/psci/Kconfig"
+>>  source "drivers/firmware/qcom/Kconfig"
+>> +source "drivers/firmware/samsung/Kconfig"
+>>  source "drivers/firmware/smccc/Kconfig"
+>>  source "drivers/firmware/tegra/Kconfig"
+>>  source "drivers/firmware/xilinx/Kconfig"
+>> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+>> index 7a8d486e718f..91efcc868a05 100644
+>> --- a/drivers/firmware/Makefile
+>> +++ b/drivers/firmware/Makefile
+>> @@ -33,6 +33,7 @@ obj-y				+= efi/
+>>  obj-y				+= imx/
+>>  obj-y				+= psci/
+>>  obj-y				+= qcom/
+>> +obj-y				+= samsung/
+>>  obj-y				+= smccc/
+>>  obj-y				+= tegra/
+>>  obj-y				+= xilinx/
+>> diff --git a/drivers/firmware/samsung/Kconfig b/drivers/firmware/samsung/Kconfig
+>> new file mode 100644
+>> index 000000000000..f908773c1441
+>> --- /dev/null
+>> +++ b/drivers/firmware/samsung/Kconfig
+>> @@ -0,0 +1,11 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +config EXYNOS_ACPM
+>> +	tristate "Exynos ACPM (Alive Clock and Power Manager) driver support"
+> 
+> depends ARCH_EXYNOS || COMPILE_TEST
 
---=20
-Jani Nikula, Intel
+oh yes.
+> 
+> Please also send a arm64 defconfig change making it a module.
+
+will do
+
+cut
+
+>> +
+>> +/**
+>> + * struct exynos_acpm_shmem_chan - descriptor of a shared memory channel.
+>> + *
+>> + * @id:			channel ID.
+>> + * @reserved:		reserved for future use.
+>> + * @rx_rear:		rear pointer of RX queue.
+>> + * @rx_front:		front pointer of RX queue.
+>> + * @rx_base:		base address of RX queue.
+>> + * @reserved1:		reserved for future use.
+>> + * @tx_rear:		rear pointer of TX queue.
+>> + * @tx_front:		front pointer of TX queue.
+>> + * @tx_base:		base address of TX queue.
+>> + * @qlen:		queue length. Applies to both TX/RX queues.
+>> + * @mlen:		message length. Applies to both TX/RX queues.
+>> + * @reserved2:		reserved for future use.
+>> + * @polling:		true when the channel works on polling.
+>> + */
+>> +struct exynos_acpm_shmem_chan {
+>> +	u32 id;
+>> +	u32 reserved[3];
+>> +	u32 rx_rear;
+>> +	u32 rx_front;
+>> +	u32 rx_base;
+>> +	u32 reserved1[3];
+>> +	u32 tx_rear;
+>> +	u32 tx_front;
+>> +	u32 tx_base;
+>> +	u32 qlen;
+>> +	u32 mlen;
+>> +	u32 reserved2[2];
+>> +	u32 polling;
+> 
+> Why are you storing addresses as u32? Shouldn't these be __iomem*?
+
+This structure defines the offsets in SRAM that describe the channel
+parameters. Instances of this struct shall be declared indeed as:
+	struct exynos_acpm_shmem_chan __iomem *shmem_chan;
+I missed that in v2, but will update in v2.
+
+> 
+> I also cannot find any piece of code setting several of above, e.g. tx_base
+
+I'm not writing any SRAM configuration fields, these fields are used to
+read/retrive the channel parameters from SRAM.
+
+cut
+
+>> +
+>> +	spin_lock_irqsave(&chan->tx_lock, flags);
+>> +
+>> +	tx_front = readl_relaxed(chan->tx.front);
+>> +	idx = (tx_front + 1) % chan->qlen;
+>> +
+>> +	ret = exynos_acpm_wait_for_queue_slots(mbox_chan, idx);
+>> +	if (ret)
+>> +		goto exit;
+>> +
+>> +	exynos_acpm_prepare_request(mbox_chan, req);
+>> +
+>> +	/* Write TX command. */
+>> +	__iowrite32_copy(chan->tx.base + chan->mlen * tx_front, tx->cmd,
+>> +			 req->txlen / 4);
+>> +
+>> +	/* Advance TX front. */
+>> +	writel_relaxed(idx, chan->tx.front);
+>> +
+>> +	/* Flush SRAM posted writes. */
+>> +	readl_relaxed(chan->tx.front);
+>> +
+> 
+> How does this flush work? Maybe you just miss here barries (s/relaxed//)?
+
+I think _relaxed() accessors should be fine in this driver as there are
+no DMA accesses involved. _relaxed() accessors are fully ordered for
+accesses to the same device/endpoint.
+
+I'm worried however about the posted writes, the buses the devices sit
+on may themselves have asynchronicity. So I issue a read from the same
+device to ensure that the write has occured.
+
+There is something that I haven't dimistified though. You'll notice that
+the writes from above are on SRAM. I enqueue on the TX queue then
+advance the head/front of the queue and then I read back to make sure
+that the writes occured. Below I write to the controller's interrupt
+register (different device/endpoint) to raise the interrupt for the
+counterpart and inform that TX queue advanced. I'm not sure whether I
+need a barrier here to make sure that the CPU does not reorder the
+accesses and raise the interrupt before advancing the TX queue. If
+someone already knows the answer, please say, I'll do some more reading
+in the meantime.
+
+> 
+>> +	/* Generate ACPM interrupt. */
+>> +	writel_relaxed(BIT(chan->id), exynos_acpm->regs + EXYNOS_ACPM_INTGR1);
+>> +
+>> +	/* Flush mailbox controller posted writes. */
+>> +	readl_relaxed(exynos_acpm->regs + EXYNOS_ACPM_MCUCTRL);
+>> +
+>> +	spin_unlock_irqrestore(&chan->tx_lock, flags);
+>> +
+>> +	queue_work(exynos_acpm->wq, &work_data->work);
+>> +
+>> +	return -EINPROGRESS;
+>> +exit:
+>> +	spin_unlock_irqrestore(&chan->tx_lock, flags);
+>> +	kfree(work_data);
+>> +	return ret;
+>> +}
+
+cut
+
+>> +static const struct of_device_id exynos_acpm_match[] = {
+>> +	{ .compatible = "google,gs101-acpm" },
+> 
+> Where are the bindings?
+
+will follow soon.
+
+cut
+
+>> +static int exynos_acpm_probe(struct platform_device *pdev)
+>> +{
+
+cut
+
+>> +	exynos_acpm->pclk = devm_clk_get(dev, "pclk");
+> 
+> devm_clk_get_enabled
+
+ok
+
+> 
+>> +	if (IS_ERR(exynos_acpm->pclk)) {
+>> +		dev_err(dev, "Missing peripheral clock.\n");
+> 
+> return dev_err_probe()
+
+ok
+
+cut
+>> +		.owner	= THIS_MODULE,
+> 
+> Drop
+
+oh yes, thanks!
+
+ta
 
