@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-374869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715E19A714E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 252479A7151
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED2FEB212A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:48:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4FB0B224BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B821EBA08;
-	Mon, 21 Oct 2024 17:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D8A1F4FC9;
+	Mon, 21 Oct 2024 17:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fFI6ntfQ"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xcgebuae"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF71D5028C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3365028C;
+	Mon, 21 Oct 2024 17:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532894; cv=none; b=U9e4JGB/ggbWogFhqZbp0AVgzPrkFlbsQx4WADrzZ/dXDpuse7BWU07UEbtbUBmLGOdFAUohs5y83Qljq5iUZf/ZI5xDUmIYvctQ0mmrej3dqIiZK8irlJvOxXqGr0b27/GCzdtZOcAzk2fSS/A35VtT9nRAwQj/xXkpXYmWCaI=
+	t=1729532903; cv=none; b=Ttm2GlQ62CLM3k2Sdv9QOl/QA/UFjMzPJ8GkYf8NsOq2qXMFNQaamDI9pSFf2NJp9NQaAAWzxM8d8jRXisAevDNSzTcW25GDX4deQEFiUCFZtlxpZ3ft8ZwHBSq/0b9T+tjUg6zmV1ZuBG7d02BM40gqMI0ao9BxIriAudTPENs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532894; c=relaxed/simple;
-	bh=XSKtuWfXkXy1EUZnyfOH7RilgH97BOuVx5La/ly0D7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JHhDiQoQHR447Op+P4n8iPcY1RziMA+7PhLAvHuFizEzwsGFg4ePzfSEmF6p/O8O/wNfzlheb/4nI7KhhKMLXthiouovquy9mEGU9RrDwGr+alVbXYdD2AQy8oXLW0dKGYDyLydoXZKgucZRBBMbFTAAlsAN7XUoYsg2hnUuoOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fFI6ntfQ; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4a49505ba64so1259458137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729532891; x=1730137691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+6xfJqNYxgSFtrrbl27/AR1F/LasrkKf3mfqMuCjZvA=;
-        b=fFI6ntfQ3pjUoj6oPDo/IByRQsJ+wJsGh+7FpTZXLA6FKWzabuHE7Hn8VDbO+zw1rs
-         eDZh3hcwdQwma4cUoQ/VQVT8LcWAdj+9fPuHju3SrBl0t9CAjA1tpQSxOKI+v1xHVAGG
-         br6I0FcaawzE4Ad7bYw8cK6ZOHD1qk+Nuf4P7+1/3TFwXHFrbAIeHLb40uRrgokBalEC
-         kf2NpOGu980b00SWxQbNVQNktqQzfQnRvGcIsdXp2Y2B4pUC1P0gFIkEuKyNPKFjZl/H
-         VPJtmvBBC0XwKdjFVrsz4DJ8WCtBiRSKmanLQqLBqW1E3yLVh0rqjF4gRWg9nhcVjOmx
-         oXIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729532891; x=1730137691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+6xfJqNYxgSFtrrbl27/AR1F/LasrkKf3mfqMuCjZvA=;
-        b=TuPrqNSyOtT5KIBqWoHNSpRNfLZuuE0ZfS7vpQNAdWSVI51k0zFKbySghTl8X9gVjl
-         PboygD/gSJf+LPGHYbYj9gMF8XQ7jMCm+6BqdBwWKMQ0BWwRceBsZR2U+8RZQ690twIv
-         nahNBn2JPxv3YNV/d8DjlrF6bhxZRW0kdZMYjXY2EQkkaDNHx7+OObrK4vt1FM70n72I
-         QVrPvdzrFppfbDsdAeAMpLdpWnO9svr1Yv/RzoyP2DKCuly1jhLUv6mIz3Pn2ieNRiAG
-         mQw2PdViSXW9G3PfkBpxJACyzgTgUGg6R4MxswYjFAKXoi318S0CqcD5j9Mu3ORCFNX1
-         2ngA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+b40GN6uZKXflEAmrkPwF60DxCieQsRYzHWzrk9lSBq1KPaSuz9zQ5JSXaYMkgcB3DFIXt50ycsg3TYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEI57VPBWnRiiWbIxDDRNQdlLXuc5jWXg7+hu53zasEybtEql6
-	ckvWV1YyGVbebmjFP90BVas2GQTDaKXgYgGqT0z15cLbdEPL/Uoi9DX9AUYNGUcNFsJj1i8BNw0
-	NJSdVvaEodUFo4l1OW+xd1MmEyxQLb5F0bO6Ey3U+J8F0DUP7sA==
-X-Google-Smtp-Source: AGHT+IETp+/g0y6U2XpbcP6t4HQIZ/PhZV/J5zf4SqFEuZHZNKc76kVZXpwgJLipoLo4+tdDXiuA+OueSYtg03V886I=
-X-Received: by 2002:a05:6102:3052:b0:4a4:7609:35f with SMTP id
- ada2fe7eead31-4a5d6beb2e7mr9296702137.24.1729532891284; Mon, 21 Oct 2024
- 10:48:11 -0700 (PDT)
+	s=arc-20240116; t=1729532903; c=relaxed/simple;
+	bh=fySSFkngfY5fa46FAuxT2ZsveJWPtJxTCyFd6HqJqEo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n06IqxDYCKgJyBqDCxS4fkIvLG1t3XPBypergokFp5iKh1kZo1XMryDZMacdLpm6ErjCijkOLTLNbK16uY6lqzk8fqkxXcUWGGFBtW6M6URzgTnwE4eNPb7yFxe8RXLX1eJ9qW3AT5/pBCGOgZPBDebiEDusPn7+vybdbb1B8Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xcgebuae; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729532902; x=1761068902;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=fySSFkngfY5fa46FAuxT2ZsveJWPtJxTCyFd6HqJqEo=;
+  b=XcgebuaegV+YpmMGI/5QL38SWBCrhhk6vBgSSnQv7vl/Fk1x6WQWvpwN
+   PyXqL8qrV7tdazXsGdq4eN9P7hp9A6PxuQMKnZbcBQ2bMO0DtuQZrzk2k
+   RrPp6nxl9YrJ2RYdES55iIb6qW9Eu1dIwnV8fEvgZcVRtK6yQzqph+AjF
+   6uqHy7ttGJIfeAxpQxLaTlkVoQXzP4Y7af6NQG2SSGg0hbXc4ybDoU5xc
+   rL10K3c6mQcISX8a6ol/3llW21OMQR6tuWkVpMPImVIy0/p3UQ+WjoY4X
+   ejZLw+9rLz+twcJ36Raj5/xSQjI21N2a3YxGNNTkXZ0vZx4aIBGp1x54T
+   g==;
+X-CSE-ConnectionGUID: IYRyfBkISSWGiWt8+WCoRw==
+X-CSE-MsgGUID: arLk4uuaT5OnNMN0FJ/ZAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="16663292"
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="16663292"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:48:21 -0700
+X-CSE-ConnectionGUID: ZtSOvIZcTwyhQrB+3z08CA==
+X-CSE-MsgGUID: qhfYvI10QSmqJMIREiZfxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="80001296"
+Received: from philliph-desk.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.220.26])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:48:19 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: kurt@linutronix.de, Joe Damato <jdamato@fastly.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "moderated list:INTEL ETHERNET DRIVERS"
+ <intel-wired-lan@lists.osuosl.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next v3 1/2] igc: Link IRQs to NAPI instances
+In-Reply-To: <20241018171343.314835-2-jdamato@fastly.com>
+References: <20241018171343.314835-1-jdamato@fastly.com>
+ <20241018171343.314835-2-jdamato@fastly.com>
+Date: Mon, 21 Oct 2024 10:48:18 -0700
+Message-ID: <878quhgxel.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020051315.356103-1-yuzhao@google.com> <ZxYNLb0CiZyw31_q@tiehlicka>
- <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com> <ZxaOo59ZwXoCduhG@tiehlicka>
-In-Reply-To: <ZxaOo59ZwXoCduhG@tiehlicka>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 21 Oct 2024 11:47:34 -0600
-Message-ID: <CAOUHufYwCoVsti9mkZ0eiRDcB50r9RjNPL+f-1cWcuGdTrvBGA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
- free highatomic
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 21, 2024 at 11:26=E2=80=AFAM Michal Hocko <mhocko@suse.com> wro=
-te:
+Joe Damato <jdamato@fastly.com> writes:
+
+> Link IRQs to NAPI instances via netdev-genl API so that users can query
+> this information with netlink.
 >
-> On Mon 21-10-24 11:10:50, Yu Zhao wrote:
-> > On Mon, Oct 21, 2024 at 2:13=E2=80=AFAM Michal Hocko <mhocko@suse.com> =
-wrote:
-> > >
-> > > On Sat 19-10-24 23:13:15, Yu Zhao wrote:
-> > > > OOM kills due to vastly overestimated free highatomic reserves were
-> > > > observed:
-> > > >
-> > > >   ... invoked oom-killer: gfp_mask=3D0x100cca(GFP_HIGHUSER_MOVABLE)=
-, order=3D0 ...
-> > > >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB =
-high:1068392kB reserved_highatomic:1073152KB ...
-> > > >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB =
-(ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M=
-) 0*2048kB 0*4096kB =3D 1477408kB
-> > > >
-> > > > The second line above shows that the OOM kill was due to the follow=
-ing
-> > > > condition:
-> > > >
-> > > >   free (1482936kB) - reserved_highatomic (1073152kB) =3D 409784KB <=
- min (410416kB)
-> > > >
-> > > > And the third line shows there were no free pages in any
-> > > > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as typ=
-e
-> > > > 'H'. Therefore __zone_watermark_unusable_free() overestimated free
-> > > > highatomic reserves. IOW, it underestimated the usable free memory =
-by
-> > > > over 1GB, which resulted in the unnecessary OOM kill.
-> > >
-> > > Why doesn't unreserve_highatomic_pageblock deal with this situation?
-> >
-> > The current behavior of unreserve_highatomic_pageblock() seems WAI to
-> > me: it unreserves highatomic pageblocks that contain *free* pages so
-> > that those pages can become usable to others. There is nothing to
-> > unreserve when they have no free pages.
+> Compare the output of /proc/interrupts (noting that IRQ 144 is the
+> "other" IRQ which does not appear to have a NAPI instance):
 >
-> I do not follow. How can you have reserved highatomic pages of that size
-> without having page blocks with free memory.
+> $ cat /proc/interrupts | grep enp86s0 | cut --delimiter=":" -f1
+>  128
+>  129
+>  130
+>  131
+>  132
+>
+> The output from netlink shows the mapping of NAPI IDs to IRQs (again
+> noting that 144 is absent as it is the "other" IRQ):
+>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                          --dump napi-get --json='{"ifindex": 2}'
+>
+> [{'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8196,
+>   'ifindex': 2,
+>   'irq': 132},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8195,
+>   'ifindex': 2,
+>   'irq': 131},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8194,
+>   'ifindex': 2,
+>   'irq': 130},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8193,
+>   'ifindex': 2,
+>   'irq': 129}]
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
 
-Sorry I might still not get your question: are you saying it's not
-possible for 524 pageblocks (reserved_highatomic=3D1073152kB) not to
-have free pages? It might be uncommon but I don't think it's
-impossible.
+Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-> In other words is this an
-> accounting problem or reserves problem?
 
-I don't follow here: why does it need to be one of the two?
-reserved_highatomic can go up to 1% of the zone, and all reserves can
-be used for highatomic allocs, leaving no free pages in
-reserved_highatomic.
+Cheers,
+-- 
+Vinicius
 
