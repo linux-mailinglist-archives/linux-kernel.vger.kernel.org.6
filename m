@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-374599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AA89A6CFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0F79A6D2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69EE0B25D29
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D4D1C22175
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0976A1FAC37;
-	Mon, 21 Oct 2024 14:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878831F9A85;
+	Mon, 21 Oct 2024 14:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FbZRNizu"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mQWXs5E3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBD21FAC39
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223C41F12FC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522354; cv=none; b=SMzdZ57mwsMPmFoANIQYPLkWRj9r8/gBHa3gP1hxRLuGjLI2YUNbYli+KYjyJIRTsEM7aR+pkyjr/cVpdXh+Rey8dCk5+1acmE3PhSMEzrLu8KIn00hPuHn7SgpKshgSzAjKv58vIs/drVQh7BY1HaHBIRnhN+VjwIJ2/TF5YxA=
+	t=1729522413; cv=none; b=uSrRhjgtNrlBGYZB1909mHVopsejC3pu6TQz/s1id/ffsWhRQd00uNvEOXyZG/jk25JRc+gbjefNrp7tVallilkdkBq1MMd3PnbVpebV1JbKtK1MAVyduwkg/nQYOMpS+nCs4lDKK3OV92wRKJCAuQB5WpE4fBA3xHqAdeETR18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522354; c=relaxed/simple;
-	bh=qHkv5JDlqgqjZRZ7PQwcwLcJ3/hu2L0ISUVO1CYr6r8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qw7dGNS3PToJ4xm6i/5fhS02Pq1Zc6dpA7GexPdX1wsyqy3wkOt0tNCUf9eODAHn6p8TMmOyz/DDQmP/wB3U5dOFVVoUtUIdEa8oPo81NGqlFUMrQJL71kEYV/t5A1IANk5RJbhJFYBdUUO82iExkkRmEZwu5KlBmME7AiClmiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FbZRNizu; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so1611057f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:52:30 -0700 (PDT)
+	s=arc-20240116; t=1729522413; c=relaxed/simple;
+	bh=XIAbw4mxYc8pAF/lqCTTYZZ/MSMJKjfurf0D1Q6b47Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J7dhK+X0aQ7jha3TCj4b7h7ePaA9F4V9JooH12hl+3h3ZGkZcAUxBRsld/EFxkFdfwbKrqB9TX3s6tLFs+RzAlIgVsDG/HX9BRf03gyC4Uc+GovIsDMlyp6sMVN20qKweh/yAG7kvRW4Q0ewk5i6I1AJ6HHanQXUM+5VMzEiPDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mQWXs5E3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca4877690so212025ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729522349; x=1730127149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QjSRnQx5O46OacBUYkVWL1KnGLuYW+NCz+8zrCnNmA8=;
-        b=FbZRNizuUuz+5GZEl+Xn6dQ4LHT8jpTIC9/cD0imTsGIRrkIQisHIy6XEaIU4E7tpr
-         2qHa/1JK6d3X4abywQgEHdzL+jqa2Qdk7yU02JHpHkD48nmslu0BxEDjT7YFMC98hob/
-         nLukdGRo8Ez3E7n3DQ64VlaBtqu3enChbAL3WCGmkjlDmMV7X739v7pTem+yMy4AnPf9
-         g7ULuw64/n2C6AS3iOf/v8iJ7yVk0wAmWjPtrNNsDCOoA4SQWKI7gWoPQDR6nO4cDbc/
-         JuJMgulCSRLQP4uLUnOu5iheZMnEpNHdhdWcFMAfAaFqAoALJH0lWLqabpTcYolXlXo/
-         0aqA==
+        d=google.com; s=20230601; t=1729522411; x=1730127211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3gG9duuhy1290ypGByuvBv1xo4Px7j5a02oLYF4PH1s=;
+        b=mQWXs5E3+XMqqOe2b426v1nalxbcnACtqEm7doLKZ/Ut7OafeitcUjkkKzrpmdt274
+         PSy/s8w+NLtXMnAJe2jWqYRZq+MeXy7K9H10ymnDrMgjKOhLiDx+4rF9qoFSf1RKsyeN
+         kIPu+Fyxm7MwDoRA4pVAypBXykMsy3dYGKVB33TnonZwycQOz/diIhmSFHZBywrRT/SB
+         EU+ibaQD42euJMbp4BtbRmeO93HTV0EUjK22ayWpAwpL+8TKzlaekFUoBBQGRzqcR1/S
+         Ui+P6/bj0pbavxVKOkbbhws+na9mLg0eRZ5XImFtNY6JeMBnQIE/UIEFscqyNwHbd7dj
+         7s3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729522349; x=1730127149;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjSRnQx5O46OacBUYkVWL1KnGLuYW+NCz+8zrCnNmA8=;
-        b=h6tVvHvbKDq/Ft7if9nDYkYAQZNNH5YIWte5U1JHW31YvsXy6WfYZH5sB2S4xr490F
-         sB0CeqM9xYH1XUtyVOmGrTnNzx/A3F23fVAXmsjb+2RV60uP2kqG9/CX2/9gWlOyMYXH
-         OmYxG1ITCUASwPCG3AEnpn/GUKsWd5MPZXBoqFnB4SMSwtVGL+EH5rO9DNP/ks2kuZHU
-         SdB5X7U5i2lMssG3v2NQTGlOXboSCrshLiYFTev+5PnRzVJQ8GtjJKu8yc8krjBC2KrU
-         t+ibrMaEWOGZlCmW5FZdZF0OZ/AjOAMXGKqll3CA7ekfFOlpxhQ9lNzkbnFA0Q9Snfq9
-         w8Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5H+ad4+S3d12UCOCeRV0gU1NF9Elk87EdQyMcCyzBtLDAIOyahXDkADw3qYx6EwxI3gcsZV3jEghjB8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp2IqeTmnjDg53gObSdxFqk0ph0cQZERmSTcinuBbpGvK4jjf7
-	fU3ju2r/tinGNDoNVH46fsEwbOut/MztFzGtt+qt9+QKFxAV6dkBfcpU0hMfhhg=
-X-Google-Smtp-Source: AGHT+IHR6qQguq7PH3Uh8RSkz2aVOh856iqdHv7IWaGdljT9tcnvh9y5umzoNMsFeKBw9U5YBzOTaQ==
-X-Received: by 2002:adf:e542:0:b0:37d:4f54:f9c8 with SMTP id ffacd0b85a97d-37ea21c8569mr7292650f8f.33.1729522349069;
-        Mon, 21 Oct 2024 07:52:29 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a3805esm4552502f8f.9.2024.10.21.07.52.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:52:28 -0700 (PDT)
-Message-ID: <5f31c010-a965-48f3-a975-efd8307316bb@linaro.org>
-Date: Mon, 21 Oct 2024 15:52:26 +0100
+        d=1e100.net; s=20230601; t=1729522411; x=1730127211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3gG9duuhy1290ypGByuvBv1xo4Px7j5a02oLYF4PH1s=;
+        b=QJiKzqIHgFZwtfULiQKeY0Ojj/cDJp1DwmIFg7HrnObHk7/+mBi8p0U6N5ntXuvBVm
+         ipdr0aZa08BZPZwU3axivR6MHG+nSD1ehmGJLT6NgMACXUaOlhDyIdvx1rRwJYl5dxCU
+         5WFYl9cR14PjQNwtGkELDqQSDQpDGe8bw0zcM/YKL3yMaLJaIH6isQ6BNZrchs40gPlC
+         spmSdWgtGrtrpfC3Hcy8icxrBdxVRk+G8+msskWdm6kyFwdiTzYJT85vXyaUy/T7z99b
+         J+Xv5Ptx/r1P99/h6GbU8VzH3mMftbRypsl9FQuJ8ZvrUC+qb4ZkZ4EWwINKUER2AL6O
+         My5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWoID/1+EN0gXWyczPDA1cfA5p7vXDFe+SUqXnReK6IW5zbtPLg0RaJHn6/8iZL23JqQ/kBTycT7UMgRC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvzsulx4QBqn75g+SSOr9bOT30sAbOPQLyiU+IoyKgVMqBvXhb
+	/g+QsciU8mc49K2KEuTJshJFyjp6QII+UPfyWVzyXHiNOILG13QECnTBpkP3iBhmQCr6squVmG+
+	UgRG5HwCrPfH4ATDqv797eZ3PG65APmh3MoUP
+X-Google-Smtp-Source: AGHT+IFk4I+l7PDx5NC4E4xF4MG0P4sMRuFqD3K2dFP68wegQRv3ETdMCuzSeOSaEIZrU5k5SKymwi+s+gYa0GYI2H0=
+X-Received: by 2002:a17:902:da8d:b0:20c:5cb1:de07 with SMTP id
+ d9443c01a7336-20e74264c95mr2671365ad.11.1729522411055; Mon, 21 Oct 2024
+ 07:53:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: krzk@kernel.org
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org,
- Jassi Brar <jassisinghbrar@gmail.com>
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241017163649.3007062-3-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241015123157.2337026-1-alexander.usyskin@intel.com> <2024101509-refined-posh-c50d@gregkh>
+In-Reply-To: <2024101509-refined-posh-c50d@gregkh>
+From: Brian Geffon <bgeffon@google.com>
+Date: Mon, 21 Oct 2024 10:52:53 -0400
+Message-ID: <CADyq12xj8VckfYO7W5XNf4MSssBTsCSi8gcE5_RmeD+dO5Cg8g@mail.gmail.com>
+Subject: Re: [char-misc-next v3] mei: use kvmalloc for read buffer
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>, Oren Weil <oren.jer.weil@intel.com>, 
+	Tomas Winkler <tomasw@gmail.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Rohit Agarwal <rohiagar@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 15, 2024 at 8:48=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Oct 15, 2024 at 03:31:57PM +0300, Alexander Usyskin wrote:
+> > Read buffer is allocated according to max message size, reported by
+> > the firmware and may reach 64K in systems with pxp client.
+> > Contiguous 64k allocation may fail under memory pressure.
+> > Read buffer is used as in-driver message storage and not required
+> > to be contiguous.
+> > Use kvmalloc to allow kernel to allocate non-contiguous memory.
+> >
+> > Fixes: 3030dc056459 ("mei: add wrapper for queuing control commands.")
+> > Reported-by: Rohit Agarwal <rohiagar@chromium.org>
+> > Closes: https://lore.kernel.org/all/20240813084542.2921300-1-rohiagar@c=
+hromium.org/
+> > Tested-by: Brian Geffon <bgeffon@google.com>
+> > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: stable@vger.kernel.org
 
+> > ---
+>
+> Why is this on the -next branch?  You want this merged now, right?
+>
+> Again, I asked "why hasn't this been reviewed by others at Intel", and
+> so I'm just going to delete this series until it has followed the
+> correct Intel-internal review process.
 
-On 10/17/24 5:36 PM, Tudor Ambarus wrote:
-> +static int exynos_acpm_chans_init(struct exynos_acpm *exynos_acpm)
-> +{
-> +	struct exynos_acpm_shmem_chan *shmem_chans, *shmem_chan;
-> +	struct exynos_acpm_shmem *shmem = exynos_acpm->shmem;
+This is a significant crash for us, any chance we can get another
+reviewer from Intel?
 
-As Krzysztof has already noticed, I need to use the __iomem pointer
-token when referring to shmem structures. This could be caught with
-sparse as well, lesson learnt:
+>
+> greg k-h
 
-   drivers/firmware/samsung/exynos-acpm.c:493:54: sparse: sparse:
-incorrect type in argument 2 (different address spaces) @@     expected
-void [noderef] __iomem *addr @@     got unsigned int * @@
-
-
-The following changes will be needed for v3:
-
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -161,7 +161,7 @@ struct exynos_acpm_chan {
-  * @num_chans: number of channels available for this controller.
-  */
- struct exynos_acpm {
--       struct exynos_acpm_shmem *shmem;
-+       struct exynos_acpm_shmem __iomem *shmem;
-        struct exynos_acpm_chan *chans;
-        void __iomem *sram_base;
-        void __iomem *regs;
-@@ -485,8 +485,8 @@ static void __iomem *exynos_acpm_get_iomem_addr(void
-__iomem *base,
- }
-
- static void exynos_acpm_rx_queue_init(struct exynos_acpm *exynos_acpm,
--                                     struct exynos_acpm_shmem_chan
-*shmem_chan,
--                                     struct exynos_acpm_queue *rx)
-+               struct exynos_acpm_shmem_chan __iomem *shmem_chan,
-+               struct exynos_acpm_queue *rx)
- {
-        void __iomem *base = exynos_acpm->sram_base;
-
-@@ -496,8 +496,8 @@ static void exynos_acpm_rx_queue_init(struct
-exynos_acpm *exynos_acpm,
- }
-
- static void exynos_acpm_tx_queue_init(struct exynos_acpm *exynos_acpm,
--                                     struct exynos_acpm_shmem_chan
-*shmem_chan,
--                                     struct exynos_acpm_queue *tx)
-+               struct exynos_acpm_shmem_chan __iomem *shmem_chan,
-+               struct exynos_acpm_queue *tx)
- {
-        void __iomem *base = exynos_acpm->sram_base;
-
-@@ -527,8 +527,8 @@ static int exynos_acpm_alloc_cmds(struct exynos_acpm
-*exynos_acpm,
-
- static int exynos_acpm_chans_init(struct exynos_acpm *exynos_acpm)
- {
--       struct exynos_acpm_shmem_chan *shmem_chans, *shmem_chan;
--       struct exynos_acpm_shmem *shmem = exynos_acpm->shmem;
-+       struct exynos_acpm_shmem_chan __iomem *shmem_chans, *shmem_chan;
-+       struct exynos_acpm_shmem __iomem *shmem = exynos_acpm->shmem;
-        struct mbox_chan *mbox_chan, *mbox_chans;
-        struct exynos_acpm_chan *chan, *chans;
-        struct device *dev = exynos_acpm->dev;
+Thanks
+Brian
 
