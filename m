@@ -1,76 +1,170 @@
-Return-Path: <linux-kernel+bounces-375218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8BA9A933F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A309A933B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE6C1F22D8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629D2283F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02A71FCC7F;
-	Mon, 21 Oct 2024 22:25:56 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAD31E2839
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652361FDFAA;
+	Mon, 21 Oct 2024 22:25:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F118D433D8;
+	Mon, 21 Oct 2024 22:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549556; cv=none; b=A4hiZRugMAy5Cm8EV5V8RU3UmJ9eCnaBpLgQnhVRoPy6IFqzMcAbKlVLn58eGITgoqV0pKUBWgQbFsE9HAq2iHZqTq+HfdgASMNLGXnJjQMW88yhHrCMXlyp5OCADT5Q8mIDFp2DfNMOeZ6Dr3jHpovy7rasIfl9eE2y6RLXJYE=
+	t=1729549500; cv=none; b=AR88aZ/HyUSW9nyNmY1y7TpQ6fPJXMpowPkXcuypRAIGBAbIGyXXyVOXH1oPsaWaYfRUn0PYccpUyVSBXOs3ifIeZkGEM2WQrTVXcz7EqQzfFroM8kCtrGMM2WFqnHoHshbw2Xux4VCnrsG951iYqNdqtLtAzq0Wee7IK3pOv00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549556; c=relaxed/simple;
-	bh=2v1KH2bWtDWEr2n/QvnL6K9QK2FAhlzSD9sDb1LQOMs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AYaYJvY3Sku5J58f0X8EQzYBrzHk2aAF+V1M5G6MAnar10z4YAWjbuqN4msrxavq6pMbb+bfm0I9f1rjtg5HMCjehsIXGZsaqYEN8j52wpasL4H5PI9beQt1Zl0RuFtQrcczeN7Y32fTYikRZvq8vSMrjH/ZkQrpPyS5Ev9dzXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3bcae85a5so36135975ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:25:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729549554; x=1730154354;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2v1KH2bWtDWEr2n/QvnL6K9QK2FAhlzSD9sDb1LQOMs=;
-        b=gaWNqzURJQ5KlyeCGDn2kkSmwhgmUebrmjMw98Fyt/ikDGzqCoHQ7V3b5rJg9X3Gea
-         Ff4B/4P4UpJIBBZOyjA8rh+0imA8jMXvfXNUKNfgc2RYjkPbXyovy2b9iB1OHt0w/ndL
-         TFyfluab0NK1SLfX31za1H7lRdgDj/B909mzKVdCkRwBpN8LQDnE4GzgC3EILmriK8ZT
-         NXCWu0Qi8SZZnFKOnKyD65N26u+OxyjUqfxchMe2ERUxImJtXH56pnehrQyQLZCL93yb
-         BZH6ct/n14Y/IyUj3aMbEc0riutYBlm8H9Mu/vE1mMIYDcza8uTW3mTLoIH2esydRAvF
-         hoIA==
-X-Gm-Message-State: AOJu0YxfhIOM2OjObmi6jMrg+JyZLVlIA+f2yGYzXD9woHzou6MTIa7F
-	JT5/+fseT5bNxISv3MyFZZOdOenqfPjz8AchM4QLK6jtt4Fln/dAN1Mqh9ggvPq7+705AuisJWR
-	twvUYpo5A3wbbceAtK63Qoei13fKIFyMct7tYzUQaPQszIHxGhM44G2s=
-X-Google-Smtp-Source: AGHT+IFontqY/o9kF4Umas2KaV0Qk1I68BFaUuSbrVZlKVmdJEz/PT3rbSGKmcwPPDtrNPT5I2oRXl5pRtVPDDCxx9Zr0B/g0Wvp
+	s=arc-20240116; t=1729549500; c=relaxed/simple;
+	bh=1quJ70PHVAFiGCbTmU5DWWW6j2chOCF8o4r7b2YCC5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GRuekMdNGqeHmL1l6RxZJ2f4u/dm0K2WAM6zPovSXlc+f0mo8a9UG+nueDdfrihRibcD1i3ogYK43a/6lh7xHwyhGCwYw0n6rdmq7XE33k7NNXlA1PsQkZRFfZV9WN37z438UGeNuOrEj2VIyftpc6o9k1Opp63YLbN1DFQb43g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11B2A497;
+	Mon, 21 Oct 2024 15:25:27 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F37D3F71E;
+	Mon, 21 Oct 2024 15:24:56 -0700 (PDT)
+Message-ID: <3b9688a6-517a-4317-8f59-8476e0462a40@arm.com>
+Date: Mon, 21 Oct 2024 23:26:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ed:b0:3a3:a639:a594 with SMTP id
- e9e14a558f8ab-3a4cc0342b4mr9583805ab.4.1729549554087; Mon, 21 Oct 2024
- 15:25:54 -0700 (PDT)
-Date: Mon, 21 Oct 2024 15:25:54 -0700
-In-Reply-To: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6716d4f2.050a0220.10f4f4.00bb.GAE@google.com>
-Subject: Re: [syzbot] kernel BUG in bch2_journal_key_insert_take
-From: syzbot <syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/12] thermal: core: Mark thermal zones as
+ initializing to start with
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2215082.irdbgypaU6@rjwysocki.net>
+ <9360231.CDJkKcVGEf@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <9360231.CDJkKcVGEf@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: kernel BUG in bch2_journal_key_insert_take
-Author: pz010001011111@proton.me
+On 10/4/24 20:15, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> After thermal_zone_device_register_with_trips() has called
+> device_register() and it has registered the new thermal zone device
+> with the driver core, user space may access its sysfs attributes and,
+> among other things, it may enable the thermal zone before it is ready.
+> 
+> To address this, introduce a new thermal zone state flag for
+> initialization and set it before calling device_register() in
+> thermal_zone_device_register_with_trips().  This causes
+> __thermal_zone_device_update() to return early until the new flag
+> is cleared.
+> 
+> To clear it when the thermal zone is ready, introduce a new
+> function called thermal_zone_init_complete() that will also invoke
+> __thermal_zone_device_update() after clearing that flag (both under the
+> thernal zone lock) and make thermal_zone_device_register_with_trips()
+> call the new function instead of checking need_update and calling
+> thermal_zone_device_update() when it is set.
+> 
+> After this change, if user space enables the thermal zone prematurely,
+> __thermal_zone_device_update() will return early for it until
+> thermal_zone_init_complete() is called.  In turn, if the thermal zone
+> is not enabled by user space before thermal_zone_init_complete() is
+> called, the __thermal_zone_device_update() call in it will return early
+> because the thermal zone has not been enabled yet, but that function
+> will be invoked again by thermal_zone_device_set_mode() when the thermal
+> zone is enabled and it will not return early this time.
+> 
+> The checking of need_update is not necessary any more because the
+> __thermal_zone_device_update() calls potentially triggered by cooling
+> device binding take place before calling thermal_zone_init_complete(),
+> so they all will return early, which means that
+> thermal_zone_init_complete() must call __thermal_zone_device_update()
+> in case the thermal zone is enabled prematurely by user space.
+> 
+> Fixes: 203d3d4aa482 ("the generic thermal sysfs driver")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a new iteration of
+> 
+> https://lore.kernel.org/linux-pm/2973309.e9J7NaK4W3@rjwysocki.net/
+> 
+> v1 -> v2: Rebase and add a Fixes tag.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |   16 +++++++++++++---
+>   drivers/thermal/thermal_core.h |    1 +
+>   2 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -1332,6 +1332,16 @@ int thermal_zone_get_crit_temp(struct th
+>   }
+>   EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
+>   
+> +static void thermal_zone_init_complete(struct thermal_zone_device *tz)
+> +{
+> +	mutex_lock(&tz->lock);
+> +
+> +	tz->state &= ~TZ_STATE_FLAG_INIT;
+> +	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+> +
+> +	mutex_unlock(&tz->lock);
+> +}
+> +
+>   /**
+>    * thermal_zone_device_register_with_trips() - register a new thermal zone device
+>    * @type:	the thermal zone device type
+> @@ -1451,6 +1461,8 @@ thermal_zone_device_register_with_trips(
+>   	tz->passive_delay_jiffies = msecs_to_jiffies(passive_delay);
+>   	tz->recheck_delay_jiffies = THERMAL_RECHECK_DELAY;
+>   
+> +	tz->state = TZ_STATE_FLAG_INIT;
+> +
+>   	/* sys I/F */
+>   	/* Add nodes that are always present via .groups */
+>   	result = thermal_zone_create_device_groups(tz);
+> @@ -1504,9 +1516,7 @@ thermal_zone_device_register_with_trips(
+>   
+>   	mutex_unlock(&thermal_list_lock);
+>   
+> -	/* Update the new thermal zone and mark it as already updated. */
+> -	if (atomic_cmpxchg(&tz->need_update, 1, 0))
+> -		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+> +	thermal_zone_init_complete(tz);
+>   
+>   	thermal_notify_tz_create(tz);
+>   
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -63,6 +63,7 @@ struct thermal_governor {
+>   
+>   #define	TZ_STATE_FLAG_SUSPENDED	BIT(0)
+>   #define	TZ_STATE_FLAG_RESUMING	BIT(1)
+> +#define	TZ_STATE_FLAG_INIT	BIT(2)
+>   
+>   #define TZ_STATE_READY		0
+>   
+> 
+> 
+> 
 
-#syz test
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
