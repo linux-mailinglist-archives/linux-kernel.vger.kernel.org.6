@@ -1,102 +1,88 @@
-Return-Path: <linux-kernel+bounces-374482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DF49A6AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:47:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890D99A6AF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628EA1C23511
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B421F24132
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0151F893F;
-	Mon, 21 Oct 2024 13:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06151F8908;
+	Mon, 21 Oct 2024 13:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0PWyLVo"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mypYa7AF"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119C4282FE;
-	Mon, 21 Oct 2024 13:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F146BA;
+	Mon, 21 Oct 2024 13:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729518454; cv=none; b=Xu9x5sCvK6olabs3LS81LiC+Rab7q69aZF5GDTD+8yr2oWGa4vhQGoBW7qSNlhvV8aJty79J8sM2ZzMkny/vo2dSbf3B0dud3hiz+EHcZbWVdSsimkQh+PYAUqjSPAV8yeinQSbjhOM1Cvj9abvXYBn9xuyNO5HN9t0NqS2Ar3s=
+	t=1729518475; cv=none; b=Q71R1FCOGEd6EVuKNn5IS50QMguPS16Nb7SYXOw5gOWDmT1idZuE/2XU7rw9Z5SybL0H7owd3VWHZkAQaZRfYOYM5hoAldAWBn1K2qRiZQRDCRbnlRTIg2vmGNbv8YTAmYMylMT20WHFm2JaDAsn2hySZNLVSPijbUyNO/K3tbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729518454; c=relaxed/simple;
-	bh=pZC3YbqyBViAPdxBqxiw35UgPV0nDZR5cXq4uA20i5g=;
+	s=arc-20240116; t=1729518475; c=relaxed/simple;
+	bh=aUw4WJZmdSfNhxDFuiH2LCXSrIkyodmCvTqA3zgVJps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bB4c6OykYfcOBEf47DuZAduFs+qMdHQnABNFdDwA+po7ufjCw5bYwW0bwkTVrLrEVVvbnBQMPOu++xKr+g2RQLCS0tg0i5noroTczhq++lt9MEJOwyMFJ4HM52CrDX+AysjSs2wRtc/MxNAE6AEymsYsKkvHMnS/9eIpoFfpeJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0PWyLVo; arc=none smtp.client-ip=209.85.218.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7skpGBLveR1URqZI5cteMEgnPeoxs8k6AOTIvkRX0L86i3qMvcjdZtvpUtXOfQwJsvkfryEx4mSP+rEtaK7OGnnjCsgjaPspAEp/BkfjR9PynMtLqJQ9tCIiksZk5EEfd2zN+lxs5p3dLeWDxi3C2qn628BWezrnmAgQQiUpJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mypYa7AF; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a99f9fa66fdso50435866b.0;
-        Mon, 21 Oct 2024 06:47:31 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb89a4e4cso30739965ad.3;
+        Mon, 21 Oct 2024 06:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729518450; x=1730123250; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729518471; x=1730123271; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0PguM/y3AdR81087UZxaCc/iTHakbzKnJWRYI0kM+s=;
-        b=M0PWyLVoIDwyPdP0bxZgNWzrX42vE0+QYoj2stRvDspSjsVcTVzisFZdRw5nsgrs80
-         dHgRzZX0xGkqtLfwWyektp0iZ8A9Fr93xlhuwH562DrUQLZpTk/5RtxPUcjn1wIr0YKP
-         1BaS4txAvRi4m0c9LItavDmpZmRpXLlRY7kUCGWFOVMqRLIvyZKs0PVKCwev46NTzRFM
-         YuW9MVfdZCpto9OTMjsrGrVEgc/1wyQBgBB83mQ+0HnCJe9A2/kMWZIe+lgZR3TxrtMk
-         vRX3P4w0Es7OGSWv1hDWTyomT/lm99q4CncaGdUJsjLi6LcTs/XQcf6mRFcd4YS71ZJz
-         8gyA==
+        bh=nD+KqOyffsNNyL4338nxmJl3FPWZED5MQGf79DLqDV4=;
+        b=mypYa7AFgrWz+0wQG3I0xNXqdvJpZkKLddJ1Yhe8IHbP24QvbheVMSYRRsxSITAxid
+         tp87djKzwgzJVHKser1X3RJFSQCRravKREm1Nyr82cstOKcKLS9nW38q1NJgs3pW/9M3
+         tGvN8ohVI7vnF5aoxBhEp5NT03/ibWW/xkuH6NjzhztawJTJWHBJoMCmeC7OCzYPgp+y
+         GgEwCfWICt1SB9oO6SAUogtBadu/O272/ySEnoVlMYFBDB1/UEr+IH/PSaAEwtbWBPaB
+         gQzOhde2+waT05vgaUjjocqDVGzml9Jxvw/MZnqx91zkKA0AzJ0NwhzMk2UjcDH/GXUr
+         Nzdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729518450; x=1730123250;
+        d=1e100.net; s=20230601; t=1729518471; x=1730123271;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L0PguM/y3AdR81087UZxaCc/iTHakbzKnJWRYI0kM+s=;
-        b=uD7ashQ6pc3PrXpBv0MbGB7Gul7rjzmABOKZUg/zbxhLN2e+Tv/r87Sgnq4enqxr18
-         CQrugf7XaLMdvle2qOB8gOmWNcS1VWAC8dcGaENJ7YtxgHmhnGwazgfMI5hCUlPUKIfS
-         bAk71bZiBdrweZDMf//x1EaTCUjU3Y/HgJvU6WE1TEOVgmtkyzUsHZxbC90/KIDBgkDx
-         fldcIYuBgZlxHJt2jon9lsC7tGADV3VlMcPbyu2Dg+tnHvUid5XhTYONsmpYcmPTEeyA
-         ds3AyQUCkqOIWY6Fcs9jT0n7Kt0Q8HKnREdoU8tRSgel6iSxx9XU57VBKbrjq02nrTc+
-         S1cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSe1Z/a+e480ozo1W96qip1L5VXo0xt9hb3JqCe0VlL+pqkMgQJ8QYc+ye2EvmhCl6pMPOTPkwU0saof1O8l/L@vger.kernel.org, AJvYcCWV2jbg3AkCcIZB32mAXq+hnHePOgW4ywgRgKBneH+cSdu8hgUbHnHhQ2v8/6hdCZI4e1yAOA24@vger.kernel.org, AJvYcCX2jVA7xlWW3g7p9x+CF4HKEYXtfIEMlip9g8GrAK2rTVdH9cHTa1vawJepGSRk5BQcP+GP9twF1jfs24g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx811PpiVlWgGjY1cvAHXnKz5CZ/y3gQbYxrpdgwX0ZJK4QPzSr
-	5taiGfllE4wk0Cst8Xz5jCVcSW0sFhgfi5Q9dDzjnXiYRE8FEqLX
-X-Google-Smtp-Source: AGHT+IHllwIsaig8SX4FhN+AvinTZ5nJRChFYQ0yBVkHaCSnwF1lUgDNNoWUZkrrdij66hbn5eP8Xg==
-X-Received: by 2002:a17:906:6a26:b0:a9a:5b78:cee5 with SMTP id a640c23a62f3a-a9a69c685d4mr437986966b.9.1729518449909;
-        Mon, 21 Oct 2024 06:47:29 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e54sm204503966b.102.2024.10.21.06.47.27
+        bh=nD+KqOyffsNNyL4338nxmJl3FPWZED5MQGf79DLqDV4=;
+        b=gH0MgGsc4jVvJEDPjnwtkl+/NVFlKJ1H88uOisp0dr/hcR2GQjEzW/77jA0c6VoPHb
+         +IwJZ4nc109E7NoDH9JbPiSA8zfkOE2xByPOET1R8CBPQsyZjTSSEMa8PuZLvCuhddfu
+         XWoQBNkXV4MRA09abpJp0atr9QQP0tvqP4K14/+nRZs/OFrzY0G4ib80KzIDqhkknfF1
+         P1VQk5BQkJ6pqxYy9Z+2eWNppBuucVbrWcAtdznOD7lg0aohaER+DveadlQqk+oVr77S
+         U0if69ZdWstsm0PL3dkxjwbA62NzYqNXEJOiWKdduySz6iuh+8Jb1S8xLmNwlvDHpL1w
+         FCJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfeTuGLnCNW8bdAQeAs4atsLGeHMDsE7qxw5x48648KQA9tBv9tRhnIBMhwloe7Wgk+vU90Cq2p8Bt@vger.kernel.org, AJvYcCUyENcnlZsIY/9CFYUD5XC+x/tgKn3be0ngWhMYuT6az5lUrxxDiz3T88+gW6xM/gjJ7LAGKLX9PtxL+dQ=@vger.kernel.org, AJvYcCVe8ywqOLvJgmdG18ckehmkYFuIVHI7xeFkY8xa9RO4Htf28/5cCUYDl8GyjRENFYLBoj5EI22z7PmPc134e/K8dA==@vger.kernel.org, AJvYcCW3DGux/nPU5UOqsFUDK/K9EiiMcwOijE9KflYfX/vNVkvVGTo3J1aHusrZ/xBSM5YzR9fsqQJZ+0wcQcDG@vger.kernel.org, AJvYcCWJtbjoDVKY7/Ov7Xj2jBxJExCbTpkglmNzNuJDaPXiAbz57rjgAxkNu2umkExmxRFR2vJHcjSS2ezL4abhsH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmxR3WIcnTHap+4ZgEv4MKqSf+L1SwTVY/brMJ1RHVQmSuGaDB
+	7ON0+ZQUP7Y2F/ZQfSc/FBZ9YAE3ITWd5bqXzpt8+dSX7/9fJzNz
+X-Google-Smtp-Source: AGHT+IGpQioQQSjVna+u0kcFMLLDGy8gnz92x4raQ8iP4uL9jWeq86xdAWB9VASoS23M74pBaQs88w==
+X-Received: by 2002:a17:902:ec83:b0:20b:9f8c:e9de with SMTP id d9443c01a7336-20e5a7529f1mr179366035ad.13.1729518471094;
+        Mon, 21 Oct 2024 06:47:51 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bd2b8sm25853735ad.159.2024.10.21.06.47.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:47:29 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:47:26 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Eric Woudstra <ericwouds@gmail.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Roopa Prabhu <roopa@nvidia.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, bridge@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH RFC v1 net-next 11/12] bridge:
- br_vlan_fill_forward_path_mode no _UNTAG_HW for dsa
-Message-ID: <20241021134726.dzfz5uu2peyin3kk@skbuf>
-References: <20241013185509.4430-1-ericwouds@gmail.com>
- <20241013185509.4430-12-ericwouds@gmail.com>
- <281cce27-c832-41c8-87d0-fbac05b8e802@blackwall.org>
- <6209405e-7100-43f9-b415-3be8fbcc6352@blackwall.org>
- <20241014144613.mkc62dvfzp3vr7rj@skbuf>
- <b919a6b1-1c07-4fc9-b3dc-a7ac2f3645bf@gmail.com>
- <785f6b7a-1de1-46fe-aa6f-9b20feee5973@gmail.com>
+        Mon, 21 Oct 2024 06:47:50 -0700 (PDT)
+Date: Mon, 21 Oct 2024 21:47:45 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
+	corbet@lwn.net, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, akpm@linux-foundation.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, willy@infradead.org,
+	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] Enhance min heap API with non-inline functions
+ and optimizations
+Message-ID: <ZxZbgWc2IsztAOOx@visitorckw-System-Product-Name>
+References: <20241020040200.939973-1-visitorckw@gmail.com>
+ <ZxYf8VvQIZv9_Y1j@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,44 +91,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <785f6b7a-1de1-46fe-aa6f-9b20feee5973@gmail.com>
+In-Reply-To: <ZxYf8VvQIZv9_Y1j@archie.me>
 
-On Sun, Oct 20, 2024 at 11:23:18AM +0200, Eric Woudstra wrote:
-> So after doing some more reading, at creation of the code using
-> BR_VLFLAG_ADDED_BY_SWITCHDEV would have been without problems.
+On Mon, Oct 21, 2024 at 04:33:37PM +0700, Bagas Sanjaya wrote:
+> On Sun, Oct 20, 2024 at 12:01:50PM +0800, Kuan-Wei Chiu wrote:
+> > Add non-inline versions of the min heap API functions in lib/min_heap.c
+> > and updates all users outside of kernel/events/core.c to use these
+> > non-inline versions. To mitigate the performance impact of indirect
+> > function calls caused by the non-inline versions of the swap and
+> > compare functions, a builtin swap has been introduced that swaps
+> > elements based on their size. Additionally, it micro-optimizes the
+> > efficiency of the min heap by pre-scaling the counter, following the
+> > same approach as in lib/sort.c. Documentation for the min heap API has
+> > also been added to the core-api section.
 > 
-> After the switchdev was altered so that objects from foreign devices can
-> be added, it is problematic in br_vlan_fill_forward_path_mode(). I have
-> tested and indeed any foreign device does have this problem.
+> What tree (and commit) this series is based on?
 > 
-> So we need a way to distinguish in br_vlan_fill_forward_path_mode()
-> whether or not we are dealing with a (dsa) foreign device on the switchdev.
+> Confused...
 > 
-> I have come up with something, but this is most likely to crude to be
-> accepted, but for the sake of 'rfc' discussing it may lead to a proper
-> solution. So what does work is the following patch, so that
-> netif_has_dsa_foreign_vlan() can be used inside
-> br_vlan_fill_forward_path_mode().
-> 
-> Any suggestions on how this could be implemented properly would be
-> greatly appreciated.
+This patchset is based on Linus' tree, commit 715ca9dd687f ("Merge tag
+'io_uring-6.12-20241019' of git://git.kernel.dk/linux"). Since it
+touches multiple subsystems, I'm not entirely sure which tree I should
+base it on. Should it be linux-next, perhaps?
 
-I don't know nearly enough about the netfilter flowtable to even
-understand exactly the problem you're describing and are trying to solve.
-I've started to read up on things, but plenty of concepts are new and
-I'm mixing this with plenty of other activities. If you could share some
-commands to build a test setup so I could form my own independent
-opinion of what is going on, it would be great as it would speed up that
-process.
+Regards,
+Kuan-Wei
 
-With respect to the patch you've posted, it doesn't look exactly great.
-One would need to make a thorough analysis of the bridge's use of
-BR_VLFLAG_ADDED_BY_SWITCHDEV, of whether it still makes sense in today's
-world where br_switchdev_vlan_replay() is a thing (a VLAN that used to
-not be "added by switchdev" can become "added by switchdev" after a
-replay, but this flag will remain incorrectly unset), of whether VLANs on
-foreign DSA interfaces should even have this flag set, and on whether
-your flowtable forwarding path patches are conceptually using it correctly.
-There's a lot to think about, and if somebody doesn't have the big picture,
-I'm worried that a wrong decision will be taken.
 
