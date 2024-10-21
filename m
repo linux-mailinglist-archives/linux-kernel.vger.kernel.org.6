@@ -1,119 +1,169 @@
-Return-Path: <linux-kernel+bounces-374086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8C39A62CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCE19A62D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC431C21BB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DBEB2829DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F51A1E7C3A;
-	Mon, 21 Oct 2024 10:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuUI21m5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593F71E5731;
+	Mon, 21 Oct 2024 10:26:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CB51E882A;
-	Mon, 21 Oct 2024 10:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAB1E47BA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729506345; cv=none; b=EoCSTsqGViAt4DchKRAUPNndBbLX88ts2gtZalbgtZwAMlR8E6SDmeFHJ44AdDtWHXKVydZcfhLrtJnqcYpMQY5YviUOHPH19nOzanx9nzwVXci2MuGoP1TJE166C+DyL7TEwzuxTrEA+ReiGajRqKoo3u9yZZRDyE1U3Ij1QNM=
+	t=1729506389; cv=none; b=k1I+9zSn8CNj+cWEBvpcXXrFK4HJ8pcoakRHtGAK47Bs2KfsF0jApGFUwTr05rbC+jv7W6bdvxIljVN/nB0IywU/9rCkGIF9ra3yVfK2sIdGoshF6EdHcwsCnvUhul2eQjWfpKqLj4wVlrfozjobiJzMWHhWLpEjgQycygH+Bbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729506345; c=relaxed/simple;
-	bh=+ERGzFcGqAZgfpbsL0KQxvrUj31An94qTY+Z0b8vfJE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WYkuieVHThfpRld6vF58uXgfy13wUNblYMCqd4Qp1Or+/KmM6JLQzYwD5sU7pGs7wMZiRWclveuu2z8ZJJbTT0vUc9T0vTgxYaiLDhavfAdEnqxxB+lBwm0sV2R4n+wS1766faZW41Vdo34o35jJfVeIudTzy4AwFG/5Nw1of2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuUI21m5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E47FC4CEC7;
-	Mon, 21 Oct 2024 10:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729506345;
-	bh=+ERGzFcGqAZgfpbsL0KQxvrUj31An94qTY+Z0b8vfJE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GuUI21m5a/yWsJac7sD8+kBDPJD+CYdpshVHwDOoQmqMTdhTZcqeTowmsDw31oV/B
-	 zYB0qkvfSuxYO0DJN1sbVSU3LxfiaNSD3/58AD6xU/bZArXbP8uBOoqQpybIkwpb45
-	 F2ZLicxg14s6sFrlMKX/09gD+JyfDaiyBJskdS4CWxY91IYwBrZMZHh36YI8DoV0Fw
-	 SFfo9p0r5x0AY98Rtfy/LPa/T6L0sgxn6WRzjPYHawIF9bJ28FQI68bo9QC4w5FGOw
-	 4+rTXidRzu36GcjBo15xIFDeKgECBEI8EIXvbLUOdoKOFOC1a6/K1cPDoxEtH9Z8M6
-	 CtM1IX2Sm/S4w==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 21 Oct 2024 12:25:28 +0200
-Subject: [PATCH net 3/3] selftests: mptcp: list sysctl data
+	s=arc-20240116; t=1729506389; c=relaxed/simple;
+	bh=HyinHEDUltMnnylEuLyH5EMvjAcRtvUx0YHleWhIe5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IL0YP/vEnY1BABCRKzy8osBSfS7rqMgOQwKfEFPU7SoQAn7KYwH18+kIY4H2XFz4NpSFt0pwPhtIcwuZucqCCzXiykdsvK3IhpAeREjcO12cgrOUBvqDfHxe+e8g/uST/9apLCIF30cMzwVhWLpbdmVexeiACPTw0Y0ykB+kgjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2pbr-0000gD-2X; Mon, 21 Oct 2024 12:25:59 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2pbq-000g9Q-22;
+	Mon, 21 Oct 2024 12:25:58 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2pbq-005k06-1g;
+	Mon, 21 Oct 2024 12:25:58 +0200
+Date: Mon, 21 Oct 2024 12:25:58 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Sherry Sun <sherry.sun@nxp.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-net-mptcp-sched-lock-v1-3-637759cf061c@kernel.org>
-References: <20241021-net-mptcp-sched-lock-v1-0-637759cf061c@kernel.org>
-In-Reply-To: <20241021-net-mptcp-sched-lock-v1-0-637759cf061c@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Gregory Detal <gregory.detal@gmail.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1473; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=+ERGzFcGqAZgfpbsL0KQxvrUj31An94qTY+Z0b8vfJE=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnFiwbvNXfL/mAHMg+fJSIDrYNm4eLaGOM+emu6
- lHDnwXbmcyJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZxYsGwAKCRD2t4JPQmmg
- cwcFEADGP6qT9NnBcsX7XErC6uFJ6mZYSJOf1cgpzwCKy1+pIkPwVv4A/z+/8IoP83XUZj4CzRo
- gOra1Vb70O4crfXA8fd1QvwGQlLahPifZw9WIHUk+Dxs22Hrg+NXIyx2J+ti/TQjcVKd0o6mQMT
- V8AD3V+lS9C7qs9M1lJZeTbXMvEXJC7P/AH30tjkH0EnTbp806TzstqXL5eesKBszIMj+A8M35Y
- ZBIE+YyFTojrzx+gpEIvwKgn+DY6NDa5RxecDqh/NWsuthy9QvOeP3yr//ZFfsovn2Bo2r/X+Ji
- AIyz/lv9XeghxVTObyfyMjikmHZtgF+ZSbuLQxswLifKQBS6PFulx9nqyglBzbz8ePsK7OmL/Gr
- UYEROMVZBya7lLQNnjvQhhcPlDIWFO48CzTH/Rw4JkeM2DZQ+eKLNcgJSDl8/bl0UEgnIn7lzfa
- S1A6CNuYRk91XEGwcCqlpno8B50uSa6uopLTxvSWP0nb1hZ9kawg/Dki4sIY63Y9o0jWQKubv6P
- ye5DB2nZAnja8HrFAcFvwuHjAAvxtvowoBYVR/9OHHp7omS540iN4UdLC552yg9qb6+k3f4DEre
- 055G7F9NeT1w2RqaxsYKlWxY0tRJ5tesSv+0raeauOe6qelK+p8DggGqLj+AzyyBR6FVpn/1qjv
- IhOOm5oXpG1jJ7A==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Listing all the values linked to the MPTCP sysctl knobs was not
-exercised in MPTCP test suite.
+On 24-10-21, Krzysztof Kozlowski wrote:
+> On 21/10/2024 08:41, Marco Felsch wrote:
+> > On 24-10-07, Krzysztof Kozlowski wrote:
+> >> On 07/10/2024 14:58, POPESCU Catalin wrote:
+> >>>>>>
+> >>>>>> +  vcc-supply:
+> >>>>>> +    description:
+> >>>>>> +      phandle of the regulator that provides the supply voltage.
+> >>>>>> +
+> >>>>>> +  reset-gpios:
+> >>>>>> +    description:
+> >>>>>> +      Chip powerdown/reset signal (PDn).
+> >>>>>> +
+> >>>>> Hi Catalin,
+> >>>>>
+> >>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
+> >>>>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
+> >>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
+> >>>
+> >>> Hi Sherry,
+> >>>
+> >>> Regulators and reset controls being refcounted, we can then implement 
+> >>> powerup sequence in both bluetooth/wlan drivers and have the drivers 
+> >>> operate independently. This way bluetooth driver would has no dependance 
+> >>> on the wlan driver for :
+> >>>
+> >>> - its power supply
+> >>>
+> >>> - its reset pin (PDn)
+> >>>
+> >>> - its firmware (being downloaded as part of the combo firmware)
+> >>>
+> >>> For the wlan driver we use mmc power sequence to drive the chip reset 
+> >>> pin and there's another patchset that adds support for reset control 
+> >>> into the mmc pwrseq simple driver.
+> >>>
+> >>>> Please wrap your replies.
+> >>>>
+> >>>> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
+> >>>
+> >>> Hi Krzysztof,
+> >>>
+> >>> I'm not familiar with power sequencing, but looks like way more 
+> >>> complicated than reset controls. So, why power sequencing is recommended 
+> >>> here ? Is it b/c a supply is involved ?
+> >>
+> >> Based on earlier message:
+> >>
+> >> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+> >> that both wifi and BT controller will be powered on and off at the same
+> >> time."
+> >>
+> >> but maybe that's not needed. No clue, I don't know the hardware. But be
+> >> carefully what you write in the bindings, because then it will be ABI.
+> > 
+> > We noticed the new power-sequencing infrastructure which is part of 6.11
+> > too but I don't think that this patch is wrong. The DT ABI won't break
+> > if we switch to the power-sequencing later on since the "reset-gpios"
+> > are not marked as required. So it is up to the driver to handle it
+> > either via a separate power-sequence driver or via "power-supply" and
+> > "reset-gpios" directly.
+> 
+> That's not the point. We expect correct hardware description. If you say
+> now it has "reset-gpios" but later say "actually no, because it has
+> PMU", I respond: no. Describe the hardware, not current Linux.
 
-Let's do that to avoid any regressions, but also to have a kernel with a
-debug kconfig verifying more assumptions. For the moment, we are not
-interested by the output, only to avoid crashes and warnings.
+I know that DT abstracts the HW. That said I don't see the problem with
+this patch. The HW is abstracted just fine:
 
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_connect.sh | 9 +++++++++
- 1 file changed, 9 insertions(+)
+shared PDn          -> reset-gpios
+shared power-supply -> vcc-supply
 
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_connect.sh b/tools/testing/selftests/net/mptcp/mptcp_connect.sh
-index 57325d57e4c6e3653019db2de09620d692143683..b48b4e56826a9cfdb3501242b707ae2ebe29b220 100755
---- a/tools/testing/selftests/net/mptcp/mptcp_connect.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_connect.sh
-@@ -259,6 +259,15 @@ check_mptcp_disabled()
- 	mptcp_lib_ns_init disabled_ns
- 
- 	print_larger_title "New MPTCP socket can be blocked via sysctl"
-+
-+	# mainly to cover more code
-+	if ! ip netns exec ${disabled_ns} sysctl net.mptcp >/dev/null; then
-+		mptcp_lib_pr_fail "not able to list net.mptcp sysctl knobs"
-+		mptcp_lib_result_fail "not able to list net.mptcp sysctl knobs"
-+		ret=${KSFT_FAIL}
-+		return 1
-+	fi
-+
- 	# net.mptcp.enabled should be enabled by default
- 	if [ "$(ip netns exec ${disabled_ns} sysctl net.mptcp.enabled | awk '{ print $3 }')" -ne 1 ]; then
- 		mptcp_lib_pr_fail "net.mptcp.enabled sysctl is not 1 by default"
+Right now the DT ABI for the BT part is incomplete since it assume a
+running WLAN part or some hog-gpios to pull the device out-of-reset
+which is addressed by this patchset.
 
--- 
-2.45.2
+Making use of the new power-sequencing fw is a Linux detail and I don't
+see why the DT can't be extended later on. We always extend the DT if
+something is missing or if we found a better way to handle devices.
 
+Regards,
+  Marco
 
