@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-374606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1669A6D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:57:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D449A6D71
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87151F22530
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053C62822BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2981FA25E;
-	Mon, 21 Oct 2024 14:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD46D1FA26C;
+	Mon, 21 Oct 2024 14:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frkN6YdF"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUcsqbhj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0B41EABDC;
-	Mon, 21 Oct 2024 14:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219591FA245;
+	Mon, 21 Oct 2024 14:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522632; cv=none; b=sfftRdgc1ksWlxjNObhxg34Z5dGpm3Xb4p8bZv/th53AGjkGYXZma6sdZV+Cu2iY96AYSXH8AxMMe3tLOMfwV+RFEfLY2bUJcyn/Wyy3lQeGadcDYC7gINcECeLsCKPtmUv+UnKTTyFOTOW6L9TpN+G9wQduLpZ2N83nhVVA6+8=
+	t=1729522739; cv=none; b=lN8VJ3gNkCiXlq1Oacu6+3LM4w8jF51f7Tetiwq5WZ4EQE8mHDglxGo/7uO4+k5Zo3kUhOHmehEkT+n6VBWuqNDqjJymBC0doXT3DDakkYN9E0IxiPSUnL0U4jgXiHQ5sDYiotDoYDwYbcIi+bfnpMnPqNztXpxBGWQDPMhLYyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522632; c=relaxed/simple;
-	bh=XF2XWkvfGVbXYyXVhinJFu1m7SQIWE+VULOwx5F/dq4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=sv5KxJHM7IAWyBdeyelNn+2TByFNOMB35+28KyHWCSP5RjFbMbeVHXFU61q9vMNBfvLSzhNX0Nsy9Xkl4LrvlkCxeRfnOwa33duIl2+j48H2Ff/xlq/n+sOZvZPBtvhLSxEhdZUpLncx8SJJTvQ2PUWT4LR8adjJII0obj6gatU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frkN6YdF; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cc250bbc9eso33479456d6.2;
-        Mon, 21 Oct 2024 07:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729522629; x=1730127429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEbezSYTuof1BOLKPVcrMzA3XBTu7g/yrGOgRxbf9/8=;
-        b=frkN6YdFy62Gfw8W1S0RKDrdTKztVcEcNBnaGzyeZygsjRxb0U8WG0Vh+puEC+v619
-         aNh7VfPWL3cZD8Tis5I2ZBwYTqUEPCWx36pRHdfzlo5P2B0R9LYfIM9Pcf8wwr7OiH76
-         y2W2sP+JG35ZMKuzTY9r657Lpo2cGdUkvziS8RJUitGf/ZpObTscbRptZpBpjQdqbX8c
-         cUj4Znu2LhIAroabJa5/BNBHc98F7bScly5sZk4Ta7qxhvhqOw6mEkIr8BrsKx6j5D9+
-         Fg6KPULkD6YbkfGb4YfXQeSTAIOxXwQS7tIcQ5BF5z71mCAfRPNe4Fobd9YS8GgfWV1T
-         vd7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729522629; x=1730127429;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NEbezSYTuof1BOLKPVcrMzA3XBTu7g/yrGOgRxbf9/8=;
-        b=TyEuZHgQocxnArgwcXuunipTh1Pr/0JIxw0opqJ8vZpzQfi4baY3DrytLdq0HsTa4v
-         6beaIJHhHPEM9Z0+gqJF3iKG6wDMWfthMPL4OgeC3nZRlLo14wuEaQKrE9EfOgYFEAfD
-         CdS+EmniOPoa4TEOEJcxzdgnGwNtZbgl7livVhMNwNtvTOMFaJqgVU9XJz5X30ct1DtF
-         PbLHgvvdu3kkyEW/c3Tk1EZEXRekxqPSxvNdkXpPRjqxkDKuH3HvK3sPTpk7VuKGKsSK
-         Xhjx30i1R3bDDA6vUMpTpxAUjc2jB4I3y6QkkK4n/V+pH1hXd5tAPrgPFn3loh4Op2DU
-         FMRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8amdAX19xsdmxFx2FwAiJxShHBo4j9gOlAX/luupV/0e/2No6LRagk+badc99n7Yw3mgwSJtKO28=@vger.kernel.org, AJvYcCUUghySoTRcN5Y7wMULu1DD4nHRg+A7xEjxR6HSkUWYvJc2fc4lIGdmcqApAoDojIWwhmGq+g23PpoYXzQ4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUZmyPIc48NCUTfIyd4VvtsFZfdiarPKPqTvmvYbkBZqYdriCY
-	yKdyBqSHE47lCAemjoXPz7bRREbWV2YFJNI46nfRVXDq9mfJVkXMmCck6g==
-X-Google-Smtp-Source: AGHT+IHynfpi2UqtXTEDhAhXbSVrM1sWFE9vREPEGJSwrTg8//GGN5l5unzLUpM7R45sDk62UJbJfA==
-X-Received: by 2002:a05:6214:4698:b0:6cb:eb66:c37a with SMTP id 6a1803df08f44-6cde163b093mr173326586d6.53.1729522629096;
-        Mon, 21 Oct 2024 07:57:09 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce0099eaefsm17600426d6.101.2024.10.21.07.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 07:57:08 -0700 (PDT)
-Date: Mon, 21 Oct 2024 10:57:08 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Levi Zim <rsworktech@outlook.com>
-Message-ID: <67166bc43e131_42f032948d@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20241021-packet_mmap_fix_link-v1-1-dffae4a174c0@outlook.com>
-References: <20241021-packet_mmap_fix_link-v1-1-dffae4a174c0@outlook.com>
-Subject: Re: [PATCH net] docs: networking: packet_mmap: replace dead links
- with archive.org links
+	s=arc-20240116; t=1729522739; c=relaxed/simple;
+	bh=YZVFt6Fiq3Uw/uK9i5TolLo/2N8dCMVm8nklxxHdVSk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=P7DZplQtjzCZIq7jgTAHMQDE/7Bf32mBiKAe9e8Vp3NOwHmmSNQA2AuojRTthGKg/cwXxKyfQVnC1bZivxbiLEEDfrqk6jObcl5vM0sNpYze7C8FXfDHW2c8VmvrDU/PAfrY0qMsFcYgcu7PjmlK2dq66ekDr4sQXoxGMvKKY3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUcsqbhj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B60A4C4CECD;
+	Mon, 21 Oct 2024 14:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729522738;
+	bh=YZVFt6Fiq3Uw/uK9i5TolLo/2N8dCMVm8nklxxHdVSk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rUcsqbhjNMYRkQhi9IaLVRmqeZBOtm8RBVcgBKhELkrrMB8bJGsA2bYDCGkxgITty
+	 lp9o/8LZo7BG0RXZXYJLgh+muhFAKxeibcxuqVfG3JcLRP/vaTOWnsQD+6eCou7iQ4
+	 KIo7pX0L1vjulzn7Vd0srSt4T+Jt+FPkRFzFtm980iT6lPkpoXhoRj+EVrPMshfElv
+	 cqBEB2nZ0D59Aw8BTfrtITTkfDSQUR42eICVwBkvvij5rTEGo46xrLnx3zk9dblBQH
+	 0eXvnb7LQnG5K19XINvYXmY3NvGv8IPCy3Zv4DBS22PACtfbeBRNLHSozp4PHU+z9V
+	 dehnd5OvjlMDg==
+Date: Mon, 21 Oct 2024 23:58:54 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Ryan Roberts
+ <ryan.roberts@arm.com>
+Subject: Re: [PATCH] fgraph: Separate size of ret_stack from PAGE_SIZE
+Message-Id: <20241021235854.8d287463ee68d4c4c2846b29@kernel.org>
+In-Reply-To: <20241019152951.053f9646@rorschach.local.home>
+References: <20241019152951.053f9646@rorschach.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Levi Zim via B4 Relay wrote:
-> From: Levi Zim <rsworktech@outlook.com>
+On Sat, 19 Oct 2024 15:29:51 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> The original link returns 404 now. This commit replaces the dead google
-> site link with archive.org link.
+> The ret_stack (shadow stack used by function graph infrastructure) is
+> currently defined as PAGE_SIZE. But some architectures which have 64K
+> PAGE_SIZE, this is way overkill. Also there's an effort to allow the
+> PAGE_SIZE to be defined at boot up.
 > 
-> Signed-off-by: Levi Zim <rsworktech@outlook.com>
+> Hard code it for now to 4096. In the future, this size may change and even
+> be dependent on specific architectures.
+> 
+> Link: https://lore.kernel.org/all/e5067bb8-0fcd-4739-9bca-0e872037d5a1@arm.com/
+>
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Looks good to me.
 
-Thanks for catching this.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-The original links are mainly useful for historical reasons.
+Thanks!
+ 
+> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/fgraph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index ee829d65f301..51e81b299a0d 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -153,7 +153,7 @@ enum {
+>   * SHADOW_STACK_OFFSET:	The size in long words of the shadow stack
+>   * SHADOW_STACK_MAX_OFFSET: The max offset of the stack for a new frame to be added
+>   */
+> -#define SHADOW_STACK_SIZE	(PAGE_SIZE)
+> +#define SHADOW_STACK_SIZE	(4096)
+>  #define SHADOW_STACK_OFFSET	(SHADOW_STACK_SIZE / sizeof(long))
+>  /* Leave on a buffer at the end */
+>  #define SHADOW_STACK_MAX_OFFSET				\
+> -- 
+> 2.45.2
+> 
 
-I'll take a look at whether this documentation needs a more full
-revision. But making sure that it works as originally intended is
-a important for now. Agreed on approach.
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
