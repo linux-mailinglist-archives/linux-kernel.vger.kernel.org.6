@@ -1,233 +1,183 @@
-Return-Path: <linux-kernel+bounces-374124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFD39A643F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:44:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D449A6466
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBE2848B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEDAB1C2189F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2A41E7679;
-	Mon, 21 Oct 2024 10:39:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C5C1E47A6;
-	Mon, 21 Oct 2024 10:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C85D1EABA6;
+	Mon, 21 Oct 2024 10:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WL4D7lJN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2994195FEC;
+	Mon, 21 Oct 2024 10:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507142; cv=none; b=JdTf0mx/AJ4WAomIlZZ3cUKTu4kTz0E58ToTVlY8XFG79mPTTStqWDsXQaTBPjicvZbiOrkLIqDN1F4BgwUXJP9WmwQzBPFcpKmBHf357pPYQClY47+Dj9xLTeqzDE1yhPt0hXZu+pC+pJvjQCBh7VxKjnZXUQqvTPUqtq/rFZg=
+	t=1729507234; cv=none; b=UbKxnbvgVsnVLVoEJfP83q+y4AePUB00Ha2bEWi3CgNYanD8g0ZVz5xZsQrf95llqmsCHb5a5yDBsGwUXZGKsq+ue7WcEQz3XacsNXRagcT/GA5h/J9llT6e4vQb6uPlKQ9FPZ2b54X2DbCZ56b5VN1CcyNHUomPhKn9Wy3LKaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507142; c=relaxed/simple;
-	bh=tMugbO/bsoQ+XfVhI+TNQJ6afsV5wimqtsGC/0Z8IAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UMaHi4t02tsypTpuFvNBf+9mjdyQ3CnZgnt1ChZ9n5gFDzFJekgf+WgRaExTfw0qcS+XBJIxY6cAwUbTPjjIwv+Zqf7d5rUB1EjycWlHwWA1nF3m1GHu28DNwfMEFs3rSzZdHeOJ4BlWG9rlvNyX5t8WIJEjSCCI0CpQhCb57m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCB3BDA7;
-	Mon, 21 Oct 2024 03:39:22 -0700 (PDT)
-Received: from [10.57.88.139] (unknown [10.57.88.139])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 928F33F73B;
-	Mon, 21 Oct 2024 03:38:51 -0700 (PDT)
-Message-ID: <5e01b376-b905-4775-badf-41d31d2a821c@arm.com>
-Date: Mon, 21 Oct 2024 11:38:44 +0100
+	s=arc-20240116; t=1729507234; c=relaxed/simple;
+	bh=41f6oEtljvqz5Te0x1SNWi4SHNJw6n7wHUBSgCBwR3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CB6/4heloakgrVdG+7Sf1Hm4L928IJ+O90B2SFgKvEIPle/tPnAMB6s7cAUO2hv+zL21ZHsEnXWUXa8y95jqJqzjlxpK6WVFALRWl49WOIQ6clz0/p5EsyJdTYmbXo0nrLV7oczntzE+wYLUSqdFZRF822T2Y5Jawj0yMXCNFG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WL4D7lJN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2KH3K032533;
+	Mon, 21 Oct 2024 10:40:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=92knE4jiltiV907EhRGLVYeamkXayI
+	7j0BwYX0ZH1JA=; b=WL4D7lJNas37Nzdhxi9rX+lx/0u/7ytK48q3TqjJR++gKt
+	r7ueMht7alDtgQ7pasPryEpqoYRd0OWJqyszZwZ+SpNOF2LJ1isSitDYhyMC/LAS
+	FwERDIOSqxtV94TGFg/XwPocGXOJNG9slT3/uBhOpxWpILgE6aPOyXK2xUh7rTpF
+	iZSfIsmznUv35ep6vlQ2EA5avKOIqsYrhOQyes8ee48qcQRT99bJpKxarFGhHfc/
+	Sf1AmAC4Lua0AKvgB9CPRIHyiQxUS0kOC4/Q4iiF3ywr7qQlDkQN+CyvM61jpuW4
+	hTkpnbK13JKGJKjwKEuAWROXZpMXdSctg6J3mWmA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hm8my5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 10:40:13 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9CWB9018605;
+	Mon, 21 Oct 2024 10:40:12 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42csaj5kvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 10:40:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49LAe94P24249044
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Oct 2024 10:40:10 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 389B320043;
+	Mon, 21 Oct 2024 10:40:09 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F0602004B;
+	Mon, 21 Oct 2024 10:40:08 +0000 (GMT)
+Received: from osiris (unknown [9.171.37.192])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 21 Oct 2024 10:40:08 +0000 (GMT)
+Date: Mon, 21 Oct 2024 12:40:07 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org,
+        Hendrik Brueckner <brueckner@linux.ibm.com>
+Subject: Re: [PATCH 07/15] s390/crc32: expose CRC32 functions through lib
+Message-ID: <20241021104007.6950-E-hca@linux.ibm.com>
+References: <20241021002935.325878-1-ebiggers@kernel.org>
+ <20241021002935.325878-8-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dma-mapping: Trace more error paths
-To: Sean Anderson <sean.anderson@linux.dev>, Christoph Hellwig <hch@lst.de>,
- iommu@lists.linux.dev
-Cc: linux-trace-kernel@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20241017181354.2834674-1-sean.anderson@linux.dev>
- <20241017181354.2834674-4-sean.anderson@linux.dev>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241017181354.2834674-4-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021002935.325878-8-ebiggers@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: f0A5vIL1iLbWasgVAUuToCuIbQMCR4iX
+X-Proofpoint-GUID: f0A5vIL1iLbWasgVAUuToCuIbQMCR4iX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 mlxlogscore=730 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210076
 
-On 2024-10-17 7:13 pm, Sean Anderson wrote:
-> It can be surprising to the user if DMA functions are only traced on
-> success. On failure, it can be unclear what the source of the problem
-> is. Fix this by tracing all functions even when they fail. Cases where
-> we BUG/WARN are skipped, since those should be sufficiently noisy
-> already.
+On Sun, Oct 20, 2024 at 05:29:27PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> Move the s390 CRC32 assembly code into the lib directory and wire it up
+> to the library interface.  This allows it to be used without going
+> through the crypto API.  It remains usable via the crypto API too via
+> the shash algorithms that use the library interface.  Thus all the
+> arch-specific "shash" code becomes unnecessary and is removed.
+> 
+> Note: to see the diff from arch/s390/crypto/crc32-vx.c to
+> arch/s390/lib/crc32-glue.c, view this commit with 'git show -M10'.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
-> 
->   include/trace/events/dma.h | 41 ++++++++++++++++++++++++++++++++++++++
->   kernel/dma/mapping.c       | 27 +++++++++++++++++--------
->   2 files changed, 60 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/trace/events/dma.h b/include/trace/events/dma.h
-> index 9bc647f9ad4d..321cce327404 100644
-> --- a/include/trace/events/dma.h
-> +++ b/include/trace/events/dma.h
-> @@ -161,6 +161,12 @@ DEFINE_EVENT(_dma_alloc, dma_alloc_pages,
->   		 unsigned long attrs),
->   	TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
->   
-> +DEFINE_EVENT(_dma_alloc, dma_alloc_sgt_err,
-> +	TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
-> +		 size_t size, enum dma_data_direction dir, gfp_t flags,
-> +		 unsigned long attrs),
-> +	TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
-> +
->   TRACE_EVENT(dma_alloc_sgt,
->   	TP_PROTO(struct device *dev, struct sg_table *sgt, size_t size,
->   		 enum dma_data_direction dir, gfp_t flags, unsigned long attrs),
-> @@ -325,6 +331,41 @@ TRACE_EVENT(dma_map_sg,
->   		decode_dma_attrs(__entry->attrs))
->   );
->   
-> +TRACE_EVENT(dma_map_sg_err,
-> +	TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
-> +		 int err, enum dma_data_direction dir, unsigned long attrs),
-> +	TP_ARGS(dev, sgl, nents, err, dir, attrs),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(device, dev_name(dev))
-> +		__dynamic_array(u64, phys_addrs, nents)
-> +		__field(int, err)
-> +		__field(enum dma_data_direction, dir)
-> +		__field(unsigned long, attrs)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		struct scatterlist *sg;
-> +		int i;
-> +
-> +		__assign_str(device);
-> +		for_each_sg(sgl, sg, nents, i)
-> +			((u64 *)__get_dynamic_array(phys_addrs))[i] = sg_phys(sg);
-> +		__entry->err = err;
-> +		__entry->dir = dir;
-> +		__entry->attrs = attrs;
-> +	),
-> +
-> +	TP_printk("%s dir=%s dma_addrs=%s err=%d attrs=%s",
-> +		__get_str(device),
-> +		decode_dma_data_direction(__entry->dir),
-> +		__print_array(__get_dynamic_array(phys_addrs),
-> +			      __get_dynamic_array_len(phys_addrs) /
-> +				sizeof(u64), sizeof(u64)),
-> +		__entry->err,
-> +		decode_dma_attrs(__entry->attrs))
-> +);
-> +
->   TRACE_EVENT(dma_unmap_sg,
->   	TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
->   		 enum dma_data_direction dir, unsigned long attrs),
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index b8a6bc492fae..636dbb0629a4 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -223,6 +223,7 @@ static int __dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
->   		debug_dma_map_sg(dev, sg, nents, ents, dir, attrs);
->   	} else if (WARN_ON_ONCE(ents != -EINVAL && ents != -ENOMEM &&
->   				ents != -EIO && ents != -EREMOTEIO)) {
-> +		trace_dma_map_sg_err(dev, sg, nents, ents, dir, attrs);
+>  arch/s390/Kconfig                      |   1 +
+>  arch/s390/configs/debug_defconfig      |   1 -
+>  arch/s390/configs/defconfig            |   1 -
+>  arch/s390/crypto/Kconfig               |  12 -
+>  arch/s390/crypto/Makefile              |   2 -
+>  arch/s390/crypto/crc32-vx.c            | 306 -------------------------
+>  arch/s390/lib/Makefile                 |   3 +
+>  arch/s390/lib/crc32-glue.c             |  82 +++++++
+>  arch/s390/{crypto => lib}/crc32-vx.h   |   0
+>  arch/s390/{crypto => lib}/crc32be-vx.c |   0
+>  arch/s390/{crypto => lib}/crc32le-vx.c |   0
+>  11 files changed, 86 insertions(+), 322 deletions(-)
+>  delete mode 100644 arch/s390/crypto/crc32-vx.c
+>  create mode 100644 arch/s390/lib/crc32-glue.c
+>  rename arch/s390/{crypto => lib}/crc32-vx.h (100%)
+>  rename arch/s390/{crypto => lib}/crc32be-vx.c (100%)
+>  rename arch/s390/{crypto => lib}/crc32le-vx.c (100%)
 
-Isn't this just a case of moving the existing tracepoint up outside the 
-"if (ents > 0)" condition?
+...
 
->   		return -EIO;
->   	}
->   
-> @@ -604,20 +605,26 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
->   	if (WARN_ON_ONCE(flag & __GFP_COMP))
->   		return NULL;
->   
-> -	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-> +	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr)) {
-> +		trace_dma_alloc(dev, cpu_addr, *dma_handle, size,
-> +				DMA_BIDIRECTIONAL, flag, attrs);
->   		return cpu_addr;
-> +	}
->   
->   	/* let the implementation decide on the zone to allocate from: */
->   	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
->   
-> -	if (dma_alloc_direct(dev, ops))
-> +	if (dma_alloc_direct(dev, ops)) {
->   		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
-> -	else if (use_dma_iommu(dev))
-> +	} else if (use_dma_iommu(dev)) {
->   		cpu_addr = iommu_dma_alloc(dev, size, dma_handle, flag, attrs);
-> -	else if (ops->alloc)
-> +	} else if (ops->alloc) {
->   		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
-> -	else
-> +	} else {
-> +		trace_dma_alloc(dev, NULL, 0, size, DMA_BIDIRECTIONAL, flag,
-> +				attrs);
->   		return NULL;
-
-Similarly just move this return down past the tracepoint, same as the 
-hunk below?
-
-> +	}
->   
->   	trace_dma_alloc(dev, cpu_addr, *dma_handle, size, DMA_BIDIRECTIONAL,
->   			flag, attrs);
-> @@ -642,11 +649,11 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
->   	 */
->   	WARN_ON(irqs_disabled());
->   
-> -	if (!cpu_addr)
-> -		return;
+> -static int __init crc_vx_mod_init(void)
+> -{
+> -	return crypto_register_shashes(crc32_vx_algs,
+> -				       ARRAY_SIZE(crc32_vx_algs));
+> -}
 > -
->   	trace_dma_free(dev, cpu_addr, dma_handle, size, DMA_BIDIRECTIONAL,
->   		       attrs);
-> +	if (!cpu_addr)
-> +		return;
-> +
->   	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
->   	if (dma_alloc_direct(dev, ops))
->   		dma_direct_free(dev, size, cpu_addr, dma_handle, attrs);
-> @@ -688,6 +695,8 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
->   		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
->   				      size, dir, gfp, 0);
->   		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
-> +	} else {
-> +		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
+> -static void __exit crc_vx_mod_exit(void)
+> -{
+> -	crypto_unregister_shashes(crc32_vx_algs, ARRAY_SIZE(crc32_vx_algs));
+> -}
+> -
+> -module_cpu_feature_match(S390_CPU_FEATURE_VXRS, crc_vx_mod_init);
 
-Could we move the page_to_virt() into the event definiton and let that 
-handle NULL, then similarly hoist the tracepoint out of the condition?
+What makes sure that all of the code is available automatically if the
+CPU supports the instructions like before? I can see that all CRC32
+related config options support also module build options.
 
->   	}
->   	return page;
->   }
-> @@ -772,6 +781,8 @@ struct sg_table *dma_alloc_noncontiguous(struct device *dev, size_t size,
->   		sgt->nents = 1;
->   		trace_dma_alloc_sgt(dev, sgt, size, dir, gfp, attrs);
->   		debug_dma_map_sg(dev, sgt->sgl, sgt->orig_nents, 1, dir, attrs);
-> +	} else {
-> +		trace_dma_alloc_sgt_err(dev, NULL, 0, size, gfp, dir, attrs);
+Before this patch, this module and hence the fast crc32 variants were
+loaded automatically when required CPU features were present.
+Right now I don't how this is happening with this series.
 
-And again similarly here - if I'm interested in calls to 
-dma_alloc_contiguous(), I'd rather have a "dma_alloc_contiguous" 
-tracepoint which can tell me both the arguments and the result at a 
-glance, than have to remember to trace two distinct other things based 
-on internal details.
+> -MODULE_ALIAS_CRYPTO("crc32");
+> -MODULE_ALIAS_CRYPTO("crc32-vx");
+> -MODULE_ALIAS_CRYPTO("crc32c");
+> -MODULE_ALIAS_CRYPTO("crc32c-vx");
 
-Thanks,
-Robin.
+...
 
->   	}
->   	return sgt;
->   }
+> +static int __init crc32_s390_init(void)
+> +{
+> +	if (cpu_have_feature(S390_CPU_FEATURE_VXRS))
+> +		static_branch_enable(&have_vxrs);
+> +	return 0;
+> +}
+> +arch_initcall(crc32_s390_init);
 
+I guess this should be changed to:
+
+module_cpu_feature_match(S390_CPU_FEATURE_VXRS, ...);
+
+Which would make at least the library functions available if cpu
+features are present. But this looks only like a partial solution of
+the above described problem.
+
+But maybe I'm missing something.
 
