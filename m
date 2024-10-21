@@ -1,84 +1,152 @@
-Return-Path: <linux-kernel+bounces-373969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C98E9A5FF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:28:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1EB9A6004
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2B5282606
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:28:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 277E4B2844F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A471E32BB;
-	Mon, 21 Oct 2024 09:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2801E503C;
+	Mon, 21 Oct 2024 09:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="hZAPVk0B"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwP45KV/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460A81E1C0F;
-	Mon, 21 Oct 2024 09:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A4E823DD;
+	Mon, 21 Oct 2024 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502879; cv=none; b=suzxlRGIfH3IAhgOoy45eP8sd1RaHVIClRlx4GymGd1OBX1HGYk3Rp3OOZkkGUoqp0h4ddq0psPMpLXKMPvKtqll9Wp4uhL7aaxyLJB/9y77D3kzgRV7WEEI+C54aQACl4+zKgfF1Jknt4ZW3myQ+tyNMAG9KRuX1gOyUVMPdqw=
+	t=1729502968; cv=none; b=HHhPbgi2BMxl/qeNWQCiSCyMlXxbVkkij9xnTCmxsOUumXYvn5UQu4EqaRXiTJtW6385p9p1kXpb0rtTaFDGIxwKsCEkuuD9U1RJj7qlZzruL7VWMzA7tduCLSDEeG5OG9m8EZiWJXlI3/qkD0biQ4n69dI9T7UKkM64wGzDLeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502879; c=relaxed/simple;
-	bh=ll7At9nIH9NUcF3cfpSsh7DnwpHJyoRpUcmDz8PvqeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RryTYIaNmxABkE108RzUL8VLEXQUzVqIumzpuTRAy4KUuFHaMev56JOBnlI6MMzpsVA4q08DfAl1rO0f/TolT7XbxKTq52WMtk2pecQA6moZO0JeLVI1FV/Y6+9DGQiqc+qZdBW7LSwfCEYWwk3uf8DYj+68phLKULTblM42GIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=hZAPVk0B; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 4F6A01F910;
-	Mon, 21 Oct 2024 11:27:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1729502867;
-	bh=mSgpzAFgc/z8kyQlEP+bYSHF4QmpnixYUN3WVSsK7sE=; h=From:To:Subject;
-	b=hZAPVk0BpGHOPRa87cRaWp3nX9mkTjq4rVaSOFaEpg6pLB1SWACbmRkUUA3i5M2s8
-	 4BHJnNURc2wYCo413nuyAI8AEMkYksjXqHQ/oX5u24jVgAUKptClzfMW0tkZBOkAOy
-	 jT1G8BA2F6bSfZ/0ZOSl5qZEdu3SszIlY97HpJHD4Ya8RWdzpP7W3eUu/Yy+z/C1Gu
-	 ownS2rjyZ7Z4i8OLavxbqdrxTeG4PcrBiIpIaR+6AR2YiA5Fs0jPoxDCEXoPqQieKY
-	 WYkii8iaSwPaNMMiaGzFkLKdCGFXldMD4IPh42U6oWIg5ZWWtvjw+aVuYRgNaFpzA7
-	 7ittoMivMBVDg==
-Date: Mon, 21 Oct 2024 11:27:43 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: carlos.song@nxp.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, frank.li@nxp.com, haibo.chen@nxp.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx7s: change i2c compatible string for
- applying errata ERR007805
-Message-ID: <20241021092743.GA21104@francesco-nb>
-References: <20241021031148.2682015-1-carlos.song@nxp.com>
+	s=arc-20240116; t=1729502968; c=relaxed/simple;
+	bh=/JzRc1Cme3nFE2GF5Li7+9M42QY8EO1CGP6MGSomNUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJ1vN6+90kEUhL3RIAABX35I0knBXdC+t3yLe/6nrKwezbToE59GoSzAOFhGxX9Wvs6G4eKEfNBEstS0TmxKuXpzay/B96kXORNQdtuAaq9sl/HgNjvftV2M64HJCSQRK8p1bfXvNmh2UYR509cpmoyJlfwUTGKZLxHYrr81S/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwP45KV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED35C4CEC3;
+	Mon, 21 Oct 2024 09:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729502967;
+	bh=/JzRc1Cme3nFE2GF5Li7+9M42QY8EO1CGP6MGSomNUA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UwP45KV/t0Nr9Lroc7vCF7jMZej/deezkrIHvNGrN8elAKsON3pkX4AALgntfm8E0
+	 /DQ4QLdBZiHz6nThZLwVTma3hdc9FcUO0xJNgzwY7DQxizP7eY5I8WlBbY5BLmCeOd
+	 Xk35GvAJQFw6NrYbVgsSEMgwDOaG/fwqPLQbnoLG6uVnlCrdejRgzLar3TEi9usnSE
+	 NI/4t2cGb4ThnZM8rCiViJipiHi6gj0qrmbqS3UWvle2xpMwsv4ne5bX9sPpV58tnH
+	 SGMdaYfsNiBhtDmaGsnaRpu9KZG1KcOvUPrRW1jCZg4ALw7Ut607cswOL/ZGCPoIFP
+	 ofzkCFJFdlqWw==
+Message-ID: <09c1e8a0-f669-42ef-bbd2-44649fad35d8@kernel.org>
+Date: Mon, 21 Oct 2024 11:29:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021031148.2682015-1-carlos.song@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: serial: samsung: Add
+ samsung,exynos8895-uart compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241020180201.376151-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241020180201.376151-2-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241020180201.376151-2-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Carlos,
-
-On Mon, Oct 21, 2024 at 11:11:48AM +0800, carlos.song@nxp.com wrote:
-> From: Carlos Song <carlos.song@nxp.com>
+On 20/10/2024 20:02, Ivaylo Ivanov wrote:
+> Add dedicated samsung,exynos8895-uart compatible to the dt-schema for
+> representing uart of the Exynos8895 SoC.
 > 
-> Compatible string "fsl,imx7d-i2c" is not exited at i2c-imx driver
-> compatible string table, at the result, "fsl,imx21-i2c" will be
-> matched, but it will cause errata ERR007805 not be applied in fact.
+> Like GS101, it has a required DT property samsung,uart-fifosize, but
+> it does not exhibit the 32 bit register access limit.
 > 
-> Replace "fsl,imx7d-i2c" by "fsl,imx7s-i2c" compatible string in dts
-> file for appling the errata ERR007805.
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> index 788c80e47..2491b6048 100644
+> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> @@ -27,6 +27,7 @@ properties:
+>            - samsung,exynos4210-uart
+>            - samsung,exynos5433-uart
+>            - samsung,exynos850-uart
+> +          - samsung,exynos8895-uart
+>        - items:
+>            - enum:
+>                - samsung,exynos7-uart
+> @@ -172,6 +173,22 @@ allOf:
+>          clock-names:
+>            maxItems: 2
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos8895-uart
 
-Did you considered changing the driver instead? If I understand this
-correctly it would be a better solution.
+This looks exactly like gs101, so please grow the enum there.
 
-Francesco
+Best regards,
+Krzysztof
 
 
