@@ -1,64 +1,94 @@
-Return-Path: <linux-kernel+bounces-374667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E6C9A6E55
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:37:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E9B9A6E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1EC283453
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA5CFB2109C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF4D1C4608;
-	Mon, 21 Oct 2024 15:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D028C1C4609;
+	Mon, 21 Oct 2024 15:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jH5m0p4e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mmNc7fZ/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fCTXftZz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mmNc7fZ/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fCTXftZz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AADD1C32EC;
-	Mon, 21 Oct 2024 15:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DB9126C0B;
+	Mon, 21 Oct 2024 15:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729525016; cv=none; b=fiDKsDv3VQoFstOy5DlVO0oYSFndONR13C7IxfL3xu3Yai6vNgC7gc9/faNdRTTcXKW9vRy+DfMc2IVQNMR5UPM28sLD6fw25Zl6Pl4YiHviDnjxflnOtTTRLlIgprcSaSeJt3hC7DvgfkygOu58jHHscjVMy3W1s4hr+0Aer1k=
+	t=1729525210; cv=none; b=FyvHOHkqFgsf99QVr840MDR2C4azMBY6bmnMP5wt4fQh7UTFdsXaBa1T9ohTAO2KPZ0TokNTyYTFwsui1lBV6LNNv6qt0gr2vwuMWEartLUcvEKtQfQ+WCxAJUhdALmSmn/QXwWGbPJUntMMh74/GhkmEt2VJ3SyPqUlUR31U44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729525016; c=relaxed/simple;
-	bh=iG8UoLDE9OO5zAzlZpMo6rLD6ZMjgHZMdsip5GxdtP0=;
+	s=arc-20240116; t=1729525210; c=relaxed/simple;
+	bh=1W5B/sDDnCJ6y86lSH7pAHZK4QqYHPygiWJjNpbO+6U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UZH2EuVuTDkebcu4KJt0tGpkLVtDZZMHSG5upvz2CGZ5hq3gBjdombgqRdjBC6wTuYlnQdbc0r37XxkEaspWyCYvQi+x/7db/qz5ZyHnmYIirmL7m3bvKAlTN+XR6mivvOhEZ8l+YbcOdEvnEIzyEP/iF9onqTRxrWZDZyz/v+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jH5m0p4e; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729525014; x=1761061014;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iG8UoLDE9OO5zAzlZpMo6rLD6ZMjgHZMdsip5GxdtP0=;
-  b=jH5m0p4edqEnxeIslQwGlbG+O67EjtEa9wGCOOrmVcm/J3o8+7BLy8GF
-   62vgkcMBzJHfKHvNik/8I9TMUJx+j/nYS8B0CtKOCCzpIWstfJhT7OksN
-   sM+VQRy2kjP/BPpZIAC/hb9GkAOac9FSYdkODN1O5re99ADXdNuC7QGh1
-   AQV6cSNdIejQ1ewnpT+4O5118A/obuDpT+OwsOJJmsZfxmUv/6VracWGm
-   +BFVHmDwYwafoVE3nJHfH64d3HslXASp1o0DcfHA85TFcL1Ueo8EpRQST
-   iDW3wGGj3NBlwU36J4s9gY6O2TAZYrrNTcxfPYTpq6IXlq7GJORYlVpTE
-   g==;
-X-CSE-ConnectionGUID: WQxmZmNhTqO+ESTShOxhfg==
-X-CSE-MsgGUID: jnXe3dl0TuijNisEfgZyDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28966787"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28966787"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 08:36:53 -0700
-X-CSE-ConnectionGUID: oGI7i789S/WjwgjjUre7Dg==
-X-CSE-MsgGUID: wsJtD0j4Sn28e+VWjO3L6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="110318540"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa001.fm.intel.com with ESMTP; 21 Oct 2024 08:36:52 -0700
-Message-ID: <51a0598a-2618-4501-af40-f1e9a1463bca@linux.intel.com>
-Date: Mon, 21 Oct 2024 18:39:04 +0300
+	 In-Reply-To:Content-Type; b=Gwdx2xCiRV1HtPt43DEV860LwNvbfrPaNsUCPJPE3zYN/AM72JkDl2wbMvKAjxG1wAxm4PP6YgQpOstcwv7iMqOgpe98qHgbZ6PldWnRxAOac2c9iE7XE2WKaB+mXYzk9JkMAaJnI9Dd8tpb6wgybrBrtx9wo5DdrjOcz4kSXUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mmNc7fZ/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fCTXftZz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mmNc7fZ/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fCTXftZz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9E2A81F7E9;
+	Mon, 21 Oct 2024 15:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729525204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrVNHHt0mG7LfTUbIY78i9Fn0M5UyUoiUWrwGWCGroQ=;
+	b=mmNc7fZ/SBFfmwhY33t8nV28H+U+4VBprC2U7Bm8HnioNHgslcnB380iYIMrO1VzcR9Ho8
+	h1RyVXgU2wObETww3mZc7jzvwpqQ4kX411vUC/M3E80D1T6vPQr9E6GalsORcC3icO0RJY
+	qjkCgzWHFGGiIu0B23Wlh+C+JbwXDqY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729525204;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrVNHHt0mG7LfTUbIY78i9Fn0M5UyUoiUWrwGWCGroQ=;
+	b=fCTXftZz6SDsfFmnAFU6IrBfoPDwnEREwCHZ7OS3qSItN2lHTYy5JK5FY2tC1oIIK0PbzO
+	FlcRnCT7yOLCmWBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729525204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrVNHHt0mG7LfTUbIY78i9Fn0M5UyUoiUWrwGWCGroQ=;
+	b=mmNc7fZ/SBFfmwhY33t8nV28H+U+4VBprC2U7Bm8HnioNHgslcnB380iYIMrO1VzcR9Ho8
+	h1RyVXgU2wObETww3mZc7jzvwpqQ4kX411vUC/M3E80D1T6vPQr9E6GalsORcC3icO0RJY
+	qjkCgzWHFGGiIu0B23Wlh+C+JbwXDqY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729525204;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrVNHHt0mG7LfTUbIY78i9Fn0M5UyUoiUWrwGWCGroQ=;
+	b=fCTXftZz6SDsfFmnAFU6IrBfoPDwnEREwCHZ7OS3qSItN2lHTYy5JK5FY2tC1oIIK0PbzO
+	FlcRnCT7yOLCmWBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4445139E0;
+	Mon, 21 Oct 2024 15:40:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A/wyINN1FmdzbgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 21 Oct 2024 15:40:03 +0000
+Message-ID: <a5a4ce33-3c32-4e43-a39b-7a3514339e37@suse.de>
+Date: Mon, 21 Oct 2024 18:39:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,122 +96,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] xhci: Fix Link TRB DMA in command ring stopped
- completion event
-To: Faisal Hassan <quic_faisalh@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mathias Nyman <mathias.nyman@intel.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241021131904.20678-1-quic_faisalh@quicinc.com>
+Subject: Re: [PATCH v3 09/11] PCI: brcmstb: Adjust PHY PLL setup to use a
+ 54MHz input refclk
+To: Jonathan Bell <jonathan@raspberrypi.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>
+References: <20241014130710.413-1-svarbanov@suse.de>
+ <20241014130710.413-10-svarbanov@suse.de>
+ <60de2ae5-af4b-4c31-bc63-9f62b08be2fc@broadcom.com>
+ <bed7b0ea-494b-429e-8130-12d12eb11bf0@suse.de>
+ <CADQZjwdO6ifEMBwh15EVPsxm4XtSYGRs==hVCZ0HmcUbADh6hw@mail.gmail.com>
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20241021131904.20678-1-quic_faisalh@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CADQZjwdO6ifEMBwh15EVPsxm4XtSYGRs==hVCZ0HmcUbADh6hw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[broadcom.com,vger.kernel.org,lists.infradead.org,linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 21.10.2024 16.19, Faisal Hassan wrote:
-> During the aborting of a command, the software receives a command
-> completion event for the command ring stopped, with the TRB pointing
-> to the next TRB after the aborted command.
+Hi,
+
+On 10/21/24 15:56, Jonathan Bell wrote:
+> On Thu, 17 Oct 2024 at 15:42, Stanimir Varbanov <svarbanov@suse.de> wrote:
+>>
+>> Hi Florian,
+>>
+>> On 10/14/24 20:07, Florian Fainelli wrote:
+>>> On 10/14/24 06:07, Stanimir Varbanov wrote:
+>>>> Use canned MDIO writes from Broadcom that switch the ref_clk output
+>>>> pair to run from the internal fractional PLL, and set the internal
+>>>> PLL to expect a 54MHz input reference clock.
+>>>>
+>>>> Without this RPi5 PCIe cannot enumerate endpoint devices on
+>>>> extension connector.
+>>>
+>>> You could say that the default reference clock for the PLL is 100MHz,
+>>> except for some devices, where it is 54MHz, like 2712d0. AFAIR, 2712c1
+>>> might have been 100MHz as well, so whether we need to support that
+>>> revision of the chip or not might be TBD.
+>>
+>> I'm confused now, according to [1] :
+>>
+>> BCM2712C1 - 4GB and 8GB RPi5 models
+>> BCM2712D0 - 2GB RPi5 models
+>>
+>> My device is 4GB RPi5 model so I would expect it is BCM2712C1, thus
+>> according to your comment the PLL PHY adjustment is not needed. But I
+>> see that the PCIex1 RC cannot enumerate devices on ext PCI connector
+>> because of link training failure. Implementing PLL adjustment fixes the
+>> failure.
+>>
+>>
+>> ~Stan
+>>
+>> [1]
+>> https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
 > 
-> If the command we abort is located just before the Link TRB in the
-> command ring, then during the 'command ring stopped' completion event,
-> the xHC gives the Link TRB in the event's cmd DMA, which causes a
-> mismatch in handling command completion event.
-> 
-> To handle this situation, an additional check has been added to ignore
-> the mismatch error and continue the operation.
-> 
-> Fixes: 7f84eef0dafb ("USB: xhci: No-op command queueing and irq handler.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
-> ---
-> Changes in v2:
-> - Removed traversing of TRBs with in_range() API.
-> - Simplified the if condition check.
-> 
-> v1 link:
-> https://lore.kernel.org/all/20241018195953.12315-1-quic_faisalh@quicinc.com
-> 
->   drivers/usb/host/xhci-ring.c | 43 +++++++++++++++++++++++++++++++-----
->   1 file changed, 38 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index b2950c35c740..de375c9f08ca 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -126,6 +126,29 @@ static void inc_td_cnt(struct urb *urb)
->   	urb_priv->num_tds_done++;
->   }
->   
-> +/*
-> + * Return true if the DMA is pointing to a Link TRB in the ring;
-> + * otherwise, return false.
-> + */
-> +static bool is_dma_link_trb(struct xhci_ring *ring, dma_addr_t dma)
-> +{
-> +	struct xhci_segment *seg;
-> +	union xhci_trb *trb;
-> +
-> +	seg = ring->first_seg;
-> +	do {
-> +		if (in_range(dma, seg->dma, TRB_SEGMENT_SIZE)) {
-> +			/* found the TRB, check if it's link */
-> +			trb = &seg->trbs[(dma - seg->dma) / sizeof(*trb)];
-> +			return trb_is_link(trb);
-> +		}
-> +
-> +		seg = seg->next;
-> +	} while (seg != ring->first_seg);
-> +
-> +	return false;
-> +}
-> +
->   static void trb_to_noop(union xhci_trb *trb, u32 noop_type)
->   {
->   	if (trb_is_link(trb)) {
-> @@ -1718,6 +1741,7 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
->   
->   	trace_xhci_handle_command(xhci->cmd_ring, &cmd_trb->generic);
->   
-> +	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
->   	cmd_dequeue_dma = xhci_trb_virt_to_dma(xhci->cmd_ring->deq_seg,
->   			cmd_trb);
->   	/*
-> @@ -1725,17 +1749,26 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
->   	 * command.
->   	 */
->   	if (!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) {
-> -		xhci_warn(xhci,
-> -			  "ERROR mismatched command completion event\n");
-> -		return;
-> +		/*
-> +		 * For the 'command ring stopped' completion event, there
-> +		 * is a risk of a mismatch in dequeue pointers if we abort
-> +		 * the command just before the link TRB in the command ring.
-> +		 * In this scenario, the cmd_dma in the event would point
-> +		 * to a link TRB, while the software dequeue pointer circles
-> +		 * back to the start.
-> +		 */
-> +		if (!(cmd_comp_code == COMP_COMMAND_RING_STOPPED &&
-> +		      is_dma_link_trb(xhci->cmd_ring, cmd_dma))) {
 
+Thanks for jumping in, Jon.
 
-Do we in this COMP_COMMAND_RING_STOPPED case even need to check if
-cmd_dma != (u64)cmd_dequeue_dma, or if command ring stopped on a link TRB?
+> The MDIO writes for 2712C1 are required because platform firmware
+> arranges for the reference input clock to be 54MHz.
+> 2712D0 can't generate a 100MHz reference input, it's 54MHz only. The
+> MDIO register defaults are also changed to suit, but there's no harm
 
-Could we just move the COMP_COMMAND_RING_STOPPED handling a bit earlier?
+I see that MDIO register defaults for pcie2 (where RP1 is connected) are
+changed to suit to 54Mhz but this is not true for pcie1 (expansion
+connector). And that could explain why the link training is failing on
+pcie1.
 
-if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
-	complete_all(&xhci->cmd_ring_stop_completion);
-         return;
-}
+> in applying the writes anyway.
+> Both steppings need to behave identically for compliance and interop reasons.
 
-If I remember correctly it should just turn aborted command TRBs into no-ops,
-and restart the command ring
+Yes, for sure.
 
-Thanks
-Mathias
+> RP1 is very tolerant of out-of-spec reference clocks, which is why
+> only the expansion connector appears to be affected.
 
+Thank you for clarifications.
+
+~Stan
+
+[1] Firmware version: RPi: BOOTSYS release VERSION:790da7ef DATE:
+2024/07/30 TIME: 15:25:46
 
