@@ -1,259 +1,300 @@
-Return-Path: <linux-kernel+bounces-374592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C319A6CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E999A6CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB86B2231E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5758E1C20898
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F4E1E7C34;
-	Mon, 21 Oct 2024 14:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040FF1F9408;
+	Mon, 21 Oct 2024 14:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVhytjJH"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="lRAekNv0"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462A11B59A;
-	Mon, 21 Oct 2024 14:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC70C1B59A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522112; cv=none; b=cceZtc+nsnQkAS4g6gTJ3FyuWJ7B9gYJN/IW6bkhqCFKvwzNoJNgk/42NtoRcvXCaXfuD1Sj6g1k9Dui9A/E6hHnJ9hu03+KWRGjgld/sdAyJiscXWi7hXCBoUheTPA1xWoya7GFNVH0d6/77CCmIW7yYnWjLS4tOus0nB21YOM=
+	t=1729522128; cv=none; b=RTs+fxg5/hcFjkZuQQKMpL9HdWxsqEltZG97azPYRpJuOks07dILeMMoIm4L3jg9DKxNyCrxEIL75EsU1o6S0y214wc6uP1EgrYy0qqr6kQBU/TvCR/fTUN5BdZCg7ZebAl2udBMK8ao5g4+XVhlz8zf13KT7KiiyOLO8kX7fmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522112; c=relaxed/simple;
-	bh=zIByhMEAx5If2NvyEt2jX/Ijtg3nnJpuFNjBMIvkj/4=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S+YS3Cdg6fqzZ7rxZ12IsTnBWG3Df+G2hyWEjj0GBmAXv/N8hTZNjwb71YFRMiUv9uL8u/eqUYXxgaTjoB9LZ26xGPSlKTYKUnfs3E+EUWQhtTp55xFUH/gP+Sh9Vkix3uDCvueb7sNNB+uFsQlCKNw7gMCp+1ZiKQLDJYzAOsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVhytjJH; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so5906543a12.1;
-        Mon, 21 Oct 2024 07:48:30 -0700 (PDT)
+	s=arc-20240116; t=1729522128; c=relaxed/simple;
+	bh=k+5+rzrNRiiXCCr5xWKP74Fs3Hm/OvZQEKNmhzm1qPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ewpb3tdZ3C10IeVCJNPFthXV0mZAijYKi0/R87LVWuqsOgw997uc6TJBYaRnT9PcOF0IWexu1oANwkNtBj/7KALQQ8LfvCF7CTFl2LJ6Qv9kFWrprNIR7RQttEBbqQuu3SiVHbUbGFEcz2VvNwog0OcOBUqROvvjEnBQ1anM6iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=lRAekNv0; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539fb49c64aso6335380e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729522108; x=1730126908; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqNfiZEfyDg/Xzyd/wdhSFkCd9cWx8IKi4PXqxUx9iE=;
-        b=OVhytjJH+tXth9wku+K9rRO5mv6mRdaUY5Yd1PrnEFUz2OOCbfPVBGCshMoH4pZO3S
-         dotRbVgOGKeSlEL59WXcgJIlN0o4gB0PqlB/kiNXH/VE+Dv7+j5b8vDKNyL+wTO0eLsM
-         MjafFLOLZwEAxAgHxrt8GP3C7xwTjKX0wTy1k553o4/5kYGDCpFsrvEiDlsBF+eHN8dy
-         fZKZxSJktEyyTXYTcXEa3k44S+Mc7Wb2dJqBqvoMO3/aEd6yJQSoyzo6W+nkVheZ73j2
-         sVkJmttLP7V0ZIi0eT+1Z3+2Jl45Rma+TX46WyExOrDE3OXGI0ixPUfigeGSsB1bykQh
-         DuBg==
+        d=criticallink.com; s=google; t=1729522124; x=1730126924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f4Wnxvm2dQTUgE/QIvCQoCPqBB9w7kv0qRHEgZpbZEY=;
+        b=lRAekNv0Abih4R8oek+V92x9M5KpHfoO8E81vNlpOKU+8O5ez4K5WvUm7+EJZVj65i
+         bd1DELGf363T2D+y16gbTWUnSQAsWcTelwfRlxBeEGlj6hX+3PehH+ENGeiCGqI7DLQ7
+         5rb6AJ1uQ3pSX2QCzwm5W99sm/zvOYSCNqKJphfTPd7tTs21vw8GVbSAUF3HFBHxilhi
+         wwJAc2X6pOjih2Sy8mf8Kqp6IKcU+Sb2Kz+LmLWs2eEeJ1vDPNGtsqwlZPWPc/NdkD8b
+         fBlSDRvOACCNzvFeuv8AGbr1ubTqVj/QO/TSeFaQyw7ZfOtP8DN98GBJFVL+EkBkB7Fy
+         naTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729522108; x=1730126908;
-        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqNfiZEfyDg/Xzyd/wdhSFkCd9cWx8IKi4PXqxUx9iE=;
-        b=O5i5PEEwItICJRJ/BpcepBZichCBh4DZmZaszIAu2wChEuKLzmLQrB3uleO5gUCL+k
-         zzVQxdAq4VAZkWzFrdN/YXUiRg0hGQWrw+owA8LkgqAzMjt1bbHzW9l5eufuVlaXMwn4
-         lytRC+FHisBS5vU62l2zj53XsXpt5pgP65C36TrleTfYmQyTgMboeE2KXH/BJ2n30IQh
-         zi6Nh2GDNMPCaGZPQX0eBg9Rse3+fGR3dHofH3HUfeI2Y5hj8Dea+QGWE93JJxheVEtR
-         P1ZireL3lWJfV1j8SpXD3BVA0JwEgN69tXjK/Ttzot3xm+VCO3igXE5KPI3LrEUe9Ilm
-         W4QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBd9YnX49RsHDj/osbQST4e2aJ/1RbPj8JsgD0GRsudO5nYxJwG2gkFVu5H9oOiU/y4h32ZSjXNew=@vger.kernel.org, AJvYcCVXA6Pu4X/8FQp+DVZnYNNM9FaR73PVDiu+FYfOO9rItsmePoZeA3gsTxE5xC2ttyr8/Wf8EjtTnoQ3ZJs=@vger.kernel.org, AJvYcCWwYa6EwyAQSnamcEkGusOvWcWkznCqA4p3czEE2bpuw9H2WzwacQ4zBe1FiP/0vKrHwpl8FoPmDxva@vger.kernel.org, AJvYcCX9Agq1D3ApoaWboH6vezE+mV2uBvxh3DB7BgAQPFzzo5ctgeo8Bn8/8jnmtNQgUfb70lfRNV8SXkuQ0+Tz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/g50aRhuVloUWxPhCnlTU3OgG2byySGpMr+y+wsbQAW8QjFpk
-	U6juZpE9ZnDEP8403FgJ/A7nPgvkrjY4iW60BCHElby4BdLhQ72p
-X-Google-Smtp-Source: AGHT+IH4U3SXhrAaQiY7SVXU0+/eI8eKxa5cP+eHUn6309fKUSYC/NaCMjDZs7vXcbpGn1PYh18A5w==
-X-Received: by 2002:a17:907:2cc6:b0:a99:89bd:d84a with SMTP id a640c23a62f3a-a9a69a68f50mr1250232866b.25.1729522108334;
-        Mon, 21 Oct 2024 07:48:28 -0700 (PDT)
-Received: from [10.50.4.74] ([95.183.227.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a231sm210780966b.210.2024.10.21.07.48.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 07:48:26 -0700 (PDT)
-Date: Mon, 21 Oct 2024 17:48:17 +0300
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-Subject: Re: [PATCH 3/6] soc: mediatek: pwrap: Add support for MT6735 and
- MT6328 SoC/PMIC pair
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, Sean Wang
-	<sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones
-	<lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, jason-ch chen
-	<Jason-ch.Chen@mediatek.com>, Chen Zhong <chen.zhong@mediatek.com>, Flora Fu
-	<flora.fu@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Message-Id: <HSNPLS.P9M4WFJGIA0V2@gmail.com>
-In-Reply-To: <b24d984f-c944-4faf-bce9-96052abb085b@collabora.com>
-References: <20241018081050.23592-1-y.oudjana@protonmail.com>
-	<20241018081050.23592-4-y.oudjana@protonmail.com>
-	<b24d984f-c944-4faf-bce9-96052abb085b@collabora.com>
-X-Mailer: geary/46.0
+        d=1e100.net; s=20230601; t=1729522124; x=1730126924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f4Wnxvm2dQTUgE/QIvCQoCPqBB9w7kv0qRHEgZpbZEY=;
+        b=p6IPbG3DVJt1IIlTMQTrmx92foUwnKvwEs/ptZUpl497esjxoPsxfwM+TZnYtn61pB
+         P+6jgdhZ7b20MH5Mb0dUoxiIL9s2GQ00fQxElEiSD45R9D5Hlbo76kUJzJHAEI81clsM
+         YkIEA/xRjFkIZb31C7Zg5qiWljGtoA0RCZlLjvnkhMadz18Hgr+aOrh47SR3U+OfoBB6
+         bl2y8npzvlVez87TMzvCxjUUyWWRyCNup0XcAVzUwKuDgrbA9YKefjKvXGJk+V9nMFo9
+         e0yD50Wq5+4jYi/NlFRG+8WMQ+H8fQKSRGiun5KQatBEJGyIVsarIXeq0ckmsHKVOybe
+         Fd7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWTtOo8w4BbXoVA6iLib+aGU6CXpzCO9UY/b5qpi9XTJmwdX6UrC+zzbkZgTGAix8YN6KNjIySpwfuC/gA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7LAJbvohueY8HKovofvx24rIhoKgl1RU5D+hKSBV6CN2829+S
+	9JSeyaLIlCBukY9/lqhO9IHCVC8/aqKJdK2U9s4DWWfBw+NxNaqwaygwXmNCbhQg61wlHFhG3kl
+	Y4HK2pJK1MSlgZLcll+Zsl/7EroizfnAuq58X
+X-Google-Smtp-Source: AGHT+IEOxuRP4k4N1TVhN96KqEpxIg7Vma8sXLor+4qk4ooyqkfDpj5OS9580Z8PqjX+LMuLSX8rEB8ca52FnMQlIeY=
+X-Received: by 2002:a05:6512:31c3:b0:535:6baa:8c5d with SMTP id
+ 2adb3069b0e04-53a15444970mr7818490e87.20.1729522123688; Mon, 21 Oct 2024
+ 07:48:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+References: <20241012150710.261767-1-devarsht@ti.com> <20241012150710.261767-2-devarsht@ti.com>
+ <3d85ac05-150b-4917-a374-5974d376e416@ideasonboard.com> <CADL8D3ZiGA+XnyvyFCQbcK_SCffrfbhMXFpWzxWVjhuOFeu-Yg@mail.gmail.com>
+In-Reply-To: <CADL8D3ZiGA+XnyvyFCQbcK_SCffrfbhMXFpWzxWVjhuOFeu-Yg@mail.gmail.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Mon, 21 Oct 2024 10:48:32 -0400
+Message-ID: <CADL8D3Zyx33t_jbUyER6tckXupS0PjPN6GxJjqNwHPAOiH6WMw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/tidss: Clear the interrupt status for interrupts
+ being disabled
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, jyri.sarha@iki.fi, airlied@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	dri-devel@lists.freedesktop.org, simona@ffwll.ch, 
+	linux-kernel@vger.kernel.org, praneeth@ti.com, vigneshr@ti.com, 
+	aradhya.bhatia@linux.dev, s-jain1@ti.com, r-donadkar@ti.com, sam@ravnborg.org, 
+	bparrot@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Ah okay, go figure.  There was an updated patch series emailed between
+before I finished writing this email. So please ignore...
 
 
-On Mon, Oct 21 2024 at 15:25:00 +02:00:00, AngeloGioacchino Del Regno 
-<angelogioacchino.delregno@collabora.com> wrote:
-> Il 18/10/24 10:10, Yassine Oudjana ha scritto:
->> From: Yassine Oudjana <y.oudjana@protonmail.com>
->> 
->> Add register definitions and configuration for the MT6735 SoC and the
->> MT6328 PMIC which are commonly paired and communicate through the 
->> PMIC
->> wrapper.
->> 
->> Note that the PMIC wrapper on MT6735M has a slightly different 
->> register
->> map and is therefore NOT compatible with MT6735.
->> 
->> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->> ---
->>   drivers/soc/mediatek/mtk-pmic-wrap.c | 251 
->> ++++++++++++++++++++++++++-
->>   1 file changed, 248 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c 
->> b/drivers/soc/mediatek/mtk-pmic-wrap.c
->> index 9fdc0ef792026..b9e8dd2a5999d 100644
->> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
->> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
->> @@ -3,6 +3,7 @@
->>    * Copyright (c) 2014 MediaTek Inc.
->>    * Author: Flora Fu, MediaTek
->>    */
->> +
->>   #include <linux/clk.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/io.h>
->> @@ -100,7 +101,7 @@ enum dew_regs {
->>   	PWRAP_DEW_CIPHER_MODE,
->>   	PWRAP_DEW_CIPHER_SWRST,
->>   -	/* MT6323 only regs */
->> +	/* MT6323 and MT6328 only regs */
->>   	PWRAP_DEW_CIPHER_EN,
->>   	PWRAP_DEW_RDDMY_NO,
->>   @@ -121,8 +122,10 @@ enum dew_regs {
->>   	PWRAP_RG_SPI_CON13,
->>   	PWRAP_SPISLV_KEY,
->>   -	/* MT6359 only regs */
->> +	/* MT6359 and MT6328 only regs */
->>   	PWRAP_DEW_CRC_SWRST,
->> +
->> +	/* MT6359 only regs */
->>   	PWRAP_DEW_RG_EN_RECORD,
->>   	PWRAP_DEW_RECORD_CMD0,
->>   	PWRAP_DEW_RECORD_CMD1,
->> @@ -171,6 +174,23 @@ static const u32 mt6323_regs[] = {
->>   	[PWRAP_DEW_RDDMY_NO] =		0x01a4,
->>   };
->>   +static const u32 mt6328_regs[] = {
->> +	[PWRAP_DEW_DIO_EN] =		0x02d4,
->> +	[PWRAP_DEW_READ_TEST] =		0x02d6,
->> +	[PWRAP_DEW_WRITE_TEST] =	0x02d8,
->> +	[PWRAP_DEW_CRC_SWRST] =		0x02da,
->> +	[PWRAP_DEW_CRC_EN] =		0x02dc,
->> +	[PWRAP_DEW_CRC_VAL] =		0x02de,
->> +	[PWRAP_DEW_MON_GRP_SEL] =	0x02e0,
->> +	[PWRAP_DEW_CIPHER_KEY_SEL] =	0x02e2,
->> +	[PWRAP_DEW_CIPHER_IV_SEL] =	0x02e4,
->> +	[PWRAP_DEW_CIPHER_EN] =		0x02e6,
->> +	[PWRAP_DEW_CIPHER_RDY] =	0x02e8,
->> +	[PWRAP_DEW_CIPHER_MODE] =	0x02ea,
->> +	[PWRAP_DEW_CIPHER_SWRST] =	0x02ec,
->> +	[PWRAP_DEW_RDDMY_NO] =		0x02ee,
->> +};
->> +
->>   static const u32 mt6331_regs[] = {
->>   	[PWRAP_DEW_DIO_EN] =		0x018c,
->>   	[PWRAP_DEW_READ_TEST] =		0x018e,
->> @@ -394,7 +414,7 @@ enum pwrap_regs {
->>   	PWRAP_ADC_RDATA_ADDR1,
->>   	PWRAP_ADC_RDATA_ADDR2,
->>   -	/* MT7622 only regs */
->> +	/* MT7622 and MT6735 only regs */
->>   	PWRAP_STA,
->>   	PWRAP_CLR,
->>   	PWRAP_DVFS_ADR8,
->> @@ -417,6 +437,8 @@ enum pwrap_regs {
->>   	PWRAP_ADC_RDATA_ADDR,
->>   	PWRAP_GPS_STA,
->>   	PWRAP_SW_RST,
->> +
->> +	/* MT7622 only regs */
->>   	PWRAP_DVFS_STEP_CTRL0,
->>   	PWRAP_DVFS_STEP_CTRL1,
->>   	PWRAP_DVFS_STEP_CTRL2,
->> @@ -481,6 +503,50 @@ enum pwrap_regs {
->>   	/* MT8516 only regs */
->>   	PWRAP_OP_TYPE,
->>   	PWRAP_MSB_FIRST,
->> +
->> +	/* MT6735 only regs */
->> +	PWRAP_WACS3_EN,
->> +	PWRAP_INIT_DONE3,
->> +	PWRAP_WACS3_CMD,
->> +	PWRAP_WACS3_RDATA,
->> +	PWRAP_WACS3_VLDCLR,
-> 
-> Are you sure that you need the PWRAP_MD_ADC_xxxx registers in here?
-> 
-> Since MD is relatively big on its own, I'm not sure how to proceed 
-> here.. it may
-> make sense to split the MD part to a different array, or it may 
-> not... I do need
-> to understand what's going on.
-> 
-> Can you please point me at some reference code to look at, so that I 
-> can understand
-> the situation a bit?
-> 
-> Besides, I'm noticing that the "MD_ADC_RDATA_ADDR_R(x)" are 
-> sequential registers
-> and that's on more than just MT6735: instead of having 32 more 
-> entries, it might
-> make more sense to set only the first and declare the number (or 
-> size) of regs...
-> 
-> Something like:
-> 
-> enum pwrap_regs {
-> 	.....
-> 	PWRAP_MD_ADC_RDATA_ADDR_LATEST,
-> 	PWRAP_MD_ADC_RDATA_ADDR_WP,
-> 	PWRAP_MD_ADC_RDATA_ADDR_R0,
-> 	PWRAP_MD_ADC_STA0,
-> 	PWRAP_MD_ADC_STA1,
-> 	PWRAP_MD_ADC_STA2
-> };
-> 
-> static const struct pmic_wrapper_type pwrap_mt6735 = {
-> 	.regs = mt6735_regs,
-> 	.num_md_addr = 32,
-> 	[other stuff]
-> };
-> 
-> ...but again, please, if you can point me at an implementation that 
-> actually
-> uses the R(x) registers, that'd be better ... so that we can choose 
-> the best
-> option to add those in there.
-> 
-> Everything else is great: good job :-)
-> 
-> Cheers,
-> Angelo
+On Mon, Oct 21, 2024 at 10:46=E2=80=AFAM Jon Cormier <jcormier@criticallink=
+.com> wrote:
+>
+> Adding the e2e thread that has instigated this change.
+>
+> https://e2e.ti.com/support/processors-group/processors/f/processors-forum=
+/1394222/am625-issue-about-tidss-rcu_preempt-self-detected-stall-on-cpu?pif=
+ragment-323307=3D1#pifragment-323307=3D2
+>
+> Summary of original problem: An AM62x device using the TIDSS driver,
+> can lock up after hours of running.  The lock ups are often detected
+> by the rcu_preempt system.  The lock ups turned out to be caused by an
+> infinite interrupt loop (irq storm?) in the TIDSS_DISPC driver.
+>
+> The k3_clear_irqstatus function which is responsible for clearing the
+> interrupt bits, only clear the the level 1 interrupts if the level 2
+> ones are set.  This leaves a small window where if for whatever reason
+> the level 2 interrupts aren't set but the level 1's are, then we will
+> never clear the level 1 interrupt.
+>
+> The change as submitted is not sufficient to prevent the irq storm.
+> I've tested these two patches for several weeks now and they reduce
+> the frequency of the irq storm from once a day to once every few days,
+> but don't prevent it.
+>
+> I suggest that the k3_clear_irqstatus function needs to be updated
+> such that it's not possible for the level 1 DISPC_IRQSTATUS bit to
+> remain uncleared.
+>
+> The following hack proposed by Bin and team removes the possibility of
+> the irq storm happening, while introducing a small chance of clearing
+> interrupts that weren't intended.  Though I would assume that if the
+> level 2 interrupts aren't cleared, they would reassert the level 1
+> DISPC_IRQSTATUS so maybe that's not much of a risk.  Most other
+> drivers when clearing interrupts do a read and then write to clear
+> interrupts so there is precedence.
+>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c
+> b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 60f69be36692..0b8a3d999c54 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -900,27 +900,27 @@ static
+>  void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t
+> clearmask)
+>  {
+>      unsigned int i;
+> -    u32 top_clear =3D 0;
+>
+>      for (i =3D 0; i < dispc->feat->num_vps; ++i) {
+>          if (clearmask & DSS_IRQ_VP_MASK(i)) {
+>              dispc_k3_vp_write_irqstatus(dispc, i, clearmask);
+> -            top_clear |=3D BIT(i);
+>          }
+>      }
+> +
+>      for (i =3D 0; i < dispc->feat->num_planes; ++i) {
+>          if (clearmask & DSS_IRQ_PLANE_MASK(i)) {
+>              dispc_k3_vid_write_irqstatus(dispc, i, clearmask);
+> -            top_clear |=3D BIT(4 + i);
+>          }
+>      }
+> +
+>      if (dispc->feat->subrev =3D=3D DISPC_K2G)
+>          return;
+>
+> -    dispc_write(dispc, DISPC_IRQSTATUS, top_clear);
+> -
+> -    /* Flush posted writes */
+> -    dispc_read(dispc, DISPC_IRQSTATUS);
+> +    /* Always clear the level 1 irqstatus (DISPC_IRQSTATUS) unconditiona=
+lly
+> Note I'm not sure we are confident in the reasoning outlined in this comm=
+ent
+> +     * due to an IP bug where level 1 irq status (DISPC_IRQSTATUS)
+> would get set delayed even
+> +     * after level 2 interrupt (DISPC_VID_IRQSTATUS,
+> DISPC_VP_IRQSTATUS) is cleared.
+> +     */
+> +    dispc_write(dispc, DISPC_IRQSTATUS, dispc_read(dispc, DISPC_IRQSTATU=
+S));
+>
+> I had proposed a more complete version of this patch but there hasn't
+> been much discussion about it and I've mostly tested Bins version.
+>
+>  }
+>
+>
+> On Mon, Oct 21, 2024 at 7:15=E2=80=AFAM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
+> >
+> > Hi,
+> >
+> > On 12/10/2024 18:07, Devarsh Thakkar wrote:
+> > > It is possible that dispc_{k2g/k3}_set_irqenable can be called for
+> > > disabling some interrupt events which were previously enabled. Howeve=
+r
+> > > instead of clearing any pending events for the interrupt events that =
+are
+> > > required to be disabled, it was instead clearing the new interrupt ev=
+ents
+> > > which were not even enabled.
+> >
+> > That's on purpose. When we enable a new interrupt, we want to first
+> > clear the irqstatus for that interrupt to make sure there's no old
+> > status left lying around. If I'm not mistaken, enabling an interrupt
+> > with an irqstatus bit set will immediately trigger the interrupt.
+> >
+> > > For e.g. While disabling the vsync events, dispc_k3_set_irqenable tri=
+es to
+> > > clear DSS_IRQ_DEVICE_OCP_ERR which was not enabled per the old_mask a=
+t all
+> > > as shown below :
+> > >
+> > > "dispc_k3_set_irqenable : irqenabled - mask =3D 91, old =3D f0, clr =
+=3D 1" where
+> > > clr =3D (mask ^ old_mask) & old_mask
+> >
+> > That's a bit odd... Why was the DSS_IRQ_DEVICE_OCP_ERR not already
+> > enabled? It is enabled in the tidss_irq_install().
+> >
+> > Or maybe it had been enabled by the driver, but as the HW doesn't
+> > support that bit, it reads always as 0. I have an unsent patch to drop
+> > DSS_IRQ_DEVICE_OCP_ERR.
+> >
+> > > This corrects the bit mask to make sure that it always clears any pen=
+ding
+> > > interrupt events that are requested to be disabled before disabling t=
+hem
+> > > actually.
+> >
+> > I think the point here makes sense: if we disable interrupts with
+> > dispc_set_irqenable(), we don't want to see interrupt handling for the
+> > disabled interrupts after the call.
+> >
+> > However, if you clear the irqstatus for an interrupt that will be
+> > disabled, but clear it _before_ disabling the interrupt, the interrupt
+> > might trigger right after clearing the irqstatus but before disabling i=
+t.
+> >
+> >   Tomi
+> >
+> > > Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform =
+Display SubSystem")
+> > > Reported-by: Jonathan Cormier <jcormier@criticallink.com>
+> > > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> > > ---
+> > >   drivers/gpu/drm/tidss/tidss_dispc.c | 8 ++++----
+> > >   1 file changed, 4 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/ti=
+dss/tidss_dispc.c
+> > > index 1ad711f8d2a8..b04419b24863 100644
+> > > --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> > > +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> > > @@ -700,8 +700,8 @@ void dispc_k2g_set_irqenable(struct dispc_device =
+*dispc, dispc_irq_t mask)
+> > >   {
+> > >       dispc_irq_t old_mask =3D dispc_k2g_read_irqenable(dispc);
+> > >
+> > > -     /* clear the irqstatus for newly enabled irqs */
+> > > -     dispc_k2g_clear_irqstatus(dispc, (mask ^ old_mask) & mask);
+> > > +     /* clear the irqstatus for irqs that are being disabled now */
+> > > +     dispc_k2g_clear_irqstatus(dispc, (mask ^ old_mask) & old_mask);
+> > >
+> > >       dispc_k2g_vp_set_irqenable(dispc, 0, mask);
+> > >       dispc_k2g_vid_set_irqenable(dispc, 0, mask);
+> > > @@ -843,8 +843,8 @@ static void dispc_k3_set_irqenable(struct dispc_d=
+evice *dispc,
+> > >
+> > >       old_mask =3D dispc_k3_read_irqenable(dispc);
+> > >
+> > > -     /* clear the irqstatus for newly enabled irqs */
+> > > -     dispc_k3_clear_irqstatus(dispc, (old_mask ^ mask) & mask);
+> > > +     /* clear the irqstatus for irqs that are being disabled now */
+> > > +     dispc_k3_clear_irqstatus(dispc, (old_mask ^ mask) & old_mask);
+> > >
+> > >       for (i =3D 0; i < dispc->feat->num_vps; ++i) {
+> > >               dispc_k3_vp_set_irqenable(dispc, i, mask);
+> >
+>
+>
+> --
+> Jonathan Cormier
+> Software Engineer
+>
+> Voice:  315.425.4045 x222
+>
+>
+>
+> http://www.CriticalLink.com
+> 6712 Brooklawn Parkway, Syracuse, NY 13211
 
-I just defined all the registers I could find. We aren't using them for 
-anything yet so it's also fine to keep them out for now.
-
-It seems that in the downstream kernel they are only initialized once 
-and never accessed again. This is the only place I could find where 
-they are accessed:
-https://gitlab.com/Tooniis/linux-samsung-grandpplte/-/blob/master/drivers/misc/mediatek/pmic_wrap/mt6735/pwrap_hal.c#L1254-1290
 
 
+--=20
+Jonathan Cormier
+Software Engineer
+
+Voice:  315.425.4045 x222
+
+
+
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
 
