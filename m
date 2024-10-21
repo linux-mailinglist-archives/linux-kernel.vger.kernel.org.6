@@ -1,137 +1,172 @@
-Return-Path: <linux-kernel+bounces-374023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0CC9A60BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:54:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCC59A60C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734E4284914
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9AB1C21AF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3531E47A1;
-	Mon, 21 Oct 2024 09:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D731E1C25;
+	Mon, 21 Oct 2024 09:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cQEFE862"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcKIWbFq"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F47D1E3776;
-	Mon, 21 Oct 2024 09:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82A1E2822
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504463; cv=none; b=uejceOx1Jp/6NJfQKcZEQR6hD9u1Nh8lMmIv5673yzkfLc27F0SKfivkeUJw1H8SVQQ4V+TTmixGkatiM5Ztu+6HeIBHK6xi/SrcUuqaPqIXeKlmBUqg+nIvhLK0ssCmMQO/5Zc8XDdCkl3FjHVu5mTtFeCyMLDxdVpf6HTUyio=
+	t=1729504501; cv=none; b=P+eQhXRiDZqQs6z38tEGg6V3HCgy6tiIgGlPwBbBNQVFTRuoyecnfxQ75P8gLflwfcCElVfekp9XP/K5YOluTOQIrXgVX8kSwIOI12FKIQXDi6eCA4GJzEtuxHYVMHTghIcvzfi7UE7mC1/9+0wO+tBRt2Vtacdl0poD0HQXtWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504463; c=relaxed/simple;
-	bh=wcviCQ9r8niYEkQiSDiTF/TFcR4LffIr93w4PDGYR+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVRnWO5LyeTtYS45GeueaQyAcqgdsCp5yxxFL609wDdF9RUIzSHRIiQbZerTn+DSvlpd3eJxuAhmRhfWhIpKMvGP9D61uTP72eFvTVZKBfj2iHrkcRVxWFJssqoOTOYzEtrzAeJOBAFDASnx1qHX9qt/51mci8OOnvcs0pYTnEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cQEFE862; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729504462; x=1761040462;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=wcviCQ9r8niYEkQiSDiTF/TFcR4LffIr93w4PDGYR+A=;
-  b=cQEFE8625EryygqNirveDbNSltQEVYy7lTo1fZtke9KXk4g3R847aGjv
-   5vVgBkKBLIT9OoxIGquCl9h7PxEng+OIcERrZdme9BZXDBK/QacHjDzg0
-   RBH0YJTeHlxPCxl4/uId5iRHPYoVIr5o7XLVi9T8iAtrW+VKW12l6sL71
-   Vxa12Z0Zx5rRs19epm+bP13l3snSPEmfMhHoYpJH0Y3FYz9hgInVZ7j0L
-   f0lpnY3qR6Hhslay+GuOp+ZnQXPUgdIflcBqdm8iJLoE3GtWxCC1zfWOQ
-   ytno91DSxO6L/wcb+NQdMVoRhQOhdg8hd8RH2V8Sv57jBrxUTyQWJNHdh
-   Q==;
-X-CSE-ConnectionGUID: 4REUzPddQX2g7S8eiWrR7w==
-X-CSE-MsgGUID: oxUDKtNES3qFDEpG6dAtRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28758287"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28758287"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:54:21 -0700
-X-CSE-ConnectionGUID: 1UHauq+tTd6Xr4n1reRQDg==
-X-CSE-MsgGUID: RgQqIdyHR3u1g3V6mXFmnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79117739"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:54:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t2p7A-00000005SAV-47H6;
-	Mon, 21 Oct 2024 12:54:16 +0300
-Date: Mon, 21 Oct 2024 12:54:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v2 1/3] platform/x86: intel_scu_ipc: Replace workaround
- by 32-bit IO
-Message-ID: <ZxYkyC00pDzarnVU@smile.fi.intel.com>
-References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com>
- <20241021084053.2443545-2-andriy.shevchenko@linux.intel.com>
- <2708af18-da90-4021-bd1b-b0491b737d6b@linux.intel.com>
- <ZxYgZGYTzINm2lpz@smile.fi.intel.com>
- <d40d824e-1827-4030-794c-a7c7e15137e6@linux.intel.com>
+	s=arc-20240116; t=1729504501; c=relaxed/simple;
+	bh=B8kXuogX2mA5q2qhHUjFQT6+8gMhHBjKX1d/0OfMugI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ssqM+gLDocJ6ZSVOD7cGRAW6FxNxzIFXcDv+zwtT8aLVEaYYfr9Heo+EbYPuGPePsHD+7RWvraHusJEUSwzdYBc/IthdecuG6A37Sdfce9K0waOJS9UrE/hXn/ph13TQrKdtw5NB+Cm/ziG6oE8XPB5z9EwLhIy1h1HGow3I6Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hcKIWbFq; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314b316495so40870915e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:54:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729504497; x=1730109297; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sAPgS81fU8WqlF/LuQRpx0NWQV7ciXlZDMNUwqEFwws=;
+        b=hcKIWbFqzX/2BqE8vPtSMVJoS6a9LiwpzsRBo/TVy9RhClxg1xgdMzm6xTrOHWcewb
+         rTwj8rF+bMcSxD5MN8dNVZWsO07OAtxA2OXNKJL666/Bg2lUuAti/ckW2SDm43vL6235
+         bDt/Bdium9SOa3DE3q0Yyyvnwm1dIxn7U9FMR9fMGUq6uo/F/3OfYpzPXSnqfobppckz
+         Lgy1g1HHVmI+uWVGAJnG4h+XbhBOrAe2Y2VTjFsxDRv/2gGdjwsewkaCI0KKqI7Es/zD
+         EnsTn1lV6p5O0VY0eT+DnhJ23VVBrN645RdDsEuSbYMPJ+rhhPogOysllMrIwPy75tYy
+         wnfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729504497; x=1730109297;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sAPgS81fU8WqlF/LuQRpx0NWQV7ciXlZDMNUwqEFwws=;
+        b=SRjIOx37oHEuu8VkI6s/FaJ9HNkKvNm+iDgMyCUCrDEKC7HkrWVS48VzPpNWfP3G8F
+         QYUICq0DbLoIMVPT+ghG/cOKuo40WuD2hcagb85SscLogo6WdWPWTFDCMs/UW80L5MX8
+         6oy0vbrUFNAyR+dK+8qkLbLE5NV+Gi8J2ZKFGndyBbRvSBaYkusxlhspmwNvbkg09swJ
+         +oP9gL/boEfYMdtFyV5F7w+oe/t+kz4MtsUNquAT9YKdYP+YwZGogfy9DSRJTynKza8b
+         XP/j3wn/FIps0erU/P5mEUqdtyg33ZhlMpj535lPuJjtIuDPCruqjAnYyqZQJddz7bO0
+         cPSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZautJ08Jgmy7ZA5Gu3+JLmUDciN9HIciEdqQU2hKVubiGmZJyI/i/YSAgevEteiEaS/DxABchDIXRw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzH3SX4ORLCdglCC/YXSWdEKyeh7TYBvHuBiItasnjYRCgVXEm
+	Sga2a8HweMhPyl+D3Avm2L6FD/RJd5JsodEgEUJghZvxbl0Wtelyj4UpAzeuHyY=
+X-Google-Smtp-Source: AGHT+IELxYkWLSigx/VF6jV9gkVikRzLwmcqDdsuj1mv4meEXk5esFNW/w5twSNROrhMuWotuOZ7TA==
+X-Received: by 2002:a05:600c:35cd:b0:431:5d4c:5eff with SMTP id 5b1f17b1804b1-43161636f5cmr76546685e9.2.1729504497213;
+        Mon, 21 Oct 2024 02:54:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57112esm52517435e9.6.2024.10.21.02.54.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 02:54:56 -0700 (PDT)
+Message-ID: <7d2c6c91-9218-4e13-81dd-d1f3ffa4801e@linaro.org>
+Date: Mon, 21 Oct 2024 11:54:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d40d824e-1827-4030-794c-a7c7e15137e6@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 4/6] drm/bridge: aux: allow interlaced and YCbCr 420
+ output
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+ <20241019-bridge-yuv420-v1-4-d74efac9e4e6@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241019-bridge-yuv420-v1-4-d74efac9e4e6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 12:49:08PM +0300, Ilpo Järvinen wrote:
-> On Mon, 21 Oct 2024, Andy Shevchenko wrote:
-> > On Mon, Oct 21, 2024 at 12:24:57PM +0300, Ilpo Järvinen wrote:
-> > > On Mon, 21 Oct 2024, Andy Shevchenko wrote:
-
-...
-
-> > > > +		for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
-> > > > +			wbuf[nc] = ipc_data_readl(scu, offset);
-> > > > +		memcpy(data, wbuf, count);
-> > > 
-> > > So do we actually need to read more than
-> > > DIV_ROUND_UP(min(count, 16U), sizeof(u32))? Because that's the approach 
-> > > used in intel_scu_ipc_dev_command_with_size() which you referred to.
-> > 
-> > I'm not sure I follow. We do IO for whole (16-bytes) buffer, but return only
-> > asked _bytes_ to the user.
+On 18/10/2024 23:49, Dmitry Baryshkov wrote:
+> As both aux bridges are merely passthrough bridges, mark them as
+> supporting interlaced and YCbCr 420 data. Other bridges in the chain
+> still might limit interlaced and YCbCr 420 data support on the
+> corresponding connector.
 > 
-> So always reading 16 bytes is not part of the old workaround? Because it 
-> has a "lets read enough" feel.
-
-Ah, now I got it! Yes, we may reduce the reads to just needed ones.
-The idea is that we always have to perform 32-bit reads independently
-on the amount of data we want.
-
-> > > >  	}
-> > > >  	mutex_unlock(&ipclock);
-> > > >  	return err;
-> > > 
-> > > FYI (unrelated to this patch), there seems to be some open-coded 
-> > > FIELD_PREP()s in pwr_reg_rdwr(), some of which is common code between 
-> > > those if branches too.
-> > 
-> > This code is quite old and full of tricks that has to be tested. So, yes
-> > while it's possible to convert, I would like to do it in a small (baby)
-> > steps. This series is already quite intrusive from this perspective :-)
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/bridge/aux-bridge.c     | 4 ++++
+>   drivers/gpu/drm/bridge/aux-hpd-bridge.c | 4 ++++
+>   2 files changed, 8 insertions(+)
 > 
-> Yeah, no pressure, I just noted down what I saw. :-)
+> diff --git a/drivers/gpu/drm/bridge/aux-bridge.c b/drivers/gpu/drm/bridge/aux-bridge.c
+> index b29980f95379..e3e95ccec1ae 100644
+> --- a/drivers/gpu/drm/bridge/aux-bridge.c
+> +++ b/drivers/gpu/drm/bridge/aux-bridge.c
+> @@ -120,6 +120,10 @@ static int drm_aux_bridge_probe(struct auxiliary_device *auxdev,
+>   	data->bridge.funcs = &drm_aux_bridge_funcs;
+>   	data->bridge.of_node = data->dev->of_node;
+>   
+> +	/* passthrough data, allow everything */
+> +	data->bridge.interlace_allowed = true;
+> +	data->bridge.ycbcr_420_allowed = true;
+> +
+>   	return devm_drm_bridge_add(data->dev, &data->bridge);
+>   }
+>   
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> index 6886db2d9e00..48f297c78ee6 100644
+> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> @@ -180,6 +180,10 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
+>   	data->bridge.ops = DRM_BRIDGE_OP_HPD;
+>   	data->bridge.type = id->driver_data;
+>   
+> +	/* passthrough data, allow everything */
+> +	data->bridge.interlace_allowed = true;
+> +	data->bridge.ycbcr_420_allowed = true;
+> +
+>   	auxiliary_set_drvdata(auxdev, data);
+>   
+>   	return devm_drm_bridge_add(data->dev, &data->bridge);
+> 
 
-Thanks, I will keep this.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
