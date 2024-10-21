@@ -1,169 +1,123 @@
-Return-Path: <linux-kernel+bounces-374088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCE19A62D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75999A62D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DBEB2829DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60B21B24EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593F71E5731;
-	Mon, 21 Oct 2024 10:26:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4A1E47D3;
+	Mon, 21 Oct 2024 10:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ooVn4SRr"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAB1E47BA
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B921816F27E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729506389; cv=none; b=k1I+9zSn8CNj+cWEBvpcXXrFK4HJ8pcoakRHtGAK47Bs2KfsF0jApGFUwTr05rbC+jv7W6bdvxIljVN/nB0IywU/9rCkGIF9ra3yVfK2sIdGoshF6EdHcwsCnvUhul2eQjWfpKqLj4wVlrfozjobiJzMWHhWLpEjgQycygH+Bbc=
+	t=1729506413; cv=none; b=ihLefaw84di/k4CcvwslFQAiTCx6Z2Vca4fQHZflDU16m3Ep7E3R3SmsaygRGxOnqPVsL/G0/7TqkKofNz9rE3RrIvaVD8r4h99XABADJTrVh4AreNw9H+oHvCmk7xj0m910FKd+d5LvZExsntBxjDCunDg6+p0n+fMxbzrK8/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729506389; c=relaxed/simple;
-	bh=HyinHEDUltMnnylEuLyH5EMvjAcRtvUx0YHleWhIe5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IL0YP/vEnY1BABCRKzy8osBSfS7rqMgOQwKfEFPU7SoQAn7KYwH18+kIY4H2XFz4NpSFt0pwPhtIcwuZucqCCzXiykdsvK3IhpAeREjcO12cgrOUBvqDfHxe+e8g/uST/9apLCIF30cMzwVhWLpbdmVexeiACPTw0Y0ykB+kgjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t2pbr-0000gD-2X; Mon, 21 Oct 2024 12:25:59 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t2pbq-000g9Q-22;
-	Mon, 21 Oct 2024 12:25:58 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t2pbq-005k06-1g;
-	Mon, 21 Oct 2024 12:25:58 +0200
-Date: Mon, 21 Oct 2024 12:25:58 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Sherry Sun <sherry.sun@nxp.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
-	"marcel@holtmann.org" <marcel@holtmann.org>,
-	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Message-ID: <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
- <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
- <20241021064129.trchqa2oickna7pc@pengutronix.de>
- <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+	s=arc-20240116; t=1729506413; c=relaxed/simple;
+	bh=ldeRxmVxesBWJgkdZ2wLQ3QBzgC/wXtoI3dkl178Rls=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V3KXb47pmFMEVcOO6tnAx/ya16KZ8LjIuIB2HlcxKX50C8pzkag+mNQMy5loWdIoOhh49pp2SCdHSmjuERf69aUzKECewPxV3KrkocCVrqs5R/nOy75PVrSvJQWta7i6/sIQqUoy6Ime6RmaXqYo87NPo8oHc2EfovyJGxMezms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ooVn4SRr; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ldeRxmVxesBWJgkdZ2wLQ3QBzgC/wXtoI3dkl178Rls=;
+	t=1729506411; x=1730716011; b=ooVn4SRrGHbey0+QUMsnOP5+Q/xopu97eVgCgW1/HOGdrW4
+	Uz7ggReA6ng9iVeZCx4geiMPEQaujSjccddjAJXgnjR3kDasM8WRhM8w6Bi9QtgJoM28JVaz54cRE
+	nKyz2/lS4++USwtJKMQoG6QmnDWBfoi9JI9y2fsDn1C//A5+JN2qIaBz1MtM7QsBHJZehxYFYATul
+	tPdtf6FT1+jZmY3XYdzwlksSOh6AjcuTJ6HqQXaxykEeXPCVELiHr7jG0AutxrA2fjQu6ColRoqyw
+	6NM1r9uTFA7AiRKiUmjoW0bWd+xF558wV5PCQ4zWriBpnbWGouF9vrFhO+ERfjqw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t2pcd-00000000k3e-1scN;
+	Mon, 21 Oct 2024 12:26:47 +0200
+Message-ID: <43f56c9d5bbbc93193b3e08622490e176bc915d9.camel@sipsolutions.net>
+Subject: Re: [PATCH] um: Fix misaligned stack in stub_exe
+From: Johannes Berg <johannes@sipsolutions.net>
+To: David Gow <davidgow@google.com>, Benjamin Berg <benjamin.berg@intel.com>
+Cc: linux-um@lists.infradead.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 21 Oct 2024 12:26:46 +0200
+In-Reply-To: <CABVgOSntH-uoOFMP5HwMXjx_f1osMnVdhgKRKm4uz6DFm2Lb8Q@mail.gmail.com>
+References: <20241017231007.1500497-2-davidgow@google.com>
+	 <CABVgOSntH-uoOFMP5HwMXjx_f1osMnVdhgKRKm4uz6DFm2Lb8Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-malware-bazaar: not-scanned
 
-On 24-10-21, Krzysztof Kozlowski wrote:
-> On 21/10/2024 08:41, Marco Felsch wrote:
-> > On 24-10-07, Krzysztof Kozlowski wrote:
-> >> On 07/10/2024 14:58, POPESCU Catalin wrote:
-> >>>>>>
-> >>>>>> +  vcc-supply:
-> >>>>>> +    description:
-> >>>>>> +      phandle of the regulator that provides the supply voltage.
-> >>>>>> +
-> >>>>>> +  reset-gpios:
-> >>>>>> +    description:
-> >>>>>> +      Chip powerdown/reset signal (PDn).
-> >>>>>> +
-> >>>>> Hi Catalin,
-> >>>>>
-> >>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
-> >>>>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
-> >>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
-> >>>
-> >>> Hi Sherry,
-> >>>
-> >>> Regulators and reset controls being refcounted, we can then implement 
-> >>> powerup sequence in both bluetooth/wlan drivers and have the drivers 
-> >>> operate independently. This way bluetooth driver would has no dependance 
-> >>> on the wlan driver for :
-> >>>
-> >>> - its power supply
-> >>>
-> >>> - its reset pin (PDn)
-> >>>
-> >>> - its firmware (being downloaded as part of the combo firmware)
-> >>>
-> >>> For the wlan driver we use mmc power sequence to drive the chip reset 
-> >>> pin and there's another patchset that adds support for reset control 
-> >>> into the mmc pwrseq simple driver.
-> >>>
-> >>>> Please wrap your replies.
-> >>>>
-> >>>> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
-> >>>
-> >>> Hi Krzysztof,
-> >>>
-> >>> I'm not familiar with power sequencing, but looks like way more 
-> >>> complicated than reset controls. So, why power sequencing is recommended 
-> >>> here ? Is it b/c a supply is involved ?
-> >>
-> >> Based on earlier message:
-> >>
-> >> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
-> >> that both wifi and BT controller will be powered on and off at the same
-> >> time."
-> >>
-> >> but maybe that's not needed. No clue, I don't know the hardware. But be
-> >> carefully what you write in the bindings, because then it will be ABI.
-> > 
-> > We noticed the new power-sequencing infrastructure which is part of 6.11
-> > too but I don't think that this patch is wrong. The DT ABI won't break
-> > if we switch to the power-sequencing later on since the "reset-gpios"
-> > are not marked as required. So it is up to the driver to handle it
-> > either via a separate power-sequence driver or via "power-supply" and
-> > "reset-gpios" directly.
-> 
-> That's not the point. We expect correct hardware description. If you say
-> now it has "reset-gpios" but later say "actually no, because it has
-> PMU", I respond: no. Describe the hardware, not current Linux.
+On Sat, 2024-10-19 at 13:54 +0800, David Gow wrote:
+>=20
+> Okay, it turns out this breaks clang:
+> arch/um/kernel/skas/stub_exe.c:84:2: error: non-ASM statement in naked
+> function is not supported
 
-I know that DT abstracts the HW. That said I don't see the problem with
-this patch. The HW is abstracted just fine:
+Fun :)
 
-shared PDn          -> reset-gpios
-shared power-supply -> vcc-supply
+Interesting too, I've _definitely_ got some code elsewhere, that's
+usually compiled with clang, using __attribute__((naked,noinline)). With
+a quite old clang version, I believe. Oh well, whatever.
 
-Right now the DT ABI for the BT part is incomplete since it assume a
-running WLAN part or some hog-gpios to pull the device out-of-reset
-which is addressed by this patchset.
+> And, looking into it, gcc's docs are not encouraging here either:
+> https://gcc.gnu.org/onlinedocs/gcc/x86-Function-Attributes.html
+>=20
+> This attribute allows the compiler to construct the requisite function
+> declaration, while allowing the body of the function to be assembly
+> code. The specified function will not have prologue/epilogue sequences
+> generated by the compiler. Only basic asm statements can safely be
+> included in naked functions (see Basic Asm =E2=80=94 Assembler Instructio=
+ns
+> Without Operands). While using extended asm or a mixture of basic asm
+> and C code may appear to work, they cannot be depended upon to work
+> reliably and are not supported.
 
-Making use of the new power-sequencing fw is a Linux detail and I don't
-see why the DT can't be extended later on. We always extend the DT if
-something is missing or if we found a better way to handle devices.
+Right ...
 
-Regards,
-  Marco
+> My gut feeling is that the "correct" way of doing this is to use an
+> actual crt implementation for __start. I managed to get it working
+> with nolibc on x86_54, but the sheer amount of hackery involved was
+> not exactly encouraging. There are a lot of conflicts between the
+> different headers for a start.
+
+Yeah, that doesn't seem like a lot of fun.
+
+> The other "correct" way would be to rewrite __start in assembly, which
+> is annoying as it'd be architecture specific, so need a separate
+> 32-bit version.
+
+That'd probably be less bad than it sounds, since all the syscall magic
+macros etc. in there are already architecture specific.
+
+> The less-correct-but-working-here way, which I'm tempted by for now,
+> is to get rid of __attribute__((naked)) and just use
+> __attribute__((force_arg_align_pointer)). That's probably the best way
+> of fixing the stack issue, but obviously won't fix any other issues
+> which could arise from __start playing loose with the rules.
+>=20
+> My current plan is to send out a v2 with force_arg_align_pointer next
+> week, unless someone has a more brilliant idea.
+
+Sounds good to me. We'll find out if we have to iterate more ;)
+
+johannes
 
