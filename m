@@ -1,119 +1,271 @@
-Return-Path: <linux-kernel+bounces-374800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2359A702A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:54:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52C99A702E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9692FB218AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620881F2147F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF7E1E8823;
-	Mon, 21 Oct 2024 16:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2AA1E9097;
+	Mon, 21 Oct 2024 16:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OgJaCPHM"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgZU75Ze"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF03947A73;
-	Mon, 21 Oct 2024 16:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF12B1C3F1F;
+	Mon, 21 Oct 2024 16:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529685; cv=none; b=SfoSd8vhGOsdhM89gkl9/Zw/raZfFfh5/aqSN85qgaAyCyvirKTY9bQAiIGMNLo9gQlF5zfxxIuB5kPuq6oM0eZzeiuBjAg2vYGS/BNoN+Rs6Rz0+KC9pbiDDCofO1IXuvOL6WoQz979iibAZxErrSu15Z/NmMkiOcblcEiZS2k=
+	t=1729529788; cv=none; b=AiusVdjJ6lm3cfF/lNqbLXbWcCgjVQr4VBX2tnjnS5o3vBoQRIkDI6Bo4pMWfMvu3MU5a0w3WQAGTzrUVXApcW+HOYOoZR8paBfXIHiAF+4CDMPh/E8kxkPGS8bwgnT7RgxgQxsB+Uu++yj3Mw+TrkKOeN/NCb7whybZD6WcZww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529685; c=relaxed/simple;
-	bh=xVLV19LdlMTEBFTYZcWLoFa2RJ2kafrvx0eUdZTpY6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S84tOM977unALE+YeT7RTPe9VobzNWuYuqRgm0N7D+c7/eH1UWELEZsHTtzQnhlP4EohWRS9GOvs5+sBpr9xDCawIBPz34KkTC49cR5KS4842uunoS1/haCi948K3sfh4FytsIrhdpnTi6c3W0BGmf4LUv32fl5yEE2nD451gIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OgJaCPHM; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49LGsS1s015685;
-	Mon, 21 Oct 2024 11:54:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729529668;
-	bh=BkUiQQbb0Y/+KVsC+QJluVm1qSPbgAKIhXWGfYSCIF0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=OgJaCPHM6sf5ryq0I2x45RORcQ1AKdvc0U+8TfYon+TW3SurtPoXAh299k00xJHie
-	 I9IiEJtIYo+8D6DXRVEa2mSxD6UpHP8LDjji1imk/T5FEXgs3ynCmXCGPTTCJWdkU7
-	 40/O2b+HwPJLSul4fVA/sqLJ6xbjcyBpFDOX9R4k=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49LGsSqb008487
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Oct 2024 11:54:28 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Oct 2024 11:54:28 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Oct 2024 11:54:28 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49LGsRhU034368;
-	Mon, 21 Oct 2024 11:54:28 -0500
-Message-ID: <4954e8a6-06dc-49db-afdb-93260539649a@ti.com>
-Date: Mon, 21 Oct 2024 11:54:27 -0500
+	s=arc-20240116; t=1729529788; c=relaxed/simple;
+	bh=liPd4zwwNy3T+1XLeHuqkI/iYD/8y4/wV+I9AolNpIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnRUBFGRGPJ5YVScSEbvzjaEaGgeKG+pTvA1HVV1XwTcS38mqjM7wCk1G+g9IIPlNGkAiiVtYmqjKcjvZaHS1aylgxFeo8905K7qn+pUyY9o6bxriqFoS0IwVNJHlvfWy3R2XcJ6LxX+Ejs6+SjIAX4ep7WYn6My8TGzsd19QaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgZU75Ze; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E20C4CEC3;
+	Mon, 21 Oct 2024 16:56:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729529787;
+	bh=liPd4zwwNy3T+1XLeHuqkI/iYD/8y4/wV+I9AolNpIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bgZU75ZeBiRT88L0fTlc+hKkfIm+521NfeTaa5pqW8Kn8ZGsrX9To9RwJi50mEkGX
+	 hKd0p4gAX5OSTuwS8FwdvhpICy9EzKFOV09zSxHkTLEZBOlScdAw+XDXDoNS5Tegw4
+	 lWgwuP32nTjxDW7h/oi59zWHTwAZqyD0lAfr2nhMwnTrMsmSUxSBS3SABSJMPXUekd
+	 /np3SM4/nPr/jBAaeJb/o1rGHd3yNw1Fm9+ylvKDgPKyJcbsCGE3PjgCJmRc2RK05R
+	 9RKijhngwzRRqkz3q7FIg2DF7iwOWOkpaCETr7HOSYwAWPx9vqyleYii0NAT61qdkE
+	 23biU/DDR+VXA==
+Date: Mon, 21 Oct 2024 17:56:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: mediatek: Add bindings for
+ MT6735 syscon clock and reset controllers
+Message-ID: <20241021-goatskin-wafer-7582dbcfe1d1@spud>
+References: <20241021121618.151079-1-y.oudjana@protonmail.com>
+ <20241021121618.151079-2-y.oudjana@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: k3-r5: Add compile testing support
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241016164141.93401-1-afd@ti.com>
- <20241016164141.93401-3-afd@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20241016164141.93401-3-afd@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZXuBxhWPZaWXTuxG"
+Content-Disposition: inline
+In-Reply-To: <20241021121618.151079-2-y.oudjana@protonmail.com>
 
-On 10/16/24 11:41 AM, Andrew Davis wrote:
-> This driver can be compile tested on non-K3 architectures as long
-> as TI_SCI_PROTOCOL is not compiled as a module. Enable this here
-> to improve this driver's build coverage.
-> 
-> Signed-off-by: Andrew Davis <afd@ti.com>
+
+--ZXuBxhWPZaWXTuxG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 21, 2024 at 03:16:15PM +0300, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>=20
+> Add device tree bindings for syscon clock and reset controllers (IMGSYS,
+> MFGCFG, VDECSYS and VENCSYS).
+>=20
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 > ---
->   drivers/remoteproc/Kconfig | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0ac1c8a6e4581..83962a114dc9f 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -355,7 +355,8 @@ config TI_K3_M4_REMOTEPROC
->   
->   config TI_K3_R5_REMOTEPROC
->   	tristate "TI K3 R5 remoteproc support"
-> -	depends on ARCH_K3
-> +	depends on ARCH_K3 || COMPILE_TEST
+>  .../bindings/clock/mediatek,syscon.yaml           |  4 ++++
+>  MAINTAINERS                                       |  6 ++++++
+>  .../dt-bindings/clock/mediatek,mt6735-imgsys.h    | 15 +++++++++++++++
+>  .../dt-bindings/clock/mediatek,mt6735-mfgcfg.h    |  8 ++++++++
+>  .../dt-bindings/clock/mediatek,mt6735-vdecsys.h   |  9 +++++++++
+>  .../dt-bindings/clock/mediatek,mt6735-vencsys.h   | 11 +++++++++++
+>  .../dt-bindings/reset/mediatek,mt6735-mfgcfg.h    |  9 +++++++++
+>  .../dt-bindings/reset/mediatek,mt6735-vdecsys.h   | 10 ++++++++++
 
-kernel test robot is giving some extra warning now around the lines:
+Is it really necessary to have individual files foe each of these? Seems
+a bit extra, no?
 
-memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+Cheers,
+Conor.
 
-This was already an issue and threw warnings even on ARM64 builds, but
-now that we can compile test on other archs, all those will start
-complaining too.
+>  8 files changed, 72 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+>  create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+>  create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml=
+ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
+> index 10483e26878fb..a86a64893c675 100644
+> --- a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
+> @@ -28,6 +28,10 @@ properties:
+>                - mediatek,mt2712-mfgcfg
+>                - mediatek,mt2712-vdecsys
+>                - mediatek,mt2712-vencsys
+> +              - mediatek,mt6735-imgsys
+> +              - mediatek,mt6735-mfgcfg
+> +              - mediatek,mt6735-vdecsys
+> +              - mediatek,mt6735-vencsys
+>                - mediatek,mt6765-camsys
+>                - mediatek,mt6765-imgsys
+>                - mediatek,mt6765-mipi0a
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2ce38c6c0e6ff..25484783f6a0b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14537,11 +14537,17 @@ F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
+>  F:	drivers/clk/mediatek/clk-mt6735-pericfg.c
+>  F:	drivers/clk/mediatek/clk-mt6735-topckgen.c
+>  F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+> +F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+>  F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+> +F:	include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+>  F:	include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+>  F:	include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+> +F:	include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+> +F:	include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+>  F:	include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+> +F:	include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+>  F:	include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+> +F:	include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+> =20
+>  MEDIATEK MT76 WIRELESS LAN DRIVER
+>  M:	Felix Fietkau <nbd@nbd.name>
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-imgsys.h b/include=
+/dt-bindings/clock/mediatek,mt6735-imgsys.h
+> new file mode 100644
+> index 0000000000000..f250c26c5eb4d
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_IMGSYS_H
+> +#define _DT_BINDINGS_CLK_MT6735_IMGSYS_H
+> +
+> +#define CLK_IMG_SMI_LARB2		0
+> +#define CLK_IMG_CAM_SMI			1
+> +#define CLK_IMG_CAM_CAM			2
+> +#define CLK_IMG_SEN_TG			3
+> +#define CLK_IMG_SEN_CAM			4
+> +#define CLK_IMG_CAM_SV			5
+> +#define CLK_IMG_SUFOD			6
+> +#define CLK_IMG_FD			7
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6735_IMGSYS_H */
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h b/include=
+/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+> new file mode 100644
+> index 0000000000000..d2d99a48348a0
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+> @@ -0,0 +1,8 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_MFGCFG_H
+> +#define _DT_BINDINGS_CLK_MT6735_MFGCFG_H
+> +
+> +#define CLK_MFG_BG3D			0
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6735_MFGCFG_H */
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-vdecsys.h b/includ=
+e/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+> new file mode 100644
+> index 0000000000000..f94cec10c89ff
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_VDECSYS_H
+> +#define _DT_BINDINGS_CLK_MT6735_VDECSYS_H
+> +
+> +#define CLK_VDEC_VDEC			0
+> +#define CLK_VDEC_SMI_LARB1		1
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6735_VDECSYS_H */
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-vencsys.h b/includ=
+e/dt-bindings/clock/mediatek,mt6735-vencsys.h
+> new file mode 100644
+> index 0000000000000..e5a9cb4f269ff
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_VENCSYS_H
+> +#define _DT_BINDINGS_CLK_MT6735_VENCSYS_H
+> +
+> +#define CLK_VENC_SMI_LARB3			0
+> +#define CLK_VENC_VENC			1
+> +#define CLK_VENC_JPGENC			2
+> +#define CLK_VENC_JPGDEC			3
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6735_VENCSYS_H */
+> diff --git a/include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h b/include=
+/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+> new file mode 100644
+> index 0000000000000..c489242b226e2
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_RESET_MT6735_MFGCFG_H
+> +#define _DT_BINDINGS_RESET_MT6735_MFGCFG_H
+> +
+> +#define MT6735_MFG_RST0_AXI		0
+> +#define MT6735_MFG_RST0_G3D		1
+> +
+> +#endif /* _DT_BINDINGS_RESET_MT6735_MFGCFG_H */
+> diff --git a/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h b/includ=
+e/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+> new file mode 100644
+> index 0000000000000..90ad73af50a3f
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_RESET_MT6735_VDECSYS_H
+> +#define _DT_BINDINGS_RESET_MT6735_VDECSYS_H
+> +
+> +#define MT6735_VDEC_RST0_VDEC			0
+> +
+> +#define MT6735_VDEC_RST1_SMI_LARB1		1
+> +
+> +#endif /* _DT_BINDINGS_RESET_MT6735_VDECSYS_H */
+> --=20
+> 2.47.0
+>=20
 
-Fix is easy, just s/memset()/memset_io() here. I'll give that a test
-run then send a patch.
+--ZXuBxhWPZaWXTuxG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Andrew
+-----BEGIN PGP SIGNATURE-----
 
-> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
->   	depends on OMAP2PLUS_MBOX
->   	help
->   	  Say m here to support TI's R5F remote processor subsystems
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxaHtQAKCRB4tDGHoIJi
+0vumAPwIGS1OkatMBdA7JBQ/k/ArAJ9clhu5Cv3etWlrGqWZwgD/X6ZWlsd5k88w
+qd9HgL4SAxnpMRUPeiUkOmaN5qWsTAE=
+=+NYr
+-----END PGP SIGNATURE-----
+
+--ZXuBxhWPZaWXTuxG--
 
