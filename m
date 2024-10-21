@@ -1,158 +1,108 @@
-Return-Path: <linux-kernel+bounces-373808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F6E9A5D13
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:30:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B489A5D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5517F281158
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAAE1F23515
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13361D26E9;
-	Mon, 21 Oct 2024 07:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23D21A28D;
+	Mon, 21 Oct 2024 07:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtcSBRL5"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkJEuzXx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE111D220E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDD31DF73F;
+	Mon, 21 Oct 2024 07:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495798; cv=none; b=njhktrkZV7lxVwdB35+FXY8nR/+SDDrOVOX49HFthIp1W96u68nQ9VBxyxuGVKDydk2WilxZMfe81WwtVVBM+s8KzjBo7OfBpZl4ovd/MelcGtIKnQlJImwFps5POphnOJEUpRVHm4Rt1P3DvG22NWa0YYJ22Il73tmzH8mBcFQ=
+	t=1729495813; cv=none; b=rEVQLPzj6DjYEGnHa71xqSf7SFy6EgQcQB/M0TP92TVjSVSklBr1mWW7enOWBHE2T7+ZULJsjcr4c6dPoRMJznfc6uS23JfJlpPuZWdC4SdzDq6MB6KjBs3LrQxCxkT5peZKszO3j/+rOEIdtVhVrn1KLEf8A0QFrNSs2QFUDj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495798; c=relaxed/simple;
-	bh=ccghK1rZWyDtkZQcOREz7ARLrOL1DYBYTH9L0R9+UKc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aXZwys80Z8s49jy8QwnCg73vOFj96G/5Fpqbpq5Gblvu579vZV2nriFbGKPpTxfJtREJpAqDgSQckE+7IPAjFeSBd0CWkwFvPTInQJ9tzXQLuweCPX6wJ7WQvHibJHnXyAB/nAjDAoG7/ClIH8eN9u9LVIe0MCfNXiFY9ywCBTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtcSBRL5; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315baec681so41709385e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729495795; x=1730100595; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YNOZqddaoOrk8/x4u3nq9GdRCqUuOFLmAqZeR4UqCCw=;
-        b=DtcSBRL5gz7p0z/PxHA+m0x44xfZsQ3BvF6d+hpj5DhpnrmuuBxFE8yIcv2s3rQjkh
-         1xL+3xI8IGyvC5ApAi9fVlbvOoq3kZ9Uwiq5jK/WIUdme7roiJGwfghwGUNltuIGdx9T
-         z1l22fbUuxV+aPCDS983kiCtsIBOAWfPJIbncS9ZybJEw3h1jff3SccklgpwQ88YqYPx
-         5or34fROiFSfbxNK1NL9I4FAVZLfthnxM7mrRBfTAIrahIsnk6wcdc+WXdY1bWZ6yBdf
-         fVbNKLPt/PrPy07OjSsJMIESyVmdr3QMClv6sLltl3gljBMVnWmlLmp0F4mwZ7xOLblK
-         s+0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729495795; x=1730100595;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YNOZqddaoOrk8/x4u3nq9GdRCqUuOFLmAqZeR4UqCCw=;
-        b=gJYxosYG/RYibEwQfb6cyyp3mcEFhV8/EEX6xsxRwvbeICBkNsg1BUaWkKpVHZjrjK
-         kj+Vnqo84s7WlTAh0f9+X1s+E0mgKJW3c+Ud1kLW3a/21+p+qG4OTAp6BnbkrjKMc6vC
-         YFkv/jgaLy4QzjpqNPJO5wdQlVaTzG6xXJSdmtUd2sKvfmQuKwZ45ORH48agBQh0MEMR
-         zBnUmCttPYcva6GLrsr7eq/e4DOh/vstlIPwyC8ZP8sudKulpUh6PUppPnq5IAKl6Z9k
-         Z5Xn2yoVz4KXx0CTA7pWjMSmv1tjbG65SekP4PE1q2ZvhUqxOfeTibJPvJeRZysTEvEC
-         5dpA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7BM/iWaXH/S4KrA4j5tzKQvbCC/jkX9i4nOTYlwSPl3hmFKWWL8W+lbIylep4c4lhZVY7rw3hP8gsoU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGG69zMfih6Okx17dx3ZI+g5HHdOiW5Bwr3sCd1kvqipxQxOff
-	jQbhMflMb8DwjEdHpjqhS7LS2BA/NeGSHzrGO3eAbv/EfsVz4AeWkJe8p4uRvko=
-X-Google-Smtp-Source: AGHT+IFJuoUGb5krhAn5cqCgAJnC/ljP9vnIC3rDFQBRXtRPQG7LFSg4zpy9bDNhkNTbxSQjbnPvqQ==
-X-Received: by 2002:a05:600c:1d04:b0:431:1a98:cb40 with SMTP id 5b1f17b1804b1-43161667bddmr62590085e9.18.1729495794803;
-        Mon, 21 Oct 2024 00:29:54 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5709efsm47712795e9.10.2024.10.21.00.29.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 00:29:54 -0700 (PDT)
-Message-ID: <28fb5aed-0387-4c16-96fb-c2c23ae315b0@linaro.org>
-Date: Mon, 21 Oct 2024 09:29:54 +0200
+	s=arc-20240116; t=1729495813; c=relaxed/simple;
+	bh=eWSvhEi1l9Z4idDUywQ6rxNtO8VvUQXU9ozHH6sVuWk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=seBcl4X/Fkgx9Gj1S+ZzUlX6B4Nnp4MpqI0if2NRN/4GVOsykV7Lx6TRAu9Eks4TDj/AMRfnQpgU/XsSGaMph42EZ7NpQAOB9jhgyng2Hc8MISTLE+8OjHNSRr2II1bYmHG/FmlBAjx604nmoTWG5YI2tbdwFW5YqjNneInNN1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkJEuzXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1663C4CEC3;
+	Mon, 21 Oct 2024 07:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729495812;
+	bh=eWSvhEi1l9Z4idDUywQ6rxNtO8VvUQXU9ozHH6sVuWk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=rkJEuzXxrwdYaX6mt0Cw5yEdsCSkPy2a9ESgfrk75p6udiP8YhuS09dchhH3yEgVN
+	 xt4eIYvbTmAQL5nPLy+A68dQwxcCeSPGDGxy5QPy1tFZf+SBU8U2ng+bKR7r3lb2aX
+	 p5wNEkzuQNMnf1KOAn2tEESPxgcu7p8IXQKuu2zm4JMQsbQwvgMEH8AcIUfNT8vQ50
+	 kIadfDl1Ltas8XbAlzukVH/WoZmidrVFcaVLPXNOfOZIW1SW6nUny1IP22ZaZ7dLRE
+	 rf0E1QxiZGNtnO7Wu/1c+HuNnYtpyVo/nynRZrUKgJ44laRaFS46sJFrRM8cJsxX1t
+	 9SQeD4TLC0oSQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,  "Miri Korenblit"
+ <miriam.rachel.korenblit@intel.com>,  "Johannes Berg"
+ <johannes.berg@intel.com>,  "Emmanuel Grumbach"
+ <emmanuel.grumbach@intel.com>,  "Gregory Greenman"
+ <gregory.greenman@intel.com>,  "Daniel Gabay" <daniel.gabay@intel.com>,
+  "Benjamin Berg" <benjamin.berg@intel.com>,  "Ilan Peer"
+ <ilan.peer@intel.com>,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iwlwifi: work around -Wenum-compare-conditional warning
+References: <20241018151841.3821671-1-arnd@kernel.org>
+	<87a5f1qtts.fsf@kernel.org>
+	<d78b5354-b265-4e45-9a6a-996273026402@app.fastmail.com>
+Date: Mon, 21 Oct 2024 10:30:08 +0300
+In-Reply-To: <d78b5354-b265-4e45-9a6a-996273026402@app.fastmail.com> (Arnd
+	Bergmann's message of "Fri, 18 Oct 2024 19:07:05 +0000")
+Message-ID: <87zfmx3ocf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/6] drm/bridge: display-connector: allow YCbCr 420 for
- HDMI and DP
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <20241019-bridge-yuv420-v1-3-d74efac9e4e6@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241019-bridge-yuv420-v1-3-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 18/10/2024 23:49, Dmitry Baryshkov wrote:
-> Allow YCbCr 420 output for HDMI and DisplayPort connectors. Other
-> bridges in the chain still might limit YCbCr 420 support on the
-> corresponding connector.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/bridge/display-connector.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/display-connector.c b/drivers/gpu/drm/bridge/display-connector.c
-> index ab8e00baf3f1..aab9ce7be94c 100644
-> --- a/drivers/gpu/drm/bridge/display-connector.c
-> +++ b/drivers/gpu/drm/bridge/display-connector.c
-> @@ -270,6 +270,10 @@ static int display_connector_probe(struct platform_device *pdev)
->   	/* All the supported connector types support interlaced modes. */
->   	conn->bridge.interlace_allowed = true;
->   
-> +	if (type == DRM_MODE_CONNECTOR_HDMIA ||
-> +	    type == DRM_MODE_CONNECTOR_DisplayPort)
-> +		conn->bridge.ycbcr_420_allowed = true;
-> +
->   	/* Get the optional connector label. */
->   	of_property_read_string(pdev->dev.of_node, "label", &label);
->   
-> 
+"Arnd Bergmann" <arnd@arndb.de> writes:
 
-I think we should make sure all HDMI bridges can filter out 420 before
-landing this, no ?
+> On Fri, Oct 18, 2024, at 16:06, Kalle Valo wrote:
+>> Arnd Bergmann <arnd@kernel.org> writes:
+>>
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> This is one of only three -Wenum-compare-conditional warnings we get
+>>> in randconfig builds:
+>>>
+>>> drivers/net/wireless/intel/iwlwifi/mvm/sta.c:4331:17: error: conditional expression between different enumeration types ('enum iwl_fw_sta_type' and 'enum iwl_sta_type') [-Werror,-Wenum-compare-conditional]
+>>>  4331 |         u32 type = mld ? STATION_TYPE_PEER : IWL_STA_LINK;
+>>>       |                        ^ ~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~
+>>>
+>>> This is a false positive since the code works as intended, but the
+>>> warning is otherwise sensible, so slightly rewrite it in order to
+>>> not trigger the warning.
+>>>
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Is this and the other rtw89 patch for current release or -next?
+>
+> Up to you, the warning has existed for a long time at W=1
+> level, so the patch applies to current and stable kernels
+> as well, but it's not a regression or particularly important.
 
-Neil
+Ok, I guess -next is more approriate then.
+
+> It would be nice to turn on the warning by default in 6.13
+> once the three patches I sent get applied.
+
+It's not certain if driver specific trees make it to v6.13 so should the
+patches applied directly to wireless-next?
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
