@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-374361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C439A68FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:48:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EF29A697C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B531C226DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0419EB27DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D241F6674;
-	Mon, 21 Oct 2024 12:47:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2F01EBA0C;
-	Mon, 21 Oct 2024 12:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47781F4FC7;
+	Mon, 21 Oct 2024 13:00:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDF81D0F77;
+	Mon, 21 Oct 2024 13:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514873; cv=none; b=IzvBJSyK+yOdsJV5mIzygDqL318PgM8GmKKfkg8xtOneObvZBLCu+kyFOdw1GI0upSTWc54gDETuecOctuF9EepUsar84Amr9uKhgYmT0NIE5Ds+7CArgmTD5M81CGa/m7/YeIPaPIAYBWJJyL8LslpHu8hizPr2jaCvpGd+P9c=
+	t=1729515639; cv=none; b=vGLnS9WF+R1KehPx3+M01LeOq9XkEfRFJVK8aGaCDWfefYUtdCnuDW9LMs3S6M60nAEIRosmoJY8stV+j2t7awnucoP7zIyfGUW5uWJE0ZCYYkrGm3grcKbmRn/CRGoSrYxG50QORtvAqiTOsZ3MnOz+C7R3RyHyv0/YhBTp6NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514873; c=relaxed/simple;
-	bh=1FAdfDt0b6kTld8gsii+fwwDIv8OQVKZ2kX2V/F2fSY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z58YKImZvUu7NnnH2wMqrXmVqF5QVh9VhCqTyBQehd/mFX3hudACgyl9pHMa/TaujJNg7iQEBPXR9oo/cWvJnqUF4nQDiTQHSyNocM/mSBXfM3AIE4RX8lmuik3Csbdr6OOmIQUHIHUbcUep7/R4PVfbr4Q4vejf9ZQYdjYOe+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XXFSv00Fhz4f3jMx;
-	Mon, 21 Oct 2024 20:47:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 561781A0359;
-	Mon, 21 Oct 2024 20:47:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMhuTRZn+TzdEg--.6426S4;
-	Mon, 21 Oct 2024 20:47:44 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Josef Bacik <josef@toxicpanda.com>,
+	s=arc-20240116; t=1729515639; c=relaxed/simple;
+	bh=sAssCSQak9kO8zSxwQR4fD3toTlDyHCeyHZpYyBznQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XSAexGQC4lU2O8qoC0GaDyv7IM5hafYQg+C/IqRX6s5WqgTvUrUCFIo4DYdvGRnMEKVNTLyDMqd2zFT476XntOpboOSpExksmCVOtO4tGhLs4Za5r3QbezhQMS55eMSY9a+BLsafbSiG4j3ylYL24Hp9ev9MdJj6iMitPScXsYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BF0DDA7;
+	Mon, 21 Oct 2024 06:01:06 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C20A53F73B;
+	Mon, 21 Oct 2024 06:00:34 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	houtao1@huawei.com
-Subject: [PATCH] fuse: zero folio correctly in fuse_notify_store()
-Date: Mon, 21 Oct 2024 20:59:55 +0800
-Message-Id: <20241021125955.2443353-1-houtao@huaweicloud.com>
-X-Mailer: git-send-email 2.29.2
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v2] mm/memcontrol: Fix seq_buf size to save memory when PAGE_SIZE is large
+Date: Mon, 21 Oct 2024 14:00:26 +0100
+Message-ID: <20241021130027.3615969-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,51 +54,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMhuTRZn+TzdEg--.6426S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF18ur1xXr4DKr4ftw1DJrb_yoWDKFX_ur
-	48Z3Z5WF48Wrn29F15ZFn3Jryqq34rGF48uF48ZFWfAry5Zw4xuFyvvrn5uryrXrW3XFs8
-	Ar1kAFZIkw1jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-From: Hou Tao <houtao1@huawei.com>
+Previously the seq_buf used for accumulating the memory.stat output was
+sized at PAGE_SIZE. But the amount of output is invariant to PAGE_SIZE;
+If 4K is enough on a 4K page system, then it should also be enough on a
+64K page system, so we can save 60K on the static buffer used in
+mem_cgroup_print_oom_meminfo(). Let's make it so.
 
-The third argument of folio_zero_range() should be the length to be
-zeroed, not the total length. Fix it by using folio_zero_segment()
-instead in fuse_notify_store().
+This also has the beneficial side effect of removing a place in the code
+that assumed PAGE_SIZE is a compile-time constant. So this helps our
+quest towards supporting boot-time page size selection.
 
-Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
-Fixes: 5d9e1455630d ("fuse: convert fuse_notify_store to use folios")
-Signed-off-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memcontrol.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 824e329b8fd7..eb89a301c406 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1668,7 +1668,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 		err = fuse_copy_page(cs, &page, offset, this_num, 0);
- 		if (!folio_test_uptodate(folio) && !err && offset == 0 &&
- 		    (this_num == folio_size(folio) || file_size == end)) {
--			folio_zero_range(folio, this_num, folio_size(folio));
-+			folio_zero_segment(folio, this_num, folio_size(folio));
- 			folio_mark_uptodate(folio);
- 		}
- 		folio_unlock(folio);
--- 
-2.29.2
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 17af08367c68..5c3a8629ef3e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -118,6 +118,7 @@ struct mem_cgroup *vmpressure_to_memcg(struct vmpressure *vmpr)
+ 	return container_of(vmpr, struct mem_cgroup, vmpressure);
+ }
+
++#define SEQ_BUF_SIZE SZ_4K
+ #define CURRENT_OBJCG_UPDATE_BIT 0
+ #define CURRENT_OBJCG_UPDATE_FLAG (1UL << CURRENT_OBJCG_UPDATE_BIT)
+
+@@ -1527,7 +1528,7 @@ void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *
+ void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+ {
+ 	/* Use static buffer, for the caller is holding oom_lock. */
+-	static char buf[PAGE_SIZE];
++	static char buf[SEQ_BUF_SIZE];
+ 	struct seq_buf s;
+
+ 	lockdep_assert_held(&oom_lock);
+@@ -1553,7 +1554,7 @@ void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+ 	pr_info("Memory cgroup stats for ");
+ 	pr_cont_cgroup_path(memcg->css.cgroup);
+ 	pr_cont(":");
+-	seq_buf_init(&s, buf, sizeof(buf));
++	seq_buf_init(&s, buf, SEQ_BUF_SIZE);
+ 	memory_stat_format(memcg, &s);
+ 	seq_buf_do_printk(&s, KERN_INFO);
+ }
+@@ -4194,12 +4195,12 @@ static int memory_events_local_show(struct seq_file *m, void *v)
+ int memory_stat_show(struct seq_file *m, void *v)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	char *buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	char *buf = kmalloc(SEQ_BUF_SIZE, GFP_KERNEL);
+ 	struct seq_buf s;
+
+ 	if (!buf)
+ 		return -ENOMEM;
+-	seq_buf_init(&s, buf, PAGE_SIZE);
++	seq_buf_init(&s, buf, SEQ_BUF_SIZE);
+ 	memory_stat_format(memcg, &s);
+ 	seq_puts(m, buf);
+ 	kfree(buf);
+--
+2.43.0
 
 
