@@ -1,133 +1,185 @@
-Return-Path: <linux-kernel+bounces-374751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE0C9A6F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:28:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978749A6F68
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188F41C22DBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2960B1F26113
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228BB1E47AB;
-	Mon, 21 Oct 2024 16:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426881E907D;
+	Mon, 21 Oct 2024 16:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CUN4VJRj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KO9SHbt/"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E69137750
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9309A1CCEC2
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528074; cv=none; b=rvmq5LE4w741lQaqkU8rUYinrvKt2gh7Snh4hoEJ0XRLR+vlufo0IxQqfURwyQh/zbAK6OZ37FD8Krn4lG7GYKfM43JMqB/XkhrNNoGs7CzyqSVS2jAfKXcUJzhf4oJyghRJU/es02zeB3eh5KVWb3sb2nm325MQqKAT0Uq9uvk=
+	t=1729528082; cv=none; b=Rh8opH5a/z/59t2jlCSGDI09DiQ8psoR/7s5TbF75B7yvjgkhkBHELr8AyBRPlWfg0WYuqrwVunvuM6GT6P6Orh+x72t64VxtV+jqHeh9ndyC/+zdqb0EWb6PV6gTpJ4jVY0Ed9EfZapS7U9h6sxiyMR7C5u9D3Y1WhXv8kfDfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528074; c=relaxed/simple;
-	bh=ng4Fd/1eXm21KjZGx0nNu+fVA/U+EZvgbDIonKK4TTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx98CNEKT2nPZSA3GnYZxBRG/Kv3uCbZ3o9tDlzkPH14JcaMysVx52kvTcP4/6V3EUkJrGqKK7NJb5oJTKEjI2hnrcnEyN34Dsx4dmob4wOGkBTejGs2WX3s0QHSqQTyaeDy1tcir2xMx3rnA9qPOhAyN4WuvPCM2sSHiJI5n04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CUN4VJRj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729528071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTDxXEF8TjHAORp7n3Sf58mbRFCPldS14PaLA/YlNHg=;
-	b=CUN4VJRjftptZ2AcxxbovaltrTyPfFVPHpHG4abVMCaOWnw7H01it/UZRCZ+joHmfrAtHS
-	Q+kuijYIx5BiByCI5l01YPr+cDjvqZDcIoJpqWZITZ/GNHF7LmiAf5p9gfVLWEB79nXlhj
-	2QMqbMvOsWTspxYP5wxMgUbCHM4MtMk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-8juTuxugPLS3ighW1uAFZA-1; Mon, 21 Oct 2024 12:27:48 -0400
-X-MC-Unique: 8juTuxugPLS3ighW1uAFZA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316655b2f1so20234665e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:27:48 -0700 (PDT)
+	s=arc-20240116; t=1729528082; c=relaxed/simple;
+	bh=gKWK5yQaMTK6S+U03rBu7q3pLRAqrpmcT/G+wf3CEUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lwG0+WqvXCqcf5QW2RjVea3iV/LHDl3Shl2gsKqd0Lx0lJdmHu74Brx61Yj27gmxzVdNSOy9Jb3TrV5RB5UD/waTgFAZK+914+I++r2tVAZsV2acl9X1Snm0/EFHMKgd8cBJkwI3dqf0FS0aSOYDPSzxycS/C9ZucPdliBW64lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KO9SHbt/; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so5155531e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729528079; x=1730132879; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gKWK5yQaMTK6S+U03rBu7q3pLRAqrpmcT/G+wf3CEUg=;
+        b=KO9SHbt/EaGR1Tw0Ryg5xAbluXmMW1LPoVfeQVptzdYYCjfOAW7W77Bo4Ab9nwHH21
+         LZPvV7RmH7i46jlIwRiO8oKtxJaToYCZY515Yi0BxqBUU+oU/YsUxJCMguT3D17qBLRN
+         RrO9daEqVgtrMenc59TsI1kxTgvBFlpQYZVMo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729528067; x=1730132867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mTDxXEF8TjHAORp7n3Sf58mbRFCPldS14PaLA/YlNHg=;
-        b=IpZzLrv8htp/IjEJXek+8w+aztwlv5J0BFdjJNAh6smhQEskFabzUcoIfxtHlLbH+t
-         /PPGhTHnGnkBeji4GhFhd0sIrKbTc0w2RrxqxSprYh4geUn1P2t4wnoD7gtPp8nXqLyp
-         AtACmf1dnTm0LHpl/mxG6FtCG2JXyrkejEUKvLlgpQciaJngHX0NRU0j7Ka/3w3Y1HLz
-         Wn79WJ4HK9g1kQieSJnySIcpfKBE1af5dpAl4bEbHWUiePLtX8Is/Tt8afZOuu9Q5xFc
-         ygc+lYyyGekgmFhlSq9ZIG0rNAflleujkuTTyh3U+lSn3Dww6hnqlcBWgmCLQJHyxRpi
-         EXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6FgX51k8WkrEVZi6p5iHAo0ri+pd2HjsNk8T36Cu/efW2UvvxAf3mWkZAgXz6L9YHKfr4tApibM+nFmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMipwPsf7oStHH3KPQHE3kc4kyj5uSJkKlFak0SY8hD/mvPqd8
-	3jjGcY1x48kbQmiBtr9HBjeRN0KX4t8byTqwM++M1ZYlFb9Sgv8cSCfgYtBFqACILVuNbnwGOJC
-	Nc9vIUueQ58kVuY/2YC3Wm/IpifXvEJ4jB2c5A8lUK0vDwOcPa3jhIAN5H69ebg==
-X-Received: by 2002:a05:600c:3110:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-4316169ac06mr96399965e9.25.1729528067186;
-        Mon, 21 Oct 2024 09:27:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSI/56QMnJyhwqWOYstEnbLNMAgepug8Hr4wC/KvF/uwvrNQxqtSy1YQTxoGG0Smjo/CMklA==
-X-Received: by 2002:a05:600c:3110:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-4316169ac06mr96399795e9.25.1729528066798;
-        Mon, 21 Oct 2024 09:27:46 -0700 (PDT)
-Received: from debian (2a01cb058918ce00b54b8c7a11d7112d.ipv6.abo.wanadoo.fr. [2a01:cb05:8918:ce00:b54b:8c7a:11d7:112d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570f89sm62079325e9.7.2024.10.21.09.27.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 09:27:46 -0700 (PDT)
-Date: Mon, 21 Oct 2024 18:27:43 +0200
-From: Guillaume Nault <gnault@redhat.com>
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Yajun Deng <yajun.deng@linux.dev>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 net-next] net: vlan: Use vlan_prio instead of vlan_qos
- in mapping
-Message-ID: <ZxaA/6zaqgbrcHX/@debian>
-References: <20241018141233.2568-1-yajun.deng@linux.dev>
- <ZxT3oVQ27erIoTVz@shredder.mtl.com>
+        d=1e100.net; s=20230601; t=1729528079; x=1730132879;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gKWK5yQaMTK6S+U03rBu7q3pLRAqrpmcT/G+wf3CEUg=;
+        b=wOYVfUiDR7urJbjjI9ZAW14u2QQN9+jz89ZNrgrg03+SukfVztaxDJU29sagYoDTfh
+         +HNydO63N38Ixk49SI+S2jFcZ6Tw/WGzyLBcqsFUQvWClRTNpjUzSsM6XpRDeWGUEyXq
+         WldsXFq1eQdTH2kg/KxmTiVcSPk7tNadHzqTBKBjjsQ7gzNojWWE71jE+pBIwtYf5Oct
+         I/groBTqEHEQMPZBAOc/0PxO3HuQX4J4IGmVU1ql9rMCmLEi810z0Hoxt5ZSBSAyn5VJ
+         Qxg78QHvigg52kDcOfb/cNhImbYfVNswCWk4UPMw4rWyiMiptarJzrO5ldmHI5EeKbLk
+         9Qvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV10/UUDHABbQVhd7Hibo/Q4OFq0T5D6Yvpnp+JPQVr58LAZDELBuF6BdNZlVkojttQUPHbZWNaVOPlpRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVV3di9oGUUwky+UAvViCaCad1DEdJMg8wc/6lK1gO9CEFbqIq
+	N0czPs0EbjfgiRApHzGmFAVnxH2TdeiTuDR0T6pfJEQG+SzH8HqtEEQHSwiZG7OcXX+iL6hvDH4
+	i7/9ykAapeJ059HJ8s2BaRwkXfoBNxppR60d++YqjyjarEbgclodk
+X-Google-Smtp-Source: AGHT+IFgrr7ZlYTCZbDHuZKOLdvY2G0azhR5BfbhDhqLi/wvfeqaPowgzmL2SXk9n0njHRgMG3FWpzPZ3pY8qYcRW1Y=
+X-Received: by 2002:a05:6512:224b:b0:539:f699:bb2a with SMTP id
+ 2adb3069b0e04-53a154703d0mr4969749e87.20.1729528078655; Mon, 21 Oct 2024
+ 09:27:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxT3oVQ27erIoTVz@shredder.mtl.com>
+References: <20241021010652.4944-1-rosenp@gmail.com>
+In-Reply-To: <20241021010652.4944-1-rosenp@gmail.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Mon, 21 Oct 2024 21:57:47 +0530
+Message-ID: <CAH-L+nN0W_BffMR6s6Je9LufSs5ZtSHm13_O1aGhDnTjPNqouw@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: mv88e6xxx: use ethtool_puts
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000c78fec0624ff22a5"
 
-On Sun, Oct 20, 2024 at 03:29:21PM +0300, Ido Schimmel wrote:
-> On Fri, Oct 18, 2024 at 10:12:33PM +0800, Yajun Deng wrote:
-> > The vlan_qos member is used to save the vlan qos, but we only save the
-> > priority. Also, we will get the priority in vlan netlink and proc.
-> > We can just save the vlan priority using vlan_prio, so we can use vlan_prio
-> > to get the priority directly.
-> > 
-> > For flexibility, we introduced vlan_dev_get_egress_priority() helper
-> > function. After this patch, we will call vlan_dev_get_egress_priority()
-> > instead of vlan_dev_get_egress_qos_mask() in irdma.ko and rdma_cm.ko.
-> > Because we don't need the shift and mask operations anymore.
-> > 
-> > There is no functional changes.
-> 
-> Not sure I understand the motivation.
-> 
-> IIUC, currently, struct vlan_priority_tci_mapping::vlan_qos is shifted
-> and masked in the control path (vlan_dev_set_egress_priority) so that
-> these calculations would not need to be performed in the data path where
-> the VLAN header is constructed (vlan_dev_hard_header /
-> vlan_dev_hard_start_xmit).
-> 
-> This patch seems to move these calculations to the data path so that
-> they would not need to be performed in the control path when dumping the
-> priority mapping via netlink / proc.
-> 
-> Why is it a good trade-off?
+--000000000000c78fec0624ff22a5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I agree with Ido. The commit description doesn't explain why these
-changes are made and I also can't see how this patch can improve
-performances.
+On Mon, Oct 21, 2024 at 6:37=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Allows simplifying get_strings and avoids manual pointer manipulation.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-If it's about code readability, why not just add a helper that gets a
-struct vlan_priority_tci_mapping pointer as input and returns a __u8
-corresponding to the priority? This way, the /proc and netlink handlers
-(and other potential users) wouldn't have to do the bit shifting and
-masking manually.
+LGTM
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
+
+--=20
+Regards,
+Kalesh A P
+
+--000000000000c78fec0624ff22a5
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIPQ9zSmFnZZfEY8UFEZWwjk2cRAk3fvDVY1xvXUfuJEWMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAyMTE2Mjc1OVowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCE5VbfWs47
+OlLCvcI68a7jTurHahLlT1etSuzqlUyZPx1p7xeYdFX+8XhJtdrLT9+yWIvzGIuPg/VUTP1CqMfd
+67re/YAiKqvAYvmT20axhqyITUjq+vxSrMm7/5NU6CNZqyn6M8zdc9F7icTFNB/mGGX3qbMfvdLu
+QtMTXWvnnC4bD7dah6g8Odb2N7W3UUjrWPdVL6EpDBX30XmS7+/D6WaQ4ppanOFDTK9lDv5XAzZt
+JkEIdfp2y7OuHXlfAb5FcGzED45v9T4CA0h+HhNe5DeVbu7m5K7ACz5EepvzMlKN9jmlnsxdQN6k
+bJDJzoMTuejez+wRLll89lb9ywil
+--000000000000c78fec0624ff22a5--
 
