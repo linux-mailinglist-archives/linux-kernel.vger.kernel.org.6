@@ -1,96 +1,133 @@
-Return-Path: <linux-kernel+bounces-374056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA9A9A6136
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456EF9A6139
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7C5284514
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05511F23154
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F41EB9FB;
-	Mon, 21 Oct 2024 10:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BDD1E47DF;
+	Mon, 21 Oct 2024 10:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NikMChGk"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hq52sTMJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0031B1EABBE
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35141E4928
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504987; cv=none; b=gLnN4FKJuvbVm/pDwJMHjMR4yBCCZyF6ed/AV6nIvHYJ+Cfz3oYWPezQIR6PkwuXd24UmOKG10Nla70naCJwsXZeAxLkAX5iXH3k60EyzyQMyphkXzfW4zz50P8B4J+bIHaYkAlquoL2RRTVq8siJK9VWEBCGMOcKmbehPcpZdM=
+	t=1729504994; cv=none; b=pq9omXONw74wetqhEZaisylIqVJukf4c7w8HhlZf4jWLyWfBQOZ0Cen3LKcl+FcPDzaCIURahSMwNUYME79jLiefdQYsJ+qDHL2HQ0GZ4g81G4Fjz6+NeTFEM12OjVVOHpdDZS5OkasBcubCk537/GkF321zAQBRo6hqhegF670=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504987; c=relaxed/simple;
-	bh=VZ/K/MXXw5QjoyzJNaNBbI9eVgTQcP9Ikp6Hi4XqNfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a65baDKMycozquTfS88P/QiINfbEKPTo2sw2yx2LZqaF79hsLkkJZARbUmyqE5F/F5ZOsWdX6XwNTF5w4MvzpbSajo2uziaDc8bBINYFTNdCQvi9L+uALIa/YT2NOUXxlr1mYG9mFSeo1RAvUc7pi3Z5HwDbwW5t/3F0gY8GgEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NikMChGk; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5BB976000D;
-	Mon, 21 Oct 2024 10:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729504982;
+	s=arc-20240116; t=1729504994; c=relaxed/simple;
+	bh=I+fgLQYvZA4NHmjabi9mLzQKoBBv8sQ86evUvZ0B3KM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nGdPJfkaFlFgIBtHJSUoU9yypzl3Ky02V61iqQx0Q2vMkl49waPN4E7UkC0eHUilXUrSq0BBszzevHcm7WRhOcB/pv54zTIOuXZEX4pas3sZ4B7WmRX9Y5mWkSUNN/n9GjM8F9Paaq0KD9tPMXcPk5LTv5bCTMvaJQbH7iOFfK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hq52sTMJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729504991;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mJZhQ6CMjsh3YkdMElA00TYYsXFupRYN7sb3b64Oh9A=;
-	b=NikMChGku6eQx9kABXAlD79s3Qn7zq2DO1RJNqh3UTT7sBjzMxS8ljQxDQEmhAFkJ6GyZh
-	U7KlvWFFPcTWiG64erPJ6ra/8CVQikIuDFqqCQ/34BXcUsF+tOKkHi1TV797GRg5pDo6WD
-	8Uo56Nzf3mQyoivcQQWDGsWqflDac18P5O8FVRANc7G+kOIgxGa3tzAMnVe2WmNQA6hgyG
-	4DtecHuYev46Mh79+SAztbbXCkekOagvu0khOXpSw42InsOaUA/+9Y1PocfYwY2osLMTvR
-	BwtYYz454G12aGLtBQJF8NgqDdEPLaKx/P0ndzLpGsimylKYNJ61sQhXV/9SxQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Shen Lichuan <shenlichuan@vivo.com>,
-	computersforpeace@gmail.com,
-	kamal.dasu@broadcom.com,
-	miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	maximlevitsky@gmail.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	richard@nod.at,
-	michal.simek@amd.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] mtd: rawnand: Correct multiple typos in comments
-Date: Mon, 21 Oct 2024 12:03:00 +0200
-Message-ID: <20241021100300.173547-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240923065649.11966-1-shenlichuan@vivo.com>
-References: 
+	bh=xyJEmcQ9WC5ci3BgLXvbHouj36m3b4UCzV4/eAbKmds=;
+	b=hq52sTMJ5GyfhAsIQCgqRyU9GgeSbML7nAgnNfLwvb0aPCxzYrCmZ6ymRA+T9jQ0IYFfcq
+	gsqKnfGm6nxHPNEXciVd76sT/iVmz4SLBIIFxCgRquGbd1sWRVryy2yJV4nnUY4ExBaf/M
+	RlqSCNa9dXqzOg9gyWFaBmbgyJuDcnk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-Q-0NbKWlOISnfShA2PN9dw-1; Mon, 21 Oct 2024 06:03:10 -0400
+X-MC-Unique: Q-0NbKWlOISnfShA2PN9dw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d537292d7so2999842f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:03:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729504989; x=1730109789;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xyJEmcQ9WC5ci3BgLXvbHouj36m3b4UCzV4/eAbKmds=;
+        b=Ym++1F4reUUBl4dJdrvUeSZkcWiL5hdcSBcUJbtZVtqu2El/DPjOEd7E5sNb8RPRbs
+         t9msvF+basWYk32b4QsFva/usVzBXceldZ0B/lyiHnXMAT5LGgFuJgx+X5CdpYPzvcUy
+         1deVe8A6RP1Go8iAsbietRiELi8uoZ+lcNHpzxGVp8iJA2WbMqZ2Fxt4GMkakidVx9FL
+         4LjNmJTxmpAeCbwdQ3Q7UX0XGw8oWC/RmlxHXXVPr7oqNP4AbAe+mb5ZyIKeJzK7c5a1
+         3tjHRFos3XSo09L4O2qjfPv1HbdqI0r9yLGJeAlbTcw1vl7ysqo5TksfvmvbFxMIK+PS
+         1A8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdTUEffYzi8SPTCZW8OMqz5oMPodbZxzwTC/MAd2rTdp3r265gAYBweML4DbLitxiZiWmCapwX/oE6spc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1cy0UzTjsm4bg2PQrv8IUpVjgNu0KZHnRID+hGniDcZeEIEje
+	0wOUnr95nzCJ0JxcLxdE5xlcsszDb9SPMk63ioyNhZN/+YDbAQ+6MmG421ZgDXoZv9P7Zvu8HR/
+	Fwvzglike02u61QPLC98wG30RT5lS4FpCpNEQ123EMhISNMXtsLgFKICzJj/MxQ==
+X-Received: by 2002:a5d:45cd:0:b0:374:c1c5:43ca with SMTP id ffacd0b85a97d-37eab4d1157mr8503636f8f.32.1729504989294;
+        Mon, 21 Oct 2024 03:03:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9g89QrZrvWMTWImI7QH5apSf6nTS4fXvPKvygF4vW9LE+7/wxBk6jbiygE/3PCkrJ2u0ofQ==
+X-Received: by 2002:a5d:45cd:0:b0:374:c1c5:43ca with SMTP id ffacd0b85a97d-37eab4d1157mr8503606f8f.32.1729504988968;
+        Mon, 21 Oct 2024 03:03:08 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm3940643f8f.72.2024.10.21.03.03.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 03:03:08 -0700 (PDT)
+Message-ID: <86d785cd-41de-484d-ae17-ffdb4aa9393e@redhat.com>
+Date: Mon, 21 Oct 2024 12:03:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'8ab1b51fa45e29edcbd887208f046a2af0e92a08'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 01/10] net: ip: refactor
+ fib_validate_source/__fib_validate_source
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
+ roopa@nvidia.com, razor@blackwall.org, gnault@redhat.com,
+ bigeasy@linutronix.de, idosch@nvidia.com, ast@kernel.org,
+ dongml2@chinatelecom.cn, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bridge@lists.linux.dev, bpf@vger.kernel.org
+References: <20241015140800.159466-1-dongml2@chinatelecom.cn>
+ <20241015140800.159466-2-dongml2@chinatelecom.cn>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241015140800.159466-2-dongml2@chinatelecom.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-09-23 at 06:56:49 UTC, Shen Lichuan wrote:
-> Fixed some confusing spelling errors, the details are as follows:
-> 
-> -in the code comments:
-> 	remaing		-> remaining
-> 	alingment	-> alignment
-> 	capabilitiies	-> capabilities
-> 	operatoin	-> operation
-> 	decriptors	-> descriptors
-> 	stareted	-> started
-> 	Unfortunelly	-> Unfortunately
-> 	compatabable	-> compatible
-> 	depenent	-> dependent
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+On 10/15/24 16:07, Menglong Dong wrote:
+> @@ -352,6 +353,28 @@ static int __fib_validate_source(struct sk_buff *skb, __be32 src, __be32 dst,
+>  	struct flowi4 fl4;
+>  	bool dev_match;
+>  
+> +	/* Ignore rp_filter for packets protected by IPsec. */
+> +	if (!rpf && !fib_num_tclassid_users(net) &&
+> +	    (dev->ifindex != oif || !IN_DEV_TX_REDIRECTS(idev))) {
+> +		if (IN_DEV_ACCEPT_LOCAL(idev))
+> +			goto last_resort;
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+IMHO the re-usage of the 'last_resort' macro makes the patch a little
+hard to read, as this is an 'accept' condition. I think it would be
+better to retain the original code. If you really want to avoid the
+small duplication, you could instead introduce an 'ok' label towards the
+end of this function:
 
-Miquel
+last_resort:
+        if (rpf)
+                goto e_rpf;
+
+ok:
+        *itag = 0;
+        return 0;
+
+And jump there.
+
+Thanks,
+
+Paolo
+
 
