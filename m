@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-374285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5019A67F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:19:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED459A67FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63FA1B250F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A301E1F237F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4531F8EF1;
-	Mon, 21 Oct 2024 12:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803BA1F8F1D;
+	Mon, 21 Oct 2024 12:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tVJJHWnT"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PVkU8iWl"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432E61F8902
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7C1F8EEB
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513077; cv=none; b=MumVFyHv1tKpJvwP6c9tKx++bNvkWwy2POi5s9g9Jy0C/6EK6HiWL+GL0avZZbXPAUWY0UYrDCkuUah7Kb7C1tZ2mX7dWhS7fcMk7z71LT0w0icwDURxT9uJ+UzhdooQs8jqL8AiU7t2pkRfms24yyzHxbKnckg2YS/ZImUFtWk=
+	t=1729513079; cv=none; b=QdBI0tMvIwEh/9W90j7S0qr0Eim+vKdBbk6FyVUPfIb8hvjWPUmO6H43Y1PYRVz/pf6mJxEpCr7FCfB2vRztop34OPhCuECZKT2bHaMHNQiXyESIs0XF5mR+YYaxAua0U1BckY7s+K4W186AR6QB8kQHpvV8SndFymIxPmRrmmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513077; c=relaxed/simple;
-	bh=D9V+xTdETJ8ksaQ5r5b/gY+O3zvjqoic5a/qlmpRsW8=;
+	s=arc-20240116; t=1729513079; c=relaxed/simple;
+	bh=4giwL2CaQe0H4v/rRaHyXf8blNfxXtNrj6bnr1BfiVM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T3hgEJIFsRriafXtMDox/JZawEcS0adH7Gol1rq4pBVlhAs+ikBwCqFGrSalH5e0XtomThC5TqYIuU+lEkc2LwpBmtaZIIpUE3Aj7G5LJ3+F6ze6LAy8ZLw+B0x+mueTauKnO4TypXStDr153dwppcBFvdtK/Pfi0SmkHke47b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tVJJHWnT; arc=none smtp.client-ip=209.85.167.44
+	 MIME-Version:Content-Type; b=fBI7WlU4VK7AkQ8mSzfyIJ+6C/pkx24JtjSa/Q8CHpUBG+h7Lq8AZodPlbX8rVQIbmIeBo1J4+0z/KwFH90sQ+/XiqtHA9I/VgiKOTanKqHM4qHUDQXmO5fNz0UG8OZsrZadUw9IIoZlmFOTLD1Uz5a3guAzzG8I3fesAtxCGY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PVkU8iWl; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so4828480e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:17:55 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53a007743e7so5150929e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513073; x=1730117873; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729513076; x=1730117876; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=++p6IK2xyUkmxIiDtF8Kg/j4cQViLTJqoFU8d2o1atw=;
-        b=tVJJHWnTrNT8cTlWKDsDbJVxXw1wsxXI5hXj0vdxiCq4qpGbOX0zG47qGvJDkudmZM
-         uoTBKcGj73Be6DYytuGCsCfQHhWB27WgAim2dxmFsjWjh6lQAkduDgv0QDRaLZpH9YQj
-         +5BoUZOBL9blJ8+1Bf7sHd10HVcBiStpRgiku18EKjaK4kXb33BN8d05ZyjAjs31pxBx
-         NlKphNml6dqTGf305Uuwc/XdHL93iIxfm5ABDU9+JpFp2btLeZtXnAQeBOCXbAbC+zfK
-         Xb6sHMr33D9zsiS3rDwTFqQ59HQ5Od8sIHV3urxH2BNGQ+XgbAozGLJkt7RjGbk/2aau
-         KUFA==
+        bh=prphtPU0Rb62bRXSWJ4X3+5cxLNBcE3V+GKAi8EyFnY=;
+        b=PVkU8iWlwk5lmHO8BVlS4IkookqjZjx/4frfdt/rGE2Zlnoo1iIZgHwPgG6vWEJ4l7
+         ytKNg8muLJqtluDQVKqK0kZawZCUxM0i6mLyM2ORlSdp7GsZSnE4a29HDo8kQFEBvVsN
+         bKdcp/YsXJVqtxC1AUyJZtgX//tK63xtYkqRQOOKa9I77Ejm1hR27CRvK1IfLs0aDsUf
+         qrsZNDcuqKvVLy0Lhe6H6MRZGnS35fWHRFHUJ+DqighC1QMG7IArPqHcoH8n4FdygE5a
+         u4YVFM1xWGaRsmtqx48oHzgH54ve3ZH6EVcO2R3WKRGIZzqaVZtiCMD3V0wa9llUHhdu
+         fYxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513073; x=1730117873;
+        d=1e100.net; s=20230601; t=1729513076; x=1730117876;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=++p6IK2xyUkmxIiDtF8Kg/j4cQViLTJqoFU8d2o1atw=;
-        b=BKkMTF9Ln6CfYBIjFNBH7NJ5PnT917uSwiT0EMuKxofFk6Sbf6h3rXInp3RXhqYBM4
-         gMIb58aV3jd5X2oq4BskZHLb5JnpC0ITk3I29hDNI4VLd8Gph4LI34Bx13zqc902rfXa
-         pP3mrBIL3GsFgaFB/YLHpUvSMaCIwoXpE2YKNBJGTqeaCbGjGw6RwlPAPE+Ok9gowfHV
-         Li6/jku81KrL6LGEmabXuyna2vVgRMTQ6fdL6ZgtGVmeo1Y/2Dnt4VxmUxVBAT3EkW2J
-         XZnIT8nQ9UUUCVAbp9VuIQ/CixbcrIzWX/3DJyXG/ki28HVzJM6NxJ3dkzGmk442+Jnb
-         vOjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFmn7rtfxRXKee+RAajKWb+KdenG5lfMG4R5Cij7IJh4IQbnHeDNIjQ0/HMEWMXp2pi8neFL5FMq+Ivl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbqIoUSXclkx02AAvOT04XINR9iHND498+JWER/7Svl/XTr1W3
-	ui7o4ir2wAlWD8P0zFyjOOYLR+Hh975qgnn+qbzsUFl/6rISSivLK6paYuPOAFI=
-X-Google-Smtp-Source: AGHT+IEaBDgO0bJNd009iFuyYoVj9ZrfomLRDAMi/yxMGgNzbZQlm++57S0iUYR+s+bCy7ZAO9vNng==
-X-Received: by 2002:a05:6512:2356:b0:539:e317:b05f with SMTP id 2adb3069b0e04-53a15229d00mr5612912e87.28.1729513073320;
-        Mon, 21 Oct 2024 05:17:53 -0700 (PDT)
+        bh=prphtPU0Rb62bRXSWJ4X3+5cxLNBcE3V+GKAi8EyFnY=;
+        b=lSJ4E57t+uTwy44Hyq2J00uY+s25Ux+gYMTXwnlgBkbZyS23lmyjbjxtW0HA411k8o
+         +nMBUBzHUlnKtT7vcDmV+uirq+oAEuEuJ4IqSfvbiEqLRpnrHBSbKRuRN2X78KpKScZv
+         jTjPKUJIyO9PV/9p0BtVpQjZ1REVaC548A4QpNye0Pfa7kxgh6qFva+bAQvtxLC1+QHF
+         A3aQfnAhOYGJkRNaJ60iSYc+GyA+0/sORCOya///7e/Gtl4maftPPS4i0D5gVj9OCaV1
+         jXJq1huSwONpa/j2K3TMJzPOWio+RvY9sH2fzSHgNn/AqyJQytjFBhXtQQBdX499v2kY
+         pT2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWf07UcfP793dMAkJM3SBkpFYDgq4+s0igqIWgkNQ4q+J2UjabXvYYvqev3tEIvHxjEaxOrRTjVQmYMEMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkqz8JIPqpYTnUSBtzEwoMRVqh4cirLOz7irfXsc1sPS/zfxDU
+	Gfj8mrydO+lYFXqhB8OeY6Oyii6jmMRAFGAkQ9OUd4bRdEJsUqBWus11ANqhklI=
+X-Google-Smtp-Source: AGHT+IFNrDA2mdhvvKnYVCFjWkWFdc+2kOvP18TFsD7M+Ufianm1YsNMhkTyVIEclzmrFo67RWAnAQ==
+X-Received: by 2002:a05:6512:3a8d:b0:539:f1e3:ca5e with SMTP id 2adb3069b0e04-53a154fa75fmr5584953e87.44.1729513075791;
+        Mon, 21 Oct 2024 05:17:55 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a22431454sm464210e87.212.2024.10.21.05.17.52
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a22431454sm464210e87.212.2024.10.21.05.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:17:52 -0700 (PDT)
+        Mon, 21 Oct 2024 05:17:55 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	konradybcio@kernel.org,
-	andersson@kernel.org,
-	simona@ffwll.ch,
-	abel.vesa@linaro.org,
+To: quic_abhinavk@quicinc.com,
 	robdclark@gmail.com,
-	quic_abhinavk@quicinc.com,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
 	airlied@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	quic_khsieh@quicinc.com,
-	quic_parellan@quicinc.com,
-	quic_bjorande@quicinc.com,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
+	Yang Li <yang.lee@linux.alibaba.com>
+Cc: dri-devel@lists.freedesktop.org,
 	freedreno@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	quic_riteshk@quicinc.com,
-	quic_vproddut@quicinc.com
-Subject: Re: [PATCH v5 0/5] Add support for DisplayPort on SA8775P platform
-Date: Mon, 21 Oct 2024 15:17:42 +0300
-Message-Id: <172950935864.2053501.518573859877352853.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next v2] drm/msm: Remove unneeded semicolon
+Date: Mon, 21 Oct 2024 15:17:44 +0300
+Message-Id: <172950935861.2053501.17039063548411571436.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241018070706.28980-1-quic_mukhopad@quicinc.com>
-References: <20241018070706.28980-1-quic_mukhopad@quicinc.com>
+In-Reply-To: <20240918023357.59399-1-yang.lee@linux.alibaba.com>
+References: <20240918023357.59399-1-yang.lee@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,17 +91,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 18 Oct 2024 12:37:01 +0530, Soutrik Mukhopadhyay wrote:
-> This series adds support for the DisplayPort controller
-> and eDP PHY v5 found on the Qualcomm SA8775P platform.
+On Wed, 18 Sep 2024 10:33:57 +0800, Yang Li wrote:
+> ./drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c:282:2-3: Unneeded semicolon
 > 
+> This patch removes an unneeded semicolon after a switch statement in the
+> pll_get_post_div function. Adding a semicolon after a switch statement is
+> unnecessary and can lead to confusion in the code structure.
+> 
+> 
+> [...]
 
 Applied, thanks!
 
-[4/5] dt-bindings: display: msm: dp-controller: document SA8775P compatible
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/c51ff89a8139
-[5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/dcb380d19e58
+[1/1] drm/msm: Remove unneeded semicolon
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/00adf52efec3
 
 Best regards,
 -- 
