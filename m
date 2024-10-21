@@ -1,260 +1,304 @@
-Return-Path: <linux-kernel+bounces-375184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A956A9A9224
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAF99A9229
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558F22841A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4911F24676
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB44C1FCF7E;
-	Mon, 21 Oct 2024 21:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220761FCC7F;
+	Mon, 21 Oct 2024 21:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFvJRvVG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rvkCmFuW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFvJRvVG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rvkCmFuW"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="orpaL+Vd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEC019923C;
-	Mon, 21 Oct 2024 21:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A84B19923C;
+	Mon, 21 Oct 2024 21:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729546530; cv=none; b=N7NOQoyovcr4xH9wLJP1GeDHd4qBPEl7tLfXU9swDLVzfb370epdjYK5ObbW5+6llZKHSRo9WPX/Pe3VfvCQD5UNGRUdxxfmTZFy7UH3mZD35ujfEQI3UpZD+DJU2SogEJ7JeHKEqgR6irQAT/AR8O8inGf8zVRLtc1nu754+tI=
+	t=1729546665; cv=none; b=WKl8HPNlCjfBeipvRc5qf7QlRGk7brBfyfuqNMgIZ6lTtoINNf4kGb61MOL/yqYP7gBqDfKNT0GXmZj68hicIWbLYTvbL/wrz7ezobpyomb9lfePZrX6m/G2P3xQQCQcJtXk+RdszFtjngXNwuuLLdAWQhwrkDIy6z+R+kJl0Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729546530; c=relaxed/simple;
-	bh=uDVNt9XrSwLB/lOwmjqReQpqMeiFN3WjxFyK3lZhZ1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Luz1VLBC4PIPrWQzkkqvdkXbQdCkanWFmObMhv9P4EEQRQPHp1cjAR2okE32DA+jYeW7LJ8CqiH7d5obYzDj/riI+Q+IzMQLnFxN7FnBH3mHYqlhy/RpBwcYWU7ot5ytW0d2wvHkBvWCajBTMCZS9OitNAYd5BLTyYQtQbnbQRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFvJRvVG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rvkCmFuW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFvJRvVG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rvkCmFuW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BCD671F8A6;
-	Mon, 21 Oct 2024 21:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729546524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LoXARsrdlSvPgawSsVLMjLV+iv37QoPv7vysgYEzKsg=;
-	b=cFvJRvVGMF2wcUPN8PdbgZVakQEPaxUr7/nF4sjo1tow3oF/BDbBvO8qcWD0uNZBDdNbpv
-	PizfmLSkBHCS8cB5yUU2VZELh8PoVKg8ru3xTyjJxmVT2Eji1OLlm6tkRa9TLOeijc4H0n
-	opZyaVSpAM+v0NBPIhudvoPCficNAlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729546524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LoXARsrdlSvPgawSsVLMjLV+iv37QoPv7vysgYEzKsg=;
-	b=rvkCmFuWiO6/tJTeMTWfd3dpHmsiE12L6ZoIVIuep/6wUwx2k6C+Z3nrFXr0WaGiefz2EB
-	lCjFk+wgkLnYPuBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cFvJRvVG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rvkCmFuW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729546524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LoXARsrdlSvPgawSsVLMjLV+iv37QoPv7vysgYEzKsg=;
-	b=cFvJRvVGMF2wcUPN8PdbgZVakQEPaxUr7/nF4sjo1tow3oF/BDbBvO8qcWD0uNZBDdNbpv
-	PizfmLSkBHCS8cB5yUU2VZELh8PoVKg8ru3xTyjJxmVT2Eji1OLlm6tkRa9TLOeijc4H0n
-	opZyaVSpAM+v0NBPIhudvoPCficNAlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729546524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LoXARsrdlSvPgawSsVLMjLV+iv37QoPv7vysgYEzKsg=;
-	b=rvkCmFuWiO6/tJTeMTWfd3dpHmsiE12L6ZoIVIuep/6wUwx2k6C+Z3nrFXr0WaGiefz2EB
-	lCjFk+wgkLnYPuBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B3FC136DC;
-	Mon, 21 Oct 2024 21:35:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yI9oHRzJFmeBUwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 21 Oct 2024 21:35:24 +0000
-Message-ID: <b92c58da-ec94-409b-8cdf-46eb3d2c7870@suse.cz>
-Date: Mon, 21 Oct 2024 23:35:24 +0200
+	s=arc-20240116; t=1729546665; c=relaxed/simple;
+	bh=wEbr1HFzzcTR4FwUCPZq06AEKW3liWKe1yuFuE8Ro+8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JENJi5AuEBzPbY0SnvE4eJPmyGYGfQjiUpwnQfkXzcFYz3nnU/gbzApjT+u0kSYF+uMKX9qzo4qvhmTzXHK8NhWLA0qPw2nTcA55zjIIB9nb7CsZD5K1NlrceyIKkGGej0mpm+JfFuIz1cwNgZyalIUKDjeyo4MuJnazqpmMYWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=orpaL+Vd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJ6GWM021903;
+	Mon, 21 Oct 2024 21:37:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=zioczsUJh7UppWTZt/rJhiKs
+	PmfMyM0J+wezcP6hQ7k=; b=orpaL+VddQv/xGjUrsFaBB44WvEbs3mSXPyoTrK/
+	AtlBT0kC/HwOA/iSztx4S7Y0oFCFkxBNQ19Oa2Yz1O9jfcSSBiP+ZGnedG00Rqv9
+	0cuw3kQdWfabJN4CGwV3p7rVK/JIu28q6nNQq+Bdm0cNvkfDwl14NxmWD/LSlk+c
+	qs/XZxhfnbNwyfNCAcHGC8S5weXBG2S9OmTno/AgGxgcU0pqNM0Ds809Js7s5T9G
+	gfELVIM0MuQNIP6jcdL5yhHl355B0fgwMEhda/b+qDQHDA7ASg/AGHngribL/xNz
+	en97Qoia4zcHDH4rO7NCK/CtQEPZtZjkb4c8zDi+dIfR2g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6tux47x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 21:37:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LLbOZf014700
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 21:37:24 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 21 Oct 2024 14:37:18 -0700
+Date: Tue, 22 Oct 2024 03:07:14 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "Puranam V G Tejaswi"
+	<quic_pvgtejas@quicinc.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
+Message-ID: <20241021213714.q5pel3c3lgsk56ah@hu-akhilpo-hyd.qualcomm.com>
+References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
+ <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com>
+ <udt76i3sl7zekhudqpnvhvhfxchvixwoinz7metuwfrpynl47k@wlpforwv7mcf>
+ <20240923200537.q5rcw66wmqnwmtpk@hu-akhilpo-hyd.qualcomm.com>
+ <CAA8EJpqNXb+pJp0OQXi5Pn7d2u2zGeJmVkTvsgFXzvkHn6FjqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] mm: madvise: implement lightweight guard page
- mechanism
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
- Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- linux-kselftest@vger.kernel.org, Sidhartha Kumar
- <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
- Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>
-References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
- <fce49bbbfe41b82161a37b022c8eb1e6c20e1d85.1729440856.git.lorenzo.stoakes@oracle.com>
- <c37ada68-5bf5-4ca5-9de8-c0838160c443@suse.cz>
- <6c282299-506f-45c9-9ddc-9ef4de582394@redhat.com>
- <fedd19ce-ea15-4ded-a1b5-ff050de15bba@suse.cz>
- <9727ada4-0048-499b-a43f-ac0a625bae5d@redhat.com>
- <73134e10-19eb-4e52-b87f-5fbfd322b575@lucifer.local>
- <0f7a6b69-5706-4010-ba7a-68a071922c80@redhat.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <0f7a6b69-5706-4010-ba7a-68a071922c80@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: BCD671F8A6
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLz1534diqmneu69wx1fp4cing)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,google.com,oracle.com,infradead.org,kernel.org,kvack.org,vger.kernel.org,linux.dev,linaro.org,jurassic.park.msu.ru,gmail.com,alpha.franken.de,hansenpartnership.com,gmx.de,zankel.net,arndb.de,chromium.org,nvidia.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqNXb+pJp0OQXi5Pn7d2u2zGeJmVkTvsgFXzvkHn6FjqA@mail.gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qCycwav3UvaWWnmMYI4JKfkb2B8AkJtx
+X-Proofpoint-GUID: qCycwav3UvaWWnmMYI4JKfkb2B8AkJtx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 clxscore=1011 suspectscore=0 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410210154
 
-On 10/21/24 23:20, David Hildenbrand wrote:
->> I don't think there's really any value in that. There's just no sensible
->> situation in which a user would care about this I don't think.
+On Tue, Sep 24, 2024 at 08:14:17AM +0200, Dmitry Baryshkov wrote:
+> On Mon, 23 Sept 2024 at 22:05, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+> >
+> > On Wed, Sep 18, 2024 at 12:27:03AM +0300, Dmitry Baryshkov wrote:
+> > > On Wed, Sep 18, 2024 at 02:08:43AM GMT, Akhil P Oommen wrote:
+> > > > From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> > > >
+> > > > Add gpu and gmu nodes for sa8775p based platforms.
+> > >
+> > > Which platforms? The commit adds nodes to the SoC and the single RIDE
+> > > platform.
+> > >
+> > > >
+> > > > Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> > > > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  8 ++++
+> > > >  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 75 ++++++++++++++++++++++++++++++
+> > > >  2 files changed, 83 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > > index 2a6170623ea9..a01e6675c4bb 100644
+> > > > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > > @@ -407,6 +407,14 @@ queue3 {
+> > > >     };
+> > > >  };
+> > > >
+> > > > +&gpu {
+> > > > +   status = "okay";
+> > > > +
+> > > > +   zap-shader {
+> > >
+> > > It's easier to add gpu_zap_shader_link label in the DTSI file and then
+> > > reference it instead of using the subnode again.
+> > >
+> > > > +           firmware-name = "qcom/sa8775p/a663_zap.mbn";
+> > > > +   };
+> > > > +};
+> > >
+> > > Separate patch, please.
+> > >
+> > > > +
+> > > >  &i2c11 {
+> > > >     clock-frequency = <400000>;
+> > > >     pinctrl-0 = <&qup_i2c11_default>;
+> > > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > > index 23f1b2e5e624..12c79135a303 100644
+> > > > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > > @@ -2824,6 +2824,81 @@ tcsr_mutex: hwlock@1f40000 {
+> > > >                     #hwlock-cells = <1>;
+> > > >             };
+> > > >
+> > > > +           gpu: gpu@3d00000 {
+> > > > +                   compatible = "qcom,adreno-663.0", "qcom,adreno";
+> > > > +                   reg = <0 0x03d00000 0 0x40000>,
+> > > > +                         <0 0x03d9e000 0 0x1000>,
+> > > > +                         <0 0x03d61000 0 0x800>;
+> > >
+> > > I think it's suggested to use 0x0 now
+> > >
+> > > > +                   reg-names = "kgsl_3d0_reg_memory",
+> > > > +                               "cx_mem",
+> > > > +                               "cx_dbgc";
+> > > > +                   interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +                   iommus = <&adreno_smmu 0 0xc00>,
+> > > > +                            <&adreno_smmu 1 0xc00>;
+> > > > +                   operating-points-v2 = <&gpu_opp_table>;
+> > > > +                   qcom,gmu = <&gmu>;
+> > > > +                   interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+> > >
+> > > QCOM_ICC_TAG_ALWAYS instead of 0
+> > >
+> > > > +                   interconnect-names = "gfx-mem";
+> > > > +                   #cooling-cells = <2>;
+> > >
+> > > No speed bins?
+> >
+> > Thanks for the review. Agree on all comments.
+> >
+> > Speedbins were missed because we are sharing these changes early in the
+> > developement cycle, sort of like what we did for chromeos develeopment.
+> > Will try to pick it up in the next patchset.
 > 
-> Making sure nobody touches an area, and wile doing that somebody already 
-> touched that area? I guess it could be worked around by 
-> mprotect(PROT_NONE),madvise(GUARD),mprotect(PROT_READ|PROT_WRITE) ... 
-> which is not particularly nice :)
-> 
->> 
->> And if you're saying 'hey do MADV_DONTNEED if this fails and keep trying!'
->> then why not just do that in the kernel?
-> 
-> Heh, no!
-> 
-> If user space doesn't expect there to be something, it should *fail*. 
-> That's likely going to be the majority of use cases for guard pages 
-> (happy to be told otherwise). No retry.
-> 
-> And if user space expects there to be something it should zap ahead of 
-> time (which some allocators maybe already do to free up memory after 
-> free()) to then install the guard. No retry.
-> 
-> There is this case where user space might be unsure. There, it might 
-> make sense to retry exactly once.
+> Ack. If you mention this in the commit message, that would be great!
 
-I've thought so too and the RFC was implemented like this, but Jann came up
-with a scenario where a THP can cause the range including our
-to-be-installed guard pte to be populated even if the userspace is not
-trying to access that exact address, see here:
+It looks like all SKUs have the same GPU fmax. Still I am checking with our
+product team about the need for SKU detection. But that discussion will
+probably take some time to close. I will post a separate series based on
+its outcome. I am sending out v2 revision right away.
 
-https://lore.kernel.org/all/CAG48ez3vqbqyWb4bLdpqSUnhwqGo2OQetecNhEGPdCGDr94nbQ@mail.gmail.com/
-
-So unless we can't *reliably* detect that userspace is really shooting
-itself in the foot and return a failure to install guard pte *only* in that
-case (which would be useful), and not horribly complicate everything to
-ensure that reliability and to avoid false positives due to races with
-THP's, then it's probably better to just retry as this version does.
-
->> 
->> Trying to explain to a user 'hey this is for installing guard pages but if
->> there's a facing fault it'll fail and that could keep happening and then
->> you'll have to zap and maybe in a loop' just... seems like a bloody awful
->> interface?
+-Akhil
 > 
-> Hope my example above made it clearer. This "retry forever until it 
-> works" use case doesn't quite make sense to me, but I might just be 
-> missing something important.
+> >
+> > -Akhil
+> >
+> > >
+> > > > +
+> > > > +                   status = "disabled";
+> > > > +
+> > > > +                   zap-shader {
+> > >
+> > > gpu_zap_shader: zap-shader
+> > >
+> > > > +                           memory-region = <&pil_gpu_mem>;
+> > > > +                   };
+> > > > +
+> > > > +                   gpu_opp_table: opp-table {
+> > > > +                           compatible = "operating-points-v2";
+> > > > +
+> > > > +                           opp-405000000 {
+> > >
+> > > Just a single freq?
+> > >
+> > > > +                                   opp-hz = /bits/ 64 <405000000>;
+> > > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+> > > > +                                   opp-peak-kBps = <8368000>;
+> > > > +                           };
+> > > > +
+> > >
+> > > Drop the empty line, please.
+> > >
+> > > > +                   };
+> > > > +           };
+> > > > +
+> > > > +           gmu: gmu@3d6a000 {
+> > > > +                   compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
+> > > > +                   reg = <0 0x03d6a000 0 0x34000>,
+> > > > +                           <0 0x3de0000 0 0x10000>,
+> > > > +                           <0 0x0b290000 0 0x10000>;
+> > >
+> > > Wrong indentation, please align to the angle bracket.
+> > > Also I think it's suggested to use 0x0 now
+> > >
+> > > > +                   reg-names = "gmu", "rscc", "gmu_pdc";
+> > > > +                   interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
+> > > > +                                   <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
+> > >
+> > > And here
+> > >
+> > > > +                   interrupt-names = "hfi", "gmu";
+> > > > +                   clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
+> > > > +                            <&gpucc GPU_CC_CXO_CLK>,
+> > > > +                            <&gcc GCC_DDRSS_GPU_AXI_CLK>,
+> > > > +                            <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> > > > +                            <&gpucc GPU_CC_AHB_CLK>,
+> > > > +                            <&gpucc GPU_CC_HUB_CX_INT_CLK>,
+> > > > +                            <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
+> > > > +                   clock-names = "gmu",
+> > > > +                                 "cxo",
+> > > > +                                 "axi",
+> > > > +                                 "memnoc",
+> > > > +                                 "ahb",
+> > > > +                                 "hub",
+> > > > +                                 "smmu_vote";
+> > > > +                   power-domains = <&gpucc GPU_CC_CX_GDSC>,
+> > > > +                                   <&gpucc GPU_CC_GX_GDSC>;
+> > > > +                   power-domain-names = "cx",
+> > > > +                                        "gx";
+> > > > +                   iommus = <&adreno_smmu 5 0xc00>;
+> > > > +                   operating-points-v2 = <&gmu_opp_table>;
+> > > > +
+> > > > +                   gmu_opp_table: opp-table {
+> > > > +                           compatible = "operating-points-v2";
+> > > > +
+> > > > +                           opp-200000000 {
+> > > > +                                   opp-hz = /bits/ 64 <200000000>;
+> > > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
+> > > > +                           };
+> > > > +                   };
+> > > > +           };
+> > > > +
+> > > >             gpucc: clock-controller@3d90000 {
+> > > >                     compatible = "qcom,sa8775p-gpucc";
+> > > >                     reg = <0x0 0x03d90000 0x0 0xa000>;
+> > > >
+> > > > --
+> > > > 2.45.2
+> > > >
+> > >
+> > > --
+> > > With best wishes
+> > > Dmitry
 > 
-> But again, I have to do more reading on the history of the current 
-> approach ... and it's fairly late here.
-
-Yeah see the RFC thread linked above.
-
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
