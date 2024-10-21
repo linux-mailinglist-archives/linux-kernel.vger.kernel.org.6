@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-373617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F279A5973
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:22:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DCE9A5974
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216521F21EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C44B22718
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B87B192599;
-	Mon, 21 Oct 2024 04:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2A764A;
+	Mon, 21 Oct 2024 04:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jRTeENji"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZcZ2eqJj"
 Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478864A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D2193427
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729484545; cv=none; b=p0slklW/frr4mO/3ZOxhPuYZfCrJ0Z+PTU8qJc4G5ZRJAOHhmp7RR7FFLQWINaoNo+mbELtv7K608sOJwTtEX01YDbxwZ14loK4Y+Lfw6+L3Be/FFW8AHn/OCCjOAPfvs23O51T9nEPdv1fjyoqjn4J9VgswERqSjtLhjNi7r6M=
+	t=1729484548; cv=none; b=S8TujW9+VESFGd3E4kIuEl+DqCPva1G7Uw6JHZgqxnz7gF92iajk3cqckP4RhW+0qSEKw/1bUafEx6dBhL3exAnoucDnJS4iqBfx0WSCjHlwJmeTYAhlx+7cC+/zGTEaMz3qle3DQEzZnb/AMYVVZ+/xi5IbEEU99JDUOTbAyno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729484545; c=relaxed/simple;
-	bh=PQ4ICM7TuLpEFyIvreG4TnkbUFSmCmlT50vM5eQMcLw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R1rTplSJ2H3ru5CF+Avic+4xXXJlsc/y322pnWmEZUKy4rvVnEibSE96cWqbnwoRq7gWrXkk5R21xp3EIRoRmevFpruFHeDudEsu/g7Er2RoQwxD6EzFKx3tlMUpI4gRv+ipBsmYR1XepVIVRcVlp5Olyo1WWThOUXU207Z1nh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jRTeENji; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1729484548; c=relaxed/simple;
+	bh=KbebdPdkRooXXqkmI/vtXOKlzOhTBRlcFc6xshyoOy8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rWc175Ys2ySFd4rYIwtZxxg2JwZyFki4nlfouFHRCC6gtGqagzuKud/rUIopFbkPxWZ7lZLCBByrnmeUo46SAFirg8tvt/u5dfhYhzHQHKRZOb5mFQSlNJUphCkSF3Q7Vr4JWeWqxCequ3e2WU6dkoy8h54iST1VfM7xwpacLPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZcZ2eqJj; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e2946a143efso5294066276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:22:23 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e290222fde4so5385422276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729484542; x=1730089342; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=djmWeapaSQGC8nHmrg76kCEnRDM6khIeNx/vxZy7BEg=;
-        b=jRTeENjiZFOy4zC8j3HVyuwz0cGcmt4mIGEqnsGut+V5Gi+YZPd4Hgyny11ZIFqAgj
-         /W0+R73kP8JvumGygtru+Xik3m7rA5HkNF1OPZhbcYaJ02jgT8YpyFpcVIDB9jJD0z1e
-         bf3f3c0i5mshlHBebh/brWdbytFrBGPUUwJp25ef3E+H9WDuLLPCzEgSGYVAWbLNFhvl
-         66buMdyKNyQdZCZ4/yjFJKjlWMNJTmqNrd8YZl5fqZ8+7jHuwHiAiYsEolQzXs5oal2p
-         I5nyvN7H+jGx3VCIZlvosWfiMqyarDdz31ezlWzqHse0BzJgOIkarNu1CDhqDvMJYS3o
-         aEBQ==
+        d=google.com; s=20230601; t=1729484545; x=1730089345; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KalWPiT5Cmq0awZpJ2ht7HZzxnfLYA4lEUcwS3DKUno=;
+        b=ZcZ2eqJjosmKC5CLl3+M0lq4V+SeSbfQpXwCzFzuPvUIRb5kMKoq6zYOVJ9jk29LMM
+         Shnlpd45711IrvGuSRSh98VFkkEPzBZ71m5jA55OWxaKDMQ9Bcxlc7KuZCSxZeAkaSsO
+         3FH2v9KXIhgpmAxw4nQGZ5h1tYHrCazNwnu/hSFRpMXy4wyW0x4qhQ6t3wXcZXlui19c
+         S3JLIzVX2+M6AEaonUcxO5urEGWB1/swzpwLlnQjZ/Y7S0PDXg8gEJQl2w9ytNgQOw1D
+         LM8RMFOqMGrFe6yHhpdP23gI2u/kmkDlg00/X0riiOf9ARs2GRQQwqW0ngvLvOrHUbEs
+         VzLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729484542; x=1730089342;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=djmWeapaSQGC8nHmrg76kCEnRDM6khIeNx/vxZy7BEg=;
-        b=offPgl7AZc9FnhflbODHCPPWBx6DzgnKLVqJc94eYQSFqtNAaYOhVLFFAX/qvtVJGW
-         LXBExyaiCHL5C+3/gm/fnPquZUjBB33eqbDNwXDMd9BOLMyZyFJR0Uy5PD9MAheNOBPn
-         JfRY2M9DnU8/01DbTZZ7S5tOcfUd2Ip2CjQ+fYp1cbvt1UfFAQjwBFcQWjYIs16G40He
-         97gYGV/aE1qJNZT93aHtBBODIyD5ZHR4u/omJl4ZiGz+yDXcJP4HfPnZzOtQ8FrmD4yH
-         VXgiYGbE0pJY6soea/f5uqbR28TYsITgNA0ueO+FYfS8eQYDivouq/VLyt+bzZZURekp
-         S4yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIcFVaLcb5drnC55L3f0m2RE/Vehkfp543Ema3kLn4dos6G+uf27dj4v9Owa5UOBHM+PsVCwnuOdE5KsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXAzl18W2qcDGNfJ0p94BfOfE12cBjeSa8Q2kEfh65+6OeagDp
-	tRU5ru4ywOQ4v0neVlu6A8vHBZpXGN6tr+ydN5OCG0kvimZMJXsFtix/FhNzw9Z+jxQhIEFfpbt
-	4PQ==
-X-Google-Smtp-Source: AGHT+IGG1IXCwOdLAyki3IzhZW4dyFxYFnYAhLqXXbmqpD2Dv/xXTcGUjx179gaMsBuxYaYLTRxOt7OLXTk=
+        d=1e100.net; s=20230601; t=1729484545; x=1730089345;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KalWPiT5Cmq0awZpJ2ht7HZzxnfLYA4lEUcwS3DKUno=;
+        b=xUHAfcbSj6d6LjhKCJ0xJaVdPfaaBRUFJtlmqzTOqo2p08YQPqBuXYqx5aWIxvOOOB
+         vARH4Y7OISYaLPFZvGlblHN6gWE6QG618sq8rAqKCBaiEIqVOLkmCIMSt/lm/jAU5CxP
+         E/rZIVViIq1PLkdWPR11p+sRHHa5UiPykaL6yoobEYzCQDD6NF+mo/JcLexIMqH769lU
+         YokudHx+MPaw49vJPsd9RLB4cZk/NGVr2aJ9eUo8oKoMAL9EXkNuV9NJzwgPEaUP6cRZ
+         +3uTAiS5IoH7uDPh8Ijg8fFBp9IYO+qt54yZnmVJGe1QjNEnohnrIe8vo8I9h1HYXyZm
+         BgFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUW9PC7FlHS7H7OuQDEs59afzWfqnOe7ZIL9un98GsVh9PTmJgt3RzXDfJwNlQ5pXva6PDWpuKg+3zefU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI1yBvAnoTMYSgOd+dH+TlGRK0ZwepQDg0IoUXw8Esz1lqt+xW
+	xKfays6CamSFdR6RSAJ61v0771rn0vY5NYLgyQM3lr/R0yRs2YlqULrwFHdicNFJ5bkBfwNrW/S
+	zDA==
+X-Google-Smtp-Source: AGHT+IH2Ur7HHiXBaY4bDEA69MOZ2p1T90XrFcEHYsQ0uSyMb8pWEEibt70U8jRDqfM7NgoMPydl9BV9rAw=
 X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:1569:9ef4:20ab:abf9])
- (user=yuzhao job=sendgmr) by 2002:a25:72c3:0:b0:e29:ad0:a326 with SMTP id
- 3f1490d57ef6-e2b9ccc8449mr48383276.0.1729484542310; Sun, 20 Oct 2024 21:22:22
- -0700 (PDT)
-Date: Sun, 20 Oct 2024 22:22:12 -0600
+ (user=yuzhao job=sendgmr) by 2002:a25:dc41:0:b0:e25:caa3:9c2e with SMTP id
+ 3f1490d57ef6-e2bb16d9206mr22332276.11.1729484545011; Sun, 20 Oct 2024
+ 21:22:25 -0700 (PDT)
+Date: Sun, 20 Oct 2024 22:22:13 -0600
+In-Reply-To: <20241021042218.746659-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241021042218.746659-1-yuzhao@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241021042218.746659-1-yuzhao@google.com>
-Subject: [PATCH v1 0/6] mm/arm64: re-enable HVO
+Message-ID: <20241021042218.746659-2-yuzhao@google.com>
+Subject: [PATCH v1 1/6] mm/hugetlb_vmemmap: batch update PTEs
 From: Yu Zhao <yuzhao@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
 	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
@@ -81,70 +84,297 @@ Cc: Douglas Anderson <dianders@chromium.org>, Mark Rutland <mark.rutland@arm.com
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Yu Zhao <yuzhao@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This series presents one of the previously discussed approaches to
-re-enable HugeTLB Vmemmap Optimization (HVO) on arm64. HVO was
-disabled by commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
-HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the following reason:
+Convert vmemmap_remap_walk->remap_pte to ->remap_pte_range so that
+vmemmap remap walks can batch update PTEs.
 
-  This is deemed UNPREDICTABLE by the Arm architecture without a
-  break-before-make sequence (make the PTE invalid, TLBI, write the
-  new valid PTE). However, such sequence is not possible since the
-  vmemmap may be concurrently accessed by the kernel.
+The goal of this conversion is to allow architectures to implement
+their own optimizations if possible, e.g., only to stop remote CPUs
+once for each batch when updating vmemmap on arm64. It is not intended
+to change the remap workflow nor should it by itself have any side
+effects on performance.
 
-Other approaches that have been discussed include:
-  A. Handle kernel PF while doing BBM [1],
-  B. Use stop_machine() while doing BBM [2], and,
-  C. Enable FEAT_BBM level 2 and keep the memory contents at the old
-     and new output addresses unchanged to avoid BBM (D8.16.1-2) [3].
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ mm/hugetlb_vmemmap.c | 163 ++++++++++++++++++++++++-------------------
+ 1 file changed, 91 insertions(+), 72 deletions(-)
 
-A quick comparison between this approach (D) and the above approaches:
-  --+------------------------------+-----------------------------+
-    |              Pro             |             Con             |
-  --+------------------------------+-----------------------------+
-  A | Low latency, h/w independent | Predictability concerns [4] |
-  B | Predictable, h/w independent | High latency                |
-  C | Predictable, low latency     | H/w dependent, complex      |
-  D | Predictable, h/w independent | Medium latency              |
-  --+------------------------------+-----------------------------+
-
-This approach is being tested for Google's production systems, which
-generally find the "con" above acceptable, making it the preferred
-tradeoff for our use cases:
-  +------------------------------+------------+----------+--------+
-  | HugeTLB operations           | Before [0] + After    | Change |
-  +------------------------------+------------+----------+--------+
-  | Alloc 600 1GB                | 0m3.526s   | 0m3.779s | +7%    |
-  | Free 600 1GB                 | 0m0.880s   | 0m0.940s | +7%    |
-  | Demote 600 1GB to 307200 2MB | 0m1.575s   | 0m5.132s | +326%  |
-  | Free 307200 2MB              | 0m0.946s   | 0m4.456s | +471%  |
-  +------------------------------+------------+----------+--------+
-
-[0] For comparison purposes, this only includes the last patch in the
-    series, i.e., CONFIG_ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP=y.
-[1] https://lore.kernel.org/20240113094436.2506396-1-sunnanyong@huawei.com/
-[2] https://lore.kernel.org/ZbKjHHeEdFYY1xR5@arm.com/
-[3] https://lore.kernel.org/Zo68DP6siXfb6ZBR@arm.com/
-[4] https://lore.kernel.org/20240326125409.GA9552@willie-the-truck/
-
-Yu Zhao (6):
-  mm/hugetlb_vmemmap: batch update PTEs
-  mm/hugetlb_vmemmap: add arch-independent helpers
-  irqchip/gic-v3: support SGI broadcast
-  arm64: broadcast IPIs to pause remote CPUs
-  arm64: pause remote CPUs to update vmemmap
-  arm64: select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
-
- arch/arm64/Kconfig               |   1 +
- arch/arm64/include/asm/pgalloc.h |  69 ++++++++
- arch/arm64/include/asm/smp.h     |   3 +
- arch/arm64/kernel/smp.c          |  92 ++++++++++-
- drivers/irqchip/irq-gic-v3.c     |  20 ++-
- include/linux/mm_types.h         |   7 +
- mm/hugetlb_vmemmap.c             | 262 +++++++++++++++++++++----------
- 7 files changed, 360 insertions(+), 94 deletions(-)
-
-
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index 57b7f591eee8..46befab48d41 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -22,7 +22,7 @@
+ /**
+  * struct vmemmap_remap_walk - walk vmemmap page table
+  *
+- * @remap_pte:		called for each lowest-level entry (PTE).
++ * @remap_pte_range:	called on a range of PTEs.
+  * @nr_walked:		the number of walked pte.
+  * @reuse_page:		the page which is reused for the tail vmemmap pages.
+  * @reuse_addr:		the virtual address of the @reuse_page page.
+@@ -32,8 +32,8 @@
+  *			operations.
+  */
+ struct vmemmap_remap_walk {
+-	void			(*remap_pte)(pte_t *pte, unsigned long addr,
+-					     struct vmemmap_remap_walk *walk);
++	void			(*remap_pte_range)(pte_t *pte, unsigned long start,
++					unsigned long end, struct vmemmap_remap_walk *walk);
+ 	unsigned long		nr_walked;
+ 	struct page		*reuse_page;
+ 	unsigned long		reuse_addr;
+@@ -101,10 +101,6 @@ static int vmemmap_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 	struct page *head;
+ 	struct vmemmap_remap_walk *vmemmap_walk = walk->private;
+ 
+-	/* Only splitting, not remapping the vmemmap pages. */
+-	if (!vmemmap_walk->remap_pte)
+-		walk->action = ACTION_CONTINUE;
+-
+ 	spin_lock(&init_mm.page_table_lock);
+ 	head = pmd_leaf(*pmd) ? pmd_page(*pmd) : NULL;
+ 	/*
+@@ -129,33 +125,36 @@ static int vmemmap_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 			ret = -ENOTSUPP;
+ 	}
+ 	spin_unlock(&init_mm.page_table_lock);
+-	if (!head || ret)
++	if (ret)
+ 		return ret;
+ 
+-	return vmemmap_split_pmd(pmd, head, addr & PMD_MASK, vmemmap_walk);
+-}
++	if (head) {
++		ret = vmemmap_split_pmd(pmd, head, addr & PMD_MASK, vmemmap_walk);
++		if (ret)
++			return ret;
++	}
+ 
+-static int vmemmap_pte_entry(pte_t *pte, unsigned long addr,
+-			     unsigned long next, struct mm_walk *walk)
+-{
+-	struct vmemmap_remap_walk *vmemmap_walk = walk->private;
++	if (vmemmap_walk->remap_pte_range) {
++		pte_t *pte = pte_offset_kernel(pmd, addr);
+ 
+-	/*
+-	 * The reuse_page is found 'first' in page table walking before
+-	 * starting remapping.
+-	 */
+-	if (!vmemmap_walk->reuse_page)
+-		vmemmap_walk->reuse_page = pte_page(ptep_get(pte));
+-	else
+-		vmemmap_walk->remap_pte(pte, addr, vmemmap_walk);
+-	vmemmap_walk->nr_walked++;
++		vmemmap_walk->nr_walked += (next - addr) / PAGE_SIZE;
++		/*
++		 * The reuse_page is found 'first' in page table walking before
++		 * starting remapping.
++		 */
++		if (!vmemmap_walk->reuse_page) {
++			vmemmap_walk->reuse_page = pte_page(ptep_get(pte));
++			pte++;
++			addr += PAGE_SIZE;
++		}
++		vmemmap_walk->remap_pte_range(pte, addr, next, vmemmap_walk);
++	}
+ 
+ 	return 0;
+ }
+ 
+ static const struct mm_walk_ops vmemmap_remap_ops = {
+ 	.pmd_entry	= vmemmap_pmd_entry,
+-	.pte_entry	= vmemmap_pte_entry,
+ };
+ 
+ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+@@ -172,7 +171,7 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (walk->remap_pte && !(walk->flags & VMEMMAP_REMAP_NO_TLB_FLUSH))
++	if (walk->remap_pte_range && !(walk->flags & VMEMMAP_REMAP_NO_TLB_FLUSH))
+ 		flush_tlb_kernel_range(start, end);
+ 
+ 	return 0;
+@@ -204,33 +203,45 @@ static void free_vmemmap_page_list(struct list_head *list)
+ 		free_vmemmap_page(page);
+ }
+ 
+-static void vmemmap_remap_pte(pte_t *pte, unsigned long addr,
+-			      struct vmemmap_remap_walk *walk)
++static void vmemmap_remap_pte_range(pte_t *pte, unsigned long start, unsigned long end,
++				    struct vmemmap_remap_walk *walk)
+ {
+-	/*
+-	 * Remap the tail pages as read-only to catch illegal write operation
+-	 * to the tail pages.
+-	 */
+-	pgprot_t pgprot = PAGE_KERNEL_RO;
+-	struct page *page = pte_page(ptep_get(pte));
+-	pte_t entry;
+-
+-	/* Remapping the head page requires r/w */
+-	if (unlikely(addr == walk->reuse_addr)) {
+-		pgprot = PAGE_KERNEL;
+-		list_del(&walk->reuse_page->lru);
++	int i;
++	struct page *page;
++	int nr_pages = (end - start) / PAGE_SIZE;
+ 
++	for (i = 0; i < nr_pages; i++) {
++		page = pte_page(ptep_get(pte + i));
++
++		list_add(&page->lru, walk->vmemmap_pages);
++	}
++
++	page = walk->reuse_page;
++
++	if (start == walk->reuse_addr) {
++		list_del(&page->lru);
++		copy_page(page_to_virt(page), (void *)walk->reuse_addr);
+ 		/*
+-		 * Makes sure that preceding stores to the page contents from
+-		 * vmemmap_remap_free() become visible before the set_pte_at()
+-		 * write.
++		 * Makes sure that preceding stores to the page contents become
++		 * visible before set_pte_at().
+ 		 */
+ 		smp_wmb();
+ 	}
+ 
+-	entry = mk_pte(walk->reuse_page, pgprot);
+-	list_add(&page->lru, walk->vmemmap_pages);
+-	set_pte_at(&init_mm, addr, pte, entry);
++	for (i = 0; i < nr_pages; i++) {
++		pte_t val;
++
++		/*
++		 * The head page must be mapped read-write; the tail pages are
++		 * mapped read-only to catch illegal modifications.
++		 */
++		if (!i && start == walk->reuse_addr)
++			val = mk_pte(page, PAGE_KERNEL);
++		else
++			val = mk_pte(page, PAGE_KERNEL_RO);
++
++		set_pte_at(&init_mm, start + PAGE_SIZE * i, pte + i, val);
++	}
+ }
+ 
+ /*
+@@ -252,27 +263,39 @@ static inline void reset_struct_pages(struct page *start)
+ 	memcpy(start, from, sizeof(*from) * NR_RESET_STRUCT_PAGE);
+ }
+ 
+-static void vmemmap_restore_pte(pte_t *pte, unsigned long addr,
+-				struct vmemmap_remap_walk *walk)
++static void vmemmap_restore_pte_range(pte_t *pte, unsigned long start, unsigned long end,
++				      struct vmemmap_remap_walk *walk)
+ {
+-	pgprot_t pgprot = PAGE_KERNEL;
++	int i;
+ 	struct page *page;
+-	void *to;
+-
+-	BUG_ON(pte_page(ptep_get(pte)) != walk->reuse_page);
++	int nr_pages = (end - start) / PAGE_SIZE;
+ 
+ 	page = list_first_entry(walk->vmemmap_pages, struct page, lru);
+-	list_del(&page->lru);
+-	to = page_to_virt(page);
+-	copy_page(to, (void *)walk->reuse_addr);
+-	reset_struct_pages(to);
++
++	for (i = 0; i < nr_pages; i++) {
++		BUG_ON(pte_page(ptep_get(pte + i)) != walk->reuse_page);
++
++		copy_page(page_to_virt(page), (void *)walk->reuse_addr);
++		reset_struct_pages(page_to_virt(page));
++
++		page = list_next_entry(page, lru);
++	}
+ 
+ 	/*
+ 	 * Makes sure that preceding stores to the page contents become visible
+-	 * before the set_pte_at() write.
++	 * before set_pte_at().
+ 	 */
+ 	smp_wmb();
+-	set_pte_at(&init_mm, addr, pte, mk_pte(page, pgprot));
++
++	for (i = 0; i < nr_pages; i++) {
++		pte_t val;
++
++		page = list_first_entry(walk->vmemmap_pages, struct page, lru);
++		list_del(&page->lru);
++
++		val = mk_pte(page, PAGE_KERNEL);
++		set_pte_at(&init_mm, start + PAGE_SIZE * i, pte + i, val);
++	}
+ }
+ 
+ /**
+@@ -290,7 +313,6 @@ static int vmemmap_remap_split(unsigned long start, unsigned long end,
+ 			       unsigned long reuse)
+ {
+ 	struct vmemmap_remap_walk walk = {
+-		.remap_pte	= NULL,
+ 		.flags		= VMEMMAP_SPLIT_NO_TLB_FLUSH,
+ 	};
+ 
+@@ -322,10 +344,10 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+ {
+ 	int ret;
+ 	struct vmemmap_remap_walk walk = {
+-		.remap_pte	= vmemmap_remap_pte,
+-		.reuse_addr	= reuse,
+-		.vmemmap_pages	= vmemmap_pages,
+-		.flags		= flags,
++		.remap_pte_range	= vmemmap_remap_pte_range,
++		.reuse_addr		= reuse,
++		.vmemmap_pages		= vmemmap_pages,
++		.flags			= flags,
+ 	};
+ 	int nid = page_to_nid((struct page *)reuse);
+ 	gfp_t gfp_mask = GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
+@@ -340,8 +362,6 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+ 	 */
+ 	walk.reuse_page = alloc_pages_node(nid, gfp_mask, 0);
+ 	if (walk.reuse_page) {
+-		copy_page(page_to_virt(walk.reuse_page),
+-			  (void *)walk.reuse_addr);
+ 		list_add(&walk.reuse_page->lru, vmemmap_pages);
+ 		memmap_pages_add(1);
+ 	}
+@@ -371,10 +391,9 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+ 		 * They will be restored in the following call.
+ 		 */
+ 		walk = (struct vmemmap_remap_walk) {
+-			.remap_pte	= vmemmap_restore_pte,
+-			.reuse_addr	= reuse,
+-			.vmemmap_pages	= vmemmap_pages,
+-			.flags		= 0,
++			.remap_pte_range	= vmemmap_restore_pte_range,
++			.reuse_addr		= reuse,
++			.vmemmap_pages		= vmemmap_pages,
+ 		};
+ 
+ 		vmemmap_remap_range(reuse, end, &walk);
+@@ -425,10 +444,10 @@ static int vmemmap_remap_alloc(unsigned long start, unsigned long end,
+ {
+ 	LIST_HEAD(vmemmap_pages);
+ 	struct vmemmap_remap_walk walk = {
+-		.remap_pte	= vmemmap_restore_pte,
+-		.reuse_addr	= reuse,
+-		.vmemmap_pages	= &vmemmap_pages,
+-		.flags		= flags,
++		.remap_pte_range	= vmemmap_restore_pte_range,
++		.reuse_addr		= reuse,
++		.vmemmap_pages		= &vmemmap_pages,
++		.flags			= flags,
+ 	};
+ 
+ 	/* See the comment in the vmemmap_remap_free(). */
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
