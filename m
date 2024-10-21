@@ -1,150 +1,95 @@
-Return-Path: <linux-kernel+bounces-374675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA4D9A6E6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AA79A6E6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FD61F2454F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D471F229F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546E21C4629;
-	Mon, 21 Oct 2024 15:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9587A1C4609;
+	Mon, 21 Oct 2024 15:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iEq9C0ur"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ye9KiAH7"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3FC1C4627
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B5E1C3F3D;
+	Mon, 21 Oct 2024 15:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729525274; cv=none; b=KU3Lj15CgSk8FuXtiBldyLwxmz0MISzX+bhHM5EQQ1GGcmNrt1tFMKUy47g111HAf31YdEf2dW/osGsgOnE+A9qWpBA73iHkq0irbIisYaFNEnGItbYgpAsH7SMxcagTf2avPvN6X7sjtB+AC6OYIx3Q68UHhNuHO8xsJRCXE1Y=
+	t=1729525269; cv=none; b=j8D68C/Gr844p3rw6AkgNoX6I3UBGuJthPBm1zcCyACfrqLvhUC2Xo+akXwdL01HMocRQf6VW+dQOZBjFcQuwEwh9ewrZLBAZ/gj41e+fJpzTSIE9tV5MFXK2c30OvtQ/1uw+PSeKGoe9QTCQdzFCaD7l1fY+SZ8cA7cKS06jZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729525274; c=relaxed/simple;
-	bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dBVSVD4Zu2IOOQR9rx94MePVvD70nzttfn5lc8rcQglHsuEtkOzpI5tUwmN9JeivOBp+XDvJr0w3to33dSyme/5EvYTTSFBYtL5AFDoY59d3vAGX1ykmbH6JeonLbUgxn1WwEhstujdUCfxUbaK4JAMx+nnz+SGwCzn/HJH44lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iEq9C0ur; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460a8d1a9b7so337151cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:41:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729525271; x=1730130071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
-        b=iEq9C0uroFXo5MUPHevr6AGJ9PJx0a+lgHaZfxW/z2aRhYk7lHfVn8WMKLllLKYY/D
-         woE67qvC2YGtusobVGIv4ZnXxRkF44UASyqcZSPc/y77jyex6jXcovPXEmSVDRDUl1CU
-         OPOCudnKtUgMyWurtWICqoNt/2L2qp5dnlfSOO8BO+3OKEgUQiJrWbiOAaBFeIPinI/4
-         SK91VYfovmq3/nZJQsCM8w3Tk0kQIkv+OR7wloOD06tCwnXRkaoszXzof9JICuWArkkV
-         NDBo/YsAx2aBT308OXmH0U7GY1+89icX/EPY3GYwuFqmr55R+G8UQ/z7PMaq730Vl89e
-         jALQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729525271; x=1730130071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
-        b=a6M6NAYgTDN8T9hYiDNSGZ/NAHJ6ycEy3lSCEc/ntB7Gji0TWQbtMQpbzecyCD9hcB
-         kREfR3eXGnaklN3r7g1eo9dR6pKwmVdpK0Dio2y0Riyn7Pq3f1aS2uB1L6YJzjbny5VR
-         /9S/R4+CLFcK+iyBaLT385ZN7788KaEPJv2n9YkDa77WJiX9itlWJxt4rT/vlv9w+6KY
-         hF5LB9fTLPRG3x/e0lIZaDc53uL1NyR25p66KlEhOyLoCkDeCydxzDrKXwJRQAnyidjA
-         qPXwzrXDJWGj/Crkl1IJG6m3OhDqPNBtWCYx5KlQLYQTuYhvdOjLDfDECD+B8qxGVIkM
-         QDig==
-X-Forwarded-Encrypted: i=1; AJvYcCX6K8TsfoGzwPoLfrhy6keFzPlWUxGc0RwMVHCIPiabPkqoryLMzt0I7IazPMGK7FLQoGeM7Fh6U3PvuoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn+SBwQ9in4Dx4rj6GONudghx9hz6DePdYaZWSDOVBthgkfdm4
-	WuKJ1VmM4XlDBjifZeKBz41tRXZTok95UoZt4+YyRqs5ZmnDQDiDe0DOlHl0OyjRXYHx6QMRTkN
-	wviJ0NypE+z1ijOgWp0u7/fKC4g0pNwWfoLUk
-X-Google-Smtp-Source: AGHT+IExtPufc3i1BL5ORPSIurwCGrgj6wuZl2/Fc9n60P6WgQQhEtufE2gQBIUUvs6EKf6872QUIbUZidcdeHoRLZY=
-X-Received: by 2002:ac8:5742:0:b0:460:900e:d6f2 with SMTP id
- d75a77b69052e-460be412160mr3854491cf.1.1729525271200; Mon, 21 Oct 2024
- 08:41:11 -0700 (PDT)
+	s=arc-20240116; t=1729525269; c=relaxed/simple;
+	bh=G9g+40I8y3M6ZPqDqPCDEioYPdPdVJlcAMLaxbn18jQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GoqTO0T4nXP4++5kL1fLJwQK41f9Tlzqd8GloSFGrxHFoWAeImign9ZKImeW7cnn/j5eIJy+fGOO7uunEf50Gn6BXb1cCvPCocpjYUd3ueFNKX41BuFiYrt8cMK6KkhLf2ZH8GQdI4dntdxMZlZdqw6eZsn1SZraLELCwFb/G6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ye9KiAH7; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8EC2042B3D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1729525266; bh=ObyUSrRbCbrFOSElhJg5GzVNZKZY84H+OFfgijxbNy8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ye9KiAH7hiuBxzbb3obwZA9Kjr+0PSpvkkUJ4fKy+0WhYP9fD8BEjlD6MrLOGhqSc
+	 sW2z9Cdr+KMwB6Owu/MZIZxoz/nYSlvqQnPtbQTvijg6nOvjghErkFMjKYwgBtACnc
+	 mR34yM7IT8xnNIMnXv5HT1PcVl1kx7IN1l31/VjpC5n8Dq1201fLmElDgwlLxKoBbz
+	 zgQe/QbW20uF1k10aQJSXJkB1gqmnZ2eMzGeIx8T/z6YEfyHn1nuuZhB8WhAKebdJQ
+	 Hcyn4ELq1j6cVCnbt5EcXBhJd2KUklckxA3DwmUSMhfsZ4ZF1hIAqgriXkvXONWs+x
+	 KiatALe7XZgww==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 8EC2042B3D;
+	Mon, 21 Oct 2024 15:41:06 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Dongliang Mu
+ <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs/zh_CN: update the translation of
+ process/email-clients.rst
+In-Reply-To: <20241018014908.3783976-1-dzm91@hust.edu.cn>
+References: <20241018014908.3783976-1-dzm91@hust.edu.cn>
+Date: Mon, 21 Oct 2024 09:41:05 -0600
+Message-ID: <87a5extqem.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
- <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
- <ZxJcryjDUk_LzOuj@tiehlicka> <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
- <ZxKWBfQ_Lps93fY1@tiehlicka> <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
- <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
- <ZxYCK0jZVmKSksA4@tiehlicka> <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
- <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com> <ZxZ0eh95AfFcQSFV@tiehlicka>
-In-Reply-To: <ZxZ0eh95AfFcQSFV@tiehlicka>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 21 Oct 2024 08:41:00 -0700
-Message-ID: <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Michal Hocko <mhocko@suse.com>
-Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
-	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 21, 2024 at 8:34=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
+Dongliang Mu <dzm91@hust.edu.cn> writes:
+
+> Update to commit 91031ca349ee ("docs: improve comment consistency in
+> .muttrc example configuration")
 >
-> On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
-> [...]
-> > Yeah, I thought about adding new values to "mem_profiling" but it's a
-> > bit complicated. Today it's a tristate:
-> >
-> > mem_profiling=3D0|1|never
-> >
-> > 0/1 means we disable/enable memory profiling by default but the user
-> > can enable it at runtime using a sysctl. This means that we enable
-> > page_ext at boot even when it's set to 0.
-> > "never" means we do not enable page_ext, memory profiling is disabled
-> > and sysctl to enable it will not be exposed. Used when a distribution
-> > has CONFIG_MEM_ALLOC_PROFILING=3Dy but the user does not use it and doe=
-s
-> > not want to waste memory on enabling page_ext.
-> >
-> > I can add another option like "pgflags" but then it also needs to
-> > specify whether we should enable or disable profiling by default
-> > (similar to 0|1 for page_ext mode). IOW we will need to encode also
-> > the default state we want. Something like this:
-> >
-> > mem_profiling=3D0|1|never|pgflags_on|pgflags_off
-> >
-> > Would this be acceptable?
+> scripts/checktransupdate.py reports:
 >
-> Isn't this overcomplicating it? Why cannot you simply go with
-> mem_profiling=3D{0|never|1}[,$YOUR_OPTIONS]
+> Documentation/translations/zh_CN/process/email-clients.rst
+> commit 91031ca349ee ("docs: improve comment consistency in .muttrc
+> example configuration")
+> commit 7fe7de7be828 ("Docs/process/email-clients: Document HacKerMaiL")
+> commit 9c03bc90c065 ("Documentation: process: Revert "Document suitability
+> of Proton Mail for kernel development"")
+> commit 1d2ed9234c85 ("Documentation: process: Document suitability of
+> Proton Mail for kernel development")
+> 4 commits needs resolving in total
 >
-> While $YOUR_OPTIONS could be compress,fallback,ponies and it would apply
-> or just be ignored if that is not applicable.
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+> v1->v2: revise the script name
+>  .../translations/zh_CN/process/email-clients.rst         | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-Oh, you mean having 2 parts in the parameter with supported options being:
+Applied, thanks.
 
-mem_profiling=3Dnever
-mem_profiling=3D0
-mem_profiling=3D1
-mem_profiling=3D0,pgflags
-mem_profiling=3D1,pgflags
-
-Did I understand correctly? If so then yes, this should work.
-
-> --
-> Michal Hocko
-> SUSE Labs
+jon
 
