@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-374881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2489A717C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:56:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043029A7191
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25A0283F7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3338C1C218A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3041F7080;
-	Mon, 21 Oct 2024 17:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B3B1F4FCB;
+	Mon, 21 Oct 2024 17:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJQY/rj4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xU0NQeuF"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570261CBEB6;
-	Mon, 21 Oct 2024 17:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B331F4FC9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729533402; cv=none; b=sBmZoDA2+kHz2LcDdrbct6YhDt/mvO0Ao5y1VXPMMQxP7/OFd5hl/sQLzUZCPkhmXgpCDHegd1+yIO3LQYzEtaF5hg9ySOH83GHph36NCjOZXsggWE2WpEFiV1NgXA9qjxWzhUQaCCLXKkp7PjJsGdwgFemRPW6lCpKewyNCNpo=
+	t=1729533467; cv=none; b=SdRtLFuMq/uHzmKpneje9GCpLhC0sEadtKdwdfqC/W2PwIegmwbQMh864REKi0IkNb4EnP9eFrnU0UPUwRPJlJqOr8EZqlvU1JY/g+X7fZ0z4xnzIEgDpqzKZJlDexdNyjolx0smOtJaugW76a+9G+xyG0q9BFN+NqHyj42abms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729533402; c=relaxed/simple;
-	bh=iOp6UPk7kp6624trt50V9GCSl7TCmUx91AXnl52vexs=;
+	s=arc-20240116; t=1729533467; c=relaxed/simple;
+	bh=ykltuD/ISwba8fAgh+W7+zqUPctjSlh3wUX/gNmLJ6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AyJL+OGZwtVdd0o9uu1OLks4L11/TH3IkqaNJ/QagCRCQPer47uMTTtxkS5zRdcryA0OnWTx4D3TrGBLmvWNtt/mvBMDFD4RqWntO67QMDSuLjIj3cKqnpK9pcDHmQTqegQp34/JwSFT7YrMhNn70sh2kyRSwCJ/eDw8NgEEUrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJQY/rj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F2FC4CEC7;
-	Mon, 21 Oct 2024 17:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729533402;
-	bh=iOp6UPk7kp6624trt50V9GCSl7TCmUx91AXnl52vexs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sJQY/rj4pTIO5uEWlo1heoszsTNmf9jrwjFBD0lIbKoaTFxHVpdjurFhvf6qbFqVx
-	 3p4d5v2zCCp/LbxdIlTGmC11dWGlMVeXXfBDk8A9Aml+/MAtk2IETKhnM8m6cKxkey
-	 BZF/dYUet13hmxhgQOUCWlo2mvzJlbvIRi1nLRTDg+g177wJbtfgI05mwIy3+AOG+C
-	 2RdO3YmkeY7RM1WJnyPqFT2fPe/8kLv+1aQd4pfj1zTvRhlxt250RD3qNZbbCGpcse
-	 fs5+AtO+kgnLwq3Dm+Zt8UDEsdLr8Tbrkjy5WAyah1cfbA8sbkBGsmyodZGLNuMspU
-	 cTEE/rSNQw61A==
-Date: Mon, 21 Oct 2024 17:56:40 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
-	x86@kernel.org, Hendrik Brueckner <brueckner@linux.ibm.com>
-Subject: Re: [PATCH 07/15] s390/crc32: expose CRC32 functions through lib
-Message-ID: <20241021175640.GA1370449@google.com>
-References: <20241021002935.325878-1-ebiggers@kernel.org>
- <20241021002935.325878-8-ebiggers@kernel.org>
- <20241021104007.6950-E-hca@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=liBoRZCUh00rfIyRM1JfdgSsf+dFT22Ma1fX7S7Q73Bx6RqGJUVkTKc9Fk1BeAF3AxWgibhAhHI6ZMb01St/ByxjQXBgYG1cYgYK+1pEC6zh5EmkTTtxgVp6yMkJ9EdlcYh1m1H4Btfk5DBz3CQB9ZlWDU1Hmwg8wNd3tk2AJrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xU0NQeuF; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Oct 2024 10:57:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729533462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NgUgtE2nbHu0jbUYd7lK1pAQWkPQaUgbx1VksnZptik=;
+	b=xU0NQeuF+r822oYJuRq2qZer4XWftar82dt65Iq58ThWtQpkf+k8hJBA9zqEIrF3VRLz+L
+	aL4tTXRZfxP6YnsfFljN/fmYmls5KErKxV6YDOYJnnJhj9Z2zEegcuWNE3RT2KR/LI+D9I
+	0Xr/KKFF3MiaQKTf8XLDgauGkjGYjOQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+Message-ID: <pdu7tddikqiyhd6srgnsrxbsssmwk6u7k35coxhaspcnz57jul@uhm45xe7josy>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,48 +58,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021104007.6950-E-hca@linux.ibm.com>
+In-Reply-To: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 21, 2024 at 12:40:07PM +0200, Heiko Carstens wrote:
-> What makes sure that all of the code is available automatically if the
-> CPU supports the instructions like before? I can see that all CRC32
-> related config options support also module build options.
+On Mon, Oct 21, 2024 at 05:34:55PM GMT, Roman Gushchin wrote:
+> Syzbot reported a bad page state problem caused by a page
+> being freed using free_page() still having a mlocked flag at
+> free_pages_prepare() stage:
 > 
-> Before this patch, this module and hence the fast crc32 variants were
-> loaded automatically when required CPU features were present.
-> Right now I don't how this is happening with this series.
-
-There's just a direct symbol dependency now.  For example
-ext4.ko -> crc32-s390.ko [crc32c_le_arch] -> crc32.ko [crc32c_le_base].
-So, crc32-$arch.ko always gets loaded when there is a user of one of the CRC32
-library functions, provided that it was enabled in the kconfig.
-
-crc32-$arch then calls either the accelerated code or the base code depending on
-the CPU features.  On most architectures including s390, I made this use a
-static branch, so there is almost no overhead (much less overhead than the
-indirect call that was needed before).
-
-This is the same way that some of the crypto library code already works.
-
-> > +static int __init crc32_s390_init(void)
-> > +{
-> > +	if (cpu_have_feature(S390_CPU_FEATURE_VXRS))
-> > +		static_branch_enable(&have_vxrs);
-> > +	return 0;
-> > +}
-> > +arch_initcall(crc32_s390_init);
+>   BUG: Bad page state in process syz.0.15  pfn:1137bb
+>   page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
+>   flags: 0x400000000080000(mlocked|node=0|zone=1)
+>   raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
+>   raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
+>   page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+>   page_owner tracks the page as allocated
+>   page last allocated via order 0, migratetype Unmovable, gfp_mask
+>   0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
+>   3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
+>    set_page_owner include/linux/page_owner.h:32 [inline]
+>    post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+>    prep_new_page mm/page_alloc.c:1545 [inline]
+>    get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
+>    __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
+>    alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
+>    kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+>    kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+>    kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
+>    kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
+>    vfs_ioctl fs/ioctl.c:51 [inline]
+>    __do_sys_ioctl fs/ioctl.c:907 [inline]
+>    __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>    do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   page last free pid 951 tgid 951 stack trace:
+>    reset_page_owner include/linux/page_owner.h:25 [inline]
+>    free_pages_prepare mm/page_alloc.c:1108 [inline]
+>    free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
+>    vfree+0x181/0x2e0 mm/vmalloc.c:3361
+>    delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
+>    process_one_work kernel/workqueue.c:3229 [inline]
+>    process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
+>    worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
+>    kthread+0x2df/0x370 kernel/kthread.c:389
+>    ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 > 
-> I guess this should be changed to:
+> A reproducer is available here:
+> https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
 > 
-> module_cpu_feature_match(S390_CPU_FEATURE_VXRS, ...);
+> The problem was originally introduced by
+> commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
+> clearance"): it was handling focused on handling pagecache
+> and anonymous memory and wasn't suitable for lower level
+> get_page()/free_page() API's used for example by KVM, as with
+> this reproducer.
 > 
-> Which would make at least the library functions available if cpu
-> features are present. But this looks only like a partial solution of
-> the above described problem.
+> Fix it by moving the mlocked flag clearance down to
+> free_page_prepare().
 > 
-> But maybe I'm missing something.
+> The bug itself if fairly old and harmless (aside from generating these
+> warnings).
+> 
+> Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
 
-This is not needed, as per the above.
+Can you open the access to the syzbot report?
 
-- Eric
 
