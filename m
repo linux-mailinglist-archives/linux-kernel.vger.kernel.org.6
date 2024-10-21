@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-374042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E0B9A6102
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DB9A6104
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84333281A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E571F23C55
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067CC1E47D6;
-	Mon, 21 Oct 2024 10:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6661E5705;
+	Mon, 21 Oct 2024 10:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fW8qPxjG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jABelndI"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WDeAFwi6"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146C1E47BD;
-	Mon, 21 Oct 2024 10:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F355D1E0DD4;
+	Mon, 21 Oct 2024 10:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504912; cv=none; b=mLFj/YwiOKOMkmTg0jXuWJI7RbbNtcRCMQORZ4Z6Cp61BaSMDE/QLv4O9teles6qH+nN5CpyqKWL8RgIgDqJZp7A1EraWqGZEV08fFowcN4m61y+sPOnlXL7tjV8Q5rprbdi+Mk+5xJGSQHXst/EbXY1a7+J/SXbD4nBma7/Ydg=
+	t=1729504940; cv=none; b=jY7y+dG4WcCtVPnFE900L3m2Fck5poP7BN6OB25XUHMQQMLxO3ptrBYEgjoxd7s+1QRXPuelDf88JoT0pNkEXpxtcFZaFqC0i+Fqcajw1hCJH1NN90AwUK1YqZ60haDdg72SfPBIoHUJUHA9trt5Dg46kR07nEe5ahk0rFVzfpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504912; c=relaxed/simple;
-	bh=MoTOl9y90sIoORVxCJbn2v1vz4mCgEMa1EHPh5uYnDk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Z7Zdj6RPsLNyILp54basGQUHSbiCpK1aFeGyxsI6XIjNl8o2ut4vBTfcQW+RzOLS3DmXwDZsOmf70+2TNnATS+JRkMO5QZw/H1Xa9669EqYCgu8HE5F6v1Ga2U5mxSkMU2rLtMKrFMvU6KNOU2rCXMQDVU1MMImtKaeKWb0ZpYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fW8qPxjG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jABelndI; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 16752114014E;
-	Mon, 21 Oct 2024 06:01:49 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 21 Oct 2024 06:01:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729504909;
-	 x=1729591309; bh=PsU+reKmiMH+6dEqfODUv58RE75ILNro4ASwJ7hVYxU=; b=
-	fW8qPxjG7VpETcQZqSN8x7slQpdpGZSXj/1i0G+iYnzS65RSdZDu6nZKZPCwUA5D
-	ojXmy4onqcjAyxlTVJWvzsQlwrpSU2ec1WElDzalvD5hSrKR/FqaxWfmoa+FjFIn
-	8qHR8WUVFURK9guGsh+p/m8xI/jJhtpx4CndtTxPGbI1JP/93O+zMEWLiVuuKMXq
-	KT4PnTiqc/FHg3PTyXM4rNfgPAnyISRYqGIZkaHr12QwQFAM143HuiRU/sS7U1Pv
-	m/3/ucIdtZ930Tt8EplH01vxQIITKJQ4VQMsxSetNWPkzXl3dS2TwpsF2q2VZdPI
-	B1YWt/SPaAIF/LJoP+jidg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729504909; x=
-	1729591309; bh=PsU+reKmiMH+6dEqfODUv58RE75ILNro4ASwJ7hVYxU=; b=j
-	ABelndIinU4Ip3zsU2JLWu9OK82+lIcLkoK5GjsL5/jsw1zKkhfVn87BBhhcQ0sY
-	YcSo0fbRVJ+zy0dv7SdcLIZ06MvtdZyaLXBXLPdCL5vLh8GCmnxwstvBHB/hZ076
-	veSSNj5kIpJdAMv5lAQLfcieGl8N8xmZ6f3drRv5X+ij2fjGyRovySrqe/gWazf2
-	tdAyMRPLsmAXMgOMBIhkoMj/cLZIww0lTO4sr8yLe/LQW6wJoDzQ51W+yC//+/5V
-	+DASU2O1z+aCWeUy7pcg8CV1qDymURDlSP8IyaaFKL/j5Rk9s7wLbCiRp9Wyg6gE
-	Ho/1rOjSmtDbZfNnGvSEw==
-X-ME-Sender: <xms:jCYWZyUjmgpQ2rFm9PI5WmhydfRMwhu9juI9XhP6D2OsvcwxWs82Ow>
-    <xme:jCYWZ-lQRsM5NJjNwLZ6fQUj_ZKsDF8ejCoV8ENmeVk7Eeo3xjeixatFiPkVVt-V6
-    OQy4SUeKpBMchwfMrc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehr
-    ohgsuggtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhushhtihhnshhtih
-    htthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgt
-    ohhmpdhrtghpthhtohepnhguvghsrghulhhnihgvrhhssehgohhoghhlvgdrtghomhdprh
-    gtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhonhhrrggu
-    higstghioheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:jCYWZ2Yhzu2akfZrZXSayTsw8WmZoV4vH5mcPhNJLxFvmlBalUAOIg>
-    <xmx:jCYWZ5VIsfWAmVcaWQKxstu8OQDdUJtPWNuBN-ZbW147Cqn0LKlIYA>
-    <xmx:jCYWZ8mJUT9n2g6iT5Vrxtvhy6sC4Z0m9JF6HpeMyAeerDFjgYSkqw>
-    <xmx:jCYWZ-fctAsd8clqYV3sdEV6qpUbmzALG6BHgPI5dZp61ACP49y5VQ>
-    <xmx:jSYWZ7cl9AYBzFKgb6f7YxD93SOgWHmFu6zwK5_rHqop8fDSx6LV_fYq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2A3942220072; Mon, 21 Oct 2024 06:01:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729504940; c=relaxed/simple;
+	bh=bDztxjGoLMT9cbPe5QceDD5X4rmFLoxtqw7/vaEwEqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G5nwD2DMhKzkZMxKdl539bf7jJTp1S24hiCFWz3CS8oVc7qb6gvhCqH8Av7TGYdaGnH2GU9bt5REzA8I60EYHWCGg1ChZk1BiKvukPuiHBTq3xCiOKFiKxqOy+tP2mavdibfMu05oyEn4aA6NeHzkP69U1ZIcG8j4rDCiInVx0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WDeAFwi6; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7787D2000F;
+	Mon, 21 Oct 2024 10:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729504935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m79BIBKqneDCStQUQ14/pD49h3bl1usdmKNzsly5q9s=;
+	b=WDeAFwi61lq51jGCq2dtNZcjZYRng+WYMANNQlyiXvBIPczC6sd9Lgo5R99LEfGy0Wj3wm
+	SzmfcCM8jY0uiS/QE4GnfSSZeylVGZHUOKC/a4Ywl43vodweeWHqdMQ+zBcwTRJHx0yMKL
+	OeNniS5u+Pi3kI2z0aU42gmkRCecObZ49gwE44CMBSTIiN3mbGEW5j+8GPzBva/z4P14Ll
+	rrnrVJWRy+YLUNuF3iDnqnmiXukMRFbCSz+BoSrXAPAAfHdXzDKZYUy4IVA4/EYzMlmPKV
+	AxTzUTPQKq8w74Gv+SotqloQEHThh2apW9b763Q0+kkQuUlCBdsjWeb9RdATwA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] mtd: spinand: Constify struct nand_ecc_engine_ops
+Date: Mon, 21 Oct 2024 12:02:13 +0200
+Message-ID: <20241021100214.173157-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To:  <72597e9de2320a4109be2112e696399592edacd4.1729271136.git.christophe.jaillet@wanadoo.fr>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 21 Oct 2024 10:01:27 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Akhil P Oommen" <quic_akhilpo@quicinc.com>,
- "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Rob Clark" <robdclark@gmail.com>,
- "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
- "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Nathan Chancellor" <nathan@kernel.org>, "Sean Paul" <sean@poorly.run>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- "Marijn Suijten" <marijn.suijten@somainline.org>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-Message-Id: <cb728358-ac32-4b37-a954-967f338385e2@app.fastmail.com>
-In-Reply-To: <20241021092509.tm4w3ufdgcd7of37@hu-akhilpo-hyd.qualcomm.com>
-References: <20241018151143.3543939-1-arnd@kernel.org>
- <20241019093146.kdp25pir5onjmg4g@hu-akhilpo-hyd.qualcomm.com>
- <k42wmgziqia6balqsrfualbg73giesjxxtyaldkxsrdxkro2li@6neybqsu27me>
- <20241021092509.tm4w3ufdgcd7of37@hu-akhilpo-hyd.qualcomm.com>
-Subject: Re: [PATCH] drm: a6xx: avoid excessive stack usage
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'af264e5989055ac33f413c4c80874345cda0cc97'
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Oct 21, 2024, at 09:25, Akhil P Oommen wrote:
-> On Sat, Oct 19, 2024 at 04:14:13PM +0300, Dmitry Baryshkov wrote:
->> On Sat, Oct 19, 2024 at 03:01:46PM +0530, Akhil P Oommen wrote:
->> > On Fri, Oct 18, 2024 at 03:11:38PM +0000, Arnd Bergmann wrote:
->> > > From: Arnd Bergmann <arnd@arndb.de>
->> > > 
->> > > Clang-19 and above sometimes end up with multiple copies of the large
->> > > a6xx_hfi_msg_bw_table structure on the stack. The problem is that
->> > > a6xx_hfi_send_bw_table() calls a number of device specific functions to
->> > > fill the structure, but these create another copy of the structure on
->> > > the stack which gets copied to the first.
->> > > 
->> > > If the functions get inlined, that busts the warning limit:
->> > > 
->> > > drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
->> > 
->> > Why does this warning says that the limit is 1024? 1024 bytes is too small, isn't it?
->> 
->> Kernel stacks are expected to be space limited, so 1024 is a logical
->> limit for a single function.
->
-> Thanks for the clarification. I think it is better to move this table to
-> struct a6xx_gmu which is required anyway when we implement dynamic generation
-> of bw table. Also, we can skip initializing it in subsequent gpu wake ups.
->
-> Arnd, do you think that would be sufficient? I can send that patch if you
-> want help.
+On Fri, 2024-10-18 at 17:05:57 UTC, Christophe JAILLET wrote:
+> 'struct nand_ecc_engine_ops' are not modified in these drivers.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> Update the prototype of mxic_ecc_get_pipelined_ops() accordingly.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   16709	   1374	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   16789	   1294	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Yes, that should work. I actually tried first to turn the model
-specific data into static const structures but that ended up 
-not working because some of them have a couple of dynamically
-computed values. I think that would have been even nicer.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-      Arnd
+Miquel
 
