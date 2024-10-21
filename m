@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-373840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A23F9A5D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BC39A5D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C85E1C203B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DCF1C21106
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2657B1E0E0E;
-	Mon, 21 Oct 2024 07:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6E31E0DFC;
+	Mon, 21 Oct 2024 07:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZWdyu/ez"
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rMZ/x6z0"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915041E0DE6;
-	Mon, 21 Oct 2024 07:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55C31E0DD7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729497013; cv=none; b=ouCfoXdV6aGMs+in7as7TINbj+8rD7QnRqb+njRo423P44EH3UeFutkk0G3GcnXyltuDyiID3BbPkrmHL8AysqM7ba4Am+kZmb7g5ORLb16S+1w6djlva654Xc883C4NIgV1bAqvOiYgbZQ6umFCcQ3lpyURlEnQfJqOTA/G1S8=
+	t=1729496947; cv=none; b=KjkkmpCzwH79G8uYJDy4aB/tCA6EUbbl2OhvKukfS0oSAqAZH9bc9UKPYQ981png6gHyuJpT9nMm9e81OXF8bFnJDBpgGTB6l0sRnPa6ITq/Po218dDir/VXuOlYhLtQ2ZsZGyOe3TCA/p+cSVBBMKWQsvnd8Ys/73kDEljC8hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729497013; c=relaxed/simple;
-	bh=XnT93t9gRI+nxE+bt78pJm7Y0qFs241Nf7r6GTYJmo8=;
+	s=arc-20240116; t=1729496947; c=relaxed/simple;
+	bh=rffjgAP5ZW88uPUrtaJRFYw7UB1XrEHtwZdvD7+yIv8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MaG74LK11V+sEAuLa8Q8KMSXFClUP25gJObDAvHEj54jzCRoff70C5bXI+ZOlXYyziusizgfDZs6qaVkGwBGzPqbbpYrkYT2Hih/tLKZXHcIXY+hGI2X5sJuVrMEKb7TlgF79ypoN18V7ftJBUfICqzuoZn2SEKIC2rBz9QPDN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZWdyu/ez; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 2n9ntL06gjsSz2n9ntfpEX; Mon, 21 Oct 2024 09:48:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729496933;
-	bh=Eb/kMiEWGo00zh4rVI7VXlwQ/NqeEqhpavG4zbOM3UM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ZWdyu/ezYh4Srx9uTDE61kWjfxE0Qg5364xgp+6Dysh48jJ5+RGRAKWT4q99gyqqf
-	 0YtR+wouWC7GUSQhe5xBAzdR4rOyy0gtCg476aIHa9ZiPorTiHxm093qhpfvaZoUzE
-	 bHkCp73+YUAFZt7qBcZVRTdWqqF3fi85KIBJuQMMIirPLpWhuv/1u61taIoHpWPU8G
-	 eWBZybVG85L8Pp7aQUQikug3G0Gg54lWA28wMCbP2tavYPjvAYFuZ3d7EVVs9GnCL8
-	 /qoE0G0h7euFkK+AGkfSDh1JTAR1j8HyzevwOohbsQh2Nv3rMXS/6cG9F5oqig+Czi
-	 e+ihO0pfj3xVw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 21 Oct 2024 09:48:53 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <5350829a-d30f-41b4-82db-8ed822e13d09@wanadoo.fr>
-Date: Mon, 21 Oct 2024 09:48:49 +0200
+	 In-Reply-To:Content-Type; b=eWOokqX5idmZLNkzxFzkd02MJCKgiVswqfAEdCws2XcDdgPFuaLZszK0+P4g6hMVBK1zok84R5aSNqWUz9Ac/FOkmTZik99SloXerCR5ZjPYY7Glpel35rt9fCjtpFRm1EHdgysYNTFfVzmnK+VLo1cilOUbGNdZDJkl3qiQAs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rMZ/x6z0; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43161c0068bso27366935e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1729496944; x=1730101744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=58kG6E9taHK6TTsZfdidB/P2/Hcxp/vWM653t/Aj+tg=;
+        b=rMZ/x6z0IHP1GC/SL4MpNjxOJUV4hJ9+9U1c6iA8pmJFsTVjhsxiM5DBzWJwvykaU0
+         05GABRaIudHCFZ81wDK4zInJ7hGJ8l8DXmlrPyD/za6YLufEYtTypMS39M09KfE9/9ch
+         u65GYXAPs58zK3RmT9TT7Jblbz921ViSyh7BuqtylYHtPUeFneJwq1OYUU2EDi/41rX2
+         dC5Uu//X0b7EyX8YjfVvn/fJLVcM5nOg03D5vmmhNe1OksDouIsEitzrZuEGxS0cxsNJ
+         SBB5BTU+Fso0ZdUppH4RNDc0yi87J5w2LLbXH/vUhEE6xRJwkV0wUU/zF503I3hxT80p
+         8dkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729496944; x=1730101744;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=58kG6E9taHK6TTsZfdidB/P2/Hcxp/vWM653t/Aj+tg=;
+        b=XHKv1ZmLY5tvhMcUHxD3EWM2FqFjKr3NvK3zZTvXYwbBOnZIVOaSkfnyHgC8RmV1XU
+         z2qHAsOOe8QOWp7S2dOwVANq5wJDjgvyofr1U1qeIPC32lWwbYi1xmpec8Npx3yP8mU+
+         YqTlHsrC298/DyexxqOr5shN6uCYBkS5N+qSal4+b09ITlC+FcRmFf7iBT/eraJk8LIG
+         MTZ0HPjjKjYt2oHJQSVXsAMFipLSN7U93oPu7nx1O+fqVZ80eD5b8xYGJlj6aEy+PKil
+         Nh0Hd+QFJ9iDXTMd0oPJ1DQsYw2NQkpUv85OF4KhCeajcsm8wo4GNfyzQvzVV4z89Mlc
+         xSNA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2XoA5H24/XXZiWy0y1JMEJmYyv0bs3DdnzODupfdIuEbGWXE9v/sxCjbpzqHvrttccnNXNTEJeKVZQxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ2zZn7rl5yPe/JavWIRXMfVGQLO+I/r8iTAy8D8bbR7/TezJ9
+	abSsLLFehWxqzpdr5uev96gXcNIIIBKhkeiPCVxQ+I2kICYc9H03cT/Fuk6HEfw=
+X-Google-Smtp-Source: AGHT+IFvgo6qt2vB4D+5CxWmwBneFTMm7VvkmB3DADmGjcvJnOJUVQG58Cd4uUg0J+6QI23+xFjXxA==
+X-Received: by 2002:a05:600c:4595:b0:431:3b53:105e with SMTP id 5b1f17b1804b1-4316163bccfmr91296875e9.9.1729496943898;
+        Mon, 21 Oct 2024 00:49:03 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc921sm47137075e9.46.2024.10.21.00.49.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 00:49:02 -0700 (PDT)
+Message-ID: <ac5a6f77-cd71-4e79-973e-8ee00cd762ff@tuxon.dev>
+Date: Mon, 21 Oct 2024 10:49:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,54 +75,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 01/13] x86/sev: Carve out and export SNP guest
- messaging init routines
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-2-nikunj@amd.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241021055156.2342564-2-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 03/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
+ p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
+ <m4kxv7cba6qd67ahhh4cal6sgieohgow6f3tdvqoxvheemtp4j@gpxbkxd3tvat>
+ <5fddjnvzu2e74rtmqw6o2w5upxn6dpih3hmdbgiky75qyuvyum@ilch2rahnmih>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <5fddjnvzu2e74rtmqw6o2w5upxn6dpih3hmdbgiky75qyuvyum@ilch2rahnmih>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 21/10/2024 à 07:51, Nikunj A Dadhania a écrit :
-> Currently, the SEV guest driver is the only user of SNP guest messaging.
-> All routines for initializing SNP guest messaging are implemented within
-> the SEV guest driver. To add Secure TSC guest support, these initialization
-> routines need to be available during early boot.
+
+
+On 21.10.2024 10:34, Krzysztof Kozlowski wrote:
+> On Mon, Oct 21, 2024 at 09:32:37AM +0200, Krzysztof Kozlowski wrote:
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+>>> +    #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
+>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>> +
+>>> +    clock-controller@1005c000 {
+>>> +        compatible = "renesas,r9a08g045-vbattb";
+>>> +        reg = <0x1005c000 0x1000>;
+>>> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+>>> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+>>> +        clock-names = "bclk", "rtx";
+>>> +        assigned-clocks = <&vbattb VBATTB_MUX>;
+>>> +        assigned-clock-parents = <&vbattb VBATTB_XC>;
+>>
+>> Why are you configuring internal clocks to internal parents? That's part
+>> internal to this device, not DTS... or at least some explanation would
+>> be useful.
 > 
-> Carve out common SNP guest messaging buffer allocations and message
-> initialization routines to core/sev.c and export them. These newly added
-> APIs set up the SNP message context (snp_msg_desc), which contains all the
-> necessary details for sending SNP guest messages.
+> From DTS I see this belongs to the board, not SoC, so makes sense.
+
+That's true. This configuration depends on the type of the input clock
+connected to the RTXIN, RTXOUT pins which is board specific (see below
+diagram):
+
+           +----------+ XC   `\
+RTXIN  --->|          |----->| \       +----+  VBATTCLK
+           | 32K clock|      |  |----->|gate|----------->
+	   | osc      | XBYP |  |      +----+
+RTXOUT --->|          |----->| /
+           +----------+      ,/
+
+Thank you,
+Claudiu Beznea
+
 > 
-> At present, the SEV guest platform data structure is used to pass the
-> secrets page physical address to SEV guest driver. Since the secrets page
-> address is locally available to the initialization routine, use the cached
-> address. Remove the unused SEV guest platform data structure.
+> Best regards,
+> Krzysztof
 > 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
-
-...
-
-> +static inline bool is_vmpck_empty(struct snp_msg_desc *mdesc)
-> +{
-> +	char zero_key[VMPCK_KEY_LEN] = {0};
-
-Nitpick: I think this could be a static const.
-
-> +
-> +	if (mdesc->vmpck)
-> +		return !memcmp(mdesc->vmpck, zero_key, VMPCK_KEY_LEN);
-> +
-> +	return true;
-> +}
-
-...
 
