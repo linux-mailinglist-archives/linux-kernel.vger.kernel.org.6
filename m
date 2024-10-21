@@ -1,179 +1,212 @@
-Return-Path: <linux-kernel+bounces-373923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DF39A5F04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:46:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A749A5E48
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A661F21624
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4028AB246CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D72C1E260E;
-	Mon, 21 Oct 2024 08:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22F1E1C04;
+	Mon, 21 Oct 2024 08:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="H+r0j0dl"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4MqpvlP"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AB51C36;
-	Mon, 21 Oct 2024 08:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166A81E0E11;
+	Mon, 21 Oct 2024 08:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729500370; cv=none; b=bbPrHc7GFDKJSfTzqYhOPlB+BXlMluTbtRcnmx6UNXoQTiHld0+SmoM7nuQiDGGYCFpb+tGix+U5t4XDH1d2ZACVPbBIaHm2rmHXi4qhoopbFuRyu3q8qsjWClrTlC3D4rBN3C22fcJmWQAqaBs/RJWBeiR5KTdPbsjQzfn2lsI=
+	t=1729498385; cv=none; b=WhE89Ux33K+YX/goNPtgj//VSfYfaV+DtX9CIhsm40WZul3ozmPqi9IXpJbIUGz8XAPzH8fkP+Vv9RsXmYU3qTRcPSiAnvIOl+yxnr/rp3sumZcEJCSwfutjlvhhQiYz1oSDwWigMOKrVt5gwQyfFwFtJ+rWREpIyw/kSfpxJ90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729500370; c=relaxed/simple;
-	bh=fJXjH5qlfC6ASDlZU2YZEnFhYawwdHJBoYR3WOBcS30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pCfp0qEpuZPyLjKWvMy7tvbMpZ0oCoDyM6yFnKFY1JIGsLAPrhy2MwLfHQdrlPZwbxIRngwaaEg9SL8IA8jqI8Nwz6DYOlucruMwvGnU+By7J7msmeN6roG1X1NBZGVWtZdOO7WDqikghDxsOMyz2aC+uM+Kgd+uC76jmnAxS6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=H+r0j0dl; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 2nWit5w2oIGzd2nWitpn3w; Mon, 21 Oct 2024 10:12:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729498354;
-	bh=b74pKJMrbi0EjSGOws8bCaw1p7JE0thrw1ZwFQ6pL1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=H+r0j0dlHG4EKgzxFMUkKsG0q8pg0iKdICETVBVlDYM4vUPoYmBSun26Yq6zYs0w2
-	 hJJ9JBJljmEjks5Kgck6/lPlN36DpOAb0x8llN3+x+k085av3NhGRRjyg1WEKQnsnB
-	 AT56vYHIHdtKFXDyIOnd3VaH1bTZqR8pwD4m92m83h+A8n5MlWHGZ6dHINU7MXNOnj
-	 OcvTmGJXQPFZEybml5JwseYK1jndJ1iXYTNeFhH6CQzXNKU6wtjmD7135nU1TdBVMz
-	 pvjChI0pGFkk+0aEKF4qHhenW+g8lMpikzKzw6m7X6B0nAK0I/yAmPsRWMd4bLdJCd
-	 dbEAfkYmELjEg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 21 Oct 2024 10:12:34 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <396e511f-e5cc-4850-bf72-0a2111f7683c@wanadoo.fr>
-Date: Mon, 21 Oct 2024 10:12:32 +0200
+	s=arc-20240116; t=1729498385; c=relaxed/simple;
+	bh=VxGqKEGCnBkJCvO3qGHM5rWV2Hs+c2kSKdV7faUoDJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnWJSmiyFPk9Upd8ECerfu2acgZoooflOGSTYT8A+VbHopj1XAkkxUMHyk5dcSzZ/5FjeI1G1EU9XXapPjEIaN8QAN12IqfbxVZ8Pn6da+3NSd57rnl2GZtO69+qacALIPKKxO3lJKUG8yWFRaoyntSeO0j0lQ1mWWRfhNvkGg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4MqpvlP; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so293127466b.0;
+        Mon, 21 Oct 2024 01:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729498381; x=1730103181; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9Ky9EMNkbbRjWKUs8mDwmXwg2t/TZHXkf923bR2tnY=;
+        b=C4MqpvlPOATgJ+vF6qk8F4f6BbVMyYcl//WNunQln7wUJdotdw8o9WBsBkdU0vUMOc
+         RmHc05E81QfggAI/bVVC7IJiujtCePz6f/TpAcbljhp9AqYDzzfU6ldi95+lvqJfvXK3
+         jd5E+CzIiea3O3InIUdIEM90NsbN/HV+/63hfaz70tFtCgBUbIscoS/x/9j9Qz+QUOhF
+         NI8GX+3In7j1vB34Uz2zRQcXI8hBLKPs8iQtbWOd+sr1Jcq0rtrTPwWTtl+cP9AC2FdM
+         2YEPQBv3ZpCegBd9HP2xRpDOy/tZVLGojXZJce+OXDXFatebhzyOuP1/wqbuvlvBP7P/
+         y+ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729498381; x=1730103181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g9Ky9EMNkbbRjWKUs8mDwmXwg2t/TZHXkf923bR2tnY=;
+        b=kLkytdUO0PGklBDkPiMhzcAbS+WunU1jD2C2zC9Jhq+3tj1E/kcimtX6Tm2nQsgzHn
+         C8yLUrxSSkFsu6VuZ/n6t88P/P5sYYYvh8pJXklCJ7Igy8LAS20QVXqd7we4JDayL5TV
+         3vaDBJduZFu/rRo2lMNvcfM+ZqLXa3TfgYyQkAJkj2YHbZxvkZYfxgBFMTw7/ckMLaSk
+         HCmUTw+TavO5qJrnNEPK+KecXDghr5TPUawHGBfC27ZcfEe9ObQ5z0UIpXKkvbzegjNd
+         paXQMyvZ53SkXXMLlBy3mgkbCYPZ92KWjK8eRpHfN/yWVOUw4mRM8UDBcqEIVtGj5le8
+         U6cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWb/u7e279hwbLYMsOInLZ/Ejke3uXdmo4juHq+UhPsLTcchlWFMzCixhK0FKSOLrbLYwxm/zEltGnxk/o=@vger.kernel.org, AJvYcCWi1gxlLWL+UX0kd0oFx2sWi6pGYGOrk6jvQq1CuB2DvzlDu6CTbZINNptc8JpR3ST6LAHCiKMa3doWC94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvz+/IhTQjYUZyAdfkr5I7k07JVcqDY4JtZ8ZNbzlJSbdR8r/g
+	OQ7aQNqIt5nKa/eDPlIFKxyC3JBuBy18ghQpO+x6ZmkjbGTgwhuc
+X-Google-Smtp-Source: AGHT+IE7AznbKuRbPEcL50uPSYz10OJVhjTCkxblruqPL518uSHr3Vnx+XV+D1ZorUI0J7TcH2Ex6g==
+X-Received: by 2002:a17:907:1c26:b0:a99:3c32:b538 with SMTP id a640c23a62f3a-a9a69cccdd9mr1238237066b.42.1729498381003;
+        Mon, 21 Oct 2024 01:13:01 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a915720fesm173285166b.167.2024.10.21.01.13.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 01:13:00 -0700 (PDT)
+Date: Mon, 21 Oct 2024 10:12:58 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
+Message-ID: <ZxYNCmZhGTICDfDC@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
+ <20241020164354.GG7770@pendragon.ideasonboard.com>
+ <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <20241021073034.GC14328@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 03/13] x86/sev: Add Secure TSC support for SNP guests
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-4-nikunj@amd.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241021055156.2342564-4-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021073034.GC14328@pendragon.ideasonboard.com>
 
-Le 21/10/2024 à 07:51, Nikunj A Dadhania a écrit :
-> Add support for Secure TSC in SNP-enabled guests. Secure TSC allows guests
-> to securely use RDTSC/RDTSCP instructions, ensuring that the parameters
-> used cannot be altered by the hypervisor once the guest is launched.
+On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
+> On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
+> > Hi Laurent,
+> > Thanks for your review.
+> > 
+> > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
+> > > Hi Tommaso,
+> > > 
+> > > Thank you for the patch.
+> > > 
+> > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
+> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > > userspace has to be able to subscribe to control events so that it is
+> > > > notified when the control changes value.
+> > > > If a control handler is set for the subdev then set the HAS_EVENTS
+> > > > flag automatically into v4l2_subdev_init_finalize() and use
+> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > > > as default if subdev don't have .(un)subscribe control operations.
+> > > 
+> > > I would add here
+> > > 
+> > > This simplifies subdev drivers by avoiding the need to set the
+> > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
+> > > consistency of the API exposed to userspace.
+> > > 
+> > > And you can also add
+> > > 
+> > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > 
+> > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > 
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Oks, Thanks again.
+> > 
+> > > Now, can we simplify sensor drivers to drop the event handlers and the
+> > > flag ? :-)
+> > 
+> > Yep, plan is add all to support v4l2_subdev_init_finalize()
+> > Removing:
+> > 
+> >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > 
+> > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
 > 
-> Secure TSC-enabled guests need to query TSC information from the AMD
-> Security Processor. This communication channel is encrypted between the AMD
-> Security Processor and the guest, with the hypervisor acting merely as a
-> conduit to deliver the guest messages to the AMD Security Processor. Each
-> message is protected with AEAD (AES-256 GCM). Use a minimal AES GCM library
-> to encrypt and decrypt SNP guest messages for communication with the PSP.
+> What I meant is looking at the I2C sensor drivers that currently
 > 
-> Use mem_encrypt_init() to fetch SNP TSC information from the AMD Security
-> Processor and initialize snp_tsc_scale and snp_tsc_offset. During secondary
-> CPU initialization, set the VMSA fields GUEST_TSC_SCALE (offset 2F0h) and
-> GUEST_TSC_OFFSET (offset 2F8h) with snp_tsc_scale and snp_tsc_offset,
-> respectively.
+> - call v4l2_subdev_init_finalize()
+> - set V4L2_SUBDEV_FL_HAS_EVENTS
+> - set the .subscribe_event() and .unsubscribe_event() handlers
 > 
-> Add confidential compute platform attribute CC_ATTR_GUEST_SNP_SECURE_TSC
-> that can be used by the guest to query whether the Secure TSC feature is
-> active.
+> and dropping the flag and handlers from them. Is that what you plan to
+> work on ?
+
+Yep, I will take a look on that. :)
+
+Thanks & Regards,
+Tommaso
+
 > 
-> Since handle_guest_request() is common routine used by both the SEV guest
-> driver and Secure TSC code, move it to the SEV header file.
+> > Meanwhile I think I will send v3 with your
+> > suggestions. :)
+> > 
+> > > > ---
+> > > > Changes since v1:
+> > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
+> > > >    SAilus
+> > > > 
+> > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
+> > > >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > index 3a4ba08810d2..fad8fa1f63e8 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+> > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+> > > >  
+> > > >  	case VIDIOC_SUBSCRIBE_EVENT:
+> > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
+> > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
+> > > > +						vfh, arg);
+> > > > +
+> > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> > > > +		    vfh->ctrl_handler)
+> > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+> > > > +
+> > > > +		return -ENOIOCTLCMD;
+> > > >  
+> > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
+> > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+> > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
+> > > > +						vfh, arg);
+> > > > +
+> > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
+> > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+> > > > +
+> > > > +		return -ENOIOCTLCMD;
+> > > >  
+> > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
+> > > >  	case VIDIOC_DBG_G_REGISTER:
+> > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > +	if (sd->ctrl_handler)
+> > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > > +
+> > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
+> > > >  	if (IS_ERR(state))
+> > > >  		return PTR_ERR(state);
 > 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Tested-by: Peter Gonda <pgonda@google.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
-
-..
-
-> +static int __init snp_get_tsc_info(void)
-> +{
-> +	static u8 buf[SNP_TSC_INFO_RESP_SZ + AUTHTAG_LEN];
-> +	struct snp_guest_request_ioctl rio;
-> +	struct snp_tsc_info_resp tsc_resp;
-> +	struct snp_tsc_info_req *tsc_req;
-> +	struct snp_msg_desc *mdesc;
-> +	struct snp_guest_req req;
-> +	int rc;
-> +
-> +	/*
-> +	 * The intermediate response buffer is used while decrypting the
-> +	 * response payload. Make sure that it has enough space to cover the
-> +	 * authtag.
-> +	 */
-> +	BUILD_BUG_ON(sizeof(buf) < (sizeof(tsc_resp) + AUTHTAG_LEN));
-> +
-> +	mdesc = snp_msg_alloc();
-> +	if (IS_ERR_OR_NULL(mdesc))
-> +		return -ENOMEM;
-> +
-> +	rc = snp_msg_init(mdesc, snp_vmpl);
-> +	if (rc)
-> +		return rc;
-> +
-> +	tsc_req = kzalloc(sizeof(struct snp_tsc_info_req), GFP_KERNEL);
-> +	if (!tsc_req)
-> +		return -ENOMEM;
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	memset(&rio, 0, sizeof(rio));
-> +	memset(buf, 0, sizeof(buf));
-> +
-> +	req.msg_version = MSG_HDR_VER;
-> +	req.msg_type = SNP_MSG_TSC_INFO_REQ;
-> +	req.vmpck_id = snp_vmpl;
-> +	req.req_buf = tsc_req;
-> +	req.req_sz = sizeof(*tsc_req);
-> +	req.resp_buf = buf;
-> +	req.resp_sz = sizeof(tsc_resp) + AUTHTAG_LEN;
-> +	req.exit_code = SVM_VMGEXIT_GUEST_REQUEST;
-> +
-> +	rc = snp_send_guest_request(mdesc, &req, &rio);
-> +	if (rc)
-> +		goto err_req;
-> +
-> +	memcpy(&tsc_resp, buf, sizeof(tsc_resp));
-> +	pr_debug("%s: response status %x scale %llx offset %llx factor %x\n",
-> +		 __func__, tsc_resp.status, tsc_resp.tsc_scale, tsc_resp.tsc_offset,
-> +		 tsc_resp.tsc_factor);
-> +
-> +	if (tsc_resp.status == 0) {
-> +		snp_tsc_scale = tsc_resp.tsc_scale;
-> +		snp_tsc_offset = tsc_resp.tsc_offset;
-> +	} else {
-> +		pr_err("Failed to get TSC info, response status %x\n", tsc_resp.status);
-> +		rc = -EIO;
-> +	}
-> +
-> +err_req:
-> +	/* The response buffer contains the sensitive data, explicitly clear it. */
-> +	memzero_explicit(buf, sizeof(buf));
-> +	memzero_explicit(&tsc_resp, sizeof(tsc_resp));
-> +	memzero_explicit(&req, sizeof(req));
-
-req does not seem to hold sensitive data.
-Is it needed, or maybe should it be tsc_req?
-
-> +
-> +	return rc;
-> +}
-
-...
-
-CJ
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
