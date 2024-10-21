@@ -1,178 +1,141 @@
-Return-Path: <linux-kernel+bounces-374786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C339A6FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:46:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0109A7000
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8816B1F211E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8F2284C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6691E5705;
-	Mon, 21 Oct 2024 16:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6703E1E9077;
+	Mon, 21 Oct 2024 16:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DD+rLbws"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7th4ogl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F0547A73;
-	Mon, 21 Oct 2024 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B7D1CCB48;
+	Mon, 21 Oct 2024 16:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529197; cv=none; b=tdlCbl9okBccslgldPqt1QJu4AI2O+0nJNLnsDfq7KckPXZXLEHXiknFEgE2I6l9e/XbYM/syUo6cPDpuHCbdD9GuAM1alyKr+vkTKMvmrcl9aF+p8TTrtQXDssoki+AUg4XdhEs3jwGS9/pN3140RyCtq97HTMbav4dRqO6FB0=
+	t=1729529227; cv=none; b=tOrnE5SqfjMARsGDoNyqypGgd2I657JB71mm2DC7McqticMP66rTmr6DsfbeTX3kua94qPnxLil6INlT90bl3kaOT5d/zvXeG4mvrh8CkeBYXjSjtd8+pfrxhQDj6Wf/Gf9z1ATRhYY32rUlIJq2A1sjaaUltTk61nfEEqqcr+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529197; c=relaxed/simple;
-	bh=A0FkUr4PZGC3BJ8Tf522Ac9/Uph3gtwc+TMsH4zYyVU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W47+OSksDWYzwyLpkJOWj6n/MX3UBOb3SzEpbkPeSugiSuRKnl9ItLXC0qx1LhtKUM6yGCPWb7fO1zHXvfO6y7zL3vJLD2DdIFTC9G5fHiMdHgOHubplaIaE7Br/qUcHEcap+EqFKtLLea9U+RHWZY/hvl/9d9KzDJucquJaZXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DD+rLbws; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61F7FC4CEC3;
-	Mon, 21 Oct 2024 16:46:36 +0000 (UTC)
+	s=arc-20240116; t=1729529227; c=relaxed/simple;
+	bh=Q5GFFFYJnSN8U7ugPStwUdZA5rYx/3dERlYxotuRH2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgOauHZQQMy3CNhxbVHnNvKa8PkLt9+P89RObJ9eTN7pea6hnxeXqEXcRQKMv8miIrrsNeCzWbHFTPcDXkXNEuLDmV4LX6L61gIYZGdEf5CVonpJwmpmxAkmYlAnby5r5qSj0gUa93qSW2sOiLUJNjqn9QtM5TdhSe+Md0N2rcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7th4ogl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40DD1C4CECD;
+	Mon, 21 Oct 2024 16:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729529196;
-	bh=A0FkUr4PZGC3BJ8Tf522Ac9/Uph3gtwc+TMsH4zYyVU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DD+rLbwstiSB8PKB5/d1WjmMXMFhcAAK58egPR6pUSAR3H3bqmc2t8dv68/I4/hsR
-	 QAKEb4CcfzaE5hYedcmChP6/cdE9WGdnHoIRn1Bz/gUBP3XFE8W1ZegxGy5L7c7OSQ
-	 uXEas5hD9Jx9hPkS1K+fj/mOIZUPIwO0RP60EBm+VU/xXxdF5LrnhlQ3ebjeCwrWvx
-	 C6BlN7joE6wD3MvhkxOKQCvXYVK0yo5WJsYgwUqweHTBq9D/HCPmS+00tgmRSWyCWw
-	 hCFxcHWljR2xjQQWcCD5rYOGhK1kZnewuH3s3nds5QegnmTrzopmuHAqyryC9rEDqp
-	 vVYrjxlbJ3f6g==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Celeste Liu <coelacanthushex@gmail.com>, Celeste Liu via B4 Relay
- <devnull+CoelacanthusHex.gmail.com@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
- <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-In-Reply-To: <b72e3d2b-d540-47bf-adec-0ab6eda135d8@gmail.com>
-References: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
- <87a5exy2rx.fsf@all.your.base.are.belong.to.us>
- <b72e3d2b-d540-47bf-adec-0ab6eda135d8@gmail.com>
-Date: Mon, 21 Oct 2024 09:46:35 -0700
-Message-ID: <8734kpqu8k.fsf@all.your.base.are.belong.to.us>
+	s=k20201202; t=1729529227;
+	bh=Q5GFFFYJnSN8U7ugPStwUdZA5rYx/3dERlYxotuRH2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7th4oglQ8Q1elW4XxPsfqZTNgK7HI07k07I67fRzn62e5cBKpNzxpJQ6LSrbm7ES
+	 nKMvcVTMSO0nZiornBNsMdWLKgEtLksUiBGt6JJUfIejqDz+Usl7zRt8sD+LoJFJGT
+	 8OuqfWPv8yY7dDy4mtooPG5D3X1EavFnWNxRXZEbgGMMe5JoXjhjBdGyI7qJ+koKiQ
+	 +RMOBEW9MM/MzIPWilEMAFWFOVOQr2JmbfUCiW/D6qYLxbD7d+JTRLj4pDV342f5aC
+	 b+0jZ502dykLCXB4y6LRvLWdIqA3UFct8QksTtnLjbyY+7y1ks+ASo5k43RBPoo6X1
+	 SeuqT/0ckfFJw==
+Date: Mon, 21 Oct 2024 17:46:58 +0100
+From: Will Deacon <will@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>,
+	linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v17 02/16] function_graph: Replace fgraph_ret_regs with
+ ftrace_regs
+Message-ID: <20241021164658.GB26073@willie-the-truck>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+ <172904028952.36809.12123402713602405457.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172904028952.36809.12123402713602405457.stgit@devnote2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Celeste Liu <coelacanthushex@gmail.com> writes:
+On Wed, Oct 16, 2024 at 09:58:09AM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Use ftrace_regs instead of fgraph_ret_regs for tracing return value
+> on function_graph tracer because of simplifying the callback interface.
+> 
+> The CONFIG_HAVE_FUNCTION_GRAPH_RETVAL is also replaced by
+> CONFIG_HAVE_FUNCTION_GRAPH_FREGS.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> 
+> ---
+>  Changes in v17:
+>   - Fixes s390 return_to_handler according to Heiko's advice.
+>  Changes in v16:
+>   - According to the recent ftrace_regs.h change, override
+>     ftrace_regs_get_frame_pointer() if needed.
+>   - s390: keep stack_frame on stack, just replace fgraph_ret_regs
+>     with ftrace_regs.
+>  Changes in v8:
+>   - Newly added.
+> ---
+>  arch/arm64/Kconfig                  |    1 +
+>  arch/arm64/include/asm/ftrace.h     |   23 ++++++-----------------
+>  arch/arm64/kernel/asm-offsets.c     |   12 ------------
+>  arch/arm64/kernel/entry-ftrace.S    |   32 ++++++++++++++++++--------------
 
->>> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
->>> index 51ebfd23e0076447518081d137102a9a11ff2e45..3125fab8ee4af468ace9f69=
-2dd34e1797555cce3 100644
->>> --- a/arch/riscv/kernel/traps.c
->>> +++ b/arch/riscv/kernel/traps.c
->>> @@ -316,18 +316,25 @@ void do_trap_ecall_u(struct pt_regs *regs)
->>>  {
->>>  	if (user_mode(regs)) {
->>>  		long syscall =3D regs->a7;
->>> +		long res;
->>>=20=20
->>>  		regs->epc +=3D 4;
->>>  		regs->orig_a0 =3D regs->a0;
->>> -		regs->a0 =3D -ENOSYS;
->>>=20=20
->>>  		riscv_v_vstate_discard(regs);
->>>=20=20
->>> -		syscall =3D syscall_enter_from_user_mode(regs, syscall);
->>> +		res =3D syscall_enter_from_user_mode(regs, syscall);
->>> +		/*
->>> +		 * Call syscall_get_nr() again because syscall_enter_from_user_mode()
->>> +		 * may change a7 register.
->>> +		 */
->>> +		syscall =3D syscall_get_nr(current, regs);
->>>=20=20
->>>  		add_random_kstack_offset();
->>>=20=20
->>> -		if (syscall >=3D 0 && syscall < NR_syscalls)
->>> +		if (syscall < 0 || syscall >=3D NR_syscalls)
->>> +			regs->a0 =3D -ENOSYS;
->>> +		else if (res !=3D -1)
->>>  			syscall_handler(regs, syscall);
->>=20
->> Here we can perform the syscall, even if res is -1. E.g., if this path
->> [2] is taken, we might have a valid syscall number in a7, but the
->> syscall should not be performed.
->
-> I may misunderstand what you said, but I can't see the issue you pointed.
-> A syscall is performed iff
->
-> 1) syscall number in a7 must be valid, so it can reach "else if" branch.
-> 2) res !=3D -1, so syscall_enter_from_user_mode() doesn't return -1 to
->    inform the syscall should be skipped.
+For the arm64 parts:
 
-Ah, indeed. Apologies, that'll work!
+Acked-by: Will Deacon <will@kernel.org>
 
-Related, now wont this reintroduce the seccomp filtering problem? Say,
-res is -1 *and* syscall invalid, then a0 updated by seccomp will be
-overwritten here?
-
->> Also, one reason for the generic entry is so that it should be less
->> work. Here, you pull (IMO) details that belong to the common entry
->> implementation/API up the common entry user. Wdyt about pushing it down
->> to common entry? Something like:
->
-> Yeah, we can. But I pull it out of common entry to get more simple API se=
-mantic:
->
-> 1. syscall_enter_from_user_mode() will do two things:
->    1) the return value is only to inform whether the syscall should be sk=
-ipped.
->    2) regs will be modified by filters (seccomp or ptrace and so on).
-> 2. for common entry user, there is two informations: syscall number and
->    the return value of syscall_enter_from_user_mode() (called is_skipped =
-below).
->    so there is three situations:
->    1) if syscall number is invalid, the syscall should not be performed, =
-and
->       we set a0 to -ENOSYS to inform userspace the syscall doesn't exist.
->    2) if syscall number is valid, is_skipped will be used:
->       a) if is_skipped is -1, which means there are some filters reject t=
-his syscall,
->          so the syscall should not performed. (Of course, we can use bool=
- instead to
->          get better semantic)
->       b) if is_skipped !=3D -1, which means the filters approved this sys=
-call,
->          so we invoke syscall handler with modified regs.
->
-> In your design, the logical condition is not obvious. Why syscall_enter_f=
-rom_user_mode()
-> informed the syscall will be skipped but the syscall handler will be call=
-ed
-> when syscall number is invalid? The users need to think two things to get=
- result:
-> a) -1 means skip
-> b) -1 < 0 in signed integer, so the skip condition is always a invalid sy=
-scall number.
->
-> In may way, the users only need to think one thing: The syscall_enter_fro=
-m_user_mode()
-> said -1 means the syscall should not be performed, so use it as a conditi=
-on of reject
-> directly. They just need to combine the informations that they get from A=
-PI as the
-> condition of control flow.
-
-I'm all-in for simpler API usage! Maybe massage the
-syscall_enter_from_user_mode() (or a new one), so that additional
-syscall_get_nr() call is not needed?
-
-
-Bj=C3=B6rn
+Will
 
