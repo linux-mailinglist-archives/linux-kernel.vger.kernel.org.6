@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-374159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6116C9A65BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:02:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5E69A6611
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E500C1F23A4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284541F23C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942161E1C19;
-	Mon, 21 Oct 2024 11:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQ7iSXQO"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D0F1E572A;
+	Mon, 21 Oct 2024 11:13:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E313A1CD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0183B39FD6;
+	Mon, 21 Oct 2024 11:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508526; cv=none; b=H3g1OqqFoOcBTpFA3FQT9QsiUlioA3gxW2RC/CvexwECFwbe+UmC8RXkzXVZl5Tfnn3Y6GJq5Jt0vF5vTeip0oQaBjWsmtFrqyvjBopoJ9L2rHG9/tiy5OBPtUStPi/QHUUWRgxqTHvrHCeUlHSgjqqW6qv2m/lQhHUpEjlACAA=
+	t=1729509190; cv=none; b=ABrqkeYsWh1mTtmlCIdZjqEtX+CRoBXHmC5FZeTBh/LpQ1tKjB9NXh/iALSVCcziY9VEZqTZWAvrkFxDtcngXPIUgmI9nZGU3ZPv/faO9KwbZw4g3fodvZ7bqv46cwqT9Z6lbonIRzxyl8V7EfSl/JnkMGKOWrUGsC2TBbhu0z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508526; c=relaxed/simple;
-	bh=7nNaav5rY0OVijNkjo4ryxicbGYxAKgnlEw2GCf+yrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nBTlsay/PrQI/WdvWy0mcfhYYrZ1t7dkAweGpuaSkTxCNO6kl3sDFuOeOXz1XG4dGDvK6D74az97FnQHeiaXO6M15r3EK5vZ58IvpPrRe5IDqzK+mootSzHmyLT1xT7gn9HQSB/PmEXhHj2AwdpY9PrEuchKfKZKh/DSE7M1km0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQ7iSXQO; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e6044f9561so1281125b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729508524; x=1730113324; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3KEnxCRvJxHLUHwDo6LAN7RNla4DoUTlDGrHx8mrkYs=;
-        b=eQ7iSXQOiSDfC5h/SoIBPNXmVEi+L+ao8bjcbj2XF6znyJItbpgJ3YwdH6Tnem6JPg
-         0gF58vFebF+4ltsceyv+E2kpdSIbVAJ99E5K74+7hkJcCkpEn5PB3ltwZkhchbFUqWt2
-         poVduhezCl4r1G4rQs7En8w/WMy/7yrEEudAwmdbF/HNq0E7XQ9e25uk1paJrr4C/7uQ
-         sw4V9H8Ry+acArStWFmuYOD1+XUdevH0MOM8Bb9eRvgMBlDiuqC6MGtflo+AGeNVOWdW
-         TPqInCf2umkgP/LOekVaRwqzWEbc7waikWkVREYEmRq1CJHACFkFxaRX3rdUPfS5lnm6
-         oyHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508524; x=1730113324;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3KEnxCRvJxHLUHwDo6LAN7RNla4DoUTlDGrHx8mrkYs=;
-        b=DSwWiQ0bbrjcvQNwLPQhAv7sbZ+7HnohfAG2vcUQdfyR3ai8GP8NYw4GHZpAGoUBMC
-         jV/wz4Ddgji1DoGoEZu8ZwriLbdl4l8g8uRC99ypexLVd4Ov1SzrhVJwyhcLddy0noR8
-         E4QT5jzm207Np6O8aD+SS83AE27mAdH7K7Gb1Cqkgbzb4DDe1JFKjGSqAWEhzTve+nbN
-         PfLXpgcvXw6Nv5Qjlc9Clu5sCAQacQrxLjm1j1+bZ6MrNp9AgmhbH0b/Ge/wVmBIwmxZ
-         U44TQ1759WALhzUENrz0ZUANHSjY8rbNkpKTOoIwKNplkBYWMSh/4mYFYUoR0Ou2eKKv
-         m6Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXontWTKs3fzw2cMiyQZaYpSzOzFmZeZMZgKf8413HxWSMlxb+lH0IwvNvPpi1bOaQkVGd3crUAPZIHHD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEpDQebeQP80sjhDUbZ+GfNK+YJ5g6wCMjYhD1k1wdxfp1uWcr
-	i73+CD9zFDJWRSq6tJafARrdpeKVh1U97Xvh7nhaEQTfHQBZW5krlDZRG/zJ/Vdd3zTqPKR5IdX
-	+DjTQk6JuESpkgRdKP+uUK9glF81M/OyKH+Lmtw==
-X-Google-Smtp-Source: AGHT+IHvdIXPDe2YEV1+7SFaHz0hdIX8uJm2BxidzbXIrl1aadRtmsEbTSvHB1GJZ9NGNT34ilz+0JXG84igEBttV/4=
-X-Received: by 2002:a05:6808:1284:b0:3e6:147d:f13 with SMTP id
- 5614622812f47-3e6147d0fdcmr1647722b6e.5.1729508523794; Mon, 21 Oct 2024
- 04:02:03 -0700 (PDT)
+	s=arc-20240116; t=1729509190; c=relaxed/simple;
+	bh=748EsHOhz8UoHb/gUJssuAMhbGWRk9glST+m3EqvEps=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bY7T82pZjmcu85NYg4hWwpDmK883Y9fJnDY1LUp/J+PcKlRoRvb+Lsy0px4BxqSzsunRrhWPazjVRRaxPbicjhzytGNOtHbN1WQftIDQBazImmZHEUbCt3QWJQnMpUSTphjzf9/PSqAVF2KQrZsxRjYAK/LO7uGzpWLLAT7AqXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXCMd27fRz4f3nJv;
+	Mon, 21 Oct 2024 19:12:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D3621A0359;
+	Mon, 21 Oct 2024 19:13:03 +0800 (CST)
+Received: from huawei.com (unknown [10.67.174.45])
+	by APP2 (Coremail) with SMTP id Syh0CgC3NlwxNxZn5mXIEg--.38372S2;
+	Mon, 21 Oct 2024 19:13:01 +0800 (CST)
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	song@kernel.org,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH -next v5 0/2] perf stat: Support inherit events for bperf
+Date: Mon, 21 Oct 2024 11:01:59 +0000
+Message-Id: <20241021110201.325617-1-wutengda@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002201555.3332138-1-peter.griffin@linaro.org>
- <20241002201555.3332138-2-peter.griffin@linaro.org> <ZwN/d8l7Mk6x2GHP@vaman>
- <CADrjBPrRrwEyg0p+6kfVoZGbPdvW6K3fa9paUoLyg_bHHScgHg@mail.gmail.com> <ZxED5/HdlBLWqesE@vaman>
-In-Reply-To: <ZxED5/HdlBLWqesE@vaman>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 21 Oct 2024 12:01:52 +0100
-Message-ID: <CADrjBPpyTz6ytYXRkTSYGxhBCTkKjMPmopXyrvbPOQg1OiBcFA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] phy: Add UFS phy hibernate modes
-To: Vinod Koul <vkoul@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Avri Altman <avri.altman@wdc.com>, quic_stummala@quicinc.com
-Cc: kishon@kernel.org, krzysztof.kozlowski@linaro.org, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, kernel-team@android.com, 
-	willmcvicker@google.com, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgC3NlwxNxZn5mXIEg--.38372S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF1xur1UJF4fuFyDGFW3ZFb_yoW8ZF4DpF
+	4Skr90kwn0gFy5KwnxAanru3WYvr1rGFy5WFn7tr4fAF4qvr17uFWIgFy5tF13ZryxGry0
+	yrnFgr13urZ5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxkF7I0Ew4C26cxK6c8Ij28IcwCF04k20xvY0x0EwIxGrwCFx2IqxV
+	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+	6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UYxBIdaVFxhVjvjDU0xZFpf9x07jeLvtUUUUU=
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Hi Vinod,
+Hello,
 
-Thanks for your feedback!
+Here is the 5th version of the series to support inherit events for bperf.
+This version added the `inherit` flag for struct `target` instead of
+`bpf_stat_opts`, and also fixed the logic when TGID w/o inherit.
 
-On Thu, 17 Oct 2024 at 13:32, Vinod Koul <vkoul@kernel.org> wrote:
->
-> On 08-10-24, 11:30, Peter Griffin wrote:
->
-> > > > +     PHY_MODE_DP,
-> > > > +     PHY_MODE_UFS_HIBERN8_ENTER,
-> > > > +     PHY_MODE_UFS_HIBERN8_EXIT,
-> > >
-> > > I am not sure I like this. why should this be the model? Phy drivers
-> > > should listen to pm events and handle this in pm_suspend/resume calls,
-> > > why do we need this special mode here...
-> >
-> > There are a couple of reasons I added it here:
-> >
-> > 1) Whilst link hibern8 mode can be used as part of runtime PM and
-> > system PM, it is also used outside of those contexts by ufshcd.c. The
-> > host controller can enable UFSHCD_CAP_HIBERN8_WITH_CLK_GATING (which
-> > will be the case for gs101 / Pixel 6) and the UFS clocks are gated and
-> > link put into hibern8 mode for periods of inactivity. When that
-> > happens the rest of the system isn't entering any sort of sleep state.
-> >
-> > 2) From looking at the existing code upstream ufs-qcom.c and
-> > phy-qcom-qmp-ufs.c look to have similar requirements in that it needs
-> > to program a set of specific register values depending on the UFS
-> > gear. To achieve that they added PHY_MODE_UFS_HS_B and
-> > PHY_MODE_UFS_HS_A modes here and then use phy_set_mode_ext() API in
-> > ufs_qcom_power_up_sequence() to signal to the phy driver the UFS gear,
-> > which is then used to choose which set of values to program to the
-> > phy.
-> >
-> > The two new UFS phy modes added here for hibern8 are for a very
-> > similar purpose (to choose a bunch of register values to program), so
-> > I considered it consistent with what was already being done upstream
-> > to signal between UFS host drivers and UFS phy drivers. Arguably I
-> > guess we could have one "mode" PHY_MODE_UFS_HIBERN8 and use the
-> > submode parameter to indicate whether we are entering (1) or exiting
-> > (0) from it. I wasn't really sure what the rules/guidelines for the
-> > submode parameter were though.
->
-> Yes but not exactly. The HIBERN8_ENTER|EXIT sound like PM events rather
-> than a PHY mode. If this is resultant from inactivity, then we should
-> hook this up to runtime pm ?
 
-As I mentioned above HIBERN8 is implemented and runs independently of
-runtime pm in the upstream UFS stack. To be clear that isn't a
-ufs-exynos thing, but rather the core ufs stack in
-drivers/ufs/core/ufshcd.c.
+bperf (perf-stat --bpf-counter) has not supported inherit events during
+fork() since it was first introduced.
 
-I've added Bart, Alim, Avri to this thread, as they are listed as
-reviewers of the core ufshcd file and also Sahitya who originally
-introduced this UFSHCD_CAP_HIBERN8_WITH_CLK_GATING functionality.
-Hopefully they can provide more details as to why hibern8 has been
-implemented like this outside of runtime pm. The original commit where
-this was introduced is
+This patch series tries to add this support by:
+ 1) adding two new bpf programs to monitor task lifecycle;
+ 2) recording new tasks in the filter map dynamically;
+ 3) reusing `accum_key` of parent task for new tasks.
 
-commit 1ab27c9cf8b63dd8dec9e17b5c17721c7f3b6cc7
-Author: Sahitya Tummala <quic_stummala@quicinc.com>
-Date:   Thu Sep 25 15:32:32 2014 +0300
+Thanks,
+Tengda
 
-    ufs: Add support for clock gating
 
-which mentions in the description that the timeout is typically less
-than the runtime suspend timeout.
+Changelog:
+---------
+v5: (Address comments from Namhyung, thanks)
+ * Add the `inherit` flag for struct `target` instead of `bpf_stat_opts`
+ * Fix the logic when TGID w/o inherit
 
-I think the main difference here versus other SoC UFS controllers and
-UFS phys is that the others don't appear to need any additional phy
-register writes when entering/leaving hibern8, which the ufs-exynos
-phy does. It looks like all the hibern8 callbacks upstream in the core
-UFS stack were added by Samsung for ufs-exynos. In downstream they
-don't split the ufs controller and ufs phy parts into separate
-drivers, it is all done from the controller glue driver so it isn't an
-issue.
+v4: https://lore.kernel.org/all/20241012023225.151084-1-wutengda@huaweicloud.com/
+ * Add an `inherit` flag to bperf to control inherit behavior
 
-With regards to whether it is a "mode" or not, HIBERN8 is a M-Phy
-power state, but then PHY_MODE_UFS_HS_A and  PHY_MODE_UFS_HS_B are
-also m-phy power states (HS_BURST with rate A or HS_BURST with rate b)
-so it seemed in keeping with what you are already doing here.
+v3: https://lore.kernel.org/all/20240916014318.267709-1-wutengda@huaweicloud.com/
+ * Use pid or tgid based on filter type in new_task prog
+ * Add comments to explain pid usage for TGID type in exit_task prog
 
-regards,
+v2: https://lore.kernel.org/all/20240905115918.772234-1-wutengda@huaweicloud.com/
+ * Remove the unused init_filter_entries in follower bpf, declare
+   a global filter_entry_count in bpf_counter instead
+ * Attach on_newtask and on_exittask progs only if the filter type
+   is either PID or TGID
 
-Peter.
+v1: https://lore.kernel.org/all/20240904123103.732507-1-wutengda@huaweicloud.com/
+
+
+Tengda Wu (2):
+  perf stat: Support inherit events during fork() for bperf
+  perf test: Use sqrtloop workload to test bperf event
+
+ tools/perf/builtin-stat.c                     |  1 +
+ tools/perf/tests/shell/stat_bpf_counters.sh   |  2 +-
+ tools/perf/util/bpf_counter.c                 | 35 +++++--
+ tools/perf/util/bpf_skel/bperf_follower.bpf.c | 98 +++++++++++++++++--
+ tools/perf/util/bpf_skel/bperf_u.h            |  5 +
+ tools/perf/util/target.h                      |  1 +
+ 6 files changed, 127 insertions(+), 15 deletions(-)
+
+-- 
+2.34.1
+
 
