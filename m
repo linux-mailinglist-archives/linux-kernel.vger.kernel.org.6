@@ -1,135 +1,104 @@
-Return-Path: <linux-kernel+bounces-373742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3109A5BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:56:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23379A5BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F231282638
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:56:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9811B1F21AF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947141D04BB;
-	Mon, 21 Oct 2024 06:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6431D0E1A;
+	Mon, 21 Oct 2024 06:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="F71kmBZ5"
-Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqP9st+B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2A41D0F68;
-	Mon, 21 Oct 2024 06:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA6015575F;
+	Mon, 21 Oct 2024 06:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729493750; cv=none; b=ju6vxXKhaQkm4nKgOlat2aMcYbBRCEycTlWWj2K9Ig4O+H+XW7/YfPQ0X6RoETsbztmcVIcu9oSSQx9onoh9EE1uTKcE8XlmDcloMa25AymJoqyBm/74A3mBZd62/c+kDXKxfh5w7PrYhk8pjAlpAidKNnPywUzJu2rd1qRuiR8=
+	t=1729493745; cv=none; b=RxxtRC4Iequ+WkpPT2Yv8X0sA/VyYTF9SpeOt0B4FsIVK5Ck+R4aT1kua+NdjujYQKX67C65OSa1qqIXzIIkkXztC92E8n8QLWElKa/LsPd1Bb3/oSPjiOYQ9C/zREpcSdp5WvToWLIJ9tWbZ5E8OdVP5VvD25aZh46yvk+1uCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729493750; c=relaxed/simple;
-	bh=arkWI03su4YSBSMmr5PkdZjKRvultl8DVI/Ao8Lq9UQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B/1qYbmbtMPmZxl6JJ1xkJI3HE6/4D+M/Ehr/9vhQE2kq78rABiEdMBGF3yjhtc3/PKl1aHTCy5PXiOYSwl52sGEvgnTanZGCtG4x4LPaPhsVfjuW4WzIlk2mECxkrk8XGssjNobMp8/ZXnUIRGvdl4uJo0d5AeiWMHK7DYV5iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=F71kmBZ5; arc=none smtp.client-ip=185.70.40.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729493740; x=1729752940;
-	bh=arkWI03su4YSBSMmr5PkdZjKRvultl8DVI/Ao8Lq9UQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=F71kmBZ5RES2Ir+IWSGNZDbm78U1UiT1fbYk0BVQxwXV3CfipwjYeWB6dN3WtMQTm
-	 dmK6v2GCZ5Obtz51Ri8F94paK6LNY54/kv/QWr57jVdCd7sU7/OWUwTfoTryRrxyqU
-	 EAQ33pIbKn5Qe2HDgwQAnut7GQTL21RaqeQkD0hKEuP9B9kPNldkcezZTez4Hk9gU7
-	 fApobs8rITw0PG91KlrICVVkyHC6htMV/vGKtqelCzpoHgaNHbyK6LGXmMxcPKDNQ5
-	 qwKE0b8wABFGDC3qIz7YyG5KaqbyRSl8zCXoSWY8Zx4B73F0dJJEvVb5Rq9ufoehFx
-	 BN74jFVgsNYtQ==
-Date: Mon, 21 Oct 2024 06:55:35 +0000
-To: koachan@protonmail.com
-From: Koakuma <koachan@protonmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] sparc/build: Remove all usage of -fcall-used* flags
-Message-ID: <iBnrR9d4gRwtBGXlD_1AXH2OXuzLp6oR4PGkk4pg7KUVIsfs0G1zvzJTrO8o4y5ZHBWHdYOifN2_ZhbnrVd9jUTwJjeA5sdQhIcHp1o4xd0=@protonmail.com>
-In-Reply-To: <20240716-sparc-cflags-v2-1-40bdc4484d10@protonmail.com>
-References: <20240716-sparc-cflags-v2-0-40bdc4484d10@protonmail.com> <20240716-sparc-cflags-v2-1-40bdc4484d10@protonmail.com>
-Feedback-ID: 6608610:user:proton
-X-Pm-Message-ID: 1a094c75eebe4bf961b497dbdf4c0791a94cc949
+	s=arc-20240116; t=1729493745; c=relaxed/simple;
+	bh=07U94b6F6zmDzp669IA6TRr0lDH3z86Sqc3IMdNwgNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NbDq4P6mK9ySzucQiGuVtetWCaovsN/Wqmr1eKqWMeVYbN0YKjW3p6tpxiPOW5aHPhFieLWXXUFKNqONcrPRZKka0uMEVsSEJKiZetqKhxz2jKW2mP0f3NQGwiDveI9g+Vy3tki7opeb6i5eEVDzzM3XXXqMLOzMQpsaEdFomA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqP9st+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB75C4CEC3;
+	Mon, 21 Oct 2024 06:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729493744;
+	bh=07U94b6F6zmDzp669IA6TRr0lDH3z86Sqc3IMdNwgNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PqP9st+BYR5vYI/1IdDe2BM9BNsFGptV4wKU4M5ozOYKdcJ26JgZC/pnBbbNVbpF0
+	 pGv7W6OQY6AA3SBfqJFQt5DGdH04+QTWY6AyCunzWtIkoClBTL2ZfMRokwpv6yBNJK
+	 wVBkecuIFlRZf9Vt4twPTy0lAJJ0D7SZlvRA8xwx5f5Fb2kds/iMPjQ2e8hXaJZThx
+	 MFgKFGhTPq5tiYMun0KeDDINMfUu6GiQGWeb6vWKzOijs/Aizk+bUUqD4dZK+6ztFB
+	 k4aldEtLJJ81a54AKjv4pG+sgJB1a5eHC+bB+QiAsSJjY6v/GS0DX2hBHFjVE9gECN
+	 o0HsPi0LZ8VkA==
+Date: Mon, 21 Oct 2024 08:55:38 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v3 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <ZxX66guRidaeV1zO@ryzen.lan>
+References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
+ <20241015-ep-msi-v3-4-cedc89a16c1a@nxp.com>
+ <ZxJqITunljv0PGxn@ryzen.lan>
+ <ZxJ7HoSuYNr8mwSi@lizhi-Precision-Tower-5810>
+ <ZxUWlSFEPDCCXaq0@x1-carbon.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxUWlSFEPDCCXaq0@x1-carbon.lan>
 
-Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org> wrote:
+On Sun, Oct 20, 2024 at 04:41:25PM +0200, Niklas Cassel wrote:
+> On Fri, Oct 18, 2024 at 11:13:34AM -0400, Frank Li wrote:
+> > On Fri, Oct 18, 2024 at 04:01:05PM +0200, Niklas Cassel wrote:
+> 
+> How about we add a new pcitest --set-doorbell-mode option
+> (that is similar to pcitest -i which sets the interrupt mode to use).
+> 
+> That way, we can do:
+> ./pcitest --set-doorbell-mode 1
+> (This will enable doorbell for e.g. BAR0, pci-epf-test will call
+> pci_epf_alloc_doorbell() when receiving this command from the RC side.
+> The command will return failure if pci_epf_alloc_doorbell() returned failure.)
+> 
+> ./pcitest -B
+> (This will perform the doorbell test)
+> 
+> ./pcitest --set-doorbell-mode 0
+> (This will disable the doorbell for BAR0,
+> so it will again not trigger IRQs when BAR0 is written,
+> and pcitest's tests to read/write the BARs will again behave as expected.)
+> 
+> (We probably also need another option pcitest --get-doorbell-mode.)
+> 
+> I think this should solve all your concerns. Thoughts?
 
-> From: Koakuma koachan@protonmail.com
->
->
-> Remove all usage of -fcall-used* flags so that all flags used are
-> portable between GCC and clang.
->
-> The reasoning is as follows:
->
-> In the (normal) 32-bit ABI, %g5 and %g7 is normally reserved, and in
-> the 64-bit ABI, %g7 is the reserved one.
-> Linux turns them into volatile registers by the way of -fcall-used-*,
-> but on the other hand, omitting the flags shouldn't be harmful;
-> compilers will now simply refuse to touch them, and any assembly
-> code that happens to touch them would still work like usual (because
-> Linux' conventions already treats them as volatile anyway).
->
-> Signed-off-by: Koakuma koachan@protonmail.com
->
-> ---
-> arch/sparc/Makefile | 4 ++--
-> arch/sparc/vdso/Makefile | 2 +-
-> 2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
-> index 757451c3ea1d..7318a8b452c3 100644
-> --- a/arch/sparc/Makefile
-> +++ b/arch/sparc/Makefile
-> @@ -29,7 +29,7 @@ UTS_MACHINE :=3D sparc
-> # versions of gcc. Some gcc versions won't pass -Av8 to binutils when you
-> # give -mcpu=3Dv8. This silently worked with older bintutils versions but
-> # does not any more.
-> -KBUILD_CFLAGS +=3D -m32 -mcpu=3Dv8 -pipe -mno-fpu -fcall-used-g5 -fcall-=
-used-g7
-> +KBUILD_CFLAGS +=3D -m32 -mcpu=3Dv8 -pipe -mno-fpu
-> KBUILD_CFLAGS +=3D -Wa,-Av8
->
-> KBUILD_AFLAGS +=3D -m32 -Wa,-Av8
-> @@ -45,7 +45,7 @@ export BITS :=3D 64
-> UTS_MACHINE :=3D sparc64
->
-> KBUILD_CFLAGS +=3D -m64 -pipe -mno-fpu -mcpu=3Dultrasparc -mcmodel=3Dmedl=
-ow
-> -KBUILD_CFLAGS +=3D -ffixed-g4 -ffixed-g5 -fcall-used-g7 -Wno-sign-compar=
-e
-> +KBUILD_CFLAGS +=3D -ffixed-g4 -ffixed-g5 -Wno-sign-compare
-> KBUILD_CFLAGS +=3D -Wa,--undeclared-regs
-> KBUILD_CFLAGS +=3D $(call cc-option,-mtune=3Dultrasparc3)
-> KBUILD_AFLAGS +=3D -m64 -mcpu=3Dultrasparc -Wa,--undeclared-regs
-> diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
-> index 243dbfc4609d..e009443145af 100644
-> --- a/arch/sparc/vdso/Makefile
-> +++ b/arch/sparc/vdso/Makefile
-> @@ -46,7 +46,7 @@ CFL :=3D $(PROFILING) -mcmodel=3Dmedlow -fPIC -O2 -fasy=
-nchronous-unwind-tables -m64
-> -fno-omit-frame-pointer -foptimize-sibling-calls \
-> -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
->
-> -SPARC_REG_CFLAGS =3D -ffixed-g4 -ffixed-g5 -fcall-used-g5 -fcall-used-g7
-> +SPARC_REG_CFLAGS =3D -ffixed-g4 -ffixed-g5
->
-> $(vobjs): KBUILD_CFLAGS :=3D $(filter-out $(RANDSTRUCT_CFLAGS) $(GCC_PLUG=
-INS_CFLAGS) $(SPARC_REG_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
->
->
-> --
-> 2.45.2
+And just to clarify, if we go with the --set-doorbell-mode approach,
+then my previous idea (introducing capabilities in pci-epf-test and
+pci-endpoint-test) is no longer a necessity.
 
-Hmm, hello, is there anything else I should do for this patch
-(and the series as a whole)?
+
+Kind regards,
+Niklas
 
