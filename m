@@ -1,111 +1,131 @@
-Return-Path: <linux-kernel+bounces-373790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8E89A5CDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:25:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3AD9A5CDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97249283DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDCEB1C2185E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2C1D1744;
-	Mon, 21 Oct 2024 07:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9521D1721;
+	Mon, 21 Oct 2024 07:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bkTIECbv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EVUYjl+z"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D894B1D0F54;
-	Mon, 21 Oct 2024 07:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E41D0F69
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495501; cv=none; b=B6033z1QY7ed40KVWg9sbOSe3le/1wOoKWYBkLdowEzVTmeirog/GxyX2FjsgQxZh89SzFq2Tdjdwtjipkxrnj20jrceNr/4jM0nAIGWbhMOfx/ja4HEh/rw6GB/WUwWKT+NqWYjfE1ifkoHAWdoO+UctsujLNYuOLD49fzGAV0=
+	t=1729495565; cv=none; b=b5vAvjMT/PHIAgHOF50lAAwgGFJolGG7GRkfbq1IYlCMTL5P9fDCJ3n+2cj12Kb+hH+fT5e+ERoZ9j/l4NCbGgpuQ0hYnZ+tcKfXudfQH0+JTJBz4GH6n2ldbdgcXCseDvRhiAQVpSP8sN1uwW7RhzeHWLC2Xyq+iZ9Thy2m9N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495501; c=relaxed/simple;
-	bh=Q/vHeCvRemXBDdF6JOsV/LJSic0sR7ukVpxi7m/3URA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0GY3skYhgowUQKueVSI0cYqT/YCPHtddbBGNuWZGOl3Rwht69oWCB7uqpwyrmoNLIZDn+peLei6860Wl/502g7Mk1r5UjCIrwfq3yQMr7YbJDrtHYMKXYPOpPh0JFkmPCwIQs5A/WHBHDCo9KzEyRj/dSBThK1vtMnYzZtNSmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bkTIECbv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1E94C4CEC3;
-	Mon, 21 Oct 2024 07:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729495500;
-	bh=Q/vHeCvRemXBDdF6JOsV/LJSic0sR7ukVpxi7m/3URA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bkTIECbvT/1ITopz/KTnSu6xS9L+g59e8y9t5fzgzv2o4c5Pkb8oSudj4pVnZHQcF
-	 Jr2C2FABZfw6oMfKZbFG9+nDpDLBafC+5iS/680Tk2ODH2+3R9R0iDjtr4dOIvQi4I
-	 h0UKZ17pBdik9LNNw8EDhjzXCJWg8VLlSFTlDkEg=
-Date: Mon, 21 Oct 2024 09:24:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mihai.Sain@microchip.com
-Cc: richard.genoud@bootlin.com, jirislaby@kernel.org,
-	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] tty: atmel_serial: Use
- devm_platform_ioremap_resource()
-Message-ID: <2024102148-stamp-isolation-ae90@gregkh>
-References: <20241021064321.3440-1-mihai.sain@microchip.com>
- <2024102151-showy-partake-a2aa@gregkh>
- <PH8PR11MB6804FADFEFEA51A8B35F894482432@PH8PR11MB6804.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1729495565; c=relaxed/simple;
+	bh=G3VWgEKJi01ZdmdbVMurfUduDugtTzi0L1djoFQtduk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JblMlGaCiSn/xU+ZNvHEQ8ZKw/KbBwJsHWoTl22PRJjUOmOBL/KNn8HssdnIHBNIqQBdykjOliSmwJT+XUMIqIgaM0rK2btxaBNlZIkjICHrXBO3TOWBwvAmuAkmnM9akXuU9bm7krmOFGIl+kpOxXxPe5jo2oj89EzSmOFjKVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EVUYjl+z; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so3390692a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729495563; x=1730100363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=riSNOYHYyitn4HEz/ZUed6KwnUQgSADxWxrkcSLcPik=;
+        b=EVUYjl+ztFpbNrf7WMChhgh3MK+mbXLr4v6ty4+mdwBI4dcE5w8FyGyOuH1hNv1tqU
+         fUo94Z3mSE5LUMlzm1EjdWbAng1hxCynR9wXfnTXXOuHWosqSwjo/MLooy+or2lVQGkE
+         in2/oMycmV9B+4B/Bbf2tiZS7pggBxW+VwEciykWMKSC8DHfatJGA6UzdpeDSGE58PjE
+         GxrHtk29wQrm7/RA+uqxe2OYUpWAZKNcLOvpNVa35CVO4nrO+R0i+fbKBL9ZbIkRghqW
+         EpNK+Hwmda2olU5myqhURtca2xZnal29drHEgsiuBKKqI6geITRNKsI1NXhCI7ff0alJ
+         RVLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729495563; x=1730100363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=riSNOYHYyitn4HEz/ZUed6KwnUQgSADxWxrkcSLcPik=;
+        b=p0wIn5z80hQMUQd/FHXyFnfF6fVKyy7TXuRtk97Wg+KzZZtw7YQw3OP/jUGCNr5enY
+         iwNaE1dNg/7Mm38Lk4w7G3vSti9A+w9BIWUFO9XGuwsC0h/1ksMNSMHnujOw4oE0svHH
+         /FtOcuVY0uBwoaC1lLZobCbpeuJpEq4mLat/dnG3MKpz3qyB7gr5iJXU4JJyn1fATh5B
+         ZwwRvcqHLG+3pJz+0P6xjBzZi+eoKNaFfbaQvfqT7aU+k2npht3xNhsrJXTDdyAwKvlv
+         yUc463vMP7IYesVgOnBgNgTW5cKJyNlcghhy4A225hjDLu4SESd2jJOFquhkWBp2/ULS
+         7a+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVEEpsUqoWW+3B6xvr38+AQPyliYRatWW7bfc25C8wQ1LwSBv2ksHueWBTQkVxlh+qTbastevv97WFX7P0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc9yvATAk+2KGuaJKO9JDr+NSOa3kKKOeYQT//kz8gGeSb3xtP
+	ewOdSCrQ1shHtHYX9LDe7v9Y/vjNz++1Jenha7s/4kPaTC2Ywddwmuuh+/mXu5fHeLN8/nKBXLA
+	DlCOFsKN6TvC375F3Ji4qPTNiBdSk9/XX4DIkLDFehWtQPKTU
+X-Google-Smtp-Source: AGHT+IFGf1Ktyy7MxB4aZc49mV0SYrg6hPff5eb+EBA6A4nZiQcncUr0r8w5/JXdPXS+OeuWFF4VbOJd2GiWctXxM+4=
+X-Received: by 2002:a05:6300:44:b0:1d8:b8da:d658 with SMTP id
+ adf61e73a8af0-1d92c501706mr13794945637.27.1729495562919; Mon, 21 Oct 2024
+ 00:26:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH8PR11MB6804FADFEFEA51A8B35F894482432@PH8PR11MB6804.namprd11.prod.outlook.com>
+References: <20241007122350.75285-1-brgl@bgdev.pl>
+In-Reply-To: <20241007122350.75285-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 21 Oct 2024 09:25:48 +0200
+Message-ID: <CAMRc=MeVQVeXdMTk-ZjabkEv58VN=2vchcy3LZ24pEwwN1DTpw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mtd: rawnand: davinci: order headers alphabetically
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 07:16:31AM +0000, Mihai.Sain@microchip.com wrote:
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: Monday, October 21, 2024 10:00 AM
-> > To: Mihai Sain - M19926 <Mihai.Sain@microchip.com>
-> > Cc: richard.genoud@bootlin.com; jirislaby@kernel.org; Nicolas Ferre - M43238
-> > <Nicolas.Ferre@microchip.com>; alexandre.belloni@bootlin.com;
-> > claudiu.beznea@tuxon.dev; linux-kernel@vger.kernel.org; linux-
-> > serial@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [RFC PATCH] tty: atmel_serial: Use
-> > devm_platform_ioremap_resource()
-> > 
-> > On Mon, Oct 21, 2024 at 09:43:21AM +0300, Mihai Sain wrote:
-> > > Simplify the request port function by using a single call to
-> > > devm_platform_ioremap_resource().
-> > >
-> > > This will also enhance the printing from /proc/iomem:
-> > >
-> > > cat /proc/iomem | grep flexcom ; cat /proc/iomem | grep serial
-> > >
-> > > f0004000-f00041ff : f0004000.flexcom flexcom@f0004000
-> > > f8020000-f80201ff : f8020000.flexcom flexcom@f8020000
-> > > f0004200-f00043ff : f0004200.serial serial@200 f8020200-f80203ff :
-> > > f8020200.serial serial@200 fffff200-fffff3ff : fffff200.serial
-> > > serial@fffff200
-> > >
-> > > Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
-> > > ---
-> > >  drivers/tty/serial/atmel_serial.c | 12 +++---------
-> > >  1 file changed, 3 insertions(+), 9 deletions(-)
-> > 
-> > Why is this a rfc?  What needs to be done before you want it merged?
-> 
-> I used the rfc tag in order to get the feedback from you and all stakeholders.
+On Mon, Oct 7, 2024 at 2:24=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> For better readability, put all includes in alphabetical order.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/mtd/nand/raw/davinci_nand.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/d=
+avinci_nand.c
+> index 392678143a36..5510b39c0b98 100644
+> --- a/drivers/mtd/nand/raw/davinci_nand.c
+> +++ b/drivers/mtd/nand/raw/davinci_nand.c
+> @@ -10,15 +10,15 @@
+>   *   Dirk Behme <Dirk.Behme@gmail.com>
+>   */
+>
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/platform_device.h>
+>  #include <linux/err.h>
+>  #include <linux/iopoll.h>
+> -#include <linux/mtd/rawnand.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+>  #include <linux/mtd/partitions.h>
+> -#include <linux/slab.h>
+> +#include <linux/mtd/rawnand.h>
+>  #include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+>
+>  #define NRCSR_OFFSET           0x00
+>  #define NANDFCR_OFFSET         0x60
+> --
+> 2.43.0
+>
 
-You need to ask for the feedback you are looking for, we don't know what
-you feel is wrong here.
+It's been two weeks so gentle ping.
 
-> If the modifications are OK for you I will send a new patch without rfc tag.
-
-As we are drowning in real patches to review, I almost always just
-ignore RFC patches as I know that means that the submitter feels there
-is still more work to be done.  So please always take that in mind.
-Please ask for reviews from other developers in your company if you feel
-it is not ready for our review.
-
-thanks,
-
-greg k-h
+Bart
 
