@@ -1,179 +1,152 @@
-Return-Path: <linux-kernel+bounces-373711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9EB9A5A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:40:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4AE9A5A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF088281631
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0753B2118B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE431CFEA0;
-	Mon, 21 Oct 2024 06:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="svCjVUlX"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BE61CFEC9;
+	Mon, 21 Oct 2024 06:41:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451161CFEC9
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0098D1CF7CC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729492785; cv=none; b=caxaKpt/YOXqYH14fnLxewY7Q+qc+/jHTyE4aWnSnm8rhpGl7+sUNomlrKl51IK2BmHGW6DPnwgf+dQWt/n/j0uYp1D3iUG0i20LmmUjDIDHB9Xi1B0rnVVF77vsAVcJcOzbLCPAYl2CclsEDuTCziTndIb7iROrJTG5TumY5FE=
+	t=1729492910; cv=none; b=PurNqmIrCIkqXGR5NZrZpdDDJJDgpfQvLdxWC5LtVZoGasYc/Jku0fIQKsigZw6yW33sEnxEceoO1gfqJMTthu0I/65P/mpsrAjoKHA903WjzHjxNCdlOVX9w510grysjzNuRTshjk9xGCs4bXMur/HAL1U3tDTymfwEpu6MPY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729492785; c=relaxed/simple;
-	bh=toSZEPuA8KtW4NGZWit+YtMDDVelJFCqeH6SIX+0vSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gVNgSjHVLBs/nD7Z6QTnwB8ZQHEDLnFNJ4NhEKe0F7MmRUk7WPB1CQfgyehAoNn9ZJytwITK2JMxkP0YJBqVmYgYEhIzM0volhIMLsymlRGupfy8O9hMOVz6R1Zxqajn+qdsMSiv7aM/7Ivk4waY9NtsRvVmpQtk9hS2eaaLplw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=svCjVUlX; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241021063940epoutp01136843c79da2216e2b53cc1144dbd0b2~AZIUy6FiP2248422484epoutp012
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:39:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241021063940epoutp01136843c79da2216e2b53cc1144dbd0b2~AZIUy6FiP2248422484epoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729492780;
-	bh=QSyRVDO0W3RLAiNZJSPSIuTvox4rmOFWkLwxUqIuoeg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=svCjVUlXHVBLUOq1j8m8yM1vlISe9t+eXUbD/QvYXAPIMhl29b07C6uy5dReImasm
-	 /48iczIkGZCmqRPpBHovgrjb2NwFFM7iZ6y69EV6NvTRYIDJA2bWND0JcRwzr0u2v9
-	 TRct53kfI9MTQZxJElCtxPAhg1PLD9qUrkCSfUZQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241021063939epcas2p454e9cc22e689e4f877c2dc872993f24e~AZIUP4-u_2426824268epcas2p4P;
-	Mon, 21 Oct 2024 06:39:39 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX5JV6mMWz4x9Q1; Mon, 21 Oct
-	2024 06:39:38 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.57.09770.A27F5176; Mon, 21 Oct 2024 15:39:38 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc~AZIS9GdeQ2425624256epcas2p1x;
-	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241021063938epsmtrp249ea0445f9583877a9ddffb0e23e3470~AZIS8Jh482414924149epsmtrp2e;
-	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
-X-AuditID: b6c32a46-638d9a800000262a-13-6715f72a8da5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	45.F8.08227.A27F5176; Mon, 21 Oct 2024 15:39:38 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241021063937epsmtip20d8581a5f2d02f8c61d13bd58fcc11e7~AZISuxjK31927319273epsmtip2W;
-	Mon, 21 Oct 2024 06:39:37 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Date: Mon, 21 Oct 2024 15:39:03 +0900
-Message-ID: <20241021063903.793166-4-trunixs.kim@samsung.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241021063903.793166-1-trunixs.kim@samsung.com>
+	s=arc-20240116; t=1729492910; c=relaxed/simple;
+	bh=hnFtsFX6EFYqg5HAO7XdkWjgtLfDDaotRvAd92AUo/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYl+InndlB1v7nbsLN+NgBMip6rg5p57H95J9vLTmwGuFLjvrZ/rs1ymSZX+wJI2NHuC14g2PSPOe/ypL3LW/PbZZY2qL6mStho6xMIL7o81PTH0/Twt0kC/h957k/OxIqZegJythu4Tf7BUrWkmyEb81s2LUt01EAhpHXLa4YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2m6c-0001kn-Fh; Mon, 21 Oct 2024 08:41:30 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2m6b-000eHY-2n;
+	Mon, 21 Oct 2024 08:41:29 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t2m6b-005e3i-2U;
+	Mon, 21 Oct 2024 08:41:29 +0200
+Date: Mon, 21 Oct 2024 08:41:29 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Sherry Sun <sherry.sun@nxp.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241021064129.trchqa2oickna7pc@pengutronix.de>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmha7Wd9F0g1V/FCwezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y+XlX4wFh7grJm7/wdTA
-	eJazi5GTQ0LAROLc48nsXYxcHEICOxglpq2+xwbhfGKU2L74MFTmG6PE5lktLDAt7zd0M0Mk
-	9jJKLFjzigXC+cgocfDgeUaQKjYBLYlth18xgSREBF4zSjT1vgNrYRb4CjS4tZUVpEpYwEPi
-	yp1mJhCbRUBV4u+dJWwgNq+ArcTWI9Og9slLnH/zHyzOKWAn8fjYUxaIGkGJkzOfgNnMQDXN
-	W2eDLZAQmMohsebUZ2aIZheJqyums0PYwhKvjm+BsqUkPr/bywZh50usXHmCCcKukbjXtgtq
-	sb3EojM/geo5gBZoSqzfpQ9iSggoSxy5BbWWT6Lj8F92iDCvREebEISpKjF9WQDEDGmJiTPW
-	Qu3xkNh+4Qg04CYySkw8tJ1tAqPCLCTPzELyzCyEvQsYmVcxiqUWFOempxYbFRjBozg5P3cT
-	IzjlarntYJzy9oPeIUYmDsZDjBIczEoivEoloulCvCmJlVWpRfnxRaU5qcWHGE2BQT2RWUo0
-	OR+Y9PNK4g1NLA1MzMwMzY1MDcyVxHnvtc5NERJITyxJzU5NLUgtgulj4uCUamAKuWrXNqOi
-	xO5Qztl3H7jfh8XN19IuaLxuu7w6TWZm1YMoo9KpOScSjy6YyPMjaAqH3PKf/f6KlZ++la58
-	7+BUeuHFXT/NDo38Eg2HyQ4586WZeJic+SpC105aV3VuWo5LkJmU1epzk49x2MooZH/KN9ml
-	Msf7nuccrdc2TS0H9k04Z6VUcvHZ1v2255jlH7OeV4uu0Nh8fL64zpp5xX+yN0VFNhkHyTKZ
-	Oq5bfLVpbeaDe/XxrmFzO6yXM0dfFDjvk+fS+ymMx9/hjuq85F6TKZcudn612fe2NFH32bKc
-	tLYIj42z7s52LH27dnrV1d/ik4y7L3knMHRnbqia/bJf1aOsJnnKugduHRe5LyqxFGckGmox
-	FxUnAgBR4/9XQgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSvK7Wd9F0g0tnmC0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx
-	8vIvxoJD3BUTt/9gamA8y9nFyMkhIWAi8X5DN3MXIxeHkMBuRomjx16wQSSkJY78hrGFJe63
-	HGGFKHrPKHHj/kZmkASbgJbEtsOvmEASIiCJs19+MYIkmAV+M0psWGAMYgsLeEhcudPMBGKz
-	CKhK/L2zBGwqr4CtxNYj01ggNshLnH/zHyzOKWAn8fjYU7C4EFDNlasvoOoFJU7OfMICMV9e
-	onnrbOYJjAKzkKRmIUktYGRaxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHB1aWjsY
-	96z6oHeIkYmD8RCjBAezkgivUolouhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeb697U4QE0hNL
-	UrNTUwtSi2CyTBycUg1Mq0892dXDaruNjXn5NpNpk9ZU7dLXaX/3xCu07F4G4zxO9QPNm3Z4
-	G2sf6fjANT26+L31k2C7Gv+l1jnnvkrksH9/LmK4K7BDZ0sq65v03ktO+y4cnn7rbmkgt6zm
-	hqOZ8ptuhVt+bF+QtmjFlFX7jezLzazPbVCX9K99uM0lL0ZwyyNdecG2uuIZjrxv3q/60ylz
-	l01SS4fphGLjy/58bjsNw1qZ5OzD+ZvPFjnVMzoHXRXlZJnM7fZv07J3cj8e5b3wZqrL8RcN
-	1tEzvVZ32o6tdKnY1VsHqw1uNHp57zU52bLR9JjadL6WsMkea29oxVzdI7SgXX7qhbVdYRz3
-	431MTGP3+056JORW+UGJpTgj0VCLuag4EQDIcTVd/QIAAA==
-X-CMS-MailID: 20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
-	<CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+On 24-10-07, Krzysztof Kozlowski wrote:
+> On 07/10/2024 14:58, POPESCU Catalin wrote:
+> >>>>
+> >>>> +  vcc-supply:
+> >>>> +    description:
+> >>>> +      phandle of the regulator that provides the supply voltage.
+> >>>> +
+> >>>> +  reset-gpios:
+> >>>> +    description:
+> >>>> +      Chip powerdown/reset signal (PDn).
+> >>>> +
+> >>> Hi Catalin,
+> >>>
+> >>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
+> >>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
+> >>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
+> > 
+> > Hi Sherry,
+> > 
+> > Regulators and reset controls being refcounted, we can then implement 
+> > powerup sequence in both bluetooth/wlan drivers and have the drivers 
+> > operate independently. This way bluetooth driver would has no dependance 
+> > on the wlan driver for :
+> > 
+> > - its power supply
+> > 
+> > - its reset pin (PDn)
+> > 
+> > - its firmware (being downloaded as part of the combo firmware)
+> > 
+> > For the wlan driver we use mmc power sequence to drive the chip reset 
+> > pin and there's another patchset that adds support for reset control 
+> > into the mmc pwrseq simple driver.
+> > 
+> >> Please wrap your replies.
+> >>
+> >> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
+> > 
+> > Hi Krzysztof,
+> > 
+> > I'm not familiar with power sequencing, but looks like way more 
+> > complicated than reset controls. So, why power sequencing is recommended 
+> > here ? Is it b/c a supply is involved ?
+> 
+> Based on earlier message:
+> 
+> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+> that both wifi and BT controller will be powered on and off at the same
+> time."
+> 
+> but maybe that's not needed. No clue, I don't know the hardware. But be
+> carefully what you write in the bindings, because then it will be ABI.
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
+We noticed the new power-sequencing infrastructure which is part of 6.11
+too but I don't think that this patch is wrong. The DT ABI won't break
+if we switch to the power-sequencing later on since the "reset-gpios"
+are not marked as required. So it is up to the driver to handle it
+either via a separate power-sequence driver or via "power-supply" and
+"reset-gpios" directly.
 
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Regards,
+  Marco
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 91882b37fdb3..2b3e8debda3d 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -172,6 +172,26 @@ chipid@10000000 {
- 			reg = <0x10000000 0x24>;
- 		};
- 
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
-+
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
--- 
-2.47.0
-
+> Best regards,
+> Krzysztof
+> 
+> 
 
