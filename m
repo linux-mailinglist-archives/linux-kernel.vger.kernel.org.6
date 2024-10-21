@@ -1,115 +1,163 @@
-Return-Path: <linux-kernel+bounces-375222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0909A9357
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:30:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9B69A9362
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62011F2126C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:30:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41895B22B89
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F51FDF98;
-	Mon, 21 Oct 2024 22:30:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25111EB56;
-	Mon, 21 Oct 2024 22:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311CC1FEFC9;
+	Mon, 21 Oct 2024 22:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcVxStV8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897761FDF98;
+	Mon, 21 Oct 2024 22:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549838; cv=none; b=RbyEJ6ygSUYEfWvMmJRMTBxQzCPq5fp5VfuRFxQ1ZyUwc7UIkA71d377106t5/5R5YgW1E/hR5YR6M+8MK5Q6KDDlM2lynKOUnKaoFBY5jXMro8uqmUq1+h284FAoKUDak4MP8Bev6aq3HCcrREp6Cc4porSm1bWsJp6grXNUG0=
+	t=1729549980; cv=none; b=FksWQ28auqyN8nXhXxgrM9hwYhgsElGJuS0Mobo3fM7M8SnMmAAQaJuLCJ4PDHAdJmNxozuWvsqbZAa4T2hrGhAsva1GiSTJWjevxWgyc3vtxyFultb4HjOvwrifO6nCb3DwIAr9QKcPfHYTRZ3B3i2jr69Iw+JXynwBcvpBHnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549838; c=relaxed/simple;
-	bh=UD732M7EnrtgsamVXJ5QerbcYazpkpBNPLQt8vDJWpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GFoalMG+WlYwSGypVnTi4W5lOkqPGFjRcXk0ISNJxhO6NxhGZkqKalNTgx/mfcTp3uDfbe5+Mr1ubftJeNBPAuCFPpk4pXCi3wj3I0eFCcFGoCWaw1w1lMZy3ZLR7C0fkno4L/tctH9wt+1Qfu+EMe/ESiuAU02FCUpY0VcCD24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E87DA497;
-	Mon, 21 Oct 2024 15:31:05 -0700 (PDT)
-Received: from [10.57.65.103] (unknown [10.57.65.103])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 022A43F71E;
-	Mon, 21 Oct 2024 15:30:34 -0700 (PDT)
-Message-ID: <91641867-0dd9-46ab-90b7-1d687f3f4408@arm.com>
-Date: Mon, 21 Oct 2024 23:31:44 +0100
+	s=arc-20240116; t=1729549980; c=relaxed/simple;
+	bh=xcaPgMt6Eh+JAUE6Xnkx1fugjyKVgIbuhtZ3W6j70r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZj0CLt6RYSXEuTtiwNTf0KejZNrRUFvAQuEge/WyjCb8agiipPBOcp4ictC3/Efrv0RcLQ2BA35N2UdHdlgiuVfV5Jkw5RAgIIom50VWtvnlqD0pB+wrKnSPIPvCHLFN8lZHKnjEfev5z0qwtXVvbKUouxDFgF16/ImniL3uAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcVxStV8; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729549977; x=1761085977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xcaPgMt6Eh+JAUE6Xnkx1fugjyKVgIbuhtZ3W6j70r8=;
+  b=dcVxStV8w8ybzYVAafiPFbmIwWZb2HG8jZ1AS0yE+yKHFNiT9PeYQkZa
+   EZIccRs/NKZXIvyRXjcFdNiQCmSRcvysSn6+TWwS90DZUWnJcCyUXYLc+
+   7ZCn9b1sbSaQTOHyM34qd8KYQ+6GZKvXFE+wo/b16y9sOzz0m0b0FReLf
+   VvpftDluQSYt3hO0plACV8T5YKPx+6lTmGeNjW4MQHxwZ2VA0BWS/ei/J
+   Oa6ou9UTZMGl2sZLSv45U19KGmbu6E9z+81snLx5La+MDSlytZTNZI8Qi
+   BrWxsY3WVVR/r3ZYRvCH8w3nAxZKbn7AW4TZgm1Lsw2ggwbas/9ccRdin
+   Q==;
+X-CSE-ConnectionGUID: QARMfs6lSxiOS466upMKGA==
+X-CSE-MsgGUID: 5hgfkNcUSoOmrzPXu/ddGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="54463005"
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="54463005"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 15:32:56 -0700
+X-CSE-ConnectionGUID: ncZ4DteBTZmTJNx2lCew7g==
+X-CSE-MsgGUID: Wi6SHKTgRaS5AI7x27aXWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="80068730"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 21 Oct 2024 15:32:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t30xH-000Sgw-1b;
+	Mon, 21 Oct 2024 22:32:51 +0000
+Date: Tue, 22 Oct 2024 06:32:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matt Johnston <matt@codeconstruct.com.au>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Dung Cao <dung@os.amperecomputing.com>
+Subject: Re: [PATCH net v2] mctp i2c: handle NULL header address
+Message-ID: <202410220659.hh4B9jRO-lkp@intel.com>
+References: <20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] thermal: core: Mark thermal zones as exiting
- before unregistration
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <2215082.irdbgypaU6@rjwysocki.net>
- <4394176.ejJDZkT8p0@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <4394176.ejJDZkT8p0@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au>
+
+Hi Matt,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on cb560795c8c2ceca1d36a95f0d1b2eafc4074e37]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Matt-Johnston/mctp-i2c-handle-NULL-header-address/20241021-123741
+base:   cb560795c8c2ceca1d36a95f0d1b2eafc4074e37
+patch link:    https://lore.kernel.org/r/20241021-mctp-i2c-null-dest-v2-1-4503e478517c%40codeconstruct.com.au
+patch subject: [PATCH net v2] mctp i2c: handle NULL header address
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241022/202410220659.hh4B9jRO-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410220659.hh4B9jRO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410220659.hh4B9jRO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/mctp/mctp-i2c.c: In function 'mctp_i2c_header_create':
+>> drivers/net/mctp/mctp-i2c.c:599:23: error: assignment to 'u8' {aka 'unsigned char'} from 'const unsigned char *' makes integer from pointer without a cast [-Wint-conversion]
+     599 |                 llsrc = dev->dev_addr;
+         |                       ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
+vim +599 drivers/net/mctp/mctp-i2c.c
 
-On 10/4/24 20:26, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> In analogy with a previous change in the thermal zone registration code
-> path, to ensure that __thermal_zone_device_update() will return early
-> for thermal zones that are going away, introduce a thermal zone state
-> flag representing the "exit" state and set it while deleting the thermal
-> zone from thermal_tz_list.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a new iteration of
-> 
-> https://lore.kernel.org/linux-pm/1997536.PYKUYFuaPT@rjwysocki.net/
-> 
-> v1 -> v2: Rebase.
-> 
-> ---
->   drivers/thermal/thermal_core.c |    3 +++
->   drivers/thermal/thermal_core.h |    1 +
->   2 files changed, 4 insertions(+)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1613,7 +1613,10 @@ void thermal_zone_device_unregister(stru
->   	}
->   
->   	mutex_lock(&tz->lock);
-> +
-> +	tz->state |= TZ_STATE_FLAG_EXIT;
->   	list_del(&tz->node);
-> +
->   	mutex_unlock(&tz->lock);
->   
->   	/* Unbind all cdevs associated with 'this' thermal zone */
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -64,6 +64,7 @@ struct thermal_governor {
->   #define	TZ_STATE_FLAG_SUSPENDED	BIT(0)
->   #define	TZ_STATE_FLAG_RESUMING	BIT(1)
->   #define	TZ_STATE_FLAG_INIT	BIT(2)
-> +#define	TZ_STATE_FLAG_EXIT	BIT(3)
->   
->   #define TZ_STATE_READY		0
->   
-> 
-> 
-> 
+   579	
+   580	static int mctp_i2c_header_create(struct sk_buff *skb, struct net_device *dev,
+   581					  unsigned short type, const void *daddr,
+   582					  const void *saddr, unsigned int len)
+   583	{
+   584		struct mctp_i2c_hdr *hdr;
+   585		struct mctp_hdr *mhdr;
+   586		u8 lldst, llsrc;
+   587	
+   588		if (len > MCTP_I2C_MAXMTU)
+   589			return -EMSGSIZE;
+   590	
+   591		if (daddr)
+   592			lldst = *((u8 *)daddr);
+   593		else
+   594			return -EINVAL;
+   595	
+   596		if (saddr)
+   597			llsrc = *((u8 *)saddr);
+   598		else
+ > 599			llsrc = dev->dev_addr;
+   600	
+   601		skb_push(skb, sizeof(struct mctp_i2c_hdr));
+   602		skb_reset_mac_header(skb);
+   603		hdr = (void *)skb_mac_header(skb);
+   604		mhdr = mctp_hdr(skb);
+   605		hdr->dest_slave = (lldst << 1) & 0xff;
+   606		hdr->command = MCTP_I2C_COMMANDCODE;
+   607		hdr->byte_count = len + 1;
+   608		hdr->source_slave = ((llsrc << 1) & 0xff) | 0x01;
+   609		mhdr->ver = 0x01;
+   610	
+   611		return sizeof(struct mctp_i2c_hdr);
+   612	}
+   613	
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
