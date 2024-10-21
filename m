@@ -1,174 +1,252 @@
-Return-Path: <linux-kernel+bounces-374821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92EE9A70A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:09:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354049A70A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A30B28175A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50DB2825C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2151F9435;
-	Mon, 21 Oct 2024 17:08:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4E91F8F1E;
-	Mon, 21 Oct 2024 17:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1240D1F473C;
+	Mon, 21 Oct 2024 17:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jVl6/xdX"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C0B1EB9F9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530486; cv=none; b=UZRE6iYBwvI/QtZWWhWN39JCn517TqLaEJlBsNSU76IzLtN31goC/eHNMMtNZe86VjLpo/GpE5IgsN7lrndETLrkzf3ChDaF0i8Inch1FNF0NeEivWEV2lbBoieDv3y0HiPafL8rt6dRKmi5b5meN6DoUNEgmIk0HD0mMEmBJhw=
+	t=1729530480; cv=none; b=G+T4rcKGTjLoP/rCTTJZxHsruBvjN8Od3V/C/0LtU3bG6C5ned5/c3fWKDmzftY1vw4i2t/hL9oUkDuF1uZbDbpEKb8FBEXwOHdLQyo8k32GGNCbocgVw+Q922NYONGip0sXWB7hQz8QvR4ki1NAlXKgmpOmssd163mWbN6wui0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530486; c=relaxed/simple;
-	bh=uI17GSyW+1IEPoQn6ErUee/qrEg3llYGFGX5cCjmRU8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z3jlRuagELVA8O/lI1x5JLIt4HOVpnZZULzBvM9U6m7d/CL2E8pAhQyyP1TiT0+QnIk0vvJ8gcA7wgt0W1+rTnNYA+vAiveNFNHsHVwoJz4P+f88xuo3ETUxriOkCyaUgSJhguFRuwkUqghRKgj2SaIuLltJbai3V80ayyfiu3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84482DA7;
-	Mon, 21 Oct 2024 10:08:33 -0700 (PDT)
-Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 004D53F528;
-	Mon, 21 Oct 2024 10:08:01 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com,
-	dan.carpenter@linaro.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 5/5] firmware: arm_scmi: Relocate atomic_threshold to scmi_desc
-Date: Mon, 21 Oct 2024 18:07:26 +0100
-Message-ID: <20241021170726.2564329-6-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241021170726.2564329-1-cristian.marussi@arm.com>
-References: <20241021170726.2564329-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1729530480; c=relaxed/simple;
+	bh=9HwBB6DUdlSqXu+QzXrHwnDX73SBMuj81nw+I6vhaeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ekCUsgwzO0gZ3kVBMSAcMR2p3kDFEFZ+gj604mxiIUmWrDrpOfrDCf7LY5Vls/I6FTCSVg8Qc3xOsFTwOTwWM3prnL6tUz0tqtFpvT+oqkr7VYlxTqXEMlhWDFdkriWEMAViC5saZ/MUsXGX53S6W1308TRq8x/cDlmK10lRJrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jVl6/xdX; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c8a42d96-c02e-4ce0-acd8-3fdc5eecd208@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729530475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SrQYJCnutF/B0aizIHStBs0qq9hGntt8rX3SGM0rkm4=;
+	b=jVl6/xdXgjM0teCdVytFPKO98U3Twrb2C4GfaL2e/DYJIrQK1G9uPDRo83IlzfMtKKRNeB
+	CX8ClxRa7Ao5d1abXKBnwszUs0uN5EGzZs/W1On5SjnRHKHFKhjNfisJ85ijDcjJc3CbI+
+	DmL6M/3jgIleui/Ge8URFzoYiwMrZGE=
+Date: Mon, 21 Oct 2024 22:37:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 13/13] drm/bridge: cdns-dsi: Use
+ pre_enable/post_disable to enable/disable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+ Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>
+References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+ <20241019200530.270738-1-aradhya.bhatia@linux.dev>
+ <20241019200530.270738-6-aradhya.bhatia@linux.dev>
+ <m7t4hsa3lcszjbipxlypf655uspoxw3xfyy5jo3n3bnmqaiqcf@6wti5f477gve>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <m7t4hsa3lcszjbipxlypf655uspoxw3xfyy5jo3n3bnmqaiqcf@6wti5f477gve>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Relocate the atomic_threshold field to scmi_desc and move the related code
-to scmi_transport_setup.
+Hi Dmitry,
 
-No functional change.
+Thank you for reviewing the patches!
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/firmware/arm_scmi/common.h |  7 +++++++
- drivers/firmware/arm_scmi/driver.c | 25 +++++++++----------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+On 10/20/24 17:27, Dmitry Baryshkov wrote:
+> On Sun, Oct 20, 2024 at 01:35:30AM +0530, Aradhya Bhatia wrote:
+>> From: Aradhya Bhatia <a-bhatia1@ti.com>
+>>
+>> The cdns-dsi controller requires that it be turned on completely before
+>> the input DPI's source has begun streaming[0]. Not having that, allows
+>> for a small window before cdns-dsi enable and after cdns-dsi disable
+>> where the previous entity (in this case tidss's videoport) to continue
+>> streaming DPI video signals. This small window where cdns-dsi is
+>> disabled but is still receiving signals causes the input FIFO of
+>> cdns-dsi to get corrupted. This causes the colors to shift on the output
+>> display. The colors can either shift by one color component (R->G, G->B,
+>> B->R), or by two color components (R->B, G->R, B->G).
+>>
+>> Since tidss's videoport starts streaming via crtc enable hooks, we need
+>> cdns-dsi to be up and running before that. Now that the bridges are
+>> pre_enabled before crtc is enabled, and post_disabled after crtc is
+>> disabled, use the pre_enable and post_disable hooks to get cdns-dsi
+>> ready and running before the tidss videoport to get pass the color shift
+>> issues.
+>>
+> 
+> Not being an expert in the TI DSS driver, would it be more proper to
+> handle that in the TI driver instead? I mean, sending out DPI signals
+> isn't a part of the CRTC setup, it's a job of the encoder.
 
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index d867bcc6883b..058d4b0e3de9 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -227,6 +227,12 @@ struct scmi_transport_ops {
-  *	be pending simultaneously in the system. May be overridden by the
-  *	get_max_msg op.
-  * @max_msg_size: Maximum size of data payload per message that can be handled.
-+ * @atomic_threshold: Optional system wide DT-configured threshold, expressed
-+ *		      in microseconds, for atomic operations.
-+ *		      Only SCMI synchronous commands reported by the platform
-+ *		      to have an execution latency lesser-equal to the threshold
-+ *		      should be considered for atomic mode operation: such
-+ *		      decision is finally left up to the SCMI drivers.
-  * @force_polling: Flag to force this whole transport to use SCMI core polling
-  *		   mechanism instead of completion interrupts even if available.
-  * @sync_cmds_completed_on_ret: Flag to indicate that the transport assures
-@@ -245,6 +251,7 @@ struct scmi_desc {
- 	int max_rx_timeout_ms;
- 	int max_msg;
- 	int max_msg_size;
-+	unsigned int atomic_threshold;
- 	const bool force_polling;
- 	const bool sync_cmds_completed_on_ret;
- 	const bool atomic_enabled;
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index b9a1d8c1034f..ed76e019dff4 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -149,12 +149,6 @@ struct scmi_debug_info {
-  *		   base protocol
-  * @active_protocols: IDR storing device_nodes for protocols actually defined
-  *		      in the DT and confirmed as implemented by fw.
-- * @atomic_threshold: Optional system wide DT-configured threshold, expressed
-- *		      in microseconds, for atomic operations.
-- *		      Only SCMI synchronous commands reported by the platform
-- *		      to have an execution latency lesser-equal to the threshold
-- *		      should be considered for atomic mode operation: such
-- *		      decision is finally left up to the SCMI drivers.
-  * @notify_priv: Pointer to private data structure specific to notifications.
-  * @node: List head
-  * @users: Number of users of this instance
-@@ -180,7 +174,6 @@ struct scmi_info {
- 	struct mutex protocols_mtx;
- 	u8 *protocols_imp;
- 	struct idr active_protocols;
--	unsigned int atomic_threshold;
- 	void *notify_priv;
- 	struct list_head node;
- 	int users;
-@@ -2445,7 +2438,7 @@ static bool scmi_is_transport_atomic(const struct scmi_handle *handle,
- 	ret = info->desc->atomic_enabled &&
- 		is_transport_polling_capable(info->desc);
- 	if (ret && atomic_threshold)
--		*atomic_threshold = info->atomic_threshold;
-+		*atomic_threshold = info->desc->atomic_threshold;
- 
- 	return ret;
- }
-@@ -2959,7 +2952,7 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
- 			   (char **)&dbg->name);
- 
- 	debugfs_create_u32("atomic_threshold_us", 0400, top_dentry,
--			   &info->atomic_threshold);
-+			   (u32 *)&info->desc->atomic_threshold);
- 
- 	debugfs_create_str("type", 0400, trans, (char **)&dbg->type);
- 
-@@ -3071,6 +3064,13 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
- 		 trans->desc->max_rx_timeout_ms, trans->desc->max_msg_size,
- 		 trans->desc->max_msg);
- 
-+	/* System wide atomic threshold for atomic ops .. if any */
-+	if (!of_property_read_u32(dev->of_node, "atomic-threshold-us",
-+				  &trans->desc->atomic_threshold))
-+		dev_info(dev,
-+			 "SCMI System wide atomic threshold set to %d us\n",
-+			 trans->desc->atomic_threshold);
-+
- 	return trans->desc;
- }
- 
-@@ -3120,13 +3120,6 @@ static int scmi_probe(struct platform_device *pdev)
- 	handle->devm_protocol_acquire = scmi_devm_protocol_acquire;
- 	handle->devm_protocol_get = scmi_devm_protocol_get;
- 	handle->devm_protocol_put = scmi_devm_protocol_put;
--
--	/* System wide atomic threshold for atomic ops .. if any */
--	if (!of_property_read_u32(np, "atomic-threshold-us",
--				  &info->atomic_threshold))
--		dev_info(dev,
--			 "SCMI System wide atomic threshold set to %d us\n",
--			 info->atomic_threshold);
- 	handle->is_transport_atomic = scmi_is_transport_atomic;
- 
- 	/* Setup all channels described in the DT at first */
--- 
-2.46.1
+I haven't done a feasibility analysis of moving the CRTC bits of TIDSS
+into the encoder, but even if it were possible, it wouldn't solve the
+issue.
 
+The bridge_enable() sequence gets called _after_ the encoder has been
+enabled - causing the TIDSS's DPI (enabled from encoder) to still be
+up and running before the DSI has had a chance to be ready.
+
+Regards
+Aradhya
+
+
+> 
+>> [0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
+>>      TRM Link: http://www.ti.com/lit/pdf/spruil1
+>>
+>> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+>> ---
+>>  .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 62 ++++++++++---------
+>>  1 file changed, 34 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> index 79d8c2264c14..dfeb53841ebc 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> @@ -658,13 +658,28 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>>  	return MODE_OK;
+>>  }
+>>  
+>> -static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
+>> -					   struct drm_bridge_state *old_bridge_state)
+>> +static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
+>> +						struct drm_bridge_state *old_bridge_state)
+>>  {
+>>  	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+>>  	struct cdns_dsi *dsi = input_to_dsi(input);
+>>  	u32 val;
+>>  
+>> +	/*
+>> +	 * The cdns-dsi controller needs to be disabled after it's DPI source
+>> +	 * has stopped streaming. If this is not followed, there is a brief
+>> +	 * window before DPI source is disabled and after cdns-dsi controller
+>> +	 * has been disabled where the DPI stream is still on, but the cdns-dsi
+>> +	 * controller is not ready anymore to accept the incoming signals. This
+>> +	 * is one of the reasons why a shift in pixel colors is observed on
+>> +	 * displays that have cdns-dsi as one of the bridges.
+>> +	 *
+>> +	 * To mitigate this, disable this bridge from the bridge post_disable()
+>> +	 * hook, instead of the bridge _disable() hook. The bridge post_disable()
+>> +	 * hook gets called after the CRTC disable, where often many DPI sources
+>> +	 * disable their streams.
+>> +	 */
+>> +
+>>  	val = readl(dsi->regs + MCTL_MAIN_DATA_CTL);
+>>  	val &= ~(IF_VID_SELECT_MASK | IF_VID_MODE | VID_EN | HOST_EOT_GEN |
+>>  		 DISP_EOT_GEN);
+>> @@ -683,15 +698,6 @@ static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
+>>  	pm_runtime_put(dsi->base.dev);
+>>  }
+>>  
+>> -static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
+>> -						struct drm_bridge_state *old_bridge_state)
+>> -{
+>> -	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+>> -	struct cdns_dsi *dsi = input_to_dsi(input);
+>> -
+>> -	pm_runtime_put(dsi->base.dev);
+>> -}
+>> -
+>>  static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
+>>  {
+>>  	struct cdns_dsi_output *output = &dsi->output;
+>> @@ -760,8 +766,8 @@ static void cdns_dsi_init_link(struct cdns_dsi *dsi)
+>>  	dsi->link_initialized = true;
+>>  }
+>>  
+>> -static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
+>> -					  struct drm_bridge_state *old_bridge_state)
+>> +static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+>> +					      struct drm_bridge_state *old_bridge_state)
+>>  {
+>>  	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+>>  	struct cdns_dsi *dsi = input_to_dsi(input);
+>> @@ -776,6 +782,21 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
+>>  	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
+>>  		return;
+>>  
+>> +	/*
+>> +	 * The cdns-dsi controller needs to be enabled before it's DPI source
+>> +	 * has begun streaming. If this is not followed, there is a brief window
+>> +	 * after DPI source enable and before cdns-dsi controller enable where
+>> +	 * the DPI stream is on, but the cdns-dsi controller is not ready to
+>> +	 * accept the incoming signals. This is one of the reasons why a shift
+>> +	 * in pixel colors is observed on displays that have cdns-dsi as one of
+>> +	 * the bridges.
+>> +	 *
+>> +	 * To mitigate this, enable this bridge from the bridge pre_enable()
+>> +	 * hook, instead of the bridge _enable() hook. The bridge pre_enable()
+>> +	 * hook gets called before the CRTC enable, where often many DPI sources
+>> +	 * enable their streams.
+>> +	 */
+>> +
+>>  	if (dsi->platform_ops && dsi->platform_ops->enable)
+>>  		dsi->platform_ops->enable(dsi);
+>>  
+>> @@ -912,19 +933,6 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
+>>  	writel(tmp, dsi->regs + MCTL_MAIN_EN);
+>>  }
+>>  
+>> -static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+>> -					      struct drm_bridge_state *old_bridge_state)
+>> -{
+>> -	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+>> -	struct cdns_dsi *dsi = input_to_dsi(input);
+>> -
+>> -	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
+>> -		return;
+>> -
+>> -	cdns_dsi_init_link(dsi);
+>> -	cdns_dsi_hs_init(dsi);
+>> -}
+>> -
+>>  static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
+>>  					       struct drm_bridge_state *bridge_state,
+>>  					       struct drm_crtc_state *crtc_state,
+>> @@ -968,9 +976,7 @@ static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
+>>  static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
+>>  	.attach = cdns_dsi_bridge_attach,
+>>  	.mode_valid = cdns_dsi_bridge_mode_valid,
+>> -	.atomic_disable = cdns_dsi_bridge_atomic_disable,
+>>  	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
+>> -	.atomic_enable = cdns_dsi_bridge_atomic_enable,
+>>  	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
+>>  	.atomic_check = cdns_dsi_bridge_atomic_check,
+>>  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>> -- 
+>> 2.34.1
+>>
+> 
 
