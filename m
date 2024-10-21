@@ -1,195 +1,109 @@
-Return-Path: <linux-kernel+bounces-374066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE049A6195
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:08:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB849A5FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166F21F23ABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F14B284402
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C01E4929;
-	Mon, 21 Oct 2024 10:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C399E1D04BB;
+	Mon, 21 Oct 2024 09:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="fKGgLyPP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="spCXKJ+p"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03491E3DC2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76591E2859
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729505272; cv=none; b=vBk3PIJRmnQ9qYob4IthpdDfGxl7D90jDCwC3Pgld1XPSWnOKdC82HB/xXbnVDJjoT+6GF9xV/07YS55KRKThlzYaAUtCNTxbafCbvgbtSM/cJ/1YY3z0wdkdyKqXDQtAY6aUFRfMdY5AFg559rjufL8bHfFpKp8cnyrRA/tmg0=
+	t=1729502089; cv=none; b=S2nY0t1u0sZBJ65rXoWJLpCN+19vhjUD5fakdqq0V3Cr9499zT2Sl3Axcou8SbwYb7xJFerqWdY/YQRt9jfaydwOHKlGLe0R0QRVdNg53paJAdjypa5QoDo25Ni6uDLG+auzXzQifrG2Bzma8j1xHEpNyMlaPi2BTkETzpIvk2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729505272; c=relaxed/simple;
-	bh=QdZWSFTeGpOWzSib81TVg25Rz1n0HWmtYu4OVad4FCo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ZdP/3UxcYpfnRYfMK9scETiVni901irjFg026PbBYCfdgrIDQczgf6OMtREF6pLqxH6kG6PjF5Wh/D7FwVxKmfxjwIhue8OWCvcuMyDi2SWtuSXz5H5VRqlyHkAt/EpkG1dQ9KQY4LNurfRz99b34lcVysbxITQggN38qjhuKKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=fKGgLyPP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431481433bdso45200125e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:07:48 -0700 (PDT)
+	s=arc-20240116; t=1729502089; c=relaxed/simple;
+	bh=V5T+KifZpNxuES86cc0P0YZbHqO0QvYd0fJIuXHtqjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tEkGat3tA7E4BXrmNyGKuqtat1KsfFpL3NAwDYUgmbWW0fhlG1E2IJGJKts9l2WbLnfxd2j3NauCW+d3BnExd+6FfwsyZCQdmq/9ZFAraLNAIQ1fua3uPUGQTAlnZSaTM1f8bGUNjzPlNmfDnvYITan+FaXnyMMtwPyEhwLN1WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=spCXKJ+p; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431695fa98bso17384415e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1729505267; x=1730110067; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBql76qWJOBLXqDBsTH119HC7QDwlYFKmnY1odQsxTU=;
-        b=fKGgLyPPWt0pLp1mFM2RVXcHs3xb1bnBBHtwjK0YLN8z6sAgqtD5boV4LreoFYVkQT
-         aQW/aiVRvpURun99vbkNXbJ2eF+WFfzKwwK3fFU6Gr/9RELP13wRpHrd1gBcSh9+j4k6
-         vP8X9Hdg+OAbS7bV3KfuN0m53+zPcmTCjD/Qf7a4pdITFbIQD4oPKzlwF83BGv2+yDnl
-         /wN8HAnagq73w+KgdI5S9jHGUSo4DzhitBA7OjpEaJ3iJOZmmw9a0mJkeO4h60oUSSUh
-         xnkKX6WMO08E9JAL5mHEqHVkkcuNXVjBq7DyCVu10H6jEKxQzwkI+LxoWz6cvJFVWysb
-         v7FQ==
+        d=linaro.org; s=google; t=1729502085; x=1730106885; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=viIdKZJdxzmzxa+AMbJaVQG5+tOcBpIZMwetXFmiAfI=;
+        b=spCXKJ+pLh4Bcii+XX4iSHw3xQJbhEGmKC5zbtgSDy50JRAQZ+i0ERFJ+T0ZzCwJSu
+         JnIyCpNZt/Gckso771wI816hJpuU8FRAl18TPWvEAuawNmnyd2DU/Jqzabi6acF2uvCe
+         kJUHJPMHKX7KMN2Md5u087+HuVT1QaxWdbX6hcfNhAIAvqIlQ9ELzOPUri8h8/Wse6FP
+         W90osZ2vioMrCF3J90MA6/GFKgp/2xdNdXn9ySMdT430nXRhmYPkM/EAyNXvxRTQ9yEU
+         xwCOUtr+uZUjMNAnPtkvsSpox6Zz5IZAZDPD1wh5BS0qNSufJhAVj+BiJoz0M/ziNkJ5
+         xtoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729505267; x=1730110067;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBql76qWJOBLXqDBsTH119HC7QDwlYFKmnY1odQsxTU=;
-        b=PwiC1PpBf0n26mriDNPxTl11U/co0zHaSbhfpyp/e/BbGowO3aCFNjpiVaB5ynWGMh
-         JYoiy8n+pHhm+k/9fXvaR2WIzRlzqSDFGtMiw/26Dz/i6ZVCIbF8Wm/bt8EGmvwSWQnI
-         CDThL0n3OV6HaHZlsZWrN9Ole1oXVP9VczY+uKh+WjNzYrBJp0NEH/1GVPSp3XTMD1zx
-         cWGr+LRPfYkBIs+IiuDNQKdbe34aJGQBXPkNBfquRB6nCLSWWpk0ZyHw4oY5/Xh4VKdX
-         se04bOjJh0GU6QgkN2SHXXvBRdDjphG5YFBCAgh/4VVsPUg+VS/INZZnJWyf5u9r7dVn
-         wmfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCpVrq5rnO8fhcSH0WeFtbpjqdQGhYPUDxzzAj35kvIsjflIgLbf5JSgwOnHd/Gq+D0fSWFRkqVQ1egMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw06Ma3q4QwQCQkfdkqB0jDcJwbF6EuYTrYcIqM0yvGASl9CxZF
-	eVpHc6rmq1BgJxwCa6yaUemWpiOHAFGjzgacsTjnAcfjuZUqTNnntZTU509hoEgokGCb4WivuLs
-	VK/g=
-X-Google-Smtp-Source: AGHT+IEq7dO7gIDeubgjOK5nBjj3N26LiS79UsNXDGMVSWLjEXQrVDIOmL3jcj587GAFbmPX3U5X5g==
-X-Received: by 2002:a05:600c:45c3:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-4316161f58bmr98151325e9.5.1729505266808;
-        Mon, 21 Oct 2024 03:07:46 -0700 (PDT)
-Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fc17sm51394775e9.15.2024.10.21.03.07.44
+        d=1e100.net; s=20230601; t=1729502085; x=1730106885;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=viIdKZJdxzmzxa+AMbJaVQG5+tOcBpIZMwetXFmiAfI=;
+        b=CunyHWllZ1aKs6YOxOzXKh029jX5LAJQcWEJAtDIGe+r+PHzMjdYltgCA6F8h9f0eA
+         DUXU5UsFeUnu9JoUet6h4fD7EyHX64d/PxnAM1FX+gsjwAolD6Y3ieJy+rW7GN1cnxq2
+         Hy/r1ZW8UBEyh4vCuDpXRECOfdigsEnfI//1IHtVWsE9NhMRp7Lex1IEs+qgGYR1EEvb
+         8XZEVYOquc2aSh9i/ayW/BrYl72rTYxER0jSpHKf5cFxa1ObQtEapm0RmGmDkm/E7APH
+         6pjooeJTBEjz+bgKuArlw7mF0rtQZPh8sTnnggtGayVY3aXgC6Qhsw4DEZOKAB0dU8aT
+         27cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg2eawQLUMLB97TZCHjK9cj722eJZJKvt63hlvmwqUiGxrzCfBjU9/YKThhwlyFPStoqOLr5yx0UqbqrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLBUeh+Sl1jmvZEhrcMJQ4mbQikUBDAqwsp6VT/efYLPJdbzAs
+	2LQ2jmVnDWmceQQdPNSl2AaFRt+Xrta1FQ2WU5RCyOmvHwjlRNU1mXKx8rQRiYI=
+X-Google-Smtp-Source: AGHT+IHRJ3XMQNNFSL+N9qTIsbeBkdqtT90O1Pz3aDqarzu2Bt0GMkFFH7O+TI0+CrOjEzrpheLyBA==
+X-Received: by 2002:a05:600c:510f:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-43161631435mr80440425e9.10.1729502085149;
+        Mon, 21 Oct 2024 02:14:45 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cb88csm50401685e9.39.2024.10.21.02.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 03:07:45 -0700 (PDT)
-From: Naresh Solanki <naresh.solanki@9elements.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	sylv@sylv.io,
-	linux-hwmon@vger.kernel.org,
-	Naresh Solanki <naresh.solanki@9elements.com>
-Subject: [PATCH v2] dt-bindings: hwmon: pmbus: Add bindings for Vicor pli1209bc
-Date: Mon, 21 Oct 2024 14:44:29 +0530
-Message-ID: <20241021091430.3489816-1-naresh.solanki@9elements.com>
-X-Mailer: git-send-email 2.42.0
+        Mon, 21 Oct 2024 02:14:44 -0700 (PDT)
+Date: Mon, 21 Oct 2024 12:14:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] wifi: rtw89: unlock on error path in
+ rtw89_ops_unassign_vif_chanctx()
+Message-ID: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Remove vicor,pli1209bc from trivial-devices as it requires additional
-properties and does not fit into the trivial devices category.
+We need to call mutex_unlock() on this error path.
 
-Add new bindings for Vicor pli1209bc, a Digital Supervisor with
-Isolation for use with BCM Bus Converter Modules.
-
-VR rails are defined under regulator node as expected by pmbus driver.
-
-Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+Fixes: aad0394e7a02 ("wifi: rtw89: tweak driver architecture for impending MLO support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Changes in V2:
-- Squash the two patch in patch into one.
-- Update commit message.
----
- .../bindings/hwmon/pmbus/vicor,pli1209bc.yaml | 62 +++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml  |  2 -
- 2 files changed, 62 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/vicor,pli1209bc.yaml
+ drivers/net/wireless/realtek/rtw89/mac80211.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/vicor,pli1209bc.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/vicor,pli1209bc.yaml
-new file mode 100644
-index 000000000000..026a835da58e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/pmbus/vicor,pli1209bc.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/pmbus/vicor,pli1209bc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Vicor PLI1209BC Power Regulator
-+
-+maintainers:
-+  - Marcello Sylvester Bauer <sylv@sylv.io>
-+  - Naresh Solanki <naresh.solanki@9elements.com>
-+
-+description:
-+  The Vicor PLI1209BC is a Digital Supervisor with Isolation for use
-+  with BCM Bus Converter Modules.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - vicor,pli1209bc
-+
-+  reg:
-+    maxItems: 1
-+
-+  regulators:
-+    type: object
-+    description:
-+      List of regulators provided by this controller.
-+
-+    properties:
-+      vout2:
-+        $ref: /schemas/regulator/regulator.yaml#
-+        type: object
-+        unevaluatedProperties: false
-+
-+  additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        regulator@5f {
-+            compatible = "vicor,pli1209bc";
-+            reg = <0x5f>;
-+
-+            regulators {
-+                p12v_d: vout2 {
-+                    regulator-name = "bcm3";
-+                    regulator-boot-on;
-+                };
-+            };
-+        };
-+    };
-+
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 15f89d7ecf73..00361b5cfc3c 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -404,8 +404,6 @@ properties:
-           - ti,tps546d24
-             # I2C Touch-Screen Controller
-           - ti,tsc2003
--            # Vicor Corporation Digital Supervisor
--          - vicor,pli1209bc
-             # Winbond/Nuvoton H/W Monitor
-           - winbond,w83793
+diff --git a/drivers/net/wireless/realtek/rtw89/mac80211.c b/drivers/net/wireless/realtek/rtw89/mac80211.c
+index 1ee63a85308f..565347a6e1e6 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac80211.c
++++ b/drivers/net/wireless/realtek/rtw89/mac80211.c
+@@ -1373,6 +1373,7 @@ static void rtw89_ops_unassign_vif_chanctx(struct ieee80211_hw *hw,
  
-
-base-commit: d79616b04f0e08178ceb716a5d2ef60ab723d532
+ 	rtwvif_link = rtwvif->links[link_conf->link_id];
+ 	if (unlikely(!rtwvif_link)) {
++		mutex_unlock(&rtwdev->mutex);
+ 		rtw89_err(rtwdev,
+ 			  "%s: rtwvif link (link_id %u) is not active\n",
+ 			  __func__, link_conf->link_id);
 -- 
-2.42.0
+2.45.2
 
 
