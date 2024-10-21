@@ -1,72 +1,79 @@
-Return-Path: <linux-kernel+bounces-373901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7469A5EB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AB49A5EB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2542833A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5380283404
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756901E1C32;
-	Mon, 21 Oct 2024 08:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4801E22FD;
+	Mon, 21 Oct 2024 08:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJvfjADD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SUCJh/PD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60C21D278D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1953C1E0B6F;
+	Mon, 21 Oct 2024 08:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729499506; cv=none; b=oElXs/gUH3Z6hrkvkQ44v0XGpcqbM7DphNqaUBWaUyFTLEP0pzvwSF+73q2T3tQldUe7CH1COfQNhThZ/pARgYQ9pE8ny9GvdXdlz4l/77Q/2FIhtW5w9Jf5eDNaJUMdpjNdQxsqQC7J29evQgvHHWHG9Tw7pJUqtVvZdw1R1ko=
+	t=1729499671; cv=none; b=LLHwnCZlHuL7wZu4qR++d7mfKTjCvOH/w9P55PKglD5B0QVjKObDXwg3KZqTIo2+l+WbDot7ADaFocHg10sWQK4v4MKJFqwBZuXlcWzRZMTMzsOgOPz/2NMzlCZsZG0rJVIz2+kShgj2pIcy6WG7q4FBuGz34z0WQvo221OmWaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729499506; c=relaxed/simple;
-	bh=f21XiQvlg0ti+Xjzxa+Z7uE3FmNRpazGuntm6reHJi0=;
+	s=arc-20240116; t=1729499671; c=relaxed/simple;
+	bh=OpWyUIDyQKJuv/TrToaEn3D+5xd+yZppCETeDqmXRoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9ZZZ5FRjFcpOmoziXbnviN084cOATyduhxX08iwd77A3eA9cbrQmb1LOV1g3eE5wOjqbJlU9AQUBspPP7vbdZwWwE0WK1JmiaAPx4JmUm9xIKfVscoVrlGvEbp2mNlE/X7tRRS+UckNKCOakUSxG+uP3n/Wg2lzG8ekaVKaEWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJvfjADD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729499503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZcSc+4L9y38uraoqMApZCtt9pe8JnUSoYfln1jlvOsY=;
-	b=SJvfjADD2URLODkgPq1RboDzyyFB5zRMeRbE8Pa1yQ7/jGiWqam6XpJcWjBm+Nb6wrIYQY
-	F/rXnQhzMZM4gODkMxnXaeehjYuDkOJ9sfCJUxNZhwA4SqbvZaTcSOIAc7K2Q4dm7X99P9
-	CBO/Aaa5HHOkbcnnMrssblY5E3IiNR0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-36Rx2BnCNDeuD8EftrT9VQ-1; Mon,
- 21 Oct 2024 04:31:40 -0400
-X-MC-Unique: 36Rx2BnCNDeuD8EftrT9VQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BEEAE1955D80;
-	Mon, 21 Oct 2024 08:31:37 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.104])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D147B1956056;
-	Mon, 21 Oct 2024 08:31:31 +0000 (UTC)
-Date: Mon, 21 Oct 2024 16:31:26 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: zhuxiaohui <zhuxiaohui400@gmail.com>, axboe@kernel.dk,
-	kbusch@kernel.org, hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-Message-ID: <ZxYRXvyxzlFP_NPl@fedora>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
- <ZxWwvF0Er-Aj-rtX@fedora>
- <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSKlhTbIDJMrSR8JOl17P55+dcj44Q6tmzSAKaHC+Bvz+L/NA09woBWoFjQ9T5c0QpH7n/Nk+z3CLIjhVWC7j44tZBQ+wpcIlJDjMFBDML7nzZsEslmVFkMhIs7T89xaYJxWhX6hFIQc2GuDV9rqgAgnlq9kD38/tmNZdyeatDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SUCJh/PD; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729499670; x=1761035670;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OpWyUIDyQKJuv/TrToaEn3D+5xd+yZppCETeDqmXRoA=;
+  b=SUCJh/PD5eEAGcUMrE7vDreYN3Z1xc77lM1SzREXk0a4AmHOiTXozG03
+   FEJ9RrhGmO+ZPO4k2bkzH0zIjIUWuxpeejWab/n+G9YkPF4z0qyS9dVoD
+   SYvLfD19djPNxW6OeVbORHh+Wf79r9CtfEECpRdkabOUkeQ738hGXi9C1
+   mrW3qhONMTaggKOyiXolxn0Vj0yQY3UUv1s790TSw5DSGrmSfA/ykXXUI
+   nRTakLnLD+0s2+CcxCpHg+XEumkXKR0pcZLORUIFd4q7VJ8evaMWbu/rf
+   REq/66tyx0NgZhl0hiTsmFIcQxt0WHeZrv4QdiT7wp1Rx198zg8ka11d6
+   w==;
+X-CSE-ConnectionGUID: hsYCEErVR7S47l7O+889zw==
+X-CSE-MsgGUID: YwySsfw8Q3GELIqkZiYgFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="31832023"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="31832023"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:34:29 -0700
+X-CSE-ConnectionGUID: G6R65nRoQnGnKZ3VmCgGnA==
+X-CSE-MsgGUID: hXM79xXBSJuzziw1SYnnXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="110221943"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:34:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t2nrt-00000005Qcr-0R7q;
+	Mon, 21 Oct 2024 11:34:25 +0300
+Date: Mon, 21 Oct 2024 11:34:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v1 2/3] platform/x86: intel_scu_ipc: Simplify code with
+ cleanup helpers
+Message-ID: <ZxYSEPAVR8JbBx-G@smile.fi.intel.com>
+References: <20241016115033.858574-1-andriy.shevchenko@linux.intel.com>
+ <20241016115033.858574-3-andriy.shevchenko@linux.intel.com>
+ <20241021070005.GW275077@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +82,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20241021070005.GW275077@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 21, 2024 at 10:05:34AM +0300, Sagi Grimberg wrote:
+On Mon, Oct 21, 2024 at 10:00:05AM +0300, Mika Westerberg wrote:
+> On Wed, Oct 16, 2024 at 02:48:25PM +0300, Andy Shevchenko wrote:
+> > Use macros defined in linux/cleanup.h to automate resource lifetime
+> > control in the driver.
+
+...
+
+> >  		get_device(&ipcdev->dev);
+> > +
 > 
+> unintended whitespace change?
+
+Hmm... I don't remember, probably.
+I will remove this part in v2.
+
+...
+
+> >  	err = intel_scu_ipc_check_status(scu);
+> > -	if (!err) { /* Read rbuf */
+> > -		for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
+> > -			wbuf[nc] = ipc_data_readl(scu, offset);
+> > -		memcpy(data, wbuf, count);
+> > -	}
 > 
+> Here you changed also the check to be for if (err) instead of (!err) so
+> at least mention why you did these at the same time you did the cleanup
+> change. It is fine by me but good to mention in the commit message.
+
+Yes, this is the part of the cleanup change. It's a byproduct of it.
+I will try to mention this in the commit message, however I consider
+the text redundant.
+
+...
+
+> > -	if (!err) {
+> > -		u32 outbuf[4] = {};
+> > -
+> > -		for (i = 0; i < outbuflen; i++)
+> > -			outbuf[i] = ipc_data_readl(scu, 4 * i);
+> > -
+> > -		memcpy(out, outbuf, outlen);
 > 
-> On 21/10/2024 4:39, Ming Lei wrote:
-> > On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
-> > > From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-> > > 
-> > > It is observed that nvme connect to a nvme over fabric target will
-> > > always fail when 'nohz_full' is set.
-> > > 
-> > > In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
-> > > isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
-> > > and when nvme connect to a remote target, it may fails on this stack:
-> > > 
-> > >          blk_mq_alloc_request_hctx+1
-> > >          __nvme_submit_sync_cmd+106
-> > >          nvmf_connect_io_queue+181
-> > >          nvme_tcp_start_queue+293
-> > >          nvme_tcp_setup_ctrl+948
-> > >          nvme_tcp_create_ctrl+735
-> > >          nvmf_dev_write+532
-> > >          vfs_write+237
-> > >          ksys_write+107
-> > >          do_syscall_64+128
-> > >          entry_SYSCALL_64_after_hwframe+118
-> > > 
-> > > due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
-> > > blk_mq_ctx on the hw queue.
-> > > 
-> > > This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
-> > > as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
-> > > indicate that block layer can fallback to a  blk_mq_ctx whose cpu
-> > > is not isolated.
-> > blk_mq_alloc_request_hctx()
-> > 	...
-> > 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
-> > 	...
-> > 
-> > It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
-> > online CPUs, both are same actually from this viewpoint.
-> > 
-> > It is one long-time problem for nvme fc.
-> 
-> For what nvmf is using blk_mq_alloc_request_hctx() is not important. It just
-> needs a tag from that hctx. the request execution is running where
-> blk_mq_alloc_request_hctx() is running.
+> Same here.
 
-I am afraid that just one tag from the specified hw queue isn't enough.
+Same answer.
 
-The connection request needs to be issued to the hw queue & completed.
-Without any online CPU for this hw queue, the request can't be completed
-in case of managed-irq.
+> > +	if (err) {
+> > +		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
+> > +		return err;
+> >  	}
 
+...
 
-thanks,
-Ming
+Thank you for the review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
