@@ -1,189 +1,525 @@
-Return-Path: <linux-kernel+bounces-375236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CEB9A9387
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:44:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AC89A9385
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AED1C225DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B951B2017E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBE21FEFAE;
-	Mon, 21 Oct 2024 22:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Eu/DMtJI"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6702CA9
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E331FEFD4;
+	Mon, 21 Oct 2024 22:43:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9841E32BD;
+	Mon, 21 Oct 2024 22:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729550688; cv=none; b=l+0wzRXNIPQKF2/CXsO+CEGZPGCrowwz0aMHsn8EdX6JQizsch9iNHkBphHS/Y0ZvHqOgZoIsynxnZa9zaLjc6KctEnd0CgM/r054U3hnrLX/rtlMrLXrpdcgAP34/TnT0wJbLIy7S3XrvYMpy+xG2XfDz/yKeK8tlRQEIHdQ3k=
+	t=1729550626; cv=none; b=QxX/XuCXNIzOm8BpKX8XfPdAGs6LVNe8Kvqb1yHbVTqweqsID+jE3PomvzfFly49j1JI+HJ9wxgTUdTiktaCXn33k0Ex3wc1sMxrIUOi0YPtpnKu38Ng2/jhAD/1BXCmmCyWatcmHXom7E9z/UsF+WMwXI6AO2gly7uJhJdAHx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729550688; c=relaxed/simple;
-	bh=fvBdXU5wdNYyyb0YdMIwM6Zof0HtqskXysq5kTzkOJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=haMOKbvA9b2FTs/McrjzvcVAe3nyuivNSyvz50P3OAT4D3jAqBBedUEgwnhX2EUMgDa7eCuV5rRBT7tGDnJnoUWYCStLbaQ5Onrn5R/SxsDYK8fP/a4I9PXsF5oNBTgpnTpjLDGBeNR8LnSC6YHcPWeMYB7hYejyPV/fF0s1QQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Eu/DMtJI; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so3353286a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729550686; x=1730155486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v9dYHyq/nO2kjsKJljIwgu2XBEVXjwR+MspuvtZff/o=;
-        b=Eu/DMtJIpd40O2ed5g9eFydSa1a4GmTmROIj2lD9FQDfKAGJLwwZAuvIRxQ31ckjbE
-         LUZ4eRhW4oIJ/cJD7VlqhIPTEwfSfbXoWIYp54/i7wi8oYP5zPLqETrTYosdB97wdwHa
-         Khaleew0eDYbLm6u94USWFGcRSiK0t8pTdXpi3y29J69CDnhlhaQEVyPfoeAOafDtPfU
-         VhM5EdMaZP7CyXJ0xwoJ61C6gwh/tbhXOjLNikIolIDOlTNH5qntm/4XT749n54g2qIe
-         DEVOXRJP7coLlir351qpWktCW6iXBlKS/5O7UlHEK4tyf5wC2wOFs/iL8p41M84mBzZj
-         AnxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729550686; x=1730155486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9dYHyq/nO2kjsKJljIwgu2XBEVXjwR+MspuvtZff/o=;
-        b=oGCGEtzdW4QPH5IC87j2349osZKi9E/ygTNK4WVqga53Ze7gpvSSxf8bsPYtgKsSOf
-         zI2RGDLITVihzovMXCRTlVyoK9Y2qrKn0OPPiN6MpSHUM/3G8rZmqQXEPlyIizUKOdWA
-         k5CsLzQNmDmJxmvUa+UOXah9uFXuhNlRQ61O6T9+VsVAtSf162UqnD4/GOeue0jM2pv5
-         2IkNgj4dF88fLxuLrnZhKn/zvs3U/dXdpU2LnauuRCg9PdERL4MuLY4WbXvO2UVuEbCV
-         Mbw8DIZvSrHuY7DoxTBhuxZlRqADElrCORi4DjljNcSkwGgHB7A4lbMNjp3x/3+apEAp
-         rZ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVGXniBLs16s+M+UuIx9kkGt/c3csx/1tSnyxVUSV+4UctYTtYR6g0o8dTmHbLN5yttpQHnCXCpZl4pROA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDxluLGifKZKcL4wgg7zb/bc2V0vLn3kx+m9jWRZXc/EhCBubd
-	EBOzB1qlELZ7VKqNKr5GF8/P+2BPPjQIZ3ES4gjLgQmVg8GO+K6kynUXRPKGlhs=
-X-Google-Smtp-Source: AGHT+IGhdnySufxWPfyYesh8DzNaeadpQJfwQ7ArqAHGT1qeQ1opDWNb+N7doDqEnIoCBf6sf7SXqg==
-X-Received: by 2002:a17:90a:ce8d:b0:2e2:973b:f8e7 with SMTP id 98e67ed59e1d1-2e5619f788amr13821134a91.38.1729550686240;
-        Mon, 21 Oct 2024 15:44:46 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ddb41548sm285199a91.39.2024.10.21.15.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 15:44:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t318l-003zgG-0d;
-	Tue, 22 Oct 2024 09:44:43 +1100
-Date: Tue, 22 Oct 2024 09:44:43 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: syzbot <syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com>,
-	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync (2)
-Message-ID: <ZxbZW5Q9sC0c+bqU@dread.disaster.area>
-References: <67104ab3.050a0220.d9b66.0175.GAE@google.com>
- <ZxBgAU7aasIzcBfj@dread.disaster.area>
- <CANp29Y6Rv2vUg463F3SYTsSNDr=Hmnarbz377tS=Hash7pT4xw@mail.gmail.com>
+	s=arc-20240116; t=1729550626; c=relaxed/simple;
+	bh=0ugwyUDFWFNxQKuMRt0UJQCEwNVFaG/OEkVWhUZqUQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s0Ah6dvwZJi5naoo+Ubtu8yh8aLV7F98NvuvpFs4mYUGkHgTrD7LU+BH3gQv8BQf6LutQYUcLyDDR8WQjqCytQKHBsAM/1spRA76GyA5WodFXyjL+kvSuD6H2QRwYCOqD4L8ppitLM5rk9ADoX3reiFNfwc5I00JQcJMgpt+btg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52F9C497;
+	Mon, 21 Oct 2024 15:44:12 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C1613F71E;
+	Mon, 21 Oct 2024 15:43:41 -0700 (PDT)
+Message-ID: <872a0e63-b894-4ebc-b964-4caada63aad9@arm.com>
+Date: Mon, 21 Oct 2024 23:44:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANp29Y6Rv2vUg463F3SYTsSNDr=Hmnarbz377tS=Hash7pT4xw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/12] thermal: core: Move lists of thermal instances
+ to trip descriptors
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2215082.irdbgypaU6@rjwysocki.net>
+ <5522726.Sb9uPGUboI@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <5522726.Sb9uPGUboI@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 12:13:33PM +0200, Aleksandr Nogikh wrote:
-> Hi Dave,
+
+
+On 10/4/24 20:39, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> On Thu, Oct 17, 2024 at 2:53 AM 'Dave Chinner' via syzkaller-bugs
-> <syzkaller-bugs@googlegroups.com> wrote:
-> >
-> > On Wed, Oct 16, 2024 at 04:22:27PM -0700, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    09f6b0c8904b Merge tag 'linux_kselftest-fixes-6.12-rc3' of..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14af3fd0580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=611be8174be36ca5dbc9
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c7705f980000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d2fb27980000
-> >
+> In almost all places where a thermal zone's list of thermal instances
+> is walked, there is a check to match a specific trip point and it is
+> walked in vain whenever there are no cooling devices associated with
+> the given trip.
 > 
-> It's better to just leave the issue open until syzbot actually stops
-> triggering it. Otherwise, after every "#syz invalid", the crash will
-> be eventually seen again and re-sent to the mailing lists.
+> To address this, store the lists of thermal instances in trip point
+> descriptors instead of storing them in thermal zones and adjust all
+> code using those lists accordingly.
 > 
-> In the other email you mentioned
-> "/sys/fs/xfs/<dev>/error/metadata/EIO/max_retries" as the only way to
-> prevent this hang. Must max_retries be set every time after xfs is
-> mounted? Or is it possible to somehow preconfigure it once at VM boot
-> and then no longer worry about it during fuzzing?
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a new iteration of
+> 
+> https://lore.kernel.org/linux-pm/2196792.irdbgypaU6@rjwysocki.net/
+> 
+> v1 -> v2:
+>     * Rebase.
+>     * Retain power_actor_is_valid() in the Power allocator governor, but
+>       drop its first parameter which is not needed any more.
+> 
+> ---
+>   drivers/thermal/gov_bang_bang.c       |   11 ++++-----
+>   drivers/thermal/gov_fair_share.c      |   16 ++++---------
+>   drivers/thermal/gov_power_allocator.c |   40 +++++++++++++++++-----------------
+>   drivers/thermal/gov_step_wise.c       |   16 ++++++-------
+>   drivers/thermal/thermal_core.c        |   33 ++++++++++++++++------------
+>   drivers/thermal/thermal_core.h        |    5 +---
+>   drivers/thermal/thermal_helpers.c     |    5 ++--
+>   7 files changed, 62 insertions(+), 64 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -490,7 +490,7 @@ static void thermal_zone_device_check(st
+>   
+>   static void thermal_zone_device_init(struct thermal_zone_device *tz)
+>   {
+> -	struct thermal_instance *pos;
+> +	struct thermal_trip_desc *td;
+>   
+>   	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
+>   
+> @@ -498,8 +498,12 @@ static void thermal_zone_device_init(str
+>   	tz->passive = 0;
+>   	tz->prev_low_trip = -INT_MAX;
+>   	tz->prev_high_trip = INT_MAX;
+> -	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+> -		pos->initialized = false;
+> +	for_each_trip_desc(tz, td) {
+> +		struct thermal_instance *instance;
+> +
+> +		list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +			instance->initialized = false;
+> +	}
+>   }
+>   
+>   static void thermal_governor_trip_crossed(struct thermal_governor *governor,
+> @@ -764,12 +768,12 @@ struct thermal_zone_device *thermal_zone
+>    * Return: 0 on success, the proper error value otherwise.
+>    */
+>   static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+> -				     const struct thermal_trip *trip,
+> +				     struct thermal_trip *trip,
+>   				     struct thermal_cooling_device *cdev,
+>   				     struct cooling_spec *cool_spec)
+>   {
+> -	struct thermal_instance *dev;
+> -	struct thermal_instance *pos;
+> +	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+> +	struct thermal_instance *dev, *instance;
+>   	bool upper_no_limit;
+>   	int result;
+>   
+> @@ -832,13 +836,13 @@ static int thermal_bind_cdev_to_trip(str
+>   		goto remove_trip_file;
+>   
+>   	mutex_lock(&cdev->lock);
+> -	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+> -		if (pos->trip == trip && pos->cdev == cdev) {
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +		if (instance->cdev == cdev) {
+>   			result = -EEXIST;
+>   			break;
+>   		}
+>   	if (!result) {
+> -		list_add_tail(&dev->tz_node, &tz->thermal_instances);
+> +		list_add_tail(&dev->trip_node, &td->thermal_instances);
+>   		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
+>   
+>   		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
+> @@ -871,15 +875,16 @@ free_mem:
+>    * This function is usually called in the thermal zone device .unbind callback.
+>    */
+>   static void thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
+> -					  const struct thermal_trip *trip,
+> +					  struct thermal_trip *trip,
+>   					  struct thermal_cooling_device *cdev)
+>   {
+> +	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+>   	struct thermal_instance *pos, *next;
+>   
+>   	mutex_lock(&cdev->lock);
+> -	list_for_each_entry_safe(pos, next, &tz->thermal_instances, tz_node) {
+> -		if (pos->trip == trip && pos->cdev == cdev) {
+> -			list_del(&pos->tz_node);
+> +	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
+> +		if (pos->cdev == cdev) {
+> +			list_del(&pos->trip_node);
+>   			list_del(&pos->cdev_node);
+>   
+>   			thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
+> @@ -1460,7 +1465,6 @@ thermal_zone_device_register_with_trips(
+>   		}
+>   	}
+>   
+> -	INIT_LIST_HEAD(&tz->thermal_instances);
+>   	INIT_LIST_HEAD(&tz->node);
+>   	ida_init(&tz->ida);
+>   	mutex_init(&tz->lock);
+> @@ -1484,6 +1488,7 @@ thermal_zone_device_register_with_trips(
+>   	tz->num_trips = num_trips;
+>   	for_each_trip_desc(tz, td) {
+>   		td->trip = *trip++;
+> +		INIT_LIST_HEAD(&td->thermal_instances);
+>   		/*
+>   		 * Mark all thresholds as invalid to start with even though
+>   		 * this only matters for the trips that start as invalid and
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -30,6 +30,7 @@ struct thermal_trip_desc {
+>   	struct thermal_trip trip;
+>   	struct thermal_trip_attrs trip_attrs;
+>   	struct list_head notify_list_node;
+> +	struct list_head thermal_instances;
+>   	int notify_temp;
+>   	int threshold;
+>   };
+> @@ -99,7 +100,6 @@ struct thermal_governor {
+>    * @tzp:	thermal zone parameters
+>    * @governor:	pointer to the governor for this thermal zone
+>    * @governor_data:	private pointer for governor data
+> - * @thermal_instances:	list of &struct thermal_instance of this thermal zone
+>    * @ida:	&struct ida to generate unique id for this zone's cooling
+>    *		devices
+>    * @lock:	lock to protect thermal_instances list
+> @@ -132,7 +132,6 @@ struct thermal_zone_device {
+>   	struct thermal_zone_params *tzp;
+>   	struct thermal_governor *governor;
+>   	void *governor_data;
+> -	struct list_head thermal_instances;
+>   	struct ida ida;
+>   	struct mutex lock;
+>   	struct list_head node;
+> @@ -229,7 +228,7 @@ struct thermal_instance {
+>   	struct device_attribute attr;
+>   	char weight_attr_name[THERMAL_NAME_LENGTH];
+>   	struct device_attribute weight_attr;
+> -	struct list_head tz_node; /* node in tz->thermal_instances */
+> +	struct list_head trip_node; /* node in trip->thermal_instances */
+>   	struct list_head cdev_node; /* node in cdev->thermal_instances */
+>   	unsigned int weight; /* The weight of the cooling device */
+>   	bool upper_no_limit;
+> Index: linux-pm/drivers/thermal/gov_bang_bang.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+> +++ linux-pm/drivers/thermal/gov_bang_bang.c
+> @@ -67,6 +67,7 @@ static void bang_bang_control(struct the
+>   			      const struct thermal_trip *trip,
+>   			      bool crossed_up)
+>   {
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+>   	struct thermal_instance *instance;
+>   
+>   	lockdep_assert_held(&tz->lock);
+> @@ -75,10 +76,8 @@ static void bang_bang_control(struct the
+>   		thermal_zone_trip_id(tz, trip), trip->temperature,
+>   		tz->temperature, trip->hysteresis);
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -		if (instance->trip == trip)
+> -			bang_bang_set_instance_target(instance, crossed_up);
+> -	}
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +		bang_bang_set_instance_target(instance, crossed_up);
+>   }
+>   
+>   static void bang_bang_manage(struct thermal_zone_device *tz)
+> @@ -104,8 +103,8 @@ static void bang_bang_manage(struct ther
+>   		 * to the thermal zone temperature and the trip point threshold.
+>   		 */
+>   		turn_on = tz->temperature >= td->threshold;
+> -		list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -			if (!instance->initialized && instance->trip == trip)
+> +		list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+> +			if (!instance->initialized)
+>   				bang_bang_set_instance_target(instance, turn_on);
+>   		}
+>   	}
+> Index: linux-pm/drivers/thermal/gov_fair_share.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_fair_share.c
+> +++ linux-pm/drivers/thermal/gov_fair_share.c
+> @@ -44,7 +44,7 @@ static int get_trip_level(struct thermal
+>   /**
+>    * fair_share_throttle - throttles devices associated with the given zone
+>    * @tz: thermal_zone_device
+> - * @trip: trip point
+> + * @td: trip point descriptor
+>    * @trip_level: number of trips crossed by the zone temperature
+>    *
+>    * Throttling Logic: This uses three parameters to calculate the new
+> @@ -61,29 +61,23 @@ static int get_trip_level(struct thermal
+>    * new_state of cooling device = P3 * P2 * P1
+>    */
+>   static void fair_share_throttle(struct thermal_zone_device *tz,
+> -				const struct thermal_trip *trip,
+> +				const struct thermal_trip_desc *td,
+>   				int trip_level)
+>   {
+>   	struct thermal_instance *instance;
+>   	int total_weight = 0;
+>   	int nr_instances = 0;
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -		if (instance->trip != trip)
+> -			continue;
+> -
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		total_weight += instance->weight;
+>   		nr_instances++;
+>   	}
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		struct thermal_cooling_device *cdev = instance->cdev;
+>   		u64 dividend;
+>   		u32 divisor;
+>   
+> -		if (instance->trip != trip)
+> -			continue;
+> -
+>   		dividend = trip_level;
+>   		dividend *= cdev->max_state;
+>   		divisor = tz->num_trips;
+> @@ -116,7 +110,7 @@ static void fair_share_manage(struct the
+>   		    trip->type == THERMAL_TRIP_HOT)
+>   			continue;
+>   
+> -		fair_share_throttle(tz, trip, trip_level);
+> +		fair_share_throttle(tz, td, trip_level);
+>   	}
+>   }
+>   
+> Index: linux-pm/drivers/thermal/gov_power_allocator.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_power_allocator.c
+> +++ linux-pm/drivers/thermal/gov_power_allocator.c
+> @@ -97,11 +97,9 @@ struct power_allocator_params {
+>   	struct power_actor *power;
+>   };
+>   
+> -static bool power_actor_is_valid(struct power_allocator_params *params,
+> -				 struct thermal_instance *instance)
+> +static bool power_actor_is_valid(struct thermal_instance *instance)
+>   {
+> -	return (instance->trip == params->trip_max &&
+> -		 cdev_is_power_actor(instance->cdev));
+> +	return cdev_is_power_actor(instance->cdev);
+>   }
+>   
+>   /**
+> @@ -118,13 +116,14 @@ static bool power_actor_is_valid(struct
+>   static u32 estimate_sustainable_power(struct thermal_zone_device *tz)
+>   {
+>   	struct power_allocator_params *params = tz->governor_data;
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+>   	struct thermal_cooling_device *cdev;
+>   	struct thermal_instance *instance;
+>   	u32 sustainable_power = 0;
+>   	u32 min_power;
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -		if (!power_actor_is_valid(params, instance))
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+> +		if (!power_actor_is_valid(instance))
+>   			continue;
+>   
+>   		cdev = instance->cdev;
+> @@ -400,6 +399,7 @@ static void divvy_up_power(struct power_
+>   static void allocate_power(struct thermal_zone_device *tz, int control_temp)
+>   {
+>   	struct power_allocator_params *params = tz->governor_data;
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+>   	unsigned int num_actors = params->num_actors;
+>   	struct power_actor *power = params->power;
+>   	struct thermal_cooling_device *cdev;
+> @@ -417,10 +417,10 @@ static void allocate_power(struct therma
+>   	/* Clean all buffers for new power estimations */
+>   	memset(power, 0, params->buffer_size);
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		struct power_actor *pa = &power[i];
+>   
+> -		if (!power_actor_is_valid(params, instance))
+> +		if (!power_actor_is_valid(instance))
+>   			continue;
+>   
+>   		cdev = instance->cdev;
+> @@ -454,10 +454,10 @@ static void allocate_power(struct therma
+>   		       power_range);
+>   
+>   	i = 0;
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		struct power_actor *pa = &power[i];
+>   
+> -		if (!power_actor_is_valid(params, instance))
+> +		if (!power_actor_is_valid(instance))
+>   			continue;
+>   
+>   		power_actor_set_power(instance->cdev, instance,
+> @@ -538,12 +538,13 @@ static void reset_pid_controller(struct
+>   static void allow_maximum_power(struct thermal_zone_device *tz)
+>   {
+>   	struct power_allocator_params *params = tz->governor_data;
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+>   	struct thermal_cooling_device *cdev;
+>   	struct thermal_instance *instance;
+>   	u32 req_power;
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -		if (!power_actor_is_valid(params, instance))
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+> +		if (!power_actor_is_valid(instance))
+>   			continue;
+>   
+>   		cdev = instance->cdev;
+> @@ -581,13 +582,11 @@ static void allow_maximum_power(struct t
+>   static int check_power_actors(struct thermal_zone_device *tz,
+>   			      struct power_allocator_params *params)
+>   {
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+>   	struct thermal_instance *instance;
+>   	int ret = 0;
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> -		if (instance->trip != params->trip_max)
+> -			continue;
+> -
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		if (!cdev_is_power_actor(instance->cdev)) {
+>   			dev_warn(&tz->device, "power_allocator: %s is not a power actor\n",
+>   				 instance->cdev->type);
+> @@ -635,14 +634,15 @@ static void power_allocator_update_tz(st
+>   				      enum thermal_notify_event reason)
+>   {
+>   	struct power_allocator_params *params = tz->governor_data;
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+>   	struct thermal_instance *instance;
+>   	int num_actors = 0;
+>   
+>   	switch (reason) {
+>   	case THERMAL_TZ_BIND_CDEV:
+>   	case THERMAL_TZ_UNBIND_CDEV:
+> -		list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+> -			if (power_actor_is_valid(params, instance))
+> +		list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +			if (power_actor_is_valid(instance))
+>   				num_actors++;
+>   
+>   		if (num_actors == params->num_actors)
+> @@ -652,8 +652,8 @@ static void power_allocator_update_tz(st
+>   		break;
+>   	case THERMAL_INSTANCE_WEIGHT_CHANGED:
+>   		params->total_weight = 0;
+> -		list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+> -			if (power_actor_is_valid(params, instance))
+> +		list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +			if (power_actor_is_valid(instance))
+>   				params->total_weight += instance->weight;
+>   		break;
+>   	default:
+> Index: linux-pm/drivers/thermal/gov_step_wise.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_step_wise.c
+> +++ linux-pm/drivers/thermal/gov_step_wise.c
+> @@ -66,9 +66,10 @@ static unsigned long get_target_state(st
+>   }
+>   
+>   static void thermal_zone_trip_update(struct thermal_zone_device *tz,
+> -				     const struct thermal_trip *trip,
+> +				     const struct thermal_trip_desc *td,
+>   				     int trip_threshold)
+>   {
+> +	const struct thermal_trip *trip = &td->trip;
+>   	enum thermal_trend trend = get_tz_trend(tz, trip);
+>   	int trip_id = thermal_zone_trip_id(tz, trip);
+>   	struct thermal_instance *instance;
+> @@ -82,12 +83,9 @@ static void thermal_zone_trip_update(str
+>   	dev_dbg(&tz->device, "Trip%d[type=%d,temp=%d]:trend=%d,throttle=%d\n",
+>   		trip_id, trip->type, trip_threshold, trend, throttle);
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>   		int old_target;
+>   
+> -		if (instance->trip != trip)
+> -			continue;
+> -
+>   		old_target = instance->target;
+>   		instance->target = get_target_state(instance, trend, throttle);
+>   
+> @@ -127,11 +125,13 @@ static void step_wise_manage(struct ther
+>   		    trip->type == THERMAL_TRIP_HOT)
+>   			continue;
+>   
+> -		thermal_zone_trip_update(tz, trip, td->threshold);
+> +		thermal_zone_trip_update(tz, td, td->threshold);
+>   	}
+>   
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+> -		thermal_cdev_update(instance->cdev);
+> +	for_each_trip_desc(tz, td) {
+> +		list_for_each_entry(instance, &td->thermal_instances, trip_node)
+> +			thermal_cdev_update(instance->cdev);
+> +	}
+>   }
+>   
+>   static struct thermal_governor thermal_gov_step_wise = {
+> Index: linux-pm/drivers/thermal/thermal_helpers.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_helpers.c
+> +++ linux-pm/drivers/thermal/thermal_helpers.c
+> @@ -43,10 +43,11 @@ static bool thermal_instance_present(str
+>   				     struct thermal_cooling_device *cdev,
+>   				     const struct thermal_trip *trip)
+>   {
+> +	const struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+>   	struct thermal_instance *ti;
+>   
+> -	list_for_each_entry(ti, &tz->thermal_instances, tz_node) {
+> -		if (ti->trip == trip && ti->cdev == cdev)
+> +	list_for_each_entry(ti, &td->thermal_instances, trip_node) {
+> +		if (ti->cdev == cdev)
+>   			return true;
+>   	}
+>   
+> 
+> 
+> 
 
-It's a post mount config because the filesystem has to be mounted
-before the error config files show up in /sys/fs/xfs/<dev>/....
+Indeed, it looks better to not loop-and-continue to
+figure out the needed trip and instances.
 
-For example, in fstests we set "fail_at_unmount" specifically when
-running a test that will error out all writes and then unmount.
-
-The code that does this is in common/xfs:
-
-# Prepare a mounted filesystem for an IO error shutdown test by disabling retry
-# for metadata writes.  This prevents a (rare) log livelock when:
-#
-# - The log has given out all available grant space, preventing any new
-#   writers from tripping over IO errors (and shutting down the fs/log),
-# - All log buffers were written to disk, and
-# - The log tail is pinned because the AIL keeps hitting EIO trying to write
-#   committed changes back into the filesystem.
-#
-# Real users might want the default behavior of the AIL retrying writes forever
-# but for testing purposes we don't want to wait.
-#
-# The sole parameter should be the filesystem data device, e.g. $SCRATCH_DEV.
-_xfs_prepare_for_eio_shutdown()
-{
-        local dev="$1"
-        local ctlfile="error/fail_at_unmount"
-
-        # Once we enable IO errors, it's possible that a writer thread will
-        # trip over EIO, cancel the transaction, and shut down the system.
-        # This is expected behavior, so we need to remove the "Internal error"
-        # message from the list of things that can cause the test to be marked
-        # as failed.
-        _add_dmesg_filter "Internal error"
-
-        # Don't retry any writes during the (presumably) post-shutdown unmount
-        _has_fs_sysfs "$ctlfile" && _set_fs_sysfs_attr $dev "$ctlfile" 1
-
-        # Disable retry of metadata writes that fail with EIO
-        for ctl in max_retries retry_timeout_seconds; do
-                ctlfile="error/metadata/EIO/$ctl"
-
-                _has_fs_sysfs "$ctlfile" && _set_fs_sysfs_attr $dev "$ctlfile" 0
-        done
-}
-
-However, this does not address the same issue when a filesystem
-freeze is run (because it has to bring the on-disk state down to the
-same as a clean unmounted filesystem). Hence for syzbot, the only
-way to avoid this sort of issue is to cap the maximum number of
-retries so that metadata writes fail as soon as the device starts
-rejecting them.
-
-Realistically, we want syzbot to exercise both the retry logic and
-the hard fail logic. Right now it is only exercising the retry
-logic, so setting the max retries to, say, three retries would
-exercise both the retry logic and the hard fail logic and still
-avoid all the potential "livelock until user intervention" test
-hangs...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
