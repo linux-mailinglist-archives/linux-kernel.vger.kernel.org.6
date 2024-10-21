@@ -1,138 +1,199 @@
-Return-Path: <linux-kernel+bounces-373557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02659A58CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:14:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861819A58CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8946528295C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1DF51F21366
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9E01CFBC;
-	Mon, 21 Oct 2024 02:14:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC522083;
+	Mon, 21 Oct 2024 02:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d08KNrR0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B3D9463;
-	Mon, 21 Oct 2024 02:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8AD10940;
+	Mon, 21 Oct 2024 02:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729476893; cv=none; b=r/TvWtFvsBGl7GFQHihFIZ60nw5TvG84MXjKi1tuvrS9T9Zbmb+12aN+qvn6iHTIU5fBttM8KRy0LhyYxyxTaKIR6Y8bUFcO40iJMaejVQllDuUt4tFEdb+RazTZeIIxY/LEeZ+rVvGjjBvGa8TjZ0IDi3n3rn7Cf8RlrBwGNMk=
+	t=1729476946; cv=none; b=hNGs3T4Pxc/hvghaKtXSDwPOloX/IWlhhd6YRY2DRWa7tiUfxuxpC6ipQUucbTVZ+8CRad7vOiW6wkp6lvKZ5MrW/BKunA62x7JHK4DNy4o42DmodJn2btaUBiZ6p7Ogf/iMZO3YhAllUxyye7CijeEHqPJYxcJaJGV9ZVNe9vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729476893; c=relaxed/simple;
-	bh=2VjWKIXAWHuHHC7RhYcuwK63hrbTsYS1nxgkeYa92Rc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s/kiZchojB7O4XiLKC929RV8YyfvPhCPUaefWMcJWqgni4Qu9l++kZw7hB9Wl8KLVba95yA90Xo7/v7kOH0w43N2UHZ8YVccVMUNQhe9kRFtKAdXet8sVoUyRUdqfx31HJK9xfljrpOTC/YYa+XJ4sQ4xomSXDd+r41miEs5010=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3b31e80a8f5211efa216b1d71e6e1362-20241021
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:7727c2d3-5d38-4940-9ce9-8409a27534a6,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:5dbac00cc02ee61ea71a56b997bc4fcd,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3b31e80a8f5211efa216b1d71e6e1362-20241021
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zenghongling@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 267218282; Mon, 21 Oct 2024 10:14:41 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 553B2B8075B2;
-	Mon, 21 Oct 2024 10:14:41 +0800 (CST)
-X-ns-mid: postfix-6715B911-209283303
-Received: from localhost.localdomain (unknown [172.25.120.36])
-	by node2.com.cn (NSMail) with ESMTPA id 703ECB8075B2;
-	Mon, 21 Oct 2024 02:14:40 +0000 (UTC)
-From: Hongling Zeng <zenghongling@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: stuart.w.hayes@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	zhongling0719@126.com,
-	Hongling Zeng <zenghongling@kylinos.cn>
-Subject: [PATCH] platform/x86: dell-dcdbase: Replace snprintf in show  functions with sysfs_emit
-Date: Mon, 21 Oct 2024 10:14:12 +0800
-Message-Id: <20241021021412.5728-1-zenghongling@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729476946; c=relaxed/simple;
+	bh=7yCrAsbcPnUs8QLX4xme6O9ayrQJh78Qk/A7EGSgZtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L7YjSVoMCEGaid7EBmjEKk2T1qMPul2XzFjwVsUahns1l3xyxsRXVIcvJWDb5kJHXxeMRzDRC3lRZdoAVsRc3Ns+NZQvCn4ilNkXUT0FfrQbURF0RwwMK7ZlODU4N5Hx3T58l2xzTit3emp2+rwucyhnX7mV5cDxa78ppKnO7j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d08KNrR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8E0C4CEE7;
+	Mon, 21 Oct 2024 02:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729476945;
+	bh=7yCrAsbcPnUs8QLX4xme6O9ayrQJh78Qk/A7EGSgZtY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d08KNrR0EDdB5cZL1479IaZ60BD1V2vtCsS7R0jtnBAV4w+rISPncIzkr2lYtP761
+	 e/FVBP8Z+3v6ba4VnJsf1PJTUWvJj8Ryh5j08KR1o5WRLn0sjwqC3z6Nc8v67wdKiW
+	 9ZHjL0fdEqOOY1cxGZvwJsxl4z457YuI9setNk1QaTLQnXJ3/cYwiSVT3JDYH0eXS1
+	 VNLqNODc7A8HrsjvJpGj6GFyM6fynPTjAjymsLSGFxLRK4RoI//h915vj/B/gg0R18
+	 ptcqdj2UlOJZb0jv0rSGEiKkDqoe7VlU7B2Hb4lrNT+/1nxHN5ljadfMzfV7aC5sGb
+	 +WitOv0l8ullQ==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f8490856so4101222e87.2;
+        Sun, 20 Oct 2024 19:15:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7MQDaD0/hTUZIr+oEGIMY3o0TqN8j6F8NQrJneFjU61h6TB2/9VSREEt7pYr/cZ2XOBZvnOCn9kPwSLR5@vger.kernel.org, AJvYcCU8rdPOB9F9pulikWHKdAaWw1+Zmu8BCoY9P/y012q4MdK4agQ6n/Fvl2j6Bnn/XSN/QbWKm2NQvW2n@vger.kernel.org, AJvYcCUMusVIX44d+bttljTgjpNtm3twZSxXpUrlsnC0M9EYlD3aN40ziwPEQeONmEPGSSHyCJTPwzlSuz68@vger.kernel.org, AJvYcCW2I2FL/Iyw9Z/srMwme5SzLefuOScbPPLgtBHQPPSoKKOypN4noKwDZ9xqJqVMk5qOM8vbMY28oiCaczxi@vger.kernel.org, AJvYcCWRm7IzOlccbfoczrvw31gp0d4DQ9bCm6rLkBcM7O+xuObGBMmSfSSsHaTawKsDwUSZcHZ5NDTc7VmY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+D/OL+sg7rKTD7RvZS3qnlaXtWQKgzIdnwNMiUYdBzIumAMOY
+	xpCKVpxRSCH3HnP6dvrQxyxN2mfyrU933q7fyO5fbuyue4KKt3KSMfr2JeDgxDFpV+ugdopirKI
+	AKQ27ULJoLvPozGbYqWSRjbWoYhY=
+X-Google-Smtp-Source: AGHT+IH3ESdsYc+/+wUsglq6HOvcvexZoZqe+c/NsP73ESbFMnBfgYbBsi4+2Lp8sphgSZWamBJV5g/oTZN9ldIl0yc=
+X-Received: by 2002:a05:6512:280d:b0:53a:d8b:95c0 with SMTP id
+ 2adb3069b0e04-53a154a26ecmr4500158e87.30.1729476943821; Sun, 20 Oct 2024
+ 19:15:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-4-xur@google.com>
+In-Reply-To: <20241014213342.1480681-4-xur@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 21 Oct 2024 11:15:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARqnhZuDf75_juBtdK0GV8jL_aDjnuyU=-8zjdCZetF1g@mail.gmail.com>
+Message-ID: <CAK7LNARqnhZuDf75_juBtdK0GV8jL_aDjnuyU=-8zjdCZetF1g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] Change the symbols order when --ffuntion-sections
+ is enabled
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-  show() must not use snprintf() when formatting the value to be
-returned to user space
+On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> When the -ffunction-sections compiler option is enabled, each function
+> is placed in a separate section named .text.function_name rather than
+> putting all functions in a single .text section.
+>
+> However, using -function-sections can cause problems with the
+> linker script. The comments included in include/asm-generic/vmlinux.lds.h
+> note these issues.:
+>   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if de=
+ad
+>    code elimination is enabled, so these sections should be converted
+>    to use ".." first.=E2=80=9D
+>
+> It is unclear whether there is a straightforward method for converting
+> a suffix to "..".
 
-Signed-off-by: Hongling Zeng <zenghongling@kylinos.cn>
----
- drivers/platform/x86/dell/dcdbas.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/x86/dell/dcdbas.c b/drivers/platform/x86/de=
-ll/dcdbas.c
-index a60e350..143fd0a 100644
---- a/drivers/platform/x86/dell/dcdbas.c
-+++ b/drivers/platform/x86/dell/dcdbas.c
-@@ -132,14 +132,14 @@ static ssize_t smi_data_buf_phys_addr_show(struct d=
-evice *dev,
- 					   struct device_attribute *attr,
- 					   char *buf)
- {
--	return sprintf(buf, "%x\n", (u32)smi_buf.dma);
-+	return sysfs_emit(buf, "%x\n", (u32)smi_buf.dma);
- }
-=20
- static ssize_t smi_data_buf_size_show(struct device *dev,
- 				      struct device_attribute *attr,
- 				      char *buf)
- {
--	return sprintf(buf, "%lu\n", smi_buf.size);
-+	return sysfs_emit(buf, "%lu\n", smi_buf.size);
- }
-=20
- static ssize_t smi_data_buf_size_store(struct device *dev,
-@@ -200,7 +200,7 @@ static ssize_t host_control_action_show(struct device=
- *dev,
- 					struct device_attribute *attr,
- 					char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_action);
-+	return sysfs_emit(buf, "%u\n", host_control_action);
- }
-=20
- static ssize_t host_control_action_store(struct device *dev,
-@@ -224,7 +224,7 @@ static ssize_t host_control_smi_type_show(struct devi=
-ce *dev,
- 					  struct device_attribute *attr,
- 					  char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_smi_type);
-+	return sysfs_emit(buf, "%u\n", host_control_smi_type);
- }
-=20
- static ssize_t host_control_smi_type_store(struct device *dev,
-@@ -239,7 +239,7 @@ static ssize_t host_control_on_shutdown_show(struct d=
-evice *dev,
- 					     struct device_attribute *attr,
- 					     char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_on_shutdown);
-+	return sysfs_emit(buf, "%u\n", host_control_on_shutdown);
- }
-=20
- static ssize_t host_control_on_shutdown_store(struct device *dev,
---=20
-2.1.0
 
+Why not for ".text.fixup"?
+
+$ git grep --name-only '\.text\.fixup' | xargs sed -i
+'s/\.text\.fixup/.text..fixup/g'
+
+
+
+I do not know how to rename other sections that are generated by compilers.
+
+
+
+
+> This patch modifies the order of subsections within the
+> text output section when the -ffunction-sections flag is enabled.
+> Specifically, it repositions sections with certain fixed patterns (for
+> example .text.unlikely) before TEXT_MAIN, ensuring that they are grouped
+> and matched together.
+>
+> Note that the limitation arises because the linker script employs glob
+> patterns instead of regular expressions for string matching. While there
+> is a method to maintain the current order using complex patterns, this
+> significantly complicates the pattern and increases the likelihood of
+> errors.
+>
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Rong Xu <xur@google.com>
+> Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
+nux.lds.h
+> index eeadbaeccf88..5df589c60401 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -554,9 +554,21 @@
+>   * during second ld run in second ld pass when generating System.map
+>   *
+>   * TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+> - * code elimination is enabled, so these sections should be converted
+> - * to use ".." first.
+> + * code elimination or function-section is enabled. Match these symbols
+> + * first when in these builds.
+>   */
+> +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_=
+CLANG)
+> +#define TEXT_TEXT                                                      \
+
+
+Why did you do this conditionally?
+
+You are making this even more unmaintainable.
+
+
+
+
+
+> +               ALIGN_FUNCTION();                                       \
+> +               *(.text.asan.* .text.tsan.*)                            \
+> +               *(.text.unknown .text.unknown.*)                        \
+> +               *(.text.unlikely .text.unlikely.*)                      \
+> +               . =3D ALIGN(PAGE_SIZE);                                  =
+ \
+> +               *(.text.hot .text.hot.*)                                \
+> +               *(TEXT_MAIN .text.fixup)                                \
+> +               NOINSTR_TEXT                                            \
+> +               *(.ref.text)
+> +#else
+>  #define TEXT_TEXT                                                      \
+>                 ALIGN_FUNCTION();                                       \
+>                 *(.text.hot .text.hot.*)                                \
+> @@ -566,6 +578,7 @@
+>                 NOINSTR_TEXT                                            \
+>                 *(.ref.text)                                            \
+>                 *(.text.asan.* .text.tsan.*)
+> +#endif
+>
+>
+>  /* sched.text is aling to function alignment to secure we have same
+> --
+> 2.47.0.rc1.288.g06298d1525-goog
+>
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
