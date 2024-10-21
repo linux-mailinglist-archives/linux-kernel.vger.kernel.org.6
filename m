@@ -1,312 +1,151 @@
-Return-Path: <linux-kernel+bounces-375289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7809A9436
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EB59A9439
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F181C21FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEDE1C229B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A721FEFD6;
-	Mon, 21 Oct 2024 23:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363C91FEFC6;
+	Mon, 21 Oct 2024 23:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hHz0D/R9"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A586tFlu"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E291FDFA7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D261E6325;
+	Mon, 21 Oct 2024 23:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729553535; cv=none; b=EAXahop3G4/HJLAo1a2jGbhpGi9qkC34JpqC7gVDli/iIJcChPZeoClO7w+OW0Z3piGLhqGWKaCjL4vXmkLhwxZty7hTDun7YnjxAyTSDtrHpUlAW4EMMmnIYbhHPBLSm7SVQQ9gThXsqCbYduhY0uDyXakFQO20XZ6BEhQRpIo=
+	t=1729553544; cv=none; b=CQF2v7zguRICOiRcyALf0+aY76+0oBtflV8Y1490ldfogvmzbyUEnbxKXfVgC5XDn5mfTTcsfUTEZAe7JxzJ4MYDModU4AKJ2ocPqkTIUzCVUpu5kbwdFITJHEsAmAlDk7Nq5sjuN4Vdo4yL0R8Egyt54yEiTJUUfULQCSwm3do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729553535; c=relaxed/simple;
-	bh=X916ky8vzME0jkYISKDdzwdl7efRQ8hg38UiB7TfrUQ=;
+	s=arc-20240116; t=1729553544; c=relaxed/simple;
+	bh=dQusqVS2m/sejoi0x8nt4cAjCs5p6H4uT0xFpndeWuI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nuTjdarAhjZj0X5WezO/KTTmuDCZTzX0sUXqn6JBA8A3sPF8rjmHEJHu0Tbgmrb0cDyeLHqC4DpIVyqGFo6Su/yGhF7hAurq7O2mCNzHfp6YIWl8M95O6x8TnbOckfq5Q/17z6Xhbl1ZPz/mhpQn05V9X+59iPAZUQD14HULmSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hHz0D/R9; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460969c49f2so134881cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:32:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=heMEVBz6db58G/kKhgKbOUDkCF80lv0fbCYjbHJN2sXo4OFcr7tXnziHjjSoOmcI/ck0WON9icE8jCkXjQg+x3uqnAVakQaqYJCTWHWte1i02d18AF8TgX0uXzE9d/1PFu4iE+ZfiejzqeBPi3SySwyemWg+CXhFpHRZg0wK6ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A586tFlu; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so4097210a12.1;
+        Mon, 21 Oct 2024 16:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729553532; x=1730158332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729553542; x=1730158342; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XBSWnMd6XTE6VfUT0N7YniZsrpOBHvMOUqQ82iETS4o=;
-        b=hHz0D/R9d/i5iIa0/fTOPVY4teWIgusx8+Zt8WFvaURuj0b6jBYb6S5xg+mEfKcvBw
-         ezyDmHKyQuI7sp82PEKqlMQJGmVJb4+iIjMD/7xnrhlEgDnyoB/3VxeuTAC2MzqfmIvv
-         XEsBNGB6KuAT3860MlzXyhDCRCoqWG23DvYLueON8OKtaXpZiBxOsYMCtjBg3W5m26hw
-         DhEVEknXrClMURnBTAc7eIgCB/SNDGDlwekYC7FINV/yo40ttnaIcaheOdofbAL8trr1
-         Xl5XKxzkZVO8Hb+8cqCvDVROUW/zRuwQ59WbN6SkgK7lsLugWADRB9/gY19XXJ7RC9Dw
-         V3WA==
+        bh=apwv868bKjMTXfXoFh01HYLst30ORGniee4XhriVDbU=;
+        b=A586tFluXb5ma4Gd32P0bDAq5j8hnEcLzLBJQNOZw/x3JAXAaI2yf7ncdxNtcu3dMr
+         0+PXPCQQfHe+UJFPNNds+yjqw6ydazzugICrLk5LfKCIKjDJBEM7J30xFA031X+1uGRW
+         7gkN/YOWoKs729V0f0O7oMhzLu8FFtnwolL1AFXELmG8f5WoNsxvrcwVUGhq/xCr0juG
+         O8XrmOumudZdUVDM2Akame6cCCPUS1UlsaHrmyhxUvRwGNZAnHq67e9FioYvUgEQpVS6
+         dRmXtFVwQZfg8sd3HhIOogAwtDliZdzYA5QFdzPR3iSAY1tUDlGkefvZxd8tR145el9N
+         5Kmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729553532; x=1730158332;
+        d=1e100.net; s=20230601; t=1729553542; x=1730158342;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XBSWnMd6XTE6VfUT0N7YniZsrpOBHvMOUqQ82iETS4o=;
-        b=FoMkpnOBt2c8adM94fv/XQCn03ds8UH8T1eEdG0wsXROnMBmvG+JLtL0RfxxShxHNG
-         SfFZLDXOsBO3ayvfDFRDqYHEtogAoHzQC1H/OfgA/PV1WRE9BzfzAvWJdq8i9WfXMCnV
-         Pd0Bodrbago2M+L8lPvn4xim07GoJGfKqAvK0dC5p79oHRjL4QpSHSadaXBvxFGSzeLA
-         Dc9rkiUq8QU/YZDfK4kAf4soplrPYlBQNiuWbK+6Oi5GbBy5kszaa5JAYBorL6muOTT4
-         FA6mh2Epk8ewgnhwR9lF19p/TP1Sz4IEaBIBstDN1qVAkZJR/KaWleBhFU3PkZkaF2qs
-         3/ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVIP+eMLsp5LZYtuDs56QDM9fyhyetEDaM/kJzLkpoGpbDtgnJ28Dg3vcF0ilTufaP+zIkfrKsYTXrdXD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL/y1RSIwf69V9mRIfAJVaL4rtKxED1bkB++gDOTQlHYcXAHZV
-	4HqCl4CDdULb3MUTI5uTrpNZKaJkaixDq+IIWQUqRtRXXcPNtB1hqBMeSBt+Rw3wOT7RDqLPoqG
-	eDoLkJ/GJ0EczyPQlTpmU/TIOgP2hmqu8GQgJ
-X-Google-Smtp-Source: AGHT+IE5R7f/XKkSpNfZF7Clv3CBDSwXz9GBn9EUoEfkMZ71oeRPVNz7IXIERudPlcaZsIWm17D9Wt+QRWMaJ8nPkfg=
-X-Received: by 2002:ac8:5e07:0:b0:45e:fda3:e995 with SMTP id
- d75a77b69052e-46100abdb08mr1708541cf.16.1729553532461; Mon, 21 Oct 2024
- 16:32:12 -0700 (PDT)
+        bh=apwv868bKjMTXfXoFh01HYLst30ORGniee4XhriVDbU=;
+        b=QEsP+xc0qBv1hiDP1rXJeppZNDBA0pyudiC7It0UmIzuvHzs4Xpxo8pNqfBaeHpC3y
+         GYExMqM/rYnOB9DL+I4FT+53FRvox0NFlJdbyUJ6xR8u3bNnoOMtJmLyQwSjpPZrrTPO
+         4fJ2h7eEw43j+hCJS+qd6GR6lwvnILGRuAw7cZOpXF8uGSdD3paFEgWRDqn7TEtDDkd2
+         qUyg8AX/ktZv9mPbZomEvflTN8aZtQRT1AJK1dqYlwY6DzjPTDCsXV6MOw+N7lX3rnQR
+         D/ZTMKPhALvwezTKswG0lxlmEcwGw1QFCjhCPzmnFuatESAgLcZsxZKMwez7EagnKt+Z
+         BNZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU89PIU4jALZ3/e5EyCCdT4iqNjFDueDh3Uv9jH8QVXIv66p5Ir+iSpwCwvGEq0oDs9+8gpgYzSWpk9k1AW@vger.kernel.org, AJvYcCXAEZuJlzrRJ15xtUyCz2c0ad8fFof0Jdc/8QTRajlkQvIvaaQHy0Cb+3jOSznJfojHqH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhwTKe2EM69gRYk2qH8uBO8H9JtdZPGta06pIFIVKjzWLxiKfH
+	hHkHaXIqT4+PyQHITqF8k3LuEmgnxgIje7Git8+sDPHN3a+U5uJ6FRAtmyyzqO3USzsPTLdSzw5
+	LRK0CiaOz097MnbaaUoANFsJgdaE=
+X-Google-Smtp-Source: AGHT+IFfnz8xbnOp/mN6RWshJDT63VoloV048Uvab1RUbpuCe5ielvPCqhJZUaqjtBUq/XkuQIZeRY4qQEqRxkientk=
+X-Received: by 2002:a05:6a20:c888:b0:1d9:2b36:3e3c with SMTP id
+ adf61e73a8af0-1d96df14595mr745570637.33.1729553542387; Mon, 21 Oct 2024
+ 16:32:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-5-xur@google.com>
- <CAK7LNAQpFdHxAGk1SSRrJwyKA1XjfJLbyAeka7-YemJ1zEevnQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQpFdHxAGk1SSRrJwyKA1XjfJLbyAeka7-YemJ1zEevnQ@mail.gmail.com>
-From: Rong Xu <xur@google.com>
-Date: Mon, 21 Oct 2024 16:32:00 -0700
-Message-ID: <CAF1bQ=Tp8Dc=jpNNq+B+qj90bowod8dQ1JYRsM4q5ARdf=Jd_Q@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] AutoFDO: Enable -ffunction-sections for the
- AutoFDO build
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>
+References: <20241017080604.541872-1-namhyung@kernel.org>
+In-Reply-To: <20241017080604.541872-1-namhyung@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 21 Oct 2024 16:32:10 -0700
+Message-ID: <CAEf4BzYB-KbDh+h3YXEGeWXcvaVchjf-2m2-nSQoWPE67zY68Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add open coded version of kmem_cache iterator
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The answers are the same as the reply in [PATCH v4 5/6]
+On Thu, Oct 17, 2024 at 1:06=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Add a new open coded iterator for kmem_cache which can be called from a
+> BPF program like below.  It doesn't take any argument and traverses all
+> kmem_cache entries.
+>
+>   struct kmem_cache *pos;
+>
+>   bpf_for_each(kmem_cache, pos) {
+>       ...
+>   }
+>
+> As it needs to grab slab_mutex, it should be called from sleepable BPF
+> programs only.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  kernel/bpf/helpers.c         |  3 ++
+>  kernel/bpf/kmem_cache_iter.c | 87 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 90 insertions(+)
+>
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 073e6f04f4d765ff..d1dfa4f335577914 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3111,6 +3111,9 @@ BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT=
+ | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+>  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+>  BTF_ID_FLAGS(func, bpf_get_kmem_cache)
+> +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_new, KF_ITER_NEW | KF_SLEEPABLE)
+> +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_next, KF_ITER_NEXT | KF_RET_NULL =
+| KF_SLEEPABLE)
+> +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_destroy, KF_ITER_DESTROY | KF_SLE=
+EPABLE)
 
-On Sun, Oct 20, 2024 at 7:26=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
-> >
-> > Enable -ffunction-sections by default for the AutoFDO build.
-> >
-> > With -ffunction-sections, the compiler places each function in its own
-> > section named .text.function_name instead of placing all functions in
-> > the .text section. In the AutoFDO build, this allows the linker to
-> > utilize profile information to reorganize functions for improved
-> > utilization of iCache and iTLB.
-> >
-> > Co-developed-by: Han Shen <shenhan@google.com>
-> > Signed-off-by: Han Shen <shenhan@google.com>
-> > Signed-off-by: Rong Xu <xur@google.com>
-> > Suggested-by: Sriraman Tallam <tmsriram@google.com>
-> > ---
-> >  include/asm-generic/vmlinux.lds.h | 37 ++++++++++++++++++++++++-------
-> >  scripts/Makefile.autofdo          |  2 +-
-> >  2 files changed, 30 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vm=
-linux.lds.h
-> > index 5df589c60401..ace617d1af9b 100644
-> > --- a/include/asm-generic/vmlinux.lds.h
-> > +++ b/include/asm-generic/vmlinux.lds.h
-> > @@ -95,18 +95,25 @@
-> >   * With LTO_CLANG, the linker also splits sections by default, so we n=
-eed
-> >   * these macros to combine the sections during the final link.
-> >   *
-> > + * With LTO_CLANG, the linker also splits sections by default, so we n=
-eed
-> > + * these macros to combine the sections during the final link.
-> > + *
-> >   * RODATA_MAIN is not used because existing code already defines .roda=
-ta.x
-> >   * sections to be brought in with rodata.
-> >   */
-> > -#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
-O_CLANG)
-> > +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
-O_CLANG) || \
-> > +defined(CONFIG_AUTOFDO_CLANG)
-> >  #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
-> > +#else
-> > +#define TEXT_MAIN .text
-> > +#endif
-> > +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
-O_CLANG)
-> >  #define DATA_MAIN .data .data.[0-9a-zA-Z_]* .data..L* .data..compoundl=
-iteral* .data.$__unnamed_* .data.$L*
-> >  #define SDATA_MAIN .sdata .sdata.[0-9a-zA-Z_]*
-> >  #define RODATA_MAIN .rodata .rodata.[0-9a-zA-Z_]* .rodata..L*
-> >  #define BSS_MAIN .bss .bss.[0-9a-zA-Z_]* .bss..L* .bss..compoundlitera=
-l*
-> >  #define SBSS_MAIN .sbss .sbss.[0-9a-zA-Z_]*
-> >  #else
-> > -#define TEXT_MAIN .text
-> >  #define DATA_MAIN .data
-> >  #define SDATA_MAIN .sdata
-> >  #define RODATA_MAIN .rodata
-> > @@ -549,6 +556,20 @@
-> >                 __cpuidle_text_end =3D .;                              =
-   \
-> >                 __noinstr_text_end =3D .;
-> >
-> > +#ifdef CONFIG_AUTOFDO_CLANG
-> > +#define TEXT_HOT                                                      =
- \
-> > +               __hot_text_start =3D .;                                =
-   \
-> > +               *(.text.hot .text.hot.*)                               =
- \
-> > +               __hot_text_end =3D .;
-> > +#define TEXT_UNLIKELY                                                 =
- \
-> > +               __unlikely_text_start =3D .;                           =
-   \
-> > +               *(.text.unlikely .text.unlikely.*)                     =
- \
-> > +               __unlikely_text_end =3D .;
-> > +#else
-> > +#define TEXT_HOT *(.text.hot .text.hot.*)
-> > +#define TEXT_UNLIKELY *(.text.unlikely .text.unlikely.*)
-> > +#endif
->
->
->
-> Again, why is this conditional?
+I'm curious. Having bpf_iter_kmem_cache_{new,next,destroy} functions,
+can we rewrite kmem_cache_iter_seq_next in terms of these ones, so
+that we have less duplication of iteration logic? Or there will be
+some locking concerns preventing this? (I haven't looked into the
+actual logic much, sorry, lazy question)
 
-The condition is to ensure that we don't change the default kernel
-build by any means. The new code will introduce a few new symbols.
+>  BTF_KFUNCS_END(common_btf_ids)
+>
+>  static const struct btf_kfunc_id_set common_kfunc_set =3D {
+> diff --git a/kernel/bpf/kmem_cache_iter.c b/kernel/bpf/kmem_cache_iter.c
+> index ebc101d7da51b57c..31ddaf452b20a458 100644
+> --- a/kernel/bpf/kmem_cache_iter.c
+> +++ b/kernel/bpf/kmem_cache_iter.c
+> @@ -145,6 +145,93 @@ static const struct bpf_iter_seq_info kmem_cache_ite=
+r_seq_info =3D {
+>         .seq_ops                =3D &kmem_cache_iter_seq_ops,
+>  };
+>
 
->
->
-> The only difference is *_start and *_end symbols are defined
-> when CONFIG_AUTOFDO_CLANG=3Dy.
->
-> And, where are these symbols used?
-
-These new symbols are currently unreferenced within the kernel source tree.
-However, they provide a valuable means of identifying hot and cold
-sections of text, and how large they are. I think they are useful informati=
-on.
-
->
->
->
->
->
->
->
->
->
->
->
-> > +
-> >  /*
-> >   * .text section. Map to function alignment to avoid address changes
-> >   * during second ld run in second ld pass when generating System.map
-> > @@ -557,30 +578,30 @@
-> >   * code elimination or function-section is enabled. Match these symbol=
-s
-> >   * first when in these builds.
-> >   */
-> > -#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
-O_CLANG)
-> > +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
-O_CLANG) || \
-> > +defined(CONFIG_AUTOFDO_CLANG)
-> >  #define TEXT_TEXT                                                     =
- \
-> >                 ALIGN_FUNCTION();                                      =
- \
-> >                 *(.text.asan.* .text.tsan.*)                           =
- \
-> >                 *(.text.unknown .text.unknown.*)                       =
- \
-> > -               *(.text.unlikely .text.unlikely.*)                     =
- \
-> > +               TEXT_UNLIKELY                                          =
- \
-> >                 . =3D ALIGN(PAGE_SIZE);                                =
-   \
-> > -               *(.text.hot .text.hot.*)                               =
- \
-> > +               TEXT_HOT                                               =
- \
-> >                 *(TEXT_MAIN .text.fixup)                               =
- \
-> >                 NOINSTR_TEXT                                           =
- \
-> >                 *(.ref.text)
-> >  #else
-> >  #define TEXT_TEXT                                                     =
- \
-> >                 ALIGN_FUNCTION();                                      =
- \
-> > -               *(.text.hot .text.hot.*)                               =
- \
-> > +               TEXT_HOT                                               =
- \
-> >                 *(TEXT_MAIN .text.fixup)                               =
- \
-> > -               *(.text.unlikely .text.unlikely.*)                     =
- \
-> > +               TEXT_UNLIKELY                                          =
- \
-> >                 *(.text.unknown .text.unknown.*)                       =
- \
-> >                 NOINSTR_TEXT                                           =
- \
-> >                 *(.ref.text)                                           =
- \
-> >                 *(.text.asan.* .text.tsan.*)
-> >  #endif
-> >
-> > -
-> >  /* sched.text is aling to function alignment to secure we have same
-> >   * address even at second ld pass when generating System.map */
-> >  #define SCHED_TEXT                                                    =
- \
-> > diff --git a/scripts/Makefile.autofdo b/scripts/Makefile.autofdo
-> > index 1c9f224bc221..9c9a530ef090 100644
-> > --- a/scripts/Makefile.autofdo
-> > +++ b/scripts/Makefile.autofdo
-> > @@ -10,7 +10,7 @@ ifndef CONFIG_DEBUG_INFO
-> >  endif
-> >
-> >  ifdef CLANG_AUTOFDO_PROFILE
-> > -  CFLAGS_AUTOFDO_CLANG +=3D -fprofile-sample-use=3D$(CLANG_AUTOFDO_PRO=
-FILE)
-> > +  CFLAGS_AUTOFDO_CLANG +=3D -fprofile-sample-use=3D$(CLANG_AUTOFDO_PRO=
-FILE) -ffunction-sections
-> >  endif
-> >
-> >  ifdef CONFIG_LTO_CLANG_THIN
-> > --
-> > 2.47.0.rc1.288.g06298d1525-goog
-> >
-> >
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+[...]
 
