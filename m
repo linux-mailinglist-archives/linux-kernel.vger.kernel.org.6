@@ -1,139 +1,106 @@
-Return-Path: <linux-kernel+bounces-375004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7999A7310
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:14:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861499A7311
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB134B21C5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E9E1F22469
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E071FBCA6;
-	Mon, 21 Oct 2024 19:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AF01FC7F5;
+	Mon, 21 Oct 2024 19:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pYg/iRxJ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjSIeixh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764E02209B;
-	Mon, 21 Oct 2024 19:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AFB2209B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729538065; cv=none; b=A7mYm+zO09KZllTw89Mmx2NBdjKlxrdgDoF4AySk5ilE5LUMNB3iP0t1RdZ0r7OfpTC4i2v4/7doXkAG+tW9ph9Tej9+ZKAZQl0P9r1DCtXcDfyWnDuSdGv/3TEBrSieH1BIYj+S5fNwA49sZ7p4GUWBJ1pMMGa2yQX19BxVltA=
+	t=1729538068; cv=none; b=O7q5UTbdX6Ttc6Be552sZQEg7W5YhiCd0EQhsXVYfQxZOznJoj/mxij4AqF0wruuB0bEsVu3uGrS80t2UBKs1vAEyRyJsuijtrGXjIg4B9QAzphbyOPZ+ph5mADkN89OqSKT92soEj2RwzpKt4EEuGyL9bs2MYt1FiLHyFs+Vzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729538065; c=relaxed/simple;
-	bh=7wFMp0HxrbR9VJ8qywVbEmIhYSvSbwVhJ8LjTG/7fTs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSqCBpPuOq/ielaICRHRhclLrgZEcabwjSQ6yBTrdUIzeXml6PFamxOUPQdpvHcIA+gbIzfwnMd4gCNNVN1d/2/ARhD5StF4uqKX5nWIOL/KPbwa3qbCgcY50MVzd2dqGEOTi7YiNlicgPInDabLpxqAMeVVcTqqZWtj1rwaaXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pYg/iRxJ; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1729538063; x=1761074063;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7wFMp0HxrbR9VJ8qywVbEmIhYSvSbwVhJ8LjTG/7fTs=;
-  b=pYg/iRxJZbwePJSpvc86czzyZ1uF5CxmurtoPO8P2Vqo26DqxH2kxb5Q
-   cb8bR//z+qwMKxdWfrp2exZIZW5LCqjgIUILBdW1yi5YS+prXaSUnVHNY
-   rUdw4Y/4gkg0Xxgz20bedMN85Ivb7JtLKZlZ0SxTiuLRqtuGwtlKJS5AC
-   mA3rT1eCGiGI6QA7lBk+J0K3nq3DAIUIjdha9pVg2vGU4wNR2qnJAGQxH
-   9tevLsvDUsekqjVx/p39ln+85kkAow7nWO6hXq89KPZZzrQC6XR/RCeou
-   iwidjj6EEGroXo0fQ4rO5iOY8N6G06vnLZTPR+Zek4HLYrgsZjf3FiBu6
-   w==;
-X-CSE-ConnectionGUID: 8BSVVT0GSq6qC8d419X4YA==
-X-CSE-MsgGUID: +168UpgjR1eYpnndNkotiw==
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="33842623"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 12:14:22 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 21 Oct 2024 12:13:53 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 21 Oct 2024 12:13:49 -0700
-Date: Mon, 21 Oct 2024 19:13:48 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <andrew@lunn.ch>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
-	<ast@fiberby.net>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH net-next 11/15] net: lan969x: add function for
- calculating the DSM calendar
-Message-ID: <20241021191348.sd5k5qnxya734muc@DEN-DL-M70577>
-References: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
- <20241021-sparx5-lan969x-switch-driver-2-v1-11-c8c49ef21e0f@microchip.com>
- <20241021195140.442c0a4f@device-21.home>
+	s=arc-20240116; t=1729538068; c=relaxed/simple;
+	bh=Vp3VyPCEZtRWwIx4AQb+2QWWum+1wrgS2sZgatBVYI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LAbfy/pqUrAmwvnZ+kPqeQAdH/yrmb9f83hTi4JZiQDeEQ/AsLZgoYSmSCoZKZLA9rtZAn76vST43+1bfBgBNc3FyObxHuhgTm6u4s3vOUjTCg7oDiYJkWS0WaRfdh5BVjPO0pqfYm/FZ/dXzo776IPQIqKnJngeB1OUAZ1pRmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjSIeixh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F05B2C4CEC7;
+	Mon, 21 Oct 2024 19:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729538068;
+	bh=Vp3VyPCEZtRWwIx4AQb+2QWWum+1wrgS2sZgatBVYI4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IjSIeixhoW7LrHHtj3D38jNNHgcGJonJznArxuKKaj0syGR2VTke4/VV9Ys+zP4jT
+	 d/Laq/3YCgme1Px0rjjUxULUUfiPD0tmvOAq6zhTPs7CpZeZmIegQbCraFvtVMZTaq
+	 ooOvisJl2bN78AdIWi61Fqxn38ESfAE9rBjWvMGbFN4WKbuFNMYXuWyV5Q1DZ4doQw
+	 5NwTtzW8JvrJE3z+qmgSmH83VrKr4ARei8LXHUlmNG2NclQR0p02CANeD1Xu0UukFJ
+	 hTb4Wzud7w1WBbcoA/7BlrF95TuSJZe7IcsuUCH1o5Iq3buVX0BOIIJyiu8SWybhOa
+	 yqOJPEtWCi3ew==
+Date: Mon, 21 Oct 2024 14:14:26 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Justin Piszcz <jpiszcz@lucidpixels.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org
+Subject: Re: 6.1.0-17: nvme nvme0: controller is down; will reset:
+ CSTS=0xffffffff, PCI_STATUS=0xffff
+Message-ID: <20241021191426.GA842491@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021195140.442c0a4f@device-21.home>
+In-Reply-To: <CAO9zADza=73GsuzAcuyH-YfhS34qjkDtuJjGBReVGpfE6KN_ow@mail.gmail.com>
 
-Hi Maxime,
+On Fri, Jan 05, 2024 at 09:49:58AM -0500, Justin Piszcz wrote:
+> Hello,
+> 
+> Distribution: Debian Stable x86-64
+> Kernel: 6.1.0-17
+> 
+> Reporting this as requested from the kernel message, I have now
+> appended the recommended kernel boot parameters
+> nvme_core.default_ps_max_latency_us=0 pcie_aspm=off and will see if
+> this recurs.
 
-> Hi Daniel,
-> 
-> On Mon, 21 Oct 2024 15:58:48 +0200
-> Daniel Machon <daniel.machon@microchip.com> wrote:
-> 
-> > Lan969x has support for RedBox / HSR / PRP (not implemented yet). In
-> > order to accommodate for this in the future, we need to give lan969x it's
-> > own function for calculating the DSM calendar.
-> >
-> > The function calculates the calendar for each taxi bus. The calendar is
-> > used for bandwidth allocation towards the ports attached to the taxi
-> > bus. A calendar configuration consists of up-to 64 slots, which may be
-> > allocated to ports or left unused. Each slot accounts for 1 clock cycle.
-> >
-> > Also expose sparx5_cal_speed_to_value(), sparx5_get_port_cal_speed,
-> > sparx5_cal_bw and SPX5_DSM_CAL_EMPTY for use by lan969x.
-> >
-> > Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-> > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> 
-> [...]
-> 
-> > +     /* Place the remaining devices */
-> > +     for (u32 i = 0; i < DSM_CAL_DEV_MAX; i++) {
-> > +             speed = &dev_speeds[i];
-> > +             for (u32 dev = 0; dev < speed->n_devs; dev++) {
-> > +                     u32 idx = 0;
-> > +
-> > +                     for (n_slots = 0; n_slots < speed->n_slots; n_slots++) {
-> > +                             lan969x_dsm_cal_idx_find_next_free(data->schedule,
-> > +                                                                cal_len,
-> > +                                                                &idx);
-> 
-> You're not checking the return of lan969x_dsm_cal_idx_find_next_free(),
-> can this be a problem ?
-> 
-> Thanks,
-> 
-> Maxime
+Hi Justin, did anything ever come of this report?  Is it reproducible?
+Did it seem to be related to suspend/resume?
 
-Yes, it should be checked as we have a finite number of calendar slots.
-
-Will fix in v2. Thanks!
-
-/Daniel
-
+> Jan  5 06:18:52 atom kernel: [295306.524933] pcieport 0000:00:06.0:
+> AER: Corrected error received: 0000:00:06.0
+> Jan  5 06:18:52 atom kernel: [295306.524979] pcieport 0000:00:06.0:
+> PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
+> Jan  5 06:18:52 atom kernel: [295306.525004] pcieport 0000:00:06.0:
+> device [8086:a74d] error status/mask=00000001/00002000
+> Jan  5 06:18:52 atom kernel: [295306.525027] pcieport 0000:00:06.0:
+> [ 0] RxErr                  (First)
+> Jan  5 06:19:22 atom kernel: [295336.554420] nvme nvme0: controller is
+> down; will reset: CSTS=0xffffffff, PCI_STATUS=0xffff
+> Jan  5 06:19:22 atom kernel: [295336.554469] nvme nvme0: Does your
+> device have a faulty power saving mode enabled?
+> Jan  5 06:19:22 atom kernel: [295336.554489] nvme nvme0: Try
+> "nvme_core.default_ps_max_latency_us=0 pcie_aspm=off" and report a bug
+> Jan  5 06:19:22 atom kernel: [295336.614521] nvme 0000:03:00.0: Unable
+> to change power state from D3cold to D0, device inaccessible
+> Jan  5 06:19:22 atom kernel: [295336.614898] nvme nvme0: Removing
+> after probe failure status: -19
+> Jan  5 06:19:22 atom kernel: [295336.630497] nvme0n1: detected
+> capacity change from 7814037168 to 0
+> Jan  5 06:19:22 atom kernel: [295336.630502] BTRFS error (device
+> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 1, rd 0, flush 0, corrupt 0,
+> gen 0
+> Jan  5 06:19:22 atom kernel: [295336.630513] BTRFS error (device
+> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0, flush 0, corrupt 0,
+> gen 0
+> Jan  5 06:19:22 atom kernel: [295336.630542] BTRFS error (device
+> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 3, rd 0, flush 0, corrupt 0,
+> gen 0
+> 
+> Regards,
+> Justin
 
