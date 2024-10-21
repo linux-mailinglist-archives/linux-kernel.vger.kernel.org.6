@@ -1,136 +1,133 @@
-Return-Path: <linux-kernel+bounces-374327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5C89A68A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAADB9A6897
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F97B2603A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6D528834A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1471D1F7A;
-	Mon, 21 Oct 2024 12:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD2B1F1303;
+	Mon, 21 Oct 2024 12:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5AMsEu/"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="T9mN8kIf"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3531F1D1E74;
-	Mon, 21 Oct 2024 12:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CE71F12F6;
+	Mon, 21 Oct 2024 12:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513999; cv=none; b=L8mLEoKnz4CGvpAJ4LGaxQg2DN7aBAiBufqm3SEYL1LlWfaiB7BjrevGdRf0bYIAKhuVqlm00loC7cOU1HbdGe0Cm0YKqtOwD3g5t9V1rJIXBMa0fdnuzh3gBU5x9x2JNcUDVeUNUiTOwxZbgoiONdT3YhE2LwlFA6n0H13+fuE=
+	t=1729514070; cv=none; b=PHU06KzEOZy5AeYcAYkiHenCiKn8FEQ1vUYTHO3a1OGYBs1owz0AdtJ2WQW0AsdIWXkWcrkM0SrKhi0RmcTcZk8zSdDsjuZd9ntnXfIySUqRR5I6GKt+a0RjjBhN3Zs9OQTjcvxIO4roH08weDUyL1qtz76zQa/brRw0ln+ooqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513999; c=relaxed/simple;
-	bh=ejiqaAdhq5qfu9otvu22vewTVMeGi2U0wyEZsSO5aOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OijM4ep9lKIzERiqnI86aK9MZMbqFEWH7fmXAIo0E+F3BPSXUbR0UYo68MOOunFp3c1Bg1GnWiAX0O/elzj9g2i2eGp/ooYrAxlhw/MZb0XpBOO+/i4jJm5IsLUTub4PYLs0nDRf/4nhlNmWPoCTBHVv5XUu2qnofUmaGfZZV3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5AMsEu/; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c693b68f5so46650505ad.1;
-        Mon, 21 Oct 2024 05:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729513997; x=1730118797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWr06tAJ0KdIua+ulYntzk6Q5W0gCnfB6uWlDXNeTVQ=;
-        b=G5AMsEu/EDSeWEJibn7D4lqc96Hi6SU2VvfhEy0u9FF7tkwkAXUWpj3kS+u7lA6oK+
-         tsZRwUl3qeQx2e8iRQikgHIAJVqz5M47ZHBZLqU7Ad73gC1QsHlwoqUYmwooz/VsHx0n
-         U17kM1+lRzC58FdU23RkbRgE+H+Na/JEOZ+QIebA0bdZEYUk7nvYOOFooX5XAVifZWKM
-         Ib/ocu2dzOsY1PV47MLliGgHnBsXvazEhYUyiTZwHb+KYUp+afJtVryOinNiK6mK4Jvi
-         cKrw5D9CS10f5QKoZdWf+Rrp+8ggV/ev8AdZkZ0DfosR4adW/K+1my/NmxWE8ITs1fTQ
-         /Pwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513997; x=1730118797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IWr06tAJ0KdIua+ulYntzk6Q5W0gCnfB6uWlDXNeTVQ=;
-        b=Yj5QbWoGsIa/JMJlwQFJFn9G/zxeE5Ch4uLUSBX7Uw6rBwRBN3+Jle//WeEnTu6aWK
-         0IWeEBHBrNgx8wHWABSGnxSbP8jlJ7erCBrVTui5Sc5dirkyluWR7Bij5s14SWMIuAgO
-         dzy0Gf7cTlBNI9SiiFg++ZRje2fW3t/ENDZB0w6N3uikVwlUDEMc/BW8iReAUlqC5skn
-         MizCfkQbX9H4Ddt9136iCwTfeW08oGFp5IEYkILs0wWbohcB1CvgEZb9fDXCos3E1GO/
-         U0r9aXKSonwt3uv1SASg1D9S5l+ECEtFI6yiiyvZ2oxQ7fXNiti/ZTFGCgg8AwiFxjkL
-         MaEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlN9owBHb8ZZRLrLZhOdtEscPNz5TmnPycLEgw39MeiI53sNdGQH1qOPLRlNRBnUFfxsFDbQAD35Caj7g=@vger.kernel.org, AJvYcCWIBD6WcnmMW0Z2JGIcs9H65l0PwsqJJDOHmWzj7GyGfb7dhEnkq9uDxBkox3hNtxbX99le@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5y3xXgIMooevhwRkvQEkllCgtSXhHjgIqkJWf/AixktUsXrh
-	p18javLpkm3CAxzxjGyTXbCvSmRAiptM3Zy5U3g3SoNVG8bZo0a3vbwZLg9+2BBXqLvVb34sl/v
-	WmiEjinpzz3iWl+3Sas4FqheWK3/7Q502
-X-Google-Smtp-Source: AGHT+IEBKgxGvKxKhz/8CKojloZs/8eqrLK8r+hnT6vg5Dv+IIz17qH26yYr+zgPHEtfbKG/YvoIZB9ecYQYn0hxuC0=
-X-Received: by 2002:a05:6a21:6b0b:b0:1d9:275b:4ee1 with SMTP id
- adf61e73a8af0-1d92c5089b5mr14316536637.24.1729513997341; Mon, 21 Oct 2024
- 05:33:17 -0700 (PDT)
+	s=arc-20240116; t=1729514070; c=relaxed/simple;
+	bh=1sTlr9enxc6QVgxLvEwIz2p0y5y0iCf8L6YZHgKTY/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b3P6LlPsYdz2IYPD9nvDVS3p/kLsMP6B/TI3Oueh7qAbjsZVkdK0GjyEt84wZHb7YV0fEcjkUhjZ0mcC/EF0EJl23Pz3e2HEsFu4Kug4KqcGs+5VzTbIJfz5/SM7ERVa4hMzndRj9Ki4PgPq8NNBHsHfAQl7Pir1w1+Tw36tMh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=T9mN8kIf; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729514060; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=NHWtLqYnu4wS3OxvS4L5uLq3I4fKPJPFOowoi3G6bQo=;
+	b=T9mN8kIfYjNrULNhOQrHgk6qDbiZmsbgiGAmpCtWDV8+11RjgYyXDEDiLRtz/J3EdKD8GZgL4uv/JN3VLyFtyAcvqfFaC759LUJVrwLF194oHDUJjmN8BLYc/32bzVQOPfdWL0i9/GI00KdvB6b5mOzhcWCAa80eW3mOQOtBIEU=
+Received: from 172.20.10.8(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHcY2W5_1729514058 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 21 Oct 2024 20:34:19 +0800
+Message-ID: <f64a9dbb-caed-4764-b104-e418ba87ad29@linux.alibaba.com>
+Date: Mon, 21 Oct 2024 20:34:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020125119.14751-1-qiang.zhang1211@gmail.com>
- <ZxWO6BmRutOC0RnZ@pavilion.home> <CALm+0cW=1PAVhjHKM+aXLHHzsD0+7pbVDvmm+kxvff7r=Di2tA@mail.gmail.com>
- <CALm+0cV-s+gYDXKQV9dYWEr-ui6aJ6DZzvyNhW6H2T39WtPjWw@mail.gmail.com> <ZxY-jRKBf8672czT@localhost.localdomain>
-In-Reply-To: <ZxY-jRKBf8672czT@localhost.localdomain>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Mon, 21 Oct 2024 20:33:05 +0800
-Message-ID: <CALm+0cXwL2fjF9njuWDRX3cmnUqyPjNKAeWQaWZ6S+BedC3MXQ@mail.gmail.com>
-Subject: Re: [PATCH] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
-	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
->
-> Le Mon, Oct 21, 2024 at 07:01:02PM +0800, Z qiang a =C3=A9crit :
-> > > For the non-nocb cpus set during boot, the corresponding
-> > > rcuop kthread, we should park directly, otherwise
-> > > WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp)) will be triggered.
->
-> Ah but this case is different. kthread_park() is called on
-> the kthread that is freshly created. In that case it is
-> parked before the kthread even had a chance to call its handler
-> (which is rcu_nocb_cb_kthread()).
->
-> See these lines in kthread():
->
->         /* OK, tell user we're spawned, wait for stop or wakeup */
->         __set_current_state(TASK_UNINTERRUPTIBLE);
->         create->result =3D current;
->         /*
->          * Thread is going to call schedule(), do not preempt it,
->          * or the creator may spend more time in wait_task_inactive().
->          */
->         preempt_disable();
->         complete(done);
->         schedule_preempt_disabled();
->         preempt_enable();
->
->         ret =3D -EINTR;
->         if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
->                 cgroup_kthread_ready();
->                 __kthread_parkme(self);
->                 ret =3D threadfn(data);
->         }
->
-
-Ah, Thanks!
-get it, I ignored parkme in kthread(),
-will update and resend.
-
-Thanks
-Zqiang
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Gao Xiang <xiang@kernel.org>,
+ Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+ Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Christoph Hellwig <hch@infradead.org>
+References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+ <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
+ <ab1a99aa-4732-4df6-97c0-e06cca2527e3@linux.alibaba.com>
+ <20241021-geldverlust-rostig-adbb4182d669@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241021-geldverlust-rostig-adbb4182d669@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
->
->
-> So really rcu_rdp_is_offloaded() has to be true (but we can
-> warn if it's not. Though we already have a test for this in
-> nocb_cb_wait()).
->
-> Thanks.
+
+On 2024/10/21 20:27, Christian Brauner wrote:
+> On Mon, Oct 21, 2024 at 03:54:12PM +0800, Gao Xiang wrote:
+>> Hi Christian,
+>>
+>> On 2024/10/10 17:48, Christian Brauner wrote:
+>>> On Wed, 09 Oct 2024 11:31:50 +0800, Gao Xiang wrote:
+>>>> As Allison reported [1], currently get_tree_bdev() will store
+>>>> "Can't lookup blockdev" error message.  Although it makes sense for
+>>>> pure bdev-based fses, this message may mislead users who try to use
+>>>> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
+>>>> then.
+>>>>
+>>>> Add get_tree_bdev_flags() to specify extensible flags [2] and
+>>>> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
+>>>> since it's misleading to EROFS file-backed mounts now.
+>>>>
+>>>> [...]
+>>>
+>>> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+>>> Patches in the vfs.misc branch should appear in linux-next soon.
+>>>
+>>> Please report any outstanding bugs that were missed during review in a
+>>> new review to the original patch series allowing us to drop it.
+>>>
+>>> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+>>> patch has now been applied. If possible patch trailers will be updated.
+>>>
+>>> Note that commit hashes shown below are subject to change due to rebase,
+>>> trailer updates or similar. If in doubt, please check the listed branch.
+>>>
+>>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+>>> branch: vfs.misc
+>>>
+>>> [1/2] fs/super.c: introduce get_tree_bdev_flags()
+>>>         https://git.kernel.org/vfs/vfs/c/f54acb32dff2
+>>> [2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
+>>>         https://git.kernel.org/vfs/vfs/c/83e6e973d9c9
+>>
+>> Anyway, I'm not sure what's your thoughts about this, so I try to
+>> write an email again.
+>>
+>> As Allison suggested in the email [1], "..so probably it should get
+>> fixed before the final release.".  Although I'm pretty fine to leave
+>> it in "vfs.misc" for the next merge window (6.13) instead, it could
+>> cause an unnecessary backport to the stable kernel.
+> 
+> Oh, the file changes have been merged during the v6.12 merge window?
+> Sorry, that wasn't clear.
+> 
+> Well, this is a bit annoying but yes, we can get that fixed upstream
+> then. I'll move it to vfs.fixes...
+
+Many thanks for the reply!
+
+Yeah, the feature is already usable [1] and it will be used for
+several use cases, yet the unexpected message might be confusing.
+Anyway, both options are fine to me, but "vfs.fixes" may be better
+to avoid unnecesary backporting.
+
+[1] https://lwn.net/Articles/990750
+
+Thanks,
+Gao Xiang
+
 
