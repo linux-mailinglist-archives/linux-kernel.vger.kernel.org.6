@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-374950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7839A725A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:30:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A656C9A7261
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E49F1F223AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C611C22BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F251FAC46;
-	Mon, 21 Oct 2024 18:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D149C1FA272;
+	Mon, 21 Oct 2024 18:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="rOV7SWwB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NJjdcg90"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsmBuPJs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC641F942D;
-	Mon, 21 Oct 2024 18:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CD3A41;
+	Mon, 21 Oct 2024 18:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729535353; cv=none; b=LqTpWZlokU59szIxtIE1LjRl99mZUoPfieHYW8l7Bo/wUOr1hFx3ixean3dihkKhFpDkL22w0ZZi6lIh9y1DV4YEcjVcaVa9l2EVoWB+/DnEOvzFNOW4BinSkyeP3wCGlvcjSmt3xiiqD7jndcHvpYwx5ifkLPoUoGREUlOGAzg=
+	t=1729535538; cv=none; b=kOCIbLbfQc+dAF7ShLDzOy1NN1e4yFg2pML6smnFNbnx2USw4iWTIx9ju66mjzaSX7AWlkwE/0Qctmrst9Tohly3uxBFBviqUZJ3PRvdoDiDcMvJCAVFZ5ICj04hhoK7c3Vv7pIXZqVv/mHm1vy/lR0Bw+euu72A1HqEKC2oW4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729535353; c=relaxed/simple;
-	bh=wGf56HOWPEAJ4DCDdsL3K6DHH1vg5bhFGfsMNNo+ktI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7cWlBk4QOf3F9hvkPMGL6F00r94+GhFzUbDJFw0tjmgcZ1YV9s0MgeD6cHPi/QVf++gIvQIiHSjZRZN0V4yXi0N2YePacDQOPUv7Gfnq9fk/YtASBt1qNVjuYRafq2kfvzL/IpDeDIZxtfSS9W6xYKKvSQzvAP3c/JEKYSnT4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=rOV7SWwB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NJjdcg90; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id E3F821380211;
-	Mon, 21 Oct 2024 14:29:09 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 21 Oct 2024 14:29:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1729535349;
-	 x=1729621749; bh=lfMv/gEB7Fyh2WyXq+JcQ/WoYPqo5T4/tBmvvpdRhJA=; b=
-	rOV7SWwBsrFdn/qJriNNPluYBAnFHA7xrFZNYPZO9w0ApdMlkRE/ggcWuReQoofH
-	wNx6c88VuofHtZX8Dn7PO/3E1zQOAQAsn0MZYZsTipH1XxbVhLBIU+U322DaO1zf
-	gvv4fv6lFz7lmjbeMM2LEFLT0Pt0CjC0tqVye9M2VRCEIb2yPc3mAfoXLnwsC03D
-	Zpab4Zw+ZiOsAXCt2GOEDxscsQg8WIox9jooP1y5os8svt0U7cVaIF4MQ+FPzq9O
-	7u9eJyamlBV9bWj106g7NLgzXy8kJVPOh+Cg6yj/vdnyNYhkAvEaMIm46Pe7OPIq
-	c89qz/IO1qseUPa4+UPffw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729535349; x=
-	1729621749; bh=lfMv/gEB7Fyh2WyXq+JcQ/WoYPqo5T4/tBmvvpdRhJA=; b=N
-	Jjdcg90unnsZwAiQtEjrllg2dHY5NvgV5fv/g53R61XbEqQZ0Fz6/w6NaiD/N7mg
-	hsuDJtitLqsoIibx8WSP5zQU1lu+0ebYDhKaIBGnSXVHyK3zBwyRLE6lFfmKHfMC
-	ujTgEkuiv/Ht8zOxrNbtvUhuBNzLQWx7TzsaLfUUTgwSIyKziOQUzdunn5MaoAho
-	/lbLRSqwNyqdNyouoAiiTwAKKwUjdZrOdkuRxoon6hxc3ZlYqToHs3l4k3vGd+IG
-	OhYtEVlQbQBfp+2jyozSu++YhFWwe9L7WtP7xV+rvs1TljkYaY4fbZyn0FsYhMLm
-	XaMT8gU+ubgiSZK51K56w==
-X-ME-Sender: <xms:dZ0WZyd4qz17f9PXyTuPLDMr76lLVXBLM3ywl9QcbEjQgxxoj-pnQw>
-    <xme:dZ0WZ8NO3y24dQjZdFmtRJBjkOl4zCNLllboc45om9bn2cY0kMCjxvkS8BlpZiuVU
-    UoQxXlr7ndXyYG2AA>
-X-ME-Received: <xmr:dZ0WZzgT_NUt-vI0l2kLfsoC-ivNl0xtxOsXiZbeo0xEGZza_U0d6JvftP-F_pMc1w2GX-gCUdkEwDpIVnYi6MdwyaRJjNeZDP0N>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledguddvhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqne
-    cuggftrfgrthhtvghrnhepgfduleegleehieelhefgjeegleeffeeliefgtdfgteeflefg
-    fedvgefgvdetjeetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhhitggvsehrhihhlhdr
-    ihhopdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epjhhhuhgssggrrhgusehnvhhiughirgdrtghomhdprhgtphhtthhopehojhgvuggrsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpg
-    hghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhs
-    ihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
-X-ME-Proxy: <xmx:dZ0WZ__qGyKzsnoBIj8TDhjBW-Yo3OQhnJNlgp0ig9muq0po0qG2CQ>
-    <xmx:dZ0WZ-vsW5zEnRXZEj-iPUp7IZdr-BQnBJH68yy90j_NwYIHPP1E2A>
-    <xmx:dZ0WZ2Geid23f1MgKGVpVRYfHhwC1AUgJ65zk_uwU9QEKDMHXGTuyg>
-    <xmx:dZ0WZ9Mm7Yn7gDpSL-RD3OsR2_5ILLRMTFdzIoLJBNLP6yi0xmD34A>
-    <xmx:dZ0WZ6O0GK03kktAbJxHNRFIN0WBd4rN97WXRZVi_FZ0Jmu7AZuX1qbh>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Oct 2024 14:29:06 -0400 (EDT)
-Message-ID: <56169ee4-321c-4546-bb89-2f9530adb01c@ryhl.io>
-Date: Mon, 21 Oct 2024 20:32:11 +0200
+	s=arc-20240116; t=1729535538; c=relaxed/simple;
+	bh=pyzBm0CHxtwGCiTGX+R2MXyhePBYI6qHIcFJ4NEy704=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ly2p4FwhVksJj+Tmk9a/V920n8r+S32j1BERxXMhY47fNxGvOiU8FIdOPsYFfRXzvZAgVnR93Pthcd3iMqWGmVg6v/zRyiaqJFanC4X/AkXpKAg0jFmd2++lfkftZQ0me02nq6glceBoubSq0uxTNbLmUoHPMHqeFrZcb7sFeJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsmBuPJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205D5C4CEC3;
+	Mon, 21 Oct 2024 18:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729535537;
+	bh=pyzBm0CHxtwGCiTGX+R2MXyhePBYI6qHIcFJ4NEy704=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YsmBuPJs5KQTszv56fUCa4qm/bfQeZggdOhOj6FpPImCqi9uTwz0HDGmeR5I2XDZO
+	 0f4Uu3SlSN8HTCF+1wwH1tIDneP+Vo1ZjIuUqhexULDUMXQBSCIPD7C/MlMJfhWi4P
+	 pwO13Gs7FcmsKn7A5+5czaAnt9yJbMFLd7MGa/qlbfNg2j4I6JnclcZEGDhLMMpm7O
+	 RLMQ0C7Wf02lIskF6eA1yHNXMo6XvUvnxbxYTxtBtUwv/II/LI0+8GDh70BCFZcABx
+	 jaQeCifmfo/MTtgi/moFcicb8+TpbbpQoVmG3jUHSZLIzCSrO2OtOWwNeYCtuylh1l
+	 rh0el/PK2tOmg==
+Date: Mon, 21 Oct 2024 19:32:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Jan Richter <jarichte@redhat.com>, linux-kernel@vger.kernel.org,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH] KVM: selftests: x86: Avoid using SSE/AVX instructions
+Message-ID: <9a160e3d-501b-4759-9067-17cd822617ec@sirena.org.uk>
+References: <20240920154422.2890096-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] rust: page: add Rust version of PAGE_ALIGN
-To: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-References: <20241016-page-align-v2-1-e0afe85fc4b4@google.com>
- <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
-Content-Language: en-US, da
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nKMoXBYbWb2e++RT"
+Content-Disposition: inline
+In-Reply-To: <20240920154422.2890096-1-vkuznets@redhat.com>
+X-Cookie: Thufir's a Harkonnen now.
 
-On 10/21/24 8:20 PM, John Hubbard wrote:
-> On 10/16/24 4:34 AM, Alice Ryhl wrote:
->> This is a useful for helper for working with indices into buffers that
->> consist of several pages. I forgot to include it when I added PAGE_SIZE
->> and PAGE_MASK for the same purpose in commit fc6e66f4696b ("rust: add
->> abstraction for `struct page`").
->>
->> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> ---
->> Changes in v2:
->> - Make the function const.
->> - Address integer overflow in docs.
->> - Link to v1: https://lore.kernel.org/r/20241015-page-align- 
->> v1-1-68fbd8b6d10c@google.com
->> ---
->>   rust/kernel/page.rs | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
->> index 208a006d587c..9ef01929e7d0 100644
->> --- a/rust/kernel/page.rs
->> +++ b/rust/kernel/page.rs
->> @@ -20,6 +20,15 @@
->>   /// A bitmask that gives the page containing a given address.
->>   pub const PAGE_MASK: usize = !(PAGE_SIZE - 1);
->> +/// Round up the given number to the next multiple of `PAGE_SIZE`.
->> +///
->> +/// It is incorrect to pass an address where the next multiple of 
->> `PAGE_SIZE` doesn't fit in a
->> +/// `usize`.
->> +pub const fn page_align(addr: usize) -> usize {
->> +    // Brackets around PAGE_SIZE-1 to avoid triggering overflow 
->> sanitizers in the wrong cases.
-> 
-> Silly nit, but I did start looking for brackets that aren't there, so:
-> 
-> s/Brackets/parentheses/
-This isn't a distinction that exists in my vocabulary, shrug.
 
-Miguel, feel free to reword when you pick this.
+--nKMoXBYbWb2e++RT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Alice
+On Fri, Sep 20, 2024 at 05:44:22PM +0200, Vitaly Kuznetsov wrote:
+
+> Some distros switched gcc to '-march=3Dx86-64-v3' by default and while it=
+'s
+> hard to find a CPU which doesn't support it today, many KVM selftests fail
+> with
+
+This patch, which is queued in -next as 9a400068a1586bc4 targeted as a
+fix, breaks the build on non-x86 architectures:
+
+aarch64-linux-gnu-gcc -D_GNU_SOURCE=3D  -Wall -Wstrict-prototypes -Wuniniti=
+alized=20
+-O2 -g -std=3Dgnu99 -Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFI=
+G_64BIT
+ -fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-s=
+trnlen -fno-stack-protector -fno-PIE -I/build/stage/linux/tools/testing/sel=
+ftests/../../../tools/include -I/build/stage/linux/tools/testing/selftests/=
+=2E./../../tools/arch/arm64/include -I/build/stage/linux/tools/testing/self=
+tests/../../../usr/include/ -Iinclude -Iaarch64 -Iinclude/aarch64 -I ../rse=
+q -I..  -march=3Dx86-64-v2 -isystem /build/stage/build-work/usr/include -I/=
+build/stage/linux/tools/testing/selftests/../../../tools/arch/arm64/include=
+/generated/   -c aarch64/aarch32_id_regs.c -o /build/stage/build-work/kself=
+test/kvm/aarch64/aarch32_id_regs.o
+cc1: error: unknown value =E2=80=98x86-64-v2=E2=80=99 for =E2=80=98-march=
+=E2=80=99
+
+This is because:
+
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftes=
+ts/kvm/Makefile
+> index 48d32c5aa3eb..3f1b24ed7245 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -238,6 +238,7 @@ CFLAGS +=3D -Wall -Wstrict-prototypes -Wuninitialized=
+ -O2 -g -std=3Dgnu99 \
+>  	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
+>  	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
+>  	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
+> +	-march=3Dx86-64-v2 \
+>  	$(KHDR_INCLUDES)
+>  ifeq ($(ARCH),s390)
+>  	CFLAGS +=3D -march=3Dz10
+
+unconditionally sets an architecture specific flag which is obviously
+not going to work on anything except x86.  This should be set under an
+architecture check like the similar S/390 flag that can be seen in the
+context for the diff.
+
+--nKMoXBYbWb2e++RT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcWniwACgkQJNaLcl1U
+h9BYogf/eDE5fDBfcReAjReqJDkasaQLJfWc+Ak+v4uCbqw9mBLCPyaYWfEW0snN
+cK13zFzB6Fr0KQa5+cGcdaCPIqSwc2YWX83ljaS8Q8x9PemPIU4K+sIH9NY/E9hE
+gd6oGL2wSZIhe7kpL7D2U6yrx+ItFfg77kxMgc9MABuYPNN5QS0SRvs9UUVBkDYm
+pZ3zZqI+9Z1FJMWUb4W9b5YRMjlKUDNz4pKvR6zTf8/935BAKV39ReatYrXjcFbW
+xfVrnUDw9LjXza1P+mw0GL8572WgGrydF1sY32HYVAhL6Pxkx2dNE68i19sRDj1x
+ZB0f0DIwsZU8XuD88KV44cZdoTphzA==
+=/jnL
+-----END PGP SIGNATURE-----
+
+--nKMoXBYbWb2e++RT--
 
