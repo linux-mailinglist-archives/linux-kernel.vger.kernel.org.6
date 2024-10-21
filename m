@@ -1,174 +1,154 @@
-Return-Path: <linux-kernel+bounces-374358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE089A68F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:47:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED539A6915
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7892628B0BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:47:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73BBFB2A933
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164021F8185;
-	Mon, 21 Oct 2024 12:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5E1F5829;
+	Mon, 21 Oct 2024 12:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIdTjn6Z"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tmeg9EGP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B761F76D0;
-	Mon, 21 Oct 2024 12:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87DC1F4FDA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514790; cv=none; b=IVdxYl7yDdIIVvMUUh6rRErq+6CYuLaxh6SlJavzQ83lgLiUyS7sueWX6diC+ufOgZWFKTPuiqKEca1rj8Yyw8kLmVUHis0s+S63MCZuQPhYKTTer/VkpwK8HHGiKIzO9gGF25ywM6jDkkYAzRqimhOeR7zgeKQePwHHlG9TdQo=
+	t=1729514797; cv=none; b=HMHeiFjcpCAm4hOAV/WJ6/t8mncHumNNtySqbbj1jhoD5Jo7LkeGp0wSk5nnUv0I5eo/9JSZhX4lrBNTPKo6zmxLDgwJbXHjpIassCiR3KItUNiq3uyVjvU0rEV/cF9HDf/mIeldjQCzhEgxNjXt1o0fbxJDN25wdqWD6AMYhwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514790; c=relaxed/simple;
-	bh=xTfEykVBfqYI2JgbgfPsBPAISsdZz05BmImPaVUH/vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1c7UBTEZkHBIxV0+qAfpxFcUZnk5BtXZz87lN/9zj9yiGVIrp2DzAHTwChvbiq222DWF3AJDmm2Uc2TMQyE9IAceJAtCXYzA5R3DYj3fwmLFH7y1VbMjFNu/YXYrjyET6ucq74GrYVbX6910Z5ahAgYDaZeBvCuvlAY3xqFm/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIdTjn6Z; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so3101716f8f.0;
-        Mon, 21 Oct 2024 05:46:28 -0700 (PDT)
+	s=arc-20240116; t=1729514797; c=relaxed/simple;
+	bh=y77wJFpZ3UjOC8+X1TAadIhkOYe0xdFWOmEEz46fJdI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dLQv2IELjbb2bXNwtkx2EgEaRTyYS07akW+a46GiC16OasfPBKw3vaDnOLEkZyZAE+ThLM4VtoQh6qRklocdUQlQqnDDuYCYjp6FsSVWZ+Ot5WrZPG4nDzWpZTqn8Q+iV0QgYZCWE/c3IPJW1VxjJUGmVHuNQ0LWYJqJHjh/2OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tmeg9EGP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431695fa98bso19615685e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:46:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729514786; x=1730119586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2tNgkXKwLXOYj2vcfpM51UGck7gc6AsRRag9xxhq4aM=;
-        b=MIdTjn6ZWld3fH+tfoX7L01M0HJt2MFk9BUS3+X8IkSvL55gG537D9U45uWvV9sM6E
-         nRyJhyAgnfQeneHyPfuIYGRUlsomzszxpQRfR+rt5zYcFmNh3x3uKPO8V95lkexW8LeN
-         G9E7EgccvcdtSvMFXpoeKnM4QN5qD82PWEfm0iO/olBUotqkibmSTKXGQmaj81RhBMk2
-         mT6bGWzawHsp5PFVnmmT/kJCEWuoJfOt6+hhlQzpm+4m+VaWJvHp7o10MeYnkNTKccKg
-         PqtAn/t+yiMpU3bRJQz3e+xfqebfO5duNRs2YNubeBlhdNTbnVwa6e6V1TD0xMAg8GjZ
-         5kjA==
+        d=linaro.org; s=google; t=1729514793; x=1730119593; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMhK5URMSsZtw7ULiqbMgHL6EoB6FZYPqPuipW9HKjM=;
+        b=tmeg9EGPo137ECL1CquHxNrSQDTA4h1rdk0tiFQjCU470kjdG4ny/BiNKxb8AnPZ8S
+         gfo5giBBlc5FouoS+nFnktqSfsv6YV0YDVXQYTYumpsZuDImGSa4glP1o7KO5TnazhSz
+         VHNv8P2B5YVXG6LqXxx17Z8gbDZi9K5hY+VRyF2/7qvtpT0Ilco14gsGdvFaRtDDeAiw
+         2sLy2N/8lCqlPetbB/ZeXKv7r9laZnNBaM79ZuYToS9SKiehZyp7qY+77NDwe5XoFLbp
+         tCg0s3saOR5gRYbwsFYAyj++94vJFdRjVOvV1EtFyPVfe28n/FMQDdMYc+qW2n7PY4J0
+         QDuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729514786; x=1730119586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2tNgkXKwLXOYj2vcfpM51UGck7gc6AsRRag9xxhq4aM=;
-        b=UkKK3guNW+kMcTGaSsAKLRwaZ99ab29qxmx5qxpcZ7H1m6wFJZyhb3Hf8VtcqSJi37
-         uOjxdmqpb9UaUWdO47xvcl3qGmiZ68+Kh5wAgioyfi2CChHykGYOj0ZLgz8F+Mhe2lL6
-         ptBfOkGD2h8fGaX/0RZIs/Fb2CNCHd3ciBeBdT9P1WTQ9Xs9lrawDIib9tV4RgC5JzLb
-         8TZ65ueOHE3DRV9685AqwtRO1o8akEMrEwptaNrykUvnV8Wms3hK3l0GeB+5eDOEGpID
-         Tb4icgoNxSUn+fgn1NeFc8GMbBoryIY8VFfUMRWgB2ITZIeaWyT40bimu4aeANbFyiPI
-         HI4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhufmy6h5ZGOHA8DwaV1T8sQZxDdCMZSB9WrgkH9BP/chwKLgTDSUCFiDEs6b2sLI94MOwZCqCiFAgDyA=@vger.kernel.org, AJvYcCWj32LUXxEBwq3HyYHjCnMtsMQYP4Aqgl870rZWXSrJ9yUKCyt+mBTNy6szl8D4YCO9DHoK/xdR@vger.kernel.org, AJvYcCX0sykXKPG2MXeXEkrWbcoX/pABCZ/VsnkaEFB+f5O+0erP1DQoCIIQknr3JdZNAIgLYuKvkjRGKv5L@vger.kernel.org, AJvYcCXVFmjtGByXBtR1nBo3xS05am0wwZBF9EOnxAXPsH81xAnuVOcapG3WDcBhd/MKZ30CQ31eZ8ztukfZ4rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydYxvU4cXO9Z7MOC9hvwL/xgPOvcl3489s9za6q3k07THuo6FS
-	5F+VqcscBV7Q7JMMetncZOlOFj3K8kQIKAaNy5YXNiyivdxB0hC1WrO7/Ber
-X-Google-Smtp-Source: AGHT+IF8yYylXofo4xb4ihzBJmGnKtLzqF98xqMY3Cs7Cdm1hv3lJGPTKXEJqP56KuRk3nu/ZFyplw==
-X-Received: by 2002:a05:6000:109:b0:37c:cca1:b1e3 with SMTP id ffacd0b85a97d-37eb48701a8mr6745329f8f.41.1729514786320;
-        Mon, 21 Oct 2024 05:46:26 -0700 (PDT)
-Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570f7esm56668325e9.10.2024.10.21.05.46.25
+        d=1e100.net; s=20230601; t=1729514793; x=1730119593;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EMhK5URMSsZtw7ULiqbMgHL6EoB6FZYPqPuipW9HKjM=;
+        b=vtset34KdGzgsfPa4jX9WOdEAEnYR4xEdNRNhiKGjEpeEwm6D0DrlsN/7dL46zahau
+         1+ywOMvNxQsyJsso+gX9w1ovBidlQZPgKwdjIztx+C/xp1BfXMdEO9xPEQ6+/g7mYUv3
+         c/N4qcndSTwWMO6fP9LI4YbaMGpRt/IYzrG/dnSLu9UHCNy7H1OiTXYhmPT2zitvJsiV
+         MIhH46aw9V7DgedAJl4xsbcZOKumlO3+2e/o6c2c8ZwaFhd8KSAfRWJtqDXN8K3em7xj
+         HN7zZI3d2c0T+9Rs7HDhcf4044dhNL6BzRYksF683SouJCFjTApAbR1HW2L38snge5Eg
+         EUkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHboms/rPwf7DIv+f29eFWZbvXSWesHPijIlPZcYjvuser9BHwmMt0myCsFa+4MXL8GCs/QLIHp12YURI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNrusIMv1ipnhptcSukFOxPBXOMuxiFlsdvpcaW6MFCj30GtIH
+	29R1PSot8jBlmVwrmwDobNyTDCYvMEnQtg6mj57mBjPbsD2ocuUj/VsTyzRFqOo=
+X-Google-Smtp-Source: AGHT+IH1sAjyo/WBTOjqBNER0j6loIWwhXiHBU4iLvjepISdYC0429yBvUc6Du/En+qHsgGmIjXDuw==
+X-Received: by 2002:a05:600c:1c0b:b0:431:52c4:1069 with SMTP id 5b1f17b1804b1-431616314c5mr83997275e9.8.1729514793206;
+        Mon, 21 Oct 2024 05:46:33 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570f89sm56459945e9.7.2024.10.21.05.46.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:46:25 -0700 (PDT)
-Date: Mon, 21 Oct 2024 14:46:24 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Henry Lin <henryl@nvidia.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Petlozu Pravareshwar <petlozup@nvidia.com>, Jim Lin <jilin@nvidia.com>, linux-usb@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v4] xhci: tegra: fix checked USB2 port number
-Message-ID: <lfjrdb5hx7ytm5kfolsidfa6pfbatocznejedyo4nsxjziouse@6bjo5huzciwa>
-References: <20241014042134.27664-1-henryl@nvidia.com>
+        Mon, 21 Oct 2024 05:46:32 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 21 Oct 2024 15:46:25 +0300
+Subject: [PATCH v2] clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts
+ flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fplnjns5szlhev77"
-Content-Disposition: inline
-In-Reply-To: <20241014042134.27664-1-henryl@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241021-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v2-1-0bfd64556238@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACBNFmcC/6WOQQ6CMBBFr0K6dkynIhJX3MOwKGUojUibDiKEc
+ HcrV3D5fvL/+5tgio5Y3LNNRJodOz8mUKdMmF6PlsC1iYWSKkeJOSxIpUQpwQxPsMZA5xZ4cwO
+ vAKFfwbZsIHwiTwzdoC3Dha7YNVoVWuci7YZIqXM4H3Xi3vHk43pcmPGX/mObERBSWxelkaqhW
+ zW4UUd/9tGKet/3L+wKR0DzAAAA
+X-Change-ID: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1634; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=y77wJFpZ3UjOC8+X1TAadIhkOYe0xdFWOmEEz46fJdI=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnFk0iL5wBinBQ3wCgTm3kdJrM8ETzHTztd0Jn8
+ /7lElTLYr6JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxZNIgAKCRAbX0TJAJUV
+ Vt7vEACtYOnPdfP2BDOdRNP5faNd/B4jjhK0A+fQO1ZG29f0nY8Z49b68npfRvVSPhWVcsvF0y/
+ NGjHuMQ1wQV5eF4wH2Tfpqf2+XSHVKegToeMmHwOopn+Z3CoJMvrSS4hoB3drVpKoo/7oI8cptI
+ JDnB0550opiqqRbk8erokFDtb4GPKV/C6zwUB0TC3dVjktnE7BlBcvmHJWoZP7fJO1aqjHsZzZA
+ biDLowe0mN2/QSfIMVYuc+JegvHHD/zDRQLvsxcPOm7TgEJFWTrI4UU1CcgGP/t8hQvmMoPZDlg
+ rr82wd94u6BxEuDEgSaxpSakQLNln3s7Px8RQ2UwUyRk7aDUBLlxMkyCs401Hsvja+30ohhah86
+ oJDA7BSyaglJGZDQKo67t4qiqBbBDoLfo1tnSNlNdj7PGiOl1ma/4deesYBPIykWHKNUZfcmYo7
+ zx6BBgoYacAmMr35j0CGwAnrLYWXw11b0/5juMdanJTKmyqgnLglT7qEzZgk1fYtYZRHN9ZlcH2
+ LWcBMzO7JZ/LWwWzt5mCC7MI/3m8Ad82YzD6Cw0SXCBVUVlCuWbuVlcDfF+6qd3fDS99EUMnoXn
+ T7gyhIZrL9rntjKr2RBeByV9EYRpGfJzVnkroXb4cpE3bzDO/nZyg3K+sPBBbQkSNwHqfr/iry2
+ 8k/f+ukxMyuoJ+g==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
+configuration on machine suspend. Currently, the QMP combo PHY driver
+doesn't reinitialise the HW on resume. Under such conditions, the USB
+SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
+RET_ON. This has been already done for USB 0 and 1 SS PHY GDSCs,
+Do this also for the USB MP SS1 PHY GDSC config. The USB MP SS0 PHY GDSC
+already has it.
 
---fplnjns5szlhev77
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4] xhci: tegra: fix checked USB2 port number
-MIME-Version: 1.0
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v2:
+- Fixed commit message according to Johan's suggestion
+- Link to v1: https://lore.kernel.org/r/20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v1-1-241a68c02be7@linaro.org
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Oct 14, 2024 at 12:21:34PM +0800, Henry Lin wrote:
-> If USB virtualizatoin is enabled, USB2 ports are shared between all
-> Virtual Functions. The USB2 port number owned by an USB2 root hub in
-> a Virtual Function may be less than total USB2 phy number supported
-> by the Tegra XUSB controller.
->=20
-> Using total USB2 phy number as port number to check all PORTSC values
-> would cause invalid memory access.
->=20
-> [  116.923438] Unable to handle kernel paging request at virtual address =
-006c622f7665642f
-> ...
-> [  117.213640] Call trace:
-> [  117.216783]  tegra_xusb_enter_elpg+0x23c/0x658
-> [  117.222021]  tegra_xusb_runtime_suspend+0x40/0x68
-> [  117.227260]  pm_generic_runtime_suspend+0x30/0x50
-> [  117.232847]  __rpm_callback+0x84/0x3c0
-> [  117.237038]  rpm_suspend+0x2dc/0x740
-> [  117.241229] pm_runtime_work+0xa0/0xb8
-> [  117.245769]  process_scheduled_works+0x24c/0x478
-> [  117.251007]  worker_thread+0x23c/0x328
-> [  117.255547]  kthread+0x104/0x1b0
-> [  117.259389]  ret_from_fork+0x10/0x20
-> [  117.263582] Code: 54000222 f9461ae8 f8747908 b4ffff48 (f9400100)
->=20
-> Cc: <stable@vger.kernel.org> # v6.3+
-> Fixes: a30951d31b25 ("xhci: tegra: USB2 pad power controls")
-> Signed-off-by: Henry Lin <henryl@nvidia.com>
-> ---
-> V1 -> V2: Add Fixes tag and the cc stable line
-> V2 -> V3: Update commit message to clarify issue
-> V3 -> V4: Resend for patch changelogs that are missing in V3
->=20
->  drivers/usb/host/xhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 6246d5ad1468..76f228e7443c 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -2183,7 +2183,7 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb =
-*tegra, bool runtime)
->  		goto out;
->  	}
-> =20
-> -	for (i =3D 0; i < tegra->num_usb_phys; i++) {
-> +	for (i =3D 0; i < xhci->usb2_rhub.num_ports; i++) {
->  		if (!xhci->usb2_rhub.ports[i])
->  			continue;
->  		portsc =3D readl(xhci->usb2_rhub.ports[i]->addr);
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 0f578771071fadb0ea7f610f04c5510a85a8485a..33afad9c878d30f487f63b311bcea6296d0653fd 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -6155,7 +6155,7 @@ static struct gdsc gcc_usb3_mp_ss1_phy_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_usb3_mp_ss1_phy_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
 
-Given that the size of usb2_rhub.ports is given by usb2_rhub.num_ports,
-this seems the right thing to do regardless of virtualization.
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
---fplnjns5szlhev77
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcWTR8ACgkQ3SOs138+
-s6HZUg/9HIVjVuZFYW96ytxOAoCNpEL/mi1p3WBpkcl8jBg4F9w4LWOWBpvfwoAd
-zIvSaFJXKqbi8/LcMvNCpSknAWDot14Lp2ZBnR9Uq4NcLpoZ3mU9eu3Kc/ZmMDRJ
-08itUmZX+FjhTmRevrYz88nc2QgMOWMcFAvWcMsdqrTX6AqFOqna3LhxzY6qX+V0
-KQLjy9DpxjdPxQY1O9B4TTd5K5BUawdPzJMQCSwayrWF3izL2qFqJ9cOQI6UnF1h
-EL1eq+2WDuCKq3AyurTAeRVFE/Gs30l1Qhzn15GzLhdF88s5fCjf3ZDZE8qG2VFq
-7pOcbMfWENhioQYncFUHnnsVju5+A3XXMs/DCUcyjHV57QnaDJA7wCiIdnP4hWBo
-IQI4UpweJRHtjArSAt6GS4T9n/TiGzstoIj1x6lvwJJuWDbV41fvr95eXAKDZ601
-0+hhTor75YN5IAoJZGNleU4OA9q3dcNTwr4lMCBNKIA6qUmJVrUUKl+RivXL0MfN
-OLP9XkP1Dn+dKFHL2zggK1MzdSQ1l+8PS+vTkmvAiYtPXDY8JZbbnxAVycweWrzi
-ocb5E93LIbrRaR2SfSXsmmdaYRMbtSUXcUlrG+fevHrzv/mUB0FWiZFH4sVwzQbO
-MMGCOcmcaXGXJqQr0sF4HQmcFWR9eze6+iyPofzVj7ryDMaTLc4=
-=IcrR
------END PGP SIGNATURE-----
-
---fplnjns5szlhev77--
 
