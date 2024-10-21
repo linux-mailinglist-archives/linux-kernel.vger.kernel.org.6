@@ -1,219 +1,569 @@
-Return-Path: <linux-kernel+bounces-373698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A9A9A5A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC6C9A5A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF1C280A46
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCBE2818A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DD11D07BD;
-	Mon, 21 Oct 2024 06:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F85B1CFEA0;
+	Mon, 21 Oct 2024 06:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ccvC3D+2"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P0Kvq7gl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XjivllKK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P0Kvq7gl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XjivllKK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC791CF7DE
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729492410; cv=fail; b=EQEkN7K2Wl+BMIdLdNw7M/a9fBhPzkHYknhLmpKqX6piXoeTXaVMhTuomNP252o8frgcTgBDZTUsiO8HVnwCaO/jAs27Gg7ORgWKRQmzhFeZ8kuIUKrt+tLHcB8tGT6cgy5rk10eh49GZswLsyPcw4qA53eWZMz52k61rSwTu1c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729492410; c=relaxed/simple;
-	bh=CmHfsfamAqdP1lotk126+4k+dlN0Ks/yK9SNoNGvJag=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GG1ViDSxyr183/zuD8mYOIH9aUT8tu9r/eMlSzuNPR47Lo1QNcD51LqOOMce4YOZisGv0keg8C54Xjim84XZSMMr1SY+MPRg6zokDqOWJfscJcann9M5PLlbg/gZpHL0k5ZnZHicrvXilMP4zVIR1ynuqcl8sKpoz/+3TF3mbek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ccvC3D+2; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bvE9QgtqxgPphuZ+jg3ZBrGJJBsXAjAvEP5zgAZ4AKL/0vHvyY5lNnGTk9/HsNk49vynRiQobR557vtBhThrnlQMpYhFggSDKpnwKaltItUpp9D2OxMyXRCLcBvJHKe1NXq41fsCgXoq/0Zg0tMXr1UXZ6sZvzp2xFDzAr5hUGb+WjWAj4B78/02AtE49gdqGF4n2GBOrU37TaqHYL73CmkvQsUUNdqLv0YqsewIs2PalK2W1FsJvaJtpbU6Qt4WBQREWSyxWrCFMDyG5XFR14omHeiCtn5XPBr8yWO5fNGriWc8qftyU1R5ElQaqWoRUdp/SRe87BzwbhtH4Bzv6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n8ZcVFp8v9hz/m+C1DVhrWFoUvn7k+qWkbALnY4n11w=;
- b=h7J0ZvPkQ+GJaXlxRB7eQxZiUCJJb4obMt50555aO2eNsT3giAHYxcAG7wg7J6QXl8P9Io4LrjYIH//2Iv296iN54fzdwDtRWZL2V2vujRpGwVOFXwbzH5EcLX9r49S6pBclvwPCCiAcNS3LIZdQxbfVubWTFrGKasNXXVSdonl8A1SrtW52WvatImbg2wKSbjvNs2Y3RkOBBLlupSL111pUa1s5fGf6/1Q7bVVI3vumwLskM9SmM79Ipn3p/QG+3clnJthrjfb9HBnnDLOkqXuHbrRPkkwHJAmG+jHmv6GTFZ1fy8NPBHSCXk2QmlgWZjK7jTrWWT7b0KQ3Fabc/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n8ZcVFp8v9hz/m+C1DVhrWFoUvn7k+qWkbALnY4n11w=;
- b=ccvC3D+2ZUSy3KGezyGJU/L9CJk7L3nySgvNFXv/TGGS2Vyl0WyDqfEdpGJmkuYcJrG/AUsEAk34uh4aHFg36zRoKB1q6SZ7Hx+EVBfDTqM46KmypY/QnC8B2hyU/Gu9Ou94JCZ1W+3bfCoPaOkt1fc9YGZjFFDFeRykUerD+0D/38ZCwFUigbJjBPxkR47Ido2rUmtXC67TB+vuQU2j9UQTV5dKgtQr5jdiPlmXw3Ozldu6PEfwbWlXAp51SQvhLuSejbzl9SoJtlOKA8qknkO0hbk+4nAT5288G7/cbZSAvaz3hTo3JJduzzoeVdoI2y9k9D+hvXxi5GTc5uUgXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ0PR12MB5469.namprd12.prod.outlook.com (2603:10b6:a03:37f::16)
- by DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 06:33:25 +0000
-Received: from SJ0PR12MB5469.namprd12.prod.outlook.com
- ([fe80::ff21:d180:55f2:d0c0]) by SJ0PR12MB5469.namprd12.prod.outlook.com
- ([fe80::ff21:d180:55f2:d0c0%6]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 06:33:24 +0000
-Message-ID: <fc42d9bf-3460-4d85-a09d-39b5634363d4@nvidia.com>
-Date: Sun, 20 Oct 2024 23:33:24 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm/gup: stop leaking pinned pages in low memory
- conditions
-To: Alistair Popple <apopple@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
- Shigeru Yoshida <syoshida@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Minchan Kim <minchan@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>
-References: <20241018011711.183642-1-jhubbard@nvidia.com>
- <20241018011711.183642-2-jhubbard@nvidia.com>
- <cc9d692a-846d-4ae4-af4b-c8de8b724df6@redhat.com>
- <ceeb9dd7-bef9-40c8-aead-c1325f1e3a3d@nvidia.com>
- <8734kqcr5g.fsf@nvdebian.thelocal>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <8734kqcr5g.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR07CA0050.namprd07.prod.outlook.com
- (2603:10b6:a03:60::27) To SJ0PR12MB5469.namprd12.prod.outlook.com
- (2603:10b6:a03:37f::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB171CF7D8;
+	Mon, 21 Oct 2024 06:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729492430; cv=none; b=SMzdTJ7ecBg4754yILHb07CkOyjZkwqGEzJrT4UFvqvH76nf1/g6jlD/Hb05vhbMBr+jOD9gVNHD0hWVj7JNKUH99IKgI074iV3qgz9huc9O8YCh9Rz/iMlqRN5sOkPJg2VQO9irJUVcGOLqqSInacGFLnHmOlrwVHNB5ZqeqlM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729492430; c=relaxed/simple;
+	bh=vGM6VFN3RZwC8xVOJVdXJgMYiB+VOXHNuwnYO/UHDJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VOp9Gg/St22xN7F3cscq00qL/C/EN+68Q4OqePYxWoh7tKWFGIDQ/cMhJaBBGbw0xZYkM4QimmDBqNkJhzcaavRcERLUUHMB2mMAUegpMYdW9AGAAwA8HDLcgNWdDJbvSx/Q10AyifnPVKPEgnWaQ0Udv6sSOy/A2BhTgzv0sGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P0Kvq7gl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XjivllKK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P0Kvq7gl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XjivllKK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BDE301FE8E;
+	Mon, 21 Oct 2024 06:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729492425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L8p22BvEnP08CpDwnec1TGaASH8ScGOYJUNhlQ1lAJ0=;
+	b=P0Kvq7glk81FL1QoEBABmheTcwkylKtV1QRYr+4e7wNwOIHj6lvpvvpJ2t0KWuNgww9PPk
+	z9uFkmz/fCxQGthfqCL7gDXTj9JHlG+WhhJ5XC1MsS4E8ykqBS5OmEhHuzk3vhbVVTDjTi
+	lp7qZBnSl1axESW5t1fEW2ajItgDu5k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729492425;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L8p22BvEnP08CpDwnec1TGaASH8ScGOYJUNhlQ1lAJ0=;
+	b=XjivllKKpxqQk4nbcQ/NHS9FEcHTFqpnkACwbsCM/EV+zoLgmfXxEYTSNvg2xSXzb+GcZg
+	UbVlWBMFmvmhxzAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=P0Kvq7gl;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XjivllKK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729492425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L8p22BvEnP08CpDwnec1TGaASH8ScGOYJUNhlQ1lAJ0=;
+	b=P0Kvq7glk81FL1QoEBABmheTcwkylKtV1QRYr+4e7wNwOIHj6lvpvvpJ2t0KWuNgww9PPk
+	z9uFkmz/fCxQGthfqCL7gDXTj9JHlG+WhhJ5XC1MsS4E8ykqBS5OmEhHuzk3vhbVVTDjTi
+	lp7qZBnSl1axESW5t1fEW2ajItgDu5k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729492425;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L8p22BvEnP08CpDwnec1TGaASH8ScGOYJUNhlQ1lAJ0=;
+	b=XjivllKKpxqQk4nbcQ/NHS9FEcHTFqpnkACwbsCM/EV+zoLgmfXxEYTSNvg2xSXzb+GcZg
+	UbVlWBMFmvmhxzAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27C13139E0;
+	Mon, 21 Oct 2024 06:33:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VjUeCMn1FWczQAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 21 Oct 2024 06:33:45 +0000
+Message-ID: <bfc4f322-1dba-44ad-8839-382645cad372@suse.de>
+Date: Mon, 21 Oct 2024 08:33:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB5469:EE_|DS0PR12MB6608:EE_
-X-MS-Office365-Filtering-Correlation-Id: abc22011-8040-4b60-f0a1-08dcf19a4402
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S210cUozUnF1RUcvcSs1Z3N2OUhSYWxreFhtSzdnZXoreTZiNEFsOWVHUTl0?=
- =?utf-8?B?ZFAwM0JvYnBZc3hYNWJiZWowQmtCdTZJNXk3VWE1R0RCeU1QKzN0UmNudGxM?=
- =?utf-8?B?ZzBYbjViY05DZTNoNUx3N0ttN1RIRTVOTGh0S2hQS2pLY0tVRUlKa1grWGN2?=
- =?utf-8?B?ZHk1Z2tJNVFmQnl2U25kU05DYXRBRVlzWGVUVjVUdTNISjRacGRVNUk5MWlC?=
- =?utf-8?B?enpYT3MzYXVGa0pCcFowemxzQjllUUZxL0xOMDdoK292Z3JRMXdiYTBra2Vy?=
- =?utf-8?B?N2ZhaUk3ZUVvaVJhaUttTUNXUzN1TzhpOGkwWUJRakFXVGwyNXBaemN6ZEpX?=
- =?utf-8?B?K3YxWmpPWHFiZ2FFRnE5RnRnUkNnOW0wN2hiWUNzVmt5NFFYdlYvbnlvc25R?=
- =?utf-8?B?cDFHTk1yR1hITGkvcFRPRUxOdXJTZWUvVlhEMW96cXc3UGNCdzNWSDRuQ1Fx?=
- =?utf-8?B?TlVoc1ZqWlFxdzhZWTFPNWxlQjNtY21laitlQVlrTnR1NUJ0NUY3MWlYQ3Vz?=
- =?utf-8?B?aCtUWEFhbmpkd3V6WkkwQm9TSExmUU9vKzE3dlFQR21jTk0wZDF3THZHbUs2?=
- =?utf-8?B?TjIyQUNXZlhueVBVQmFoM0tGNDNjQVVFOU9ScW42em54RTZUMU56YjJrRkVs?=
- =?utf-8?B?VngwbmNEalJPZGRrVWFWM01lUVE3SVRXMG1rbFRkL1IzWVhFLzc0LzV2dHlF?=
- =?utf-8?B?bVdMRUhtUmtqMzdOeVRyNTQ1QmxucHBIVWRlUUQ3YUl1NnVibS9uaklIR1lH?=
- =?utf-8?B?NmRqTTZSOGNQZ2RhbHIyRlFvb1VOcWxtZGxHeWg3S1l1cHFpS3phOG1BM0sy?=
- =?utf-8?B?alV1cGJyNXhTdDgxcG1uQTgvUkYzbDNXU3lBK2w1SklkNkFzKzlGUVFKZkJB?=
- =?utf-8?B?ZStNS1o5RjNHL3YrUU13cDFFT3FJTDhLL2JVSGN3SFp2a3lScks2bzd4RTI3?=
- =?utf-8?B?Q3pjU0poNUZ1WkVjaVRTRWFuUjFDQTZDcnRHYlhNVUJhWWRMSmQ3b2ZWMkRo?=
- =?utf-8?B?SHlGVzFWZHhibUUyd0xUVXZmTmJtR2dGS2Y5d2Z5MEYxZTRRaFZBZ3A0RkRU?=
- =?utf-8?B?dGRWRUhHL1VnbG9OUG9lZFN5R2cxcjk2Q3VuTU5oeGt2R3ptcm1kdnZJRnM5?=
- =?utf-8?B?dUZ5eVI0ZUo5RDB5bWQ4ZVRXWEV4Q2xrZXhpcmtYVjRna1ZXQW5reitSd3g4?=
- =?utf-8?B?M0NXRnJtektxTjlZRlZkZ1ZLQVhrS3pRVkRqWEZoWVlwdkQ1cWZQQWZRMEdU?=
- =?utf-8?B?ek0zTXBDNmpiNkMrdHNWQ3Y3K0ZDVHB3QTcwc2xIYS9CWUt1dmdITTVBYjR2?=
- =?utf-8?B?dDhVWFBsa0lYaklRSjhHckwvKzB0MlVwMFVCSFYvZE42eDJaOURrbUdlYkdD?=
- =?utf-8?B?RnA2UGhuVmNwbUJUbVhhT2xOaGlzTERRK0l1RXR6eGFWVndBS245SWlVbjVX?=
- =?utf-8?B?TFk3MzNrMzZ2VHB1V2JNRlVoWUxYYnMxcTR0TFVRZGNJc3NqdE40TnhMaFJW?=
- =?utf-8?B?UTRER2Nmd0svSy82ZHZ4NzFueE1IK1FGRDlHRktpMHVUNTB1dVhzZG5OQTZi?=
- =?utf-8?B?b3JWUWNQU3lhS1NWN2cvMDV6Z2hmelhldjBTTkQ2MFowc1dLTzE2c09JbnlZ?=
- =?utf-8?B?SDJyanpML0tRT0dpMW1xNGx1UGl6K3gwZnBva3VGMW9DT0lwY2RGd2NRVjc3?=
- =?utf-8?B?STM1RVNHTVFnaUo2dkFZSGRLb2w4NGtvandrNmdWbmNubGhWVXh2MVNwOTJU?=
- =?utf-8?Q?/y6k78Vk8W1nz6gQrsUlKw08AoDLK93xZH4DDzf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5469.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmRKdksyRlZHb2NJRzlnQmdtRkJ2c25DUE1uUlZXcHpyaXZvcDErY29qSmVI?=
- =?utf-8?B?YzFwNWxRMzVjQVNHcmwzWTJNNGpuZ3JzYS9IaHdRVHIxZmZ0RzVCNFliR1Bx?=
- =?utf-8?B?dkl0RTBmZDhJWkhYUWZ2bWxsTkFmZ25uSjJzNUtweE41RDR0a1EwMTl4WlZi?=
- =?utf-8?B?bS9IdExWUkowV0RDUkkrTDlLRkxUZzFMaFhvd2N2SmpIWWgxalJxSHY0U0V6?=
- =?utf-8?B?Vnl3UzkzTlZpMVlrdXZmbmxOZnkxSjlwbDc4cGNld0ExbXpXUzJEMXJ0MEVL?=
- =?utf-8?B?WnNUY2VmMFlhODQ4RXNhejNkZXRFNnZBQ09uVmtJZHBadHJwREdzK1hBMEN1?=
- =?utf-8?B?SjlkRllheVpTUWY0VlRvVTF1bDlXRWh3U002Z2Rtc3ZrS0htNCtPMVl4NjZH?=
- =?utf-8?B?dHZzamlPa3htSFZVSkhGNloxdDNDVTdwb2tIZWl2OTQwSGpscU9tK1dhNGtM?=
- =?utf-8?B?ZUVJaEx0V0VCbzZpbTJSOVMwdzE2ZWlseUMyQUtpZmFrZ2V4dUVpZUI5N1Ar?=
- =?utf-8?B?VnZ5czg0NzYzd0FrYVhrcG1tczAyOVNFNTBvTTFqbGxGYXJFdnFUTzFKcEJN?=
- =?utf-8?B?cm1Udk1GZVhDeTlYam5TMFhNSEJJeTBKd05kcVZsK2Ivb3ZXSzdXdjBnREJy?=
- =?utf-8?B?SEFBcUxHQ0phd3pGem0xUUpFaEF6bkxyazJmU284cWZPRGdLWDkvaDk2NUpt?=
- =?utf-8?B?TUtUQmFGbHREQ2R0WEIwSXpSZ2VyT09VTURGQ0F3c2JBV3lSMW01N1U3RUZw?=
- =?utf-8?B?Snk3R0ZaZEdmOHF5VXlNWGVOcGQ0S0tzemtBRlYyaFV3U2xXVzR3RDBsZEpR?=
- =?utf-8?B?N0VxRFRPOFNIbVc3SjRsNTBZUStQcFNialYvS3oydFFSOUNpNFZYcG1KbEFD?=
- =?utf-8?B?MTh0TEkvL2gxVFFJTHlHME4yc0dCdGY2bzhYdUcwVTZZMTFFSzJIa25XUC93?=
- =?utf-8?B?QXhCRVU1SW5YMEY4b1cweUcycDFpOG1zNUlkakd6c3VlYVEwODg0eDhlVG5y?=
- =?utf-8?B?ci9MMlhYSUJ6bEp0RExpWC9GcWdiWHUvTXNwNzJuYzEwRXFFNEEyNnZxR1Ev?=
- =?utf-8?B?Y0NTS05heG1ndmNUU29GSE53RVNlODFTTUpTMnF4bStIUXdtYmlTVHkyaW9r?=
- =?utf-8?B?aG53eW1aVkUzUkFTOGRVRm9TRW9ZQ2xYYWhKaG1pdEl2UlhRQ0cxSVE3eG9j?=
- =?utf-8?B?TGRITXlMRUpHTS9mbk4zK1lPYXFxcnVWZFJobUZmYlo4REQxUUg3clAzTXpH?=
- =?utf-8?B?dVArdjUvZHBSTnYydHlHSTdGTkY5QXBwVXhVaVBXOCt0c0NaZ2wveHREczFD?=
- =?utf-8?B?cStnd3l6dkFWNkt0QUZDMEFVVWM3dWxaOTRxcy9kNnJuT2Z5cVlDcEVDK2pF?=
- =?utf-8?B?WTNMK0ZYdXlKSFdpZ2Nrcm5zc0RYNmR3STd0alpXVWJOK1I1WTFoWUlyY2Uy?=
- =?utf-8?B?MnZGQjlheVJOME8yMGRIUkVMUHdHTXN6TTVGZDRSb3AyY0dwZFdlNmM1MEdh?=
- =?utf-8?B?RFJOK1N1Q0liSWl4cXVkL2hySkExcXdZdUpjTG5TbGFWdHp0dnA5aWZYTFU0?=
- =?utf-8?B?T00wdStnUWM2Yk5DajFYcjk4NDIvL2VPUjBhRjhYZzhpRldrZXRja3M1bWEx?=
- =?utf-8?B?STZkMWRmK3pFQXVVdVU4VVZGNU5CNGZxMWZ2MzJieWdwMmNhSVdOMGhkazFO?=
- =?utf-8?B?SWhtaENJbW1uTm8xOHF6NXdTU2s2Y1k3bytrbm50eGs5eUUzaFhuOGxPbnZZ?=
- =?utf-8?B?ZCs5QWpGUVNZaDRydUhJa2pUaVdFZ0s1eDRoa0wzQVlQQmdJK2NQRHlxa25z?=
- =?utf-8?B?OGFKMjNKT1FNUmRib0h3VEJlNDB0QWg3aS85VVcwTUVCQ1RSQW9McTRWeThZ?=
- =?utf-8?B?bFZUNjJvYXdLOXNNK3dPc21MRTkvWWRjc3owNEg4ZS9aNGxQd1dRQy9tOGFS?=
- =?utf-8?B?Wk1MWExSeitIK2grL0kwRExHcVAxOXI4a1lObmZvSWFFMTFTb0llR0NPcm5o?=
- =?utf-8?B?aklhc0NhcW1EdGlRKzFJdTNkU3kvQVVYQWlqdXU4UGtoZTRpQk56aDY3eWg2?=
- =?utf-8?B?V2VaU0tFSHZGYUtWbDNSUWN3MEhqMGlZTEswajV2dXh4K0hDd1F2V2lzS1BG?=
- =?utf-8?B?R2ZhbFRjRytrNDdnQWlsaUcyVUQrRmxUK1ZSNVozeGZNTk5lYVI1YndDNTRy?=
- =?utf-8?B?L3c9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: abc22011-8040-4b60-f0a1-08dcf19a4402
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5469.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 06:33:24.9428
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +5z1uO6+wuFBkpinSMsBifWxv+CKJUp0LouorxiDSzSteu6fCeB5ouqZsvRr1BC2n/QWr5TY3T00UmwN8F9NAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6608
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/14] scsi: fnic: Add headers and definitions for FDLS
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241018161409.4442-1-kartilak@cisco.com>
+ <20241018161409.4442-3-kartilak@cisco.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241018161409.4442-3-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: BDE301FE8E
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10/20/24 3:59 PM, Alistair Popple wrote:
-> John Hubbard <jhubbard@nvidia.com> writes:
->> On 10/18/24 12:47 AM, David Hildenbrand wrote:
->>> On 18.10.24 03:17, John Hubbard wrote:
-> [...]
->> And actually this whole thing of "pin the pages, just for a short time, even
->> though you're not allowed to" is partly why this area is so entertaining.
+On 10/18/24 18:13, Karan Tilak Kumar wrote:
+> Add headers and definitions for FDLS (Fabric Discovery and Login
+> Services).
 > 
-> I'm looking at your v3 but as an aside I disagree with this
-> statement. AFAIK you're always allowed to pin the pages for a short time
-> (ie. !FOLL_LONGTERM), or did I misunderstand your comment?
+> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+> Co-developed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+> Signed-off-by: Gian Carlo Boffa <gcboffa@cisco.com>
+> Co-developed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+> Signed-off-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+> Co-developed-by: Arun Easi <aeasi@cisco.com>
+> Signed-off-by: Arun Easi <aeasi@cisco.com>
+> Co-developed-by: Karan Tilak Kumar <kartilak@cisco.com>
+> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+> ---
+> Changes between v4 and v5:
+>      Incorporate review comments from Martin:
+> 	Remove newline at the end of fnic_fdls.h.
+> 	Modify attribution appropriately.
+> 
+> Changes between v2 and v3:
+>      Incorporate review comments from Hannes:
+> 	Replace redundant structure definitions with standard
+> 	definitions.
+> 	Remove multiple endian macro copies.
+> 	Remove static OXIDs macro definitions.
+> 
+> Changes between v1 and v2:
+>      Incorporate review comments from Hannes:
+> 	Remove redundant patch description.
+> 	Replace htonll() with get_unaligned_be64().
+> 	Replace raw values with macro names.
+> 	Remove fnic_del_fabric_timer_sync macro.
+> 	Remove fnic_del_tport_timer_sync macro.
+> 	Add fnic_del_fabric_timer_sync function declaration.
+> 	Add fnic_del_tport_timer_sync function declaration.
+> 	Replace definitions with standard definitions from fc_els.h.
+> 	Move FDMI function declaration to this patch.
+>      Incorporate review comments from John:
+> 	Replace int return value with void.
+> ---
+>   drivers/scsi/fnic/fdls_fc.h   | 381 ++++++++++++++++++++++++++++++
+>   drivers/scsi/fnic/fnic_fdls.h | 430 ++++++++++++++++++++++++++++++++++
+>   2 files changed, 811 insertions(+)
+>   create mode 100644 drivers/scsi/fnic/fdls_fc.h
+>   create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+> 
+> diff --git a/drivers/scsi/fnic/fdls_fc.h b/drivers/scsi/fnic/fdls_fc.h
+> new file mode 100644
+> index 000000000000..25dc89a4fc2f
+> --- /dev/null
+> +++ b/drivers/scsi/fnic/fdls_fc.h
+> @@ -0,0 +1,381 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright 2008 Cisco Systems, Inc.  All rights reserved.
+> + * Copyright 2007 Nuova Systems, Inc.  All rights reserved.
+> + */
+> +
+> +#ifndef _FDLS_FC_H_
+> +#define _FDLS_FC_H_
+> +
+> +/* This file contains the declarations for FC fabric services
+> + * and target discovery
+> + *
+> + * Request and Response for
+> + * 1. FLOGI
+> + * 2. PLOGI to Fabric Controller
+> + * 3. GPN_ID, GPN_FT
+> + * 4. RSCN
+> + * 5. PLOGI to Target
+> + * 6. PRLI to Target
+> + */
+> +
+> +#include <scsi/scsi.h>
+> +#include <scsi/fc/fc_els.h>
+> +#include <uapi/scsi/fc/fc_fs.h>
+> +#include <uapi/scsi/fc/fc_ns.h>
+> +#include <uapi/scsi/fc/fc_gs.h>
+> +#include <scsi/fc/fc_ms.h>
+> +
+> +#ifndef MIN
+> +#define MIN(x, y) (x < y ? x : y)
+> +#endif				/* MIN */
+> +
 
-Sort of: short term pins are allowed, but at this point in the code,
-here:
+#include <linux/minmax.h>
 
-pin_user_pages(FOLL_PIN | FOLL_LONGTERM)
-     __gup_longterm_locked()
-          __get_user_pages_locked(FOLL_PIN | FOLL_LONGTERM)
+> +#define FNIC_FCP_SP_RD_XRDY_DIS 0x00000002
+> +#define FNIC_FCP_SP_TARGET      0x00000010
+> +#define FNIC_FCP_SP_INITIATOR   0x00000020
+> +#define FNIC_FCP_SP_CONF_CMPL   0x00000080
+> +#define FNIC_FCP_SP_RETRY       0x00000100
+> +
+> +#define FNIC_E_D_TOV           (0x7d0)
 
-, just before calling check_and_migrate_movable_pages(), we have already
-filtered out any cases other than (FOLL_PIN | FOLL_LONGTERM).
+Please keep E_D_TOV in decimal for better readability.
+And anyway you can use FC_DEF_E_T_TOV (which is already
+defined and has the same value)
+> +#define FNIC_FC_CONCUR_SEQS    (0xFF)
+> +#define FNIC_FC_RO_INFO        (0x1F)
+> +
+> +/* Little Endian */
+> +#define FNIC_UNSUPPORTED_RESP_OXID   (0xffff)
+> +#define FNIC_UNASSIGNED_RXID	(0xffff)
+> +#define FNIC_ELS_REQ_FCTL      (0x000029)
+> +#define FNIC_ELS_REP_FCTL      (0x000099)
+> +
+> +#define FNIC_FCP_RSP_FCTL      (0x000099)
+> +#define FNIC_REQ_ABTS_FCTL     (0x000009)
+> +
+> +#define FNIC_FC_PH_VER_HI      (0x20)
+> +#define FNIC_FC_PH_VER_LO      (0x20)
+> +#define FNIC_FC_PH_VER         (0x2020)
+> +#define FNIC_FC_B2B_CREDIT     (0x0A)
+> +#define FNIC_FC_B2B_RDF_SZ     (0x0800)
+> +
+> +#define FNIC_FC_FEATURES       (0x0080)
+> +
+> +#define ETH_TYPE_FCOE			0x8906
+> +#define ETH_TYPE_FIP			0x8914
+> +
 
-And that means that code has taken a *longterm* pin of presumably short
-duration (this incongruity bothers me), on pages that are not actually
-allowed to be long term pinned. That also feels imperfect, even though
-it is supposedly short duration...except that page migration is only
-sort of short...hmmm.
+#include <linux/if_ether.h>
+ETH_P_FIP
+ETH_P_FCOE
 
-I'm starting to think that migrating any ZONE_MOVABLE pages away first
-might be better.
+> +#define FC_DIR_SERVER          0xFFFFFC
+> +#define FC_FABRIC_CONTROLLER   0xFFFFFD
+> +#define FC_DOMAIN_CONTR        0xFFFFFE
+> +
 
-Since I'm already preparing that "wait for folio refcount" idea for
-migration, which is almost related, I'll take a closer look at this
-idea while I'm at it.
+Please use values from 'enum fc_well_known_fid'
 
+> +#define FNIC_FC_GPN_LAST_ENTRY (0x80)
+> +
+> +#define FNIC_BA_ACC_RCTL        0x84
+> +#define FNIC_BA_RJT_RCTL        0x85
+> +#define FC_ABTS_RCTL            0x81
+> +
 
-thanks,
+#include <scsi/fc/fc_fs.h>
+
+> +/* FNIC FDMI Register HBA Macros */
+> +#define FNIC_FDMI_NUM_PORTS 0x1000000
+> +#define FNIC_FDMI_NUM_HBA_ATTRS 0x9000000
+> +#define FNIC_FDMI_TYPE_NODE_NAME	0X100
+> +#define FNIC_FDMI_TYPE_MANUFACTURER	0X200
+> +#define FNIC_FDMI_MANUFACTURER		"Cisco Systems"
+> +#define FNIC_FDMI_TYPE_SERIAL_NUMBER	0X300
+> +#define FNIC_FDMI_TYPE_MODEL		0X400
+> +#define FNIC_FDMI_TYPE_MODEL_DES	0X500
+> +#define FNIC_FDMI_MODEL_DESCRIPTION	"Cisco Virtual Interface Card"
+> +#define FNIC_FDMI_TYPE_HARDWARE_VERSION	0X600
+> +#define FNIC_FDMI_TYPE_DRIVER_VERSION	0X700
+> +#define FNIC_FDMI_TYPE_ROM_VERSION	0X800
+> +#define FNIC_FDMI_TYPE_FIRMWARE_VERSION	0X900
+> +#define FNIC_FDMI_NN_LEN 0xc00
+> +#define FNIC_FDMI_MANU_LEN 0x1800
+> +#define FNIC_FDMI_SERIAL_LEN 0x1400
+> +#define FNIC_FDMI_MODEL_LEN 0x1000
+> +#define FNIC_FDMI_MODEL_DES_LEN 0x3c00
+> +#define FNIC_FDMI_HW_VER_LEN 0x1400
+> +#define FNIC_FDMI_DR_VER_LEN 0x2000
+> +#define FNIC_FDMI_ROM_VER_LEN 0xc00
+> +#define FNIC_FDMI_FW_VER_LEN 0x1400
+> +
+> +/* FNIC FDMI Register PA Macros */
+> +#define FNIC_FDMI_TYPE_FC4_TYPES	0X100
+> +#define FNIC_FDMI_TYPE_SUPPORTED_SPEEDS 0X200
+> +#define FNIC_FDMI_TYPE_CURRENT_SPEED	0X300
+> +#define FNIC_FDMI_TYPE_MAX_FRAME_SIZE	0X400
+> +#define FNIC_FDMI_TYPE_OS_NAME		0X500
+> +#define FNIC_FDMI_TYPE_HOST_NAME	0X600
+> +#define FNIC_FDMI_NUM_PORT_ATTRS 0x6000000
+> +#define FNIC_FDMI_FC4_LEN 0x2400
+> +#define FNIC_FDMI_SUPP_SPEED_LEN 0x800
+> +#define FNIC_FDMI_CUR_SPEED_LEN 0x800
+> +#define FNIC_FDMI_MFS_LEN 0x800
+> +#define FNIC_FDMI_MFS 0x0080000
+> +#define FNIC_FDMI_OS_NAME_LEN 0x1400
+> +#define FNIC_FDMI_HN_LEN 0x1C00
+> +
+Do these need to be defined here?
+Wouldn't it be better to move them into the source file handling FDMI?
+I doubt that they need to be available for every file ...
+
+> +#define FNIC_LOGI_RDF_SIZE(_logi) ((_logi)->fl_csp.sp_bb_data)
+> +#define FNIC_LOGI_R_A_TOV(_logi) ((_logi)->fl_csp.sp_r_a_tov)
+> +#define FNIC_LOGI_E_D_TOV(_logi) ((_logi)->fl_csp.sp_e_d_tov)
+> +#define FNIC_LOGI_FEATURES(_logi) ((_logi)->fl_csp.sp_features)
+> +#define FNIC_LOGI_PORT_NAME(_logi) ((_logi)->fl_wwpn)
+> +#define FNIC_LOGI_NODE_NAME(_logi) ((_logi)->fl_wwnn)
+> +
+> +#define FNIC_LOGI_SET_NPORT_NAME(_logi, _pName) \
+> +	(FNIC_LOGI_PORT_NAME(_logi) = get_unaligned_be64(&_pName))
+> +#define FNIC_LOGI_SET_NODE_NAME(_logi, _pName) \
+> +	(FNIC_LOGI_NODE_NAME(_logi) = get_unaligned_be64(&_pName))
+> +#define FNIC_LOGI_SET_RDF_SIZE(_logi, _rdf_size) \
+> +	(FNIC_LOGI_RDF_SIZE(_logi) = cpu_to_be16(_rdf_size))
+> +#define FNIC_LOGI_SET_E_D_TOV(_logi, _e_d_tov) \
+> +	(FNIC_LOGI_E_D_TOV(_logi) = htonl(_e_d_tov))
+> +#define FNIC_LOGI_SET_R_A_TOV(_logi, _r_a_tov) \
+> +	(FNIC_LOGI_R_A_TOV(_logi) = htonl(_r_a_tov))
+> +
+> +#define FNIC_STD_SET_S_ID(_fchdr, _sid)        memcpy((_fchdr)->fh_s_id, _sid, 3)
+> +#define FNIC_STD_SET_D_ID(_fchdr, _did)        memcpy((_fchdr)->fh_d_id, _did, 3)
+> +#define FNIC_STD_SET_OX_ID(_fchdr, _oxid)      ((_fchdr)->fh_ox_id = _oxid)
+> +#define FNIC_STD_SET_RX_ID(_fchdr, _rxid)      ((_fchdr)->fh_rx_id = _rxid)
+> +
+> +#define FNIC_STD_SET_R_CTL(_fchdr, _rctl)	((_fchdr)->fh_r_ctl = _rctl)
+> +#define FNIC_STD_SET_TYPE(_fchdr, _type)	((_fchdr)->fh_type = _type)
+> +#define FNIC_STD_SET_F_CTL(_fchdr, _fctl) \
+> +	put_unaligned_be24(_fctl, (_fchdr)->fh_f_ctl)
+> +
+> +#define FNIC_STD_SET_NPORT_NAME(_ptr, _wwpn)	put_unaligned_be64(_wwpn, _ptr)
+> +#define FNIC_STD_SET_NODE_NAME(_ptr, _wwnn)	put_unaligned_be64(_wwnn, _ptr)
+> +#define FNIC_STD_SET_PORT_ID(__req, __portid) \
+> +	memcpy(__req->fr_fid.fp_fid, __portid, 3)
+> +#define FNIC_STD_SET_PORT_NAME(_req, _pName) \
+> +	(put_unaligned_be64(_pName, &_req->fr_wwn))
+> +
+> +#define FNIC_STD_GET_OX_ID(_fchdr)		((_fchdr)->fh_ox_id)
+> +#define FNIC_STD_GET_RX_ID(_fchdr)		((_fchdr)->fh_rx_id)
+> +#define FNIC_STD_GET_S_ID(_fchdr)		((_fchdr)->fh_s_id)
+> +#define FNIC_STD_GET_D_ID(_fchdr)		((_fchdr)->fh_d_id)
+> +#define FNIC_STD_GET_TYPE(_fchdr)		((_fchdr)->fh_type)
+> +#define FNIC_STD_GET_F_CTL(_fchdr)		((_fchdr)->fh_f_ctl)
+> +#define FNIC_STD_GET_R_CTL(_fchdr)		((_fchdr)->fh_r_ctl)
+> +
+> +#define FNIC_STD_GET_FC_CT_CMD(__fcct_hdr)  (be16_to_cpu(__fcct_hdr->ct_cmd))
+> +
+> +#define FNIC_FCOE_SOF         (0x2E)
+> +#define FNIC_FCOE_EOF         (0x42)
+> +
+> +#define FNIC_FCOE_MAX_FRAME_SZ  (2048)
+> +#define FNIC_FCOE_MIN_FRAME_SZ  (280)
+> +#define FNIC_FC_MAX_PAYLOAD_LEN (2048)
+> +#define FNIC_MIN_DATA_FIELD_SIZE  (256)
+> +#define FNIC_R_A_TOV_DEF        (10 * 1000) /* msec */
+> +#define FNIC_E_D_TOV_DEF        (2 * 1000)  /* msec */
+> +
+
+?? You already had defined FNIC_E_D_TOV above ...
+
+> +#define FNIC_FC_EDTOV_NSEC    (0x400)
+> +#define FNIC_NSEC_TO_MSEC     (0x1000000)
+> +#define FCP_PRLI_FUNC_TARGET	(0x0010)
+> +
+> +#define FNIC_FC_R_CTL_SOLICITED_DATA			(0x21)
+> +#define FNIC_FC_F_CTL_LAST_END_SEQ				(0x98)
+> +#define FNIC_FC_F_CTL_LAST_END_SEQ_INT			(0x99)
+> +#define FNIC_FC_F_CTL_FIRST_LAST_SEQINIT		(0x29)
+> +#define FNIC_FC_R_CTL_FC4_SCTL					(0x03)
+> +#define FNIC_FC_CS_CTL							(0x00)
+> +
+> +#define FNIC_FC_FRAME_UNSOLICITED(_fchdr)				\
+> +		(_fchdr->fh_r_ctl == FC_RCTL_ELS_REQ)
+> +#define FNIC_FC_FRAME_SOLICITED_DATA(_fchdr)			\
+> +		(_fchdr->fh_r_ctl == FNIC_FC_R_CTL_SOLICITED_DATA)
+> +#define FNIC_FC_FRAME_SOLICITED_CTRL_REPLY(_fchdr)		\
+> +		(_fchdr->fh_r_ctl == FC_RCTL_ELS_REP)
+> +#define FNIC_FC_FRAME_FCTL_LAST_END_SEQ(_fchdr)			\
+> +		(_fchdr->fh_f_ctl[0] == FNIC_FC_F_CTL_LAST_END_SEQ)
+> +#define FNIC_FC_FRAME_FCTL_LAST_END_SEQ_INT(_fchdr)		\
+> +		(_fchdr->fh_f_ctl[0] == FNIC_FC_F_CTL_LAST_END_SEQ_INT)
+> +#define FNIC_FC_FRAME_FCTL_FIRST_LAST_SEQINIT(_fchdr)	\
+> +		(_fchdr->fh_f_ctl[0] == FNIC_FC_F_CTL_FIRST_LAST_SEQINIT)
+> +#define FNIC_FC_FRAME_FC4_SCTL(_fchdr)					\
+> +		(_fchdr->fh_r_ctl == FNIC_FC_R_CTL_FC4_SCTL)
+> +#define FNIC_FC_FRAME_TYPE_BLS(_fchdr) (_fchdr->fh_type == FC_TYPE_BLS)
+> +#define FNIC_FC_FRAME_TYPE_ELS(_fchdr) (_fchdr->fh_type == FC_TYPE_ELS)
+> +#define FNIC_FC_FRAME_TYPE_FC_GS(_fchdr) (_fchdr->fh_type == FC_TYPE_CT)
+> +#define FNIC_FC_FRAME_CS_CTL(_fchdr) (_fchdr->fh_cs_ctl == FNIC_FC_CS_CTL)
+> +
+> +#define FNIC_FC_C3_RDF         (0xfff)
+> +#define FNIC_FC_PLOGI_RSP_RDF(_plogi_rsp) \
+> +	(MIN(_plogi_rsp->u.csp_plogi.b2b_rdf_size, \
+> +	(_plogi_rsp->spc3[4] & FNIC_FC_C3_RDF)))
+> +#define FNIC_FC_PLOGI_RSP_CONCUR_SEQ(_plogi_rsp) \
+> +	(MIN(_plogi_rsp->els.fl_csp.sp_tot_seq, \
+> +	 (be16_to_cpu(_plogi_rsp->els.fl_cssp[2].cp_con_seq) & 0xff)))
+> +
+> +/* Frame header */
+> +struct fnic_eth_hdr_s {
+> +	uint8_t		dst_mac[6];
+> +	uint8_t		src_mac[6];
+> +	uint16_t	ether_type;
+> +}  __packed;
+> +
+> +struct	fnic_fcoe_hdr_s	{
+> +	uint8_t		ver;
+> +	uint8_t		rsvd[12];
+> +	uint8_t		sof;
+> +} __packed;
+> +
+> +/* FLOGI/PLOGI struct */
+> +struct fc_std_flogi {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_els_flogi els;
+> +} __packed;
+> +
+> +#define FC_ELS_RSP_ACC_SIZE (sizeof(struct fc_frame_header) + \
+> +		sizeof(struct fc_els_ls_acc))
+> +#define FC_ELS_RSP_REJ_SIZE (sizeof(struct fc_frame_header) + \
+> +		sizeof(struct fc_els_ls_rjt))
+> +
+> +struct fc_std_els_rsp {
+> +	struct fc_frame_header fchdr;
+> +	union	{
+> +	u8 rsp_cmd;
+> +	struct fc_els_ls_acc acc;
+> +	struct fc_els_ls_rjt rej;
+> +	}	u;
+> +} __packed;
+> +
+> +struct fc_std_els_adisc {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_els_adisc els;
+> +} __packed;
+> +
+> +struct fc_std_rls_acc {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_els_rls_resp els;
+> +} __packed;
+> +
+> +struct fc_std_abts_ba_acc {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_ba_acc acc;
+> +} __packed;
+> +
+> +struct fc_std_abts_ba_rjt {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_ba_rjt rjt;
+> +} __packed;
+> +
+> +struct fc_std_els_prli {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_els_prli els_prli;
+> +	struct fc_els_spp sp;
+> +}	 __packed;
+> +
+> +struct fc_std_rpn_id {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_ct_hdr fc_std_ct_hdr;
+> +	struct fc_ns_rn_id rpn_id;
+> +} __packed;
+> +
+> +struct fc_std_fdmi_rhba {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_ct_hdr fc_std_ct_hdr;
+> +	uint64_t	hba_identifier;
+> +	uint32_t	num_ports;
+> +	uint64_t	port_name;
+> +	uint32_t	num_hba_attributes;
+> +	uint16_t	type_nn;
+> +	uint16_t	length_nn;
+> +	uint64_t	node_name;
+> +	uint16_t	type_manu;
+> +	uint16_t	length_manu;
+> +	uint8_t		manufacturer[20];
+> +	uint16_t	type_serial;
+> +	uint16_t	length_serial;
+> +	uint8_t		serial_num[16];
+> +	uint16_t	type_model;
+> +	uint16_t	length_model;
+> +	uint8_t		model[12];
+> +	uint16_t	type_model_des;
+> +	uint16_t	length_model_des;
+> +	uint8_t		model_description[56];
+> +	uint16_t	type_hw_ver;
+> +	uint16_t	length_hw_ver;
+> +	uint8_t		hardware_ver[16];
+> +	uint16_t	type_dr_ver;
+> +	uint16_t	length_dr_ver;
+> +	uint8_t		driver_ver[28];
+> +	uint16_t	type_rom_ver;
+> +	uint16_t	length_rom_ver;
+> +	uint8_t		rom_ver[8];
+> +	uint16_t	type_fw_ver;
+> +	uint16_t	length_fw_ver;
+> +	uint8_t		firmware_ver[16];
+> +} __packed;
+> +
+> +struct fc_std_fdmi_rpa {
+> +	struct fc_frame_header fchdr;
+> +	struct fc_ct_hdr fc_std_ct_hdr;
+> +	uint64_t	port_name;
+> +	uint32_t	num_port_attributes;
+> +	uint16_t	type_fc4;
+> +	uint16_t	length_fc4;
+> +	uint8_t		fc4_type[32];
+> +	uint16_t	type_supp_speed;
+> +	uint16_t	length_supp_speed;
+> +	uint32_t	supported_speed;
+> +	uint16_t	type_cur_speed;
+> +	uint16_t	length_cur_speed;
+> +	uint32_t	current_speed;
+> +	uint16_t	type_max_frame_size;
+> +	uint16_t	length_max_frame_size;
+> +	uint32_t	max_frame_size;
+> +	uint16_t	type_os_name;
+> +	uint16_t	length_os_name;
+> +	uint8_t		os_name[16];
+> +	uint16_t	type_host_name;
+> +	uint16_t	length_host_name;
+> +	uint8_t host_name[24];
+> +}	 __packed;
+> +
+
+Weelll ....
+There _is_ an FDMI structure definition in
+include/scsi/fc/fc_ms.h.
+
+Remainder looks ok.
+
+Cheers,
+
+Hannes
 -- 
-John Hubbard
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
