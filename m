@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-374640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C565E9A6DD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A19B09A6DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717B71F225B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7A81F22791
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B22BAFC;
-	Mon, 21 Oct 2024 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E279F811EB;
+	Mon, 21 Oct 2024 15:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="pSqL/hRg"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6hB2/iB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3D22619
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224576A8D2;
+	Mon, 21 Oct 2024 15:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523709; cv=none; b=nGUr9kUh2h8qJdYVHjR1AiobtUqzDSyJPzMarghO4MyQDOZApDJUo7leX4ZCV3wwr1bpTZWEz3chuAudso6YXGg5hSXo8ItpUvrQ2s4NLlqwgPnHmAqmiqwlDk9G9NGHFrEMWIT/mm16aodwwwwLffY1fY9o4T8IH8wkvizrnLY=
+	t=1729523744; cv=none; b=QMgPg1DLETwUtOj7lF7xkqdhCDihBlL81bntJkzLscoKEih1/p44fONu+XTQWEz7XL1k/7qIgMIzmjckCZI1wY792GLxnQCDsVm2g05EZFR+fwtOqgO/Tf21NIayuGPBVuc+ColHzteJECKKM8Sv+PHC/DHPLnefE1j29k/Ogsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523709; c=relaxed/simple;
-	bh=MbTjSVzv8f+NjyPLuVwedfGWGnFwOToxQBmyznK/2Lo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HobWziq/cr2/Bwb2aKITsWw/7VrLWFNRGEpOt79wkMO+7zxC3YHwMBJbSrN5kB36Q+R2+zUJK3jf2xXFJKJqyvGVnQSZGPVBIe1wJYHzY2+lvRNc9i96Fr1WHeMysBdi3M+NLzDmQESjXr9zLx6Qp4QQPlaasSkrxpZJuiHZCZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=pSqL/hRg; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f1292a9bso5527172e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=criticallink.com; s=google; t=1729523705; x=1730128505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GvLvAGoaEs4cLCLummjUn/fSa2RxeVRTPvPMgQ05vWA=;
-        b=pSqL/hRg9oKL7fZJw751VNEEq5iN9rV5NyK2crFIQbG2kPa0N9rU/C6LfReu/SMMP1
-         GKOr654+LAPpmiI/QXO2Jb7h6g72OV8rbCOPSBodoxgYbtQ9hoiE6/5ai0MFim3IFeX9
-         uwiC9Z2YCzwLXCtO1LzLGPG0faqXWoxMeacIcM8/gvu4bvZSMSa7t/CtuUItaDD9Dsiu
-         hJI7/ZWbvEYRpt1ITLV/2IShWU7xQZrw2M5XrWxoeOXP5c4A5P7LAoC3G/WjAzgjM6St
-         M00mbZ0GOsIW7jHvrxLQ3E4B22zRbEOj3UpAMqfi+XiB/xX5FtFux0qCvgUa/0k7wyx3
-         tIrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729523705; x=1730128505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GvLvAGoaEs4cLCLummjUn/fSa2RxeVRTPvPMgQ05vWA=;
-        b=nLFmJd5ysaM7piskOD4kMknKb8sckGnKI0cO89GZa1wPOWfCgNkoTgXDhehceiEMNd
-         8QTZekiClGyLn3pmrpDHcU4VhfCC+SOQ+5BgTCaWDQdUm0J2nOT0iHI7TqzRN0lTTMd5
-         2U3fQsS+Bw5rUIccWz1MKKkgtSLL6Av9KgK0wW/YJ/u6wmi7eiXeAzoppWZ1+CuxnlE9
-         sMfb8x/ANgJgUYrPhsLuc5w+O17Ggje2JdgzACiTMvxp3IIsNqI5imkE1ruRiQZgZUn4
-         Ok9N2u9uiEw0aG3P2In5GA4Qzv5EaJSYMsDTiW/k+fbIBL+prJHmJmi4XUTsMXTk4KYj
-         RipA==
-X-Forwarded-Encrypted: i=1; AJvYcCV57ZcvUkLzGC8QaZd98+w21dkSeLVTtYgc8pcmA88GtK5fS9OBCR69ElqeNkZv2ta3T6GKXMAdpeH0KnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF8jhwFZtzD78bzRtN1QaZAsOWbcIOzJscZqVuJjeYJT5ma37h
-	eU7BuEdb8o2vwFlNov3CSTg0+WbFj0VuEnOK5YV9O1yZ1k4F3VJCGy1/IPNNMDS5BVAZtRUt45k
-	Yt2mSBjMZ8e040QfkuquIrdpoNriZSBTl7h0H
-X-Google-Smtp-Source: AGHT+IH5PS65InXxWy7zQvIKXC5DV3lRT7k9uy1hS9BXMEO9QulVaI6d3S3/tVIqUPBmpDRG0ReoxzC3NqxZUA7H7xY=
-X-Received: by 2002:a05:6512:2813:b0:533:44e7:1b2a with SMTP id
- 2adb3069b0e04-53a154b2d95mr5431587e87.40.1729523704965; Mon, 21 Oct 2024
- 08:15:04 -0700 (PDT)
+	s=arc-20240116; t=1729523744; c=relaxed/simple;
+	bh=3Ie81PJaB3Z2D/AicTp4yUNXRV46tqz0pVjMH/bKZBU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Dunf1B/pOdTRN1DOPbliJ02XjZDBUJ/sNJWYIU7Wbfr69MyHCzvZE3GqPfynXH5ezPLOTnHYnMWUCsSKx3vMhuJNucQCqtz16X8x3lg8ezNZ9w0GvXI2nIwY1tbcg5uTd2iMnjwQvYp63DvLZgFZYtiiNAZICRsTI50h9RWTDYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6hB2/iB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93016C4CECD;
+	Mon, 21 Oct 2024 15:15:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729523743;
+	bh=3Ie81PJaB3Z2D/AicTp4yUNXRV46tqz0pVjMH/bKZBU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O6hB2/iB4wLSkH+h4kqg9A82MI6C6IV/Jv5g90mM8cP4PlUevnewputwtJBeguYBB
+	 ltrz1sjQxRpcFOYGuHOL+ughjbvCW5qRRlIMGoY4EPHgHL1Qo8XZZIV1jlQuaY52rb
+	 p2NjWr0hYlHUeJinima3br77dEtuQysAuE4hhjcgNJWKraMq83QbOSNYYFcK+Es1D4
+	 OuwPPrE5Dp0Y7rba+PMbIYfJRQ+I2XEfIgX8mwI+09jxh7MW62PR3NBhgnoDqRcAaL
+	 V1WlHRu/ywpY2YElacTzveP2eCaR6BS0b5dinhgMAnhkpRhkcGdqZei7LtAua/+j9p
+	 GZwVnrgH2NZrA==
+Date: Tue, 22 Oct 2024 00:15:34 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Sven Schnelle
+ <svens@linux.ibm.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew
+ Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph
+ tracer
+Message-Id: <20241022001534.96c0d1813d8f4a26563d4663@kernel.org>
+In-Reply-To: <20241018124952.17670-E-hca@linux.ibm.com>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904040206.36809.2263909331707439743.stgit@devnote2>
+	<yt9ded4gfdz0.fsf@linux.ibm.com>
+	<20241016101022.185f741b@gandalf.local.home>
+	<20241018124952.17670-E-hca@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com> <20241021-tidss-irq-fix-v1-6-82ddaec94e4a@ideasonboard.com>
-In-Reply-To: <20241021-tidss-irq-fix-v1-6-82ddaec94e4a@ideasonboard.com>
-From: Jon Cormier <jcormier@criticallink.com>
-Date: Mon, 21 Oct 2024 11:14:53 -0400
-Message-ID: <CADL8D3Ykxbz7W=Av774sk9HaEnvneLNZcxmGsGaL2XDEFgpzAw@mail.gmail.com>
-Subject: Re: [PATCH 6/7] drm/tidss: Fix race condition while handling
- interrupt registers
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 10:08=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
->
-> From: Devarsh Thakkar <devarsht@ti.com>
->
-> The driver has a spinlock for protecting the irq_masks field and irq
-> enable registers. However, the driver misses protecting the irq status
-> registers which can lead to races.
->
-> Take the spinlock when accessing irqstatus too.
->
-> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Disp=
-lay SubSystem")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> [Tomi: updated the desc]
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 4 ++++
->  drivers/gpu/drm/tidss/tidss_irq.c   | 2 ++
->  2 files changed, 6 insertions(+)
+On Fri, 18 Oct 2024 14:49:52 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
-Tested an equivalent patch for several weeks.
-Tested-by: Jonathan Cormier <jcormier@criticallink.com>
+> On Wed, Oct 16, 2024 at 10:10:22AM -0400, Steven Rostedt wrote:
+> > On Wed, 16 Oct 2024 14:07:31 +0200
+> > Sven Schnelle <svens@linux.ibm.com> wrote:
+> > > I haven't yet fully understood why this logic is needed, but the
+> > > WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
+> > > has the upper bits of the address set on x86 (and likely others). As an
+> > > example, in my test setup, fp is 0x8feec218 on s390, while it is
+> > > 0xffff888100add118 in x86-kvm.
+> > 
+> > Since we only need to save 4 bits for size, we could have what it is
+> > replacing always be zero or always be f, depending on the arch. The
+> > question then is, is s390's 4 MSBs always zero?
+> > 
+> > Thus we could make it be:
+> > 
+> > static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
+> > {
+> > 	unsigned long ptr;
+> > 
+> > 	ptr = (val & FPROBE_HEADER_PTR_MASK) | FPROBE_HEADER_MSB_MASK;
+> > 	if (fp)
+> > 		*fp = (struct fprobe *)ptr;
+> > 	return val >> FPROBE_HEADER_PTR_BITS;
+> > }
+> > 
+> > And define FPROBE_HEADER_MSB_MASK to be either:
+> > 
+> > For most archs:
+> > 
+> > #define FPROBE_HEADER_MSB_MASK	(0xf << FPROBE_HEADER_PTR_BITS)
+> > 
+> > or on s390:
+> > 
+> > #define FPROBE_HEADER_MSB_MASK	(0x0)
+> > 
+> > Would this work?
+> 
+> This would work for s390. Right now we don't make any use of the four
+> MSBs, and they are always zero. If for some reason this would ever
+> change, we would need to come up with a different solution.
 
->
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/=
-tidss_dispc.c
-> index 515f82e8a0a5..07f5c26cfa26 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -2767,8 +2767,12 @@ static void dispc_init_errata(struct dispc_device =
-*dispc)
->   */
->  static void dispc_softreset_k2g(struct dispc_device *dispc)
->  {
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&dispc->tidss->wait_lock, flags);
->         dispc_set_irqenable(dispc, 0);
->         dispc_read_and_clear_irqstatus(dispc);
-> +       spin_unlock_irqrestore(&dispc->tidss->wait_lock, flags);
->
->         for (unsigned int vp_idx =3D 0; vp_idx < dispc->feat->num_vps; ++=
-vp_idx)
->                 VP_REG_FLD_MOD(dispc, vp_idx, DISPC_VP_CONTROL, 0, 0, 0);
-> diff --git a/drivers/gpu/drm/tidss/tidss_irq.c b/drivers/gpu/drm/tidss/ti=
-dss_irq.c
-> index 3cc4024ec7ff..8af4682ba56b 100644
-> --- a/drivers/gpu/drm/tidss/tidss_irq.c
-> +++ b/drivers/gpu/drm/tidss/tidss_irq.c
-> @@ -60,7 +60,9 @@ static irqreturn_t tidss_irq_handler(int irq, void *arg=
-)
->         unsigned int id;
->         dispc_irq_t irqstatus;
->
-> +       spin_lock(&tidss->wait_lock);
->         irqstatus =3D dispc_read_and_clear_irqstatus(tidss->dispc);
-> +       spin_unlock(&tidss->wait_lock);
->
->         for (id =3D 0; id < tidss->num_crtcs; id++) {
->                 struct drm_crtc *crtc =3D tidss->crtcs[id];
->
-> --
-> 2.43.0
->
+Ah, so fill with zero works for s390 kernel. Thanks for the info.
+
+> Please note that this only works for addresses in the kernel address
+> space. For user space the full 64 bit address range (minus the top
+> page) can be used for user space applications.
+
+I wonder what is the unsigned long size (stack entry size) of the
+s390? is it 64bit?
+
+> I'm just writing this
+> here, just in case something like this comes up for uprobes or
+> something similar as well.
+
+I'm considering another solution if it doesn't work. Of course if
+above works, it is the best compression ratio.
+
+This is only if it doesn't work, we can consolidate a set of
+fprobe header in N + 1 entries as
+
+0: [# of fprobes(4bit)|4bit array of sizes]
+1: [fp 1]
+2: [fp 1 data]
+...
+
+So if we have 3 fprobes on the same entry and has 0, 3, 2 data size, then
+
+0:[3|0|3|2|0...0]
+1:[fp1]
+2:[fp2]
+3:[fp2 data 1]
+4:[fp2 data 2]
+5:[fp2 data 3]
+6:[fp3]
+7:[fp3 data 1]
+8:[fp3 data 2]
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
