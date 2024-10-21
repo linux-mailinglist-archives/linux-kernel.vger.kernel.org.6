@@ -1,136 +1,185 @@
-Return-Path: <linux-kernel+bounces-375301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0889A9463
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:51:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B579A9465
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B83E283B79
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:51:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 120D5B21B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760C1E7657;
-	Mon, 21 Oct 2024 23:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5415B10A3E;
+	Mon, 21 Oct 2024 23:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbJmDbix"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="GXpKyRlG"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A441E6325;
+	Mon, 21 Oct 2024 23:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729554819; cv=none; b=eCRRIvzsEVbwL4Vm11XW8hBSMzKpIAPxyMgNyE/fc7Fx5wMyVnQLWQr7SAKn7E9yg3wIRABifdLC6QL1BL6pqWJSMWrjCm6j1+rERCeiojJb5xzlpm2K3k6+tQ32WXf/OI0D9VhYxBLumbRcCS/AXECqv1JTqPn/fNJQWbIFYiY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729554819; c=relaxed/simple;
+	bh=tFRu6EMylPp3LvWlxOVcpIx8tqErVAbtF+BDXGrKeFs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NAtZhj1yV2gw8HsC9wMtrCeKgX2g5z9gbhBr/nOWjfT75KxQVmCuKVgmhxpp7J/D26iMZUXMnAKYa5JnRBI59xPoBLTWymlo1aJjJtTW3zPt1IBf5QtdFEB5l20L2nlAzRgETlFw6qHCkR7dzzM4FdobU+rc8GINTgSTdzMLW1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=GXpKyRlG; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id EEE1F20820;
+	Tue, 22 Oct 2024 01:53:34 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id H3eHxTkhD1Aq; Tue, 22 Oct 2024 01:53:34 +0200 (CEST)
+Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C62310A3E;
-	Mon, 21 Oct 2024 23:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729554664; cv=none; b=RUE9QwKIvO9Q0IM2wtaDht5/FepH0R0ZZzpeGTl+mca3DVbG5czWepWVcUZmjS6HAawCLf9n+pOcukM/M6+GUDv/8xPS5SZtzF3QD4bXC99dGESGxzE9TzMlS2tTQw7jlJU8EfSAKmm+cnumRTRvi+HAZNGKX7bDHsOqNxSrD4A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729554664; c=relaxed/simple;
-	bh=93xD4Tmdxtey8zA31B+sDxPb2lgtp53gthKrr3LUyrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YTOKGX3iz2KfwaPsGCe5CvNAzgpOJqbm2rbF9PlfAWpnzOevmPem1xHLGU+M5OQyoO1HirUEsVaUlcRPU//g4N9bA58BpPvSNxprjs2qt680MWpR4DHtmYi1sJcGCN1w9htdM/ShmaINKESJvhSw19apt1ujktHayQUUqdaDo3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbJmDbix; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so4250318a12.0;
-        Mon, 21 Oct 2024 16:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729554659; x=1730159459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DsstOehMPTk25wTqFefncYy9YI2o+RkqFZwG3Mp+20=;
-        b=mbJmDbixVKW4qVbvRTFDYfZtC8uFMX5C2SZnB2hoO7sc5ZYMLpHc7ON+HPC6rywDLv
-         B/8bmnv3ox596YP7zXlOnZuZWIhV0RatO0Nw6tBvtgiVaqzmz0kBHzqaHKPXUGAln5Xd
-         iZZZfDwfhvwQfYRAUlaFHUxR78gZYQM46f4fzpNXsHmCVJFRk5IS7dbDl79FzKyjlkzN
-         lABEfFdSiWTPOGys3VztgqXGFkSqORnxD7KJ4s8TybtVaMrZyHAldcTUZlyt4I9HfBJx
-         jqmtwoypyfdNu1BE0Dg04HQUkUflokRouGFX8gBYe1lyaQpjQbT+zTXWM+vJ38o0nZ75
-         to9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729554659; x=1730159459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DsstOehMPTk25wTqFefncYy9YI2o+RkqFZwG3Mp+20=;
-        b=jRnLUieqNMXviUTCFh6dW0Ef85t4L0PJ7zNax8Hcl60ukCPESBFcWDUdXzgs2uwoUT
-         qcIWWdWnMFj5Z/3icMQDHyqmNcSFIZg7dw2iPGdDWLsLh97K4BLfKj98JH1H7XUH+IeB
-         cFcAFHYFE7FmTpGsf/X0VtSk/bLGBYHZGo9Enn4fZsCsvKNMIvLBlzXYc3+zRR9A27px
-         2pfUxs9145RR67gIVyDcIfZ69JokhmsqwdKum0YOl1hh7pq7Wcadd4e8ir61lq6gEukh
-         9MQJ604W7ehB0E5ylG83MGPvYcYyxqXLCI7A7M1WBaGLWPuXGKzEj0DoIUeAZwGeUDLX
-         UBqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz/QhZbAy4yQohNv7pgMrUBYXYpOtJ59NaFNA9fZUtffnKk8qDHNcvS5cz/NMJbpa1FYuLTN1rMuSU+w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT2SZV/HdTgsqN2LJpNHN5Tf1CPDwmNcxohc9GpcuaEB+RZvWj
-	JU/eMKqKAX24eiu0cWqQx/8Y7fCiIozEsvjEd2LjaaTudqd6vfhIiKp+kfvOgxKgBKrXZJblaH8
-	r7cIC5pzdIPWROnpxuE0ydIZne2Y=
-X-Google-Smtp-Source: AGHT+IEzDjVyVWT29AJGbIwG7b2eflJUodQhWYTjVwmzTK10zwWUN+8xkMDjNVQIaTnlgDUgrc3HbwPS9mkt07D9sfM=
-X-Received: by 2002:a05:6a20:ac43:b0:1d6:97f2:71b4 with SMTP id
- adf61e73a8af0-1d92c4bac83mr19878033637.1.1729554658722; Mon, 21 Oct 2024
- 16:50:58 -0700 (PDT)
+	by a.mx.secunet.com (Postfix) with ESMTPS id 4B269206B0;
+	Tue, 22 Oct 2024 01:53:34 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 4B269206B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1729554814;
+	bh=4oO/CO1S7FHDO6oDhvZ6wAucF3SqIDF1wHi005tQZjg=;
+	h=Date:From:To:CC:Subject:Reply-To:References:In-Reply-To:From;
+	b=GXpKyRlGqvFxZDeYVNHJVNH7HsQ9/2IvOMe3Fv7yFvWz5glP/+7n53h9L07zwt7H0
+	 Cl0NDxEcUI1rQj6FZa2upn5ARPUqQ2Tb68tVcnNIvkjP73kQjBOMBCNe3aOy0R3RKk
+	 aaXIpi1iDw9fMTtbEv0fDTNTwfbAKpLG3StHPKQz3ftbPW8s6THy3FfVHdGwRQecXc
+	 0l/ONEwHW7su2fZCftYGMaCcZHWcLg39TVsJMT6VYNyxsfQu7+DjmPurmWExOyX1sn
+	 hOacj5DWZaUp12WzQf9Ty1TPjVc9PBsUeLSZceqwbkT0vxQaq9eZ8mC+6CGOSEq7ua
+	 KOFwewkYkb2ig==
+Received: from mbx-essen-01.secunet.de (10.53.40.197) by
+ cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 22 Oct 2024 01:53:34 +0200
+Received: from moon.secunet.de (172.18.149.1) by mbx-essen-01.secunet.de
+ (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Oct
+ 2024 01:53:33 +0200
+Date: Tue, 22 Oct 2024 01:53:26 +0200
+From: Antony Antony <antony.antony@secunet.com>
+To: David Howells <dhowells@redhat.com>
+CC: Antony Antony <antony@phenome.org>, Sedat Dilek <sedat.dilek@gmail.com>,
+	Maximilian Bosch <maximilian@mbosch.me>, Linux regressions mailing list
+	<regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] 9p: Don't revert the I/O iterator after reading
+Message-ID: <ZxbpdnA4jR7IYhRH@moon.secunet.de>
+Reply-To: <antony.antony@secunet.com>
+References: <ZxFQw4OI9rrc7UYc@Antony2201.local>
+ <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
+ <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
+ <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
+ <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
+ <2299159.1729543103@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
-In-Reply-To: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 21 Oct 2024 16:50:44 -0700
-Message-ID: <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
-To: paulmck@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2299159.1729543103@warthog.procyon.org.uk>
+Precedence: first-class
+Priority: normal
+Organization: secunet
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-01.secunet.de (10.53.40.197)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
-On Mon, Oct 21, 2024 at 3:13=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
->
-> For almost 20 years, the int return value from srcu_read_lock() has
-> been always either zero or one.  This commit therefore documents the
-> fact that it will be non-negative.
->
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org
->
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index bab1dae3f69e6..512a8c54ba5ba 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-> @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp=
-, int read_flavor);
->   * a mutex that is held elsewhere while calling synchronize_srcu() or
->   * synchronize_srcu_expedited().
->   *
-> - * The return value from srcu_read_lock() must be passed unaltered
-> - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
-> - * the matching srcu_read_unlock() must occur in the same context, for
-> - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
-> - * if the matching srcu_read_lock() was invoked in process context.  Or,
-> - * for that matter to invoke srcu_read_unlock() from one task and the
-> - * matching srcu_read_lock() from another.
-> + * The return value from srcu_read_lock() is guaranteed to be
-> + * non-negative.  This value must be passed unaltered to the matching
-> + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
-> + * srcu_read_unlock() must occur in the same context, for example, it is
-> + * illegal to invoke srcu_read_unlock() in an irq handler if the matchin=
-g
-> + * srcu_read_lock() was invoked in process context.  Or, for that matter=
- to
-> + * invoke srcu_read_unlock() from one task and the matching srcu_read_lo=
-ck()
-> + * from another.
+Hi David,
 
-For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
-Presumably the same non-negative index will be returned/consumed there
-as well, right? Can we add a blurb to that effect for them as well?
+On Mon, Oct 21, 2024 at 21:38:23 +0100, David Howells wrote:
+> Hi Antony,
+> 
+> I think I may have a fix already lurking on my netfs-writeback branch for the
+> next merge window.  Can you try the attached?
 
-Otherwise LGTM, thanks!
+yes. The fix works. I rebooted a few times and no crash.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Tested-by: Antony Antony <antony.antony@secunet.com>
 
->   */
->  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp=
-)
->  {
+I am running test script in a loop over night. 
+
+thanks,
+-antony
+
+> 
+> David
+> ---
+> Don't revert the I/O iterator before returning from p9_client_read_once().
+> netfslib doesn't require the reversion and nor doed 9P directory reading.
+> 
+> Make p9_client_read() use a temporary iterator to call down into
+> p9_client_read_once(), and advance that by the amount read.
+> 
+> Reported-by: Antony Antony <antony@phenome.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Van Hensbergen <ericvh@kernel.org>
+> cc: Latchesar Ionkov <lucho@ionkov.net>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
+> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+> cc: v9fs@lists.linux.dev
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+
+
+> ---
+>  net/9p/client.c |   10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 5cd94721d974..be59b0a94eaf 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -1519,13 +1519,15 @@ p9_client_read(struct p9_fid *fid, u64 offset, struct iov_iter *to, int *err)
+>  	*err = 0;
+>  
+>  	while (iov_iter_count(to)) {
+> +		struct iov_iter tmp = *to;
+>  		int count;
+>  
+> -		count = p9_client_read_once(fid, offset, to, err);
+> +		count = p9_client_read_once(fid, offset, &tmp, err);
+>  		if (!count || *err)
+>  			break;
+>  		offset += count;
+>  		total += count;
+> +		iov_iter_advance(to, count);
+>  	}
+>  	return total;
+>  }
+> @@ -1567,16 +1569,12 @@ p9_client_read_once(struct p9_fid *fid, u64 offset, struct iov_iter *to,
+>  	}
+>  	if (IS_ERR(req)) {
+>  		*err = PTR_ERR(req);
+> -		if (!non_zc)
+> -			iov_iter_revert(to, count - iov_iter_count(to));
+>  		return 0;
+>  	}
+>  
+>  	*err = p9pdu_readf(&req->rc, clnt->proto_version,
+>  			   "D", &received, &dataptr);
+>  	if (*err) {
+> -		if (!non_zc)
+> -			iov_iter_revert(to, count - iov_iter_count(to));
+>  		trace_9p_protocol_dump(clnt, &req->rc);
+>  		p9_req_put(clnt, req);
+>  		return 0;
+> @@ -1596,8 +1594,6 @@ p9_client_read_once(struct p9_fid *fid, u64 offset, struct iov_iter *to,
+>  			p9_req_put(clnt, req);
+>  			return n;
+>  		}
+> -	} else {
+> -		iov_iter_revert(to, count - received - iov_iter_count(to));
+>  	}
+>  	p9_req_put(clnt, req);
+>  	return received;
+> 
 
