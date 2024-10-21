@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-374016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799F49A60A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:50:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1DF9A60AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADD4284831
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:50:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAFCDB2163D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89E1E47A4;
-	Mon, 21 Oct 2024 09:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943201E3DFA;
+	Mon, 21 Oct 2024 09:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qb57PkJ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nKXBgP7+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A9F1E32AC;
-	Mon, 21 Oct 2024 09:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985F1E32CC;
+	Mon, 21 Oct 2024 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504223; cv=none; b=D3gBzYnzRL8Ps5CC3kzeYxb9keus08biZUXTRts8XqKm1I3i42n/pQnVhW+PkeRZdmUgjeBg9f/+OVwrgN4OVWWhgmq9TJVVdJOX+2N9fi22Xtmc0YpQPPOtwPSjFBvJzimrUV0d+DK5DW281e5Oq9qqprb33y0NMAVh3RAHdr0=
+	t=1729504263; cv=none; b=SnrlvZqHVZ/wOxw9mMCg8kRCkQaFX+rnanbb9/In3aQ8R8Nnw4+YdLpRHybZDTWJLLvhxiK2u/0YwBDhmL0bTHAwbA4nh1I9R7CLP9EtAQgQcL3uAqGsNb6MwfjjAxjgK1oDiVC0umSYuTqNoagnRDsh9EWaw9L1vnbn3aBv6Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504223; c=relaxed/simple;
-	bh=EINqetAsJIKGinGmMOLN93gzlHvmLn/CfhjxCi/PMAI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=uBWIvWZFVw7UknlHEsznDx5/TFV9QoRhLCOofn2L8JG4I42VQ6IUSjYD3mECbxYaeMfK6GCkt1Lcu6fyurvZXbGVsMrLsqKwTEEh7FdOBm7XPCg920th/Gea0x3FSWeNMLVb3UBbQoDIa+d04Vt7z4v03vEDo2V6/E3puJ76V9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qb57PkJ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46496C4CEC3;
-	Mon, 21 Oct 2024 09:50:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729504223;
-	bh=EINqetAsJIKGinGmMOLN93gzlHvmLn/CfhjxCi/PMAI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qb57PkJ3oAu1jPezwGNmdx8iAUb/e4kzDPSkZy9xZbhn9g2OsimK27K33bUcEXvfX
-	 p2fzO3JlMBGA6lPV7hjPuwMn1OGOow2Yis+hxsSbniZ9fflpKplahq6iAsn+vEo0qQ
-	 2DF0lRHPZrokkAbYzwLnazD2ZsaQhqyy3PaCun9PH3sKiy9+aTt7AMZy3nxbmiWzS7
-	 mla3baFHGr1R5xGFM31dCqB2hNrvhXfL8ddKXLIIzTHn43UbuzRJkxiuaaUwK19N4x
-	 dH3myWYf1sF4L6gwTzIQYaRBa1yjfBf/0mUBCGf/opbbnfLA8vGN1iMQ1NVM8DemmT
-	 e2H0clFWsxwKg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DEA3809A8A;
-	Mon, 21 Oct 2024 09:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729504263; c=relaxed/simple;
+	bh=ZfeOH7rYOlevYzT5SzGyHIjuXCx9BtiO7m4trFmlIRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYA1D2jFGUj2OEUzCiU71CkhM5xg/m1fptf/nvE42YZhLyfM59RAZOIqyQU81d2c6UKSlcwzmqwlpObxh18fffgiT5oEOse1cBQjsODFhCwP46A584/dfTy0ACQSY5t/oYbc8/gpfUrJcwsqT9OKr13IUaXlUQzFipgznoCWGVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nKXBgP7+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2KIxW032571;
+	Mon, 21 Oct 2024 09:51:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=GXIGiW8JBg082T38K2vrQgy8xxzE2l
+	iAugbLGCj+vs4=; b=nKXBgP7+AUY0u7OHwIwXkBg39NAyYP1/rwfAtI/Zlztw6j
+	WkWh7LAu9gG5EglglwSDQvrUvHmQr4duGbMAOqjQPiFlj4b6NHuFyPeAjSQyv1wY
+	M1dnNXsO0rkdLrsWmh/rA24EgkgE24xHfihbpsZp8v4GxsRGk/7VfSxbZm1EE/ni
+	MzGWRRTSvOD6TypvmY6IIVbC6HCTAA+el4R49CrFog9Irxz4Phv2G0d7ReavNM4Z
+	liVQESbd49AzJaRYVP//0mV3nRt13vXJ3kn5jd2nthELYgJ49w9OpjHqEukbnufX
+	M6Do7aASdXqnPj3IvjdmuoHBoKrczz0Ho5b1mD1A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hm8dbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 09:51:01 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9MY6I023825;
+	Mon, 21 Oct 2024 09:51:00 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42cst0w9yr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 09:51:00 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49L9ou5C45023690
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Oct 2024 09:50:57 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF24E20049;
+	Mon, 21 Oct 2024 09:50:56 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 46E1220040;
+	Mon, 21 Oct 2024 09:50:56 +0000 (GMT)
+Received: from osiris (unknown [9.171.37.192])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 21 Oct 2024 09:50:56 +0000 (GMT)
+Date: Mon, 21 Oct 2024 11:50:54 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v3 08/11] s390: Remove gmap pointer from lowcore
+Message-ID: <20241021095054.6950-D-hca@linux.ibm.com>
+References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
+ <20241015164326.124987-9-imbrenda@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v1] net: wwan: fix global oob in wwan_rtnl_policy
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172950422926.192458.11194707436275183429.git-patchwork-notify@kernel.org>
-Date: Mon, 21 Oct 2024 09:50:29 +0000
-References: <20241015131621.47503-1-linma@zju.edu.cn>
-In-Reply-To: <20241015131621.47503-1-linma@zju.edu.cn>
-To: Lin Ma <linma@zju.edu.cn>
-Cc: loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
- johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015164326.124987-9-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LAgR44xM_4-I_V0jz4p7YYLe9W7vwIaG
+X-Proofpoint-GUID: LAgR44xM_4-I_V0jz4p7YYLe9W7vwIaG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 mlxlogscore=591 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210068
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 15 Oct 2024 21:16:21 +0800 you wrote:
-> The variable wwan_rtnl_link_ops assign a *bigger* maxtype which leads to
-> a global out-of-bounds read when parsing the netlink attributes. Exactly
-> same bug cause as the oob fixed in commit b33fb5b801c6 ("net: qualcomm:
-> rmnet: fix global oob in rmnet_policy").
+On Tue, Oct 15, 2024 at 06:43:23PM +0200, Claudio Imbrenda wrote:
+> Remove the gmap pointer from lowcore, since it is not used anymore.
 > 
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in validate_nla lib/nlattr.c:388 [inline]
-> BUG: KASAN: global-out-of-bounds in __nla_validate_parse+0x19d7/0x29a0 lib/nlattr.c:603
-> Read of size 1 at addr ffffffff8b09cb60 by task syz.1.66276/323862
-> 
-> [...]
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Reviewed-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/lowcore.h | 3 +--
+>  arch/s390/kernel/asm-offsets.c  | 1 -
+>  2 files changed, 1 insertion(+), 3 deletions(-)
 
-Here is the summary with links:
-  - [net,v1] net: wwan: fix global oob in wwan_rtnl_policy
-    https://git.kernel.org/netdev/net/c/47dd5447cab8
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
 
