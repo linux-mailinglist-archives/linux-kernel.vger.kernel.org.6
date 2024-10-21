@@ -1,164 +1,151 @@
-Return-Path: <linux-kernel+bounces-374011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950EC9A6094
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0503B9A609B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B2B28100E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46841F225B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6361E376D;
-	Mon, 21 Oct 2024 09:48:40 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F02F1E3DD3;
+	Mon, 21 Oct 2024 09:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="US+5GZTA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7C6198A0C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C911799F;
+	Mon, 21 Oct 2024 09:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504119; cv=none; b=DOmztnyyx/mdyzxdsMaVALpniRBm3gCIv9df5tDWU6WmbME5Uolvs2qpZq9A/7bmjF/T2r/5DKfr/T0er2PGhioml9LD4Tzs9XYN0k1KIkUdGOhnpDGM2h7rqS0ak/GTtZTtL0LXbJ3vz7uNi8sGGOv6eoHQAKiRypGKdrqHKaM=
+	t=1729504157; cv=none; b=T+NMl9yBhgQd/x1W5LXB9TOw9jmpAPz+kYvchMQ3NEqmUYe3X4zrMFVIcY4+nURiz9SmajNQHviT7CyjCKlyvdaIXKYAOnW1Wyj5EsnbpTKx1UFhuDOw7l18kx2wp4Ezlri5zh8zh99cSIavvoqLfXFxNJeZQAge1zV270yLB14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504119; c=relaxed/simple;
-	bh=WlasfIzrdwdmRFmYoxAQnRMw44by65kcpFlvXFxQ6ZE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tOz0i61vVDW9C8Hwgnd8Qd4d2SLabLdzw+xIc58p4foI4uh9o6qLQBwUSyqsj0GcSYKvMylUCjj63E2+PfOT9nbFFrD+v7boy2bA83hBm4SdDocAKNHYMalo6zgIJSp/g3vXM18yhoy9Sa1imQyqmYcVUT3LbnQoS026WtDuqPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso43416215ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:48:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729504117; x=1730108917;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAk+FBZSQ2Rj8j6YsolBZryf7ITZaXmHRRT4gy57V5U=;
-        b=VxFzJdXMS3+w0osNaAe+lG9OM6TGA9dHgccx6gwKQF4obilcr/UqwhES3JBgmIcwsS
-         kUxQM0/KwKRrEKLnWRHkR9wEn4gTzmho7vCD6qE3ZZq6i2um8D3c9K/TPFcl8iLUfNJO
-         vRX5CIue4bT/JNfnT+dfSvFNWmKgfoa5GTQk7FMZ8aG0zeTVnGE5pMVfFA+GqBntlzhs
-         HHqrv19zRgsvN0RF8USM4S7k+xnzC8lobHOR/ySiu6RI5Ani8r6NHxnvxZWyupkB8W6U
-         bK84H4Bt/0wbR0uRJuoP9S4BIbads4aNsH8/lOspjW5ilShN9/3GxRzcMVxpM3RghggK
-         U3RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTzjwcx0nBrac5/4nUU3FT5H91LY3zFnXzZzE3xTlgDrrV3A9c9Xwu5tr6fHbApPRy8wurtLBkmbXWBxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweGplnYaRTNMZWHmSgEGLHKZZSUO5JWhb/WbaLFretHbL/XnXO
-	J65kyDjOSv3a5oqcjcWO6fsAhnxe0fv71SQSjumoGsZqotwSJr6ikp31zCpLbg5/ix1QF3NdEnl
-	O7/UA/2VcineDH7G2TXlLt0FWIfbRWAN0+bkQqwiNSHOitx4WuY5SkDQ=
-X-Google-Smtp-Source: AGHT+IFzCM9KL02rlmENjVVm2HUojSpl5z+P36lytHeYZcOw89y6u2Z7kyknTj8HSSIKxyanTJnTGzv4fkBxoLmx/hLfGAM4JuE6
+	s=arc-20240116; t=1729504157; c=relaxed/simple;
+	bh=LVlyh6gWyKin0x0BUybEyhwr2ToXpCky2JG4EsFXQJE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HLic1A2v/XxA9ctxQLQMJrYixOfPiVUwL9sy/HztpzhOHGc2S+J9JAywDSOWbl5YLqYg1n2xADmW0dKcOr0IRYXHbMXb3IROpPXqRU8uqBPUi1An7GMxD0kEM4wyBrcUkoPP7CA0gDqNt+vLKUkipHyII90TDSTPIEdjJuNutZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=US+5GZTA; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729504156; x=1761040156;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=LVlyh6gWyKin0x0BUybEyhwr2ToXpCky2JG4EsFXQJE=;
+  b=US+5GZTAs+Hw7lsgTuqIjFLeprWNgScqF3+0pXynLvFY4l0A4GKLCm1n
+   gAqScnfPNUz9V6K3LWAWsD2Q0nGDQkaDK0Lkm9ofaU6zzR9tCWcaXYwmh
+   /QnSyhdmBi2BkW8tIHYP8LmKJmfDxlhixkgxjEW4Dll7gClymGQ/MzwdV
+   alPV5S5iEUIwXAcSKw7BK2IGwZD7U7QZrzTvMqo0o0UtJPbqbuZHyeL2d
+   ksgptS4kLC+iK9KILkAa62T982E3Sc+DcHpHBrIIHH4DTtVbznt8JvKRf
+   +ly9uMold38TLTtUmxjI17un0KNOjcfz0vwV3agcuOMYR/PwBASqlqq0a
+   Q==;
+X-CSE-ConnectionGUID: qpKgz+I7QDOorCxscD24aw==
+X-CSE-MsgGUID: Rojmg0RjQwuCooZdY+XTVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="39567421"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="39567421"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:49:15 -0700
+X-CSE-ConnectionGUID: +46OhpZERIuxLidf9QJHtg==
+X-CSE-MsgGUID: 4cFn4d27Ru6+NQeX61+D2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="116921685"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.201])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:49:13 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 21 Oct 2024 12:49:08 +0300 (EEST)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v2 1/3] platform/x86: intel_scu_ipc: Replace workaround
+ by 32-bit IO
+In-Reply-To: <ZxYgZGYTzINm2lpz@smile.fi.intel.com>
+Message-ID: <d40d824e-1827-4030-794c-a7c7e15137e6@linux.intel.com>
+References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com> <20241021084053.2443545-2-andriy.shevchenko@linux.intel.com> <2708af18-da90-4021-bd1b-b0491b737d6b@linux.intel.com> <ZxYgZGYTzINm2lpz@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c9:b0:3a1:f549:7272 with SMTP id
- e9e14a558f8ab-3a3f40b7159mr76977225ab.23.1729504116703; Mon, 21 Oct 2024
- 02:48:36 -0700 (PDT)
-Date: Mon, 21 Oct 2024 02:48:36 -0700
-In-Reply-To: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67162374.050a0220.10f4f4.0045.GAE@google.com>
-Subject: Re: [syzbot] [nilfs] [fs] kernel BUG in submit_bh_wbc (3)
-From: syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, brauner@kernel.org, konishi.ryusuke@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323328-256814922-1729504148=:1065"
 
-syzbot has found a reproducer for the following issue on:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-HEAD commit:    42f7652d3eb5 Linux 6.12-rc4
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10c66a40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
-dashboard link: https://syzkaller.appspot.com/bug?extid=985ada84bf055a575c07
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1541e430580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1181e0a7980000
+--8323328-256814922-1729504148=:1065
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/21f56ec05989/disk-42f7652d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d295ea00e68a/vmlinux-42f7652d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6c4b95c7f67f/bzImage-42f7652d.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/709e6e32762f/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/6576d8861c23/mount_7.gz
+On Mon, 21 Oct 2024, Andy Shevchenko wrote:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com
+> On Mon, Oct 21, 2024 at 12:24:57PM +0300, Ilpo J=E4rvinen wrote:
+> > On Mon, 21 Oct 2024, Andy Shevchenko wrote:
+> >=20
+> > > The theory is that the so called workaround in pwr_reg_rdwr() is
+> > > the actual reader of the data in 32-bit chunks. For some reason
+> > > the 8-bit IO won't fail after that. Replace the workaround by using
+> > > 32-bit IO explicitly and then memcpy() as much data as was requested
+> > > by the user. The same approach is already in use in
+> > > intel_scu_ipc_dev_command_with_size().
+>=20
+> ...
+>=20
+> > >  =09err =3D intel_scu_ipc_check_status(scu);
+> > > -=09if (!err && id =3D=3D IPC_CMD_PCNTRL_R) { /* Read rbuf */
+> > > -=09=09/* Workaround: values are read as 0 without memcpy_fromio */
+> > > -=09=09memcpy_fromio(cbuf, scu->ipc_base + 0x90, 16);
+> > > -=09=09for (nc =3D 0; nc < count; nc++)
+> > > -=09=09=09data[nc] =3D ipc_data_readb(scu, nc);
+> > > +=09if (!err) { /* Read rbuf */
+> >=20
+> > What is the reason for the removal of that id check? This seems a clear=
+=20
+> > logic change but why? And if you remove want to remove that check, what=
+=20
+> > that comment then means?
+>=20
+> Let me split this to a separate change with better explanation then.
+>=20
+> > > +=09=09for (nc =3D 0, offset =3D 0; nc < 4; nc++, offset +=3D 4)
+> > > +=09=09=09wbuf[nc] =3D ipc_data_readl(scu, offset);
+> > > +=09=09memcpy(data, wbuf, count);
+> >=20
+> > So do we actually need to read more than
+> > DIV_ROUND_UP(min(count, 16U), sizeof(u32))? Because that's the approach=
+=20
+> > used in intel_scu_ipc_dev_command_with_size() which you referred to.
+>=20
+> I'm not sure I follow. We do IO for whole (16-bytes) buffer, but return o=
+nly
+> asked _bytes_ to the user.
 
-------------[ cut here ]------------
-kernel BUG at fs/buffer.c:2785!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5235 Comm: syz-executor372 Not tainted 6.12.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
-Code: 89 fa e8 dd 76 cc 02 e9 95 fe ff ff e8 73 85 74 ff 90 0f 0b e8 6b 85 74 ff 90 0f 0b e8 63 85 74 ff 90 0f 0b e8 5b 85 74 ff 90 <0f> 0b e8 53 85 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003b6f0d8 EFLAGS: 00010293
-RAX: ffffffff82206235 RBX: 0000000000000154 RCX: ffff88802d490000
-RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-RBP: 0000000000000100 R08: ffffffff82205df9 R09: 1ffff1100ef571d0
-R10: dffffc0000000000 R11: ffffed100ef571d1 R12: 0000000000000000
-R13: ffff888077ab8e80 R14: 0000000000000000 R15: 1ffff1100ef571d0
-FS:  0000555573f7e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbda422e00a CR3: 000000002fc1e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- submit_bh fs/buffer.c:2824 [inline]
- block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2451
- do_mpage_readpage+0x1a73/0x1c80 fs/mpage.c:317
- mpage_read_folio+0x108/0x1e0 fs/mpage.c:392
- filemap_read_folio+0x14b/0x630 mm/filemap.c:2367
- do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3825
- read_mapping_folio include/linux/pagemap.h:1011 [inline]
- nilfs_get_folio+0x4b/0x240 fs/nilfs2/dir.c:190
- nilfs_find_entry+0x13d/0x660 fs/nilfs2/dir.c:313
- nilfs_inode_by_name+0xad/0x240 fs/nilfs2/dir.c:394
- nilfs_lookup+0xed/0x210 fs/nilfs2/namei.c:63
- lookup_open fs/namei.c:3573 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x11a7/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbda41e54a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe5e610168 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fbda41e54a9
-RDX: 000000000000275a RSI: 0000000020000180 RDI: 00000000ffffff9c
-RBP: 0000000000000000 R08: 00000000000051a5 R09: 000000002000a440
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe5e61019c
-R13: 0000000000000007 R14: 431bde82d7b634db R15: 00007ffe5e6101d0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
-Code: 89 fa e8 dd 76 cc 02 e9 95 fe ff ff e8 73 85 74 ff 90 0f 0b e8 6b 85 74 ff 90 0f 0b e8 63 85 74 ff 90 0f 0b e8 5b 85 74 ff 90 <0f> 0b e8 53 85 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003b6f0d8 EFLAGS: 00010293
-RAX: ffffffff82206235 RBX: 0000000000000154 RCX: ffff88802d490000
-RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-RBP: 0000000000000100 R08: ffffffff82205df9 R09: 1ffff1100ef571d0
-R10: dffffc0000000000 R11: ffffed100ef571d1 R12: 0000000000000000
-R13: ffff888077ab8e80 R14: 0000000000000000 R15: 1ffff1100ef571d0
-FS:  0000555573f7e380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd9cbff000 CR3: 000000002fc1e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+So always reading 16 bytes is not part of the old workaround? Because it=20
+has a "lets read enough" feel.
 
+> > >  =09}
+> > >  =09mutex_unlock(&ipclock);
+> > >  =09return err;
+> >=20
+> > FYI (unrelated to this patch), there seems to be some open-coded=20
+> > FIELD_PREP()s in pwr_reg_rdwr(), some of which is common code between=
+=20
+> > those if branches too.
+>=20
+> This code is quite old and full of tricks that has to be tested. So, yes
+> while it's possible to convert, I would like to do it in a small (baby)
+> steps. This series is already quite intrusive from this perspective :-)
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Yeah, no pressure, I just noted down what I saw. :-)
+
+--=20
+ i.
+
+--8323328-256814922-1729504148=:1065--
 
