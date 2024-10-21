@@ -1,78 +1,56 @@
-Return-Path: <linux-kernel+bounces-374289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B454C9A6805
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EA59A6866
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3A9281A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7105F1F27B36
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDEC1F5859;
-	Mon, 21 Oct 2024 12:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0171E1E7C13;
+	Mon, 21 Oct 2024 12:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itBqERyJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="HqtSjTaf"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA41F4FDD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828C51D0E15;
+	Mon, 21 Oct 2024 12:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513170; cv=none; b=bP+jG0/R8ZIdsUzzH9HTeN+Hzeq+PgFYvtAxVo0fzr5BZfb3s60ehobQXvk2uPMODKOrXcl7gN5L1CJEwtrqCRNPjbuMJSV79Hn88GLujf8oMWCWhbtN4LUUq/f+P9PSg9WfaMEYicwZUCbnOb21MiKj/CxD+YAQPrvoPR0wwwg=
+	t=1729513703; cv=none; b=Lj02sPweEybTd2dpVrNXq0tf56zxn4x0FxpdKRtNE6IXH5Lf3Q1yutNj6BFxmIjT/icOMMin3B3iVHevjKox83t09Ldqc88eS98dVoaQYig9Bdo2N6+EaQhB8Mg/qvCtP9yEfB32ij2ndGOQkZi/6PiWVo7T8k+iZvPOJtRLsoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513170; c=relaxed/simple;
-	bh=85dwOBqgxabEtu7DlXSK3j+X36k6w41TKJHAAtHgg2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHKSWjXz4YJ542EONvnf2EE2hmuhhR8M+7DVz/t1fp1XRfZGPJ5WqdIrizUgUeO0bHiNFr1SnwdK9i/AWoNPE/oWsu1J2Uo9fUZErF2w6gS6F+n0RQx6d3fzw40CMPpR7sYrFnNPl1Uj7xGDzLewUa4knnsLJjY/pmKoJCih9Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itBqERyJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729513167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3SSNANQOGj1r9ayrCBzVvFmFj/ChOB3ieC2hxuoZm3o=;
-	b=itBqERyJZx0C2HdogBZrG1iHhbTD+RVGYjGo8WQyOwltnzNBy58AqH6ro8TNzpLRkxKfWp
-	Ghvv3brzegyNpke9jO2nji55JSLzY5N46YCYOlXaLUHP98x3wvsr2abHHaXYNmm06pJFJe
-	jmt/atFFhosb9d41FV9VbifIoXhVQHI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-448-mkp5I1ZaOy6cDOL7mqpq4w-1; Mon, 21 Oct 2024 08:19:26 -0400
-X-MC-Unique: mkp5I1ZaOy6cDOL7mqpq4w-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316ac69e6dso14859255e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:19:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513165; x=1730117965;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SSNANQOGj1r9ayrCBzVvFmFj/ChOB3ieC2hxuoZm3o=;
-        b=J7Txm9GHqUoGHnfFxlHLsBu/TdfK2bBEzckl0kIZXpu9b0nt6Y9fchtbneld5dDwtQ
-         rTVHzDUmCM/h45ujz1pq7luXL8nD6ceownI012BezAN7xoIIGR4aXpJJfGrr0BB4h6tm
-         45drVMU7Ipv6LKHhky+Tg4VpftK99tRktJ+FxNhwGJHW7BPZ1MzPzUy/fibWRd2vsS29
-         OIOLp/xWNfgy9TNturxS9e5zLD1BvVkevftsHDQElzqGKXzS6eENFDylmeoFuNIieyUR
-         D+0jz1pHka2+Y34A2PsznjkCm+mJe0s8c2i1AZE/GPhlmhz25pmal7WzEWMDFbTiLedg
-         JyUg==
-X-Gm-Message-State: AOJu0YzqTA4XhgEyqijyFbJ0UXwqxc4YaPDlEWKVTX9qtLyCe0zcDPyG
-	qcnf1EAHnNVaM+ercf0f7iIQezC6MHQPdRpsYoWPRmqjakFBGtUxBk1AKLuScTyks51iIKBAb8q
-	znGGhdscaL5u+iNoY+pfarNqjL0nEC3gOW4XGQFB3A2TMFqHj9kxOqt33EJ31lg==
-X-Received: by 2002:a05:600c:4e12:b0:431:1d97:2b0a with SMTP id 5b1f17b1804b1-43161641793mr95708025e9.15.1729513164991;
-        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHL+4zTIZRaHCwKu0OkK2nf7jN/ima55H0fGeAQpNI8aBlBlaAzYq2yIrtU/CEO+/V54e4DoQ==
-X-Received: by 2002:a05:600c:4e12:b0:431:1d97:2b0a with SMTP id 5b1f17b1804b1-43161641793mr95707665e9.15.1729513164570;
-        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fa4fsm56089275e9.16.2024.10.21.05.19.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
-Message-ID: <213b6a6a-3594-4bc5-ae6d-930bbaf3616d@redhat.com>
-Date: Mon, 21 Oct 2024 14:19:20 +0200
+	s=arc-20240116; t=1729513703; c=relaxed/simple;
+	bh=AWIWDMVcoZMFoL0I33M3dhyRPFg891LL/NaNnJJwlEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H6cArTmdcO2hQnb7XtkdCw/iBz46uoX5Hjif8s83E1tiWmaM5CQ1W80yJAp9Nb1b/qNv7ulTuAG8HSIoN/Qh08bM0Zgdc2tF03L7k5pZIkjs7tY3sKTpAuk1ryHvlPU9MZWSCznjJyHnfSKX6UtjQaPbCvF7LGoQjLqgiYzEByM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=HqtSjTaf; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id D73E2A0767;
+	Mon, 21 Oct 2024 14:19:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=19R2T/P5bYh8LMjLk5vV
+	rkn4FuMNiEEmfkBlSoRm6XU=; b=HqtSjTafIWn5xUHXauvx0kFCpQq/lj6Q4eoG
+	LCyO9sHjre/d2MNhSLtA6c0VaD2dioLFLSXTJtUtie+a6atoDBh4ILbwzNR+C16Y
+	xlYt26HEQ86ulDmV4wNx2t00D6AHiWizQL24GAiy2lNgTU/7UwxLMvjoUqP3e99u
+	0vgmRtVZhfPTlE7QPriFHmfUXmBuZx4WrMVntPxHSV3GAnEq+R/FTYnnVOzihUhC
+	BbM7JRANPY7yS6G8Tj4tDHbnwDVN6ef4qhhgQXLH5DB5rQ9jjcsZwyeqlXHo7XeX
+	FflyhpCOdfS1kyP8dfW6a6w+P/CmAefgYO8fkh1Uc2PkIsQSzBHOoDNpE6o1YAaa
+	3ci5Y/OeWnEPuVn0NlZuMcbti4AExrCVDsv81ffBB5dEnDVqJWxddSFUocF8QY7d
+	C30DEZeuwYfEBBNmLgzOKimrQlwnHYffExLwIGOjkdIN5nzd4GQlWH6MbdDG0N83
+	6AlJN0PQWlzodGYg1xqB8spk5CEedBJpdkmrmE8ypVsbnd0vEkwifeWuY9JD758R
+	uBeTkmrbPnI+v5ynsvssu1TktloU7Ii9IDLidnSK9FjsWl/cjLO7cQhWULhbUJYq
+	GejXt7KCrtJoEJrPu21Dzkt15WC1A8UAZdczEGTP/manOBoe2B5+re1bk2SCNv6J
+	rhRdLCI=
+Message-ID: <eae501a6-d210-4576-afa0-010f9cc8c5fd@prolan.hu>
+Date: Mon, 21 Oct 2024 14:19:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,82 +58,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] virtio-mem: s390 support
-To: Christian Borntraeger <borntraeger@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-6-david@redhat.com>
- <20241014184824.10447-F-hca@linux.ibm.com>
- <ebce486f-71a0-4196-b52a-a61d0403e384@redhat.com>
- <20241015083750.7641-D-hca@linux.ibm.com>
- <fbee219a-cc88-414b-8f5f-2cb3b4c9f470@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] spi: atmel-quadspi: Add support for sama7g5 QSPI
+To: Tudor Ambarus <tudor.ambarus@microchip.com>, <broonie@kernel.org>
+CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<ludovic.desroches@microchip.com>, <linux-spi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Varshini Rajendran <varshini.rajendran@microchip.com>, Claudiu Beznea
+	<Claudiu.Beznea@microchip.com>
+References: <20211214133404.121739-1-tudor.ambarus@microchip.com>
 Content-Language: en-US
-In-Reply-To: <fbee219a-cc88-414b-8f5f-2cb3b4c9f470@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20211214133404.121739-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855677761
 
+Hi,
 
-
-Am 21.10.24 um 08:33 schrieb Christian Borntraeger:
+On 2021. 12. 14. 14:34, Tudor Ambarus wrote:
+> The sama7g5 QSPI controller uses dedicated clocks for the
+> QSPI Controller Interface and the QSPI Controller Core, and
+> requires synchronization before accessing registers or bit
+> fields.
 > 
+> QSPI_SR.SYNCBSY must be zero before accessing any of the bits:
+> QSPI_CR.QSPIEN, QSPI_CR.QSPIDIS, QSPI_CR.SRFRSH, QSPI_CR.SWRST,
+> QSPI_CR.UPDCFG, QSPI_CR.STTFR, QSPI_CR.RTOUT, QSPI_CR.LASTXFER.
 > 
-> Am 15.10.24 um 10:37 schrieb Heiko Carstens:
->> On Mon, Oct 14, 2024 at 09:16:45PM +0200, David Hildenbrand wrote:
->>> On 14.10.24 20:48, Heiko Carstens wrote:
->>>
->>> The cover letter is clearer on that: "One remaining work item is kdump
->>> support for virtio-mem memory. This will be sent out separately once initial
->>> support landed."
->>>
->>> I had a prototype, but need to spend some time to clean it up -- or find
->>> someone to hand it over to clean it up.
->>>
->>> I have to chose wisely what I work on nowadays, and cannot spend that time
->>> if the basic support won't get ACKed.
->>>
->>>
->>> For many production use cases it certainly needs to exist.
->>>
->>> But note that virtio-mem can be used with ZONE_MOVABLE, in which case mostly
->>> only user data (e.g., pagecache,anon) ends up on hotplugged memory, that
->>> would get excluded from makedumpfile in the default configs either way.
->>>
->>> It's not uncommon to let kdump support be added later (e.g., AMD SNP
->>> variants).
->>
->> I'll leave it up to kvm folks to decide if we need kdump support from
->> the beginning or if we are good with the current implementation.
+> Also, the QSPI controller core configuration can be updated by
+> writing the QSPI_CR.UPDCFG bit to ‘1’. This is needed by the
+> following registers: QSPI_MR, QSPI_SCR, QSPI_IAR, QSPI_WICR,
+> QSPI_IFR, QSPI_RICR, QSPI_SMR, QSPI_SKR,QSPI_REFRESH, QSPI_WRACNT
+> QSPI_PCALCFG.
 > 
-> If David confirms that he has a plan for this, I am fine with a staged approach
-> for upstream.
+> The Octal SPI supports frequencies up to 200 MHZ DDR. The need
+> for output impedance calibration arises. To avoid the degradation
+> of the signal quality, a PAD calibration cell is used to adjust
+> the output impedance to the driven I/Os.
+> 
+> The transmission flow requires different sequences for setting
+> the configuration and for the actual transfer, than what is in
+> the sama5d2 and sam9x60 versions of the IP. Different interrupts
+> are handled. aq->ops->set_cfg() and aq->ops->transfer() are
+> introduced to help differentiating the flows.
+> 
+> Tested single and octal SPI mode with mx66lm1g45g.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-I do have a plan and a even a semi-working prototype that I am currently 
-improving. In summary, the virtio-mem driver in kdump mode can report ranges 
-with plugged memory to the core so we can include them in the elfcore hdr. That 
-is the easy part.
+This patch doesn't seem to have been merged. Is it no longer needed? Has 
+Claudiu's comment been addressed? Likely not, as the vendor kernel 
+(linux4microchip) still contains the un-amended commit.
 
-The "challenge" is when the virtio-mem driver is built as a module and gets 
-loaded after building/allocating the elfcore hdr (which happens when creating 
-/proc/vmcore). We have to defer detecting+adding the ranges to the time 
-/proc/vmcore gets opened. Not super complicated, but needs some thought to get 
-it done in a clean way / with minimal churn.
-
--- 
-Cheers,
-
-David / dhildenb
+Bence
 
 
