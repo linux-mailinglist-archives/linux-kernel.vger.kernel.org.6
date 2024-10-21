@@ -1,253 +1,104 @@
-Return-Path: <linux-kernel+bounces-373563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205929A58DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:29:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934D19A58DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1041C21178
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87A9282B9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6474322334;
-	Mon, 21 Oct 2024 02:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oijx0f1D"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67AA2EB02;
+	Mon, 21 Oct 2024 02:30:04 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19BF14263;
-	Mon, 21 Oct 2024 02:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343719BA6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729477746; cv=none; b=fxMOs8C7LgOvgWuVN4qf4DIboIXG0byPyY4CwjyzgAOyoJou+lRDGz2e/0qmwOyXKN+EtuE0gL9wS3M53leOEq5rfHFheNPpkTQexjjUeH1yW/LAogHfy/w0nS3RRTbM3Rma7qfrcSNqVXAmpfZ8ZuSsTSEgIdX5b8+RbLhKwzA=
+	t=1729477804; cv=none; b=H6Ta6Tq8/cAEnnx8aG4WW8DTLU+PGGtiHvSy+2q/8hUi87aKNDt/gbu/Q7beRA5lsDgCHR20UXgrIbO8ELwpkoG+ljottHRdIR5p5xdBcDl40JyIKpt3KiiZjNY5yNCqdzJM56yESvHIFLNQXpqAaU/5Llsh9HIj8BBbHrl9OLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729477746; c=relaxed/simple;
-	bh=6qtTmtydCnKundBDR3axy9UipvrlBvJigyFpZp6xJmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drE9upNdPn5CZmd3UsEJwbIO8LPU0gvZvuiifLfSw0E5e+qPZoNTTTUog5cGE4XoArevH5CXKZddLYwMWQZa/njnPWsRaLrg2lBP7g7SZOES0bbQ20r4ifnM6HQVnS2ZeN1BhwOeETW6fI0jVEq28AgvYMuTpCj1nW1yGgUktws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oijx0f1D; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c9978a221so45593385ad.1;
-        Sun, 20 Oct 2024 19:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729477744; x=1730082544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZutcxFkjMK9a7hZ9nx5BY2GReswDRsLPMQDv9l5Ojv0=;
-        b=Oijx0f1DcLyDWl9EuJvvaV5ocpwOIAJ6bbPLyUlcYe/PEJHOJXFlWklHvMkRLbAzC4
-         QwSZsse8Q9RQWWKUvIZTUqXVl3bh6l2l21ByFQBjnzmEZvI6J0mLQa47mIYZNiXgKu45
-         Vv3/mmKSJpaTLPsYfbt1sI9VwQsWwtg9aWypDfFbWM0Zb6NA+fvvF9DyISxYwN1lOxt5
-         vz1bSUSU2HNXyzN5s5PmMpoAHEs+nu1FGZtm6tXnB3/mkhDu650T21mMw/87i0b1Abzm
-         gpnZNr6gvRL27XmWxFFm/fa0I2V5C3HkFl41DhxHDa1zPub5db5+8Vzg/rPnqxUqyxYH
-         9zkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729477744; x=1730082544;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZutcxFkjMK9a7hZ9nx5BY2GReswDRsLPMQDv9l5Ojv0=;
-        b=ANPt+ZDULiLUiD0LJ+yuW84+OvB+jcyvE6tHLxkkqBozQcDMxPkBlvGS42EOaRbWcC
-         vxI/HhGBRS8PYAsqxq4xbuAtW8FJlbWAF+wrqVpjgrK1FtfkX9yIepRlsrWdSDOgN1fF
-         S/mmYfHT/9fjLA2gaqgJC4VIWX7dHtybdiUGpiMpDD0UKN89kQSnQ87+gkW2DGkXAoWy
-         PP74hZ5bBv6rx+BjRdFGv0PHpAS0P4F6B3AIj2Uf2eEHWMGmM1UpsP7zpUar6/xhIx6x
-         4jJjEiLboqosfGaWTsY1F7kLOLW9t8eLi/dYPsgl6xXGtyUD6H+O1pq/U+sqGAFOzy67
-         w4Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLfLlN+XI6hxqZZTDlt0kUvhTJw4Isdiwnqaxuzrc0w1pF1hKoQCt8Jib8kTyFfWh4Zq6XndUhICYrdkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ADXAKjOWE2ImrWBD19Smlu59YQbKIAja839RSpW9N6Zc+wPI
-	p6pFqhML8bpd2bzIw4L0wa/lCPHS/7yEtCkoQglw6V27m4tL5nkk369QYKOU
-X-Google-Smtp-Source: AGHT+IHfPJlH8pcT5tWiZ4wh/zQbi0gGxk2PgXlCe0H6l5Xp9QtDEZWpIvSjBiL3t2GQjFPikNb30g==
-X-Received: by 2002:a05:6a21:e91:b0:1d6:fb3e:78cf with SMTP id adf61e73a8af0-1d92c57c430mr13782764637.41.1729477743878;
-        Sun, 20 Oct 2024 19:29:03 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabb8418sm1551056a12.67.2024.10.20.19.29.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 19:29:03 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Michael Chan <michael.chan@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: bnxt: use ethtool string helpers
-Date: Sun, 20 Oct 2024 19:29:01 -0700
-Message-ID: <20241021022901.318647-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729477804; c=relaxed/simple;
+	bh=APP2ZKmLkrw81biRI32U+QH7TU2wRU9Akwf0S52bu9E=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BH/RrjYmsZaRueOx9TUd3bSLF8rW7x3JmRTjkNVc1SJrvgF1FsAVEK3Blc2unjFeOVVdNwDjCN76PZ091Mk6kXlbZ+z/oZ8RiNhpQQqzJcZddCzX3Th+kAVLfgSsTOQ+luIWxdXXk/SgSjv7gtDRrBsm4g3tLrhkdE1KbgDAOAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XWzgM32vLz1HLDB;
+	Mon, 21 Oct 2024 10:25:35 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id C2C6314037D;
+	Mon, 21 Oct 2024 10:29:53 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 21 Oct 2024 10:29:52 +0800
+Subject: Re: [PATCH] mtd: ubi: fix unreleased fwnode_handle in
+ find_volume_fwnode()
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Richard Weinberger
+	<richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Daniel Golle <daniel@makrotopia.org>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241019-mtd-uvi-fwnode_handle_put-v1-1-f5ef0d0cf9c8@gmail.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <f475a196-db30-7aef-6bc7-3c7d0e962382@huawei.com>
+Date: Mon, 21 Oct 2024 10:29:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20241019-mtd-uvi-fwnode_handle_put-v1-1-f5ef0d0cf9c8@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-Avoids having to use manual pointer manipulation.
+在 2024/10/20 4:27, Javier Carrasco 写道:
+> The 'fw_vols' fwnode_handle initialized via
+> device_get_named_child_node() requires explicit calls to
+> fwnode_handle_put() when the variable is no longer required.
+> 
+> Add the missing calls to fwnode_handle_put() before the function
+> returns.
+> 
+> Fixes: 51932f9fc487 ("mtd: ubi: populate ubi volume fwnode")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>   drivers/mtd/ubi/vmt.c | 2 ++
+>   1 file changed, 2 insertions(+)
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 110 ++++++++----------
- 1 file changed, 50 insertions(+), 60 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index f71cc8188b4e..84d468ad3c8e 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -713,18 +713,17 @@ static void bnxt_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
- 		for (i = 0; i < bp->cp_nr_rings; i++) {
- 			if (is_rx_ring(bp, i)) {
- 				num_str = NUM_RING_RX_HW_STATS;
--				for (j = 0; j < num_str; j++) {
--					sprintf(buf, "[%d]: %s", i,
-+				for (j = 0; j < num_str; j++)
-+					ethtool_sprintf(
-+						&buf, "[%d]: %s", i,
- 						bnxt_ring_rx_stats_str[j]);
--					buf += ETH_GSTRING_LEN;
--				}
- 			}
- 			if (is_tx_ring(bp, i)) {
- 				num_str = NUM_RING_TX_HW_STATS;
- 				for (j = 0; j < num_str; j++) {
--					sprintf(buf, "[%d]: %s", i,
-+					ethtool_sprintf(
-+						&buf, "[%d]: %s", i,
- 						bnxt_ring_tx_stats_str[j]);
--					buf += ETH_GSTRING_LEN;
- 				}
- 			}
- 			num_str = bnxt_get_num_tpa_ring_stats(bp);
-@@ -736,81 +735,72 @@ static void bnxt_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
- 			else
- 				str = bnxt_ring_tpa_stats_str;
- 
--			for (j = 0; j < num_str; j++) {
--				sprintf(buf, "[%d]: %s", i, str[j]);
--				buf += ETH_GSTRING_LEN;
--			}
-+			for (j = 0; j < num_str; j++)
-+				ethtool_sprintf(&buf, "[%d]: %s", i, str[j]);
- skip_tpa_stats:
- 			if (is_rx_ring(bp, i)) {
- 				num_str = NUM_RING_RX_SW_STATS;
--				for (j = 0; j < num_str; j++) {
--					sprintf(buf, "[%d]: %s", i,
-+				for (j = 0; j < num_str; j++)
-+					ethtool_sprintf(
-+						&buf, "[%d]: %s", i,
- 						bnxt_rx_sw_stats_str[j]);
--					buf += ETH_GSTRING_LEN;
--				}
- 			}
- 			num_str = NUM_RING_CMN_SW_STATS;
--			for (j = 0; j < num_str; j++) {
--				sprintf(buf, "[%d]: %s", i,
--					bnxt_cmn_sw_stats_str[j]);
--				buf += ETH_GSTRING_LEN;
--			}
--		}
--		for (i = 0; i < BNXT_NUM_RING_ERR_STATS; i++) {
--			strscpy(buf, bnxt_ring_err_stats_arr[i], ETH_GSTRING_LEN);
--			buf += ETH_GSTRING_LEN;
-+			for (j = 0; j < num_str; j++)
-+				ethtool_sprintf(&buf, "[%d]: %s", i,
-+						bnxt_cmn_sw_stats_str[j]);
- 		}
-+		for (i = 0; i < BNXT_NUM_RING_ERR_STATS; i++)
-+			ethtool_puts(&buf, bnxt_ring_err_stats_arr[i]);
-+
-+		if (bp->flags & BNXT_FLAG_PORT_STATS)
-+			for (i = 0; i < BNXT_NUM_PORT_STATS; i++)
-+				ethtool_puts(&buf,
-+					     bnxt_port_stats_arr[i].string);
- 
--		if (bp->flags & BNXT_FLAG_PORT_STATS) {
--			for (i = 0; i < BNXT_NUM_PORT_STATS; i++) {
--				strcpy(buf, bnxt_port_stats_arr[i].string);
--				buf += ETH_GSTRING_LEN;
--			}
--		}
- 		if (bp->flags & BNXT_FLAG_PORT_STATS_EXT) {
- 			u32 len;
- 
- 			len = min_t(u32, bp->fw_rx_stats_ext_size,
- 				    ARRAY_SIZE(bnxt_port_stats_ext_arr));
--			for (i = 0; i < len; i++) {
--				strcpy(buf, bnxt_port_stats_ext_arr[i].string);
--				buf += ETH_GSTRING_LEN;
--			}
-+			for (i = 0; i < len; i++)
-+				ethtool_puts(&buf,
-+					     bnxt_port_stats_ext_arr[i].string);
-+
- 			len = min_t(u32, bp->fw_tx_stats_ext_size,
- 				    ARRAY_SIZE(bnxt_tx_port_stats_ext_arr));
--			for (i = 0; i < len; i++) {
--				strcpy(buf,
--				       bnxt_tx_port_stats_ext_arr[i].string);
--				buf += ETH_GSTRING_LEN;
--			}
-+			for (i = 0; i < len; i++)
-+				ethtool_puts(
-+					&buf,
-+					bnxt_tx_port_stats_ext_arr[i].string);
-+
- 			if (bp->pri2cos_valid) {
--				for (i = 0; i < 8; i++) {
--					strcpy(buf,
--					       bnxt_rx_bytes_pri_arr[i].string);
--					buf += ETH_GSTRING_LEN;
--				}
--				for (i = 0; i < 8; i++) {
--					strcpy(buf,
--					       bnxt_rx_pkts_pri_arr[i].string);
--					buf += ETH_GSTRING_LEN;
--				}
--				for (i = 0; i < 8; i++) {
--					strcpy(buf,
--					       bnxt_tx_bytes_pri_arr[i].string);
--					buf += ETH_GSTRING_LEN;
--				}
--				for (i = 0; i < 8; i++) {
--					strcpy(buf,
--					       bnxt_tx_pkts_pri_arr[i].string);
--					buf += ETH_GSTRING_LEN;
--				}
-+				for (i = 0; i < 8; i++)
-+					ethtool_puts(
-+						&buf,
-+						bnxt_rx_bytes_pri_arr[i].string);
-+
-+				for (i = 0; i < 8; i++)
-+					ethtool_puts(
-+						&buf,
-+						bnxt_rx_pkts_pri_arr[i].string);
-+
-+				for (i = 0; i < 8; i++)
-+					ethtool_puts(
-+						&buf,
-+						bnxt_tx_bytes_pri_arr[i].string);
-+
-+				for (i = 0; i < 8; i++)
-+					ethtool_puts(
-+						&buf,
-+						bnxt_tx_pkts_pri_arr[i].string);
- 			}
- 		}
- 		break;
- 	case ETH_SS_TEST:
- 		if (bp->num_tests)
--			memcpy(buf, bp->test_info->string,
--			       bp->num_tests * ETH_GSTRING_LEN);
-+			for (i = 0; i < bp->num_tests; i++)
-+				ethtool_puts(&buf, bp->test_info->string[i]);
- 		break;
- 	default:
- 		netdev_err(bp->dev, "bnxt_get_strings invalid request %x\n",
--- 
-2.47.0
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+> index 5a3558bbb903..e5cf3bdca3b0 100644
+> --- a/drivers/mtd/ubi/vmt.c
+> +++ b/drivers/mtd/ubi/vmt.c
+> @@ -143,8 +143,10 @@ static struct fwnode_handle *find_volume_fwnode(struct ubi_volume *vol)
+>   		    vol->vol_id != volid)
+>   			continue;
+>   
+> +		fwnode_handle_put(fw_vols);
+>   		return fw_vol;
+>   	}
+> +	fwnode_handle_put(fw_vols);
+>   
+>   	return NULL;
+>   }
+> 
+> ---
+> base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+> change-id: 20241019-mtd-uvi-fwnode_handle_put-7b220d2778b5
+> 
+> Best regards,
+> 
 
 
