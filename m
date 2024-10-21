@@ -1,249 +1,180 @@
-Return-Path: <linux-kernel+bounces-374644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0159A6DFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:21:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92679A6E00
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4C9282DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:21:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A611C2099A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083D6126C15;
-	Mon, 21 Oct 2024 15:21:46 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6FE12FB0A;
+	Mon, 21 Oct 2024 15:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="WrFeqS+Y"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284EE7FBC2;
-	Mon, 21 Oct 2024 15:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E509126F2A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524105; cv=none; b=BoHlg/UKhxFI7DZuTvo30tPsBMn0IxWd9Aak96rCSpaalkNKVL5sjv0yk6FPPXuSgoheu5a2uqaKrcYXzcEC4bJCZnyqTZ98pz1jaknwDbFlEwuyGpUjTKHslU9uZzoEWQpUEPEqBU2CVc6w0z8Vy9xlpa77PGfXvQsMACuVyp4=
+	t=1729524108; cv=none; b=YG9DWJrhaEP87x1gtJaHimySBOPM2oIXC7OK62s1sMeo9ltAjyf0fLw1VgMU4L+46ebP3C95//1mb1/tsL2HAEG+mYyjqbcT0OypDNqfhN9E2O45y0abBD8CFzcJT36P0BcZrkGRR6NtQ+yt7B0R+HISiZFVKvdVZoKd/oyHptE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524105; c=relaxed/simple;
-	bh=XCrL4izJIy9UyUFs1AzO/wmPMPe0z9HyOj9uoklY+iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtRFBKDEkI1SgbH+Mkk11IHiOtlzQ2N8nwmvP96PD9AM+Gw2zneFg6WxVyxr669vOLiFNf4IVRdg7WfyzS4qxJ3Xls9Y1M52TpTLhiNeSucA2qHBpKmDAkpMQ6YNajJwskCtOVy3WvOYoH04aLHDZNuWlNNG6F/dSVsfeW4XgH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 75FC461E5FE05;
-	Mon, 21 Oct 2024 17:20:59 +0200 (CEST)
-Message-ID: <15688d2d-b3a0-4730-9cee-15bb6c7f78fb@molgen.mpg.de>
-Date: Mon, 21 Oct 2024 17:20:59 +0200
+	s=arc-20240116; t=1729524108; c=relaxed/simple;
+	bh=PWJXLI/zc9+YfPp0JQp12zzhzEBvi/Lb9IqoZrMgbPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8nS230ZNgwBhywXp54V0tzDF2Qwlmo7L+QWHberqGUBr0BD64l+RVRGwWRjkx9npOFbcvGQwf3Un9Sjcs5qLBiVzDSz7sO/QiCGukul4lLsFcL4cZWoMMyTXukRPW4Sp3olahHule9HmpoBqYzWHmE7G8/Mb/Z8QMq9pXeRSIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=WrFeqS+Y; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e3f35268so2800612e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1729524104; x=1730128904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1LJXhrYQrk3gwAFgilc+sphvRBz6z5yynh7/PAYChQI=;
+        b=WrFeqS+Ysiuhw7Eo/UpXWMqXdXbx/SsjTo0ysaERqcoXnajWcqZGzKA3Z/hH8Fswfe
+         5vje7pCj4mj8Mv++qf9y499PRavdJwrXDVP5V5GeWNMykN6c2jYViMIvKH9IfWd9nccL
+         eNhmmoGDxHfQqwMcRBHlyWZCKRjyUFuNSQKKzNtXpqnj3RKDNIwWVfdfQbIy8Tg9ebgl
+         bymHK1HfcGKPBrpzgqyYkQ5+BXZQNQ1kAWAYOMEWBGUc0IRYcgtdJ0qh40SRZ8Z3EBmi
+         EvBeULylkA7d5baT2RGQvFQqXzAOe2OxC8tIVNdH4eQI9ueDTLmh+FE6X1YSnjFIEaSy
+         UpRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729524104; x=1730128904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1LJXhrYQrk3gwAFgilc+sphvRBz6z5yynh7/PAYChQI=;
+        b=GpHV9jy3a3ttEW8Kp8+p63pnwhOKaIUgyRhHUQKXhUMGtCbbJXPQjmjMedUFHZ6B0a
+         tpnIexr+7hgyRRx9lWcyofXpMn6PLiNvImhvtE2xkE/8+bqOvTlxansoJOXkj5YJaZaV
+         c7ygvuTbE1ekwu4/keIqCvGgwsVsXt24oawJr92udqjO28aBv5vQdrk+JYpoeAUfJCai
+         mZLZVE/rFeRkheh3K/X2WbmispIUHDGTD6twtp3Sb5lDFand+vBnCNZLjUiaBOBikwg2
+         4wR6Dg74P+1nMONgtRguWrpGCuMQOq8o6WvHK0qnJv6KCnNWUuRsFp2fc3/hMgUDTKU2
+         ecZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkC9kjUpOOst9TdazoqJz6i7ObQ4ywZF8Qws0Jh27VoMVxfzMlgGV18BJphsQrPRfBVS7G2HEhWkeJJTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi3vZZ2Sg1VkJunsT2o9jTbnXpn/CIfoQJif3mcNVTd0yTjyYS
+	Ad5u4gTjuQdYAnjGpQgqc7kDJd4TegqLUPH8eUuuKUAyQw6sX2GRRMlcYNu3ckefieObh1wLAnN
+	OAoqkXbbNoeWOlytrDwpXiZj/BdE6NB6ujJ5X
+X-Google-Smtp-Source: AGHT+IFXYdf/1S8sUivCEKQLffjqH0HbVL7pn9283MDgZzq8osSfS/mtwn0YAPg2ee14WNWmqyFbTcTg/tuCM+FRyAI=
+X-Received: by 2002:a05:6512:31c1:b0:535:6cde:5c4d with SMTP id
+ 2adb3069b0e04-53a1520bfaemr7096304e87.3.1729524103994; Mon, 21 Oct 2024
+ 08:21:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net-next 1/2] ptp: add control over HW
- timestamp latch point
-To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-References: <20241021141955.1466979-1-arkadiusz.kubalewski@intel.com>
- <20241021141955.1466979-2-arkadiusz.kubalewski@intel.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20241021141955.1466979-2-arkadiusz.kubalewski@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com> <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
+In-Reply-To: <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Mon, 21 Oct 2024 11:21:32 -0400
+Message-ID: <CADL8D3ZcvynQCGLCcbK=U9-2WB758abLcKaNkTtXN8Y7s=dyqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] drm/tidss: Fix issue in irq handling causing
+ irq-flood issue
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Bin Liu <b-liu@ti.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Arkadiusz,
-
-
-Thank you for your patch.
-
-Am 21.10.24 um 16:19 schrieb Arkadiusz Kubalewski:
-> Currently HW support of PTP/timesync solutions in network PHY chips can be
-> implemented with two different approaches, the timestamp maybe latched
-> either at the beginning or after the Start of Frame Delimiter (SFD) [1].
-> 
-> Allow ptp device drivers to provide user with control over the HW
-> timestamp latch point with ptp sysfs ABI.
-
-Please describe, that it’s done using `/sys` filesystem.
-
-How can this be tested?
-
-> [1] https://www.ieee802.org/3/cx/public/april20/tse_3cx_01_0420.pdf
-> 
-> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+On Mon, Oct 21, 2024 at 10:08=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> It has been observed that sometimes DSS will trigger an interrupt and
+> the top level interrupt (DISPC_IRQSTATUS) is not zero, but the VP and
+> VID level interrupt-statuses are zero.
+>
+> As the top level irqstatus is supposed to tell whether we have VP/VID
+> interrupts, the thinking of the driver authors was that this particular
+> case could never happen. Thus the driver only clears the DISPC_IRQSTATUS
+> bits which has corresponding interrupts in VP/VID status. So when this
+> issue happens, the driver will not clear DISPC_IRQSTATUS, and we get an
+> interrupt flood.
+>
+> It is unclear why the issue happens. It could be a race issue in the
+> driver, but no such race has been found. It could also be an issue with
+> the HW. However a similar case can be easily triggered by manually
+> writing to DISPC_IRQSTATUS_RAW. This will forcibly set a bit in the
+> DISPC_IRQSTATUS and trigger an interrupt, and as the driver never clears
+> the bit, we get an interrupt flood.
+>
+> To fix the issue, always clear DISPC_IRQSTATUS. The concern with this
+> solution is that if the top level irqstatus is the one that triggers the
+> interrupt, always clearing DISPC_IRQSTATUS might leave some interrupts
+> unhandled if VP/VID interrupt statuses have bits set. However, testing
+> shows that if any of the irqstatuses is set (i.e. even if
+> DISPC_IRQSTATUS =3D=3D 0, but a VID irqstatus has a bit set), we will get=
+ an
+> interrupt.
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Co-developed-by: Bin Liu <b-liu@ti.com>
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> Co-developed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
+> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Disp=
+lay SubSystem")
+> Cc: stable@vger.kernel.org
 > ---
->   Documentation/ABI/testing/sysfs-ptp | 12 ++++++++
->   drivers/ptp/ptp_sysfs.c             | 44 +++++++++++++++++++++++++++++
->   include/linux/ptp_clock_kernel.h    | 29 +++++++++++++++++++
->   3 files changed, 85 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-ptp b/Documentation/ABI/testing/sysfs-ptp
-> index 9c317ac7c47a..a0d89e0fd72e 100644
-> --- a/Documentation/ABI/testing/sysfs-ptp
-> +++ b/Documentation/ABI/testing/sysfs-ptp
-> @@ -140,3 +140,15 @@ Description:
->   		PPS events to the Linux PPS subsystem. To enable PPS
->   		events, write a "1" into the file. To disable events,
->   		write a "0" into the file.
-> +
-> +What:		/sys/class/ptp/ptp<N>/ts_point
-> +Date:		October 2024
-> +Contact:	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-> +Description:
-> +		This file provides control over the point in time in
-> +		which the HW timestamp is latched. As specified in IEEE
-> +		802.3cx, the latch point can be either at the beginning
-> +		or after the end of Start of Frame Delimiter (SFD).
-> +		Value "0" means the timestamp is latched at the
-> +		beginning of the SFD. Value "1" means that timestamp is
-> +		latched after the end of SFD.
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
-Would it make sense to let it be configured by strings, so it’s clear, 
-what the values mean?
+I assume a reviewed by doesn't make sense since I co-developed this
+patch but adding my tested by, hopefully, that makes sense.
 
-1.  beginning_of_sfd
-2.  end_of_sfd
-
-> diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
-> index 6b1b8f57cd95..7e9f6ef368b6 100644
-> --- a/drivers/ptp/ptp_sysfs.c
-> +++ b/drivers/ptp/ptp_sysfs.c
-> @@ -28,6 +28,46 @@ static ssize_t max_phase_adjustment_show(struct device *dev,
->   }
->   static DEVICE_ATTR_RO(max_phase_adjustment);
->   
-> +static ssize_t ts_point_show(struct device *dev, struct device_attribute *attr,
-> +			     char *page)
-> +{
-> +	struct ptp_clock *ptp = dev_get_drvdata(dev);
-> +	enum ptp_ts_point point;
-> +	int err;
-> +
-> +	if (!ptp->info->get_ts_point)
-> +		return -EOPNOTSUPP;
-> +	err = ptp->info->get_ts_point(ptp->info, &point);
-> +	if (err)
-> +		return err;
-> +
-> +	return sysfs_emit(page, "%d\n", point);
-> +}
-> +
-> +static ssize_t ts_point_store(struct device *dev, struct device_attribute *attr,
-> +			      const char *buf, size_t count)
-> +{
-> +	struct ptp_clock *ptp = dev_get_drvdata(dev);
-> +	enum ptp_ts_point point;
-> +	int err;
-> +	u8 val;
-> +
-> +	if (!ptp->info->set_ts_point)
-> +		return -EOPNOTSUPP;
-> +	if (kstrtou8(buf, 0, &val))
-> +		return -EINVAL;
-> +	if (val > PTP_TS_POINT_MAX)
-> +		return -EINVAL;
-> +	point = val;
-> +
-> +	err = ptp->info->set_ts_point(ptp->info, point);
-> +	if (err)
-> +		return err;
-> +
-> +	return count;
-> +}
-> +static DEVICE_ATTR_RW(ts_point);
-> +
->   #define PTP_SHOW_INT(name, var)						\
->   static ssize_t var##_show(struct device *dev,				\
->   			   struct device_attribute *attr, char *page)	\
-> @@ -335,6 +375,7 @@ static struct attribute *ptp_attrs[] = {
->   	&dev_attr_pps_enable.attr,
->   	&dev_attr_n_vclocks.attr,
->   	&dev_attr_max_vclocks.attr,
-> +	&dev_attr_ts_point.attr,
->   	NULL
->   };
->   
-> @@ -363,6 +404,9 @@ static umode_t ptp_is_attribute_visible(struct kobject *kobj,
->   	} else if (attr == &dev_attr_max_phase_adjustment.attr) {
->   		if (!info->adjphase || !info->getmaxphase)
->   			mode = 0;
-> +	} else if (attr == &dev_attr_ts_point.attr) {
-> +		if (!info->get_ts_point && !info->set_ts_point)
-> +			mode = 0;
->   	}
->   
->   	return mode;
-> diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
-> index c892d22ce0a7..921d6615bd39 100644
-> --- a/include/linux/ptp_clock_kernel.h
-> +++ b/include/linux/ptp_clock_kernel.h
-> @@ -55,6 +55,23 @@ struct ptp_system_timestamp {
->   	clockid_t clockid;
->   };
->   
-> +/**
-> + * enum ptp_ts_point - possible timestamp latch points (IEEE 802.3cx)
-> + * @PTP_TS_POINT_SFD:      timestamp latched at the beginning of sending Start
-
-The alignment of the start of the description looks strange with the 
-second line being further right.
-
-> + *			   of Frame Delimiter (SFD)
-> + * @PTP_TS_POINT_POST_SFD: timestamp latched after the end of sending Start
-> + *			   of Frame Delimiter (SFD)
-> + */
-> +enum ptp_ts_point {
-> +	PTP_TS_POINT_SFD,
-> +	PTP_TS_POINT_POST_SFD,
-> +
-> +	/* private: */
-> +	__PTP_TS_POINT_MAX
-> +};
-> +
-> +#define PTP_TS_POINT_MAX (__PTP_TS_POINT_MAX - 1)
-> +
->   /**
->    * struct ptp_clock_info - describes a PTP hardware clock
->    *
-> @@ -159,6 +176,14 @@ struct ptp_system_timestamp {
->    *                scheduling time (>=0) or negative value in case further
->    *                scheduling is not required.
->    *
-> + * @set_ts_point: Request change of timestamp latch point, as the timestamp
-> + *                could be latched at the beginning or after the end of start
-> + *                frame delimiter (SFD), as described in IEEE 802.3cx
-> + *                specification.
-> + *
-> + * @get_ts_point: Obtain the timestamp measurement latch point, counterpart of
-> + *                .set_ts_point() for getting currently configured value.
-> + *
->    * Drivers should embed their ptp_clock_info within a private
->    * structure, obtaining a reference to it using container_of().
->    *
-> @@ -195,6 +220,10 @@ struct ptp_clock_info {
->   	int (*verify)(struct ptp_clock_info *ptp, unsigned int pin,
->   		      enum ptp_pin_function func, unsigned int chan);
->   	long (*do_aux_work)(struct ptp_clock_info *ptp);
-> +	int (*set_ts_point)(struct ptp_clock_info *ptp,
-> +			    enum ptp_ts_point point);
-> +	int (*get_ts_point)(struct ptp_clock_info *ptp,
-> +			    enum ptp_ts_point *point);
->   };
->   
->   struct ptp_clock;
-
-
-Kind regards,
-
-Paul
+Tested an equivalent patch for several weeks.
+Tested-by: Jonathan Cormier <jcormier@criticallink.com>
+>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/=
+tidss_dispc.c
+> index 1ad711f8d2a8..f81111067578 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -780,24 +780,20 @@ static
+>  void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t cl=
+earmask)
+>  {
+>         unsigned int i;
+> -       u32 top_clear =3D 0;
+>
+>         for (i =3D 0; i < dispc->feat->num_vps; ++i) {
+> -               if (clearmask & DSS_IRQ_VP_MASK(i)) {
+> +               if (clearmask & DSS_IRQ_VP_MASK(i))
+>                         dispc_k3_vp_write_irqstatus(dispc, i, clearmask);
+> -                       top_clear |=3D BIT(i);
+> -               }
+>         }
+>         for (i =3D 0; i < dispc->feat->num_planes; ++i) {
+> -               if (clearmask & DSS_IRQ_PLANE_MASK(i)) {
+> +               if (clearmask & DSS_IRQ_PLANE_MASK(i))
+>                         dispc_k3_vid_write_irqstatus(dispc, i, clearmask)=
+;
+> -                       top_clear |=3D BIT(4 + i);
+> -               }
+>         }
+>         if (dispc->feat->subrev =3D=3D DISPC_K2G)
+>                 return;
+>
+> -       dispc_write(dispc, DISPC_IRQSTATUS, top_clear);
+> +       /* always clear the top level irqstatus */
+> +       dispc_write(dispc, DISPC_IRQSTATUS, dispc_read(dispc, DISPC_IRQST=
+ATUS));
+>
+>         /* Flush posted writes */
+>         dispc_read(dispc, DISPC_IRQSTATUS);
+>
+> --
+> 2.43.0
+>
 
