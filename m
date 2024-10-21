@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-374582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD979A6C67
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:41:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1529A6C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9FC1C21D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7233A1F2120D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302881FA257;
-	Mon, 21 Oct 2024 14:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1921F6661;
+	Mon, 21 Oct 2024 14:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GXuBW79+"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l1NZndhc"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978A41F6661;
-	Mon, 21 Oct 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6485A26ACD;
+	Mon, 21 Oct 2024 14:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521669; cv=none; b=TPJLOp9wiOXfBCWJAAzid8n07nwiHtLwKWeef6b+eVRDKfxNKEpiwjCibM96BpAIX9jV5cLysbW9JI1kabOX7jiPRXmx197maud+1se/uRJJuGHrOv32aghBUXnYLYpyi0RkA1i2TJFPl5JB/dfcdnXViK3qXu3lYoY4ZA6uuEM=
+	t=1729521703; cv=none; b=Nr4Dc7ATvnq0FPPFfPRUY7LOq2d52pZiflgxC5DS92ZQEqEBs/BQzde9i80zggLjjoobwfmuEFl8GQD/R0HBOyaqDlghOCC/JVAiYsAs7yCbs4cu9wtD3oUE4vVK+KcT63oBmQEgIDH9Q7tzqAeApmNDVPVSV30cTxz4zNR4d60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521669; c=relaxed/simple;
-	bh=wEJWjkfmcIKHp4iFivlAhHssAMAlpxNOvJ38VUX1szw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aJxSzTPlw5oAyiLtTMr1wd6n8A0iH5dkdcKHu/2lVwhXTQ+o3Bgw3M+0zsFFnAPWpyzPV3oIRZa1jh3HzwzwIlrXH/AH9KbZW3PpbuO8BIgLTVmRGXdKZxVVFOiIesMnoew8ptqKCDKpOmo/Rxl7Q8EanH59hRBiPvCt3OF3b/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GXuBW79+; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43161c0068bso31709165e9.1;
-        Mon, 21 Oct 2024 07:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729521666; x=1730126466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
-        b=GXuBW79+4Gr935ZVMGhGM66/NGFeL0AMBNNZyt2zTnKlUU6Zz5SElUHIBQRJAGruLU
-         t9cwmCaW/Pe7DTPfMIz2HfXcrzlS+4gAQ/sP7lL6tBQHtiC/Xk1DCLVOZ/ZBZdvlIsyk
-         nxeI3NJ0bz/6FDi1YvdtxMZalCRZ+Nis+FQvxUgzsJeBAD39vZda07mY1gy3YaVd0cIF
-         G9iUMUrAjtzjs10GVqXEY/ttmLVua7sWhs8/sD22XXKJ6y95P0QfWnpoQOImZnK3+9qm
-         u5TWrV89emxdruCE8F5s1qm6lAs1xrAaKY6a+DChrkW/XndrFqDj2kkJXJHfcmyLibN4
-         UtmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729521666; x=1730126466;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
-        b=beH14Y+nLgtIAnZ4OU0pWmgvTfPBilSUTPw3y9udK9UzbTIazkUqDDeMdwNrSDaXdK
-         8lX4aEK8hPyEZra91/5O92ptUe4AI5++EpKnvXHyZ2w0cqhv0quvrT+Z1lZz9cGxZyoV
-         dtR6PMKYLs5DEcG9B7jrSbF9gr108gcwkdbLoZZXiUTsdmpVcWpfKyqMTiBJhJxua74w
-         yYT0aYsUzaINCpn7WDvvxIsZJCB1ykpazemNcPDM3HXcEOqBjQ0a38Ky7AcWvuW4mY6p
-         iEIhZ9RvhECszoOwa8/wD2qQXNnpqQe5kUPn//OjFDli5iS1YAmz5ccjypmU4WIy/UBE
-         2gVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaX9f+rgLszwfNwOSks772unKHcTRHTZmFjjFcSihOFNq2QyYasuFAYOtbBx0i6vdWuBjLV1MUzpplUw==@vger.kernel.org, AJvYcCXcgl01oechym9XqRKMdgkCJMvqJs9btTI3D/K0kIj2HVRwzZS9LH1WbJHHTeP3vb0+ELmLtigZIFMxJYKE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJz9GYT+3930+fvLX52aIWQzF6EoaP5aO/KVVnp3IohfMIZIbj
-	u10+wYhk+NMPCmK1TdVMiMc7SLWLSxkobVwfZ/C9MvVHYUoHEQlWQvtKzQ==
-X-Google-Smtp-Source: AGHT+IED1aGCt1yMsc3SxJEZZdr6y+3uXzAWdgpu65AhZbo4N+sbPYfiaV0ZPST7QuCCjvgI8LLCzQ==
-X-Received: by 2002:adf:f88d:0:b0:371:82ec:206f with SMTP id ffacd0b85a97d-37ea2174e92mr6426192f8f.16.1729521665691;
-        Mon, 21 Oct 2024 07:41:05 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm4483177f8f.104.2024.10.21.07.41.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 07:41:04 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] Input: serio_raw: Fix uninitialized variable 'written'
-Date: Mon, 21 Oct 2024 15:41:03 +0100
-Message-Id: <20241021144103.928386-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729521703; c=relaxed/simple;
+	bh=oES9w02HsNO+wAdgGTKwa5IUNCRPd0m/e8VFJjy8Y6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sOM/fs0DxDo82KcfjBwl5PSe2FSytOtNlqOFWO/yzYOGzHQj7YF9c0kKmOHeiDTKpCZxEDty54yhjRS4KazWNom0dbo9ueQQRLgouxfxzmTugA3ID1U5guE7MBvFZpk7eHjSOjwEGLXgzg4xLtGYuFzHPfFCMUC+ZiSTQPh+WPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l1NZndhc; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C1E1660003;
+	Mon, 21 Oct 2024 14:41:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729521698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HWKKfevfqq3xTQx/qm5VhEu0R1W8s/2FfrkGVfXaCqU=;
+	b=l1NZndhcmmiFNAfOeaopATuWCDhot1mJIYIJNqbwnUDhfcG+fSZwrPO3K+LKKi1VuAKCva
+	F1XcD3cp8ikbu1KgiUyGHW3NhsuAi/a7L7vK5Ii0AMJYpEeBAWcMoNMTqSaLIkc3cDw1Vq
+	o0ochi2t0hSFRAjfr531mBmOSYHH+I//wjmQNp3rDbDDpRiloKt/kLQZrYqZsAx1O886Wk
+	L12XTFZMg0eHP4GXV8BWpe9YcF3nU1b+1pHbADu88IvXV/MWaEMs2xv0tF+LIvzb/vA3T6
+	j0JE4uEgGi9icat4PhlAuxS+BDSDzDLoJEw71RmrQusyBk00/i3tW52e7My8ag==
+Date: Mon, 21 Oct 2024 16:41:35 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
+ <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Lee Jones
+ <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan
+ <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Herve Codina
+ <herve.codina@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew
+ Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
+ Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v10 0/6] Add support for the LAN966x PCI device using a
+ DT overlay
+Message-ID: <20241021164135.494c8ff6@bootlin.com>
+In-Reply-To: <20241014124636.24221-1-herve.codina@bootlin.com>
+References: <20241014124636.24221-1-herve.codina@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-The variable written is not initialized and subsequent increments of the
-variable are using an uninitialized value. Fix this by initializating it
-at the start of the function.
+Hi Greg, Philip, Maintainers,
 
-Fixes: 5b53a9d40c4f ("Input: serio_raw - use guard notation for locks and other resources")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/input/serio/serio_raw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 14 Oct 2024 14:46:29 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-diff --git a/drivers/input/serio/serio_raw.c b/drivers/input/serio/serio_raw.c
-index e058fef07f57..4d6395088986 100644
---- a/drivers/input/serio/serio_raw.c
-+++ b/drivers/input/serio/serio_raw.c
-@@ -185,7 +185,7 @@ static ssize_t serio_raw_write(struct file *file, const char __user *buffer,
- {
- 	struct serio_raw_client *client = file->private_data;
- 	struct serio_raw *serio_raw = client->serio_raw;
--	int written;
-+	int written = 0;
- 	unsigned char c;
- 
- 	scoped_guard(mutex_intr, &serio_raw_mutex) {
+> Hi,
+> 
+> This series adds support for the LAN966x chip when used as a PCI
+> device.
+> 
+...
+
+All patches have received an 'Acked-by' and I didn't receive any
+feedback on this v10.
+
+Is there anything that blocks the whole series merge?
+
+Let me know if I need to do something else to have the series applied.
+
+Best regards,
+Hervé
+
 -- 
-2.39.5
-
+Hervé Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
