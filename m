@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-374770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04399A6FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0614D9A6FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250811C20993
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C2E1C21C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B05F1E0E0E;
-	Mon, 21 Oct 2024 16:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E061E0E0E;
+	Mon, 21 Oct 2024 16:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="a9x9op6z"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mlR79deu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A867F199939;
-	Mon, 21 Oct 2024 16:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A1F1C3F01;
+	Mon, 21 Oct 2024 16:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528607; cv=none; b=TkwuXUQVdFWXS8XE17qXNdVodlU2YjC2EZMAPkgaeUlu8BGVOjgMP7IbwX9EGRPJhWFOYZeNjsKkAgzWV7zTeXi1CvrAiALyRkuScY37wroiRQLtQSDoi9nqmZkS4sYIUpkqT9CXVSsT2j3XybyCoulGRZ65NG9ohgmyVuIDvwQ=
+	t=1729528642; cv=none; b=FeKarYQxxBGCW0orzOS+295xvsBRSRD38ptljCXIfVMf0E7MprT5k3hF9/+ufDad22/3BUrOH8OM9ojrTDT8gPUhExUYP7NaywgSPBnHA3INM3uqPVut2XlXb/1SLXVUsS0SCvW8waWeZXxp6N3K8eeK2jQrjo2ygiu7pkxPEM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528607; c=relaxed/simple;
-	bh=XuuGobw0hfMVMmCTBZKSUa46Tfsbw6R+AJV4pdFgx6Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q6w6xQYZlPNX0PNC8pF+JFLaCtmkGxbX1thFN1kct5sjP+x49qaQ3hqgDRgWJddMpAXXhvk93ppA+cCLZWf5hUHWSSJEDrEswyMxzD3BOM/0o6boAtsmuFHzN79J5Ycb54oCvYiFyhL7Lq4x+Lz/HUxTgJR9+5K4uAUa7pbPDXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=a9x9op6z; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BE20542B3D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729528603; bh=kkS3fy90jciUzgDpVmMX47FSMiXqhw+lNdT1LNHH8mQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=a9x9op6z1qpevV34J9312DUqgryyzZveELlBtjWPRkqi5pPPA2wm0Hcasqo4WS4ro
-	 fhrTcGmVkW7/GImVLQ09nySRbNHMzAdnE/YkQAxT6/rwcdaDiMXDyKMxOyE2k0Bal+
-	 VR5HCMCK0syfMjzfLTRFMyzpaX6MlW3D/YCc5kTfUdZXQlsFZNH7g7GoZe0ltJIaRw
-	 zfxHzFZbCnyLz9HTIwYzHav0eAoZT0yeT7oi81rzIVtjbDAFjztVq6f72i1mZlspVs
-	 7xesrYZXHv+J4OTxIIrkwcBPupqA0/VZs6QC7w+XwGMUTUTI9GFe1OQuk2LFIZZTe8
-	 UpzicWbS+60Gg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id BE20542B3D;
-	Mon, 21 Oct 2024 16:36:43 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
- <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-Subject: Re: [PATCH v2] docs/zh_CN: update the translation of
- process/programming-language.rst
-In-Reply-To: <bae3c59c-39a5-4daa-b37e-bbf077d57643@hust.edu.cn>
-References: <20241018015226.3786020-1-dzm91@hust.edu.cn>
- <87ed49tqia.fsf@trenco.lwn.net>
- <bae3c59c-39a5-4daa-b37e-bbf077d57643@hust.edu.cn>
-Date: Mon, 21 Oct 2024 10:36:43 -0600
-Message-ID: <87wmi1s99g.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1729528642; c=relaxed/simple;
+	bh=cp6oYYgOsrrCc+iShk2LoGhhdoylFkelstQyBdhSgZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcM0IovmOQRxjEbUgu3ZUEzXBxf1he9oGlL2TZNYr+nJN4oaj9QOUSZDEmTcgUJmumDek808kMtJerEOWJk8j9cPxRscVpbxTkc4cZQ9hEVTmcFEWqXphmgisbB/djtS3nIdIQNqOLsPE9/87DQyn6FIWd3IvHOOZDl7qBKINFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mlR79deu; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729528641; x=1761064641;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cp6oYYgOsrrCc+iShk2LoGhhdoylFkelstQyBdhSgZI=;
+  b=mlR79deulDXtOqSUZQdxShlc5p+6bU8TCbUJHE6DhythjNNos3KXPhhe
+   FRd8eQpGsMZRhFVQLlfZ8ta+LQpWirdV20rjnIpBmPFtoXLVEvRiAzvjb
+   aeVkYJyNVlenXPUCaYzUx27UnafVeXk6d8cHroLZp+AK0vNgQysHZcAz5
+   wWj+WeRQt6S/Up8dC9/EL4lZNjOoYYJBGI8raAE0XeYhEHzCkt7HnJgOI
+   s+m/hnS3x64nHSA8BUdiamdYCRTJNmXsDFYnJFx4uXpWnblLHsMraT723
+   4jnGz0Ei+cMV/YjYYNnyyTgmzSv0QllMF5VV85ccLULpzDRL1AzqUxcb/
+   Q==;
+X-CSE-ConnectionGUID: NUEWT9syTaqcQd5yvg3JHA==
+X-CSE-MsgGUID: wMNM98QcTWimfjVqvEOKhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28900005"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28900005"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 09:37:20 -0700
+X-CSE-ConnectionGUID: 8xlQShIjQsq3KoV5yIMmAQ==
+X-CSE-MsgGUID: GB/DnTueSuO03UYI1IwLdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="110343285"
+Received: from cphoward-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.124])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 09:37:12 -0700
+Date: Mon, 21 Oct 2024 09:36:56 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct
+ cpuinfo_topology
+Message-ID: <20241021163656.zyyugk4vyqyhzh3i@desk>
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+ <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
+ <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local>
+ <20241018203053.2x6oyws3dkxfw6rm@desk>
+ <9534B53F-7B91-4525-97DC-889EC3836658@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9534B53F-7B91-4525-97DC-889EC3836658@alien8.de>
 
-Dongliang Mu <dzm91@hust.edu.cn> writes:
-
-> On 2024/10/21 23:38, Jonathan Corbet wrote:
->> Dongliang Mu <dzm91@hust.edu.cn> writes:
->>
->>> Update to commit 0b02076f9953 ("docs: programming-language: add Rust
->>> programming language section")
->>>
->>> scripts/checktransupdate.py reports:
->>>
->>> Documentation/translations/zh_CN/process/programming-language.rst
->>> commit 0b02076f9953 ("docs: programming-language: add Rust programming
->>> language section")
->>> commit 38484a1d0c50 ("docs: programming-language: remove mention of the
->>> Intel compiler")
->>> 2 commits needs resolving in total
->>>
->>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->>> ---
->>> v1->v2: revise the script name
->>>   .../zh_CN/process/programming-language.rst    | 78 +++++++------------
->>>   1 file changed, 30 insertions(+), 48 deletions(-)
->> This one adds some new build warnings:
->>
->> Documentation/translations/zh_CN/process/programming-language.rst:44: WARNING: duplicate citation gcc, other instance in /stuff/k/git/kernel/Documentation/process/programming-language.rst
->> Documentation/translations/zh_CN/process/programming-language.rst:51: WARNING: duplicate citation rustc, other instance in /stuff/k/git/kernel/Documentation/process/programming-language.rst
->>
->> *Please* be sure to do a docs build before submitting your patches.
+On Mon, Oct 21, 2024 at 03:38:06PM +0200, Borislav Petkov wrote:
+> On October 18, 2024 10:30:53 PM GMT+02:00, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+> >I will drop "core", but can we keep "native"? "native" is used in SDM to
+> >define this field. Also model_id could be confused with model number.
+> >
+> >  From Intel SDM Vol. 2A:
+> >
+> >  Bits 23-00: Native model ID of the core. The core-type and native model
+> >  ID can be used to uniquely identify the microarchitecture of the core.
+> >  This native model ID is not unique across core types, and not related to
+> >  the model ID reported in CPUID leaf 01H, and does not identify the SOC.
+> 
+> I'm still not clear on what "native" is supposed to mean here?
 >
-> I am sorry. I am not sure why I miss this warning. I should strictly 
-> follow the rule - make htmldocs and checkpatch do no trigger any errors 
-> or warns.
->
-> A simple question: if you miss the warning in one `make htmldocs` 
-> building``, you rerun `make htmldocs` and still trigger the warning or 
-> just the warnnings do not appear until `make cleandocs` is done?
+> The core is born this way and then it changes... so this is its native
+> model ID? Weird...
 
-Sphinx only rebuilds what it has to, so a warning may not repeat if you
-do not build from a clean tree.
+In a hybrid system the model number reported by CPUID could represent
+multiple core-types. As model number is same for all cores, it is
+insufficient to uniquely identify the microarchitecture of a core. I
+believe "native model ID" bridges that gap as it is specific to a core.
 
-jon
+> >Yes, topo.hw_cpu_type is initialized to TOPO_HW_CPU_TYPE_UNKNOWN. We should
+> >not ideally need the vendor check at all. As long as topo.hw_cpu_type has
+> >the core type, returning it should be enough here. For Intel hw_cpu_type
+> >also has the native_model_id, that is why we need the vendor check.
+> >
+> >If AMD or other vendors have similar use case, it makes sense to add the
+> >explicit vendor check. Please let me know if thats the likely case.
+> 
+> Yes, it either needs to be vendor-agnostic or you need to accommodate all
+> vendors. Former sounds cleaner...
+
+Ok, I will add an explicit vendor check for AMD as well.
 
