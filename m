@@ -1,94 +1,74 @@
-Return-Path: <linux-kernel+bounces-374721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4789A6EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AD99A6EFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337AB1C2333F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C7A1C23520
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D201DACA1;
-	Mon, 21 Oct 2024 16:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4837B1E5716;
+	Mon, 21 Oct 2024 16:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7e3feHW"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C7i96HM9"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A7217C224;
-	Mon, 21 Oct 2024 16:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13B91CBEAC;
+	Mon, 21 Oct 2024 16:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526520; cv=none; b=ouXg9piQhxokwl6gGpV8kG6RrfoNo6ZOE8D38XJmjAaB22rmzkDbzEKiLvrMfWOjSqnyNX8ycMeP1TlySOXByoeXkgRZAz36xZC4x3R7JGkGB37qrPgFoHDhb3W18gr21H/Jbz8AXSSDR0DM66NYB49dW/azTY2oNK6eadXLYfY=
+	t=1729526540; cv=none; b=d2RSiPYcWGRZQ60J9Ri9S7sSOL3wDaR5OGrT4NxS0XW6IStAe6shVZLA/UC9EuXc6uelW3E3ZpS51DCY7egDzdjaBd46UU9jhGyoNNygyKgDT/jzpCsWEwmcj3/kBpESwg8qmxC0S9thSoFxpbabpR2wA3ZEoSLknO+EneqmA+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526520; c=relaxed/simple;
-	bh=KqOvlvWU4dwKQIYucRDgx5Bc6wlqDO5UU2lJZuu2g4g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBLLPjjGeywEWAE5CelvVbsQZtwsJAl1jm/FLLWS9ubiPFS5492DbgIzNTN4aE6gnnFa+1tPThvxq9weVErOjIt1c2L8XWt74iK9Tyau2qU9/t4XQ3DugrHAEls+s3n4CgfiWWlCHICQB+epRx8+nCXHo+K1aPOitubZtiaV0wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7e3feHW; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e8586b53so4781465e87.1;
-        Mon, 21 Oct 2024 09:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729526516; x=1730131316; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=U3dxFTPmf1Xx55SxWH3mCtz6g7NbAdX1kAdoe9FSYX4=;
-        b=Y7e3feHWAdZu4baUmetvZbgMdzPErvu2LoFcLVvYsQ9csI89ZlmQlzOZgNwm3oG/WG
-         NLHSogxJY1k8bOWqkGqGnUorDtkmIbwFy/r0m1duhd72toGiWab+9eGM3qlRtJ0vdznL
-         iWPQ7sIKdC/xVWXJfePC0sHmbUpD3fiNHs9019xFUOe02+2NW716nhNNDaRI0BWFqfJP
-         wbfIVDal+3zcErC9KTWpG7IyCHpOYA+gN648VOSERPklOr+H5S+VezcZ4uzP2z06Te5O
-         ptjK9f7+XTCMdnBx8VIIZOkCYoyDCaL6s7kEU7z23kAAQcBbHn1651/2ih0Tt6ogxA2C
-         2htw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729526516; x=1730131316;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3dxFTPmf1Xx55SxWH3mCtz6g7NbAdX1kAdoe9FSYX4=;
-        b=ppDpY4TmI7hN3XWgUPlET42BsI5qPZ+flIITXp74IJkhGFTApxlw2tfJok5iuv4mhU
-         TFB5on3ZJ92Yy7q9DTEzPHwG7iHHr5OrzB7gbxH016UEwGBkZMM3bSfkense8dAbgo/w
-         0d7N/M/XU6PCVj9b2lVm2kdGP59SHTWXaKJZV0kn4Z8s5/28VlFOXI+mgg+2ocp/3WW2
-         wCVbb9g2Dx8kpvmCrlRVd3BG3vqzFcfht2RYKlWtWIrKFQ8eREHgfPqxlkTzFWEQE2bc
-         x/9x74x9HC+0CWbWqQKL2wyz6juHPAnj4SD+NdiKxfFq3tbAnNC8cKqJlYWZMjWTkIis
-         gZZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3WIozy9H9wHxr/72RQchfKBkIbAIa39blCjM+JwjYIYqgEO8fyEtBOD/rcZ2DjHi9e17/8tt+2DzlzoMx@vger.kernel.org, AJvYcCVRkI1Evz/yus3DFAe56YuKtM80kI2Q0os4e7FnmpQaQWYc+lf4MCXf0p4Xv5DdNpFWCC3Q@vger.kernel.org, AJvYcCXJRVUZKyDwAgGZEF9JlpyfOVrCrbPTCa4+8ml25H+Ifb+r1l7VzdFsPxntcdIPhKWkSX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4hyDxjA249ou9Ohn4v3Ktnz+ULTRBvmvWdn8amu09pI4nw1XY
-	shku7BZkx4CEu77EsTFEfWM/R2EGmmJObQT1NOK9u4ytJZ+Q5Vq0
-X-Google-Smtp-Source: AGHT+IHeKm06YyrvKQ0tfAGHWdf+1GK274E7UqvzwaxdSk+6ZjECVQrZ5AXSQ8ROVmeI8Ec5+paYeA==
-X-Received: by 2002:a05:6512:3d92:b0:539:fe02:c1fe with SMTP id 2adb3069b0e04-53b13185208mr22440e87.16.1729526515916;
-        Mon, 21 Oct 2024 09:01:55 -0700 (PDT)
-Received: from pc636 (host-90-233-222-236.mobileonline.telia.com. [90.233.222.236])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a224313b5sm521241e87.201.2024.10.21.09.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 09:01:55 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 21 Oct 2024 18:01:52 +0200
-To: paulmck@kernel.org
-Cc: paulmck@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-	syzbot <syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	Marco Elver <elver@google.com>, andrii@kernel.org, ast@kernel.org,
-	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
-	haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev, sdf@fomichev.me, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [syzbot] [bpf?] KCSAN: data-race in __mod_timer / kvfree_call_rcu
-Message-ID: <ZxZ68KmHDQYU0yfD@pc636>
-References: <670cb520.050a0220.4cbc0.0041.GAE@google.com>
- <CACT4Y+a1sWaWSVoYrafE+9secQgHYwywEWGCSTF6MZs0Rr7zUA@mail.gmail.com>
- <278957c8-a6d2-43e5-aed7-9ed44648ffb2@paulmck-laptop>
- <CA+KHdyX5n8K0guzyGiWFOt=p8UY6OvHrkH01-wgRHjzF8BZxDQ@mail.gmail.com>
+	s=arc-20240116; t=1729526540; c=relaxed/simple;
+	bh=2jsYqb4Ep2sJG5RivIhBxdAGOfUNCMP3DJotctrN4pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gttUYtcQjaqNdV7fulXnkuDDG772wPIKf9j/7cGV5XuNGuNNYge3j3BEQzYleePpmLapMh2k6ZUjFK+ApzWBPlITl7/Y+ki9H89jgHyHuTL+7XaJYlTn96yXABD5fsXddjKLa6RNlb1KjQiW/rlMMQ9DwGmRrIsvsJ8D0UQF6Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C7i96HM9; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AFE7340E0198;
+	Mon, 21 Oct 2024 16:02:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TNPfEbfOKVQk; Mon, 21 Oct 2024 16:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729526530; bh=gxl89NxCdQju+U0MLf0hibFSL/6VOGUYN70p3/bw+j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C7i96HM9lXwl1k5HrAq902CmHG0b3HztacSFaP1d9APzlRdHBwfHHY+Nt6ByNtrcF
+	 R8j/llMr1+RvDOHplMM3GixW8TmJ6nK3x2XQHHCn5I39mGOT43cvxL2umYYan+HfYj
+	 CRJLTO6GFdi/1RU4Aa54ow86yrb634NySlltHrQQCh4nhTrzrHXZbpVeHsGAgPHNSK
+	 uP8+K+rqfQQDPgBqdHTpDZSh74tVfLsGUmEdhRB9m6YhIsAb/koG850TzIezCAsw7T
+	 naUCIv76eZlZASeU/dOXUKsfn186sZvz3hMCOOLulMVAaHs7RjMwsSvoIKLVfNsxh0
+	 2JXlWguaQTySq3ZR+Ki6Zg3415vJX5qsRQVTGKBC+hUsoxDKGSFCTbn/cAief5jYyr
+	 9+Pe0Kr+hUr0wFFSOQHG4qVZi01RZCnMKIWWjLb8JiUiu90PAff6r3avbT1YjDvL79
+	 EwAYGAAbTrW0t+XKU3+T/5DUH/8w4HVw2PNeWPXH5w3esKMQ8Rdfz72NARJfzELgs1
+	 IHnLM08TDqszmkfWEZbgtLLf54Cp6twbiJ94FySU3g4cjbvHePb4Urpd9IseieN/JM
+	 1XS25ZsLtRBAbZm49S+px84WiWvweL6abSkW16sXLEGkiQvjzrFwgG1AuZ8go048Q5
+	 aoyYhLuA2KoPr42gbEiqNAnY=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98CD340E0194;
+	Mon, 21 Oct 2024 16:02:03 +0000 (UTC)
+Date: Mon, 21 Oct 2024 18:02:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: bugzilla-daemon@kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>
+Cc: mikeseohyungjin@gmail.com
+Subject: Re: [Bug 219383] New: System reboot on S3 sleep/wakeup test
+Message-ID: <20241021160202.GGZxZ6-gCNNKUtTRse@fat_crate.local>
+References: <bug-219383-6385@https.bugzilla.kernel.org/>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,141 +77,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+KHdyX5n8K0guzyGiWFOt=p8UY6OvHrkH01-wgRHjzF8BZxDQ@mail.gmail.com>
+In-Reply-To: <bug-219383-6385@https.bugzilla.kernel.org/>
 
-> On Mon, Oct 14, 2024 at 7:00 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Mon, Oct 14, 2024 at 10:27:05AM +0200, Dmitry Vyukov wrote:
-> > > On Mon, 14 Oct 2024 at 08:07, syzbot
-> > > <syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > syzbot found the following issue on:
-> > > >
-> > > > HEAD commit:    5b7c893ed5ed Merge tag 'ntfs3_for_6.12' of https://github...
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=148ae327980000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f7ae2f221e9eae
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=061d370693bdd99f9d34
-> > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > >
-> > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > >
-> > > > Downloadable assets:
-> > > > disk image: https://storage.googleapis.com/syzbot-assets/79bb9e82835a/disk-5b7c893e.raw.xz
-> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/5931997fd31c/vmlinux-5b7c893e.xz
-> > > > kernel image: https://storage.googleapis.com/syzbot-assets/fc8cc3d97b18/bzImage-5b7c893e.xz
-> > > >
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com
-> > > >
-> > > > ==================================================================
-> > > > BUG: KCSAN: data-race in __mod_timer / kvfree_call_rcu
-> > > >
-> > > > read to 0xffff888237d1cce8 of 8 bytes by task 10149 on cpu 1:
-> > > >  schedule_delayed_monitor_work kernel/rcu/tree.c:3520 [inline]
-> >
-> > This is the access to krcp->monitor_work.timer.expires in the function
-> > schedule_delayed_monitor_work().
-> >
-> > Uladzislau, could you please take a look at this one?
-> >
-> >                                                         Thanx, Paul
-> >
-> > > +rcu maintainers, this looks more like rcu issue
-> > >
-> > > #syz set subsystems: rcu
-> > >
-> > > >  kvfree_call_rcu+0x3b8/0x510 kernel/rcu/tree.c:3839
-> > > >  trie_update_elem+0x47c/0x620 kernel/bpf/lpm_trie.c:441
-> > > >  bpf_map_update_value+0x324/0x350 kernel/bpf/syscall.c:203
-> > > >  generic_map_update_batch+0x401/0x520 kernel/bpf/syscall.c:1849
-> > > >  bpf_map_do_batch+0x28c/0x3f0 kernel/bpf/syscall.c:5143
-> > > >  __sys_bpf+0x2e5/0x7a0
-> > > >  __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
-> > > >  __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
-> > > >  __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5739
-> > > >  x64_sys_call+0x2625/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:322
-> > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > >  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
-> > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > >
-> > > > write to 0xffff888237d1cce8 of 8 bytes by task 56 on cpu 0:
-> > > >  __mod_timer+0x578/0x7f0 kernel/time/timer.c:1173
-> > > >  add_timer_global+0x51/0x70 kernel/time/timer.c:1330
-> > > >  __queue_delayed_work+0x127/0x1a0 kernel/workqueue.c:2523
-> > > >  queue_delayed_work_on+0xdf/0x190 kernel/workqueue.c:2552
-> > > >  queue_delayed_work include/linux/workqueue.h:677 [inline]
-> > > >  schedule_delayed_monitor_work kernel/rcu/tree.c:3525 [inline]
-> > > >  kfree_rcu_monitor+0x5e8/0x660 kernel/rcu/tree.c:3643
-> > > >  process_one_work kernel/workqueue.c:3229 [inline]
-> > > >  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
-> > > >  worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
-> > > >  kthread+0x1d1/0x210 kernel/kthread.c:389
-> > > >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
-> > > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > > >
-> > > > Reported by Kernel Concurrency Sanitizer on:
-> > > > CPU: 0 UID: 0 PID: 56 Comm: kworker/u8:4 Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> > > > Workqueue: events_unbound kfree_rcu_monitor
-> > > > ==================================================================
-> > > > bridge0: port 2(bridge_slave_1) entered blocking state
-> > > > bridge0: port 2(bridge_slave_1) entered forwarding state
-> > > >
->
-I tried to reproduce it but i am not able to. For the other hand, it is
-obvious that a reading "krcp->monitor_work.timer.expires" and simultaneous
-writing is possible.
+Looks like TPM. CCing the proper people.
 
-So, we can address it, i mean to prevent such parallel access by following patch:
+On Mon, Oct 14, 2024 at 12:46:26AM +0000, bugzilla-daemon@kernel.org wrote:
+> https://bugzilla.kernel.org/show_bug.cgi?id=219383
+> 
+>             Bug ID: 219383
+>            Summary: System reboot on S3 sleep/wakeup test
+>            Product: Platform Specific/Hardware
+>            Version: 2.5
+>           Hardware: All
+>                 OS: Linux
+>             Status: NEW
+>           Severity: normal
+>           Priority: P3
+>          Component: x86-64
+>           Assignee: platform_x86_64@kernel-bugs.osdl.org
+>           Reporter: mikeseohyungjin@gmail.com
+>         Regression: No
+> 
+> I'm working for LG laptops, and I have run serveral LG PC with ubuntu OS. You
+> may know, most LG laptops has intel soc.
+> I found out a critical issue, system reboot on S3 sleep/wake up.
+> 
+> Enviornments:
+> - PC BIOS : Phoenix Technologies
+> - Intel Jasperlake or Intel Lunarlake 
+> - OS Ubuntu 22.04(Jasperlake), 24.04.1(Lunarlake)
+> - linux kernel version 6.x.0(Jasperlake) or up-to-date 6.11(Lunarlake)
+> 
+> Symptom:
+> 
+> Running the aging scripts like below, system reboots.
+> -------------------------
+> #!/bin/bash
+> <snip>
+> for (( i=1; i<=10000 ; i++ ))
+> sudo rtcwake -m mem -s 10 >> ${LOG} 2>&1
+> <snip>
+> -------------------------
+> The scripts works like below,
+> 1. waits 10 secs
+> 2. echo mem > /sys/power/state
+> 3. waits 10 secs again and wake up system like press power button.
+> 
+> 
+> My analysis:
+> 
+> I had reproduced several times to find that BIOS side triggered the system
+> reboots.
+> | pm_suspend() | syscore_suspend() | acpi_suspend_enter() | ... |  < BIOS > | 
+> ...| acpi_suspend_enter() |  syscore_resume() | ...|
+> 
+> Debugging on BIOS, TPM2 can generate cold reset when it detects something wrong
+> after TPM resuming.
+> In the BIOS code, if there are active PCR banks that are not supported by the
+> Platform mask, it supposes to be update the TPM allocations and reboot the
+> machine.
+> 
+> It means that something in linux kernel side can effect operations of  tpm when
+> going to sleep.
+> So, I have debuggered and traced the functions related to tpm, such as
+> tpm_chip_start whenever the symptoms represented.
+> 
+> In normal case, tpm_chip_start() called once like below,
+>  tpm_pm_suspend()-> tpm_chip_start().
+> but issued case, additionally called below
+>  hwrng_fillfn ->
+>   rng_get_data ->
+>     tpm_hwrng_read ->
+>       tpm_get_random ->
+>         tpm_find_get_ops ->
+>            tpm_try_get_ops ->
+>              tpm_chip_start ->
+> 
+> I found out that when running hwrng_fillfn(), related to Hardware random number
+> generator,  called during system_sleep, it can cause system reboots.
+> To Verify it, I have tested with custom kernel which includes below patch.
+> 
+> -----------------------
+> From 373e92bb6d471c5fb42bacb97a4caf5375df5522 Mon Sep 17 00:00:00 2001
+> From: mike Seo <mikeseohyungjin@gmail.com>
+> Date: Thu, 10 Oct 2024 14:04:57 +0900
+> Subject: [PATCH] test_patch
+> 
+> test_patch for reboot while sleep/wakeup
+> 
+> Signed-off-by: mike Seo <mikeseohyungjin@gmail.com>
+> ---
+>  drivers/char/hw_random/core.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+> index 57c51efa5..d3f0059a4 100644
+> --- a/drivers/char/hw_random/core.c
+> +++ b/drivers/char/hw_random/core.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/suspend.h>
+> 
+>  #define RNG_MODULE_NAME                "hw_random"
+> 
+> @@ -469,6 +470,22 @@ static struct attribute *rng_dev_attrs[] = {
+> 
+>  ATTRIBUTE_GROUPS(rng_dev);
+> 
+> +
+> +static int hwrng_pm_notification(struct notifier_block *nb, unsigned long
+> action, void *data)
+> +{
+> +
+> +       switch (action) {
+> +       case PM_SUSPEND_PREPARE:
+> +               is_suspend_prepare = 1;
+> +               break;
+> +       default:
+> +               is_suspend_prepare = 0;
+> +               break;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static struct notifier_block pm_notifier = { .notifier_call =
+> hwrng_pm_notification };
+>  static int hwrng_fillfn(void *unused)
+>  {
+>         size_t entropy, entropy_credit = 0; /* in 1/1024 of a bit */
+> @@ -478,6 +495,9 @@ static int hwrng_fillfn(void *unused)
+>                 unsigned short quality;
+>                 struct hwrng *rng;
+> 
+> +               while (is_suspend_prepare)
+> +                       msleep(500);
+> +
+>                 rng = get_current_rng();
+>                 if (IS_ERR(rng) || !rng)
+>                         break;
+> @@ -549,6 +569,7 @@ int hwrng_register(struct hwrng *rng)
+>                         goto out_unlock;
+>         }
+>         mutex_unlock(&rng_mutex);
+> +       WARN_ON(register_pm_notifier(&pm_notifier));
+>         return 0;
+>  out_unlock:
+>         mutex_unlock(&rng_mutex);
+> -- 
+> 2.43.0
+> ------------------------
+> 
+> And I had passed over 10000 times of s3 wake/sleep aging test.
+> 
+> Can you make some patches for this issue and merges?
+> 
+> Thank you,
+> Mike
+> 
+> -- 
+> You may reply to this email to add a comment.
+> 
+> You are receiving this mail because:
+> You are watching the assignee of the bug.
 
-<snip>
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e641cc681901..d711870fde84 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3531,7 +3531,7 @@ static int krc_count(struct kfree_rcu_cpu *krcp)
- }
- 
- static void
--schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
-+__schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
- {
- 	long delay, delay_left;
- 
-@@ -3545,6 +3545,16 @@ schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
- 	queue_delayed_work(system_wq, &krcp->monitor_work, delay);
- }
- 
-+static void
-+schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krcp->lock, flags);
-+	__schedule_delayed_monitor_work(krcp);
-+	raw_spin_unlock_irqrestore(&krcp->lock, flags);
-+}
-+
- static void
- kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
- {
-@@ -3841,7 +3851,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 
- 	// Set timer to drain after KFREE_DRAIN_JIFFIES.
- 	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING)
--		schedule_delayed_monitor_work(krcp);
-+		__schedule_delayed_monitor_work(krcp);
- 
- unlock_return:
- 	krc_this_cpu_unlock(krcp, flags);
-<snip>
+-- 
+Regards/Gruss,
+    Boris.
 
-i will send out the patch after some testing!
-
---
-Uladzislau Rezki
+https://people.kernel.org/tglx/notes-about-netiquette
 
