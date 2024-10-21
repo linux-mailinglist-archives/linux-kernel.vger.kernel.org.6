@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-375197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBE99A9260
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13AD9A92D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC2FD2838BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BF20B231B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78AA1E32A2;
-	Mon, 21 Oct 2024 21:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963DC1FF045;
+	Mon, 21 Oct 2024 22:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gbgue5UC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B9NM8C/i"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513F81990C8
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 21:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DF1FDFA0
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729547675; cv=none; b=t7tystUm52jB0gI3tMa0pFE3Ohm2QJ+UNhjcrKHRTTVZE3W8tE1DLPRMM2qB4KQ9JH/peSyXsjBwRWhi9uNcQLzJR1id3zptAaJVwy/WlcKq8TZqnyDzTAmDokjeIZT88CqtSoUHY5EEcsVXDx0q2WsWZL5v2pYYjmbXMadtrSg=
+	t=1729548176; cv=none; b=bd6BVu6OT8WYhmhF1K0cqM2E+G5uLzXC5wUTVwcNToXrCL5Tpelzsl81Lbu7fkzxzcqpcvAn6OB01vdDaN1YVCrGBlZZHiawA/30uZ+FmwefgMgiUJwbXzvc1lpFVAVSUjcQLYqMv//jD1RwcvzpJBZLKBk1IYr4Cd85CeSQrUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729547675; c=relaxed/simple;
-	bh=sw+dBGfFbqpKv9a1ctQHwNLTPSK8mhahzDAhyz5qpAI=;
+	s=arc-20240116; t=1729548176; c=relaxed/simple;
+	bh=2HURbjKo1eAJNOse2Ao8NLyhdbO+OLbMMD9fcMmUnCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aT158C9u7MotA0E+lGqjPd8RUYOI0bGdpuAxHkhnie60YMPzlaYffnywPkyOBYmUDMm0xXyBO2QwI5bovyfsKxZ31Qlpgiyy5giiwh0f3E2eSFlO21k+anP8OAgs3vKcKizNY0EDH5mxQ9e4qAiQpzf84h+FWgpc0kr7V0jktnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gbgue5UC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A69FC4CEC3;
-	Mon, 21 Oct 2024 21:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729547674;
-	bh=sw+dBGfFbqpKv9a1ctQHwNLTPSK8mhahzDAhyz5qpAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gbgue5UCC6NSGITKZC7v2QFwc6i10sDz/wKroW9aomETPeuwARU1RDkEPCQLxPtg5
-	 WupsDYNa/+MUivH8Qgk0MpS8JFdfdtKG5zymRC4pAtqnFn34btdhpWICZLWI6knQwY
-	 6tisn4KISrm5mCknSBNAtTC/FpiEl9aRY+zMnjV7Exl2dER15/BwKHyAVQB6BUoz5c
-	 Nj42Oj6qbw+dXbCNE6csmBn2PYPoQTfiu+DocuuCbcY9t2kmU0z9fvbp5Ya9NIbO/u
-	 IEaZi5/eJNeBINGy7CCZmFWTBBudR/+q6c/HHyX0dpts9Z2H55tv9i4LT4RNOU1Ol5
-	 IV7w3tn65vBqg==
-Date: Mon, 21 Oct 2024 23:54:31 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 09/26] posix-timers: Make signal overrun accounting
- sensible
-Message-ID: <ZxbNlw4F5tUI1a5D@pavilion.home>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083835.790542522@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZAc4bzbOI38Gcsc4WILfbirxlWD92ASNmCiqlulxf9H5R2vPK0t9WGNOu7OtI478mWB6AZtf1fhRWk1mSTEdBFkUCZ3dKrrU2PHgOTWM3uCJ3XxpqnOjGED7yuXyco0PuWzmNeiv7rpZNGP3nJJXbPmTCGMIR4v71JZ7FIAMiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B9NM8C/i; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729548175; x=1761084175;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2HURbjKo1eAJNOse2Ao8NLyhdbO+OLbMMD9fcMmUnCw=;
+  b=B9NM8C/iUN3I1MLP/d37EQjd1OQnQqIXjFSfgVU+Wq1Yn/ipTV/vNYt5
+   EztIZJQsMULaEtba+WE5QCS0tPLObVTlmonHX8b1jcDtAw2FR+3PnY4tt
+   T3W/oo+NAb+5I9pQETCN5pfzGbco5vZf4WxqZNjlIAxhdPg1pe7Kflzka
+   BCvfZbjZNmZy1IFfRIN7Qjci5o1E9PszgzxfyTfuwhbHhCxTQC65ePEih
+   bxkmX3cBipdnuLeomJVQY7M+t25pzLIuiGl8nXOIIbC7XIzj0HDMcFbO4
+   kWDoUs5nybN9DYiQeP+B5hARaWdOG7VqAT4VlHFrqye0z3t0jRSFqNlLp
+   Q==;
+X-CSE-ConnectionGUID: 8kOs+BsxQ7O4tFc08tzJTQ==
+X-CSE-MsgGUID: ZgwvmwO6Qie0ForeRmoS4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51598968"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51598968"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 15:02:54 -0700
+X-CSE-ConnectionGUID: j61wYtazQt2GvMbHT417XA==
+X-CSE-MsgGUID: JaX1jGIjTVCE/djY0grilA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="79742733"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Oct 2024 15:02:51 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t30UD-000Sfc-0o;
+	Mon, 21 Oct 2024 22:02:49 +0000
+Date: Tue, 22 Oct 2024 06:01:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Jianmin Lv <lvjianmin@loongson.cn>
+Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
+	WANG Xuerui <kernel@xen0n.name>
+Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
+Message-ID: <202410220508.9OO5jJgk-lkp@intel.com>
+References: <20241021080418.644342-1-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083835.790542522@linutronix.de>
+In-Reply-To: <20241021080418.644342-1-maobibo@loongson.cn>
 
-Le Tue, Oct 01, 2024 at 10:42:12AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> The handling of the timer overrun in the signal code is inconsistent as it
-> takes previous overruns into account. This is just wrong as after the
-> reprogramming of a timer the overrun count starts over from a clean state,
-> i.e. 0.
-> 
-> Make the accounting in send_sigqueue() consistent with that.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/signal.c |   34 ++++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
-> ---
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1961,6 +1961,34 @@ int send_sigqueue(struct sigqueue *q, st
->  	 */
->  	q->info.si_sys_private = si_private;
->  
-> +	/*
-> +	 * Set the overrun count to zero unconditionally. The posix timer
-> +	 * code does not self rearm periodic timers. They are rearmed from
-> +	 * dequeue_signal().
-> +	 *
-> +	 * But there is a situation where @q is already enqueued:
-> +	 *
-> +	 * 1) timer_settime()
-> +	 *      arm_timer()
-> +	 * 2) timer_expires()
-> +	 *      send_sigqueue(@q)
-> +	 *        enqueue(@q)
-> +	 * 3) timer_settime()
-> +	 *      arm_timer()
-> +	 * 4) timer_expires()
-> +	 *      send_sigqueue(@q) <- Observes @q already queued
-> +	 *
-> +	 * In this case incrementing si_overrun does not make sense because
-> +	 * there is no relationship between timer_settime() #1 and #2.
-> +	 *
-> +	 * The POSIX specification is useful as always: "The effect of
-> +	 * disarming or resetting a timer with pending expiration
-> +	 * notifications is unspecified."
-> +	 *
-> +	 * Just do the sensible thing and reset the overrun.
-> +	 */
-> +	q->info.si_overrun = 0;
+Hi Bibo,
 
-So this means that in the above example case, no signal at all is going to be
-delivered (because the seq will be impaired on the previously queued
-signal) and no overrun count will be incremented either?
+kernel test robot noticed the following build errors:
 
-> +
->  	ret = 1; /* the signal is ignored */
->  	result = TRACE_SIGNAL_IGNORED;
->  	if (!prepare_signal(sig, t, false))
-> @@ -1968,15 +1996,9 @@ int send_sigqueue(struct sigqueue *q, st
->  
->  	ret = 0;
->  	if (unlikely(!list_empty(&q->list))) {
-> -		/*
-> -		 * If an SI_TIMER entry is already queue just increment
-> -		 * the overrun count.
-> -		 */
-> -		q->info.si_overrun++;
+[auto build test ERROR on 42f7652d3eb527d03665b09edac47f85fb600924]
 
-Who is ever incrementing this after that? I'm a bit confused between the
-timer overrun and the sigqueue overrun. Those seem to be two different
-things without any link...
+url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-Fix-cpu-hotplug-issue/20241021-160525
+base:   42f7652d3eb527d03665b09edac47f85fb600924
+patch link:    https://lore.kernel.org/r/20241021080418.644342-1-maobibo%40loongson.cn
+patch subject: [PATCH v2] LoongArch: Fix cpu hotplug issue
+config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20241022/202410220508.9OO5jJgk-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410220508.9OO5jJgk-lkp@intel.com/reproduce)
 
-Thanks.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410220508.9OO5jJgk-lkp@intel.com/
 
->  		result = TRACE_SIGNAL_ALREADY_PENDING;
->  		goto out;
->  	}
-> -	q->info.si_overrun = 0;
->  
->  	signalfd_notify(t, sig);
->  	pending = (type != PIDTYPE_PID) ? &t->signal->shared_pending : &t->pending;
-> 
+All errors (new ones prefixed by >>):
+
+   arch/loongarch/kernel/setup.c: In function 'topo_add_cpu':
+>> arch/loongarch/kernel/setup.c:383:9: error: '__cpu_logical_map' undeclared (first use in this function); did you mean 'cpu_logical_map'?
+     383 |         __cpu_logical_map[possible_cpus] = physid;
+         |         ^~~~~~~~~~~~~~~~~
+         |         cpu_logical_map
+   arch/loongarch/kernel/setup.c:383:9: note: each undeclared identifier is reported only once for each function it appears in
+   arch/loongarch/kernel/setup.c: In function 'topo_init':
+   arch/loongarch/kernel/setup.c:391:9: error: '__cpu_logical_map' undeclared (first use in this function); did you mean 'cpu_logical_map'?
+     391 |         __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
+         |         ^~~~~~~~~~~~~~~~~
+         |         cpu_logical_map
+
+
+vim +383 arch/loongarch/kernel/setup.c
+
+   364	
+   365	int topo_add_cpu(int physid)
+   366	{
+   367		int cpu;
+   368	
+   369		if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
+   370			bsp_added = true;
+   371			return 0;
+   372		}
+   373	
+   374		cpu = topo_get_cpu(physid);
+   375		if (cpu >= 0) {
+   376			pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
+   377			return -EEXIST;
+   378		}
+   379	
+   380		if (possible_cpus >= nr_cpu_ids)
+   381			return -ERANGE;
+   382	
+ > 383		__cpu_logical_map[possible_cpus] = physid;
+   384		cpu = possible_cpus++;
+   385		return cpu;
+   386	}
+   387	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
