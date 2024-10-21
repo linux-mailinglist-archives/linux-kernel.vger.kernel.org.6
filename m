@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-374792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375899A7010
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C60D9A7011
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550591C216FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0814283303
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9151D2F54;
-	Mon, 21 Oct 2024 16:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19001EB9EB;
+	Mon, 21 Oct 2024 16:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uL3ruZF8"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQMC3Ib1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1581C7B81;
-	Mon, 21 Oct 2024 16:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B02D1C7B81;
+	Mon, 21 Oct 2024 16:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529339; cv=none; b=BDaKqlAdH4NmTSNxZR7ZT2/uwndHL5IxqfXm+nqYmN+7mdZQ2oqS82tPstlWIp2Aj0efoXjBATvfGv7TFJToJA+f4Ufora3/IJZ7S1MK0pJ+WYEEgPrO2Rg/BOYvDeL3jOOmnzUQIVUZ0Hi0lcbcgZnIot3ZJXWbdU1KFpAFehc=
+	t=1729529346; cv=none; b=ffCAl9xl/HocewL7YVhgertj/ixwbg7YPjsS/doUJhd/TsutTTc36Dq+rTMActl2kaHXHqGKbxRTzrXpCrEEAXytKaMO3+fShsFn0xX0vvafIoc7qmVWBYMb8actPq1HBHhvf+KkXJ5keDPRRxGzG5PT8M0T/wqyRhCesQWYCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529339; c=relaxed/simple;
-	bh=gR4UnDBoTyoO8LMDwZAKLoYw/q0TwI5fU2hybcdxb7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EFUwK2DTOMBVzafeyrHhsSGr1EfjYYWt8CKEttMISTCcAvk28mSbi0vPCgM5jlSLdeutlYF5SjyQIttvalTjG9B+8SkTqSseMYc+HKULYu8/Udvws51NZaBSbXdeewDICpjsXmQl/pi5D75V7jaESLbLkk9oEChVKZc2FnzPBTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uL3ruZF8; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729529334;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VM62Ppuaj9ExI8TZbSZPXIH7o5k8upPR7JSKZv9bTk8=;
-	b=uL3ruZF8Uc9ag0vqVwIbqMohY2DljJYsG9RM8UBAGRKBWdOr+NyfYsKUAmSvoDI1+dLWub
-	Mp+UEO76kTcRiUCWEjmJ/4nLAJd9xpFC1t/3+Oe8icCNL7CNJUNoPSb6w6e2PtUNR3lpyR
-	86m09p40dBnsXw8qLGNxE8SLdcM8f2I=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	stable@vger.kernel.org,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] mm: page_alloc: move mlocked flag clearance into free_pages_prepare()
-Date: Mon, 21 Oct 2024 16:48:36 +0000
-Message-ID: <20241021164837.2681358-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1729529346; c=relaxed/simple;
+	bh=Xhmz2Yd3SwGpseR8dLR4yXNrCUFWeAR1BlGSfk79iDc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B5rdRn0d9bphCaDAq7NaUz++kFGSKc7l6n2oFO3W+XxDTY5FqtUYH9TNrk/ZkEwgD2o6ZMCEuAJCiB4ZrwGcDopWuB+VFI9ZolChkSO1VBnGBFSQkg9XLyC8Gu7xHd/SH/KfS3I+uhINcPFGBkcgWCNY6iOPeEnQ5dtbHRyezXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQMC3Ib1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C1592C4CEC3;
+	Mon, 21 Oct 2024 16:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729529345;
+	bh=Xhmz2Yd3SwGpseR8dLR4yXNrCUFWeAR1BlGSfk79iDc=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=QQMC3Ib1hWtzksS58Xr0QSMETCSd3FBsbK4KEPcfRcbKxITTHSFBxd/U3uA9Cyo2F
+	 oJL4+uMvhEuqCGNrkfZtav/8y8HTygCo5VOOuQodW3IxVQfEON+gyd+1W1t9smhkah
+	 zS2iTHDBhXI08upVYblWsl59bfeIf86yMi1Gif1hCenvPuHZQqMekEAwWbTfiPSrYJ
+	 sqmOfrk1QwrjKv/CWf6pNYBBUlnErv8HqCh3TF/qLh8wuE/qNnBn1YrEZCrLzQ9oyr
+	 JFZzQIQDyM/pxW3wjVdA4tNlh8Ph8uHDceKBbAcFEfpLipp/CzHjg9rtUkptReMvl4
+	 jtJSzJxiY1lLA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC49FD15DB2;
+	Mon, 21 Oct 2024 16:49:05 +0000 (UTC)
+From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
+Date: Mon, 21 Oct 2024 22:18:57 +0530
+Subject: [PATCH] Revert "bcachefs: Add asserts to
+ bch2_dev_btree_bitmap_marked_sectors()"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241021-revert-assert-bch2-v1-1-e869c7c55bb6@iiitd.ac.in>
+X-B4-Tracking: v=1; b=H4sIAPmFFmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyNDXaCi1KIS3cTiYhCVlJxhpGtkamJukpZqYWCZYqgE1FhQlJqWWQE
+ 2NDq2thYAFnuBOGQAAAA=
+X-Change-ID: 20241021-revert-assert-bch2-25474fe809d1
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Anup Sharma <anupnewsmail@gmail.com>, 
+ Shuah Khan <skhan@linuxfoundation.org>, Manas <manas18244@iiitd.ac.in>, 
+ syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729529344; l=1877;
+ i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
+ bh=M5hbMLylF0b+ZchbJH4bBirAx8QVk4kpDgu8JqXEiG0=;
+ b=WgevtVQ8IzkqKxDmL4PPt4x+pwzKgX51dRXKIkpi/bHg+qtl1U1+wYlMsvhRz3aI+SKqx7uQJ
+ /moCqOYxegOAir9iBXGhNInRIgLvsv2CRck4KxE2nrWm2swoQTEIXd3
+X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
+ pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
+X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
+ auth_id=196
+X-Original-From: Manas <manas18244@iiitd.ac.in>
+Reply-To: manas18244@iiitd.ac.in
 
-Syzbot reported [1] a bad page state problem caused by a page
-being freed using free_page() still having a mlocked flag at
-free_pages_prepare() stage:
+From: Manas <manas18244@iiitd.ac.in>
 
-  BUG: Bad page state in process syz.0.15  pfn:1137bb
-  page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
-  flags: 0x400000000080000(mlocked|node=0|zone=1)
-  raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
-  raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
-  page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-  page_owner tracks the page as allocated
-  page last allocated via order 0, migratetype Unmovable, gfp_mask
-  0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
-  3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
-   set_page_owner include/linux/page_owner.h:32 [inline]
-   post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
-   prep_new_page mm/page_alloc.c:1545 [inline]
-   get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
-   __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
-   alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
-   kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
-   kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
-   kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
-   kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:907 [inline]
-   __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
-   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-   do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  page last free pid 951 tgid 951 stack trace:
-   reset_page_owner include/linux/page_owner.h:25 [inline]
-   free_pages_prepare mm/page_alloc.c:1108 [inline]
-   free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
-   vfree+0x181/0x2e0 mm/vmalloc.c:3361
-   delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
-   process_one_work kernel/workqueue.c:3229 [inline]
-   process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
-   worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
-   kthread+0x2df/0x370 kernel/kthread.c:389
-   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+This reverts commit 60f2b1bcf519416dbffee219132aa949d0c39d0e.
 
-The problem was originally introduced by
-commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
-clearance"): it was handling focused on handling pagecache
-and anonymous memory and wasn't suitable for lower level
-get_page()/free_page() API's used for example by KVM, as with
-this reproducer.
+This syzbot bug[1] is triggered due to the BUG_ON assertions added in
+__bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
+63 '?'. This triggers both the assertions.
 
-Fix it by moving the mlocked flag clearance down to
-free_page_prepare().
+Reverting the commit does not reproduce the said bug.
 
-The bug itself if fairly old and harmless (aside from generating these
-warnings), so the stable backport is likely not justified.
+[1] https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
 
-Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
-Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: <stable@vger.kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Manas <manas18244@iiitd.ac.in>
+Reported-by: syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
 ---
- mm/page_alloc.c |  9 +++++++++
- mm/swap.c       | 14 --------------
- 2 files changed, 9 insertions(+), 14 deletions(-)
+This syzbot bug[1] is triggered due to the BUG_ON assertions added in
+__bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
+63 '?'. This triggers both the assertions.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index bc55d39eb372..24200651ad92 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	bool skip_kasan_poison = should_skip_kasan_poison(page);
- 	bool init = want_init_on_free();
- 	bool compound = PageCompound(page);
-+	struct folio *folio = page_folio(page);
- 
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 
-@@ -1053,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	if (memcg_kmem_online() && PageMemcgKmem(page))
- 		__memcg_kmem_uncharge_page(page, order);
- 
-+	if (unlikely(folio_test_mlocked(folio))) {
-+		long nr_pages = folio_nr_pages(folio);
-+
-+		__folio_clear_mlocked(folio);
-+		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
-+		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
-+	}
-+
- 	if (unlikely(PageHWPoison(page)) && !order) {
- 		/* Do not let hwpoison pages hit pcplists/buddy */
- 		reset_page_owner(page, order);
-diff --git a/mm/swap.c b/mm/swap.c
-index 835bdf324b76..7cd0f4719423 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -78,20 +78,6 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
- 		lruvec_del_folio(*lruvecp, folio);
- 		__folio_clear_lru_flags(folio);
+I am unfamiliar with the codebase, and there wasn't a lore discussion
+about the assertions in the commit, so I am unsure about the relevance
+of these assertions.
+
+Reverting the commit does not reproduce the said bug.
+
+[1] https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
+---
+ fs/bcachefs/sb-members.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
+index fb08dd680dacf82bca414f424024e4a00bf432de..9790fd47338c46d2af30547e1f41a1e578b71aa4 100644
+--- a/fs/bcachefs/sb-members.c
++++ b/fs/bcachefs/sb-members.c
+@@ -450,9 +450,6 @@ static void __bch2_dev_btree_bitmap_mark(struct bch_sb_field_members_v2 *mi, uns
+ 		m->btree_bitmap_shift += resize;
  	}
--
--	/*
--	 * In rare cases, when truncation or holepunching raced with
--	 * munlock after VM_LOCKED was cleared, Mlocked may still be
--	 * found set here.  This does not indicate a problem, unless
--	 * "unevictable_pgs_cleared" appears worryingly large.
--	 */
--	if (unlikely(folio_test_mlocked(folio))) {
--		long nr_pages = folio_nr_pages(folio);
--
--		__folio_clear_mlocked(folio);
--		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
--		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
--	}
- }
  
- /*
+-	BUG_ON(m->btree_bitmap_shift > 57);
+-	BUG_ON(end > 64ULL << m->btree_bitmap_shift);
+-
+ 	for (unsigned bit = start >> m->btree_bitmap_shift;
+ 	     (u64) bit << m->btree_bitmap_shift < end;
+ 	     bit++)
+
+---
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+change-id: 20241021-revert-assert-bch2-25474fe809d1
+
+Best regards,
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+Manas <manas18244@iiitd.ac.in>
+
 
 
