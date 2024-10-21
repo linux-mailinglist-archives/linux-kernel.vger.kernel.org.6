@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-373828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD05F9A5D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1109A5D57
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41587282067
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7E0281E89
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B81E1028;
-	Mon, 21 Oct 2024 07:43:01 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B811C1E0DE5;
+	Mon, 21 Oct 2024 07:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/aQdz1b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ECF1E0E14
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3661E0DCE;
+	Mon, 21 Oct 2024 07:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496581; cv=none; b=pK0eIMrq7xEkP/KCD0mvftjVXUyN7g7uYCqH8I6ArNTvxQlvENFWYs/BE/BI8htKGHXP8S/WcmfB1eXcLVN7a9OV9Ic6jYUZ+21/INvAYA+6QP5b/0TVfbW9cUVgZlKLUSA196AReXwVXhi1E68BFqSNZQQrImbhve16X2w3698=
+	t=1729496577; cv=none; b=IziiRIQrCmWj1NKkZeWI2/tfHBkBvDy/rYoBJDO9WGjCDewTWW0rP04Vq5ZnZPAO3efA88/1yxovGWSxxm8nTd2wzn/4FsCkqji4OMlfWL9jne41TT+E9f8An7YAr1ITEzFspNvXjj4yNz4IFwiYxqeYnAa6x0R8XqoQNwTyUdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496581; c=relaxed/simple;
-	bh=4F38RaSeyiuBzrNIiyM4nOzEmD4QbYnDqNUbbDz9djw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6a7Ecv9zL/+KgLwVWlN/VHoq37oBMnkkNpTlkcG/SqXo7G8MS2Z62iQ4PSwBK5uiloACQMaiRPFMwDkw8mIuG6UoyVynxpgWwwXCee0xT4cO8oHzrzDWc/IQa/mf9yUH388IXX2de7ezWmoDMdncB+x3P43PLpSBapwiP5qBrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e28e4451e0bso3637475276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:42:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729496577; x=1730101377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NUcD2BmDMlp1A2BQXeSlhDpra3RAM0pJabqaL97dvBo=;
-        b=J3zQ6eZq3Y8pKqBYk1PybnqDkFLmetCImeBPhpWPIgQuRI3zrHTb2INXa2naly/JwC
-         rf4fEEDM9g+GMbW55As3TlFEuMc9RGSzWick0wTIR1jdeLyNhpLQ2rMmD1HiPlWAl3FK
-         RFf1qa4g0ZHMDkUetH1e1Mtl6UWeRh8IQbNiqUyXX9KxBbr4WPBqYhXktOv4T/qBn+yU
-         97H2qqBI3FchdKgmiM9l7YQ02VZzlZR4UBsVtAmxRm8pVkzc4YUHiV0AFiwjmQl2bGfK
-         FWDQQHqTXJ2h+WBFbDjj74NcwgBuEK6MNLyeLnTPDT1rPq3uNvaKa+iHC/nT0PiyRsbQ
-         04Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP+kLQWSDhqqyItylBBKvLVltEMUSrCcBRwwzrwkZxA49vA88ZDhzRRKZEod940Xj3OabuymO8PfU/cL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzadxmWmwDh6GkcXCGYw2alLzHjwRnNnHj90ZPNXdXiRaDOSlth
-	xM3/X/gmH5pr71oFC78mGpyhRJZljB8LotaqkhT9u0b1EeGMc6tGw3PFvxxn
-X-Google-Smtp-Source: AGHT+IHE7RaDBw2GTV+Pte9en8Lfg/SCB+46iZHk2hURQnREDL6imM48rQkyssO/vGU9/5Lh48w+GA==
-X-Received: by 2002:a05:6902:1009:b0:e29:33d1:a3ac with SMTP id 3f1490d57ef6-e2bb11e5b40mr8976363276.11.1729496577310;
-        Mon, 21 Oct 2024 00:42:57 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2bdcaec280sm606614276.43.2024.10.21.00.42.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 00:42:57 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so29337057b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:42:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXPNfeUKWa35e8oAyk4dSBfVZgUfdsmDn9WSRq0yRaDYAoTf3RDORBB7at2GfAGyrePGuvFEfmnG3hF+nA=@vger.kernel.org
-X-Received: by 2002:a05:690c:4249:b0:6e3:2cfb:9a86 with SMTP id
- 00721157ae682-6e5bf9ff1a9mr73123877b3.26.1729496576759; Mon, 21 Oct 2024
- 00:42:56 -0700 (PDT)
+	s=arc-20240116; t=1729496577; c=relaxed/simple;
+	bh=ApqwmB7DQ5PPTRaBJTXoXsgPgMvSEcAFElebawzKHa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WthEpWt9Bzn3ocxpENelBH9qKKEzs0OPjhR+FCUch65p43iELmnlIStGqy88uX2gl9qbThkEOLjU02Au7v1YzrxEj7F2h78z3QvrnSXw9OrmlYi7uuQerK4bmY95kl3k4vLhdWzf2ja04Y7Im6z8cA6/pb+eZUUnION9ekIhQi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/aQdz1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6668C4CEC3;
+	Mon, 21 Oct 2024 07:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729496576;
+	bh=ApqwmB7DQ5PPTRaBJTXoXsgPgMvSEcAFElebawzKHa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l/aQdz1b6a1b5M0AGzZmsZsjDcJv5G4peieTIxabEOz9GwCBn+QvAtrft1tPGi/62
+	 Xn9NGcr8Sf49RqsAr+DcT7Rw4LeaIZTyBG32z6hKGw+Yp0Q/lVO7gVJVE6f0ddBJGO
+	 osv01D5hnfm29ch95ShbtTjnR87qpTDNkpY871ki4t+nhk0F8D0Rq6dssEuQJOYQdx
+	 se1dk89om8Bs9ONh8wwZHVsOPH/HCiGaMAP7lRKrDcrQvXLAHTDSs9+EcCeMjjKkVy
+	 g5WiBmqJJyk1/q0CXhHXb3UqYjBrnjYsh511r5ClNl3JyFGHYK/+a/ngVKKMt4khrk
+	 E4jVoV8NrT8eg==
+Date: Mon, 21 Oct 2024 09:42:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
+	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH v3 08/15] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Message-ID: <y6xpffdtpd4baczoatbotghhes3owh44tzdqvdgv3id4jj6jhj@nrqjn6d3wndx>
+References: <20241021064446.263619-1-victor.liu@nxp.com>
+ <20241021064446.263619-9-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZxUH2J0BL3FCV6Hr@kroah.com>
-In-Reply-To: <ZxUH2J0BL3FCV6Hr@kroah.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 21 Oct 2024 09:42:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUTEfnSyEYDeNtRHeB5KgMaQANr2JSeAou7Fc9pAkQK_w@mail.gmail.com>
-Message-ID: <CAMuHMdUTEfnSyEYDeNtRHeB5KgMaQANr2JSeAou7Fc9pAkQK_w@mail.gmail.com>
-Subject: Re: [GIT PULL] Char/Misc driver fixes for 6.12-rc4
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021064446.263619-9-victor.liu@nxp.com>
 
-Hi Greg,
+On Mon, Oct 21, 2024 at 02:44:39PM +0800, Liu Ying wrote:
+> Dual-link LVDS displays receive odd pixels and even pixels separately from
+> dual LVDS links.  One link receives odd pixels and the other receives even
+> pixels.  Some of those displays may also use only one LVDS link to receive
+> all pixels, being odd and even agnostic.  Document common properties for
+> those displays by extending LVDS display common properties defined in
+> lvds.yaml.
+> 
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> v3:
+> * New patch.  (Dmitry)
+> 
+>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> new file mode 100644
+> index 000000000000..0ac4c06d0a17
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Dual-link LVDS Display Common Properties
+> +
+> +maintainers:
+> +  - Liu Ying <victor.liu@nxp.com>
+> +
+> +description: |
+> +  This binding documents common properties for LVDS displays with dual LVDS
 
-On Sun, Oct 20, 2024 at 3:38=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
-> All of these, except for the Kconfig and MAINTAINERS file updates have
-> been in linux-next all week.  Those other two are just documentation
-> changes and will have no runtime issues and were merged on Friday.
+s/This binding documents//
 
->       MAINTAINERS: Remove some entries due to various compliance requirem=
-ents.
+But anyway there is a binding for common properties used in dual-link
+panels: panel-common-dual. How is it different? Why this is not suitable
+there? Why entirely different file name?
 
-That was quick...
-(And you forgot to run get_maintainer.pl when submitting that patch ;-)
+Best regards,
+Krzysztof
 
-So you traded various compliance requirements for other various
-compliance requirements?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
