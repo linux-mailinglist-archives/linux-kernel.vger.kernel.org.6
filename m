@@ -1,96 +1,130 @@
-Return-Path: <linux-kernel+bounces-374253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093B59A677D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC589A6780
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060AA1C21E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B18072839D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF26E1EABD5;
-	Mon, 21 Oct 2024 12:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1558C1EABC4;
+	Mon, 21 Oct 2024 12:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh+DtB2T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdRyjnGi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED81E8820;
-	Mon, 21 Oct 2024 12:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880E01EABC3;
+	Mon, 21 Oct 2024 12:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512226; cv=none; b=L5mda+wYmQbyEzTGdyVyrCxYsZ4OvLft1zchfThaeDgY7nHwh8NyloOMHLDxacyLm8990YTKLdr7qlMmH3HLhpOBHC317dQexy0I3ygoqKiMS4DVOmHyqaXCzN1/4OGRV3Mq9wTntP0LoRL5RDTVBWdo6rNxxJBCijvFy/FsQBQ=
+	t=1729512235; cv=none; b=FEnNsYNWc1przAz+I8nvPm9EBpsgxGlLlCXI4XL4HpTjiX1+uFCekf+nqwWAYvexGDW1Ab/hYbifj5SYMP4ByMa4oUKZuSu4Y8cdD5Cs1IBNlexa0NeZSC9I4UCS6zQKw0pQrsTykWX47fGPZTwrt7TmAEXoUtA5DbfE9b1lY6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512226; c=relaxed/simple;
-	bh=9epohfJmZxLsUdXZ/zc+G8wpo+sIrJshlK6G6pUw5zs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fRzcb+vQNFekiKzKe/fQoxmUSoKEFDFxb2aeGE8qVbxc6+3nobOHEN8nGd2CirnAjCMgLYxhMWzO5Clf2/2VJFkAg3nPCNzypvrJVZt9Lc0S8++byJ9L/rIc7X6Ac6jEQU35blaGp1FMymH9uSFzK8f61Q+8uKA300MJ1Zm+BLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jh+DtB2T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA95C4CEE5;
-	Mon, 21 Oct 2024 12:03:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729512225;
-	bh=9epohfJmZxLsUdXZ/zc+G8wpo+sIrJshlK6G6pUw5zs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Jh+DtB2T8eaWx7crSQOIW7QzNXZMDuKQovDDqZF3d3sde8DjE/ZjBi0xmGPO8g71j
-	 MZeFMA3yy7dPrwI6vXHdt41C8veWk0ln76pdnDa2/seOLXtaUR5FekcQSk3wPGAEzO
-	 pfKNGfNZqGBChknoKUC2nqUULOq7Kx2BPrz7fSis4Uu8MgXE6MEnx5soN4AjXVkcLo
-	 7ec3/9m0mq/5bun8vxYx3rEauNDBHVXzeNw48lKx/pY1NSI205YNfB4fuKvxx1hGpA
-	 y92Lx53Bt8DSuHwmGXdr/gpYneq243SlEt+vwo6rp2fKhxAq4QPOUgqATX5LidrprR
-	 8i1uIf2tw+8WA==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ebc4e89240so327555eaf.1;
-        Mon, 21 Oct 2024 05:03:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVeY+6/eewd5O/kDb7ZT/8WGoGRAbHLS/YIXW7N6J/dQkjRVKGafgtqCQHC9SULUdf1eC57czU+N1o=@vger.kernel.org, AJvYcCX60V3Nstw+4h25CXtM/LiSURU4EveOTU30uWzX3i4slr/8InjYps3aoAcvy2NoIcJ3GXLs4DKZVEeFufE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw34S2lzt3+JpFgP1QOBtwVw3CNYPCYaLbBAJbuVThDp8SmlhL/
-	uyNhX1OWtCANFWa+/8YVEUIsbyM0Z0+F2gYuaCVZrEj3ywD34+NnkoV+x0zlhtXA4+rRjoRlY41
-	P4FMyCKYdjqrdiG/a0Gbtxk2aO68=
-X-Google-Smtp-Source: AGHT+IEfjlA2YhXSUpCd4226cJ7vdxG3hlbzsF1xwlcqyFU47ucXUepbqKtJr8r+yti1hMvnM2onuZKudAvlqoV3/PY=
-X-Received: by 2002:a05:6870:a10e:b0:277:ca2f:905 with SMTP id
- 586e51a60fabf-2892c527fc8mr8273047fac.29.1729512224713; Mon, 21 Oct 2024
- 05:03:44 -0700 (PDT)
+	s=arc-20240116; t=1729512235; c=relaxed/simple;
+	bh=64w73gIGV4oF+vq2Rcl+l60DIPus9XsF4mUZMhA7ah8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eX39RDy0yuphNDLtVih14sj7Ehe+BOvsH/3sa+LSZEND3xGlR5+djSpcZp/RhZ/bOqzeYp05bz/aQpERSLTQgG608g05PBms+ukGsidL2R5ebzvwbPlm0+hcIpAsp8Qcks7hDcKcw1gYZmbifPee8migfsahLTC1OVx/oEFM96k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdRyjnGi; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729512234; x=1761048234;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=64w73gIGV4oF+vq2Rcl+l60DIPus9XsF4mUZMhA7ah8=;
+  b=bdRyjnGiwe1K7RTfhOMaNK/U3ovTrYJl7y2qkZVEmC9AV4y8jk2Fn8HM
+   OZOQz6sCz7hqlA7OzAGYc/AxHsmqbdIotU8HGfE1BVsfIVztTJsAVjBad
+   IEE6UzUwqJvmNYdM7do6dzi2I8u7CSa0hzBkXs6iESEuM8gBkJaE/iyK4
+   cfwmKoKU+eoQ1VEyc8uYbgVq3hWo+PybOooIAAUX4Jrwnzy9qATPxhrNR
+   0mCE8/1PNYROYfV9WoxmSNGvNFclUrM1jT5E7lbYvODe+SOYh8vjhV5XH
+   wnroxWoND7vGZ7DouJ0MKGJEwA6oFIXpO0Xcb9CieSv79gGLJodS081t4
+   A==;
+X-CSE-ConnectionGUID: aKlS3UKjSiKKESDvAe7fuQ==
+X-CSE-MsgGUID: Z+0KMbLcRIe/oIvniRyYOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="31855354"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="31855354"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 05:03:43 -0700
+X-CSE-ConnectionGUID: l0ULbCs3Qqmf1AxmMyh5ow==
+X-CSE-MsgGUID: rf2wPc2FSPOFTqBlYa6gWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="79456680"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 05:03:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t2r8I-00000005US1-2Urn;
+	Mon, 21 Oct 2024 15:03:34 +0300
+Date: Mon, 21 Oct 2024 15:03:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
+Message-ID: <ZxZDFiUANo0Jqaai@smile.fi.intel.com>
+References: <20241021072606.585878-1-inochiama@gmail.com>
+ <20241021072606.585878-3-inochiama@gmail.com>
+ <29d8e2a6-d0e7-0f74-1f5c-4f285ec1e9ee@linux.intel.com>
+ <tm7jtf3swggiilznwo3xcqjlhd2a7cguwk3nay3bhmaxo23mf5@qw2fyjwapoxe>
+ <3dafd285-f56f-de2a-1544-b6ce092607b5@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1930069.tdWV9SEqCh@rjwysocki.net> <40ec7bb0-02ef-4af7-8934-9f960fa15355@web.de>
- <CAJZ5v0iaR1e6OMpY=wMBKhqg8F6DAX5KUqa+YACEr0z3EZxo-w@mail.gmail.com> <45cbf165-770e-4e28-8936-edd6f18964fd@web.de>
-In-Reply-To: <45cbf165-770e-4e28-8936-edd6f18964fd@web.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Oct 2024 14:03:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gV+NHZiAwQdeG_0Cjg-s1ugdTDJDkhRwZ9AmBsy80Giw@mail.gmail.com>
-Message-ID: <CAJZ5v0gV+NHZiAwQdeG_0Cjg-s1ugdTDJDkhRwZ9AmBsy80Giw@mail.gmail.com>
-Subject: Re: [v2 01/11] thermal: core: Add and use thermal zone guard
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3dafd285-f56f-de2a-1544-b6ce092607b5@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 21, 2024 at 2:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> >> =E2=80=A6
-> >>> +++ linux-pm/drivers/thermal/thermal_helpers.c
-> >>> @@ -60,13 +60,13 @@ bool thermal_trip_is_bound_to_cdev(struc
-> =E2=80=A6
-> >> =E2=80=A6
-> >>
-> >> Would you become interested to apply a statement
-> >> like =E2=80=9Cguard(mutex)(&cdev->lock);=E2=80=9D?
-> >
-> > Well, please see
-> > https://lore.kernel.org/linux-pm/5837621.DvuYhMxLoT@rjwysocki.net/
->
-> Will the separation of source code adjustments according to cooling devic=
-es
-> and thermal zones trigger any related clarifications?
+On Mon, Oct 21, 2024 at 01:17:55PM +0300, Ilpo Järvinen wrote:
+> On Mon, 21 Oct 2024, Inochi Amaoto wrote:
+> > On Mon, Oct 21, 2024 at 11:52:38AM +0300, Ilpo Järvinen wrote:
+> > > On Mon, 21 Oct 2024, Inochi Amaoto wrote:
 
-I'm not aware of any.
+> > > > SG2044 relys on an internal divisor when calculating bitrate, which
+> > > > means a wrong clock for the most common bitrates. So add a quirk for
+> > > > this uart device to skip the set rate call and only relys on the
+> > > > internal UART divisor.
+> > > > 
+> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > 
+> > > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > > 
+> > > I wonder though does this mean the numbers userspace can read from kernel 
+> > > are bogus and if something can be done about that?
+> > 
+> > I am not sure whether the clock rate can be read by the userspace.
+> > At least it report the right baud speed by using stty.
+> 
+> Okay, I meant baud & other settings. Thanks for checking it.
+
+oBut there is clock rate for user space. I think Ilpo has a point.
+
+Documentation/ABI/testing/sysfs-tty:21:What:            /sys/class/tty/ttyS<x>/uartclk
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
