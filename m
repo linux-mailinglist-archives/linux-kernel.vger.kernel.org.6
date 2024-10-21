@@ -1,115 +1,99 @@
-Return-Path: <linux-kernel+bounces-374314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA519A6861
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D672B9A6864
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4415E284688
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984052834A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2631EB9FE;
-	Mon, 21 Oct 2024 12:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B0E1E9089;
+	Mon, 21 Oct 2024 12:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzyRfExx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FTfTwZiv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jrFA/5hQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EA81E7C32;
-	Mon, 21 Oct 2024 12:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1229A1E7C09
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513633; cv=none; b=JYREsL4RxaZBbDMbDHh+1kcMIBDjUL5GQXI3draXqgAcWmM5Trv9xpo9t9XnpN9WcfArAv3Dmvl4q3QE9megfCZ4Z8hz4D/8PtDYL/MjiH267AC8FNj3Ata2NMWjo97ujuOMZbjafkx5mC3M4ecBd+banY4Rd4UPThF+Sf4jiwQ=
+	t=1729513670; cv=none; b=pQK2gR02t8ZzVPsPrtg4TGHdVZ+5fOB88jW8QfxIS25kgY+UCKFdtZgjjU/lNYy6e5OWzsVKdj2/gqpGO/Sqyj6CNbozu98QtQ8VEOjWcy3ilhgtls3b5102aTl1cp+jPxqudMj4mQfXvfU5YECY/OI7xGJDVpdemtsdGvPC/z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513633; c=relaxed/simple;
-	bh=kYjiKbopU3nHCtbQJu6rvBASdvuKeELUFFKYISpb/sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFJ2yMMPzt9eZsXnx0NIsOdZxBk5Qx8fZzWlb2X7L7Rpojrjt5QXmCB6Pqg0D5JfLC9UE0h4CSSmpYB0XnNctyTMDfDyiYI77SOio16mUnHmgTLFqx1M6+r2G+RrgmDe//m8vz8cdM6t8bzgca1h5+EXTJHLKbPK6cEEhoQ/olM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzyRfExx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FCCC4CEC3;
-	Mon, 21 Oct 2024 12:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729513632;
-	bh=kYjiKbopU3nHCtbQJu6rvBASdvuKeELUFFKYISpb/sQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UzyRfExx3I0AZj3W96QbCWdo+ZGE2EjZ8RlagAj7q+gzmFRpr7587s5qGTcTc1vLF
-	 w+Y4Xkw4dWz9a0v9moVieSSsVe8gAtZtp5Istt76SlYVdntv9iH7ffR5XJMMs1mBYI
-	 02X7TCA2HhqdjHJelBwHcGzqUke+V7oUHRUCFlU2/BU+Cz1DdjKIYApBo9yR017Wgv
-	 duMFtTfLw8ZGEOCA+sJX8kWpUQHoP+R5RrH/CHwzrlavPFR7AWxxnTCOZZkYAvkOad
-	 bwfdzj8CsLUEWzbRT7E9MdwrGE38aOHK0Pt8XwttpveHlLXtD+zTIUMHqleSU4k3hJ
-	 CVQRhVIRHAa9w==
-Date: Mon, 21 Oct 2024 14:27:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Gao Xiang <xiang@kernel.org>, 
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>, Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
-Message-ID: <20241021-geldverlust-rostig-adbb4182d669@brauner>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
- <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
- <ab1a99aa-4732-4df6-97c0-e06cca2527e3@linux.alibaba.com>
+	s=arc-20240116; t=1729513670; c=relaxed/simple;
+	bh=IGK5XyR7IlNtmOeaNTr+p/k+f61t96h/7mLGFkS+aUs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g8eoqn+Ue+d9BiL7JmDo9Go5U+LAMHbumZB8uEwrDFEWicRka79YiY0JSK/0co2CEaYG5xGnUe5v8eR6XxGizBvf62fX6gC69acz7pC6FTOHey0pQl3drtjIkEVqdvpgFn8JvmsWx1X+AFvPK+iVRlKmXAzVc9eEnqpNjEfuDu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FTfTwZiv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jrFA/5hQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729513667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=99jFXW/CwdyRcK8sGANnfyq1NG9lVOM4bAuwhhPMZ3Q=;
+	b=FTfTwZivkJNNhVUSQLAGwI4zc3HGwCHeWIQA0KRcXWbxaIpgYlngv319X4Uv76M05mAzUF
+	22eCKrIOuqvbcI7TaLpvYlkfncXaP3jLvoqqnuQeQEySbVqszPIhZgfAT3okHPkbOJUSbK
+	IbAUIHTGs/UFQt+u8h2Dq2WY1lQY3mFC2kashseP/IUONO/GBVhPx/44NC/XeP8TRmY+sA
+	rPvhpqHjdwUpCecLlwkzAQsIoTbLBz4IvJZD9/MN+/ESx2TCDXQwX5cOK9K5nNKizzSr8K
+	cB8CTiksFaTuKECBpLrjbUpPCt37kSF7zqnqDK7iVzwxrDubIe7ybOm/S5EeuA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729513667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=99jFXW/CwdyRcK8sGANnfyq1NG9lVOM4bAuwhhPMZ3Q=;
+	b=jrFA/5hQfVqm9mel2IJlzbl//WFQCYPiYzZVO8TNDBHkNTn0/XLklq6P50n5V5eh1cGQiz
+	7OE84fab6r5wXfBA==
+To: Ryo Takakura <ryotkkr98@gmail.com>
+Cc: christophe.leroy@csgroup.eu, hbathini@linux.ibm.com,
+ leobras.c@gmail.com, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ naveen@kernel.org, npiggin@gmail.com, pmladek@suse.com,
+ ryotkkr98@gmail.com, sourabhjain@linux.ibm.com
+Subject: Re: [PATCH] powerpc/crash: Allow direct printing on kexec
+In-Reply-To: <20241021121159.331940-1-ryotkkr98@gmail.com>
+References: <844j56v75z.fsf@jogness.linutronix.de>
+ <20241021121159.331940-1-ryotkkr98@gmail.com>
+Date: Mon, 21 Oct 2024 14:33:46 +0206
+Message-ID: <847ca1fxod.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ab1a99aa-4732-4df6-97c0-e06cca2527e3@linux.alibaba.com>
+Content-Type: text/plain
 
-On Mon, Oct 21, 2024 at 03:54:12PM +0800, Gao Xiang wrote:
-> Hi Christian,
-> 
-> On 2024/10/10 17:48, Christian Brauner wrote:
-> > On Wed, 09 Oct 2024 11:31:50 +0800, Gao Xiang wrote:
-> > > As Allison reported [1], currently get_tree_bdev() will store
-> > > "Can't lookup blockdev" error message.  Although it makes sense for
-> > > pure bdev-based fses, this message may mislead users who try to use
-> > > EROFS file-backed mounts since get_tree_nodev() is used as a fallback
-> > > then.
-> > > 
-> > > Add get_tree_bdev_flags() to specify extensible flags [2] and
-> > > GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
-> > > since it's misleading to EROFS file-backed mounts now.
-> > > 
-> > > [...]
-> > 
-> > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs.misc branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.misc
-> > 
-> > [1/2] fs/super.c: introduce get_tree_bdev_flags()
-> >        https://git.kernel.org/vfs/vfs/c/f54acb32dff2
-> > [2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
-> >        https://git.kernel.org/vfs/vfs/c/83e6e973d9c9
-> 
-> Anyway, I'm not sure what's your thoughts about this, so I try to
-> write an email again.
-> 
-> As Allison suggested in the email [1], "..so probably it should get
-> fixed before the final release.".  Although I'm pretty fine to leave
-> it in "vfs.misc" for the next merge window (6.13) instead, it could
-> cause an unnecessary backport to the stable kernel.
+On 2024-10-21, Ryo Takakura <ryotkkr98@gmail.com> wrote:
+>> Rather than removing the deferring, it would be better to convert the
+>> console you are using to the new NBCON API. Then it would be able to
+>> print direct and safe during panic. (printk_deferred does not affect
+>> NBCON consoles.) What console driver are you using that you want to
+>> see the messages on?
+>
+> I was working on qemu ppc64 this time but I am usually working on 
+> Raspberry Pi 4 (mostly for fun and study) which uses either of 
+> bcm2835-aux-uart or amba-pl011. It would be really nice to see them 
+> working as nbcon!
+> I am thinking of taking a look at [0] but If there were any other 
+> references, I would really like to look into as well.
+>
+> [0] https://lore.kernel.org/lkml/87wn3zsz5x.fsf@jogness.linutronix.de/
 
-Oh, the file changes have been merged during the v6.12 merge window?
-Sorry, that wasn't clear.
+The lastest version of the series is here [1]. The series is still
+undergoing revisions, however the changes are 8250-specific. The API for
+nbcon consoles is already available since 6.12-rc1. You are certainly
+welcome to try to convert one of those Raspi 4 drivers to the nbcon
+interface. I would be happy to review it.
 
-Well, this is a bit annoying but yes, we can get that fixed upstream
-then. I'll move it to vfs.fixes...
+John Ogness
+
+[1] https://lore.kernel.org/lkml/20240913140538.221708-1-john.ogness@linutronix.de
 
