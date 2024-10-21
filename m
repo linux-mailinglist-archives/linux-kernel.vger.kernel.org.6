@@ -1,248 +1,349 @@
-Return-Path: <linux-kernel+bounces-373883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B619A5E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942C29A5E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CA91C2162B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F14CCB2242A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F5A1E1C21;
-	Mon, 21 Oct 2024 08:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACE61E201D;
+	Mon, 21 Oct 2024 08:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g/0thSM/"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011046.outbound.protection.outlook.com [52.101.70.46])
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="IJFUSQsI"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCAA1E0B8F;
-	Mon, 21 Oct 2024 08:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1055B1E1C39;
+	Mon, 21 Oct 2024 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729498779; cv=fail; b=KFrscntkudBu7TANElMsKyLRsHlJR2Iw+CeIpfi0hyBxsxd1WHk3+0QW0VxBiUBTLTQGMijnHuV2tqRi2gBih3/1hWBbFs4sLULn/eDufHVU2jaKfJHyu2nNZitcnhB6y6EI4EMzZi3xgOLIs8vALXR1zIks2YnGkNe1zRr5BGw=
+	t=1729498823; cv=fail; b=S27CV2I0nTX1BIYcTQ6R9D9PjuHV/YYJzKBQ4XQPfriFInuAZ86W7BAS+vMOOgwG/0fJQBaChmE0/vrhWp6khhLVxWBKZ1Asyol7FEVjzeFMRERH6kge/ixzQJVcfymL0zwpxkH+BwVRGCqnxGq+N13kXZeonQvkHGCE0t2Bzco=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729498779; c=relaxed/simple;
-	bh=01iyie0cwFvY/ROnJO9NHTCRPyn/ZtsZ0DZD2sIAzzs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jBKahtyR/VW0vjIb7MVYviKLiaTfm+oMyIGxFL7UjAvEZ00gmDKMMzXnK9WB6ywjtXoSgC48UamX7d8uwzOzn040RSlrh2hQnU5rj+jmqvS5vQbHW+EvhkAGCzEfdH4jomHQPjoHHaBNXqF5gVSunUfKbKpxdrckxEnxQzvEFg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g/0thSM/; arc=fail smtp.client-ip=52.101.70.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1729498823; c=relaxed/simple;
+	bh=ypzwJD+R020L9ke/wEgrf3AB6ZQMNBYCyRGwz4454YU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcuWmS50yNtOxzpD5Pj39z/5OMP4z6ct2ApHNA5ApGIKUfopq49v38lAKuV1F6ltrY4TFH+R3fU6SuYTklQ4Ut2AiaBVEe7AVT7oDuf6m1DJtnmsWSxuH0rB6a+9eWqO3762OaY2pGz4MOElmcz4zv4w4Oi/0R0T6Z32yoAm2Og=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=IJFUSQsI; arc=fail smtp.client-ip=40.107.244.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=waZfs8I/bsRjHxhbamIBPEPKHuCB1FJCOvF148aKaC4DCPNt0oyP/CYSDWYkvRlbfMEwwobSCXvlR/CVD7HJf+SSub4jpK9wf4hIGpCU5R87otDasmvNFERvRot4i6zmrR8CS8gJMVcsqsZblKLjpjZIojGq7UEyZ7ehO+F/RdOD70WoTgi465FVm3ycIuk2BmH3q1W4Zj3U7Dw3qXwdM0NVDhMo0Sbpz1LlSB30x3xdOG5CT2SMgdw6DbE4wKTsfTSTAwohZh+4xBiLEJSFzd13HLWaGyo1ZHBEZkmWfe8hmq+Wf/HIdzewALG/JgEInYqQAmxL13UXO0cc4gQPXw==
+ b=OdzrUtDRLzTl3NSq4NbJuXFc0sW5caJcwACM6P7BBUUYmkeg+fos6NA3mXrCO8GjCdq6ZZG4mgOlBZVOjsgG1dTkNUaR/iw6F7cuXkz5h2Bf1s7if3BTcgCeOr6Qjzws2WpAUgQQ58dQYIikBHpTq4h+sjy8fc/Y74T1IZqLP2j2zFUTU41Xsxd08W6rRikseSgHame3q9bkDoM7CTuNFt2q5eNs2Uus683iP3S39UqZb4PLZBo0M5OaBvlaCsh7hgVX4wcg73iGoa7Man0EpFkBvmz516biw34gP5Wgs9sEoiUFc/lTRTfL5Bra70+Ni6GFehRR+/YLcndbBvdCVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c6OnNLxPBlLFvkEhr4S1ap4juZc70ZONYmKSLzZ6M80=;
- b=Q4XMltI5Vt8CnbSI32mr80YsdNlVxMHuQrWXSShwb3JmWKvqljKF9vSfVUPz/JRoowmPsMxZ9MFAhLKH+AAadB1EiBqfGva6wJ6pXYtKDGi0lMbJzBdIaWqJEGQjX/jaKeeODxu3ofY3tp61OfuSwstcEgKdcZxtsxyXsMAF4qzYk31T8Jo0BCLgTD8I2aISbORD6XJWDMna4i8g9hZ8YYhuNSOUxZnHYVZSuL5cestIO7qVyGZA7xf8uqJBAPr0GOwOnM7LsAe1v3mARq8/jN5UfVgGL3rZKQTSIZIazBSiU0Fb3UEplgm4QSE5OraW1Qq0vqh2gbGo1J8Od0D8kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=prAtZWOoux0soeWaIrE6FDfqAkD7EuolHFZuMk1GthM=;
+ b=gzTjiej5+cbfomky1I+y4UfCilXg43dtCoYzmjXv5bPJO8P8ALTnVwIZfrKXVvC+iRb865jZxdK9T0oWjXNIj82wZuQWlJ1FKEUz4x3sJ4/EYXKeTOvft6HyZtMuf332xwalb8wK+NLqiLAYkTiHR0Xl3rODPdIuXEljlvBzEtER38X2Fw2hpO11ZLflFVroTl+ibMJA4Obcinwu8Z4Hjit9VQwkM0EmOhG2R0uLw/rJ84h7qFqGjEu1DhS2jEO5aojPjvw5u6rF9sO3E55P0r6fcY26CU7bns13gKtqzZkgjeTK599mXTGYiN8C4EqB/NYSL7krhx5uNvuH4sK8jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c6OnNLxPBlLFvkEhr4S1ap4juZc70ZONYmKSLzZ6M80=;
- b=g/0thSM/QYLCfxIv7+mfyo0DSOZlbMb7VW5JAZav+F82d0wqWv280YUAhi7JvNoplRzwr1Oj1+9H0IujQ5/CYN2irizqyuQTaqvhDW9lP1VOu8wboHvbqkXgpzNFSusPOVet06mLNJHAxO4V5RRLOVSN+eFG39Jq9prsLRQ5NVduTHgJsHRVyZaHaDtPEhyqYPY1CbXcwbX2jLwT/X0vWktN/flKQzy0pY6QLW81NuPWMRkt3fjEB3nY2U9IifxoWuhdKe5W6ILe+52J6QwXtH8IWiFhEnmVR26Vga5RMYpCaNW5nzwbtsGAIK1QRkpOZEpIL2WVV/2pQ6z3tc3MKw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM8PR04MB7460.eurprd04.prod.outlook.com (2603:10a6:20b:1c5::11) with
+ bh=prAtZWOoux0soeWaIrE6FDfqAkD7EuolHFZuMk1GthM=;
+ b=IJFUSQsIH2ZxtUI09J0reomZoQg4shAFxqG8Ax1bkK+BLIk0OTKkmQrKCEZ9az9VpTFXGfKQ8878HHlfdMThr9zX/Qty2pSb0wS4kG1EfHiyMxpN9/+ykOrmB09+m0ttImVcYPIynL4jzEZ6eYdq17AcY9AVuVuofvi/8YXe5IF2rGt99nak3H7EV3ybaBN3LA+fLF+c2MSmqbhbbXPO+ORAvDkwMRCu914Gu7EIuThrNwFyX0wp6nVy4ptrEwepzfqtMZEsuC68zyoqpSKIGzBhOf4qeCgLnYKZPol47gDruy7Lgga6gSot4sx3zrohoM2apwgXsfVKG7Q6aTtw0w==
+Received: from SA0PR11CA0205.namprd11.prod.outlook.com (2603:10b6:806:1bc::30)
+ by LV8PR22MB5699.namprd22.prod.outlook.com (2603:10b6:408:267::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 08:19:32 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 08:19:32 +0000
-Message-ID: <8f63ae16-f484-401c-a3e7-6c12a2343cc3@nxp.com>
-Date: Mon, 21 Oct 2024 16:19:52 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/15] dt-bindings: display: Document dual-link LVDS
- display common properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_jesszhan@quicinc.com, mchehab@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- catalin.marinas@arm.com, will@kernel.org, sakari.ailus@linux.intel.com,
- hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com,
- quic_bjorande@quicinc.com, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
- thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-9-victor.liu@nxp.com>
- <y6xpffdtpd4baczoatbotghhes3owh44tzdqvdgv3id4jj6jhj@nrqjn6d3wndx>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <y6xpffdtpd4baczoatbotghhes3owh44tzdqvdgv3id4jj6jhj@nrqjn6d3wndx>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SG2PR06CA0186.apcprd06.prod.outlook.com (2603:1096:4:1::18)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Mon, 21 Oct
+ 2024 08:20:17 +0000
+Received: from SN1PEPF000397AF.namprd05.prod.outlook.com
+ (2603:10b6:806:1bc:cafe::25) by SA0PR11CA0205.outlook.office365.com
+ (2603:10b6:806:1bc::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28 via Frontend
+ Transport; Mon, 21 Oct 2024 08:20:17 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=mkerelay2.compute.ge-healthcare.net;
+Received: from mkerelay2.compute.ge-healthcare.net (165.85.157.49) by
+ SN1PEPF000397AF.mail.protection.outlook.com (10.167.248.53) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Mon, 21 Oct 2024 08:20:17 +0000
+Received: from f642ec5a18a7 (unknown [10.168.174.111])
+	by builder1.em.health.ge.com (Postfix) with SMTP id 6D0331A2DF;
+	Mon, 21 Oct 2024 11:20:15 +0300 (EEST)
+Date: Mon, 21 Oct 2024 11:20:15 +0300
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
+Message-ID: <ZxYOv67foIw78NrW@f642ec5a18a7>
+References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
+ <ce0ac1bfe2fb54feb10dc06827091caea57b7a19.camel@suse.de>
+ <ZwTK5Jip2YJrSd8L@f642ec5a18a7>
+ <4f8b6f2d57abc5ea4ba1e755bac31d3fa3dc2e55.camel@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f8b6f2d57abc5ea4ba1e755bac31d3fa3dc2e55.camel@suse.de>
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM8PR04MB7460:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1f9c7cd-57ca-4693-bfff-08dcf1a91725
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397AF:EE_|LV8PR22MB5699:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7084ec84-f48d-4b4e-d432-08dcf1a9326d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?dHNTeFJWKy9xSUdKSEROWXp3cUJlNU1qeFNiaElsRWt0RkxDVS8vTHdPT21B?=
- =?utf-8?B?TjVsOG01cFFOM0NycjJLdzJQSEYrMzkrMG5CTXUzdG9wczZrU0c2YTFtYWg0?=
- =?utf-8?B?d0dCbmQxWlF3VHRSazFocjZWclBXSHVaV1RvZFRPWkhzOVB4eXJ5WFpXQnZx?=
- =?utf-8?B?eEJaemcyMk9GTHR1OGpkeGJNbUpoU1N0SkdhbExzRTVIczhhc1UzNmpUaDlJ?=
- =?utf-8?B?cjhqem80a3RNbWZ6YjBVdjRlS2prYzBsUWxWMENZNm41WUYvZnhxbjRCajE4?=
- =?utf-8?B?TkNaTk03eGIwUFg2L0JiMVYvdlhRY1lIQXR6TGdObVlMUW8wZGQ0STFLZlRu?=
- =?utf-8?B?Rnp3d3RsR3dzUitnZlIwTzI4SExFTkw1WkxDNllZOU9seXhSRDdSYzRtYTdv?=
- =?utf-8?B?RWJud1BRaGdZd1o4TWVnME5DRVJVVlFvT0pidWVrWHNiSUxRcG9ldTcwajcy?=
- =?utf-8?B?LzhLalBYK21OYWl5RFJFb3htV0g4VzJoQmVoTmE3dnNLdVNtMGRVWDNWWXdh?=
- =?utf-8?B?N3JYQ2tETklkZkFqbTNYTVl0TlI4dzM4bGhpNURRcUhtbFRkQlpVVTdienpO?=
- =?utf-8?B?NDNaL2s2WFVWaktTZ0NsdVRMZUEwUWdhOGQvUEJHb0dKRERDbysvak53b0Nt?=
- =?utf-8?B?THdDUHRKR3VOOTFKUjk3OERXd1RjYTliMnI3d0o0OEkzYTJQc0V5aWtvQ1dl?=
- =?utf-8?B?amhFNzRtZHYvR3ZOQ0tud3hEeTNMUjZlT25pYzlSQzhIUUxNTlFZVnpEdEZl?=
- =?utf-8?B?R2hGUUhrY0l5V0l1TWxBMVlZeG1mVS8zTTNMZHJFcmFYSnBtS2x6L0E3M0Vh?=
- =?utf-8?B?ZmhBUGkrbEVicGdaUmxpNURTVmpBR3ZYelVROHZZRmNiMG1XdmZUTWIrY1lM?=
- =?utf-8?B?bGNVaDVDUXFTeURBcFBrVElDckFGMGltMWljMFA3WHhNY1NZbWZIdDFzMUhN?=
- =?utf-8?B?MTRJejBJaWlndWJjUXY1NGtHUkJvZFF2c1NqaVplbjNJZjZkUk9TV2poSUpO?=
- =?utf-8?B?RmxZYXB0Qk44Y0tpNmhleU83bmJMV21ybjJOWUJyZUZxaCs3TXNOanRzMk80?=
- =?utf-8?B?a0hyZWVrZVZNUG9lbXNkZzdIejVFWTF5d0NhQjNyM2djekRwSTR5bGhyS0Q5?=
- =?utf-8?B?K1VuQW1wcDlXZlJzQ1grYVYzNnd2Um9kTUFlMG5teDM3bjZXWG51WWY0MFkr?=
- =?utf-8?B?Rmx1NkkwMWRRekhmaGpUL0I4Nk9MYW9KaWQvdkFjNTEzaFg3YU1LcVkxVnE1?=
- =?utf-8?B?blp6NFlJczlBcDBiNkJqV20vNVBkTTFhT2tOSlAyZHl6N01xZkkxdWtrYkpK?=
- =?utf-8?B?L1FQSFpIeDVhUzhaUWdaZW15NUZPbEFyRWhIYVVGbkpaUnF5T0ZsZktScHNz?=
- =?utf-8?B?aHRaMjY0VjlRQnZsK2tOZnBYMXBINUpCU0xLWlVmUTNUdG5XYVFZdzFtVnNm?=
- =?utf-8?B?UUI1WjJleU9sSXlJNzZLZFBYUXZlVWkxM2lZWEtNQlpZTnlYUy81QmhlbTdx?=
- =?utf-8?B?MDUwVnNXZzhJM3AyNU9jbS9QTUtmdFBubFpydVRUS0JqYzhlWmIzYzhNbVVv?=
- =?utf-8?B?Y3MzRXBjaUxNWE9XSmZaNHdrNHJVUEpvNklHa2hsSHh3OWhFRzZqM1ZNYjdW?=
- =?utf-8?B?SjBZcnUzNmwrczZyMWhraFY2eWllYWZpR3BvbnM2R0dyRktiU0ZHZ2g5a1hs?=
- =?utf-8?Q?Uy+Yahf+81G8wos9D4Lf?=
+	=?us-ascii?Q?fqMASU4mNbJVpvYdhVMPPo1smXkFR+EEikwM0AvIw+9idfXXPyCS6kdX+4CC?=
+ =?us-ascii?Q?25NZPFiQkh0/SpfuiHfI3EOJnOeTBjQhnIUnyE1f8Inmc9az2u2C7oChpkN5?=
+ =?us-ascii?Q?CSEHtY4Rjgh776jxeSzZGeOxqHMEIdavceZEv2iKN32jOBm35qf7KKbndIFT?=
+ =?us-ascii?Q?wOnRNSUp+nmeU+kbJHTl70Ax/eEe3ExKIsaJpbyNOclQ/btAAh0VLJVYTzLA?=
+ =?us-ascii?Q?gjZda7+nHAiD+DQbSQx7H3MkeajufdeZysAb9ngR8o9wohrc2k/P7E03PACj?=
+ =?us-ascii?Q?Rr6YxLoChO3phuBBFDS55g5mPK7drAgvZrYMVrJT8TYdDIWDL66Zsh2WNOnW?=
+ =?us-ascii?Q?XUaOXEUJtiUVPX2ojasDq8YzLD6N2EaGZsbJe/QT/yA8i6YaZitPwehy1Gtf?=
+ =?us-ascii?Q?5MypHj01CEbh12kMpJ+Im43QDVXUmigmSkwlhPPQpNnmEyG8HgjLN/7M/fQv?=
+ =?us-ascii?Q?X+8SmEfIw7kUHcVZUraoxMqpRSg0s6cB2mweYBJeXDvypjRBo6rXA84u/dyn?=
+ =?us-ascii?Q?6tcJc1y1E5Th+SbLPIxpDuaTKLnV/WcK4bXXBgz9/OlmMZJAbl5II62x+ZiQ?=
+ =?us-ascii?Q?vCwlWQ3anPFTmZVXliVqd7L63pwDOrosp/ssUBc47VFfuS0dI7d6X1/7Yh1b?=
+ =?us-ascii?Q?vNRy2FfI+zFifLm6/nYa2fYHQYZsO7xWjEMaDFKucaQx8MnoJ/xyZ2Y21pob?=
+ =?us-ascii?Q?yHMqc7tPqgM2UKRI6FpkoLT5f9rAOixvP18U5OOa+FUDIMYbKbvmZPQzQONr?=
+ =?us-ascii?Q?D7XkdtPIixRCCxi7cbo18Jgq9CAUpjZCe0B1BBg4Kho836rZCGj4zDA2cQqL?=
+ =?us-ascii?Q?p3YL/R6oQxzk0xYyTJjVIUbdBGS5E0SznPvswr/IjWp6ZJFoc6v+7kH1VjwN?=
+ =?us-ascii?Q?9AwJmrwq3yXwWliecO0Koi0u3BdZaZ7SqgLYlJ5wzC2WZb31gxSegUA8do+N?=
+ =?us-ascii?Q?+2F750BMWWgRBnttABZU9Ad07bEuerJ9DvRP/RW6gWIknphwiww9Bjx8JB+C?=
+ =?us-ascii?Q?XOw5xJKkXswunBwpgPhmXv7qwfZHJGXOTWyzdU10IAC1mDp1TQ93bk4zxAzN?=
+ =?us-ascii?Q?HuB4G1QPfDXHwRzi6Hrrm4+iU2fUWULL3MB0OmHIRk3dR6NdESfx5FRLeINi?=
+ =?us-ascii?Q?IKQJprWgkBss1H2UyQD2D6+owoD09Zn5gQBJzVuwcFCXDolOoi3NKECf2A4+?=
+ =?us-ascii?Q?IYszNninHmdJ3+WY5Xh8f+HMRGOQPT9QEVVO4peIrPN1U4MofNwv/LwtGVY2?=
+ =?us-ascii?Q?j0MuWGqUeUpuo3aFIueTysEcSRPXMdAR13lw5F/jxk/t1erwHCVc/YwvDb36?=
+ =?us-ascii?Q?jE++9P+znBIrtteFAo7i9DUI9AilUvzaJ5fLOIiaJIM4bQXE+bexLkW7pACZ?=
+ =?us-ascii?Q?b6fPZ1SNAKI0HOe+SW7vl0k+iUVQ9AJ+fxDWLXryyf/8QFwUKg=3D=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?RFB0clRuZk5yZ004aXVRUGlLZXlMdWc4aXFCLytQMUtkMFZYY3FBVlhOWlBT?=
- =?utf-8?B?cFlVN3gwL0ZtVURRckNOblJGaGk3dkZjMFg1QzcrSlczQjgrcTJDM29YNXNJ?=
- =?utf-8?B?dzgyMmpCMElvL25vcVlsMVh6L1ZQdWM1TnljWWdDbytjK0RGdXM4bDhYMDFo?=
- =?utf-8?B?SU5RSUZBT2F0Ni9FQzBIanhWb3l6N2ZoQWFvNFJ3Y2N1Q2JUczdJS0ZUTlRv?=
- =?utf-8?B?NUdZRFVDQ3puVzZDOWhiWnhPTG9NckJqQzVPRHJKZlB5K3dBK1ZiOWVVL0hQ?=
- =?utf-8?B?MldnTGkrM3FtanVQNlhCWWJDdERWYitNQnNCNVJxWlROLzdhMVlGR1N3MnhI?=
- =?utf-8?B?SUpjUmV1enZDbnZhZ2l2UU5YVmZFUGZ3c2dFRlFkbDRJbFZxTno2MFFJWU5W?=
- =?utf-8?B?bnV0MXVGTGoyaVZMYloxOTNmZXhSdURHTUc3ZTFzL0R6YS9qUFpSSU9qTTZj?=
- =?utf-8?B?enFFQ1ptUVJLT2tYOG51R1BaQUV2clo4MXJRZjhTRUpjckxEREFmTDNnM1U3?=
- =?utf-8?B?Vk1seVdKUFpUc2JIMTRrSzg5YzM2WGROeDhGK3RnVGVIM0RJUVZqcHd0UkYw?=
- =?utf-8?B?Wmd4akdTejNvUHU0LzBwekNwdzBIT0ZPcCt0ZHRHRmExeTVhdHdMUVFsZUVZ?=
- =?utf-8?B?QkxkZGVyTGhobCs3SFkxdW4reGt4bEJJYmhlYU9HRjZRbW5HZm5TeDlHYWdC?=
- =?utf-8?B?b0lvRTFmcjBUWFFEOWRkemlXc1JZK3VLd2NiNFozMVBwSkFBWjB4TEFJODAr?=
- =?utf-8?B?NE40R01uZVlvdEZ0eWQwWGRiWFFZZXgwQUFUdEM5S0NrTTVDMmZCckNWbmRF?=
- =?utf-8?B?MzlPeFYxVjVmZk1od1hweHkyeGN5M09DNmVHYThMN1l1eWF0a2FvTndpUlRr?=
- =?utf-8?B?S0ZWdFBiTkEyUUMrMWNtY1ovL3lrQlNOSldoTXg2dGovL3VmVEVIRDFaL3Vo?=
- =?utf-8?B?RmJpWFpjVUNJdzNwVlM3WUFxcXZ3Wm1NM1pIUDhNMkN2a1dKZ25vVFZWSkQv?=
- =?utf-8?B?MEk1ZERPUFBQS1dvR3ZURjRhUHlFM29jRDBZNjNPL2lwQ2hMTnJnNHVNUVZv?=
- =?utf-8?B?eGEva0NWNUNWSVZyNjk2M1c1cVdPTWhaUXRMbkVVdVoxd3dhYm0rTE8vS3Z6?=
- =?utf-8?B?UHVVS24rRXZ0RTJWRUltTk9iOVJtQW9jOUtMV0cvSHhhMlNXalJodVVGMCs4?=
- =?utf-8?B?MlhBZC95ckJZWThRUHUxWEdUMjI2bXltdWNVWmtWZUFyR1BJd3I4VFpLQkpF?=
- =?utf-8?B?eEdMa05JeHplMHczOGtEVmtWRTF1ekdyV0RzZTl6RGF6VFhPazJsOFZhUFdm?=
- =?utf-8?B?WmFHTGI0R0JnL3NOSlRJa2taZXVFelZFVThYcGwrMjRCcWNCbDJLODdjaFlO?=
- =?utf-8?B?QnFSaytRTW5mTXcvcHArMVFoTGI5MDZ5UDVpaTNqcWp6UzBVcUZLeGR5OGo4?=
- =?utf-8?B?YkEwNFZ0SzRjekx1NlRNaG5GUlc3aEswTVllSWRqcVU0Vk9WVjNQaG5NTzk4?=
- =?utf-8?B?dmdiMzJqNU1RU1JSdFA0TDJxZGZWRmhZSnRwS2puWExUYW0xTU9mOHA4a1Ft?=
- =?utf-8?B?NURiYVhPbW9rMjV3REJiTGNMWWpQWkxBOGd4OUo2cm9QSHRIQXdPNi80dkNk?=
- =?utf-8?B?OEV4aWx6WFcrVk02NTJHNFpMdGNScFRyaDkvWXNZWUpUSTBzTGR6eERvV0FD?=
- =?utf-8?B?VEs1c01YaDZKSWtCS2QrUXphQXJUNEErUWxPaFhITGc2NVdXaFpYaXcrQWt0?=
- =?utf-8?B?Q2JKRnhyV3N1RjErMWRTanRMdHdRT2tWRy9xWUpGRjVxOFU5WUtjL0FOZ05j?=
- =?utf-8?B?QWNGSmxTci9JTGZpUFRFeVlJWWEyVUhTWW15M3Zyc3l6ZlVOYWV5SkhHSVFh?=
- =?utf-8?B?QWtndFk4dDJ6N1h1TW5hZHlMRHk0M0Z5M0lneFFXY2tFcDZWN2RybVA4M1ZR?=
- =?utf-8?B?bG8vaktlUHc0U2RaTFF3Ym9kQ2tmY0c1SG51VzJTenQ2QVMzbzNrTDJXSkE5?=
- =?utf-8?B?UnZCT3pPMXJqQi9MNmZqVWFqWWJzaENkenYwN0ROT21wTVd3enpJYjQ3c3h4?=
- =?utf-8?B?WVJVZVFiNThnR3V3VDNBVmdXVWF2NlBzMkdmS05sRWIvUWlWWk1menNoNEs2?=
- =?utf-8?Q?O3vso8RScHPkPd1LI2s24D0BI?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1f9c7cd-57ca-4693-bfff-08dcf1a91725
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 08:19:32.2843
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mkerelay2.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 08:20:17.4937
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j12BPV9M9nAkBX2pykRuBrQCOwK3Yi3jgwtXl2o4xhrTerwdgWtf5gjfUbG3DLlbJJ0oJL2Ws5LgC3ZBrL8cmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7460
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7084ec84-f48d-4b4e-d432-08dcf1a9326d
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[mkerelay2.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SN1PEPF000397AF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR22MB5699
 
-On 10/21/2024, Krzysztof Kozlowski wrote:
-> On Mon, Oct 21, 2024 at 02:44:39PM +0800, Liu Ying wrote:
->> Dual-link LVDS displays receive odd pixels and even pixels separately from
->> dual LVDS links.  One link receives odd pixels and the other receives even
->> pixels.  Some of those displays may also use only one LVDS link to receive
->> all pixels, being odd and even agnostic.  Document common properties for
->> those displays by extending LVDS display common properties defined in
->> lvds.yaml.
->>
->> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->> v3:
->> * New patch.  (Dmitry)
->>
->>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
->>  1 file changed, 76 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->> new file mode 100644
->> index 000000000000..0ac4c06d0a17
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->> @@ -0,0 +1,76 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Dual-link LVDS Display Common Properties
->> +
->> +maintainers:
->> +  - Liu Ying <victor.liu@nxp.com>
->> +
->> +description: |
->> +  This binding documents common properties for LVDS displays with dual LVDS
+On Fri, Oct 18, 2024 at 11:26:54AM +0200, Jean Delvare wrote:
+> Hi Ray,
 > 
-> s/This binding documents//
-
-Ack.
-
+> Sorry for the delay.
 > 
-> But anyway there is a binding for common properties used in dual-link
-> panels: panel-common-dual. How is it different? Why this is not suitable
-> there? Why entirely different file name?
+> On Tue, 2024-10-08 at 09:02 +0300, Ian Ray wrote:
+> > On Mon, Oct 07, 2024 at 11:16:51PM +0200, Jean Delvare wrote:
+> > > On Thu, 2024-06-20 at 07:29 +0300, Ian Ray wrote:
+> > > > Ensure that `i2c_lock' is held when setting interrupt latch and mask in
+> > > > pca953x_irq_bus_sync_unlock() in order to avoid races.
+> > > >
+> > > > The other (non-probe) call site pca953x_gpio_set_multiple() ensures the
+> > > > lock is held before calling pca953x_write_regs().
+> > > >
+> > > > The problem occurred when a request raced against irq_bus_sync_unlock()
+> > > > approximately once per thousand reboots on an i.MX8MP based system.
+> > > >
+> > > >  * Normal case
+> > > >
+> > > >    0-0022: write register AI|3a {03,02,00,00,01} Input latch P0
+> > > >    0-0022: write register AI|49 {fc,fd,ff,ff,fe} Interrupt mask P0
+> > > >    0-0022: write register AI|08 {ff,00,00,00,00} Output P3
+> > > >    0-0022: write register AI|12 {fc,00,00,00,00} Config P3
+> > > >
+> > > >  * Race case
+> > > >
+> > > >    0-0022: write register AI|08 {ff,00,00,00,00} Output P3
+> > > >    0-0022: write register AI|08 {03,02,00,00,01} *** Wrong register ***
+> > > >    0-0022: write register AI|12 {fc,00,00,00,00} Config P3
+> > > >    0-0022: write register AI|49 {fc,fd,ff,ff,fe} Interrupt mask P0
+> > > >
+> > >
+> > > I have more questions on this. Where does the above log come from?
+> > > Specifically, at which layer (bus driver, regmap, gpio device drier)?
+> >
+> > Additional debug, with manually added commentary (sorry for not being
+> > clearer).  The debug was added to drivers/base/regmap/regmap-i2c.c while
+> > investigating the issue.
+> 
+> FWIW, I think regmap includes a tracing facility which may have served
+> you. Specifically, I see calls to trace_regmap_hw_write_start() and
+> trace_regmap_hw_write_done() in _regmap_raw_write_impl(). But I must
+> confess I couldn't find where these functions are defined nor how to
+> enable tracing...
 
-This one references lvds.yaml, which allows data-mapping and data-mirror.
-They are not something common for dual-link panels.
-
-Also, this one is supposed to cover all dual-link LVDS displays including
-display panels and display bridges, while pane-common-dual.yaml is for
-panels only.
+Interesting, thank you!
 
 > 
-> Best regards,
-> Krzysztof
+> > > What do these values represent exactly? Which GPIO chip was used on
+> > > your system? Which i2c bus driver is being used on that system? What
+> > > are the "requests" you mention in the description above?
+> >
+> > GPIO expander pi4ioe5v6534q at I2C address 0-0022.
 > 
+> This device model doesn't seem to be explicitly supported by driver
+> gpio-pca953x. I see it listed as compatible in
+> Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml but not in the
+> driver's pca953x_dt_ids. Out of curiosity, did you have to add it
+> manually? I admit I'm not familiar with these device tree node
+> declarations.
+> 
+> > # grep . {name,uevent}
+> > name:30a20000.i2c
+> > uevent:OF_NAME=i2c
+> > uevent:OF_FULLNAME=/soc@0/bus@30800000/i2c@30a20000
+> > uevent:OF_COMPATIBLE_0=fsl,imx8mp-i2c
+> > uevent:OF_COMPATIBLE_1=fsl,imx21-i2c
+> > uevent:OF_COMPATIBLE_N=2
+> > uevent:OF_ALIAS_0=i2c0
+> 
+> OK, so the underlying I2C master is capable of writing to multiple
+> registers at once. This helped me follow the code flow while trying to
+> figure out where the race was.
+> 
+> > > I'm asking because I do not understand how writing to the wrong
+> > > register can happen, even without holding i2c_lock in
+> > > pca953x_irq_bus_sync_unlock(). The i2c layer has a per-i2c_adapter lock
+> >
+> > Given that pca953x_irq_bus_sync_unlock is part of an interrupt handler,
+> > IMHO this explains very well why locking is needed (but I did not dig
+> > deeper than that).
+> 
+> I took the time to dig deeper, my conclusions are below.
+> 
+> > > which is taken before any bus transfer, so it isn't possible that two
+> > > transfers collide at the bus level. So the lack of locking at the
+> > > device driver level could lead to data corruption (for example read-
+> > > modify-write cycles overlapping), but not to data being written to the
+> > > wrong register.
+> >
+> > Based on the observed data, the hypothesis was that pca953x_write_regs
+> > (called via pca953x_gpio_set_multiple) and pca953x_irq_bus_sync_unlock
+> > can race.
+> >
+> > The missing guard neatly explained and fixed the issue (disclaimer: on
+> > my hardware for my scenario).
+> >
+> > > As a side note, I dug through the history of the gpio-pca953x driver
+> > > and found that i2c_lock was introduced before the driver was converted
+> > > to regmap by:
+> > >
+> > > commit 6e20fb18054c179d7e64c0af43d855b9310a3394
+> > > Author: Roland Stigge
+> > > Date:   Thu Feb 10 15:01:23 2011 -0800
+> > >
+> > >     drivers/gpio/pca953x.c: add a mutex to fix race condition
+> > >
+> > > The fix added locking around read-modify-write cycles (which was indeed
+> > > needed) and also around simple register reads (which I don't think was
+> > > needed).
+> > >
+> > > It turns out that regmap has its own protection around read-modify-
+> > > write cycles (see regmap_update_bits_base) so I think several uses of
+> > > i2c_lock should have been removed from the gpio-pca953x driver when it
+> > > was converted to regmap as they became redundant then.
+> 
+> I have to correct myself here. The regmap layer implements its own,
+> configurable and *optional* protection lock. It turns out that the
+> gpio-pca953x driver has it disabled:
+> 
+> static const struct regmap_config pca953x_i2c_regmap = {
+>         (...)
+>         .disable_locking = true,
+>         (...)
+> };
+> 
+> So it is expected and very needed that the gpio-pca953x driver
+> implements its own lock to protect against races whenever the hardware
+> is accessed.
+> 
+> > > This driver-side
+> > > lock is still needed in a number of functions though, where the read-
+> > > modify-write is handled outside of regmap (for example in
+> > > pca953x_gpio_set_multiple).
+> 
+> After reading the regmap code (which took me some time as I wasn't
+> familiar at all with it, I didn't know what I was looking for exactly
+> and I wanted to make sure I wasn't missing something along the way), I
+> think I understand what was racing exactly.
+> 
+> The gpio-pca953x driver uses regmap_bulk_write() which is implemented
+> by _regmap_raw_write_impl(). The register map uses an internal buffer
+> to prepare the actual hardware transfers:
+> 
+> struct regmap *__regmap_init(...) {
+>         (...)
+>         map->work_buf = kzalloc(map->format.buf_size, GFP_KERNEL);
+>         (...)
+> }
+> 
+> This work buffer has space for both the register address and the values
+> to be written to or read from the device:
+> 
+>         map->format.buf_size = DIV_ROUND_UP(config->reg_bits +
+>                         config->val_bits + config->pad_bits, 8);
+> 
+> During a regmap raw write, the register address is written to the first
+> byte of the work buffer:
+> 
+>         map->format.format_reg(map->work_buf, reg, map->reg_shift);
+> 
+> where map->format.format_reg() is regmap_format_8() for the gpio-
+> pca953x driver:
+> 
+> static void regmap_format_8(void *buf, unsigned int val, unsigned int shift)
+> {
+>         u8 *b = buf;
+> 
+>         b[0] = val << shift;
+> }
+> 
+> If _regmap_raw_write_impl() is called concurrently without proper
+> locking then the contents of the work buffer may be overwritten by the
+> second caller before the first caller had a chance to use it. I think
+> this matches your debug log of the race case pretty well.
+> 
+> I checked the regmap implementation for other use cases of map-
+> >format.format_reg(map->work_buf, ...) and found it is being used in
+> _regmap_raw_read(), so I had to investigate further, because
+> pca953x_irq_bus_sync_unlock() also calls pca953x_read_regs(..., chip-
+> >regs->direction, ...) which in turn calls regmap_bulk_read().
+> 
+> For volatile registers, this function will call regmap_raw_read() which
+> reads the values from the hardware most of the time. However, for non-
+> volatile registers, _regmap_bulk_read() is being called instead, which
+> is implemented by _regmap_read() which reads from the regmap cache. As
+> it turns out that the direction registers are not volatile and are read
+> first as part of pca953x_irq_setup(), the values will always be
+> available from the cache when read from pca953x_irq_bus_sync_unlock(),
+> so no hardware access will happen and the internal work buffer won't be
+> used.
+> 
+> Therefore my conclusion is that your fix was needed, is correct and is
+> sufficient. My initial concern about the unprotected
+> pca953x_read_regs() call in pca953x_irq_bus_sync_unlock() was
+> incorrect. Sorry for the noise.
 
--- 
-Regards,
-Liu Ying
+No noise, this was a really interesting study, and a good learning
+experience for me.  Thank you for this.
 
+Blue skies,
+Ian
+
+
+> 
+> --
+> Jean Delvare
+> SUSE L3 Support
 
