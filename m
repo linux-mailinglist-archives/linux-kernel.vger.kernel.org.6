@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-373697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED239A5A69
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3769A5A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFAF281478
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A391F217FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA021CF291;
-	Mon, 21 Oct 2024 06:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0872B1CF5DA;
+	Mon, 21 Oct 2024 06:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="qfOO5kwR"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xguos8CT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8116B194A49
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A998194A49;
+	Mon, 21 Oct 2024 06:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729492405; cv=none; b=gTuZBsjwkdesF0jWWABmls94SqwSmVhUkBwZBzIjE9LJmZ6an49KqQjBMF7zog2o7qfm7WHxh15kZXUJmSniTjo6o4gVgZDPG8rJYxsPSgMLPLvNUJPnuRkVErKeCZwrMaRmj7rZ63ikb0k19pj5DrWIm6RWiCLL/kfwxpwlwyc=
+	t=1729492616; cv=none; b=oG7rRjgZZywEpe/ypiKlYiC1uFdjUMT7nmMliA5aYEfAjx1Zq9yo+SiStU+e9cYRjtOyVp+l0iCIWZv2N/aYuDlraRbSBvkT/rfFv8v9zleY2lZh7ZMdMgNAmvc+hUkkzhqCBP7/eO/Ky31NmwiNXUthLAmzv2KCbyfzHzHDJFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729492405; c=relaxed/simple;
-	bh=d9EUatJrHB967xkaMIGGxBlmw9uOaKcQwdMTUJwPQyA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=leI42oIbj/fNp6FIxYH12fNVXWZb6WEWF4jKI/aKiaofSJZcslGRUsHrHNEoPDiLTud/WqdkhnLXOGi8czCSGUgXeVTuOvkBWSGa0RJX3wVjkjLQOlQSkVyysiyy9POwWRZeR4NtdMnEQM7+EtzAQuavQPaDrDo67Eq/wL8L7vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=qfOO5kwR reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=d9EUatJrHB967xkaMIGGxBlmw9uOaKcQwdMTUJwPQyA=;
-  b=qfOO5kwR8h//rxYbBkp8CRl+x211/8uAdpdbU4VwGIYrBK28i3ZtH15E
-   yIXwdrEBf5fbreTq597nc3+rvfRIAenAmQkeAlL3b+T1/g/s0eUNlTT76
-   v4eJnWOoQZFqJC8emM5rSX04w1Z1qJZ5YwmRLDS7fQ9wPJQYXyfDTwVsi
-   /gP/BlprxEgJcJj5RtxLVdmVfLq6Xx/c7FYrU0LUWjoYWVimYDN9iv6jB
-   hdYFifAilB3+swK6xah1WR9t5/K7zyeH4s7oE5AOinWeLsplfHhm2SHxY
-   Wdmsl3JKJ/tKv4u9ttprN3TlfNhfpvWWIRv2ltmWUZqS1Ub+6SK4eFKWx
+	s=arc-20240116; t=1729492616; c=relaxed/simple;
+	bh=r8Y1zyu4RvBdryMzhceEsx+cQKkc+1PuhMnt3cv/Dc8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hB4qUizNayBKORmKJDHBu+3RkgaPMbVEdz8uopPNRKAh+4BrY26mA8I5ofj33VuUon6CAgqSZ4JPkxxF0lfUmXXpT4lhHU366/nkqiZB56s857zdhUe2MTRMxUnldKCw8abpYRKnArafLf/trTXfHB6ZZBFW26FJbV13nlwWPTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xguos8CT; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729492615; x=1761028615;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=r8Y1zyu4RvBdryMzhceEsx+cQKkc+1PuhMnt3cv/Dc8=;
+  b=Xguos8CT3381gJP8blvCc6Fyk+dUzz/uw3HRMBumuJ9Qh8Mewyr5oePr
+   vXB9WqK6dpMu50lI1NWFHondMv1s1VzFX7pp6WecvCR514TJSS76Gy/mE
+   1KHlcld9XQb6JF14tkcP8Mo0xAS5jCt7PpU40ly63Em5AdVSJRBS0ZGeQ
+   jm5OamEBk+jxHDW1q5sHtd5dlSYxG9CpH+cL6qZsC6xwQm6viYpMlZkZ+
+   KwWFDUHha8rEtE5QiG/58Cie0bhfEnwOv1rvFhxbTHUECw0Oad/+1Dz20
+   bQmDNjsB5UmQ9n7fw87CcAjB7Ga+q8Si270DGuwOZCf8E9Nt6tQhIHmPJ
    g==;
-X-CSE-ConnectionGUID: IZyzp3biR+aigF6Kxb/glA==
-X-CSE-MsgGUID: 8zrP8PZfSaahjsweDGbz/Q==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 21 Oct 2024 14:33:14 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 49L6X9XD099218;
-	Mon, 21 Oct 2024 14:33:09 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 21 Oct 2024 14:33:09 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Mon, 21 Oct 2024 14:33:09 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <angelogioacchino.delregno@collabora.com>,
-        <treapking@chromium.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <Kenneth.Hung@ite.com.tw>,
-        <Pet.Weng@ite.com.tw>
-Subject: RE: [PATCH v6 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
- add MCCS support
-Thread-Topic: [PATCH v6 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
- add MCCS support
-Thread-Index: AQHbIvfv2yCYgM8QaEWs6T2K4Uuy/LKQvbWQ
-Date: Mon, 21 Oct 2024 06:33:09 +0000
-Message-ID: <2302452d3a6e446d9d288241958ec086@ite.com.tw>
-References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
- <e6ksqhssu55ox4ffzyko7fsahvk6i6aoj4jo2rbe2gv6sclvzp@elpidkcflh3s>
-In-Reply-To: <e6ksqhssu55ox4ffzyko7fsahvk6i6aoj4jo2rbe2gv6sclvzp@elpidkcflh3s>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 4AA65F92141D12A2B8DA56F580D5AD81F0FF959BCA15C3262F2C8DAA8FFB35882002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+X-CSE-ConnectionGUID: 5LefrVy7SPWoIdAo0915jg==
+X-CSE-MsgGUID: uQIsQevURnWIktK+VwTNHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="40329309"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="40329309"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 23:36:54 -0700
+X-CSE-ConnectionGUID: ALpJtLuERPe8PB9buqQm1A==
+X-CSE-MsgGUID: sDWXCQTUQx6onzTxI7N0dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="80246044"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 23:36:51 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  linux-cxl@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Gregory Price <gourry@gourry.net>,
+  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>,  Alison Schofield
+ <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
+  Ira Weiny <ira.weiny@intel.com>,  Alejandro Lucero <alucerop@amd.com>,
+  Ben Cheatham <benjamin.cheatham@amd.com>
+Subject: Re: [PATCH 4/5] cxl: Set type of region to that of the first endpoint
+In-Reply-To: <6712d0f737037_10a0329441@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	(Dan Williams's message of "Fri, 18 Oct 2024 14:19:51 -0700")
+References: <20241015065713.308671-1-ying.huang@intel.com>
+	<20241015065713.308671-5-ying.huang@intel.com>
+	<6711909cd5d83_3f14294e@dwillia2-xfh.jf.intel.com.notmuch>
+	<877ca57vlb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<6712d0f737037_10a0329441@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Date: Mon, 21 Oct 2024 14:33:18 +0800
+Message-ID: <87y12i55jl.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 49L6X9XD099218
+Content-Type: text/plain; charset=ascii
 
-aGkNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRG1pdHJ5IEJhcnlzaGtv
-diA8ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPiANCj5TZW50OiBTdW5kYXksIE9jdG9iZXIg
-MjAsIDIwMjQgOTo1NyBQTQ0KPlRvOiBIZXJtZXMgV3UgKKdkqM6nuykgPEhlcm1lcy5XdUBpdGUu
-Y29tLnR3Pg0KPkNjOiBBbmRyemVqIEhhamRhIDxhbmRyemVqLmhhamRhQGludGVsLmNvbT47IE5l
-aWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPjsgUm9iZXJ0IEZvc3MgPHJm
-b3NzQGtlcm5lbC5vcmc+OyBMYXVyZW50IFBpbmNoYXJ0IDxMYXVyZW50LnBpbmNoYXJ0QGlkZWFz
-b25ib2FyZC5jb20+OyBKb25hcyBLYXJsbWFuIDxqb25hc0Brd2lib28uc2U+OyBKZXJuZWogU2ty
-YWJlYyA8amVybmVqLnNrcmFiZWNAZ21haWwuY29tPjsgTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0
-ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNvbT47IE1heGltZSBSaXBhcmQgPG1yaXBhcmRAa2Vy
-bmVsLm9yZz47IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPjsgRGF2aWQg
-QWlybGllIDxhaXJsaWVkQGdtYWlsLmNvbT47IFNpbW9uYSBWZXR0ZXIgPHNpbW9uYUBmZndsbC5j
-aD47IEFuZ2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2NoaW5vLmRlbHJlZ25v
-QGNvbGxhYm9yYS5jb20+OyBQaW4teWVuIExpbiA8dHJlYXBraW5nQGNocm9taXVtLm9yZz47IGRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmc7IEtlbm5ldGggSHVuZyAorHiuYa3bKSA8S2VubmV0aC5IdW5nQGl0ZS5jb20udHc+OyBQZXQg
-V2VuZyAor86lyariKSA8UGV0LldlbmdAaXRlLmNvbS50dz4NCj5TdWJqZWN0OiBSZTogW1BBVENI
-IHY2IDAwLzEwXSBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBmYWlsIGl0ZW1zIGFu
-ZCBhZGQgTUNDUyBzdXBwb3J0DQo+DQo+T24gV2VkLCBPY3QgMTYsIDIwMjQgYXQgMDM6NTQ6MTJQ
-TSArMDgwMCwgSGVybWVzIFd1IHZpYSBCNCBSZWxheSB3cm90ZToNCj4+IFRoaXMgaXMgYSB2NiBw
-YXRjaC1zZXQuDQo+PiANCj4+IFRoZXJlIGFyZSBsb3RzIG9mIGZhaWx1cmUgaXRlbXMgd2hpbGUg
-cnVubmluZyBIRENQIENUUyB1c2luZyBVTklHUkFGIERQUi0xMDAuDQo+PiBJbiBPcmRlciB0byBm
-aXggdGhvc2UgZmFpbHVyZXMsIEhEQ1AgZmxvdyBuZWVkcyB0byBiZSBjaGFuZ2VkLg0KPj4gDQo+
-PiBUaGUgRGlzcGxheVBvcnQgQVVYIHByb3RvY29sIHN1cHBvcnRzIEkyQyB0cmFuc3BvcnQuDQo+
-PiBJbiBPcmRlciB0byBzdXBwb3J0IE1DQ1MgdmlhIHRoZSBhdXggY2hhbm5lbCwgdGhlIGF1eC1p
-MmMgb3BlcmF0aW9uIGlzIGFkZGVkLg0KPj4gDQo+PiB2NS0+djY6DQo+PiAJLWtlZXAgdGhlIGNv
-bW1pdCBtZXNzYWdlIHdyYXBwZWQgYXQgNzItNzUgY2hhcnMuDQo+PiAJLVsxMC8xMF0gZml4IHJl
-dHVybiB2YXJpYWJsZSBiZWluZyB1c2VkIHdpdGhvdXQgYmVpbmcgaW5pdGlhbGl6ZWQNCj4NCj5J
-IGhhdmUgcmV2aWV3ZWQgdGhlIHBhdGNoZXMgdGhhdCBJIGNvdWxkIHJldmlldywgYnV0IEkgbGFj
-ayBkZWVwIEhEQ1Aga25vd2xlZGdlLCBzbyBJIGNhbiBub3QgcmV2aWV3IHBhdGNoZXMgNSwgNiwg
-OCwgOS4gSG9wZWZ1bGx5IHNvbWVib2R5IGVsc2UgY2FuIHN0ZXAgdXAuDQo+DQp0aGFuayB5b3Uu
-DQoNCj4+IHY0LT52NToNCj4+IAktYWRkIG1vcmUgbWVzc2FnZXMgZm9yIGNoYW5nZXMuDQo+PiAJ
-LVsyLzEwXSBtb2RpZmllZCBBVVggdHJhbnNmZXIgZGF0YSBzaXplIGp1ZGdtZW50Lg0KPj4gCQlj
-aGFuZ2UgZm9yLWxvb3AgdG8gZG8td2hpbGUuDQo+PiAJLVs3LzEwXSBjaGFuZ2UgZm9yLWxvb3Ag
-dG8gZG8td2hpbGUuDQo+PiAJLVs5LzEwXSBjaGFuZ2Ugd2FpdCB0aW1lciB3aXRoIHRpbWVyX2Fm
-dGVyKCkNCj4+IA0KPj4gCWxpbmtzOg0KPj4gCWh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19o
-dHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA5MjYwNzQ3NTUuMjIxNzYtNC1IZXJtZXMu
-V3VAaXRlLmNvbS50dy9fXzshIUh0bkxFOEEhSE93eTA1X2VnVGJqNVU3dnJqZlBoSkMyMVZLX0p4
-bGw4VVdOT2NHRXpOU0R4bktRakU2UVNMaGFtZC1JUk9FLVN4R09yekZTX1NMZml4dE9SakxMQlRq
-ZEwzU1YkIA0KPj4gCQ0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC8yMDI0MDkyNjA3NTEzNA0KPj4gLjIyMzk0LTEtSGVybWVzLld1QGl0
-ZS5jb20udHcvX187ISFIdG5MRThBIUhPd3kwNV9lZ1RiajVVN3ZyamZQaEpDMjFWSw0KPj4gX0p4
-bGw4VVdOT2NHRXpOU0R4bktRakU2UVNMaGFtZC1JUk9FLVN4R09yekZTX1NMZml4dE9SakxMQlRj
-X1lnOFIkDQo+PiANCj4+IHYzLT52NDoNCj4+IAktc3BsaXQgY2hhbmdlcyAgaW50byBwYXRjaGVz
-Lg0KPj4gDQo+PiB2Mi0+djM6DQo+PiAJLXNwbGl0IGF1eCByZWFkICBLU1YgZnVuY3Rpb24gdG8g
-YSBwYXRjaC4NCj4+IAktWzEvM10gbmV3IGluIHYzDQo+PiAJLVsyLzNdIGFkZCBkZXNjcmlwdGlv
-biBvZiBwYXRjaA0KPj4gDQo+PiB2MS0+djI6DQo+PiAJLSBpZ25vcmVkLg0KPj4gDQo+PiBIZXJt
-ZXMgV3UgKDEwKToNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBDaGFuZ2UgZGVmaW5pdGlvbiBv
-ZiBBVVhfRklGT19NQVhfU0laRQ0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGltcHJvdmUgQVVY
-IG9wZXJhdGlvbiBmb3IgZWRpZCByZWFkDQo+PiAgIGRybS9icmlkZ2U6IGl0NjUwNTogYWRkIEFV
-WCBvcGVyYXRpb24gZm9yIEhEQ1AgS1NWIGxpc3QgcmVhZA0KPj4gICBkcm0vYnJpZGdlOiBpdDY1
-MDU6IENoYW5nZSBkZWZpbml0aW9uIE1BWF9IRENQX0RPV05fU1RSRUFNX0NPVU5UDQo+PiAgIGRy
-bS9icmlkZ2U6IGl0NjUwNTogZml4IEhEQ1AgQnN0YXR1cyBjaGVjaw0KPj4gICBkcm0vYnJpZGdl
-OiBpdDY1MDU6IGZpeCBIRENQIGVuY3J5cHRpb24gd2hlbiBSMCByZWFkeQ0KPj4gICBkcm0vYnJp
-ZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBLU1YgbGlzdCByZWFkIHdpdGggVU5JR1JBRiBEUFIt
-MTAwLg0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBjb21wYXJlIFYgbWF0
-Y2hpbmcNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBmaXggSERDUCBDVFMgS1NWIGxpc3Qgd2Fp
-dCB0aW1lcg0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGFkZCBJMkMgZnVuY3Rpb25hbGl0eSBv
-biBBVVgNCj4+IA0KPj4gQ2hhbmdlLUlkOiBJYWQwYzA1NmQ3MmFiZjI2NTUwODEzNTdjZjQwYzNi
-MGQzZGY5MTZiNQ0KPj4gU2lnbmVkLW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNv
-bS50dz4NCj4+IC0tLQ0KPj4gSGVybWVzIFd1ICgxMCk6DQo+PiAgICAgICBkcm0vYnJpZGdlOiBp
-dDY1MDU6IENoYW5nZSBkZWZpbml0aW9uIG9mIEFVWF9GSUZPX01BWF9TSVpFDQo+PiAgICAgICBk
-cm0vYnJpZGdlOiBpdDY1MDU6IGltcHJvdmUgQVVYIG9wZXJhdGlvbiBmb3IgZWRpZCByZWFkDQo+
-PiAgICAgICBkcm0vYnJpZGdlOiBpdDY1MDU6IGFkZCBBVVggb3BlcmF0aW9uIGZvciBIRENQIEtT
-ViBsaXN0IHJlYWQNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogQ2hhbmdlIGRlZmluaXRp
-b24gTUFYX0hEQ1BfRE9XTl9TVFJFQU1fQ09VTlQNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUw
-NTogZml4IEhEQ1AgQnN0YXR1cyBjaGVjaw0KPj4gICAgICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBm
-aXggSERDUCBlbmNyeXB0aW9uIHdoZW4gUjAgcmVhZHkNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0
-NjUwNTogZml4IEhEQ1AgQ1RTIEtTViBsaXN0IHJlYWQgd2l0aCBVTklHUkFGIERQUi0xMDAuDQo+
-PiAgICAgICBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBjb21wYXJlIFYgbWF0Y2hp
-bmcNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogZml4IEhEQ1AgQ1RTIEtTViBsaXN0IHdh
-aXQgdGltZXINCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogYWRkIEkyQyBmdW5jdGlvbmFs
-aXR5IG9uIEFVWA0KPj4gDQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMg
-fCAzMzQgDQo+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0NCj4+ICAxIGZp
-bGUgY2hhbmdlZCwgMjc3IGluc2VydGlvbnMoKyksIDU3IGRlbGV0aW9ucygtKQ0KPj4gLS0tDQo+
-PiBiYXNlLWNvbW1pdDogYjgxMjhmNzgxNWZmMTM1ZjAzMzNjMWI0NmRjZGYxNTQzYzQxYjg2MA0K
-Pj4gY2hhbmdlLWlkOiAyMDI0MTAxNS11cHN0cmVhbS12Ni05ZjRiMDE1ZmVjZjcNCj4+IA0KPj4g
-QmVzdCByZWdhcmRzLA0KPj4gLS0NCj4+IEhlcm1lcyBXdSA8SGVybWVzLnd1QGl0ZS5jb20udHc+
-DQo+PiANCj4+IA0KPg0KPi0tDQo+V2l0aCBiZXN0IHdpc2hlcw0KPkRtaXRyeQ0KPg0KDQpCUiwN
-Ckhlcm1lcw0K
+Dan Williams <dan.j.williams@intel.com> writes:
+
+> Huang, Ying wrote:
+>> Dan Williams <dan.j.williams@intel.com> writes:
+>> 
+>> > Huang Ying wrote:
+>> 
+>> [snip]
+>> 
+>> >> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> >> index 21b877d8582f..d709738ada61 100644
+>> >> --- a/drivers/cxl/core/region.c
+>> >> +++ b/drivers/cxl/core/region.c
+>> >> @@ -1926,7 +1926,10 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+>> >>  		return -ENXIO;
+>> >>  	}
+>> >>  
+>> >> -	if (cxled->cxld.target_type != cxlr->type) {
+>> >> +	/* Set the type of region to that of the first endpoint */
+>> >> +	if (cxlr->type == CXL_DECODER_INVALID) {
+>> >> +		cxlr->type = cxled->cxld.target_type;
+>> >> +	} else if (cxled->cxld.target_type != cxlr->type) {
+>> >
+>> > No, the type of the region is determined by the caller and should be
+>> > gated by the region capability. For type-2 region creation I doubt
+>> > userspace is going to be creating those vs the accelerator so this all
+>> > seems backwards to me.
+>> 
+>> How do we determine the type of the endpoint?  Specify it in type2/type3
+>> device driver?
+>
+> Why does the endpoint type matter? Memory expansion can be supported by
+> HDM-D[B], and an accelerator could have one or more HDM-H decoders.
+>
+>> If so, we will specify the type of both the endpoint and the region in
+>> type2/type3 device driver.  Then, why not only specify the type of the
+>> endpoint?  The type of region can be determined from the type of the
+>> endpoint.
+>
+> Because CXL HDM protocol is per decoder not per device.
+
+Sorry for confusing.  When I said endpoint, I wanted to say "endpoint
+decoder" actually.  IIUC, the coherence type of region should be same as
+that of all endpoint decoders participating the region.  If we specify
+the coherence type of the endpoint decoders, the coherence type of the
+region should be same, so we don't need to specify it again?  We need to
+check root decoder capability as you pointed out.
+
+Best Regards,
+Huang, Ying
 
