@@ -1,190 +1,340 @@
-Return-Path: <linux-kernel+bounces-374760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326319A6F86
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 111CD9A6F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580631C21456
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3082C1C2175F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E863D1CBEB6;
-	Mon, 21 Oct 2024 16:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E21178395;
+	Mon, 21 Oct 2024 16:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6M9c7RV"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPbJ92H4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4406B199EB2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1D41E884B;
+	Mon, 21 Oct 2024 16:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528385; cv=none; b=IPOvnhXMdlphev1e8GSUI39KJPcJWfpcaXRq2wfyUuRscfgEW3I2ge9snD8m0BwZseo1NGiGHJMiOYkwlwu/VUrnccntisNl/jlOKjyTuKEcjQxT91rjP+NTbKyaW41QwpJeKDqyuk2udfvU8PBXCuBCjytx+h8vwCgR58Fc4SQ=
+	t=1729528400; cv=none; b=icPBFC3MorkOO0vJ8VkCEsvLfPH26V1B20Z6/K1pg5NQtQD6QbkyHWVr7Tp4h9G3m11trIaBR1hCjvr6ONMOstt+XP7tUiJwyJyTP9d33iUpVoBS9GEWDRcrg8TzL6bGNoIN8+KHR6aMnJPef3mE9RlgVmsiUCsOivSKR+Qkms8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528385; c=relaxed/simple;
-	bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hfcVwZ3ZGOVsH5ZhWp4ug9RA9g7xAF921eF2NUREQg9YzM46nPRURUfYj4Y2QvG9svVlr2RMCSK4GVGx4bOmrAkS6XE1ibA5aw5b0WG7uskDqyZrK3gPxkWDtQmdwZ31qQzFdH2SGhsU1rSIZPF/up37w31DfFdV6dS8r3lfW6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n6M9c7RV; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608dddaa35so2731cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729528382; x=1730133182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
-        b=n6M9c7RVzEEViJ1XxuCI3im2jeVzeN2MjKcPzEfFxyqpGPrro80d7rvy+M/tukB3n9
-         gZujALNvyTjaZ9pgECRNj/9GE/TQCmdh4xyT6/hMwdqmWdWa4ZVWyLIvHEtElb8G3crq
-         yZcj9w2axBanglhNnDcd0bNB14fB31cbB4LYFcC0BJ/lhTjxaSOAq5BJAEV1zKuPljTG
-         7UvtTvLZO43ZSWZkRwvf+EDLjeH0C9zEgx2XoqWFdVfpzkjV8yiuKyELFaf9lKgb+Oj2
-         tYH4SovYwr9BQdcY4yM+JhD2DpAZfOYAHLohuCEMHPpsZLPLPsxorSNDjS6z9Gcjzqq+
-         vYEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729528382; x=1730133182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
-        b=QPziJ1PDhl+rVb9jBYTCtUkUqA0lirVFOZDISekVDA/BlDmSobhj9alQ8R1XOwd7DE
-         RaISZojD7JWvPZqDhsoN7pAuSjDwsFOKPF/eDSMwPGiRtqO1dZHjlSH4RVtWXpIvo2lC
-         wfChmxy/BhzjgI4xiJaeV0N8dPmEnXEb2B/bzlNcYzcnylUictsVsaqVxFDuxKcfnSaI
-         z4Uj2eeE7m8BzMvozVnx3XwQn4nieqzJdbOwZad8AA+3e1xXsoZPSpN3z3XGW0a7mHud
-         +yWduzDXBu/MVS+QbHeCoFMD+Nr+hc0ntwjPqtaCrGpf+GQtqlQuUhRltbDIjPY4870n
-         0UrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1kzdbVRvA5vBQh8Pk/1t9y9dMzDQ3GOMrNxs80kzYHWbV+KQPhWVq61kiw9sugean1UTuLz6UHgakK94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaHPsxOFLXXu1kCaj+NDrF1NEY38Ic3C7SM9TtcB4WanxB7kD6
-	LmNeePimLM+sii0mjzHHDpdulEH8bsZ2uv/G6VIAP59JcU0LiaImJSvoOyUjQGaXiR+YD1Q0/vg
-	mIwfeCr4OViywNYwWrgIYWXGjjjvwYPlKzvvF
-X-Google-Smtp-Source: AGHT+IEQJ7/dyf+59nB7w/ddzz12Ku666cGjBPoxf5tsDd/h9NHtih3CUtvHgU9dx314ldpzIPEbnG3QzndRB2BJVaA=
-X-Received: by 2002:a05:622a:1a18:b0:460:77ac:8773 with SMTP id
- d75a77b69052e-460bc5cf9c1mr4982821cf.26.1729528381808; Mon, 21 Oct 2024
- 09:33:01 -0700 (PDT)
+	s=arc-20240116; t=1729528400; c=relaxed/simple;
+	bh=6OcdKlmewqXrz4uXGX4rgtHpk/lWg7eQivdJwig1cwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tj7FJUbychSin/XpqBoTeOv79Kp/PoslKrZiYy2+hex7gEP6qKFrsNOchHw/7Fg5jwbLT+OQlK5sjHts7+dmJ7d+Ew3d8LWALiEZAtVsi3NVeQrG2OJcHMQGCB33HILb4i6rlwUGGOBRCxyw4rQ8f54q8LF0pX3xgoyI2LogDoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPbJ92H4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA75EC4CEE8;
+	Mon, 21 Oct 2024 16:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729528400;
+	bh=6OcdKlmewqXrz4uXGX4rgtHpk/lWg7eQivdJwig1cwE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bPbJ92H4sZ4GCwx+UOw/7Wqy+pyL1SIgnRAUiB7fVoE3kBefIQL8kPigJXdJf2QJj
+	 yqlI7WWqKFmlVCzlGSFb3lO2G7u1tnIJb8QE3keqe7qkLEw/WlG9TBkqmB+KLGVMsL
+	 YJI5RQ875GgAxvOSJJgmxAwj6jKs2syQQOlxuFMC7gArgryENwxq8dY5A9gSRslET6
+	 1rYG5V35iQz+hmf691MjijLWyWO+fVE0pwBZaCKBr5MD13FLyTab3Fj3NESudx7P7i
+	 DPKh2wCCySiG8DkWJ9S6Yaq+8s5XY+h45HbxpkLV1i3STrdjPteiviSLUENTJgLXJT
+	 l2CsPBJWRqGeA==
+From: SeongJae Park <sj@kernel.org>
+To: Zheng Yejian <zhengyejian@huaweicloud.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	sieberf@amazon.com,
+	shakeel.butt@linux.dev,
+	foersleo@amazon.de,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Ye Weihua <yeweihua4@huawei.com>
+Subject: Re: [PATCH] mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
+Date: Mon, 21 Oct 2024 09:33:16 -0700
+Message-Id: <20241021163316.12443-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <186f770b-925f-3541-2ca7-fa6ee6f0caf6@huaweicloud.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZxKWBfQ_Lps93fY1@tiehlicka> <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
- <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
- <ZxYCK0jZVmKSksA4@tiehlicka> <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
- <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com>
- <ZxZ0eh95AfFcQSFV@tiehlicka> <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
- <ZxZ52Kcd8pskQ-Jd@tiehlicka> <CAJuCfpFr2CAKvfyTCY2tkVHWG1kb4N2jhNe5=2nFWH0HhoU+yg@mail.gmail.com>
- <ZxZ_99yLDhRMNr3p@tiehlicka>
-In-Reply-To: <ZxZ_99yLDhRMNr3p@tiehlicka>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 21 Oct 2024 09:32:50 -0700
-Message-ID: <CAJuCfpFk+1R8JQc+w6r6NUDsmjFnh9K1_42AvG+qTZq4vimwKg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Michal Hocko <mhocko@suse.com>
-Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
-	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 9:23=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Mon 21-10-24 09:16:14, Suren Baghdasaryan wrote:
-> > On Mon, Oct 21, 2024 at 8:57=E2=80=AFAM Michal Hocko <mhocko@suse.com> =
-wrote:
-> > >
-> > > On Mon 21-10-24 08:41:00, Suren Baghdasaryan wrote:
-> > > > On Mon, Oct 21, 2024 at 8:34=E2=80=AFAM Michal Hocko <mhocko@suse.c=
-om> wrote:
-> > > > >
-> > > > > On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
-> > > > > [...]
-> > > > > > Yeah, I thought about adding new values to "mem_profiling" but =
-it's a
-> > > > > > bit complicated. Today it's a tristate:
-> > > > > >
-> > > > > > mem_profiling=3D0|1|never
-> > > > > >
-> > > > > > 0/1 means we disable/enable memory profiling by default but the=
- user
-> > > > > > can enable it at runtime using a sysctl. This means that we ena=
-ble
-> > > > > > page_ext at boot even when it's set to 0.
-> > > > > > "never" means we do not enable page_ext, memory profiling is di=
-sabled
-> > > > > > and sysctl to enable it will not be exposed. Used when a distri=
-bution
-> > > > > > has CONFIG_MEM_ALLOC_PROFILING=3Dy but the user does not use it=
- and does
-> > > > > > not want to waste memory on enabling page_ext.
-> > > > > >
-> > > > > > I can add another option like "pgflags" but then it also needs =
-to
-> > > > > > specify whether we should enable or disable profiling by defaul=
-t
-> > > > > > (similar to 0|1 for page_ext mode). IOW we will need to encode =
-also
-> > > > > > the default state we want. Something like this:
-> > > > > >
-> > > > > > mem_profiling=3D0|1|never|pgflags_on|pgflags_off
-> > > > > >
-> > > > > > Would this be acceptable?
-> > > > >
-> > > > > Isn't this overcomplicating it? Why cannot you simply go with
-> > > > > mem_profiling=3D{0|never|1}[,$YOUR_OPTIONS]
-> > > > >
-> > > > > While $YOUR_OPTIONS could be compress,fallback,ponies and it woul=
-d apply
-> > > > > or just be ignored if that is not applicable.
-> > > >
-> > > > Oh, you mean having 2 parts in the parameter with supported options=
- being:
-> > > >
-> > > > mem_profiling=3Dnever
-> > > > mem_profiling=3D0
-> > > > mem_profiling=3D1
-> > > > mem_profiling=3D0,pgflags
-> > > > mem_profiling=3D1,pgflags
-> > > >
-> > > > Did I understand correctly? If so then yes, this should work.
-> > >
-> > > yes. I would just not call it pgflags because that just doesn't reall=
-y
-> > > tell what the option is to anybody but kernel developers. You could a=
-lso
-> > > have an option to override the default (disable profiling) failure st=
-rategy.
-> >
-> > Ok, how about "compressed" instead? Like this:
-> >
-> > mem_profiling=3D0,compressed
->
-> Sounds good to me. And just to repeat, I do not really care about
-> specific name but let's just stay away from something as specific as
-> page flags because that is really not helping to understand the purpose
-> but rather the underlying mechanism which is not telling much to most
-> users outside of kernel developers.
+On Mon, 21 Oct 2024 11:56:04 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
 
-Understood. Ok, I'll start changing my patchset to incorporate this
-feedback and will post the new version this week.
-Thanks for the input everyone!
+> On 2024/10/19 02:33, SeongJae Park wrote:
+> > Hi Zheng,
+> > 
+> > 
+> > Thank you for sharing this nice finding and fix!  I have a few comments below.
+> > 
+> 
+> Thanks for your review!
+> 
+> > On Fri, 18 Oct 2024 11:53:04 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
+> > 
+> >> According to the logic of damon_va_evenly_split_region(), currently at
+> >> least following split cases would not meet the expectation:
+> >>
+> >>    Suppose DAMON_MIN_REGION=0x1000,
+> >>    Case1: Split [0x0, 0x1100) into 1 pieces, then the result would be
+> >>           acutually [0x0, 0x1000), but NOT the expected [0x0, 0x1100) !!!
+> > 
+> > Nice finding!  However, as long as DAMON_MIN_REGION is respected, [0x0, 0x1100]
+> > region could not be created.  So, the problematic case cannot happen in real?
+> > Please let me know if I'm missing something.
+> 
+> Currently when DAMON_MIN_REGION is defined as PAGE_SIZE, and both vm start
+> and end are commonly page-aligned, then the [0x, 0x1100) could not be created,
+> but I'm not sure either.
 
->
-> --
-> Michal Hocko
-> SUSE Labs
+Thank you for confirming.  If there is a way that DAMON could generate
+[0x, 0x1100], that's a bug that deserves its own fix.  So let's assume it
+cannot happen for now.
+
+> 
+> > 
+> > And, why would someone call the function with nr_pieces 1?
+> > 
+> 
+> damon_va_evenly_split_region() is called in __damon_va_init_regions(), and nr_pieces
+> is calculated by:
+> 
+>    `nr_pieces = (regions[i].end - regions[i].start) / sz;`
+> 
+> Above regions[i].start/regions[i].end/sz is determine at runtime, and sz can
+> beaffected by minimum number of regions, user can change that, am I right?
+> Then nr_pieces can be 1 !
+
+You're right, thank you.
+
+Now, the next question would be, could that ('damon_va_evenly_split_region()'
+being called with 1 'nr_pieces') trigger some issues?  Based on the code, I
+don't think so.  Please let me know if I'm missing some corner cases.
+
+> On the other hand, I think damon_va_evenly_split_region() itself should
+> handle the 'nr_pieces == 1' case, or if we make sure that case is unreal,
+> would it be better to add some assertion?
+
+Nice suggestion, thanks.  I agree that making it be handled is better in terms
+of maintenance.  It would make the code much easier to read.
+
+It wouldn't be for a fix of a bug, but for making the code easier to read.  So
+I think posting it as a separate patch is better.  If you don't mind, please
+post a patch.
+
+> 
+> >>    Case2: Split [0x0, 0x3000) into 2 pieces, then the result would be
+> >>           acutually 3 regions:
+> >>             [0x0, 0x1000), [0x1000, 0x2000), [0x2000, 0x3000)
+> >>           but NOT the expected 2 regions:
+> >>             [0x0, 0x1000), [0x1000, 0x3000) !!!
+> > 
+> > Nice finding!
+> > 
+> >>
+> >> The root cause is that when calculating size of each split piece in
+> >> damon_va_evenly_split_region():
+> >>
+> >>    `sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);`
+> >>
+> >> both the dividing and the ALIGN_DOWN may cause loss of precision,
+> >> then each time split one piece of size 'sz_piece' from origin 'start' to
+> >> 'end' would cause:
+> >>    1. For the above Case1, the 'end' value of the split 1 piece is
+> >>       aligned but not updated!!!
+> >>    2. For the above Case2, more pieces are split out than expected!!!
+> >>
+> >> To fix it, in this patch:
+> >> - As for the expect to split 1 piece, just return 0;
+> > 
+> > As mentioned above, I think this is not needed, since the problematic case is
+> > unreal.
+> 
+> I think this case exists, as above reply.
+
+A case that damon_va_evenly_split_region() is called with nr_pieces of value 1
+exists.
+
+A case that the function is called with DAMON_MIN_REGION un-aligned region
+doesn't exist (unless there is a bug).
+
+I was saying about the second case.  I still agree doing the nr_pieces check is
+good for readability, so please post a patch if you don't mind.
+
+> 
+> > 
+> >> - Count for each piece split and make sure no more than 'nr_pieces';
+> >> - Add above two cases into damon_test_split_evenly().
+> > 
+> > Thank you for adding tests!
+> > 
+> >>
+> >> BTW, currently when running kunit test, DAMON_MIN_REGION is redefined
+> >> as 1, then above ALIGN_DOWN cases may not be test, since every int
+> >> value is ALIGN-ed to 1.
+> >>
+> >> After this patch, damon-operations test passed:
+> >>
+> >>   # ./tools/testing/kunit/kunit.py run damon-operations
+> >>   [...]
+> >>   ============== damon-operations (6 subtests) ===============
+> >>   [PASSED] damon_test_three_regions_in_vmas
+> >>   [PASSED] damon_test_apply_three_regions1
+> >>   [PASSED] damon_test_apply_three_regions2
+> >>   [PASSED] damon_test_apply_three_regions3
+> >>   [PASSED] damon_test_apply_three_regions4
+> >>   [PASSED] damon_test_split_evenly
+> >>   ================ [PASSED] damon-operations =================
+> >>
+> >> Fixes: 3f49584b262c ("mm/damon: implement primitives for the virtual memory address spaces")
+> >> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
+> >> ---
+> >>   mm/damon/tests/vaddr-kunit.h |  2 ++
+> >>   mm/damon/vaddr.c             | 13 +++++++++----
+> >>   2 files changed, 11 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
+> >> index a339d117150f..b9a03e4e29e5 100644
+> >> --- a/mm/damon/tests/vaddr-kunit.h
+> >> +++ b/mm/damon/tests/vaddr-kunit.h
+> >> @@ -300,6 +300,8 @@ static void damon_test_split_evenly(struct kunit *test)
+> >>   	damon_test_split_evenly_fail(test, 0, 100, 0);
+> >>   	damon_test_split_evenly_succ(test, 0, 100, 10);
+> >>   	damon_test_split_evenly_succ(test, 5, 59, 5);
+> >> +	damon_test_split_evenly_succ(test, 4, 6, 1);
+> > 
+> > If my above assumption (the first problem is unreal) is not wrong, maybe this
+> > test is not needed?
+> > 
+> 
+> As an unit test, damon_va_evenly_split_region() itself should be able
+> to handle the 'nr_pieces == 1' case, right? I think this testcase can
+> be added in case something goes wrong one day.
+
+I agree.  Nonetheless, let's make it be separated with the real bug fix.
+
+> 
+> >> +	damon_test_split_evenly_succ(test, 0, 3, 2);
+> > 
+> > Nice.
+> > 
+> >>   	damon_test_split_evenly_fail(test, 5, 6, 2);
+> >>   }
+> >>   
+> >> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> >> index 08cfd22b5249..1f3cebd20829 100644
+> >> --- a/mm/damon/vaddr.c
+> >> +++ b/mm/damon/vaddr.c
+> >> @@ -67,10 +67,14 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+> >>   	unsigned long sz_orig, sz_piece, orig_end;
+> >>   	struct damon_region *n = NULL, *next;
+> >>   	unsigned long start;
+> >> +	int i;
+> > 
+> > Purpose of this variable is counting the number of splitted regions, and
+> > comparing it against 'nr_pieces', right?  Because nr_pieces is 'unsigned int',
+> > let's make this 'unsigned int' type, too.
+> > 
+> 
+> Well, yes, I'll do it in v2 after all the discussions for this version are complete!
+
+Thanks :)
+
+> 
+> >>   
+> >>   	if (!r || !nr_pieces)
+> >>   		return -EINVAL;
+> >>   
+> >> +	if (nr_pieces == 1)
+> >> +		return 0;
+> >> +
+> > 
+> > As mentioned above, I don't think this is not needed.
+
+As mentioned above, now I think having this is good for readability, but let's
+make it an individual change that separated from the real bug fix.
+
+> > 
+> 
+> 
+> 
+> >>   	orig_end = r->ar.end;
+> >>   	sz_orig = damon_sz_region(r);
+> >>   	sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);
+> >> @@ -79,9 +83,11 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+> >>   		return -EINVAL;
+> >>   
+> >>   	r->ar.end = r->ar.start + sz_piece;
+> >> +	/* origin region will be updated as the first one after splitting */
+> > 
+> > I don't think this comment is easy to understand.  Let's just remove it.
+> > 
+> 
+> Thanks, I'll remove it in next version!
+> 
+> >> +	i = 1;
+> >> +	n = r;
+> > 
+> > Why we need this? for 'nr_pieces == 1' case?  If so, I don't think we need to
+> > take care about the case for the above mentioned reason.  Please let me know if
+> > I'm missing something.
+> 
+> Yes, this is for 'nr_pieces == 1' case, and if we have above `if (nr_pieces == 1) return 0;` line,
+> then this is not needed since nr_pieces > 1, and following loop will at least two times
+> 
+> > 
+> >>   	next = damon_next_region(r);
+> >> -	for (start = r->ar.end; start + sz_piece <= orig_end;
+> >> -			start += sz_piece) {
+> >> +	for (start = r->ar.end; i < nr_pieces; start += sz_piece, i++) {
+> >>   		n = damon_new_region(start, start + sz_piece);
+> >>   		if (!n)
+> >>   			return -ENOMEM;
+> >> @@ -89,8 +95,7 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+> >>   		r = n;
+> >>   	}
+> >>   	/* complement last region for possible rounding error */
+> >> -	if (n)
+> >> -		n->ar.end = orig_end;
+> >> +	n->ar.end = orig_end;
+> > 
+> > Maybe this change is related with the above 'n = r' line?  But, I don't think
+> > we need that, as commented there.
+> 
+> Yes, they related.
+
+Thank you for confirming.
+
+> 
+> > 
+> >>   
+> >>   	return 0;
+> >>   }
+> >> -- 
+> >> 2.25.1
+> > 
+> > 
+> > Thanks,
+> > SJ
+> 
+> -- 
+> Thanks,
+> Zheng Yejian
+
+So, let's add the 'nr_pieces == 1' check, but as a change that separated from
+the real bug fix.  I'm looking forward to your next posts, Zheng :)
+
+Nonetheless, please note that the real bug is not somewhat critical for users.
+It only has a potential to slightly degrade the best-effort accuracy of DAMON
+in corner cases.
+
+
+Thanks,
+SJ
 
