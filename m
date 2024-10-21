@@ -1,343 +1,135 @@
-Return-Path: <linux-kernel+bounces-375272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A809A93F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821089A93FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9498D1C220B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF51E1C20C04
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012021FF5E8;
-	Mon, 21 Oct 2024 23:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D41E3DCB;
+	Mon, 21 Oct 2024 23:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUJ5yxI2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U/Ko2KHN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262951E1027;
-	Mon, 21 Oct 2024 23:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717171E260C;
+	Mon, 21 Oct 2024 23:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729552627; cv=none; b=VPihA2DKYn2Iu3DwOrC0UHfBxU+kxM/r2XkgFSJn0uCBEL0JA2mJchUZd7u6fuO2LY0nC5Da2JHTXc/TfXUOgUecDhuLo8aEIAzLVolW6ju0HXgIXo86e1HdeXeOvCahHKn/OeN1JQ+mYKxP7RbMhjCoDrsAhdYaKtS63Ab32ck=
+	t=1729552730; cv=none; b=k3z9VOeBOPOHCWTduKzCZy3EjMJh6QJNhu7+CdUiusmdsgHp1jTweZBbDtceH93qzTflV1ILzWad06IYhzZe9MpthyLH/rIclNpwR2aR9R0CzSwdsF0oBB7vR6iM94JuFpe6/1Vc/D61EiVebjcCIWVLVol+KOKNyJ2oL+pXt0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729552627; c=relaxed/simple;
-	bh=jVskpFl1LH/SVzsHNFpnJ7SWeS7WUXdwU6ODljQf22A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCXaF31C9e3fpgZv4DqY5hFKj7d/u4VpJVZcXwxEdhtinumQA3C568OnrLW9sQnc8RA2dl0AQ/5Gb7G9nu9yd7UJ+MHbknCpOjsdgxL4jXMPj7WAU5j1z5fH7dWIMOoE8ltrFDkfWE/Q8BA5GWiW0DzmI3Tbed1d1xa+/C1R6ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUJ5yxI2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2BD6C4CEC3;
-	Mon, 21 Oct 2024 23:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729552626;
-	bh=jVskpFl1LH/SVzsHNFpnJ7SWeS7WUXdwU6ODljQf22A=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=sUJ5yxI287GwIvCyeWrVM92cDq+DXBKqi+tjahkUTYMwNVF5NMK3cYoBD5fnhE3sO
-	 DjslYfRmZA20rUAvZTTSWBQRLGeRa6CxNqC1VDRK1ljtxobmSblwNhvnsUfddrlrhG
-	 MDI89KsriO5cE1MhhZQwl72FexV3FMTSkg9BRe5rtGWmcS4WNqt+70F7tDcdBePkOI
-	 SQFWNxs/2wCcYuE/R4ATU+ayHGM4wtHGlOXr+l/7Dm/S+tpbXGaFPvZ3VdMOZ+z7cr
-	 hQpeTnTKpAdmXeSXN0DMNcWyz8Wv7E2K6skm1dnqc9gwJHYJnWHZhYMYVoiDLRsOrT
-	 gHMBoSXd/9Y3g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 53DDFCE09F6; Mon, 21 Oct 2024 16:17:06 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:17:06 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
- PREEMPT_RT.
-Message-ID: <db150a72-9748-46eb-bac8-be5d1ceef754@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241004103842.131014-1-bigeasy@linutronix.de>
- <20241004103842.131014-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1729552730; c=relaxed/simple;
+	bh=PbkltP23qfqfIUT7bDRqIJ/qw7ieioxvSwYjJ8+NX+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k18vk6MjU9k8CREnKLKEH7u+8LKOYhs7SGGYGq8PkZAX2OEn4yz/CuVtk+qCpH72cKMQ9DRl7GdUN1OVqebvJD6tLyy+1nmjS95xH66AhxsFlKrlKRk/xVi2qyDoBmKfO+ZdabkilsBcx/jkiRW2P3OtePXlAbY627zAL/sHEFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U/Ko2KHN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LGiJOg014452;
+	Mon, 21 Oct 2024 23:18:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=SUfYIgcJMF09jE2rwpKqRc
+	rKrOmCqdpPZiNh+7L4B0E=; b=U/Ko2KHN8NsWpUidiYcUfmVruTd3y1l2GknwWe
+	jpzwMcnZ+fSKfXVPg5UIq7ku2aQ3sO/8GGhCPi5tlbZPZ0YNmtX83MpSrlP21GKq
+	rJPFSs8WvLKCPogaTZD9FWFLeWfDgjb7wVZj9kqB5W/6x1GkpMQjUxZbj8QY/l+k
+	WPkE14VRqF33IOTyKQhrO/H7OHaZ5lLr5ZjdKpTUdsXBfFL6I/Ws9j7DBcD6tizQ
+	y/AyWrnrAmGYqL5bNe9jPU3KrSrGYshDujvS3HIHlUtplq5RPESbHLcZfFCPDucm
+	Ub/yUXAJUog42gFD+rw9S+e5bTXYFQ642mVg6nNsdbkrn4xA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkhd2ehq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 23:18:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LNIbK4014234
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 23:18:37 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 21 Oct 2024 16:18:36 -0700
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?=
+	<barnabas.czeman@mainlining.org>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        Raviteja Laggyshetty
+	<quic_rlaggysh@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>,
+        "Abel
+ Vesa" <abel.vesa@linaro.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya
+ Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] interconnect: qcom: Introduce interconnects for SM8750
+Date: Mon, 21 Oct 2024 16:18:20 -0700
+Message-ID: <20241021231823.2635534-1-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004103842.131014-2-bigeasy@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: K54T6-53IRaoEgdANhRa571KOKFFrNKK
+X-Proofpoint-GUID: K54T6-53IRaoEgdANhRa571KOKFFrNKK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
+ mlxscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=800
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410210164
 
-On Fri, Oct 04, 2024 at 12:17:04PM +0200, Sebastian Andrzej Siewior wrote:
-> A timer/ hrtimer softirq is raised in-IRQ context. With threaded
-> interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
-> for the processing of the softirq.
-> Once the ksoftirqd is marked as pending (or is running) it will collect
-> all raised softirqs. This in turn means that a softirq which would have
-> been processed at the end of the threaded interrupt, which runs at an
-> elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
-> priority and competes with every regular task for CPU resources.
-> This introduces long delays on heavy loaded systems and is not desired
-> especially if the system is not overloaded by the softirqs.
-> 
-> Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
-> timers thread and let it run at the lowest SCHED_FIFO priority.
-> Wake-ups for RT tasks happen from hardirq context so only timer_list timers
-> and hrtimers for "regular" tasks are processed here. The higher priority
-> ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
-> 
-> Using a dedicated variable to store the pending softirq bits values
-> ensure that the timer are not accidentally picked up by ksoftirqd and
-> other threaded interrupts.
-> It shouldn't be picked up by ksoftirqd since it runs at lower priority.
-> However if ksoftirqd is already running while a timer fires, then
-> ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
-> Ideally we try to avoid having ksoftirqd running.
-> 
-> The timer thread can pick up pending softirqs from ksoftirqd but only
-> if the softirq load is high. It is not be desired that the picked up
-> softirqs are processed at SCHED_FIFO priority under high softirq load
-> but this can already happen by a PI-boost by a force-threaded interrupt.
-> 
-> [ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
->   local_pending_timers() for tick_nohz_next_event() ]
-> 
-> [ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
->   softirq is currently served. ]
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Add interconnect support for SM8750 SoC.
 
-For the rcutorture pieces:
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Raviteja Laggyshetty (2):
+  dt-bindings: interconnect: add interconnect bindings for SM8750
+  interconnect: qcom: Add interconnect provider driver for SM8750
 
-> ---
->  include/linux/interrupt.h | 29 ++++++++++++++
->  kernel/rcu/rcutorture.c   |  6 +++
->  kernel/softirq.c          | 82 ++++++++++++++++++++++++++++++++++++++-
->  kernel/time/hrtimer.c     |  4 +-
->  kernel/time/tick-sched.c  |  2 +-
->  kernel/time/timer.c       |  2 +-
->  6 files changed, 120 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 457151f9f263d..4a4f367cd6864 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -616,6 +616,35 @@ extern void __raise_softirq_irqoff(unsigned int nr);
->  extern void raise_softirq_irqoff(unsigned int nr);
->  extern void raise_softirq(unsigned int nr);
->  
-> +#ifdef CONFIG_PREEMPT_RT
-> +DECLARE_PER_CPU(struct task_struct *, timersd);
-> +DECLARE_PER_CPU(unsigned long, pending_timer_softirq);
-> +
-> +extern void raise_timer_softirq(void);
-> +extern void raise_hrtimer_softirq(void);
-> +
-> +static inline unsigned int local_pending_timers(void)
-> +{
-> +	return __this_cpu_read(pending_timer_softirq);
-> +}
-> +
-> +#else
-> +static inline void raise_timer_softirq(void)
-> +{
-> +	raise_softirq(TIMER_SOFTIRQ);
-> +}
-> +
-> +static inline void raise_hrtimer_softirq(void)
-> +{
-> +	raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-> +}
-> +
-> +static inline unsigned int local_pending_timers(void)
-> +{
-> +	return local_softirq_pending();
-> +}
-> +#endif
-> +
->  DECLARE_PER_CPU(struct task_struct *, ksoftirqd);
->  
->  static inline struct task_struct *this_cpu_ksoftirqd(void)
-> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> index bb75dbf5c800c..609687fd742d5 100644
-> --- a/kernel/rcu/rcutorture.c
-> +++ b/kernel/rcu/rcutorture.c
-> @@ -2440,6 +2440,12 @@ static int rcutorture_booster_init(unsigned int cpu)
->  		WARN_ON_ONCE(!t);
->  		sp.sched_priority = 2;
->  		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-> +#ifdef CONFIG_PREEMPT_RT
-> +		t = per_cpu(timersd, cpu);
-> +		WARN_ON_ONCE(!t);
-> +		sp.sched_priority = 2;
-> +		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-> +#endif
->  	}
->  
->  	/* Don't allow time recalculation while creating a new task. */
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index d082e7840f880..2d847405e5a7f 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -624,6 +624,24 @@ static inline void tick_irq_exit(void)
->  #endif
->  }
->  
-> +#ifdef CONFIG_PREEMPT_RT
-> +DEFINE_PER_CPU(struct task_struct *, timersd);
-> +DEFINE_PER_CPU(unsigned long, pending_timer_softirq);
-> +
-> +static void wake_timersd(void)
-> +{
-> +	struct task_struct *tsk = __this_cpu_read(timersd);
-> +
-> +	if (tsk)
-> +		wake_up_process(tsk);
-> +}
-> +
-> +#else
-> +
-> +static inline void wake_timersd(void) { }
-> +
-> +#endif
-> +
->  static inline void __irq_exit_rcu(void)
->  {
->  #ifndef __ARCH_IRQ_EXIT_IRQS_DISABLED
-> @@ -636,6 +654,10 @@ static inline void __irq_exit_rcu(void)
->  	if (!in_interrupt() && local_softirq_pending())
->  		invoke_softirq();
->  
-> +	if (IS_ENABLED(CONFIG_PREEMPT_RT) && local_pending_timers() &&
-> +	    !(in_nmi() | in_hardirq()))
-> +		wake_timersd();
-> +
->  	tick_irq_exit();
->  }
->  
-> @@ -971,12 +993,70 @@ static struct smp_hotplug_thread softirq_threads = {
->  	.thread_comm		= "ksoftirqd/%u",
->  };
->  
-> +#ifdef CONFIG_PREEMPT_RT
-> +static void timersd_setup(unsigned int cpu)
-> +{
-> +	sched_set_fifo_low(current);
-> +}
-> +
-> +static int timersd_should_run(unsigned int cpu)
-> +{
-> +	return local_pending_timers();
-> +}
-> +
-> +static void run_timersd(unsigned int cpu)
-> +{
-> +	unsigned int timer_si;
-> +
-> +	ksoftirqd_run_begin();
-> +
-> +	timer_si = local_pending_timers();
-> +	__this_cpu_write(pending_timer_softirq, 0);
-> +	or_softirq_pending(timer_si);
-> +
-> +	__do_softirq();
-> +
-> +	ksoftirqd_run_end();
-> +}
-> +
-> +static void raise_ktimers_thread(unsigned int nr)
-> +{
-> +	trace_softirq_raise(nr);
-> +	__this_cpu_or(pending_timer_softirq, 1 << nr);
-> +}
-> +
-> +void raise_hrtimer_softirq(void)
-> +{
-> +	raise_ktimers_thread(HRTIMER_SOFTIRQ);
-> +}
-> +
-> +void raise_timer_softirq(void)
-> +{
-> +	unsigned long flags;
-> +
-> +	local_irq_save(flags);
-> +	raise_ktimers_thread(TIMER_SOFTIRQ);
-> +	wake_timersd();
-> +	local_irq_restore(flags);
-> +}
-> +
-> +static struct smp_hotplug_thread timer_threads = {
-> +	.store			= &timersd,
-> +	.setup			= timersd_setup,
-> +	.thread_should_run	= timersd_should_run,
-> +	.thread_fn		= run_timersd,
-> +	.thread_comm		= "ktimers/%u",
-> +};
-> +#endif
-> +
->  static __init int spawn_ksoftirqd(void)
->  {
->  	cpuhp_setup_state_nocalls(CPUHP_SOFTIRQ_DEAD, "softirq:dead", NULL,
->  				  takeover_tasklets);
->  	BUG_ON(smpboot_register_percpu_thread(&softirq_threads));
-> -
-> +#ifdef CONFIG_PREEMPT_RT
-> +	BUG_ON(smpboot_register_percpu_thread(&timer_threads));
-> +#endif
->  	return 0;
->  }
->  early_initcall(spawn_ksoftirqd);
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index cddcd08ea827f..133d49f703d93 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -1811,7 +1811,7 @@ void hrtimer_interrupt(struct clock_event_device *dev)
->  	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
->  		cpu_base->softirq_expires_next = KTIME_MAX;
->  		cpu_base->softirq_activated = 1;
-> -		raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-> +		raise_hrtimer_softirq();
->  	}
->  
->  	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-> @@ -1906,7 +1906,7 @@ void hrtimer_run_queues(void)
->  	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
->  		cpu_base->softirq_expires_next = KTIME_MAX;
->  		cpu_base->softirq_activated = 1;
-> -		raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-> +		raise_hrtimer_softirq();
->  	}
->  
->  	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 753a184c70907..efa3181607a2b 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -859,7 +859,7 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
->  
->  static inline bool local_timer_softirq_pending(void)
->  {
-> -	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
-> +	return local_pending_timers() & BIT(TIMER_SOFTIRQ);
->  }
->  
->  /*
-> diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-> index 0fc9d066a7be4..79f0dc73ac436 100644
-> --- a/kernel/time/timer.c
-> +++ b/kernel/time/timer.c
-> @@ -2499,7 +2499,7 @@ static void run_local_timers(void)
->  		 */
->  		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
->  		    (i == BASE_DEF && tmigr_requires_handle_remote())) {
-> -			raise_softirq(TIMER_SOFTIRQ);
-> +			raise_timer_softirq();
->  			return;
->  		}
->  	}
-> -- 
-> 2.45.2
-> 
+ .../interconnect/qcom,sm8750-rpmh.yaml        |  136 ++
+ drivers/interconnect/qcom/Kconfig             |    9 +
+ drivers/interconnect/qcom/Makefile            |    2 +
+ drivers/interconnect/qcom/sm8750.c            | 1610 +++++++++++++++++
+ drivers/interconnect/qcom/sm8750.h            |  132 ++
+ .../interconnect/qcom,sm8750-rpmh.h           |  143 ++
+ 6 files changed, 2032 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sm8750-rpmh.yaml
+ create mode 100644 drivers/interconnect/qcom/sm8750.c
+ create mode 100644 drivers/interconnect/qcom/sm8750.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,sm8750-rpmh.h
+
+
+base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+-- 
+2.46.1
+
 
