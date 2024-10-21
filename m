@@ -1,262 +1,97 @@
-Return-Path: <linux-kernel+bounces-375266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511459A93E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:09:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA899A93E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B641C21CD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:09:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 223EBB21675
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DA3209662;
-	Mon, 21 Oct 2024 23:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BB01FEFBA;
+	Mon, 21 Oct 2024 23:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JAq94tn9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgtTLqpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED68D1FEFD6;
-	Mon, 21 Oct 2024 23:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659F71FEFDD;
+	Mon, 21 Oct 2024 23:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729551935; cv=none; b=Yq+iw/sq2sIqTaebumDfxx0o4WYi/7p0m0CECt2Jx2TNXBV0PqduDFWsnLLltOYvJdIDZPEFziNKgxHkciZnZA9sjNCNc7XE3ipbkzHEAS+aOjS5k4ToPwUTnrlIiSzXnaItnm2ZvU4IwX+SgGfvITDTeBwL1aSrSlDWcLiDMFM=
+	t=1729551934; cv=none; b=AbmPnA65LtKGFLusWognxluPIDMn1+oW9Rxzd5CMD04QEvNg9yJFfBop0E6/wqelMymRVtB0QW+vxvKf34W65+cnqomjjbQdYIu6Hme0QPCusf7mv60Z4Vt7LY8x+CSfA+CBvIEPKikvreUco+5OpbZt5IGU8sOoIAkJC3QD/kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729551935; c=relaxed/simple;
-	bh=YKdo+Uxlo1eCoawACV9oWjMlaGMaBHJ/ijXI/XMZF4Q=;
+	s=arc-20240116; t=1729551934; c=relaxed/simple;
+	bh=GgGk3/Y7H2IU2xsVU7CzwSTqSvZtBptn3on5KhFGVAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZzc3rdCm5q2S0S5jRVieE30Ti4NmHDySU8daUAZLcdfu+pJ8qb6GPhvELVm1Bz6esiFkY3MUGrmKyJHR2AAeWqqWM6kx729k4qfHwqj/q0dUVLfzgxhr4uS8vwWGAL4hn9Rs9u4Ik7ZjyFGDNtYCsWwuAY8b7xGU+cAKR/AQPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JAq94tn9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EB763CCC;
-	Tue, 22 Oct 2024 01:03:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729551819;
-	bh=YKdo+Uxlo1eCoawACV9oWjMlaGMaBHJ/ijXI/XMZF4Q=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kzjv+/2yC/Q/Hcrd2KARmM2CfhPJoRTueV1rb8AwXUtKiKBysPQfKN+vPxoOfCVRjWt/tvQ31CsexHLjGNpQfcSHO+7kidYe+5ulI0ID6KfUk36SWiMBrFQeGy+fVXrWhSj164QePK53WkisjwZsWQ7om/1J23awb+Hmp7B9Zys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgtTLqpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DDFC4CEC3;
+	Mon, 21 Oct 2024 23:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729551934;
+	bh=GgGk3/Y7H2IU2xsVU7CzwSTqSvZtBptn3on5KhFGVAk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JAq94tn9mUqktHPHFzsTtzJlmc2s1AUFUYocxqZDZGfxRgM29RCjBNtWvAAlqBVeV
-	 gIn+WEY1/4F9Pr6S1mRFD2GVTEk/m+uZ6NYUbGQ0y5WlK8hK8wPC0GNTIm1FLC68hq
-	 HGu5tzqMnSSxEYZNgl7Rft0WBaJbmsVEKRQxUCsE=
-Date: Tue, 22 Oct 2024 02:05:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Stefan Riedmueller <s.riedmueller@phytec.de>,
-	Guoniu Zhou <guoniu.zhou@nxp.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Christian Hemp <c.hemp@phytec.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: nxp: imx8-isi: better handle the m2m
- usage_count
-Message-ID: <20241021230519.GB8113@pendragon.ideasonboard.com>
-References: <20240927080420.3867806-1-laurentiu.palcu@oss.nxp.com>
+	b=WgtTLqpfDjmawLfzTdlAs79dkX5SV43b2VbiIRHCZiYff8YdajrdaAJrZseEc0VnJ
+	 XgDtQvjgNes3UWICWV+r+Z1VxatfV+HdSjUCPW7F8Zr8+byKSg4wMnwpWHadGhaZT2
+	 aiM/+N70ALKC1ESZW5SfcdX10GpMAUCOHhf2baZkfy+GlY+UTuR0L7J53+RvmLqk95
+	 y+eHjVTUG8fvv+zxj0g5TjY7xtCTasZ5X8Jef8xuHH+u8JZqGFMISxoOlGxtg8CqJS
+	 5UJc70AF1g0Rxdjrmjl/T91ij/n4n/pjPmv8XHEg7jaY9OfizaEpPcgGzgQ+eJzGKv
+	 A9MQxXMptdlqA==
+Date: Tue, 22 Oct 2024 00:05:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.6 000/124] 6.6.58-rc1 review
+Message-ID: <bfbf2def-c3dc-4435-b218-8ca8d2e969a5@sirena.org.uk>
+References: <20241021102256.706334758@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bmU92ulhcJv30c65"
 Content-Disposition: inline
-In-Reply-To: <20240927080420.3867806-1-laurentiu.palcu@oss.nxp.com>
+In-Reply-To: <20241021102256.706334758@linuxfoundation.org>
+X-Cookie: Most people prefer certainty to truth.
 
-On Fri, Sep 27, 2024 at 11:04:20AM +0300, Laurentiu Palcu wrote:
-> Currently, if streamon/streamoff calls are imbalanced we can either end up
-> with a negative ISI m2m usage_count (if streamoff() is called more times
-> than streamon()) in which case we'll not be able to restart the ISI pipe
-> next time, or the usage_count never gets to 0 and the pipe is never
-> switched off.
-> 
-> So, to avoid that, add an 'in_use' flag in the ctx structure that will
-> keep track whether the output/capture queues have been started or not,
-> and use it to avoid decrementing/incrementing the usage_count
-> unnecessarily.
-> 
-> Fixes: cf21f328fcafac ("media: nxp: Add i.MX8 ISI driver")
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
-> v2:
->  * Changed the way 'usage_count' is incremented/decremented by taking
->    into account the context the streamon/streamoff functions are called
->    from;
->  * Changed the commit message and subject to reflect the changes;
-> 
->  .../platform/nxp/imx8-isi/imx8-isi-m2m.c      | 24 +++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> index 9745d6219a166..3f06ae1349e53 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> @@ -65,6 +65,7 @@ struct mxc_isi_m2m_ctx {
->  	} ctrls;
->  
->  	bool chained;
-> +	bool in_use[2];
 
-I think you can store this in mxc_isi_m2m_ctx_queue_data instead as a
+--bmU92ulhcJv30c65
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	bool streaming;
+On Mon, Oct 21, 2024 at 12:23:24PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.58 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
->  };
->  
->  static inline struct mxc_isi_m2m_buffer *
-> @@ -491,6 +492,7 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
->  	const struct mxc_isi_format_info *cap_info = ctx->queues.cap.info;
->  	const struct mxc_isi_format_info *out_info = ctx->queues.out.info;
->  	struct mxc_isi_m2m *m2m = ctx->m2m;
-> +	bool already_in_use;
->  	bool bypass;
->  
->  	int ret;
-> @@ -502,6 +504,8 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
->  		goto unlock;
->  	}
->  
-> +	already_in_use = ctx->in_use[type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE];
-> +
+Tested-by: Mark Brown <broonie@kernel.org>
 
-As the streamon and streamoff operation are covered by the same queue
-lock for all contexts, you can do all this outside of the m2m->lock
-sections. I think the following patch (untested) should do and would be
-simpler:
+--bmU92ulhcJv30c65
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-index 9745d6219a16..cd6c52e9d158 100644
---- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-+++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-@@ -43,6 +43,7 @@ struct mxc_isi_m2m_ctx_queue_data {
- 	struct v4l2_pix_format_mplane format;
- 	const struct mxc_isi_format_info *info;
- 	u32 sequence;
-+	bool streaming;
- };
+-----BEGIN PGP SIGNATURE-----
 
- struct mxc_isi_m2m_ctx {
-@@ -486,15 +487,18 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
- 				enum v4l2_buf_type type)
- {
- 	struct mxc_isi_m2m_ctx *ctx = to_isi_m2m_ctx(fh);
-+	struct mxc_isi_m2m_ctx_queue_data *q = mxc_isi_m2m_ctx_qdata(ctx, type);
- 	const struct v4l2_pix_format_mplane *out_pix = &ctx->queues.out.format;
- 	const struct v4l2_pix_format_mplane *cap_pix = &ctx->queues.cap.format;
- 	const struct mxc_isi_format_info *cap_info = ctx->queues.cap.info;
- 	const struct mxc_isi_format_info *out_info = ctx->queues.out.info;
- 	struct mxc_isi_m2m *m2m = ctx->m2m;
- 	bool bypass;
--
- 	int ret;
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcW3jYACgkQJNaLcl1U
+h9CY9Qf/c6HO74lLhfRLnxl37KSTjprUCkTkUN6jS1cFZ1hS+xs4XgYDthFKINMz
+RjvPesLTQ4AdszdwkHHPAQ5qXipvE4ZqpcZpsCntZ4QYPH5/qwaIGz06SQZpAceN
+F6EzZzDw3tWhFRqntKlQOFv+ASNPzetF35D5MOwFcXRCh+dgz+sI27lxvYbQxE1k
+wbvY3D9a6f5ReGXEWc+adBOH8NyMqKeyKfBjM+6GoAdBfYPdcIn1dNgqKZaXRkeU
+4Kqn5DrPTCdQRfSoSOjJYSAOswc1Gca9bKmCULyZyjvvPTPxi31lKr9eJNgGFWov
+cJqKzjcAMv8YSVa7P2SmtCBsQKRoMw==
+=DtN/
+-----END PGP SIGNATURE-----
 
-+	if (q->streaming)
-+		return 0;
-+
- 	mutex_lock(&m2m->lock);
-
- 	if (m2m->usage_count == INT_MAX) {
-@@ -547,6 +551,8 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
- 		goto unchain;
- 	}
-
-+	q->streaming = true;
-+
- 	return 0;
-
- unchain:
-@@ -569,10 +575,14 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
- 				 enum v4l2_buf_type type)
- {
- 	struct mxc_isi_m2m_ctx *ctx = to_isi_m2m_ctx(fh);
-+	struct mxc_isi_m2m_ctx_queue_data *q = mxc_isi_m2m_ctx_qdata(ctx, type);
- 	struct mxc_isi_m2m *m2m = ctx->m2m;
-
- 	v4l2_m2m_ioctl_streamoff(file, fh, type);
-
-+	if (!q->streaming)
-+		return 0;
-+
- 	mutex_lock(&m2m->lock);
-
- 	/*
-@@ -598,6 +608,8 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
-
- 	mutex_unlock(&m2m->lock);
-
-+	q->streaming = false;
-+
- 	return 0;
- }
-
-If this works for you, could you turn it into a v3 ?
-
->  	bypass = cap_pix->width == out_pix->width &&
->  		 cap_pix->height == out_pix->height &&
->  		 cap_info->encoding == out_info->encoding;
-> @@ -520,7 +524,10 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
->  		mxc_isi_channel_get(m2m->pipe);
->  	}
->  
-> -	m2m->usage_count++;
-> +	if (!already_in_use) {
-> +		m2m->usage_count++;
-> +		ctx->in_use[type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE] = true;
-> +	}
->  
->  	/*
->  	 * Allocate resources for the channel, counting how many users require
-> @@ -555,7 +562,12 @@ static int mxc_isi_m2m_streamon(struct file *file, void *fh,
->  	ctx->chained = false;
->  
->  deinit:
-> -	if (--m2m->usage_count == 0) {
-> +	if (!already_in_use) {
-> +		m2m->usage_count--;
-> +		ctx->in_use[type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE] = false;
-> +	}
-> +
-> +	if (m2m->usage_count == 0) {
->  		mxc_isi_channel_put(m2m->pipe);
->  		mxc_isi_channel_release(m2m->pipe);
->  	}
-> @@ -575,6 +587,9 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
->  
->  	mutex_lock(&m2m->lock);
->  
-> +	if (!ctx->in_use[type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE])
-> +		goto unlock;
-> +
->  	/*
->  	 * If the last context is this one, reset it to make sure the device
->  	 * will be reconfigured when streaming is restarted.
-> @@ -587,6 +602,8 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
->  		mxc_isi_channel_unchain(m2m->pipe);
->  	ctx->chained = false;
->  
-> +	ctx->in_use[type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE] = false;
-> +
->  	/* Turn off the light with the last user. */
->  	if (--m2m->usage_count == 0) {
->  		mxc_isi_channel_disable(m2m->pipe);
-> @@ -594,8 +611,7 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
->  		mxc_isi_channel_release(m2m->pipe);
->  	}
->  
-> -	WARN_ON(m2m->usage_count < 0);
-> -
-> +unlock:
->  	mutex_unlock(&m2m->lock);
->  
->  	return 0;
-
--- 
-Regards,
-
-Laurent Pinchart
+--bmU92ulhcJv30c65--
 
