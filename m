@@ -1,269 +1,137 @@
-Return-Path: <linux-kernel+bounces-374165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE369A65D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCB89A65DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906802831EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:05:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A069A1C21F05
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365E21E47DD;
-	Mon, 21 Oct 2024 11:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA041E47B0;
+	Mon, 21 Oct 2024 11:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMj2kvrN"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdZ3CQoz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041DE1E32B1;
-	Mon, 21 Oct 2024 11:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041271E1C19;
+	Mon, 21 Oct 2024 11:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508730; cv=none; b=jHn7llAeR39p8kEjoAnY2e9g9/E+Euj9Uhc4uin6D4C5kux1HdEDpCO8Cqsble6rv6QWsH9Be+JZK9f2+LDeIicqGM55cVGEv9s6yFH6BYbZk9gl8S15BkGiyzGloUJRCNrwwSahLfY7SrYreLcSFcLOWmYvn+Eb/otHHv47ETE=
+	t=1729508769; cv=none; b=FELCccSpzKwSnc9SRll6WGRHn/gWnNRTM48KlIAuH2oDG/3ISyaGvSQ+7Rnmmk/NK4/SaLtjP55ZFx2US4Kp7qq8WBkWBAp3cKVC3N2ZbnmcFlLdbVlIsmFL596Dofwq8Yjei32gN/5z5sETRCgsiu7QZGg17HoQLUsX8MiY2JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508730; c=relaxed/simple;
-	bh=ZRTKoqaHXBOxiKN8AEbhr4Fx3bC/DN2G3is5OfKXU6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gq0/CNpoORcn2Y/hU/GYrPule9jCa9IAKLLfGEsfR0OcNR+qA544t1UCCEIxJT16Oi9dHxlVQtuzjT7yae8YWvgCM7sMA7BVN0dFGP2XRgQpJ553/Eq5xf+UxU2b1pW96jqEICUQ8zj1GntPAOJpBVibcyoX60iwAiyL1W3guTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMj2kvrN; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso58271801fa.1;
-        Mon, 21 Oct 2024 04:05:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729508726; x=1730113526; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NqNFHSWuutv20ehvXxI1hUrs4pZWsBCSOoD06uhzKuM=;
-        b=FMj2kvrNAyiorz+akmCjTu8ko+zgscjhFDf5F8gY2NauPecHOY+PjeUNo16B9t9q/A
-         +keaUtxU3v1uXlmVfX6Z2RP7wbyL52VmGoZiVW2Ijlg5xodt96rJsJZlyQmJjbvYvS+M
-         TmFwXn3UHE8pdgc5KvomRZHiDoRuT7QeUNZ5Kc7nXNm4y0nehm39B0z7/63IuPopm3Tu
-         8kUu+bYl0AZil6j5RCwUOolAmv67abQjC7QUCu4ZHL+7YgbwOQkLwxm0x1eZdPyZGDU5
-         /VbrprXa7GIsEcZHRq7LsW7p2KMNFHnfM91Cz8Ma1Wp9ZjIMFS57JuRs0YMlwnDcSALZ
-         l4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508726; x=1730113526;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NqNFHSWuutv20ehvXxI1hUrs4pZWsBCSOoD06uhzKuM=;
-        b=txrxFQ1CNUX/1v+FdU8I8q/KONPAKJ2+38SvWgtVj284xYBLXq3VQFU1736TCD/S28
-         so5b1lYwWRZ1CpNvpU8hNEWZ1LRtce+HuEYF+tOKJ/gUmy2efO2qi3XUVYqB4WjQ8ehr
-         ESlYI8usPS7YQfRRe7OYz7y0Ffv6Dqeqwfz9X9numq55FIR2dfYHoRy3DnPoK79EXZuU
-         q/kAFRtxfNV4HpalNGWgwgh5fg5YkkHAk2Lry0VWlUsp4OWEGAZXRyez5iM9a8oGuo5P
-         Z+0xuXD6svrDpUXLJpderzGEz18vJV3s7sXo0eJ3X67KR2JY1543XUuYdpulgNebfaCW
-         +8Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNH0My9IpONXlhCYuFXT67fyh7jQBXtwp6ApDb2SzlYTxiRVD6KHYw/Yi/xgsF5hkHphJ5t7rWnDQ1bmGY@vger.kernel.org, AJvYcCVeIafqDwtI/wkPetHuoY3HOPuxrYWMsXgonRlaZEzQB4rWzorOG/n6jdOWceBPVazxmGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8HUWmStmkR6AlJUK25UJaRnuIht6rcfmRBlra8Gfp4GP8VDDQ
-	tmHQSCWq1pnOwObPBEWDYS+mOtZnVL5+uSlAT8u5T3ZAK1B1nyB7
-X-Google-Smtp-Source: AGHT+IFOG1PkyobwVZ39rIiirf4rBQ3iEqCXuA8Jmy8EQXggUTer46/r7rXVJ6UNucPZayPd0vjXNg==
-X-Received: by 2002:a05:6512:3f12:b0:533:71f:3a3d with SMTP id 2adb3069b0e04-53a1545d85fmr8891958e87.24.1729508725650;
-        Mon, 21 Oct 2024 04:05:25 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2242024csm453364e87.121.2024.10.21.04.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 04:05:25 -0700 (PDT)
-Date: Mon, 21 Oct 2024 14:05:21 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: jitendra.vegiraju@broadcom.com
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
-	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
-	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, linux@armlinux.org.uk, 
-	horms@kernel.org, florian.fainelli@broadcom.com, quic_abchauha@quicinc.com
-Subject: Re: [PATCH net-next v6 0/5] net: stmmac: Add PCI driver support for
- BCM8958x
-Message-ID: <nvc3cop5dn5yjmt4n3q64j76ulsowfw4l577pe47qmba3pvz4z@owm4jwjuhawr>
-References: <20241018205332.525595-1-jitendra.vegiraju@broadcom.com>
+	s=arc-20240116; t=1729508769; c=relaxed/simple;
+	bh=R7/RPu4AFxZsi+EZ6njnKVrGIe+/202VV6/um7d+mDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kYjLc+7pIHVLKemNaWH1Jv8SJd9Yzz797cky6JeQh6Mcg8Gk4tJj4RUGyBurZWbw5/Qk8Mix5dUBnaMKCg0AorCbsNA5z6JtV8qmftMmFQllX1GEpGA4SYplEWlfntpk7fn8KD/EQfiqixekBBM7wDi0dPgaEZptzVvISHcOZcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdZ3CQoz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94021C4CEC7;
+	Mon, 21 Oct 2024 11:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729508768;
+	bh=R7/RPu4AFxZsi+EZ6njnKVrGIe+/202VV6/um7d+mDQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XdZ3CQozSDYYkApVtuKYyW5LmJYAMAwy6Znwug0H3YUmyvhEg6NjB1v98R6TNtRzu
+	 WT2EP2E+vmqZcAtDiFWAAUIhih5N7FKhkHP7izhCiRL7tjKOb3+QmGGMIHXni4osK6
+	 nz4kJ0zc6NvTRoZ46tzx3a3TdSH0kS1Dziv7jE8VmmaOjlR5hbKABnZdPNhRq7LMOc
+	 TvankPaxTx8p/yPym3eO5Z8ElZ35+a9OIiL7wX9kCltBu1FCYsX0zy9VR55YrwjIsr
+	 I2RXjWhACApyZKIgM3N+U7N5+7D2mQ3NeLXWJlA4hkDBaW86LaWAOvai2QvG2Jnq/+
+	 e5uB7V7FXRvrA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2886e2b878dso1659160fac.2;
+        Mon, 21 Oct 2024 04:06:08 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyGQnZRCNll+pvweFF93jlrbfsjITXHonQC+hVW5NsTtBh1ybRl
+	PuxNoQxoC73B4913GWS3ZgoNErRqnFAbhGax0JAHcRGHFMVkL7YhY8ulTrMWMXbfaL7H5GC8GcU
+	kRwD6VLEln6h9C37mvbDFK6ClE7w=
+X-Google-Smtp-Source: AGHT+IFw9ozZilzB71Zf6F2Ku0o4gspj0Z1sOAsPFF4yN/METxHLnodD3eBvvVLagOHOl/1bmmFhTADmtnQaw+4j00g=
+X-Received: by 2002:a05:6871:6ab:b0:288:5c55:dfd5 with SMTP id
+ 586e51a60fabf-2892c544d6fmr9025782fac.31.1729508767832; Mon, 21 Oct 2024
+ 04:06:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018205332.525595-1-jitendra.vegiraju@broadcom.com>
+References: <2215082.irdbgypaU6@rjwysocki.net> <CAJZ5v0jYzw7hXaX+5AvO407d8vo725_-wHLQW6Q1fqXXJGSb6g@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jYzw7hXaX+5AvO407d8vo725_-wHLQW6Q1fqXXJGSb6g@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Oct 2024 13:05:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gEgr7Q49JSQQ37_2VbdXBTDPZmoYHuCSACJW_3gdmuwQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gEgr7Q49JSQQ37_2VbdXBTDPZmoYHuCSACJW_3gdmuwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] thermal: core: Fixes and cleanups, mostly
+ related to thermal zone init and exit
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jitendra
+On Fri, Oct 11, 2024 at 8:50=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, Oct 4, 2024 at 10:11=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >
+> > Hi Everyone,
+> >
+> > After posting the two series of thermal core patches for 6.13:
+> >
+> > https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
+> >
+> > and
+> >
+> > https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
+> >
+> > before the 6.12 merge window, I have decided to reorder the changes inc=
+luded in
+> > these series, so that fixes and more significant cleanups (for example,=
+ changing
+> > they layout of data structures) go first, followed by the changes relat=
+ed to
+> > using guards for locking, and the optimization involving sorted lists b=
+ecomes
+> > the last piece.
+> >
+> > This series is the first part and the majority of patches in it come fr=
+om the
+> > second (RFC) series mentioned above.  Of course, they needed to be reba=
+sed to
+> > be applied in the new order.  It is on top of 6.12-rc1 with
+> >
+> > https://lore.kernel.org/linux-pm/12549318.O9o76ZdvQC@rjwysocki.net/
+> >
+> > applied and it will be added to my thermal-core-testing branch.  It is =
+in v2
+> > to start with because all of the patches in it have already been posted=
+ in
+> > some form.
+> >
+> > The first 10 patches fix some potential issues related to thermal zone
+> > initialization and exit (for example, user space may start to interact =
+with
+> > a thermal zone during its initialization before it's ready and system s=
+uspend
+> > taking place at a wrong time may skip a new thermal zone so it is not s=
+uspended)
+> > and do some cleanups related to that.  This concludes with the removal =
+of the
+> > need_update field from struct thermal_zone_device.
+> >
+> > The last two patches move lists of thermal instances from thermal zones=
+ to
+> > trip point descriptors and clean up some code on top of that.
+> >
+> > Please refer to the individual patch changelogs for details.
+>
+> This material is now present in the thermal-core-testing and
+> thermal-core-experimental branches in linux-pm.git.
 
-On Fri, Oct 18, 2024 at 01:53:27PM GMT, jitendra.vegiraju@broadcom.com wrote:
-> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> 
-> This patchset adds basic PCI ethernet device driver support for Broadcom
-> BCM8958x Automotive Ethernet switch SoC devices.
-> 
-> This SoC device has PCIe ethernet MAC attached to an integrated ethernet
-> switch using XGMII interface. The PCIe ethernet controller is presented to
-> the Linux host as PCI network device.
-> 
-> The following block diagram gives an overview of the application.
->              +=================================+
->              |       Host CPU/Linux            |
->              +=================================+
->                         || PCIe
->                         ||
->         +==========================================+
->         |           +--------------+               |
->         |           | PCIE Endpoint|               |
->         |           | Ethernet     |               |
->         |           | Controller   |               |
->         |           |   DMA        |               |
->         |           +--------------+               |
->         |           |   MAC        |   BCM8958X    |
->         |           +--------------+   SoC         |
->         |               || XGMII                   |
->         |               ||                         |
->         |           +--------------+               |
->         |           | Ethernet     |               |
->         |           | switch       |               |
->         |           +--------------+               |
->         |             || || || ||                  |
->         +==========================================+
->                       || || || || More external interfaces
-> 
-> The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
-> MAC IP introduces new DMA architecture called Hyper-DMA for virtualization
-> scalability.
-> 
-> Driver functionality specific to new MAC (DW25GMAC) is implemented in
-> new file dw25gmac.c.
-> 
-> Management of integrated ethernet switch on this SoC is not handled by
-> the PCIe interface.
-> This SoC device has PCIe ethernet MAC directly attached to an integrated
-> ethernet switch using XGMII interface.
-> 
-> v5->v6:
->    Change summary to address comments/suggestions by Serge Semin.
->    Patch1:
->      Removed the comlexity of hdma mapping in previous patch series and
->      use static DMA mapping.
->      Renamed plat_stmmacenet_data::snps_dev_id as dev_id and moved to
->      the beginning of the struct.
->    Patch2:
->      Added dw25gmac_get_hw_feature() for dw25gmac.
->      Use static one-to-one VDMA-TC-PDMA mapping.
->    Patch4:
->      Remove usage of plat_stmmacenet_data::msi_*_vec variables for
->      interrupt vector initialization.
->      Change phy_interface type to XGMII.
->      Cleanup unused macros.
-
-Sorry for abandoning the v5 discussion for too long. I've finally
-finished another urgent task, so I'll be more interactive in the next
-few weeks. I'll get back to reviewing this series today or early
-tomorrow.
-
--Serge(y)
-
->      
-> v4->v5:
->    Summary of changes in this patch series:
->    As suggested by Serge Semin, defined common setup function for dw25gmac.
->    To accommodate early adopter DW25GMAC used in BCM8958x device, provide
->    a mechanism to override snps_id and snps_dev_id used for driver entry
->    matching in hwif.c
-> 
->    Patch1:
->      Added plat_stmmacenet_data::snps_id,snps_dev_id fields - Serge Semin
->    Patch2:
->      Define common setup function for dw25gmac_setup() - Serge Semin
->      Support DW25GMAC IPs with varying VDMA/PDMA count - Abhishek Chauhan
->      Allocate and initialize hdma mapping configuration data dynamically
->      based on device's VDMA/PDMA feature capabilities in dw25gmac_setup().
->      Spelling errors in commit log, lower case 0x for hex -Amit Singh Tomar
->    Patch3:
->      Glue support in hwif.c for DW25GMAC in hwif.c - Serge Semin
->      Provide an option to override snps_id and snps_dev_id when the device
->      reports version info not conformant with driver's expectations as is
->      the case with BCM8958x device. - Serge Semin
->    Patch4:
->      Remove setup function in the glue driver - Serge Semin
->      Remove unnecessary calls pci_enable_device() and pci_set_master()
->      in dwxgmac_brcm_pci_resume() - Jakub Kicinski
->      Merge variable definitions to single line - Amit Singh Tomar
->     https://lore.kernel.org/netdev/20240904054815.1341712-1-jitendra.vegiraju@broadcom.com/
->    
-> v3->v4:
->    Based on Serge's questions, received a confirmation from Synopsys that
->    the MAC IP is indeed the new 25GMAC design.
->    Renamed all references of XGMAC4 to 25GMAC.
->    The patch series is rearranged slightly as follows.
->    Patch1 (new): Define HDMA mapping data structure in kernel's stmmac.h
->    Patch2 (v3 Patch1): Adds dma_ops for dw25gmac in stmmac core
->        Renamed new files dwxgmac4.* to dw25gmac.* - Serge Semin
->        Defined new Synopsis version and device id macros for DW25GMAC.
->        Converted bit operations to FIELD_PREP macros - Russell King
->        Moved hwif.h to this patch, Sparse flagged warning - Simon Horman
->        Defined macros for hardcoded values TDPS etc - Serge Semin
->        Read number of PDMAs/VDMAs from hardware - Serge Semin
->    Patch3 (v3 Patch2): Hooks in hardware interface handling for dw25gmac
->        Resolved user_version quirks questions - Serge, Russell, Andrew
->        Added new stmmac_hw entry for DW25GMAC. - Serge
->        Added logic to override synopsis_dev_id by glue driver.
->    Patch4 (v3 Patch3): Adds PCI driver for BCM8958x device
->        Define bitmmap macros for hardcoded values - Andrew Lunn
->        Added per device software node - Andrew Lunn
->    Patch5(new/split): Adds BCM8958x driver to build system
->    https://lore.kernel.org/netdev/20240814221818.2612484-1-jitendra.vegiraju@broadcom.com/
-> 
-> v2->v3:
->    Addressed v2 comments from Andrew, Jakub, Russel and Simon.
->    Based on suggestion by Russel and Andrew, added software node to create
->    phylink in fixed-link mode.
->    Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgmac4.h
->    in stmmac core module.
->    Reorganized the code to use the existing glue logic support for xgmac in
->    hwif.c and override ops functions for dwxgmac4 specific functions.
->    The patch is split into three parts.
->      Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
->      Patch#2 Hooks in the hardware interface handling for dwxgmac4
->      Patch#3 Adds PCI driver for BCM8958x device
->    https://lore.kernel.org/netdev/20240802031822.1862030-1-jitendra.vegiraju@broadcom.com/
-> 
-> v1->v2:
->    Minor fixes to address coding style issues.
->    Sent v2 too soon by mistake, without waiting for review comments.
->    Received feedback on this version.
->    https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegiraju@broadcom.com/
-> 
-> v1:  
->    https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegiraju@broadcom.com/
-> 
-> Jitendra Vegiraju (5):
->   Add snps_id, dev_id to struct plat_stmmacenet_data
->   Add basic dw25gmac support in stmmac core
->   Integrate dw25gmac into stmmac hwif handling
->   Add PCI driver support for BCM8958x
->   Add BCM8958x driver to build system
-> 
->  MAINTAINERS                                   |   8 +
->  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
->  drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
->  drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
->  .../net/ethernet/stmicro/stmmac/dw25gmac.c    | 161 ++++++
->  .../net/ethernet/stmicro/stmmac/dw25gmac.h    |  92 ++++
->  .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 478 ++++++++++++++++++
->  .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |   1 +
->  .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  42 ++
->  .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  52 ++
->  drivers/net/ethernet/stmicro/stmmac/hwif.c    |  26 +-
->  drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
->  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  26 +
->  include/linux/stmmac.h                        |   2 +
->  14 files changed, 905 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.c
->  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.h
->  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
-> 
-> -- 
-> 2.34.1
-> 
+I gather that it is not controversial and it has been around for quite
+a while, and it was discussed during the PM+TC session at the LPC, so
+I've just applied it for 6.13.
 
