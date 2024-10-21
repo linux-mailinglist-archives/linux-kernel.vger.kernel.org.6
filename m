@@ -1,75 +1,39 @@
-Return-Path: <linux-kernel+bounces-374024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCC59A60C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85459A60C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9AB1C21AF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998842847C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D731E1C25;
-	Mon, 21 Oct 2024 09:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcKIWbFq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82A1E2822
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7438A1E3DD3;
+	Mon, 21 Oct 2024 09:55:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED381E2822
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504501; cv=none; b=P+eQhXRiDZqQs6z38tEGg6V3HCgy6tiIgGlPwBbBNQVFTRuoyecnfxQ75P8gLflwfcCElVfekp9XP/K5YOluTOQIrXgVX8kSwIOI12FKIQXDi6eCA4GJzEtuxHYVMHTghIcvzfi7UE7mC1/9+0wO+tBRt2Vtacdl0poD0HQXtWI=
+	t=1729504524; cv=none; b=gh8e+14uJbqy4+PjNGHGSpbwHMmkWPRd8V+Hi71p+Cpa9UDndCab4f5fHlXpDME0ajI+FCYYrTTk6/HcCqke08dOGJOMwfd3J5PIYj/donYYhA8aG35v+WvJnMpnwDZibKJqpMkdsq1v2cjIedLCPDOuAtwZSgowZcvD/lBapL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504501; c=relaxed/simple;
-	bh=B8kXuogX2mA5q2qhHUjFQT6+8gMhHBjKX1d/0OfMugI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ssqM+gLDocJ6ZSVOD7cGRAW6FxNxzIFXcDv+zwtT8aLVEaYYfr9Heo+EbYPuGPePsHD+7RWvraHusJEUSwzdYBc/IthdecuG6A37Sdfce9K0waOJS9UrE/hXn/ph13TQrKdtw5NB+Cm/ziG6oE8XPB5z9EwLhIy1h1HGow3I6Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hcKIWbFq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314b316495so40870915e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729504497; x=1730109297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sAPgS81fU8WqlF/LuQRpx0NWQV7ciXlZDMNUwqEFwws=;
-        b=hcKIWbFqzX/2BqE8vPtSMVJoS6a9LiwpzsRBo/TVy9RhClxg1xgdMzm6xTrOHWcewb
-         rTwj8rF+bMcSxD5MN8dNVZWsO07OAtxA2OXNKJL666/Bg2lUuAti/ckW2SDm43vL6235
-         bDt/Bdium9SOa3DE3q0Yyyvnwm1dIxn7U9FMR9fMGUq6uo/F/3OfYpzPXSnqfobppckz
-         Lgy1g1HHVmI+uWVGAJnG4h+XbhBOrAe2Y2VTjFsxDRv/2gGdjwsewkaCI0KKqI7Es/zD
-         EnsTn1lV6p5O0VY0eT+DnhJ23VVBrN645RdDsEuSbYMPJ+rhhPogOysllMrIwPy75tYy
-         wnfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729504497; x=1730109297;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sAPgS81fU8WqlF/LuQRpx0NWQV7ciXlZDMNUwqEFwws=;
-        b=SRjIOx37oHEuu8VkI6s/FaJ9HNkKvNm+iDgMyCUCrDEKC7HkrWVS48VzPpNWfP3G8F
-         QYUICq0DbLoIMVPT+ghG/cOKuo40WuD2hcagb85SscLogo6WdWPWTFDCMs/UW80L5MX8
-         6oy0vbrUFNAyR+dK+8qkLbLE5NV+Gi8J2ZKFGndyBbRvSBaYkusxlhspmwNvbkg09swJ
-         +oP9gL/boEfYMdtFyV5F7w+oe/t+kz4MtsUNquAT9YKdYP+YwZGogfy9DSRJTynKza8b
-         XP/j3wn/FIps0erU/P5mEUqdtyg33ZhlMpj535lPuJjtIuDPCruqjAnYyqZQJddz7bO0
-         cPSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVZautJ08Jgmy7ZA5Gu3+JLmUDciN9HIciEdqQU2hKVubiGmZJyI/i/YSAgevEteiEaS/DxABchDIXRw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzH3SX4ORLCdglCC/YXSWdEKyeh7TYBvHuBiItasnjYRCgVXEm
-	Sga2a8HweMhPyl+D3Avm2L6FD/RJd5JsodEgEUJghZvxbl0Wtelyj4UpAzeuHyY=
-X-Google-Smtp-Source: AGHT+IELxYkWLSigx/VF6jV9gkVikRzLwmcqDdsuj1mv4meEXk5esFNW/w5twSNROrhMuWotuOZ7TA==
-X-Received: by 2002:a05:600c:35cd:b0:431:5d4c:5eff with SMTP id 5b1f17b1804b1-43161636f5cmr76546685e9.2.1729504497213;
-        Mon, 21 Oct 2024 02:54:57 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57112esm52517435e9.6.2024.10.21.02.54.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 02:54:56 -0700 (PDT)
-Message-ID: <7d2c6c91-9218-4e13-81dd-d1f3ffa4801e@linaro.org>
-Date: Mon, 21 Oct 2024 11:54:54 +0200
+	s=arc-20240116; t=1729504524; c=relaxed/simple;
+	bh=qIpPXtC0SNrnkKvcXFjN5JdPncjjfBJ4E+7B2L34Oh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iU2nNryImzH/DwClHCYK7U8brNRG6RFtAFQ8isC1SA4uquyymUMNJ41p+NfEGNExLg7Xlf0qRsBeBRGn+rW5FpCr//cJDhd6y5pLeiGM6fTmXocXm1OuzJ9TudhbDuxvBsvvq7/5vrxN3ejamtOn7cvrJgdIphoRM8weQZAIy0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2BF4DA7;
+	Mon, 21 Oct 2024 02:55:50 -0700 (PDT)
+Received: from [10.57.87.148] (unknown [10.57.87.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1DC3F73B;
+	Mon, 21 Oct 2024 02:55:18 -0700 (PDT)
+Message-ID: <745cb0c5-35ce-4879-9d98-52816f3241df@arm.com>
+Date: Mon, 21 Oct 2024 10:55:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,96 +41,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 4/6] drm/bridge: aux: allow interlaced and YCbCr 420
- output
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <20241019-bridge-yuv420-v1-4-d74efac9e4e6@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241019-bridge-yuv420-v1-4-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [External] : Re: [RFC PATCH v1 00/57] Boot-time page size
+ selection for arm64
+Content-Language: en-GB
+To: Joseph Salisbury <joseph.salisbury@oracle.com>,
+ David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <f5baa653-fec1-4f6e-91b0-ed8368d3c725@oracle.com>
+ <915e2f0c-f603-4617-8429-da4dacc862c4@redhat.com>
+ <aa4b6c90-6e8c-4943-ba83-6688cdf776a1@oracle.com>
+ <3f096ba0-b6f0-4db7-9d65-ba0550eb98b1@redhat.com>
+ <eb0c7c21-5a45-4a36-a96a-1abaaf3bbd61@oracle.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <eb0c7c21-5a45-4a36-a96a-1abaaf3bbd61@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 18/10/2024 23:49, Dmitry Baryshkov wrote:
-> As both aux bridges are merely passthrough bridges, mark them as
-> supporting interlaced and YCbCr 420 data. Other bridges in the chain
-> still might limit interlaced and YCbCr 420 data support on the
-> corresponding connector.
+On 18/10/2024 21:06, Joseph Salisbury wrote:
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/bridge/aux-bridge.c     | 4 ++++
->   drivers/gpu/drm/bridge/aux-hpd-bridge.c | 4 ++++
->   2 files changed, 8 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/bridge/aux-bridge.c b/drivers/gpu/drm/bridge/aux-bridge.c
-> index b29980f95379..e3e95ccec1ae 100644
-> --- a/drivers/gpu/drm/bridge/aux-bridge.c
-> +++ b/drivers/gpu/drm/bridge/aux-bridge.c
-> @@ -120,6 +120,10 @@ static int drm_aux_bridge_probe(struct auxiliary_device *auxdev,
->   	data->bridge.funcs = &drm_aux_bridge_funcs;
->   	data->bridge.of_node = data->dev->of_node;
->   
-> +	/* passthrough data, allow everything */
-> +	data->bridge.interlace_allowed = true;
-> +	data->bridge.ycbcr_420_allowed = true;
-> +
->   	return devm_drm_bridge_add(data->dev, &data->bridge);
->   }
->   
-> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> index 6886db2d9e00..48f297c78ee6 100644
-> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> @@ -180,6 +180,10 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
->   	data->bridge.ops = DRM_BRIDGE_OP_HPD;
->   	data->bridge.type = id->driver_data;
->   
-> +	/* passthrough data, allow everything */
-> +	data->bridge.interlace_allowed = true;
-> +	data->bridge.ycbcr_420_allowed = true;
-> +
->   	auxiliary_set_drvdata(auxdev, data);
->   
->   	return devm_drm_bridge_add(data->dev, &data->bridge);
 > 
+> On 10/18/24 15:27, David Hildenbrand wrote:
+>>
+>>>>> Hi Ryan,
+>>>>>
+>>>>> First off, this is excellent work!  Your cover page was very detailed
+>>>>> and made the patch set easier to understand.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Thanks!
+
+>>>>>
+>>>>> Some questions/comments:
+>>>>>
+>>>>> Once a kernel is booted with a certain page size, could there be issues
+>>>>> if it is booted later with a different page size?  How about if this is
+>>>>> done frequently?
+>>>>
+>>>> I think that is the reason why you are only given the option in RHEL
+>>>> to select the kernel (4K vs. 64K) to use at install time.
+>>>>
+>>>> Software can easily use a different data format for persistance based
+>>>> on the base page size. I would suspect DBs might be the usual suspects.
+>>>>
+>>>> One example is swap space I think, where the base page size used when
+>>>> formatting the device is used, and it cannot be used with a different
+>>>> page size unless reformatting it.
+>>>>
+>>>> So ... one has to be a bit careful ...
+>>>>
+>>> Yes, that is what I was thinking.  Once a userspace process does an I/O
+>>> and if it is based on PAGE_SIZE things can go south.  I think this is
+>>> not an issue with THP, so maybe it's possible with boot-time page selection?
+>>
+>> THP is a different beast and has different semantics: the base page size
+>> doesn't change: the result of getpagesize() is unmodified ("transparent").
+>>
+>> One would have to emulate for a given user space process a different page
+>> size ... and Ryan can likely tell some stories about that.
+>>
+>> Not that I consider it reasonable to have dynamic page sizes in the kernel and
+>> then try emulating a different one for all user space.
+> 
+> This is probably  a case of ensuring proper documentation from the distro or
+> application vendor.
+> 
+> Or maybe some type of "Safety gate" could be implemented outside of the kernel.
+> Some check for the prior use of different page sizes, in the cases where it
+> could cause problems.
+
+I agree there are likely to be problems in some corner cases if switching page
+size between boots, if persisted data makes assumptions about the page size. I
+would argue that any problems that are observed should really be considered bugs
+in the user space SW though.
+
+But I don't think this is really any different from today; With Ubuntu, for
+example, you can install both 4K and 64K kernels concurrently, then choose which
+one to boot via Grub. So the issue exists there already. This proposed boot-time
+page size selection series, doesn't make that any worse, it just simplifies the
+distribution model, given the reality that distros are now having to support
+multiple page sizes.
+
+Thanks,
+Ryan
+
 
