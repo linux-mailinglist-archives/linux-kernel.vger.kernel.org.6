@@ -1,111 +1,249 @@
-Return-Path: <linux-kernel+bounces-374643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB179A6DFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0159A6DFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9FC5B2205D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4C9282DF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9447D84A57;
-	Mon, 21 Oct 2024 15:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmhpHZ76"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083D6126C15;
+	Mon, 21 Oct 2024 15:21:46 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA37839EB;
-	Mon, 21 Oct 2024 15:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284EE7FBC2;
+	Mon, 21 Oct 2024 15:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524018; cv=none; b=HDG6h61csYMQ9OuEazWPNw0WgHFqhP9x/pDJxvwyJ1uO0+bn87F7tYKhegLC/BTUSH/myMscDTmb6Pe6j0AMvnkx8rH++GXt3RGF7nJo4b2leK3drIkuLbrGzXOoa6DCBG8dcGtFkTN4CPQRLuDRBxH0DwAhU/Py7wN/DYktJ1Y=
+	t=1729524105; cv=none; b=BoHlg/UKhxFI7DZuTvo30tPsBMn0IxWd9Aak96rCSpaalkNKVL5sjv0yk6FPPXuSgoheu5a2uqaKrcYXzcEC4bJCZnyqTZ98pz1jaknwDbFlEwuyGpUjTKHslU9uZzoEWQpUEPEqBU2CVc6w0z8Vy9xlpa77PGfXvQsMACuVyp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524018; c=relaxed/simple;
-	bh=RavReSX2R+y8sjDIaSr5xuC8/7DPGyL/PZkXGUjWQVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pG8ptarRfEaJmqqRJC6dASlloWLWD2qmvRBH5zZejiMgyV4Ryc0qzY6EE51Elx9Bo/C1jhYZbMBdi1ptprm4JMU/iZ6nDwa21HwqzR5NR9E3dCRp3x+ML1hPdyH5Ds1WuALQVuuJCi4sm8yi5j4CMhA+6Imwo75DK1lDzouJIYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmhpHZ76; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC68C4CEC3;
-	Mon, 21 Oct 2024 15:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729524017;
-	bh=RavReSX2R+y8sjDIaSr5xuC8/7DPGyL/PZkXGUjWQVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pmhpHZ76WDX3Cl6P6yjNDmStEyFyI0VipaHFzpxzl3uIqxpvpdCIr1KAelqXms9N1
-	 vYf0grGEm/fE4dxTTMa8XzSvXF7Q9qQiTyaXSj0gTS39zx8/rQs/XELobkpMFEAHDa
-	 BIXnh6bHqKf1RuGV3QtbsC+HMw14hNFmdvDyqUTSyhZt4JzKSPY7HX/pHBf4qk7Den
-	 oamJHH90d6RsurSO2HDoMQANGrh3b4Z8Z5o5MQqNkpT/gK7Qc2Ve3GfNuqwoVb+QTr
-	 pBrtsEjb1Cfm12NCnO6PtYRyUhq8Pr2xRDfSfM24nNgDLVd5bc2s/sSFyiNjnd06S1
-	 dMEDwAsb8YUiw==
-Date: Mon, 21 Oct 2024 17:20:12 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Igor Pylypiv <ipylypiv@google.com>,
-	Niklas Cassel <niklas.cassel@wdc.com>, linux-ide@vger.kernel.org,
-	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ata: libata: Clear DID_TIME_OUT for ATA PT commands
- with sense data
-Message-ID: <ZxZxLK7eSQ_bwkLe@ryzen.lan>
-References: <20240909154237.3656000-2-cassel@kernel.org>
- <ZxYz871I3Blsi30F@ly-workstation>
- <ZxZD-doogmnZGfRI@ryzen.lan>
+	s=arc-20240116; t=1729524105; c=relaxed/simple;
+	bh=XCrL4izJIy9UyUFs1AzO/wmPMPe0z9HyOj9uoklY+iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GtRFBKDEkI1SgbH+Mkk11IHiOtlzQ2N8nwmvP96PD9AM+Gw2zneFg6WxVyxr669vOLiFNf4IVRdg7WfyzS4qxJ3Xls9Y1M52TpTLhiNeSucA2qHBpKmDAkpMQ6YNajJwskCtOVy3WvOYoH04aLHDZNuWlNNG6F/dSVsfeW4XgH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 75FC461E5FE05;
+	Mon, 21 Oct 2024 17:20:59 +0200 (CEST)
+Message-ID: <15688d2d-b3a0-4730-9cee-15bb6c7f78fb@molgen.mpg.de>
+Date: Mon, 21 Oct 2024 17:20:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxZD-doogmnZGfRI@ryzen.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next 1/2] ptp: add control over HW
+ timestamp latch point
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+References: <20241021141955.1466979-1-arkadiusz.kubalewski@intel.com>
+ <20241021141955.1466979-2-arkadiusz.kubalewski@intel.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241021141955.1466979-2-arkadiusz.kubalewski@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 02:07:21PM +0200, Niklas Cassel wrote:
-> Hello Yi Lai,
-> 
-> On Mon, Oct 21, 2024 at 06:58:59PM +0800, Lai, Yi wrote:
-> > Hi Niklas Cassel,
-> > 
-> > Greetings!
-> > 
-> > I used Syzkaller and found that there is INFO: task hung in blk_mq_get_tag in v6.12-rc3
-> > 
-> > After bisection and the first bad commit is:
-> > "
-> > e5dd410acb34 ata: libata: Clear DID_TIME_OUT for ATA PT commands with sense data
-> > "
-> 
-> It might be that your bisection results are accurate.
-> 
-> However, after looking at the stacktraces, I find it way more likely that
-> bisection has landed on the wrong commit.
-> 
-> See this series that was just queued (for 6.13) a few days ago that solves a
-> similar starvation:
-> https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
-> 
-> You could perhaps run with v6.14-rc4 (which should be able to trigger the bug)
-> and then try v6.14-rc4 + that series applied, to see if you can still trigger
-> the bug?
+Dear Arkadiusz,
 
-Another patch that might be relevant:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e972b08b91ef48488bae9789f03cfedb148667fb
 
-Which fixes a use after delete in rq_qos_wake_function().
-(We can see that the stack trace has rq_qos_wake_function() before
-getting stuck forever in rq_qos_wait())
+Thank you for your patch.
 
-Who knows what could go wrong when accessing a deleted entry, in the
-report there was a crash, but I could image other surprises :)
-The fix was first included in v6.12-rc4.
+Am 21.10.24 um 16:19 schrieb Arkadiusz Kubalewski:
+> Currently HW support of PTP/timesync solutions in network PHY chips can be
+> implemented with two different approaches, the timestamp maybe latched
+> either at the beginning or after the Start of Frame Delimiter (SFD) [1].
+> 
+> Allow ptp device drivers to provide user with control over the HW
+> timestamp latch point with ptp sysfs ABI.
+
+Please describe, that it’s done using `/sys` filesystem.
+
+How can this be tested?
+
+> [1] https://www.ieee802.org/3/cx/public/april20/tse_3cx_01_0420.pdf
+> 
+> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+> ---
+>   Documentation/ABI/testing/sysfs-ptp | 12 ++++++++
+>   drivers/ptp/ptp_sysfs.c             | 44 +++++++++++++++++++++++++++++
+>   include/linux/ptp_clock_kernel.h    | 29 +++++++++++++++++++
+>   3 files changed, 85 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-ptp b/Documentation/ABI/testing/sysfs-ptp
+> index 9c317ac7c47a..a0d89e0fd72e 100644
+> --- a/Documentation/ABI/testing/sysfs-ptp
+> +++ b/Documentation/ABI/testing/sysfs-ptp
+> @@ -140,3 +140,15 @@ Description:
+>   		PPS events to the Linux PPS subsystem. To enable PPS
+>   		events, write a "1" into the file. To disable events,
+>   		write a "0" into the file.
+> +
+> +What:		/sys/class/ptp/ptp<N>/ts_point
+> +Date:		October 2024
+> +Contact:	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+> +Description:
+> +		This file provides control over the point in time in
+> +		which the HW timestamp is latched. As specified in IEEE
+> +		802.3cx, the latch point can be either at the beginning
+> +		or after the end of Start of Frame Delimiter (SFD).
+> +		Value "0" means the timestamp is latched at the
+> +		beginning of the SFD. Value "1" means that timestamp is
+> +		latched after the end of SFD.
+
+Would it make sense to let it be configured by strings, so it’s clear, 
+what the values mean?
+
+1.  beginning_of_sfd
+2.  end_of_sfd
+
+> diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
+> index 6b1b8f57cd95..7e9f6ef368b6 100644
+> --- a/drivers/ptp/ptp_sysfs.c
+> +++ b/drivers/ptp/ptp_sysfs.c
+> @@ -28,6 +28,46 @@ static ssize_t max_phase_adjustment_show(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RO(max_phase_adjustment);
+>   
+> +static ssize_t ts_point_show(struct device *dev, struct device_attribute *attr,
+> +			     char *page)
+> +{
+> +	struct ptp_clock *ptp = dev_get_drvdata(dev);
+> +	enum ptp_ts_point point;
+> +	int err;
+> +
+> +	if (!ptp->info->get_ts_point)
+> +		return -EOPNOTSUPP;
+> +	err = ptp->info->get_ts_point(ptp->info, &point);
+> +	if (err)
+> +		return err;
+> +
+> +	return sysfs_emit(page, "%d\n", point);
+> +}
+> +
+> +static ssize_t ts_point_store(struct device *dev, struct device_attribute *attr,
+> +			      const char *buf, size_t count)
+> +{
+> +	struct ptp_clock *ptp = dev_get_drvdata(dev);
+> +	enum ptp_ts_point point;
+> +	int err;
+> +	u8 val;
+> +
+> +	if (!ptp->info->set_ts_point)
+> +		return -EOPNOTSUPP;
+> +	if (kstrtou8(buf, 0, &val))
+> +		return -EINVAL;
+> +	if (val > PTP_TS_POINT_MAX)
+> +		return -EINVAL;
+> +	point = val;
+> +
+> +	err = ptp->info->set_ts_point(ptp->info, point);
+> +	if (err)
+> +		return err;
+> +
+> +	return count;
+> +}
+> +static DEVICE_ATTR_RW(ts_point);
+> +
+>   #define PTP_SHOW_INT(name, var)						\
+>   static ssize_t var##_show(struct device *dev,				\
+>   			   struct device_attribute *attr, char *page)	\
+> @@ -335,6 +375,7 @@ static struct attribute *ptp_attrs[] = {
+>   	&dev_attr_pps_enable.attr,
+>   	&dev_attr_n_vclocks.attr,
+>   	&dev_attr_max_vclocks.attr,
+> +	&dev_attr_ts_point.attr,
+>   	NULL
+>   };
+>   
+> @@ -363,6 +404,9 @@ static umode_t ptp_is_attribute_visible(struct kobject *kobj,
+>   	} else if (attr == &dev_attr_max_phase_adjustment.attr) {
+>   		if (!info->adjphase || !info->getmaxphase)
+>   			mode = 0;
+> +	} else if (attr == &dev_attr_ts_point.attr) {
+> +		if (!info->get_ts_point && !info->set_ts_point)
+> +			mode = 0;
+>   	}
+>   
+>   	return mode;
+> diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
+> index c892d22ce0a7..921d6615bd39 100644
+> --- a/include/linux/ptp_clock_kernel.h
+> +++ b/include/linux/ptp_clock_kernel.h
+> @@ -55,6 +55,23 @@ struct ptp_system_timestamp {
+>   	clockid_t clockid;
+>   };
+>   
+> +/**
+> + * enum ptp_ts_point - possible timestamp latch points (IEEE 802.3cx)
+> + * @PTP_TS_POINT_SFD:      timestamp latched at the beginning of sending Start
+
+The alignment of the start of the description looks strange with the 
+second line being further right.
+
+> + *			   of Frame Delimiter (SFD)
+> + * @PTP_TS_POINT_POST_SFD: timestamp latched after the end of sending Start
+> + *			   of Frame Delimiter (SFD)
+> + */
+> +enum ptp_ts_point {
+> +	PTP_TS_POINT_SFD,
+> +	PTP_TS_POINT_POST_SFD,
+> +
+> +	/* private: */
+> +	__PTP_TS_POINT_MAX
+> +};
+> +
+> +#define PTP_TS_POINT_MAX (__PTP_TS_POINT_MAX - 1)
+> +
+>   /**
+>    * struct ptp_clock_info - describes a PTP hardware clock
+>    *
+> @@ -159,6 +176,14 @@ struct ptp_system_timestamp {
+>    *                scheduling time (>=0) or negative value in case further
+>    *                scheduling is not required.
+>    *
+> + * @set_ts_point: Request change of timestamp latch point, as the timestamp
+> + *                could be latched at the beginning or after the end of start
+> + *                frame delimiter (SFD), as described in IEEE 802.3cx
+> + *                specification.
+> + *
+> + * @get_ts_point: Obtain the timestamp measurement latch point, counterpart of
+> + *                .set_ts_point() for getting currently configured value.
+> + *
+>    * Drivers should embed their ptp_clock_info within a private
+>    * structure, obtaining a reference to it using container_of().
+>    *
+> @@ -195,6 +220,10 @@ struct ptp_clock_info {
+>   	int (*verify)(struct ptp_clock_info *ptp, unsigned int pin,
+>   		      enum ptp_pin_function func, unsigned int chan);
+>   	long (*do_aux_work)(struct ptp_clock_info *ptp);
+> +	int (*set_ts_point)(struct ptp_clock_info *ptp,
+> +			    enum ptp_ts_point point);
+> +	int (*get_ts_point)(struct ptp_clock_info *ptp,
+> +			    enum ptp_ts_point *point);
+>   };
+>   
+>   struct ptp_clock;
 
 
 Kind regards,
-Niklas
+
+Paul
 
