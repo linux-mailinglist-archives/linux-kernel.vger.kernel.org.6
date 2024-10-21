@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-374254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC589A6780
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723FA9A6784
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B18072839D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D72283D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1558C1EABC4;
-	Mon, 21 Oct 2024 12:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdRyjnGi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CE01EBFFD;
+	Mon, 21 Oct 2024 12:04:02 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880E01EABC3;
-	Mon, 21 Oct 2024 12:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5A51EABC3;
+	Mon, 21 Oct 2024 12:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512235; cv=none; b=FEnNsYNWc1przAz+I8nvPm9EBpsgxGlLlCXI4XL4HpTjiX1+uFCekf+nqwWAYvexGDW1Ab/hYbifj5SYMP4ByMa4oUKZuSu4Y8cdD5Cs1IBNlexa0NeZSC9I4UCS6zQKw0pQrsTykWX47fGPZTwrt7TmAEXoUtA5DbfE9b1lY6M=
+	t=1729512242; cv=none; b=cnkh0Zj+ltBWYUMeuDr39ZqGkeoC/JGbP6V0p8HSIKgO/4sxbNTUvSxClUhmjGrG84oU7cWmhbtJ7EfJNJ4oEbOGG2qZ46mfnccc0T6WcTfQH87hpzsxleOFfakkDev91vl76lS+6TrXhmyfQ22hD1EEpuwrHx6Xkmrg+f39+QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512235; c=relaxed/simple;
-	bh=64w73gIGV4oF+vq2Rcl+l60DIPus9XsF4mUZMhA7ah8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eX39RDy0yuphNDLtVih14sj7Ehe+BOvsH/3sa+LSZEND3xGlR5+djSpcZp/RhZ/bOqzeYp05bz/aQpERSLTQgG608g05PBms+ukGsidL2R5ebzvwbPlm0+hcIpAsp8Qcks7hDcKcw1gYZmbifPee8migfsahLTC1OVx/oEFM96k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdRyjnGi; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729512234; x=1761048234;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=64w73gIGV4oF+vq2Rcl+l60DIPus9XsF4mUZMhA7ah8=;
-  b=bdRyjnGiwe1K7RTfhOMaNK/U3ovTrYJl7y2qkZVEmC9AV4y8jk2Fn8HM
-   OZOQz6sCz7hqlA7OzAGYc/AxHsmqbdIotU8HGfE1BVsfIVztTJsAVjBad
-   IEE6UzUwqJvmNYdM7do6dzi2I8u7CSa0hzBkXs6iESEuM8gBkJaE/iyK4
-   cfwmKoKU+eoQ1VEyc8uYbgVq3hWo+PybOooIAAUX4Jrwnzy9qATPxhrNR
-   0mCE8/1PNYROYfV9WoxmSNGvNFclUrM1jT5E7lbYvODe+SOYh8vjhV5XH
-   wnroxWoND7vGZ7DouJ0MKGJEwA6oFIXpO0Xcb9CieSv79gGLJodS081t4
-   A==;
-X-CSE-ConnectionGUID: aKlS3UKjSiKKESDvAe7fuQ==
-X-CSE-MsgGUID: Z+0KMbLcRIe/oIvniRyYOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="31855354"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="31855354"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 05:03:43 -0700
-X-CSE-ConnectionGUID: l0ULbCs3Qqmf1AxmMyh5ow==
-X-CSE-MsgGUID: rf2wPc2FSPOFTqBlYa6gWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79456680"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 05:03:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t2r8I-00000005US1-2Urn;
-	Mon, 21 Oct 2024 15:03:34 +0300
-Date: Mon, 21 Oct 2024 15:03:34 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
-Message-ID: <ZxZDFiUANo0Jqaai@smile.fi.intel.com>
-References: <20241021072606.585878-1-inochiama@gmail.com>
- <20241021072606.585878-3-inochiama@gmail.com>
- <29d8e2a6-d0e7-0f74-1f5c-4f285ec1e9ee@linux.intel.com>
- <tm7jtf3swggiilznwo3xcqjlhd2a7cguwk3nay3bhmaxo23mf5@qw2fyjwapoxe>
- <3dafd285-f56f-de2a-1544-b6ce092607b5@linux.intel.com>
+	s=arc-20240116; t=1729512242; c=relaxed/simple;
+	bh=MexqYOOCFAKTWp7wFixbyK1Hi5aI+zLK7LGUYsL1zjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XrUaWGJVa1avsWdihAs7W/H0Ee7dcGVy1tbcmZTpQafLpBLvrFGzoOLbHOFWhaGJTvReMhGMXpuaN5C5bK+UqGO+4R9+vrtsG4vLCBIT1xE/fkW8eafmkW+KvpOSldTZB0JDoeB/Ch77qETzq9ODUcEJZxrseZOvctGJ5pL+1AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXDSQ5FcBzpX4d;
+	Mon, 21 Oct 2024 20:01:58 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A15518005F;
+	Mon, 21 Oct 2024 20:03:56 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 21 Oct 2024 20:03:55 +0800
+Message-ID: <895ce437-d6b1-46ba-b06f-e422f58a03cb@huawei.com>
+Date: Mon, 21 Oct 2024 20:03:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better
+ scalability
+To: Oleg Nesterov <oleg@redhat.com>
+CC: <ak@linux.intel.com>, <mhiramat@kernel.org>, <andrii@kernel.org>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240927094549.3382916-1-liaochang1@huawei.com>
+ <20240927171838.GA15877@redhat.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20240927171838.GA15877@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3dafd285-f56f-de2a-1544-b6ce092607b5@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Mon, Oct 21, 2024 at 01:17:55PM +0300, Ilpo Järvinen wrote:
-> On Mon, 21 Oct 2024, Inochi Amaoto wrote:
-> > On Mon, Oct 21, 2024 at 11:52:38AM +0300, Ilpo Järvinen wrote:
-> > > On Mon, 21 Oct 2024, Inochi Amaoto wrote:
+Oleg,
 
-> > > > SG2044 relys on an internal divisor when calculating bitrate, which
-> > > > means a wrong clock for the most common bitrates. So add a quirk for
-> > > > this uart device to skip the set rate call and only relys on the
-> > > > internal UART divisor.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > 
-> > > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > > 
-> > > I wonder though does this mean the numbers userspace can read from kernel 
-> > > are bogus and if something can be done about that?
-> > 
-> > I am not sure whether the clock rate can be read by the userspace.
-> > At least it report the right baud speed by using stty.
+My bad to take so long to reply. I have recently returned from a long vacation.
+
+åœ¨ 2024/9/28 1:18, Oleg Nesterov å†™é“:
+> On 09/27, Liao Chang wrote:
+>>
+>> +int recycle_utask_slot(struct uprobe_task *utask, struct xol_area *area)
+>> +{
+>> +	int slot = UINSNS_PER_PAGE;
+>> +
+>> +	/*
+>> +	 * Ensure that the slot is not in use on other CPU. However, this
+>> +	 * check is unnecessary when called in the context of an exiting
+>> +	 * thread. See xol_free_insn_slot() called from uprobe_free_utask()
+>> +	 * for more details.
+>> +	 */
+>> +	if (test_and_put_task_slot(utask)) {
+>> +		list_del(&utask->gc);
+>> +		clear_bit(utask->insn_slot, area->bitmap);
+>> +		atomic_dec(&area->slot_count);
+>> +		utask->insn_slot = UINSNS_PER_PAGE;
+>> +		refcount_set(&utask->slot_ref, 1);
 > 
-> Okay, I meant baud & other settings. Thanks for checking it.
+> This lacks a barrier, CPU can reorder the last 2 insns
+> 
+> 		refcount_set(&utask->slot_ref, 1);
+> 		utask->insn_slot = UINSNS_PER_PAGE;
+> 
+> so the "utask->insn_slot == UINSNS_PER_PAGE" check in xol_get_insn_slot()
+> can be false negative.
 
-oBut there is clock rate for user space. I think Ilpo has a point.
+Good catcha! Would an atomic_set() with release ordering be sufficient here
+instead of smp_mb()?
 
-Documentation/ABI/testing/sysfs-tty:21:What:            /sys/class/tty/ttyS<x>/uartclk
+> 
+>> +static unsigned long xol_get_insn_slot(struct uprobe_task *utask,
+>> +				       struct uprobe *uprobe)
+>>  {
+>>  	struct xol_area *area;
+>>  	unsigned long xol_vaddr;
+>> @@ -1665,16 +1740,46 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+>>  	if (!area)
+>>  		return 0;
+>>
+>> -	xol_vaddr = xol_take_insn_slot(area);
+>> -	if (unlikely(!xol_vaddr))
+>> +	/*
+>> +	 * The racing on the utask associated slot_ref can occur unless the
+>> +	 * area runs out of slots. This isn't a common case. Even if it does
+>> +	 * happen, the scalability bottleneck will shift to another point.
+>> +	 */
+> 
+> I don't understand the comment, I guess it means the race with
+> recycle_utask_slot() above.
+> >> +	if (!test_and_get_task_slot(utask))
+
+Exactly, While introducing another refcount operation here might seem like
+a downside, the potential racing on it should be less than the ones on
+xol_area->bitmap and xol_area->slot_count(which you've already optimized).
+
+>>  		return 0;
+> 
+> No, we can't do this. xol_get_insn_slot() should never fail.
+> 
+> OK, OK, currently xol_get_insn_slot() _can_ fail, but only if get_xol_area()
+> fails to allocate the memory. Which should "never" happen and we can do nothing
+> in this case anyway.
+
+Sorry, I haven't trace the exact path where xol_get_insn_slot() fails. I suspect
+it might repeatedly trigger BRK exceptions before get_xol_area() successfully
+returns. Please correct me if I am wrong.
+
+> 
+> But it certainly must not fail if it races with another thread, this is insane.
+
+Agreed, it is somewhat costly when race fails. I suggest that it allocates a new
+slot upon the race fails instead of returning 0.
+
+> 
+> And. This patch changes the functions which ask for cleanups. I'll try to send
+> a couple of simple patches on Monday.
+
+Thank you for pointing that out, I must have missed some patches while I was on
+vacation, I will carefully review the mailing list to ensure that this patch can
+work with any recent cleanups.
+
+> 
+> Oleg.
+> 
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+BR
+Liao, Chang
 
 
