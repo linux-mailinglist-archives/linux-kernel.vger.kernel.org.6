@@ -1,149 +1,156 @@
-Return-Path: <linux-kernel+bounces-374639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A840C9A6DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C565E9A6DD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB1C1F2279A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717B71F225B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663211FBC93;
-	Mon, 21 Oct 2024 15:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B22BAFC;
+	Mon, 21 Oct 2024 15:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6dBmo4B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="pSqL/hRg"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A681C1F9EA4;
-	Mon, 21 Oct 2024 15:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3D22619
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523680; cv=none; b=EqRvD+u7/Et8DDcQNEKZdgh74vbtymbOPAfemlALvI9x64UrPYGkekp8QY9XIGRpOX5mDya8TO8EIWxJHvOpRy8pfUcB3YETWUCImae+npoKOJ962JZjMrh6Gm4XjkL+Yvu7faa7qaQpnm34/p/JPBPLMZCs29gfBk2BDjMxIWE=
+	t=1729523709; cv=none; b=nGUr9kUh2h8qJdYVHjR1AiobtUqzDSyJPzMarghO4MyQDOZApDJUo7leX4ZCV3wwr1bpTZWEz3chuAudso6YXGg5hSXo8ItpUvrQ2s4NLlqwgPnHmAqmiqwlDk9G9NGHFrEMWIT/mm16aodwwwwLffY1fY9o4T8IH8wkvizrnLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523680; c=relaxed/simple;
-	bh=4sqNqcl6enA2uep5yPbqNRkltc0niKW2hhqA/FLbO5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U80xk8svMVm76zPkjC5wRCxGTdsccJR4IlzMwHec0h04wd++K4oKzmVj04/Ha2omHQg1+2KqGtMTph9NXdU6rkPQsS8JBgrDvb0sREiHcE86ygz8bvY7FxGHJgbMpcpMrme55ahOL21l1h4fMcFkBb/cUPNpMZK2xSNCkyt7pAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6dBmo4B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C6FC4CEE6;
-	Mon, 21 Oct 2024 15:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729523680;
-	bh=4sqNqcl6enA2uep5yPbqNRkltc0niKW2hhqA/FLbO5s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=H6dBmo4Bul+vk/CYUyLi43MWU4cp9Ypmuvx6iBWBdhcgBtV392XpeR1MX6qXFtJOb
-	 oyChvjaLNC/fMTa3CJwzSolCXx7skGo/RfJPst8dASmnVWpaIb6Yl46Qi9xgb1O7Gb
-	 47oSYZi6WgrxEZOGxYYNaKlJIzRgbfgrTxnKMkR4qxudgC38zQu+Oh5inTu2ELrA4B
-	 3fuPetX1ZYUHEXclM0K/ZVVT5x5nJaqgMhe5UUjdTCAYRiimh1Z37Gt8DlgnCJhm6O
-	 YlKTFOjQymuKAXFv7JD/hoiQBUJc5NeqpisuBk59SCQhIbv9EKmWVdjVy1GgZAyIyI
-	 FBtV6EAEUK/XA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 21 Oct 2024 17:14:06 +0200
-Subject: [PATCH net-next 4/4] mptcp: use "middlebox interference" RST when
- no DSS
+	s=arc-20240116; t=1729523709; c=relaxed/simple;
+	bh=MbTjSVzv8f+NjyPLuVwedfGWGnFwOToxQBmyznK/2Lo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HobWziq/cr2/Bwb2aKITsWw/7VrLWFNRGEpOt79wkMO+7zxC3YHwMBJbSrN5kB36Q+R2+zUJK3jf2xXFJKJqyvGVnQSZGPVBIe1wJYHzY2+lvRNc9i96Fr1WHeMysBdi3M+NLzDmQESjXr9zLx6Qp4QQPlaasSkrxpZJuiHZCZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=pSqL/hRg; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f1292a9bso5527172e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1729523705; x=1730128505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GvLvAGoaEs4cLCLummjUn/fSa2RxeVRTPvPMgQ05vWA=;
+        b=pSqL/hRg9oKL7fZJw751VNEEq5iN9rV5NyK2crFIQbG2kPa0N9rU/C6LfReu/SMMP1
+         GKOr654+LAPpmiI/QXO2Jb7h6g72OV8rbCOPSBodoxgYbtQ9hoiE6/5ai0MFim3IFeX9
+         uwiC9Z2YCzwLXCtO1LzLGPG0faqXWoxMeacIcM8/gvu4bvZSMSa7t/CtuUItaDD9Dsiu
+         hJI7/ZWbvEYRpt1ITLV/2IShWU7xQZrw2M5XrWxoeOXP5c4A5P7LAoC3G/WjAzgjM6St
+         M00mbZ0GOsIW7jHvrxLQ3E4B22zRbEOj3UpAMqfi+XiB/xX5FtFux0qCvgUa/0k7wyx3
+         tIrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729523705; x=1730128505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GvLvAGoaEs4cLCLummjUn/fSa2RxeVRTPvPMgQ05vWA=;
+        b=nLFmJd5ysaM7piskOD4kMknKb8sckGnKI0cO89GZa1wPOWfCgNkoTgXDhehceiEMNd
+         8QTZekiClGyLn3pmrpDHcU4VhfCC+SOQ+5BgTCaWDQdUm0J2nOT0iHI7TqzRN0lTTMd5
+         2U3fQsS+Bw5rUIccWz1MKKkgtSLL6Av9KgK0wW/YJ/u6wmi7eiXeAzoppWZ1+CuxnlE9
+         sMfb8x/ANgJgUYrPhsLuc5w+O17Ggje2JdgzACiTMvxp3IIsNqI5imkE1ruRiQZgZUn4
+         Ok9N2u9uiEw0aG3P2In5GA4Qzv5EaJSYMsDTiW/k+fbIBL+prJHmJmi4XUTsMXTk4KYj
+         RipA==
+X-Forwarded-Encrypted: i=1; AJvYcCV57ZcvUkLzGC8QaZd98+w21dkSeLVTtYgc8pcmA88GtK5fS9OBCR69ElqeNkZv2ta3T6GKXMAdpeH0KnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF8jhwFZtzD78bzRtN1QaZAsOWbcIOzJscZqVuJjeYJT5ma37h
+	eU7BuEdb8o2vwFlNov3CSTg0+WbFj0VuEnOK5YV9O1yZ1k4F3VJCGy1/IPNNMDS5BVAZtRUt45k
+	Yt2mSBjMZ8e040QfkuquIrdpoNriZSBTl7h0H
+X-Google-Smtp-Source: AGHT+IH5PS65InXxWy7zQvIKXC5DV3lRT7k9uy1hS9BXMEO9QulVaI6d3S3/tVIqUPBmpDRG0ReoxzC3NqxZUA7H7xY=
+X-Received: by 2002:a05:6512:2813:b0:533:44e7:1b2a with SMTP id
+ 2adb3069b0e04-53a154b2d95mr5431587e87.40.1729523704965; Mon, 21 Oct 2024
+ 08:15:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-net-next-mptcp-misc-6-13-v1-4-1ef02746504a@kernel.org>
-References: <20241021-net-next-mptcp-misc-6-13-v1-0-1ef02746504a@kernel.org>
-In-Reply-To: <20241021-net-next-mptcp-misc-6-13-v1-0-1ef02746504a@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Davide Caratti <dcaratti@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2222; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=kl9DK7HD7r1EeUzN5KT2dnyn50jJCyFp2AMSo9gs1og=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnFm/TO9aj5czQ2jOGmTdUgveys84TK2SLiS6BN
- 8U7BbZRd3OJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZxZv0wAKCRD2t4JPQmmg
- c3nCEACyOlH8DW5LM8a1tjOtVTJFSV8slTWiHnS/Rr+DiPD206bxZCOhH5QLBp4HRezF3NZh5LB
- lDq0+XMAwJ39M4AIm5W0YDPlTk2pN5WvM3P41iKFoy2Yn3M1BLm4lv7GYq9tHYj1YUVjJifmowM
- McGAMmBANwz5iZ2gbLolwPXZVpAJutMYRb3enPAgEJKKQVq6HeL46eiS1qS5yylIWP6aZBd/Lib
- Rf3Mjf3Vtv3KJQ/luPGNIVgHrGQ8NzkZc0bJbGUKJxPx/AZtYayJ6y6PAyO0sAc2sT+u5Ksl0Fg
- oF9waAxr6JJM+2Va2DMLFvPIfbvd28CCdY10r4AAYG+PxfBoSMHctGE6oW8aW67OZBTKUvqox+k
- O0/Mg/KznETAbfF55G/67iYBn1kx6AgTVgFWfPx2kpYw4FOQMKgsAtTbE1poPK3ei7lprFQ1Izp
- jZGFbpMwfmozqMqgFTmkDD+KONkqTq0b+Vt4LbOplklaFox5+zonvCShoVYRFJWN38tRpa+yy6e
- lg7gOv63KhC/jivoKDkXp1FiQZapvk0ygawmp1vF72qBo3xcuW7tO3XZn+SeA9+um7L4S6isF+n
- 5qtt3SSP24woGDN2h23KOJO0SPd89dxnCBYwiYjarfQZnxsmCRB3ZuFJoK47Msx48c49ejk9Tl3
- wp6F3x6Ou17Hr2A==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com> <20241021-tidss-irq-fix-v1-6-82ddaec94e4a@ideasonboard.com>
+In-Reply-To: <20241021-tidss-irq-fix-v1-6-82ddaec94e4a@ideasonboard.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Mon, 21 Oct 2024 11:14:53 -0400
+Message-ID: <CADL8D3Ykxbz7W=Av774sk9HaEnvneLNZcxmGsGaL2XDEFgpzAw@mail.gmail.com>
+Subject: Re: [PATCH 6/7] drm/tidss: Fix race condition while handling
+ interrupt registers
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Davide Caratti <dcaratti@redhat.com>
+On Mon, Oct 21, 2024 at 10:08=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> From: Devarsh Thakkar <devarsht@ti.com>
+>
+> The driver has a spinlock for protecting the irq_masks field and irq
+> enable registers. However, the driver misses protecting the irq status
+> registers which can lead to races.
+>
+> Take the spinlock when accessing irqstatus too.
+>
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Disp=
+lay SubSystem")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> [Tomi: updated the desc]
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 4 ++++
+>  drivers/gpu/drm/tidss/tidss_irq.c   | 2 ++
+>  2 files changed, 6 insertions(+)
 
-RFC8684 suggests use of "Middlebox interference (code 0x06)" in case of
-fully established subflow that carries data at TCP level with no DSS
-sub-option.
+Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
+Tested an equivalent patch for several weeks.
+Tested-by: Jonathan Cormier <jcormier@criticallink.com>
 
-This is generally the case when mpext is NULL or mpext->use_map is 0:
-use a dedicated value of 'mapping_status' and use it before closing the
-socket in subflow_check_data_avail().
-
-Link: https://github.com/multipath-tcp/mptcp_net-next/issues/518
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/subflow.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
-index 860903e0642255cf9efb39da9e24c39f6547481f..07352b15f145832572a4203ab4d0427c37675e94 100644
---- a/net/mptcp/subflow.c
-+++ b/net/mptcp/subflow.c
-@@ -971,7 +971,8 @@ enum mapping_status {
- 	MAPPING_EMPTY,
- 	MAPPING_DATA_FIN,
- 	MAPPING_DUMMY,
--	MAPPING_BAD_CSUM
-+	MAPPING_BAD_CSUM,
-+	MAPPING_NODSS
- };
- 
- static void dbg_bad_map(struct mptcp_subflow_context *subflow, u32 ssn)
-@@ -1128,8 +1129,9 @@ static enum mapping_status get_mapping_status(struct sock *ssk,
- 			return MAPPING_EMPTY;
- 		}
- 
-+		/* If the required DSS has likely been dropped by a middlebox */
- 		if (!subflow->map_valid)
--			return MAPPING_INVALID;
-+			return MAPPING_NODSS;
- 
- 		goto validate_seq;
- 	}
-@@ -1343,7 +1345,7 @@ static bool subflow_check_data_avail(struct sock *ssk)
- 		status = get_mapping_status(ssk, msk);
- 		trace_subflow_check_data_avail(status, skb_peek(&ssk->sk_receive_queue));
- 		if (unlikely(status == MAPPING_INVALID || status == MAPPING_DUMMY ||
--			     status == MAPPING_BAD_CSUM))
-+			     status == MAPPING_BAD_CSUM || status == MAPPING_NODSS))
- 			goto fallback;
- 
- 		if (status != MAPPING_OK)
-@@ -1396,7 +1398,9 @@ static bool subflow_check_data_avail(struct sock *ssk)
- 			 * subflow_error_report() will introduce the appropriate barriers
- 			 */
- 			subflow->reset_transient = 0;
--			subflow->reset_reason = MPTCP_RST_EMPTCP;
-+			subflow->reset_reason = status == MAPPING_NODSS ?
-+						MPTCP_RST_EMIDDLEBOX :
-+						MPTCP_RST_EMPTCP;
- 
- reset:
- 			WRITE_ONCE(ssk->sk_err, EBADMSG);
-
--- 
-2.45.2
-
+>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/=
+tidss_dispc.c
+> index 515f82e8a0a5..07f5c26cfa26 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -2767,8 +2767,12 @@ static void dispc_init_errata(struct dispc_device =
+*dispc)
+>   */
+>  static void dispc_softreset_k2g(struct dispc_device *dispc)
+>  {
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dispc->tidss->wait_lock, flags);
+>         dispc_set_irqenable(dispc, 0);
+>         dispc_read_and_clear_irqstatus(dispc);
+> +       spin_unlock_irqrestore(&dispc->tidss->wait_lock, flags);
+>
+>         for (unsigned int vp_idx =3D 0; vp_idx < dispc->feat->num_vps; ++=
+vp_idx)
+>                 VP_REG_FLD_MOD(dispc, vp_idx, DISPC_VP_CONTROL, 0, 0, 0);
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.c b/drivers/gpu/drm/tidss/ti=
+dss_irq.c
+> index 3cc4024ec7ff..8af4682ba56b 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.c
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.c
+> @@ -60,7 +60,9 @@ static irqreturn_t tidss_irq_handler(int irq, void *arg=
+)
+>         unsigned int id;
+>         dispc_irq_t irqstatus;
+>
+> +       spin_lock(&tidss->wait_lock);
+>         irqstatus =3D dispc_read_and_clear_irqstatus(tidss->dispc);
+> +       spin_unlock(&tidss->wait_lock);
+>
+>         for (id =3D 0; id < tidss->num_crtcs; id++) {
+>                 struct drm_crtc *crtc =3D tidss->crtcs[id];
+>
+> --
+> 2.43.0
+>
 
