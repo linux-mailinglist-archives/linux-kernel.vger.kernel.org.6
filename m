@@ -1,298 +1,240 @@
-Return-Path: <linux-kernel+bounces-374516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F98E9A6B68
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E63449A6B79
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF61E283032
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B5528407E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CCC1FCF40;
-	Mon, 21 Oct 2024 14:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0DA1FA24B;
+	Mon, 21 Oct 2024 14:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXjKY2iv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JPO0EOc5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C785B1E526;
-	Mon, 21 Oct 2024 14:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519219; cv=none; b=bkRl3y3IO+xSoRuB+pjhDNef/w0lobQ+jGNPGkkn/Hjlb6fUhmG8BM2kEwQgCpVzxVBOxXLx+raTjMtI6SEtgObVUOKE+aoVJwr4VeiZChcX3v9x6QFainHelUMfF/gWgXV99ZWjiru2wvRlL1I96WZKy48v4Nhyw3GDIJKcpSU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519219; c=relaxed/simple;
-	bh=K11LCsKQc2ry+fO2DLHhfmu1ngQ3hcOkF6If1cy54AQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JVuj8RHWVgz1wyfIvBtqw4MDXp865g+lg0Np2umEe793tJC7fwFml3GEk2qByyWwsqzRT/Bv6oEhuKKzyfsg/Nd5iG+mvrSt4PBBc3uRPU43VSVLBiVCKjoc/2LwmX+iJLHr4SKM4KaWn66koPdDhfee1aP2f9tVGFDq24+hQSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXjKY2iv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48588C4CEC3;
-	Mon, 21 Oct 2024 14:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729519219;
-	bh=K11LCsKQc2ry+fO2DLHhfmu1ngQ3hcOkF6If1cy54AQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FXjKY2ivGt3Mpt61YRFUTs3b2GtS1CmR0iRrDHbkKfbCFbxaB1Dqc9jCDNBBZXwRA
-	 KH/dRGXLr1QOLq3/tFPYD2PFWA2su8eqDI+cAX8FxifCvPQM+RS462Uu1udKI6hGL4
-	 IvumQKTBZH1IsQI2jegzgTWPeCXj6FFYzUnjVQN7AXFn+6HFKBA+PQHV9KvL441E3Z
-	 298qDG/R2qWvdWrZv+h8fZB8NkF0vsTOOHR+RSoZggVKAKJlLEyKJx9uIRIDEyZ8BK
-	 8I03R2DEpOCWpy2RwZZei9RQw9zM/ueu/PRZNmXE+60OJVr5nF0gmhw1TgXOGZih+I
-	 uKTNfhq0LfRWA==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, =?utf-8?B?Qmo=?=
- =?utf-8?B?w7ZybiBUw7ZwZWw=?=
- <bjorn@rivosinc.com>, Celeste Liu <coelacanthushex@gmail.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
- <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>, Thomas
- Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-In-Reply-To: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
-References: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
-Date: Mon, 21 Oct 2024 07:00:18 -0700
-Message-ID: <87a5exy2rx.fsf@all.your.base.are.belong.to.us>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B9B1E5705;
+	Mon, 21 Oct 2024 14:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729519301; cv=fail; b=b3HCe42N5g7XI+FwIb81kryhfAmcGQ4ViP3IvXi6PS6VdL/RxQEfd5pg4YyS4nVlIa8VzUyxhAOh98sir943wqygjbYPO6x+87ZFcWbcUXqyvn3oXjgz1PgX1BZPrN6uTfr8C+gnRd0G+cc14x2PhtX5c+TjY1umFVzIBJ3sPCE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729519301; c=relaxed/simple;
+	bh=0xO0GRELvq2GRX4+uq0YmnT5Xuel/BTMcRIfume+H2c=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AmS5cWpx0ttXw9Hn/jLa6JOBfMnnTsEObKAc/BJzADAzo2ooC1HaqMf5k9D2v1DBnGmjdGPmMrgc/PR9j2gmGTZaZ5ANqVUoW6QgvqDl3yVn/K+OIxXFZ+a9oUw382yZopW8LwPgRQW94Aesxr9tMKK973I0vPBPUT2dP1E0Zbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JPO0EOc5; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729519299; x=1761055299;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0xO0GRELvq2GRX4+uq0YmnT5Xuel/BTMcRIfume+H2c=;
+  b=JPO0EOc5mnhV6Cvmv8dq51imDVPUGWvMzkS3XRH9I4jMhdnHZUL4RLeM
+   YoiYSDD+OrlIp2m1BrbvvKlQZfgIrbBMAYcih5MCPoE2saDxU4gjwnGGl
+   gU6rrqZo9zL7olEFhSSHAv+D/oOe8beK1xZgCfK8COgY3kL2Dm2KuUyIS
+   Gej44qUQPfr7mX3V8xLJyhHifAfxLEyFuFQc5ztZkxoOPzjgEE9zhui7o
+   vAeNBULRz7xs8e/gUmvcnqosp5ZjUr97+9G7FF65Wjx9roM2HhvLFgkDY
+   NhoXUf7ILEtJGaqJjFvbPaT8HHTFmt3QhlX7LH4F+EKM0VIBqmCh4rJO5
+   Q==;
+X-CSE-ConnectionGUID: KTvXeTTxQ2GZLTXrXMMhlA==
+X-CSE-MsgGUID: xD0TktOaQuy45pLN+3O2dw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51550238"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51550238"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:01:37 -0700
+X-CSE-ConnectionGUID: Jz42PffuSTS0vRr4ypFQTQ==
+X-CSE-MsgGUID: 2u0wd4K+RGyzaPMEc1EIIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="84596034"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 07:01:37 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 21 Oct 2024 07:01:36 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 07:01:36 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.48) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 21 Oct 2024 07:01:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R1fnmajEcinoXcQTBAIrAT9nkgpaCQYY6sCqpZ/9+07uyIXsASV0u5oyyILy1I1qpDCoreXe17gHcTVb1sxG9QpRKl38KQvjViQzQv0JcVkKl4gv6Md/KNN5i/4v9/Y+4WU/0bmrRoX9Jjbk9UPaqRTGP+jCBy49dL3W5Bmf7ZHaH8MgwPY6tkx40+UH7kf/nATOoip4Oljz/PE20m6qngfUq74gCL2NKnlZwN8Ntg/HVdM8mWcVhOBAixrwpR4UNxVkuypyrFBtMiScY2Y02mQenjS6HBE2OVIICqxQqJkxa9EfSHB1MlxKoGwVJmLU4TtNoPhj0lmZZQ4+m3ABmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DzP8R6o6TKsXh9qOGTT1GoAGmS9YwsWc1LN6cztODcw=;
+ b=yXhHq7oGmfcxdCHxvsYOkDZeCRquQ9+UCCZdznn6Kn1EehZbIf80Yo5elrA0hZ0FjnOrQtPRkH8uSedizXa06yGp2pFtOGVeR1EpisNFHKdgtIUkacazOhXzJXLK00jAx6MMB0nWdd6VR/e2xrAjlRAo0e+N+cNxrq2kbFNJ6087hcjcOZKAk2/FJ/nTKAB21elBBTR6JZmR70jUQ22PuIg1lWzhTVUI3cJh3Sm0ppn5KJ+asAmO0DaxwZN22hn/3EWnj+qqp/2HMLSXfFSFltT25DILKRMmdAuhK0eG++DTKhpwkhmK/Gc9oiQW/L8L18b74uTaf4cdQMAEQUfTWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by CY5PR11MB6234.namprd11.prod.outlook.com (2603:10b6:930:25::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 14:01:26 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 14:01:26 +0000
+Message-ID: <6935ab95-c723-4abe-9143-1e7665190b83@intel.com>
+Date: Mon, 21 Oct 2024 16:00:46 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 07/18] net: Register system page pool as an
+ XDP memory model
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?=
+	<toke@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
+ Nakryiko" <andrii@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, "Magnus
+ Karlsson" <magnus.karlsson@intel.com>,
+	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241015145350.4077765-1-aleksander.lobakin@intel.com>
+ <20241015145350.4077765-8-aleksander.lobakin@intel.com>
+ <ZxD1s0UOJy11wt55@boxer>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <ZxD1s0UOJy11wt55@boxer>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DU2PR04CA0336.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b4::15) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|CY5PR11MB6234:EE_
+X-MS-Office365-Filtering-Correlation-Id: e387ea82-a304-433a-5659-08dcf1d8daa7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UnRQQ1dDUVFaelVRdmJmQWt5am5kODNMMk9HYVBsbWg3YmdTSVFSVWxDM0tQ?=
+ =?utf-8?B?QXMrYjVTZk1tbnBhZFJ5d3U1cU5kK2Jud3h5U1BRc0VkZHF0bkp0SWhMUEVI?=
+ =?utf-8?B?Ry82WkI4TWRwUUh2UGxVR1lTSDV5YXpxQkJzTTZRdXp3RGZRbWJnOGx5WUhJ?=
+ =?utf-8?B?NWlWMHRGcE02N29aaTdJdEM4cE9PTlNKa29HU3pINXRQbHA0TkY1dUJpNmVQ?=
+ =?utf-8?B?SUZ2eVY4Yjdud3hnejd1bGpuYTU2SHpheWtwQVhmZmlMM0RCbDhobHU5dzhC?=
+ =?utf-8?B?WStCb1hueExlWWZ2SG1CcHFTaG5lL2Zld0taVWdUZ2x5MzdhZkF3S0pHQWRD?=
+ =?utf-8?B?ZzJwakZrL213NnRKSkdueDA4ZDNnNEt5Wi90QzErdGsxbis2THBsbWFXT25N?=
+ =?utf-8?B?SkNmUTFkd3BmNmJZZnQ3YUtsekxFVGN6eUwwbFdSQlpOSUxCcHpNY2k5TVl1?=
+ =?utf-8?B?dXJUT2lwTTNYaFd3MkgrejlMUUJYeWQvTEEzWVVsLzBuYkRwZ3FYZnZkSG1N?=
+ =?utf-8?B?UjA1aXI4MHFMbWV6ZFJEUTN2M1R2NDIxbXVuUXp0TEl3cm85U1d5bVI1U0dl?=
+ =?utf-8?B?dDJFbXpWbENOTkE5UWVieEdYMVo1bURhN0tGRFFsSW1rYi9TdWhVd0Y0NDFN?=
+ =?utf-8?B?QUViVEhOSnhOd3dFRFUzV2s1YlVDUWFrNStlVlAreWlMSjhOaUlTYThmUDdm?=
+ =?utf-8?B?dGZ5ZmpGSm5xb0x6V0FrRHoyT2dtaU1YWmswWGpvTEx5MWRQZHJUVE9ocDNl?=
+ =?utf-8?B?blVIWml3NmdFaTJHRGFXL09PcjlGbUExU3grSDFCWU8xWGxVR0RmblFWdDZ6?=
+ =?utf-8?B?aGpoZElaODVldUw5Ukp5WW1sa0trZGFBa2swZmpQSnVwQ3ZiYWRDeFBsMjli?=
+ =?utf-8?B?cEZDb1AzOG9PK2IrdCtsV2kzNDVGYnYvMy9wSVN4N3pjNUFnVno3YVlieWVO?=
+ =?utf-8?B?YmR1RDcrWVBwTTFRRCtNTHcreDVTM1ZncWlzRzhHaDJnTmdmc2VrZ1BBdy9Z?=
+ =?utf-8?B?QlBjVFZHTk5hUGlha2VNamovTGw5Wm1xQVFoeWdwK3RqTXFwNFN1bWtkN0VZ?=
+ =?utf-8?B?QVorcExvaFFVNURoR29PcGRteTkwdWNwSytYRXlidXorY0p5OCtQOW5jdDMr?=
+ =?utf-8?B?eUcvOEFPMnpuOXgxTVp4d3diNXJGYUsrQmVqRWtqV1RoUktYWGJ5QUZYdUsv?=
+ =?utf-8?B?NkFUS2RZNUhLc1U2ci9jbzB2aE5zcmt5bWNEa0VVeEoyZ1RPM0RxcTV2cnVF?=
+ =?utf-8?B?Z1J2dWVrOENqbzBQcWZyVzVmZnJlRTlDVEJuQy9rVjQ0SzhCR1RsUjloNDA1?=
+ =?utf-8?B?a29WaEw4c0R0aEhOdHBmbFpOQ2lUaWFJaXhIQnVYUElURkUvVkhHQnc2SGdM?=
+ =?utf-8?B?OEdiajBKSU5kblp0bkJzYklTWUlIYnNSenFHVlZiZ2czaWJraDlaenR1NDJm?=
+ =?utf-8?B?L0hIZC91cGFUTGNqVG5TSWlQNDJ2a3lYeWc5RVdrd0NWZ3VFRWlBU1lpcUhY?=
+ =?utf-8?B?RXdTRUZ1MVlZb2dQaU9NZG5XMFcyZGttbzVkK2Fsd2tCTlFFakFNQVdVTWN6?=
+ =?utf-8?B?bHUxQVNzakFmeWhacVZ3aDVxMnh6eVkxTkt0a3ZHOE9MUkJsM2M0bVlKNjM4?=
+ =?utf-8?B?M0t0dVpOcFByWnRRM3VVK1dRY2xHN29OR2owbDBKU2l3cmxIV0N0dWMxdEZl?=
+ =?utf-8?B?Tit2SHNuZ0Jjelh5eXJSYSsxK2t1dXBFUUVrSHBYN0c4REZjOUlyRjhhVnhq?=
+ =?utf-8?Q?RBL9TNI91CinU/dqEbrV/3QJYVsh92OEn9Zyn+w?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RkhzQkgrbFk4YUJ0aUNUcFpQOUt6eUpyVmlZUDl1SlRmR0VUamhaN0JkajZU?=
+ =?utf-8?B?U2p1RXRBWDNveEZkbFBkMHdxSVN3SThhK2x5NHU1VkpRTVdRQWgrVFpUWmd5?=
+ =?utf-8?B?d3FOYnhTTzlQWkZvQ01wdHBzQldOYlNuc3lkWXJ6enZnWEpQVXJvcWlpcEZF?=
+ =?utf-8?B?eTZhR0dGazhCTm5obmlpT3RMc1lvZ3RpYmtXOFBmWHVqNFBtRGVnZlAwUHpO?=
+ =?utf-8?B?MDZqT1IrMFdDV0dGWnMxMWNvWjBma0lsdWhLM2xpcWJsSVlkcDM2MGFQMndI?=
+ =?utf-8?B?NzVYaWtXenNwN3pKZ0lmL0dCa1A1NnZnaWU4WlB2alpJYzg0V1NtZHFmeS9G?=
+ =?utf-8?B?N21EUUdteEsvZmlCYUR0NnRwSXZPU0ZFeU5LRWRxN2RoNWVwKytiaEZXTE5I?=
+ =?utf-8?B?OW1pTkRwa2U3M1kxeUtUaERXRFBlcHl3ZWJETSsxMThyM3Q4b1pTTzhqdWVN?=
+ =?utf-8?B?WXM4YXMwK1g5QlpyQlVlVVZ2K3pleUlNVVIrNUc1UlpQZmFweTlSekl5QkVt?=
+ =?utf-8?B?KzNhRm5Ddm9VUEpzbjBMWThYd1UyTVpLSnJGd1hVUWFuRjZheHNvZnBvU1hW?=
+ =?utf-8?B?Uk5rQmdLMDNCbVE1WUhkenBLRE9OTytWN1VsNUQ2R3pLd2QrdUtJM3hUT2JH?=
+ =?utf-8?B?aitWRFQ0alFPVVo1S0NXcDduWS9CMFh3UThtdkF0dXByL1NPbEhtbldlYXo2?=
+ =?utf-8?B?RHhDTmtvUEo5VTJXWnlSc3R0T1hISnRhQ0JBaXdFdG9aMGh4MHNZZWFzZXJP?=
+ =?utf-8?B?c01hRFlRSnFQamRyQ29QYzV0UlpzK3RqbUNFQThUT1pzTUFJL2Nydnp5VHJt?=
+ =?utf-8?B?UFZnb2h0dk1lUTU4b1hVZUJwU1M1aGZqWjdjdnJTZFA4c1A3THJGZzFpY28z?=
+ =?utf-8?B?eEZsSGs3UlI1RjNnbUw1KzBlV3Z0YUg1RVBQaVNXNGMwRk9WM0w0Rzlpc1VO?=
+ =?utf-8?B?b0ZDM3BQTUhxMG41K0RDOTJ2a3U1em1lY0pjVzVTVW41UTJZK3NHZ01rSjJn?=
+ =?utf-8?B?Z2UxQkFCRVZTY1MvV0VRUHJXbHNlbGl1SExpb2FKNFJnOWVleVFSUmJKRGZN?=
+ =?utf-8?B?Q1VrYTQzREJTMjA1Ukt1eTlGOVZTUTBLc1piaDdtQlJaSHZWUlY0OU52bEtj?=
+ =?utf-8?B?Z0p4RFFIMUpqU1pFZklidkxZTTY5Tm9WZGtkNXNRdE5WZjUrc3JDZEdVcGRT?=
+ =?utf-8?B?SzhvOFl1SlMvNHowWFhRTG8yV3ROdUJidjZxd2FvZHNMQkRVMU1HbTE0ZFhQ?=
+ =?utf-8?B?aUUzOGZSQ3J0MTkyRHBSTTcxOUdXL0gvNUszVE9OMFI5WVFxVDRoZU1GSVJh?=
+ =?utf-8?B?ZU1JUUNMS0lsK1lYQitlR0puNEFIcWRvbDdjUU9iOHFmTU9nUEZzRnJjUFk3?=
+ =?utf-8?B?Ti95TVhUOXNwbVdaQUlVTGhPV0hQdCsvcXhyMDJiMENrZ2hhZVhoOHd4Y3RJ?=
+ =?utf-8?B?UENCQnVrMFBNNjRxN2VQRW44aCt1WUFuWTRQeXpMaFp4eVFDRnd5OTg0bVd2?=
+ =?utf-8?B?ajgxRXR5SGszYk1CemNjOWF3NjNiTTZWVDhlKzdIRUtGU1duWjJBTlVUbEM4?=
+ =?utf-8?B?cHBxS1NMeWpDK3lhNlpIUTMxNzExNUNiSnZyYk5BL1dEaGxrK1pXc3hGMjNk?=
+ =?utf-8?B?UWpEWE1SemJCL0F3U2NrelhzVHAwcGU1MHQ0NDhMUC9qK20xQXZ0Z0kzUjJ4?=
+ =?utf-8?B?OElIeXNpR0VZSlNRNEVzTnJOekhzNGFETFRuUlhFN1d1NWxFUDBoRDlKUFY4?=
+ =?utf-8?B?OWlHeFh3dm5Od0RrMXRSNlNmRTBCbFVjTlJIUmlhYUt5OEE0TlZERlA4OU93?=
+ =?utf-8?B?eVBuNnZlQXdDL2tMdjZQSUhaVnN5UjhSYkdOUzdXYVRyNE5FSDIrWWZYcnVI?=
+ =?utf-8?B?by9seFQ1OHFDM2I3NEtUMzlIV2xyNlRCaWptWHhOSFc2MU5qdHlsVlhhUDNz?=
+ =?utf-8?B?eUluaWpLeU1nWWxxWmwycTFmTnhLN1hRSXNoQmFVVGhyWEIxUXZjRWU0SHc5?=
+ =?utf-8?B?WGlremZ3anlaSjdSdEVoRjVvZlRxK0pOQU10QVF6dEhDaCszTWp1MVVXenZ4?=
+ =?utf-8?B?YXdadlpOWStiWWdkbk96QlkrWjZ0MlhtS0xNUW54ay84OGlzOGtyVFNFSi9y?=
+ =?utf-8?B?Z255TWhmZENoVUpwMnZJN05weS9ROVUvSnBQODUxZW1UUU4xQjB1NUVEWW9r?=
+ =?utf-8?B?K0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e387ea82-a304-433a-5659-08dcf1d8daa7
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 14:01:26.6294
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b/6Zrh373qOcYdwwdBrldNppeqzJ6oQSeqFto1KwGNfH0VZjXVGHFKdr9q7/qgVCJ4pNdElSVbBF2FHuUhYH3hgAEp+pvllrsrnWL7BXjDY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6234
+X-OriginatorOrg: intel.com
 
-Celeste!
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Date: Thu, 17 Oct 2024 13:32:03 +0200
 
-I'll pick up your thread [1] here, since there's code here! :-) Let's
-try to clear up/define the possible flow.
+> On Tue, Oct 15, 2024 at 04:53:39PM +0200, Alexander Lobakin wrote:
+>> From: Toke Høiland-Jørgensen <toke@redhat.com>
+>>
+>> To make the system page pool usable as a source for allocating XDP
+>> frames, we need to register it with xdp_reg_mem_model(), so that page
+>> return works correctly. This is done in preparation for using the system
+>> page pool for the XDP live frame mode in BPF_TEST_RUN; for the same
+>> reason, make the per-cpu variable non-static so we can access it from
+>> the test_run code as well.
+> 
+> Again, to me BPF_TEST_RUN has nothing to do with libeth/idpf XDP support
+> :<
 
-The common/generic entry syscall_enter_from_user_mode{,_work}() says
-that a return value of -1 means that the syscall should be skipped.
+Sorry, I forgot to adjust the commit message =\
 
-The RISC-V calling convention uses the same register for arg0/retval
-(a0). So, when a ptracer (PTRACE_SYSCALL+PTRACE_GETREGS). That means
-that the kernel cannot call into the tracer, *after* changing a0.
+Registering system page_pools as memory models is needed to introduce
+generic XSk buff -> skb conversion (patch 15).
 
-The interesting flow for a syscall is roughly:
-1. The exception/trap function
-2. syscall_enter_from_user_mode() which might return -1, meaning that
-   the syscall should be skipped. A tracer might have altered the
-   regs. More importantly, if it's -1 the kernel cannot change the
-   return value, because seccomp filtering might already done that.
-3. If it's a valid syscall, perform the syscall.
+> 
+>>
+>> Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-Now some scenarios:
-* A user does a valid syscall.
-* A user does an invalid syscall(-1)
-* A user does an invalid syscall(!=3D -1)
-
-Then there're the tracing variants of those, and that's where we go get
-trouble.
-
-Now the bugs we've seen in RISC-V:
-
-1. strace "tracing": Requires that regs->a0 is not tampered with prior
-   ptrace notification
-
-   E.g.:
-   | # ./strace /
-   | execve("/", ["/"], 0x7ffffaac3890 /* 21 vars */) =3D -1 EACCES (Permis=
-sion denied)
-   | ./strace: exec: Permission denied
-   | +++ exited with 1 +++
-   | # ./disable_ptrace_get_syscall_info ./strace /
-   | execve(0xffffffffffffffda, ["/"], 0x7fffd893ce10 /* 21 vars */) =3D -1=
- EACCES (Permission denied)
-   | ./strace: exec: Permission denied
-   | +++ exited with 1 +++
-
-   In the second case, arg0 is prematurely set to -ENOSYS
-   (0xffffffffffffffda).
-
-2. strace "syscall tampering": Requires that ENOSYS is returned for
-   syscall(-1), and not skipped w/o a proper return value.
-=20=20=20
-   E.g.:
-   | ./strace -a0 -ewrite -einject=3Dwrite:error=3Denospc echo helloject=3D=
-write:error=3Denospc echo hello=20=20=20
-=20=20=20
-   Here, strace expects that injecting -1, would result in a ENOSYS.
-
-3. seccomp filtering: Requires that the a0 is not tampered to
-
-First 3 was broken (tampering with a0 after seccomp), then 2 was
-broken (not setting ENOSYS for -1), and finally 1 was broken (and
-still is!).
-
-Now for your patch:
-
-Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>
-writes:
-
-> From: Celeste Liu <CoelacanthusHex@gmail.com>
->
-> The return value of syscall_enter_from_user_mode() is always -1 when the
-> syscall was filtered. We can't know whether syscall_nr is -1 when we get =
--1
-> from syscall_enter_from_user_mode(). And the old syscall variable is
-> unusable because syscall_enter_from_user_mode() may change a7 register.
-> So get correct syscall number from syscall_get_nr().
->
-> So syscall number part of return value of syscall_enter_from_user_mode()
-> is completely useless. We can remove it from API and require caller to
-> get syscall number from syscall_get_nr(). But this change affect more
-> architectures and will block more time. So we split it into another
-> patchset to avoid block this fix. (Other architectures can works
-> without this change but riscv need it, see Link: tag below)
->
-> Fixes: 61119394631f ("riscv: entry: always initialize regs->a0 to -ENOSYS=
-")
-> Reported-by: Andrea Bolognani <abologna@redhat.com>
-> Closes: https://github.com/strace/strace/issues/315
-> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gm=
-ail.com/
-> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
-> ---
->  arch/riscv/kernel/traps.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 51ebfd23e0076447518081d137102a9a11ff2e45..3125fab8ee4af468ace9f692d=
-d34e1797555cce3 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -316,18 +316,25 @@ void do_trap_ecall_u(struct pt_regs *regs)
->  {
->  	if (user_mode(regs)) {
->  		long syscall =3D regs->a7;
-> +		long res;
->=20=20
->  		regs->epc +=3D 4;
->  		regs->orig_a0 =3D regs->a0;
-> -		regs->a0 =3D -ENOSYS;
->=20=20
->  		riscv_v_vstate_discard(regs);
->=20=20
-> -		syscall =3D syscall_enter_from_user_mode(regs, syscall);
-> +		res =3D syscall_enter_from_user_mode(regs, syscall);
-> +		/*
-> +		 * Call syscall_get_nr() again because syscall_enter_from_user_mode()
-> +		 * may change a7 register.
-> +		 */
-> +		syscall =3D syscall_get_nr(current, regs);
->=20=20
->  		add_random_kstack_offset();
->=20=20
-> -		if (syscall >=3D 0 && syscall < NR_syscalls)
-> +		if (syscall < 0 || syscall >=3D NR_syscalls)
-> +			regs->a0 =3D -ENOSYS;
-> +		else if (res !=3D -1)
->  			syscall_handler(regs, syscall);
-
-Here we can perform the syscall, even if res is -1. E.g., if this path
-[2] is taken, we might have a valid syscall number in a7, but the
-syscall should not be performed.
-
-Also, one reason for the generic entry is so that it should be less
-work. Here, you pull (IMO) details that belong to the common entry
-implementation/API up the common entry user. Wdyt about pushing it down
-to common entry? Something like:
-
---8<--
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 51ebfd23e007..66fded8e4b60 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -319,7 +319,6 @@ void do_trap_ecall_u(struct pt_regs *regs)
-=20
- 		regs->epc +=3D 4;
- 		regs->orig_a0 =3D regs->a0;
--		regs->a0 =3D -ENOSYS;
-=20
- 		riscv_v_vstate_discard(regs);
-=20
-@@ -329,6 +328,8 @@ void do_trap_ecall_u(struct pt_regs *regs)
-=20
- 		if (syscall >=3D 0 && syscall < NR_syscalls)
- 			syscall_handler(regs, syscall);
-+		else if (syscall !=3D -1)
-+			regs->a0 =3D -ENOSYS;
-=20
- 		/*
- 		 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index 1e50cdb83ae5..9b69c2ad4f12 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -14,6 +14,7 @@
- #include <linux/kmsan.h>
-=20
- #include <asm/entry-common.h>
-+#include <asm/syscall.h>
-=20
- /*
-  * Define dummy _TIF work flags if not defined by the architecture or for
-@@ -166,6 +167,8 @@ static __always_inline long syscall_enter_from_user_mod=
-e_work(struct pt_regs *re
-=20
- 	if (work & SYSCALL_WORK_ENTER)
- 		syscall =3D syscall_trace_enter(regs, syscall, work);
-+	else if (syscall =3D=3D -1L)
-+		syscall_set_return_value(current, regs, -ENOSYS, 0);
-=20
- 	return syscall;
- }
-diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index 5b6934e23c21..99742aee5002 100644
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -43,8 +43,10 @@ long syscall_trace_enter(struct pt_regs *regs, long sysc=
-all,
- 	/* Handle ptrace */
- 	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
- 		ret =3D ptrace_report_syscall_entry(regs);
--		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
-+		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU)) {
-+			syscall_set_return_value(current, regs, -ENOSYS, 0);
- 			return -1L;
-+		}
- 	}
-=20
- 	/* Do seccomp after ptrace, to catch any tracer changes. */
-@@ -66,6 +68,14 @@ long syscall_trace_enter(struct pt_regs *regs, long sysc=
-all,
- 		syscall =3D syscall_get_nr(current, regs);
- 	}
-=20
-+	/*
-+	 * If we're not setting the return value here, the context is
-+	 * gone; For higher callers, -1 means that the syscall should
-+	 * be skipped.
-+	 */
-+	if (syscall =3D=3D -1L)
-+		syscall_set_return_value(current, regs, -ENOSYS, 0);
-+
- 	syscall_enter_audit(regs, syscall);
-=20
- 	return ret ? : syscall;
---8<--
-
-I did a quick test of the above, and it seems to cover all the previous
-bugs -- but who knows! ;-)
-
-
-Bj=C3=B6rn
-
-[1] https://lore.kernel.org/linux-riscv/59505464-c84a-403d-972f-d4b2055eeaa=
-c@gmail.com/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/kernel/entry/common.c#n47
+Thanks,
+Olek
 
