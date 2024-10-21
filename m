@@ -1,232 +1,88 @@
-Return-Path: <linux-kernel+bounces-375040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE099A901D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665F59A9021
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95B10B2276B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E28F281645
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83741CB518;
-	Mon, 21 Oct 2024 19:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF871CEEBB;
+	Mon, 21 Oct 2024 19:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u38O1dgU"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyhZIGvk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075AF1C3F0E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E07A1CBE8E;
+	Mon, 21 Oct 2024 19:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729540185; cv=none; b=lw25QIaVl2gRHHHXFQYZP1WYyhOOFWXwZwkD5P+ubaxIB7x4dOJVCH5V7CaKy+00YyCDgZYxItCPpq7wI0UtdJgJNvXiyLg/CkpQiW3Y2ioUvaE6itF2ZczU8nnAhY2c1yw+0py674vubYE86T/FRRi5SXQwvBV+9W/O4BlB+vc=
+	t=1729540213; cv=none; b=mu+2vrfVX3GpxQUNtVQelxultllgsGlp8BM87IEE8ryTGcdaEmNYxz9rJ2EVaipk8x0kQlaBJT/onJ0YGq8JSlaHxcDtZsR/GE/UZrppJU9Gf+y0SVLNZksPyCLjq41EoEqzdKR2F4rnBt3nl3rpzw50LlOEs9Nv0zRytzk2M0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729540185; c=relaxed/simple;
-	bh=HTep6Ps/b0VqQuVOG52oSj2XTrXoOn40CM7dR4EIEOI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MKa/J0s+JJ/MOtHJNayT00jzdPUoyiPCw9u45/f2hHgJu7VQHqDP8H1E9TZK30mAS6S/GRW75ePSmyQAhrzsXweKl7Oo35+6nlThYdcPaDHn6TG0b+t8LuxvaJnAyhTQHbBZyXD4AZHuKJPf/gQd1GrcvLpT2wEfkVfsqdNUPb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u38O1dgU; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so3758969b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729540182; x=1730144982; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIAEhXnz+TycYsOXq4fwUScpNqUcxMY2FROsK0V63/0=;
-        b=u38O1dgUi9XNpaywyCUwduuXJ9Nc4q2RPX1D/Yq5Vb3OTTT/z4A+25TEsVWxq7QNf4
-         X7JF6sW6MT+lqBO5h0xTtzXB2WNGuQe3+C+Qutew8+KCulr+0MZzNRBn9Wuz4ota5ztz
-         vYPk0nw1oeO2fsGegij3qpgdNhBr33WPZGttJlNc/RTlv48iYYee0ocFZv38ten/6iLG
-         yLRzV5Q4PnZ0v2zP2O8ZlSQR/JaLcKkStZIKEGxntXzqr8+dfqQOlAeTJD1R9W40khZH
-         cF7ML29gfA8UVY19YwYJzKUxfhhVPfmq+h4rpjMFE8jdPm6PmgkjFYhXeCr2dyvMJiAf
-         HH3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729540182; x=1730144982;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIAEhXnz+TycYsOXq4fwUScpNqUcxMY2FROsK0V63/0=;
-        b=WCYWer0XV8AfJmokWkU6w7VZy3uxYxY8jWUor3HlZmKxXKTTs4bCk2PomW+vUvXM+B
-         E+G69SZxNu4K7Gxb07hhmd0LWB2Z2DWvFJp1R50yyezVYJ58nv5pPSD0T2hz4yubRhwz
-         rO5MONeEcmorhAv/sBvkl4kxUeY78PXtujkmN87kW1W+fx5yvBUHAT/DRZMpNq5yYSva
-         OHgv8q4r30oJffFybJPhunqMbEYolq9cI0lqF99Dzob3MKezy2CZnivibF3RRhLkbBOs
-         wczYeBUDcofxIwpEu7o89JMzKcIptaFSZv/9Xw2AgPIDLhe/nqO4nelml13MMgccmIxK
-         D76Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXvBqQmFIlDiUzI270XlMaiOhsyjMWBOqTvW6g5zaRFhvLOaFvX5I8VYNRg+mJYXeajMBhJJ3BbV18ZM4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoM7/RTVKrJl8Mb+fHR8+iMj7cSGuIbFijvIoomLDU54Bp9NbZ
-	phRoYAkis9hhRfu8mLDj3YoTm5xf8SE+6/udzvd1eyn+pFX2bwcBg3uk812Y/g==
-X-Google-Smtp-Source: AGHT+IE7LBFDuXD464oDX7R+3pKFv6gB/pDONRd/qrGrJhWZX+JT1kChQtcaO3T6c0R4R1FchyglYw==
-X-Received: by 2002:a05:6a21:a24b:b0:1d9:275b:4f06 with SMTP id adf61e73a8af0-1d96debc9a1mr86139637.19.1729540181812;
-        Mon, 21 Oct 2024 12:49:41 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407f63sm3277862b3a.204.2024.10.21.12.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 12:49:40 -0700 (PDT)
-Date: Mon, 21 Oct 2024 12:49:28 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-    Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
-    stable@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
-    Matthew Wilcox <willy@infradead.org>, 
-    Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
- free_pages_prepare()
-In-Reply-To: <20241021173455.2691973-1-roman.gushchin@linux.dev>
-Message-ID: <d50407d4-5a4e-de0c-9f70-222eef9a9f67@google.com>
-References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1729540213; c=relaxed/simple;
+	bh=eZYf3GJHPEiM9OohyeCcgFDCaHIVP50U9kyroIh1Xm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJCik6I+qY1SOd41hCMgU2TTFTRSTBllQ5FUZN54QeJ8gXBAV+z1yGQrmVDzEtHIDM81FI+PIzXmsFETHEjAv/ok5P5hXkdmyx3Mq6DIn9Uch+Hx32tkFsvEWNn75Wk8pisHJnJVAwtdvTleVHglF81e2mMf8dSks0M9MqnmuFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyhZIGvk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64046C4CEE5;
+	Mon, 21 Oct 2024 19:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729540212;
+	bh=eZYf3GJHPEiM9OohyeCcgFDCaHIVP50U9kyroIh1Xm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uyhZIGvkS2Onm//7dOxuVzku5f4l75aicLhlLCLxV+xc4DCV6MbYTlEHMhpiFK2/D
+	 Ig2V5GO1I20kaQOYfAVPjexFqjmrR154+RmH92/WvOro4oUR88cZpdpdWTXcU5e54o
+	 xVBOGpqmtSpcWovV45eGhiAk0EyFAuXnJ1oDm7TGWfPJQykSut9PIXa3E2T8Y5Fnyt
+	 w63ClYON3N/XKApIdPju660n8Ddig3FGo6JZ598U2i3vXsH+TR89/uBhL0aaVWn4GD
+	 M/4/oivOKvJ6DBk3Y8LX60FdFoQm5dcIR5H4H+PB/ekWDBaEgqfPsTDBTOxMv9iaNX
+	 5+N44evzinVTQ==
+Date: Mon, 21 Oct 2024 14:50:11 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chanh Nguyen <chanh@os.amperecomputing.com>
+Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+	linux-arm-kernel@lists.infradead.org,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Open Source Submission <patches@amperecomputing.com>,
+	Phong Vo <phong@os.amperecomputing.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thang Nguyen <thang@os.amperecomputing.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Khanh Pham <khpham@amperecomputing.com>,
+	linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: aspeed: add Mt. Jefferson board
+Message-ID: <172954021092.1028025.10007351603543504033.robh@kernel.org>
+References: <20241021083702.9734-1-chanh@os.amperecomputing.com>
+ <20241021083702.9734-2-chanh@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021083702.9734-2-chanh@os.amperecomputing.com>
 
-On Mon, 21 Oct 2024, Roman Gushchin wrote:
 
-> Syzbot reported a bad page state problem caused by a page
-> being freed using free_page() still having a mlocked flag at
-> free_pages_prepare() stage:
+On Mon, 21 Oct 2024 08:37:01 +0000, Chanh Nguyen wrote:
+> Document Ampere's Mt. Jefferson BMC board compatible.
 > 
->   BUG: Bad page state in process syz.0.15  pfn:1137bb
->   page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
->   flags: 0x400000000080000(mlocked|node=0|zone=1)
->   raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
->   raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
->   page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
->   page_owner tracks the page as allocated
->   page last allocated via order 0, migratetype Unmovable, gfp_mask
->   0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
->   3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
->    set_page_owner include/linux/page_owner.h:32 [inline]
->    post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
->    prep_new_page mm/page_alloc.c:1545 [inline]
->    get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
->    __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
->    alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
->    kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
->    kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
->    kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
->    kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
->    vfs_ioctl fs/ioctl.c:51 [inline]
->    __do_sys_ioctl fs/ioctl.c:907 [inline]
->    __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->    do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   page last free pid 951 tgid 951 stack trace:
->    reset_page_owner include/linux/page_owner.h:25 [inline]
->    free_pages_prepare mm/page_alloc.c:1108 [inline]
->    free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
->    vfree+0x181/0x2e0 mm/vmalloc.c:3361
->    delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
->    process_one_work kernel/workqueue.c:3229 [inline]
->    process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
->    worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
->    kthread+0x2df/0x370 kernel/kthread.c:389
->    ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> 
-> A reproducer is available here:
-> https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
-> 
-> The problem was originally introduced by
-> commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
-> clearance"): it was handling focused on handling pagecache
-> and anonymous memory and wasn't suitable for lower level
-> get_page()/free_page() API's used for example by KVM, as with
-> this reproducer.
-> 
-> Fix it by moving the mlocked flag clearance down to
-> free_page_prepare().
-> 
-> The bug itself if fairly old and harmless (aside from generating these
-> warnings).
-> 
-> Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
-> Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: <stable@vger.kernel.org>
-> Cc: Hugh Dickins <hughd@google.com>
-
-Acked-by: Hugh Dickins <hughd@google.com>
-
-Thanks Roman - I'd been preparing a similar patch, so agree that this is
-the right fix.  I don't think there's any need to change your text, but
-let me remind us that any "Bad page" report stops that page from being
-allocated again (because it's in an undefined, potentially dangerous
-state): so does amount to a small memory leak even if otherwise harmless.
-
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
 > ---
->  mm/page_alloc.c | 15 +++++++++++++++
->  mm/swap.c       | 14 --------------
->  2 files changed, 15 insertions(+), 14 deletions(-)
+> Changes in v2:
+>   - Document Mt. Jefferson board compatible                   [Krzysztof]
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index bc55d39eb372..7535d78862ab 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
->  	bool skip_kasan_poison = should_skip_kasan_poison(page);
->  	bool init = want_init_on_free();
->  	bool compound = PageCompound(page);
-> +	struct folio *folio = page_folio(page);
->  
->  	VM_BUG_ON_PAGE(PageTail(page), page);
->  
-> @@ -1053,6 +1054,20 @@ __always_inline bool free_pages_prepare(struct page *page,
->  	if (memcg_kmem_online() && PageMemcgKmem(page))
->  		__memcg_kmem_uncharge_page(page, order);
->  
-> +	/*
-> +	 * In rare cases, when truncation or holepunching raced with
-> +	 * munlock after VM_LOCKED was cleared, Mlocked may still be
-> +	 * found set here.  This does not indicate a problem, unless
-> +	 * "unevictable_pgs_cleared" appears worryingly large.
-> +	 */
-> +	if (unlikely(folio_test_mlocked(folio))) {
-> +		long nr_pages = folio_nr_pages(folio);
-> +
-> +		__folio_clear_mlocked(folio);
-> +		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
-> +		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
-> +	}
-> +
->  	if (unlikely(PageHWPoison(page)) && !order) {
->  		/* Do not let hwpoison pages hit pcplists/buddy */
->  		reset_page_owner(page, order);
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 835bdf324b76..7cd0f4719423 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -78,20 +78,6 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
->  		lruvec_del_folio(*lruvecp, folio);
->  		__folio_clear_lru_flags(folio);
->  	}
-> -
-> -	/*
-> -	 * In rare cases, when truncation or holepunching raced with
-> -	 * munlock after VM_LOCKED was cleared, Mlocked may still be
-> -	 * found set here.  This does not indicate a problem, unless
-> -	 * "unevictable_pgs_cleared" appears worryingly large.
-> -	 */
-> -	if (unlikely(folio_test_mlocked(folio))) {
-> -		long nr_pages = folio_nr_pages(folio);
-> -
-> -		__folio_clear_mlocked(folio);
-> -		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
-> -		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
-> -	}
->  }
->  
->  /*
-> -- 
-> 2.47.0.105.g07ac214952-goog
-> 
-> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
