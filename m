@@ -1,211 +1,220 @@
-Return-Path: <linux-kernel+bounces-374366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285D99A6918
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9389F9A6914
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A861B1F2186A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46381C22207
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC981F4FD5;
-	Mon, 21 Oct 2024 12:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2317A1F4736;
+	Mon, 21 Oct 2024 12:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BxinkhbI"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovtOKHwU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D901E8853
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BA1D1E7A;
+	Mon, 21 Oct 2024 12:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515073; cv=none; b=km6DNUObY9AGQlQvIKY0jsnv4DjW9QavYdarHE6Wiy8j5v8syBzar3KiSIGCEjwphiapBiLAUlXjJvVbYAvWM+AfJkZ8grL2zPqNgBBMowhoD9F+cgGAUGfM9YIC9iu+xEw4u2jL80fVuqH6xN3Hj57hLdRPPAQgEzB/T2EfCVY=
+	t=1729515056; cv=none; b=URV/MA+5ByaRKlEt2xRDjrOvQoWRZM7O/9tLK1o+u5Kctus4+8S5HcMiXY49OcxZ53iVHvlh+17wWec1aQ0PR2G+btL8yKhgEchsKSFVY/vexJqYDQovP0nQC3JV/18cLGzUYMr4Ef6WtIdpGBBy2PZJhqTKimEtdYnCjlwLEio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515073; c=relaxed/simple;
-	bh=V94Ij3ae1rZVmL+jxKjTKUB+2p4lVCFw5V42wkRlmNk=;
+	s=arc-20240116; t=1729515056; c=relaxed/simple;
+	bh=b+6l4BsUolOYut6i6SR1zP3LvfGX7ZQLtQzTjt4qRGU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EIWh6f0TGEOKeIcOamlaQzZvY+mtb/PH9jra8UvS4lgC0EK5DHN0k0YpJrTyDl2kLIa2iJnfEYGvZEQhajEI5ptU1kaUtRSsxSzMzQnTy7ntpB/M/8AsFrRbfQIsvZVK/MvPCZB/VoEmHrh4ByJpA+Ab0GaiXhrXB7joN0ibWj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BxinkhbI; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e3f35268so2523811e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729515068; x=1730119868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y4x0frPjt5/BOSJ9+yy/X3eM08JC+jz1BkqZ97LB2LU=;
-        b=BxinkhbIolaZt7V0mXqJwX1rjsQq5gLUkpj0/0egfWJIczRp+6fczOr0/MloDhqncM
-         oPL66Jwead4z/83KS3lQGCWG2r9xa2IM5mq3FNUDY+V0WwujlXUo8WK3jzyfIMOEMdeo
-         a5/I9l2xjPh9+MauM35OH2Yklj6Xz3+0+30wYDvNUO2wBffp3Z11tx6UczFj7xOcTtf/
-         lo5bt/v5jZpxxRVopqBV9k/Oag/Q5S1m3UcaOaMJc6ZI6tKz1KUcd2dhCBJXA+EaAihk
-         jripIz+9Fw+89KcmYLyeItz+3aZQ0cfU2NNJMe/h5jgI/DH+u5w+/6I/XAJAH5ZaVT8M
-         hPnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729515068; x=1730119868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y4x0frPjt5/BOSJ9+yy/X3eM08JC+jz1BkqZ97LB2LU=;
-        b=VW16H8wGG9ey6Mbn+WEfv4ut7bpXSbIz+iHOQXxeZhgidhPzvOk+HiTpRBvNKVh3c9
-         6+lj7pAoeCwTFItqI58wGR2FKJyhslE+I6nQ+/crxsCZQVmcMywDowJsapcCSfsm+P30
-         zAk4Oz8dCE8fY3hX5pdMR04pq6LK7MPo8hmj44rnyPyO6PKdiKNng6JHKchj+JfdaDdl
-         S043ZBBHjuUOLfuy8J703gnswSnnsFggHBkvArnlsuztC3et2qEutm1MYGAq7ZlyTf5u
-         YaBK2/4b7kuyJ7P1w5sm6loQ8OIeiLEPgCCWQT+qTVN7mwwC4ayFN4beBWWmWFbtYr7v
-         e60g==
-X-Forwarded-Encrypted: i=1; AJvYcCVmKUB8jHWOrB5uxQ9UHScr5yvvZ61FYZIXkN2BwWjJZdZ+AVv+fL7CrccgezqCClyHQkAqA8nxDblBEpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywBOwrtR5vPxdGzA7UngPTqBx9GXsoT50XQ9ULLtpD+4HjZjN7
-	MkGzikItdMR/2arhcA+lsHRkHKlLd5eAbFVfgHk4xDJfgIbYgJkxi8IWx9bz2MnvJOWQBUgwxw9
-	HT8KjQcbiR6Pu4NVg6rNou3Ut01rXDywP/mjSxg==
-X-Google-Smtp-Source: AGHT+IE+MWgG9ymZWSMfk2GnXFlKQTXntyhXseGsCdBrJgITVmJEdzAzJOSda4D1TD0k+L/IINSDoacMOfpYM6ib3uo=
-X-Received: by 2002:a05:6512:1383:b0:539:d428:fbdd with SMTP id
- 2adb3069b0e04-53a1546d2f9mr5522728e87.53.1729515068095; Mon, 21 Oct 2024
- 05:51:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=kuyiNzQyuallGC2u++PVebqe2ayY0cX8neU/H2JcCycME0f3tKkZ/2p1KMzIp/vjvcImQpGVIZ+ubSymISw4hMswk5J0qAzk90JvZvhil+j1YK8P1NSwzPc25AkQGYs0YwKSsdf5r6Q0ShuztviG+IXgdmnXVshD2UjIjin0rHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovtOKHwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA940C4CEEB;
+	Mon, 21 Oct 2024 12:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729515056;
+	bh=b+6l4BsUolOYut6i6SR1zP3LvfGX7ZQLtQzTjt4qRGU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ovtOKHwUMUU5R3hJLLt/7sG6YzDH+O6y7QU/0DhidpgciKmYe/+1y9YpKOv2Q16/f
+	 EFJ5eJS/bLxJkcUiu/GRQKiy9TgtKu+hi0+2ANoQPtCm2Sy0/mEfuQp7zBTrGDhq5C
+	 MYuMFH9GlvPBQELR9dIgyBU+yTCRFyiSH2XL8nwbATWxWGhozK9QvEs9vZWqt0xrkp
+	 6cWGrbcPXs+sVWtOG4tS17pqLDELylcDRPO4Koxr6BwTEKx62imR/+vqkC0hZa9lCe
+	 MRhRdnXTi1CrPgEUVRL3CRQA6QrM2WU7T9hAO9+kqL1WBV4PYmZBthO42sujbNO5dP
+	 ftN7PoGo8ukmw==
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso2811594b3a.3;
+        Mon, 21 Oct 2024 05:50:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVb1+mOC73smK5w7oo8c5EgudreTjvZ4EFh0eo9wTMx70Es4IYJqJ1906q6P+QPOPHC86fOejWOHF1J@vger.kernel.org, AJvYcCXvKMaz+XqBNos+0Z3vzLAF0fHnaxuBrePB2P5uJnSDkxbMotlC+1tQg+hJzd/Tf/AiNrQzDJuDE7lhkMfT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhG5dBW7KRqDNkxdQh49VXOVYWS6dxWmOIxC9HeJ+JaqWvKOFG
+	Bzqgk/iY1XoioWN3LN1cU/8YfCQIri86lWRA1EqOnutgB/XIdKJMdG2Da3jQQHlEEmtibyojW6E
+	B/6LqPLztEKUIOpKKtJYsxgv3Wg==
+X-Google-Smtp-Source: AGHT+IFZ1C5QqluT3ibMGY6cMrOFVa0OCrC4RfXKLBxeIAjailnBblIgy2YF9BWgyqZBpaECWwTu7rQPKp8us5XNm1o=
+X-Received: by 2002:a05:6a00:9298:b0:71e:5de:ad6d with SMTP id
+ d2e1a72fcca58-71ea323b91dmr16025574b3a.24.1729515055229; Mon, 21 Oct 2024
+ 05:50:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com>
- <20241021-ad7380-fix-supplies-v2-4-2ca551b3352a@baylibre.com> <037d7ebb4d037edb32f9d717e456ab545621ea94.camel@gmail.com>
-In-Reply-To: <037d7ebb4d037edb32f9d717e456ab545621ea94.camel@gmail.com>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Mon, 21 Oct 2024 14:50:55 +0200
-Message-ID: <CAEHHSvZxrt3cPmmLwNj9nts9KhBWg4CwnzWnoTXYJL30AbJBsA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] iio: adc: ad7380: fix supplies for ad7380-4
-To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org
+References: <20241017103809.156056-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20241017103809.156056-1-angelogioacchino.delregno@collabora.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Mon, 21 Oct 2024 20:51:15 +0800
+X-Gmail-Original-Message-ID: <CAAOTY__6CVfnCCMGnbrfi0qdp5qK73TzNLo6T+-+HxqAGYwP1w@mail.gmail.com>
+Message-ID: <CAAOTY__6CVfnCCMGnbrfi0qdp5qK73TzNLo6T+-+HxqAGYwP1w@mail.gmail.com>
+Subject: Re: [PATCH v13 0/3] drm/mediatek: Add support for OF graphs
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com, 
+	ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	wenst@chromium.org, kernel@collabora.com, sui.jingfeng@linux.dev, 
+	michael@walle.cc, sjoerd@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le lun. 21 oct. 2024 =C3=A0 13:18, Nuno S=C3=A1 <noname.nuno@gmail.com> a =
-=C3=A9crit :
->
-> On Mon, 2024-10-21 at 12:00 +0200, Julien Stephan wrote:
-> > ad7380-4 is the only device in the family that does not have an interna=
-l
-> > reference. It uses "refin" as a required external reference.
-> > All other devices in the family use "refio"" as an optional external
-> > reference.
-> >
-> > Fixes: 737413da8704 ("iio: adc: ad7380: add support for ad738x-4 4 chan=
-nels
-> > variants")
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---
->
-> Hi Julien,
->
-> Patch looks good. Sorry if this already came out in the previous version =
-or in
-> the other patchset you mention but shouldn't this fix come first in the s=
-eries?
->
+Hi, Angelo:
 
-Hi Nuno,
-That was my plan at first, but doing the
-devm_regulator_get_enable_read_voltage() first, simplifies the next
-changes ... and also eases the review :)
+For patch [1/3] and patch [3/3], applied to mediatek-drm-next [1], thanks.
 
-If needed I can do the rebase
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
 
-Cheers
-Julien
+Regards,
+Chun-Kuang.
 
-> Anyways, for the patch itself:
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
+=BC
+2024=E5=B9=B410=E6=9C=8817=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=886:=
+38=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> Changes in v13:
+>  - Added comment in commit description of patch [1/3] to warn about
+>    new port scheme.
+>  - The series is now fully reviewed, tested, hence *ready*.
 >
-> >  drivers/iio/adc/ad7380.c | 36 ++++++++++++++++++++++++++----------
-> >  1 file changed, 26 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> > index
-> > e257f78d63edd7910fcb936ec5344922f8e70b99..65096717f0dd3ea6a4ff7020bc544=
-d62b84c
-> > b8fd 100644
-> > --- a/drivers/iio/adc/ad7380.c
-> > +++ b/drivers/iio/adc/ad7380.c
-> > @@ -89,6 +89,7 @@ struct ad7380_chip_info {
-> >       bool has_mux;
-> >       const char * const *supplies;
-> >       unsigned int num_supplies;
-> > +     bool external_ref_only;
-> >       const char * const *vcm_supplies;
-> >       unsigned int num_vcm_supplies;
-> >       const unsigned long *available_scan_masks;
-> > @@ -431,6 +432,7 @@ static const struct ad7380_chip_info ad7380_4_chip_=
-info =3D
-> > {
-> >       .num_simult_channels =3D 4,
-> >       .supplies =3D ad7380_supplies,
-> >       .num_supplies =3D ARRAY_SIZE(ad7380_supplies),
-> > +     .external_ref_only =3D true,
-> >       .available_scan_masks =3D ad7380_4_channel_scan_masks,
-> >       .timing_specs =3D &ad7380_4_timing,
-> >  };
-> > @@ -1047,17 +1049,31 @@ static int ad7380_probe(struct spi_device *spi)
-> >                                    "Failed to enable power supplies\n")=
-;
-> >       msleep(T_POWERUP_MS);
-> >
-> > -     /*
-> > -      * If there is no REFIO supply, then it means that we are using
-> > -      * the internal 2.5V reference, otherwise REFIO is reference volt=
-age.
-> > -      */
-> > -     ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "refio"=
-);
-> > -     if (ret < 0 && ret !=3D -ENODEV)
-> > -             return dev_err_probe(&spi->dev, ret,
-> > -                                  "Failed to get refio regulator\n");
-> > +     if (st->chip_info->external_ref_only) {
-> > +             ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
-> > +                                                          "refin");
-> > +             if (ret < 0)
-> > +                     return dev_err_probe(&spi->dev, ret,
-> > +                                          "Failed to get refin
-> > regulator\n");
-> > +
-> > +             st->vref_mv =3D ret / 1000;
-> >
-> > -     external_ref_en =3D ret !=3D -ENODEV;
-> > -     st->vref_mv =3D external_ref_en ? ret / 1000 : AD7380_INTERNAL_RE=
-F_MV;
-> > +             /* these chips don't have a register bit for this */
-> > +             external_ref_en =3D false;
-> > +     } else {
-> > +             /*
-> > +              * If there is no REFIO supply, then it means that we are
-> > using
-> > +              * the internal reference, otherwise REFIO is reference
-> > voltage.
-> > +              */
-> > +             ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
-> > +                                                          "refio");
-> > +             if (ret < 0 && ret !=3D -ENODEV)
-> > +                     return dev_err_probe(&spi->dev, ret,
-> > +                                          "Failed to get refio
-> > regulator\n");
-> > +
-> > +             external_ref_en =3D ret !=3D -ENODEV;
-> > +             st->vref_mv =3D external_ref_en ? ret / 1000 :
-> > AD7380_INTERNAL_REF_MV;
-> > +     }
-> >
-> >       if (st->chip_info->num_vcm_supplies > ARRAY_SIZE(st->vcm_mv))
-> >               return dev_err_probe(&spi->dev, -EINVAL,
-> >
+> Changes in v12:
+>  - Added comment to describe graph for OVL_ADAPTOR in patch [3/3]
+>    as suggested by CK Hu.
+>
+> Changes in v11:
+>  - Added OVL_ADAPTOR_MDP_RDMA to OVL Adaptor exclusive components list
+>    to avoid failures in graphs with MDP_RDMA inside
+>  - Rebased on next-20241004
+>
+> Changes in v10:
+>  - Removed erroneously added *.orig/*.rej files
+>
+> Changes in v9:
+>  - Rebased on next-20240910
+>  - Removed redundant assignment and changed a print to dev_err()
+>  - Dropped if branch to switch conversion as requested; this will
+>    be sent as a separate commit out of this series.
+>
+> Changes in v8:
+>  - Rebased on next-20240617
+>  - Changed to allow probing a VDO with no available display outputs
+>
+> Changes in v7:
+>  - Fix typo in patch 3/3
+>
+> Changes in v6:
+>  - Added EPROBE_DEFER check to fix dsi/dpi false positive DT fallback cas=
+e
+>  - Dropped refcount of ep_out in mtk_drm_of_get_ddp_ep_cid()
+>  - Fixed double refcount drop during path building
+>  - Removed failure upon finding a DT-disabled path as requested
+>  - Tested again on MT8195, MT8395 boards
+>
+> Changes in v5:
+>  - Fixed commit [2/3], changed allOf -> anyOf to get the
+>    intended allowance in the binding
+>
+> Changes in v4:
+>  - Fixed a typo that caused pure OF graphs pipelines multiple
+>    concurrent outputs to not get correctly parsed (port->id);
+>  - Added OVL_ADAPTOR support for OF graph specified pipelines;
+>  - Now tested with fully OF Graph specified pipelines on MT8195
+>    Chromebooks and MT8395 boards;
+>  - Rebased on next-20240516
+>
+> Changes in v3:
+>  - Rebased on next-20240502 because of renames in mediatek-drm
+>
+> Changes in v2:
+>  - Fixed wrong `required` block indentation in commit [2/3]
+>
+>
+> The display IPs in MediaTek SoCs are *VERY* flexible and those support
+> being interconnected with different instances of DDP IPs (for example,
+> merge0 or merge1) and/or with different DDP IPs (for example, rdma can
+> be connected with either color, dpi, dsi, merge, etc), forming a full
+> Display Data Path that ends with an actual display.
+>
+> This series was born because of an issue that I've found while enabling
+> support for MT8195/MT8395 boards with DSI output as main display: the
+> current mtk_drm_route variations would not work as currently, the driver
+> hardcodes a display path for Chromebooks, which have a DisplayPort panel
+> with DSC support, instead of a DSI panel without DSC support.
+>
+> There are other reasons for which I wrote this series, and I find that
+> hardcoding those paths - when a HW path is clearly board-specific - is
+> highly suboptimal. Also, let's not forget about keeping this driver from
+> becoming a huge list of paths for each combination of SoC->board->disp
+> and... this and that.
+>
+> For more information, please look at the commit description for each of
+> the commits included in this series.
+>
+> This series is essential to enable support for the MT8195/MT8395 EVK,
+> Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
+> and Chromebooks to co-exist without conflicts.
+>
+> Besides, this is also a valid option for MT8188 Chromebooks which might
+> have different DSI-or-eDP displays depending on the model (as far as I
+> can see from the mtk_drm_route attempt for this SoC that is already
+> present in this driver).
+>
+> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+> NIO-12L with both hardcoded paths, OF graph support and partially
+> hardcoded paths, and pure OF graph support including pipelines that
+> require OVL_ADAPTOR support.
+>
+> AngeloGioacchino Del Regno (3):
+>   dt-bindings: display: mediatek: Add OF graph support for board path
+>   dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
+>   drm/mediatek: Implement OF graphs support for display paths
+>
+>  .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
+>  .../display/mediatek/mediatek,aal.yaml        |  40 +++
+>  .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
+>  .../display/mediatek/mediatek,color.yaml      |  22 ++
+>  .../display/mediatek/mediatek,dither.yaml     |  22 ++
+>  .../display/mediatek/mediatek,dpi.yaml        |  25 +-
+>  .../display/mediatek/mediatek,dsc.yaml        |  24 ++
+>  .../display/mediatek/mediatek,dsi.yaml        |  27 +-
+>  .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
+>  .../display/mediatek/mediatek,gamma.yaml      |  19 ++
+>  .../display/mediatek/mediatek,merge.yaml      |  23 ++
+>  .../display/mediatek/mediatek,od.yaml         |  22 ++
+>  .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
+>  .../display/mediatek/mediatek,ovl.yaml        |  22 ++
+>  .../display/mediatek/mediatek,postmask.yaml   |  21 ++
+>  .../display/mediatek/mediatek,rdma.yaml       |  22 ++
+>  .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
+>  drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
+>  .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  43 ++-
+>  drivers/gpu/drm/mediatek/mtk_dpi.c            |  21 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 253 +++++++++++++++++-
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+>  drivers/gpu/drm/mediatek/mtk_dsi.c            |  14 +-
+>  23 files changed, 712 insertions(+), 25 deletions(-)
+>
+> --
+> 2.46.1
 >
 
