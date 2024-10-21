@@ -1,141 +1,190 @@
-Return-Path: <linux-kernel+bounces-375214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EC49A9336
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C245C9A9339
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2AB1F22C11
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF2E283D0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCB41FDFA3;
-	Mon, 21 Oct 2024 22:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KJc9fFcd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n55CCHl6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOk2eDh0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E22rJU3q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EDB282F0;
-	Mon, 21 Oct 2024 22:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141261FDFA5;
+	Mon, 21 Oct 2024 22:22:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59B7433D8;
+	Mon, 21 Oct 2024 22:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549300; cv=none; b=Q202Fk286otZVxF3z2W0IJ3J4p4ScuUDWq7KuYiI1Msj9Q7VSxsAq4P/aG+OlPiOr//FmkZl3SWskrnyisGjewEIblKpyZuGMis8mJnRkLaUNJxQYaYbBRSYZA4MNBMxAnDOL0vIfXBPB5e8FCtTQ0RH89ZlWZUFJ/BU0vva7X8=
+	t=1729549357; cv=none; b=jvM6wPiOfiguG+uhoW5b85Gb9BzwpJZRl0FYfHS+gtJ+Rk3m0FM0Kdr6g+yJcYHHX7UEnSYNOn2pX4zf6GX5Ayi68v9ATgZF8eOWOGR/Hxf/wC6EVfcOvCb+7kZHqwS2eUF+dvhXU8dm5ibdXoZGuzOTr5MolGP/nVkx5GKUb20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549300; c=relaxed/simple;
-	bh=nmwcusJKYHrKotjVQFOqKJBJFglkOVTVDWh0mf1uIf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZweBytIGuDWDyiWvkoEHdH8LfsQq+LNm1JpUTfOqg/9AP2Rzmr4ZuBDxX2krUsVcWQv9/RevBnyhdYIjM+/xY+yWZGLr0gX6F4xIUqTeG/GIUJwH3GV6j0sJArjTd4u30aBqj+GX3yjm5FudAF/aiFrD0CFmszFu7SD12TLQFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KJc9fFcd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n55CCHl6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOk2eDh0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E22rJU3q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 00D1A1F8B6;
-	Mon, 21 Oct 2024 22:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729549296;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1xcR6+YO/GEwgCGqd6FHE/oCrtyPF7+hYyzu2uE3B2E=;
-	b=KJc9fFcdSic5po1LV2wdDlPQm265vEM0h4Yp6eczHCP9DXyBYcIyUAoSiRnmYfo08TU5Et
-	0T6OAGIGEW6r3zAgQDEMSiGH3AGD2CBraQmTb7nYA+1BPxm3OmLBowioLgYNqMU4agE9pE
-	Fij5Gbq+gU0ab6xcIhDoOhD3PbM7BII=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729549296;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1xcR6+YO/GEwgCGqd6FHE/oCrtyPF7+hYyzu2uE3B2E=;
-	b=n55CCHl6MUl5LnoNJ4S4fAxTg1Nu/wYy2sKY445/xM9PMCizavRDeAaU16Twjxxay3/DIb
-	ouOEHK1tHYYiWQAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729549295;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1xcR6+YO/GEwgCGqd6FHE/oCrtyPF7+hYyzu2uE3B2E=;
-	b=hOk2eDh0LCx0+aQo4OE5kqO6pIp71mGpnDnj9+hAhOP07Cn6q71WfZfy+rNF3oBtfNe1Ht
-	pqEfrLiFg4pKMsclfNdaTcAmevElSJOy1ZrfoULFoPq1dTNG7DrbdDMRXdK9alTZr05IA1
-	r2DZjzBRsYQ9nLon702cKwAB+B4s9oE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729549295;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1xcR6+YO/GEwgCGqd6FHE/oCrtyPF7+hYyzu2uE3B2E=;
-	b=E22rJU3q51naL1ccXXKikw/3jevpshd5+pVL5X+fnQWOSYUbliUWfSb020layseXeze1Uh
-	IbZf3qTgZ8YoCVDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4AA3139E0;
-	Mon, 21 Oct 2024 22:21:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dR2cN+7TFmeSXwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 21 Oct 2024 22:21:34 +0000
-Date: Tue, 22 Oct 2024 00:21:29 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Use str_yes_no() helper function in
- btrfs_dump_free_space()
-Message-ID: <20241021222129.GA31418@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241021214022.31010-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729549357; c=relaxed/simple;
+	bh=fCITHyJLnrqPuzGdHO7doJEsyzBVBGiiwWm56sxcivo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PssRbNfL6as9s72nTzyjayYiF0tYsLq4u2R217YcxO980K8lnFUhbi7OhhC7L1Gpu9A9c+dzyZLRMfgUh6QJ7p04MdWG1bvU7e01KJpfLPh/2Pa3W2//oxIw1xEAd2ofEw7zXqD4HLC++d94ZwcIRr7GIwClo+RX3BZShqzVTMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7ECC497;
+	Mon, 21 Oct 2024 15:23:03 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E876E3F71E;
+	Mon, 21 Oct 2024 15:22:32 -0700 (PDT)
+Message-ID: <3adbae5c-f6c2-4a9c-8544-7020b84a8845@arm.com>
+Date: Mon, 21 Oct 2024 23:23:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021214022.31010-2-thorsten.blum@linux.dev>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.992];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.com:email,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/12] thermal: core: Represent suspend-related thermal
+ zone flags as bits
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2215082.irdbgypaU6@rjwysocki.net>
+ <7733910.EvYhyI6sBW@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <7733910.EvYhyI6sBW@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 11:40:22PM +0200, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() and str_no_yes()
-> helper functions.
+
+
+On 10/4/24 20:11, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Instead of using two separate fields in struct thermal_zone_device for
+> representing flags related to thermal zone suspend, represent them
+> explicitly as bits in one u8 "state" field.
+> 
+> Subsequently, that field will be used for addressing race conditions
+> related to thermal zone initialization and exit.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a new iteration of
+> 
+> https://lore.kernel.org/linux-pm/2215885.irdbgypaU6@rjwysocki.net/
+> 
+> v1 -> v2: The thermal zone guard has not been introduced yet, so adjust for that.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |   11 +++++------
+>   drivers/thermal/thermal_core.h |   11 +++++++----
+>   2 files changed, 12 insertions(+), 10 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -547,7 +547,7 @@ void __thermal_zone_device_update(struct
+>   	int low = -INT_MAX, high = INT_MAX;
+>   	int temp, ret;
+>   
+> -	if (tz->suspended || tz->mode != THERMAL_DEVICE_ENABLED)
+> +	if (tz->state != TZ_STATE_READY || tz->mode != THERMAL_DEVICE_ENABLED)
+>   		return;
+>   
+>   	ret = __thermal_zone_get_temp(tz, &temp);
+> @@ -1662,7 +1662,7 @@ static void thermal_zone_device_resume(s
+>   
+>   	mutex_lock(&tz->lock);
+>   
+> -	tz->suspended = false;
+> +	tz->state &= ~(TZ_STATE_FLAG_SUSPENDED | TZ_STATE_FLAG_RESUMING);
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+I see, we now clean both in on go...
+
+>   
+>   	thermal_debug_tz_resume(tz);
+>   	thermal_zone_device_init(tz);
+> @@ -1670,7 +1670,6 @@ static void thermal_zone_device_resume(s
+>   	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
+>   
+>   	complete(&tz->resume);
+> -	tz->resuming = false;
+
+so handled as well.
+
+>   
+>   	mutex_unlock(&tz->lock);
+>   }
+> @@ -1679,7 +1678,7 @@ static void thermal_zone_pm_prepare(stru
+>   {
+>   	mutex_lock(&tz->lock);
+>   
+> -	if (tz->resuming) {
+> +	if (tz->state & TZ_STATE_FLAG_RESUMING) {
+>   		/*
+>   		 * thermal_zone_device_resume() queued up for this zone has not
+>   		 * acquired the lock yet, so release it to let the function run
+> @@ -1692,7 +1691,7 @@ static void thermal_zone_pm_prepare(stru
+>   		mutex_lock(&tz->lock);
+>   	}
+>   
+> -	tz->suspended = true;
+> +	tz->state |= TZ_STATE_FLAG_SUSPENDED;
+>   
+>   	mutex_unlock(&tz->lock);
+>   }
+> @@ -1704,7 +1703,7 @@ static void thermal_zone_pm_complete(str
+>   	cancel_delayed_work(&tz->poll_queue);
+>   
+>   	reinit_completion(&tz->resume);
+> -	tz->resuming = true;
+> +	tz->state |= TZ_STATE_FLAG_RESUMING;
+>   
+>   	/*
+>   	 * Replace the work function with the resume one, which will restore the
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -61,6 +61,11 @@ struct thermal_governor {
+>   	struct list_head	governor_list;
+>   };
+>   
+> +#define	TZ_STATE_FLAG_SUSPENDED	BIT(0)
+> +#define	TZ_STATE_FLAG_RESUMING	BIT(1)
+> +
+> +#define TZ_STATE_READY		0
+> +
+>   /**
+>    * struct thermal_zone_device - structure for a thermal zone
+>    * @id:		unique id number for each thermal zone
+> @@ -100,8 +105,7 @@ struct thermal_governor {
+>    * @node:	node in thermal_tz_list (in thermal_core.c)
+>    * @poll_queue:	delayed work for polling
+>    * @notify_event: Last notification event
+> - * @suspended: thermal zone suspend indicator
+> - * @resuming:	indicates whether or not thermal zone resume is in progress
+> + * @state: 	current state of the thermal zone
+>    * @trips:	array of struct thermal_trip objects
+>    */
+>   struct thermal_zone_device {
+> @@ -134,8 +138,7 @@ struct thermal_zone_device {
+>   	struct list_head node;
+>   	struct delayed_work poll_queue;
+>   	enum thermal_notify_event notify_event;
+> -	bool suspended;
+> -	bool resuming;
+> +	u8 state;
+>   #ifdef CONFIG_THERMAL_DEBUGFS
+>   	struct thermal_debugfs *debugfs;
+>   #endif
+> 
+> 
+> 
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
