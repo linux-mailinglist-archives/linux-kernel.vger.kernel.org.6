@@ -1,317 +1,114 @@
-Return-Path: <linux-kernel+bounces-374143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B959A6563
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:56:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E029A62BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC392830EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81663B22DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C2D1EF093;
-	Mon, 21 Oct 2024 10:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A0B1E47AE;
+	Mon, 21 Oct 2024 10:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V56uxoCO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6ZJ9QGO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED051F4FCF;
-	Mon, 21 Oct 2024 10:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFD31E3784;
+	Mon, 21 Oct 2024 10:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507825; cv=none; b=YvRTKrfv55aq+qKq4nulvghQrA5g6CzZbp/UGE7DAtK+l+m3xOErd+i6xha0wGcaS0bETEUO0ck4O2A8u5IFk+9i9DhL4uD5NBzUE40rQs3+xgegDxWbzVEkmQ+CCr1M6O7pULBG9U3ZuJGRGcBqHCdHwGbhCTXwP66tWcz3OZg=
+	t=1729506335; cv=none; b=FwluOKsYY6WXzcINPM2fWfucKhEOK4+dCOkEyjkTLYgqsKZCB+2CZvS1GBFta6iX83zM5vN+UjvlW+bfyKZzhFk08YP+UnfNae9N1JYLDfAUFQbiZ2RSbRe5kgrGEVeVWm6Lf9qzD+vAtRA9AB4zeIbrtclA9QkxgEf6WBGbJvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507825; c=relaxed/simple;
-	bh=CONWmjOUph2NstnHRnnYDwMgnf2fAAhA86/S6qzAgiA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pyXaL8pgxzWHxjNYP90cyePu5eB7yJ5vVP+GGWZum7z+eX4YV5d1FdTK9fxSwgUmwY5mTLRwumLkM+309jt6OC8IgYyiVX8fNer2tdR36k22TV5coynJuRSMarbs6I6JLw/Ieb8f23oFXfKd+5/yzNPxa1p6EuMdc6ZG9kKxsBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V56uxoCO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D672DC4CEC3;
-	Mon, 21 Oct 2024 10:50:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729507825;
-	bh=CONWmjOUph2NstnHRnnYDwMgnf2fAAhA86/S6qzAgiA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V56uxoCOB3espfpg5/NiT73QIvkXJ7x8xQnH2M5NcqLIQXIVh6QpjRJhh7aVsXlQz
-	 vulkpqEtYUxG6ZFQL2hmQM8ah6p+SL6CgO0h5tETwrmUeA/SDKZDcJOqPnncDO154P
-	 BxbY1e3Mu5sVZq7AiS75EVUmEegr3BXN6u+esN+w=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 5.10 00/52] 5.10.228-rc1 review
-Date: Mon, 21 Oct 2024 12:25:21 +0200
-Message-ID: <20241021102241.624153108@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729506335; c=relaxed/simple;
+	bh=uIgLSqziQCeKnnjs3M6A6U9bobYsrf6xTUo8tXLjk/E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DyKlBWal7Y+bKJFPcO60Qsx3kWegbyVXjDpXEEIL+Rwe5kXmqo0QWdyTsYjwYl3qQqM9Ntt1gPQ8VBe3Qf2vuo4VXnVphBNSLOMBxKF/wtKR4nxUCquqamIOskGPaImuWUxTRBaQGoV4Db1S3MwlMbISRpUKyHgVH39BFNwq0uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6ZJ9QGO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1EB9C4CEC3;
+	Mon, 21 Oct 2024 10:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729506334;
+	bh=uIgLSqziQCeKnnjs3M6A6U9bobYsrf6xTUo8tXLjk/E=;
+	h=From:Subject:Date:To:Cc:From;
+	b=a6ZJ9QGOtOersDdiTY/X/N92Rp1/V/9VoTiBUwdbX4iO/ESfasNO660x83QMtcUXH
+	 XGA+M2WR43csK6l6iSWel6a3dFsHetl3+eOE3cwWfcvMyX/hvNuNBfp3vhtJDHFJF+
+	 ZRRWYTxenzkDOK703vLxQmpom3+IqiRMt+juiKAeHcpXQW+qXHMwHDtTJ7KaLuzx+N
+	 moPlPU2RaJTcyzm2VUJFyh1a7iH2P7efmNDrK3jqvXcTLr+laJvGmYyL+76OMVHXbh
+	 MZ0+REnRI/DfxDSdt+EEtMDv+bX17d09arJXFCTVtA8FyToWmhZtZ9UbYi258ZBjPR
+	 q/WvN+vvbj2sw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/3] mptcp: sched: fix some lock issues
+Date: Mon, 21 Oct 2024 12:25:25 +0200
+Message-Id: <20241021-net-mptcp-sched-lock-v1-0-637759cf061c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.10.228-rc1
-X-KernelTest-Deadline: 2024-10-23T10:22+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 5.10.228 release.
-There are 52 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.10.228-rc1
-
-Vasiliy Kovalev <kovalev@altlinux.org>
-    ALSA: hda/conexant - Use cached pin control for Node 0x1d on HP EliteOne 1000 G2
-
-Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-    powerpc/mm: Always update max/min_low_pfn in mem_topology_setup()
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: propagate directory read errors from nilfs_find_entry()
-
-Paolo Abeni <pabeni@redhat.com>
-    tcp: fix mptcp DSS corruption due to large pmtu xmit
-
-Paolo Abeni <pabeni@redhat.com>
-    mptcp: handle consistently DSS corruption
-
-Geliang Tang <geliang.tang@suse.com>
-    mptcp: track and update contiguous data status
-
-Marc Zyngier <maz@kernel.org>
-    irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/entry_32: Clear CPU buffers after register restore in NMI return
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/entry_32: Do not clobber user EFLAGS.ZF
-
-Zhang Rui <rui.zhang@intel.com>
-    x86/apic: Always explicitly disarm TSC-deadline timer
-
-Nathan Chancellor <nathan@kernel.org>
-    x86/resctrl: Annotate get_mem_config() functions as __init
-
-Takashi Iwai <tiwai@suse.de>
-    parport: Proper fix for array out-of-bounds access
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit FN920C04 MBIM compositions
-
-Benjamin B. Frost <benjamin@geanix.com>
-    USB: serial: option: add support for Quectel EG916Q-GL
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Fix incorrect stream context type macro
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: btusb: Fix regression with fake CSR controllers 0a12:0001
-
-Aaron Thompson <dev@aaront.org>
-    Bluetooth: Remove debugfs directory on module init failure
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: adc: ti-ads124s08: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: proximity: mb1232: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Emil Gedenryd <emil.gedenryd@axis.com>
-    iio: light: opt3001: add missing full-scale range value
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: light: veml6030: fix IIO device retrieval from embedded device
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: light: veml6030: fix ALS sensor resolution
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: adc: ti-ads8688: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: stm32-dac-core: add missing select REGMAP_MMIO in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: ltc1660: add missing select REGMAP_SPI in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: ad5770r: add missing select REGMAP_SPI in Kconfig
-
-Nikolay Kuratov <kniv@yandex-team.ru>
-    drm/vmwgfx: Handle surface check failure correctly
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/radeon: Fix encoder->possible_clones
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring/sqpoll: close race on waiting for sqring entries
-
-Omar Sandoval <osandov@fb.com>
-    blk-rq-qos: fix crash on rq_qos_wait vs. rq_qos_wake_function race
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/bugs: Do not use UNTRAIN_RET with IBPB on entry
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/bugs: Skip RSB fill at VMEXIT
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/entry: Have entry_ibpb() invalidate return predictions
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/cpufeatures: Add a IBPB_NO_RET BUG flag
-
-Jim Mattson <jmattson@google.com>
-    x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
-
-Michael Mueller <mimu@linux.ibm.com>
-    KVM: s390: Change virtual to physical address access in diag 0x258 handler
-
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-    s390/sclp_vt220: Convert newlines to CRLF instead of LFCR
-
-Felix Moessbauer <felix.moessbauer@siemens.com>
-    io_uring/sqpoll: do not put cpumask on stack
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring/sqpoll: retain test for whether the CPU is valid
-
-Felix Moessbauer <felix.moessbauer@siemens.com>
-    io_uring/sqpoll: do not allow pinning outside of cpuset
-
-Breno Leitao <leitao@debian.org>
-    KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
-
-Johannes Berg <johannes.berg@intel.com>
-    wifi: mac80211: fix potential key use-after-free
-
-Liu Shixin <liushixin2@huawei.com>
-    mm/swapfile: skip HugeTLB pages for unuse_vma
-
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-    fat: fix uninitialized variable
-
-Nianyao Tang <tangnianyao@huawei.com>
-    irqchip/gic-v3-its: Fix VSYNC referencing an unmapped VPE on GIC v4.1
-
-Oleksij Rempel <linux@rempel-privat.de>
-    net: macb: Avoid 20s boot delay by skipping MDIO bus registration for fixed-link PHY
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: probes: Fix simulate_ldr*_literal()
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: probes: Remove broken LDR (literal) uprobe support
-
-Jinjie Ruan <ruanjinjie@huawei.com>
-    posix-clock: Fix missing timespec64 check in pc_clock_settime()
-
-Wei Fang <wei.fang@nxp.com>
-    net: enetc: add missing static descriptor and inline keyword
-
-Vasiliy Kovalev <kovalev@altlinux.org>
-    ALSA: hda/conexant - Fix audio routing for HP EliteOne 1000 G2
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/arm64/kernel/probes/decode-insn.c             | 16 ++++---
- arch/arm64/kernel/probes/simulate-insn.c           | 18 +++-----
- arch/powerpc/mm/numa.c                             |  6 +--
- arch/s390/kvm/diag.c                               |  2 +-
- arch/x86/entry/entry.S                             |  5 +++
- arch/x86/entry/entry_32.S                          |  6 ++-
- arch/x86/include/asm/cpufeatures.h                 |  5 ++-
- arch/x86/kernel/apic/apic.c                        | 14 +++++-
- arch/x86/kernel/cpu/bugs.c                         | 32 ++++++++++++++
- arch/x86/kernel/cpu/common.c                       |  3 ++
- arch/x86/kernel/cpu/resctrl/core.c                 |  4 +-
- block/blk-rq-qos.c                                 |  2 +-
- drivers/bluetooth/btusb.c                          | 13 ++++--
- drivers/gpu/drm/radeon/radeon_encoders.c           |  2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                |  1 +
- drivers/iio/adc/Kconfig                            |  4 ++
- .../iio/common/hid-sensors/hid-sensor-trigger.c    |  2 +-
- drivers/iio/dac/Kconfig                            |  3 ++
- drivers/iio/light/opt3001.c                        |  4 ++
- drivers/iio/light/veml6030.c                       |  5 +--
- drivers/iio/proximity/Kconfig                      |  2 +
- drivers/irqchip/irq-gic-v3-its.c                   | 26 ++++++++---
- drivers/net/ethernet/cadence/macb_main.c           | 14 ++++--
- drivers/parport/procfs.c                           | 22 +++++-----
- drivers/s390/char/sclp_vt220.c                     |  4 +-
- drivers/usb/host/xhci.h                            |  2 +-
- drivers/usb/serial/option.c                        |  8 ++++
- fs/fat/namei_vfat.c                                |  2 +-
- fs/nilfs2/dir.c                                    | 50 ++++++++++++----------
- fs/nilfs2/namei.c                                  | 39 +++++++++++------
- fs/nilfs2/nilfs.h                                  |  2 +-
- include/linux/fsl/enetc_mdio.h                     |  3 +-
- include/linux/irqchip/arm-gic-v4.h                 |  4 +-
- io_uring/io_uring.c                                | 21 ++++++++-
- kernel/time/posix-clock.c                          |  3 ++
- mm/swapfile.c                                      |  2 +-
- net/bluetooth/af_bluetooth.c                       |  1 +
- net/ipv4/tcp_output.c                              |  2 +-
- net/mac80211/cfg.c                                 |  3 ++
- net/mac80211/key.c                                 |  2 +-
- net/mptcp/mib.c                                    |  2 +
- net/mptcp/mib.h                                    |  2 +
- net/mptcp/protocol.c                               | 26 +++++++++--
- net/mptcp/protocol.h                               |  1 +
- net/mptcp/subflow.c                                |  3 +-
- sound/pci/hda/patch_conexant.c                     | 19 ++++++++
- virt/kvm/kvm_main.c                                |  5 ++-
- 48 files changed, 308 insertions(+), 113 deletions(-)
-
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUsFmcC/x3MQQqEMAxA0atI1gaSogheRVxIGjWotbQiA+Ldp
+ 7j8i/cfyJpMM/TVA0lvy3aGElxXIOsUFkXzpcGRa5gcY9ALj3hJxCyretxP2ZDJz9K1npUICo1
+ JZ/t92wGKgPF9/0F/G2xrAAAA
+X-Change-ID: 20241021-net-mptcp-sched-lock-10dfc75d1e00
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Gregory Detal <gregory.detal@gmail.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1005; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=uIgLSqziQCeKnnjs3M6A6U9bobYsrf6xTUo8tXLjk/E=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnFiwbUyEDYfJ6v5K+ZJSztVrh+r7PGQBWTjjTY
+ lPuIsFotGaJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZxYsGwAKCRD2t4JPQmmg
+ c1PeEAC0RZJZiiiBXPzXzy5/SBC1aGCpPNMiv6x5BNj1rNyZIv/l23Pn5ZdaP+ljrVGmNO+RnF/
+ MnrGotL0jY76ffMuwDdJoUvG/xVoNlQUUlupPkK3IKtHLA9heRlzbJWYlf9F+vDHXaGg0oKLI+o
+ 0sNKmPt1ODvyX9Nt9xIDXJwhVaCPFLgwGoDyOZQvK/xv0MrN8Vv3mnHSvKnXi24XbLdbWRyGmLe
+ 4JHXGbJ8pa65A2yKZInwPjzHrIaGwTd79a5SCR0Tmkn4QS9kurjybpIQZ8bvQqUbvt2TRNz9HJa
+ ysTS0+Cwz6cEFw/jyzcgkMsCR4m+mWOPq+gcRo5HXYgGvLevFFQXDYIVIY221Yl3YpHjtB+XKtA
+ VfTbfxBlJB7pN7/rTPLSiN63B0bfaxhvterWDUTLfuWSxkD5RXvqfleOYSmJYR1byWmxzTHSnH2
+ S47i4rJApubaq5MJ5lf3S6xYhqlRez9780ouAN/iyuEr78eOVEnroxpO78kxDpT1a6U1dZkLWgq
+ hs3X6IuVnlcmyUHATLRZNE2ufKy8MoWtxqd/VRxPgL+nmIbiArfYIPrUc06jdGGVTTt+NtTR79i
+ m+BIACH8Bk1NLMmKZPnnsvAtIWaMC0+2ErBNBiu394w/nRsXYCW38s9bbTCyDGpslwmr+7hmIdj
+ hipEkxCJxf3tLjg==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+
+Two small fixes related to the MPTCP packets scheduler:
+
+- Patch 1: add missing rcu_read_(un)lock(). A fix for >= 6.6.
+
+- Patch 2: remove unneeded lock when listing packets schedulers. A fix
+  for >= 6.10.
+
+And some modifications in the MPTCP selftests:
+
+- Patch 3: a small addition to the MPTCP selftests to cover more code.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (3):
+      mptcp: init: protect sched with rcu_read_lock
+      mptcp: remove unneeded lock when listing scheds
+      selftests: mptcp: list sysctl data
+
+ net/mptcp/protocol.c                               | 2 ++
+ net/mptcp/sched.c                                  | 2 --
+ tools/testing/selftests/net/mptcp/mptcp_connect.sh | 9 +++++++++
+ 3 files changed, 11 insertions(+), 2 deletions(-)
+---
+base-commit: 3b05b9c36ddd01338e1352588f2ec1ea23f97d43
+change-id: 20241021-net-mptcp-sched-lock-10dfc75d1e00
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
