@@ -1,92 +1,169 @@
-Return-Path: <linux-kernel+bounces-374883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE719A7182
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:57:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FB69A711A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9941C22D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE8C1C22AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5E71F9403;
-	Mon, 21 Oct 2024 17:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DA41EF93C;
+	Mon, 21 Oct 2024 17:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClhW/BCh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+fx71Ln"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEA81F8EE0;
-	Mon, 21 Oct 2024 17:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0869B191F8A;
+	Mon, 21 Oct 2024 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729533410; cv=none; b=AXNPfx4WpGxrQvJNZPO09k2WBo0gkA31teGoeC0hfL8FcGEKu4T8K3qOwPr0zwoAMkB8jBfBwTX2LsjEh41ZSPmRJq2z9puwNoHeob0uFnHyxeJ+N20asTG0XByWEWW1yj+lZvVneaJJZTaYLSs2+kqpnT3cPsNppsK1pFeLk2E=
+	t=1729532002; cv=none; b=o1EksC/btnpHOlNhmWKw8pIgTjFwWP3iGNlIs8IDuYo+yLzQGj2wAWieqBU1vFgxacP5OZefS7a93q04OJJ4id89DeUqhRmnDTjh9+aBrdADrm8poa2kiaHB1DnhXqRdx/YkeKM0+aGifkdMuBdEBYha1rXmpfApjidVaBnLdLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729533410; c=relaxed/simple;
-	bh=PoMYB0MBTluKGbrOcMZ2NG103OhIvWMsk4YgoHV9f70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGszTNrmjynGLvGj6m3L6PadO9l5pkdkw7VI9PWIFycEo+jOxqZZQavehdN5jt7pIzBDMYya+fbiyZ50yoQrU/g4ciLp3QQX5GzCr94WxIIS63o1cVZadOjZlP0GYOoO7HJYkbXu9x+XjVJx3FkD8+1Du5C2CqgToDmbqRlBVes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClhW/BCh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC84C4CEE8;
-	Mon, 21 Oct 2024 17:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729533410;
-	bh=PoMYB0MBTluKGbrOcMZ2NG103OhIvWMsk4YgoHV9f70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ClhW/BCheoLjCVUeO5Hrv+Aur7HSWu9EYLAi7inVvuP8oVd/KvwFmNfKgmkkRbsaF
-	 z+6ZybIESrdi+ullcxIg7R3Ftil8pZoSiu9/cSLe/FTQJIarUhfxivMrCrT8S99Z/J
-	 5mekzkdWxZfWDkm/6aMcl3dgIHErSqYmu4nHDRdf8od7tgcfz/as4KsEKqUxJEsSJL
-	 L9DREu6fgNlQe8ZnVAFg0/FJFaOo+5xvQhNM1akt9ybMNrIBPbBbo9MRuQrBUOBhf4
-	 7zKSdyn9Y/NtaIXKF592EvoFZcy/q3zjZjh1uVGu4u+SnOHN7maGcwH871lDW6Fm6G
-	 uaQ5FCMUKy0QQ==
-Date: Mon, 21 Oct 2024 13:30:06 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZxaPnk-uC7-A-f_e@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <e27ab2c0-ddee-4fc2-a41e-70b4a7775127@acm.org>
+	s=arc-20240116; t=1729532002; c=relaxed/simple;
+	bh=OfO5TkIeLtro3wIfUq87IH8nuVAYq2iLa58LnRZAI7w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iWktF4lk4LS6jjtnmZT2K85/orfd8n59FJa9q7hO5UMv25Rh3QpN0rqb/hPzJ3hmIzD7WElvB0kug+eE5O6bjA94UjbnZ4gsVroBS8sYOmYdJZFa0DueyU+/Fzhjs9mN5cEQ454clDAueP4DJwvT0NDNJiEmet+vgBxbVaCmqSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+fx71Ln; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a850270e2so383919166b.0;
+        Mon, 21 Oct 2024 10:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729531998; x=1730136798; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Uchf4DfqOWZdv07WmnBWftx6/6zS08AXtERn4+sfpY=;
+        b=F+fx71LndRbu3FzRTq328t3D7kuXxvWswDDWCo4ZG5QcYFImeEYTMknoe/92dVeIU0
+         IQb/XLDKHYc6Dk0p2M5kR/Y06Nswst2bnD93XRgKVFe88KGcDUdg1A5wGIJkCIkM66Tg
+         +dbcBtb58f1ex5PF0KO1rdncBGNEylrNQIjRm2j9v0mP51Xs3SHpUM/6JSaV3+wFImdi
+         j2u7bCRoGgLiS7HFp49vE7ZCDW10CyVrpVhI+qZf7PDUVbHb/9LqMFl6ccEMqBdh3bMa
+         p1vedIDytPHws4Mxnz5+nBgUJHmg5FWMmywEunTNsO45R2xy6f2Ix8vVwRpbqKgmTxnz
+         jpLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729531998; x=1730136798;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Uchf4DfqOWZdv07WmnBWftx6/6zS08AXtERn4+sfpY=;
+        b=JzNI9gpQFdOFeH/FzXUqCRtrneYlZuMwrfNwo0PAkRsjIRo9MuX8GbPyVvU+VycGFX
+         xNYeYLpmpqgUQSFQ81JUwKlwfL45zUCehc9Z3ShB+K9HwHx40QC2FPbtk8BPn4QxTmZ8
+         j+NeRrvQKJij4qML8ZG9JPyRL8odBKJgf0WuNfH4TqJWysOtzbI3AOczwKCixBoPirPi
+         2PFc6/QIrmEdxUmNBm+Dx4YTQlhijCbExHlUfJh6Zz9x89XTia7X/toB2GBXd+9fwzEE
+         GfwMe85h87CFmFHJqQjwFqjdY81UMCwRjUrv76NLi7USq01gixSa5J+tAb4azQ4KCITN
+         9V7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGavvLk8FR+b9PcguO3Ry9ifgRPKFbnV9oncjK+c097haam30f5TK/peBPhgo38xxnqq/EKSua2A=@vger.kernel.org, AJvYcCUMxeTEQWwxyidf7uKnb1rKvnamEQD/3XKalgmMi4qrdHG2bjSu5/5vzX91gvL6OYksOqe9Qh7D@vger.kernel.org, AJvYcCW2Bao+i4WXVnct+U3MwC7Kfp1yhQy0P3mQ9TVZ6wuJfXPuoNg+r4OE9e+mH3ILCA5ORnkwnqGL0h3aoZGo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPzUuiEU6g7fdHuqhz3EwGzogUHwu0Qfa2Ov974WegqnVZdJ/2
+	A+Ma3EMfhf0sJxZ8vZccQeMblindvh6rAyViBnfk6FHbrZCMveuM
+X-Google-Smtp-Source: AGHT+IFQ1IzKK6SAnz3zq0W+v5pEYQErKRtAU0i5dQMvUcq6gcCgEUhTxp+dH7LG0yZFb7r9vJpjLg==
+X-Received: by 2002:a17:907:940b:b0:a90:df6f:f086 with SMTP id a640c23a62f3a-a9a69a64d51mr1264849566b.11.1729531997886;
+        Mon, 21 Oct 2024 10:33:17 -0700 (PDT)
+Received: from redchief.lan (5D59A6C7.catv.pool.telekom.hu. [93.89.166.199])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9a913706d3sm232561166b.134.2024.10.21.10.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 10:33:17 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Mon, 21 Oct 2024 19:32:48 +0200
+Subject: [PATCH] clk: qcom: clk-alpha-pll: fix alpha mode configuration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e27ab2c0-ddee-4fc2-a41e-70b4a7775127@acm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAD+QFmcC/x2MWwqAIBAArxL73UI+Aukq0YfoWgulohBBePekz
+ 4GZeaFSYaqwDC8Uurlyih3EOIA7bNwJ2XcGOUktJikw8IP2zIfFK3lCl2LgHY0ySipjtZk19DY
+ X6uL/XbfWPsumAQ5nAAAA
+X-Change-ID: 20241021-fix-alpha-mode-config-8383238a4854
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Mon, Oct 21, 2024 at 10:24:53AM -0700, Bart Van Assche wrote:
->On 10/21/24 9:07 AM, Sasha Levin wrote:
->>Current testing:
->>   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
->>   - KernelCI: https://t.ly/KEW7F
->
->Hi Sasha,
->
->Is blktests included in any of the above? If not, please consider 
->including it. During the past few years we have noticed that the
->test failures reported by this test suite are most of the time caused
->by kernel bugs. Sometimes issues in the tests are discovered but this
->is rare. See also https://github.com/osandov/blktests/.
+Commit c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+added support for configuring alpha mode, but it seems that the feature
+was never working in practice.
 
-Hey Bart,
+The value of the alpha_{en,mode}_mask members of the configuration gets
+added to the value parameter passed to the regmap_update_bits() function,
+however the same values are not getting applied to the bitmask. As the
+result, the respective bits in the USER_CTL register are never modifed
+which leads to improper configuration of several PLLs.
 
-I don't plan on doing any tests on my own, but rather have our existing
-CI infra (kernelci, LKFT, etc) deal with the actual testing part of
-things.
+The following table shows the PLL configurations where the 'alpha_en_mask'
+member is set and which are passed as a parameter for the
+clk_alpha_pll_configure() function. In the table the 'expected rate' column
+shows the rate the PLL should run at with the given configuration, and
+the 'real rate' column shows the rate the PLL runs at actually. The real
+rates has been verified on hardwareOn IPQ* platforms, on other platforms,
+those are computed values only.
 
-AFAIK KernelCI if working on adding blktests support!
+      file                 pll         expected rate   real rate
+  dispcc-qcm2290.c     disp_cc_pll0      768.0 MHz     768.0 MHz
+  dispcc-sm6115.c      disp_cc_pll0      768.0 MHz     768.0 MHz
+  gcc-ipq5018.c        ubi32_pll        1000.0 MHz !=  984.0 MHz
+  gcc-ipq6018.c        nss_crypto_pll   1200.0 MHz    1200.0 MHz
+  gcc-ipq6018.c        ubi32_pll        1497.6 MHz != 1488.0 MHz
+  gcc-ipq8074.c        nss_crypto_pll   1200.0 MHz != 1190.4 MHz
+  gcc-qcm2290.c        gpll11            532.0 MHz !=  518.4 MHz
+  gcc-qcm2290.c        gpll8             533.2 MHz !=  518.4 MHz
+  gcc-qcs404.c         gpll3             921.6 MHz     921.6 MHz
+  gcc-sm6115.c         gpll11            600.0 MHz !=  595.2 MHz
+  gcc-sm6115.c         gpll8             800.0 MHz !=  787.2 MHz
+  gpucc-sdm660.c       gpu_cc_pll0       800.0 MHz !=  787.2 MHz
+  gpucc-sdm660.c       gpu_cc_pll1       740.0 MHz !=  729.6 MHz
+  gpucc-sm6115.c       gpu_cc_pll0      1200.0 MHz != 1190.4 MHz
+  gpucc-sm6115.c       gpu_cc_pll1       640.0 MHz !=  633.6 MHz
+  gpucc-sm6125.c       gpu_pll0         1020.0 MHz != 1017.6 MHz
+  gpucc-sm6125.c       gpu_pll1          930.0 MHz !=  921.6 MHz
+  mmcc-sdm660.c        mmpll8            930.0 MHz !=  921.6 MHz
+  mmcc-sdm660.c        mmpll5            825.0 MHz !=  806.4 MHz
 
-Thanks!
+As it can be seen from the above, there are several PLLs which are
+configured incorrectly.
 
+Change the code to apply both 'alpha_en_mask' and 'alpha_mode_mask'
+values to the bitmask in order to configure the alpha mode correctly.
+
+Applying the 'alpha_en_mask' fixes the initial rate of the PLLs showed
+in the table above. Since the 'alpha_mode_mask' is not used by any driver
+currently, that part of the change causes no functional changes.
+
+Cc: stable@vger.kernel.org
+Fixes: c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f9105443d7dbb104e3cb091e59f43df25999f8b3..03cc7aa092480bfdd9eaa986d44f0545944b3b89 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -421,6 +421,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	mask |= config->pre_div_mask;
+ 	mask |= config->post_div_mask;
+ 	mask |= config->vco_mask;
++	mask |= config->alpha_en_mask;
++	mask |= config->alpha_mode_mask;
+ 
+ 	regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
+ 
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241021-fix-alpha-mode-config-8383238a4854
+
+Best regards,
 -- 
-Thanks,
-Sasha
+Gabor Juhos <j4g8y7@gmail.com>
+
 
