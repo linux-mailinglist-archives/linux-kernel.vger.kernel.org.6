@@ -1,170 +1,152 @@
-Return-Path: <linux-kernel+bounces-374641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19B09A6DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F399A6DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7A81F22791
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722DB1C214CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E279F811EB;
-	Mon, 21 Oct 2024 15:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2443C2E859;
+	Mon, 21 Oct 2024 15:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6hB2/iB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uvUvGHx8"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224576A8D2;
-	Mon, 21 Oct 2024 15:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494EF3D68
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523744; cv=none; b=QMgPg1DLETwUtOj7lF7xkqdhCDihBlL81bntJkzLscoKEih1/p44fONu+XTQWEz7XL1k/7qIgMIzmjckCZI1wY792GLxnQCDsVm2g05EZFR+fwtOqgO/Tf21NIayuGPBVuc+ColHzteJECKKM8Sv+PHC/DHPLnefE1j29k/Ogsg=
+	t=1729523867; cv=none; b=nL0HVG7moMAt0xJ7lzCUXB0FL9ZFluBgHPiqkf8AmyMxEYQYC+YMArn6lXkn/U3XBhwZt5xrkkd3MKOmuqQDGb89vQaGQrbI7OZJTFl/l8eHfpSZEqxLsC8cX8fXKKiFMUdKNCNWACwk1xK2s+qZXI52gUht22OVInSLU99nHRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523744; c=relaxed/simple;
-	bh=3Ie81PJaB3Z2D/AicTp4yUNXRV46tqz0pVjMH/bKZBU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dunf1B/pOdTRN1DOPbliJ02XjZDBUJ/sNJWYIU7Wbfr69MyHCzvZE3GqPfynXH5ezPLOTnHYnMWUCsSKx3vMhuJNucQCqtz16X8x3lg8ezNZ9w0GvXI2nIwY1tbcg5uTd2iMnjwQvYp63DvLZgFZYtiiNAZICRsTI50h9RWTDYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6hB2/iB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93016C4CECD;
-	Mon, 21 Oct 2024 15:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729523743;
-	bh=3Ie81PJaB3Z2D/AicTp4yUNXRV46tqz0pVjMH/bKZBU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O6hB2/iB4wLSkH+h4kqg9A82MI6C6IV/Jv5g90mM8cP4PlUevnewputwtJBeguYBB
-	 ltrz1sjQxRpcFOYGuHOL+ughjbvCW5qRRlIMGoY4EPHgHL1Qo8XZZIV1jlQuaY52rb
-	 p2NjWr0hYlHUeJinima3br77dEtuQysAuE4hhjcgNJWKraMq83QbOSNYYFcK+Es1D4
-	 OuwPPrE5Dp0Y7rba+PMbIYfJRQ+I2XEfIgX8mwI+09jxh7MW62PR3NBhgnoDqRcAaL
-	 V1WlHRu/ywpY2YElacTzveP2eCaR6BS0b5dinhgMAnhkpRhkcGdqZei7LtAua/+j9p
-	 GZwVnrgH2NZrA==
-Date: Tue, 22 Oct 2024 00:15:34 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Sven Schnelle
- <svens@linux.ibm.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew
- Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph
- tracer
-Message-Id: <20241022001534.96c0d1813d8f4a26563d4663@kernel.org>
-In-Reply-To: <20241018124952.17670-E-hca@linux.ibm.com>
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
-	<172904040206.36809.2263909331707439743.stgit@devnote2>
-	<yt9ded4gfdz0.fsf@linux.ibm.com>
-	<20241016101022.185f741b@gandalf.local.home>
-	<20241018124952.17670-E-hca@linux.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729523867; c=relaxed/simple;
+	bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W2IpujyLsZPC7sTA9QD4ge25qh7e5YleH0iduYVpn5bTGd2JxoALe/C2VMKb+JLiy6hCRulhFsSLpN/2qr6GrsWZDwFTAdaSMfeiI5o0UmbNaid7rphuVU/TlhQ+wnk/mVcVArPR6NplrNif+iXUjUb481BcIR4fvzeV2Zy+nTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uvUvGHx8; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ece998fe6so237713f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:17:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729523863; x=1730128663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
+        b=uvUvGHx8EfIaqf4oFv+7ALNFSao2mm38bBfZVxdLVej0j8b6J3BCG2K1VpYUy7mLX5
+         JI64GQ2A4dUdneKHDdfb+vLH38WMxszisQ9DjtA38vsy9pvG3rr43GF5f99ZZgFpVbqa
+         TWnsnK++R29lGiIGwmnUwRarAQcKwQpx4PXzE1npjADkjmVWlaHX1jaTGgB6+Njv6wRk
+         Tn9Zm8TuGvix12UeJ3xz/KgKFtAKZe/Xgh5+vvhZCFgzxxpUgdLUV+V/HxwYr3onOSYD
+         ZCtwWyX3Ck+AUdtIKlPpFARclO6+vpn8YPREMZ84KJDwRCLbUYlq+czBD5pp1TmElo0m
+         ohCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729523863; x=1730128663;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
+        b=wUBturg3PXWD8at2ouAf9dwxenEVMIhKuxj5uvvUIzODrjUYKBM3N5174r4HorYxjA
+         L9gBmGMghGRBcEGnwE6dRz6cEAHZiV3ffCDk9IxAuXMlLG4S4Mrx4O+mjaX8F8ReFP3n
+         FKIw+ps4vhw3ovimPkMr27f7Hql0mAT55DWr/IxCX0ZANcqkR06DgIIuOEuR4hADXBFq
+         TTyAHblwfCast1foT995/HGMep75Y+/n7bLcakgAWTyPm99GgGCsPDUThQt3zdq4nM8y
+         F19PJINfuTIMC7XHe5I/mKdULx+e4TO4sIXdsKQ2UInKtjdFgb2y76LUPllqGMAxdsA+
+         5j/w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1rR7kcl5xw+bGvzVg6EniZI2SCzL/rQAuvDeDHoM2QnMQSJ62k2gtomFeMJskDQe77NYI/Di8F2Iw9+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN/0VBgJn+IDu2meMH4T8Y1NdMR1zAAax9Z5mtFgvAKwdnc+Lz
+	nmFn38SmNogxkfQRwckFLGr/wEZlW0Lm176cyc7SD+wmWKgZbgeW1diN9ehQX00=
+X-Google-Smtp-Source: AGHT+IHLggBfC8qlk0ctTOzUDi6lswf4EKGzztL3/AzNpGYOi8l65VOaIyIRWfA9PPw0hIL7QGTskQ==
+X-Received: by 2002:a5d:6484:0:b0:37d:4988:a37e with SMTP id ffacd0b85a97d-37eab73d2fcmr3572770f8f.13.1729523863437;
+        Mon, 21 Oct 2024 08:17:43 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47b74sm4548200f8f.27.2024.10.21.08.17.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 08:17:42 -0700 (PDT)
+Message-ID: <0c5d174f-7cff-46a8-bbbd-b116e12cb09c@linaro.org>
+Date: Mon, 21 Oct 2024 17:17:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] arm64: defconfig: Enable STM protocol and source
+ configs
+To: Mao Jinlong <quic_jinlmao@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241021090317.5934-1-quic_jinlmao@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241021090317.5934-1-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Oct 2024 14:49:52 +0200
-Heiko Carstens <hca@linux.ibm.com> wrote:
+On 21/10/2024 11:03, Mao Jinlong wrote:
+> COERSIGHT_STM config is enabled. Refer to Documentation/trace/stm.rst,
+> to make software trace sources go through STM(System Trace Module),
+> need to enable STP (System Trace Protocol) protocols and stm sources
+> configs. With COERSIGHT_STM config, protocol configs and stm source
+> configs, STM function will be fully functional.
 
-> On Wed, Oct 16, 2024 at 10:10:22AM -0400, Steven Rostedt wrote:
-> > On Wed, 16 Oct 2024 14:07:31 +0200
-> > Sven Schnelle <svens@linux.ibm.com> wrote:
-> > > I haven't yet fully understood why this logic is needed, but the
-> > > WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
-> > > has the upper bits of the address set on x86 (and likely others). As an
-> > > example, in my test setup, fp is 0x8feec218 on s390, while it is
-> > > 0xffff888100add118 in x86-kvm.
-> > 
-> > Since we only need to save 4 bits for size, we could have what it is
-> > replacing always be zero or always be f, depending on the arch. The
-> > question then is, is s390's 4 MSBs always zero?
-> > 
-> > Thus we could make it be:
-> > 
-> > static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
-> > {
-> > 	unsigned long ptr;
-> > 
-> > 	ptr = (val & FPROBE_HEADER_PTR_MASK) | FPROBE_HEADER_MSB_MASK;
-> > 	if (fp)
-> > 		*fp = (struct fprobe *)ptr;
-> > 	return val >> FPROBE_HEADER_PTR_BITS;
-> > }
-> > 
-> > And define FPROBE_HEADER_MSB_MASK to be either:
-> > 
-> > For most archs:
-> > 
-> > #define FPROBE_HEADER_MSB_MASK	(0xf << FPROBE_HEADER_PTR_BITS)
-> > 
-> > or on s390:
-> > 
-> > #define FPROBE_HEADER_MSB_MASK	(0x0)
-> > 
-> > Would this work?
-> 
-> This would work for s390. Right now we don't make any use of the four
-> MSBs, and they are always zero. If for some reason this would ever
-> change, we would need to come up with a different solution.
+I still do not understand why we want it. Which boards, which SoCs use
+it or will benefit from it?
 
-Ah, so fill with zero works for s390 kernel. Thanks for the info.
+Best regards,
+Krzysztof
 
-> Please note that this only works for addresses in the kernel address
-> space. For user space the full 64 bit address range (minus the top
-> page) can be used for user space applications.
-
-I wonder what is the unsigned long size (stack entry size) of the
-s390? is it 64bit?
-
-> I'm just writing this
-> here, just in case something like this comes up for uprobes or
-> something similar as well.
-
-I'm considering another solution if it doesn't work. Of course if
-above works, it is the best compression ratio.
-
-This is only if it doesn't work, we can consolidate a set of
-fprobe header in N + 1 entries as
-
-0: [# of fprobes(4bit)|4bit array of sizes]
-1: [fp 1]
-2: [fp 1 data]
-...
-
-So if we have 3 fprobes on the same entry and has 0, 3, 2 data size, then
-
-0:[3|0|3|2|0...0]
-1:[fp1]
-2:[fp2]
-3:[fp2 data 1]
-4:[fp2 data 2]
-5:[fp2 data 3]
-6:[fp3]
-7:[fp3 data 1]
-8:[fp3 data 2]
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
