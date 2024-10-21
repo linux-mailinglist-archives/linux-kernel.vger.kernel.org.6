@@ -1,194 +1,86 @@
-Return-Path: <linux-kernel+bounces-373917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12BA9A5EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 823489A5ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679DC1F22144
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380201F228AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0A1E2849;
-	Mon, 21 Oct 2024 08:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fh9mRi04"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8BA1E22F8;
+	Mon, 21 Oct 2024 08:39:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B0B1E2600;
-	Mon, 21 Oct 2024 08:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845CB1E22E8
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729500064; cv=none; b=eMFv0WE2jR3/yQOAoWufuOrp1134YN9xjLitFIued35nVy+1JmyjZ+fbTxhySMdim3fo0Xk5DYnU8yDvC98SzvIBljq7tYamBjTr8yIkko1flAt39Unr0PWmsc3EyKX3ShHcxLGxUe66MEvu1gYj3rF31qlYIBzms+M7l0ZWmKY=
+	t=1729499946; cv=none; b=WQkoTuLyXX/uSJfq1+lns7MZgZhp0jBrtF0Sbg1+eNZyk58At/f28addbJtFiqJClT4ddNi0/iTAuEm5t3V9g7MiR4GDZVGNBBa96v2ruF5mvKsZ5UMsts6vP7eVZsobw5EGdkDDEwZHS93b/jb4sHFLK3bHWVB1qrDGC/ugxIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729500064; c=relaxed/simple;
-	bh=3vdjcqeukS/8Km0duETYAbLAA9L9ljye3GpgyOjOLRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uL6+lG6Q/6IzcaiGV6AkXdESyz8PUZ4XiHc5nDBvV+L4FWpFkeUkTjJkM/ecsuKw2ZXk+m/7EEBDN4uggVOZFwUQ7Im6pqLfWG9f436z14ts7VyQ0L2TwoMEbcAreY8KKHESyHx3DbBY6YHoTe4KYfmChJF1JRItswebv/O+5Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fh9mRi04; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729500063; x=1761036063;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3vdjcqeukS/8Km0duETYAbLAA9L9ljye3GpgyOjOLRk=;
-  b=Fh9mRi04VBOBwqHWtOGUkd6Ogj/sPYyMTqg7TFiKlc34VUy7jG2vnKaS
-   +fwS6nKuVq2iTRxf5UxUUx0KLmE69AkezWR9jgzn44gb1Zi+31yr5Ya1U
-   01dHtjPkgafK3cZdGhVp8654orU2vfzMnAi9AVQj6zN13XyQCLUQ1ym/g
-   aR1DbrgBZ7WKyWgC63X7tzJsvS8IAVdVaUm4RMGa49p6JsZlrghnjJMr0
-   JHXNV+tW8/9n+wiO4JgnuJ/rpMKgX0/l2CLdTm0nVuSiE4IJ4Ucld9TOO
-   BnptAwj+CF5nDKKKX4VnvRqA6raWAOFIabajSE+bVV/DkK9CcIEpcfArD
-   Q==;
-X-CSE-ConnectionGUID: srf7yLliQRKVMtiPq5wo6g==
-X-CSE-MsgGUID: DHnCcy0UR0GBdgV6V2grEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="32778775"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="32778775"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:41:01 -0700
-X-CSE-ConnectionGUID: 2zCiUT2sT/K/JgfOen6olA==
-X-CSE-MsgGUID: KHi4TWIvQICfifSP7huU9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="84250933"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 21 Oct 2024 01:40:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 32C6935B; Mon, 21 Oct 2024 11:40:58 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Ferry Toth <fntoth@gmail.com>
-Subject: [PATCH v2 3/3] platform/x86: intel_scu_ipc: Save a copy of the entire struct intel_scu_ipc_data
-Date: Mon, 21 Oct 2024 11:38:53 +0300
-Message-ID: <20241021084053.2443545-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com>
-References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729499946; c=relaxed/simple;
+	bh=Mw3mQ51Qrp6VAjQ+PLfksbQ7K76tqgW6TBErgdaibQE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oPpvYm75LyCAdIzDVojKayzJp6qmGIHvs7XQbJMFTRvqaiPmB6zgfvnpFWSjgEWo24Ae1i79zYgzxoEyr9qNenJ8TZURT8qvtkvZIUyr7kiogzJmPgFZBdKqTnt0d0cWCfoEQP9QTIBHS9WWQb/7GZmyWVIllx5vjhOB2NEA4R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab434c629so319794839f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:39:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729499943; x=1730104743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOMO5YridhNWI0/MqOp9S9+4WTERRsU+BRRRGAf9Sk8=;
+        b=BdkdOnCRx8K/g+ko52bw3IKZh0Nem5fyGkaAMcrDqh60aqYJdDVZPm2LmG7HY/RvZt
+         xVrCai4IP+JpmJ5e3IRMa5Ae4RRaUuMxd4eCIP11owwL7funm1xs7b7zTXtkkN7yllIz
+         FxPzuW8HUxw4ESIhia+mBq8k8R7L/rL6xUTUXeAazyL6UpM58CLxzkpF0WLnqNnsH+9r
+         yyKN2Kw5HYg4cUKjZQFzweolUXlT8L13TEdZwZBTnkUE551t/lGcEqWqVt2eQsUKA53k
+         B3gBWrefI+IQ1UMrD2VGsWNPr27wIiTRjoV6cWA9luTBdbjQlLLhpmPXDe/KZYFpuLSE
+         7HEA==
+X-Gm-Message-State: AOJu0YzHsRISRnQH2OUmQE5NBpo3tHdHSu3M2X74M8r33/4xvi0DxKOh
+	jldJhW7CPp3kX5wuiv3PgV2E/MpHiO8u+53KZVgTScw5j6V68paIlIgYoYgrwFvbTQ6d0gifUXP
+	CNo4jPcBwLUBYZGH6GWqCl2Da8B6nkkABizPfLghJkQDUuBw29iV+iLM=
+X-Google-Smtp-Source: AGHT+IGJYHewHRfsLWZXGYSoCAo1wEJB2NpoPHzcVNTX2LY0FEqFhoqn1/R3ctnOL0gdAICQTMArzTiPFh/FjIAxEv6fW+vxnywM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:6b81:b0:83a:9476:2593 with SMTP id
+ ca18e2360f4ac-83aba65cfaemr797290339f.14.1729499943430; Mon, 21 Oct 2024
+ 01:39:03 -0700 (PDT)
+Date: Mon, 21 Oct 2024 01:39:03 -0700
+In-Reply-To: <62UDikG_A_c9--WGMXiOnVYgYo7NJo7Q3r83PJM03i01CIM9IRkHrZcG0agPWZ38lUhCqFLDToTkgxHwPrD1aKOhFvnIeJTS49ygYkRYCEE=@proton.me>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67161327.050a0220.1e4b4d.0053.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_bucket_alloc_trans (2)
+From: syzbot <syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pz010001011111@proton.me, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Save a copy of the entire struct intel_scu_ipc_data for easier
-maintenance in case of expanding (adding new members become simpler).
+Hello,
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Ferry Toth <fntoth@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/intel_scu_ipc.c | 33 ++++++++++++++--------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
-index 3a1584ed7db8..f7db90a14afd 100644
---- a/drivers/platform/x86/intel_scu_ipc.c
-+++ b/drivers/platform/x86/intel_scu_ipc.c
-@@ -57,11 +57,11 @@
- 
- struct intel_scu_ipc_dev {
- 	struct device dev;
--	struct resource mem;
- 	struct module *owner;
--	int irq;
- 	void __iomem *ipc_base;
- 	struct completion cmd_complete;
-+
-+	struct intel_scu_ipc_data data;
- };
- 
- #define IPC_STATUS		0x04
-@@ -255,7 +255,7 @@ static inline int ipc_wait_for_interrupt(struct intel_scu_ipc_dev *scu)
- 
- static int intel_scu_ipc_check_status(struct intel_scu_ipc_dev *scu)
- {
--	return scu->irq > 0 ? ipc_wait_for_interrupt(scu) : busy_loop(scu);
-+	return scu->data.irq > 0 ? ipc_wait_for_interrupt(scu) : busy_loop(scu);
- }
- 
- static struct intel_scu_ipc_dev *intel_scu_ipc_get(struct intel_scu_ipc_dev *scu)
-@@ -535,13 +535,13 @@ static irqreturn_t ioc(int irq, void *dev_id)
- 
- static void intel_scu_ipc_release(struct device *dev)
- {
--	struct intel_scu_ipc_dev *scu;
-+	struct intel_scu_ipc_dev *scu = container_of(dev, struct intel_scu_ipc_dev, dev);
-+	struct intel_scu_ipc_data *data = &scu->data;
- 
--	scu = container_of(dev, struct intel_scu_ipc_dev, dev);
--	if (scu->irq > 0)
--		free_irq(scu->irq, scu);
-+	if (data->irq > 0)
-+		free_irq(data->irq, scu);
- 	iounmap(scu->ipc_base);
--	release_mem_region(scu->mem.start, resource_size(&scu->mem));
-+	release_mem_region(data->mem.start, resource_size(&data->mem));
- 	kfree(scu);
- }
- 
-@@ -562,6 +562,7 @@ __intel_scu_ipc_register(struct device *parent,
- 			 struct module *owner)
- {
- 	int err;
-+	struct intel_scu_ipc_data *data;
- 	struct intel_scu_ipc_dev *scu;
- 	void __iomem *ipc_base;
- 
-@@ -580,25 +581,25 @@ __intel_scu_ipc_register(struct device *parent,
- 	scu->dev.class = &intel_scu_ipc_class;
- 	scu->dev.release = intel_scu_ipc_release;
- 
--	if (!request_mem_region(scu_data->mem.start, resource_size(&scu_data->mem),
--				"intel_scu_ipc")) {
-+	memcpy(&scu->data, scu_data, sizeof(scu->data));
-+	data = &scu->data;
-+
-+	if (!request_mem_region(data->mem.start, resource_size(&data->mem), "intel_scu_ipc")) {
- 		err = -EBUSY;
- 		goto err_free;
- 	}
- 
--	ipc_base = ioremap(scu_data->mem.start, resource_size(&scu_data->mem));
-+	ipc_base = ioremap(data->mem.start, resource_size(&data->mem));
- 	if (!ipc_base) {
- 		err = -ENOMEM;
- 		goto err_release;
- 	}
- 
- 	scu->ipc_base = ipc_base;
--	scu->mem = scu_data->mem;
--	scu->irq = scu_data->irq;
- 	init_completion(&scu->cmd_complete);
- 
--	if (scu->irq > 0) {
--		err = request_irq(scu->irq, ioc, 0, "intel_scu_ipc", scu);
-+	if (data->irq > 0) {
-+		err = request_irq(data->irq, ioc, 0, "intel_scu_ipc", scu);
- 		if (err)
- 			goto err_unmap;
- 	}
-@@ -621,7 +622,7 @@ __intel_scu_ipc_register(struct device *parent,
- err_unmap:
- 	iounmap(ipc_base);
- err_release:
--	release_mem_region(scu_data->mem.start, resource_size(&scu_data->mem));
-+	release_mem_region(data->mem.start, resource_size(&data->mem));
- err_free:
- 	kfree(scu);
- 	return ERR_PTR(err);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Tested-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         42f7652d Linux 6.12-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13bc6a40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d46a40580000
+
+Note: testing is done by a robot and is best-effort only.
 
