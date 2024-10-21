@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-374581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA359A6C65
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD979A6C67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EC122827C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9FC1C21D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBC71F9AB2;
-	Mon, 21 Oct 2024 14:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302881FA257;
+	Mon, 21 Oct 2024 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gO3yHrE6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GXuBW79+"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855561EABA9
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978A41F6661;
+	Mon, 21 Oct 2024 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521657; cv=none; b=gi0FkaZc3SFqHRL+PZ5m6PQZ2bAaWSENlxosb7h88nNtbWTmzlG1TMcenCeS6msHzx+GZfyOOUW/6pAi94f8752gOg2RFkvNBL73IHppe1QQGUg12is6IhLDoLjzMVBsRVkaHBmwASw4zPF8UXhEXON+BvPsAhkVJA7CDnzWTaY=
+	t=1729521669; cv=none; b=TPJLOp9wiOXfBCWJAAzid8n07nwiHtLwKWeef6b+eVRDKfxNKEpiwjCibM96BpAIX9jV5cLysbW9JI1kabOX7jiPRXmx197maud+1se/uRJJuGHrOv32aghBUXnYLYpyi0RkA1i2TJFPl5JB/dfcdnXViK3qXu3lYoY4ZA6uuEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521657; c=relaxed/simple;
-	bh=SY0QU0S/YEb+CgOL7A43I19aUv+YqaDgGKxwtTIbOKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJviQXWq4EpVoacysYCsX8O5Ik9XxgGV3w1iCKlZF4aomsn9TvT3etYjhH6WPqAJEl0KBWAd8mc9fRHFkB6hu2LY6DriCHD3osv1Kk7sk3tH3VKMs7EpnQ9o3oLYtCsXKYMfD6Mlc0oI7ZjG8YVFzWChBg52XSw6syW8jse3j1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gO3yHrE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6833C4CEC3;
-	Mon, 21 Oct 2024 14:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729521657;
-	bh=SY0QU0S/YEb+CgOL7A43I19aUv+YqaDgGKxwtTIbOKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gO3yHrE62NA/dqvUlrYxk2/3iyNecJfwhQ0kDYggARDYiF8Y25d2Fg/wf8gSs2/aG
-	 UbhBf/Np2b98/JZIZbGsAeDUHEEvhQ2MhXszB2Wm0p10bmCadIqh0Qkbupj8mR+yeO
-	 ggPB+2rw+Cvp6hSZHmb4ddoDvn/Wfvy0I/fyPFKq0f0GAWDH+ON4gp9fwWmslsJ11z
-	 Ohiv2i6Kvjget3/bLpcJDl3p943NTXeAl8HXjtvyC6XfowoLIcr+0gNHWyC4s1OlAH
-	 ZSn5XMsZKu+dEnSWGGV4u5m4JcBjkLNSWElziYSNFY23X9b7VYakLlBUxUpvtFBEEn
-	 J4duoU61KcNgA==
-Date: Mon, 21 Oct 2024 16:40:54 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 08/26] posix-timers: Make signal delivery consistent
-Message-ID: <ZxZn9gwnk4Vr5L6k@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083835.730528613@linutronix.de>
+	s=arc-20240116; t=1729521669; c=relaxed/simple;
+	bh=wEJWjkfmcIKHp4iFivlAhHssAMAlpxNOvJ38VUX1szw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aJxSzTPlw5oAyiLtTMr1wd6n8A0iH5dkdcKHu/2lVwhXTQ+o3Bgw3M+0zsFFnAPWpyzPV3oIRZa1jh3HzwzwIlrXH/AH9KbZW3PpbuO8BIgLTVmRGXdKZxVVFOiIesMnoew8ptqKCDKpOmo/Rxl7Q8EanH59hRBiPvCt3OF3b/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GXuBW79+; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43161c0068bso31709165e9.1;
+        Mon, 21 Oct 2024 07:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729521666; x=1730126466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
+        b=GXuBW79+4Gr935ZVMGhGM66/NGFeL0AMBNNZyt2zTnKlUU6Zz5SElUHIBQRJAGruLU
+         t9cwmCaW/Pe7DTPfMIz2HfXcrzlS+4gAQ/sP7lL6tBQHtiC/Xk1DCLVOZ/ZBZdvlIsyk
+         nxeI3NJ0bz/6FDi1YvdtxMZalCRZ+Nis+FQvxUgzsJeBAD39vZda07mY1gy3YaVd0cIF
+         G9iUMUrAjtzjs10GVqXEY/ttmLVua7sWhs8/sD22XXKJ6y95P0QfWnpoQOImZnK3+9qm
+         u5TWrV89emxdruCE8F5s1qm6lAs1xrAaKY6a+DChrkW/XndrFqDj2kkJXJHfcmyLibN4
+         UtmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729521666; x=1730126466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
+        b=beH14Y+nLgtIAnZ4OU0pWmgvTfPBilSUTPw3y9udK9UzbTIazkUqDDeMdwNrSDaXdK
+         8lX4aEK8hPyEZra91/5O92ptUe4AI5++EpKnvXHyZ2w0cqhv0quvrT+Z1lZz9cGxZyoV
+         dtR6PMKYLs5DEcG9B7jrSbF9gr108gcwkdbLoZZXiUTsdmpVcWpfKyqMTiBJhJxua74w
+         yYT0aYsUzaINCpn7WDvvxIsZJCB1ykpazemNcPDM3HXcEOqBjQ0a38Ky7AcWvuW4mY6p
+         iEIhZ9RvhECszoOwa8/wD2qQXNnpqQe5kUPn//OjFDli5iS1YAmz5ccjypmU4WIy/UBE
+         2gVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaX9f+rgLszwfNwOSks772unKHcTRHTZmFjjFcSihOFNq2QyYasuFAYOtbBx0i6vdWuBjLV1MUzpplUw==@vger.kernel.org, AJvYcCXcgl01oechym9XqRKMdgkCJMvqJs9btTI3D/K0kIj2HVRwzZS9LH1WbJHHTeP3vb0+ELmLtigZIFMxJYKE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJz9GYT+3930+fvLX52aIWQzF6EoaP5aO/KVVnp3IohfMIZIbj
+	u10+wYhk+NMPCmK1TdVMiMc7SLWLSxkobVwfZ/C9MvVHYUoHEQlWQvtKzQ==
+X-Google-Smtp-Source: AGHT+IED1aGCt1yMsc3SxJEZZdr6y+3uXzAWdgpu65AhZbo4N+sbPYfiaV0ZPST7QuCCjvgI8LLCzQ==
+X-Received: by 2002:adf:f88d:0:b0:371:82ec:206f with SMTP id ffacd0b85a97d-37ea2174e92mr6426192f8f.16.1729521665691;
+        Mon, 21 Oct 2024 07:41:05 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm4483177f8f.104.2024.10.21.07.41.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 07:41:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] Input: serio_raw: Fix uninitialized variable 'written'
+Date: Mon, 21 Oct 2024 15:41:03 +0100
+Message-Id: <20241021144103.928386-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083835.730528613@linutronix.de>
 
-Le Tue, Oct 01, 2024 at 10:42:10AM +0200, Thomas Gleixner a écrit :
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -269,7 +269,10 @@ bool posixtimer_deliver_signal(struct ke
->  	if (!timr)
->  		goto out;
->  
-> -	if (timr->it_interval && timr->it_signal_seq == info->si_sys_private) {
-> +	if (timr->it_signal_seq != info->si_sys_private)
-> +		goto out_unlock;
-> +
-> +	if (timr->it_interval && timr->it_status == POSIX_TIMER_REQUEUE_PENDING) {
+The variable written is not initialized and subsequent increments of the
+variable are using an uninitialized value. Fix this by initializating it
+at the start of the function.
 
-Can it be something else than POSIX_TIMER_REQUEUE_PENDING actually?
-And if not, should it be a WARN_ON() ?
+Fixes: 5b53a9d40c4f ("Input: serio_raw - use guard notation for locks and other resources")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/input/serio/serio_raw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  		timr->kclock->timer_rearm(timr);
->  
->  		timr->it_status = POSIX_TIMER_ARMED;
-> @@ -281,6 +284,7 @@ bool posixtimer_deliver_signal(struct ke
->  	}
->  	ret = true;
->  
-> +out_unlock:
->  	unlock_timer(timr, flags);
->  out:
->  	spin_lock(&current->sighand->siglock);
-> @@ -293,19 +297,19 @@ bool posixtimer_deliver_signal(struct ke
->  int posix_timer_queue_signal(struct k_itimer *timr)
->  {
->  	enum posix_timer_state state = POSIX_TIMER_DISARMED;
-> -	int ret, si_private = 0;
->  	enum pid_type type;
-> +	int ret;
->  
->  	lockdep_assert_held(&timr->it_lock);
->  
->  	if (timr->it_interval) {
-> +		timr->it_signal_seq++;
+diff --git a/drivers/input/serio/serio_raw.c b/drivers/input/serio/serio_raw.c
+index e058fef07f57..4d6395088986 100644
+--- a/drivers/input/serio/serio_raw.c
++++ b/drivers/input/serio/serio_raw.c
+@@ -185,7 +185,7 @@ static ssize_t serio_raw_write(struct file *file, const char __user *buffer,
+ {
+ 	struct serio_raw_client *client = file->private_data;
+ 	struct serio_raw *serio_raw = client->serio_raw;
+-	int written;
++	int written = 0;
+ 	unsigned char c;
+ 
+ 	scoped_guard(mutex_intr, &serio_raw_mutex) {
+-- 
+2.39.5
 
-Is the increment here is still needed then, since it's done
-from del and set?
-
-Thanks.
-
->  		state = POSIX_TIMER_REQUEUE_PENDING;
-> -		si_private = ++timr->it_signal_seq;
->  	}
->  	timr->it_status = state;
->  
->  	type = !(timr->it_sigev_notify & SIGEV_THREAD_ID) ? PIDTYPE_TGID : PIDTYPE_PID;
-> -	ret = send_sigqueue(timr->sigq, timr->it_pid, type, si_private);
-> +	ret = send_sigqueue(timr->sigq, timr->it_pid, type, timr->it_signal_seq);
->  	/* If we failed to send the signal the timer stops. */
->  	return ret > 0;
->  }
 
