@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-373799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DD19A5CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157CA9A5D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B28283C8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4503A1C203DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4D81D1E63;
-	Mon, 21 Oct 2024 07:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8C31DE8B9;
+	Mon, 21 Oct 2024 07:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WFbYoJ0H"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ewq+nabE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7951D14FD;
-	Mon, 21 Oct 2024 07:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D641D1E6D;
+	Mon, 21 Oct 2024 07:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495643; cv=none; b=OMGTEa1bOr9YV71ZPIlcBBlXW5FYd2e4yJJKmvRJ1Uy0QB2rVuiQdv5Qub5LvvzzMqTTSAmG2Bot0dqP5akgHdqXw87LZBxOOYGWQzgiCddC1hKvyd81XhfEY6/peeYCUnKwcuuDFwZp8MkX2RsSgQxhrwnj8PxSWCN4wdBWRQ4=
+	t=1729495679; cv=none; b=gXEz5ID6ymshe23x8QV4dNmxHD4nt8fDYTcRKzhTkmKcFB0aLUieKJ0XLIb32PZ94k2hb62C4b4ftTy9kHl84M9BiGEWmGono92BBhUwz/4HQvivs45kkBGYBv3zoSkBSSBBOLQNhuNH1YR86y7J+uUdVSFpzC9OpOFdFhgplQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495643; c=relaxed/simple;
-	bh=QF6KY4k5GY0VkT+IkLLmKOGfh6/RS9SVdO/NmhkaPDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YetvsKirto+J7NioDFBtMKxjUDk7mqGLSAv1mPaXVohBA5KWLV0oBxAoJUqQWuDiem3Z0ZJAzejCgqZOHiFQ0wmfJjIHXBaF4f2OaDRpoFL3KNNQaJGtfm9cx3tmO3maHOL6Gx/EfIrmoR6AlAiZfirEUeQUbrAvj7V/+3Rosek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WFbYoJ0H; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E6BA4000C;
-	Mon, 21 Oct 2024 07:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729495631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QF6KY4k5GY0VkT+IkLLmKOGfh6/RS9SVdO/NmhkaPDo=;
-	b=WFbYoJ0H/0B9WBzg4BGbisbZwOR/1LxXOqXphTYkIUKa6eRhun3ZoTTZo9r5OwJFsceG3G
-	wdm1LtT61mL31lHlgZG4v4a1lAJcpH425fv/NaG2KOuXpknhxxY30mBW7aWlQsTQmomVPt
-	esNesj/G7+3Yl2ioW05/WP+dSkc7CQ6tkZhlZJzYMrR4gs8yc8SZFk6ck7PZ8VrKvdyFYm
-	81aMBvq2PTug21D75z+89HmCgQ8odjT4ulO6kH7ijWkHmZM7lla4mQ30rmxF+GeeEi4ybb
-	ET5mChhe1pu6zcKMOhusSs+2kU9m7dGvpsvDbNPm4K+R8aeikTvWP5ouXsJnHQ==
-Date: Mon, 21 Oct 2024 09:27:09 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt
- <stefan@datenfreihafen.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, linux-wpan@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] ieee802154: Replace BOOL_TO_STR() with
- str_true_false()
-Message-ID: <20241021092709.2458367a@xps-13>
-In-Reply-To: <20241020112313.53174-2-thorsten.blum@linux.dev>
-References: <20241020112313.53174-2-thorsten.blum@linux.dev>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729495679; c=relaxed/simple;
+	bh=QxL830a9Ax2smwJ/u4AW2tTEirYlo+bfedpBWZc+7V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VAGL4mW2GGSQgzgBLBXQFZG140YNp6frfVv3L9RO0gyC76gw1IFAhuEdtUSxcnJgDbY3tHLhTgEuKKmljilKg7EO7wWfUEwhowuLMZBZiee3o0/gvmkPqQxzR8bEfgFizJhui3WREJZC0Trtws+L36p0kyzEb2+yHqqEWS04DfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ewq+nabE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AAAC4CEC3;
+	Mon, 21 Oct 2024 07:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729495679;
+	bh=QxL830a9Ax2smwJ/u4AW2tTEirYlo+bfedpBWZc+7V8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ewq+nabEmyPpNwRvJxshR2Fulo749uN12b4AjLYzP7jvQv+iMMKNx0avF5iP3ocXU
+	 UsEUopJSpgcacv+TQ6slMptGpXATO1/76YFRFd/rmFNJE4YhPoWA4MnQn4B9JL5QFn
+	 SurQdxNl65S/d35vVWnOWpTQFc9dQ1ANcui1Xa7yqcb1ZFiu9z6izD7WfG3YnmWe5+
+	 zHjKpMUYK8lGTKzXqzMRfVDl02Yfw6EeYOkwYm6G2Oo1Fh1oFtshC4Th4+vmZg+SdT
+	 t0z6mX8PPmuLqx5x9ZewBuIBVcohfODU9vhwXcrq/191/TyeA8PGmwVvVW/tLfvlLC
+	 dlizrxHJPM0wA==
+Date: Mon, 21 Oct 2024 09:27:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Wojciech Siudy (Nokia)" <wojciech.siudy@nokia.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>, 
+	"peda@axentia.se" <peda@axentia.se>
+Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: pca954x: Add timeout reset
+ property
+Message-ID: <pkse4jc6muqwo4zrvb6auhcdv4zrt6zd5zmp4yea5usagw62o3@lgzwggtz4uv3>
+References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
+ <20241018100338.19420-2-wojciech.siudy@nokia.com>
+ <20241018135314.GA91900-robh@kernel.org>
+ <DB6PR07MB35091425FE5CBCD782B465A69D412@DB6PR07MB3509.eurprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DB6PR07MB35091425FE5CBCD782B465A69D412@DB6PR07MB3509.eurprd07.prod.outlook.com>
 
-Hi Thorsten,
+On Sat, Oct 19, 2024 at 11:09:43AM +0000, Wojciech Siudy (Nokia) wrote:
+> Hi!
+> 
+> > If you have a reset GPIO for the mux, then why wouldn't just use it
+> > on timeout?
+> 
+> Because we cannot do that on every board. The reset GPIO is provided to
+> ensure, that we have reset signal de-asserted during initialisation.
+> You might have connected other devices to the same reset line so this
+> must be a configurable option.
+> 
+> > What happens if you timeout and don't have this property? Just 
+> give up?
+> 
+> This would be the case just like before introducting this change. Some
+> aplications might do other attempt, the bus driver can try recovery.
+> Unfortunately common reset line for multiple chips is not a rare
+> situation.
 
-thorsten.blum@linux.dev wrote on Sun, 20 Oct 2024 13:23:13 +0200:
+And Linux handles it well now. This is reset of the I2C devices
+(children), not the controller, right? If so, then:
+1. It's not a property of the controller,
+2. Linux already handles it - switch to reset controller framework.
 
-> Replace the custom BOOL_TO_STR() macro with the str_true_false() helper
-> function and remove the macro.
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Best regards,
+Krzysztof
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
 
