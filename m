@@ -1,160 +1,116 @@
-Return-Path: <linux-kernel+bounces-374989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD029A72DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0249A72E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F14CB21BF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF3F1F24815
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6CE1FB3D2;
-	Mon, 21 Oct 2024 19:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AC01FC7FB;
+	Mon, 21 Oct 2024 19:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="euhGju1L"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAC5eGI2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7944B1FB3C3
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E761F942D;
+	Mon, 21 Oct 2024 19:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729537401; cv=none; b=T13ZwQ7beCTOP2bn/Ok3VBPRKEjYnKte6rc3sNbGouKu9DgWsvD4JM8z+hlvc8j16oiA7LLBKkC0cRQhq6dEMiWJxUv0SOHqz42K7QabB927AgZAzQTvQD0/nZgk1BmxonOd2l0aZGZ/FQJ01GTdQxwJogWA9Haa4mvUI8vil38=
+	t=1729537416; cv=none; b=tvyGwlryrIovJwdznX2QxXRfXrTt39ri/fmVP4W1xVnsq1EjnNxDXjgPPd0OdFAJZKhRwvELim0xGGEg2iSDQAL2MMmSKM2XKHR0pzOV9MfKyWeheEKrbWDnyyCTCzNLqV4Bf0M1lGXZAUjWU1D5oJsriTEWhHgKi6YhRLRlP+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729537401; c=relaxed/simple;
-	bh=LETpUrrq++PNB4Cvb1fLdlqOpX4xrxJJQoe4xDSvBgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CmcnyavEbfW5KO8u4rtAlBcKFXPpnIs31WJ2/eOFrSk541tB4qrHNVjSTAlGhiVHBH6eN2xzoJoB/tKP7Zx/izJsCOQuU9rUyWXAVTMEUQppk5mVbjMHuyaDhC4e1llLi8BoMtcVDg+rIqqpEChgRNNKvPYRxmUd3+7JpiYj5VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=euhGju1L; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e28e4451e0bso4338125276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729537396; x=1730142196; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zvl5j8GY6xxT48+PDh05t1YeQhkFTt/d7c/rGxhmWmQ=;
-        b=euhGju1L5hJFRKHGD9snobvYxQROON2s8dZ5kCVbPXhmyTCZukAhrjCHscHUCOyGuK
-         O8K6cIMZh2Ag/llaBH1R7hXHWnVdE+Dw/llaPL62Q+88MaYMGjbU6TEUwzyvf4EcJjEJ
-         HGEqVCY/9s5kQFJqKXyCHQi16aX4n22IvIYqebm2spDc5gcrN4eHRtEl8qoq971ghO5U
-         IyO1m7+WwS0nJxyfvry8HmIkM0x6kIu1CF4SOanwPLopTZa2ts/UYJA8LHbpW9oQUaYd
-         ilRPEBHGoF/QsfuSME5VSE4nPiGtIrL+YODfL+ie1R9cMiSSOaTe4ttMDE6hXDCzNcOi
-         YEog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729537396; x=1730142196;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zvl5j8GY6xxT48+PDh05t1YeQhkFTt/d7c/rGxhmWmQ=;
-        b=j+Tl+Dosd2QmHOFzva/fRH2CRXG31TInyeTFXrtpzIrDsJEt04GotgzEoi/NKGQR73
-         AaxtohmuZUx90x6nXAvVnPOZvKp+bk9I40rIAcDjkWb65yFU6wTsDxUiARolMpBdfAVf
-         I3iz4C6emoILMqhjeOgovOERLV7sDd5licQIsjbulWks4es6e3mt33FqRISds7he1QGC
-         qZcsq71c4G+lm5Pad//4R5pfwRCBUfYUvhmV5rAufFDDq2LghtUgtUEgTIoa1k8dR6je
-         SA2Q+qXJjJCBvkA/WAxp12YGaTvmc2LxNlRjLlOqbXjPKu8oY93i+4hRGM1MFjF9D8A0
-         z59g==
-X-Forwarded-Encrypted: i=1; AJvYcCUv/DBJLU+eiDhJ+RgP008AruwQO+qS52xlTHfMLgOw4PmPGV8AcMfLSl8MqZ2FyijScCyxZasmWdttjqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeoiABb6sm2s8R7KkvcKjvLkP2JV4JcdYtvks3RPHxCr0yq/Ym
-	zyF/jByS5kqZhhNo10Pt56W6yLIZMV+0ZRuv4bmJJ3DFYISolv/GyndjtoNggmOUradHQvXYWYs
-	LBCJpG+SIOdtNjEIiAEuERe3cljabNzWBtJBDmQ==
-X-Google-Smtp-Source: AGHT+IFw6ofUQkqzWyNMI2FtgBN3vvVTDk3qQDpOKITNNWCcXB/ic89esi1afFvp5h98Sem6vY56OuWzqFJAnFUCjYc=
-X-Received: by 2002:a05:690c:488a:b0:6e3:28ec:1a7f with SMTP id
- 00721157ae682-6e5bf9e81aemr126667917b3.23.1729537396350; Mon, 21 Oct 2024
- 12:03:16 -0700 (PDT)
+	s=arc-20240116; t=1729537416; c=relaxed/simple;
+	bh=rBGnIU2ChSzNbvZ5Xe+O+3llHRdoMbcsKIPRGW3IyNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeSI3Kz6rmBLn878AHMgXlQXpzSePs7jxqy/DZXdxkT7OZGRBVV5mn8MBQK9+z/mk8CqIbo7jmjIx1ub3IdxOUNHSJvbdFT+C5BfCtRT49p9oKHggcX94ULNSUS1eP5mptFyanBqxuHbsedW2r4ZTgSnqhuFoW4K5Ds6EuFIyCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAC5eGI2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 794AEC4CEC3;
+	Mon, 21 Oct 2024 19:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729537415;
+	bh=rBGnIU2ChSzNbvZ5Xe+O+3llHRdoMbcsKIPRGW3IyNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BAC5eGI2h/vU8QtDowYR5TEPWsNlzjzTbJNgFcJV+n7COFotJ1Q7xfI84gbctw3b9
+	 xlqtgRvkP7flzhq9MEQkb0t4Xg556IzWC/tm1+4LRsZaB3rmqHET8h76REqdPUnAqT
+	 zJ7Zkwc72vXITR1iaOR5mlPEL9iT4HNXWjRxRVKO1DrkXdFjosjO8NCH80EERSeXsb
+	 G6A8xN/lidTdzW1c1Ne0v8G73APArjVXQ+zP+CoCr/ZOivQbyscczPstZww+ZtW+05
+	 +DOAV5G1iqMOQA2ub6TOuQLcX2gZn5iqlDbrZ/zFeKDS97V8jMsSxK1I9alECXvV0x
+	 5hJaIEecAgl7g==
+Date: Mon, 21 Oct 2024 14:03:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
+Message-ID: <20241021190334.GA953710-robh@kernel.org>
+References: <20241018182247.41130-1-james.quinlan@broadcom.com>
+ <20241018182247.41130-2-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
- <20240930100610.782363-5-shiyongbang@huawei.com> <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
- <277b126d-e17c-4ef9-a6fe-56f36061606e@huawei.com>
-In-Reply-To: <277b126d-e17c-4ef9-a6fe-56f36061606e@huawei.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 21 Oct 2024 22:03:05 +0300
-Message-ID: <CAA8EJpontTXUd0TzvwJZ4gCZ2i6vdB8+PqE+W3ChCuBH3WkfaA@mail.gmail.com>
-Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
-To: s00452708 <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
-	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
-	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018182247.41130-2-james.quinlan@broadcom.com>
 
-On Mon, 21 Oct 2024 at 14:54, s00452708 <shiyongbang@huawei.com> wrote:
->
-> Thanks, I will modify codes according to your comments, and I also
-> replied some questions or reasons why I did it below.
->
-> > On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
-> >> From: baihan li <libaihan@huawei.com>
-> >>
-> >> To support DP interface displaying in hibmc driver. Add
-> >> a encoder and connector for DP modual.
-> >>
-> >> Signed-off-by: baihan li <libaihan@huawei.com>
-> >> ---
-> >>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
-> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
-> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
-> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
-> >>   4 files changed, 217 insertions(+), 2 deletions(-)
-> >>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> >>
+On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
+> Support configuration of the GEN3 preset equalization settings, aka the
+> Lane Equalization Control Register(s) of the Secondary PCI Express
+> Extended Capability.  These registers are of type HwInit/RsvdP and
+> typically set by FW.  In our case they are set by our RC host bridge
+> driver using internal registers.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> index 0925c520195a..f965ad57f32f 100644
+> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> @@ -104,6 +104,18 @@ properties:
+>      minItems: 1
+>      maxItems: 3
+>  
+> +  brcm,gen3-eq-presets:
+> +    description: |
+> +      A u16 array giving the GEN3 equilization presets, one for each lane.
+> +      These values are destined for the 16bit registers known as the
+> +      Lane Equalization Control Register(s) of the Secondary PCI Express
+> +      Extended Capability.  In the array, lane 0 is first term, lane 1 next,
+> +      etc. The contents of the entries reflect what is necessary for
+> +      the current board and SoC, and the details of each preset are
+> +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
 
-[...]
+If these are defined by the PCIe spec, then why is it Broadcom specific 
+property?
 
-> >> +
-> >> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
-> >> +{
-> >> +    int count;
-> >> +
-> >> +    count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
-> >> +                                 connector->dev->mode_config.max_height);
-> >> +    drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
-> > What? Please parse EDID instead.
-> > I'll add aux over i2c r/w and get edid functions in next patch.
+> +
+> +    $ref: /schemas/types.yaml#/definitions/uint16-array
 
-At least please mention that it's a temporal stub which will be changed later.
+minItems: 1
+maxItems: 16
 
-> >> +
-> >> +    return count;
-> >> +}
-> >> +
+Last I saw, you can only have up to 16 lanes.
 
-[...]
-
-> >> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
-> >>              return ret;
-> >>      }
-> >>
-> >> +    /* if DP existed, init DP */
-> >> +    if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
-> >> +         DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
-> >> +            ret = hibmc_dp_init(priv);
-> >> +            if (ret)
-> >> +                    drm_err(dev, "failed to init dp: %d\n", ret);
-> >> +    }
-> >> +
-> >>      ret = hibmc_vdac_init(priv);
-> >>      if (ret) {
-> >>              drm_err(dev, "failed to init vdac: %d\n", ret);
-> >> -            return ret;
-> > Why?
-> > We have two display cables, if VGA cannot work, this change makes DP
-> > still work.
-
-But that has nothing to do with init errors. If initialising (aka
-probing) VGA fails, then the driver init should fail. At the runtime
-the VGA and DP should be independent and it should be possible to
-drive just one output, that's true.
-
--- 
-With best wishes
-Dmitry
+Rob
 
