@@ -1,120 +1,82 @@
-Return-Path: <linux-kernel+bounces-373830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A18D9A5D5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79679A5D62
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8BC2822D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47BD1C236CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551641E0DDB;
-	Mon, 21 Oct 2024 07:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849471E0DFE;
+	Mon, 21 Oct 2024 07:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiNqqyiv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cdUIg4em"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE8E440C;
-	Mon, 21 Oct 2024 07:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B721E0DD4;
+	Mon, 21 Oct 2024 07:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496620; cv=none; b=pq8S34td29ZUou6YiDJ11JwNo9f+8EtdyONx9FhibrGMb81ZaVeYmarZgUDiAFcl/pKjF5SXXked1mCepFuyc0EggqyauIHs6hgU2nBEnSB5oMrFFgD6eCK7hL0qldLQ36oPPHJZs27IncdzqWzwQJeHbHziFF09mjSgHdNdmEI=
+	t=1729496654; cv=none; b=XSSqYGhWhMg+1622uLc0411jvDUscAhfMVQU2kCny+QsFB49emuyEU5cY8CjFMYz7lEmEPI0wYZqGivFZQpSaKpe8ert+bM6aPLZRk1UJXeZsAef/rL2Fq7SELKUiovCIAWyj+FJlagj8+j927DY7k6EmQvS9DZZLAqKaVzAzDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496620; c=relaxed/simple;
-	bh=jVUvL+nwzIhExDvhRX8qXKXjV5D8t+xunCafnMybz/A=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fN0wKXnDXX7D1vXVOp2T/FAnnRLlNUfIu3phKvt6W+lDf1elBM59SeIMTvhraRFfSLNC9ypeaU0OjNddIUjv3PisLomMUUsqX2Pi86B1fZbleouUYSylE9fhvxQJdJvImDaU8THv5TlY21e6XwEkI+yfRXz9mrsCcxSWTG3FwGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiNqqyiv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A332C4CECD;
-	Mon, 21 Oct 2024 07:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729496620;
-	bh=jVUvL+nwzIhExDvhRX8qXKXjV5D8t+xunCafnMybz/A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MiNqqyivYG2b+sSOANKdt73+QK7Tru8NNJg4rTayYdGd2a3SHPqpwxp2eLlZBMf9s
-	 7cFZn00Cu1+hWjNO0yNXzGdj5BKIbjJiZK7WzXEWzcUo+TESD/uxfV3rOcNBsF+kX+
-	 15FrDGxpIOeKNwHsIg8VvzE+72gG7kddsK+nOFIEJpWQYMlThRnyIAJXgm5z8NXt1K
-	 nPPSvggesWtOKTgOmMskGJqdJaK48Mdny/ah58v/6IJXrEnlKW+cja3jo12tLbUKqB
-	 dtlJ7S9EBpF24Rxp9jr1Fkxud3ixoyFYJeu0LkhZ4oMYDzm9laF7FOFt47UhtVFkYc
-	 Qer8Y/g+vcFRw==
-Date: Mon, 21 Oct 2024 16:43:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] fgraph: Allocate ret_stack_list with proper size
-Message-Id: <20241021164336.79a90af16419aa6e3f065bf3@kernel.org>
-In-Reply-To: <20241018215212.23f13f40@rorschach>
-References: <20241018215212.23f13f40@rorschach>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729496654; c=relaxed/simple;
+	bh=dmEkpj1SX2e3mHQUhOKtpvrPvJet0vNsLVPj9d+IIGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoD5JOQduKijBnH8WerH/3x1RkcAGxMrI6T6RybSLUwRx+SrQfS3ULNFLRR4bQ3h76zSk9FiKcSnNJRMhqbsZDQg/gr4qonHu+aji17a6JO2WdDPZwdj6QT7CGW8i3iSGNPJWICvo9GW/i80xfOXk3Y1biLHR/iN5K0J/ap0+vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cdUIg4em; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C041BC4CEC3;
+	Mon, 21 Oct 2024 07:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729496654;
+	bh=dmEkpj1SX2e3mHQUhOKtpvrPvJet0vNsLVPj9d+IIGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cdUIg4emr5YXIh+f3xr5HDRub4+1C+zEb6YP7bg9qG9t/RYh6BfGLFtrnnw8s18/l
+	 CQ/e5Ex/ebMSaMtO6xFM/5fv9w4D9uSVuYQ8UDXTKAyPqPmpkKbavrQKR2xeLlc8ak
+	 S86PAlvWrebXu7QbPEe8z9HVlkYnk0JaoN/tSOf8=
+Date: Mon, 21 Oct 2024 09:44:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: Pls pick up two bluetooth fixes
+Message-ID: <2024102100-spongy-etching-0695@gregkh>
+References: <2fad9d09-c328-4353-be0b-cfcfef33ed01@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2fad9d09-c328-4353-be0b-cfcfef33ed01@leemhuis.info>
 
-On Fri, 18 Oct 2024 21:52:12 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, Oct 21, 2024 at 05:28:25AM +0200, Thorsten Leemhuis wrote:
+> Hi Greg! Please consider picking up the following two bluetooth fixes
+> for the next round of stable updates, they fix problems quite a few
+> users hit in various stable series due to backports:
 > 
-> The ret_stack_list is an array of ret_stack shadow stacks for the function
-> graph usage. When the first function graph is enabled, all tasks in the
-> system get a shadow stack. The ret_stack_list is a 32 element array of
-> pointers to these shadow stacks. It allocates the shadow stack in batches
-> (32 stacks at a time), assigns them to running tasks, and continues until
-> all tasks are covered.
+> 4084286151fc91 ("Bluetooth: btusb: Fix not being able to reconnect after
+> suspend") [v6.12-rc4] for 6.11.y
 > 
-> When the function graph shadow stack changed from an array of
-> ftrace_ret_stack structures to an array of longs, the allocation of
-> ret_stack_list went from allocating an array of 32 elements to just a
-> block defined by SHADOW_STACK_SIZE. Luckily, that's defined as PAGE_SIZE
-> and is much more than enough to hold 32 pointers. But it is way overkill
-> for the amount needed to allocate.
+> and
 > 
-> Change the allocation of ret_stack_list back to a kcalloc() of
-> FTRACE_RETSTACK_ALLOC_SIZE pointers.
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
-
+> 2c1dda2acc4192 ("Bluetooth: btusb: Fix regression with fake CSR
+> controllers 0a12:0001") [v6.12-rc4] for 5.10.y and later
 > 
-> Fixes: 42675b723b484 ("function_graph: Convert ret_stack to a series of longs")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/fgraph.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 43f4e3f57438..41e7a15dcb50 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -1162,7 +1162,8 @@ static int start_graph_tracing(void)
->  	unsigned long **ret_stack_list;
->  	int ret;
->  
-> -	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
-> +	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
-> +				 sizeof(*ret_stack_list), GFP_KERNEL);
->  
->  	if (!ret_stack_list)
->  		return -ENOMEM;
-> -- 
-> 2.45.2
-> 
+> For details see also:
+> https://lore.kernel.org/all/CABBYNZL0_j4EDWzDS=kXc1Vy0D6ToU+oYnP_uBWTKoXbEagHhw@mail.gmail.com/
 
+Now picked up, thanks!  Hopefully this fixes the bluetooth regression on
+my new laptop, I haven't had the time to bisect it yet...
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+greg k-h
 
