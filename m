@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-374483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890D99A6AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BB89A6AF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B421F24132
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844751C23FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06151F8908;
-	Mon, 21 Oct 2024 13:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49821F707F;
+	Mon, 21 Oct 2024 13:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mypYa7AF"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="q0M+l5LX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="IktmwYTY"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F146BA;
-	Mon, 21 Oct 2024 13:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA8F1F130A;
+	Mon, 21 Oct 2024 13:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729518475; cv=none; b=Q71R1FCOGEd6EVuKNn5IS50QMguPS16Nb7SYXOw5gOWDmT1idZuE/2XU7rw9Z5SybL0H7owd3VWHZkAQaZRfYOYM5hoAldAWBn1K2qRiZQRDCRbnlRTIg2vmGNbv8YTAmYMylMT20WHFm2JaDAsn2hySZNLVSPijbUyNO/K3tbQ=
+	t=1729518503; cv=none; b=RTH4fUwyidtDu2QZiWioG3WMCHxV8A7SMF+jn5xgTwWLB3Vd+XpEHhfd1yMJkl8iXo6qADdVTzaUMCKro8YRpsL7hN7VDThpoJ4DKu1Hz3KZ7LXlFHgDbQE2xRLiWnHbYMbYEhrOdfnsqvU/h4iEYy/hfsSIMSk2COa8iHj2uoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729518475; c=relaxed/simple;
-	bh=aUw4WJZmdSfNhxDFuiH2LCXSrIkyodmCvTqA3zgVJps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7skpGBLveR1URqZI5cteMEgnPeoxs8k6AOTIvkRX0L86i3qMvcjdZtvpUtXOfQwJsvkfryEx4mSP+rEtaK7OGnnjCsgjaPspAEp/BkfjR9PynMtLqJQ9tCIiksZk5EEfd2zN+lxs5p3dLeWDxi3C2qn628BWezrnmAgQQiUpJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mypYa7AF; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb89a4e4cso30739965ad.3;
-        Mon, 21 Oct 2024 06:47:51 -0700 (PDT)
+	s=arc-20240116; t=1729518503; c=relaxed/simple;
+	bh=Zv+uXFl0RQcRbDUrQN5TBTqjzzSX7jumC0m+kpAaEZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WF+MjBiVmwQc9tjx+mPy5GFi+pWxHoC/zd30GukmixLg3yT3hlVD5Q93VcoF/CyxH8tATCgSvhZy+uEYX7j9M208kQzZ0jLu5VC31v8ZUVZHL60VLcnVcduvOQBtEWdIgdJ8Vh2V/1fqi/bX/7fFCuTmyPhKuj3c+U+SnmobaU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=q0M+l5LX; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=IktmwYTY reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729518471; x=1730123271; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nD+KqOyffsNNyL4338nxmJl3FPWZED5MQGf79DLqDV4=;
-        b=mypYa7AFgrWz+0wQG3I0xNXqdvJpZkKLddJ1Yhe8IHbP24QvbheVMSYRRsxSITAxid
-         tp87djKzwgzJVHKser1X3RJFSQCRravKREm1Nyr82cstOKcKLS9nW38q1NJgs3pW/9M3
-         tGvN8ohVI7vnF5aoxBhEp5NT03/ibWW/xkuH6NjzhztawJTJWHBJoMCmeC7OCzYPgp+y
-         GgEwCfWICt1SB9oO6SAUogtBadu/O272/ySEnoVlMYFBDB1/UEr+IH/PSaAEwtbWBPaB
-         gQzOhde2+waT05vgaUjjocqDVGzml9Jxvw/MZnqx91zkKA0AzJ0NwhzMk2UjcDH/GXUr
-         Nzdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729518471; x=1730123271;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nD+KqOyffsNNyL4338nxmJl3FPWZED5MQGf79DLqDV4=;
-        b=gH0MgGsc4jVvJEDPjnwtkl+/NVFlKJ1H88uOisp0dr/hcR2GQjEzW/77jA0c6VoPHb
-         +IwJZ4nc109E7NoDH9JbPiSA8zfkOE2xByPOET1R8CBPQsyZjTSSEMa8PuZLvCuhddfu
-         XWoQBNkXV4MRA09abpJp0atr9QQP0tvqP4K14/+nRZs/OFrzY0G4ib80KzIDqhkknfF1
-         P1VQk5BQkJ6pqxYy9Z+2eWNppBuucVbrWcAtdznOD7lg0aohaER+DveadlQqk+oVr77S
-         U0if69ZdWstsm0PL3dkxjwbA62NzYqNXEJOiWKdduySz6iuh+8Jb1S8xLmNwlvDHpL1w
-         FCJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfeTuGLnCNW8bdAQeAs4atsLGeHMDsE7qxw5x48648KQA9tBv9tRhnIBMhwloe7Wgk+vU90Cq2p8Bt@vger.kernel.org, AJvYcCUyENcnlZsIY/9CFYUD5XC+x/tgKn3be0ngWhMYuT6az5lUrxxDiz3T88+gW6xM/gjJ7LAGKLX9PtxL+dQ=@vger.kernel.org, AJvYcCVe8ywqOLvJgmdG18ckehmkYFuIVHI7xeFkY8xa9RO4Htf28/5cCUYDl8GyjRENFYLBoj5EI22z7PmPc134e/K8dA==@vger.kernel.org, AJvYcCW3DGux/nPU5UOqsFUDK/K9EiiMcwOijE9KflYfX/vNVkvVGTo3J1aHusrZ/xBSM5YzR9fsqQJZ+0wcQcDG@vger.kernel.org, AJvYcCWJtbjoDVKY7/Ov7Xj2jBxJExCbTpkglmNzNuJDaPXiAbz57rjgAxkNu2umkExmxRFR2vJHcjSS2ezL4abhsH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmxR3WIcnTHap+4ZgEv4MKqSf+L1SwTVY/brMJ1RHVQmSuGaDB
-	7ON0+ZQUP7Y2F/ZQfSc/FBZ9YAE3ITWd5bqXzpt8+dSX7/9fJzNz
-X-Google-Smtp-Source: AGHT+IGpQioQQSjVna+u0kcFMLLDGy8gnz92x4raQ8iP4uL9jWeq86xdAWB9VASoS23M74pBaQs88w==
-X-Received: by 2002:a17:902:ec83:b0:20b:9f8c:e9de with SMTP id d9443c01a7336-20e5a7529f1mr179366035ad.13.1729518471094;
-        Mon, 21 Oct 2024 06:47:51 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bd2b8sm25853735ad.159.2024.10.21.06.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:47:50 -0700 (PDT)
-Date: Mon, 21 Oct 2024 21:47:45 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	corbet@lwn.net, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, akpm@linux-foundation.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Enhance min heap API with non-inline functions
- and optimizations
-Message-ID: <ZxZbgWc2IsztAOOx@visitorckw-System-Product-Name>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
- <ZxYf8VvQIZv9_Y1j@archie.me>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1729518499; x=1761054499;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KEFV90NtjKhk5WP7S+oF07G1Q6k1s2xpduU//Ae0D2s=;
+  b=q0M+l5LX0z4uSY1eoIeZJ+MLg5rh3oCvRELQoGnUkUhAriuUdflIW3o0
+   ydlqYOLPZLhbZGRMXRLGDpLMUWEwqqNRE5DctzJlouIdgt9lT9BmR1SCC
+   tWwANhTG8cNuZqp5NmXBywv2DjCwrMBEIyUzRiHC0OTTQcJod0GYFK6TQ
+   FgxMCPRA2b+H7QADZGJAH6NP8X7c9UbcDqAToQ4dSFTdhdEwEGs6mM+c4
+   /3xBBXMRQiitiszbr0JG9u0iUkisW6WZJJR3haXVyYRLqLnWtypyi2b2b
+   ZRMyLn6On5JYZl7TVPRNRQGzX+SteWtfIdFFe+TduqQchnw+AmFYa/401
+   g==;
+X-CSE-ConnectionGUID: HFLFfOkzTreLiUJYWJ10yQ==
+X-CSE-MsgGUID: jkaZF85fTAGn0EnQ8v2ucQ==
+X-IronPort-AV: E=Sophos;i="6.11,221,1725314400"; 
+   d="scan'208";a="39576079"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 21 Oct 2024 15:48:17 +0200
+X-CheckPoint: {67165BA1-F-69FF9A8E-EE9CEDAF}
+X-MAIL-CPID: 5835941C4BD768457DA0DE859DEFCF6C_0
+X-Control-Analysis: str=0001.0A682F18.67165BA1.005B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB15D16B491;
+	Mon, 21 Oct 2024 15:48:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1729518492;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=KEFV90NtjKhk5WP7S+oF07G1Q6k1s2xpduU//Ae0D2s=;
+	b=IktmwYTY1/ITpIkYod18GzpOJd2buw1RXiqxY5+mJQlX2WDPqs2RFxrNIHkvUc42DpYe7z
+	O4u0t1at+eER5RHHvhf7NEVdLtxeE8T0Hm9F54XBQHRKOn4N9s/KHkfDldT/ftsah7Vrqo
+	+j/K2fTrQGTjUr9zXs3fnTdmBAIOoFTUlSCD3AYj+vCKkbUsvfZOcOrcHy8YRSusrhKu7U
+	bpY+kZ0XxF0lOuwqc7jTaWVDib/2FX3e4ilDVVWdnwR4FcdsgVOxOXIp4bXWRnJIIJdiuW
+	wysouKNGijPive6QIccT6Ux/kIppJd3KMY3qOkHzG0ZQL6bGuqEwfLYJwE/SCg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: Re: [PATCH v3 1/7] arm64: dts: imx95: set max-rx-timeout-ms
+Date: Mon, 21 Oct 2024 15:48:11 +0200
+Message-ID: <2755523.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20241012-imx95-dts-new-v3-1-edfab0054c71@nxp.com>
+References: <20241012-imx95-dts-new-v3-0-edfab0054c71@nxp.com> <20241012-imx95-dts-new-v3-1-edfab0054c71@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxYf8VvQIZv9_Y1j@archie.me>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Oct 21, 2024 at 04:33:37PM +0700, Bagas Sanjaya wrote:
-> On Sun, Oct 20, 2024 at 12:01:50PM +0800, Kuan-Wei Chiu wrote:
-> > Add non-inline versions of the min heap API functions in lib/min_heap.c
-> > and updates all users outside of kernel/events/core.c to use these
-> > non-inline versions. To mitigate the performance impact of indirect
-> > function calls caused by the non-inline versions of the swap and
-> > compare functions, a builtin swap has been introduced that swaps
-> > elements based on their size. Additionally, it micro-optimizes the
-> > efficiency of the min heap by pre-scaling the counter, following the
-> > same approach as in lib/sort.c. Documentation for the min heap API has
-> > also been added to the core-api section.
-> 
-> What tree (and commit) this series is based on?
-> 
-> Confused...
-> 
-This patchset is based on Linus' tree, commit 715ca9dd687f ("Merge tag
-'io_uring-6.12-20241019' of git://git.kernel.dk/linux"). Since it
-touches multiple subsystems, I'm not entirely sure which tree I should
-base it on. Should it be linux-next, perhaps?
+Am Samstag, 12. Oktober 2024, 13:19:08 CEST schrieb Peng Fan (OSS):
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> With 'max-rx-timeout-ms' property added in 'Documentation/devicetree/
+> indings/firmware/arm,scmi.yaml', set the value for i.MX95.
+>=20
+> NXP i.MX95 SCMI Firmware designation does not allow timeout, it will not
+> recover if the Agents use timeout design. So set a large value (5000ms)
+> here.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx95.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/d=
+ts/freescale/imx95.dtsi
+> index 03661e76550f4d5b8e5e706ad51d6f7620cb1dc3..9c802c2344fcfb2802e5d52c7=
+62b0178a2a88ba8 100644
+> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> @@ -293,6 +293,7 @@ scmi {
+>  			shmem =3D <&scmi_buf0>, <&scmi_buf1>;
+>  			#address-cells =3D <1>;
+>  			#size-cells =3D <0>;
+> +			max-rx-timeout-ms =3D <5000>;
 
-Regards,
-Kuan-Wei
+Acked-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+Best regards,
+Alexander
+>  			scmi_devpd: protocol@11 {
+>  				reg =3D <0x11>;
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
