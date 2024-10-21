@@ -1,159 +1,207 @@
-Return-Path: <linux-kernel+bounces-375098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22249A90E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50C09A90E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCFA1C2201B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5815D283476
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774BA1FBF56;
-	Mon, 21 Oct 2024 20:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362521FCF6D;
+	Mon, 21 Oct 2024 20:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FRzObLMc"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WhSfTD/h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB8C19EEC4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89501DFE22
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729541921; cv=none; b=JzFj+tAAbdu1WFX7kuMdIf8oow3aIzGpmRTtG+uv/r3vfj2Dpz9ESxNzIZbWEw+w//in8w7DCYgKGINJHMqtn+6pYXleZEYvvAkSpXuFuHF7tOslfQVzzCCiiUEWyDF60+vW28uLKRLPpdK55EznjbrfE/1dG4H4rysB7XvimVw=
+	t=1729541934; cv=none; b=SR+N2e7Wr76bpsI/Sk2vhGB5YHZ96JSLHRQW8Sx3eoDmaTKQKBIq86Ly3BnCICafu7No+myMEywf4VeerkmpO1R+5hZ/SbNo337duNdmR9q0u2Blbd1MGCESPqMqrTmNzBPmCCTuKtlGqU5o9z8yQJ9gpc8WXku6Mi0cA4E4w+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729541921; c=relaxed/simple;
-	bh=9Gj/jW1MB+dyTX+ZFqtjWJywSQcP6u5NAgXUWiH8RL0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nDjSMtUrTpkMpuqAmlqEMCIlRRvG0X8nX/m9d32U7U4msv1BmJO/U7eNhC2APt6xZWBLF/kKdaXnt3JEONDOI0gr8trUaWM4y0kQbhqiXs+v6oLd2eUL36AegNViH6156d8ARR18DuKetrBFOHBW8TFkMHuzSifqAyhONXtDOeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FRzObLMc; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e370d76c15so90946347b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729541919; x=1730146719; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tnh2nzSdhlx2y3A9xhxtGt0QYxcm3xF/mRsViTfWQlQ=;
-        b=FRzObLMcAW6FWC/jVk7RHEru50/ziu5/naMH4VG4PTVyI4V251+CM0lFs0WlZp4GcC
-         s+D4x+RRj2v5U7DwZ9iNH4TtkDw9fqWmfsEfJsW2XhB4FWBTQLuYsFHCKXS34GA3jX90
-         owKWZMeGNe0Q4SAnE8xGJOaLgEJ2l7BgpubOluywEWsGGXaB3BizFhLYMu4Bhw0vgZ+x
-         Xao1m6KGAwIh3OkjL4xXwKtdpwYbiHzQMSuo2nyEAkLKWYBU76oM+eqLsTd+6FPTs1NJ
-         pM4qu5qpSvOHCl+17KJXBii8dEGsbi52xPtQrwoTZAVziyopJTZtdjlLP5QLZocedxyt
-         ng4w==
+	s=arc-20240116; t=1729541934; c=relaxed/simple;
+	bh=ow8qB7zSMBU87cxA7P3F/0WxMvgzc9ilG3X0oKA0n0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hF/udxrAg/2b4DwD+tKJQwJb/OjiT5YJHsHcW6+hK+8TV1zQnnynl+qPBWoWZvOfe30RMoueghUtOAkJKvoCoFhsPhLZV6lA9WVFCyI1YqhezF9h7rLLnjXxI2jGV0ALLhD3iJwDobIALiRaCdAzT43OZ3lPcndDFzyX/SqLyi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WhSfTD/h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729541931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M88OeI5oZFPk5wfhywkCpTo9I5LQOf7gyBYD+TmpbMs=;
+	b=WhSfTD/h1lGyIhJhtS8atS9umoWl+vut2F+VCzETcYezD4V+TUpF3c+feq5ixgq/RIrda8
+	9PrYMD6qmnNxO25g+clOUAyLX0yYPi+ZzIwOF6KkJPCFqwDGdEVHx4yFTy+fjpHOqui0Su
+	IW8jM/nA0Qc5oeHmgNJHLmye6W339mQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-Y-6Xo5lmOYuHqCYYGI5RaA-1; Mon, 21 Oct 2024 16:18:50 -0400
+X-MC-Unique: Y-6Xo5lmOYuHqCYYGI5RaA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d49887a2cso2708553f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:18:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729541919; x=1730146719;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tnh2nzSdhlx2y3A9xhxtGt0QYxcm3xF/mRsViTfWQlQ=;
-        b=iggs/BKsMCBFCes9tzNhZWTw/wj0/sYX2YG7z4en1FvV+yT2eksnkSzON/BPUbwJC6
-         w2ns3PvxZSV0HtKz3uhrnvC6kRrZiSTk7z47MXDWWvnox0dsPgzedN4KF3aR3raUGuzW
-         /7NVxT1c5ZkWPICiO+bDeXqWdNfehbdpySsATYPWvCgmzDAaLp8b4Q7raj67mAj4Ff53
-         sFP6HYOn1K+nYEY3NuhidqQa4nLAkRNvyXHz16AKOhATYF2XMh8AgJY+A/bYha7SXYNw
-         xs8ln+upkqhyZD6CGcTeWyvRiocyjtxD7Y5eI32Vg3ymKRb6N3s3NMpEiZdNvwLs6jor
-         9+bA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSw1naVyBSvktl+sN7LjR3sqmfePQmz1gQQd2a4yu+vxy8nZ22xGWa3T79Yj1IXnTigMMlAL1Dfhn9XqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGSD42bkC716wLTR2HE3FEtd1gmYfgafAzlZxQzffmtdxX4oJL
-	i7Bpnn7/I3Ojxps1Vvunh42Kj6//aLYr+Cb1xuhRPoFOnOPIlGfkE4jkJ0tttvaKrjdKo4/tLRb
-	0PbNKWGoy0w==
-X-Google-Smtp-Source: AGHT+IF066Si3BOFxjLkWn+rMxHThsNuEv9DNgP2bpLiRq/sQMSkJEEP7mYtUIpakSK7wQYaE+awk/7RByL2KQ==
-X-Received: from tadamsjr.c.googlers.com ([fda3:e722:ac3:cc00:13f:f798:ac1c:499f])
- (user=tadamsjr job=sendgmr) by 2002:a05:690c:6902:b0:6db:c6eb:bae9 with SMTP
- id 00721157ae682-6e5bfb868e1mr3110627b3.2.1729541919388; Mon, 21 Oct 2024
- 13:18:39 -0700 (PDT)
-Date: Mon, 21 Oct 2024 13:18:28 -0700
+        d=1e100.net; s=20230601; t=1729541930; x=1730146730;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=M88OeI5oZFPk5wfhywkCpTo9I5LQOf7gyBYD+TmpbMs=;
+        b=ErjkOrAEFRkBhhhJBoRk0ocQUwUIwqPgfQhnKdkLK3VNadr8RlpzOSphHtlMoloiFX
+         Y3mMKlIZHBpLQRCj32J1m+oeLDU8ERSDoDMwgDW6lydbLQ/n6xIRIVhsvsZMKeUyW5Qt
+         MPZZ+s00WBzkFxa6sHtgHQuY/Saf+57qAj6WdZ2zTJip6VzVemOl5uO3Ie3xUCexBdC0
+         2TwdSjRnKrDcdJLFgPTMMrfUHKSMHpaZpgXRVRaS1GmzqMW+B0tB9RTXfDRlCeNcBQ5w
+         5sONG2S6ox/aw97Mk6r3IXTdXLkJkSG1QWynngJaGFjFqL5pq+HaJwWcQhvZB/nq/RYM
+         2pfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm3vXL7phcnRU1RUxri9AT5OOrTKbj74PCvXZElC4SP6K5tY2AyqMcVRoUWbAbEqefb2dbfj1jv2gaLsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu7SN44WffFnryI80wuGoC2WEisqMPbsS/ITPDxxcA+/kpgO25
+	RJmlgTcyrlIW/nfDsV2RKo1l6ywfV69z3w++qMQmSj3dpRSxzqnp07QUpen4l2qGvyemMTQvxZ/
+	JDnrOnrO+9Hkn0WdP3ZJ9r2hhh/K7Ithlco3l9TXzrJCCE4lM/yWdBKqW0MsX1g==
+X-Received: by 2002:a5d:4845:0:b0:37d:4610:dca with SMTP id ffacd0b85a97d-37ef14c36a2mr473508f8f.31.1729541928253;
+        Mon, 21 Oct 2024 13:18:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5o8+RlEPSJh6ZYLVD8PlLR+Qht5L0r2ZYZxN0Zixf3cPupS76Kl1KQKSr870jX7VNYn6Shw==
+X-Received: by 2002:a5d:4845:0:b0:37d:4610:dca with SMTP id ffacd0b85a97d-37ef14c36a2mr473461f8f.31.1729541926389;
+        Mon, 21 Oct 2024 13:18:46 -0700 (PDT)
+Received: from [192.168.3.141] (p5b0c6747.dip0.t-ipconnect.de. [91.12.103.71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4864csm5086369f8f.35.2024.10.21.13.18.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 13:18:45 -0700 (PDT)
+Message-ID: <5e72a89f-4094-4831-8670-7fda2f64efa5@redhat.com>
+Date: Mon, 21 Oct 2024 22:18:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241021201828.1378858-1-tadamsjr@google.com>
-Subject: [PATCH] scsi: pm8001: Initialize devices in pm8001_alloc_dev()
-From: TJ Adams <tadamsjr@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>, Terrence Adams <tadamsjr@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] mm: madvise: implement lightweight guard page
+ mechanism
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ John Hubbard <jhubbard@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Muchun Song <muchun.song@linux.dev>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
+ Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ linux-kselftest@vger.kernel.org, Sidhartha Kumar
+ <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
+ Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org
+References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
+ <fce49bbbfe41b82161a37b022c8eb1e6c20e1d85.1729440856.git.lorenzo.stoakes@oracle.com>
+ <b13a83f4-c31c-441d-b18e-d63d78c4b2fb@redhat.com>
+ <b2bca752-77f3-4b63-abe9-348a5fc2a5cc@lucifer.local>
+ <c8272b9d-5c33-4b44-9d6d-1d25c7ac23dd@redhat.com>
+ <3baf8814-0a9a-4de0-b568-62d241dbba0e@nvidia.com>
+ <a4b7ed07-3b14-4443-aa76-77d720912cd0@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <a4b7ed07-3b14-4443-aa76-77d720912cd0@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Igor Pylypiv <ipylypiv@google.com>
+On 21.10.24 21:39, Lorenzo Stoakes wrote:
+> On Mon, Oct 21, 2024 at 12:25:08PM -0700, John Hubbard wrote:
+>> On 10/21/24 10:23 AM, David Hildenbrand wrote:
+> [snip]
+>>>>> Just to raise it here: MADV_GUARD_INSTALL / MADV_GUARD_REMOVE or sth. like
+>>>>> that would have been even clearer, at least to me.
+>>
+>> Yes, I think so.
+>>
+>>>>
+>>>> :)
+>>>>
+>>>> It still feels like poisoning to me because we're explicitly putting
+>>>> something in the page tables to make a range have different fault behaviour
+>>>> like a HW poisoning, and 'installing' suggests backing or something like
+>>>> this, I think that's more confusing.
+>>>
+>>> I connect "poison" to "SIGBUS" and "corrupt memory state", not to "there is nothing and there must not be anything". Thus my thinking. But again, not the end of the world, just wanted to raise it ...
+>>
+>> "Poison" is used so far for fairly distinct things, and I'd very much like
+>> to avoid extending its meaning to guard pages. It makes the other things
+>> less unique, and it misses a naming and classification opportunity.
+>>
+>> "Guard" and "guard page" are fairly unique names. That's valuable.
+>>
+>>
+>> thanks,
+>> --
+>> John Hubbard
+>>
+> 
+> Guys you're breaking my heart... Will you not leave me with even a remnant
+> of a cultural reference?? [0]
 
-Devices can be allocated and freed at runtime. For example during
-a soft reset all devices are freed and reallocated upon discovery.
+I'm sure you will recover from that loss :)
 
-Currently driver fully initializes devices once in pm8001_alloc().
-This commit allows initialization steps to happen during runtime,
-avoiding any leftover states from the device being freed.
-
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-Signed-off-by: Terrence Adams <tadamsjr@google.com>
----
- drivers/scsi/pm8001/pm8001_init.c |  3 ---
- drivers/scsi/pm8001/pm8001_sas.c  | 17 ++++++++++++-----
- 2 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm8001_init.c
-index 33e1eba62ca1..ab961ab3224a 100644
---- a/drivers/scsi/pm8001/pm8001_init.c
-+++ b/drivers/scsi/pm8001/pm8001_init.c
-@@ -447,9 +447,6 @@ static int pm8001_alloc(struct pm8001_hba_info *pm8001_ha,
- 	}
- 	for (i = 0; i < PM8001_MAX_DEVICES; i++) {
- 		pm8001_ha->devices[i].dev_type = SAS_PHY_UNUSED;
--		pm8001_ha->devices[i].id = i;
--		pm8001_ha->devices[i].device_id = PM8001_MAX_DEVICES;
--		atomic_set(&pm8001_ha->devices[i].running_req, 0);
- 	}
- 	pm8001_ha->flags = PM8001F_INIT_TIME;
- 	return 0;
-diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
-index ee2da8e49d4c..d80cffd25a6e 100644
---- a/drivers/scsi/pm8001/pm8001_sas.c
-+++ b/drivers/scsi/pm8001/pm8001_sas.c
-@@ -572,6 +572,13 @@ void pm8001_ccb_task_free(struct pm8001_hba_info *pm8001_ha,
- 	pm8001_ccb_free(pm8001_ha, ccb);
- }
- 
-+static void pm8001_init_dev(struct pm8001_device *pm8001_dev, int id)
-+{
-+	pm8001_dev->id = id;
-+	pm8001_dev->device_id = PM8001_MAX_DEVICES;
-+	atomic_set(&pm8001_dev->running_req, 0);
-+}
-+
- /**
-  * pm8001_alloc_dev - find a empty pm8001_device
-  * @pm8001_ha: our hba card information
-@@ -580,9 +587,11 @@ static struct pm8001_device *pm8001_alloc_dev(struct pm8001_hba_info *pm8001_ha)
- {
- 	u32 dev;
- 	for (dev = 0; dev < PM8001_MAX_DEVICES; dev++) {
--		if (pm8001_ha->devices[dev].dev_type == SAS_PHY_UNUSED) {
--			pm8001_ha->devices[dev].id = dev;
--			return &pm8001_ha->devices[dev];
-+		struct pm8001_device *pm8001_dev = &pm8001_ha->devices[dev];
-+
-+		if (pm8001_dev->dev_type == SAS_PHY_UNUSED) {
-+			pm8001_init_dev(pm8001_dev, dev);
-+			return pm8001_dev;
- 		}
- 	}
- 	if (dev == PM8001_MAX_DEVICES) {
-@@ -613,9 +622,7 @@ struct pm8001_device *pm8001_find_dev(struct pm8001_hba_info *pm8001_ha,
- 
- void pm8001_free_dev(struct pm8001_device *pm8001_dev)
- {
--	u32 id = pm8001_dev->id;
- 	memset(pm8001_dev, 0, sizeof(*pm8001_dev));
--	pm8001_dev->id = id;
- 	pm8001_dev->dev_type = SAS_PHY_UNUSED;
- 	pm8001_dev->device_id = PM8001_MAX_DEVICES;
- 	pm8001_dev->sas_device = NULL;
 -- 
-2.47.0.105.g07ac214952-goog
+Cheers,
+
+David / dhildenb
 
 
