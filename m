@@ -1,171 +1,340 @@
-Return-Path: <linux-kernel+bounces-375269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B2D9A93EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418759A93F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE7928300B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A573F1F22C90
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4287D1FF7A4;
-	Mon, 21 Oct 2024 23:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC21FEFDD;
+	Mon, 21 Oct 2024 23:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g+E98ERK"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+o8HRAC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B811E3766;
-	Mon, 21 Oct 2024 23:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729552151; cv=fail; b=jC8CXzvhYY/uf8+K+Qzng0JBDpfr4gifWuD0/UzoDgisSX+NL7ZHhWxEDX9IaMCd797RzIRsRdPr9B3RN23xQCcov+MN55iKeZn/b9tphkqHHR5k2pvBuBftUALW8deRzPOLR3qJGFvaedKOAUuT+I00vrHMHsvEg7x47nV5LOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729552151; c=relaxed/simple;
-	bh=ZlJy7TsHJF9CZZvuwwgfVIKQt0LBj4015Jr6UKIBO/0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T0xP064ZsHSI8iu8yLBBnVwbmYUka6fV1lC9dYg8ZShjCcO9b1h3qXjbjd63xX9vxaIeu+etf3fnduLIMSjHu6o2ZPK5nAMTPLlzwE4B+EVMdmKvR0VYqYkVbBIhEw3qXAeixsRPrpp82lDJdWuG8bMKZ7UAY0Uj3H8dHUqxI+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g+E98ERK; arc=fail smtp.client-ip=40.107.92.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GGKjefCo2K4aOzzGQHxYot0zNglkM6+j8EvTezUBPGrmILjcNuylLNJAwjYxXfpLVWc02Pw3WSbcTZOnlU/RFSPEEQqVhoauMjAaA3Pw34X8a4/IeNalH3p8FZ3sNfkKyEgPQnHe5TSIXWhBzS/qN0TEL1xUYIPbKbzPB2GAXfQKh1kFpjFY1HTIh6uFTx6LxsaOiyezPRI/7I8E3/QhrEW14g5+Gd9FxI8EUOnK5QqBECwS4chuq9jotHEqWoP4zpnv24cK7x2WOxmbxe4n6iBt6nnThJcf4ts6ObZTQGpz0K2Mnhu9+1wVswHWVvcVHeACBL2QDgdf6DSMMwV2jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vBBx6ucmCPHgdM14Cm9fhaj2Z7ZEuzt6RmJ7fuKaUOk=;
- b=VI4K3Gc2l0SorLevHfofLB/h6PvPsdBzfE7Xr3VJXOERqnPXI3nV5NKXUIX+xaIsnYBTo/2C27Lbavp96Va4arsWZGKKTs2tP0IOmhPSFcoIvtcFGZfv/cGnvqc+jXmSXpKquIaksBJakc5c54i1TL+hGHvy+n9uZXtohUA48jD5cmySHv91g3wpDEWk5Uw5EtNsqoAmpiFYrLUjhVUd8yWTSbzV1R10Y48hZW/Otr8AG37CMUinMErQYKXRNaM9ypgeHAaOPsT9rUT8d9bQCWQQqe9Y/HylNUX+/YUVDlclLDriG1lzd+oxwrkv3PnL7cYyc7VOcuOh5NlxPWemsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vBBx6ucmCPHgdM14Cm9fhaj2Z7ZEuzt6RmJ7fuKaUOk=;
- b=g+E98ERKzDHxuUpNNt7YLWVOk/l1ce+veazfDHUJY12ejQGdyu9g5B42IoqSgL27FBDvY432addui7/to8f331atTIkcs6fg0XuF9FZEe8JPknFeee2QQ9H0ztBcFiINsilAER295PdAHY80OQmz8gCPTZpNBnkNkJPssqsXdxdsvmiGbGCMOrja3ahgAZ5XlCp5+7edTWE7BNLZWOR5YsNg27h9CpB9UIzMdpYsxIhYzOzC8pFxKIqwfwD5T4PcG77OV16GrS7xt+bjLJUWaSvb2GPD/IjZkKq/7fQUdZzHi1r0SAPkEV7N2R8TMzaOc5UhsqXvjkb3uewRKv4u3A==
-Received: from SJ0PR13CA0186.namprd13.prod.outlook.com (2603:10b6:a03:2c3::11)
- by IA1PR12MB8309.namprd12.prod.outlook.com (2603:10b6:208:3fe::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Mon, 21 Oct
- 2024 23:09:06 +0000
-Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
- (2603:10b6:a03:2c3:cafe::85) by SJ0PR13CA0186.outlook.office365.com
- (2603:10b6:a03:2c3::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.15 via Frontend
- Transport; Mon, 21 Oct 2024 23:09:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.14 via Frontend Transport; Mon, 21 Oct 2024 23:09:05 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Oct
- 2024 16:08:50 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Oct
- 2024 16:08:50 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 21 Oct 2024 16:08:49 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>
-CC: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <jonathanh@nvidia.com>, <jgg@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, <mochs@nvidia.com>
-Subject: [PATCH] iommu/tegra241-cmdqv: Staticize cmdqv_debugfs_dir
-Date: Mon, 21 Oct 2024 16:08:46 -0700
-Message-ID: <20241021230847.811218-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B311E201D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729552472; cv=none; b=LpetXJPKD+cpuYPprR3rqd7ug/FF1KqRM0NijXDSN4hhVkNwgkixc+xVTaFw6LmT4YD8n9BH9um6h4Cmd64aac8K/0ycitNoR4hv5bxC5KIa15sLOBNJOQiYJRPhjkKVsP3L5UrgPqJvH/J3aJbkDS4Ah6rMSXdyBpH+DttRQ1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729552472; c=relaxed/simple;
+	bh=pmH0zHXeP5OH9YQvRucq/Si/jaZ+Ne4KpiQsfpoWjBc=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=HVNrXPAZsPx92iCTvwuRVxWc6nwBkeDii9fK/MENFPBhIN8pB3bfE/GiDVQIiUFvN9FkxrnioF9/fNcx873uCjvx3jwQ3TV0g6GWDS5ES3WWgWefsxHXM+NpkzoVi5bnd3y6jaUoXjYcUZ/Gc0WLi7LPCuX9NGY6IxmlIck+iGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+o8HRAC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729552469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zQ0MKqQxa7ETrGUeViXzkqtCEJr3CQ/fdaJCZsPv2V0=;
+	b=Z+o8HRAChWVwqKd2Y/AqvGI2eGMm9gybfXD+ZGbQ3GbpUct3/R5LJRomH8FDVlyN2S80X6
+	gfstvOr5Q8alh1Ad4HSQCLJv4esns+5h+x3OCo8PDaZaLZ/l8AG9DG2rEaELEhlld9DudM
+	xyMHenPApnxkQQ1ZWkDL07MYJt2vEH8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-Ayou6e6XMbyGpRoDZOL3cw-1; Mon,
+ 21 Oct 2024 19:14:25 -0400
+X-MC-Unique: Ayou6e6XMbyGpRoDZOL3cw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 753BC1956096;
+	Mon, 21 Oct 2024 23:14:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D4EB21956056;
+	Mon, 21 Oct 2024 23:14:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix missing subdir edit when renamed between parent dirs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|IA1PR12MB8309:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27689047-0f6b-42e5-b712-08dcf2255c61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FBLnAFr/fo+HSNshMNt6bSgSHAsd6DGEZG7L80KVs4QFyw1oPUTJsVF1zrpW?=
- =?us-ascii?Q?Y1A7VzNIBm1d3rE6hTW0pwYxGIk+fAKF7ITiwDQHfEnklqfbFXwB2BJgtlcp?=
- =?us-ascii?Q?EBaDFTk1WkB4kQSAQiYF9rdmlxNNAIOht2Gs8YCVZBGfssFCWqO0XMiooFVQ?=
- =?us-ascii?Q?eUmLMJbOPAGumTYF3397c0/aZ1awK9yvaUBP13Cn7iUGoU84UqkwEdzVyppu?=
- =?us-ascii?Q?pQCLwdt5xT6NZ/QlFEaohPPaM5f19qfWkjz1tNjqohgPC2W7nXctoTiDfqyP?=
- =?us-ascii?Q?0R7RItCT2M4gLv3zA5Dnv4DE8i0vzDdndCTjF4CggAXFioC2h6TLS2NsUHQP?=
- =?us-ascii?Q?52Dnzb3zsFK1vmFb3Ia5bjBeIH1UkEcbtznxAkThL/rxyrNF5EG1pYM2U3bc?=
- =?us-ascii?Q?ng+mwy/DxiS2HrY0k9R9RTT5Mn8OiLG6adDXTYhc7NFTYdGdjZtNgztJqmVN?=
- =?us-ascii?Q?5pVBjIU21H8y5rUrXyo1SEDVh4ZUhb94E5XqRjNtuA9ZwoOfePOVprKC3DO2?=
- =?us-ascii?Q?mCTBctSoGkdzzeZ36y8cOEpzQ5CLnwzrxTXQAh19Pb+P5EEMUq+iOn/BItHK?=
- =?us-ascii?Q?C/wTbP24h3FO95L82PbxycFVyHK+Znc8DZiAu3NtimV8zoPtIQ0MLnVAIhnD?=
- =?us-ascii?Q?2jy/Zy2NGtpHJyXfGxVNE+ddCJZsGUtdeC6Qp4UBuHOdBFotP39QCqgxiAxG?=
- =?us-ascii?Q?3bMIv2Ev0vqZo6RJ0J37vmPr8Uf3VD8HkT4zS0Y0lh7rYsYMh0M3jtZQG+2s?=
- =?us-ascii?Q?4oPdUd0DzgnnHY4p3jLfkl3aTM7f73Y8voH8E0pxWJ7K/zBn1TczmN4emWgd?=
- =?us-ascii?Q?q22OiBXzSyuOd5XN8JyGKifYzgp7uMpJFI5tVQUfpQn7DSrCR4p0Lw8SVNpA?=
- =?us-ascii?Q?kzMiR+uNBkxWTkP7jNFGRTU9E/Y9gEevSFcvnxK40Jc+EkVnWKVPAJoIeEn5?=
- =?us-ascii?Q?/t+JwgKKEXFL5jSXQP+c08zafR4PR5+OAnMKZ3qaq8VYw+ZOeJknMreGhI/X?=
- =?us-ascii?Q?f0FfIqILax6lyr6/glOUinUqRN2nufJCbcimyG7NDK0ffFu1TJJ262l1yXQs?=
- =?us-ascii?Q?eSDhd/7uhtkHibkXo+fTTTp/RRFDp4oaK/MlrNuvoPntwiDmd6+3fLXuMaeU?=
- =?us-ascii?Q?lZZ4qKDA1Vk2qv6YiNCkblzLHAGmMDkCQylcZ+9is1WwTRvp+7Ex94X3O944?=
- =?us-ascii?Q?FiNn8idpemcCXEx9NZ2MyqJIkH+/SNAFrMzPiklMTMH7qSUXz/fgsPoW3/YM?=
- =?us-ascii?Q?WgCofRKwWB6B6k09TOEU630FGMvuZJOq1gJZ311ZZzTxsvPmHYGsoyICcTBM?=
- =?us-ascii?Q?OrsM3xzG1uk2N4FQ4IhpddR4d8gh32wKG6yQSY6F820TgI4RB/VgrfWs1IvE?=
- =?us-ascii?Q?HI3jiedfs3ebW99cHMZ3twL2mh6nOmlyCq19bm9viq0D4ksxDQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 23:09:05.5824
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27689047-0f6b-42e5-b712-08dcf2255c61
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E9.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8309
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2411940.1729552461.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 22 Oct 2024 00:14:21 +0100
+Message-ID: <2411941.1729552461@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Fix a sparse warning.
+When rename moves an AFS subdirectory between parent directories, the
+subdir also needs a bit of editing: the ".." entry needs updating to point
+to the new parent (though I don't make use of the info) and the DV needs
+incrementing by 1 to reflect the change of content.  The server also sends
+a callback break notification on the subdirectory if we have one, but we
+can take care of recovering the promise next time we access the subdir.
 
-Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410172003.bRQEReTc-lkp@intel.com/
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+This can be triggered by something like:
+
+    mount -t afs %example.com:xfstest.test20 /xfstest.test/
+    mkdir /xfstest.test/{aaa,bbbb,aaa/ccc}
+    mv /xfstest.test/{aaa/ccc,bbbb/ccc}
+    touch /xfstest.test/bbbb/ccc/d
+
+When the pathwalk for the touch hits "ccc", kafs spots that the DV is
+incorrect and downloads it again unnecessarily.
+
+Fix this, if the rename target is a directory and the old and new
+parents are different, by:
+
+ (1) Incrementing the DV number of the target locally.
+
+ (2) Editing the ".." entry in the target to refer to its new parent's
+     vnode ID and uniquifier.
+
+cc: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
 ---
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/dir.c               |   25 ++++++++++++
+ fs/afs/dir_edit.c          |   91 +++++++++++++++++++++++++++++++++++++++=
++++++-
+ fs/afs/internal.h          |    2 =
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index fcd13d301fff..a243c543598c 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -800,7 +800,7 @@ static int tegra241_cmdqv_init_structures(struct arm_smmu_device *smmu)
- 	return 0;
+ include/trace/events/afs.h |    7 ++-
+ 4 files changed, 122 insertions(+), 3 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index f8622ed72e08..474062d22712 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -12,6 +12,7 @@
+ #include <linux/swap.h>
+ #include <linux/ctype.h>
+ #include <linux/sched.h>
++#include <linux/iversion.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include "internal.h"
+ #include "afs_fs.h"
+@@ -1823,6 +1824,8 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
+ct inode *dir,
+ =
+
+ static void afs_rename_success(struct afs_operation *op)
+ {
++	struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
++
+ 	_enter("op=3D%08x", op->debug_id);
+ =
+
+ 	op->ctime =3D op->file[0].scb.status.mtime_client;
+@@ -1832,6 +1835,22 @@ static void afs_rename_success(struct afs_operation=
+ *op)
+ 		op->ctime =3D op->file[1].scb.status.mtime_client;
+ 		afs_vnode_commit_status(op, &op->file[1]);
+ 	}
++
++	/* If we're moving a subdir between dirs, we need to update
++	 * its DV counter too as the ".." will be altered.
++	 */
++	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
++	    op->file[0].vnode !=3D op->file[1].vnode) {
++		u64 new_dv;
++
++		write_seqlock(&vnode->cb_lock);
++
++		new_dv =3D vnode->status.data_version + 1;
++		vnode->status.data_version =3D new_dv;
++		inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
++
++		write_sequnlock(&vnode->cb_lock);
++	}
  }
- 
--struct dentry *cmdqv_debugfs_dir;
-+static struct dentry *cmdqv_debugfs_dir;
- 
- static struct arm_smmu_device *
- __tegra241_cmdqv_probe(struct arm_smmu_device *smmu, struct resource *res,
--- 
-2.34.1
+ =
+
+ static void afs_rename_edit_dir(struct afs_operation *op)
+@@ -1873,6 +1892,12 @@ static void afs_rename_edit_dir(struct afs_operatio=
+n *op)
+ 				 &vnode->fid, afs_edit_dir_for_rename_2);
+ 	}
+ =
+
++	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
++	    new_dvnode !=3D orig_dvnode &&
++	    test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
++		afs_edit_dir_update_dotdot(vnode, new_dvnode,
++					   afs_edit_dir_for_rename_sub);
++	=
+
+ 	new_inode =3D d_inode(new_dentry);
+ 	if (new_inode) {
+ 		spin_lock(&new_inode->i_lock);
+diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
+index a71bff10496b..fe223fb78111 100644
+--- a/fs/afs/dir_edit.c
++++ b/fs/afs/dir_edit.c
+@@ -127,10 +127,10 @@ static struct folio *afs_dir_get_folio(struct afs_vn=
+ode *vnode, pgoff_t index)
+ /*
+  * Scan a directory block looking for a dirent of the right name.
+  */
+-static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr=
+ *name,
++static int afs_dir_scan_block(const union afs_xdr_dir_block *block, const=
+ struct qstr *name,
+ 			      unsigned int blocknum)
+ {
+-	union afs_xdr_dirent *de;
++	const union afs_xdr_dirent *de;
+ 	u64 bitmap;
+ 	int d, len, n;
+ =
+
+@@ -492,3 +492,90 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
+ 	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	goto out_unmap;
+ }
++
++/*
++ * Edit a subdirectory that has been moved between directories to update =
+the
++ * ".." entry.
++ */
++void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
+ *new_dvnode,
++				enum afs_edit_dir_reason why)
++{
++	union afs_xdr_dir_block *block;
++	union afs_xdr_dirent *de;
++	struct folio *folio;
++	unsigned int nr_blocks, b;
++	pgoff_t index;
++	loff_t i_size;
++	int slot;
++
++	_enter("");
++
++	i_size =3D i_size_read(&vnode->netfs.inode);
++	if (i_size < AFS_DIR_BLOCK_SIZE) {
++		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
++		return;
++	}
++	nr_blocks =3D i_size / AFS_DIR_BLOCK_SIZE;
++
++	/* Find a block that has sufficient slots available.  Each folio
++	 * contains two or more directory blocks.
++	 */
++	for (b =3D 0; b < nr_blocks; b++) {
++		index =3D b / AFS_DIR_BLOCKS_PER_PAGE;
++		folio =3D afs_dir_get_folio(vnode, index);
++		if (!folio)
++			goto error;
++
++		block =3D kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_pos(fo=
+lio));
++
++		/* Abandon the edit if we got a callback break. */
++		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
++			goto invalidated;
++
++		slot =3D afs_dir_scan_block(block, &dotdot_name, b);
++		if (slot >=3D 0)
++			goto found_dirent;
++
++		kunmap_local(block);
++		folio_unlock(folio);
++		folio_put(folio);
++	}
++
++	/* Didn't find the dirent to clobber.  Download the directory again. */
++	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
++			   0, 0, 0, 0, "..");
++	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
++	goto out;
++
++found_dirent:
++	de =3D &block->dirents[slot];
++	de->u.vnode  =3D htonl(new_dvnode->fid.vnode);
++	de->u.unique =3D htonl(new_dvnode->fid.unique);
++
++	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
++			   ntohl(de->u.vnode), ntohl(de->u.unique), "..");
++
++	kunmap_local(block);
++	folio_unlock(folio);
++	folio_put(folio);
++	inode_set_iversion_raw(&vnode->netfs.inode, vnode->status.data_version);
++
++out:
++	_leave("");
++	return;
++
++invalidated:
++	kunmap_local(block);
++	folio_unlock(folio);
++	folio_put(folio);
++	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
++			   0, 0, 0, 0, "..");
++	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
++	goto out;
++
++error:
++	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
++			   0, 0, 0, 0, "..");
++	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
++	goto out;
++}
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 52aab09a32a9..c9d620175e80 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -1073,6 +1073,8 @@ extern void afs_check_for_remote_deletion(struct afs=
+_operation *);
+ extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
+s_fid *,
+ 			     enum afs_edit_dir_reason);
+ extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
+fs_edit_dir_reason);
++void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
+ *new_dvnode,
++				enum afs_edit_dir_reason why);
+ =
+
+ /*
+  * dir_silly.c
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 450c44c83a5d..a0aed1a428a1 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -331,7 +331,11 @@ enum yfs_cm_operation {
+ 	EM(afs_edit_dir_delete,			"delete") \
+ 	EM(afs_edit_dir_delete_error,		"d_err ") \
+ 	EM(afs_edit_dir_delete_inval,		"d_invl") \
+-	E_(afs_edit_dir_delete_noent,		"d_nent")
++	EM(afs_edit_dir_delete_noent,		"d_nent") \
++	EM(afs_edit_dir_update_dd,		"u_ddot") \
++	EM(afs_edit_dir_update_error,		"u_fail") \
++	EM(afs_edit_dir_update_inval,		"u_invl") \
++	E_(afs_edit_dir_update_nodd,		"u_nodd")
+ =
+
+ #define afs_edit_dir_reasons				  \
+ 	EM(afs_edit_dir_for_create,		"Create") \
+@@ -340,6 +344,7 @@ enum yfs_cm_operation {
+ 	EM(afs_edit_dir_for_rename_0,		"Renam0") \
+ 	EM(afs_edit_dir_for_rename_1,		"Renam1") \
+ 	EM(afs_edit_dir_for_rename_2,		"Renam2") \
++	EM(afs_edit_dir_for_rename_sub,		"RnmSub") \
+ 	EM(afs_edit_dir_for_rmdir,		"RmDir ") \
+ 	EM(afs_edit_dir_for_silly_0,		"S_Ren0") \
+ 	EM(afs_edit_dir_for_silly_1,		"S_Ren1") \
 
 
