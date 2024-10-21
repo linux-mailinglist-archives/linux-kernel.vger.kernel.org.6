@@ -1,98 +1,187 @@
-Return-Path: <linux-kernel+bounces-374422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D0E9A69ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 961AA9A6A02
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284D8284047
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490FA281E6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432F21F429E;
-	Mon, 21 Oct 2024 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfU7CQv4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C241E0DD7;
-	Mon, 21 Oct 2024 13:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753191F81A6;
+	Mon, 21 Oct 2024 13:23:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B481EC01E;
+	Mon, 21 Oct 2024 13:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516811; cv=none; b=RpWUt4+zJ5A0u+614SuUGKjfcL0FxA87DbXBlu2XDNLEkd3e6MiLFjRt5xWXOpdb7ZRLsgI/kWcjkT4DzmLALvAu8cG5CzUbbumxJlZrM3Q6AN/+zNEAdaUKXLLVjaDjLTh/n2VWN91jTYp/1mxKTXOQRoFNVZBjjuNgA60L5Pk=
+	t=1729516995; cv=none; b=lpZJ/Bo9Ev/NPQOpEJ5aB1O+mKrVKwFpDqgDJDGY5MXphjf6Bx/FCuSWLg+qgfvNXKRAihK71f2Lk1ELAreJHVSngXvXNgpt1Qi+sr16A+miSV747zYPHSaLe9CVZZj/jQa4siodZWpT2L1MxcKQStPPNl9tRhAz4gbtEwsesgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516811; c=relaxed/simple;
-	bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sqdNbuLa9Xyt3a85a2lYXshwxgLND0WUVf/Kwx92uqKguHf23sNs5hCNhRloAy0siallgRQ2c9GGv5fu9O6F2Mt2Abg3pBNb02E66+tVX90zu8LcN80PbDLACKuypYMVjcJ4jbc6BTYu5swjWhjj0G5T9AYXhLoJZXoyJRo4SqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfU7CQv4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D866DC4CEC3;
-	Mon, 21 Oct 2024 13:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729516811;
-	bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rfU7CQv4/Ex0Hm4HCwQgGues8xgjV4uUlbKKs6KE4dQK3Yfnkex+Cf6GceY1QGIqX
-	 couOKavPDfCgJI5IKQuFYwKAEPrVO6cAPjEMZI2O6W8KuQOYiD6snLXoRJ2kN1uGdw
-	 JSd0P6qs0Ce9AmIeo2YR0kWUb7lYYT/dmpfdZ+4wi6nQa/u10JfT9e7FaJTErq8f0Z
-	 Z/iHJtJ+3ro+ocX8JRMJekUcvc4wPEXe1e5oWxE3Zgqlk4lzS23xeEiob3SqtX6CNd
-	 BFdHC6Q/NEjxW1II4/+R9HEiEUPB/ssJvxOxWXHO0YQoB/ypyFdLIPtue4IquYgSzn
-	 IEq9DUPYwDK2w==
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: Re: [PATCH v2] acl: Annotate struct posix_acl with __counted_by()
-Date: Mon, 21 Oct 2024 15:20:03 +0200
-Message-ID: <20241021-skalpell-kulant-6622b37fc93a@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241018121426.155247-2-thorsten.blum@linux.dev>
-References: <20241018121426.155247-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729516995; c=relaxed/simple;
+	bh=sZVT35tPktjswObqMzDeNjpp8MfKEIT8nIy1KCQbxUQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sF/oF9SKWLwPVFcclItM4nMbFAO+AMKWGk0Cg1481KQTRa2KgXkDhQ2Axxfc5QcrPJlPt9+4+zIz3Z3Y9VD+cJupxbNu4tAmYv1UWJChrCI/hy5UJCt72VQa8D/OYQ62nm6iOv2vz3I2qntAMXZjJpQF6himc2gtRkRsuuDKiqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1B4ADA7;
+	Mon, 21 Oct 2024 06:23:40 -0700 (PDT)
+Received: from [10.57.24.27] (unknown [10.57.24.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8DCB3F73B;
+	Mon, 21 Oct 2024 06:22:59 -0700 (PDT)
+Message-ID: <b6ca55b7-4de2-4085-97bd-619f91d9fcb8@arm.com>
+Date: Mon, 21 Oct 2024 14:22:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1140; i=brauner@kernel.org; h=from:subject:message-id; bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLhbLs27gs1nVGgsHTtwyXmKQ+vWhh1Z9b6Prk4W8OH SV3u+CJHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPhYWP47667nlc2e93rIzHb 1r0/WdDd8UurwK+yecexRLN7vLXWzowMx7+dqVqjLabsGbLud3tYPN/RS2szn/DNu78w+d++/VX L+QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Steven Price <steven.price@arm.com>
+Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+ Charlie Jenkins <charlie@rivosinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
+ <yu7um2tcxg2apoz372rmzpkrfgbb42ndvabvrsp4usb2e3bkrf@huaucjsp5vlj>
+ <Ztnp3OAIRz/daj7s@ghost>
+ <pbotlphw77fkfacldtpxfjcs2w5nhb2uvxszv5rmlrhjm42akd@4pvcqb7ojq4v>
+Content-Language: en-GB
+In-Reply-To: <pbotlphw77fkfacldtpxfjcs2w5nhb2uvxszv5rmlrhjm42akd@4pvcqb7ojq4v>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Oct 2024 14:14:21 +0200, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> a_entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+On 09/09/2024 10:46, Kirill A. Shutemov wrote:
+> On Thu, Sep 05, 2024 at 10:26:52AM -0700, Charlie Jenkins wrote:
+>> On Thu, Sep 05, 2024 at 09:47:47AM +0300, Kirill A. Shutemov wrote:
+>>> On Thu, Aug 29, 2024 at 12:15:57AM -0700, Charlie Jenkins wrote:
+>>>> Some applications rely on placing data in free bits addresses allocated
+>>>> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+>>>> address returned by mmap to be less than the 48-bit address space,
+>>>> unless the hint address uses more than 47 bits (the 48th bit is reserved
+>>>> for the kernel address space).
+>>>>
+>>>> The riscv architecture needs a way to similarly restrict the virtual
+>>>> address space. On the riscv port of OpenJDK an error is thrown if
+>>>> attempted to run on the 57-bit address space, called sv57 [1].  golang
+>>>> has a comment that sv57 support is not complete, but there are some
+>>>> workarounds to get it to mostly work [2].
 > 
-> Use struct_size() to calculate the number of bytes to allocate for new
-> and cloned acls and remove the local size variables.
+> I also saw libmozjs crashing with 57-bit address space on x86.
 > 
-> [...]
+>>>> These applications work on x86 because x86 does an implicit 47-bit
+>>>> restriction of mmap() address that contain a hint address that is less
+>>>> than 48 bits.
+>>>>
+>>>> Instead of implicitly restricting the address space on riscv (or any
+>>>> current/future architecture), a flag would allow users to opt-in to this
+>>>> behavior rather than opt-out as is done on other architectures. This is
+>>>> desirable because it is a small class of applications that do pointer
+>>>> masking.
+> 
+> You reiterate the argument about "small class of applications". But it
+> makes no sense to me.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Sorry to chime in late on this - I had been considering implementing
+something like MAP_BELOW_HINT and found this thread.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+While the examples of applications that want to use high VA bits and get
+bitten by future upgrades is not very persuasive. It's worth pointing
+out that there are a variety of somewhat horrid hacks out there to work
+around this feature not existing.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+E.g. from my brief research into other code:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+  * Box64 seems to have a custom allocator based on reading 
+    /proc/self/maps to allocate a block of VA space with a low enough 
+    address [1]
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+  * PHP has code reading /proc/self/maps - I think this is to find a 
+    segment which is close enough to the text segment [2]
 
-[1/1] acl: Annotate struct posix_acl with __counted_by()
-      https://git.kernel.org/vfs/vfs/c/ac0812ef00c8
+  * FEX-Emu mmap()s the upper 128TB of VA on Arm to avoid full 48 bit
+    addresses [3][4]
+
+  * pmdk has some funky code to find the lowest address that meets 
+    certain requirements - this does look like an ALSR alternative and 
+    probably couldn't directly use MAP_BELOW_HINT, although maybe this 
+    suggests we need a mechanism to map without a VA-range? [5]
+
+  * MIT-Scheme parses /proc/self/maps to find the lowest mapping within 
+    a range [6]
+
+  * LuaJIT uses an approach to 'probe' to find a suitable low address 
+    for allocation [7]
+
+The biggest benefit I see of MAP_BELOW_HINT is that it would allow a
+library to get low addresses without causing any problems for the rest
+of the application. The use case I'm looking at is in a library and 
+therefore a personality mode wouldn't be appropriate (because I don't 
+want to affect the rest of the application). Reading /proc/self/maps
+is also problematic because other threads could be allocating/freeing
+at the same time.
+
+Thanks,
+Steve
+
+
+[1] https://sources.debian.org/src/box64/0.3.0+dfsg-1/src/custommem.c/
+[2] https://sources.debian.org/src/php8.2/8.2.24-1/ext/opcache/shared_alloc_mmap.c/#L62
+[3] https://github.com/FEX-Emu/FEX/blob/main/FEXCore/Source/Utils/Allocator.cpp
+[4] https://github.com/FEX-Emu/FEX/commit/df2f1ad074e5cdfb19a0bd4639b7604f777fb05c
+[5] https://sources.debian.org/src/pmdk/1.13.1-1.1/src/common/mmap_posix.c/?hl=29#L29
+[6] https://sources.debian.org/src/mit-scheme/12.1-3/src/microcode/ux.c/#L826
+[7] https://sources.debian.org/src/luajit/2.1.0+openresty20240815-1/src/lj_alloc.c/
+
+> With full address space by default, this small class of applications is
+> going to *broken* unless they would handle RISC-V case specifically.
+> 
+> On other hand, if you limit VA to 128TiB by default (like many
+> architectures do[1]) everything would work without intervention.
+> And if an app needs wider address space it would get it with hint opt-in,
+> because it is required on x86-64 anyway. Again, no RISC-V-specific code.
+> 
+> I see no upside with your approach. Just worse user experience.
+> 
+> [1] See va_high_addr_switch test case in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/mm/Makefile#n115
+> 
+
 
