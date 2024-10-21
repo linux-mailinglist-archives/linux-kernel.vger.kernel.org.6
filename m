@@ -1,146 +1,397 @@
-Return-Path: <linux-kernel+bounces-374545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FC29A6BC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:11:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910FA9A6BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D482E280A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D673281562
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5871F9AAE;
-	Mon, 21 Oct 2024 14:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565401F4726;
+	Mon, 21 Oct 2024 14:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wxpfwnjX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dv0Ajaei"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fs+EI15h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BECA1F4FB9;
-	Mon, 21 Oct 2024 14:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C221FA242
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519885; cv=none; b=qFwE+CZXv5zjsyD4ewEy+TGRxwyeOhhtC9Vz1qjhARaBQHcXzu3uZOI874g9805ruBKYCOgWtDNKcUU5KoyVmGWyAnpRrwiWKxu2Uxr+heYqlIq9SVIi54n/fr63jdjtHA+r6c0QymuFlyoBA/vrqpIswXSJoBx1i9jVySy6h1M=
+	t=1729519891; cv=none; b=uPtKLYzpsi1lj8eIylE8rHde8fcwqejlKShTtL7yxEhX2ziHB2BPcUO1AGhoKrwZz5Bw5A70pzSUJhzQQ8bTd93wBVWGiK6IN4gy1NA9xLZmBvwWDMzVOHDaTOSF2XoyXRMdDJ7kAVa+V8aoJDG1ryCAEtZkkwwLYlnD+MZrRfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519885; c=relaxed/simple;
-	bh=b/cW38UmE3Pv76IHe4RPgR096CPrB/Pvt0IRGOkpP/U=;
+	s=arc-20240116; t=1729519891; c=relaxed/simple;
+	bh=XkdqeatQDCxubXBfPkfBchjPnMYSbzeBn/G0Sha+xE0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jgSsN9HKfXo2ldB6ujay6H2XpHNROud+ROpOo4E2m15jYVMIclr963nB8HJmHzYEd0unNNAaVTcpzBlw8h0sv51YxNtNOf+9Dnnj/OVFbJ6s1uNSlSBDLA2UMp0gPUhcZ18eRTSSGb1bKJyH2i43WgStczU9vY36mZVmBKbB4DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wxpfwnjX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dv0Ajaei; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729519881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX3cYUCg0C3YKx6EmlFEipnB4MzYOAQ48LbD1o4kUOs=;
-	b=wxpfwnjXqTMfV9S2UECFbZ7QBnCB8nOxPdiMmaIGKniEmliHqLsndr4NxVwDJ2/O5sHQG8
-	AQbH0Z3K/dbvv+Ng4c6nM5/ljqDUivc0STxOT/IX1v+0xwv0roFXAuUetD7puY20QH5o7/
-	nNIR95PfOuHz8anb1DEBUADi5n4cekNY8VJQtTcGpqHQ1mMq57erlcXUJ72HZAHEwGzlrp
-	XqlFQ/W2znK53SE2bl9qB6wPRVKON8Jw7cJMC8J2DKztey/+VVO4bkqNxDgvSh/7rf0A6X
-	4UeJXMP8Hy3BB2TVKhftXpqqBufc0ZVHLY4TaNVkmdFCCwDDY7VWD9me1ENP9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729519881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX3cYUCg0C3YKx6EmlFEipnB4MzYOAQ48LbD1o4kUOs=;
-	b=dv0Ajaeim9j8QL4yXE0A+Wmil/cwevlLfy0I5GBbsismvMz9aq3bbC4KB58qgfGPIQkFOp
-	PzfpLHKqaNT+HpAA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Marcos Paulo de Souza <mpdesouza@suse.com>, Steven Rostedt
- <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
-In-Reply-To: <ZxZYKe0t7jWX-_1K@pathway.suse.cz>
-References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
- <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
- <84plnz29zv.fsf@jogness.linutronix.de> <ZxDl-VcVAI8DGM40@pathway.suse.cz>
- <847ca5rigk.fsf@jogness.linutronix.de> <ZxZYKe0t7jWX-_1K@pathway.suse.cz>
-Date: Mon, 21 Oct 2024 16:17:20 +0206
-Message-ID: <8434kpfsvr.fsf@jogness.linutronix.de>
+	 MIME-Version:Content-Type; b=WgMhdGtwE6vA+hDTg9svdXxsUZ4pFhXi4d1H4F5/kLg/0HueVS4xjCLGDBjJT3deB+L04E68Z8y/wpqhRXKvVx3y4M9sSXbm6/x9dNI6ZOzZeixvNzj2l63C97tWXeANrBZZ60/dvq74AonXPTJR8HT52QeJPbPXbw9ospZhzkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fs+EI15h; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729519889; x=1761055889;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=XkdqeatQDCxubXBfPkfBchjPnMYSbzeBn/G0Sha+xE0=;
+  b=Fs+EI15hBWGsLH0o/8FD7e9c9fB4cJ90xqH3fynBbbr2tHpRzJR3LsTA
+   Jh6Rw/97DOchkhUXShV0KZ9yolQEnL2iMdL3LebGFDpnCke/IQ2zEzE0x
+   Qt9QDIqt51OJ6GifzeQrOkAvbpghQgkPU0nrVjqKzqHSBvwVhr9vngDTD
+   Ddxi4nEE9AOPIOioSpYywKhHHgsSKgQNZO73IRAV9jM+ivAeqBbpYJ8Ok
+   6UWGbhOKrdqRJhOfdUcnDTeLTlwNAUnIm2YzsjH8HWme6dDaFUEhowws9
+   iHpN/zJxKKjqYVwlNz+mLLZ0dqbUiHt60s3BHnUU1aPS89oUd8EJ4c2mC
+   A==;
+X-CSE-ConnectionGUID: csYTh0xtS1WXlgMiw4b/Eg==
+X-CSE-MsgGUID: mGUjbL5UTDCQN7jR7cslbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="28445768"
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="28445768"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:11:28 -0700
+X-CSE-ConnectionGUID: MuaBI2t+Sq+qsLRXTM36Fw==
+X-CSE-MsgGUID: O0WjhHM4SZKSfVvQ2Q2/3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="79484935"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.222])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:11:25 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/edid: transition to passing struct cea_db * to
+ cae_db_payload_len
+In-Reply-To: <CAJvTgAjb1h=1vn3MVNbTu=qrxf2zaG1RgF4jTM3uobTfpd9YRw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241011152929.10145-1-vamsikrishna.brahmajosyula@gmail.com>
+ <87jze1y3mb.fsf@intel.com>
+ <CAJvTgAjb1h=1vn3MVNbTu=qrxf2zaG1RgF4jTM3uobTfpd9YRw@mail.gmail.com>
+Date: Mon, 21 Oct 2024 17:11:21 +0300
+Message-ID: <87h695y29i.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-21, Petr Mladek <pmladek@suse.com> wrote:
->> That will not work because migrate_enable() can only be called from
->> can_sleep context. Instead, the migrate_disable()/enable() should be at
->> the few (one?) call sites where printk_loud_console_enter()/exit() is
->> used from task context.
+On Mon, 21 Oct 2024, Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyul=
+a@gmail.com> wrote:
+> On Mon, Oct 21, 2024 at 7:12=E2=80=AFPM Jani Nikula <jani.nikula@linux.in=
+tel.com> wrote:
+>>
+>> On Fri, 11 Oct 2024, Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajos=
+yula@gmail.com> wrote:
+>> > Address the FIXME in cea_db_payload_len
+>> >       Transition to passing struct cea_db * everywhere
+>>
+>> You've misunderstood the comment. The point is to pass struct cea_db *
+>> around, not to stick to u8 * and drop calls to cea_db_payload_len().
+>>
+> Thank you for the response.
+> Would below be an acceptable change for the FIXME?
+> 1. Use a macro to extract length from  (db->tag_length & 0x1f)
+
+No, why would you do that? We have the function.
+
+> 2. Pass struct cea_db * to all individual parsers
+
+Yes. Look at all callers of cea_db_payload_len() and propagate struct
+cea_db *db to them instead of u8 *db.
+
+The related and relevant other FIXME comment is in drm_parse_cea_ext():
+
+	/* FIXME: convert parsers to use struct cea_db */
+
+That's where you should start. Some of the parsers already handle struct
+cea_db, and others need to use const u8 *data.
+
+Please don't cram all of this in one patch, probably start off function
+by function. It's easier to squash patches later than to split.
+Yes.
+
+> 3. Use db->data? / convert to u8 and use db[i] where needed.
+
+There's cea_db_data() for this. The slightly annoying part is that for
+extended tags and vendor blocks the "actual" data is at an offset. See
+for example drm_parse_hdmi_vsdb_video(). It's good that the len checks
+and db dereferences match, and that they match what's written in the
+spec, but it's a bit funny in the code. Maybe not something you need to
+worry about at this point.
+
+
+BR,
+Jani.
+
+
 >
-> Hmm, if I get it correctly, we could not use migrate_disable() in
-> __handle_sysrq() because it can be called also in atomic context,
+>> BR,
+>> Jani.
+>>
+>> >
+>> > Precompute the payload length in drm_parse_cea_ext and pass to
+>> > individual parsers to avoid casting struct cea_db pointer to u8
+>> > pointer where length is needed.
+>> >
+>> > Since the type of payload length is inconsistent in the file,
+>> > use u8, u16 where it was already in place, use int elsewhere.
+>> >
+>> > Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula=
+@gmail.com>
+>> > ---
+>> >  drivers/gpu/drm/drm_edid.c | 63 ++++++++++++++++----------------------
+>> >  1 file changed, 27 insertions(+), 36 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+>> > index 855beafb76ff..80442e8b8ac6 100644
+>> > --- a/drivers/gpu/drm/drm_edid.c
+>> > +++ b/drivers/gpu/drm/drm_edid.c
+>> > @@ -4977,11 +4977,8 @@ static int cea_db_tag(const struct cea_db *db)
+>> >       return db->tag_length >> 5;
+>> >  }
+>> >
+>> > -static int cea_db_payload_len(const void *_db)
+>> > +static int cea_db_payload_len(const struct cea_db *db)
+>> >  {
+>> > -     /* FIXME: Transition to passing struct cea_db * everywhere. */
+>> > -     const struct cea_db *db =3D _db;
+>> > -
+>> >       return db->tag_length & 0x1f;
+>> >  }
+>> >
+>> > @@ -5432,22 +5429,18 @@ static uint8_t hdr_metadata_type(const u8 *edi=
+d_ext)
+>> >  }
+>> >
+>> >  static void
+>> > -drm_parse_hdr_metadata_block(struct drm_connector *connector, const u=
+8 *db)
+>> > +drm_parse_hdr_metadata_block(struct drm_connector *connector, const u=
+8 *db, const u16 payload_len)
+>> >  {
+>> > -     u16 len;
+>> > -
+>> > -     len =3D cea_db_payload_len(db);
+>> > -
+>> >       connector->hdr_sink_metadata.hdmi_type1.eotf =3D
+>> >                                               eotf_supported(db);
+>> >       connector->hdr_sink_metadata.hdmi_type1.metadata_type =3D
+>> >                                               hdr_metadata_type(db);
+>> >
+>> > -     if (len >=3D 4)
+>> > +     if (payload_len >=3D 4)
+>> >               connector->hdr_sink_metadata.hdmi_type1.max_cll =3D db[4=
+];
+>> > -     if (len >=3D 5)
+>> > +     if (payload_len >=3D 5)
+>> >               connector->hdr_sink_metadata.hdmi_type1.max_fall =3D db[=
+5];
+>> > -     if (len >=3D 6) {
+>> > +     if (payload_len >=3D 6) {
+>> >               connector->hdr_sink_metadata.hdmi_type1.min_cll =3D db[6=
+];
+>> >
+>> >               /* Calculate only when all values are available */
+>> > @@ -5457,20 +5450,18 @@ drm_parse_hdr_metadata_block(struct drm_connec=
+tor *connector, const u8 *db)
+>> >
+>> >  /* HDMI Vendor-Specific Data Block (HDMI VSDB, H14b-VSDB) */
+>> >  static void
+>> > -drm_parse_hdmi_vsdb_audio(struct drm_connector *connector, const u8 *=
+db)
+>> > +drm_parse_hdmi_vsdb_audio(struct drm_connector *connector, const u8 *=
+db, u8 payload_len)
+>> >  {
+>> > -     u8 len =3D cea_db_payload_len(db);
+>> > -
+>> > -     if (len >=3D 6 && (db[6] & (1 << 7)))
+>> > +     if (payload_len >=3D 6 && (db[6] & (1 << 7)))
+>> >               connector->eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |=3D DRM_ELD=
+_SUPPORTS_AI;
+>> >
+>> > -     if (len >=3D 10 && hdmi_vsdb_latency_present(db)) {
+>> > +     if (payload_len >=3D 10 && hdmi_vsdb_latency_present(db)) {
+>> >               connector->latency_present[0] =3D true;
+>> >               connector->video_latency[0] =3D db[9];
+>> >               connector->audio_latency[0] =3D db[10];
+>> >       }
+>> >
+>> > -     if (len >=3D 12 && hdmi_vsdb_i_latency_present(db)) {
+>> > +     if (payload_len >=3D 12 && hdmi_vsdb_i_latency_present(db)) {
+>> >               connector->latency_present[1] =3D true;
+>> >               connector->video_latency[1] =3D db[11];
+>> >               connector->audio_latency[1] =3D db[12];
+>> > @@ -5695,7 +5686,7 @@ static void drm_edid_to_eld(struct drm_connector=
+ *connector,
+>> >               case CTA_DB_VENDOR:
+>> >                       /* HDMI Vendor-Specific Data Block */
+>> >                       if (cea_db_is_hdmi_vsdb(db))
+>> > -                             drm_parse_hdmi_vsdb_audio(connector, (co=
+nst u8 *)db);
+>> > +                             drm_parse_hdmi_vsdb_audio(connector, (co=
+nst u8 *)db, len);
+>> >                       break;
+>> >               default:
+>> >                       break;
+>> > @@ -6122,7 +6113,7 @@ static void drm_parse_ycbcr420_deep_color_info(s=
+truct drm_connector *connector,
+>> >  }
+>> >
+>> >  static void drm_parse_dsc_info(struct drm_hdmi_dsc_cap *hdmi_dsc,
+>> > -                            const u8 *hf_scds)
+>> > +                            const u8 *hf_scds, int payload_len)
+>> >  {
+>> >       hdmi_dsc->v_1p2 =3D hf_scds[11] & DRM_EDID_DSC_1P2;
+>> >
+>> > @@ -6142,7 +6133,7 @@ static void drm_parse_dsc_info(struct drm_hdmi_d=
+sc_cap *hdmi_dsc,
+>> >               /* Supports min 8 BPC if DSC 1.2 is supported*/
+>> >               hdmi_dsc->bpc_supported =3D 8;
+>> >
+>> > -     if (cea_db_payload_len(hf_scds) >=3D 12 && hf_scds[12]) {
+>> > +     if (payload_len >=3D 12 && hf_scds[12]) {
+>> >               u8 dsc_max_slices;
+>> >               u8 dsc_max_frl_rate;
+>> >
+>> > @@ -6188,13 +6179,13 @@ static void drm_parse_dsc_info(struct drm_hdmi=
+_dsc_cap *hdmi_dsc,
+>> >               }
+>> >       }
+>> >
+>> > -     if (cea_db_payload_len(hf_scds) >=3D 13 && hf_scds[13])
+>> > +     if (payload_len >=3D 13 && hf_scds[13])
+>> >               hdmi_dsc->total_chunk_kbytes =3D hf_scds[13] & DRM_EDID_=
+DSC_TOTAL_CHUNK_KBYTES;
+>> >  }
+>> >
+>> >  /* Sink Capability Data Structure */
+>> >  static void drm_parse_hdmi_forum_scds(struct drm_connector *connector,
+>> > -                                   const u8 *hf_scds)
+>> > +                                   const u8 *hf_scds, int payload_len)
+>> >  {
+>> >       struct drm_display_info *info =3D &connector->display_info;
+>> >       struct drm_hdmi_info *hdmi =3D &info->hdmi;
+>> > @@ -6247,8 +6238,8 @@ static void drm_parse_hdmi_forum_scds(struct drm=
+_connector *connector,
+>> >
+>> >       drm_parse_ycbcr420_deep_color_info(connector, hf_scds);
+>> >
+>> > -     if (cea_db_payload_len(hf_scds) >=3D 11 && hf_scds[11]) {
+>> > -             drm_parse_dsc_info(hdmi_dsc, hf_scds);
+>> > +     if (payload_len >=3D 11 && hf_scds[11]) {
+>> > +             drm_parse_dsc_info(hdmi_dsc, hf_scds, payload_len);
+>> >               dsc_support =3D true;
+>> >       }
+>> >
+>> > @@ -6259,7 +6250,7 @@ static void drm_parse_hdmi_forum_scds(struct drm=
+_connector *connector,
+>> >  }
+>> >
+>> >  static void drm_parse_hdmi_deep_color_info(struct drm_connector *conn=
+ector,
+>> > -                                        const u8 *hdmi)
+>> > +                                        const u8 *hdmi, const u8 payl=
+oad_len)
+>> >  {
+>> >       struct drm_display_info *info =3D &connector->display_info;
+>> >       unsigned int dc_bpc =3D 0;
+>> > @@ -6267,7 +6258,7 @@ static void drm_parse_hdmi_deep_color_info(struc=
+t drm_connector *connector,
+>> >       /* HDMI supports at least 8 bpc */
+>> >       info->bpc =3D 8;
+>> >
+>> > -     if (cea_db_payload_len(hdmi) < 6)
+>> > +     if (payload_len < 6)
+>> >               return;
+>> >
+>> >       if (hdmi[6] & DRM_EDID_HDMI_DC_30) {
+>> > @@ -6320,18 +6311,17 @@ static void drm_parse_hdmi_deep_color_info(str=
+uct drm_connector *connector,
+>> >
+>> >  /* HDMI Vendor-Specific Data Block (HDMI VSDB, H14b-VSDB) */
+>> >  static void
+>> > -drm_parse_hdmi_vsdb_video(struct drm_connector *connector, const u8 *=
+db)
+>> > +drm_parse_hdmi_vsdb_video(struct drm_connector *connector, const u8 *=
+db, const u8 payload_len)
+>> >  {
+>> >       struct drm_display_info *info =3D &connector->display_info;
+>> > -     u8 len =3D cea_db_payload_len(db);
+>> >
+>> >       info->is_hdmi =3D true;
+>> >
+>> >       info->source_physical_address =3D (db[4] << 8) | db[5];
+>> >
+>> > -     if (len >=3D 6)
+>> > +     if (payload_len >=3D 6)
+>> >               info->dvi_dual =3D db[6] & 1;
+>> > -     if (len >=3D 7)
+>> > +     if (payload_len >=3D 7)
+>> >               info->max_tmds_clock =3D db[7] * 5000;
+>> >
+>> >       /*
+>> > @@ -6340,14 +6330,14 @@ drm_parse_hdmi_vsdb_video(struct drm_connector=
+ *connector, const u8 *db)
+>> >        * HDMI infoframe support was first added in HDMI 1.4. Assume th=
+e sink
+>> >        * supports infoframes if HDMI_Video_present is set.
+>> >        */
+>> > -     if (len >=3D 8 && db[8] & BIT(5))
+>> > +     if (payload_len >=3D 8 && db[8] & BIT(5))
+>> >               info->has_hdmi_infoframe =3D true;
+>> >
+>> >       drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] HDMI: DVI dual %d=
+, max TMDS clock %d kHz\n",
+>> >                   connector->base.id, connector->name,
+>> >                   info->dvi_dual, info->max_tmds_clock);
+>> >
+>> > -     drm_parse_hdmi_deep_color_info(connector, db);
+>> > +     drm_parse_hdmi_deep_color_info(connector, db, payload_len);
+>> >  }
+>> >
+>> >  /*
+>> > @@ -6410,12 +6400,13 @@ static void drm_parse_cea_ext(struct drm_conne=
+ctor *connector,
+>> >       cea_db_iter_for_each(db, &iter) {
+>> >               /* FIXME: convert parsers to use struct cea_db */
+>> >               const u8 *data =3D (const u8 *)db;
+>> > +             int len =3D cea_db_payload_len(db);
+>> >
+>> >               if (cea_db_is_hdmi_vsdb(db))
+>> > -                     drm_parse_hdmi_vsdb_video(connector, data);
+>> > +                     drm_parse_hdmi_vsdb_video(connector, data, len);
+>> >               else if (cea_db_is_hdmi_forum_vsdb(db) ||
+>> >                        cea_db_is_hdmi_forum_scdb(db))
+>> > -                     drm_parse_hdmi_forum_scds(connector, data);
+>> > +                     drm_parse_hdmi_forum_scds(connector, data, len);
+>> >               else if (cea_db_is_microsoft_vsdb(db))
+>> >                       drm_parse_microsoft_vsdb(connector, data);
+>> >               else if (cea_db_is_y420cmdb(db))
+>> > @@ -6425,7 +6416,7 @@ static void drm_parse_cea_ext(struct drm_connect=
+or *connector,
+>> >               else if (cea_db_is_vcdb(db))
+>> >                       drm_parse_vcdb(connector, data);
+>> >               else if (cea_db_is_hdmi_hdr_metadata_block(db))
+>> > -                     drm_parse_hdr_metadata_block(connector, data);
+>> > +                     drm_parse_hdr_metadata_block(connector, data, le=
+n);
+>> >               else if (cea_db_tag(db) =3D=3D CTA_DB_VIDEO)
+>> >                       parse_cta_vdb(connector, db);
+>> >               else if (cea_db_tag(db) =3D=3D CTA_DB_AUDIO)
+>> >
+>> > base-commit: 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
+>>
+>> --
+>> Jani Nikula, Intel
+> Thanks,
+> Vamsi
 
-I am talking about callers of __handle_sysrq() and/or their callers.
-
-For example write_sysrq_trigger() could do:
-
-	migrate_disable();
-	__handle_sysrq(c, false);
-	migrate_enable();
-
-Or a new wrapper could be introduced for this purpose:
-
-static inline void wrapper handle_sysrq_task(u8 key, bool check_mask)
-{
-	migrate_disable();
-	__handle_sysrq(key, check_mask);
-	migrate_enable();
-}
-
-A quick grep shows about 25 call sites to check.
-
-> I do not see any easy way how to distinguish whether it was called in
-> an atomic context or not.
-
-There is no clean way to do that. If this information is needed, it must
-be tracked by the call chain.
-
-> So, I see three possibilities:
->
->   1. Explicitly call preempt_disable() in __handle_sysrq().
->
->      It would be just around the the single line or the help. But still,
->      I do not like it much.
-
-Not acceptable for PREEMPT_RT since sysrq is exposed to external inputs.
-
->   2. Avoid the per-CPU variable. Force adding the LOUD_CON/FORCE_CON
->      flag using a global variable, e.g. printk_force_console.
->
->      The problem is that it might affect also messages printed by
->      other CPUs. And there might be many.
->
->      Well, console_loglevel is a global variable. The original code
->      had a similar problem.
-
-If disabling migration is not an option for you, this would be my second
-choice. I assume tagging too many messages is better than not tagging
-enough. And, as you say, this is effectively what the current code is
-trying to do.
-
->   3. Add the LOUD_CON/FLUSH_CON flag via a parameter. For example,
->      by a special LOGLEVEL_FORCE_CON, similar to LOGLEVEL_SCHED.
->
->      I might work well for __handle_sysrq() which calls the affected
->      printk() directly.
->
->      But it won't work, for example, for kdb_show_stack(). It wants
->      to show messages printed by a nested functions.
-
-Right, this has limited usefulness and might miss the important things,
-which tend to be within helper functions.
-
-John
+--=20
+Jani Nikula, Intel
 
