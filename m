@@ -1,117 +1,165 @@
-Return-Path: <linux-kernel+bounces-374423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C098E9A69F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 259F29A6A05
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772231F23D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76911F241BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE14E1F5843;
-	Mon, 21 Oct 2024 13:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29641F5843;
+	Mon, 21 Oct 2024 13:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcIa9Hek"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8m/3G3w"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1DE1EF953;
-	Mon, 21 Oct 2024 13:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC081EC01E;
+	Mon, 21 Oct 2024 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516993; cv=none; b=lYhfG/Hx2GuYFr5Wc7ceASfvJ9mpEob87bFNZwhI8Ip8cPvh/mAZM2oq08bazMBjxQrBZuAfadAgr81tAcSt9392Y48KzCVKwy4o1ft3ymowGs0GRUB2RrutZMJVFTg4gdo20XwLncWL0iWiPgLQunR5/ByJH6WftFS6yYpIVLM=
+	t=1729517004; cv=none; b=szgJMjtlJAbn+PIBacNQASdPCVLuXdizmMkXyKdoJX8Gkj9gXUdt8/SjFYItSZ8vKELkTWnf9g2sA72JsHsRG3Fk98iqfysNWQcD597pfgOWFQMaSzQYLY2uOmb707tIni13HiranCNcn6Swbe+m0iz3QC5g1tONkPfKfrSnGkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516993; c=relaxed/simple;
-	bh=yNPBY4RLl4JpyR1CBd7aVXhxf9HFXQWZ60Vp+IVyuh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOcBJ/cOECOwjlFD9AcKp1Yobm4QkFKXzhvajjDl/UENEBcSxQ7E4RWLAoKvub0wT5dSh3S0VW/I1uqkk4qL4ICgnyzIJ+wkBSVm5wmPAlPdsEOhLpr8VFHFky5bC/IR9URKc29IzezFuzu/H2kVgVEj316XtAyATfa17SDJsdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcIa9Hek; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4910C4CEC3;
-	Mon, 21 Oct 2024 13:23:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729516992;
-	bh=yNPBY4RLl4JpyR1CBd7aVXhxf9HFXQWZ60Vp+IVyuh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lcIa9Hek0sfVlZ3qU8kB+W7YhbOeeC/Vlk97QviwoqOHvqTa6eM8z4wObSwcF5vhg
-	 qVZ8oetK6z868u2fzL0oZ99iKTBYLf0FQjKr+amVc5n+TBYiqXypuIrhuH6FhWj83Q
-	 fG0JpbbQDyus2aZSubSs1dC49UQYR/Au+U4KJBVhXOEBVL973nG4yAL1IhgR9m4wb8
-	 b1FJ8WhtH08si7hS9lDnzVnzK1sCmDTma24HQtTi09lU0h8phzoOrpeax4VfoPdsi/
-	 aMlFiCYxazXAvk4nVkM8WiYZ5STFcCaI901pqvywoU5BhjKKytriJOZuQ2+NgUKigF
-	 HsL8i6RPQj+kQ==
-Date: Mon, 21 Oct 2024 15:23:08 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Antony Antony <antony@phenome.org>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, 
-	Maximilian Bosch <maximilian@mbosch.me>, Linux regressions mailing list <regressions@lists.linux.dev>, 
-	David Howells <dhowells@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <20241021-nummer-gewillt-1d2a68581ff9@brauner>
-References: <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
- <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
- <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
- <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
- <ZxFQw4OI9rrc7UYc@Antony2201.local>
+	s=arc-20240116; t=1729517004; c=relaxed/simple;
+	bh=KrIr5TD/tMCRzHcZXtOxV67jdslZZdFURr5RzMBftas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dV+N1V9sPWXIIe2ogDEGyLFA3/uirFtc5jm1xw3pbc2abOxS0InK4pZVt9dJ4a0tBLiBShX9SypAwhvw1pBeHYOfqbqJCw43maYbS50tebb6R7aTGLp9YWHlV0eelLYCIjykVNQeLV/avDnRUCdcCa34LEILget9JgicGR+OOow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8m/3G3w; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so4195776276.2;
+        Mon, 21 Oct 2024 06:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729517001; x=1730121801; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oiaj5vEk58Uu7Q5W05B/+5MSwPTnerZpSh0c5/iJqpY=;
+        b=d8m/3G3wYWcgTl3ZOtKGJRNTecT1o9t7vYm25n4a5qk6SZrknuv3e2DoqPq3Z+rT83
+         doGB7vd9NAaSAr5RaSVKBT1L/zzysqEo09ZKFvpV7f80pTzqIekMZoT3c91+6DCxBxcw
+         6VYQkHMcHE3yKBDCMlJ+y8ATLjcjaqTQBrOM4KfR7iwMNW5a7lMHCfIOFYFJkJLKVfDT
+         DrhJKPViuWEgoU8DsHtDKIbmGDrUuQ3Sds360aH42ciWP08nDn7eVVZJQYiWRHIQFP2L
+         B8Xe1TikgD0EmrbrEDxiUafXWCkFClwZT8HVkeOT1FMDlGuGOtvMgloeq7CBZ49E0Hdr
+         oXOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729517001; x=1730121801;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oiaj5vEk58Uu7Q5W05B/+5MSwPTnerZpSh0c5/iJqpY=;
+        b=OOCoQqILddpvmq+9G5a0m6rLSIAwCC6wY4zihB7Q5zYQBkwEwU3LYFaB6nEmJQboG5
+         1Q6xYMztTh3h9uTRqyYkUydOR+GJAzO1/Wqrk/TRPwWfuPQ4UeqIaBTS+YIQT6i8rbza
+         aiS4QE56kHFqhCiAdATiUVj9WxW1L+7hhMjHbJePg13BgliihRu0qC3ZJFVEdXQ98Xhh
+         QfaNkL5iMBwohVD93rRDlVJVeD+nZDd7MwI9qLfOAtmwcJt0lfFpRpVaUQ+Du1kuoVEW
+         39iwWSF56WxqVsJqKNdDaJHfb+z+ghH0gTUXZE0jN7hWluxqBSrGuhIAHMkpQMN6cGSL
+         oG2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUyvxlpC07gnJd94Od21KVDEACoAJS8Y5kKqFrh4Qmsn83hYPTILS9kSLrQUPktz8RshjWahvG+Yalt@vger.kernel.org, AJvYcCWV8MmVJEZsVv4DZYmiu7ShzG2FLw5ZmKiqOFRmFwOwXrh0qbJ/wuqS07L/aAInRLOqX1ZkxluNFuXstz7T@vger.kernel.org, AJvYcCXD4KQH99FAreqloAYgYpdq64y4giFN0qHM29OP0PNW4lwboJYcYaL0L4SrTox6ssM4WtQcxGmJTjwTRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdCXA2/do6/OZXSAcP/noK4ChpSphc2h9jdLlDRks4Gd7pButC
+	V595dkdRWtp0XSBYBqREPK/7gY2SHe1QlEQ98VfRbTt52WENEqU9eTPKHTl7L/0dsXo67VCuYvu
+	iYlg0JaBEO0PP6YO9Mp7JH4MsXgM=
+X-Google-Smtp-Source: AGHT+IHlUOxt1/NRsWxzoxhFmYbXmB0LFOgRabrM0r/vzuOswt5ukRgoBSsCDgfnHkH8z3V9ZTIavsl/lv43Z+c290U=
+X-Received: by 2002:a25:d681:0:b0:e2b:d3da:46d7 with SMTP id
+ 3f1490d57ef6-e2bd3da4803mr4186272276.40.1729517000949; Mon, 21 Oct 2024
+ 06:23:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxFQw4OI9rrc7UYc@Antony2201.local>
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <ZxG70kzjsvT3UBlQ@yilunxu-OptiPlex-7050> <20241018-chump-juvenile-dc368d3d2f2c@spud>
+ <ZxW4DJOES77ifOC9@yilunxu-OptiPlex-7050> <20241021-depravity-scale-6123da541538@spud>
+In-Reply-To: <20241021-depravity-scale-6123da541538@spud>
+From: Ian Dannapel <iansdannapel@gmail.com>
+Date: Mon, 21 Oct 2024 15:23:10 +0200
+Message-ID: <CAKrir7gB+cdnHJu6ZgpEOA-rYLpVK0wJOG=9zChmA6fMCyZRQw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI
+ programming driver
+To: Conor Dooley <conor@kernel.org>
+Cc: Xu Yilun <yilun.xu@linux.intel.com>, mdf@kernel.org, hao.wu@intel.com, 
+	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, neil.armstrong@linaro.org, heiko.stuebner@cherry.de, 
+	rafal@milecki.pl, linus.walleij@linaro.org, linux-fpga@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 17, 2024 at 08:00:35PM +0200, Antony Antony wrote:
-> Hi,
-> 
-> On Thu, Oct 03, 2024 at 03:12:15AM +0200, Sedat Dilek wrote:
-> > On Wed, Oct 2, 2024 at 11:58 PM Maximilian Bosch <maximilian@mbosch.me> wrote:
+Am Mo., 21. Okt. 2024 um 14:18 Uhr schrieb Conor Dooley <conor@kernel.org>:
+>
+> On Mon, Oct 21, 2024 at 10:10:20AM +0800, Xu Yilun wrote:
+> > On Fri, Oct 18, 2024 at 05:58:44PM +0100, Conor Dooley wrote:
+> > > On Fri, Oct 18, 2024 at 09:37:22AM +0800, Xu Yilun wrote:
+> > > > On Fri, Sep 27, 2024 at 04:14:42PM +0200, iansdannapel@gmail.com wrote:
+> > > > > From: Ian Dannapel <iansdannapel@gmail.com>
+> > > > >
+> > > > > Add a new driver for loading binary firmware to volatile
+> > > > > configuration RAM using "SPI passive programming" on Efinix FPGAs.
+> > > > >
+> > > > > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> > > > > ---
+> > > > >  drivers/fpga/Kconfig                    |  10 ++
+> > > > >  drivers/fpga/Makefile                   |   1 +
+> > > > >  drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++++++
+> > > > >  3 files changed, 222 insertions(+)
+> > > > >  create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
+> > > > >
+> > > > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > > > > index 37b35f58f0df..eb1e44c4e3e0 100644
+> > > > > --- a/drivers/fpga/Kconfig
+> > > > > +++ b/drivers/fpga/Kconfig
+> > > > > @@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
+> > > > >           FPGA manager driver support for Xilinx FPGA configuration
+> > > > >           over slave serial interface.
+> > > > >
+> > > > > +config FPGA_MGR_EFINIX_SPI
+> > > > > +       tristate "Efinix FPGA configuration over SPI passive"
+> > > > > +       depends on SPI
+> > > > > +       help
+> > > > > +         This option enables support for the FPGA manager driver to
+> > > > > +         configure Efinix Trion and Titanium Series FPGAs over SPI
+> > > > > +         using passive serial mode.
+> > > > > +         Warning: Do not activate this if there are other SPI devices
+> > > > > +         on the same bus as it might interfere with the transmission.
+> > > >
+> > > > Sorry, this won't work. As you can see, the conflict usage of CS causes
+> > > > several concerns. Just a text here is far from enough.
+> > > >
+> > > > You need to actively work with SPI core/controller drivers to find a
+> > > > solution that coordinate the usage of this pin.
 > > >
-> > > Good evening,
-> > >
-> > > thanks a lot for the quick reply!
-> > >
-> > > > A fix for it is already pending in the vfs.fixes branch and -next:
-> > > > https://lore.kernel.org/all/cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com/
-> > >
-> > > I applied the patch on top of Linux 6.12-rc1 locally and I can confirm
-> > > that this resolves the issue, thanks!
-> 
-> Maximilian, would you like to re-run the test a few times? I wonder if there 
-> is another intermittend bug related to the same commit.
-> 
-> > >
-> > > With best regards
-> > >
-> > > Maximilian
-> > >
-> > 
-> > Thanks for testing.
-> > 
-> > For the records:
-> > 
-> > iov_iter: fix advancing slot in iter_folioq_get_pages()
-> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.fixes&id=0d24852bd71ec85ca0016b6d6fc997e6a3381552
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.fixes
-> 
-> I’m still seeing a kernel oops after the fix in 6.12-rc3, but I’ve noticed 
-> that the issue is no longer 100% reproducible. Most of the time, the system 
-> crashes. Before this fix it was 100% reproducible.
-> 
-> When using the nix testing, I have to force the test to re-run.
-> 
-> result=$(readlink -f ./result); rm ./result && nix-store --delete $result
-> 
-> nix-build -v nixos/tests/kernel-generic.nix -A linux_testing
-> 
-> So may be there is a new bug showing up after the fix. I have reported it.
-> 
-> https://lore.kernel.org/regressions/ZxFEi1Tod43pD6JC@moon.secunet.de/T/#u
+> > > Why does it even impact other SPI devices on the bus? It's not /their/
+> > > CS line that is being modified here, it is the line for the FPGA's
+> > > programming interface, right?
+> > > What am I missing here that makes it any different to any other SPI
+> > > device that may need it's CS toggled?
+> >
+> > IIUC, now spi core or controller driver should fully responsible for
+> > HW operations of CS. And every good behaved spi device driver should
+> > declare their logical CS index defined by SPI controller and let SPI
+> > core/controller driver to proxy the CS change.
+> >
+> > But if this spi device driver directly aquires CS, it conflicts with
+> > the controller and just fails.
+>
+> Right, I don't think you answered my question here at all, but just
+> reading over the kconfig text again I think I understand what it means.
+> I'd interpreted this as other devices being impacted by what this driver
+> is doing, but actually it is talking about other devices on the bus
+> interfering with this one because of how it handles the chip select.
 
-I've pinged David again so hopefully we'll have a fix soon.
+Correct, the problem lies when other devices initiate a transfer in
+between the device programming:
+If the CS goes inactive in between, the fpga won't be programmed
+correctly since it requires that all bytes are transferred within the
+same CS active.
+If the CS remains active, the fpga will be programmed with random payloads.
+
+But I might have found a solution to coordinate the CS with the
+controller (set_cs in struct spi_controller), since the cs state must
+be set before any transfer to enter the programming mode.
+
+Regards,
+Ian
 
