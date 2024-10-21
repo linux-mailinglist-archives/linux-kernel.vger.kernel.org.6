@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-374188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C2B9A6691
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:28:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9725D9A6696
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64BBA1C213AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA13282077
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8051E6325;
-	Mon, 21 Oct 2024 11:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Daj1qTzY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qKz1f9ra"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB21E7C1E;
+	Mon, 21 Oct 2024 11:30:07 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D4D198E6F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165FC1E7C26;
+	Mon, 21 Oct 2024 11:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729510081; cv=none; b=sLLWjEx7Cc46Ux4Yb8HS/KHveH/NaDhMP0HwwcBVxjN+Sm4GdWfYbfAYGujKQfdPqOYVqBRP9tCa9WiCYK5T9LtNYi2y7lonlgyl4slWQqOo43mtI9SMb9Q6lhgEBjF2su1jPrVE5Jmdgghg/r1I5r1zkDuBf29LgF3OoksdMtM=
+	t=1729510207; cv=none; b=ub0hkIpxAqmGPmaRB6orb28LsTwI495raPV9glToywBUHbOycyXnTkgQAIWquJZaBBjwSHpLAf379vw0c/IbBydWxo+uj1DeVTDS7dpVEZMmrhsdJ3aOTkEYk4FGtiigveeYmbzneniX4hiC0yDBHe7oZcP0e0QMxsExNN9kod0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729510081; c=relaxed/simple;
-	bh=b5IndUBUWnrLbJ2qcQHXhc7GovdBsR/Aedi4iqQ8ptA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPZr2a6290yc/PRynr5yzITYz9VDFzF9OehOGIwKNpSUz4deRuKEl0w3iuJW/622SEIwv+/7BiuyiXTh45eweVEzeaJ88xXiOKCClmgtoU6nwaxYgyQqEgYjXroSn2rfAArdqEUzB1OlgRfXveuLITvKtVjRYeDViWsfHTJVmZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Daj1qTzY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qKz1f9ra; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Oct 2024 13:27:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729510077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SZptfpkmtnph5FccEpfCWxm3lInZ8j0ni8t+QEKi8z0=;
-	b=Daj1qTzYmDkxbCL+WqupLvJU1jBSAGWoNq68lt4+hX7ykKg2IRA9R+oFETbFZ4p2ZOF/Do
-	mKUnQHT/ceo/OJuray/+WG4Wvn9HLR/CQtn2x2BMyxa242kGr9Bn8nAFyQxk+n3f0UGhXx
-	BSpQHK0h12xKeyvswIOV+sLUX+IoVZWCEgHkX3vqS9cT6BNcvzcAgvBmt5y/DH7q42oPd5
-	j7xACdV+RY1mC7dJQLci1sHb7SbxSvZ2D8+LH4vA6MGc1ajbu+xSMyqv1KGWVbMhv4/5ST
-	T1rBxM2Lm32+C4xKcKB/0+QQEE8P3O33eaKG4lfyHJC/OWtzA/j+llBfESmiMQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729510077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SZptfpkmtnph5FccEpfCWxm3lInZ8j0ni8t+QEKi8z0=;
-	b=qKz1f9ra5gnVNxtK2oB4rYoTKH90+wXfSlYfJw0hhRo7EFUn9GdpclewrtryLOrCOcMu/r
-	ugtaovL12WJWg6BA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <20241021112755.m7dWNbc0@linutronix.de>
-References: <20241010104438.GJ14587@noisy.programming.kicks-ass.net>
- <c6cbc343-01c3-4a38-8723-cc44e83dedf7@paulmck-laptop>
- <20241011081847.r2x73XIr@linutronix.de>
- <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
- <20241011144341.mQKXkGkm@linutronix.de>
- <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
- <20241015112224.KdvzKo80@linutronix.de>
- <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
- <20241017070710.U9bTJFMS@linutronix.de>
- <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
+	s=arc-20240116; t=1729510207; c=relaxed/simple;
+	bh=K5GkbffwOE1U2oBrMiRamUsxE1wrltguIEEmB0wp4PU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwVVyp0++xf2DnYkWVHsW4cuB03oMkdosx7b4gL3HZFwxlX9RitSOirm4DcVaIhMXTjeU3e+3HnITyoW6idq+jJ65AnbIX7FECniFqgjZnAGlCIdud3emoWKry7HPm63D84OqRT+CoA2fI9eHxKtGA6tzAe/kSDv0TcVISGnGGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so44569495e9.1;
+        Mon, 21 Oct 2024 04:30:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729510203; x=1730115003;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LTJfKmuI0AsDNtueSvfDv1B8tVY2xfxReUx3Zx8L+Is=;
+        b=cpqq2MZmJvXv1DfNmQ5jpY+1yjgPfz0TjfALGCWv6nRYjTwOH65qpG97W/z/2RZwA3
+         EMJqvvHTvekj8rw9AyJwtYIif1M1J5G3FRaCcwk/oQFMLZkz1YvdtL00fneNo58voxwN
+         QuEO3Vc0bhLN3dm1nn3UI19fauBhq5st9yjE4IU4JSmu/k3SskRPSBa0GCgFGIbnhdgz
+         g4qBzqJHaRvHdCQ9iz7z4gSGDakryrIplF8Pb2uAn8IpyQ8X0vcH41oBxo4bKDYvGScW
+         s2EVCQ7nbIlJZsEVEuf/++aJugzR30+Vwqz4Nup8w+8BIyagMzh2gs345FLVm9ac9OHg
+         siSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUblRol2H6NFCQQt8xovcPWDS4XtLyS8kEFaERudIrQtH/BIzsLegGgg5THixVU1nUvyFASN4sBQZ/OMyKD@vger.kernel.org, AJvYcCWVLVqUsZmUUo0QT5YnKEGP2LCA1kLmelOPKjyfQl22oo2MCsMTuy45dADPujbavkyBC/7dznizR7p4OA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT3omV2c/nYosrDKmeR9mwUM3+ZGrZnov9hOBweKWbYPZlJvWq
+	kRU2kSlWiibnsOdwbWtc3I6XLP1C6LRZ249jrYsvj8D/nlh7KlFs
+X-Google-Smtp-Source: AGHT+IHbayAJI3QNFHIobPOQHH8sUh2FU4OTF56IrfvdfLiWAa5xFFH0sEWOcjkLHMaJUaVVOZyUtg==
+X-Received: by 2002:adf:e40a:0:b0:37d:39f8:a77a with SMTP id ffacd0b85a97d-37eab0faa93mr6301280f8f.8.1729510203166;
+        Mon, 21 Oct 2024 04:30:03 -0700 (PDT)
+Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm4129957f8f.72.2024.10.21.04.30.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 04:30:02 -0700 (PDT)
+Message-ID: <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me>
+Date: Mon, 21 Oct 2024 14:30:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
+ ctx fallback
+To: Ming Lei <ming.lei@redhat.com>
+Cc: zhuxiaohui <zhuxiaohui400@gmail.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
+ <ZxWwvF0Er-Aj-rtX@fedora> <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
+ <ZxYRXvyxzlFP_NPl@fedora>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <ZxYRXvyxzlFP_NPl@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-18 10:38:15 [-0700], Paul E. McKenney wrote:
-> > > > I don't think this is always the case because the "preemptible" users
-> > > > would also get this and this is an unexpected change for them.
-> > > 
-> > > Is this series now removing PREEMPT_NONE and PREEMPT_VOLUNTARY?
-> > no, not yet. It is only adding PREEMPT_LAZY as new model, next to
-> > PREEMPT_NONE and PREEMPT_VOLUNTARY. But is is likely to be on schedule.
-> > 
-> > > As conceived last time around, the change would affect only kernels
-> > > built with one of the other of those two Kconfig options, which will
-> > > not be users expecting preemption.
-> > 
-> > If you continue to use PREEMPT_NONE/ PREEMPT_VOLUNTARY nothing changes
-> > right now.
-> 
-> Good, thank you!
-> 
-> Presumably PREEMPT_NONE=y && PREEMPT_LAZY=y enables lazy preemption,
-> but retains non-preemptible RCU.
 
-PREEMPT_NONE=y && PREEMPT_LAZY=y is exclusive. Either NONE or LAZY.
 
-> > > If PREEMPT_NONE and PREEMPT_VOLUNTARY are still around, it would be
-> > > far better to make PREEMPT_RCU depend on neither of those being set.
-> > > That would leave the RCU Kconfig settings fully automatic, and this
-> > > automation is not to be abandoned lightly.
-> > 
-> > Yes, that was my intention - only to make is selectable with
-> > LAZY-preemption enabled but without dynamic.
-> > So you are not complete against it.
-> 
-> Help me out here.  In what situation is it beneficial to make PREEMPT_RCU
-> visible, given that PREEMPT_NONE, PREEMPT_VOLUNTARY, PREEMPT, and
-> PREEMPT_FULL already take care of this automatically?
 
-We have now NONE, VOLUNTARY, PREEMPT, PREEMPT_RT (as in choose one).
+On 21/10/2024 11:31, Ming Lei wrote:
+> On Mon, Oct 21, 2024 at 10:05:34AM +0300, Sagi Grimberg wrote:
+>>
+>>
+>> On 21/10/2024 4:39, Ming Lei wrote:
+>>> On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
+>>>> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+>>>>
+>>>> It is observed that nvme connect to a nvme over fabric target will
+>>>> always fail when 'nohz_full' is set.
+>>>>
+>>>> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
+>>>> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
+>>>> and when nvme connect to a remote target, it may fails on this stack:
+>>>>
+>>>>           blk_mq_alloc_request_hctx+1
+>>>>           __nvme_submit_sync_cmd+106
+>>>>           nvmf_connect_io_queue+181
+>>>>           nvme_tcp_start_queue+293
+>>>>           nvme_tcp_setup_ctrl+948
+>>>>           nvme_tcp_create_ctrl+735
+>>>>           nvmf_dev_write+532
+>>>>           vfs_write+237
+>>>>           ksys_write+107
+>>>>           do_syscall_64+128
+>>>>           entry_SYSCALL_64_after_hwframe+118
+>>>>
+>>>> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
+>>>> blk_mq_ctx on the hw queue.
+>>>>
+>>>> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
+>>>> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
+>>>> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
+>>>> is not isolated.
+>>> blk_mq_alloc_request_hctx()
+>>> 	...
+>>> 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
+>>> 	...
+>>>
+>>> It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
+>>> online CPUs, both are same actually from this viewpoint.
+>>>
+>>> It is one long-time problem for nvme fc.
+>> For what nvmf is using blk_mq_alloc_request_hctx() is not important. It just
+>> needs a tag from that hctx. the request execution is running where
+>> blk_mq_alloc_request_hctx() is running.
+> I am afraid that just one tag from the specified hw queue isn't enough.
+>
+> The connection request needs to be issued to the hw queue & completed.
+> Without any online CPU for this hw queue, the request can't be completed
+> in case of managed-irq.
 
-This series changes it to NONE, VOLUNTARY, PREEMPT, LAZY, LAZIEST.
-Ignore LAZIEST. PREEMPT_RT is a on/ off bool.
-
-Based on my understanding so far, you have nothing to worry about.
-
-With NONE + VOLUNTARY removed in favor of LAZY or without the removal
-(yet)  you ask yourself what happens to those using NONE, go to LAZY and
-want to stay with !PREEMPT_RCU, right?
-With LAZY and !PREEMPT_DYNAMIC there is still PREEMPT_RCU as of now.
-And you say people using !PREEMPT_DYNAMIC + LAZY are the old NONE/
-VOLUNTARY users and want !PREEMPT_RCU.
-
-This could be true but it could also attract people from PREEMPT which
-expect additional performance gain due to LAZY and the same "preemption"
-level. Additionally if PREEMPT gets removed because LAZY turns out to be
-superior then PREEMPT_DYNAMIC makes probably no sense since there is
-nothing to switch from/ to.
-
-Therefore I would suggest to make PREEMPT_RCU 
-- selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-- selected for LAZY && PREEMPT_DYNAMIC
-- the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-  !PREEMPT_DYNAMIC)
-
-Does this make sense to you?
-
-> 							Thanx, Paul
-
-Sebastian
+None of the consumers of this API use managed-irqs. the networking stack
+takes care of steering irq vectors to online cpus.
 
