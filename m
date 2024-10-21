@@ -1,274 +1,216 @@
-Return-Path: <linux-kernel+bounces-374032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107329A60DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:58:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075C89A60DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1323283967
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED551F22C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77121E47A3;
-	Mon, 21 Oct 2024 09:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D171E3797;
+	Mon, 21 Oct 2024 09:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G4O7qF5J"
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="qyKy2Wwd"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDA71E410E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053E11E5701;
+	Mon, 21 Oct 2024 09:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504689; cv=none; b=X8HsBGd9/G/sbHgLXgcT0RVJzt7eYmHQy0xd/abcF/jbwgdfTtPG78JOGNPbOdDFIkL6oGtNG5UTuTpy9zjrpb+ZUcL0ZSu74TQRRq269qzEcb71s5/pM13wzR32/2gbl1MZ1sG+8G668wyZJtR3/Ck5auZ3x54PoGJD8biWMzs=
+	t=1729504696; cv=none; b=H29uN3098o3UbcD0GT43zMbxfm7GdripgJW24E000JOYJjj5EtKkclRUW9XmimjSezvxFlhAXi+sl92YPRmAfF743WImbHC9FvmrTbvnCcOCZk1jPkVGbiEE0NScFYu1imPloE6Q+1pw02EcAlRU6oZtYE6nBIfpPTNzr6YvXU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504689; c=relaxed/simple;
-	bh=EVL4wUmYrTJEyHGsQ/62BPsBtlNsOUVSRfFQ61ReZ6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSXm+vi0+rdywHEDrMZCCq6V35gfpxLFBVyhlLa9Pa4fI5nAlsvYvjpvLxYeCM/+OD0vs+GNYOYdy2Hp8iHMInCMEW4VbBFhvkPo+LURXQDAqFkXEDkO+RZQTzEydxy571qbSa7iXlt3srKO4vcDVrETsOdxGVdqdNsdm1J8tPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G4O7qF5J; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XX9jH57xszXs9;
-	Mon, 21 Oct 2024 11:57:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729504675;
-	bh=oQqDcNvi3dV/GKQZTqzoU9Gy+j6RUcYEDosffosB1cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4O7qF5Jlq8MVI5T7TPwo0OXw/iZ+oNwBlrtKbywh/q/ICD+2YW2GyClZm/L4XJFD
-	 JirGE6PckwP2NdFR8Wh4hcrBRrMwUqn2ESk2UpSyHYxxB2zcRTl6D1AmdJR5j4L5Zm
-	 4GNjbCAHym9OHgf4mKwFXzNhtpdBpc3CyQhu/4Qk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XX9jG0KMHzcSf;
-	Mon, 21 Oct 2024 11:57:53 +0200 (CEST)
-Date: Mon, 21 Oct 2024 11:57:53 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Subject: Re: [RFC PATCH v1 4/7] landlock: Add UDP send+recv access control
-Message-ID: <20241021.Abohbuph8eet@digikod.net>
-References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-5-matthieu@buffet.re>
- <20240921.ohCheQuoh1eu@digikod.net>
- <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
+	s=arc-20240116; t=1729504696; c=relaxed/simple;
+	bh=uCULIxbcJywiOKYZjq43UhyRV8sFKz967+OUgHE/Iu4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GE+MmO3cnkzdinbrRmb5ACXmKnvsLoTWuXpvc0J7WwkEioNqT4dgQlLCQZRNoAmHSwA00rm64dgRDSu1VxfanxuA3NacIHz/e9zS41pPAIC6R3aWXeBp56gcvihjHNcyKXurZlNAi0flRRqmGV5deSKllVIBB/bvFC/5OuFl1MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=qyKy2Wwd; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:Reply-To:Subject:From:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=mDveBoDYf4fN13vKMrP/EXZV3Nj+OeRfq74BWOg3v4w=;
+	t=1729504694; x=1729936694; b=qyKy2Wwd9aQhqHsXwIu2FxrycJ+LCB7e/ouozBUWN5rs/CJ
+	Lc+EYLSVqrYpih74WumIgkeLY5hP2Ji7iDyy0A5BtmuG9JcnzBES5pXPIqZJ4gFi8R/59R2UFyQLT
+	kr+1AZg5zgRsXaIU16UF6x5Mxjqsq9YbCvz41I5RKTI6hu9KwqPlbu0Go2pnYccIpQAIJbd0yih2F
+	MuZjezR/cPRzqDuobGTW5FdAQbCDUjWY7K1dMNFjvqAJkU80WT+qNbuxCG+LJ8rO8eXflfQHoh0bn
+	HqkAwaj4fPTnmzZjT4jxtyImfjqHkbf9a3eUeE1QESKIM9/PkLR/2qr6aiBVWt9w==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t2pAx-0001lx-3g; Mon, 21 Oct 2024 11:58:11 +0200
+Message-ID: <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
+Date: Mon, 21 Oct 2024 11:58:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Subject: Re: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts
+ for Micron MT25QL01 flash
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Yoshitaka Ikeda <ikeda@nskint.co.jp>, Mark Brown <broonie@kernel.org>,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@pengutronix.de, Stefan Kerkmann <s.kerkmann@pengutronix.de>,
+ regressions@lists.linux.dev, Mark Brown <broonie@kernel.org>
+References: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
+Content-Language: en-US, de-DE
+In-Reply-To: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729504694;9b2e926e;
+X-HE-SMSGID: 1t2pAx-0001lx-3g
 
-On Sat, Oct 19, 2024 at 02:47:48PM +0200, Matthieu Buffet wrote:
-> Hi Mickaël,
+On 14.10.24 14:43, Stefan Kerkmann wrote:
 > 
-> I've almost finished merging your review (thanks for all the feedback), with
-> the exception of this main point. Just making sure we agree on the
-> limitations before I merge this into a new version.
+> I have run into the same regression when probing a Micron MT25QL01 SPI-NOR flash
+> on a Intel CycloneV platform (socfpga) as Yoshitaka Ikeda[1]. The regression
+> manifests in read timeouts. Bisecting the issue tracked it down to commit
+> "d403fb6e76bf8 spi: cadence-quadspi: use STIG mode for small reads".
+
+Adding Dhruva Gole (author) and Mark Brown (committer) to the list of
+recipients.
+
+> Reverting
+> the commit resolves the issue on v6.12-rc3. There are no custom patches applied,
+> except for the debugging output mentioned in the linked thread.
+
+The culprit afaics was merged for v6.3-rc1. Makes me wonder: would
+reverting this now even an option to fix this in mainline, or would this
+just lead to a regression for someone else?
+
+Ciao, Thorsten
+
+> The good case is as follows:
 > 
-> On 9/21/2024 12:23 PM, Mickaël Salaün wrote:
-> >> +	/*
-> >> +	 * If there is a more specific address in the message, it will take
-> >> +	 * precedence over any connect()ed address. Base our access check on
-> it.
-> >> +	 */
-> >> +	if (address) {
-> >> +		const bool in_udpv6_sendmsg =
-> >> +			(sock->sk->sk_prot == &udpv6_prot);
-> >> +
-> >> +		err = get_addr_port(address, msg->msg_namelen, in_udpv6_sendmsg,
-> >> +				    &port);
-> >> +		if (err != 0)
-> >> +			return err;
-> >> +
-> >> +		/*
-> >> +		 * In `udpv6_sendmsg`, AF_UNSPEC is interpreted as "no address".
-> >> +		 * In that case, the call above will succeed but without
-> >> +		 * returning a port.
-> >> +		 */
-> >> +		if (in_udpv6_sendmsg && address->sa_family == AF_UNSPEC)
-> >> +			address = NULL;
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * Without a message-specific destination address, the socket must be
-> >> +	 * connect()ed to an address, base our access check on that one.
-> >> +	 */
-> >> +	if (!address) {
-> >
-> > If the address is not specified, I think we should just allow the
-> > request and let the network stack handle the rest.  The advantage of
-> > this approach would be that if the socket was previously allowed to be
-> > connected, the check is only done once and they will be almost no
-> > performance impact when calling sendto/write/recvfrom/read on this
-> > "connected" socket.
-> > [...]
-> > What about something like this (with the appropriate comments)?
-> >
-> > if (!address)
-> > 	return 0;
-> >
-> > if (address->sa_family == AF_UNSPEC && sock->sk->sk_prot ==
-> >     &udpv6_prot)
-> > 	return 0;
-> >
-> > err = get_addr_port(address, msg->msg_namelen, &port);
-> > if (err)
-> > 	return err;
-> >
-> > return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
+> ```
+> [    1.063171] **********spi_mem_op dump**************
+> [    1.063183] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    1.068093] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
+> [    1.073837] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.079823] ***************************************
+> [    1.086068] **********spi_mem_op dump**************
+> [    1.090931] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
+> [    1.095815] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.101543] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.107547] ***************************************
+> [    1.113835] **********spi_mem_op dump**************
+> [    1.118695] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
+> [    1.123573] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.129395] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.135392] ***************************************
+> [    1.141592] **********spi_mem_op dump**************
+> [    1.146471] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
+> [    1.151335] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.157072] data: nbytes:0x88 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.163058] ***************************************
+> [    1.169341] **********spi_mem_op dump**************
+> [    1.174219] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x30
+> [    1.179082] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.184904] data: nbytes:0x40 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.190890] ***************************************
+> [    1.197183] **********spi_mem_op dump**************
+> [    1.202045] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x80
+> [    1.206925] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.212740] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.218736] ***************************************
+> [    1.224916] **********spi_mem_op dump**************
+> [    1.229776] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    1.234649] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
+> [    1.240376] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
+> [    1.246283] ***************************************
+> [    1.252443] **********spi_mem_op dump**************
+> [    1.257314] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    1.262176] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0xB7
+> [    1.267917] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
+> [    1.273914] ***************************************
+> [    1.280074] **********spi_mem_op dump**************
+> [    1.284946] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    1.289809] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x4
+> [    1.295544] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
+> [    1.301444] ***************************************
+> [    1.307694] 5 fixed-partitions partitions found on MTD device ff705000.spi.0
+> [    1.319593] Creating 5 MTD partitions on "ff705000.spi.0":
+> [    1.325080] 0x000000000000-0x000000040000 : "preloader"
+> [    1.331825] 0x000000040000-0x0000000c0000 : "bootloader"
+> [    1.338645] 0x0000000c0000-0x0000000e0000 : "barebox-environment"
+> [    1.346299] 0x0000000e0000-0x000000110000 : "state-storage"
+> [    1.353319] 0x000000110000-0x000008000000 : "ubi"
+> ```
 > 
-> If I understand correctly, you would like the semantics of
-> LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect(), and sendmsg() without
-> explicit address} and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with
-> explicit address}.
-
-Not exactly, here is the rewording with my thinking:
-...the semantics of LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect()}
-and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with explicit
-address}.
-
-sendmsg() without explicit address should always be allowed,
-whatever the Landlock policy (similarly as write(2) on a write-opened
-file descriptor).  In a nutshell, sendmsg(2) without explicit address
-should be handled the same as a write(2) call on a connected socket (I
-guess the kernel handles such action on connected datagram sockets the
-same as on connected stream sockets).
-
-I think it is more important to first have a simple model that
-enables developers to initialize a socket with connect(2) and then
-sandbox the process to only be able to use this socket to communicate
-with the configured peer, similar to what can be enforced with TCP
-sockets.
-
-sendmsg(2) can do two different thinks: (optionally) configure a
-peer/port and write data. recvmsg(2) only reads data.  We should first
-start by controlling exchange from/to peers, and maybe later controlling
-data flow.
-
-An alternative approach would be to not add a sendmsg specific access
-right but only LANDLOCK_ACCESS_NET_CONNECT_UDP because connect should
-be a superset of sendmsg.  This would make it impossible to specifically
-deny (shared) socket's configuration change though.  I think it's
-better to stick to the kernel semantic with 3 dedicated access rights,
-and it should make more sense for users too.  What do you think?
-
-
-> This makes it impossible to allow a landlocked server to
-> connect() in order to receive traffic only from a specific client while at
-> the same time preventing it from sending traffic (that is, a receive-only
-> client-specific socket ala Cloudflare's "established-over-unconnected"[1]).
-
-My proposal would indeed makes this use case impossible to enforce only
-with the proposed access rights, and we would need to restrict write(2)
-too BTW.  However, I think it would make sense to add complementary
-access rights to restrict reading or writing to a socket.  I guess this
-semantic would be useful for non-UDP protocols too with
-LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP} access rights set at
-socket-creation time and stored in the socket object (instead of looking
-at a Landlock domain for each read/write call, similarly to the truncate
-and ioctl_dev access rights).  What do you think?
-
-I wonder what happens if we call recvmsg(2) on a newly created (and then
-unconfigured) socket.  Without prior call to bind(2) I would guess that
-the recvmsg(2) call fail but I'm not so sure with a datagram socket.  We
-should check that.
-
+> With the STIG short read optimization enabled, the read timeouts occur:
 > 
-> >> +	err = check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-> >> +				port_bigendian);
-> >> +	if (err != -EACCES)
-> >> +		return err;
-> >
-> > We should be able to follow the same policy for "connected" sockets.
+> ```
+> [    0.931469] **********spi_mem_op dump**************
+> [    0.931482] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    0.936398] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
+> [    0.942129] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    0.948132] ***************************************
+> [    0.954369] **********spi_mem_op dump**************
+> [    0.959233] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
+> [    0.964117] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    0.969845] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    0.975844] ***************************************
+> [    1.482104] cadence-qspi ff705000.spi: Flash command execution timed out.
+> [    1.493754] **********spi_mem_op dump**************
+> [    1.493759] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
+> [    1.498623] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
+> [    1.504451] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
+> [    1.510438] ***************************************
+> [    1.516611] spi-nor spi0.0: operation failed with -110
+> [    2.026639] cadence-qspi ff705000.spi: Flash command execution timed out.
+> [    2.033430] **********spi_mem_op dump**************
+> [    2.033437] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
+> [    2.038300] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
+> [    2.044041] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
+> [    2.049942] ***************************************
+> [    2.056112] spi-nor spi0.0: operation failed with -110
+> [    2.066110] spi-nor spi0.0: probe with driver spi-nor failed with error -110
+> ```
 > 
-> Again if I understand correctly, to fully merge semantics of
-> LANDLOCK_ACCESS_NET_BIND_UDP and LANDLOCK_ACCESS_NET_RECVMSG_UDP (since if
-> the access check is performed at bind() time, there is nothing to check in
-> recvmsg() anymore).
-
-Correct (I was a bit confused with recvmsg, but it doesn't set the
-receiving address/port).
-
-> Similarly, this makes it impossible to allow a send-only
-> program to bind() to set a source port without allowing it to recvmsg()
-> traffic.
-
-Correct with the current access rights.  We would need a
-LANDLOCK_ACCESS_NET_READ_UDP.
-
+> The DT node for the flash is as follows:
 > 
-> I do not know of real-life programs that might want to sandbox their network
-> workers *that* precisely, nor how much we want to be future-proof and
-> support it. If not, I can merge your feedback and:
-> - remove LANDLOCK_ACCESS_NET_RECVMSG_UDP and the recvmsg() hook;
-
-Yes
-
-> - change the doc for LANDLOCK_ACCESS_NET_SENDMSG_UDP to mention that it is
-> not required if the app uses connect() and then sendmsg() without explicit
-> addresses;
-
-Yes
-
-> - change the doc for LANDLOCK_ACCESS_NET_CONNECT_UDP to mention that it
-> grants the right to send traffic (and similarly for
-> LANDLOCK_ACCESS_NET_BIND_UDP to receive traffic), and the reason
-
-The documentation should highlight that these flags grants the right to
-configure a socket, but indeed, no restrictions are enforced on reading
-or writing on sockets.
-
-> (performance, though I haven't managed to get a benchmark);
-> - rename to LANDLOCK_ACCESS_NET_CONNECT_SENDMSG_UDP,
-> LANDLOCK_ACCESS_NET_SENDMSG_UDP, and LANDLOCK_ACCESS_NET_BIND_RECVMSG_UDP,
-> what do you think?
-
-The first and third rights are confusing.  I prefer simple names such as
-LANDLOCK_ACCESS_NET_CONNECT_UDP and LANDLOCK_ACCESS_NET_BIND_UDP.
-Moreover, LANDLOCK_ACCESS_NET_CONNECT_UDP would not impact sendmsg(2)
-calls at all.
-
+> ```
+> &qspi {
+> 	status = "okay";
 > 
-> If merging semantics is a problem, I mentioned socket tagging in [2] to
-> reduce the performance impact (e.g. tag whether it can send traffic at
-> connect() time, and tag whether it can recv at bind() time). So another
-> option could be to keep precise semantics and explore that?
+> 	flash0: flash@0 {
+> 		#address-cells = <1>;
+> 		#size-cells = <1>;
+> 		/* Micron MT25QL01 */
+> 		compatible = "n25q00", "jedec,spi-nor";
+> 		reg = <0>;	/* chip select */
+> 		spi-max-frequency = <100000000>;
+> 		m25p,fast-read;
+> 		cdns,page-size = <256>;
+> 		cdns,block-size = <16>;   /* 2^16, 64KB */
+> 		cdns,read-delay = <4>;    /* delay value in read data capture register */
+> 		cdns,tshsl-ns = <50>;
+> 		cdns,tsd2d-ns = <50>;
+> 		cdns,tchsh-ns = <4>;
+> 		cdns,tslch-ns = <4>;
+> 	};
+> };
+> ```
+> 
+> Regards,
+> Stefan Kerkmann
+> 
+> [1]:
+> https://lore.kernel.org/lkml/OSZPR01MB70048CE259A3D63C4179199A8B659@OSZPR01MB7004.jpnprd01.prod.outlook.com/#t
+> 
+> #regzbot introduced: d403fb6e76bf854ef0f7d84e797e51b9494788e0
+> 
 
-This tagging mechanism looks like a good idea to implement
-LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP}, but that should be a
-future separate patch series.
-
-> 
-> >> +	/*
-> >> +	 * Slow path: socket is bound to an ephemeral port. Need a second check
-> >> +	 * on port 0 with different semantics ("any ephemeral port").
-> >> +	 */
-> >> +	inet_sk_get_local_port_range(sk, &ephemeral_low, &ephemeral_high);
-> >
-> > Is it to handle recvmsg(with port 0)?
-> 
-> If you mean recvmsg() on a socket that was previously bind(0), yep. This
-> second rule lookup added a different meaning to rules on port 0. Without
-> this, one would not be able to allow "all ephemeral ports", making the
-> feature unusable for servers that bind on ephemeral ports. All this
-> disappears if we remove LANDLOCK_ACCESS_NET_RECVMSG_UDP.
-
-OK
-
-> 
-> Matthieu
-> 
-> [1] https://blog.cloudflare.com/everything-you-ever-wanted-to-know-about-udp-sockets-but-were-afraid-to-ask-part-1/
-> [2] https://github.com/landlock-lsm/linux/issues/10#issuecomment-2267871144
-> 
+#regzbot poke
 
