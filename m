@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-374000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFCA9A6071
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:44:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787379A6076
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9F3B2A654
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2BB1F2263E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845CF1E3772;
-	Mon, 21 Oct 2024 09:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C6A1E32DF;
+	Mon, 21 Oct 2024 09:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOgJh/ia"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="D5rn6Eae"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2F21E283D;
-	Mon, 21 Oct 2024 09:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7251E32C2;
+	Mon, 21 Oct 2024 09:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503822; cv=none; b=ICnTxc0YUdkNb7u+W5E57YwnNDf2xEtr91vex0WPROsYCV78HLCmWWe8Z2KxEWorIpqjQe2U6R3nKp/w7LASxQUBbIG09Et/1f+TpwLuaCk0O3v8xgpUDrvCR1cCSl1wOla4dAXOnq55qxuhBUK2eBIKIuVL0yJy1yyfO6Cjy40=
+	t=1729503893; cv=none; b=BTI/3TetdW/oLrVS+WdbxdBqT1VoQQ3HYBzCAaae9ksUiCKFZUk8p7qzkz2/TiuQHQ8qYSQDYUa+GwlX+KRzETkhjgkrdTNhR3dqRLqx0fq/1jrsbvbZBzRt0KoDm+1fRkG9FXwXZujFCk5S0LidCDIrkLkEnQgOuJNQ8S6WdAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503822; c=relaxed/simple;
-	bh=DocfnqodpECHeTU7WzOZ8o9ZwceqaD+JMKAhWcybg7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlkIsu3oBg9qvOfRswXbGSJqGSCrwFOUwqcUdsnoaowz7DWzkhT3pEO5+BbCBN7xskuqkCl63L0eLfj1Nt8AqJ8fFsaAvckhK+/7+nFQ328Pp5A//WNIVFqqk7F36AOKLFU63tZjeK/uBvLVxgTbCtSS7cpTRC2AGPVW1OW0orU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOgJh/ia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F232C4CEC3;
-	Mon, 21 Oct 2024 09:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729503822;
-	bh=DocfnqodpECHeTU7WzOZ8o9ZwceqaD+JMKAhWcybg7g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DOgJh/iab918XNUp6ZzTERCymq7jkBNkGI9G3LUununJvoVxX2FpPcoAdE1hzxayZ
-	 KvkWsugqp/KiXlQ+rRMMBN9OZp5VA6PeMBO43HKGbYIofzBamdVvatNlw9iiMj0Tfj
-	 ELugB8yXQPcb793QSgDKWG/HONCCQwTnBfJ9lDzioAjfRyrNORrdIl0eYF4sHUlHzc
-	 OngBmmVyfZuiwRs44Vfxntua/FIV9JBhk0t9hlRbfEdmtrWfTiG7TxCJ3vBTuZaiUN
-	 uJZoLwu04bBl/x7lNpevGhHAN/1FvT55OJ9jID6mluTHHp0yKHBKJKwG2IdUF5/Yxr
-	 BxOcj5NpE19Cw==
-Message-ID: <fbde8a3a-3adc-4c1a-8529-fde0fa149c8e@kernel.org>
-Date: Mon, 21 Oct 2024 11:43:35 +0200
+	s=arc-20240116; t=1729503893; c=relaxed/simple;
+	bh=4hhyyXoiB5pb01jeMMh9kHegq0/iQPW7gU2ES1fF2ro=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bi/Vbh9g4cvUh48GJXh7sWApGLwO4sCNA//NsKNR4jPygQuxCJHe5wARD3TTSkFj1ekbHS/OvJ+1TrdGx+M7NwLAZvPLfAcRDVJXGO2VoMfqBCguNTzoKp2Kp0omX80rt+YdfAyq5szya4WJvYPNv9eDKldtYrBzooO4DK4Eykw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=D5rn6Eae; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E43361C0007;
+	Mon, 21 Oct 2024 09:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1729503883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NZEgQgSIER4U+57OAed9+YasME4GNodja+ZxrnB9kC8=;
+	b=D5rn6Eaen6Ua1EPzxZTBRrtlnYpYoyLdJd8hmBgOFEb4UlKRJwwW2wnBWP5zYiFBUML0GH
+	2twz6bWXSyCtJms8TsATfi7J7DjFFM6jey0t5bQokUXxkaDmWQ1rg5mQF7loWJ/rF8R64c
+	DIS/BpSDaKjanHb8ublu4FHpiEq3KCGCebdENBWcOfCsXwSKk0nRWoUgwBTFdKmLlzJBYy
+	PXRvRNOjYnzYLnbd3ogkYa/+oZet2Sx9E0A7MJaVjrzWSom4v8iMw2nOPNnVuiu8EUIYnI
+	qGoRNV7lFqXHgCkok1/7jpLhNmpQZ5DSoAbXPXxs3JANN4b5X6/DrGdcfVRdoA==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Subject: [PATCH RFC 0/2] Add basic tracing support for m68k
+Date: Mon, 21 Oct 2024 11:44:41 +0200
+Message-Id: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-To: Charles Wang <charles.goodix@gmail.com>,
- Doug Anderson <dianders@chromium.org>
-Cc: dmitry.torokhov@gmail.com, hbarnor@chromium.org,
- conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241018020815.3098263-2-charles.goodix@gmail.com>
- <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
- <ZxMfu4yxk961mZWB@ux-UP-WHL01>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZxMfu4yxk961mZWB@ux-UP-WHL01>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIkiFmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyND3cSUFN1cM4ts3ZKixOTMvHTd4tKCgvyiEl1js2RDixQjI2PjFAs
+ loPaCotS0zAqw0dFKQW7OSrG1tQAMFvKdbwAAAA==
+X-Change-ID: 20241021-add-m68k-tracing-support-36c18d2233d8
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, 
+ Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729503882; l=2478;
+ i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
+ bh=4hhyyXoiB5pb01jeMMh9kHegq0/iQPW7gU2ES1fF2ro=;
+ b=1JKFddvpN6dr45qJtYHNMvSGtjmGr3vem/1uEBLLfIhlP3hOzYg45ePNZS6/3y25bxP07OhZW
+ 4hXmwkXXNDkCPeiBiRf53qL03hk2O2Ok86RRiG49Km9XYnU5Vh8SdWB
+X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
+ pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On 19/10/2024 04:55, Charles Wang wrote:
-> Hi Doug
-> 
-> On Fri, Oct 18, 2024 at 01:48:56PM -0700, Doug Anderson wrote:
->>
->> On Thu, Oct 17, 2024 at 7:09 PM Charles Wang <charles.goodix@gmail.com> wrote:
->>>
->>> The Goodix GT7986U touch controller report touch data according to the
->>> HID protocol through the SPI bus. However, it is incompatible with
->>> Microsoft's HID-over-SPI protocol.
->>>
->>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
->>> ---
->>>  .../bindings/input/goodix,gt7375p.yaml        | 68 ++++++++++++++++---
->>>  1 file changed, 58 insertions(+), 10 deletions(-)
->>
->> I'm happy to let device tree folks make the call here, but IMO it
->> would be much cleaner to just consider the I2C-connected GT7986U and
->> the SPI-connected GT7986U to be different things and just use a
+In order to debug latency issues, I wanted to use ftrace on my M54418
+coldfire. Sadly, it is not supported yet.
+Thanks to Steven [1] it does not sound too difficult.
 
-Same device, you cannot have different compatibles. The way how the same
-(literally same chip) device sits on the bus is not part of the binding,
-thus no different compatibles.
+This small series adds basic functions to make it work, and for the few
+tests I could do, it seems to be working well.
 
->> different compatible string for them. So essentially go back to your
->> v7 patch from before [1] but change the compatible to
->> "goodix,gt7986u-spi". If, for instance, this device also had a USB
->> interface then I don't think we'd try to cram it into the same
->> bindings even though the same physical chip was present...
->>
-> 
-> Honestly, I agree with this approach, but Krzysztof seems to prefer
-> extending the existing binding.
+Here is a simple output I get:
 
-I prefer not to have warnings and that was the problem with original
-patchset. I am fine with splitting different models between different
-binding schemas/files, but not the same device in two files.
+```
+
+            bash-232     [000] d..3.   947.629000: thread_noise:     bash:232 start 947.629000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.629000: #51598 context thread timer_latency    409280 ns
+            bash-232     [000] d.h..   947.630000: #51599 context    irq timer_latency    110720 ns
+            bash-232     [000] dnh1.   947.630000: irq_noise: timer:206 start 947.629000000 duration 1000000 ns
+            bash-232     [000] d..3.   947.630000: thread_noise:     bash:232 start 947.630000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.630000: #51599 context thread timer_latency    407168 ns
+            bash-232     [000] d.h..   947.631000: #51600 context    irq timer_latency    108608 ns
+            bash-232     [000] dnh1.   947.631000: irq_noise: timer:206 start 947.630000000 duration 1000000 ns
+            bash-232     [000] d..3.   947.631000: thread_noise:     bash:232 start 947.631000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.631000: #51600 context thread timer_latency    401472 ns
+```
+
+I am very interested by any relevant test to do (switch events ?
+Anything else ?) to improve the series (and the platform :-)).
+
+I am quite sure I missed a *lot* of things, but it seems to do what I
+need :-). I post it as RFC for now, in particular because I added a new
+file, and I am not sure if it is the proper way.
+
+Thanks for your remarks and improvements !
+
+[1]: https://lore.kernel.org/linux-m68k/20241018124511.70d29198@gandalf.local.home
+
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+Jean-Michel Hautbois (2):
+      m68k: Add tracirqs
+      arch: m68k: Add STACKTRACE support
+
+ arch/m68k/Kconfig             |  6 ++++
+ arch/m68k/kernel/Makefile     |  1 +
+ arch/m68k/kernel/irq.c        |  2 ++
+ arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 79 insertions(+)
+---
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+change-id: 20241021-add-m68k-tracing-support-36c18d2233d8
 
 Best regards,
-Krzysztof
+-- 
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
 
 
