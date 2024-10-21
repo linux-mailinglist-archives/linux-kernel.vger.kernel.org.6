@@ -1,99 +1,86 @@
-Return-Path: <linux-kernel+bounces-375151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF609A919D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:50:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366AA9A91A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9479C1F22F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E7EB21C93
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D329B1FE0F2;
-	Mon, 21 Oct 2024 20:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oLr04C+7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6722F1FEFA0;
+	Mon, 21 Oct 2024 20:53:47 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597441C9EDD;
-	Mon, 21 Oct 2024 20:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D471EEE0;
+	Mon, 21 Oct 2024 20:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729543818; cv=none; b=aOjOCsmZjYCr1pYJltM4Zn+SYtFESI8vJzrQdFKjEdi0nCfxqnwRHaA6wfnu18AhfH4E84I96H9SZ7viZn1UsasVsl+LofHHX/NPlzyWszngB6iVzrGJ/RAZtx07higxZ4+V0b/CpwwRFBEdITKOb9WAaibc7rFyg/ZeXLjcFkY=
+	t=1729544027; cv=none; b=FnlRNzObv61Ex5HH4IBOOQpJhQEGgEIExymYsF0+izeuyds5eYe0sZn+KSvF+UXI5j8kqRQLXPr6FD8nBuegCGFuBBm8RBkzSdGhEld0hzWrigrOlSZYrrEScBhQnA4qNKg5lesZZR6x19nb0BczlcFGs/uxTaI1g6Lxm7Snabw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729543818; c=relaxed/simple;
-	bh=FJBh0R1sjKvOe7ZaRx7rQ0Rhy0uNGJ7rDJK8f3yEUY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BxSKq+Zk2ZP810wAPQu7iEqgCU/mopEK/LukCbC42qwFW+DNcwOXj17nVWhellvIE0Kiv8k0reMjjvtP1WSqU4HM/bGRDVlbgXBZVPgMnTDmtuQMFFDPNP2weFuJtt1KiF/EtjCdcqbf4KDoYtdC6OqlJNeRKK6509jzSjDnFRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oLr04C+7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729543804;
-	bh=rH+CO2y4DJGXU4U5GosY0T8R9Epnke5MUBhioxrSy0U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oLr04C+7hpqyRtGytDKwILnBWGlV4XGDelBgHb5YfS/MFsqRoRB8h7QY9XqYojfiA
-	 EjzZN73D5CYb6oZ6Y6c2ybf5sAzm3YmVeNBEhU3MIcq2b+kqJA1/sgQqYAsQxN5Qcy
-	 X19zCuvPUZaSLWDrZrqAUyuF2HZAo/d0AA8v8Rv13Ndqm7TH+Q4+GkzT+UXESIA+ZA
-	 +FcD9FG29uw/mtIJPeP2tRoaW4cL+LqRI5v6F09MqbZrO+PlkuWwHZqSJCSfwBFLVv
-	 hwgFOltvPuUz9hB5R9DxS4iPQXWSc2vi8KLYcq1EiPzjwaMqfF/Sa9BA0kM/aKz4Ji
-	 FIbfWYjF2rhHw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XXS9l4Y52z4wb7;
-	Tue, 22 Oct 2024 07:50:03 +1100 (AEDT)
-Date: Tue, 22 Oct 2024 07:50:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andreas Gruenbacher <agruenba@redhat.com>, Steven Whitehouse
- <swhiteho@redhat.com>
-Cc: Qianqiang Liu <qianqiang.liu@163.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Message-ID: <20241022075004.3369d8ec@canb.auug.org.au>
+	s=arc-20240116; t=1729544027; c=relaxed/simple;
+	bh=j1T4iZzE4giUJcwjweZk0ASQX6aBWUlxR0GeSGmkTkw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kmfINiLI5J1rqyz+up9DgzBt403M7/kQgbj593th7Ilfv3R1ULmUG6rpbWp1gQbq2pjuePmaqpHWXx1zPwk/UkPQLU656SjsBvMrpSIizH4SpUNMdOo+izt2f8mMcvHBHSOM4jcGb+WXGQhMOsQj15e1IM2dMgjsaEwP7FWZa1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1t2zP9-00174U-Rs;
+	Mon, 21 Oct 2024 20:53:32 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH v2 1/2] dt-bindings: arm: fsl: Add Gateworks GW82XX-2x dev kit
+Date: Mon, 21 Oct 2024 13:53:28 -0700
+Message-Id: <20241021205329.1179426-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Kgm2zns7YHrDfYTJ3rry/V9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/Kgm2zns7YHrDfYTJ3rry/V9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Adds support for the Gateworks GW82XX-2X development kit
+based on a GW82XX baseboard and a GW702X System On Module.
 
-Hi all,
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+v2: no changes
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Commit
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177..93af4fb6296a 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1082,6 +1082,7 @@ properties:
+               - gateworks,imx8mp-gw73xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw74xx   # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw75xx-2x # i.MX8MP Gateworks Board
++              - gateworks,imx8mp-gw82xx-2x # i.MX8MP Gateworks Board
+               - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate control without panel
+               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
+               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
+-- 
+2.25.1
 
-  507da2cb5d8a ("KMSAN: uninit-value in inode_go_dump (5)")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Kgm2zns7YHrDfYTJ3rry/V9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcWvnwACgkQAVBC80lX
-0GzxwQf/YSo6vaQcBjHATnr9dSEkXDA4MGIMFP7OZwOsItxUN5JKVCTfui4QBqpG
-WEHZFZody1JX8IK/Hb3Qb4B7vcVN7hT7VDZtFyW7zs14iL1i1cf0jNpAwpzdXwoS
-7FF+D0kRwHZpz7rpXHMCBqDW0Z7UoVcL0FrGtOGNBzqXpfM5dA/b0wq6rk2g2qU+
-1wztXpy/uPaSUrS/KDjqK5M1c4EnhWYJHpnPCqQtjWHLBRPuacuuRUNGCNonYikH
-6jKD6AoPXVawUKWBi8ip0PPJ3c4I39b/EIjSH8VED7e3yJKWjLB/o4E63TK/R2Zw
-rJsc8NsGMsA776NC0EHLC53OfU7oaw==
-=jgwy
------END PGP SIGNATURE-----
-
---Sig_/Kgm2zns7YHrDfYTJ3rry/V9--
 
