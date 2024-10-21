@@ -1,184 +1,242 @@
-Return-Path: <linux-kernel+bounces-375212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513539A932F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256379A9331
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70EA11C222BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:19:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CE11C22A9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3EB1FDFB1;
-	Mon, 21 Oct 2024 22:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADF6433D8;
+	Mon, 21 Oct 2024 22:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Jl/uMdWI"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GY1PVxzQ"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FB41E0DBF
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F06F1FDF88;
+	Mon, 21 Oct 2024 22:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549172; cv=none; b=FiHjjLeZIVEGGh52Gfk9bsy062y0W+wEsJqvl/VHPWpIxu2nOH3oZjAqcnPsrZyV7/9KDej5YGOr9sKAPtUxhwlviH6EYFmw0VvvIVegvb1xBBbp9lH5Pgb87kXW/Jgf4zKOZwCf4lUZwXLnEaMgo+VIYMcNUmDrf0zuIaubHDo=
+	t=1729549195; cv=none; b=HAATYwMps1/4imZCwsd5Nese+cJ8zKbOZP8UPt9dDODoefDCILqUrgriS08b1F2qFoc/Q/Dp1TO4jjScXPLKq573/RrWUaLAis195hWwxPts6PhLKolr0EQUFXeAaqsZEIAdU+rrP4qiIy3UUAj4CMQdguOvLUs5k8ohYVzygVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549172; c=relaxed/simple;
-	bh=d4Hx/cRy7NkkHTNVss8trxhlikAzBWyB1IlZmeA0OFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k34j4BaRcSxSiUySSsap+nIVtu4NqXUZqtmsrqTKmgg89JSmfFdU/3vvmgNwlzML/Zc/w1AAcfcwCRkBLiSuKsKMggVtLXevihYT+irznpZNQFycFiWNS30baGesYyEvCiB+gOpoMnppdpoYwCD+tro8xEzoW0jk9nR6aYqn+ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Jl/uMdWI; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d808ae924so3433968f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:19:30 -0700 (PDT)
+	s=arc-20240116; t=1729549195; c=relaxed/simple;
+	bh=diKNMK3Qe9TVzYTct8pJQa3ZgQbJBEctfTGOhA6eNjE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXgonsOy4pBVGEuFPzyS2u5IHaUT3xPE4a876XTs2g+kz9MrBwH0gpvmCLXQriGY/ubYLgOaVhrGEkJzO/wK8XiyC8IP7dfdwEgsC4pqcEgAJ4HZ8GnrqKVjU9DJNCh4vfDF+5mNe9esKV/wRUAIBMmup9bskBe3d2AAmLsT2u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GY1PVxzQ; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so2050302276.3;
+        Mon, 21 Oct 2024 15:19:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1729549169; x=1730153969; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZ2zuYw+4sVZ/fhPBdOcU9Qy7dwIcoCWAMOXyFZEzQ8=;
-        b=Jl/uMdWICRVkU+KJqsA9Yz+o4QODSCQLgessEzsNF8MUANQV1H/GfJP+MJ+/AG/q9g
-         wBBqNRrDM0oqoOkLqIggcoXuvD1AM8mDNwR/fOuPWvqHohlIPb+LLFyYxVNxrk3Vo+RF
-         AycJ5glXvYZNSAZaBV3GYvEBZ0VIHg88J4Ua4=
+        d=gmail.com; s=20230601; t=1729549192; x=1730153992; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3fHFzTzwtnaiiSBzJZZQe8XpRwnesGuRxl9fLAMU1c=;
+        b=GY1PVxzQaTzMGsWDjURNlVRKN9Oa4LuCh1T2uLUhD/hDH6UCj0Y21bQ0wsT8ol3z5X
+         9RqbsTgbZ5Rm/Rnj+f3S2v5IAAICbcTLVr8Q+Q3sgjXz93KF1usdeJLP0Yd97O5SNLGH
+         9oFwSU3/xPXRVbKj6J6aoow2sFbeN71L4TTulGnBwi0ku+AIQ5/7oA0vN+pnqX2vysH4
+         fnAMFLr1eUNP+ObMcT31AIyAid/MJR7e3u7VU2G8FvL4vRnkMMVwJvLOUyb3yn/69F6u
+         hh7/h184/FQ1cgYbu8jrEkX1oSn7uEnzakoVR28K/cEorOVkf0gQGh243jDZQfFbaBVX
+         T80w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729549169; x=1730153969;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GZ2zuYw+4sVZ/fhPBdOcU9Qy7dwIcoCWAMOXyFZEzQ8=;
-        b=JFd/wBLpGmOOvEM+EujRQMFEmSZrHa4R2b/ThzivnIkCsa78izCB//6RYdL8fHL3nJ
-         wJhtW+wmiZ4oa5/DJPoULuRtelUAG7bo+OHYEWrUUJQJYV21CdxNQgncyrx7ibePT7jf
-         71KrN8VDfkemG10rgYDjFHSf7DVPGi3ZpCZjbbrpaRwsOkCUAeQ6I/XFMkA8ijDOeUHd
-         UtFpMbZg1FxB1gqtohFs6rp19dKGNZ6o5u+s0BQm0bBN4SZj0vzFPu9eQroOFdqBhIBX
-         f1cin4FIKp7tWHYhpp+w4wSVkA4PQIRS7PxUkGXz8sx3knzBwxfkUQypyFfT6kthB6vT
-         xtqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmfZ69xX9BdtunjHx9emsETpEChj1hJKDHuU/v/CdYMrCnwGrALJdI2UwMfGkfRMQ+3Kuyx0hlzCQDcLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXy6thrN1eP4yBzKmoehLrUJhgUt+CZMxUR8Pq0KFSws2X9Pis
-	9xH8poX+akivlsMj/t8CY/icSfQfg/43Sh0wQCm7TxvK9X5nF+F3adDOVGPXaSqCsSYoDQ5ZmLf
-	mrIXCECgnejlSSR7h3UHL4Lh+WIYkzJI1TlY6
-X-Google-Smtp-Source: AGHT+IEvjbXW6wM/SIUdgE+eDK7EVoNhkWytwaD+uWMZQ4J50zDJS0rWuud1j6IvR9zb6ETrq6M0OaMLiIrlxiZjYBk=
-X-Received: by 2002:a5d:4810:0:b0:37d:4cf9:e085 with SMTP id
- ffacd0b85a97d-37eab707d5emr10101396f8f.25.1729549168574; Mon, 21 Oct 2024
- 15:19:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729549192; x=1730153992;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w3fHFzTzwtnaiiSBzJZZQe8XpRwnesGuRxl9fLAMU1c=;
+        b=GWQxKiXVmWocuYSQ++ID0qB6JecJttsfMa7l4hQYzIyXzQd6tSXqVMeyNv2KkoHOeF
+         NjGLVFWI/AS4gUxVFlPMmozngravKDu6F8Jpg/9mlVB67CnXt5DIrTIO90eNOB0MHIEA
+         CQqFsClb1+ilIjczNGF3dKIvqv0jGJlwtbe4tRCvpkIihmrwPW5ee02/so/Qe3E28Ff6
+         KrD/abWqCFUkB7AJ3GvobS5XOxsC+PBYK1SGSwI3Sqpf9p2TJA6JRZv/aexjTjJhEIZ4
+         FqzdavUCoFdkakPCAckz7oAdnVTU83918N6OH9RADl5eEm/mXyvp5k0XpRkvIbkMB4y9
+         Yf7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdWK4ECzit10xWzeKHYoOzeWJ+Kbz+UaE1ffDWnjqtZgPkIuc1PBSBOPpwWRCDU96rR3zTkaK4mCE=@vger.kernel.org, AJvYcCWlx1oHq6br2CJrPTpXycC2xRHmKZb4ZGuMikCxXZAXINJkrEMNbCc9Ze03YXprsOPSNHQa2hAuIOOgMjYl@vger.kernel.org, AJvYcCWmMVwkILKrccXxiHXybuLdytJ2c5HmjoOH4b7plqxJeZJhyZHgGJrBo4F58S6Itq83xSZtxVS6umSe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi/FR8IfPGClK3SLrIGWUBDX3HllfhFMjMbQpYwyUmtdBzgUCy
+	QKfcyopdIcsKCI7LTkomT2VjZoW6S7TYROafdS33belpF5CcrIA+
+X-Google-Smtp-Source: AGHT+IE6DCryAMRTcQ/uYaS+w9dgwclJfmstPIXQ7cQMdqYtzykFctUoamtl2khAknAXDVOeKjGbbQ==
+X-Received: by 2002:a05:690c:6210:b0:6dd:d5b7:f35d with SMTP id 00721157ae682-6e7d82b1bafmr6517197b3.30.1729549192267;
+        Mon, 21 Oct 2024 15:19:52 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ccb435sm8458227b3.91.2024.10.21.15.19.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 15:19:51 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 21 Oct 2024 15:19:38 -0700
+To: "Bowman, Terry" <kibowman@amd.com>
+Cc: Fan Ni <nifan.cxl@gmail.com>, Terry Bowman <terry.bowman@amd.com>,
+	ming4.li@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
+	Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
+Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
+ logging
+Message-ID: <ZxbTepcs8eJqckFN@fan>
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+ <ZxE8jn9M7twa4v2u@fan>
+ <8c34b676-e71a-42e8-96fe-485ffeaa8328@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021022901.318647-1-rosenp@gmail.com> <CACKFLi=WNXhDJPD-bt5cm46bBDZRn=8ZbDCQfE0juO_32SDuAQ@mail.gmail.com>
- <CAKxU2N8vW-b-=FpdZdBvakWzEYYhHJyhLDsEs-PJ4gapaxH0ow@mail.gmail.com>
-In-Reply-To: <CAKxU2N8vW-b-=FpdZdBvakWzEYYhHJyhLDsEs-PJ4gapaxH0ow@mail.gmail.com>
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Mon, 21 Oct 2024 15:19:16 -0700
-Message-ID: <CACKFLin_iCLiHvHqkSspgYpNfBH_SWZ2DiLWW91EsAo5JAGaPA@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: bnxt: use ethtool string helpers
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000d72aa20625040b24"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c34b676-e71a-42e8-96fe-485ffeaa8328@amd.com>
 
---000000000000d72aa20625040b24
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 17, 2024 at 12:27:04PM -0500, Bowman, Terry wrote:
+> Hi Fan,
+> 
+> On 10/17/2024 11:34 AM, Fan Ni wrote:
+> > On Tue, Oct 08, 2024 at 05:16:42PM -0500, Terry Bowman wrote:
+> > > This is a continuation of the CXL port error handling RFC from earlier.[1]
+> > > The RFC resulted in the decision to add CXL PCIe port error handling to
+> > > the existing RCH downstream port handling. This patchset adds the CXL PCIe
+> > > port handling and logging.
+> > > 
+> > > The first 7 patches update the existing AER service driver to support CXL
+> > > PCIe port protocol error handling and reporting. This includes AER service
+> > > driver changes for adding correctable and uncorrectable error support, CXL
+> > > specific recovery handling, and addition of CXL driver callback handlers.
+> > > 
+> > > The following 8 patches address CXL driver support for CXL PCIe port
+> > > protocol errors. This includes the following changes to the CXL drivers:
+> > > mapping CXL port and downstream port RAS registers, interface updates for
+> > > common RCH and VH, adding port specific error handlers, and protocol error
+> > > logging.
+> > > 
+> > > [1] - https://lore.kernel.org/linux-cxl/20240617200411.1426554
+> > > -1-terry.bowman@amd.com/
+> > > 
+> > > Testing:
+> > > 
+> > > Below are test results for this patchset. This is using Qemu with a root
+> > > port (0c:00.0), upstream switch port (0d:00.0),and downstream switch port
+> > > (0e:00.0).
+> > > 
+> > > This was tested using aer-inject updated to support CE and UCE internal
+> > > error injection. CXL RAS was set using a test patch (not upstreamed).
+> > 
+> > Hi Terry,
+> > Can you share the aer-inject repo for the testing or the test patch?
 
-On Mon, Oct 21, 2024 at 2:05=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
-> The only real way to satisfy everything is to use a temporary variable li=
-ke
->
-> for (i =3D 0; i < BNXT_NUM_PORT_STATS; i++) {
->   const char *str =3D bnxt_port_stats_arr[i].string;
->
->   ethtool_puts(&buf, str);
->   }
->
-> to make everything small.
+Hi Terry,
 
-This looks fine too.  The actual function call looks clean on one line.
+Could you tell me which code base you use for this patch set?
+I hit a lot of issues when trying to apply it on top of "fixes" or
+"next" branches.
 
---000000000000d72aa20625040b24
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Fan
 
-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
-OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
-/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
-L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
-kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
-5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
-hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
-E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMj0OiziUrU4DDRX89L6UV4YZOOhMa0s
-PDZGGSdPhBt1MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAy
-MTIyMTkyOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQA6JR4uuNrpAgViS1HjsyrUYCgih5q1ma92D8tWQu0MNpWAdGRk
-rauyKt0+hzg/e8OgSIfftlB9PTim9fIvaskoDoF/b8gBXSQfnZG4AIJWsGGCWU6xaNBbw4tUVQWq
-oqq6/lqj/OD5A8VO/yt0heSv5CsvN1879RK7xZnod2m2Dp1szF0jJuDDahwDfA3S/gDXO7Ili2vo
-++PEHtnxiElT630xDanrDovPxQ+wtoDUmg7QgclX2hnIOWLYT5MX2bjDtOGe3KuvPo6zsd81bVBL
-JZ1ehp2xDJdd3hmXLj3E0z9ocRCHSLDwmCLveIqTzbuCnYBccp7a6YEoangxOj7U
---000000000000d72aa20625040b24--
+> > 
+> > Fan
+> 
+> Sure, but, its easiest to attach the patch here.
+> 
+> Origin was https://github.com/jderrick/aer-inject.git
+> Base is 81701cbb30e35a1a76c3876f55692f91bdb9751b
+> 
+> Regards,
+> Terry
+
+> From ca9277866b506723f46f3acd7b264ffa80c37276 Mon Sep 17 00:00:00 2001
+> From: Terry Bowman <terry.bowman@amd.com>
+> Date: Thu, 17 Oct 2024 12:12:58 -0500
+> Subject: [PATCH] aer-inject: Add internal error injection
+> 
+> Add corrected (CE) and uncorrected (UCE) AER internal error injection
+> support.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  aer.h   | 2 ++
+>  aer.lex | 2 ++
+>  aer.y   | 8 ++++----
+>  3 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/aer.h b/aer.h
+> index a0ad152..e55a731 100644
+> --- a/aer.h
+> +++ b/aer.h
+> @@ -30,11 +30,13 @@ struct aer_error_inj
+>  #define  PCI_ERR_UNC_MALF_TLP	0x00040000	/* Malformed TLP */
+>  #define  PCI_ERR_UNC_ECRC	0x00080000	/* ECRC Error Status */
+>  #define  PCI_ERR_UNC_UNSUP	0x00100000	/* Unsupported Request */
+> +#define  PCI_ERR_UNC_INTERNAL   0x00400000      /* Internal error */
+>  #define  PCI_ERR_COR_RCVR	0x00000001	/* Receiver Error Status */
+>  #define  PCI_ERR_COR_BAD_TLP	0x00000040	/* Bad TLP Status */
+>  #define  PCI_ERR_COR_BAD_DLLP	0x00000080	/* Bad DLLP Status */
+>  #define  PCI_ERR_COR_REP_ROLL	0x00000100	/* REPLAY_NUM Rollover */
+>  #define  PCI_ERR_COR_REP_TIMER	0x00001000	/* Replay Timer Timeout */
+> +#define  PCI_ERR_COR_CINTERNAL	0x00004000	/* Internal error */
+>  
+>  extern void init_aer(struct aer_error_inj *err);
+>  extern void submit_aer(struct aer_error_inj *err);
+> diff --git a/aer.lex b/aer.lex
+> index 6121e4e..4fadd0e 100644
+> --- a/aer.lex
+> +++ b/aer.lex
+> @@ -82,11 +82,13 @@ static struct key {
+>  	KEYVAL(MALF_TLP, PCI_ERR_UNC_MALF_TLP),
+>  	KEYVAL(ECRC, PCI_ERR_UNC_ECRC),
+>  	KEYVAL(UNSUP, PCI_ERR_UNC_UNSUP),
+> +	KEYVAL(INTERNAL, PCI_ERR_UNC_INTERNAL),
+>  	KEYVAL(RCVR, PCI_ERR_COR_RCVR),
+>  	KEYVAL(BAD_TLP, PCI_ERR_COR_BAD_TLP),
+>  	KEYVAL(BAD_DLLP, PCI_ERR_COR_BAD_DLLP),
+>  	KEYVAL(REP_ROLL, PCI_ERR_COR_REP_ROLL),
+>  	KEYVAL(REP_TIMER, PCI_ERR_COR_REP_TIMER),
+> +	KEYVAL(CINTERNAL, PCI_ERR_COR_CINTERNAL),
+>  };
+>  
+>  static int cmp_key(const void *av, const void *bv)
+> diff --git a/aer.y b/aer.y
+> index e5ecc7d..500dc97 100644
+> --- a/aer.y
+> +++ b/aer.y
+> @@ -34,8 +34,8 @@ static void init(void);
+>  
+>  %token AER DOMAIN BUS DEV FN PCI_ID UNCOR_STATUS COR_STATUS HEADER_LOG
+>  %token <num> TRAIN DLP POISON_TLP FCP COMP_TIME COMP_ABORT UNX_COMP RX_OVER
+> -%token <num> MALF_TLP ECRC UNSUP
+> -%token <num> RCVR BAD_TLP BAD_DLLP REP_ROLL REP_TIMER
+> +%token <num> MALF_TLP ECRC UNSUP INTERNAL
+> +%token <num> RCVR BAD_TLP BAD_DLLP REP_ROLL REP_TIMER CINTERNAL
+>  %token <num> SYMBOL NUMBER
+>  %token <str> PCI_ID_STR
+>  
+> @@ -77,14 +77,14 @@ uncor_status_list: /* empty */			{ $$ = 0; }
+>  	;
+>  
+>  uncor_status: TRAIN | DLP | POISON_TLP | FCP | COMP_TIME | COMP_ABORT
+> -	| UNX_COMP | RX_OVER | MALF_TLP | ECRC | UNSUP | NUMBER
+> +	| UNX_COMP | RX_OVER | MALF_TLP | ECRC | UNSUP | INTERNAL | NUMBER
+>  	;
+>  
+>  cor_status_list: /* empty */			{ $$ = 0; }
+>  	| cor_status_list cor_status		{ $$ = $1 | $2; }
+>  	;
+>  
+> -cor_status: RCVR | BAD_TLP | BAD_DLLP | REP_ROLL | REP_TIMER | NUMBER
+> +cor_status: RCVR | BAD_TLP | BAD_DLLP | REP_ROLL | REP_TIMER | CINTERNAL | NUMBER
+>  	;
+>  
+>  %% 
+> -- 
+> 2.34.1
+> 
+
+
+-- 
+Fan Ni
 
