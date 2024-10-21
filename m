@@ -1,83 +1,74 @@
-Return-Path: <linux-kernel+bounces-374943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00E09A7249
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:27:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA0B9A724A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080461C229D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:27:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81430B23187
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF8F1FA26B;
-	Mon, 21 Oct 2024 18:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4371FA27D;
+	Mon, 21 Oct 2024 18:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0jypGmh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WL//4TkY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA8F1F9428;
-	Mon, 21 Oct 2024 18:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5661FA274
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729535250; cv=none; b=i1L9XMj22dEIiLh6FSnKPIrCTZfEHlpRXEKEFz9XWlSwyM8ERJvIPD//HPUhCKosGMTAiuP92cWqJbiQL8vCr5OJBIPLOcpUwld6Iy8uocKwnaxKRNwjuV2sjH/hl+Pangt1jj0sNszA3mjvkOeYJNGMu+UCcrEFu/mfb468qlw=
+	t=1729535257; cv=none; b=tJ+1yXe3fq3zVTyQ9kADdDg4pYI80QGUaH876EZchU6lTLvgu0VL7Ojn0Kpo1T5yUT2YctCKiSAlcGNtFpfUY8OG+Tpl73oCuR5zdTSpbX9sVKL+3FYuA6/7TTWMpN2CczT1yMYLbVN91a9Z8V070qE7os37puM+cXCkH9duxaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729535250; c=relaxed/simple;
-	bh=2sEOQOPHW1JywRabWfVE6g+TWK69PAQId9/YmP1/b4I=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=omyqi15+GsJ20O6hptiMoAROHhjM6ecHYXmNYP8QTBVvgrMHlL1pWlkM6bQVtfM9ugBbnl21BSArP3oxv12Yzejo0+W97teo4Mtx53t99fLttIV/IYodvHB8sfv+eNX+xabA3rtFyW1fGF8E68mdeLO9ry4r+dn4/P1dWMyg2+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0jypGmh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1688C4CEC3;
-	Mon, 21 Oct 2024 18:27:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729535250;
-	bh=2sEOQOPHW1JywRabWfVE6g+TWK69PAQId9/YmP1/b4I=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=S0jypGmhGp5uoOK4Ozsx9ZXQmQmpem3pbft33fN/S49Jm7LNXhD95YP+FtITl3jkq
-	 TPZAN63bkusJZ4Nkb0ezkICnzmgM9p/GqTH6lcVW6JacRKlz3NyOdjvpwbqYvHlduu
-	 CmCeC5ZOTU1ucvATVBSalu8RTI/sYuExvoum13uqYOmHcpiOyhdu/Vu3hgKb8nZTrt
-	 WOdVertBUlGuRHEbU30xyfR79yVl9TUKZ6CdTJeJtKp9yQI2Tpb81CpoBFQ28u5jt2
-	 uW6GvsQ802/s0+LjWzRaYwReAFSASWWfn7Ho6kxf5lXA1oM3g694LNoLk8gTqwMPOx
-	 8Pu9AggMgZGEQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3408E3809A8A;
+	s=arc-20240116; t=1729535257; c=relaxed/simple;
+	bh=8AAw+Mmuhbsvo80+NODCaVjv2c0MTkp1/O5eE10j9V0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TDkY9TQ1CRvcXou2rOXtGiXEpITJ7UIso75KY29MgSgCWGVgAFw/owrj9+b2L1oKZwTCXUfGqMzFAneKAa+kfmKntO4ZQdxkFlOk95iCtpHFDUKjqooqrlMkmVaAGtrijSZbKaTlqAWo228d7cdtmrl36bKh4u0/x03pw0YREZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WL//4TkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E177C4CEC3;
 	Mon, 21 Oct 2024 18:27:37 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.12
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729535257;
+	bh=8AAw+Mmuhbsvo80+NODCaVjv2c0MTkp1/O5eE10j9V0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=WL//4TkYu9WL9sc0tIANauRGEQUGAhEfXOxvllyQf6zr6GNyVTnG4Ppe4jwiynXTq
+	 89gf76sabk+e7JKWFx2P+USQE7SjM1YeFDSUdmfNlksh/3psbKi7sSVGyat9lQTxAZ
+	 cxZZqOWoz0J9yFDNX7vY1iQfVyZAhJCOr+HZHS7mI+xPDb5thZmVw02bG1pLv7zuEX
+	 HQkWL6vZ033DyWuEmfPYJQaeF2/TWshZ7v+Pge0X1+SU9YSjS2SlIHopZOj0QvgTrp
+	 cQMOR6zUQNThV9Z7pabIQLYxW3OYa++P8fSouud1AEgX2jRW56srLq0W/yUD0+l2Ba
+	 aWO74LGB87NGQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7143C3809A8A;
+	Mon, 21 Oct 2024 18:27:44 +0000 (UTC)
+Subject: Re: [GIT PULL] probes: Fixes for v6.12-rc4
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZxXqbFAO9VN3ugIR@gondor.apana.org.au>
-References: <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
- <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
- <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
- <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZbstBewmaIfrFocE@gondor.apana.org.au>
- <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
- <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
- <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
- <Zw9RM_jNu9vqp9T8@gondor.apana.org.au> <ZxXqbFAO9VN3ugIR@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZxXqbFAO9VN3ugIR@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p4
-X-PR-Tracked-Commit-Id: cd843399d706411ff80520fb7883afeeefa76e98
+In-Reply-To: <20241021235534.e5e55cffca4113ff0081e99b@kernel.org>
+References: <20241021235534.e5e55cffca4113ff0081e99b@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241021235534.e5e55cffca4113ff0081e99b@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-fixes-v6.12-rc4
+X-PR-Tracked-Commit-Id: 373b9338c9722a368925d83bc622c596896b328e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a777c32ca42b9a8a5e5abd915883a73620d9044b
-Message-Id: <172953525589.401524.8311435958320768805.pr-tracker-bot@kernel.org>
-Date: Mon, 21 Oct 2024 18:27:35 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+X-PR-Merge-Commit-Id: c1bc09d7bfcbe90c6df3a630ec1fb0fcd4799236
+Message-Id: <172953526324.401524.17046928838832439511.pr-tracker-bot@kernel.org>
+Date: Mon, 21 Oct 2024 18:27:43 +0000
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Qiao Ma <mqaio@linux.alibaba.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 21 Oct 2024 13:45:16 +0800:
+The pull request you sent on Mon, 21 Oct 2024 23:55:34 +0900:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p4
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-fixes-v6.12-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a777c32ca42b9a8a5e5abd915883a73620d9044b
+https://git.kernel.org/torvalds/c/c1bc09d7bfcbe90c6df3a630ec1fb0fcd4799236
 
 Thank you!
 
