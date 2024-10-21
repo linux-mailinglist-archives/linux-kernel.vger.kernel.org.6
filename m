@@ -1,120 +1,181 @@
-Return-Path: <linux-kernel+bounces-373532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDC49A587A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758619A587F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20C78B20DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F791F21E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D56EB67A;
-	Mon, 21 Oct 2024 01:17:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685D0EEAB;
+	Mon, 21 Oct 2024 01:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CG7+E6Vz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1461C27
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A622C4C70;
+	Mon, 21 Oct 2024 01:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729473461; cv=none; b=owT7avS0KERIQ0ZJfKMa6r7iWVShmn4N1B6CP664U3YR3OixPxctgxxMmxw+rxsMfXwaKVrJUypOZwIvo7mhXqAlySW3djGUxoocqiH6lQBubwp/Rc5TD43OB1eNi+fpGofWH/DPfaaqah9yuyRFM3b2++UHvCIMInNSnilCf54=
+	t=1729473763; cv=none; b=KIeUKa6JFmTBEA83JXYRHC8ch5d8wJ3fzZNnJXWd2Nj/195nY3g6MR6ibXLZbX+VVYEtb+oi+ep50OBa/xkU9ghx30XqZ3skqAtYf6Oy3OB2jkvr6VwMGMlyT946WTUXBI/M/hAjVvsl42U1yUWekL2xFVkPbZE+8C1u6KeFDLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729473461; c=relaxed/simple;
-	bh=5CcACS49hDXCkLO1qZ0CjdJgdUlMHlKFZ5c3ApVPW3Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LMRWwO/QLg8FAPw7UOj+ZK4XvnH+NQ2vo3OwzoBQ+68TQfruDPj3wjOThE9z9r1a/gZ2bYMD/nD2kDC8rt6nghc3/KIfyMhi5b3vyy4oHyqgO1dmG8SECYzwDa1liTCdSxnqkaZV5NsUmBhL+TckFxrBzsUExG5ElqjG+ouge/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 39dccacc8f4a11efa216b1d71e6e1362-20241021
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:e60d0836-56e9-445c-84ee-345377496f2a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:82c5f88,CLOUDID:37eb8528babbb630d6c02e2c687f8550,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 39dccacc8f4a11efa216b1d71e6e1362-20241021
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <chenzhang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 455357184; Mon, 21 Oct 2024 09:17:23 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 226A4B8075B2;
-	Mon, 21 Oct 2024 09:17:23 +0800 (CST)
-X-ns-mid: postfix-6715ABA2-997432120
-Received: from localhost.localdomain (unknown [172.25.120.42])
-	by node2.com.cn (NSMail) with ESMTPA id EF116B8075B2;
-	Mon, 21 Oct 2024 01:17:21 +0000 (UTC)
-From: chen zhang <chenzhang@kylinos.cn>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	cascardo@holoscopio.com
-Cc: linux-kernel@vger.kernel.org,
-	chenzhang_0901@163.com,
-	chen zhang <chenzhang@kylinos.cn>
-Subject: [PATCH] platform/x86: classmate-laptop: use sysfs_emit() instead of sprintf()
-Date: Mon, 21 Oct 2024 09:17:17 +0800
-Message-Id: <20241021011717.6742-1-chenzhang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729473763; c=relaxed/simple;
+	bh=jlCzg7egAixbWdgUefAl7xo5OOX4XAUpPQw4CNFUOIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wt1MS4iyIs+rgn5UIu4vbyf0J7svmy8sEORztD6YTGBe+XyPRyw2WVtyIFeqnHqIRrJMi/apitrn8IyPX1urKfvDg2r8iKgWuXn8V/09mNAd7XLIiMmcI17A2L6HtsrUf7txebrACCspt8EKabH3U4DaC3v4ax5sm14LCAVGQG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CG7+E6Vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35EC7C4CEC7;
+	Mon, 21 Oct 2024 01:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729473763;
+	bh=jlCzg7egAixbWdgUefAl7xo5OOX4XAUpPQw4CNFUOIo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CG7+E6VzrSrwBrhwvoSrkmrlXQtOW8B22B8eFwlRO9GrJyrW/jHD8SztOSd3JNflR
+	 u5tSATP4Y+I3hP1gVAZgTGFSgBvyuM7B2FmO5q0ERSf70fo3evLrEkNvnvE+dAbkZ5
+	 iYywmNzmXytC9xC6MVv0xBjEt3pe4I7RbTbf8icw+v+rs1WWDC0GLu5hbQjddHG1MN
+	 DTrXnwFr0phT/a3dLgu18+KxUKJBzf4ZMuNCNl95zX5lhXqa0tYPmZ+CjZQHkvZFP6
+	 UsyjpeCtvHyyrT5bCMb1CclRstx7xmcCConnRVyGlH0IgcfD9Khw9YcW1yvYwXonYU
+	 46UlX9NtYR2Hg==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so45328601fa.0;
+        Sun, 20 Oct 2024 18:22:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCbXIf2qw2SY/7XOrA6jkBBQJLAC0U9cdJNctCRc52clgiOJRp46vffVNKq6lOxoosmoSaLQyM5+Ac4xM9@vger.kernel.org, AJvYcCVDb950Q7ilKE1hnJAc0FJztdTIptRLQyNITIdDtnWPFKSmn8tVvRT4bxousrbXWuwsP2zJwovAVNDzTHKp@vger.kernel.org, AJvYcCXP05sKMD8O5prAwSiCC0NAuwblXAjc6qBbBtb1F2o1HkFKeod/doFS8TI6aouPXrfN05m0aXLWmNDX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUvp4778UxTgp1pgky7sbBaSn5C1RoBu6k+xGnbRIS9qxmAEh9
+	WHFmmvLhjzkqbQapfsYQNVH1ZMEWGiTpTAhS4dghQ6Rlf+Xva5aXSt+MUQl64qH2aDx8xM8NJuW
+	AbVbJSwER/B7SKc0NJ4t03bACpfE=
+X-Google-Smtp-Source: AGHT+IHKEipf35MYVwH+nk6bWLaxQ2XVrgwntLhq6reCsCyEjeQfuvEfGfKQ2g8ZLOkWK0d/FcaxQkfXbS6HX1Iz10k=
+X-Received: by 2002:a2e:a545:0:b0:2fb:50e9:34cc with SMTP id
+ 38308e7fff4ca-2fb6dc74e7bmr44845751fa.17.1729473761693; Sun, 20 Oct 2024
+ 18:22:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241016194149.4178898-1-chris.packham@alliedtelesis.co.nz>
+ <CAK7LNAR4h6NZ+D0BK+q4VQBeHWpjzRBQFQ9ovBrftM=6dHRcUg@mail.gmail.com> <bca44b71-d002-4dac-8c53-6b7dd90ffce1@alliedtelesis.co.nz>
+In-Reply-To: <bca44b71-d002-4dac-8c53-6b7dd90ffce1@alliedtelesis.co.nz>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 21 Oct 2024 10:22:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASZSSkUOTGeCB-JsSyX8a7EbKOD5UdQPqN4pVnG5rXeKg@mail.gmail.com>
+Message-ID: <CAK7LNASZSSkUOTGeCB-JsSyX8a7EbKOD5UdQPqN4pVnG5rXeKg@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: Restore the ability to build out of tree dtbs
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+On Mon, Oct 21, 2024 at 7:57=E2=80=AFAM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> +cc devicetree
+>
+> Hi Masahiro,
+>
+> On 19/10/24 00:19, Masahiro Yamada wrote:
+> > On Thu, Oct 17, 2024 at 4:59=E2=80=AFAM Chris Packham
+> > <chris.packham@alliedtelesis.co.nz> wrote:
+> >> A build pattern to handle out of tree dtbs is to copy the .dts file in=
+to
+> >> the kernel source tree and run `make myboard.dtb`. This is supported b=
+y
+> >> the wildcard %.dtb rule in the Makefile but recent changes to split th=
+e
+> >> dtb handling out of scripts/Makefile.build stopped this from working.
+> >> Restore this functionality by looking for .dtb in $(MAKECMDGOALS) as
+> >> well as $(targets).
+> >>
+> >> Fixes: e7e2941300d2 ("kbuild: split device tree build rules into scrip=
+ts/Makefile.dtbs")
+> >> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> >> ---
+> > This is not a use-case in upstream.
+> >
+> > If you drop-in your downstream DT to the kernel tree,
+> > you need to associate it with Makefile.
+>
+> I agree that this is Hyrum's Law at work.  I still feel that handling
+> out-of-tree dtbs is something that would be in the best interest of the
+> Linux kernel. It doesn't necessarily need to be done by allowing copying
+> arbitrary .dts files into the tree, a mechanism like the way out of tree
+> kernel modules are handled would be workable.
+>
+> Often supporting a new hardware platform is just a matter of writing a
+> dts that describes the board. Particularly when that board is based on
+> an existing one. The way most dts/dtsi files are arranged in-tree
+> requires a non trivial amount of handling by the C processor. So while
+> one could produce a dtb file by invoking cc -E and dtc with the right
+> options pointing at the right paths, having the kernel build system
+> provide something that abstracts that would be beneficial for developers
+> and even end users.
 
-Signed-off-by: chen zhang <chenzhang@kylinos.cn>
----
- drivers/platform/x86/classmate-laptop.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/platform/x86/classmate-laptop.c b/drivers/platform/x=
-86/classmate-laptop.c
-index cb6fce655e35..14c238faca85 100644
---- a/drivers/platform/x86/classmate-laptop.c
-+++ b/drivers/platform/x86/classmate-laptop.c
-@@ -208,7 +208,7 @@ static ssize_t cmpc_accel_sensitivity_show_v4(struct =
-device *dev,
- 	inputdev =3D dev_get_drvdata(&acpi->dev);
- 	accel =3D dev_get_drvdata(&inputdev->dev);
-=20
--	return sprintf(buf, "%d\n", accel->sensitivity);
-+	return sysfs_emit(buf, "%d\n", accel->sensitivity);
- }
-=20
- static ssize_t cmpc_accel_sensitivity_store_v4(struct device *dev,
-@@ -257,7 +257,7 @@ static ssize_t cmpc_accel_g_select_show_v4(struct dev=
-ice *dev,
- 	inputdev =3D dev_get_drvdata(&acpi->dev);
- 	accel =3D dev_get_drvdata(&inputdev->dev);
-=20
--	return sprintf(buf, "%d\n", accel->g_select);
-+	return sysfs_emit(buf, "%d\n", accel->g_select);
- }
-=20
- static ssize_t cmpc_accel_g_select_store_v4(struct device *dev,
-@@ -550,7 +550,7 @@ static ssize_t cmpc_accel_sensitivity_show(struct dev=
-ice *dev,
- 	inputdev =3D dev_get_drvdata(&acpi->dev);
- 	accel =3D dev_get_drvdata(&inputdev->dev);
-=20
--	return sprintf(buf, "%d\n", accel->sensitivity);
-+	return sysfs_emit(buf, "%d\n", accel->sensitivity);
- }
-=20
- static ssize_t cmpc_accel_sensitivity_store(struct device *dev,
+
+I also handle a bunch of yet-to-upstream device tree files.
+
+
+I have them in the proper directory location, and add
+
+  dtb-$(CONFIG_ARCH_FOO)  +=3D foo-downstream-custom1.dtb
+  dtb-$(CONFIG_ARCH_FOO)  +=3D foo-downstream-custom2.dtb
+    ...
+
+jutt like how they would look when they were upstreamed.
+
+
+
+I do not understand why the drop-in way is supported.
+
+
+
+
+
+
+
+
+
+
+
+> >> Notes:
+> >>      Changes in v2:
+> >>      - keep $(target) and search for .dtb in $(MAKECMDGOALS)
+> >>
+> >>   scripts/Makefile.build | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> >> index 8f423a1faf50..78763a4bc58a 100644
+> >> --- a/scripts/Makefile.build
+> >> +++ b/scripts/Makefile.build
+> >> @@ -449,7 +449,7 @@ ifneq ($(userprogs),)
+> >>   include $(srctree)/scripts/Makefile.userprogs
+> >>   endif
+> >>
+> >> -ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o=
+,$(targets)),)
+> >> +ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o=
+,$(targets))$(filter %.dtb,$(MAKECMDGOALS)),)
+> >>   include $(srctree)/scripts/Makefile.dtbs
+> >>   endif
+> >>
+> >> --
+> >> 2.47.0
+> >>
+> >>
+> >
+> > --
+> > Best Regards
+> > Masahiro Yamada
+>
+
+
 --=20
-2.25.1
-
+Best Regards
+Masahiro Yamada
 
