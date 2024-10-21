@@ -1,231 +1,234 @@
-Return-Path: <linux-kernel+bounces-375067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FA99A9078
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:58:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0CD9A906D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E210281C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:58:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EAC1B20D6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333001E0DD5;
-	Mon, 21 Oct 2024 19:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A0F1CEEBB;
+	Mon, 21 Oct 2024 19:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7/XgDl1"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="terkjER9"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A8B1E0B70
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FCF1991AE
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729540714; cv=none; b=NRce3SG1vdIlrA/zPC/a2UchrriZybbdbv6OUXxPF36RrNiEpnaQdZSlbMs91jFHcM4J8TqokvZENrAWuR2PXrAlZEnnOEdgbzG7zxumxKlO1bRFzx3l76ERXmElT5vGTt771FYh2HuSMef+mX+Y3WExOQVdLkacig/SYN3EkO0=
+	t=1729540650; cv=none; b=tNy5ngqp1al22ZsxgLEc2dKAcgHxC1TUg9ISAuNM+RdA7i7hHVtBDDcjQ5BAB+z2qNV4mb/nBrnUvaqJpp3lXoNfr4MeX+RIpR6h8V42HKperlZsZxMWKFuiKB4dO+DEBMxu1eqPAd9QhXzhMzYDipAb1qvshZH3GBxO477fdNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729540714; c=relaxed/simple;
-	bh=GiobojYiVfVoZBFuSMMSjKv3icK3jZgNcGiHUKWvBFI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u4Ldmlo3xugolqyxgyLsleni5EFcPowaMs83IaHTxdgdWdczLCdBCNvvk7ZybOfg0bzIsRoj1YvwVimcvnbbnpNPB0wKIR+KFAFjeofNJazGM8FwCmg87JDjdUrPa3aPm6IhRUl9lpg3QN2JJMTKnKQN27LXPgBYpfe1uAmb9/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7/XgDl1; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e5417f8d4so312620b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:58:32 -0700 (PDT)
+	s=arc-20240116; t=1729540650; c=relaxed/simple;
+	bh=qOutugFCpepW8u5UYINmN7xH5gJdHqlJntLv8cxtA44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqbZk5Debb/VJclrnhRkqaWbx8nawdMWxPHYYi3tGWpxb8+LCpm5zcpKXjkMU4xQ1QYCjHSJJWYHZ2Lhb0J3C3LJ1amPNItjftoPXd2xxVHWmO+Ykygiz/WslKcB8lIJb1cam6sWSIWZaXtcz6+8hBP+oyOWQZZSOITVc3MSkv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=terkjER9; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-851d5b60739so989657241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729540712; x=1730145512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/FgF0DU7rN81tqNTOqqY5AogDEl5GSNKz8OuW5qCJA=;
-        b=c7/XgDl1cByt7jrp8HaveuW8IxiysfvfY/pfvCweXVivxNYSbUp5GVEA0++naQAEig
-         uQcMmKAzhYHvNwddye12Ft63Y5N6qP/yCWfcT5lRBF9GlsYjOB1JFD0GUeT3E6iY8sqy
-         qeeePypGPFXqh/vWjq6UTlJZGo/Ao0YkFXsTrtC1OX7/o3Z3gcIGsfe59G97N/BCSXW2
-         0obJcAdPvrBRgxGqBeaGLkIn2jiwP2mP3La8rqPnYHi1iBb8EoRj9I3F6d8ljrfC/zFM
-         ERdexqdEzPwe6bSNyYzz7vnmzirmaV7Ra90jOaa4umCk0SNdxOCPz/ehQFOBJlq/F2Nd
-         3YAQ==
+        d=linaro.org; s=google; t=1729540646; x=1730145446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cH/iMGwmL8zueR5LtHUH4E+NzMcpI4d6jTgQKxN0ldQ=;
+        b=terkjER9482u2PmNWP+wabj3BeFcvIdYFGJAiNf4FD+O/iylMpvlcEx5aqai52pdXQ
+         pa6zJ3gMzUryrWfOKB1/5BDIpMl09/QZs5lYHSN+fTXeO+9XDRLJc8vZOkopetsZZA6d
+         5ekr7VK3TobGtUcsKTaEftzLjbF4bEKHWP5IO5BfI0d7surtiCWlVoB6tgC/8nDQMM3A
+         B7p5J93HWMuFktNELj1eQ6YdophQnudLw2kKe1AhTiTuUl3eEhSdjCnHeKrIibs6RvpB
+         ef540MpSmr15nDlK31/5r2PiKtXk+WoM+NI65ysBawLRIsGJswzh5sySKjZMy9pYm42Z
+         1FhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729540712; x=1730145512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j/FgF0DU7rN81tqNTOqqY5AogDEl5GSNKz8OuW5qCJA=;
-        b=k9rdslf4/ETq3/8zUuM9PzpdgfATyKpdiZTADakaKDHDWuGUds9+z7A2rAfM53IBLD
-         JdNIWfHD1a4B6njtLmMa1VH74kWx/TPN72+xIqoVDs2hLR0lds3df1njv3aP9jwENJTs
-         CDv+RCio8uTIWG6oL6vPXdjOmET7qBZ4V0Fe4eaKhtYWQD6WSexjbuCVuJF9fmzDsEUZ
-         w6z1F7e8ixnYYXOBC3Q2F7I5QzFLdCtQm6QhsL7Nsf3CaYiZGlfxvM+0jfQp1YVbswx5
-         OSUglelVbw3bq5edM+lk9Kp6yISTMK9j0C2WW9+shP+T+nAMqLKpFjhUyF7Tc+KD/NCn
-         RU4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU0NBFiNGEzZFwzmN1+SXGOsBi8HbWjjuHKoYvXhq2l7qQHsMTdcg2p8oij5L4tOi3yrd5fFOyUSkufEXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP19iTrwbLtL29qWiYRVwviIY1bpNmAZIgRIgsoAc36CD/sNYE
-	UT1NEAu0cvtt37htBWrA5A+EA5HGPjWQlDrPDiOTd9WyLUISAU4uhNwcWFIu0MY=
-X-Google-Smtp-Source: AGHT+IFbbo2FCzmyaEvh+4vefK128rGbliC2Oq+pvv23OD/JdHWj7XNKeV3KiAD15pNYTR8kdOsTDg==
-X-Received: by 2002:a05:6a00:2e24:b0:71e:66bb:d33b with SMTP id d2e1a72fcca58-71ea3129093mr7659113b3a.1.1729540712152;
-        Mon, 21 Oct 2024 12:58:32 -0700 (PDT)
-Received: from ice.. ([171.76.87.28])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312cd8sm3292796b3a.31.2024.10.21.12.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 12:58:31 -0700 (PDT)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: ryabinin.a.a@gmail.com
-Cc: glider@google.com,
-	andreyknvl@gmail.com,
-	dvyukov@google.com,
-	elver@google.com,
-	skhan@linuxfoundation.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>
-Subject: [PATCH v2] kasan:report: filter out kasan related stack entries
-Date: Tue, 22 Oct 2024 01:27:15 +0530
-Message-Id: <20241021195714.50473-1-niharchaithanya@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1729540646; x=1730145446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cH/iMGwmL8zueR5LtHUH4E+NzMcpI4d6jTgQKxN0ldQ=;
+        b=bsj55uxKIq6HkKPu7TnzCQqp2UxeuHiomENDktn4Ydo3TNcwHs7n0WmT4PRQM57HVi
+         JVpm+o+Coa5vHRFQM2+Q8Grt/AFlLCTperjEtSeHwP16SvI4I6a04fjGBlhXzHj+Tgyq
+         C2jiAwp4vugsG2WHk0rTcIrkkO1KO+MsXVsPs/4y3LkDSGSeTGp/MEKYXKWWEnp8odgr
+         GrfyzXtXhxbUERm0bmIeY5kMaoA+9tDlPDYckPPmMpjAKifRDVKcOFwB0FFWuHHCOYxQ
+         jTeKOa6xes/oklnS75MD21jFrQ0/IywGyHmHFt3P+/5lFiIM67Pksgzrjvs0+xO+yV6N
+         +/1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9CD/fOGGpShXCGopt+iSdF11cNXaxeKAC0bxMySu4bjKMn8P9tx8g0Ks9XefPBfMkvczrwqEfspTuIn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK0lCwRUbjPvhNX3LovqrABtlMwpkrmlnM1qhsjBDiZ48ai8lm
+	s3axJE1MBFUwPhHPyJfIpFVfnFoKIV65SIAiegxXntHhIvownnRM40cetLvXLrtNYmTL8xi63kc
+	DwGlb95Kt4eCL/YIQgpAnQ+wZWM+AgNOQGCR5+A==
+X-Google-Smtp-Source: AGHT+IEAxK901tOLYft3Q6FSmittxptvWwx8UI67LGet/0+2dqQn/zWS1SdC2S2Ep467Qgo3yOephfFiNjAr5nswFs4=
+X-Received: by 2002:a05:6122:65a2:b0:50d:2769:d741 with SMTP id
+ 71dfb90a1353d-50dda3a0fe4mr9320092e0c.11.1729540646150; Mon, 21 Oct 2024
+ 12:57:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241021102256.706334758@linuxfoundation.org>
+In-Reply-To: <20241021102256.706334758@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 22 Oct 2024 01:27:15 +0530
+Message-ID: <CA+G9fYsZboqX-V7-uyuSHH9FpOQXX4ZKH=0hXq0nea61tPNN2Q@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/124] 6.6.58-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The reports of KASAN include KASAN related stack frames which are not
-the point of interest in the stack-trace. KCSAN report filters out such
-internal frames providing relevant stack trace. Currently, KASAN reports
-are generated by dump_stack_lvl() which prints the entire stack.
+On Mon, 21 Oct 2024 at 16:05, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.58 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.58-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Add functionality to KASAN reports to save the stack entries and filter
-out the kasan related stack frames in place of dump_stack_lvl() and
-stack_depot_print().
 
-Within this new functionality:
-	- A function kasan_dump_stack_lvl() in place of dump_stack_lvl() is
-	  created which contains functionality for saving, filtering and
-	  printing the stack-trace.
-	- A function kasan_stack_depot_print() in place of
-	  stack_depot_print() is created which contains functionality for
-	  filtering and printing the stack-trace.
-	- The get_stack_skipnr() function is included to get the number of
-	  stack entries to be skipped for filtering the stack-trace.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=215756
----
-Changes in v2:
-	- Changed the function name from save_stack_lvl_kasan() to
-          kasan_dump_stack_lvl().
-        - Added filtering of stack frames for print_track() with 
-	  kasan_stack_depot_print().
-        - Removed redundant print_stack_trace(), and instead using
-          stack_trace_print() directly.
-	- Removed sanitize_stack_entries() and replace_stack_entry()
-	  functions.
-	- Increased the buffer size in get_stack_skipnr to 128.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Note:
-When using sanitize_stack_entries() the output was innacurate for free and
-alloc tracks, because of the missing ip value in print_track().
-The buffer size in get_stack_skipnr() is increase as it was too small when
-testing with some KASAN uaf bugs which included free and alloc tracks.
+## Build
+* kernel: 6.6.58-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 6cb44f821fff24ed5cca1de30a2acc48ec426f1e
+* git describe: v6.6.57-125-g6cb44f821fff
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.5=
+7-125-g6cb44f821fff
 
- mm/kasan/report.c | 62 ++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 56 insertions(+), 6 deletions(-)
+## Test Regressions (compared to v6.6.56-212-ga3810192966c)
 
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b48c768acc84..e00cf764693c 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -261,6 +261,59 @@ static void print_error_description(struct kasan_report_info *info)
- 			info->access_addr, current->comm, task_pid_nr(current));
- }
- 
-+/* Helper to skip KASAN-related functions in stack-trace. */
-+static int get_stack_skipnr(const unsigned long stack_entries[], int num_entries)
-+{
-+	char buf[128];
-+	int len, skip;
-+
-+	for (skip = 0; skip < num_entries; ++skip) {
-+		len = scnprintf(buf, sizeof(buf), "%ps", (void *)stack_entries[skip]);
-+
-+		/* Never show  kasan_* functions. */
-+		if (strnstr(buf, "kasan_", len) == buf)
-+			continue;
-+		/*
-+		 * No match for runtime functions -- @skip entries to skip to
-+		 * get to first frame of interest.
-+		 */
-+		break;
-+	}
-+
-+	return skip;
-+}
-+
-+/*
-+ * Use in place of stack_dump_lvl to filter KASAN related functions in
-+ * stack_trace.
-+ */
-+static void kasan_dump_stack_lvl(void)
-+{
-+	unsigned long stack_entries[KASAN_STACK_DEPTH] = { 0 };
-+	int num_stack_entries = stack_trace_save(stack_entries, KASAN_STACK_DEPTH, 1);
-+	int skipnr = get_stack_skipnr(stack_entries, num_stack_entries);
-+
-+	dump_stack_print_info(KERN_ERR);
-+	stack_trace_print(stack_entries + skipnr, num_stack_entries - skipnr, 0);
-+	pr_err("\n");
-+}
-+
-+/*
-+ * Use in place of stack_depot_print to filter KASAN related functions in
-+ * stack_trace.
-+ */
-+static void kasan_stack_depot_print(depot_stack_handle_t stack)
-+{
-+	unsigned long *entries;
-+	unsigned int nr_entries;
-+
-+	nr_entries = stack_depot_fetch(stack, &entries);
-+	int skipnr = get_stack_skipnr(entries, nr_entries);
-+
-+	if (nr_entries > 0)
-+		stack_trace_print(entries + skipnr, nr_entries - skipnr, 0);
-+}
-+
- static void print_track(struct kasan_track *track, const char *prefix)
- {
- #ifdef CONFIG_KASAN_EXTRA_INFO
-@@ -277,7 +330,7 @@ static void print_track(struct kasan_track *track, const char *prefix)
- 	pr_err("%s by task %u:\n", prefix, track->pid);
- #endif /* CONFIG_KASAN_EXTRA_INFO */
- 	if (track->stack)
--		stack_depot_print(track->stack);
-+		kasan_stack_depot_print(track->stack);
- 	else
- 		pr_err("(stack is not available)\n");
- }
-@@ -374,9 +427,6 @@ static void print_address_description(void *addr, u8 tag,
- {
- 	struct page *page = addr_to_page(addr);
- 
--	dump_stack_lvl(KERN_ERR);
--	pr_err("\n");
--
- 	if (info->cache && info->object) {
- 		describe_object(addr, info);
- 		pr_err("\n");
-@@ -484,11 +534,11 @@ static void print_report(struct kasan_report_info *info)
- 		kasan_print_tags(tag, info->first_bad_addr);
- 	pr_err("\n");
- 
-+	kasan_dump_stack_lvl();
-+
- 	if (addr_has_metadata(addr)) {
- 		print_address_description(addr, tag, info);
- 		print_memory_metadata(info->first_bad_addr);
--	} else {
--		dump_stack_lvl(KERN_ERR);
- 	}
- }
- 
--- 
-2.34.1
+## Metric Regressions (compared to v6.6.56-212-ga3810192966c)
 
+## Test Fixes (compared to v6.6.56-212-ga3810192966c)
+
+## Metric Fixes (compared to v6.6.56-212-ga3810192966c)
+
+## Test result summary
+total: 111049, pass: 90448, fail: 1389, skip: 19120, xfail: 92
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 41 total, 41 passed, 0 failed
+* i386: 28 total, 26 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 36 total, 35 passed, 1 failed
+* riscv: 19 total, 19 passed, 0 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 7 total, 7 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
