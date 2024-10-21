@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-374840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB139A70E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E209A70EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DE01C2227C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5808E1C2296D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9BB1EE02C;
-	Mon, 21 Oct 2024 17:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF8C1EBFFD;
+	Mon, 21 Oct 2024 17:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="l8ZXMYaq"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XIRXOy6o"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070831C460D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6C1EBA05
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729531187; cv=none; b=IA6iylBQkplO69rhxFOjJAyVzdiqxxGQi3A1rqhLuw/Nfsk2SvJ6+Kkh4N8j5NcDPUwQQHCAoOVxTS2Kcv4vozJ0XxGqVlub/+Wvu1ZZo0+LcKYRo5uK2CTZMF29413Ma4ScZ4iQjXMnAgX/tc4hjuYf9AF5vRKq/4TgoLkW0/s=
+	t=1729531204; cv=none; b=tBDLxrePiKQze0X828IOv8pVy23axPnwvj4TH2Qwx7OwDHGMaXzSHqERCUc1WR4NUEmQAWtizLzxSVpwa8S1vbG2pG1j+2rEZsRrtCTVMxafEJ4Gu82NR6hgxvEZiujJ+EDQJ4kVSUr+LBumZvgGYLBahfUaeWGZ8BgcHIYOGyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729531187; c=relaxed/simple;
-	bh=VT8mmAKrwqeCy2RkDHrrEva2qPRp2pxEkmo9EA7vyzY=;
+	s=arc-20240116; t=1729531204; c=relaxed/simple;
+	bh=JWV/i5zojTJx6bQIp+jvd7rWWLcZj80OVaXS4jHHGyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=my+KMtzlsxLmzrlsuoG1PCzR/uuhLFaY2WiaCjz+BVrB23m206sFn1CzWKndw7flQxBy6fxQWLhe19gtpKP3ToUMUzDZGUHtkVK7yYDJXYvfUy14n0ImfW39+aj2msMfpzpoJPPR2H3dOXPmbA3Lfk6eRnj6QV2toSucB0rgpeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=l8ZXMYaq; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-718119fc061so1797734a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:19:42 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=RkGUPiXV1EOfaXT66qlk+NH9pQ3wMA8xhSyFhiAknS2uCZDdkp8BTarJW/sAWYqpqFQLpNPbM2580kHPhso8Vt5KWlzmGEK5DIjSlMbb1xWRDufKxWgfaGS56r/ZYU/p3sCpPyUhGks1sR7LpXxohn1R8Te6Md/afTMlavo+Fxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=XIRXOy6o; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b155cca097so304563285a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:20:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729531182; x=1730135982; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hOFL7ofhLfrgIiFV4c6NydCiKi/kbPEnGF3mniiUaXo=;
-        b=l8ZXMYaqPVQ9EhZi425gIUsTd/DYF0O1PJjYegy/RVXncrzXiO8BS1Ebe06ZTxcqH7
-         mOru4y0HzNdAvkikS72N0acHWGAZovmhuntWtISE5fcuMLjkYk1n+bobm50UgNE9XemC
-         BMsTKUVJAgXJnfbNMiGiBjpYh84Oc/IM1ZMEwLswgwr5qDU6/W46XzVVqi3vIEDdfY2u
-         CAzEQa7xQ6GSs7UMxP5V79MPhtidJzyXY5HN3DpFibJ5zEXij3bdoM9mWBAeg8mJ4z74
-         FHVjDZLbQ92NbfNWzpuZn9avWKFGIVeW4ayn+hXfLk3q/eY1kj++Nw9tkWX0PHA4c7yd
-         u3iA==
+        d=broadcom.com; s=google; t=1729531201; x=1730136001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ctC8fXiNy6wpA6bkFpNb4LVNQhiHNx14q8X5vVW7V5g=;
+        b=XIRXOy6oAydS1qXZa732cGkR930q71diIsD25Olckg9wBWpTzltIEk9efDF710fWB5
+         Y5I3anr87GIoa+rfmoR/8UuIQ9yHlY8kEWbcdM81p6VFZKOxFPxdkI3fkEo71XpkkFgJ
+         HTQucAaYrMwUb47GvoAE04+69jiRIVrWhJmhE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729531182; x=1730135982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOFL7ofhLfrgIiFV4c6NydCiKi/kbPEnGF3mniiUaXo=;
-        b=NwjcxnbskT+fPgZCj2Xsm2meJE22xaot8VLhZBvyNb9I8/6UfHT/qB8VvIdadRlNWo
-         4/UhTzQYMNnpUNm9hZEl61dmB9CpNUFh6f29QkWeYCDoffTGiVm6xMfYLX09zz8VmvnW
-         Am0//JyzgftWjFOJRrpIG3BtKISfmrbypave5KxxvRrdFfSGI2+leilzERIc3hWZFiRD
-         anEArLCqqJZBioRvocUSLOnI76kgV/A/v2Oy6E5Z1/5l/0/d1Scb/50LCv7fPUAJLRKZ
-         3pVDojhVvYA6wOXHR3Yb6s4pLNXvRmKq8bO3iEgG/tV0yY/X8PqO56/sWiPg7Pmma5QL
-         pOwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBFL3hvJceTv5FyiSYmKyX9HVpq2VIdjApLQ8frUwHPyegi/PHp2616Nk3bTtTwuyjBqD1NMlwxz6LWqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycFvE9+QYoDe8bSG9FRTD8nLixIrvulzIXcd6JWsZxCA8tzgxd
-	OvfGlaiedd7oFcThzLg8zGK1IXAwuIN9Jaj4FPJijU4ookSEtZTeKqIOK5gMU7E=
-X-Google-Smtp-Source: AGHT+IHfZS4g8MTE1WLtwwQiDfsSzfQjcyzq8KaqPIPnfPd3Ox0b4I0TLEYr65leOuEDGiV0yu8G0w==
-X-Received: by 2002:a05:6830:3155:b0:718:186a:497d with SMTP id 46e09a7af769-7181a5dc591mr9990344a34.5.1729531182096;
-        Mon, 21 Oct 2024 10:19:42 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182ec03211sm836933a34.67.2024.10.21.10.19.41
+        d=1e100.net; s=20230601; t=1729531201; x=1730136001;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ctC8fXiNy6wpA6bkFpNb4LVNQhiHNx14q8X5vVW7V5g=;
+        b=JCf357iJRctdC+bhO4Vk+e40bkMBh4L/TSX+O9Ip+eMQkg/gfxIjOP4sBeAwR5BccL
+         moo6wVEko0DXh/ADqMOplbORnwGtbExfR1yY2Cshs8w3y0xEch73GZ44WqFk/g31iu81
+         lUaepbJ47SNNtatdy6QNAs+jTkXctcCa8EXbNXTjlDgbLq1gODWRIIwDHWESdLa3Cfrd
+         ppLs3UIj9p8S7dFYq4Uo1Zggy3tLVV3sUC1P7W2huhc0rkJ4A6wVO0hZmUO8CuxcFRoX
+         shLxRwzrwcIsH60teGrpEa9zv+Bs4Gjh3Jt3CM+hWKkqsfRlV/dZgUr1cEz3c+m8I2Xs
+         GrVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF7J94mx0Mg9hNzoRc6t7rQlqFWUMOy36d9AUon0GJa74jAdhH1PBj69m2ghHCs5H3+Q8P8A8p2MRB/ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhAATy680+vasc4BakR6HhmsMBE3dfd2OZndy30UOUfble0FFP
+	q+oCD6A+u7bQkFismwV8+QZL/d7+x4HKT+If3XNhlGrRebX44IGTY+H6dEDlTw==
+X-Google-Smtp-Source: AGHT+IGzW2tSYa2m++C/zBRvZuTFeit4VPfjeqE7fUScjmZlnHGxWvynb3Yf5laqjfFCytvDFtou4Q==
+X-Received: by 2002:a05:620a:4691:b0:7b1:4222:b385 with SMTP id af79cd13be357-7b175589eb5mr66421685a.11.1729531201315;
+        Mon, 21 Oct 2024 10:20:01 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008ac8e6sm19444216d6.17.2024.10.21.10.19.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 10:19:41 -0700 (PDT)
-Message-ID: <f319c8bd-1edc-451b-aeb2-27ec529267a3@baylibre.com>
-Date: Mon, 21 Oct 2024 12:19:40 -0500
+        Mon, 21 Oct 2024 10:20:00 -0700 (PDT)
+Message-ID: <b5c0a524-51e0-4b65-8db5-c7416837351a@broadcom.com>
+Date: Mon, 21 Oct 2024 10:19:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,93 +73,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] iio: adc: ad7606: use realbits for sign-extending in
- scan_direct
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-References: <20241021130221.1469099-1-aardelean@baylibre.com>
- <20241021130221.1469099-4-aardelean@baylibre.com>
+Subject: Re: [PATCH v2 2/5] firmware: arm_scmi: Calculate virtio PDU max size
+ dynamically
+To: Cristian Marussi <cristian.marussi@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com,
+ vincent.guittot@linaro.org, etienne.carriere@st.com, peng.fan@oss.nxp.com,
+ michal.simek@amd.com, quic_sibis@quicinc.com, quic_nkela@quicinc.com,
+ dan.carpenter@linaro.org
+References: <20241021170726.2564329-1-cristian.marussi@arm.com>
+ <20241021170726.2564329-3-cristian.marussi@arm.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241021130221.1469099-4-aardelean@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241021170726.2564329-3-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/21/24 8:02 AM, Alexandru Ardelean wrote:
-> Currently the 'ad7606' driver supports parts with 18 and 16 bits
-> resolutions.
-> But when adding support for AD7607 (which has a 14-bit resolution) we
-> should check for the 'realbits' field, to be able to sign-extend correctly.
+On 10/21/24 10:07, Cristian Marussi wrote:
+> SCMI virtio transport maximum PDU size is currently hardcoded at build
+> time; this will not play well with the possibile retrieval of a different
+> size at run-time.
 > 
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> ---
->  drivers/iio/adc/ad7606.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
+> Make the virtio transport derive the maximum PDU size from the max_msg_size
+> provided by the SCMI core.
 > 
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index d0fe9fd65f3f..a1f0c2feb04a 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -568,7 +568,7 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
->  			      int *val)
->  {
->  	struct ad7606_state *st = iio_priv(indio_dev);
-> -	unsigned int storagebits = st->chip_info->channels[1].scan_type.storagebits;
-> +	unsigned int realbits = st->chip_info->channels[1].scan_type.realbits;
->  	const struct iio_chan_spec *chan;
->  	int ret;
->  
-> @@ -603,15 +603,29 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
->  
->  	chan = &indio_dev->channels[ch + 1];
->  	if (chan->scan_type.sign == 'u') {
-> -		if (storagebits > 16)
+> No functional change.
+> 
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-I think it would be simpler to keep this if statement for choosing
-which data.bufXX to use since there are only 2 choices.
-
-
-> +		switch (realbits) {
-> +		case 18:
->  			*val = st->data.buf32[ch];
-> -		else
-> +			break;
-> +		case 16:
->  			*val = st->data.buf16[ch];
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +			break;
-> +		}
->  	} else {
-> -		if (storagebits > 16)
-> +		switch (realbits) {
-> +		case 18:
->  			*val = sign_extend32(st->data.buf32[ch], 17);
-> -		else
-> +			break;
-> +		case 16:
->  			*val = sign_extend32(st->data.buf16[ch], 15);
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-
-We can change this to:
-
-	*val = sign_extend32(st->data.buf16[ch], reablbits - 1);
-
-Then no additional changes should be needed to support 14-bit chips.
-
-And similarly, we could avoid the need to use the more verbose
-switch statement.
-
->  	}
->  
->  error_ret:
-
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
