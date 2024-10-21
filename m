@@ -1,1177 +1,533 @@
-Return-Path: <linux-kernel+bounces-374072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD689A622C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA4F9A6238
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641201F21982
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2154F1C2180F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4331E47A5;
-	Mon, 21 Oct 2024 10:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DC41E3DD8;
+	Mon, 21 Oct 2024 10:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="dU5WfJHB"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010011.outbound.protection.outlook.com [52.101.228.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8CVaWgK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB99192D69;
-	Mon, 21 Oct 2024 10:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729505559; cv=fail; b=d7XC55iUTBG+0SVEW+IhhwRAj8KxIOSm6F+GHDjliFos7tcT9Xz49XfYkfqEipj5P1DAEfKo5yyyjR2nEpgxD8IYouqt0jtVDxvZx4q883nf9WRq5tgYOydU/Jq86bWZqxDsAE0limP6ox9ci52dF8/Wrl1fMHocs5d9PqCtaTs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729505559; c=relaxed/simple;
-	bh=+RxTcDXYoQbK2EnpfrOE5HfYQXCXymRpakIWP/y5BVA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TtJ1MzKcvpw89SAeEDAZMln/vbmoKV7hoWrYBc0ir4+DVgu4Xn4I6mhvM9AIib0TQJrcKqfKt2jxY+G+aS3EspXGVobjHbD73J6WiA4SNaHajMSb2VmrLP0hmv7xNxoYCKG10VE3OMCERGYPWg6BnL3wCTYhvDdrf1x9Y9UvbVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=dU5WfJHB; arc=fail smtp.client-ip=52.101.228.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qWEJy72bCfpd3vGANE7kwhSfid74DiTJ31B/T1pEC87t2p6P6fkKH2MpsaKwil9mWAICI63VdXBpg2jhf7nqD3J8qi+Kv7QHks+lMtcTpLinWELX8rNF6B3NGIwegkkngQqzEnGoy4caxvs8e9MuhzJyItY0NlRDYNXClhKzvrgU+wCQxgx0s3RgVynvoEPB6cMh7kcnPJPHBW7owcu1jYy6vWgtqc5ZJQfuLzFaIH3coWtta6VLA6YdWgyjqwy1SXJuXU1ftJ+Zfvhrqv6WL1TbXfppE1VA/54KdhvAnfFor8Xl3c466pN8ZTk0lsdUCWnSyCJVuTEekM9WeLE+Qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cJasO9TnJI7rIZagno52mHDRfBVAN4nySqTGRAlHy0E=;
- b=hu0uNzILG1QWpZqoyTDtRDT0wRcbTmewA8LiqBqTgxO8spkKezFvxyreGWT5UjHE45FNBgCmOv/iSXil7Fb+1LJac7zy/1D2lAyf11HXnWMFR8ObsgKz0GXgmPRpwKl9TnMdBUuWNahbhidYuQ1qFsFssUspMXtw3b3FJNNH+n8dPBbWRbqCN4oDzoIFkpz695WKSPvyS3d/Xo/U5b7JDVo79/gebyASBK5SEQmvt+6gZoqByBjs38XWQGC8af8XajrqIXYqeanThyMcdTXIMMi4ju8ixF5Ed2KuIvxpNfkMdMh1zNc1OjiIwAfx6HqN55daAr8dz6djdTO9CVL6tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cJasO9TnJI7rIZagno52mHDRfBVAN4nySqTGRAlHy0E=;
- b=dU5WfJHBV/J3Q0vNyPJ7GSjBZ1c4Oxzc77mwhxie9n1KNyHFxeZ8dwujl6UoM1ZUvGeJbm6Zk8cgk7JbIoTfu/s2re2ZYVOWkNeDyePO26WNx0ZeBq0k+y/5/eaD/Xh13T1mhPfmwlloBZ7KrRRUFmILT0rI6VRivJkiDnrJKLo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB9915.jpnprd01.prod.outlook.com (2603:1096:604:1f1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 10:12:28 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 10:12:27 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Liu Ying <victor.liu@nxp.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-CC: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org"
-	<rfoss@kernel.org>, laurent.pinchart <laurent.pinchart@ideasonboard.com>,
-	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com"
-	<jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "sakari.ailus@linux.intel.com"
-	<sakari.ailus@linux.intel.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, "arnd@arndb.de"
-	<arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, "sam@ravnborg.org"
-	<sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
- converter
-Thread-Topic: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
- converter
-Thread-Index: AQHbI4Ue6dBHAatu9E2qi1QByFRdurKQ+yvg
-Date: Mon, 21 Oct 2024 10:12:27 +0000
-Message-ID:
- <TY3PR01MB1134641A1F639A61282F82B8986432@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-13-victor.liu@nxp.com>
-In-Reply-To: <20241021064446.263619-13-victor.liu@nxp.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB9915:EE_
-x-ms-office365-filtering-correlation-id: 89ba8fc9-35de-4ffc-afbd-08dcf1b8dde6
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?FAmD+y8VLGFyHMh65C+pjJf/mAjdjZ8QLZbjtwTtuOweVQA0SueuoCwbqOA2?=
- =?us-ascii?Q?kTdr+roqYUPFRbJtSOx1N+MCQ4foy77z0ajfbqHhO3oDUORXhmy3Tx0BbTO0?=
- =?us-ascii?Q?nqMD1AKyod5kz624RfbiCEfUyHGnxD12UkuDZNsyTUbcUPqlSif4OTBC/DRS?=
- =?us-ascii?Q?R55zbv7SqsYohSI3BsP5H4b0xXQCpjDRYJ/YD/JAPR9RZY4Lxfj89ml5IJi8?=
- =?us-ascii?Q?5adxk+pU+bhWERh8DUutdC3RQJvmHRjP5irhVNqOoDjGTZItUul/DqH5wRvw?=
- =?us-ascii?Q?XJvWbAGvW4gqOWtIAs410RNzNYL2PQwc3PawxsQb/jOn4xQ5+97aBEHHFjeO?=
- =?us-ascii?Q?GCGVoBxL0psaoY7tZb9NGv9KjYWJcILGU2BwAvYym/mLkeWoYVC3+exkik3W?=
- =?us-ascii?Q?FTH0TKzv3yX/Q/VBvxD3DuMXnt6acUVRWGgQKdU/KT+t+uD9eQBco2CisAlD?=
- =?us-ascii?Q?oaARZI3zxoG8B3Rl+lojL4i9ZuXGy6fxc0i3zUl2uiZOXwpRfxk50C06P0YN?=
- =?us-ascii?Q?jIpuPiHg1K0IBeu1GTABhDZ0SmQyJCqF8eLrZcRHWRXQRkNT5knh1h+Z21ww?=
- =?us-ascii?Q?GF12cfECeKWQb0S+cHWYd4qojQ73x9hK9ACVP+t1pxRRZK3NtudX0cl4myOQ?=
- =?us-ascii?Q?9AYmWRsX00/xvd8N34W5H6PC+qbl0tRhFWv2ZM6i6kjyHlC1B4d+1Xemfdt4?=
- =?us-ascii?Q?8ngkeoAnQ23YbznETJy6rj/MXoBsoLwTOGcEqqTVKRQa4ei6AD70cSTYpdw6?=
- =?us-ascii?Q?6XdGOECumYKWjEQFIvO5t+mlmJd/JITzO6AZuNIlJ9RhcIpeCfkFPJosyHcA?=
- =?us-ascii?Q?7brfwUWAGYvnsjSDdVxDFpN0pzP0Z/PBkoYn3LVaNwCD6zhad6uklwQQjQzZ?=
- =?us-ascii?Q?kNeN/3twoG5MQDYt7EB6VWCtoJE6HHdTifzA+pxhcUP6BIhCoMoCuvZT5udY?=
- =?us-ascii?Q?f0PPTS7l8WJcNgNEEjtl1+lxnHF4R1KfkgJJjEiGryeEtam8b4OoydG3q+BQ?=
- =?us-ascii?Q?7JsQ4lpDU/cIW6JWFml6Rn7paJaZgP4OFaXYYyGj2ZWGIGYU9UIgGnb4Fl5O?=
- =?us-ascii?Q?AFXo8xSi8/8r3l4jGtcfc2HpNFAbkOmaanp+udTyfZM52nhthY4blkoYeOrc?=
- =?us-ascii?Q?CaajLWGL8b8Wa9mzKpneCut2RjP1ByUAytdy364dcAWkDD5qyzFiDmR9ghsY?=
- =?us-ascii?Q?3mZ75uGI37kcIxVwriinHLPkdebpOCc8iKtM/0fnrdhnCo3RrFBbqtOcPJVP?=
- =?us-ascii?Q?7anblG9XOOIqYMlv63CeSk3jJr0xGZcP4e8eDkNqIMMIu4JY5P+E6FWgHr0O?=
- =?us-ascii?Q?OL22Ri7aLCTgDQ7dhgMrrYkcfKwMTD2SEK2vxYYrx6Lhc4N1RXTRb2f6HenC?=
- =?us-ascii?Q?uAVHY9tH3IYsgwz57FjhlXIFUYrC?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?GKQVbUkL/k0SQkuW8cAQzbJgub6D6Unx975Ykfcc+9AMiPMkccDeAnss6h7D?=
- =?us-ascii?Q?C5ZVzvj5OxnV7edY+nQWy93GKYD2o5MIzbIyGRCx3heU+PUidwymQRuRGCNc?=
- =?us-ascii?Q?6EbQorz2XWyGIdhXc4FsQN/6dvLLIKdKkKlMYvXWNe8Jw6PK6cHdwTwM9x9+?=
- =?us-ascii?Q?FOC9Ltvcj2eL7ywFw5F1t31ZXSy7i6S2FYNl/jQsAaLUejEEIN22OnURULJy?=
- =?us-ascii?Q?ZidP8M6zgBwoZ0z/L3wQgjF0goaKSyIKZ08/FL7ee3R/BionuXQ4/sj7QRGG?=
- =?us-ascii?Q?5uqa1VrcloLRVwBo6Q+umX2gEbobhwraizQiG3mfBtAElwDwPcQPPr0hH8Zw?=
- =?us-ascii?Q?ImTYTzeiFDEZ40KLc4KGuDEU4Wotuf5l7HqNFz8yDQ8n+aB6po3NvBfFz7r1?=
- =?us-ascii?Q?M667ceuJvOcWKD4jM8zWvowlaVY2savtSeRV5emm1ZgiDajh6TB0jGA1ThJU?=
- =?us-ascii?Q?DNgbdyylkYxw6ACCDgUtMXdMW0FFVqGb1DNy5QQT/mcGyc5GQcFA5i2kShci?=
- =?us-ascii?Q?LoGA3tGNO6fXdK7i09IUfoOrobKlvd37tpBTaBQCHDPkjoYrjRmSYlPjk/De?=
- =?us-ascii?Q?leD3hjqreYJ+PGmTDqDIJgZIko9+VY5PR2VD0oWm+qa07eIxZoZM+LZMjAHe?=
- =?us-ascii?Q?oAxaBJjisExk4b6Ykx/q09tkhtLZWr2vHzV1GGBKQI14J+27M2AfZh7BGFIj?=
- =?us-ascii?Q?01TjsNivcGTJHXMz5nArClI7Z1rCmLwIEiT8U2vBT7xRtB8hVgkkha1cBNP/?=
- =?us-ascii?Q?ciBGYW1hjGlBAuxLmbDV6Ybiwh6SllH3LC2xEhfzjFyh0Fs/1eM4HtPA9wqY?=
- =?us-ascii?Q?/chPMpGc1IEDZ7KvfQxgy4n1LF469EJPQl5AuXwUFKVzxKuW8Zgv2z8Swu+Y?=
- =?us-ascii?Q?4xMhnTC3vr10vEQvYZ8FQ5jTEzmzfdXxnmHyYNR46/qZG1KSTWB+ws0IoK17?=
- =?us-ascii?Q?I1DTYxp/Uxzj9kK626m+7Uzyyi2ESdH83Ksb3dJWg7K9/XViNo+oo4v4BqSq?=
- =?us-ascii?Q?Tvr7JvREQZmE0cnA7m3LJxq3ORl7OsEW0cNrGB33fMyFGiys9+JjUO7tu6cf?=
- =?us-ascii?Q?s6pUWabZMKIKh4m9mODmNOyczXW7MWky1STH7fppj//JXr6NVXwNniaSlU0X?=
- =?us-ascii?Q?Do7Ja/+lCRzSxnBXZjb3mzeWWGF9i3BuJ1l7YplZlhhyMIdn7U1V/7YpKcLd?=
- =?us-ascii?Q?KPVx1/oXhLmweuI2s1KozqadMKJif+LoSQkKHbhYUlzrlVVCQx1xuhemcN0S?=
- =?us-ascii?Q?VoOFzlXihv5kumpRVHOc3cgWNQ/mr33Zp07b2uITNFLEgqstKnjxytnLP9Yu?=
- =?us-ascii?Q?v2IrYxCB//rbpAoJOnRtD6b5gizV0zSI3/NM7i7bKA15x1whGTZges54MUtS?=
- =?us-ascii?Q?7IbJ9sIQ49Fx/WNm8EdAk5yD1suJuiSTDy9b4h/NSkECdX6Z9jghOcB7gZWY?=
- =?us-ascii?Q?18r0rUFS5tIgiaWAiJylnB8dPHbQgtg5WfwOJNtiXZeXoMeRZBXVOVzujrG5?=
- =?us-ascii?Q?EgneZDYF8oCEDN0Afz4YMU8CaLy6T2USIB2rrhrEQULsnuhE6MsKCGRtyLrX?=
- =?us-ascii?Q?g47QlLkYglwSyFSH1YCB0Yf3dicWPGfl0mi88gdFQlWKfCzbE7UaHZidyhtf?=
- =?us-ascii?Q?lg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F0B192D69
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729505618; cv=none; b=tg5dW7h4qQ7pcY7PHMkopivAkPY0Gcw4q/WKfVv1YJ92V3bRKorQKknkwkeLdf6jvfbAxTDclcgYXTfwjQnkNMgx00lEdWKZgtK6lZtauVfUVcDMwRHk7r6poKQCAuC+nqfnWqqIG5de1GEXJASRPnULBgHv788IFYlsjTW7OiE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729505618; c=relaxed/simple;
+	bh=jgibUuUlmzffYqsQkg5W+yVcI04OIHEGmRwn6NuO/wU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axLLeVhHbspfLM6Nmy8yLItWODgyUuN9yhu8UNNggeuzC1B2jEeGWexfRN6iPK9j2INfJ2WR+aElHdQtvbazAsXT4N7jdoBxJExCyH7v5c5PlEBkzXZUfauWl29NFv9AH5DdOxn0fT/scq2gtg9DG9AwsyCht0WR7/NQOQOETXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8CVaWgK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F9DC4CEE6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:13:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729505617;
+	bh=jgibUuUlmzffYqsQkg5W+yVcI04OIHEGmRwn6NuO/wU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O8CVaWgKGMhB0cBPkApEVVEUDRMYrD7xqVCOt0yoZtyt6QGgwVQ3ptHt0jB7djrkB
+	 /mlbBfaR2RXCgCKzS25NVvzir/j4HKgSlEoKlHOzDW+xePTLFusb6wI0Cv80FyMkFI
+	 8OTUo0f4qHR3syPBXiYCDPCToRNIQP0iwdsz/TFvZCpnfLEfrsnKbFzrMnCIHlUr8j
+	 8gqpGl3AoPfp3a2+ejLi4UKG1bh0GpFt1mCu9/TfA7f2E4CLXNK4q5UfREhRAE08Ur
+	 LQXANATocN1JCmkfbwpA3a5SgUBtqbtChK+nOY9tIF6e+GsoD6rmvYXgP4H9Lq33fq
+	 X3UGYlLa4/2ZQ==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c9552d02e6so5389751a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:13:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXAHmU/B9+GixUc36wi+dO6ltJ5891n34GGyeWqVYfAbb/wU36X8oDU03qIxPljwN9H+Lid+1PkHblRpnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFsWpCvv4CI7j6txh2e59gumEIkQOEqojRJ/vQLklldBAJqMoN
+	54UcbnmtGBjOeVZLJVyYgOKt40FisEl+Dc3vVBacbiVDmc7L+Gk11K27oYDHJ047iXAH9DthJl9
+	jete8csBn2Et5+0tlL3g7YUvMkEA=
+X-Google-Smtp-Source: AGHT+IGkScV1UZ4+JsX1t5mnmGxuvMdzS/NJr4OXeJMsMFge9N+OTDfUV2GMn59vK/I6+b7B/D8r6K8TkoU1q96HgQc=
+X-Received: by 2002:a17:906:478b:b0:a99:4025:82e1 with SMTP id
+ a640c23a62f3a-a9a69c55c81mr1013062566b.41.1729505615843; Mon, 21 Oct 2024
+ 03:13:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89ba8fc9-35de-4ffc-afbd-08dcf1b8dde6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 10:12:27.8458
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KtOv56odGElx8sr0SI/Hut0HiY+OKy2WL1n1au+gzQeLTo8P04N6OS+vSTRn0mq92qB6lE8AQ2xqM4629hZMP5w6va+ISWxiACbcEoURCAU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9915
+References: <20241014035855.1119220-1-maobibo@loongson.cn> <20241014035855.1119220-2-maobibo@loongson.cn>
+ <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
+ <f3089991-fd49-8d55-9ede-62ab1555c9fa@loongson.cn> <CAAhV-H7yX6qinPL5E5tmNVpJk_xdKqFaSicUYy2k8NGM1owucw@mail.gmail.com>
+ <a4c6b89e-4ffe-4486-4ccd-7ebc28734f6f@loongson.cn> <CAAhV-H6FkJZwa-pALUhucrU5OXxsHg+ByM+4NN0wPQgOJTqOXA@mail.gmail.com>
+ <5f76ede6-e8be-c7a9-f957-479afa2fb828@loongson.cn> <CAAhV-H51W3ZRNxUjeAx52j6Tq18CEhB3_YeSH=psjAbEJUdwgg@mail.gmail.com>
+ <f727e384-6989-0942-1cc8-7188f558ee39@loongson.cn>
+In-Reply-To: <f727e384-6989-0942-1cc8-7188f558ee39@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 21 Oct 2024 18:13:23 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5CADad2EGv0zMQrgrvpNRtBTWDoXFj=j+zXEJdy7HkAQ@mail.gmail.com>
+Message-ID: <CAAhV-H5CADad2EGv0zMQrgrvpNRtBTWDoXFj=j+zXEJdy7HkAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] LoongArch: Set initial pte entry with PAGE_GLOBAL
+ for kernel space
+To: maobibo <maobibo@loongson.cn>
+Cc: wuruiyang@loongson.cn, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Liu Ying,
+On Mon, Oct 21, 2024 at 9:23=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
+:
+>
+>
+>
+> On 2024/10/18 =E4=B8=8B=E5=8D=882:32, Huacai Chen wrote:
+> > On Fri, Oct 18, 2024 at 2:23=E2=80=AFPM maobibo <maobibo@loongson.cn> w=
+rote:
+> >>
+> >>
+> >>
+> >> On 2024/10/18 =E4=B8=8B=E5=8D=8812:23, Huacai Chen wrote:
+> >>> On Fri, Oct 18, 2024 at 12:16=E2=80=AFPM maobibo <maobibo@loongson.cn=
+> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 2024/10/18 =E4=B8=8B=E5=8D=8812:11, Huacai Chen wrote:
+> >>>>> On Fri, Oct 18, 2024 at 11:44=E2=80=AFAM maobibo <maobibo@loongson.=
+cn> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> On 2024/10/18 =E4=B8=8A=E5=8D=8811:14, Huacai Chen wrote:
+> >>>>>>> Hi, Bibo,
+> >>>>>>>
+> >>>>>>> I applied this patch but drop the part of arch/loongarch/mm/kasan=
+_init.c:
+> >>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-=
+loongson.git/commit/?h=3Dloongarch-next&id=3D15832255e84494853f543b4c70ced5=
+0afc403067
+> >>>>>>>
+> >>>>>>> Because kernel_pte_init() should operate on page-table pages, not=
+ on
+> >>>>>>> data pages. You have already handle page-table page in
+> >>>>>>> mm/kasan/init.c, and if we don't drop the modification on data pa=
+ges
+> >>>>>>> in arch/loongarch/mm/kasan_init.c, the kernel fail to boot if KAS=
+AN is
+> >>>>>>> enabled.
+> >>>>>>>
+> >>>>>> static inline void set_pte(pte_t *ptep, pte_t pteval)
+> >>>>>>      {
+> >>>>>>            WRITE_ONCE(*ptep, pteval);
+> >>>>>> -
+> >>>>>> -       if (pte_val(pteval) & _PAGE_GLOBAL) {
+> >>>>>> -               pte_t *buddy =3D ptep_buddy(ptep);
+> >>>>>> -               /*
+> >>>>>> -                * Make sure the buddy is global too (if it's !non=
+e,
+> >>>>>> -                * it better already be global)
+> >>>>>> -                */
+> >>>>>> -               if (pte_none(ptep_get(buddy))) {
+> >>>>>> -#ifdef CONFIG_SMP
+> >>>>>> -                       /*
+> >>>>>> -                        * For SMP, multiple CPUs can race, so we =
+need
+> >>>>>> -                        * to do this atomically.
+> >>>>>> -                        */
+> >>>>>> -                       __asm__ __volatile__(
+> >>>>>> -                       __AMOR "$zero, %[global], %[buddy] \n"
+> >>>>>> -                       : [buddy] "+ZB" (buddy->pte)
+> >>>>>> -                       : [global] "r" (_PAGE_GLOBAL)
+> >>>>>> -                       : "memory");
+> >>>>>> -
+> >>>>>> -                       DBAR(0b11000); /* o_wrw =3D 0b11000 */
+> >>>>>> -#else /* !CONFIG_SMP */
+> >>>>>> -                       WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(=
+buddy)) | _PAGE_GLOBAL));
+> >>>>>> -#endif /* CONFIG_SMP */
+> >>>>>> -               }
+> >>>>>> -       }
+> >>>>>> +       DBAR(0b11000); /* o_wrw =3D 0b11000 */
+> >>>>>>      }
+> >>>>>>
+> >>>>>> No, please hold on. This issue exists about twenty years, Do we ne=
+ed be
+> >>>>>> in such a hurry now?
+> >>>>>>
+> >>>>>> why is DBAR(0b11000) added in set_pte()?
+> >>>>> It exists before, not added by this patch. The reason is explained =
+in
+> >>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+commit/?h=3Dv6.12-rc3&id=3Df93f67d06b1023313ef1662eac490e29c025c030
+> >>>> why speculative accesses may cause spurious page fault in kernel spa=
+ce
+> >>>> with PTE enabled?  speculative accesses exists anywhere, it does not
+> >>>> cause spurious page fault.
+> >>> Confirmed by Ruiyang Wu, and even if DBAR(0b11000) is wrong, that
+> >>> means another patch's mistake, not this one. This one just keeps the
+> >>> old behavior.
+> >>> +CC Ruiyang Wu here.
+> >> Also from Ruiyang Wu, the information is that speculative accesses may
+> >> insert stale TLB, however no page fault exception.
+> >>
+> >> So adding barrier in set_pte() does not prevent speculative accesses.
+> >> And you write patch here, however do not know the actual reason?
+> >>
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
+mit/?h=3Dv6.12-rc3&id=3Df93f67d06b1023313ef1662eac490e29c025c030
+> > I have CCed Ruiyang, whether the description is correct can be judged b=
+y him.
+>
+> There are some problems to add barrier() in set_pte():
+>
+> 1. There is such issue only for HW ptw enabled and kernel address space,
+> is that? Also it may be two heavy to add barrier in set_pte(), comparing
+> to do this in flush_cache_vmap().
+So adding a barrier in set_pte() may not be the best solution for
+performance, but you cannot say it is a wrong solution. And yes, we
+can only care the kernel space, which is also the old behavior before
+this patch, so set_pte() should be:
 
-Thanks for the patch.
+static inline void set_pte(pte_t *ptep, pte_t pteval)
+{
+        WRITE_ONCE(*ptep, pteval);
+#ifdef CONFIG_SMP
+        if (pte_val(pteval) & _PAGE_GLOBAL)
+                DBAR(0b11000); /* o_wrw =3D 0b11000 */
+#endif
+}
 
-> -----Original Message-----
-> From: Liu Ying <victor.liu@nxp.com>
-> Sent: Monday, October 21, 2024 7:45 AM
-> Subject: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI convert=
-er
->=20
-> Add basic HDMI video output support. Currently, only RGB888 output pixel =
-format is supported.  At the
-> LVDS input side, the driver supports single LVDS link and dual LVDS links=
- with "jeida-24" LVDS
-> mapping.
->=20
-> Product link:
-> https://www.ite.com.tw/en/product/cate1/IT6263
->=20
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v3:
-> * Use HDMI connector framework.  (Maxime)
-> * Control the missing HDMI_REG_AVI_INFOFRM_CTRL register.
-> * Validate the maximal HDMI TMDS character rate.  (Dmitry)
-> * Get LVDS data mapping from data-mapping DT property.  (Dmitry, Biju)
-> * Validate 30bit LVDS data bit order by checking data-mirror DT property.
-> * Use drm_of_lvds_get_dual_link_pixel_order_sink().  (Dmitry)
-> * Initialize a bridge connector instead of open coding.  (Dmitry)
-> * Add a comment that IT6263 chip has no HPD IRQ support.  (Dmitry)
-> * Use devm_drm_bridge_add() instead of drm_bridge_add().  (Dmitry)
-> * Fix a minor build warning reported by kernel test robot.
->=20
-> v2:
-> * Add AVI inforframe support.  (Maxime)
-> * Add DRM_MODE_CONNECTOR_HDMIA.  (Biju)
-> * Rename it6263_reset() to it6263_hw_reset().  (Biju)
-> * Check number of LVDS link data lanes.  (Biju)
->=20
->  drivers/gpu/drm/bridge/Kconfig      |  11 +
->  drivers/gpu/drm/bridge/Makefile     |   1 +
->  drivers/gpu/drm/bridge/ite-it6263.c | 906 ++++++++++++++++++++++++++++
->  3 files changed, 918 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/ite-it6263.c
->=20
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kcon=
-fig index
-> 609f4d0ac93d..6b4664d91faa 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -90,6 +90,17 @@ config DRM_FSL_LDB
->  	help
->  	  Support for i.MX8MP DPI-to-LVDS on-SoC encoder.
->=20
-> +config DRM_ITE_IT6263
-> +	tristate "ITE IT6263 LVDS/HDMI bridge"
-> +	depends on OF
-> +	select DRM_DISPLAY_HDMI_STATE_HELPER
-> +	select DRM_DISPLAY_HELPER
-> +	select DRM_BRIDGE_CONNECTOR
-> +	select DRM_KMS_HELPER
-> +	select REGMAP_I2C
-> +	help
-> +	  ITE IT6263 LVDS to HDMI bridge chip driver.
-> +
->  config DRM_ITE_IT6505
->  	tristate "ITE IT6505 DisplayPort bridge"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Mak=
-efile index
-> 3daf803ce80b..97304b429a53 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_CHRONTEL_CH7033) +=3D chrontel-ch7033.o
->  obj-$(CONFIG_DRM_CROS_EC_ANX7688) +=3D cros-ec-anx7688.o
->  obj-$(CONFIG_DRM_DISPLAY_CONNECTOR) +=3D display-connector.o
->  obj-$(CONFIG_DRM_FSL_LDB) +=3D fsl-ldb.o
-> +obj-$(CONFIG_DRM_ITE_IT6263) +=3D ite-it6263.o
->  obj-$(CONFIG_DRM_ITE_IT6505) +=3D ite-it6505.o
->  obj-$(CONFIG_DRM_LONTIUM_LT8912B) +=3D lontium-lt8912b.o
->  obj-$(CONFIG_DRM_LONTIUM_LT9211) +=3D lontium-lt9211.o diff --git a/driv=
-ers/gpu/drm/bridge/ite-it6263.c
-> b/drivers/gpu/drm/bridge/ite-it6263.c
-> new file mode 100644
-> index 000000000000..1ad7727742bf
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> @@ -0,0 +1,906 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/hdmi.h>
-> +#include <linux/i2c.h>
-> +#include <linux/media-bus-format.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#include <drm/display/drm_hdmi_helper.h> #include
-> +<drm/display/drm_hdmi_state_helper.h>
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_atomic_state_helper.h> #include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h> #include <drm/drm_connector.h>
-> +#include <drm/drm_crtc.h> #include <drm/drm_edid.h> #include
-> +<drm/drm_of.h> #include <drm/drm_probe_helper.h>
-> +
-> +/*
-> +-----------------------------------------------------------------------
-> +------
-> + * LVDS registers
-> + */
-> +
-> +/* LVDS software reset registers */
-> +#define LVDS_REG_05			0x05
-> +#define  REG_SOFT_P_RST			BIT(1)
-> +
-> +/* LVDS system configuration registers */
-> +/* 0x0b */
-> +#define LVDS_REG_0B			0x0b
-> +#define  REG_SSC_PCLK_RF		BIT(0)
-> +#define  REG_LVDS_IN_SWAP		BIT(1)
-> +
-> +/* LVDS test pattern gen control registers */
-> +/* 0x2c */
-> +#define LVDS_REG_2C			0x2c
-> +#define  REG_COL_DEP			GENMASK(1, 0)
-> +#define  BIT8				FIELD_PREP(REG_COL_DEP, 2)
-> +#define  OUT_MAP			BIT(4)
-> +#define  JEIDA				0
-> +#define  REG_DESSC_ENB			BIT(6)
-> +#define  DMODE				BIT(7)
-> +#define  DISO				BIT(7)
-> +#define  SISO				0
-> +
-> +#define LVDS_REG_3C			0x3c
-> +#define LVDS_REG_3F			0x3f
-> +#define LVDS_REG_47			0x47
-> +#define LVDS_REG_48			0x48
-> +#define LVDS_REG_4F			0x4f
-> +#define LVDS_REG_52			0x52
-> +
-> +/*
-> +-----------------------------------------------------------------------
-> +------
-> + * HDMI registers are separated into three banks:
-> + * 1) HDMI register common bank: 0x00 ~ 0x2f  */
-> +
-> +/* HDMI genernal registers */
-> +#define HDMI_REG_SW_RST			0x04
-> +#define  SOFTREF_RST			BIT(5)
-> +#define  SOFTA_RST			BIT(4)
-> +#define  SOFTV_RST			BIT(3)
-> +#define  AUD_RST			BIT(2)
-> +#define  HDCP_RST			BIT(0)
-> +#define  HDMI_RST_ALL			(SOFTREF_RST | SOFTA_RST | SOFTV_RST | \
-> +					 AUD_RST | HDCP_RST)
-> +
-> +#define HDMI_REG_SYS_STATUS		0x0e
-> +#define  HPDETECT			BIT(6)
-> +#define  TXVIDSTABLE			BIT(4)
-> +
-> +#define HDMI_REG_BANK_CTRL		0x0f
-> +#define  REG_BANK_SEL			BIT(0)
-> +
-> +/* HDMI System DDC control registers */
-> +#define HDMI_REG_DDC_MASTER_CTRL	0x10
-> +#define  MASTER_SEL_HOST		BIT(0)
-> +
-> +#define HDMI_REG_DDC_HEADER		0x11
-> +
-> +#define HDMI_REG_DDC_REQOFF		0x12
-> +#define HDMI_REG_DDC_REQCOUNT		0x13
-> +#define HDMI_REG_DDC_EDIDSEG		0x14
-> +
-> +#define HDMI_REG_DDC_CMD		0x15
-> +#define  DDC_CMD_EDID_READ		0x3
-> +#define  DDC_CMD_FIFO_CLR		0x9
-> +
-> +#define HDMI_REG_DDC_STATUS		0x16
-> +#define  DDC_DONE			BIT(7)
-> +#define  DDC_NOACK			BIT(5)
-> +#define  DDC_WAITBUS			BIT(4)
-> +#define  DDC_ARBILOSE			BIT(3)
-> +#define  DDC_ERROR			(DDC_NOACK | DDC_WAITBUS | DDC_ARBILOSE)
-> +
-> +#define HDMI_DDC_FIFO_BYTES		32
-> +#define HDMI_REG_DDC_READFIFO		0x17
-> +#define HDMI_REG_LVDS_PORT		0x1d /* LVDS input control I2C addr */
-> +#define HDMI_REG_LVDS_PORT_EN		0x1e
-> +#define LVDS_INPUT_CTRL_I2C_ADDR	0x33
-> +
-> +/*
-> +-----------------------------------------------------------------------
-> +------
-> + * 2) HDMI register bank0: 0x30 ~ 0xff
-> + */
-> +
-> +/* HDMI AFE registers */
-> +#define HDMI_REG_AFE_DRV_CTRL		0x61
-> +#define  AFE_DRV_PWD			BIT(5)
-> +#define  AFE_DRV_RST			BIT(4)
-> +
-> +#define HDMI_REG_AFE_XP_CTRL		0x62
-> +#define  AFE_XP_GAINBIT			BIT(7)
-> +#define  AFE_XP_ER0			BIT(4)
-> +#define  AFE_XP_RESETB			BIT(3)
-> +
-> +#define HDMI_REG_AFE_ISW_CTRL		0x63
-> +
-> +#define HDMI_REG_AFE_IP_CTRL		0x64
-> +#define  AFE_IP_GAINBIT			BIT(7)
-> +#define  AFE_IP_ER0			BIT(3)
-> +#define  AFE_IP_RESETB			BIT(2)
-> +
-> +/* HDMI input data format registers */
-> +#define HDMI_REG_INPUT_MODE		0x70
-> +#define  IN_RGB				0x00
-> +
-> +/* HDMI general control registers */
-> +#define HDMI_REG_HDMI_MODE		0xc0
-> +#define  TX_HDMI_MODE			BIT(0)
-> +
-> +#define HDMI_REG_GCP			0xc1
-> +#define  AVMUTE				BIT(0)
-> +#define  HDMI_COLOR_DEPTH		GENMASK(6, 4)
-> +#define  HDMI_COLOR_DEPTH_24		FIELD_PREP(HDMI_COLOR_DEPTH, 4)
-> +
-> +#define HDMI_REG_PKT_GENERAL_CTRL	0xc6
-> +#define HDMI_REG_AVI_INFOFRM_CTRL	0xcd
-> +#define  ENABLE_PKT			BIT(0)
-> +#define  REPEAT_PKT			BIT(1)
-> +
-> +/*
-> +-----------------------------------------------------------------------
-> +------
-> + * 3) HDMI register bank1: 0x130 ~ 0x1ff (HDMI packet registers)  */
-> +
-> +/* AVI packet registers */
-> +#define HDMI_REG_AVI_DB1		0x158
-> +#define HDMI_REG_AVI_DB2		0x159
-> +#define HDMI_REG_AVI_DB3		0x15a
-> +#define HDMI_REG_AVI_DB4		0x15b
-> +#define HDMI_REG_AVI_DB5		0x15c
-> +#define HDMI_REG_AVI_CSUM		0x15d
-> +#define HDMI_REG_AVI_DB6		0x15e
-> +#define HDMI_REG_AVI_DB7		0x15f
-> +#define HDMI_REG_AVI_DB8		0x160
-> +#define HDMI_REG_AVI_DB9		0x161
-> +#define HDMI_REG_AVI_DB10		0x162
-> +#define HDMI_REG_AVI_DB11		0x163
-> +#define HDMI_REG_AVI_DB12		0x164
-> +#define HDMI_REG_AVI_DB13		0x165
-> +
-> +#define HDMI_AVI_DB_CHUNK1_SIZE		(HDMI_REG_AVI_DB5 - HDMI_REG_AVI_DB1 + =
-1)
-> +#define HDMI_AVI_DB_CHUNK2_SIZE		(HDMI_REG_AVI_DB13 - HDMI_REG_AVI_DB6 +=
- 1)
-> +
-> +#define MAX_PIXEL_CLOCK_KHZ		150000
-> +#define HIGH_PIXEL_CLOCK_KHZ		80000
-> +#define MAX_HDMI_TMDS_CHAR_RATE_HZ	225000000
-> +
-> +struct it6263 {
-> +	struct device *dev;
-> +	struct i2c_client *hdmi_i2c;
-> +	struct i2c_client *lvds_i2c;
-> +	struct regmap *hdmi_regmap;
-> +	struct regmap *lvds_regmap;
-> +	struct drm_bridge bridge;
-> +	struct drm_bridge *next_bridge;
-> +	struct gpio_desc *reset_gpio;
-This can be dropped, since it is used only in probe().
+Putting a dbar unconditionally in set_pte() is my mistake, I'm sorry for  t=
+hat.
 
-With that fixed,
+>
+> 2. LoongArch is different with other other architectures, two pages are
+> included in one TLB entry. If there is two consecutive page mapped and
+> memory access, there will page fault for the second memory access. Such
+> as:
+>     addr1 =3Dpercpu_alloc(pagesize);
+>     val1 =3D *(int *)addr1;
+>       // With page table walk, addr1 is present and addr2 is pte_none
+>       // TLB entry includes valid pte for addr1, invalid pte for addr2
+>     addr2 =3Dpercpu_alloc(pagesize); // will not flush tlb in first time
+>     val2 =3D *(int *)addr2;
+>       // With page table walk, addr1 is present and addr2 is present also
+>       // TLB entry includes valid pte for addr1, invalid pte for addr2
+>     So there will be page fault when accessing address addr2
+>
+> There there is the same problem with user address space. By the way,
+> there is HW prefetching technology, negative effective of HW prefetching
+> technology will be tlb added. So there is potential page fault if memory
+> is allocated and accessed in the first time.
+As discussed internally, there may be three problems related to
+speculative access in detail: 1) a load/store after set_pte() is
+prioritized before, which can be prevented by dbar, 2) a instruction
+fetch after set_pte() is prioritized before, which can be prevented by
+ibar, 3) the buddy tlb problem you described here, if I understand
+Ruiyang's explanation correctly this can only be prevented by the
+filter in do_page_fault().
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+From experiments, without the patch "LoongArch: Improve hardware page
+table walker", there are about 80 times of spurious page faults during
+boot, and increases continually during stress tests. And after that
+patch which adds a dbar to set_pte(), we cannot observe spurious page
+faults anymore. Of course this doesn't mean 2) and 3) don't exist, but
+we can at least say 1) is the main case. On this basis, in "LoongArch:
+Improve hardware page table walker" we use a relatively cheap dbar
+(compared to ibar) to prevent the main case, and add a filter to
+handle 2) and 3). Such a solution is reasonable.
 
-Cheers,
-Biju
 
-> +	int lvds_data_mapping;
-> +	bool lvds_dual_link;
-> +	bool lvds_link12_swap;
-> +};
-> +
-> +static inline struct it6263 *bridge_to_it6263(struct drm_bridge
-> +*bridge) {
-> +	return container_of(bridge, struct it6263, bridge); }
-> +
-> +static bool it6263_hdmi_writeable_reg(struct device *dev, unsigned int
-> +reg) {
-> +	switch (reg) {
-> +	case HDMI_REG_SW_RST:
-> +	case HDMI_REG_BANK_CTRL:
-> +	case HDMI_REG_DDC_MASTER_CTRL:
-> +	case HDMI_REG_DDC_HEADER:
-> +	case HDMI_REG_DDC_REQOFF:
-> +	case HDMI_REG_DDC_REQCOUNT:
-> +	case HDMI_REG_DDC_EDIDSEG:
-> +	case HDMI_REG_DDC_CMD:
-> +	case HDMI_REG_LVDS_PORT:
-> +	case HDMI_REG_LVDS_PORT_EN:
-> +	case HDMI_REG_AFE_DRV_CTRL:
-> +	case HDMI_REG_AFE_XP_CTRL:
-> +	case HDMI_REG_AFE_ISW_CTRL:
-> +	case HDMI_REG_AFE_IP_CTRL:
-> +	case HDMI_REG_INPUT_MODE:
-> +	case HDMI_REG_HDMI_MODE:
-> +	case HDMI_REG_GCP:
-> +	case HDMI_REG_PKT_GENERAL_CTRL:
-> +	case HDMI_REG_AVI_INFOFRM_CTRL:
-> +	case HDMI_REG_AVI_DB1:
-> +	case HDMI_REG_AVI_DB2:
-> +	case HDMI_REG_AVI_DB3:
-> +	case HDMI_REG_AVI_DB4:
-> +	case HDMI_REG_AVI_DB5:
-> +	case HDMI_REG_AVI_CSUM:
-> +	case HDMI_REG_AVI_DB6:
-> +	case HDMI_REG_AVI_DB7:
-> +	case HDMI_REG_AVI_DB8:
-> +	case HDMI_REG_AVI_DB9:
-> +	case HDMI_REG_AVI_DB10:
-> +	case HDMI_REG_AVI_DB11:
-> +	case HDMI_REG_AVI_DB12:
-> +	case HDMI_REG_AVI_DB13:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool it6263_hdmi_readable_reg(struct device *dev, unsigned int
-> +reg) {
-> +	if (it6263_hdmi_writeable_reg(dev, reg))
-> +		return true;
-> +
-> +	switch (reg) {
-> +	case HDMI_REG_SYS_STATUS:
-> +	case HDMI_REG_DDC_STATUS:
-> +	case HDMI_REG_DDC_READFIFO:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool it6263_hdmi_volatile_reg(struct device *dev, unsigned int
-> +reg) {
-> +	switch (reg) {
-> +	case HDMI_REG_SW_RST:
-> +	case HDMI_REG_SYS_STATUS:
-> +	case HDMI_REG_DDC_STATUS:
-> +	case HDMI_REG_DDC_READFIFO:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static const struct regmap_range_cfg it6263_hdmi_range_cfg =3D {
-> +	.range_min =3D 0x00,
-> +	.range_max =3D HDMI_REG_AVI_DB13,
-> +	.selector_reg =3D HDMI_REG_BANK_CTRL,
-> +	.selector_mask =3D REG_BANK_SEL,
-> +	.selector_shift =3D 0,
-> +	.window_start =3D 0x00,
-> +	.window_len =3D 0x100,
-> +};
-> +
-> +static const struct regmap_config it6263_hdmi_regmap_config =3D {
-> +	.name =3D "it6263-hdmi",
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +	.writeable_reg =3D it6263_hdmi_writeable_reg,
-> +	.readable_reg =3D it6263_hdmi_readable_reg,
-> +	.volatile_reg =3D it6263_hdmi_volatile_reg,
-> +	.max_register =3D HDMI_REG_AVI_DB13,
-> +	.ranges =3D &it6263_hdmi_range_cfg,
-> +	.num_ranges =3D 1,
-> +	.cache_type =3D REGCACHE_MAPLE,
-> +};
-> +
-> +static bool it6263_lvds_writeable_reg(struct device *dev, unsigned int
-> +reg) {
-> +	switch (reg) {
-> +	case LVDS_REG_05:
-> +	case LVDS_REG_0B:
-> +	case LVDS_REG_2C:
-> +	case LVDS_REG_3C:
-> +	case LVDS_REG_3F:
-> +	case LVDS_REG_47:
-> +	case LVDS_REG_48:
-> +	case LVDS_REG_4F:
-> +	case LVDS_REG_52:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool it6263_lvds_readable_reg(struct device *dev, unsigned int
-> +reg) {
-> +	return it6263_lvds_writeable_reg(dev, reg); }
-> +
-> +static bool it6263_lvds_volatile_reg(struct device *dev, unsigned int
-> +reg) {
-> +	return reg =3D=3D LVDS_REG_05;
-> +}
-> +
-> +static const struct regmap_config it6263_lvds_regmap_config =3D {
-> +	.name =3D "it6263-lvds",
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +	.writeable_reg =3D it6263_lvds_writeable_reg,
-> +	.readable_reg =3D it6263_lvds_readable_reg,
-> +	.volatile_reg =3D it6263_lvds_volatile_reg,
-> +	.max_register =3D LVDS_REG_52,
-> +	.cache_type =3D REGCACHE_MAPLE,
-> +};
-> +
-> +static const char * const it6263_supplies[] =3D {
-> +	"ivdd", "ovdd", "txavcc18", "txavcc33", "pvcc1", "pvcc2",
-> +	"avcc", "anvdd", "apvdd"
-> +};
-> +
-> +static int it6263_parse_dt(struct it6263 *it) {
-> +	struct device *dev =3D it->dev;
-> +	struct device_node *port0, *port1;
-> +	int ret =3D 0;
-> +
-> +	it->lvds_data_mapping =3D drm_of_lvds_get_data_mapping(dev->of_node);
-> +	if (it->lvds_data_mapping < 0) {
-> +		dev_err(dev, "%pOF: invalid or missing %s DT property: %d\n",
-> +			dev->of_node, "data-mapping", it->lvds_data_mapping);
-> +		return it->lvds_data_mapping;
-> +	}
-> +
-> +	/* LVDS bit order is reversed only for 30-bit data mappings. */
-> +	if (of_property_read_bool(dev->of_node, "data-mirror") &&
-> +	    it->lvds_data_mapping !=3D MEDIA_BUS_FMT_RGB101010_1X7X5_SPWG &&
-> +	    it->lvds_data_mapping !=3D MEDIA_BUS_FMT_RGB101010_1X7X5_JEIDA) {
-> +		dev_err(dev, "%pOF: invalid data-mirror DT property\n",
-> +			dev->of_node);
-> +		return -EINVAL;
-> +	}
-> +
-> +	it->next_bridge =3D devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
-> +	if (IS_ERR(it->next_bridge))
-> +		return dev_err_probe(dev, PTR_ERR(it->next_bridge),
-> +				     "failed to get next bridge\n");
-> +
-> +	port0 =3D of_graph_get_port_by_id(dev->of_node, 0);
-> +	port1 =3D of_graph_get_port_by_id(dev->of_node, 1);
-> +	if (port0 && port1) {
-> +		int order;
-> +
-> +		it->lvds_dual_link =3D true;
-> +		order =3D drm_of_lvds_get_dual_link_pixel_order_sink(port0, port1);
-> +		if (order < 0) {
-> +			dev_err(dev,
-> +				"failed to get dual link pixel order: %d\n",
-> +				order);
-> +			ret =3D order;
-> +		} else if (order =3D=3D DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS) {
-> +			it->lvds_link12_swap =3D true;
-> +		}
-> +	} else if (port1) {
-> +		ret =3D -EINVAL;
-> +		dev_err(dev, "single input LVDS port1 is not supported\n");
-> +	} else if (!port0) {
-> +		ret =3D -EINVAL;
-> +		dev_err(dev, "no input LVDS port\n");
-> +	}
-> +
-> +	of_node_put(port0);
-> +	of_node_put(port1);
-> +
-> +	return ret;
-> +}
-> +
-> +static inline void it6263_hw_reset(struct it6263 *it) {
-> +	if (!it->reset_gpio)
-> +		return;
-> +
-> +	gpiod_set_value_cansleep(it->reset_gpio, 0);
-> +	fsleep(1000);
-> +	gpiod_set_value_cansleep(it->reset_gpio, 1);
-> +	/* The chip maker says the low pulse should be at least 40ms. */
-> +	fsleep(40000);
-> +	gpiod_set_value_cansleep(it->reset_gpio, 0);
-> +	/* addtional time to wait the high voltage to be stable */
-> +	fsleep(5000);
-> +}
-> +
-> +static inline int it6263_lvds_set_i2c_addr(struct it6263 *it) {
-> +	int ret;
-> +
-> +	ret =3D regmap_write(it->hdmi_regmap, HDMI_REG_LVDS_PORT,
-> +			   LVDS_INPUT_CTRL_I2C_ADDR << 1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(it->hdmi_regmap, HDMI_REG_LVDS_PORT_EN, BIT(0)); }
-> +
-> +static inline void it6263_lvds_reset(struct it6263 *it) {
-> +	/* AFE PLL reset */
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_3C, BIT(0), 0x0);
-> +	fsleep(1000);
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_3C, BIT(0), BIT(0));
-> +
-> +	/* software pixel clock domain reset */
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_05, REG_SOFT_P_RST,
-> +			  REG_SOFT_P_RST);
-> +	fsleep(1000);
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_05, REG_SOFT_P_RST, 0x0);
-> +	fsleep(10000);
-> +}
-> +
-> +static inline void it6263_lvds_set_interface(struct it6263 *it) {
-> +	/* color depth */
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, REG_COL_DEP, BIT8);
-> +	/* output mapping */
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, JEIDA);
-> +
-> +	if (it->lvds_dual_link) {
-> +		regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, DMODE, DISO);
-> +		regmap_write_bits(it->lvds_regmap, LVDS_REG_52, BIT(1), BIT(1));
-> +	} else {
-> +		regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, DMODE, SISO);
-> +		regmap_write_bits(it->lvds_regmap, LVDS_REG_52, BIT(1), 0);
-> +	}
-> +}
-> +
-> +static inline void it6263_lvds_set_afe(struct it6263 *it) {
-> +	regmap_write(it->lvds_regmap, LVDS_REG_3C, 0xaa);
-> +	regmap_write(it->lvds_regmap, LVDS_REG_3F, 0x02);
-> +	regmap_write(it->lvds_regmap, LVDS_REG_47, 0xaa);
-> +	regmap_write(it->lvds_regmap, LVDS_REG_48, 0x02);
-> +	regmap_write(it->lvds_regmap, LVDS_REG_4F, 0x11);
-> +
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_0B, REG_SSC_PCLK_RF,
-> +			  REG_SSC_PCLK_RF);
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_3C, 0x07, 0);
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, REG_DESSC_ENB,
-> +			  REG_DESSC_ENB);
-> +}
-> +
-> +static inline void it6263_lvds_sys_cfg(struct it6263 *it) {
-> +	regmap_write_bits(it->lvds_regmap, LVDS_REG_0B, REG_LVDS_IN_SWAP,
-> +			  it->lvds_link12_swap ? REG_LVDS_IN_SWAP : 0); }
-> +
-> +static inline void it6263_lvds_config(struct it6263 *it) {
-> +	it6263_lvds_reset(it);
-> +	it6263_lvds_set_interface(it);
-> +	it6263_lvds_set_afe(it);
-> +	it6263_lvds_sys_cfg(it);
-> +}
-> +
-> +static inline void it6263_hdmi_config(struct it6263 *it) {
-> +	regmap_write(it->hdmi_regmap, HDMI_REG_SW_RST, HDMI_RST_ALL);
-> +	regmap_write(it->hdmi_regmap, HDMI_REG_INPUT_MODE, IN_RGB);
-> +	regmap_write_bits(it->hdmi_regmap, HDMI_REG_GCP, HDMI_COLOR_DEPTH,
-> +			  HDMI_COLOR_DEPTH_24);
-> +}
-> +
-> +static enum drm_connector_status it6263_detect(struct it6263 *it) {
-> +	unsigned int val;
-> +
-> +	regmap_read(it->hdmi_regmap, HDMI_REG_SYS_STATUS, &val);
-> +	if (val & HPDETECT)
-> +		return connector_status_connected;
-> +	else
-> +		return connector_status_disconnected; }
-> +
-> +static int it6263_read_edid(void *data, u8 *buf, unsigned int block,
-> +size_t len) {
-> +	struct it6263 *it =3D data;
-> +	struct regmap *regmap =3D it->hdmi_regmap;
-> +	unsigned int start =3D (block % 2) * EDID_LENGTH;
-> +	unsigned int segment =3D block >> 1;
-> +	unsigned int count, val;
-> +	int ret;
-> +
-> +	regmap_write(regmap, HDMI_REG_DDC_MASTER_CTRL, MASTER_SEL_HOST);
-> +	regmap_write(regmap, HDMI_REG_DDC_HEADER, DDC_ADDR << 1);
-> +	regmap_write(regmap, HDMI_REG_DDC_EDIDSEG, segment);
-> +
-> +	while (len) {
-> +		/* clear DDC FIFO */
-> +		regmap_write(regmap, HDMI_REG_DDC_CMD, DDC_CMD_FIFO_CLR);
-> +
-> +		ret =3D regmap_read_poll_timeout(regmap, HDMI_REG_DDC_STATUS,
-> +					       val, val & DDC_DONE,
-> +					       2000, 10000);
-> +		if (ret) {
-> +			dev_err(it->dev, "failed to clear DDC FIFO:%d\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		count =3D len > HDMI_DDC_FIFO_BYTES ? HDMI_DDC_FIFO_BYTES : len;
-> +
-> +		/* fire the read command */
-> +		regmap_write(regmap, HDMI_REG_DDC_REQOFF, start);
-> +		regmap_write(regmap, HDMI_REG_DDC_REQCOUNT, count);
-> +		regmap_write(regmap, HDMI_REG_DDC_CMD, DDC_CMD_EDID_READ);
-> +
-> +		start +=3D count;
-> +		len -=3D count;
-> +
-> +		ret =3D regmap_read_poll_timeout(regmap, HDMI_REG_DDC_STATUS, val,
-> +					       val & (DDC_DONE | DDC_ERROR),
-> +					       20000, 250000);
-> +		if (ret && !(val & DDC_ERROR)) {
-> +			dev_err(it->dev, "failed to read EDID:%d\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		if (val & DDC_ERROR) {
-> +			dev_err(it->dev, "DDC error\n");
-> +			return -EIO;
-> +		}
-> +
-> +		/* cache to buffer */
-> +		for (; count > 0; count--) {
-> +			regmap_read(regmap, HDMI_REG_DDC_READFIFO, &val);
-> +			*(buf++) =3D val;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int it6263_bridge_atomic_check(struct drm_bridge *bridge,
-> +				      struct drm_bridge_state *bridge_state,
-> +				      struct drm_crtc_state *crtc_state,
-> +				      struct drm_connector_state *conn_state) {
-> +	struct drm_display_mode *mode =3D &crtc_state->adjusted_mode;
-> +	int ret;
-> +
-> +	ret =3D drm_atomic_helper_connector_hdmi_check(conn_state->connector,
-> +						     conn_state->state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return mode->clock > MAX_PIXEL_CLOCK_KHZ ? -EINVAL : 0; }
-> +
-> +static void
-> +it6263_bridge_atomic_disable(struct drm_bridge *bridge,
-> +			     struct drm_bridge_state *old_bridge_state) {
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +
-> +	regmap_write_bits(it->hdmi_regmap, HDMI_REG_GCP, AVMUTE, AVMUTE);
-> +	regmap_write(it->hdmi_regmap, HDMI_REG_PKT_GENERAL_CTRL, 0);
-> +	regmap_write(it->hdmi_regmap, HDMI_REG_AFE_DRV_CTRL,
-> +		     AFE_DRV_RST | AFE_DRV_PWD);
-> +}
-> +
-> +static void
-> +it6263_bridge_atomic_enable(struct drm_bridge *bridge,
-> +			    struct drm_bridge_state *old_bridge_state) {
-> +	struct drm_atomic_state *state =3D old_bridge_state->base.state;
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +	const struct drm_crtc_state *crtc_state;
-> +	struct regmap *regmap =3D it->hdmi_regmap;
-> +	const struct drm_display_mode *mode;
-> +	struct drm_connector *connector;
-> +	bool is_stable =3D false;
-> +	struct drm_crtc *crtc;
-> +	unsigned int val;
-> +	bool pclk_high;
-> +	int i, ret;
-> +
-> +	connector =3D drm_atomic_get_new_connector_for_encoder(state,
-> +							     bridge->encoder);
-> +	crtc =3D drm_atomic_get_new_connector_state(state, connector)->crtc;
-> +	crtc_state =3D drm_atomic_get_new_crtc_state(state, crtc);
-> +	mode =3D &crtc_state->adjusted_mode;
-> +
-> +	regmap_write(regmap, HDMI_REG_HDMI_MODE, TX_HDMI_MODE);
-> +
-> +	drm_atomic_helper_connector_hdmi_update_infoframes(connector, state);
-> +
-> +	/* HDMI AFE setup */
-> +	pclk_high =3D mode->clock > HIGH_PIXEL_CLOCK_KHZ;
-> +	regmap_write(regmap, HDMI_REG_AFE_DRV_CTRL, AFE_DRV_RST);
-> +	if (pclk_high)
-> +		regmap_write(regmap, HDMI_REG_AFE_XP_CTRL,
-> +			     AFE_XP_GAINBIT | AFE_XP_RESETB);
-> +	else
-> +		regmap_write(regmap, HDMI_REG_AFE_XP_CTRL,
-> +			     AFE_XP_ER0 | AFE_XP_RESETB);
-> +	regmap_write(regmap, HDMI_REG_AFE_ISW_CTRL, 0x10);
-> +	if (pclk_high)
-> +		regmap_write(regmap, HDMI_REG_AFE_IP_CTRL,
-> +			     AFE_IP_GAINBIT | AFE_IP_RESETB);
-> +	else
-> +		regmap_write(regmap, HDMI_REG_AFE_IP_CTRL,
-> +			     AFE_IP_ER0 | AFE_IP_RESETB);
-> +
-> +	/* HDMI software video reset */
-> +	regmap_write_bits(regmap, HDMI_REG_SW_RST, SOFTV_RST, SOFTV_RST);
-> +	fsleep(1000);
-> +	regmap_write_bits(regmap, HDMI_REG_SW_RST, SOFTV_RST, 0);
-> +
-> +	/* reconfigure LVDS and retry several times in case video is instable *=
-/
-> +	for (i =3D 0; i < 3; i++) {
-> +		ret =3D regmap_read_poll_timeout(regmap, HDMI_REG_SYS_STATUS, val,
-> +					       val & TXVIDSTABLE,
-> +					       20000, 500000);
-> +		if (!ret) {
-> +			is_stable =3D true;
-> +			break;
-> +		}
-> +
-> +		it6263_lvds_config(it);
-> +	}
-> +
-> +	if (!is_stable)
-> +		dev_warn(it->dev, "failed to wait for video stable\n");
-> +
-> +	/* HDMI AFE reset release and power up */
-> +	regmap_write(regmap, HDMI_REG_AFE_DRV_CTRL, 0);
-> +
-> +	regmap_write_bits(regmap, HDMI_REG_GCP, AVMUTE, 0);
-> +
-> +	regmap_write(regmap, HDMI_REG_PKT_GENERAL_CTRL, ENABLE_PKT |
-> +REPEAT_PKT); }
-> +
-> +static enum drm_mode_status
-> +it6263_bridge_mode_valid(struct drm_bridge *bridge,
-> +			 const struct drm_display_info *info,
-> +			 const struct drm_display_mode *mode) {
-> +	unsigned long long rate;
-> +
-> +	if (mode->clock > MAX_PIXEL_CLOCK_KHZ)
-> +		return MODE_CLOCK_HIGH;
-> +
-> +	rate =3D drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
-> +	if (rate =3D=3D 0)
-> +		return MODE_NOCLOCK;
-> +
-> +	return bridge->funcs->hdmi_tmds_char_rate_valid(bridge, mode, rate); }
-> +
-> +static int it6263_bridge_attach(struct drm_bridge *bridge,
-> +				enum drm_bridge_attach_flags flags) {
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +	struct drm_connector *connector;
-> +	int ret;
-> +
-> +	ret =3D drm_bridge_attach(bridge->encoder, it->next_bridge, bridge,
-> +				flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
-> +		return 0;
-> +
-> +	connector =3D drm_bridge_connector_init(bridge->dev, bridge->encoder);
-> +	if (IS_ERR(connector)) {
-> +		ret =3D PTR_ERR(connector);
-> +		dev_err(it->dev, "failed to initialize bridge connector: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	drm_connector_attach_encoder(connector, bridge->encoder);
-> +
-> +	return 0;
-> +}
-> +
-> +static enum drm_connector_status it6263_bridge_detect(struct drm_bridge
-> +*bridge) {
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +
-> +	return it6263_detect(it);
-> +}
-> +
-> +static const struct drm_edid *
-> +it6263_bridge_edid_read(struct drm_bridge *bridge,
-> +			struct drm_connector *connector)
-> +{
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +
-> +	return drm_edid_read_custom(connector, it6263_read_edid, it); }
-> +
-> +static u32 *
-> +it6263_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-> +					struct drm_bridge_state *bridge_state,
-> +					struct drm_crtc_state *crtc_state,
-> +					struct drm_connector_state *conn_state,
-> +					u32 output_fmt,
-> +					unsigned int *num_input_fmts)
-> +{
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +	u32 *input_fmts;
-> +
-> +	*num_input_fmts =3D 0;
-> +
-> +	if (it->lvds_data_mapping !=3D MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA)
-> +		return NULL;
-> +
-> +	input_fmts =3D kmalloc(sizeof(*input_fmts), GFP_KERNEL);
-> +	if (!input_fmts)
-> +		return NULL;
-> +
-> +	input_fmts[0] =3D MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
-> +	*num_input_fmts =3D 1;
-> +
-> +	return input_fmts;
-> +}
-> +
-> +static enum drm_mode_status
-> +it6263_hdmi_tmds_char_rate_valid(const struct drm_bridge *bridge,
-> +				 const struct drm_display_mode *mode,
-> +				 unsigned long long tmds_rate)
-> +{
-> +	if (tmds_rate > MAX_HDMI_TMDS_CHAR_RATE_HZ)
-> +		return MODE_CLOCK_HIGH;
-> +
-> +	return MODE_OK;
-> +}
-> +
-> +static int it6263_hdmi_clear_infoframe(struct drm_bridge *bridge,
-> +				       enum hdmi_infoframe_type type) {
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +
-> +	if (type =3D=3D HDMI_INFOFRAME_TYPE_AVI)
-> +		regmap_write(it->hdmi_regmap, HDMI_REG_AVI_INFOFRM_CTRL, 0);
-> +	else
-> +		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-> +
-> +	return 0;
-> +}
-> +
-> +static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
-> +				       enum hdmi_infoframe_type type,
-> +				       const u8 *buffer, size_t len) {
-> +	struct it6263 *it =3D bridge_to_it6263(bridge);
-> +	struct regmap *regmap =3D it->hdmi_regmap;
-> +
-> +	if (type !=3D HDMI_INFOFRAME_TYPE_AVI) {
-> +		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-> +		return 0;
-> +	}
-> +
-> +	/* write the first AVI infoframe data byte chunk(DB1-DB5) */
-> +	regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
-> +			  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
-> +			  HDMI_AVI_DB_CHUNK1_SIZE);
-> +
-> +	/* write the second AVI infoframe data byte chunk(DB6-DB13) */
-> +	regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
-> +			  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
-> +				  HDMI_AVI_DB_CHUNK1_SIZE],
-> +			  HDMI_AVI_DB_CHUNK2_SIZE);
-> +
-> +	/* write checksum */
-> +	regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
-> +
-> +	regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL, ENABLE_PKT |
-> +REPEAT_PKT);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct drm_bridge_funcs it6263_bridge_funcs =3D {
-> +	.atomic_duplicate_state =3D drm_atomic_helper_bridge_duplicate_state,
-> +	.atomic_destroy_state =3D drm_atomic_helper_bridge_destroy_state,
-> +	.atomic_reset =3D drm_atomic_helper_bridge_reset,
-> +	.attach =3D it6263_bridge_attach,
-> +	.mode_valid =3D it6263_bridge_mode_valid,
-> +	.atomic_disable =3D it6263_bridge_atomic_disable,
-> +	.atomic_enable =3D it6263_bridge_atomic_enable,
-> +	.atomic_check =3D it6263_bridge_atomic_check,
-> +	.detect =3D it6263_bridge_detect,
-> +	.edid_read =3D it6263_bridge_edid_read,
-> +	.atomic_get_input_bus_fmts =3D it6263_bridge_atomic_get_input_bus_fmts,
-> +	.hdmi_tmds_char_rate_valid =3D it6263_hdmi_tmds_char_rate_valid,
-> +	.hdmi_clear_infoframe =3D it6263_hdmi_clear_infoframe,
-> +	.hdmi_write_infoframe =3D it6263_hdmi_write_infoframe, };
-> +
-> +static int it6263_probe(struct i2c_client *client) {
-> +	struct device *dev =3D &client->dev;
-> +	struct it6263 *it;
-> +	int ret;
-> +
-> +	it =3D devm_kzalloc(dev, sizeof(*it), GFP_KERNEL);
-> +	if (!it)
-> +		return -ENOMEM;
-> +
-> +	it->dev =3D dev;
-> +	it->hdmi_i2c =3D client;
-> +
-> +	it->hdmi_regmap =3D devm_regmap_init_i2c(client,
-> +					       &it6263_hdmi_regmap_config);
-> +	if (IS_ERR(it->hdmi_regmap))
-> +		return dev_err_probe(dev, PTR_ERR(it->hdmi_regmap),
-> +				     "failed to init I2C regmap for HDMI\n");
-> +
-> +	it->reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW)=
-;
-> +	if (IS_ERR(it->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(it->reset_gpio),
-> +				     "failed to get reset gpio\n");
-> +
-> +	ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(it6263_supplies)=
+>
+> 3. For speculative execution, if it is user address, there is eret from
+> syscall. eret will rollback all speculative execution instruction. So it
+> is only problem for speculative execution. And how to verify whether it
+> is the problem of speculative execution or it is the problem of clause 2?
+As described above, if spurious page faults still exist after adding
+dbar to set_pte(), it may be a problem of clause 2 (case 3 in my
+description), otherwise it is not a problem of clause 2.
+
+At last, this patch itself is attempting to solve the concurrent
+problem about _PAGE_GLOBAL, so adding pte_alloc_one_kernel() and
+removing the buddy stuff in set_pte() are what it needs. However it
+shouldn't touch the logic of dbar in set_pte(), whether "LoongArch:
+Improve hardware page table walker" is right or wrong.
+
+
+Huacai
+
+>
+> Regards
+> Bibo Mao
+>
+>
+> >
+> > Huacai
+> >
+> >>
+> >> Bibo Mao
+> >>>
+> >>> Huacai
+> >>>
+> >>>>
+> >>>> Obvious you do not it and you write wrong patch.
+> >>>>
+> >>>>>
+> >>>>> Huacai
+> >>>>>
+> >>>>>>
+> >>>>>> Regards
+> >>>>>> Bibo Mao
+> >>>>>>> Huacai
+> >>>>>>>
+> >>>>>>> On Mon, Oct 14, 2024 at 11:59=E2=80=AFAM Bibo Mao <maobibo@loongs=
+on.cn> wrote:
+> >>>>>>>>
+> >>>>>>>> Unlike general architectures, there are two pages in one TLB ent=
+ry
+> >>>>>>>> on LoongArch system. For kernel space, it requires both two pte
+> >>>>>>>> entries with PAGE_GLOBAL bit set, else HW treats it as non-globa=
+l
+> >>>>>>>> tlb, there will be potential problems if tlb entry for kernel sp=
+ace
+> >>>>>>>> is not global. Such as fail to flush kernel tlb with function
+> >>>>>>>> local_flush_tlb_kernel_range() which only flush tlb with global =
+bit.
+> >>>>>>>>
+> >>>>>>>> With function kernel_pte_init() added, it can be used to init pt=
+e
+> >>>>>>>> table when it is created for kernel address space, and the defau=
+lt
+> >>>>>>>> initial pte value is PAGE_GLOBAL rather than zero at beginning.
+> >>>>>>>>
+> >>>>>>>> Kernel address space areas includes fixmap, percpu, vmalloc, kas=
+an
+> >>>>>>>> and vmemmap areas set default pte entry with PAGE_GLOBAL set.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>>>>>> ---
+> >>>>>>>>      arch/loongarch/include/asm/pgalloc.h | 13 +++++++++++++
+> >>>>>>>>      arch/loongarch/include/asm/pgtable.h |  1 +
+> >>>>>>>>      arch/loongarch/mm/init.c             |  4 +++-
+> >>>>>>>>      arch/loongarch/mm/kasan_init.c       |  4 +++-
+> >>>>>>>>      arch/loongarch/mm/pgtable.c          | 22 +++++++++++++++++=
++++++
+> >>>>>>>>      include/linux/mm.h                   |  1 +
+> >>>>>>>>      mm/kasan/init.c                      |  8 +++++++-
+> >>>>>>>>      mm/sparse-vmemmap.c                  |  5 +++++
+> >>>>>>>>      8 files changed, 55 insertions(+), 3 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongar=
+ch/include/asm/pgalloc.h
+> >>>>>>>> index 4e2d6b7ca2ee..b2698c03dc2c 100644
+> >>>>>>>> --- a/arch/loongarch/include/asm/pgalloc.h
+> >>>>>>>> +++ b/arch/loongarch/include/asm/pgalloc.h
+> >>>>>>>> @@ -10,8 +10,21 @@
+> >>>>>>>>
+> >>>>>>>>      #define __HAVE_ARCH_PMD_ALLOC_ONE
+> >>>>>>>>      #define __HAVE_ARCH_PUD_ALLOC_ONE
+> >>>>>>>> +#define __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
+> >>>>>>>>      #include <asm-generic/pgalloc.h>
+> >>>>>>>>
+> >>>>>>>> +static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> >>>>>>>> +{
+> >>>>>>>> +       pte_t *pte;
+> >>>>>>>> +
+> >>>>>>>> +       pte =3D (pte_t *) __get_free_page(GFP_KERNEL);
+> >>>>>>>> +       if (!pte)
+> >>>>>>>> +               return NULL;
+> >>>>>>>> +
+> >>>>>>>> +       kernel_pte_init(pte);
+> >>>>>>>> +       return pte;
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>      static inline void pmd_populate_kernel(struct mm_struct *mm=
 ,
-> +					     it6263_supplies);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to get power supplies\n");
-> +
-> +	ret =3D it6263_parse_dt(it);
-> +	if (ret)
-> +		return ret;
-> +
-> +	it6263_hw_reset(it);
-> +
-> +	ret =3D it6263_lvds_set_i2c_addr(it);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to set I2C addr\n");
-> +
-> +	it->lvds_i2c =3D devm_i2c_new_dummy_device(dev, client->adapter,
-> +						 LVDS_INPUT_CTRL_I2C_ADDR);
-> +	if (IS_ERR(it->lvds_i2c))
-> +		dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
-> +			      "failed to allocate I2C device for LVDS\n");
-> +
-> +	it->lvds_regmap =3D devm_regmap_init_i2c(it->lvds_i2c,
-> +					       &it6263_lvds_regmap_config);
-> +	if (IS_ERR(it->lvds_regmap))
-> +		return dev_err_probe(dev, PTR_ERR(it->lvds_regmap),
-> +				     "failed to init I2C regmap for LVDS\n");
-> +
-> +	it6263_lvds_config(it);
-> +	it6263_hdmi_config(it);
-> +
-> +	i2c_set_clientdata(client, it);
-> +
-> +	it->bridge.funcs =3D &it6263_bridge_funcs;
-> +	it->bridge.of_node =3D dev->of_node;
-> +	/* IT6263 chip doesn't support HPD interrupt. */
-> +	it->bridge.ops =3D DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID |
-> +			 DRM_BRIDGE_OP_HDMI;
-> +	it->bridge.type =3D DRM_MODE_CONNECTOR_HDMIA;
-> +	it->bridge.vendor =3D "ITE";
-> +	it->bridge.product =3D "IT6263";
-> +
-> +	return devm_drm_bridge_add(dev, &it->bridge); }
-> +
-> +static const struct of_device_id it6263_of_match[] =3D {
-> +	{ .compatible =3D "ite,it6263", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, it6263_of_match);
-> +
-> +static const struct i2c_device_id it6263_i2c_ids[] =3D {
-> +	{ "it6263", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, it6263_i2c_ids);
-> +
-> +static struct i2c_driver it6263_driver =3D {
-> +	.probe =3D it6263_probe,
-> +	.driver =3D {
-> +		.name =3D "it6263",
-> +		.of_match_table =3D it6263_of_match,
-> +	},
-> +	.id_table =3D it6263_i2c_ids,
-> +};
-> +module_i2c_driver(it6263_driver);
-> +
-> +MODULE_DESCRIPTION("ITE Tech. Inc. IT6263 LVDS/HDMI bridge");
-> +MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>"); MODULE_LICENSE("GPL");
-> --
-> 2.34.1
-
+> >>>>>>>>                                            pmd_t *pmd, pte_t *pt=
+e)
+> >>>>>>>>      {
+> >>>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongar=
+ch/include/asm/pgtable.h
+> >>>>>>>> index 9965f52ef65b..22e3a8f96213 100644
+> >>>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+> >>>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+> >>>>>>>> @@ -269,6 +269,7 @@ extern void set_pmd_at(struct mm_struct *mm,=
+ unsigned long addr, pmd_t *pmdp, pm
+> >>>>>>>>      extern void pgd_init(void *addr);
+> >>>>>>>>      extern void pud_init(void *addr);
+> >>>>>>>>      extern void pmd_init(void *addr);
+> >>>>>>>> +extern void kernel_pte_init(void *addr);
+> >>>>>>>>
+> >>>>>>>>      /*
+> >>>>>>>>       * Encode/decode swap entries and swap PTEs. Swap PTEs are =
+all PTEs that
+> >>>>>>>> diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+> >>>>>>>> index 8a87a482c8f4..9f26e933a8a3 100644
+> >>>>>>>> --- a/arch/loongarch/mm/init.c
+> >>>>>>>> +++ b/arch/loongarch/mm/init.c
+> >>>>>>>> @@ -198,9 +198,11 @@ pte_t * __init populate_kernel_pte(unsigned=
+ long addr)
+> >>>>>>>>             if (!pmd_present(pmdp_get(pmd))) {
+> >>>>>>>>                     pte_t *pte;
+> >>>>>>>>
+> >>>>>>>> -               pte =3D memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+> >>>>>>>> +               pte =3D memblock_alloc_raw(PAGE_SIZE, PAGE_SIZE)=
+;
+> >>>>>>>>                     if (!pte)
+> >>>>>>>>                             panic("%s: Failed to allocate memory=
+\n", __func__);
+> >>>>>>>> +
+> >>>>>>>> +               kernel_pte_init(pte);
+> >>>>>>>>                     pmd_populate_kernel(&init_mm, pmd, pte);
+> >>>>>>>>             }
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/=
+kasan_init.c
+> >>>>>>>> index 427d6b1aec09..34988573b0d5 100644
+> >>>>>>>> --- a/arch/loongarch/mm/kasan_init.c
+> >>>>>>>> +++ b/arch/loongarch/mm/kasan_init.c
+> >>>>>>>> @@ -152,6 +152,8 @@ static void __init kasan_pte_populate(pmd_t =
+*pmdp, unsigned long addr,
+> >>>>>>>>                     phys_addr_t page_phys =3D early ?
+> >>>>>>>>                                             __pa_symbol(kasan_ea=
+rly_shadow_page)
+> >>>>>>>>                                                   : kasan_alloc_=
+zeroed_page(node);
+> >>>>>>>> +               if (!early)
+> >>>>>>>> +                       kernel_pte_init(__va(page_phys));
+> >>>>>>>>                     next =3D addr + PAGE_SIZE;
+> >>>>>>>>                     set_pte(ptep, pfn_pte(__phys_to_pfn(page_phy=
+s), PAGE_KERNEL));
+> >>>>>>>>             } while (ptep++, addr =3D next, addr !=3D end && __p=
+te_none(early, ptep_get(ptep)));
+> >>>>>>>> @@ -287,7 +289,7 @@ void __init kasan_init(void)
+> >>>>>>>>                     set_pte(&kasan_early_shadow_pte[i],
+> >>>>>>>>                             pfn_pte(__phys_to_pfn(__pa_symbol(ka=
+san_early_shadow_page)), PAGE_KERNEL_RO));
+> >>>>>>>>
+> >>>>>>>> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+> >>>>>>>> +       kernel_pte_init(kasan_early_shadow_page);
+> >>>>>>>>             csr_write64(__pa_symbol(swapper_pg_dir), LOONGARCH_C=
+SR_PGDH);
+> >>>>>>>>             local_flush_tlb_all();
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/loongarch/mm/pgtable.c b/arch/loongarch/mm/pgt=
+able.c
+> >>>>>>>> index eb6a29b491a7..228ffc1db0a3 100644
+> >>>>>>>> --- a/arch/loongarch/mm/pgtable.c
+> >>>>>>>> +++ b/arch/loongarch/mm/pgtable.c
+> >>>>>>>> @@ -38,6 +38,28 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+> >>>>>>>>      }
+> >>>>>>>>      EXPORT_SYMBOL_GPL(pgd_alloc);
+> >>>>>>>>
+> >>>>>>>> +void kernel_pte_init(void *addr)
+> >>>>>>>> +{
+> >>>>>>>> +       unsigned long *p, *end;
+> >>>>>>>> +       unsigned long entry;
+> >>>>>>>> +
+> >>>>>>>> +       entry =3D (unsigned long)_PAGE_GLOBAL;
+> >>>>>>>> +       p =3D (unsigned long *)addr;
+> >>>>>>>> +       end =3D p + PTRS_PER_PTE;
+> >>>>>>>> +
+> >>>>>>>> +       do {
+> >>>>>>>> +               p[0] =3D entry;
+> >>>>>>>> +               p[1] =3D entry;
+> >>>>>>>> +               p[2] =3D entry;
+> >>>>>>>> +               p[3] =3D entry;
+> >>>>>>>> +               p[4] =3D entry;
+> >>>>>>>> +               p +=3D 8;
+> >>>>>>>> +               p[-3] =3D entry;
+> >>>>>>>> +               p[-2] =3D entry;
+> >>>>>>>> +               p[-1] =3D entry;
+> >>>>>>>> +       } while (p !=3D end);
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>      void pgd_init(void *addr)
+> >>>>>>>>      {
+> >>>>>>>>             unsigned long *p, *end;
+> >>>>>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >>>>>>>> index ecf63d2b0582..6909fe059a2c 100644
+> >>>>>>>> --- a/include/linux/mm.h
+> >>>>>>>> +++ b/include/linux/mm.h
+> >>>>>>>> @@ -3818,6 +3818,7 @@ void *sparse_buffer_alloc(unsigned long si=
+ze);
+> >>>>>>>>      struct page * __populate_section_memmap(unsigned long pfn,
+> >>>>>>>>                     unsigned long nr_pages, int nid, struct vmem=
+_altmap *altmap,
+> >>>>>>>>                     struct dev_pagemap *pgmap);
+> >>>>>>>> +void kernel_pte_init(void *addr);
+> >>>>>>>>      void pmd_init(void *addr);
+> >>>>>>>>      void pud_init(void *addr);
+> >>>>>>>>      pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
+> >>>>>>>> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+> >>>>>>>> index 89895f38f722..ac607c306292 100644
+> >>>>>>>> --- a/mm/kasan/init.c
+> >>>>>>>> +++ b/mm/kasan/init.c
+> >>>>>>>> @@ -106,6 +106,10 @@ static void __ref zero_pte_populate(pmd_t *=
+pmd, unsigned long addr,
+> >>>>>>>>             }
+> >>>>>>>>      }
+> >>>>>>>>
+> >>>>>>>> +void __weak __meminit kernel_pte_init(void *addr)
+> >>>>>>>> +{
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>      static int __ref zero_pmd_populate(pud_t *pud, unsigned lon=
+g addr,
+> >>>>>>>>                                     unsigned long end)
+> >>>>>>>>      {
+> >>>>>>>> @@ -126,8 +130,10 @@ static int __ref zero_pmd_populate(pud_t *p=
+ud, unsigned long addr,
+> >>>>>>>>
+> >>>>>>>>                             if (slab_is_available())
+> >>>>>>>>                                     p =3D pte_alloc_one_kernel(&=
+init_mm);
+> >>>>>>>> -                       else
+> >>>>>>>> +                       else {
+> >>>>>>>>                                     p =3D early_alloc(PAGE_SIZE,=
+ NUMA_NO_NODE);
+> >>>>>>>> +                               kernel_pte_init(p);
+> >>>>>>>> +                       }
+> >>>>>>>>                             if (!p)
+> >>>>>>>>                                     return -ENOMEM;
+> >>>>>>>>
+> >>>>>>>> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> >>>>>>>> index edcc7a6b0f6f..c0388b2e959d 100644
+> >>>>>>>> --- a/mm/sparse-vmemmap.c
+> >>>>>>>> +++ b/mm/sparse-vmemmap.c
+> >>>>>>>> @@ -184,6 +184,10 @@ static void * __meminit vmemmap_alloc_block=
+_zero(unsigned long size, int node)
+> >>>>>>>>             return p;
+> >>>>>>>>      }
+> >>>>>>>>
+> >>>>>>>> +void __weak __meminit kernel_pte_init(void *addr)
+> >>>>>>>> +{
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>      pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned=
+ long addr, int node)
+> >>>>>>>>      {
+> >>>>>>>>             pmd_t *pmd =3D pmd_offset(pud, addr);
+> >>>>>>>> @@ -191,6 +195,7 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t=
+ *pud, unsigned long addr, int node)
+> >>>>>>>>                     void *p =3D vmemmap_alloc_block_zero(PAGE_SI=
+ZE, node);
+> >>>>>>>>                     if (!p)
+> >>>>>>>>                             return NULL;
+> >>>>>>>> +               kernel_pte_init(p);
+> >>>>>>>>                     pmd_populate_kernel(&init_mm, pmd, p);
+> >>>>>>>>             }
+> >>>>>>>>             return pmd;
+> >>>>>>>> --
+> >>>>>>>> 2.39.3
+> >>>>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>
+> >>>>
+> >>
+> >>
+>
 
