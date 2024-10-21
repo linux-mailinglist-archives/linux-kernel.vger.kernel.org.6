@@ -1,163 +1,130 @@
-Return-Path: <linux-kernel+bounces-374865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5699A7143
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948309A7147
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2491283412
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0DA1C2244A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CBA1EF945;
-	Mon, 21 Oct 2024 17:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAC51F131C;
+	Mon, 21 Oct 2024 17:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeKNEo+P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TG1lREhQ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485A2178395
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E815028C;
+	Mon, 21 Oct 2024 17:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532648; cv=none; b=XWwy9hYKB48KDhSGtutl4MPoj6oUXKu0cTxy9txkt4SzqRWim8yF7ByOPhDu04xnyqYougu3RuK3T43q/qpmYlCdbO+uSEJ2Td5844NMdUImwN4vtq9RyOBVA/zaC0E0+xRPRKIBsTiPy+ftD2OviY1Eh2izX75rXbSekHZ1kgE=
+	t=1729532755; cv=none; b=us2jns3QMInzG9TppJvoYmU8a8ukbxOgK0ncHbVOFuixzp6rbl8MRFJ2sZmPoY6Jpwzu66WOmH8QiGY9qUS3V+oIx9I1VdwojGEOYy9nUBaKrQH/w8e9i/VvMZEsYz9ryfAPhTeFLKdo6Fmd9j9WyPn1JEDHlxh8CneRLo5Rvss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532648; c=relaxed/simple;
-	bh=zGJj8wrBgY1TcEriRxoBtO0t39RL8zcLJTjaqUOxzY8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NQkvh0gq3E36C5W92sEUvGhfqVNXgkLMdz+IDH/0LnAD0Uq5j1NGdA70uOnLllj6xEVF/HAapKTpO+IbU5FOLJe6ATo1ozK+a5IO2DAqweeJUYYHeca2M5jpKxVuMpfwDF/BAa3dLuY6aLOEVI5wJUKh1eK/oziggJ0iwmfylPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeKNEo+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB781C4CECD;
-	Mon, 21 Oct 2024 17:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729532647;
-	bh=zGJj8wrBgY1TcEriRxoBtO0t39RL8zcLJTjaqUOxzY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AeKNEo+PgMPOYrvyzCDrBcnFh+qCvuqpChah5uwy+BlnCB5mTEL13C3xX3gg9YwCp
-	 AzUoNRA2PTS9WY5sGKLsaqGQZ4heZ85QS4VJGbfqfgHew20oKzvHLUc2O0AsfHMCgi
-	 aBadvkfwgyS3FP4TSQE0GP+DqcUrz4AtZXB3LF3mgqBvh3zM8nV4o58kD9UvhAF64e
-	 zPN6L2oOqlBeCLBR0c1G5U52NNn5kRw3SCzZQ6G33OptOX3CEu+VTAfASBNZyHB0Qp
-	 O8QFyzdfoIkjEXNhuCnaD7/BlPt/DYe7RDHniNbjwXT1SnMPWyx/PD5O89G8JNC0/S
-	 CO34yYSkoTmag==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t2wRp-005Vkp-HQ;
-	Mon, 21 Oct 2024 18:44:05 +0100
-Date: Mon, 21 Oct 2024 18:44:04 +0100
-Message-ID: <86cyjt4ahn.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Rex Nie <rex.nie@jaguarmicro.com>
-Cc: mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	angus.chen@jaguarmicro.com
-Subject: Re: [PATCH] tools: arm64: add registers read/write tool for arm64
-In-Reply-To: <20241021150112.1194-1-rex.nie@jaguarmicro.com>
-References: <20241021150112.1194-1-rex.nie@jaguarmicro.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729532755; c=relaxed/simple;
+	bh=K1244QOye3wf+xMcvjh/wKrTBXhK53QFrFb5VJextIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riGGuHyFod5N5rAwVNIggIkQF/tXaw0lK/jchQXLP0DQqEQuZdhsKZlsdn/s9PbPHTjFnuabZ/Y0+IFjTjUd06ZCjGzR/BgFKudZv1PEaAkU97G3VIlrtUKtWKM5SnzI2tmtbRtUYHLVLs0M5GFzwzu/k1A/4Jh0/hfsHzHyhrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TG1lREhQ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 08CB840E0194;
+	Mon, 21 Oct 2024 17:45:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NUTJvmhMzHNt; Mon, 21 Oct 2024 17:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729532746; bh=qVXw11o3fTQ4SrofK9F4rmkunE7a3EEHp7kqO/1k6Q0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TG1lREhQTfVhkvwxf7ZUXbrrnOdFd5MGuNHQzXq2B5Ri+9F29u6EjvkTFYGCmSWFR
+	 fjBypvQSlBysOyCqM5zwaKYF8NUmfcfdSV50vObgFREU9VfHh5E/oUXuCC1qwuGAof
+	 cbRTlyZIylv5BvhM6DjKH/IplOOhG5pxjAN1doVqKeR3n0sKp0ZGYDaC6khMddCnsk
+	 JOMetH5BpqEtS0MV0sn/GuovBsZQHXSl0NNJABc1e+8olCDFMjK6EEVyc+NzTXSJ15
+	 l3s5CL4UMDoqGpN8IELZULjHjOFaALBueMEl9dvXhxxx7fNEIURbtQqoav/uNRpYl3
+	 qGKjSEzRhmVcRG0e7V/Gbsiebt40M6Vcns40lIHy03bblRca2UnIXje+AaB5vxU8Ng
+	 IRXH6SAQtz+bRrxJEPXY8Q584ho3erIEl1sDTg7zJWDdhfFRLDGAY8SYnpULN5IdkB
+	 dtxj/+tlDTCwQvBBeTZsL4cNO4NjKKjIZh3xhI6q9V7klVbLl+Y4UivsjdQhTbuiWa
+	 QRU8AeQtQMzCZEm57QejGtNW7+2SejlIxu/FjJjEJId5bXy58aUgM0jvet4yDDRt7O
+	 pjOSVbrXIH7OwXydFufoygWl7Oko/SfPnNjufrSla0rCX3CqpOb1F/w1IlRGyDP5Vj
+	 ml9pLj9QeJXtTi+80n14FgCI=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C1ACE40E0169;
+	Mon, 21 Oct 2024 17:45:25 +0000 (UTC)
+Date: Mon, 21 Oct 2024 19:45:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct
+ cpuinfo_topology
+Message-ID: <20241021174519.GIZxaTL7o85C_w2ucR@fat_crate.local>
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+ <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
+ <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local>
+ <20241018203053.2x6oyws3dkxfw6rm@desk>
+ <9534B53F-7B91-4525-97DC-889EC3836658@alien8.de>
+ <20241021163656.zyyugk4vyqyhzh3i@desk>
+ <SJ1PR11MB6083A4F82CCC844D4C8C7D6AFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rex.nie@jaguarmicro.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, angus.chen@jaguarmicro.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083A4F82CCC844D4C8C7D6AFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On Mon, 21 Oct 2024 16:01:12 +0100,
-Rex Nie <rex.nie@jaguarmicro.com> wrote:
->=20
-> The reg_ctrl kernel module can read/write most aarch64 system registers,
-> including EL0/1/2/3, which is very useful when hardware debuger (such
-> as ArmDS5/trace32) is unusable.
->=20
-> The primary implementation of the reg_ctrl module is as follows:
-> 1. when the core can directly access the target register, it uses
->    the MRS/MSR instructions to read/write register.
-> 2. Otherwise, it performs an SMC call to switch to EL3, where the
->    register read/write is completed and then return to kernel mode.
->    I implement an OEM Service in ATF to access register at EL3,
->    using one SMC function ID for reading and another for writing register=
-s.
->=20
-> test steps on my platform with 16x Arm Neoverse N2:
-> 1. insmod reg_ctrl.ko
-> 2. cd /sys/kernel/reg_ctrl/system/
-> 3. view the directory tree on DUT.
-> [root@localhost system]# tree
-> .
-> =E2=94=9C=E2=94=80=E2=94=80 control
-> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 VNCR_EL2
-> =E2=94=9C=E2=94=80=E2=94=80 id
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CCSIDR_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CLIDR_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CSSELR_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CTR_EL0
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 DCZID_EL0
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64AFR0_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64AFR1_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64DFR0_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64DFR1_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64ISAR0_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64ISAR1_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64MMFR0_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64MMFR1_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64PFR0_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 ID_AA64PFR1_EL1
-> =E2=94=9C=E2=94=80=E2=94=80 implementation_defined
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUACTLR_EL3
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUECTLR_EL1
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR2_EL3
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR4_EL3
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR5_EL3
-> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR6_EL3
-> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 IMP_CPUPPMCR_EL3
-> =E2=94=94=E2=94=80=E2=94=80 reset
->     =E2=94=94=E2=94=80=E2=94=80 RMR_EL3
->=20
-> 4. read EL1 register on core 0:
-> [root@localhost system]# taskset -c 0 cat id/ID_AA64PFR0_EL1
-> 0x1201111123111112
->=20
-> 5. read EL3 register on core 1:
-> [root@localhost system]# taskset -c 1 cat implementation_defined/IMP_CPUP=
-PMCR4_EL3
-> 0x2000315a10000045
->=20
-> 6. set bit 1 of IMP_CPUPPMCR4_EL3 regiter on core 1:
-> [root@localhost system]# taskset -c 1 echo 0x2000315a10000047 > implement=
-ation_defined/IMP_CPUPPMCR4_EL3
->=20
-> 7. check if bit 1 is set:
-> [root@localhost system]# taskset -c 1 cat implementation_defined/IMP_CPUP=
-PMCR4_EL3
-> 0x2000315a10000047
->=20
-> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
+On Mon, Oct 21, 2024 at 05:13:41PM +0000, Luck, Tony wrote:
+> Example from <asm/intel-family.h>
+> 
+> #define INTEL_ALDERLAKE_L               IFM(6, 0x9A) /* Golden Cove / Gracemont */
+> 
+> #define INTEL_RAPTORLAKE                IFM(6, 0xB7) /* Raptor Cove / Enhanced Gracemont */
+> 
+> The native model number could be helpful to tell what each of your P-cores and E-cores
+> are based on. Could be useful when the same base core is used in more than one SoC
+> generation.
 
-This sort of thing has been NAKed in the past (see [1]), because it is
-terribly unsafe. I'm afraid the kernel is not a validation tool, and
-while I understand that this can be useful in extremely narrow cases,
-it has no place in the upstream kernel.
+How am I supposed to read this?
 
-Thanks,
+Gracemont is the "native", base core and from that they do a Golden Cove and
+a Raptor Cove?
 
-	M.
+What does that have to do with the P- and E-cores? Are those above two
+different types wrt performance?
 
-[1] https://lore.kernel.org/all/20201130174833.41315-1-rongwei.wang@linux.a=
-libaba.com/
+Thx.
 
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
