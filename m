@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-373811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B199A5D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688059A5D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F44B22A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2065C280D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65471CF7B7;
-	Mon, 21 Oct 2024 07:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Rbq1pPkB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400401D0142;
+	Mon, 21 Oct 2024 07:31:53 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CDC1D2B3C;
-	Mon, 21 Oct 2024 07:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F611D0F41;
+	Mon, 21 Oct 2024 07:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495844; cv=none; b=UG0PXj0bXH4RF1k1+7iy9qAgVGNmecBuj8U+GC3BoVz0iZ7l/zWPseBj8XpSAlqgIO9VAg2MhgUnICGzKXGwDwAWvTPb/npTa2WS2p9Mq7uQUrfW3WfK0XkUUNgL2x7ZSwiXk/vW9zfblmlI9UmernQn3yG137Uijlr2Am+3YzA=
+	t=1729495912; cv=none; b=QIOTRkM+eVJBkNQFHre61Z9hvM7g+O/NZYl5HB9Lk7rC3lNyIRCjGrLgfLxPdwr6Vchplfs3bOJkN2kIwVLjYD9hNHqhKxM6NUhErW4bw8CLozAUY7RuIwdX9OiPTacrmU8Dot7Y2Z5e/hqfhvzBHIQJIDUq9oaEZCLXkWHZbR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495844; c=relaxed/simple;
-	bh=Z6UlwbDUZSsB4+wZPsrAxz492+YRijjGRP/qPbVeUAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYirPGawC7AIBMI1I3YflSM9BPKu3QfcK2FN1dAk/sIhqy+wd3kXm4Ic894dNQYI/cNX8ZMVOrikwiYV3MSzHuwmm9UzJIIQk3T+iBtFqKHrH4B+lwZUaz6L+EcJHJ6IiHPyTytrVQ2Osel5oFOzfO+hxIPy+YN3R6xdb3rD9WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Rbq1pPkB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 390444CF;
-	Mon, 21 Oct 2024 09:28:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729495734;
-	bh=Z6UlwbDUZSsB4+wZPsrAxz492+YRijjGRP/qPbVeUAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rbq1pPkBq4mkzTcm+SJgMmN8QtaO4t3IK9ODdHey1uaF2wWU8q/2RcLETFO/ecJA7
-	 26YuktdaAafimJvvBi2sntpIVclOBGpUQbZpC2p3xxX4tef3KMkJy6BJcVveZ7etWY
-	 E45S/uveLe4B1/4GLqMOAsWgaDzmNRWj+vTzuyqA=
-Date: Mon, 21 Oct 2024 10:30:34 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <20241021073034.GC14328@pendragon.ideasonboard.com>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
- <20241020164354.GG7770@pendragon.ideasonboard.com>
- <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+	s=arc-20240116; t=1729495912; c=relaxed/simple;
+	bh=x56QYfTtpSaW6T92GC+6kY8hsQt71XOAsUTiauRLXuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c3tZX+SbA56lMlkV4NcnuqJSQA2jUCLT2+VO8Q+h/xumu6N8yuPy1v2FwQ2OB7oCDpSrIHmIN8/tfpeXHlEjbfMAHa0cb4MxBqRETl1c7KJ3TeWOKVaLzligB4AFB9dmRj8otBM9csKllPLUZAoHjFf/c7ZlUuCLUW4Dlf5zdlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2772f7df9so33923677b3.2;
+        Mon, 21 Oct 2024 00:31:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729495909; x=1730100709;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jr+kpALnRUsAPIgtZFzgufk7e4vaGeioyiXEU/DOG3s=;
+        b=BirLM5eJI/qukBzZ/M6cFVTpCriHOGcp2mkUNGZcg2Z5PTwdiMKezZi6kin2lOCGpu
+         AKf7ELogO42W2fxqj7Bm1cfy15rejvMlUQksQqIgowpirIoNQQ4jh4h2vPR3v7Xl72+3
+         Mk87c7i+3AObZ74qM+59x14uZzUvO6XcjQELxWhsoRnh1v4Dwu06fAoaIg4Rpg/ITgKR
+         jNSppkX/EukU5ta2bZ6loniAhFST0iC5PgZt9f0MyUMlBji3IIYByFey18JPySGwCybB
+         O2DfBHLgb9j3Q9ObA03sbWEEr/QWlhxjfwIR82yOCL756a1BNWYpGRjJCcOMfencOvzW
+         xD2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVny0ERBxpoCfNmRBgYOCWXq5ebYbvSePlEovehPa2gTDwGrHHCRcSa/SHWmOkF4pyqF0bQKgDBxKbpy4xa8LY=@vger.kernel.org, AJvYcCWh4R2KXT2YCBWwoIe1TLlpQqO7XUI3CO3a2HrC5IJZcGvRTXEX2TjMawy49vCXFlUJTPhBUP7/dld6CZjD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy72y4qncqaSbqc14v1ZkuTZTANBwHkZVw0amu5m9aPHKNsRaQU
+	HpAMSwxslca+q/0Z7Hksqh6nvPjGAkDiN4znfTHivOPTdM0MhY2Sz6KRoUgA
+X-Google-Smtp-Source: AGHT+IHtIABokKmWrSV50XC1fSDO4GddECRooaJ1CM30ZWHXyXLK2XEsrLulrQIa2od777tS3j6Ynw==
+X-Received: by 2002:a05:690c:4b0c:b0:6db:d7c9:c97b with SMTP id 00721157ae682-6e5bfe887f3mr94928637b3.40.1729495909193;
+        Mon, 21 Oct 2024 00:31:49 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ad5addsm5830597b3.72.2024.10.21.00.31.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 00:31:49 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e5ef7527deso9672357b3.0;
+        Mon, 21 Oct 2024 00:31:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMY+GMpMk6TPD3EtxiS0pVFUHRohyRp3/6fsTJ+jWndn7UPGYYa+ax0I7D9mxCAVa9k/1w7FMBQQhlC05G@vger.kernel.org, AJvYcCVgUf7pFj4YvXwGBLLBGuKi9uDP2//vzLQgT1sbxDyL8qAviqeGGtqd5FjGEd1xLFWfhKyr2QPhsGA5PtmiUVo=@vger.kernel.org
+X-Received: by 2002:a05:690c:3389:b0:6dd:e837:3596 with SMTP id
+ 00721157ae682-6e5bfc31904mr97889987b3.14.1729495908789; Mon, 21 Oct 2024
+ 00:31:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <ZxMV3YvSulJFZ8rk@mail.google.com>
+In-Reply-To: <ZxMV3YvSulJFZ8rk@mail.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 21 Oct 2024 09:31:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUG7z0Qz=6GfeidmnrD_s_RQzMeC1wq0c2A1eQB7rG=Xg@mail.gmail.com>
+Message-ID: <CAMuHMdUG7z0Qz=6GfeidmnrD_s_RQzMeC1wq0c2A1eQB7rG=Xg@mail.gmail.com>
+Subject: Re: [PATCH][next] powerpc/ps3: replace open-coded sysfs_emit function
+To: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+Cc: geoff@infradead.org, mpe@ellerman.id.au, npiggin@gmail.com, 
+	christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
-> Hi Laurent,
-> Thanks for your review.
-> 
-> On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
-> > Hi Tommaso,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > userspace has to be able to subscribe to control events so that it is
-> > > notified when the control changes value.
-> > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > as default if subdev don't have .(un)subscribe control operations.
-> > 
-> > I would add here
-> > 
-> > This simplifies subdev drivers by avoiding the need to set the
-> > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-> > consistency of the API exposed to userspace.
-> > 
-> > And you can also add
-> > 
-> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Oks, Thanks again.
-> 
-> > Now, can we simplify sensor drivers to drop the event handlers and the
-> > flag ? :-)
-> 
-> Yep, plan is add all to support v4l2_subdev_init_finalize()
-> Removing:
-> 
->  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
->  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> 
-> if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
+On Sat, Oct 19, 2024 at 4:14=E2=80=AFAM Paulo Miguel Almeida
+<paulo.miguel.almeida.rodenas@gmail.com> wrote:
+> sysfs_emit() helper function should be used when formatting the value
+> to be returned to user space.
+>
+> This patch replaces open-coded sysfs_emit() in sysfs .show() callbacks
+>
+> Link: https://github.com/KSPP/linux/issues/105
+> Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.c=
+om>
 
-What I meant is looking at the I2C sensor drivers that currently
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-- call v4l2_subdev_init_finalize()
-- set V4L2_SUBDEV_FL_HAS_EVENTS
-- set the .subscribe_event() and .unsubscribe_event() handlers
+Gr{oetje,eeting}s,
 
-and dropping the flag and handlers from them. Is that what you plan to
-work on ?
+                        Geert
 
-> Meanwhile I think I will send v3 with your
-> suggestions. :)
-> 
-> > > ---
-> > > Changes since v1:
-> > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
-> > >    SAilus
-> > > 
-> > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > index 3a4ba08810d2..fad8fa1f63e8 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > >  
-> > >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > > +						vfh, arg);
-> > > +
-> > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > +		    vfh->ctrl_handler)
-> > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > +
-> > > +		return -ENOIOCTLCMD;
-> > >  
-> > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > +						vfh, arg);
-> > > +
-> > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
-> > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > > +
-> > > +		return -ENOIOCTLCMD;
-> > >  
-> > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> > >  	case VIDIOC_DBG_G_REGISTER:
-> > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> > >  		}
-> > >  	}
-> > >  
-> > > +	if (sd->ctrl_handler)
-> > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > +
-> > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> > >  	if (IS_ERR(state))
-> > >  		return PTR_ERR(state);
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
--- 
-Regards,
-
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
