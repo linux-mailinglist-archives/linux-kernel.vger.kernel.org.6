@@ -1,98 +1,252 @@
-Return-Path: <linux-kernel+bounces-374438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1AC9A6A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E5D9A6A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF731C21E78
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300861C21E80
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51051F709B;
-	Mon, 21 Oct 2024 13:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4AB1E7C0D;
+	Mon, 21 Oct 2024 13:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXXfwab4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iWNLeEa9"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB6B1DFFB;
-	Mon, 21 Oct 2024 13:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0536B11185
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517326; cv=none; b=q3LnQZZWXNbU/wvs5CuEFqk5p6dmIAVVbXZLS9JMZLLFqEADBpbM8f8LiX1oHnkwhV7BIv+bM6baE820SF7eXr4x2qeLhxIFlRjxwoPnOPp4re1cAg0VpQnBRlLs4FFj5SI/0TmCfkDx5mNl9lATBkbDMrTPN+wMRtQV4drTN+Q=
+	t=1729517426; cv=none; b=fOa7BfEtHFfzf8flPtmH2QXNbYHNOJx8p3gYi3MncEywYs2o6Fum6eE8RN2KKZ0+Mg3qcIXgJLXrqTXmL6W66l9EA6UymT1wteZ6PJOFlxIJugUQH464GORDyu+Lgq2LZA58e299hvamC4WRucrtprLzLi5TfYxwPxtZRK6iNCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517326; c=relaxed/simple;
-	bh=I/lqGfR6DjRwRm7x77Ce84OzvDVzs3+1+CsEADwNolo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8j+igZ5BxHGBJicRmv2d6ZQuQJimrHvbs117DEAyeLEjXcsA3Efna9w+T2RE08kTUTaRQ1VWGyx2Jjy25kPWWL9Coe5mQVG20agwTXrcfuk/Mni2SqBMW+oUDqgmSLk3iAS8yF0sz/vsCwyvret0PZCac320KrK4raH4LyfXNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXXfwab4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80200C4CEC3;
-	Mon, 21 Oct 2024 13:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729517325;
-	bh=I/lqGfR6DjRwRm7x77Ce84OzvDVzs3+1+CsEADwNolo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXXfwab4dNShaGhHGRWIl//4ACrC9bDO2LurXIq+yB26mxrFkuaJh8yl9VnF3G8Va
-	 jw1VH8el1Akp5ByhaXYe/m/fByNwNmM6DRRW1z1mBaKmVsZRRXD9NQ3fI0KABx0GV0
-	 KZOp605UfqLoLlZMnamVV9C6Gl3dIXFl5Qd3xleNzS2Y2cH1KTUTcnkJJeIvSye2qO
-	 oFRxvjLC/pUMr2Fj9gkJIAxLqqxfr4+I85y5rxWiAO8MyVJjojLE9jpb0A8KLY1aR5
-	 Y4q7uMf/yU3j7lOElSiLfab9o3Ei8So+bvLhaK5QmGV6Mu0YSbjlaetx+MDWxlzWje
-	 /uAwumpfztBlw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t2sSt-000000001Bv-2NzU;
-	Mon, 21 Oct 2024 15:28:55 +0200
-Date: Mon, 21 Oct 2024 15:28:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Fix
- X1E80100 resets entries
-Message-ID: <ZxZXFx9T-9Uw0Ndw@hovoldconsulting.com>
-References: <20241021-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v2-1-1b11a40baad1@linaro.org>
+	s=arc-20240116; t=1729517426; c=relaxed/simple;
+	bh=5EjVz3Q+MOWdSbz7fy3KdO9neMXkMKVokQZXuSXImg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ra8NrJR1EtZYJ5aBX/YPMSmrplbcLmnUPH0RCLQC8AaSdRUsIVLhZchpT5HjPnCO/gcxna1GB8PviL/pnKdrswD/I9X/YgUUqjMV5ExC6vvVEcil8UI8rVh7kZQE2zx2G4LZ5Tytj34fGnmZ91wwFfDcnGuf+Aw9zRMKLcJTGJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iWNLeEa9; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e3881042dcso39550187b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729517423; x=1730122223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xbhe2TqzSvcaurimHVW1IGX30JYpSFOMwX7ToQfqPaU=;
+        b=iWNLeEa9TOzXYnBnXtC/fYYqhl1xKGKNtmcqj3SLdMlofAKmgO/hZdfPRms8x/+qA0
+         OGoYlVBICiXuVLlgo7m5p7Fb71j2V2bfH1APNilzQpavTFE4PvhHvJPRGj74hVSmFnMS
+         BU2Fs15jBQAsSMT5u8QhzITI6ktzvVU9mjGMeeOVp2tW8p7DPWpkb5akKVdYf+xhuD4q
+         Vy2VGtc1SwS/lkbq+BB3r7uCgarRZUFpELz7iTkGwA+KNYkRi8DoWx29Zrh5rO3IOmee
+         gqeKtCZ5OKRxv1tXXxMbSSKlarVddC2jW44Jwt5EgWxiuZJWhb3c1wIOeToaImE5Qxix
+         an+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729517423; x=1730122223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xbhe2TqzSvcaurimHVW1IGX30JYpSFOMwX7ToQfqPaU=;
+        b=Aivq3cDj0revCV/RnObsuRROWKOjnQehBYSxZkuz2bXux6+qxnjy1EzEoPOeqWA8ka
+         rVWMAWMEj1KbqKCFNoGc67DoUsn+HOvYIPxxLcB3d6wrfa3hMft7Fa84JZ6UHAY/bwok
+         /I6HX1YiWFQATkuOGvIHu01r7UmwYrQgA/Rp23BZHGDR2wH+JogWrl+wb6NYr70sN/1D
+         /lGU/36U9ZDHUbX0/s2nVoFxachbtEq337WNq6tBLWMh6h21srfOPPOxFAr3Utk4Ie6G
+         mlRbyAB30JtiwhDx9yZRgHEx95S0xVIHWMIm4zK6U/DbLH8jIxUjKHY9gsibGJiUVJKQ
+         pA2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVYc/5Lbwm11Nuanur7I301NMpOZOdQMO9hMNSDxNkTXodH6QJQE+TRXJkvsYvKFcvyycRcf3fAH5+IYek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytu0D5xGystW9hiZMaBjpqr5cPeVpeU8c8T8GRCaxKFMuVMj2+
+	7mzSjXv56rYL5zXhWxa904B1o9qYvCVOOMoShhOMLutHDc6KXA0/CPV9I9078BsSeEK92mfmeX0
+	opNnAFjGWkwdozmB2/0VRi+L1tAPZUd9YFh2uOw==
+X-Google-Smtp-Source: AGHT+IHqwJNEfK6Y3ddBvD/T1PBpBcKI+SMe9p7s2+QvnApVMesS8CYFE9YL4hm4SDDk+0IzMCy6Q/MHASzUaHJGNWk=
+X-Received: by 2002:a05:690c:28f:b0:6e2:313a:a022 with SMTP id
+ 00721157ae682-6e5bfe94d4bmr107404457b3.33.1729517422932; Mon, 21 Oct 2024
+ 06:30:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v2-1-1b11a40baad1@linaro.org>
+References: <CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com>
+ <3748add3-18e5-42ef-9d48-93650cfc0682@rock-chips.com> <CAC8uq=O=519iRpcs7p+jZaKngkCDuawLz8NVZYORY6qfGPifZg@mail.gmail.com>
+ <eb1d15dd-8e85-4a9b-9b8b-ee005c446bf6@rock-chips.com>
+In-Reply-To: <eb1d15dd-8e85-4a9b-9b8b-ee005c446bf6@rock-chips.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 21 Oct 2024 15:29:46 +0200
+Message-ID: <CAPDyKFr6oDxdc2UhMvAh885dofF1EeT17Ch_Fp-9f2Yvf-654A@mail.gmail.com>
+Subject: Re: Unable to handle kernel paging request at virtual address ffffffc08058e000
+To: Shawn Lin <shawn.lin@rock-chips.com>, Adam Green <greena88@gmail.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, regressions@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, sydarn@proton.me, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 04:10:21PM +0300, Abel Vesa wrote:
-> The PCIe 6a PHY is actually Gen4 4-lanes capable. So the gen4x4 compatible
-> describes it. But according to the schema, currently the gen4x4 compatible
-> doesn't require both PHY and PHY-nocsr resets, while the HW does. So fix
-> that by adding by adding the gen4x4 compatible alongside gen4x2 for the
+On Fri, 18 Oct 2024 at 05:43, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+> + Sam
+>
+> =E5=9C=A8 2024/10/18 8:06, Adam Green =E5=86=99=E9=81=93:
+> > Hi Shawn,
+> >
+> > I can confirm that after reverting
+> >
+> > commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890
+> > Author: Sam Protsenko <semen.protsenko@linaro.org>
+> > Date:   Wed Mar 6 17:20:52 2024 -0600
+> >
+> >      mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
+> >
+> > that the problem does appear to have resolved itself, I tested this on
+> > a variety of devices.
+> >
+>
+> I'm confused about the patch. Doesn't max_seg_size stand for max bytes
+> per IDMA descriptor can handle?  How can it be equal to max_req_size
+> which should be max_seq_size * max_segs=EF=BC=88max_segs is IDMAC descrip=
+tors
+> number can be used=EF=BC=89 ?
+>
+>   /* Each descriptor can transfer up to 4KB of data in chained mode */
+>   #define DW_MCI_DESC_DATA_LENGTH 0x1000
+>
 
-nit: s/by adding//
+Does the below patch fix the problem too?
 
-> resets description.
-> 
-> Fixes: 0c5f4d23f776 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHY Gen4 x4")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410182029.n2zPkuGx-lkp@intel.com/
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> Changes in v2:
-> - Picked up Krzysztof's R-b tag
-> - Re-worded commit message according to Johan's
->   suggestion
-> - Link to v1: https://lore.kernel.org/r/20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v1-1-f543267a2dd8@linaro.org
+https://lore.kernel.org/lkml/20241020142931.138277-1-aurelien@aurel32.net/T=
+/
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Kind regards
+Uffe
+
+>
+> > Best regards,
+> >
+> > Adam
+> >
+> > On Wed, 16 Oct 2024 at 11:13, Shawn Lin <shawn.lin@rock-chips.com> wrot=
+e:
+> >>
+> >> =E5=9C=A8 2024/10/16 17:55, Adam Green =E5=86=99=E9=81=93:
+> >>> Good morning,
+> >>>
+> >>> I would like to report a regression that appears to have been
+> >>> introduced into the linux kernel since v6.9.
+> >>>
+> >>
+> >> I didn't see many patches for dw_mmc since 6.9. So I guess the fastest
+> >> way is to do a bisect. Or maybe you could try reverting this commit
+> >> first to see what will happen.
+> >>
+> >> commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890
+> >> Author: Sam Protsenko <semen.protsenko@linaro.org>
+> >> Date:   Wed Mar 6 17:20:52 2024 -0600
+> >>
+> >>       mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
+> >>
+> >>
+> >>> My device is currently experiencing a panic booting the kernel/rootfs
+> >>> from an SD card.
+> >>>
+> >>> The device is a Powkiddy RGB30 which is a portable handheld gaming
+> >>> console with a Rockchip RK3566 SoC (arm64).
+> >>>
+> >>> I have tested a variety of devices from a couple of manufacturers wit=
+h
+> >>> the same SoC and they all have the same issue,
+> >>> I have also tested, 6.12-rc3 and linux-next and the same issue appear=
+s present.
+> >>>
+> >>> A full UART dump can be found here: https://clbin.com/zLZAW
+> >>>
+> >>> [   41.547983] Unable to handle kernel paging request at virtual
+> >>> address ffffffc08058e000
+> >>> [   41.553426] Mem abort info:
+> >>> [   41.558231]   ESR =3D 0x0000000096000007
+> >>> [   41.563115]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+> >>> [   41.568135]   SET =3D 0, FnV =3D 0
+> >>> [   41.572882]   EA =3D 0, S1PTW =3D 0
+> >>> [   41.577575]   FSC =3D 0x07: level 3 translation fault
+> >>> [   41.582404] Data abort info:
+> >>> [   41.586995]   ISV =3D 0, ISS =3D 0x00000007, ISS2 =3D 0x00000000
+> >>> [   41.591848]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+> >>> [   41.596664]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> >>> [   41.601457] swapper pgtable: 4k pages, 39-bit VAs, pgdp=3D00000000=
+0363e000
+> >>> [   41.606359] [ffffffc08058e000] pgd=3D1000000000225003,
+> >>> p4d=3D1000000000225003, pud=3D1000000000225003, pmd=3D1000000000c8c00=
+3,
+> >>> pte=3D0000000000000000
+> >>> [   41.616442] Internal error: Oops: 0000000096000007 [#1] PREEMPT SM=
+P
+> >>> [   41.621544] Modules linked in: hci_uart btrtl bluetooth rfkill
+> >>> [   41.626678] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.=
+0-rc2 #1
+> >>> [   41.631922] Hardware name: Powkiddy RGB30 (DT)
+> >>> [   41.636951] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS =
+BTYPE=3D--)
+> >>> [   41.642330] pc : dw_mci_idmac_start_dma+0xa0/0x358
+> >>> [   41.647585] lr : __dw_mci_start_request+0x21c/0x6a0
+> >>> [   41.652827] sp : ffffffc080003da0
+> >>> [   41.657882] x29: ffffffc080003da0 x28: ffffff8001f06d80 x27: fffff=
+fc08058d000
+> >>> [   41.663399] x26: ffffffc08058e000 x25: 0000000000002711 x24: 00000=
+00000002000
+> >>> [   41.668864] x23: ffffff800167dc80 x22: 0000000080000012 x21: 00000=
+00000001000
+> >>> [   41.674257] x20: 000000003b5d1000 x19: 0000000000001000 x18: 00000=
+00972073a81
+> >>> [   41.679654] x17: ffffff9c39b47000 x16: ffffffc080000000 x15: 00000=
+00000000001
+> >>> [   41.685074] x14: 0000000000000004 x13: 000001ba5087c8e8 x12: 00000=
+000000001a8
+> >>> [   41.690506] x11: 0000000000000040 x10: ffffffe40628d890 x9 : 00000=
+00000000000
+> >>> [   41.695972] x8 : ffffff803fd44080 x7 : 0000000008f0d180 x6 : 00000=
+0003b9ac9ff
+> >>> [   41.701495] x5 : 0000000000fffffe x4 : ffffffc08058de80 x3 : 00000=
+000b2d05e00
+> >>> [   41.707073] x2 : ffffffe40546ab08 x1 : ffffffc08058e000 x0 : 00000=
+00000001000
+> >>> [   41.712686] Call trace:
+> >>> [   41.717857]  dw_mci_idmac_start_dma+0xa0/0x358
+> >>> [   41.723266]  __dw_mci_start_request+0x21c/0x6a0
+> >>> [   41.728719]  dw_mci_work_func+0x4c8/0x4d8
+> >>> [   41.734144]  process_one_work+0x148/0x284
+> >>> [   41.739587]  bh_worker+0x224/0x278
+> >>> [   41.744985]  workqueue_softirq_action+0x78/0x88
+> >>> [   41.750545]  tasklet_action+0x14/0x3c
+> >>> [   41.756023]  handle_softirqs+0x100/0x23c
+> >>> [   41.761506]  __do_softirq+0x14/0x20
+> >>> [   41.766917]  ____do_softirq+0x10/0x20
+> >>> [   41.772301]  call_on_irq_stack+0x24/0x54
+> >>> [   41.777689]  do_softirq_own_stack+0x1c/0x40
+> >>> [   41.783106]  irq_exit_rcu+0x94/0xd0
+> >>> [   41.788455]  el1_interrupt+0x38/0x68
+> >>> [   41.793799]  el1h_64_irq_handler+0x18/0x24
+> >>> [   41.799200]  el1h_64_irq+0x68/0x6c
+> >>> [   41.804532]  default_idle_call+0x28/0x58
+> >>> [   41.809931]  do_idle+0x1fc/0x260
+> >>> [   41.815152]  cpu_startup_entry+0x34/0x40
+> >>> [   41.820346]  kernel_init+0x0/0x140
+> >>> [   41.825437]  console_on_rootfs+0x0/0x6c
+> >>> [   41.830477]  __primary_switched+0x80/0x88
+> >>> [   41.835501] Code: 54000280 d294f8c0 940e1f8c d503203f (b9400340)
+> >>> [   41.840748] ---[ end trace 0000000000000000 ]---
+> >>> [   41.845896] Kernel panic - not syncing: Oops: Fatal exception in i=
+nterrupt
+> >>> [   41.851321] SMP: stopping secondary CPUs
+> >>> [   41.856502] Kernel Offset: 0x2384800000 from 0xffffffc080000000
+> >>> [   41.861840] PHYS_OFFSET: 0x0
+> >>> [   41.866814] CPU features: 0x0c,00000014,00280928,4201720b
+> >>> [   41.872087] Memory Limit: none
+> >>> [   41.877119] Rebooting in 1 seconds..
+> >>>
+> >>> Best regards,
+> >>>
+> >>> Adam Green
+> >>
+>
 
