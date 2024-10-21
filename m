@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-373959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514849A5FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:23:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3969A5FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C971F219D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C291281B9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ADE1E282F;
-	Mon, 21 Oct 2024 09:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4811E103B;
+	Mon, 21 Oct 2024 09:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jm4KieOX"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TiQhv01N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF4D946C;
-	Mon, 21 Oct 2024 09:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F461E1C0F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502596; cv=none; b=Pv7h8xwo7oNGe6P3YG0iXWsNUN2LrN90dQ0vN21EoIlXYyVlDIUpKdksoaNkywdvuA1DUVLe3RVOQPudsoTU/47n9e5ty9CMX82kaEgaFP2w/iB6S/kqeNyrZ/AuRTYNJVp5cYLP0nRADvrMDsHJA7erV8ZhP8umUmi+7EHMLBU=
+	t=1729502632; cv=none; b=JcfAbGJzHS4vdfLpatMwQAIzTlBROLa3Yy152d7oDspi6ErrOzBjSbwtF5HxMHc09DwlCmAgbC5OLr5Ajey5qlcc7lG86iQAeDx9boiE/6Rx9C6pfgsexxfuZkEVCEAPwGD0/vea5mH3rRrwaXNUDZjprNdQXEZPhpEJNuGdQDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502596; c=relaxed/simple;
-	bh=WAYYulQYX+DAUemVwit3xk3XSk1nPNeKZQVIB1B57co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p/7naOSJe+iJcc/6dpAH+0Qj4CYNSmyXplaBc7LAhFB/5LosEacpBq6M+7KxZjCqm2n6f1BovobaeP4g4e1uMOZd2k3Bjb3crDUkCx5iBBS2lItjiyc1gOLsK38u7wOeKxlip1QSBxwpZJNhimBlZFouHOmUU36GN+PLAst86R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jm4KieOX; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-50c9f4efd09so1271885e0c.2;
-        Mon, 21 Oct 2024 02:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729502594; x=1730107394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENbw7gWD7Jn54F2uwwYCMj4RVQBrD+2XwdYMKUKg144=;
-        b=Jm4KieOXNKsoXd15BdujTUkzuM07Iht38N6hQK81fVdg9Wa0ggePBLPkvUC4HjCp3p
-         SyYbfCdaB/XTkT/mkFWIh2pz7dd+jewjKk8f0oHepmD85kdySCkpr9bbowfsSgk0VxDq
-         m6zCOcjwOKBc81SAEpgvQpbTGEYiJWj7CU/Is4RtIBI6xctopvPlTJvZwwSnerZ+T0IZ
-         Qi4+YZUUDWOh6yYoxlzNAOB4tLWd/0Bniz5WkzXtjqM0jYRuGNNXj6Hwfk+9XJnXM3T0
-         QnxdXVfLeo/mbxvO1EkvCSvagAVCe/KGsnmFR3W6zw2i3MXVDdPeZwqOdnObgGqUTcxX
-         b5pw==
+	s=arc-20240116; t=1729502632; c=relaxed/simple;
+	bh=XAazZYLkwAGGoZZOx7JUiyLm2ipHe+8hLTq1JrfcDJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sQKD565e+fW2US3Orzh4rWllmUF6PYGAkjyM0wq5JgyW+yRJvdwqfWkyJ/YNl9U8Fbzg5Ak+kut7VxnYTiAF1XSl04Q69aARdcLJKwbGQjmnh5DkrDwk08VAMUa9KIZjeKQYWWjvAiJaCldgIJlCCu5CwWsON5RqwCdRnP0B+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TiQhv01N; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729502629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZOPzM8nTUFqwLn8ohf0g1jVEfJikuSPUMDsCZxkKDsM=;
+	b=TiQhv01NdZ+2MEt9Icgs6dt73xDtBCYCSodeuEA9tn0R+DS97Pe1Wb/4J05WVJrNmuFH36
+	2EC2CUX1rO8OQzA9f3HyGNv5LB8qT6FL/U0wESyWE/J6R8D6K9pzAiNUkQD59DDxCOWHLv
+	zaWwLCaEMtQRc1C6o5wyWwM8dfvSGYc=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-382-Ks_bXxOQM5-IhCrQCCwbFQ-1; Mon, 21 Oct 2024 05:23:40 -0400
+X-MC-Unique: Ks_bXxOQM5-IhCrQCCwbFQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4cf04bcfso1845797f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729502594; x=1730107394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ENbw7gWD7Jn54F2uwwYCMj4RVQBrD+2XwdYMKUKg144=;
-        b=GKsthhLJTuPj6ySPLHEZ9DiAaoeNxstSvKNCEYfr0XtYk7PDFHyoVydZbgXruA6m9P
-         NwBtNnvWw74OzTZbeu7oWCM88EJAIBi+/fF01CMKgYC0q/nraTYajtgXX2D0RFwUj7ZW
-         yujkhINLFLMKzxoEPxLM3K5ChY72AEHyx0ATIcrshQSuCxyyjiggPPq82o6iA1BgvPlC
-         8gmbqLwQ3bZsnXfrvjkGqnWH15Bj1/MbaQ8UCt+DLtLc0ejVwtjBGl0HoOjsOsC2/YiF
-         bGLCKlj8HrnnqtW5NWiSer9ZYT0CXodOJ68Z7S56s/2sNHDncTFkwLsRqka6GG+q+s2J
-         4nDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcqb/SpbtCaqNNn7JFM1HsIMgQCb4n+6XyOXMZ3bF5KLrDgIuQrrMnPL45bMxQnHiZ6FM/9FCjiDhtxkA=@vger.kernel.org, AJvYcCVxxZLkJHl7mpph8rITzKIXb6mgbdsSXx/GfEeu7z9pJSGgS+jEX9xXiYONjRKHVoDdP0U8Ie1uI6u9p3dDg4k3DA4=@vger.kernel.org, AJvYcCWYE2SJqOuEYCFtpRDpjCRtYYXo11yvFQ7OncgZ0cW7PTQHgvdlbE3GJrGCjVWkZ7iCbmhsudqqHcYJnAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAcH59PKOUK2QgzyxAQycKfzRvPJJRLB/WSBdjaDKyIhhCHdmH
-	dSnaAKyhFm9pN/RHUmag0nRvfP7odhe/PeC+1YcQEB4sniVIdc6Vr2L7mklHcI467FhIMJYwzeW
-	JRk4MkUbCRvRd7golqsbkcOcnTbE=
-X-Google-Smtp-Source: AGHT+IE84rq5c82g8Tz5bnxAkvjCHAq8g0llMBa5uZLrF5eolLVIg282EihctrNLjQnRbMTuFp0Cp6yG1YuPoCNkcio=
-X-Received: by 2002:a05:6122:d9d:b0:50d:2769:d757 with SMTP id
- 71dfb90a1353d-50dda3caa3bmr7779684e0c.11.1729502593733; Mon, 21 Oct 2024
- 02:23:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729502619; x=1730107419;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZOPzM8nTUFqwLn8ohf0g1jVEfJikuSPUMDsCZxkKDsM=;
+        b=iTkD+D0B7rRywKOqds+GKNkZ2uo0tHd2I3BNQIj6nWg/210pfw5LKjj+0K6p3cJY/B
+         fHWSE1ZSPWNQ+g5b+DG5zr+S0r++yAIzpaD2KL/yWyeWD2cQMnOnsARgDhR8Q5/f5/sv
+         bEloJirpafvhpA2dAa784anD02PUWX1IdSUG5Mq7VByxvdcPpUHW4JN5sKpq4kngiBIh
+         HbfSFwXw/rUdzquLQYZhFDagFxwJ0XAYfeYUplNPtjBzYkXVww9hV7D00ov8oXMRnmyz
+         /pfX53TvkCximrdnqLBPakwnTgL0PBy9p+HHXtzv319QciHQzjYLr9g5YH3tGt3Ho5tA
+         e9NA==
+X-Forwarded-Encrypted: i=1; AJvYcCWw+fOCzFReWvbyEfmyRME8PMHCwZgcY8wmTrIM48KHHAtoQ3Dq+W+x9QeuofzFX1EpqOLcO0D/tMEzSvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoY1MZ4Y0yDzSDW4W4n8Y1GAzyqDkph6V07EOpXdUrtgfQ0ZJ0
+	cFsBLgG7gXpsBqzBzo4KibzhsVnjcj3QcjGLP7xs0v0zo8JLIwzRm8I1VTyS0nLeMKG5PgLYaoj
+	B8o7kanJaI0v26Zt5xx/ThS1gs6nUd7oFNLX5TomGT2gQeUvTkDDuUxNAZYm8aw==
+X-Received: by 2002:adf:f591:0:b0:37d:39df:8658 with SMTP id ffacd0b85a97d-37eab72a94dmr6219404f8f.58.1729502619022;
+        Mon, 21 Oct 2024 02:23:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHysyLKLLu8ecA+EiDeIyFSZdEdGbiDbJIKLmvhlv8Jpyw7lbNkChKbBAKP5wBfWcUaSVANmA==
+X-Received: by 2002:adf:f591:0:b0:37d:39df:8658 with SMTP id ffacd0b85a97d-37eab72a94dmr6219383f8f.58.1729502618678;
+        Mon, 21 Oct 2024 02:23:38 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cbe7dsm51045765e9.39.2024.10.21.02.23.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 02:23:38 -0700 (PDT)
+Message-ID: <6b95c3c9-3b8b-4db3-b755-a3652c1a59cc@redhat.com>
+Date: Mon, 21 Oct 2024 11:23:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <ZxYMaGhTDLWsUPOm@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-In-Reply-To: <ZxYMaGhTDLWsUPOm@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 21 Oct 2024 10:22:47 +0100
-Message-ID: <CA+V-a8u3eW0WH5JAXtAkejXoJyijW-SgkHCYrzQ0HBZAUUkxpQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] media: ov5645: Add support for streams
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 4/4] net: ethernet: mtk_eth_soc: optimize dma
+ ring address/index calculation
+To: Felix Fietkau <nbd@nbd.name>, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241015110940.63702-1-nbd@nbd.name>
+ <20241015110940.63702-4-nbd@nbd.name>
+ <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
+ <695421bb-6f31-4bae-8c8c-6d4fccf1b497@nbd.name>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <695421bb-6f31-4bae-8c8c-6d4fccf1b497@nbd.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tommaso,
+On 10/15/24 15:07, Felix Fietkau wrote:
+> On 15.10.24 14:54, Andrew Lunn wrote:
+>> On Tue, Oct 15, 2024 at 01:09:38PM +0200, Felix Fietkau wrote:
+>>> Since DMA descriptor sizes are all power of 2, we can avoid costly integer
+>>> division in favor or simple shifts.
+>>
+>> Could a BUILD_BUG_ON() be added to validate this?
+> 
+> Not sure if that would be useful. I can't put the BUILD_BUG_ON in the 
+> initializer macro, so I could only add it for the individual dma 
+> descriptor structs.
+> Since the size of those structs will not be changed (otherwise it would 
+> immediately visibly break with existing hw), the remaining possibility 
+> would be adding new structs that violate this expectation. However, 
+> those would then not be covered by the BUILD_BUG_ON.
+> 
+>> Do you have some benchmark data for this series? It would be good to
+>> add to a patch 0/4.
+> 
+> No, I just ran basic tests that everything still works well and looked 
+> at the assembly diff to ensure that the generated code seems sane.
 
-On Mon, Oct 21, 2024 at 9:10=E2=80=AFAM Tommaso Merciai <tomm.merciai@gmail=
-.com> wrote:
->
-> Hi Prabhakar,
-> Thanks this series.
->
-> On Fri, Oct 18, 2024 at 04:32:20PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Hi All,
-> >
-> > This patch series aims to add the below features,
-> > - Support subdev active state
-> > - Support for streams
-> > - Support for virtual channel
-> > - Code cleanup
-> >
-> > Note, these patches are dependent on below:
-> > 1] https://patchwork.kernel.org/project/linux-media/patch/2024041619331=
-9.778192-27-sakari.ailus@linux.intel.com/
-> > 2] https://patchwork.kernel.org/project/linux-media/patch/2024041619331=
-9.778192-26-sakari.ailus@linux.intel.com/
->
-> I thinks also:
->  3] https://patchwork.kernel.org/project/linux-media/patch/20240416193319=
-.778192-45-sakari.ailus@linux.intel.com/
->
-Agreed.
+Since this series is about performances, some related quick figures
+would be really a plus.
 
-> >
-> > v2->v3
-> > - Fixed review commments from Laurent
-> > - Included RB tags from Laurent
-> > - Dropped patch "media: i2c: ov5645: Enable runtime PM after v4l2_async=
-_register_subdev()"
-> > - Fixed checkpatch issues (ie used --max-line-length=3D80)
-> >
-<snip>
-> >
->
-> Same result here.
-> Tested on rzg2l-smarc evk.
->
-> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
->
-Thanks for the testing.
+At least we need a cover-letter to try to keep the git log history
+clean. Otherwise cooking the net-next PR at the end of the cycle will be
+a 10w worth task;)
 
-Cheers,
-Prabhakar
+Please re-send with a cover letter.
+Thanks,
+
+Paolo
+
 
