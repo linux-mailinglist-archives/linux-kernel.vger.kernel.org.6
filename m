@@ -1,176 +1,174 @@
-Return-Path: <linux-kernel+bounces-373696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F519A5A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED239A5A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20CBE2814CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFAF281478
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC5219925B;
-	Mon, 21 Oct 2024 06:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA021CF291;
+	Mon, 21 Oct 2024 06:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwOAlGvI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="qfOO5kwR"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA41DDA8;
-	Mon, 21 Oct 2024 06:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8116B194A49
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729492367; cv=none; b=L6f4GmhV5qpJeehwE4EM1lbvaohqeVLeIEonj8tpXeX3EMayntjQvCZGr0fwk7LT6SBhTmJWgAvUswyvdrT5NMOUMT/Xga+wNEzXc//wA/H95ViRPLHdHKXmAmwlFV9x9y7s+wWwb+BOM4K9QcUaLT5fThOyItTl9U+ASx6e5bI=
+	t=1729492405; cv=none; b=gTuZBsjwkdesF0jWWABmls94SqwSmVhUkBwZBzIjE9LJmZ6an49KqQjBMF7zog2o7qfm7WHxh15kZXUJmSniTjo6o4gVgZDPG8rJYxsPSgMLPLvNUJPnuRkVErKeCZwrMaRmj7rZ63ikb0k19pj5DrWIm6RWiCLL/kfwxpwlwyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729492367; c=relaxed/simple;
-	bh=zpa4Fatg54DYqfk5OKylbowe0195Hg2MiUo5EvTyIxU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AfA6bkPjc5O0eT9XGzAKmxqufgpIzyM/EtXZV/flaUGJPhJoZsPoz9bbdM7UnQ1c8mWHzTc3dzfGz/27KGDQVHkGQdf4qBD7RDrtT+2T0XTX4wSM/P9ZCNUlgBqK+PVyfchzUJQuwrUoAmyYjlJnP/Ksmc21zGEcMlLjg0g4rKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwOAlGvI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C21DAC4CEC3;
-	Mon, 21 Oct 2024 06:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729492367;
-	bh=zpa4Fatg54DYqfk5OKylbowe0195Hg2MiUo5EvTyIxU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=TwOAlGvIimmLdmkiDg5An7a7QN2gYBWQlH7uQ4T4SYgv0YNzvllK6AFyh2ShcFSuL
-	 D6kmQ5cncjwb0XIeVeONMgieydjPXjnQOwz8LTZB6efQycibaJ9EtLpSDifaAJMKCs
-	 DKbaPauZLfevKN8FrlE9HBj3FsvSrjcujGqPl2TgLwrRPwNkjF0V3Pd0Ssqy3dPdpP
-	 eVocuS52+J6pgmOscGh0QBH/QhAvdw/xMO4uTKF1O3YjsHmnaxuRYWRfHPmew0eUcR
-	 C9ugl0PgbhXvvubwTsGAFv8XqaNT+x8AY/CteGS02v/nhk327dyQPjvrGi5k8qhNAE
-	 i/SFtJKrcJDMw==
-Message-ID: <119e86e4-acb4-455d-9b0b-ee851b621c91@kernel.org>
-Date: Mon, 21 Oct 2024 08:32:40 +0200
+	s=arc-20240116; t=1729492405; c=relaxed/simple;
+	bh=d9EUatJrHB967xkaMIGGxBlmw9uOaKcQwdMTUJwPQyA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=leI42oIbj/fNp6FIxYH12fNVXWZb6WEWF4jKI/aKiaofSJZcslGRUsHrHNEoPDiLTud/WqdkhnLXOGi8czCSGUgXeVTuOvkBWSGa0RJX3wVjkjLQOlQSkVyysiyy9POwWRZeR4NtdMnEQM7+EtzAQuavQPaDrDo67Eq/wL8L7vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=qfOO5kwR reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=d9EUatJrHB967xkaMIGGxBlmw9uOaKcQwdMTUJwPQyA=;
+  b=qfOO5kwR8h//rxYbBkp8CRl+x211/8uAdpdbU4VwGIYrBK28i3ZtH15E
+   yIXwdrEBf5fbreTq597nc3+rvfRIAenAmQkeAlL3b+T1/g/s0eUNlTT76
+   v4eJnWOoQZFqJC8emM5rSX04w1Z1qJZ5YwmRLDS7fQ9wPJQYXyfDTwVsi
+   /gP/BlprxEgJcJj5RtxLVdmVfLq6Xx/c7FYrU0LUWjoYWVimYDN9iv6jB
+   hdYFifAilB3+swK6xah1WR9t5/K7zyeH4s7oE5AOinWeLsplfHhm2SHxY
+   Wdmsl3JKJ/tKv4u9ttprN3TlfNhfpvWWIRv2ltmWUZqS1Ub+6SK4eFKWx
+   g==;
+X-CSE-ConnectionGUID: IZyzp3biR+aigF6Kxb/glA==
+X-CSE-MsgGUID: 8zrP8PZfSaahjsweDGbz/Q==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 21 Oct 2024 14:33:14 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 49L6X9XD099218;
+	Mon, 21 Oct 2024 14:33:09 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 21 Oct 2024 14:33:09 +0800
+Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
+ TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
+ 15.01.2507.039; Mon, 21 Oct 2024 14:33:09 +0800
+From: <Hermes.Wu@ite.com.tw>
+To: <dmitry.baryshkov@linaro.org>
+CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+        <simona@ffwll.ch>, <angelogioacchino.delregno@collabora.com>,
+        <treapking@chromium.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <Kenneth.Hung@ite.com.tw>,
+        <Pet.Weng@ite.com.tw>
+Subject: RE: [PATCH v6 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
+ add MCCS support
+Thread-Topic: [PATCH v6 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
+ add MCCS support
+Thread-Index: AQHbIvfv2yCYgM8QaEWs6T2K4Uuy/LKQvbWQ
+Date: Mon, 21 Oct 2024 06:33:09 +0000
+Message-ID: <2302452d3a6e446d9d288241958ec086@ite.com.tw>
+References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
+ <e6ksqhssu55ox4ffzyko7fsahvk6i6aoj4jo2rbe2gv6sclvzp@elpidkcflh3s>
+In-Reply-To: <e6ksqhssu55ox4ffzyko7fsahvk6i6aoj4jo2rbe2gv6sclvzp@elpidkcflh3s>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tm-snts-smtp: 4AA65F92141D12A2B8DA56F580D5AD81F0FF959BCA15C3262F2C8DAA8FFB35882002:8
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
- SoCs
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
- <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
- <4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
- <1jttd9rein.fsf@starbuckisacylon.baylibre.com>
- <4127b448-a914-4c69-b938-29512995326f@amlogic.com>
- <1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
- <d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org>
- <1jiktpr40d.fsf@starbuckisacylon.baylibre.com>
- <8cb615cf-1b4e-49ba-91fc-6e1f5f57cd3c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8cb615cf-1b4e-49ba-91fc-6e1f5f57cd3c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MAIL:mse.ite.com.tw 49L6X9XD099218
 
-On 21/10/2024 08:31, Krzysztof Kozlowski wrote:
->>>>
->>>>  reset-gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
->>>>
->>>> And others will go in the driver to see that is maps to GPIOX_10 ? the number
->>>> being completly made up, with no link to anything HW/Datasheet
->>>> whatsoever ?
->>>>
->>>> This is how things should be done now ?
->>>
->>> Why would you need to do this? Why it cannot be <&gpio 10
->>> GPIO_ACTIVE_LOW>, assuming it is GPIO 10?
->>>
->>> Bindings have absolutely nothing to do with it. You have GPIO 10, not
->>> 42, right?
->>
->> That's what being proposed here, as far as I can see.
->>
->> GPIOX_10 (not GPIO 10) maps to 42. If this goes through, for DTs to be
->> valid in any OS, all need to share the same definition. That looks like
->> a binding to me.
->>
->> On these SOC, gpios in each controller are organized in bank with
->> different number of pins. So far, this was represented as single linear
->> array and that was not a problem since the mapping was part of the binding.
->>
->> Are you suggesting 2 params instead of one ? something like this maybe ?
->>
->> reset-gpios = <&gpio BANK_X 10 GPIO_ACTIVE_LOW>;
-> 
-> No, I propose the same as you wrote:
-> <&gpio 10 GPIO_ACTIVE_LOW>
-> 
-> but I don't mind putting bank there.
-> 
->>
->> This means this A4 controller will be software incompatible with the
->> previous generation. It will need to handled differently eventhough the
->> HW is exactly the same.
->>
->> Note that some form of binding would still be required to define the
->> banks which are referenced by arbitrary letter in doc, not numbers.
-> 
-> Usually banks are considered separate gpio controllers, so numbering
-> always start from 0 because phandle encodes the bank.
-> 
-> And this is exactly what Rob already asked in v1 review.
-
-Ha, actually I misread his reply, I think he proposed your syntax:
-<&gpio BANK_X 10 GPIO_ACTIVE_LOW>
-
-Best regards,
-Krzysztof
-
+aGkNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRG1pdHJ5IEJhcnlzaGtv
+diA8ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPiANCj5TZW50OiBTdW5kYXksIE9jdG9iZXIg
+MjAsIDIwMjQgOTo1NyBQTQ0KPlRvOiBIZXJtZXMgV3UgKKdkqM6nuykgPEhlcm1lcy5XdUBpdGUu
+Y29tLnR3Pg0KPkNjOiBBbmRyemVqIEhhamRhIDxhbmRyemVqLmhhamRhQGludGVsLmNvbT47IE5l
+aWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPjsgUm9iZXJ0IEZvc3MgPHJm
+b3NzQGtlcm5lbC5vcmc+OyBMYXVyZW50IFBpbmNoYXJ0IDxMYXVyZW50LnBpbmNoYXJ0QGlkZWFz
+b25ib2FyZC5jb20+OyBKb25hcyBLYXJsbWFuIDxqb25hc0Brd2lib28uc2U+OyBKZXJuZWogU2ty
+YWJlYyA8amVybmVqLnNrcmFiZWNAZ21haWwuY29tPjsgTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0
+ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNvbT47IE1heGltZSBSaXBhcmQgPG1yaXBhcmRAa2Vy
+bmVsLm9yZz47IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPjsgRGF2aWQg
+QWlybGllIDxhaXJsaWVkQGdtYWlsLmNvbT47IFNpbW9uYSBWZXR0ZXIgPHNpbW9uYUBmZndsbC5j
+aD47IEFuZ2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2NoaW5vLmRlbHJlZ25v
+QGNvbGxhYm9yYS5jb20+OyBQaW4teWVuIExpbiA8dHJlYXBraW5nQGNocm9taXVtLm9yZz47IGRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7IEtlbm5ldGggSHVuZyAorHiuYa3bKSA8S2VubmV0aC5IdW5nQGl0ZS5jb20udHc+OyBQZXQg
+V2VuZyAor86lyariKSA8UGV0LldlbmdAaXRlLmNvbS50dz4NCj5TdWJqZWN0OiBSZTogW1BBVENI
+IHY2IDAwLzEwXSBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBmYWlsIGl0ZW1zIGFu
+ZCBhZGQgTUNDUyBzdXBwb3J0DQo+DQo+T24gV2VkLCBPY3QgMTYsIDIwMjQgYXQgMDM6NTQ6MTJQ
+TSArMDgwMCwgSGVybWVzIFd1IHZpYSBCNCBSZWxheSB3cm90ZToNCj4+IFRoaXMgaXMgYSB2NiBw
+YXRjaC1zZXQuDQo+PiANCj4+IFRoZXJlIGFyZSBsb3RzIG9mIGZhaWx1cmUgaXRlbXMgd2hpbGUg
+cnVubmluZyBIRENQIENUUyB1c2luZyBVTklHUkFGIERQUi0xMDAuDQo+PiBJbiBPcmRlciB0byBm
+aXggdGhvc2UgZmFpbHVyZXMsIEhEQ1AgZmxvdyBuZWVkcyB0byBiZSBjaGFuZ2VkLg0KPj4gDQo+
+PiBUaGUgRGlzcGxheVBvcnQgQVVYIHByb3RvY29sIHN1cHBvcnRzIEkyQyB0cmFuc3BvcnQuDQo+
+PiBJbiBPcmRlciB0byBzdXBwb3J0IE1DQ1MgdmlhIHRoZSBhdXggY2hhbm5lbCwgdGhlIGF1eC1p
+MmMgb3BlcmF0aW9uIGlzIGFkZGVkLg0KPj4gDQo+PiB2NS0+djY6DQo+PiAJLWtlZXAgdGhlIGNv
+bW1pdCBtZXNzYWdlIHdyYXBwZWQgYXQgNzItNzUgY2hhcnMuDQo+PiAJLVsxMC8xMF0gZml4IHJl
+dHVybiB2YXJpYWJsZSBiZWluZyB1c2VkIHdpdGhvdXQgYmVpbmcgaW5pdGlhbGl6ZWQNCj4NCj5J
+IGhhdmUgcmV2aWV3ZWQgdGhlIHBhdGNoZXMgdGhhdCBJIGNvdWxkIHJldmlldywgYnV0IEkgbGFj
+ayBkZWVwIEhEQ1Aga25vd2xlZGdlLCBzbyBJIGNhbiBub3QgcmV2aWV3IHBhdGNoZXMgNSwgNiwg
+OCwgOS4gSG9wZWZ1bGx5IHNvbWVib2R5IGVsc2UgY2FuIHN0ZXAgdXAuDQo+DQp0aGFuayB5b3Uu
+DQoNCj4+IHY0LT52NToNCj4+IAktYWRkIG1vcmUgbWVzc2FnZXMgZm9yIGNoYW5nZXMuDQo+PiAJ
+LVsyLzEwXSBtb2RpZmllZCBBVVggdHJhbnNmZXIgZGF0YSBzaXplIGp1ZGdtZW50Lg0KPj4gCQlj
+aGFuZ2UgZm9yLWxvb3AgdG8gZG8td2hpbGUuDQo+PiAJLVs3LzEwXSBjaGFuZ2UgZm9yLWxvb3Ag
+dG8gZG8td2hpbGUuDQo+PiAJLVs5LzEwXSBjaGFuZ2Ugd2FpdCB0aW1lciB3aXRoIHRpbWVyX2Fm
+dGVyKCkNCj4+IA0KPj4gCWxpbmtzOg0KPj4gCWh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19o
+dHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA5MjYwNzQ3NTUuMjIxNzYtNC1IZXJtZXMu
+V3VAaXRlLmNvbS50dy9fXzshIUh0bkxFOEEhSE93eTA1X2VnVGJqNVU3dnJqZlBoSkMyMVZLX0p4
+bGw4VVdOT2NHRXpOU0R4bktRakU2UVNMaGFtZC1JUk9FLVN4R09yekZTX1NMZml4dE9SakxMQlRq
+ZEwzU1YkIA0KPj4gCQ0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2FsbC8yMDI0MDkyNjA3NTEzNA0KPj4gLjIyMzk0LTEtSGVybWVzLld1QGl0
+ZS5jb20udHcvX187ISFIdG5MRThBIUhPd3kwNV9lZ1RiajVVN3ZyamZQaEpDMjFWSw0KPj4gX0p4
+bGw4VVdOT2NHRXpOU0R4bktRakU2UVNMaGFtZC1JUk9FLVN4R09yekZTX1NMZml4dE9SakxMQlRj
+X1lnOFIkDQo+PiANCj4+IHYzLT52NDoNCj4+IAktc3BsaXQgY2hhbmdlcyAgaW50byBwYXRjaGVz
+Lg0KPj4gDQo+PiB2Mi0+djM6DQo+PiAJLXNwbGl0IGF1eCByZWFkICBLU1YgZnVuY3Rpb24gdG8g
+YSBwYXRjaC4NCj4+IAktWzEvM10gbmV3IGluIHYzDQo+PiAJLVsyLzNdIGFkZCBkZXNjcmlwdGlv
+biBvZiBwYXRjaA0KPj4gDQo+PiB2MS0+djI6DQo+PiAJLSBpZ25vcmVkLg0KPj4gDQo+PiBIZXJt
+ZXMgV3UgKDEwKToNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBDaGFuZ2UgZGVmaW5pdGlvbiBv
+ZiBBVVhfRklGT19NQVhfU0laRQ0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGltcHJvdmUgQVVY
+IG9wZXJhdGlvbiBmb3IgZWRpZCByZWFkDQo+PiAgIGRybS9icmlkZ2U6IGl0NjUwNTogYWRkIEFV
+WCBvcGVyYXRpb24gZm9yIEhEQ1AgS1NWIGxpc3QgcmVhZA0KPj4gICBkcm0vYnJpZGdlOiBpdDY1
+MDU6IENoYW5nZSBkZWZpbml0aW9uIE1BWF9IRENQX0RPV05fU1RSRUFNX0NPVU5UDQo+PiAgIGRy
+bS9icmlkZ2U6IGl0NjUwNTogZml4IEhEQ1AgQnN0YXR1cyBjaGVjaw0KPj4gICBkcm0vYnJpZGdl
+OiBpdDY1MDU6IGZpeCBIRENQIGVuY3J5cHRpb24gd2hlbiBSMCByZWFkeQ0KPj4gICBkcm0vYnJp
+ZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBLU1YgbGlzdCByZWFkIHdpdGggVU5JR1JBRiBEUFIt
+MTAwLg0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBjb21wYXJlIFYgbWF0
+Y2hpbmcNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBmaXggSERDUCBDVFMgS1NWIGxpc3Qgd2Fp
+dCB0aW1lcg0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGFkZCBJMkMgZnVuY3Rpb25hbGl0eSBv
+biBBVVgNCj4+IA0KPj4gQ2hhbmdlLUlkOiBJYWQwYzA1NmQ3MmFiZjI2NTUwODEzNTdjZjQwYzNi
+MGQzZGY5MTZiNQ0KPj4gU2lnbmVkLW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNv
+bS50dz4NCj4+IC0tLQ0KPj4gSGVybWVzIFd1ICgxMCk6DQo+PiAgICAgICBkcm0vYnJpZGdlOiBp
+dDY1MDU6IENoYW5nZSBkZWZpbml0aW9uIG9mIEFVWF9GSUZPX01BWF9TSVpFDQo+PiAgICAgICBk
+cm0vYnJpZGdlOiBpdDY1MDU6IGltcHJvdmUgQVVYIG9wZXJhdGlvbiBmb3IgZWRpZCByZWFkDQo+
+PiAgICAgICBkcm0vYnJpZGdlOiBpdDY1MDU6IGFkZCBBVVggb3BlcmF0aW9uIGZvciBIRENQIEtT
+ViBsaXN0IHJlYWQNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogQ2hhbmdlIGRlZmluaXRp
+b24gTUFYX0hEQ1BfRE9XTl9TVFJFQU1fQ09VTlQNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUw
+NTogZml4IEhEQ1AgQnN0YXR1cyBjaGVjaw0KPj4gICAgICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBm
+aXggSERDUCBlbmNyeXB0aW9uIHdoZW4gUjAgcmVhZHkNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0
+NjUwNTogZml4IEhEQ1AgQ1RTIEtTViBsaXN0IHJlYWQgd2l0aCBVTklHUkFGIERQUi0xMDAuDQo+
+PiAgICAgICBkcm0vYnJpZGdlOiBpdDY1MDU6IGZpeCBIRENQIENUUyBjb21wYXJlIFYgbWF0Y2hp
+bmcNCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogZml4IEhEQ1AgQ1RTIEtTViBsaXN0IHdh
+aXQgdGltZXINCj4+ICAgICAgIGRybS9icmlkZ2U6IGl0NjUwNTogYWRkIEkyQyBmdW5jdGlvbmFs
+aXR5IG9uIEFVWA0KPj4gDQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMg
+fCAzMzQgDQo+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0NCj4+ICAxIGZp
+bGUgY2hhbmdlZCwgMjc3IGluc2VydGlvbnMoKyksIDU3IGRlbGV0aW9ucygtKQ0KPj4gLS0tDQo+
+PiBiYXNlLWNvbW1pdDogYjgxMjhmNzgxNWZmMTM1ZjAzMzNjMWI0NmRjZGYxNTQzYzQxYjg2MA0K
+Pj4gY2hhbmdlLWlkOiAyMDI0MTAxNS11cHN0cmVhbS12Ni05ZjRiMDE1ZmVjZjcNCj4+IA0KPj4g
+QmVzdCByZWdhcmRzLA0KPj4gLS0NCj4+IEhlcm1lcyBXdSA8SGVybWVzLnd1QGl0ZS5jb20udHc+
+DQo+PiANCj4+IA0KPg0KPi0tDQo+V2l0aCBiZXN0IHdpc2hlcw0KPkRtaXRyeQ0KPg0KDQpCUiwN
+Ckhlcm1lcw0K
 
