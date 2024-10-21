@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-374457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBDD9A6A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06E59A6A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C1DB26378
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCC61F26E49
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F391F819A;
-	Mon, 21 Oct 2024 13:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D451F940B;
+	Mon, 21 Oct 2024 13:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="btYc6JmQ"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="F/vNCa5I"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6EC1F130A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91244198E69;
+	Mon, 21 Oct 2024 13:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517874; cv=none; b=FuIbDY6AIMjiu5W6W6rJxw9klkqaFVYW0tqUYw8u+hoPw4tu0OHFTJG1XxB+zP5tNLi3cuGKMXF4S/muxJKtymKQ8ux2FkO2e+GdvCX6U9LR2Sd7UMdDvhZK6tTxjtJ0+0C5NkqI71dKTe51swQiSgn5o08lBfHuW6edK+bGbOo=
+	t=1729517921; cv=none; b=IxAhdl5j4P1BiDblkWBdtk1pZ2HjYg2GgK4Xs5RctoLdZJrDPo6SmDQejX/w34HNmvt8dZmt4GOZVrs6s20CuHbl+mTHtZtMcijRZdRz6XS4VmbKybEtxXYtS5h/hrD2+o/2e/VVwRnrlFA43wrvd43phSd6n+zE9IwyzRHVce8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517874; c=relaxed/simple;
-	bh=n6X/0/W+M7OgMRfLkaxcrvDPRmAh9uAqLDVZJJMEoY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj31BL25oDYa9m8STW9RMGMZX+HSIji9Mgkp8vm1hKT/wlDJy0bD4l+kyTpfa18DPLipmLfeBbCr7vdW8tt/EhL4uweheDCPZ1NDejAxJcKs0QZXKWo5qMj77Yj7+Xxcp8OndeBrMoaIkhUkHXV/psR3jqgt27Ga7Os+JS7Fsyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=btYc6JmQ; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7ac83a98e5eso359198385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:37:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1729517871; x=1730122671; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YWEbsxsm53Lx9ILIr9ES9qF+72+igaeoLguBxIwGlnE=;
-        b=btYc6JmQYGVjd0pizSwHJKaQfJ8TOEymOhwGob6FrX9uGZaZdEU8atP4lhWinwV2GF
-         5JkJB/W9svY5HfszAqHwaCnBnNQ0uI7I/62fANx8rmVEIdz7Mx7bwGXy21+SemH2BmDh
-         3kBa4TmuM09mwOaUSCm2YRtAaanOFMAnMBlRoVggxJKrZ+qRn3bNuoPlRC2u6IAiSn6h
-         VHfsxnTGDZQbLO7DXk52I48GL6V24asPCNI3L1BKlCZzIWD1qt2qScvuQf6O7eyeVyEZ
-         Ct/reHZuPyvDQmG+EVx7QLgZYq07vVqj3HDFF1uDXNn2N+57RSFxRfjDo0irYq5PajIK
-         rpIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729517871; x=1730122671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YWEbsxsm53Lx9ILIr9ES9qF+72+igaeoLguBxIwGlnE=;
-        b=e5LDKe7dCLrUUXaTQVr0tGA0kuUfcc95xe8w5Z6D3ARgf56ZZxK2W7ePEpafTUbUcT
-         c6RRRcZXxiHf60veCPGfW0HqyP8qR9mLFCPHiDPU/3JFNEKoBQYWa8vU7LD1gOlpqAEq
-         a6ZiImHeIUOm2iKZP165hLnM0lIPBlCa7GGryeodBO1aVOYJl0tPHxGUnqKJ46eRyv82
-         CzIo9UbHLW3FhdZnEoUhJ/+yJldNqRwUF4CPUTLZi/9OQkLMMZD5ISfntvkh9g5/fZtl
-         HNZXzO8CSTrKsTjGNinaTQpwmOJwXeAy7JtOCKsBA6EK9qDt7nGOIb7mqmHMdVBY69yo
-         10Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUXRM6DDJ+nnmN4DifY6jQstAQFqJABn9hkMz+GqZL1xCGbAOf4T9J98J4ZQZXLm/rt2J86/N6x04o6BOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI71+Oa6D2RHwZEm44pD3QCohSJk3i+KjhbON7NmuCKpUYAbMB
-	mGOQPnKWP36SIXe5M/hTzak4Zjg26flLFmVe5d8FhQgsufFEhSzV1jzS4onifdPE4Py796guhbQ
-	=
-X-Google-Smtp-Source: AGHT+IHVugA7rEA0S5MRO0aQ9bm5te9cXooKX14KNYGIWCX37+E15VSBV1ORs5uVp4vT1+W9FeqDMw==
-X-Received: by 2002:a05:620a:2448:b0:7ae:310a:75de with SMTP id af79cd13be357-7b1576dc231mr1880845185a.25.1729517871288;
-        Mon, 21 Oct 2024 06:37:51 -0700 (PDT)
-Received: from rowland.harvard.edu (ool-18bba9aa.dyn.optonline.net. [24.187.169.170])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00999c52sm17193516d6.95.2024.10.21.06.37.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:37:50 -0700 (PDT)
-Date: Mon, 21 Oct 2024 09:37:48 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, sylv@sylv.io,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Message-ID: <b5093db9-8f4e-484d-bed5-cef08f69eecb@rowland.harvard.edu>
-References: <67153205.050a0220.1e4b4d.0048.GAE@google.com>
- <0abd3cbd-0e8a-43b2-8cb0-6556297aa7c9@suse.com>
+	s=arc-20240116; t=1729517921; c=relaxed/simple;
+	bh=roOl+m/JGSK6QNvnXNhS7xQMy5AOm4j/0OQxVJPmtfk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=kjYQNR9L+m+F8D61Pf8XedWhtZmJmwa5okL1JYQd+dz+vO72tl7TAVlH2WJxqWM3AmOdG3u5o0MMS5xURa/J+oiC88VcFy/++O365NJAZDM0QMK2UhL/DWW32+2yrzErA3kogOWUpYH74Wr6qeRQ/dz70dqPAwNeb2RMv5BjHZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=F/vNCa5I; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C195140E0194;
+	Mon, 21 Oct 2024 13:38:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Nf8-6GFGTMfa; Mon, 21 Oct 2024 13:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729517911; bh=j22jsymwrbA8Fif24m1BaObFbbLpxzT/M5Qj+YoLY+w=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=F/vNCa5ID66B+2TrmMnD2QSJM9XRKZsVknuXce/BEue8UnCCJVlXtYkK6sp7cbFFv
+	 iaPrVhVtaxY/kHTsb1K5KfK+aveke6UpTcBYPG0gFBtIB8L91UuV+CwDriiLBUOoDf
+	 0vEiQbbilH6albLIIlEajJ/L8BYyLgH73riAIl4nvGc51SRrzrB4OJZEWLiQHC46cY
+	 rYPnfBOH33nJDTuDMh3NUsCdo+73fuPCVP9yEdVbJG2LvngKjMxqgTIVB8a1zc5FQA
+	 nzdy2s3LImu+ax95YXAKrgfRD2W1498zVIStPeHZsQl7XoSF67Y2R+1Qtr9B3mfQnI
+	 niEcRe6fF4jozutYRE64Kor6FY3pXFDd7LVAZ7kMEk5Z5E7Yumk1ntq0oLMfUJFaye
+	 QbQzid8W8MGwB5jQadLeOixMKfHxSC1bAQE7Q3DNAOxBQ7PLM9hKVy7vTe5NEm3yae
+	 BxIUYHm3ZkaICXTHB6glfiqwW7iu6gjCWFVhGDH/amXAkgyQvPeCCEM+B+eZRv00g7
+	 +zr+nxPqwCZ6qrYEIx3fe0YpWG30aImZBLwR8qN9NOaRhcmHS66ENojSYJBktLqNUQ
+	 e/FiuKpIgtoo1DwXVarmjzOPnK2M8/7psM3HhMiC2GH8+cPkx91zh+xi3SBVvOqOJY
+	 jpz2ojCjgRwrf8dQIFtDv2vY=
+Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8B6B640E01A5;
+	Mon, 21 Oct 2024 13:38:10 +0000 (UTC)
+Date: Mon, 21 Oct 2024 15:38:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Brice Goglin <brice.goglin@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <Perry.Yuan@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_02/10=5D_x86/cpu/topology=3A_?=
+ =?US-ASCII?Q?Add_CPU_type_to_struct_cpuinfo=5Ftopology?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241018203053.2x6oyws3dkxfw6rm@desk>
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com> <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com> <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local> <20241018203053.2x6oyws3dkxfw6rm@desk>
+Message-ID: <9534B53F-7B91-4525-97DC-889EC3836658@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0abd3cbd-0e8a-43b2-8cb0-6556297aa7c9@suse.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 10:04:52AM +0200, Oliver Neukum wrote:
-> On 20.10.24 18:38, syzbot wrote:
-> > INFO: task kworker/0:0:8 blocked for more than 143 seconds.
-> >        Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > task:kworker/0:0     state:D stack:24544 pid:8     tgid:8     ppid:2      flags:0x00004000
-> > Workqueue: pm pm_runtime_work
-> > Call Trace:
-> >   <TASK>
-> >   context_switch kernel/sched/core.c:5322 [inline]
-> >   __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
-> >   __schedule_loop kernel/sched/core.c:6759 [inline]
-> >   schedule+0xe7/0x350 kernel/sched/core.c:6774
-> 
-> And this sleeps forever. This must not happen.
-> >   usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
-> >   usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
-> 
-> We are changing our mind, presumably due to a timeout
-> >   usb_start_wait_urb+0x255/0x4c0 drivers/usb/core/message.c:65
-> 
-> We are sending a control message, presumably to enable
-> remote wakeup
-> >   usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
-> >   usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
-> >   usb_enable_remote_wakeup drivers/usb/core/hub.c:3365 [inline]
-> >   usb_port_suspend+0x339/0xf10 drivers/usb/core/hub.c:3472
-> 
-> Suspending ...
-> >   usb_generic_driver_suspend+0xeb/0x1d0 drivers/usb/core/generic.c:302
-> >   usb_suspend_device drivers/usb/core/driver.c:1272 [inline]
-> >   usb_suspend_both+0x66d/0x9c0 drivers/usb/core/driver.c:1443
-> >   usb_runtime_suspend+0x49/0x180 drivers/usb/core/driver.c:1968
-> 
-> This very much looks like the HC driver used to run these tests
-> can hand in unlink. If that happens there is nothing usbcore
-> or a driver can do.
-> As this is now reproducible I would suggest a bisection. Brute force,
-> but I see no good alternative.
-> 
-> Syzbot is an important tool and if the HC driver it uses is unreliable,
-> the whole thing becomes unreliable and that is most undesirable.
+On October 18, 2024 10:30:53 PM GMT+02:00, Pawan Gupta <pawan=2Ekumar=2Egup=
+ta@linux=2Eintel=2Ecom> wrote:
+>I will drop "core", but can we keep "native"? "native" is used in SDM to
+>define this field=2E Also model_id could be confused with model number=2E
+>
+>  From Intel SDM Vol=2E 2A:
+>
+>  Bits 23-00: Native model ID of the core=2E The core-type and native mod=
+el
+>  ID can be used to uniquely identify the microarchitecture of the core=
+=2E
+>  This native model ID is not unique across core types, and not related t=
+o
+>  the model ID reported in CPUID leaf 01H, and does not identify the SOC=
+=2E
 
-This issue should be fixed by commit 5189df7b8088 ("USB: gadget: 
-dummy-hcd: Fix "task hung" problem").
+I'm still not clear on what "native" is supposed to mean here?
 
-Alan Stern
+The core is born this way and then it changes=2E=2E=2E so this is its nati=
+ve model ID? Weird=2E=2E=2E
+
+>Yes, topo=2Ehw_cpu_type is initialized to TOPO_HW_CPU_TYPE_UNKNOWN=2E We =
+should
+>not ideally need the vendor check at all=2E As long as topo=2Ehw_cpu_type=
+ has
+>the core type, returning it should be enough here=2E For Intel hw_cpu_typ=
+e
+>also has the native_model_id, that is why we need the vendor check=2E
+>
+>If AMD or other vendors have similar use case, it makes sense to add the
+>explicit vendor check=2E Please let me know if thats the likely case=2E
+
+Yes, it either needs to be vendor-agnostic or you need to accommodate all =
+vendors=2E Former sounds cleaner=2E=2E=2E
+
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
