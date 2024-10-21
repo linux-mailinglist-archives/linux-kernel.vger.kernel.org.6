@@ -1,229 +1,143 @@
-Return-Path: <linux-kernel+bounces-374334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F179A68B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:40:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2459A68C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2F4B2359D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:36:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E24D6B28395
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C91F1310;
-	Mon, 21 Oct 2024 12:36:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768081E884E;
-	Mon, 21 Oct 2024 12:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AA71F1317;
+	Mon, 21 Oct 2024 12:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVFuWCre"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABBD1D1F6F;
+	Mon, 21 Oct 2024 12:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514198; cv=none; b=orc8H7HEPzMpxHeYacvdPALSjOmSBEStAsF2C86e+vV9egaP3+d+VbvYwdPaApcF60j1Sz94XhiJ92l4RPkKRYio5KVeDLul0xx7Ge/RUVuGxIUOR9+r9Lx7cqA8nAQ+ZcbvRzz7cnolDYbp3/pS+3BHQ3hOX5Nb5Y6Nidh9950=
+	t=1729514312; cv=none; b=mP87zVe2hmhbL3iFNzZ0i+h/E26R+RgVfEtBd6EZ8phInryWUFnSRHIIpvwnG5aozRh6mFhfaxXYMMq8ID4XXYHWEBxhUoHeeY8RPOubSMmfE+LP9G6uZ15P/AR1k1inH8xUeo3FRi+rN0Z8qwfswal1iDSL/5ny8fStruWuy7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514198; c=relaxed/simple;
-	bh=pGjxOAo38J7DvNsv0qsRBEiB1i0Qpqbdm/HFUd5B7ek=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CBxDUehgsJGWZNUVBMkLMkbJC5/Xe7/dMvuA3kjYrf5YVxsx/N+79hbV/RLGQlVeQAvvUsG3QmgbeJx9CZolU+z3aszQ74fiqDjwpEaqQBjLcs7BZOEXPOGqaAQGy+qOMAIW/l1dBS3ByoPxWnAdZfW5O5bUysh3ROzxp0wlokQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68768DA7;
-	Mon, 21 Oct 2024 05:37:04 -0700 (PDT)
-Received: from [10.57.64.219] (unknown [10.57.64.219])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0A3513F528;
-	Mon, 21 Oct 2024 05:36:32 -0700 (PDT)
-Message-ID: <4ddc9078-1059-45a2-8f44-c904d62c854f@arm.com>
-Date: Mon, 21 Oct 2024 13:36:32 +0100
+	s=arc-20240116; t=1729514312; c=relaxed/simple;
+	bh=yNL8qYUq9HguxJnTEcF9WvrB/HYXaTpAV9wVobmZLSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4oex0cUl4ZIJ4biw/IY1tHuttQ14a5apF7AQ2+FeZu1v5UBFlx4o57RnCtza3g1FO+A0AbAXAOsnbfXoh8kAPHvkIqMmaKvYdTjX2aBjxIqShqULzifN8JQ87Rk+Z4PPtr7uRbxcG57gPZUmmji+Nt9K7lm81UUzaKO1Gp9ya0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVFuWCre; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso2919783a12.0;
+        Mon, 21 Oct 2024 05:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729514310; x=1730119110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5VdkMJahzYM4ARizPLfC5JGwlmy+1HUcx/YnyM/NNsU=;
+        b=VVFuWCreAby1Qcr98pBiRo5k2LuHZWYOnYUnZtd8KGeakFNOHI4mcpCuqt+IN9k2BC
+         SClE5DkM/Yn7PcKqDvI4VYabLqzawbMZ6QFhfLSBZTJ0tfqI+bpG1Omh2WDwe0ILGnEj
+         cY88If3IbGlWl+3EL3nhRKZ7tugcJGYBblIQALdKFeVxn5W5xmuLIsFdLGIoOyoS1BYW
+         O2/G4HU7djYDo/Hdr7vgc62IxgsQZb2yeAER8TKH9Oss8HPxSUbSGYfY6pONrFKi05zT
+         TV4o7JA2zUouKv/iyx4y9nsVXPDgJT8ysQJkQ5exPxQ6MNpcNWhFaQ3g2nMetZ5rBerm
+         NfzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729514310; x=1730119110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5VdkMJahzYM4ARizPLfC5JGwlmy+1HUcx/YnyM/NNsU=;
+        b=Xs+OnCnN2UC2t/y7PEXUe3nFnH1Jhh8ttvIOc5r5OTxPD+Hgl4E52IUQDSZGkMNF91
+         165Sbi+gGxMae+/yVt5yBfSJVLap9D1b+FC2lqsTb3kFQSLlns10HrGKNlZhlzaDwvAD
+         ygCSYAViEOogOdjYJR3VFZhmwvv6FurvBQzmfg4A34MtDQyBIorIt//vTx6o/ggLmLiS
+         OYXEYPvG6S216ZXn1QMFBDtTo5HSgGejEs+SbEoq+AM3ZTK4VDYtZMRHHPd1H14ptmZ2
+         ADXCaFJc4VlQm9AE8Xn5Px6CP80fQqsK25+fTdJjLdVO7NPzWfdrhRAX8dOrLGLMPKO6
+         ZCJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjinp7HQ/NVCRc9YPZSm/kbRKToOtKAZ0YDu8ajGMi0BLB8Lt/HlUdSmm7YhFVzh/fQOEfnshBD9kUKRpY@vger.kernel.org, AJvYcCWqMTtUKvG7aq+EVF9slZBzXm13qS8RSO+P3C1GDDjxamPegSmBWSzxM3FV3hB2L/o8PK3kQXT/aGLK@vger.kernel.org, AJvYcCXblrOgrNy4L2FwbJPdtCrervU0yvzINgJI9G57FMPSDJP1a2nbR/RFuZaVOQ6aczgmwmJX/Bhi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsGoEeK7R8CdRU3m2cYlAgpqBG6X8vAM/7uQm5rAKiB2eIEjFm
+	xJrIlQ/gMNQYE8wYqWPySoVQGwsCjncCAOwe5gAkB2YSNWp7vbVu
+X-Google-Smtp-Source: AGHT+IELTG5U+pOWjQan4mOzNnHckdPe5BPOOI3wlomTskXwd3e2mPKfcYsxX04oUIZTOqrQqVQjwQ==
+X-Received: by 2002:a05:6a20:ac43:b0:1d7:109f:cac4 with SMTP id adf61e73a8af0-1d92c9f873amr17387168637.3.1729514310059;
+        Mon, 21 Oct 2024 05:38:30 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312d6bsm2750800b3a.29.2024.10.21.05.38.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 05:38:29 -0700 (PDT)
+Date: Mon, 21 Oct 2024 20:38:11 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+Message-ID: <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-5-inochiama@gmail.com>
+ <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] coresight: dummy: Add static trace id support for
- dummy source
-Content-Language: en-GB
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241018032217.39728-1-quic_jinlmao@quicinc.com>
- <20241018032217.39728-4-quic_jinlmao@quicinc.com>
- <b2f9aa93-a50a-4bfd-9df0-9e3a170404f8@arm.com>
-In-Reply-To: <b2f9aa93-a50a-4bfd-9df0-9e3a170404f8@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
 
-On 21/10/2024 13:31, Suzuki K Poulose wrote:
-> On 18/10/2024 04:22, Mao Jinlong wrote:
->> Some dummy source has static trace id configured in HW and it cannot
->> be changed via software programming. Configure the trace id in device
->> tree and reserve the id when device probe.
->>
->> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
->> ---
->>   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
->>   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
->>   2 files changed, 70 insertions(+), 4 deletions(-)
->>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight- 
->> devices-dummy-source
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->> dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->> dummy-source
->> new file mode 100644
->> index 000000000000..c7d975e75d85
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
->> @@ -0,0 +1,15 @@
->> +What:        /sys/bus/coresight/devices/dummy_source<N>/enable_source
->> +Date:        Oct 2024
->> +KernelVersion:    6.13
->> +Contact:    Mao Jinlong <quic_jinlmao@quicinc.com>
->> +Description:    (RW) Enable/disable tracing of dummy source. A sink 
->> should be activated
->> +        before enabling the source. The path of coresight components 
->> linking
->> +        the source to the sink is configured and managed 
->> automatically by the
->> +        coresight framework.
->> +
->> +What:        /sys/bus/coresight/devices/dummy_source<N>/traceid
->> +Date:        Oct 2024
->> +KernelVersion:    6.13
->> +Contact:    Mao Jinlong <quic_jinlmao@quicinc.com>
->> +Description:    (R) Show the trace ID that will appear in the trace 
->> stream
->> +        coming from this trace entity.
->> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/ 
->> hwtracing/coresight/coresight-dummy.c
->> index bb85fa663ffc..602a7e89e311 100644
->> --- a/drivers/hwtracing/coresight/coresight-dummy.c
->> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
->> @@ -11,10 +11,12 @@
->>   #include <linux/pm_runtime.h>
->>   #include "coresight-priv.h"
->> +#include "coresight-trace-id.h"
->>   struct dummy_drvdata {
->>       struct device            *dev;
->>       struct coresight_device        *csdev;
->> +    u8                traceid;
->>   };
->>   DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
->> @@ -72,6 +74,32 @@ static const struct coresight_ops dummy_sink_cs_ops 
->> = {
->>       .sink_ops = &dummy_sink_ops,
->>   };
->> +/* User can get the trace id of dummy source from this node. */
->> +static ssize_t traceid_show(struct device *dev,
->> +                struct device_attribute *attr, char *buf)
->> +{
->> +    unsigned long val;
->> +    struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +
->> +    val = drvdata->traceid;
->> +    return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
->> +}
->> +static DEVICE_ATTR_RO(traceid);
->> +
->> +static struct attribute *coresight_dummy_attrs[] = {
->> +    &dev_attr_traceid.attr,
->> +    NULL,
->> +};
->> +
->> +static const struct attribute_group coresight_dummy_group = {
->> +    .attrs = coresight_dummy_attrs,
->> +};
->> +
->> +static const struct attribute_group *coresight_dummy_groups[] = {
->> +    &coresight_dummy_group,
->> +    NULL,
->> +};
->> +
->>   static int dummy_probe(struct platform_device *pdev)
->>   {
->>       struct device *dev = &pdev->dev;
->> @@ -79,6 +107,11 @@ static int dummy_probe(struct platform_device *pdev)
->>       struct coresight_platform_data *pdata;
->>       struct dummy_drvdata *drvdata;
->>       struct coresight_desc desc = { 0 };
->> +    int ret, trace_id;
->> +
->> +    drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->> +    if (!drvdata)
->> +        return -ENOMEM;
->>       if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
->> @@ -90,6 +123,25 @@ static int dummy_probe(struct platform_device *pdev)
->>           desc.subtype.source_subtype =
->>                       CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
->>           desc.ops = &dummy_source_cs_ops;
->> +        desc.groups = coresight_dummy_groups;
->> +
->> +        ret = coresight_get_static_trace_id(dev, &trace_id);
->> +        if (!ret) {
->> +            /* Get the static id if id is set in device tree. */
->> +            ret = coresight_trace_id_get_static_system_id(trace_id);
-
-This may be worth an error message, it is a rare one. Othewise, there is
-no clue on what caused the failure. Or have a specific error code as a
-result ?
-
->> +            if (ret < 0)
->> +                return ret;
-
-e.g., return -EBUSY ? /* Device or resource not available */
-
->> +
->> +        } else {
->> +            /* Get next available id if id is not set in device tree. */
->> +            trace_id = coresight_trace_id_get_system_id();
->> +            if (trace_id < 0) {
->> +                ret = trace_id;
->> +                return ret;
->> +            }
->> +        }
->> +        drvdata->traceid = (u8)trace_id;
->> +
->>       } else if (of_device_is_compatible(node, "arm,coresight-dummy- 
->> sink")) {
->>           desc.name = coresight_alloc_device_name(&sink_devs, dev);
->>           if (!desc.name)
->> @@ -108,10 +160,6 @@ static int dummy_probe(struct platform_device *pdev)
->>           return PTR_ERR(pdata);
->>       pdev->dev.platform_data = pdata;
->> -    drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->> -    if (!drvdata)
->> -        return -ENOMEM;
->> -
->>       drvdata->dev = &pdev->dev;
->>       platform_set_drvdata(pdev, drvdata);
-
-Additionally we should drop the system_id if registering the coresight 
-device fails.
-
-
-Suzuki
-
->> @@ -131,7 +179,10 @@ static void dummy_remove(struct platform_device 
->> *pdev)
->>   {
->>       struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
->>       struct device *dev = &pdev->dev;
->> +    struct device_node *node = dev->of_node;
+On Mon, Oct 21, 2024 at 02:22:47PM +0200, Andrew Lunn wrote:
+> > +static void sophgo_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> > +{
+> > +	struct sophgo_dwmac *dwmac = priv;
+> > +	unsigned long rate;
+> > +	int ret;
+> > +
+> > +	switch (speed) {
+> > +	case SPEED_1000:
+> > +		rate = 125000000;
+> > +		break;
+> > +	case SPEED_100:
+> > +		rate = 25000000;
+> > +		break;
+> > +	case SPEED_10:
+> > +		rate = 2500000;
+> > +		break;
+> > +	default:
+> > +		dev_err(dwmac->dev, "invalid speed %u\n", speed);
+> > +		break;
+> > +	}
 > 
-> ^^ Why is this needed ? The rest looks fine to me
-> 
->> +    if (IS_VALID_CS_TRACE_ID(drvdata->traceid))
->> +        coresight_trace_id_put_system_id(drvdata->traceid);
->>       pm_runtime_disable(dev);
->>       coresight_unregister(drvdata->csdev);
->>   }
+> There was a helper added recently for this, since it appears
+> repeatedly in drivers.
 > 
 
+OK, I will change it.
+
+> > +	ret = regmap_set_bits(regmap, args[0], DWMAC_SG2044_FLAG_USE_RX_DELAY);
+> > +	if (ret)
+> > +		return dev_err_probe(&pdev->dev, ret,
+> > +				     "failed to set the phy rx delay\n");
+> 
+> Please could you explain what this delay is for. Is it the 2ns RGMII
+> delay?
+> 
+> 	Andrew
+
+It is related to the RGMII delay. On sg2044, when the phy 
+sets rx-delay, the interal mac is not set the same delay, 
+so this is needed to be set.
+
+Regards,
+Inochi
 
