@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-374600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C991D9A6D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D425A9A6CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B31F280613
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFC21C2037D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70A41FAC5B;
-	Mon, 21 Oct 2024 14:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8CB1F9404;
+	Mon, 21 Oct 2024 14:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TE2vDYBh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCc2KfDr"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115971FA25D;
-	Mon, 21 Oct 2024 14:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA511F6681;
+	Mon, 21 Oct 2024 14:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522360; cv=none; b=R4LkhKSAxP5/+MjjBFX7CpUUA0lJYCa5fxupoJWsbOvp2pwkNX9ogbU52AhYrMso1mGhwt9lQMDFwbSXUtiBKF9p2U14Wm6nsDUNxT06QTTotyPPjvhlN1lel4knn5EDn4K40hg1NsC3GYUlLPyQ90uZCBpJu3B/jPrzUh469qg=
+	t=1729522347; cv=none; b=RCzVTtiLzYdI+/9P7GUuKAv8FNpsxyflT2V4eS67XqechxQO2qH2sunqaySXR4Zls1C6oXagmsEzmLnfE9gulSwcDrVU2027mhEvBolQ70zvOfre6jObCxF0jt+aUbm/LQvz+gLZHiS2LgIQVi/gqJNztzztpr7Jx87KKIk+gnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522360; c=relaxed/simple;
-	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDGerendu52NRLGSEPZ+rPAaXa67jj0zAQ9EEknhPoa7m5qdXH0CRDGz9mYkhh91/gecfh6nXcJnL9nbIIk5lfHLrPU9yahCu2INt3RsQ2RzIldft/pfN+IqubRiuM7yUcJGAEUfwjHVd6fw1zuqLjTB+0//h0e4cY1dTds2FCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TE2vDYBh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C0CC4CEE6;
-	Mon, 21 Oct 2024 14:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729522359;
-	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TE2vDYBhb7mKSE49g1O1JrRTkH+haqmC6CjGkUMfx/NS5mL2aW3udk3wL9gUNgImP
-	 lw5uhWPxmWnn055BzlW8D3d4PJLrCI2Mc6TTBrY15owrVx4SFgKredCEEn/wqA+/De
-	 5phEeg9ijWs+UwuKH6Vw/FPgPgBVMA0Q3PGN87Cr8wBsoyzf7w1T97B41O6ZkPipoh
-	 g4X2y2ZyA2/unPvyF6YAj9Ll8sDI5HOmR/4GoSJOjp1LwmDTiSq63J91XJiphb9PLG
-	 GX/RPoLKgNFfPGGPtQ6RxHZU1UMZwLvNgKkkUk+YvNv9/e72gF7xqPWdRD5lQRjyhu
-	 k5ysD7Q/BvrNw==
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: (subset) [PATCH RFC v3 00/10] extensible syscalls: CHECK_FIELDS to allow for easier feature detection
-Date: Mon, 21 Oct 2024 16:51:51 +0200
-Message-ID: <20241021-kraut-fundgrube-cf1648e59df4@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+	s=arc-20240116; t=1729522347; c=relaxed/simple;
+	bh=FowACoN2b+0Ge0RZ36VFhGeMwK+RM4hKXl9ttJGBZgY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OA6/rnBgYcL61dNUxfxNjUfynVJh1LdyAbKjcOrH3Bh412EB8YnyOnlfevHKeVgg6gnao00d5CGBBxMiwQ0mzMEJnGNCvus3K9LykyZIjco6hZRtiMKJrXmjMGqDRPx2DNyhTTaYl79EqPSgUOfiBMmVG1neNNXXWeycLKdqVZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nCc2KfDr; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c70abba48so36474685ad.0;
+        Mon, 21 Oct 2024 07:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729522345; x=1730127145; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ERo6rITP6HUIczBUz1Hheo3MKjLwe9uWSn3gY/EEL4=;
+        b=nCc2KfDr6A7NLfooLdROoRKjC4vsr0JxCBgrDpbkNrDbxrrVX5X1zTmefnJ6yRXaju
+         RYcXE2yyK6Y4m6/LovmKenxEosHTMjmuuZ3bQsJLs9JePvct8qE7+dCN/PhDgN86Ul1P
+         6jmEwD3a6a8rl8fp8/JvA9fnmrW8uMwYuKnKlQRPU0S1RtdsvP14qppWxGxUF505cTgD
+         eeqt8ivCu/RkVObY9fut9WFC2RBuoqRAluqBDo9+zYIXU6+svUKM/f+eZJ47+QvkR3d1
+         ZkUYP+0RYJ/l48y2/cLHRlv9S5uTeA8unrKHxcJ3xPZYS6AWPEnU6fAeixeCRMKoUOFH
+         dyOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729522345; x=1730127145;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ERo6rITP6HUIczBUz1Hheo3MKjLwe9uWSn3gY/EEL4=;
+        b=IdSfUDndaziP5zB+bfxp5ERbvCZ7PdPb04OnECkkXJ5EzwQkAoJspT//STiyqHyx1F
+         9RhNItbFQTWuAp6LSh5WURhdqAoagSK3gFv2rxU1r7sli1vRMgj+9XXpSKAN3/zDDE+r
+         hZ2ydtTd13IIFEHuvVaIxg+guMhQXNz54qnn8xEfu5HtYI7y53UJ9+tbxLn3HER42g67
+         ZiQNe1XEd8f57YczJMhWDedROKH7/AmgCSeb6Ur8PADQOoq4BlgaNpiXFLPYZlxNRGUs
+         bfdmRqrE3wUYMbrIOgRk39AlH5yF0ZREbAB0u2sy042oBvnuPxP3chxvHjOrQSncZziS
+         EcbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYS52IbJpSXiik7kgTPGoH8PH9w2IcEr+ojgV5WbZT9sXY2oAQCK4bOD35Pl1n5B2TmkXw6JMu+XlI2qU/@vger.kernel.org, AJvYcCXC+r3Urg82Xc6vNL+ykZj1iRIQg2wzxjkCFRSlFfGZ9yABrQLJ0PHt9Bq21o+qxQtIBOjzKFlTmcpwbbHeFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcqG6yRVVhRAs0iAswAlwn7TSWyGUhpPvmNUtNbhgWMiPLKpqQ
+	zcdt1AFbOcHlAAzi3M629NFhd7Iu0NCMEqNl1/oI/yHv6HKHXB4REbJujG85
+X-Google-Smtp-Source: AGHT+IEQpfinzGbZ9bbZ6wqp+SETYR3+MaQZQf07P8pgWWxOTCceOVOn0hvPZzXD2jYaYpD4Qd99FA==
+X-Received: by 2002:a17:902:ea0a:b0:20c:a189:c006 with SMTP id d9443c01a7336-20e5a91f162mr141998065ad.45.1729522344562;
+        Mon, 21 Oct 2024 07:52:24 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f36e6sm26799735ad.258.2024.10.21.07.52.22
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2024 07:52:24 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=brauner@kernel.org; h=from:subject:message-id; bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLZa29GrT7ZpV74rL3y8Ijstc/P7tdxYBRchtjj8Umw 0JXGZ8vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpj2f4X33A1Nfrxe052925 gvPv/S+69SaCQZXp45K3TXnHQj0mCzMyfPqyRJ9NYJ5kq/Clhd+W3ix5fGt6n9uW5+rR3003zXn Cxg8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <20241021140949.29204-1-aha310510@gmail.com>
+Date: Mon, 21 Oct 2024 22:52:09 +0800
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <656AA7DA-D2FB-447A-9491-781880D79A4B@gmail.com>
+References: <20241021140949.29204-1-aha310510@gmail.com>
+To: Jeongjun Park <aha310510@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Thu, 10 Oct 2024 07:40:33 +1100, Aleksa Sarai wrote:
-> This is something that I've been thinking about for a while. We had a
-> discussion at LPC 2020 about this[1] but the proposals suggested there
-> never materialised.
-> 
-> In short, it is quite difficult for userspace to detect the feature
-> capability of syscalls at runtime. This is something a lot of programs
-> want to do, but they are forced to create elaborate scenarios to try to
-> figure out if a feature is supported without causing damage to the
-> system. For the vast majority of cases, each individual feature also
-> needs to be tested individually (because syscall results are
-> all-or-nothing), so testing even a single syscall's feature set can
-> easily inflate the startup time of programs.
-> 
-> [...]
+On Oct 21, 2024, at 22:09, Jeongjun Park <aha310510@gmail.com> wrote:
+>=20
+> The size of a.data_type is set abnormally large, causing =
+shift-out-of-bounds.
+> To fix this, we need to add validation on a.data_type in=20
+> alloc_lru_idx_fragmentation().
+>=20
+> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+> fs/bcachefs/alloc_background.h       | 3 +++
+> fs/bcachefs/disk_accounting_format.h | 2 ++
+> 2 files changed, 5 insertions(+)
+>=20
+> diff --git a/fs/bcachefs/alloc_background.h =
+b/fs/bcachefs/alloc_background.h
+> index f8e87c6721b1..66a334e2edcd 100644
+> --- a/fs/bcachefs/alloc_background.h
+> +++ b/fs/bcachefs/alloc_background.h
+> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum =
+bch_data_type type)
+> static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
+>   struct bch_dev *ca)
+> {
+> + if (a.data_type > BCH_DATA_TYPE_MAX)
+> + return 0;
+> +=20
+> if (!data_type_movable(a.data_type) ||
+>    !bch2_bucket_sectors_fragmented(ca, a))
+> return 0;
+> diff --git a/fs/bcachefs/disk_accounting_format.h =
+b/fs/bcachefs/disk_accounting_format.h
+> index 7b6e6c97e6aa..0232bc9f590d 100644
+> --- a/fs/bcachefs/disk_accounting_format.h
+> +++ b/fs/bcachefs/disk_accounting_format.h
+> @@ -72,6 +72,8 @@ enum bch_data_type {
+> BCH_DATA_NR
+> };
+>=20
+> +#define BCH_DATA_TYPE_MAX 10
 
-I think the copy_struct_to_user() is useful especially now that we'll gain
-another user with pidfd_info.
+Use BCH_DATA_NR instead.
 
----
+> +
+> static inline bool data_type_is_empty(enum bch_data_type type)
+> {
+> switch (type) {
+> --
+>=20
 
-Applied to the vfs.usercopy branch of the vfs/vfs.git tree.
-Patches in the vfs.usercopy branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.usercopy
-
-[01/10] uaccess: add copy_struct_to_user helper
-        https://git.kernel.org/vfs/vfs/c/424a55a4a908
-[02/10] sched_getattr: port to copy_struct_to_user
-        https://git.kernel.org/vfs/vfs/c/112cca098a70
 
