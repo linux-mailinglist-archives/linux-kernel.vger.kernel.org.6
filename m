@@ -1,193 +1,182 @@
-Return-Path: <linux-kernel+bounces-375304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCDD9A9469
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:57:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A066A9A9482
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071412812A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC0D1C21DD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59241FEFC6;
-	Mon, 21 Oct 2024 23:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769F923A9;
+	Tue, 22 Oct 2024 00:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdgjnWJP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tMDB3uHk"
+Received: from sonic306-9.consmr.mail.bf2.yahoo.com (sonic306-9.consmr.mail.bf2.yahoo.com [74.6.132.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BC10A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B295818E1A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729555022; cv=none; b=ePfyZ3R5xKAXEv9fFtzrEWGCUSrZdGkXh0XxZuwE8dq2y/FlqBP6Iu4s9RTAy0WlUv490+itdvskLGf+Ev3CKgN7QfAJ4wZQiTaGld3H5w9V4Wtz7xsTyVOK8T9bOkZLYbIMdOeblVkZs88rlxfW7wLAYhknjpF4FISbfH7Dh4E=
+	t=1729555702; cv=none; b=hy5rnIh7dt+3f47J+AoXub1Udzi0CwoFtr2NRbR/Bhfpe5AI1io9ZJB7WyMHJmjGuk2BuzcmCkxXnGORNlsT55csv4TPvSJjtdnewESlk4P9vBmc1LOcJnEeYmdDgYqxBHYfE+WRHXvfqZ9H3hMurCAVZRbV9XAnGrYd0RYChqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729555022; c=relaxed/simple;
-	bh=s18HD12MJyz0CnqaYMbmgWatQPAaFuILvIsf9zvBi2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLmobe8uQ9k78t/HagNJEMCwEUNXqM/80A9jmn7sRDnWq5i6NXxA3r0kRCPXZmEkAQ1uSTHlreBBNjPYscnpam7E0/qHC84V+9aF1SdmGIGT5l+3ysLLuFfqjPTGVc5sk+maniXHtWHW3MuKiRBhsxDrpqOJdy5G73JsGIr0A0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdgjnWJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB43C4CEC3;
-	Mon, 21 Oct 2024 23:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729555021;
-	bh=s18HD12MJyz0CnqaYMbmgWatQPAaFuILvIsf9zvBi2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MdgjnWJPYysikgIUun9KWoxSrIvxfwqLvqMFo9UbeQqiZncgmTgXip7a+qAEF7pNR
-	 7qd0LPfPXv7QQj2siK9KMHj6eAQkYD0ZvKnX/AQrj/i32B14GHouYSppZMUPeOzhMV
-	 jl7hPN3RD4eTIytO8l2ONC8rZBw2K3Et5S/f3qkVZHcqXDtmH1qgWfrU81Hz6hi89R
-	 bb9HwtKIkkysDvIyZ/eaWTvWF5pWv4zK2qi4qoqD/cyQxBBos2h++67zo3sdA+Gjl3
-	 PJNdV5AbpfZ1kU2JQFf9clW9S8RelhfPqA9TM9Fmi0zuaIrcwO5MH7UcpZuk9D1Pmk
-	 BzjuT8ZnwfZvg==
-Date: Mon, 21 Oct 2024 23:56:59 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] f2fs: fix to parse temperature correctly in
- f2fs_get_segment_temp()
-Message-ID: <ZxbqS-jeQ6sDOeVH@google.com>
-References: <20241017012932.1570038-1-chao@kernel.org>
+	s=arc-20240116; t=1729555702; c=relaxed/simple;
+	bh=z181btsfxt9PDb/yCV5oeTIzDXg22ExnqXko3wxsUyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nBchK7OZsJMIg+1QvF/6FabEKF5oZhPoYvm2sKm5mz2KjiljYdiuYiuBbTc5/Z4MrGG1SeU03XSfk8iBXzdAGoq0Fhj9v9SYBn8/2NJx5+7EW3qJPXAbu850Q8J/ZbIRVVW/PrmJ/bkDw8+qne6SGiYgWF52X+AM87GYBUn1BKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tMDB3uHk; arc=none smtp.client-ip=74.6.132.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729555699; bh=jDj5CXvHcjdpLFA63d1hBsH/DNQTd4LCrH9oYp0BA9k=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tMDB3uHkP30hS1OSHr+XU9aZ1bs7AVjgNE37zy/9zEaUKxJVBMQQz6pbcsD+UJw69ux7ET+ee7xckFIiz6lpPfHqwHKkp61Z4cCohLr8J2wJOtrQbLvH+wSRKY6T36v0CkAccJ1Fniiz1Wh7e9oURVz3x4E9c+7/5hTCHxu3q1tfyu/dJnlu8cvuLQR23SF3eCmrD5mMRloaLyj9s4rnglMZ0/f2S2hN5dq0mCpUOCf1h7Cwh61B59j1n1/D4EQ/HsN9s5uW6wLyxIDJ5WcNf7e6lOYrCFzmC4X4Ow8UBIdvSCmpGmnkqe3usBlaI7xmGl4ZgwOjP1Xt6U85VJ2SAw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729555699; bh=7uRxrLcDwnSC4EdOljGxW/Gr52x6SrKnzwFFRTkmqQl=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=K5yBr1LmJW6rWDUlBuAVkDrZegCSQnKfsGuzX7ExrJg32TFe38tDHuR6iprEE7WaiuzGz+wSo3Pf+vvUHjeInblB92rPufeSDNBDrpGmW38coqv754Dd2G3wgrFzuNW7ZEdl0/HRsaawwg4vbINZvDMyrRTAzFVJK4BklvGX8WQq+4i5HjKCNwmBbnbxz9/Yh1K9YCSBA/Zlor3pZvxzojzHzJQDo/5khOjRq24fgiZUbHAc8shR0xeyjgMO8RxhG0KLZT5lYj1Ny8suTK4MJglce7Z2An7L9qx9qOHlGfLDKF3JE5rX8DbNTW7wX/OJGyCRS+aIUpE0k5/HwioFkA==
+X-YMail-OSG: b2yzTPoVM1kqh1.EwrToqFS8bYbeVZJNIjI.Kk2vyBkUxMzHeh2OGEfb.5M_G8a
+ caYx0blk.h1r1bV4YN_OAoE.IRzvTTXTSnzCQcSU4gtvFBzTeaIXywdXu3HJvLOkV6XCtldVVxMw
+ dgZgB0Znesy6Kk7kvD3MqKSrrIyiwQ3cJ4kna6ET5IenSIlkAFwnUvqJylv8Y8A4172ukwZRHIDP
+ O8kjM_UFJDE.dIcxB2sq24l4kwFCQjsHBscxni9ro49CXe_pSgqLY.UJs5y8lqrcdG6qT.8oIDt3
+ bd60la9XrBPhj6d2wxs1AOnmDmU6Hw7eJlaT4fwZsg6bYnBVFMZgaHwfuZapCOcgGQHItOw.s6z9
+ xPCRVh_QEWMzImhe3Sgl.AW2izuJOCcL7kWi7cFmChg9QvKK5XHEmkG1rCKZcvr.vm_bFUvpxSci
+ OZdSXuuiXCBLAsrOfNu5aMCjKOqAisnoh8h7lSl2quSXTG9cr9rloQk_CkZFZvQOmNakT2Kw7osG
+ P62ZFlIXjRNZy7fAv7NOAZtv3MMRzoPrF5quf6WMkB2yIOX6c8zdba8ntmtAYMHazHV3VHXF5U3k
+ TBMgF4OWBKzt4qpHwdrr_C6Z5lose0Kn9KqWcQCnj79YQISGUare7Lo8Lj.RoPpg5QEQISK.zHt3
+ Ealo9KLhdGrO0HOTinQPZw0.HMFDoWc7Co6II5n7MzACbpfkP1SPTHZqdDLl4SpdvbaM6TYcIvor
+ raXui3x0PS71vF8wCCjqdP4uQqvXy5uOtOB.wyGMRm67OBWTbimO6ICTnn2EbYfjx5cpNs0My9G.
+ 3faeKmhxtcoczYAlsQK3a.DKLnwzXH2gNSRtSJb6rfxriY8umm48IZyuEEFFvZeFGDmIEyFck_pl
+ PdDlIg5zg0Lkr8LqRj_lvaYVwQU6CQHP1zQ_InT9vh8q9VmVuLNS_9TVDICqdTllwzHMAx4HBkVG
+ 3yrf2gaoX3s2PkG_f.CwCU.nYqpuzAqLDoopDjuW45swdLM3DKLXZIe_mzxNIorFwglH2.umXl8c
+ mJ4mkmzdb0ZgWLiL8jDSfvkwpO7avdLs_EZ.943h8W4k_n2PZtMZYIEB7qwkyrRaadyTGhFFknMs
+ URDcXkqTv5SvQXHgQNdz2UNoghYU4DUIMp2dkvazE51Scp5aAOxUSH0ORelHdxkPu4DufgDoBa.o
+ a_kNSxDe2Lp4VuxlcCSnvYR4E6wp5RvxtV.Mikmd86gJaJIRs8nUbHOHiCyHekqeCICgsQddoHHA
+ gd1K.AsqyVYWOeb7BhqoOd3ZuLhVIOCCvvqwKME9zQ.STxPA7OV7T43W1w7HIrwwaGZe7JiWnawQ
+ Qf2R.v.EaagLQKnXMmwp5uWv1u0kh2dXVRjxhj6t8QLRb8zo._P2CaZ8uD_4TZu9Qk72aioNrWS2
+ 5tzPDjDQs1bXUdHGhvswSIE7djPKNymNXwNoM46ACuK0iF2ppF_DH.y_q_J6nPDiXQNmZeEMAYjL
+ 2Z58Dg.KGOX.p_FOsGyfY8Gh07TZpmGo5UPapi6zkiAX4seqINgb3uOc7MkrrXAECitfBInCkl0R
+ rXHPhhFYvcMqpz0I4qMb9CoXhHI7uQOliNHhVlYL4yHzxN65qMToiUmXtH0pVgKr7VowTtKKwsOY
+ OzoFXMrsdUfwTRaU52Ysas4nBYQKAIp6vHDIUkdd9kDRXC2VxcJ5De_IWKvGJmkpW4nK0RoSL_K6
+ JMggscSlleLiK5xRebHR7MkrF2igdFjl5ZvS5heKDjJbd1RHVxO0_xMLSx.yjhyaJh_hZvLGn0lv
+ dhQy8ZEDKaKL_QmZZY41yzgqqWM1nKs0iW2Cx_GLMM6jg4Gw11KEXx_J4GA6QhAFx32m9UCkttRF
+ naUnX8zIROEMipfwIhxc281.PAW3jWAkJ6Dd2vPtZv7weIlzC_DWv_H6dKUuKGxDNDcc9WSeApAX
+ KRt46ho9Ab9_BikIZBuhgOvCVPk3wllK_c1z8zofi8DjYTWVe2SgR0yY5IwGwB9tzKHzRXxSTBU3
+ ezmeEKMQUB0EyCFORAkAlIvFW3uUWKjGvILbXUMCIzvNOBO4h_uCKx5JeMkr4By_ARrcO6p3vBas
+ 5K.ZVQV5CV8RouHp1aOSwKFnIxEtGqE0lcvyLMpt5v9kzB1sdOEXTEGj8jtmQZ1dCEfKZLqT3tGy
+ RRsWhT5xtuMj1lvqhpMGUcQ7quw5.wa.0m5Tr54JbUrJash0lGewbia0MKOph4atefNKA6yoILiM
+ 9mnk.K7PwUuQskT01Azw8gox3.k1FXnJ1GAvd3.8NzBKBPUqR9OxLCBoCXp5kqaii5fIjiGkkVbB
+ U.5Ict_X.wZNL6_d6IqPOaA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 566483e5-b146-4668-90c8-890eb38b538e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 00:08:19 +0000
+Received: by hermes--production-gq1-5dd4b47f46-wrqn7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c72af3b73ce19b5992080d7cc4add89a;
+          Mon, 21 Oct 2024 23:58:10 +0000 (UTC)
+Message-ID: <bab1de2e-0205-40dd-af3e-5956ff349948@schaufler-ca.com>
+Date: Mon, 21 Oct 2024 16:58:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017012932.1570038-1-chao@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] LSM: Ensure the correct LSM context releaser
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net, linux-integrity@vger.kernel.org,
+ netdev@vger.kernel.org, audit@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Todd Kjos <tkjos@google.com>, Casey Schaufler <casey@schaufler-ca.com>
+References: <20241014151450.73674-2-casey@schaufler-ca.com>
+ <dad74779768e7c00d2a3c9bf8c60045d@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <dad74779768e7c00d2a3c9bf8c60045d@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/17, Chao Yu wrote:
-> In __get_segment_type(), __get_segment_type_6() may return
-> CURSEG_COLD_DATA_PINNED or CURSEG_ALL_DATA_ATGC log type, but
-> following f2fs_get_segment_temp() can only handle persistent
-> log type, fix it.
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v2:
-> - initialize variable in f2fs_get_segment_temp() to avoid
-> static compilier complaint.
->  fs/f2fs/f2fs.h    |  5 +++--
->  fs/f2fs/file.c    |  4 ++--
->  fs/f2fs/segment.c | 33 +++++++++++++++++++++++++--------
->  fs/f2fs/segment.h |  4 ----
->  4 files changed, 30 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f3ef4dc50992..56797f8e6659 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1019,7 +1019,7 @@ static inline void set_new_dnode(struct dnode_of_data *dn, struct inode *inode,
->  #define NR_CURSEG_PERSIST_TYPE	(NR_CURSEG_DATA_TYPE + NR_CURSEG_NODE_TYPE)
->  #define NR_CURSEG_TYPE		(NR_CURSEG_INMEM_TYPE + NR_CURSEG_PERSIST_TYPE)
->  
-> -enum {
-> +enum log_type {
->  	CURSEG_HOT_DATA	= 0,	/* directory entry blocks */
->  	CURSEG_WARM_DATA,	/* data blocks */
->  	CURSEG_COLD_DATA,	/* multimedia or GCed data blocks */
-> @@ -3758,7 +3758,8 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
->  			block_t old_addr, block_t new_addr,
->  			unsigned char version, bool recover_curseg,
->  			bool recover_newaddr);
-> -int f2fs_get_segment_temp(int seg_type);
-> +enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-> +						enum log_type seg_type);
->  int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  			block_t old_blkaddr, block_t *new_blkaddr,
->  			struct f2fs_summary *sum, int type,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 0e07231dc093..92d7c62eba29 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -4858,8 +4858,8 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
->  {
->  	struct inode *inode = iter->inode;
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -	int seg_type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
-> -	enum temp_type temp = f2fs_get_segment_temp(seg_type);
-> +	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
-> +	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
->  
->  	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
->  	submit_bio(bio);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 0f4408fe2b19..8e80e6620854 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3603,18 +3603,35 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
->  	}
->  }
->  
-> -int f2fs_get_segment_temp(int seg_type)
-> +enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-> +						enum log_type type)
->  {
-> -	if (IS_HOT(seg_type))
-> -		return HOT;
-> -	else if (IS_WARM(seg_type))
-> -		return WARM;
-> -	return COLD;
-> +	struct curseg_info *curseg = CURSEG_I(sbi, type);
-> +	enum temp_type temp = COLD;
-> +
-> +	switch (curseg->seg_type) {
-> +	case CURSEG_HOT_NODE:
-> +	case CURSEG_HOT_DATA:
-> +		temp = HOT;
-> +		break;
-> +	case CURSEG_WARM_NODE:
-> +	case CURSEG_WARM_DATA:
-> +		temp = WARM;
-> +		break;
-> +	case CURSEG_COLD_NODE:
-> +	case CURSEG_COLD_DATA:
-> +		temp = COLD;
-> +		break;
-> +	default:
-> +		f2fs_bug_on(sbi, 1);
-> +	}
-> +
-> +	return temp;
->  }
->  
->  static int __get_segment_type(struct f2fs_io_info *fio)
->  {
-> -	int type = 0;
-> +	enum log_type type;
+On 10/21/2024 4:39 PM, Paul Moore wrote:
+> On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Add a new lsm_context data structure to hold all the information about a
+>> "security context", including the string, its size and which LSM allocated
+>> the string. The allocation information is necessary because LSMs have
+>> different policies regarding the lifecycle of these strings. SELinux
+>> allocates and destroys them on each use, whereas Smack provides a pointer
+>> to an entry in a list that never goes away.
+>>
+>> Update security_release_secctx() to use the lsm_context instead of a
+>> (char *, len) pair. Change its callers to do likewise.  The LSMs
+>> supporting this hook have had comments added to remind the developer
+>> that there is more work to be done.
+>>
+>> The BPF security module provides all LSM hooks. While there has yet to
+>> be a known instance of a BPF configuration that uses security contexts,
+>> the possibility is real. In the existing implementation there is
+>> potential for multiple frees in that case.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: linux-integrity@vger.kernel.org
+>> Cc: netdev@vger.kernel.org
+>> Cc: audit@vger.kernel.org
+>> Cc: netfilter-devel@vger.kernel.org
+>> To: Pablo Neira Ayuso <pablo@netfilter.org>
+>> Cc: linux-nfs@vger.kernel.org
+>> Cc: Todd Kjos <tkjos@google.com>
+>> Reviewed-by: Serge Hallyn <sergeh@kernel.org>
+>> ---
+>>  drivers/android/binder.c                | 24 ++++++-------
+>>  fs/ceph/xattr.c                         |  6 +++-
+>>  fs/nfs/nfs4proc.c                       |  8 +++--
+>>  fs/nfsd/nfs4xdr.c                       |  8 +++--
+>>  include/linux/lsm_hook_defs.h           |  2 +-
+>>  include/linux/security.h                | 35 +++++++++++++++++--
+>>  include/net/scm.h                       | 11 +++---
+>>  kernel/audit.c                          | 30 ++++++++---------
+>>  kernel/auditsc.c                        | 23 +++++++------
+>>  net/ipv4/ip_sockglue.c                  | 10 +++---
+>>  net/netfilter/nf_conntrack_netlink.c    | 10 +++---
+>>  net/netfilter/nf_conntrack_standalone.c |  9 +++--
+>>  net/netfilter/nfnetlink_queue.c         | 13 ++++---
+>>  net/netlabel/netlabel_unlabeled.c       | 45 +++++++++++--------------
+>>  net/netlabel/netlabel_user.c            | 11 +++---
+>>  security/apparmor/include/secid.h       |  2 +-
+>>  security/apparmor/secid.c               | 11 ++++--
+>>  security/security.c                     |  8 ++---
+>>  security/selinux/hooks.c                | 11 ++++--
+>>  19 files changed, 167 insertions(+), 110 deletions(-)
+> ..
+>
+>> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+>> index 1bc2d0890a9f..8303bbcfc543 100644
+>> --- a/net/netlabel/netlabel_unlabeled.c
+>> +++ b/net/netlabel/netlabel_unlabeled.c
+>> @@ -1127,14 +1122,14 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
+>>  		secid = addr6->secid;
+>>  	}
+>>  
+>> -	ret_val = security_secid_to_secctx(secid, &secctx, &secctx_len);
+>> +	ret_val = security_secid_to_secctx(secid, &ctx.context, &ctx.len);
+>>  	if (ret_val != 0)
+>>  		goto list_cb_failure;
+>>  	ret_val = nla_put(cb_arg->skb,
+>>  			  NLBL_UNLABEL_A_SECCTX,
+>> -			  secctx_len,
+>> -			  secctx);
+>> -	security_release_secctx(secctx, secctx_len);
+>> +			  ctx.len,
+>> +			  ctx.context);
+> Nitpicky alignment issue; please keep the arguments aligned as they
+> are currently.
 
-Here as well.
+Not a problem, although it looks like it's correct to me. I'll check to make sure.
 
-
->  
->  	switch (F2FS_OPTION(fio->sbi).active_logs) {
->  	case 2:
-> @@ -3630,7 +3647,7 @@ static int __get_segment_type(struct f2fs_io_info *fio)
->  		f2fs_bug_on(fio->sbi, true);
->  	}
->  
-> -	fio->temp = f2fs_get_segment_temp(type);
-> +	fio->temp = f2fs_get_segment_temp(fio->sbi, type);
->  
->  	return type;
->  }
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 55a01da6c4be..6a23bb1d16a2 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -34,10 +34,6 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
->  	f2fs_bug_on(sbi, seg_type >= NR_PERSISTENT_LOG);
->  }
->  
-> -#define IS_HOT(t)	((t) == CURSEG_HOT_NODE || (t) == CURSEG_HOT_DATA)
-> -#define IS_WARM(t)	((t) == CURSEG_WARM_NODE || (t) == CURSEG_WARM_DATA)
-> -#define IS_COLD(t)	((t) == CURSEG_COLD_NODE || (t) == CURSEG_COLD_DATA)
-> -
->  #define IS_CURSEG(sbi, seg)						\
->  	(((seg) == CURSEG_I(sbi, CURSEG_HOT_DATA)->segno) ||	\
->  	 ((seg) == CURSEG_I(sbi, CURSEG_WARM_DATA)->segno) ||	\
-> -- 
-> 2.40.1
+>
+>> +	security_release_secctx(&ctx);
+>>  	if (ret_val != 0)
+>>  		goto list_cb_failure;
+>>  
+> --
+> paul-moore.com
+>
 
