@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-374261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A059A6792
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093B59A677D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361F81F22115
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060AA1C21E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36A41EB9EB;
-	Mon, 21 Oct 2024 12:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF26E1EABD5;
+	Mon, 21 Oct 2024 12:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GVNee7E4"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh+DtB2T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B3F1EABA6;
-	Mon, 21 Oct 2024 12:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED81E8820;
+	Mon, 21 Oct 2024 12:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512358; cv=none; b=LkPFOHXaUZPIcYBPxDSDl15rl/2rTG8IMunCikJJH9miiGivJ87kPMn5Kd+mV1o9ryi/nejapZ353+BiwKk+e2TyuNLrrpFlpFRF3SZGFA04KlA79/FYznfL7OH8hLWlC3/6VdLjsekVAWdn6FNGYPqbsAzC/9ETGmHxf7mGAoQ=
+	t=1729512226; cv=none; b=L5mda+wYmQbyEzTGdyVyrCxYsZ4OvLft1zchfThaeDgY7nHwh8NyloOMHLDxacyLm8990YTKLdr7qlMmH3HLhpOBHC317dQexy0I3ygoqKiMS4DVOmHyqaXCzN1/4OGRV3Mq9wTntP0LoRL5RDTVBWdo6rNxxJBCijvFy/FsQBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512358; c=relaxed/simple;
-	bh=TfHS6fsENhaF/hIqepQjlW1Tz+LVrupzEVhHjDPZ9oA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N9nYXzQ9qOsdErVK9gTvnIt12gOWm3HmfZnDAW7NHWEMkib9VF+txjd1+6TRWoiRZqZQaDJGIEuH5aLNJy0GW+rHr7VfyTVTmIj6SDX144m/ZaQQYKIKWhGXQblbZocFwIqjYoXsI1v1uiNnJdzzkZJ/2cNH8DqoJZp6SMuHtbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=GVNee7E4; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1729512356; x=1761048356;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TfHS6fsENhaF/hIqepQjlW1Tz+LVrupzEVhHjDPZ9oA=;
-  b=GVNee7E4d36JRLG0soxpRFyR2rRvwiLmSA6NUX94Z+6SSezH6+WBtbky
-   XDA/xM4wTdQZNsAbmQZdpUncw7HDgeXwk4AefXuVDbF3ZQCdnoWyu9HqV
-   yYCNYrEFUXZy7DMn9xAy+ubRiC2rBSe/pBXdBCoAExrAy3ubK7ybX95xR
-   oIPv82NOOdcLbXG74aRULvqkpGljBQLtmm15KEW4ugAC7S8wxJ1wptHHi
-   zCJCUM/J4RpgtfeLWoKn2148MyuUgpTXK+HMsODOJBBdaaV+aNWkIDAHN
-   uHuxmj/omvkOsbMJDuk2s0X/w4HbETWwWyYOdL8lb/x7J8l+Yjxf3uhaZ
-   A==;
-X-CSE-ConnectionGUID: V2F6fuCzRPaHi/kTMYll5A==
-X-CSE-MsgGUID: I7sbvonKT+mHAhDWzo8+8Q==
-X-IronPort-AV: E=Sophos;i="6.11,220,1725292800"; 
-   d="scan'208";a="30593017"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Oct 2024 20:05:52 +0800
-IronPort-SDR: 67163532_nAB0R/j9a6rTsMUGF31UBuVSAFU3zpQT3fRSQ1XpSoAWeQ/
- ALvzfZVpcVZjZPiRkBtuzx6an7ULJf86AMZccAg==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 04:04:18 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 05:05:51 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH 4/4] scsi: ufs: core: Use reg_lock to protect HCE register
-Date: Mon, 21 Oct 2024 15:03:13 +0300
-Message-Id: <20241021120313.493371-5-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241021120313.493371-1-avri.altman@wdc.com>
-References: <20241021120313.493371-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1729512226; c=relaxed/simple;
+	bh=9epohfJmZxLsUdXZ/zc+G8wpo+sIrJshlK6G6pUw5zs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fRzcb+vQNFekiKzKe/fQoxmUSoKEFDFxb2aeGE8qVbxc6+3nobOHEN8nGd2CirnAjCMgLYxhMWzO5Clf2/2VJFkAg3nPCNzypvrJVZt9Lc0S8++byJ9L/rIc7X6Ac6jEQU35blaGp1FMymH9uSFzK8f61Q+8uKA300MJ1Zm+BLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jh+DtB2T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA95C4CEE5;
+	Mon, 21 Oct 2024 12:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729512225;
+	bh=9epohfJmZxLsUdXZ/zc+G8wpo+sIrJshlK6G6pUw5zs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Jh+DtB2T8eaWx7crSQOIW7QzNXZMDuKQovDDqZF3d3sde8DjE/ZjBi0xmGPO8g71j
+	 MZeFMA3yy7dPrwI6vXHdt41C8veWk0ln76pdnDa2/seOLXtaUR5FekcQSk3wPGAEzO
+	 pfKNGfNZqGBChknoKUC2nqUULOq7Kx2BPrz7fSis4Uu8MgXE6MEnx5soN4AjXVkcLo
+	 7ec3/9m0mq/5bun8vxYx3rEauNDBHVXzeNw48lKx/pY1NSI205YNfB4fuKvxx1hGpA
+	 y92Lx53Bt8DSuHwmGXdr/gpYneq243SlEt+vwo6rp2fKhxAq4QPOUgqATX5LidrprR
+	 8i1uIf2tw+8WA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ebc4e89240so327555eaf.1;
+        Mon, 21 Oct 2024 05:03:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVeY+6/eewd5O/kDb7ZT/8WGoGRAbHLS/YIXW7N6J/dQkjRVKGafgtqCQHC9SULUdf1eC57czU+N1o=@vger.kernel.org, AJvYcCX60V3Nstw+4h25CXtM/LiSURU4EveOTU30uWzX3i4slr/8InjYps3aoAcvy2NoIcJ3GXLs4DKZVEeFufE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw34S2lzt3+JpFgP1QOBtwVw3CNYPCYaLbBAJbuVThDp8SmlhL/
+	uyNhX1OWtCANFWa+/8YVEUIsbyM0Z0+F2gYuaCVZrEj3ywD34+NnkoV+x0zlhtXA4+rRjoRlY41
+	P4FMyCKYdjqrdiG/a0Gbtxk2aO68=
+X-Google-Smtp-Source: AGHT+IEfjlA2YhXSUpCd4226cJ7vdxG3hlbzsF1xwlcqyFU47ucXUepbqKtJr8r+yti1hMvnM2onuZKudAvlqoV3/PY=
+X-Received: by 2002:a05:6870:a10e:b0:277:ca2f:905 with SMTP id
+ 586e51a60fabf-2892c527fc8mr8273047fac.29.1729512224713; Mon, 21 Oct 2024
+ 05:03:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1930069.tdWV9SEqCh@rjwysocki.net> <40ec7bb0-02ef-4af7-8934-9f960fa15355@web.de>
+ <CAJZ5v0iaR1e6OMpY=wMBKhqg8F6DAX5KUqa+YACEr0z3EZxo-w@mail.gmail.com> <45cbf165-770e-4e28-8936-edd6f18964fd@web.de>
+In-Reply-To: <45cbf165-770e-4e28-8936-edd6f18964fd@web.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Oct 2024 14:03:28 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gV+NHZiAwQdeG_0Cjg-s1ugdTDJDkhRwZ9AmBsy80Giw@mail.gmail.com>
+Message-ID: <CAJZ5v0gV+NHZiAwQdeG_0Cjg-s1ugdTDJDkhRwZ9AmBsy80Giw@mail.gmail.com>
+Subject: Re: [v2 01/11] thermal: core: Add and use thermal zone guard
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the host register lock to serialize access to the Host Controller
-Enable (HCE) register as well, instead of the host_lock.
+On Mon, Oct 21, 2024 at 2:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> >> =E2=80=A6
+> >>> +++ linux-pm/drivers/thermal/thermal_helpers.c
+> >>> @@ -60,13 +60,13 @@ bool thermal_trip_is_bound_to_cdev(struc
+> =E2=80=A6
+> >> =E2=80=A6
+> >>
+> >> Would you become interested to apply a statement
+> >> like =E2=80=9Cguard(mutex)(&cdev->lock);=E2=80=9D?
+> >
+> > Well, please see
+> > https://lore.kernel.org/linux-pm/5837621.DvuYhMxLoT@rjwysocki.net/
+>
+> Will the separation of source code adjustments according to cooling devic=
+es
+> and thermal zones trigger any related clarifications?
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- drivers/ufs/core/ufshcd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 4eee737a4fd5..3cc8ffc6929f 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -4795,9 +4795,9 @@ void ufshcd_hba_stop(struct ufs_hba *hba)
- 	 * Obtain the host lock to prevent that the controller is disabled
- 	 * while the UFS interrupt handler is active on another CPU.
- 	 */
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&hba->reg_lock, flags);
- 	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&hba->reg_lock, flags);
- 
- 	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
- 					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
--- 
-2.25.1
-
+I'm not aware of any.
 
