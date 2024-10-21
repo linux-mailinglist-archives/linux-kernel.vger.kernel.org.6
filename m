@@ -1,224 +1,274 @@
-Return-Path: <linux-kernel+bounces-374031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063509A60DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107329A60DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E86D1F21B38
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1323283967
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0511E47AC;
-	Mon, 21 Oct 2024 09:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77121E47A3;
+	Mon, 21 Oct 2024 09:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BqCuirFT"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G4O7qF5J"
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC211E3797
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDA71E410E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504666; cv=none; b=FJwc61h0d81jxtwnp3axUect0U55g8BqehFKX3cs3oabzZFwjOlIUuc3pLe5dC3ZfHnrh/ddw4ZgL5cBaK0jYshhYu+2TsQEY9ez4G3NTIREM8CjsZjKN7ErSqRL1vGF/k3L2p7Ank+RH9a3PIdxuGvb6w1SsQ6u3/9xy3BPhHg=
+	t=1729504689; cv=none; b=X8HsBGd9/G/sbHgLXgcT0RVJzt7eYmHQy0xd/abcF/jbwgdfTtPG78JOGNPbOdDFIkL6oGtNG5UTuTpy9zjrpb+ZUcL0ZSu74TQRRq269qzEcb71s5/pM13wzR32/2gbl1MZ1sG+8G668wyZJtR3/Ck5auZ3x54PoGJD8biWMzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504666; c=relaxed/simple;
-	bh=qXhoyDNVvXc+6IIV9TKTG0lhVgcA5+9rjg/KityqydE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sY6abuRU2rTo2P4yrLNsHTHWNw4mCaK9Zfzti8j7b/5ZDQucM0Zq6r88DkuavVTNNnXvAtP55J6SLDMLF/o5fPjAVPl+0gsKhtmGBLrLsUetYbREgQzLg1EKltKCwEgcQKDMTwvS0udIypEUUOADslV+aYx86XmTu8Pp0XmzANw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BqCuirFT; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so47680995e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:57:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729504662; x=1730109462; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YFJZ4BI8JgbDyIrmdc3YWzeoobktonPl/4kNXWfXXdA=;
-        b=BqCuirFTliFqN1AKJXxu7meIjhpdUJuTD6UKfeXWVugBz/uHgtIN+Fdjw31GYfttwY
-         kkKE2JvWT2TYbirIqWzptlr7ll2FpXzp0vwSNz95QpXBsEM41EC7pzMPP0gF68PAtrxY
-         ElvU/m0AGPP7C8qZth6Vv4AHtz+thakf9BkUHiASwzcVVdb8zyuSE+nePzQpPzYRcyiV
-         3mLp7qHn7+vSKmn/zZ+/67GFhLN44cIhkUVE1HV1TDgyx6MQZFZAsB5qgcikMWI3WJ/g
-         5Jshb8YZMWo7vcXeDr5gBEStxb0cLUTfSjOy1yONmLd2ewzXEBi4jjeQCvf7PK6ULnB1
-         Lq8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729504662; x=1730109462;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YFJZ4BI8JgbDyIrmdc3YWzeoobktonPl/4kNXWfXXdA=;
-        b=R9T/+WPTxi6jpXTGQKqimpGA97TYx85C1JBKhmvIhimCwC/ulj0+r/aiwBoFQaiWUZ
-         p8ab0bT6P4AZkGhbOUYImnBS2xnA+UhBVweAf0scudsZEbfm9KDIBtYGKSxEjSJxPK/C
-         azd4mdlPD1YlKlZh+uSzosaq2e9l8nSiOA7hq7HMeB3geQUzzWqZz4vLdRi4rk0MC3tZ
-         9lKZtSaF6Hj5BuvnEwNYCeaSQaQo/tzDXsnC7OAls6qliC5opy/uePDizlXYCggcoj4A
-         tXa/gaq+QXIMaV52SWRGrTtw+Zaqu3L9FXXUwLEyUdQXXJt27c/Pk6AJrbYJEXXS06m2
-         uGHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWvkmPDqO02I8gxsS86JgEVCTYPZ+UTYRYKLjs/z3OHe3Ux/04jzA9hWRzk2a8GYxjLwmSeHEULwynwOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSGlLgrKl3Kdaot5KqR81tsXs/Ep0EIRfhMWly+9uUPh2XBAa8
-	H/2iBEVuGPksHzvAJlvxb9TC7Kh/DZ9JZJsLWRxI/9pqWkcDK0+4zMuFH3oBpjY=
-X-Google-Smtp-Source: AGHT+IGeGSva1dCGKJK0ItMljEFaN9RGTBSz4M7spLmPszck8GeOtwhoBXXlA6N5i6PY8nRM5qgSIQ==
-X-Received: by 2002:a05:600c:3b08:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-43161687de8mr86397695e9.23.1729504662459;
-        Mon, 21 Oct 2024 02:57:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37b35sm3926555f8f.2.2024.10.21.02.57.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 02:57:42 -0700 (PDT)
-Message-ID: <3731a3d4-6435-4594-b97f-45c10d9cfcfd@linaro.org>
-Date: Mon, 21 Oct 2024 11:57:37 +0200
+	s=arc-20240116; t=1729504689; c=relaxed/simple;
+	bh=EVL4wUmYrTJEyHGsQ/62BPsBtlNsOUVSRfFQ61ReZ6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSXm+vi0+rdywHEDrMZCCq6V35gfpxLFBVyhlLa9Pa4fI5nAlsvYvjpvLxYeCM/+OD0vs+GNYOYdy2Hp8iHMInCMEW4VbBFhvkPo+LURXQDAqFkXEDkO+RZQTzEydxy571qbSa7iXlt3srKO4vcDVrETsOdxGVdqdNsdm1J8tPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G4O7qF5J; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XX9jH57xszXs9;
+	Mon, 21 Oct 2024 11:57:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1729504675;
+	bh=oQqDcNvi3dV/GKQZTqzoU9Gy+j6RUcYEDosffosB1cE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G4O7qF5Jlq8MVI5T7TPwo0OXw/iZ+oNwBlrtKbywh/q/ICD+2YW2GyClZm/L4XJFD
+	 JirGE6PckwP2NdFR8Wh4hcrBRrMwUqn2ESk2UpSyHYxxB2zcRTl6D1AmdJR5j4L5Zm
+	 4GNjbCAHym9OHgf4mKwFXzNhtpdBpc3CyQhu/4Qk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XX9jG0KMHzcSf;
+	Mon, 21 Oct 2024 11:57:53 +0200 (CEST)
+Date: Mon, 21 Oct 2024 11:57:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [RFC PATCH v1 4/7] landlock: Add UDP send+recv access control
+Message-ID: <20241021.Abohbuph8eet@digikod.net>
+References: <20240916122230.114800-1-matthieu@buffet.re>
+ <20240916122230.114800-5-matthieu@buffet.re>
+ <20240921.ohCheQuoh1eu@digikod.net>
+ <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 5/6] drm/msm/dp: migrate the ycbcr_420_allowed to
- drm_bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <20241019-bridge-yuv420-v1-5-d74efac9e4e6@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241019-bridge-yuv420-v1-5-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On 18/10/2024 23:49, Dmitry Baryshkov wrote:
-> Instead of forcing the ycbcr_420_allowed flag to be set on the created
-> drm_connector, set it on the drm_bridge instance and allow
-> drm_bridge_connecgtor to propagate it to the drm_connector.
+On Sat, Oct 19, 2024 at 02:47:48PM +0200, Matthieu Buffet wrote:
+> Hi Mickaël,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_display.c |  4 ++--
->   drivers/gpu/drm/msm/dp/dp_drm.c     | 10 ++++------
->   drivers/gpu/drm/msm/dp/dp_drm.h     |  7 ++++---
->   3 files changed, 10 insertions(+), 11 deletions(-)
+> I've almost finished merging your review (thanks for all the feedback), with
+> the exception of this main point. Just making sure we agree on the
+> limitations before I merge this into a new version.
 > 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index e1228fb093ee..0ddd8abca499 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -1467,14 +1467,14 @@ int msm_dp_modeset_init(struct msm_dp *dp_display, struct drm_device *dev,
->   
->   	dp_priv = container_of(dp_display, struct dp_display_private, dp_display);
->   
-> -	ret = dp_bridge_init(dp_display, dev, encoder);
-> +	ret = dp_bridge_init(dp_display, dev, encoder, yuv_supported);
->   	if (ret) {
->   		DRM_DEV_ERROR(dev->dev,
->   			"failed to create dp bridge: %d\n", ret);
->   		return ret;
->   	}
->   
-> -	dp_display->connector = dp_drm_connector_init(dp_display, encoder, yuv_supported);
-> +	dp_display->connector = dp_drm_connector_init(dp_display, encoder);
->   	if (IS_ERR(dp_display->connector)) {
->   		ret = PTR_ERR(dp_display->connector);
->   		DRM_DEV_ERROR(dev->dev,
-> diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
-> index 1b9be5bd97f1..7eb1621f9e7f 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_drm.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_drm.c
-> @@ -289,7 +289,7 @@ static const struct drm_bridge_funcs edp_bridge_ops = {
->   };
->   
->   int dp_bridge_init(struct msm_dp *dp_display, struct drm_device *dev,
-> -			struct drm_encoder *encoder)
-> +		   struct drm_encoder *encoder, bool yuv_supported)
->   {
->   	int rc;
->   	struct msm_dp_bridge *dp_bridge;
-> @@ -304,6 +304,7 @@ int dp_bridge_init(struct msm_dp *dp_display, struct drm_device *dev,
->   	bridge = &dp_bridge->bridge;
->   	bridge->funcs = dp_display->is_edp ? &edp_bridge_ops : &dp_bridge_ops;
->   	bridge->type = dp_display->connector_type;
-> +	bridge->ycbcr_420_allowed = yuv_supported;
->   
->   	/*
->   	 * Many ops only make sense for DP. Why?
-> @@ -351,8 +352,8 @@ int dp_bridge_init(struct msm_dp *dp_display, struct drm_device *dev,
->   }
->   
->   /* connector initialization */
-> -struct drm_connector *dp_drm_connector_init(struct msm_dp *dp_display, struct drm_encoder *encoder,
-> -					    bool yuv_supported)
-> +struct drm_connector *dp_drm_connector_init(struct msm_dp *dp_display,
-> +					    struct drm_encoder *encoder)
->   {
->   	struct drm_connector *connector = NULL;
->   
-> @@ -363,9 +364,6 @@ struct drm_connector *dp_drm_connector_init(struct msm_dp *dp_display, struct dr
->   	if (!dp_display->is_edp)
->   		drm_connector_attach_dp_subconnector_property(connector);
->   
-> -	if (yuv_supported)
-> -		connector->ycbcr_420_allowed = true;
-> -
->   	drm_connector_attach_encoder(connector, encoder);
->   
->   	return connector;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_drm.h b/drivers/gpu/drm/msm/dp/dp_drm.h
-> index 45e57ac25a4d..ae632fcc407c 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_drm.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_drm.h
-> @@ -19,10 +19,11 @@ struct msm_dp_bridge {
->   
->   #define to_dp_bridge(x)     container_of((x), struct msm_dp_bridge, bridge)
->   
-> -struct drm_connector *dp_drm_connector_init(struct msm_dp *dp_display, struct drm_encoder *encoder,
-> -					    bool yuv_supported);
-> +struct drm_connector *dp_drm_connector_init(struct msm_dp *dp_display,
-> +					    struct drm_encoder *encoder);
->   int dp_bridge_init(struct msm_dp *dp_display, struct drm_device *dev,
-> -			struct drm_encoder *encoder);
-> +		   struct drm_encoder *encoder,
-> +		   bool yuv_supported);
->   
->   void dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
->   			     struct drm_bridge_state *old_bridge_state);
+> On 9/21/2024 12:23 PM, Mickaël Salaün wrote:
+> >> +	/*
+> >> +	 * If there is a more specific address in the message, it will take
+> >> +	 * precedence over any connect()ed address. Base our access check on
+> it.
+> >> +	 */
+> >> +	if (address) {
+> >> +		const bool in_udpv6_sendmsg =
+> >> +			(sock->sk->sk_prot == &udpv6_prot);
+> >> +
+> >> +		err = get_addr_port(address, msg->msg_namelen, in_udpv6_sendmsg,
+> >> +				    &port);
+> >> +		if (err != 0)
+> >> +			return err;
+> >> +
+> >> +		/*
+> >> +		 * In `udpv6_sendmsg`, AF_UNSPEC is interpreted as "no address".
+> >> +		 * In that case, the call above will succeed but without
+> >> +		 * returning a port.
+> >> +		 */
+> >> +		if (in_udpv6_sendmsg && address->sa_family == AF_UNSPEC)
+> >> +			address = NULL;
+> >> +	}
+> >> +
+> >> +	/*
+> >> +	 * Without a message-specific destination address, the socket must be
+> >> +	 * connect()ed to an address, base our access check on that one.
+> >> +	 */
+> >> +	if (!address) {
+> >
+> > If the address is not specified, I think we should just allow the
+> > request and let the network stack handle the rest.  The advantage of
+> > this approach would be that if the socket was previously allowed to be
+> > connected, the check is only done once and they will be almost no
+> > performance impact when calling sendto/write/recvfrom/read on this
+> > "connected" socket.
+> > [...]
+> > What about something like this (with the appropriate comments)?
+> >
+> > if (!address)
+> > 	return 0;
+> >
+> > if (address->sa_family == AF_UNSPEC && sock->sk->sk_prot ==
+> >     &udpv6_prot)
+> > 	return 0;
+> >
+> > err = get_addr_port(address, msg->msg_namelen, &port);
+> > if (err)
+> > 	return err;
+> >
+> > return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
 > 
+> If I understand correctly, you would like the semantics of
+> LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect(), and sendmsg() without
+> explicit address} and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with
+> explicit address}.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Not exactly, here is the rewording with my thinking:
+...the semantics of LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect()}
+and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with explicit
+address}.
+
+sendmsg() without explicit address should always be allowed,
+whatever the Landlock policy (similarly as write(2) on a write-opened
+file descriptor).  In a nutshell, sendmsg(2) without explicit address
+should be handled the same as a write(2) call on a connected socket (I
+guess the kernel handles such action on connected datagram sockets the
+same as on connected stream sockets).
+
+I think it is more important to first have a simple model that
+enables developers to initialize a socket with connect(2) and then
+sandbox the process to only be able to use this socket to communicate
+with the configured peer, similar to what can be enforced with TCP
+sockets.
+
+sendmsg(2) can do two different thinks: (optionally) configure a
+peer/port and write data. recvmsg(2) only reads data.  We should first
+start by controlling exchange from/to peers, and maybe later controlling
+data flow.
+
+An alternative approach would be to not add a sendmsg specific access
+right but only LANDLOCK_ACCESS_NET_CONNECT_UDP because connect should
+be a superset of sendmsg.  This would make it impossible to specifically
+deny (shared) socket's configuration change though.  I think it's
+better to stick to the kernel semantic with 3 dedicated access rights,
+and it should make more sense for users too.  What do you think?
+
+
+> This makes it impossible to allow a landlocked server to
+> connect() in order to receive traffic only from a specific client while at
+> the same time preventing it from sending traffic (that is, a receive-only
+> client-specific socket ala Cloudflare's "established-over-unconnected"[1]).
+
+My proposal would indeed makes this use case impossible to enforce only
+with the proposed access rights, and we would need to restrict write(2)
+too BTW.  However, I think it would make sense to add complementary
+access rights to restrict reading or writing to a socket.  I guess this
+semantic would be useful for non-UDP protocols too with
+LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP} access rights set at
+socket-creation time and stored in the socket object (instead of looking
+at a Landlock domain for each read/write call, similarly to the truncate
+and ioctl_dev access rights).  What do you think?
+
+I wonder what happens if we call recvmsg(2) on a newly created (and then
+unconfigured) socket.  Without prior call to bind(2) I would guess that
+the recvmsg(2) call fail but I'm not so sure with a datagram socket.  We
+should check that.
+
+> 
+> >> +	err = check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
+> >> +				port_bigendian);
+> >> +	if (err != -EACCES)
+> >> +		return err;
+> >
+> > We should be able to follow the same policy for "connected" sockets.
+> 
+> Again if I understand correctly, to fully merge semantics of
+> LANDLOCK_ACCESS_NET_BIND_UDP and LANDLOCK_ACCESS_NET_RECVMSG_UDP (since if
+> the access check is performed at bind() time, there is nothing to check in
+> recvmsg() anymore).
+
+Correct (I was a bit confused with recvmsg, but it doesn't set the
+receiving address/port).
+
+> Similarly, this makes it impossible to allow a send-only
+> program to bind() to set a source port without allowing it to recvmsg()
+> traffic.
+
+Correct with the current access rights.  We would need a
+LANDLOCK_ACCESS_NET_READ_UDP.
+
+> 
+> I do not know of real-life programs that might want to sandbox their network
+> workers *that* precisely, nor how much we want to be future-proof and
+> support it. If not, I can merge your feedback and:
+> - remove LANDLOCK_ACCESS_NET_RECVMSG_UDP and the recvmsg() hook;
+
+Yes
+
+> - change the doc for LANDLOCK_ACCESS_NET_SENDMSG_UDP to mention that it is
+> not required if the app uses connect() and then sendmsg() without explicit
+> addresses;
+
+Yes
+
+> - change the doc for LANDLOCK_ACCESS_NET_CONNECT_UDP to mention that it
+> grants the right to send traffic (and similarly for
+> LANDLOCK_ACCESS_NET_BIND_UDP to receive traffic), and the reason
+
+The documentation should highlight that these flags grants the right to
+configure a socket, but indeed, no restrictions are enforced on reading
+or writing on sockets.
+
+> (performance, though I haven't managed to get a benchmark);
+> - rename to LANDLOCK_ACCESS_NET_CONNECT_SENDMSG_UDP,
+> LANDLOCK_ACCESS_NET_SENDMSG_UDP, and LANDLOCK_ACCESS_NET_BIND_RECVMSG_UDP,
+> what do you think?
+
+The first and third rights are confusing.  I prefer simple names such as
+LANDLOCK_ACCESS_NET_CONNECT_UDP and LANDLOCK_ACCESS_NET_BIND_UDP.
+Moreover, LANDLOCK_ACCESS_NET_CONNECT_UDP would not impact sendmsg(2)
+calls at all.
+
+> 
+> If merging semantics is a problem, I mentioned socket tagging in [2] to
+> reduce the performance impact (e.g. tag whether it can send traffic at
+> connect() time, and tag whether it can recv at bind() time). So another
+> option could be to keep precise semantics and explore that?
+
+This tagging mechanism looks like a good idea to implement
+LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP}, but that should be a
+future separate patch series.
+
+> 
+> >> +	/*
+> >> +	 * Slow path: socket is bound to an ephemeral port. Need a second check
+> >> +	 * on port 0 with different semantics ("any ephemeral port").
+> >> +	 */
+> >> +	inet_sk_get_local_port_range(sk, &ephemeral_low, &ephemeral_high);
+> >
+> > Is it to handle recvmsg(with port 0)?
+> 
+> If you mean recvmsg() on a socket that was previously bind(0), yep. This
+> second rule lookup added a different meaning to rules on port 0. Without
+> this, one would not be able to allow "all ephemeral ports", making the
+> feature unusable for servers that bind on ephemeral ports. All this
+> disappears if we remove LANDLOCK_ACCESS_NET_RECVMSG_UDP.
+
+OK
+
+> 
+> Matthieu
+> 
+> [1] https://blog.cloudflare.com/everything-you-ever-wanted-to-know-about-udp-sockets-but-were-afraid-to-ask-part-1/
+> [2] https://github.com/landlock-lsm/linux/issues/10#issuecomment-2267871144
+> 
 
