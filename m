@@ -1,277 +1,638 @@
-Return-Path: <linux-kernel+bounces-373598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAC39A5944
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:36:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CA89A5947
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FBE282BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82737281C83
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBC6193435;
-	Mon, 21 Oct 2024 03:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFB31CEEBB;
+	Mon, 21 Oct 2024 03:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YWl+gGH4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="akgQRJGI"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355D517C200;
-	Mon, 21 Oct 2024 03:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729481773; cv=fail; b=dflk+o12zUEuIHvtMuLZS8lhdmunH4p8fdvvC97MwQsAM0obOSvNvRuQ5v/Jqj3m5MOudsYj9uNq92Guk1DFEBwhc3PjMjUzGeACGVRDeuKhlY3cRh2jkPKda3zwsIiILKY/8raMo3H9Ff74CYhcv1gyIfx4izZPUrykNoxuvbQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729481773; c=relaxed/simple;
-	bh=12iiOS9l8E63drrFckNdxAvB1VmWbLP7Tu8C2Mb+JjE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uDy8rkYGOrEn4b7qGPxr10V/GIwQbjwTksf4urFWl1O/LHIAIh9jYGRa4DHCki2eMUE5e42pTJ7Ap070TZB1L/g3u7NeL55ktD7v/171bH/tC4Z2iFxYaMCvhOhEOFHZIYAc82flKuyhwa2qqhMgRT6aEwM6h9UjxvaIsPeNCaQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YWl+gGH4; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729481769; x=1761017769;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=12iiOS9l8E63drrFckNdxAvB1VmWbLP7Tu8C2Mb+JjE=;
-  b=YWl+gGH41ZvpMPS9Fw+CNPfhKZrdb41m95aZpBUrsPnB9M+lFE7fejd1
-   RAK1Aqhikyxy5/UaGUYHNWmTKomnqaof8kud2ft8M0yfH5+LZLjOPBaMv
-   yz/ABvolFsLKXc1F5ekX+RvmcTsCqnjnATGAO48Lf6GCMffyWEM9RR7bP
-   j2VVOMC1/7+lppaBTRpBLHbJBAwRAX/mQ3Aoh7uih+N9GTGl3N2cs/DBL
-   kIEhlziyMT9Kiob0Vh6D3W8gBJFVe+zj9OdsyqKKlxlyQ7U4uBV7F45/S
-   dGrsTnqRxTLh+TxB+4GqZcAaS3iVs5jXoD7yYKxEb7EQ1aSwLVhb014qQ
-   g==;
-X-CSE-ConnectionGUID: VtwOND4kQB++ML6q8Yuclg==
-X-CSE-MsgGUID: C6mRLlNySsq6/G0dEfEwTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28899697"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28899697"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 20:36:08 -0700
-X-CSE-ConnectionGUID: aPqKJAu6RNq0FSohUIA1gA==
-X-CSE-MsgGUID: xL76iRKGTh+6qSJKqRW8+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
-   d="scan'208";a="78996017"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Oct 2024 20:36:08 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 20 Oct 2024 20:36:07 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 20 Oct 2024 20:36:07 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.42) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 20 Oct 2024 20:36:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JW9BjFWN5g+ByV80jzRl1CYBzW3ftebZ7FrbPSp4020MyFhNos5wZ7d3DgNXv4KE2h09U3rnfS7bmUemycJfHloiz4i13FFWSP7DBx172DOQxOaqQ13WJK8BS4n9c0EjjPzN7pDVKFzLS0+qx3njvHPANPfHOBjgYq4i9BHqLoXm9F1L7KYNW0RriSeTZACB8C1VYtK7boEvNNcjaXkS1U5IL3Gyp5ndwkFeZpvbuS1AmuUuXXP+UG3fLF+gjsl9eO238XM8M26Fb9okcltZ6GNH23XzzHYXM+qJ8MunS3O6ZcY6UGFFLNvyXa/MAvCOK7bU8gXRC7cWe0hR8egu4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LlvATILJPrUMFIR6Uwy+Or3+4B5e/hzaYDLERxWuIjA=;
- b=hqiDZ7YfXCCcNVeqCRmK7fOQxiLLZyqHPW80uU6nhrfmNfEAryLXDfpIle396CGgIdvWOiJ0h1qH2H8lFboxgVB7+sbevaPpZduX03nhHYQ2uQuYx8DmNTKQTRBJCL765EpRQHJHGKO3w4hIATizJrwrHPuAQpNHwQka9wg5XGS6rCfgJaDkD4eV4TqBNO58oCtTgMdMCw+SR/f6dZ0tGHBRa6N14cvVNiybT2JCl8KRLgnh5Q/tptvT1h7fApkzy9lZZoG/meTNfcwGfwOjaORHjdAEhtguOT3zSrKC0XjoZSA63r2M1Dg5HNueJ3+t70jOGmbF7ChIGISVjFG25w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by MW3PR11MB4524.namprd11.prod.outlook.com (2603:10b6:303:2c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 03:36:05 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 03:36:05 +0000
-Date: Sun, 20 Oct 2024 22:35:59 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, Alison Schofield
-	<alison.schofield@intel.com>, Li Zhijian <lizhijian@fujitsu.com>
-CC: <linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
-	"Jonathan Cameron" <jonathan.cameron@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, "Dan Williams" <dan.j.williams@intel.com>,
-	<linux-kernel@vger.kernel.org>, "Huang, Ying" <ying.huang@intel.com>
-Subject: Re: [PATCH] testing/cxl: Fix abused pci_bus_read_config_word() on
- platform device
-Message-ID: <6715cc1fab7ec_747d629455@iweiny-mobl.notmuch>
-References: <20241016015213.900985-1-lizhijian@fujitsu.com>
- <ZxGqYPGNaVWoLuP6@aschofie-mobl2.lan>
- <6711b7c0c0b53_3ee2294a6@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6711b7c0c0b53_3ee2294a6@dwillia2-xfh.jf.intel.com.notmuch>
-X-ClientProxiedBy: MW4PR03CA0313.namprd03.prod.outlook.com
- (2603:10b6:303:dd::18) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D519C2B9A5
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729481931; cv=none; b=jpWi7U1GK/q69PYTCEx9p3B/DYZshgp9+ayGQx9qv9tqvDYCZImTgmXm6QoTJl6OSo6e4hHIFBF9eMJacapTBPOl8mk9fOCMdP2Jt52qU+XvRpUT8NxQfRIDBTE+z7/j95THcujWnzD48AsTCKgqNMwY0S+l/4imCVVoVVWhst0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729481931; c=relaxed/simple;
+	bh=18c2itREAox/bjgDhkiJjXnayMdBR3IFNHlrwV+BdeU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tjEAd3Voz6rri5P+PRZrYIvX+dTJOI4cln2t6ieqRRMttegdTYKkP8VCkmGMrSrKihFgp6j1EhvmDTVc1Lc5nW7t+DgGVePpJ10nXeX3zpsJOPRURYZuwW32/6wuBPjBOYEapWz7XeRHrYBc6sk/hQDaolmXhF8yV5ll8St8PzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=akgQRJGI; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e7e73740so3512836e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 20:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729481927; x=1730086727; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=klkHwPzgSw6t5yEE5IZ638Fn43afTE8vUiIjP6cAYEo=;
+        b=akgQRJGIbbCgCUluZuZbDRP/QHMfjrzjno6oYcCYkFsQnwsBb1h0F1/k7jFv6UOusv
+         ogS7lU4EoW3Br/J4Ea84jmgNY1ADfFGISpIaKtpWnKhNfIYB1dj77oukGvG67BRDrh2Q
+         CJqL9/WJzD9vVPEz0dpuYwBQiGEUZCTEauw4E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729481927; x=1730086727;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=klkHwPzgSw6t5yEE5IZ638Fn43afTE8vUiIjP6cAYEo=;
+        b=uTwhaJFCxFvVHLhWajO/rrDxA/Niv9hPIcr6nhC/gE4EzzhqMv+YPy842Gdvftzgxm
+         QoHjBeYgWTmIIendYVk29mdU7Fp3y0j3/9dpj9wjdPzgDspwhHbtKBjfTysRNGOt3uLp
+         yomI6dNBhkKIO6jif5c6DwRgli0ZsSxwMX8X4M+kv/N+XadZvanCWXBoeQAtHY2/j9YQ
+         5QotKax7xXSUhQ1H598kIfCaRjs/Ub8wOWZKF+KlMTTcx8rHML2pHGp6cNCwIlWD+0+D
+         8T9sbtFOZh/X/fwv0HKqBM+qYqrhzlFkM+4H836SqX8rD74N+BfUKDGXq6x4I/69f4US
+         M4ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWwCrw0R3KTbRUgdA8uvSyWmH5wsSD81H8DXYq7+ERMK6e6W3pPQiHhMUenMN9BaOD3jYd9sB4p7Cx4uBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmdPZoiWdgoWpI97HuKQzkO6tY5s6bJxeKWq1eq75NvYsd0pSR
+	iLcxC+Z952pCplyIqPPsBK0in0kmA4ey95t+ppxv95MIc8WOWRIFSi8E2JJITYKFQVN2VPkgVT7
+	ZzdnFLSKaxg4ezzwHWOm8/y46if8u1MKTtNPx
+X-Google-Smtp-Source: AGHT+IEkDqCuOIw2iQj9aTxF7tpeJSNOBSsh0t3TUASuGO+kYneRUhHxWoM0TgJRlDliv+ZBCDpT4FSybC5t4Sc4bS8=
+X-Received: by 2002:a05:6512:130b:b0:539:edc9:e81b with SMTP id
+ 2adb3069b0e04-53a15229cd2mr4564190e87.28.1729481926615; Sun, 20 Oct 2024
+ 20:38:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MW3PR11MB4524:EE_
-X-MS-Office365-Filtering-Correlation-Id: b522c668-5d31-483e-506d-08dcf1817e49
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xMbWm2+1IAJNP9q52vtaE5Gj6gbnNDsAJjOmL1ygO71zkW7tkqlF4eNpf0K4?=
- =?us-ascii?Q?X7OfCqDd7LlXdn9YQ8VGkUmsjMFwhUNqS4d5Y++lDiQhgWzd+5MSNjhs/u6Q?=
- =?us-ascii?Q?8GgwtQmHqagcWg9Wih5yqSGcS6iubZ8aDVmqQQhXo1mD2F9u7ZIdhpQLDT7y?=
- =?us-ascii?Q?Yi35ahmTc3cKmre9IIEXwWQs/eRlgafG/2OxOWmOhVvzP82AcEJAQKFPyOYZ?=
- =?us-ascii?Q?A+LvhkNCImEa7XOP0q+onJ1Tc9faDXvkX5mcTl3g39QgIBZNH1z5lTPT+CWq?=
- =?us-ascii?Q?vM9QWX8fPKChGL/4D42miGZqaUwfyS8lczOjxiSOymcZEPkBcmbSfpbGMlXK?=
- =?us-ascii?Q?Va6/eI7kj6LLxDI1meFyZCMP9sP8Ad05wxHomYu3+N5t+PawJtVeI+KgAqAn?=
- =?us-ascii?Q?ZnfSmQnmirED/1sdSDUgYT2qO6KY+QkvYHwwal+oQqjujlsbR3be2q3c0qqO?=
- =?us-ascii?Q?c2t4Gxx2lShVuOxNu12PLA7k5nR78qfgYkAgZ+xgjkeZYXMgvqdESKqeAHSo?=
- =?us-ascii?Q?1fPBxHJF6BSGfHkeNZu4C7eubh8MbP0S782J/wSILOaZYEcJnTaExORat+c7?=
- =?us-ascii?Q?qqF4hcsG1teI/SyP2+X6acWaAMWUs+SRrzjXNtlY++VnnbrAaDJ677HDFu/z?=
- =?us-ascii?Q?Ehnjw9MKql2RsPRQSMoctTOWOd5mHq8mw62AnE0T4W42AdoMVgm8k6elxYeI?=
- =?us-ascii?Q?gJzcYRiKF1unePHm1rVECkSvmZl82qRujLyIuJRKi7iSxV/um3hBqxo0bXxZ?=
- =?us-ascii?Q?YXs0vbYm+pL1e/5lrKXRxwcFfSPq7TRzIipLyiEH89NRjco01JMYV1OhAIsP?=
- =?us-ascii?Q?t1zp/xf6LHMqGB2drUk0fLiIq4EpqXGm8LUOsZnTffjXihG8G76uhDkxZK6M?=
- =?us-ascii?Q?AJ8ICTKZQhPYJjFgf5aDkmLktvk4S96PcaFwORluOUKmIEaPYo+jqjCl+4Ik?=
- =?us-ascii?Q?rLiCe08E4Rfxb0CrO3xsOGHkA4UyWYlSiksWvp5iZgHy3CUY/DF3OQ97qDWy?=
- =?us-ascii?Q?ow0ySdPhGXQq7ZOF44FqUgRUiGwQbOFVi+3Ts4uPaMXgcVP++W0UPXS+10Bs?=
- =?us-ascii?Q?5Q4oBPozyOhRuu7YTA6Td0QMkdL7/dXQPbM1tFUSEsi8zucR/wm6nm1BQtZ6?=
- =?us-ascii?Q?3yjL70PSA7KVJiY+DyxxgFXKIbR9bgZxC7XRankLMNKK0HYAUaFI067xcsD7?=
- =?us-ascii?Q?RKFtaKP9CPj88RsRQDZjTRyeW9KgFi5opzbKDbKmxq2XWzk9jwbfZnbYEbK4?=
- =?us-ascii?Q?zadAUTpn3aSJwbTLrQLfsRaCcF7tSUhyCXZpwIcrnX7Qan1YPBEbfTCVk4DL?=
- =?us-ascii?Q?Soc9ZcbPGY+FoJLhRIvtNXgl?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1GwUARP+UsHW5M9Ews+09GYFQrL5lP8DKFSxt4KhI71UyzpeNLYFTk4yIHhc?=
- =?us-ascii?Q?ngakbTBLFe1UIOlyZ4C/GTW2MJRxdOQwiQX4U1KDKSDusVheh3aAvohbyJ9h?=
- =?us-ascii?Q?WSZbS/6Uz14ThDcA+dnVUkcPm7ZEDHao9u6E4Zb7dWYxka8sPnTgiaLqnazH?=
- =?us-ascii?Q?V1nfFf4HBheO7cGMuS0RIGN/MaI6PaQoKCB99i21l1nQJ79XM70lAcfM7kvi?=
- =?us-ascii?Q?Xr/PWvpQ7aRq11SSGfnSBeXhnsJxOrnvGW4C7a19ffcE/EHXJoFPESCxmaVn?=
- =?us-ascii?Q?pD4SJU9pRwrCy49TOXFpWzd48LfuUk3T0XJomOK5yZLZqSKkVXp+bKAsoO5l?=
- =?us-ascii?Q?yG/l04xx8fODG4+ks4VKV/aoCSv3tHuqLy5hbx3hzsCK8qGo9Ivi/bXnCic1?=
- =?us-ascii?Q?DZPni4DkzdvVdVzpdTSyu9tZPw5a5Pp8GC+JlB9rb8y+oBRTqMWPyb6XwWxe?=
- =?us-ascii?Q?5KwTd4EAlPvc7ZmWrAaAzi1MxlKQgXDCuY/coeUtPltIB6Z07D2GTcCC4C+J?=
- =?us-ascii?Q?ghDIdhE+2+2RrsJxR22ARMVVwPIceOZ6lgW+lOApCs81tW6iGdh2e8rV4HH3?=
- =?us-ascii?Q?kEGaGfyNvdpQKobXyObQRUvUHyUTYTjQWAcOqu9ZA9RqjHJZ4zxjjHyhfaCV?=
- =?us-ascii?Q?Q2jEQ0bkX9iSRPGdsg6MNSgjyzktXtVBwPblabHbkD8fpLJNlUBr+eA0oECe?=
- =?us-ascii?Q?371bBwwrgqnQIsVMVykAtdsZbXNMe0WZCGaThIAiuXAVD/eBeg61xpJUhr3U?=
- =?us-ascii?Q?u8NH+9owcYKWD5dqgsbZgd/YAJ0tcrCppxLZjb6DEzXknf/njD5BPmvoCJfV?=
- =?us-ascii?Q?4VmGMt5j/PnleVW4H+PedlvllWkrzclaKLvQtz7ySk0p0odgjOzeqW5ATQFn?=
- =?us-ascii?Q?jjnIrT2epeuIXLCynf734x3TPMr3J4SOKy+J0iJ/JGw/FMzXJY5pCSAwpZDF?=
- =?us-ascii?Q?GJdDBkol219b5RXxPKiytbh9zmi2ohAe3j2badFWcB25yq5mxxrTQguHRRXj?=
- =?us-ascii?Q?EYuTmCSWSj8XUYWIBCqD/aDjvNeEEZ37vnHJ6S3Susm84J14dNAECErJFLj4?=
- =?us-ascii?Q?8xImnrMwz3p/JrOu53IqJrJQE0DacotQMSDjMqxqoE7pLkdtCqtcZdrajcSu?=
- =?us-ascii?Q?JTjUtdBfifTub9wgf7jNKpiEMnjvpgaScvEltJ8nHNHtdzHv5og82ykzDclp?=
- =?us-ascii?Q?haTupE9gUHGwvQvvOjl0urfU8lyTbNyNbpZtZF0CRW2OH1Opct8qg4zrIxl8?=
- =?us-ascii?Q?sy6MsmFTQvIVVQ7uh8r5f37KPr/THCOs6yjIkSDAbuuDHccyqMV3RsH5j+Qm?=
- =?us-ascii?Q?lUOBGFN7WREFmqAabOxQsTzhs7q8khyaT4jmlw2KzhROkzP/iS6JNwLs1not?=
- =?us-ascii?Q?XreySwiTYzx/KRRhW8e4DiIChKFQvxmojE7KyIxbfzpIDpxzLiPuJ3WWH5eo?=
- =?us-ascii?Q?T66vqbmsZP4A+B2xF/OL8Riz7vErkijWQXRO7VRjTuJ7f7RfZ2cPlcKlAQ8Y?=
- =?us-ascii?Q?iYFS1w8X7dlpUEp7tKyeotapEW4u49AFX8Ynp2OSSmQfq0ANNCgscmycF/ZP?=
- =?us-ascii?Q?CgeEqHZ4yl003SYZTwzRmesDv4Zv6IalybyK+Iku?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b522c668-5d31-483e-506d-08dcf1817e49
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 03:36:05.4459
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5v27w2cNsnSROcpLfPcJB5WChDDDaC1jXvVnNXtn1dGBwdJcDz0M1vM6kUc8PgCvo8hLShdEc2Fsg76JnboUMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4524
-X-OriginatorOrg: intel.com
+References: <20241018203058.3641959-1-saikrishnag@marvell.com> <20241018203058.3641959-5-saikrishnag@marvell.com>
+In-Reply-To: <20241018203058.3641959-5-saikrishnag@marvell.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Mon, 21 Oct 2024 09:08:35 +0530
+Message-ID: <CAH-L+nNF_pheu9+HtNNAfP0WFQmJpeMeQueYj7JCrOCk9bpPcw@mail.gmail.com>
+Subject: Re: [net-next PATCH 4/6] octeontx2-pf: CN20K mbox REQ/ACK
+ implementation for NIC PF
+To: Sai Krishna <saikrishnag@marvell.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sgoutham@marvell.com, gakula@marvell.com, lcherian@marvell.com, 
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000ea47680624f463a5"
 
-Dan Williams wrote:
-> Alison Schofield wrote:
-> > On Wed, Oct 16, 2024 at 09:52:13AM +0800, Li Zhijian wrote:
-> > > The cxl_region_shared_upstream_bandwidth_update() in clx_core works on
-> > > PCI/PCIe CXL device only while cxl_test was implemeneted by platform
-> > > device.
-> > > 
-> > > Mock a cxl_region_shared_upstream_bandwidth_update() which does nothing
-> > > for cxl_core so that the cxl_test goes well.
-> > > 
-> > > Abuse cxl_region_shared_upstream_bandwidth_update() on platform device
-> > > will cause a kernel panic with calltrace:
-> > 
-> > snip
-> > 
-> > > ---
-> > >  tools/testing/cxl/Kbuild      | 2 ++
-> > >  tools/testing/cxl/mock_cdat.c | 8 ++++++++
-> > >  2 files changed, 10 insertions(+)
-> > >  create mode 100644 tools/testing/cxl/mock_cdat.c
-> > > 
-> > > diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-> > > index b1256fee3567..ed9f50dee3f5 100644
-> > > --- a/tools/testing/cxl/Kbuild
-> > > +++ b/tools/testing/cxl/Kbuild
-> > > @@ -15,6 +15,7 @@ ldflags-y += --wrap=devm_cxl_add_rch_dport
-> > >  ldflags-y += --wrap=cxl_rcd_component_reg_phys
-> > >  ldflags-y += --wrap=cxl_endpoint_parse_cdat
-> > >  ldflags-y += --wrap=cxl_dport_init_ras_reporting
-> > > +ldflags-y += --wrap=cxl_region_shared_upstream_bandwidth_update
-> > >  
-> > >  DRIVERS := ../../../drivers
-> > >  CXL_SRC := $(DRIVERS)/cxl
-> > > @@ -61,6 +62,7 @@ cxl_core-y += $(CXL_CORE_SRC)/pci.o
-> > >  cxl_core-y += $(CXL_CORE_SRC)/hdm.o
-> > >  cxl_core-y += $(CXL_CORE_SRC)/pmu.o
-> > >  cxl_core-y += $(CXL_CORE_SRC)/cdat.o
-> > > +cxl_core-y += mock_cdat.o
-> > >  cxl_core-$(CONFIG_TRACING) += $(CXL_CORE_SRC)/trace.o
-> > >  cxl_core-$(CONFIG_CXL_REGION) += $(CXL_CORE_SRC)/region.o
-> > >  cxl_core-y += config_check.o
-> > > diff --git a/tools/testing/cxl/mock_cdat.c b/tools/testing/cxl/mock_cdat.c
-> > > new file mode 100644
-> > > index 000000000000..99974153b3f6
-> > > --- /dev/null
-> > > +++ b/tools/testing/cxl/mock_cdat.c
-> > > @@ -0,0 +1,8 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/* Copyright (c) 2024 FUJITSU LIMITED. All rights reserved. */
-> > > +
-> > > +#include <cxl.h>
-> > > +
-> > > +void __wrap_cxl_region_shared_upstream_bandwidth_update(struct cxl_region *cxlr)
-> > > +{
-> > > +}
-> > 
-> > The addition of file mock_cdat.c made me wonder why this wrapper couldn't join
-> > all the other __wrap's defined in test/mock.c. I tried, as you probably did,
-> > and see the circular dependency. I mention it here in case anyone else has a
-> > way to simplify this.
-> 
-> Yeah, unfortunately symbols can only be mocked across EXPORT_SYMBOL()
-> boundaries, but since the caller of this is internal to the CXL core it
-> is not amenable to the wrap approach.
-> 
-> So, unfortunately what this patch does is break the expectation that
-> cxl_test can live alongside and not regress any production flows. I.e.
-> what this patch does is replace 
-> cxl_region_shared_upstream_bandwidth_update() for all use cases, not
-> just platform devices.
-> 
-> Compare that to tools/testing/cxl/test/mock.c which arranges for all the
-> mocked use cases to call back into the real routines in the real device
-> case.
-> 
-> Given that I think this puts the device type check back in play.
-> 
-> However, instead of checking "dev_is_platform()" check "dev_is_pci()" to
-> be consistent with all the other CXL core internal functions that exit
-> early when passed cxl_test devices.
+--000000000000ea47680624f463a5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Zhijian,
+On Sat, Oct 19, 2024 at 2:03=E2=80=AFAM Sai Krishna <saikrishnag@marvell.co=
+m> wrote:
+>
+> This implementation uses separate trigger interrupts for request,
+> response messages against using trigger message data in CN10K.
+> This patch adds support for basic mbox implementation for CN20K
+> from NIC PF side.
+>
+> Signed-off-by: Sunil Kovvuri Goutham <sgoutham@marvell.com>
+> Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
+> ---
+>  .../marvell/octeontx2/af/cn20k/struct.h       | 15 ++++
+>  .../ethernet/marvell/octeontx2/nic/Makefile   |  2 +-
+>  .../ethernet/marvell/octeontx2/nic/cn10k.c    | 18 ++++-
+>  .../ethernet/marvell/octeontx2/nic/cn10k.h    |  1 +
+>  .../ethernet/marvell/octeontx2/nic/cn20k.c    | 65 +++++++++++++++
+>  .../ethernet/marvell/octeontx2/nic/cn20k.h    | 14 ++++
+>  .../marvell/octeontx2/nic/otx2_common.h       |  5 ++
+>  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 80 +++++++++++++++----
+>  .../ethernet/marvell/octeontx2/nic/otx2_reg.h |  4 +
+>  .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  6 ++
+>  10 files changed, 188 insertions(+), 22 deletions(-)
+>  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
+>  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h b/d=
+rivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+> index fccad6e422e8..055ccc8c4689 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+> @@ -8,6 +8,21 @@
+>  #ifndef STRUCT_H
+>  #define STRUCT_H
+>
+> +/**
+> + * CN20k RVU PF MBOX Interrupt Vector Enumeration
+> + *
+> + * Vectors 0 - 3 are compatible with pre cn20k and hence
+> + * existing macros are being reused.
+> + */
+> +enum rvu_mbox_pf_int_vec_e {
+> +       RVU_MBOX_PF_INT_VEC_VFPF_MBOX0  =3D 0x4,
+> +       RVU_MBOX_PF_INT_VEC_VFPF_MBOX1  =3D 0x5,
+> +       RVU_MBOX_PF_INT_VEC_VFPF1_MBOX0 =3D 0x6,
+> +       RVU_MBOX_PF_INT_VEC_VFPF1_MBOX1 =3D 0x7,
+> +       RVU_MBOX_PF_INT_VEC_AFPF_MBOX   =3D 0x8,
+> +       RVU_MBOX_PF_INT_VEC_CNT         =3D 0x9,
+> +};
+> +
+>  /* RVU Admin function Interrupt Vector Enumeration */
+>  enum rvu_af_cn20k_int_vec_e {
+>         RVU_AF_CN20K_INT_VEC_POISON             =3D 0x0,
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile b/driver=
+s/net/ethernet/marvell/octeontx2/nic/Makefile
+> index 64a97a0a10ed..1e2e838959f4 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
+> @@ -7,7 +7,7 @@ obj-$(CONFIG_OCTEONTX2_PF) +=3D rvu_nicpf.o otx2_ptp.o
+>  obj-$(CONFIG_OCTEONTX2_VF) +=3D rvu_nicvf.o otx2_ptp.o
+>
+>  rvu_nicpf-y :=3D otx2_pf.o otx2_common.o otx2_txrx.o otx2_ethtool.o \
+> -               otx2_flows.o otx2_tc.o cn10k.o otx2_dmac_flt.o \
+> +               otx2_flows.o otx2_tc.o cn10k.o cn20k.o otx2_dmac_flt.o \
+>                 otx2_devlink.o qos_sq.o qos.o
+>  rvu_nicvf-y :=3D otx2_vf.o
+>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c b/drivers=
+/net/ethernet/marvell/octeontx2/nic/cn10k.c
+> index c1c99d7054f8..52e0e036d00b 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
+> @@ -14,6 +14,7 @@ static struct dev_hw_ops      otx2_hw_ops =3D {
+>         .sqe_flush =3D otx2_sqe_flush,
+>         .aura_freeptr =3D otx2_aura_freeptr,
+>         .refill_pool_ptrs =3D otx2_refill_pool_ptrs,
+> +       .pfaf_mbox_intr_handler =3D otx2_pfaf_mbox_intr_handler,
+>  };
+>
+>  static struct dev_hw_ops cn10k_hw_ops =3D {
+> @@ -21,8 +22,20 @@ static struct dev_hw_ops cn10k_hw_ops =3D {
+>         .sqe_flush =3D cn10k_sqe_flush,
+>         .aura_freeptr =3D cn10k_aura_freeptr,
+>         .refill_pool_ptrs =3D cn10k_refill_pool_ptrs,
+> +       .pfaf_mbox_intr_handler =3D otx2_pfaf_mbox_intr_handler,
+>  };
+>
+> +void otx2_init_hw_ops(struct otx2_nic *pfvf)
+> +{
+> +       if (!test_bit(CN10K_LMTST, &pfvf->hw.cap_flag)) {
+> +               pfvf->hw_ops =3D &otx2_hw_ops;
+> +               return;
+> +       }
+> +
+> +       pfvf->hw_ops =3D &cn10k_hw_ops;
+> +}
+> +EXPORT_SYMBOL(otx2_init_hw_ops);
+> +
+>  int cn10k_lmtst_init(struct otx2_nic *pfvf)
+>  {
+>
+> @@ -30,12 +43,9 @@ int cn10k_lmtst_init(struct otx2_nic *pfvf)
+>         struct otx2_lmt_info *lmt_info;
+>         int err, cpu;
+>
+> -       if (!test_bit(CN10K_LMTST, &pfvf->hw.cap_flag)) {
+> -               pfvf->hw_ops =3D &otx2_hw_ops;
+> +       if (!test_bit(CN10K_LMTST, &pfvf->hw.cap_flag))
+>                 return 0;
+> -       }
+>
+> -       pfvf->hw_ops =3D &cn10k_hw_ops;
+>         /* Total LMTLINES =3D num_online_cpus() * 32 (For Burst flush).*/
+>         pfvf->tot_lmt_lines =3D (num_online_cpus() * LMT_BURST_SIZE);
+>         pfvf->hw.lmt_info =3D alloc_percpu(struct otx2_lmt_info);
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.h b/drivers=
+/net/ethernet/marvell/octeontx2/nic/cn10k.h
+> index c1861f7de254..bb030816b523 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.h
+> @@ -39,4 +39,5 @@ int cn10k_alloc_leaf_profile(struct otx2_nic *pfvf, u16=
+ *leaf);
+>  int cn10k_set_ipolicer_rate(struct otx2_nic *pfvf, u16 profile,
+>                             u32 burst, u64 rate, bool pps);
+>  int cn10k_free_leaf_profile(struct otx2_nic *pfvf, u16 leaf);
+> +void otx2_init_hw_ops(struct otx2_nic *pfvf);
+>  #endif /* CN10K_H */
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c b/drivers=
+/net/ethernet/marvell/octeontx2/nic/cn20k.c
+> new file mode 100644
+> index 000000000000..44472a9f9a6e
+> --- /dev/null
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
+> @@ -0,0 +1,65 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Marvell RVU Ethernet driver
+> + *
+> + * Copyright (C) 2024 Marvell.
+> + *
+> + */
+> +
+> +#include "otx2_common.h"
+> +#include "otx2_reg.h"
+> +#include "otx2_struct.h"
+> +#include "cn10k.h"
+> +
+> +static struct dev_hw_ops cn20k_hw_ops =3D {
+> +       .pfaf_mbox_intr_handler =3D cn20k_pfaf_mbox_intr_handler,
+> +};
+> +
+> +int cn20k_init(struct otx2_nic *pfvf)
+[Kalesh] This function returns 0 unconditionally and the caller is not
+checking the return value. You can change it to return void
+> +{
+> +       pfvf->hw_ops =3D &cn20k_hw_ops;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(cn20k_init);
+> +/* CN20K mbox AF =3D> PFx irq handler */
+> +irqreturn_t cn20k_pfaf_mbox_intr_handler(int irq, void *pf_irq)
+> +{
+> +       struct otx2_nic *pf =3D (struct otx2_nic *)pf_irq;
+> +       struct mbox *mw =3D &pf->mbox;
+> +       struct otx2_mbox_dev *mdev;
+> +       struct otx2_mbox *mbox;
+> +       struct mbox_hdr *hdr;
+> +       int pf_trig_val;
+> +
+> +       pf_trig_val =3D otx2_read64(pf, RVU_PF_INT) & 0x3;
+> +
+> +       /* Clear the IRQ */
+> +       otx2_write64(pf, RVU_PF_INT, pf_trig_val);
+> +
+> +       if (pf_trig_val & BIT_ULL(0)) {
+> +               mbox =3D &mw->mbox_up;
+> +               mdev =3D &mbox->dev[0];
+> +               otx2_sync_mbox_bbuf(mbox, 0);
+> +
+> +               hdr =3D (struct mbox_hdr *)(mdev->mbase + mbox->rx_start)=
+;
+> +               if (hdr->num_msgs)
+> +                       queue_work(pf->mbox_wq, &mw->mbox_up_wrk);
+> +
+> +               trace_otx2_msg_interrupt(pf->pdev, "UP message from AF to=
+ PF",
+> +                                        BIT_ULL(0));
+> +       }
+> +
+> +       if (pf_trig_val & BIT_ULL(1)) {
+> +               mbox =3D &mw->mbox;
+> +               mdev =3D &mbox->dev[0];
+> +               otx2_sync_mbox_bbuf(mbox, 0);
+> +
+> +               hdr =3D (struct mbox_hdr *)(mdev->mbase + mbox->rx_start)=
+;
+> +               if (hdr->num_msgs)
+> +                       queue_work(pf->mbox_wq, &mw->mbox_wrk);
+> +               trace_otx2_msg_interrupt(pf->pdev, "DOWN reply from AF to=
+ PF",
+> +                                        BIT_ULL(1));
+> +       }
+> +
+> +       return IRQ_HANDLED;
+> +}
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h b/drivers=
+/net/ethernet/marvell/octeontx2/nic/cn20k.h
+> new file mode 100644
+> index 000000000000..da6210042c62
+> --- /dev/null
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Marvell RVU Ethernet driver
+> + *
+> + * Copyright (C) 2024 Marvell.
+> + *
+> + */
+> +
+> +#ifndef CN20K_H
+> +#define CN20K_H
+> +
+> +#include "otx2_common.h"
+> +
+> +int cn20k_init(struct otx2_nic *pfvf);
+> +#endif /* CN20K_H */
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/d=
+rivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> index 8e7ed3979f80..d0320192e7a5 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> @@ -30,6 +30,7 @@
+>  #include <rvu.h>
+>  #include <rvu_trace.h>
+>  #include "qos.h"
+> +#include "cn20k.h"
+>
+>  /* IPv4 flag more fragment bit */
+>  #define IPV4_FLAG_MORE                         0x20
+> @@ -53,6 +54,9 @@
+>  #define NIX_PF_PFC_PRIO_MAX                    8
+>  #endif
+>
+> +irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq);
+> +irqreturn_t cn20k_pfaf_mbox_intr_handler(int irq, void *pf_irq);
+> +
+>  enum arua_mapped_qtypes {
+>         AURA_NIX_RQ,
+>         AURA_NIX_SQ,
+> @@ -373,6 +377,7 @@ struct dev_hw_ops {
+>                              int size, int qidx);
+>         int     (*refill_pool_ptrs)(void *dev, struct otx2_cq_queue *cq);
+>         void    (*aura_freeptr)(void *dev, int aura, u64 buf);
+> +       irqreturn_t (*pfaf_mbox_intr_handler)(int irq, void *pf_irq);
+>  };
+>
+>  #define CN10K_MCS_SA_PER_SC    4
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drive=
+rs/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> index 5492dea547a1..c0cf228ac714 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> @@ -958,7 +958,7 @@ static void otx2_pfaf_mbox_up_handler(struct work_str=
+uct *work)
+>         otx2_mbox_msg_send(mbox, 0);
+>  }
+>
+> -static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
+> +irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
+>  {
+>         struct otx2_nic *pf =3D (struct otx2_nic *)pf_irq;
+>         struct mbox *mw =3D &pf->mbox;
+> @@ -1010,10 +1010,18 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(in=
+t irq, void *pf_irq)
+>
+>  static void otx2_disable_mbox_intr(struct otx2_nic *pf)
+>  {
+> -       int vector =3D pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_MBOX)=
+;
+> +       int vector;
+>
+>         /* Disable AF =3D> PF mailbox IRQ */
+> -       otx2_write64(pf, RVU_PF_INT_ENA_W1C, BIT_ULL(0));
+> +       if (!is_cn20k(pf->pdev)) {
+> +               vector =3D pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_M=
+BOX);
+> +               otx2_write64(pf, RVU_PF_INT_ENA_W1C, BIT_ULL(0));
+> +       } else {
+> +               vector =3D pci_irq_vector(pf->pdev,
+> +                                       RVU_MBOX_PF_INT_VEC_AFPF_MBOX);
+> +               otx2_write64(pf, RVU_PF_INT_ENA_W1C,
+> +                            BIT_ULL(0) | BIT_ULL(1));
+> +       }
+>         free_irq(vector, pf);
+>  }
+>
+> @@ -1025,10 +1033,24 @@ static int otx2_register_mbox_intr(struct otx2_ni=
+c *pf, bool probe_af)
+>         int err;
+>
+>         /* Register mailbox interrupt handler */
+> -       irq_name =3D &hw->irq_name[RVU_PF_INT_VEC_AFPF_MBOX * NAME_SIZE];
+> -       snprintf(irq_name, NAME_SIZE, "RVUPFAF Mbox");
+> -       err =3D request_irq(pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_=
+MBOX),
+> -                         otx2_pfaf_mbox_intr_handler, 0, irq_name, pf);
+> +       if (!is_cn20k(pf->pdev)) {
+> +               irq_name =3D &hw->irq_name[RVU_PF_INT_VEC_AFPF_MBOX * NAM=
+E_SIZE];
+> +               snprintf(irq_name, NAME_SIZE, "RVUPF%d AFPF Mbox",
+> +                        rvu_get_pf(pf->pcifunc));
+> +               err =3D request_irq(pci_irq_vector
+> +                                 (pf->pdev, RVU_PF_INT_VEC_AFPF_MBOX),
+> +                                 pf->hw_ops->pfaf_mbox_intr_handler,
+> +                                 0, irq_name, pf);
+> +       } else {
+> +               irq_name =3D &hw->irq_name[RVU_MBOX_PF_INT_VEC_AFPF_MBOX =
+*
+> +                                               NAME_SIZE];
+> +               snprintf(irq_name, NAME_SIZE, "RVUPF%d AFPF Mbox",
+> +                        rvu_get_pf(pf->pcifunc));
+> +               err =3D request_irq(pci_irq_vector
+> +                                 (pf->pdev, RVU_MBOX_PF_INT_VEC_AFPF_MBO=
+X),
+> +                                 pf->hw_ops->pfaf_mbox_intr_handler,
+> +                                 0, irq_name, pf);
+> +       }
+>         if (err) {
+>                 dev_err(pf->dev,
+>                         "RVUPF: IRQ registration failed for PFAF mbox irq=
+\n");
+> @@ -1038,8 +1060,14 @@ static int otx2_register_mbox_intr(struct otx2_nic=
+ *pf, bool probe_af)
+>         /* Enable mailbox interrupt for msgs coming from AF.
+>          * First clear to avoid spurious interrupts, if any.
+>          */
+> -       otx2_write64(pf, RVU_PF_INT, BIT_ULL(0));
+> -       otx2_write64(pf, RVU_PF_INT_ENA_W1S, BIT_ULL(0));
+> +       if (!is_cn20k(pf->pdev)) {
+> +               otx2_write64(pf, RVU_PF_INT, BIT_ULL(0));
+> +               otx2_write64(pf, RVU_PF_INT_ENA_W1S, BIT_ULL(0));
+> +       } else {
+> +               otx2_write64(pf, RVU_PF_INT, BIT_ULL(0) | BIT_ULL(1));
+> +               otx2_write64(pf, RVU_PF_INT_ENA_W1S, BIT_ULL(0) |
+> +                            BIT_ULL(1));
+> +       }
+>
+>         if (!probe_af)
+>                 return 0;
+> @@ -1070,7 +1098,7 @@ static void otx2_pfaf_mbox_destroy(struct otx2_nic =
+*pf)
+>                 pf->mbox_wq =3D NULL;
+>         }
+>
+> -       if (mbox->mbox.hwbase)
+> +       if (mbox->mbox.hwbase && !is_cn20k(pf->pdev))
+>                 iounmap((void __iomem *)mbox->mbox.hwbase);
+>
+>         otx2_mbox_destroy(&mbox->mbox);
+> @@ -1089,12 +1117,20 @@ static int otx2_pfaf_mbox_init(struct otx2_nic *p=
+f)
+>         if (!pf->mbox_wq)
+>                 return -ENOMEM;
+>
+> -       /* Mailbox is a reserved memory (in RAM) region shared between
+> -        * admin function (i.e AF) and this PF, shouldn't be mapped as
+> -        * device memory to allow unaligned accesses.
+> +       /* For CN20K, AF allocates mbox memory in DRAM and writes PF
+> +        * regions/offsets in RVU_MBOX_AF_PFX_ADDR, the RVU_PFX_FUNC_PFAF=
+_MBOX
+> +        * gives the aliased address to access AF/PF mailbox regions.
+>          */
+> -       hwbase =3D ioremap_wc(pci_resource_start(pf->pdev, PCI_MBOX_BAR_N=
+UM),
+> -                           MBOX_SIZE);
+> +       if (is_cn20k(pf->pdev))
+> +               hwbase =3D pf->reg_base + RVU_PFX_FUNC_PFAF_MBOX +
+> +                       ((u64)BLKADDR_MBOX << RVU_FUNC_BLKADDR_SHIFT);
+> +       else
+> +               /* Mailbox is a reserved memory (in RAM) region shared be=
+tween
+> +                * admin function (i.e AF) and this PF, shouldn't be mapp=
+ed as
+> +                * device memory to allow unaligned accesses.
+> +                */
+> +               hwbase =3D ioremap_wc(pci_resource_start
+> +                                   (pf->pdev, PCI_MBOX_BAR_NUM), MBOX_SI=
+ZE);
+>         if (!hwbase) {
+>                 dev_err(pf->dev, "Unable to map PFAF mailbox region\n");
+>                 err =3D -ENOMEM;
+> @@ -2957,8 +2993,13 @@ static int otx2_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+>         if (err)
+>                 goto err_free_netdev;
+>
+> -       err =3D pci_alloc_irq_vectors(hw->pdev, RVU_PF_INT_VEC_CNT,
+> -                                   RVU_PF_INT_VEC_CNT, PCI_IRQ_MSIX);
+> +       if (!is_cn20k(pf->pdev))
+> +               err =3D pci_alloc_irq_vectors(hw->pdev, RVU_PF_INT_VEC_CN=
+T,
+> +                                           RVU_PF_INT_VEC_CNT, PCI_IRQ_M=
+SIX);
+> +       else
+> +               err =3D pci_alloc_irq_vectors(hw->pdev, RVU_MBOX_PF_INT_V=
+EC_CNT,
+> +                                           RVU_MBOX_PF_INT_VEC_CNT,
+> +                                           PCI_IRQ_MSIX);
+>         if (err < 0) {
+>                 dev_err(dev, "%s: Failed to alloc %d IRQ vectors\n",
+>                         __func__, num_vec);
+> @@ -2967,6 +3008,11 @@ static int otx2_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+>
+>         otx2_setup_dev_hw_settings(pf);
+>
+> +       if (is_cn20k(pf->pdev))
+> +               cn20k_init(pf);
+> +       else
+> +               otx2_init_hw_ops(pf);
+> +
+>         /* Init PF <=3D> AF mailbox stuff */
+>         err =3D otx2_pfaf_mbox_init(pf);
+>         if (err)
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h b/driv=
+ers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+> index 858f084b9d47..901f8cf7f27a 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+> @@ -58,6 +58,10 @@
+>  #define        RVU_VF_MSIX_PBAX(a)                 (0xF0000 | (a) << 3)
+>  #define RVU_VF_MBOX_REGION                  (0xC0000)
+>
+> +/* CN20K RVU_MBOX_E: RVU PF/VF MBOX Address Range Enumeration */
+> +#define RVU_MBOX_AF_PFX_ADDR(a)             (0x5000 | (a) << 4)
+> +#define RVU_PFX_FUNC_PFAF_MBOX             (0x80000)
+> +
+>  #define RVU_FUNC_BLKADDR_SHIFT         20
+>  #define RVU_FUNC_BLKADDR_MASK          0x1FULL
+>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drive=
+rs/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> index 99fcc5661674..76b97896ff1c 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> @@ -616,6 +616,12 @@ static int otx2vf_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+>         }
+>
+>         otx2_setup_dev_hw_settings(vf);
+> +
+> +       if (is_cn20k(vf->pdev))
+> +               cn20k_init(vf);
+> +       else
+> +               otx2_init_hw_ops(vf);
+> +
+>         /* Init VF <=3D> PF mailbox stuff */
+>         err =3D otx2vf_vfaf_mbox_init(vf);
+>         if (err)
+> --
+> 2.25.1
+>
+>
 
-Looks like we will need a spin of this fix.  Do you have time to do that?
 
-Ira
+--=20
+Regards,
+Kalesh A P
+
+--000000000000ea47680624f463a5
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEID9ju7wPGGy9szKmZ8Qbtp0gITC419z3gilqRfQOPURjMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAyMTAzMzg0N1owaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAYJ9cY1+HX
+Jn+AhpB4/IQOAe8uW7XHs6NgCJ9zaJ1KiqFsjHL5+NLZ+Tsj4FDszyak5CpAHsrO1MpPk0IOSjvO
+kqHk6fxgAhjDFN8zsipYkRGvONsM2KrEBcfnkHnIYEJSy+7hMlmStgmWGzCgbBrpxBmM8cXXFIB2
+Kvh2QPggIDHAt7j7uIWR+4gY/AOFGVo3dOW2l1EhzfkrScroWiLIS6edaLjC2SphLYRbM4U8naBJ
+uvntiutRyI12weS5wZJ4N7+54XQid7JKRqpISh7c9Bec+zZ/js+XmTVolgrmGsvTurtEH/mFrhkP
+T6bMieoFkUaT6HgiuU+tQ6eNkV5k
+--000000000000ea47680624f463a5--
 
