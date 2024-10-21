@@ -1,78 +1,51 @@
-Return-Path: <linux-kernel+bounces-374386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442669A6968
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:01:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B3A9A69BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0575B284C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:01:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF200B24EBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB411E573E;
-	Mon, 21 Oct 2024 13:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D82E1EF939;
+	Mon, 21 Oct 2024 13:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mr7Mmsg9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NdQribRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B005A1E511;
-	Mon, 21 Oct 2024 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6B01D1F7A;
+	Mon, 21 Oct 2024 13:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515673; cv=none; b=CIlGnn7yowjvBKxL/xUyYP3+0y/oKSTymVWlt5MEXd20S9ApTXY/P6Xxplzqreb9DKKJqEMQV9MRNEeT3CO8HNkcBme2bGWiuItaFBqrpijigWbLJnkkaPKFwk1mmaKL9Su/fAtbt9HImggrtDJFnI4phebKKdOqh14xHVL0Jo8=
+	t=1729515696; cv=none; b=tHqbq0LGEu5BQmRpzljrJ0IKHfsmdhoR4Z5eLIokOxqMaI+Jx3MusqDC+Ayf8YsSpGu69SjDOgQxfE38HkBjTJOvOupktvefQXYRegugVDah242qR7IWyclDWI0kT8CNGKdGE5xpm1Z08eQ96JkzSpXxmQDCkhJ0LEE+bK4qlu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515673; c=relaxed/simple;
-	bh=ej3qu3+gaDVBh2zajSPGQQs7YptzCBhIISJg5FqP5Ys=;
+	s=arc-20240116; t=1729515696; c=relaxed/simple;
+	bh=/zZKXJvBLxmmovl1avbBtZ7Tib3327F/k874Mk0+vRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5ZtuoIcg0SaY/bUg6AxnNeeVoE5gKwRXe1BGTnhmTvevYeIzGar/FL/MJUEaiHtlJAT1DdRLSzHQZ7IfDnJxuDeNC2nbc6R7tCivHUPqQg6vdfsZe2Ik1ccE40ofcyOmCzHJS6EveFi59rj7VrYcGJiv+onrpfXyUUtzcrQt14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mr7Mmsg9; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729515672; x=1761051672;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ej3qu3+gaDVBh2zajSPGQQs7YptzCBhIISJg5FqP5Ys=;
-  b=Mr7Mmsg9MXZzJkKHMP9+WvMb+mz93qt9QnjuND8Q8X+v3BMp+vP8gaeW
-   31hWq9jkBze2zicISOWWv4FMtofRLzG/E88AO+/fdicJ6Qr1YWlniLolq
-   eXG6tZwZuSMA90SLWzWZg0yfZCKeZdq9L2wOjbiJZvFZm7W87QfUvMfVo
-   Q4WdoBexXfHiOmUDIRZBvo1KkcWAhkNBF7gcRnreLRZA9tiovlFA0QQqs
-   i7XCOicWKd+5OQHTGPbk47YCTDOglUcLQ1av8dfKHIg/GZn4Xf6jBEK7u
-   6FH0r4nb9nlteIVMY6PwZVj58QwWcc8kubtAaEm9zeKV9qgcI/RVyyPRj
-   g==;
-X-CSE-ConnectionGUID: SSPZ41cCQn+dXCJq9kjd3A==
-X-CSE-MsgGUID: 3AT0bh6jSGy0U90EEV1wSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29162840"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29162840"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 06:01:12 -0700
-X-CSE-ConnectionGUID: Ff3P9/pOT8ipqVHXPAl0nQ==
-X-CSE-MsgGUID: pm4T5JBTSeeKY95E78IYqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79871502"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa010.fm.intel.com with SMTP; 21 Oct 2024 06:01:07 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Oct 2024 16:01:06 +0300
-Date: Mon, 21 Oct 2024 16:01:06 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] usb: typec: qcom-pmic-typec: use
- fwnode_handle_put() to release fwnodes
-Message-ID: <ZxZQks8_rkYge-yf@kuha.fi.intel.com>
-References: <20241020-qcom_pmic_typec-fwnode_remove-v2-0-7054f3d2e215@gmail.com>
- <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCs/Ir3EEOYZYmd92gJQ3mqbRTQ6hKJzstbBELULihFGCdqadUzZpP20KrWf2iSTxlyCHUTumzmoV3MAGBCab5+0gaCMRvlLeZ1p3u0TqzIiWMCfbfM+T+jDQ9oP3kHh9hUgEaYOKW9TOwX+uyszgV601TYSkiORBYAgKL812mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NdQribRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163CCC4CEC3;
+	Mon, 21 Oct 2024 13:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729515696;
+	bh=/zZKXJvBLxmmovl1avbBtZ7Tib3327F/k874Mk0+vRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NdQribRRV6FIZenUZi4cl1qaM8HnvSG4h90qan7X/wQch0Gwp64R0gLfkSbQDgTjO
+	 7ypn/x+1S0CGBfTzm2c9w8QGKkmdRNg6el4wRn5WYW5UOr8J+w76773VmzXb6GSk8k
+	 weVfzpdG0mPJrmWTRjAdbt0Kk8rTZAhGqKz6j1cI=
+Date: Mon, 21 Oct 2024 15:01:33 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: huanglei814 <huanglei814@163.com>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, huanglei <huanglei@kylinos.cn>
+Subject: Re: [PATCH] usb: core: adds support for PM control of specific USB
+ dev skip suspend.
+Message-ID: <2024102137-senate-yarn-34ed@gregkh>
+References: <20241021124741.6014-1-huanglei814@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +54,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
+In-Reply-To: <20241021124741.6014-1-huanglei814@163.com>
 
-On Sun, Oct 20, 2024 at 02:56:34PM +0200, Javier Carrasco wrote:
-> The right function to release a fwnode acquired via
-> device_get_named_child_node() is fwnode_handle_put(), and not
-> fwnode_remove_software_node(), as no software node is being handled.
+On Mon, Oct 21, 2024 at 08:47:41PM +0800, huanglei814 wrote:
+> From: huanglei <huanglei@kylinos.cn>
 > 
-> Replace the calls to fwnode_remove_software_node() with
-> fwnode_handle_put() in qcom_pmic_typec_probe() and
-> qcom_pmic_typec_remove().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> All USB devices are brought into suspend power state after system suspend.
+> It is desirable for some specific manufacturers buses to keep their devices
+> in normal state even after system suspend.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Why is it desireable to do that?  Why can't you just do so from
+userspace today?
 
+What hardware requires this?
+
+> Signed-off-by: huanglei <huanglei@kylinos.cn>
 > ---
->  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/usb/core/Kconfig     | 12 ++++++++++++
+>  drivers/usb/core/driver.c    | 14 ++++++++++++++
+>  drivers/usb/host/xhci-plat.c |  7 +++++++
+>  include/linux/usb.h          |  9 +++++++++
+>  4 files changed, 42 insertions(+)
 > 
-> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
-> index 2201eeae5a99..73a159e67ec2 100644
-> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
-> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
-> @@ -123,7 +123,7 @@ static int qcom_pmic_typec_probe(struct platform_device *pdev)
->  port_unregister:
->  	tcpm_unregister_port(tcpm->tcpm_port);
->  fwnode_remove:
-> -	fwnode_remove_software_node(tcpm->tcpc.fwnode);
-> +	fwnode_handle_put(tcpm->tcpc.fwnode);
+> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+> index 58e3ca7e4793..fe178c90d167 100644
+> --- a/drivers/usb/core/Kconfig
+> +++ b/drivers/usb/core/Kconfig
+> @@ -143,3 +143,15 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+>  	  ACPI selecting value 2 is analogous to selecting value 0.
 >  
->  	return ret;
->  }
-> @@ -135,7 +135,7 @@ static void qcom_pmic_typec_remove(struct platform_device *pdev)
->  	tcpm->pdphy_stop(tcpm);
->  	tcpm->port_stop(tcpm);
->  	tcpm_unregister_port(tcpm->tcpm_port);
-> -	fwnode_remove_software_node(tcpm->tcpc.fwnode);
-> +	fwnode_handle_put(tcpm->tcpc.fwnode);
->  }
->  
->  static const struct pmic_typec_resources pm8150b_typec_res = {
-> 
-> -- 
-> 2.43.0
+>  	  If unsure, keep the default value.
+> +
+> +config USB_SKIP_SUSPEND
+> +	bool "Vendor USB support skip suspend"
+> +	depends on USB
+> +	default n
 
--- 
-heikki
+No need for this line, 'n' is the default.
+
+> +	help
+> +	  Select this the associate USB devices will skip suspend when pm control.
+> +
+> +	  This option adds support skip suspend for PM control of USB devices
+> +	  in specific manufacturers platforms.
+> +
+> +	  If unsure, keep the default value.
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index 0c3f12daac79..05fe921f8297 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -1583,6 +1583,15 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int r;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_SUSPEND)) {
+> +		if (udev->state != USB_STATE_SUSPENDED)
+> +			dev_err(dev, "abort suspend\n");
+> +
+> +		return 0;
+> +	}
+> +#endif
+
+Please do not put #ifdef lines in .c files if at all possible.
+
+> +
+>  	unbind_no_pm_drivers_interfaces(udev);
+>  
+>  	/* From now on we are sure all drivers support suspend/resume
+> @@ -1619,6 +1628,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int			status;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_RESUME))
+> +		return 0;
+> +#endif
+> +
+>  	/* For all calls, take the device back to full power and
+>  	 * tell the PM core in case it was autosuspended previously.
+>  	 * Unbind the interfaces that will need rebinding later,
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index ecaa75718e59..8cbc666ab5c6 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -265,6 +265,13 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+>  		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+>  			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +		if (device_property_read_bool(tmpdev, "usb-skip-suspend")) {
+> +			hcd_to_bus(hcd)->skip_suspend = true;
+> +			hcd_to_bus(xhci->shared_hcd)->skip_suspend = true;
+> +		}
+> +#endif
+
+Why are you only doing this for xhci platform drivers?
+
+
+> +
+>  		device_property_read_u32(tmpdev, "imod-interval-ns",
+>  					 &xhci->imod_interval);
+>  	}
+> diff --git a/include/linux/usb.h b/include/linux/usb.h
+> index 672d8fc2abdb..5f88850fc42d 100644
+> --- a/include/linux/usb.h
+> +++ b/include/linux/usb.h
+> @@ -487,6 +487,15 @@ struct usb_bus {
+>  	struct mon_bus *mon_bus;	/* non-null when associated */
+>  	int monitored;			/* non-zero when monitored */
+>  #endif
+> +
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	unsigned int skip_suspend;	/* All USB devices are brought into suspend
+> +					 * power state after system suspend. It is
+> +					 * desirable for some specific manufacturers
+> +					 * buses to keep their devices in normal
+> +					 * state even after system suspend.
+> +					 */
+
+Shouldn't this be a boolean?
+
+thanks,
+
+greg k-h
 
