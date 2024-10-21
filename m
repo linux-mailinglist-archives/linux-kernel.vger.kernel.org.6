@@ -1,226 +1,332 @@
-Return-Path: <linux-kernel+bounces-374430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5E19A6A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097479A6A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2CE1F2491F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:25:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297281C22AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8771F8F1F;
-	Mon, 21 Oct 2024 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAD71F81A6;
+	Mon, 21 Oct 2024 13:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B1TtMsZQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Wr404rzF"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E565611CAF;
-	Mon, 21 Oct 2024 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5881D1F582C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517106; cv=none; b=HGyfRt02Ik3W8+NnjbtVSIwNXD3Yo3se+iMbvpvkifkbwRiPQUPb3DBz+E6GUlNy9dpDG4Jk4/a49ZLYomQcF9N7cJW7emrEHrE2B8EqIsR42ByV5v/pbO6su/YEEu+JbLwZNNnGXtWIVH2MLrIBLY+Xw34SkYV+hbqBeTzMhUo=
+	t=1729517140; cv=none; b=KnZ1sYntU44cs8/BR0BqdlLBqy7zzei+XuGF7vr7+luO79d9kvX1Ph9MI7a6dnOoDIP1WAIlAbabwdc+UWlVPtjcxPti0ilJ3RtvMVytAWS2bch35bm/WUXLzV2cYvR3ffnlRnTWHv9tQlfytSYDvvZH9fkvjbMIQ4nYr6jfMDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517106; c=relaxed/simple;
-	bh=AUAhAgskxThRMePyyMce4M7UR6fLNXfYYQVzhMdRuKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ndmHZJZaS4BV1zyNdwjZZiSQHRaP6x9bRDq6TPiiJYsSUzzepBV1gFMgImc6xO8j0zWbucekiRkir1PH+g+QXCPp3GfkQNm9XynnqIAcV4pC6R5VriGRA3kpqPIOQ/cKQKeUwmcX9VfUF99EghQQnF0XGLHmGNWZhb5rs2hWI0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B1TtMsZQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729517102;
-	bh=AUAhAgskxThRMePyyMce4M7UR6fLNXfYYQVzhMdRuKc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B1TtMsZQ8sHZ188gbXwS2WXJ33vpZx+YyJf04Vp8O/iflRVQ8nPAO1uTMWfv2FYpA
-	 p4msJ2C9PcNSKxiuLcMyU9268WhfQzgFRvQsSwI6W0EcDUUIGszKkXuXkwgx//dNCk
-	 FnvtSjwbLgnT1aQi0ScGUupWB48mbgQlP37o73mhUdw5Us4F9xQKVZTKO+qL/MdufN
-	 w6kESLEsaqN1F0NDk93vjW066EjG4/qGN7I/q4D9JbMzl0Z3l50gnQIZ1kXpombLa0
-	 /J6xlqv+s8XGAX53YAQnkalid+IEg0NNgqaJP2t2zH7leGg9K/NjqrJzuRiQy+Z3Hl
-	 uR8GdLxiOcVOg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5378B17E3616;
-	Mon, 21 Oct 2024 15:25:01 +0200 (CEST)
-Message-ID: <b24d984f-c944-4faf-bce9-96052abb085b@collabora.com>
-Date: Mon, 21 Oct 2024 15:25:00 +0200
+	s=arc-20240116; t=1729517140; c=relaxed/simple;
+	bh=P+KKJj15t259mwuqNR5CWfI1dluPRWtg3MwZgZl0PiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l+yFz8ZlCIIwHyfyGxvGmiZyteidZUREeoS0lCBE0ZFUso8Qko+TuAjNWZhKuAjJMCDkRME4lGGCWk6IXJlwrCX2aK/Snrl8aZRKgpEkxRQMyIMGOzWWEw3IyU7wOjDuNPxhL0RXN/33i59qItxD53CuAwqOtbqIoU2iyMok9xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Wr404rzF; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so9435749a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729517135; x=1730121935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QvmlddUQ2SZljJFHe7Sv16dud/9QhjBfMHI0vq0SyAw=;
+        b=Wr404rzFmr8ZaY4O9rFXRH2arqNGNs3V0nuilIWLbhtLT7we1RlOCmdLP3fS0B05zR
+         8scx/KMDejDTVL4G5tgwr2sWeGQ4e1asHrdKK4xt8gPGu8NOWO/YbqI5X1165tlhqBZ2
+         RIEEC+xVpAmmRKOvBPAdM6nDIXqzgrktx0d9xC0CelsF3bI1MLzfMxKOwY0ZHZK3Njc8
+         cgMwGYv9yOblCPtjaF3obUpnI8JrDSl8Yt3FxSNIVN+QC3ci1l6wWh9ZwowwDad1aK0S
+         TZDspget3+XonhSzgNYXyAh1oKMH+OKEjud38HJOB8nSXrz6mwOPg6yWtPqg15RwSMlc
+         h/tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729517135; x=1730121935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QvmlddUQ2SZljJFHe7Sv16dud/9QhjBfMHI0vq0SyAw=;
+        b=Ilgyu1JgKCOQZmE2U7xUQ1wYTQcQoT9F948ETOAD7DsMF9fTyVYZgPGI+F+ZFZNWgr
+         hm9nLqS5lQyknvoKnHnIeIwgZ+VpyKbqg37w52O4K8GUZE89hZQYkrVVF+1Q8UMg6mww
+         QIy9oTyWFF4toeMbqrrNFMsA/6iCTMfp0wujalEDmdrf81FjzSolpokSODyXTQoweSd/
+         DWmBvyDnlng3EneAs04NRwndL1TjUOUem+s338/q+f+xsP/u0eI1h/e81QpRv0tGxujG
+         77RVGYG7xnFFrGQ0ReS9ojZtHqF95pd3i6HQBVu7moZRUEK8392ued9wNAQW38lvY0Ey
+         6RjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqj4+iUblkxGR/ApWlwjjmljT+HSDIwAHrcOGcL1syNlnH+EQxZyJLU7ypzksJMJkTiP+3UJSUkTuOwMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVFBy6/V7uGrKtFjpnIC0Efh6LYIMOfVVXMKUyHohFY2HHsahj
+	NNiPeGi8ShGGVud+LEVM5ou6V6vNcPKkxWmUTUCLUWIC/tMB//fYH5vD203t7bSjmOAB9Fhp3IU
+	CnvcI7sD6BvKO/8mabZmPdJKsrn+e49Qjk2z2hA==
+X-Google-Smtp-Source: AGHT+IF27KXBH3wjrxEEkfggK/TGRAnQx4/sKhM03LqMoJ1keE93dKryMe4B0vg0ed9Hs0y5PMk5l4OCW1RrRRdJe4E=
+X-Received: by 2002:a17:907:7e90:b0:a9a:1575:23e3 with SMTP id
+ a640c23a62f3a-a9a6a450842mr1203521966b.19.1729517135504; Mon, 21 Oct 2024
+ 06:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] soc: mediatek: pwrap: Add support for MT6735 and
- MT6328 SoC/PMIC pair
-To: Yassine Oudjana <yassine.oudjana@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- jason-ch chen <Jason-ch.Chen@mediatek.com>,
- Chen Zhong <chen.zhong@mediatek.com>, Flora Fu <flora.fu@mediatek.com>,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241018081050.23592-1-y.oudjana@protonmail.com>
- <20241018081050.23592-4-y.oudjana@protonmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241018081050.23592-4-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
+ <20241015-ad7380-add-adaq4380-4-support-v1-1-d2e1a95fb248@baylibre.com> <20241020142058.6ce576f8@jic23-huawei>
+In-Reply-To: <20241020142058.6ce576f8@jic23-huawei>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Mon, 21 Oct 2024 15:25:23 +0200
+Message-ID: <CAEHHSvaHo102=133Jpzj0N=qh4_x7e9ZZG47S7Vgr6z3W9qisA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/4] dt-bindings: iio: adc: ad7380: add adaq4370-4 and
+ adaq4380-4 compatible parts
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 18/10/24 10:10, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Add register definitions and configuration for the MT6735 SoC and the
-> MT6328 PMIC which are commonly paired and communicate through the PMIC
-> wrapper.
-> 
-> Note that the PMIC wrapper on MT6735M has a slightly different register
-> map and is therefore NOT compatible with MT6735.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->   drivers/soc/mediatek/mtk-pmic-wrap.c | 251 ++++++++++++++++++++++++++-
->   1 file changed, 248 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index 9fdc0ef792026..b9e8dd2a5999d 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -3,6 +3,7 @@
->    * Copyright (c) 2014 MediaTek Inc.
->    * Author: Flora Fu, MediaTek
->    */
-> +
->   #include <linux/clk.h>
->   #include <linux/interrupt.h>
->   #include <linux/io.h>
-> @@ -100,7 +101,7 @@ enum dew_regs {
->   	PWRAP_DEW_CIPHER_MODE,
->   	PWRAP_DEW_CIPHER_SWRST,
->   
-> -	/* MT6323 only regs */
-> +	/* MT6323 and MT6328 only regs */
->   	PWRAP_DEW_CIPHER_EN,
->   	PWRAP_DEW_RDDMY_NO,
->   
-> @@ -121,8 +122,10 @@ enum dew_regs {
->   	PWRAP_RG_SPI_CON13,
->   	PWRAP_SPISLV_KEY,
->   
-> -	/* MT6359 only regs */
-> +	/* MT6359 and MT6328 only regs */
->   	PWRAP_DEW_CRC_SWRST,
-> +
-> +	/* MT6359 only regs */
->   	PWRAP_DEW_RG_EN_RECORD,
->   	PWRAP_DEW_RECORD_CMD0,
->   	PWRAP_DEW_RECORD_CMD1,
-> @@ -171,6 +174,23 @@ static const u32 mt6323_regs[] = {
->   	[PWRAP_DEW_RDDMY_NO] =		0x01a4,
->   };
->   
-> +static const u32 mt6328_regs[] = {
-> +	[PWRAP_DEW_DIO_EN] =		0x02d4,
-> +	[PWRAP_DEW_READ_TEST] =		0x02d6,
-> +	[PWRAP_DEW_WRITE_TEST] =	0x02d8,
-> +	[PWRAP_DEW_CRC_SWRST] =		0x02da,
-> +	[PWRAP_DEW_CRC_EN] =		0x02dc,
-> +	[PWRAP_DEW_CRC_VAL] =		0x02de,
-> +	[PWRAP_DEW_MON_GRP_SEL] =	0x02e0,
-> +	[PWRAP_DEW_CIPHER_KEY_SEL] =	0x02e2,
-> +	[PWRAP_DEW_CIPHER_IV_SEL] =	0x02e4,
-> +	[PWRAP_DEW_CIPHER_EN] =		0x02e6,
-> +	[PWRAP_DEW_CIPHER_RDY] =	0x02e8,
-> +	[PWRAP_DEW_CIPHER_MODE] =	0x02ea,
-> +	[PWRAP_DEW_CIPHER_SWRST] =	0x02ec,
-> +	[PWRAP_DEW_RDDMY_NO] =		0x02ee,
-> +};
-> +
->   static const u32 mt6331_regs[] = {
->   	[PWRAP_DEW_DIO_EN] =		0x018c,
->   	[PWRAP_DEW_READ_TEST] =		0x018e,
-> @@ -394,7 +414,7 @@ enum pwrap_regs {
->   	PWRAP_ADC_RDATA_ADDR1,
->   	PWRAP_ADC_RDATA_ADDR2,
->   
-> -	/* MT7622 only regs */
-> +	/* MT7622 and MT6735 only regs */
->   	PWRAP_STA,
->   	PWRAP_CLR,
->   	PWRAP_DVFS_ADR8,
-> @@ -417,6 +437,8 @@ enum pwrap_regs {
->   	PWRAP_ADC_RDATA_ADDR,
->   	PWRAP_GPS_STA,
->   	PWRAP_SW_RST,
-> +
-> +	/* MT7622 only regs */
->   	PWRAP_DVFS_STEP_CTRL0,
->   	PWRAP_DVFS_STEP_CTRL1,
->   	PWRAP_DVFS_STEP_CTRL2,
-> @@ -481,6 +503,50 @@ enum pwrap_regs {
->   	/* MT8516 only regs */
->   	PWRAP_OP_TYPE,
->   	PWRAP_MSB_FIRST,
-> +
-> +	/* MT6735 only regs */
-> +	PWRAP_WACS3_EN,
-> +	PWRAP_INIT_DONE3,
-> +	PWRAP_WACS3_CMD,
-> +	PWRAP_WACS3_RDATA,
-> +	PWRAP_WACS3_VLDCLR,
-
-Are you sure that you need the PWRAP_MD_ADC_xxxx registers in here?
-
-Since MD is relatively big on its own, I'm not sure how to proceed here.. it may
-make sense to split the MD part to a different array, or it may not... I do need
-to understand what's going on.
-
-Can you please point me at some reference code to look at, so that I can understand
-the situation a bit?
-
-Besides, I'm noticing that the "MD_ADC_RDATA_ADDR_R(x)" are sequential registers
-and that's on more than just MT6735: instead of having 32 more entries, it might
-make more sense to set only the first and declare the number (or size) of regs...
-
-Something like:
-
-enum pwrap_regs {
-	.....
-	PWRAP_MD_ADC_RDATA_ADDR_LATEST,
-	PWRAP_MD_ADC_RDATA_ADDR_WP,
-	PWRAP_MD_ADC_RDATA_ADDR_R0,
-	PWRAP_MD_ADC_STA0,
-	PWRAP_MD_ADC_STA1,
-	PWRAP_MD_ADC_STA2
-};
-
-static const struct pmic_wrapper_type pwrap_mt6735 = {
-	.regs = mt6735_regs,
-	.num_md_addr = 32,
-	[other stuff]
-};
-
-...but again, please, if you can point me at an implementation that actually
-uses the R(x) registers, that'd be better ... so that we can choose the best
-option to add those in there.
-
-Everything else is great: good job :-)
-
-Cheers,
-Angelo
+Le dim. 20 oct. 2024 =C3=A0 15:21, Jonathan Cameron <jic23@kernel.org> a =
+=C3=A9crit :
+>
+> On Tue, 15 Oct 2024 11:09:06 +0200
+> Julien Stephan <jstephan@baylibre.com> wrote:
+>
+> > adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS) are quad-channel precision da=
+ta
+> > acquisition signal chain =CE=BCModule solutions compatible with the ad7=
+38x
+> > family, with the following differences:
+> >
+> > - configurable gain in front of each 4 adc
+> As per quick review I gave for the driver code, I'm not seeing why
+> a configurable gain is a DT thing on an ADC vs something that belongs
+> in userspace control.  I may be missing something though.
+>
+> It exists for the ad4000 because the control isn't via registers
+> but via pin straps so we can't control it sensibly from userspace.
 
 
+Hi Jonathan,
+I indeed based my work on ad4000. I think my commit description is
+erroneous and confusing.
+On the first page of the datasheet
+(https://www.analog.com/media/en/technical-documentation/data-sheets/adaq43=
+80-4.pdf)
+it's written : Pin selectable Gain/attenuation. So I guess adaq4380-4
+and adaq4370-4 are working the same way as the adaq4000 series.
+I'll rewrite my commit message. Also, I didn't want to restrict users
+to the gain values in the datasheet, because I thought they are just
+examples and users can always use additional resistance to change the
+gain. Am I correct? Or should I use the datasheet values (as adaq4000
+series does) ?
+
+Cheers
+Julien
+
+>
+> Jonathan
+>
+> > - internal reference is 3V derived from refin-supply (5V)
+> > - additional supplies
+> >
+> > To configure the gain a new patternProperties is added to describe each
+> > channel. It is restricted to adaq devices.
+> >
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 117 +++++++++++++=
+++++++++
+> >  1 file changed, 117 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml =
+b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> > index 74d82721637c..3007d8e39684 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> > @@ -25,6 +25,8 @@ description: |
+> >    * https://www.analog.com/en/products/ad7386-4.html
+> >    * https://www.analog.com/en/products/ad7387-4.html
+> >    * https://www.analog.com/en/products/ad7388-4.html
+> > +  * https://www.analog.com/en/products/adaq4370-4.html
+> > +  * https://www.analog.com/en/products/adaq4380-4.html
+> >
+> >
+> >  $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > @@ -46,6 +48,8 @@ properties:
+> >        - adi,ad7386-4
+> >        - adi,ad7387-4
+> >        - adi,ad7388-4
+> > +      - adi,adaq4370-4
+> > +      - adi,adaq4380-4
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -59,6 +63,9 @@ properties:
+> >    vlogic-supply: true
+> >    refio-supply: true
+> >    refin-supply: true
+> > +  vs-p-supply: true
+> > +  vs-n-supply: true
+> > +  ldo-supply: true
+> >
+> >    aina-supply:
+> >      description:
+> > @@ -86,12 +93,43 @@ properties:
+> >        specify the ALERT interrupt.
+> >      maxItems: 1
+> >
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> >    - vcc-supply
+> >    - vlogic-supply
+> >
+> > +patternProperties:
+> > +  "^channel@([0-3])$":
+> > +    $ref: adc.yaml
+> > +    type: object
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          The channel number. From 0 to 3 corresponding to channels A,=
+B,C,D
+> > +        items:
+> > +          minimum: 0
+> > +          maximum: 3
+> > +
+> > +      adi,gain-milli:
+> > +        description:
+> > +          The hardware gain applied to the ADC input (in milli units).
+> > +          If not present, default to 1000 (no actual gain applied).
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        default: 1000
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +    additionalProperties: false
+> > +
+> >  unevaluatedProperties: false
+> >
+> >  allOf:
+> > @@ -128,7 +166,21 @@ allOf:
+> >          ainc-supply: false
+> >          aind-supply: false
+> >
+> > +  # Using channel to declare gain property only applies to adaq device=
+s
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          not:
+> > +            contains:
+> > +              enum:
+> > +                - adi,adaq4370-4
+> > +                - adi,adaq4380-4
+> > +    then:
+> > +      patternProperties:
+> > +        "^channel@([0-3])$": false
+> > +
+> >    # ad7380-4 uses refin-supply as external reference.
+> > +  # adaq devices use internal reference only, derived from refin-suppl=
+y
+> >    # All other chips from ad738x family use refio as optional external =
+reference.
+> >    # When refio-supply is omitted, internal reference is used.
+> >    - if:
+> > @@ -136,6 +188,8 @@ allOf:
+> >          compatible:
+> >            enum:
+> >              - adi,ad7380-4
+> > +            - adi,adaq4370-4
+> > +            - adi,adaq4380-4
+> >      then:
+> >        properties:
+> >          refio-supply: false
+> > @@ -145,6 +199,24 @@ allOf:
+> >        properties:
+> >          refin-supply: false
+> >
+> > +  # adaq devices need more supplies
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          enum:
+> > +            - adi,adaq4370-4
+> > +            - adi,adaq4380-4
+> > +    then:
+> > +      required:
+> > +        - vs-p-supply
+> > +        - vs-n-supply
+> > +        - ldo-supply
+> > +    else:
+> > +      properties:
+> > +        vs-p-supply: false
+> > +        vs-n-supply: false
+> > +        ldo-supply: false
+> > +
+> >  examples:
+> >    - |
+> >      #include <dt-bindings/interrupt-controller/irq.h>
+> > @@ -169,3 +241,48 @@ examples:
+> >              refio-supply =3D <&supply_2_5V>;
+> >          };
+> >      };
+> > +
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    spi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        adc@0 {
+> > +            compatible =3D "adi,adaq4380-4";
+> > +            reg =3D <0>;
+> > +
+> > +            spi-cpol;
+> > +            spi-cpha;
+> > +            spi-max-frequency =3D <80000000>;
+> > +
+> > +            interrupts =3D <27 IRQ_TYPE_EDGE_FALLING>;
+> > +            interrupt-parent =3D <&gpio0>;
+> > +
+> > +            vcc-supply =3D <&supply_3_3V>;
+> > +            vlogic-supply =3D <&supply_3_3V>;
+> > +            refin-supply =3D <&supply_5V>;
+> > +            vs-p-supply =3D <&supply_5V>;
+> > +            vs-n-supply =3D <&supply_0V>;
+> > +            ldo-supply =3D <&supply_5V>;
+> > +
+> > +            #address-cells =3D <1>;
+> > +            #size-cells =3D <0>;
+> > +
+> > +            channel@0 {
+> > +                reg =3D <0>;
+> > +                adi,gain-milli =3D <300>;
+> > +            };
+> > +
+> > +            channel@2 {
+> > +                reg =3D <2>;
+> > +                adi,gain-milli =3D <600>;
+> > +            };
+> > +
+> > +            channel@3 {
+> > +                reg =3D <3>;
+> > +                adi,gain-milli =3D <1000>;
+> > +            };
+> > +        };
+> > +    };
+> >
+>
 
