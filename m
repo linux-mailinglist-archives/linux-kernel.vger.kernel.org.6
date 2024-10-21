@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-374730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA12B9A6F16
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:10:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6679A6F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86791C21A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C143128316E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CEA1D0153;
-	Mon, 21 Oct 2024 16:10:25 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5495C1D0174;
+	Mon, 21 Oct 2024 16:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Ok4IF/8m"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17C17C224
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9629408
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729527025; cv=none; b=NTMrzt3SJxu7/QJwZfXlXZiyMoTbHO0yRtGhAPI7fkH8Gy3MEnTSIj8EkXF5kvTYiK9h8OCDoYe2rj/yUaWRUoqPeSKLw/wWJsIimuuSzQzlKXUh97+E9L+9ZCFzPv+cnKFFmbPOLjFBj1tY0ouscGXfTuW4IVzUxbAEWcWsnOI=
+	t=1729527077; cv=none; b=Czk2J7glUAcV9vc2EVWeeg6fuOjgKfDlYyZXma9hU2oiWePvMkQ8tnoErbz/CSGCUvsiVuv9KB0SX5rjlTDoXrEq0+BzffG8UH+hvywcHRjq4JQTTO2x0/1/f3p/saDMHvfVj+WTqAz/Cf12PLB1U1Mss9dGSj7YsIi59g5RLwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729527025; c=relaxed/simple;
-	bh=SHkfl7zwwdOZZpM3tZyCrj6DU/+eGm7kRwBKaChlot8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=NWTSFQIXcwZWzI2FufS47pOER3+qvhnI/4lUHwSgMC4wkN2rCsOzGVG9TTZWD+Fqhur+iJ9wmghxtxIFcD4txaDtax6ZvvvIo8ZYhqM601Dh+JLdFYhuo/6N3odTSN6cTYr0jqmGs38IXwp4csE3eGxiawI+Umg01GOpRtfZ1tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-42-GJKTBsbbNASPdj52kXe81Q-1; Mon, 21 Oct 2024 17:10:19 +0100
-X-MC-Unique: GJKTBsbbNASPdj52kXe81Q-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 21 Oct
- 2024 17:10:18 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 21 Oct 2024 17:10:18 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Liam R. Howlett'" <Liam.Howlett@oracle.com>, Shuah Khan
-	<skhan@linuxfoundation.org>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "sidhartha.kumar@oracle.com" <sidhartha.kumar@oracle.com>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tools: fix -Wunused-result in linux.c
-Thread-Topic: [PATCH] tools: fix -Wunused-result in linux.c
-Thread-Index: AQHbHp870qBUIivxfUSvLqqqTfcy0bKRaOAw
-Date: Mon, 21 Oct 2024 16:10:18 +0000
-Message-ID: <13ddebb3e15b4a94b466c6ee5f3f2f42@AcuMS.aculab.com>
-References: <20241011225155.27607-1-skhan@linuxfoundation.org>
- <ddepbtajvjqoftjqanab7dpcx62pjrl4s3cowhciocevfa43wa@sncxpv75hpjp>
-In-Reply-To: <ddepbtajvjqoftjqanab7dpcx62pjrl4s3cowhciocevfa43wa@sncxpv75hpjp>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1729527077; c=relaxed/simple;
+	bh=cZKs4ubBotkkXS5Wnwk+PcczuZZPeiV15E2zkT/8Z4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IyqvFj8CldAaSRadXgjUAbrP7fpwVtNg3Qi6nlk+trgPQXvOH8y3d4XVIZal7leVY1KGJC/+lYB5ItakCrDAKWYH/YcmjVMU+kNHUK7rfzSUVJMFnsxUFpJR0lhxHXMEJeXvvriiyPHI86iuHL9KeH+yd8GZ3VzauRu1iaLGbe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Ok4IF/8m; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e35f08e23eso42502607b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1729527074; x=1730131874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JLarjVGAZYFr9G6LDtG3NeEVj6TR9gyCIIm1pC11MuQ=;
+        b=Ok4IF/8m00xfRLIICcNX330z76zALqvX2dhC++CCn9AbIczbYdSuVk+8XFCExvfqc4
+         hdX0m0y7zE6PGstdxsXoRZsgIZ+lgONfrzK/LGANTaJSZYiOji2kB+rltKctg30KcSuG
+         /dUZjH6wtoV+k8m6j4VuGE4b7Z2TvVfQOLM10O/z7Al5/BEQfiAvWQZVW2r9MNrVJCgI
+         P1cQhQtCOlVPIsQhXC156VO4a8flTN93IwXORIC7R9/doilhHhzyWMjFxD2hw1HmncJf
+         7pU7GamUcGsVzgO68Og6RIIm5/sAe72HK8HmuWc5VfAUXfPNAuheJXQPjRfGng8SXq2q
+         APQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729527074; x=1730131874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JLarjVGAZYFr9G6LDtG3NeEVj6TR9gyCIIm1pC11MuQ=;
+        b=Ge0FABtfkVzwSHuMLxSHMMVaXtkk45hWpLfoNe55IVHbzihaZC+TI4DJ8QaGtsUGLe
+         dpysx6I0sdyoJtAaVJEiIsr4HxFL0/bHIysncSwVSa6Dnz97DsraOqTeZVEIWq+P1f1P
+         LYchmeDkYhs+LmUdrgdqCrojbSu3BiC9x1/JC0qnGJSMO796fUWQjv1Bd+10yrUuqF9f
+         imiadOKMINLCdfCh5dj7D/H6MumiK6nO4iLlJfFhRUTk00DJjlakpxyfUVB1XAfJVosO
+         77dCzZ1CAZrdJVazGz5xVDGk+b9H6S2HbvGmMYvM3HQ94MA4ShEbKKDeXU5ttk8Z0D8R
+         1JMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS8Cc/p4YCK/Ox/nsgE5uhxT+fe5Kv79U0o6eDSOXsUF4ZTqFLvHgvgKaOsU+8X1mIjinVOA/p56+gJ6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjTLvD/ErZq8DCNIZTXV2dbGh2d6q4ncN41p5zW4ZUFtK7rZMT
+	77pCbThTFeNK9HE7AnSXSMrHsiZ33u6gvLeeOOSCuNu8yiYkM8MKLBvSBaw6n3ai6W3cornVFTQ
+	bnBgbq7qyS23SjEwhuLsWE6JRkhx8iHuNgTxNaQ==
+X-Google-Smtp-Source: AGHT+IH6DdrcYaXPP0mChPDBwLUR+WGY3uRjOTHPRavp++JQS8rWKbIt/tCRrjaIgu43SO89ByRFTbqpJEuDqSJqcxs=
+X-Received: by 2002:a05:690c:a8d:b0:6db:cf6c:a7c4 with SMTP id
+ 00721157ae682-6e5bfd8b1acmr97052717b3.45.1729527074457; Mon, 21 Oct 2024
+ 09:11:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20241002-vc4_fbdev_fix-v1-0-8737bd11b147@raspberrypi.com>
+ <20241002-vc4_fbdev_fix-v1-1-8737bd11b147@raspberrypi.com>
+ <b1d76661-41b9-4841-80f4-452654d9cd6b@igalia.com> <CAPY8ntDgkyQ6ijdgB2Qmd45ArtXqYFwfmpvYgQhobnw=bUnd-Q@mail.gmail.com>
+In-Reply-To: <CAPY8ntDgkyQ6ijdgB2Qmd45ArtXqYFwfmpvYgQhobnw=bUnd-Q@mail.gmail.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Mon, 21 Oct 2024 17:10:57 +0100
+Message-ID: <CAPY8ntDc_s4pxBAVbSdDRDHMVWZHEdWw-283GxCiguz81NYBow@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/vc4: Run default client setup for all variants.
+To: Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogTGlhbSBSLiBIb3dsZXR0DQo+IFNlbnQ6IDE1IE9jdG9iZXIgMjAyNCAwMjoxMQ0KPiAN
-Cj4gKiBTaHVhaCBLaGFuIDxza2hhbkBsaW51eGZvdW5kYXRpb24ub3JnPiBbMjQxMDExIDE4OjUy
-XToNCj4gPiBGaXggdGhlIGZvbGxvd2luZyAtV3VudXNlZC1yZXN1bHQgd2FybmluZ3Mgb24gcG9z
-aXhfbWVtYWxpZ24oKQ0KPiA+IHJldHVybiB2YWx1ZXMgYW5kIGFkZCBlcnJvciBoYW5kbGluZy4N
-Cj4gPg0KPiA+IC4vc2hhcmVkL2xpbnV4LmM6MTAwOjI1OiB3YXJuaW5nOiBpZ25vcmluZyByZXR1
-cm4gdmFsdWUgb2Yg4oCYcG9zaXhfbWVtYWxpZ27igJkgZGVjbGFyZWQgd2l0aCBhdHRyaWJ1dGUN
-Cj4g4oCYd2Fybl91bnVzZWRfcmVzdWx04oCZIFstV3VudXNlZC1yZXN1bHRdDQo+ID4gICAxMDAg
-fCAgICAgICAgICBwb3NpeF9tZW1hbGlnbigmcCwgY2FjaGVwLT5hbGlnbiwgY2FjaGVwLT5zaXpl
-KTsNCj4gPiAgICAgICB8ICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+DQo+ID4gLi4vc2hhcmVkL2xpbnV4LmM6IEluIGZ1bmN0aW9uIOKAmGtt
-ZW1fY2FjaGVfYWxsb2NfYnVsa+KAmToNCj4gPiAuLi9zaGFyZWQvbGludXguYzoxOTg6MzM6IHdh
-cm5pbmc6IGlnbm9yaW5nIHJldHVybiB2YWx1ZSBvZiDigJhwb3NpeF9tZW1hbGlnbuKAmSBkZWNs
-YXJlZCB3aXRoIGF0dHJpYnV0ZQ0KPiDigJh3YXJuX3VudXNlZF9yZXN1bHTigJkgWy1XdW51c2Vk
-LXJlc3VsdF0NCj4gPiAgIDE5OCB8ICAgICAgICAgIHBvc2l4X21lbWFsaWduKCZwW2ldLCBjYWNo
-ZXAtPmFsaWduLA0KPiA+ICAgICAgIHwgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+DQo+ID4gICAxOTkgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Y2FjaGVwLT5zaXplKTsNCj4gPiAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICB+fn5+fn5+fn5+fn5+DQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaHVhaCBLaGFuIDxza2hh
-bkBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiANCj4gUmV2aWV3ZWQtYnk6IExpYW0gUi4gSG93bGV0
-dCA8TGlhbS5Ib3dsZXR0QE9yYWNsZS5jb20+DQo+IA0KPiA+IC0tLQ0KPiA+ICB0b29scy90ZXN0
-aW5nL3NoYXJlZC9saW51eC5jIHwgMTQgKysrKysrKysrLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5n
-ZWQsIDkgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQg
-YS90b29scy90ZXN0aW5nL3NoYXJlZC9saW51eC5jIGIvdG9vbHMvdGVzdGluZy9zaGFyZWQvbGlu
-dXguYw0KPiA+IGluZGV4IDE3MjYzNjk2YjVkOC4uNjZkYmIzNjIzODVmIDEwMDY0NA0KPiA+IC0t
-LSBhL3Rvb2xzL3Rlc3Rpbmcvc2hhcmVkL2xpbnV4LmMNCj4gPiArKysgYi90b29scy90ZXN0aW5n
-L3NoYXJlZC9saW51eC5jDQo+ID4gQEAgLTk2LDEwICs5NiwxMyBAQCB2b2lkICprbWVtX2NhY2hl
-X2FsbG9jX2xydShzdHJ1Y3Qga21lbV9jYWNoZSAqY2FjaGVwLCBzdHJ1Y3QgbGlzdF9scnUgKmxy
-dSwNCj4gPiAgCQlwID0gbm9kZTsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gIAkJcHRocmVhZF9tdXRl
-eF91bmxvY2soJmNhY2hlcC0+bG9jayk7DQo+ID4gLQkJaWYgKGNhY2hlcC0+YWxpZ24pDQo+ID4g
-LQkJCXBvc2l4X21lbWFsaWduKCZwLCBjYWNoZXAtPmFsaWduLCBjYWNoZXAtPnNpemUpOw0KPiA+
-IC0JCWVsc2UNCj4gPiArCQlpZiAoY2FjaGVwLT5hbGlnbikgew0KPiA+ICsJCQlpZiAocG9zaXhf
-bWVtYWxpZ24oJnAsIGNhY2hlcC0+YWxpZ24sIGNhY2hlcC0+c2l6ZSkgPCAwKQ0KPiA+ICsJCQkJ
-cmV0dXJuIE5VTEw7DQo+ID4gKwkJfSBlbHNlIHsNCj4gPiAgCQkJcCA9IG1hbGxvYyhjYWNoZXAt
-PnNpemUpOw0KPiA+ICsJCX0NCj4gPiArDQoNCllvdSByZWFsbHkgb3VnaHQgdG8gYmUgY2hlY2tp
-bmcgbWFsbG9jKCkgYXMgd2VsbC4NClBlcmhhcHM6DQoJCWlmICguLi4pIHsNCgkJCWlmIChwb3Np
-eF9tZW1hbGlnbiguLi4pIDwgMCkNCgkJCQlwID0gTlVMTDsNCgkJfSBlbHNlIHsNCgkJCXAgPSBt
-YWxsb2MoLi4uKTsNCgkJfQ0KCQlpZiAoIXApDQoJCQlyZXR1cm4gTlVMTDsNCg0KT3IganVzdCB1
-c2UgYSBoYWNrIHRvIGdldCB0aGUgY29tcGlsZXIgdG8gU1RGVSA6LSkNCg0KCURhdmlkDQoNCi0N
-ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
-aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
-cykNCg==
+Hi Maxime & Thomas.
 
+Sorry, I'm still learning the processes.
+
+This patch and the 3 from
+https://patchwork.freedesktop.org/series/139716/ are in drm-misc-next,
+but they are fixes needed for 6.12.
+Am I right in thinking I need to "dim cherry-pick" them to
+drm-misc-fixes so they get merged there?
+
+Thanks
+
+  Dave
+
+On Wed, 9 Oct 2024 at 13:15, Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+>
+> On Wed, 9 Oct 2024 at 12:02, Ma=C3=ADra Canal <mcanal@igalia.com> wrote:
+> >
+> > Hi Dave,
+> >
+> > On 10/2/24 12:06, Dave Stevenson wrote:
+> > > Commit 45903624e9fc ("drm/vc4: Run DRM default client setup")
+> > > only added DRM_FBDEV_DMA_DRIVER_OPS for the vc4 (Pi0-3) driver
+> > > definition, which caused an issue on vc5 (Pi4) as there was no
+> > > fbdev_probe function defined.
+> > >
+> > > Fixes: 45903624e9fc ("drm/vc4: Run DRM default client setup")
+> > > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> >
+> > Reviewed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>
+> Applied to drm-misc-next.
+>
+> > Best Regards,
+> > - Ma=C3=ADra
+> >
+> > > ---
+> > >   drivers/gpu/drm/vc4/vc4_drv.c | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_=
+drv.c
+> > > index 13a1ecddbca3..a238f76a6073 100644
+> > > --- a/drivers/gpu/drm/vc4/vc4_drv.c
+> > > +++ b/drivers/gpu/drm/vc4/vc4_drv.c
+> > > @@ -238,6 +238,7 @@ const struct drm_driver vc5_drm_driver =3D {
+> > >   #endif
+> > >
+> > >       DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(vc5_dumb_create),
+> > > +     DRM_FBDEV_DMA_DRIVER_OPS,
+> > >
+> > >       .fops =3D &vc4_drm_fops,
+> > >
+> > >
 
