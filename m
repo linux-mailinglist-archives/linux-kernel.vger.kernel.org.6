@@ -1,138 +1,179 @@
-Return-Path: <linux-kernel+bounces-374312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D3B9A6852
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:27:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C395D9A684F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CB3282151
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415A91F2708C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0821F80A4;
-	Mon, 21 Oct 2024 12:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DE61F7061;
+	Mon, 21 Oct 2024 12:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ler/M14P"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ORfImR0E"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8909D1F7089;
-	Mon, 21 Oct 2024 12:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F131F1316
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513431; cv=none; b=pY2B8XmyNQGfBSM784i890Um1mm5j73wi/OaF8YNS3cbQxvWqxU+3s+fGAV8/Wwgxc2ft/0fSW8v9kvDQCvvXmr7jyTwYbMdf/WCHUeh5YEDKWI5mBOM4O0w0hJ1yeme8dT3yPQVJveqtGiG5kaI8AFdRKESahVLv+eE4/FqAxA=
+	t=1729513419; cv=none; b=oy5D3l7NY5KMwyXWjwKmQS12kIZwJrcMMHzozI2OHl6au5wZo7pWqaIaJ//34m6w+IyIYUsmHdu1HGPWGTB9OFyNIxPWRHXIIucllxwDWLmz97K/aGGiSqOF2Iwe7dHSzkV3F5SHXvrFrkcf4AyGte4mKva56h8FCNHIPlm0yxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513431; c=relaxed/simple;
-	bh=x9slBDnJ/jFLTcaoGTUOyBDa28EHs3QGP8fa7TcQpqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jhpe2dmLQaPOigmA37qv5G/6sGM/LUkKoVgnIGqhJ2jcqRRn02VFEMR3q2aSrZ6mY43l/071ML2Hkc3R/YZdSyZ/U03bF4xeKf6AG9jhx7sBOXOZrqC0bpybtgfzZkzeZoJ2gHM/5mfP5Ot75Rqqeq3SIyZ8cqQvfKGcJ+G9d/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ler/M14P; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e602a73ba1so1471170b6e.2;
-        Mon, 21 Oct 2024 05:23:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729513428; x=1730118228; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OgXSaFGWlsNd0CbHWwjqIDW8aVdA/ighcZzKc7cVXd0=;
-        b=ler/M14Pvr+PqN1I2le5IzHjACmFeDxPSgKIPZiJGiAJfKSrp4AxqBsdT1kyg8apW1
-         m7CfvcP0lm3LwOK5zeBhfj4eRO7ZepC+5MZYVFF/uLiIIesLtQPfpKyBIM4sZ0IevhLk
-         v60ZG8NSsrLZqp29wzrFElVeYQ3VM0l9GOGqE43Pe2P0de0K9uTJ7SmVqUY3+T4sLGOg
-         yhNqrZem9K/LOL0J/Is62HRic9Vnr0WE2NJHg0l6GJh6EcwdpU8Zi1vb7EvMkD1LjNmM
-         5x8fWR6JWQ0A4nEt/HsoxF2oFJCKONNFXOmKh/Vm2mp/Go+uCedUkKBxjrUEGyu6dmgK
-         E9Iw==
+	s=arc-20240116; t=1729513419; c=relaxed/simple;
+	bh=hqH3uJ3cRmHOsg368fktq8gyPxcMNhmSH3SzytsGRbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DhvVFU60GGSl+TloSk2qFJM2ZphEqVbQod60MVCmfVS3UgXrlpkH6lU8aULyy9Ae2bha+SCzcYT3PsoT83HsCv6Ez6aR+wR0JtUsn/7QMnmU8RUkxkjKO4R/zX6PNBFEkRdhU38G5z0XxEKZsSXjfP6HxrQ+WnJ4iksLsHiGA2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ORfImR0E; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729513416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uFXJPA42Z4FvckVpfiQrwGifFsYvWjPgRdkDsfHcBUA=;
+	b=ORfImR0EiVOQsctBCNdNW4LU1MlmoRz28uJ21WaxCivEYCUtldMvQZw4JnNsXwqbnahisQ
+	kt+f7pucfhe1lrcpv8zhDfUv4c4BfAShzgQFiz9Tcy7gBap1GLAZ4TOU/73fxwsninfkvj
+	xTslXLsoRzGfY42Lt6yHOrpnsQKdZPw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-Jm5UskipPCm64VDxaVy4OA-1; Mon, 21 Oct 2024 08:23:34 -0400
+X-MC-Unique: Jm5UskipPCm64VDxaVy4OA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315d98a873so28977115e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:23:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513428; x=1730118228;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OgXSaFGWlsNd0CbHWwjqIDW8aVdA/ighcZzKc7cVXd0=;
-        b=X174Us7KiX919R1N/e7Drh/4Yp3t5BLVai7GLyy3uSZae0CHxVkpjJyYzvshidTPuQ
-         F+HU1tfPpRGY+M0eT2QfG0Pdib674Sxa4s/uoZh8yyEyfWqNnXVytqf1IE3I0oO1NPC+
-         WbWUR+eTawIlv5Amv5EeV5DZSrFfe7LHF5414hY3X5lNOfmh5tFJsYU88ZpWNKQuIH3V
-         i4yesS642nQzNCSEubQCnPG3OJ4fY3o4/tWn/HhYhM0h4Hh6LsdamhbN/t3lmW/EW42C
-         j1mN9h3juxnWxP0HabGnAVTvoibhtBLskfYUWr1XCQfMeMtyamLby7rFNcCrAijmWbHR
-         uboQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZDsaNsYfbSZTFSKI015scFl+1MvJ9RNUIl4EIcJwMEM78BjvbCNQJCQ6Mejqt5jmnpEGHAgpDsas@vger.kernel.org, AJvYcCWj5qMpWRGdh2KDNGzskPWspcfUuambngDWosYLm4v0FpVkwUSDna6W6RzDqJ09J+0mdoAtFuTGm+1T7VCu@vger.kernel.org, AJvYcCXSrCCvAwqthx6vw9SPsTht5/hcfOimJd4AlpNDqCINuTSSx36aaTQKtzsA5OejJrb55gnM9xs9LOBqqv0P@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlUmjeJfRv4BVDwwXH27nRj/Q/AGVBugg1Wj5aN8DUbMbfse2S
-	dCxkXvyXv7x9s8Agb+tOUBKu8NDZi1kg/7QNoddGQY3k66mA7Pm6
-X-Google-Smtp-Source: AGHT+IG6AbXnc+JnTbQtqAFHScJgxFYihFzpe/ayUKl45Zmwl2fKaZXsfhokHl5gSrgPWj7HcVOoDQ==
-X-Received: by 2002:a05:6808:2f0a:b0:3e6:1170:a58f with SMTP id 5614622812f47-3e61170a67cmr3003068b6e.5.1729513428463;
-        Mon, 21 Oct 2024 05:23:48 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaebd061c1sm2332892a12.19.2024.10.21.05.23.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:23:48 -0700 (PDT)
-Date: Mon, 21 Oct 2024 20:23:30 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@outlook.com>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <2zawe64brm3sfuslh443352wfupgnhb4xw7jragkzxu6kgg6t7@b4qiya3jdij4>
-References: <20241021072606.585878-1-inochiama@gmail.com>
- <20241021072606.585878-2-inochiama@gmail.com>
- <20241021-outlying-washday-8f171dedc703@spud>
- <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
- <20241021-rosy-drove-1ae3c8985405@spud>
+        d=1e100.net; s=20230601; t=1729513414; x=1730118214;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFXJPA42Z4FvckVpfiQrwGifFsYvWjPgRdkDsfHcBUA=;
+        b=xEtYA8uwWjuONjotq+P9TAX4MWG3xFQRmQkgk0bA72mCxbWRlBmFdLWVvQNIjgVL1r
+         riBfVwkDfht7F7dfCmFPhFTmZZBOLfzZ5wta8MBcW3AMgIT/uAXCeHbum/p+t/8QiTwh
+         ewjx8xh1V4PEPjnMVPRs2ujez9vdUa8vkjqRt+jt0CykSaoPokn2Gb884EwD8E+cV4/d
+         AsYpw9FWP0ciHdZeLve42/HcR70DaoUKk10FdjFAPuZTHrmcEzdeaVjuRHsYKSSEj1K4
+         lGckY1MGQadZBymxO0jR9TGIBA0W6b37yfJg5cTfBh1SDklY/9obhhmVZK09hyHre6Ja
+         27ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0lPYIePUDmPfyJpov/NWFlv9FcOL9knTsXKZVAUrylgnp5WUq3GZlf+EgyoEqeq2Izq+z0NromGpTCa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztKjRDcJKCuqrqPLRUnV+7yKFst/IOPMSxtOD5hl8/shrvNYvo
+	qgxle0KulMPbxrh3JcqZ+IjCFthsFAQQlWWcw98Pp6IRw3sZm3IKcoMnkiZ8sEpO3E3VR6EGETE
+	VCI+CiZbG8vRzeh3L5AQr8tTQzqYJYQNCV+R0QEfMVujRldxW571Kwb4WWeSMlg==
+X-Received: by 2002:a05:600c:1547:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431615bf97dmr90972315e9.0.1729513413631;
+        Mon, 21 Oct 2024 05:23:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXq14rjOzZqkZ2LLBYAJkh/Z9QyHz8AiwWS/xKGGmWoTb0OdLBygpyTri0cFef6ZUQDR+yOA==
+X-Received: by 2002:a05:600c:1547:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431615bf97dmr90972045e9.0.1729513413260;
+        Mon, 21 Oct 2024 05:23:33 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fbe8sm55532975e9.18.2024.10.21.05.23.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 05:23:32 -0700 (PDT)
+Message-ID: <a7279751-b9cd-4197-9c98-3aa70b1f5fe8@redhat.com>
+Date: Mon, 21 Oct 2024 14:23:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-rosy-drove-1ae3c8985405@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with
+ init_on_alloc=1
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ John Hubbard <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
+ <glider@google.com>, Kees Cook <keescook@chromium.org>,
+ linux-kernel@vger.kernel.org
+References: <20241011150304.709590-1-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20241011150304.709590-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 01:21:58PM +0100, Conor Dooley wrote:
-> On Mon, Oct 21, 2024 at 08:18:58PM +0800, Inochi Amaoto wrote:
-> > On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
-> > > On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
-> > > > The UART of SG2044 is modified version of the standard Synopsys
-> > > > DesignWare UART. The UART on SG2044 relys on the internal divisor
-> > > > and can not set right clock rate for the common bitrates.
-> > > > 
-> > > > Add compatibles string for the Sophgo SG2044 uarts.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > ---
-> > > >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
-> > > >  1 file changed, 4 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > index 4cdb0dcaccf3..6963f89a1848 100644
-> > > > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > @@ -58,6 +58,10 @@ properties:
-> > > >                - brcm,bcm11351-dw-apb-uart
-> > > >                - brcm,bcm21664-dw-apb-uart
-> > > >            - const: snps,dw-apb-uart
-> > > > +      - items:
-> > > > +          - enum:
-> > > > +              - sophgo,sg2044-uart
-> > > > +          - const: snps,dw-apb-uart
-> > > 
-> > > Why does each vendor have an items entry of its own? Seems like needless
-> > > clutter of the file IMO, except for the renesas bit.
-> > 
-> > I just follow others when writing this binding. I think it may need
-> > another patch to fix this problem, right?
+
+
+Am 11.10.24 um 17:03 schrieb Zi Yan:
+> Commit 6471384af2a6 ("mm: security: introduce init_on_alloc=1 and
+> init_on_free=1 boot options") forces allocated page to be zeroed in
+> post_alloc_hook() when init_on_alloc=1.
 > 
-> Yeah. But I'd hold off to see if someone gives a rationale for it being
-> done this way before sending that. I've not deleted this thread, and
-> will send an ack if someone justifies why the binding is written like
-> this.
+> For order-0 folios, if arch does not define
+> vma_alloc_zeroed_movable_folio(), the default implementation again zeros
+> the page return from the buddy allocator. So the page is zeroed twice.
+> Fix it by passing __GFP_ZERO instead to avoid double page zeroing.
+> At the moment, s390,arm64,x86,alpha,m68k are not impacted since they
+> define their own vma_alloc_zeroed_movable_folio().
+> 
+> For >0 order folios (mTHP and PMD THP), folio_zero_user() is called to
+> zero the folio again. Fix it by calling folio_zero_user() only if
+> init_on_alloc is set. All arch are impacted.
+> 
+> Added alloc_zeroed() helper to encapsulate the init_on_alloc check.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   include/linux/highmem.h | 8 +-------
+>   mm/huge_memory.c        | 3 ++-
+>   mm/internal.h           | 6 ++++++
+>   mm/memory.c             | 3 ++-
+>   4 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index bec9bd715acf..6e452bd8e7e3 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -224,13 +224,7 @@ static inline
+>   struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+>   				   unsigned long vaddr)
+>   {
+> -	struct folio *folio;
+> -
+> -	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
+> -	if (folio)
+> -		clear_user_highpage(&folio->page, vaddr);
+> -
+> -	return folio;
+> +	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr);
+>   }
+>   #endif
+>   
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 82f464865570..5dcbea96edb7 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1176,7 +1176,8 @@ static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
+>   	}
+>   	folio_throttle_swaprate(folio, gfp);
+>   
+> -	folio_zero_user(folio, addr);
+> +	if (!alloc_zeroed())
+> +		folio_zero_user(folio, addr);
 
-Thanks.
+
+
+It might be reasonable to spell out why we are not using GFP_ZERO somewhere, 
+something like
+
+/*
+  * We are not using __GFP_ZERO because folio_zero_user() will make sure that the
+  * page corresponding to the faulting address will be hot in the cache.
+  */
+
+Sth. like that maybe.
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
