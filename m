@@ -1,252 +1,279 @@
-Return-Path: <linux-kernel+bounces-374818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354049A70A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:08:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BE89A709C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50DB2825C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B6E28198B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1240D1F473C;
-	Mon, 21 Oct 2024 17:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB1F1EBA07;
+	Mon, 21 Oct 2024 17:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jVl6/xdX"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M1uWKc6P"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C0B1EB9F9
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DECE5FEE4
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530480; cv=none; b=G+T4rcKGTjLoP/rCTTJZxHsruBvjN8Od3V/C/0LtU3bG6C5ned5/c3fWKDmzftY1vw4i2t/hL9oUkDuF1uZbDbpEKb8FBEXwOHdLQyo8k32GGNCbocgVw+Q922NYONGip0sXWB7hQz8QvR4ki1NAlXKgmpOmssd163mWbN6wui0=
+	t=1729530455; cv=none; b=fvXzNEo5ZFssV69P3lAtrUMlQnAev1lvLUnh1PqrXjE9072BSDv+NRUZH6gVru9Bn3dNg+RQvPWKxx+WymXlvudbk54neXVGPbd1uGVPeZLg9dwI3nf5NqJVLtOpfcqyRya3Il76cB2ikU7Iad5kZOFpTN4wg/jZKZ1+rTJtC6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530480; c=relaxed/simple;
-	bh=9HwBB6DUdlSqXu+QzXrHwnDX73SBMuj81nw+I6vhaeU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekCUsgwzO0gZ3kVBMSAcMR2p3kDFEFZ+gj604mxiIUmWrDrpOfrDCf7LY5Vls/I6FTCSVg8Qc3xOsFTwOTwWM3prnL6tUz0tqtFpvT+oqkr7VYlxTqXEMlhWDFdkriWEMAViC5saZ/MUsXGX53S6W1308TRq8x/cDlmK10lRJrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jVl6/xdX; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c8a42d96-c02e-4ce0-acd8-3fdc5eecd208@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729530475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SrQYJCnutF/B0aizIHStBs0qq9hGntt8rX3SGM0rkm4=;
-	b=jVl6/xdXgjM0teCdVytFPKO98U3Twrb2C4GfaL2e/DYJIrQK1G9uPDRo83IlzfMtKKRNeB
-	CX8ClxRa7Ao5d1abXKBnwszUs0uN5EGzZs/W1On5SjnRHKHFKhjNfisJ85ijDcjJc3CbI+
-	DmL6M/3jgIleui/Ge8URFzoYiwMrZGE=
-Date: Mon, 21 Oct 2024 22:37:44 +0530
+	s=arc-20240116; t=1729530455; c=relaxed/simple;
+	bh=7vrfWB5WrTWf0h+U1F37EUhfoH8IbtutV29jICF/fEo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfnHMB9rrc0nJdUQhR9wAVdzeWrSVjsjeJUYiPewN3opKKpUnn2+/I+pWMmIddKMEIb2M8h1IeZgxsLIyMKnFNP8A7ukihi8atJEdAOg94NDwwHbfIU4nimPps7wr28rupMKWfgt1vESL5TCxiwpuEezldqhoi69LMwCrEzHbcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M1uWKc6P; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a99ebb390a5so1069179166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729530450; x=1730135250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1fzWHWXCAzDgmWq67RRGZJvTtBysz8yIfOAsQ6M82Y=;
+        b=M1uWKc6PyX2RCZD8ZNzujTi81oqytXYsdoBN9Nc1mOHT59RJQi9GNnfAqX1qIqRSMp
+         9GwKZA2LKGomFRrfRmKG8eDwSDdSYQzzanvbeOLr39AB7Tnrx18fvcPtXHarVcpxV9wb
+         CKHF1AD/pNKWnZSeKstJD5L7lDhGf6GO0p2N3mxb9+CdG/iXmVp3RJjB1q61+edTp1ZO
+         9KZmLUswSmWRA3l9wVqo8lthE4LNzqazf6k11vQSq+/uKC6qn0DxoTN9V3O1qZ4/+9YN
+         4fbMOS42UvIJE7T7tRCABxGZats90AjGl9Say88CKrYYyRgOsXHw+bzUSmW3AJ0jP72H
+         dqiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729530450; x=1730135250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1fzWHWXCAzDgmWq67RRGZJvTtBysz8yIfOAsQ6M82Y=;
+        b=sQ8vW24OxYTVRAD0vTGwF6OmPpaT/RGvWhPrk1s+sLclFb3h6WnvvxdjBu9DJIaf+C
+         4XiF3YreFhBVD4bDCJfvom1Q/J1UzogqfhGBy7ZhSlGde4DSBTeiY8yCjAIecSs0Trez
+         RxDBkdExpHoPaSB6IIv02brPv2JmuoAQCA0KUFNrKwrhMASpiPdapk5nk5MjXT2CAloU
+         Cqm4/T03DkX7AU40BRZFrVW6OqW5af3P29tJoz+nBh9EqzKlE3kJ6kA95BgkwR9Ko+0w
+         9qqdqPB0e2fpiGLY3tIz6VPn+NVsnt4rRjbEy8lYwowMGxlR1ZH1BFuBgmP4yUVnzU8Y
+         Jw7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUugvcoFVdgVlxGEkTjI55dIVvBLsYOShrmqfB2zGrZzZV2G4O0EXhv6sOOadnO1pnlZI4sHk6BbDp+GJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj9il+NrClePRay2W4i85L/nX0yoi7U56J2TQ/J4MCkMoXcABc
+	5n86SXPZI6cUXfr5GSC/PlSICY7QWRW0UanDrwsovBNhthj81ZTphUzu3ku1n88=
+X-Google-Smtp-Source: AGHT+IH8Qx4ewqPHCyDHdSihJ2G5kCb8Eh+Lq4JPwgxoxbykep04isusVWNXUkEnJTI73qGFKifEKg==
+X-Received: by 2002:a17:907:3f95:b0:a9a:17be:fac7 with SMTP id a640c23a62f3a-a9aaa52671dmr32704966b.14.1729530449552;
+        Mon, 21 Oct 2024 10:07:29 -0700 (PDT)
+Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d62b8sm227099766b.25.2024.10.21.10.07.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 10:07:29 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 21 Oct 2024 19:07:50 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 01/14] dt-bindings: clock: Add RaspberryPi RP1 clock
+ bindings
+Message-ID: <ZxaKZsXCHIYLwrfT@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <74199551e7a9e43a9aa2e1ed1a678493e7a8fb2c.1728300189.git.andrea.porta@suse.com>
+ <bznpgisxve5y34lu6hj6mlahd7r5fq2wz565nieiwvihwqbnzx@v6uk4mifhkhp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 13/13] drm/bridge: cdns-dsi: Use
- pre_enable/post_disable to enable/disable
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>
-References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
- <20241019200530.270738-1-aradhya.bhatia@linux.dev>
- <20241019200530.270738-6-aradhya.bhatia@linux.dev>
- <m7t4hsa3lcszjbipxlypf655uspoxw3xfyy5jo3n3bnmqaiqcf@6wti5f477gve>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <m7t4hsa3lcszjbipxlypf655uspoxw3xfyy5jo3n3bnmqaiqcf@6wti5f477gve>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bznpgisxve5y34lu6hj6mlahd7r5fq2wz565nieiwvihwqbnzx@v6uk4mifhkhp>
 
-Hi Dmitry,
+Hi Krzysztof,
 
-Thank you for reviewing the patches!
-
-On 10/20/24 17:27, Dmitry Baryshkov wrote:
-> On Sun, Oct 20, 2024 at 01:35:30AM +0530, Aradhya Bhatia wrote:
->> From: Aradhya Bhatia <a-bhatia1@ti.com>
->>
->> The cdns-dsi controller requires that it be turned on completely before
->> the input DPI's source has begun streaming[0]. Not having that, allows
->> for a small window before cdns-dsi enable and after cdns-dsi disable
->> where the previous entity (in this case tidss's videoport) to continue
->> streaming DPI video signals. This small window where cdns-dsi is
->> disabled but is still receiving signals causes the input FIFO of
->> cdns-dsi to get corrupted. This causes the colors to shift on the output
->> display. The colors can either shift by one color component (R->G, G->B,
->> B->R), or by two color components (R->B, G->R, B->G).
->>
->> Since tidss's videoport starts streaming via crtc enable hooks, we need
->> cdns-dsi to be up and running before that. Now that the bridges are
->> pre_enabled before crtc is enabled, and post_disabled after crtc is
->> disabled, use the pre_enable and post_disable hooks to get cdns-dsi
->> ready and running before the tidss videoport to get pass the color shift
->> issues.
->>
+On 08:31 Tue 08 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 07, 2024 at 02:39:44PM +0200, Andrea della Porta wrote:
+> > Add device tree bindings for the clock generator found in RP1 multi
+> > function device, and relative entries in MAINTAINERS file.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../clock/raspberrypi,rp1-clocks.yaml         | 62 +++++++++++++++++++
+> >  MAINTAINERS                                   |  6 ++
+> >  .../clock/raspberrypi,rp1-clocks.h            | 61 ++++++++++++++++++
+> >  3 files changed, 129 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >  create mode 100644 include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> > new file mode 100644
+> > index 000000000000..5e2e98051bf3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> > @@ -0,0 +1,62 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RaspberryPi RP1 clock generator
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta <andrea.porta@suse.com>
+> > +
+> > +description: |
+> > +  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
+> > +  VIDEO), and each PLL output can be programmed though dividers to generate
+> > +  the clocks to drive the sub-peripherals embedded inside the chipset.
+> > +
+> > +  Link to datasheet:
+> > +  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: raspberrypi,rp1-clocks
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#clock-cells':
+> > +    description:
+> > +      The index in the assigned-clocks is mapped to the output clock as per
 > 
-> Not being an expert in the TI DSS driver, would it be more proper to
-> handle that in the TI driver instead? I mean, sending out DPI signals
-> isn't a part of the CRTC setup, it's a job of the encoder.
+> How assigned-clocks is related to this? Drop.
 
-I haven't done a feasibility analysis of moving the CRTC bits of TIDSS
-into the encoder, but even if it were possible, it wouldn't solve the
-issue.
-
-The bridge_enable() sequence gets called _after_ the encoder has been
-enabled - causing the TIDSS's DPI (enabled from encoder) to still be
-up and running before the DSI has had a chance to be ready.
-
-Regards
-Aradhya
-
+This node provides clock for several peripherals, and for minimum functionality
+at least 3 clocks have to be setup through assigned-clocks (and
+assigned-clock-rates). That should be done in this same node (the provider of the
+clocks) because those clocks are shared among peripherals or clock generators,
+so cannot be described from consumers or we could incur in multiple declaration of
+the same clock. I dropped the assigned-clocks and assigned-clock-rates from the
+example section because Conor commented (see the first patchset version) that
+according to him those properties were not relevant there, maybe I failed to produce
+a careful explanation about why they are important. What should be the right course
+of action, then? Just drop that description or leave it as it is (maybe augmenting
+it with what I've explained here) and add again the dropped properties in the
+example? I would be inclined to vote for the latter, but I'm not sure... 
 
 > 
->> [0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
->>      TRM Link: http://www.ti.com/lit/pdf/spruil1
->>
->> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
->> ---
->>  .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 62 ++++++++++---------
->>  1 file changed, 34 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> index 79d8c2264c14..dfeb53841ebc 100644
->> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> @@ -658,13 +658,28 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
->>  	return MODE_OK;
->>  }
->>  
->> -static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
->> -					   struct drm_bridge_state *old_bridge_state)
->> +static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
->> +						struct drm_bridge_state *old_bridge_state)
->>  {
->>  	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
->>  	struct cdns_dsi *dsi = input_to_dsi(input);
->>  	u32 val;
->>  
->> +	/*
->> +	 * The cdns-dsi controller needs to be disabled after it's DPI source
->> +	 * has stopped streaming. If this is not followed, there is a brief
->> +	 * window before DPI source is disabled and after cdns-dsi controller
->> +	 * has been disabled where the DPI stream is still on, but the cdns-dsi
->> +	 * controller is not ready anymore to accept the incoming signals. This
->> +	 * is one of the reasons why a shift in pixel colors is observed on
->> +	 * displays that have cdns-dsi as one of the bridges.
->> +	 *
->> +	 * To mitigate this, disable this bridge from the bridge post_disable()
->> +	 * hook, instead of the bridge _disable() hook. The bridge post_disable()
->> +	 * hook gets called after the CRTC disable, where often many DPI sources
->> +	 * disable their streams.
->> +	 */
->> +
->>  	val = readl(dsi->regs + MCTL_MAIN_DATA_CTL);
->>  	val &= ~(IF_VID_SELECT_MASK | IF_VID_MODE | VID_EN | HOST_EOT_GEN |
->>  		 DISP_EOT_GEN);
->> @@ -683,15 +698,6 @@ static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
->>  	pm_runtime_put(dsi->base.dev);
->>  }
->>  
->> -static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
->> -						struct drm_bridge_state *old_bridge_state)
->> -{
->> -	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
->> -	struct cdns_dsi *dsi = input_to_dsi(input);
->> -
->> -	pm_runtime_put(dsi->base.dev);
->> -}
->> -
->>  static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
->>  {
->>  	struct cdns_dsi_output *output = &dsi->output;
->> @@ -760,8 +766,8 @@ static void cdns_dsi_init_link(struct cdns_dsi *dsi)
->>  	dsi->link_initialized = true;
->>  }
->>  
->> -static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
->> -					  struct drm_bridge_state *old_bridge_state)
->> +static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
->> +					      struct drm_bridge_state *old_bridge_state)
->>  {
->>  	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
->>  	struct cdns_dsi *dsi = input_to_dsi(input);
->> @@ -776,6 +782,21 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
->>  	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
->>  		return;
->>  
->> +	/*
->> +	 * The cdns-dsi controller needs to be enabled before it's DPI source
->> +	 * has begun streaming. If this is not followed, there is a brief window
->> +	 * after DPI source enable and before cdns-dsi controller enable where
->> +	 * the DPI stream is on, but the cdns-dsi controller is not ready to
->> +	 * accept the incoming signals. This is one of the reasons why a shift
->> +	 * in pixel colors is observed on displays that have cdns-dsi as one of
->> +	 * the bridges.
->> +	 *
->> +	 * To mitigate this, enable this bridge from the bridge pre_enable()
->> +	 * hook, instead of the bridge _enable() hook. The bridge pre_enable()
->> +	 * hook gets called before the CRTC enable, where often many DPI sources
->> +	 * enable their streams.
->> +	 */
->> +
->>  	if (dsi->platform_ops && dsi->platform_ops->enable)
->>  		dsi->platform_ops->enable(dsi);
->>  
->> @@ -912,19 +933,6 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
->>  	writel(tmp, dsi->regs + MCTL_MAIN_EN);
->>  }
->>  
->> -static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
->> -					      struct drm_bridge_state *old_bridge_state)
->> -{
->> -	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
->> -	struct cdns_dsi *dsi = input_to_dsi(input);
->> -
->> -	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
->> -		return;
->> -
->> -	cdns_dsi_init_link(dsi);
->> -	cdns_dsi_hs_init(dsi);
->> -}
->> -
->>  static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
->>  					       struct drm_bridge_state *bridge_state,
->>  					       struct drm_crtc_state *crtc_state,
->> @@ -968,9 +976,7 @@ static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
->>  static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
->>  	.attach = cdns_dsi_bridge_attach,
->>  	.mode_valid = cdns_dsi_bridge_mode_valid,
->> -	.atomic_disable = cdns_dsi_bridge_atomic_disable,
->>  	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
->> -	.atomic_enable = cdns_dsi_bridge_atomic_enable,
->>  	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
->>  	.atomic_check = cdns_dsi_bridge_atomic_check,
->>  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->> -- 
->> 2.34.1
->>
+> > +      definitions in dt-bindings/clock/raspberrypi,rp1-clocks.h.
+> 
+> Use full paths, so they can be validated. This applies to all your
+> patches.
+
+Ack.
+
+> 
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    const: rp1-xosc
+> 
+> Drop clock-names, redundant. Or just "xosc". Hyphens are not recommended
+> character and rp1 is redundant.
+
+Ack.
+
+> 
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - '#clock-cells'
+> > +  - clocks
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
+> > +
+> > +    rp1 {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        rp1_clocks: clocks@c040018000 {
+> 
+> Drop unused label.
+
+Ack.
+
+> 
+> > +            compatible = "raspberrypi,rp1-clocks";
+> > +            reg = <0xc0 0x40018000 0x0 0x10038>;
+> > +            #clock-cells = <1>;
+> > +            clocks = <&clk_rp1_xosc>;
+> > +            clock-names =  "rp1-xosc";
+> > +        };
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index c27f3190737f..75a66e3e34c9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19380,6 +19380,12 @@ F:	Documentation/devicetree/bindings/media/raspberrypi,pispbe.yaml
+> >  F:	drivers/media/platform/raspberrypi/pisp_be/
+> >  F:	include/uapi/linux/media/raspberrypi/
+> >  
+> > +RASPBERRY PI RP1 PCI DRIVER
+> > +M:	Andrea della Porta <andrea.porta@suse.com>
+> > +S:	Maintained
+> > +F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> > +F:	include/dt-bindings/clock/rp1.h
+> > +
+> >  RC-CORE / LIRC FRAMEWORK
+> >  M:	Sean Young <sean@mess.org>
+> >  L:	linux-media@vger.kernel.org
+> > diff --git a/include/dt-bindings/clock/raspberrypi,rp1-clocks.h b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+> > new file mode 100644
+> > index 000000000000..b7c1eaa74eae
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+> > @@ -0,0 +1,61 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> 
+> Any reason for different license?
+
+Not really, I'll revert it back to the usual (GPL-2.0-only OR BSD-2-Clause), as
+the other schemas.
+
+Many thanks,
+
+Andrea
+
+> 
+> > +/*
+> > + * Copyright (C) 2021 Raspberry Pi Ltd.
+> > + */
+> 
+> Best regards,
+> Krzysztof
 > 
 
