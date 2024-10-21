@@ -1,74 +1,45 @@
-Return-Path: <linux-kernel+bounces-374026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D529A60C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD329A60CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A926A1F2262D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCCC1F2264D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C29F1E3DDE;
-	Mon, 21 Oct 2024 09:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hNtB4ltj"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B381E3DC2;
+	Mon, 21 Oct 2024 09:56:19 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8639C1E3777
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775901E3777
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504560; cv=none; b=ADdUnhN9dyvD76Yip57mSFTPPS6RkR2cxasdyufdHooBb5BA+b5Q1ovD0SmJWh5gkiihyXf6stizv6kgB6oXhMXPywzaUcLsemVptV8/vx10MI7iWEUNJDCGqKfmrA/bian2VqPifPK2ymv+WAh6KcIYyN6bBP8VY8ozp7yR2io=
+	t=1729504579; cv=none; b=rDfiJe6M0OYQaCesSCSYV/d9tGpM6C2HlF1psX5TS8EXpvCkspDDhFDh4BJSgOkeelIX6n07RnwsR3JxB1heW/CaPrJB/uhtmSH7RkKmpro5qmoEwQhg/JrUEP5bAqVtSWFXT6RskVxLYhq6qZQyJGNHDj1u9OjeJ6qF0TgTuJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504560; c=relaxed/simple;
-	bh=aCPplQNHBSp7ixtlvVKNeQb0ld7g2/qr5WKCYSFaPBI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MAysVCV6LWiEtazP0gP1HaBjDN4kPnlNfZ//r7Mo8nX/ppIki32lt1HMhoCcJE8icMu7OgZDjhVV5FKy6oO6WosU5de6T1qI7wc++hwcEk7ekgb7OgCsYdOuUG7YRLDVaYM6Az8BoJhfuutEDsUV17DqO9o6pajyGaK7VQJIWPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hNtB4ltj; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso41616195e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729504557; x=1730109357; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ly9QzvkDQwHbhqCl2zYl2fNRI7r46h78qQTGBELbePs=;
-        b=hNtB4ltjI5B7MbU5AoKG8TPQpuoxz26YEwoc5onwTcGosdFPtMF1b8Fbi3+NcNWe90
-         rmlQg9i6HcLWVIb3QO2fP5wO0CwM+VGXRnXQjSx0YuEqNzavKqRPHB5JaHDBv9wRxTN3
-         ywz8zhOmQiosKyn/AY6nYqjA8VROI3S6KfT1DYgrAXQKcsFrgvjZoDTBiSXcS9xGQyqN
-         cGKnnfELWtQkP8UZfEGEEZiNFNzAYJply6lehf3dXD5c/ytql98Q9bdYf/1F+w3xgm8G
-         aVw3NLvh9X5bUmFrRUqtWXhWRfgs3AoSRXHyqQHlzZ0DAudIfn1GyeUF80QLxboC5UhE
-         7Pfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729504557; x=1730109357;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ly9QzvkDQwHbhqCl2zYl2fNRI7r46h78qQTGBELbePs=;
-        b=JdW1zehbUaQ2DoqTUnGXH/JO+zkX2I8f0LQ+SfXwbiLXtcEgRqGRKsRA4LLCTnTbi+
-         lydXZjxPfXHk/TajGwujnuCJrz5+VOpdi0LJqZiRIWxFOQktChUI3Ivc3+NBlNU9o6bA
-         LhgDyKTzQNgBxLWa2gMahMNrVBJZQ4TjR+pFAqUctWJpdLm8mbH2cPylg2VKZ1OcG9DP
-         hnKPXElSKUvs/FH/IqDivnSaWId/A2ceuiF00lXbcsdcjRZGtCBRwDxh45INpTO7bGmn
-         RRDgDkfJCwIw1oYspygQeauLl/8Y0syWx96gWz2tnG3JCZxfGYEhSIjQxYDN4C8UNb4B
-         QKzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJGJRCPwbRZICQ2I2OmxTc+hAAeTp5347Tsyu20kVFzfApKLV3yjMNnMNbDaioVgPcBVQOIAvbO5n7DG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWR1PStLygR/dQrHJGZqvBkqo2JQHKwUQ4p/iR/93p9dUJdeu
-	PdBDIf0Ig+Y6rS+Czh2WRzqo+FMI5qDJnYITOnwp7KZvNpweQug6gKlt/oALnpg=
-X-Google-Smtp-Source: AGHT+IGObxU10ZGfZ87Oq/bHgK2wd5Q6KMGknCnnY1ElFcpU0HfA1xR2NwKT5e6iZbBblacYId1lVw==
-X-Received: by 2002:a05:600c:1e28:b0:42c:b750:1a1e with SMTP id 5b1f17b1804b1-431615991f4mr85416045e9.0.1729504556750;
-        Mon, 21 Oct 2024 02:55:56 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57ba0bsm51558885e9.15.2024.10.21.02.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 02:55:56 -0700 (PDT)
-Message-ID: <a19cae79-b50b-4faf-a81d-39e00d563053@linaro.org>
-Date: Mon, 21 Oct 2024 11:55:53 +0200
+	s=arc-20240116; t=1729504579; c=relaxed/simple;
+	bh=ILzBlsaYR4viHZuitkcmgZnmKOpIM85FwTS8uhL2eeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Cgt0tDwH2+IYveWIBJcahVLr8Zm5ckXEqJydkZMLQdhTOMjsbLONXZorOoBNU6DGBW/ctLb9B/kskBOi/mISWkP/q7O2ZpjtVzCX5snt2UCLvRtlwyUlJ8D8qv1HRwyJ8N7LvAnb40L+xxJXdc+utr1PTldWlrr3s5UKQw23r14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XX9cR19Y4zfdRk;
+	Mon, 21 Oct 2024 17:53:43 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 86773180064;
+	Mon, 21 Oct 2024 17:56:12 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 21 Oct
+ 2024 17:56:11 +0800
+Message-ID: <c85a035b-70d2-47df-b2c3-db255c98f6ff@huawei.com>
+Date: Mon, 21 Oct 2024 17:56:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,108 +47,289 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/6] drm/display: bridge_connector: handle
- ycbcr_420_allowed
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <20241019-bridge-yuv420-v1-1-d74efac9e4e6@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241019-bridge-yuv420-v1-1-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3] mm/vmscan: stop the loop if enough pages have been
+ page_out
+To: Barry Song <21cnbao@gmail.com>, Chen Ridong <chenridong@huaweicloud.com>
+CC: Kefeng Wang <wangkefeng.wang@huawei.com>, <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<wangweiyang2@huawei.com>, Michal Hocko <mhocko@suse.com>, Johannes Weiner
+	<hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, Yu Zhao
+	<yuzhao@google.com>, David Hildenbrand <david@redhat.com>, Matthew Wilcox
+	<willy@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>
+References: <20241010081802.290893-1-chenridong@huaweicloud.com>
+ <c3f2c5e2-4804-46e8-86ff-1f6a79ea9a7c@huawei.com>
+ <CAGsJ_4zR+=80S_Fz1ZV3iZxjVKUE3-f32w7W1smuAgZM=HrPRQ@mail.gmail.com>
+ <62bd2564-76fa-4cb0-9c08-9eb2f96771b6@huawei.com>
+ <CAGsJ_4x=nqKFMqDmfmvXVAhQNTo1Fx-aQ2MoSKSGQrSCccqr3Q@mail.gmail.com>
+ <28b3eae5-92e7-471f-9883-d03684e06d1b@huaweicloud.com>
+ <CAGsJ_4yx8Z2w=FbBCUHtDa-=jDVDcdsBAHu26-LNeuOuquoOmg@mail.gmail.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <CAGsJ_4yx8Z2w=FbBCUHtDa-=jDVDcdsBAHu26-LNeuOuquoOmg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On 18/10/2024 23:49, Dmitry Baryshkov wrote:
-> Follow the interlace_allowed example and calculate drm_connector's
-> ycbcr_420_allowed flag as AND of all drm_bridge's ycbcr_420_allowed
-> flags in a chain. This is one of the gaps between several
-> bridge-specific connector implementations and drm_bridge_connector.
+
+
+On 2024/10/21 17:42, Barry Song wrote:
+> On Mon, Oct 21, 2024 at 9:14 PM Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> On 2024/10/21 12:44, Barry Song wrote:
+>>> On Fri, Oct 11, 2024 at 7:49 PM chenridong <chenridong@huawei.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/10/11 0:17, Barry Song wrote:
+>>>>> On Thu, Oct 10, 2024 at 4:59 PM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+>>>>>>
+>>>>>> Hi Ridong,
+>>>>>>
+>>>>>> This should be the first version for upstream, and the issue only
+>>>>>> occurred when large folio is spited.
+>>>>>>
+>>>>>> Adding more CCs to see if there's more feedback.
+>>>>>>
+>>>>>>
+>>>>>> On 2024/10/10 16:18, Chen Ridong wrote:
+>>>>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>>>>
+>>>>>>> An issue was found with the following testing step:
+>>>>>>> 1. Compile with CONFIG_TRANSPARENT_HUGEPAGE=y
+>>>>>>> 2. Mount memcg v1, and create memcg named test_memcg and set
+>>>>>>>      usage_in_bytes=2.1G, memsw.usage_in_bytes=3G.
+>>>>>>> 3. Create a 1G swap file, and allocate 2.2G anon memory in test_memcg.
+>>>>>>>
+>>>>>>> It was found that:
+>>>>>>>
+>>>>>>> cat memory.usage_in_bytes
+>>>>>>> 2144940032
+>>>>>>> cat memory.memsw.usage_in_bytes
+>>>>>>> 2255056896
+>>>>>>>
+>>>>>>> free -h
+>>>>>>>                 total        used        free
+>>>>>>> Mem:           31Gi       2.1Gi        27Gi
+>>>>>>> Swap:         1.0Gi       618Mi       405Mi
+>>>>>>>
+>>>>>>> As shown above, the test_memcg used about 100M swap, but 600M+ swap memory
+>>>>>>> was used, which means that 500M may be wasted because other memcgs can not
+>>>>>>> use these swap memory.
+>>>>>>>
+>>>>>>> It can be explained as follows:
+>>>>>>> 1. When entering shrink_inactive_list, it isolates folios from lru from
+>>>>>>>      tail to head. If it just takes folioN from lru(make it simple).
+>>>>>>>
+>>>>>>>      inactive lru: folio1<->folio2<->folio3...<->folioN-1
+>>>>>>>      isolated list: folioN
+>>>>>>>
+>>>>>>> 2. In shrink_page_list function, if folioN is THP, it may be splited and
+>>>>>>>      added to swap cache folio by folio. After adding to swap cache, it will
+>>>>>>>      submit io to writeback folio to swap, which is asynchronous.
+>>>>>>>      When shrink_page_list is finished, the isolated folios list will be
+>>>>>>>      moved back to the head of inactive lru. The inactive lru may just look
+>>>>>>>      like this, with 512 filioes have been move to the head of inactive lru.
+>>>>>>>
+>>>>>>>      folioN512<->folioN511<->...filioN1<->folio1<->folio2...<->folioN-1
+>>>>>>>
+>>>>>>> 3. When folio writeback io is completed, the folio may be rotated to tail
+>>>>>>>      of lru. The following lru list is expected, with those filioes that have
+>>>>>>>      been added to swap cache are rotated to tail of lru. So those folios
+>>>>>>>      can be reclaimed as soon as possible.
+>>>>>>>
+>>>>>>>      folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
+>>>>>>>
+>>>>>>> 4. However, shrink_page_list and folio writeback are asynchronous. If THP
+>>>>>>>      is splited, shrink_page_list loops at least 512 times, which means that
+>>>>>>>      shrink_page_list is not completed but some folios writeback have been
+>>>>>>>      completed, and this may lead to failure to rotate these folios to the
+>>>>>>>      tail of lru. The lru may look likes as below:
+>>>>>
+>>>>> I assume you’re referring to PMD-mapped THP, but your code also modifies
+>>>>> mTHP, which might not be that large. For instance, it could be a 16KB mTHP.
+>>>>>
+>>>>>>>
+>>>>>>>      folioN50<->folioN49<->...filioN1<->folio1<->folio2...<->folioN-1<->
+>>>>>>>      folioN51<->folioN52<->...folioN511<->folioN512
+>>>>>>>
+>>>>>>>      Although those folios (N1-N50) have been finished writing back, they
+>>>>>>>      are still at the head of lru. When isolating folios from lru, it scans
+>>>>>>>      from tail to head, so it is difficult to scan those folios again.
+>>>>>>>
+>>>>>>> What mentioned above may lead to a large number of folios have been added
+>>>>>>> to swap cache but can not be reclaimed in time, which may reduce reclaim
+>>>>>>> efficiency and prevent other memcgs from using this swap memory even if
+>>>>>>> they trigger OOM.
+>>>>>>>
+>>>>>>> To fix this issue, it's better to stop looping if THP has been splited and
+>>>>>>> nr_pageout is greater than nr_to_reclaim.
+>>>>>>>
+>>>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>>>>> ---
+>>>>>>>    mm/vmscan.c | 16 +++++++++++++++-
+>>>>>>>    1 file changed, 15 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>>>>> index 749cdc110c74..fd8ad251eda2 100644
+>>>>>>> --- a/mm/vmscan.c
+>>>>>>> +++ b/mm/vmscan.c
+>>>>>>> @@ -1047,7 +1047,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>>>>>>>        LIST_HEAD(demote_folios);
+>>>>>>>        unsigned int nr_reclaimed = 0;
+>>>>>>>        unsigned int pgactivate = 0;
+>>>>>>> -     bool do_demote_pass;
+>>>>>>> +     bool do_demote_pass, splited = false;
+>>>>>>>        struct swap_iocb *plug = NULL;
+>>>>>>>
+>>>>>>>        folio_batch_init(&free_folios);
+>>>>>>> @@ -1065,6 +1065,16 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>>>>>>>
+>>>>>>>                cond_resched();
+>>>>>>>
+>>>>>>> +             /*
+>>>>>>> +              * If a large folio has been split, many folios are added
+>>>>>>> +              * to folio_list. Looping through the entire list takes
+>>>>>>> +              * too much time, which may prevent folios that have completed
+>>>>>>> +              * writeback from rotateing to the tail of the lru. Just
+>>>>>>> +              * stop looping if nr_pageout is greater than nr_to_reclaim.
+>>>>>>> +              */
+>>>>>>> +             if (unlikely(splited && stat->nr_pageout > sc->nr_to_reclaim))
+>>>>>>> +                     break;
+>>>>>
+>>>>> I’m not entirely sure about the theory behind comparing stat->nr_pageout
+>>>>> with sc->nr_to_reclaim. However, the condition might still hold true even
+>>>>> if you’ve split a relatively small “large folio,” such as 16kB?
+>>>>>
+>>>>
+>>>> Why compare stat->nr_pageout with sc->nr_to_reclaim? It's because if all
+>>>> pages that have been pageout can be reclaimed, then enough pages can be
+>>>> reclaimed when all pages have finished writeback. Thus, it may not have
+>>>> to pageout more.
+>>>>
+>>>> If a small large folio(16 kB) has been split, it may return early
+>>>> without the entire pages in the folio_list being pageout, but I think
+>>>> that is fine. It can pageout more pages the next time it enters
+>>>> shrink_folio_list if there are not enough pages to reclaimed.
+>>>>
+>>>> However, if pages that have been pageout are still at the head of the
+>>>> LRU, it is difficult to scan these pages again. In this case, not only
+>>>> might it "waste" some swap memory but it also has to pageout more pages.
+>>>>
+>>>> Considering the above, I sent this patch. It may not be a perfect
+>>>> solution, but i think it's a good option to consider. And I am wondering
+>>>> if anyone has a better solution.
+>>>
+>>> Hi Ridong,
+>>> My overall understanding is that you have failed to describe your problem
+>>> particularly I don't understand what your 3 and 4 mean:
+>>>
+>>>> 3. When folio writeback io is completed, the folio may be rotated to tail
+>>>>    of lru. The following lru list is expected, with those filioes that have
+>>>>    been added to swap cache are rotated to tail of lru. So those folios
+>>>>  can be reclaimed as soon as possible.
+>>>>
+>>>>  folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
+>>>
+>>>  > 4. However, shrink_page_list and folio writeback are asynchronous. If THP
+>>>  >    is splited, shrink_page_list loops at least 512 times, which means that
+>>>  >    shrink_page_list is not completed but some folios writeback have been
+>>>  >    completed, and this may lead to failure to rotate these folios to the
+>>>   >  tail of lru. The lru may look likes as below:
+>>>
+>>> can you please describe it in a readable approach?
+>>>
+>>> i feel your below diagram is somehow wrong:
+>>> folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
+>>>
+>>> You mentioned "rotate', how could "rotate" makes:
+>>> folioN512<->folioN511<->...filioN1 in (2)
+>>> become
+>>> filioN1<->...folioN511<->folioN512 in (3).
+>>>
+>>
+>> I am sorry for any confusion.
+>>
+>> If THP is split, filioN1, filioN2, filioN3, ...filioN512 are committed
+>> to writeback one by one. it assumed that filioN1,
+>> filioN2,filioN3,...filioN512 are completed in order.
+>>
+>> Orignal:
+>> folioN512<->folioN511<->...filioN1<->folio1<->folio2...<->folioN-1
+>>
+>> filioN1 is finished, filioN1 is rotated to the tail of LRU:
+>> folioN512<->folioN511<->...filioN2<->folio1<->folio2...<->folioN-1<->folioN1
+>>
+>> filioN2 is finished:
+>> folioN512<->folioN511<->...filioN3<->folio1<->folio2...<->folioN-1<->folioN1<->folioN2
+>>
+>> filioN3 is finished:
+>> folioN512<->folioN511<->...filioN4<->folio1<->folio2...<->folioN-1<->folioN1<->folioN2<->filioN3
+>>
+>> ...
+>>
+>> filioN512 is finished:
+>> folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
+>>
+>> When the filios are finished, the LRU might just like this:
+>> folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/display/drm_bridge_connector.c | 6 ++++--
->   include/drm/drm_bridge.h                       | 5 +++++
->   2 files changed, 9 insertions(+), 2 deletions(-)
+> understood, thanks!
 > 
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index 3da5b8bf8259..320c297008aa 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -397,11 +397,11 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->   	bridge_connector->encoder = encoder;
->   
->   	/*
-> -	 * TODO: Handle doublescan_allowed, stereo_allowed and
-> -	 * ycbcr_420_allowed.
-> +	 * TODO: Handle doublescan_allowed and stereo_allowed.
->   	 */
->   	connector = &bridge_connector->base;
->   	connector->interlace_allowed = true;
-> +	connector->ycbcr_420_allowed = true;
->   
->   	/*
->   	 * Initialise connector status handling. First locate the furthest
-> @@ -414,6 +414,8 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->   	drm_for_each_bridge_in_chain(encoder, bridge) {
->   		if (!bridge->interlace_allowed)
->   			connector->interlace_allowed = false;
-> +		if (!bridge->ycbcr_420_allowed)
-> +			connector->ycbcr_420_allowed = false;
->   
->   		if (bridge->ops & DRM_BRIDGE_OP_EDID)
->   			bridge_connector->bridge_edid = bridge;
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 75019d16be64..e8d735b7f6a4 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -802,6 +802,11 @@ struct drm_bridge {
->   	 * modes.
->   	 */
->   	bool interlace_allowed;
-> +	/**
-> +	 * @ycbcr_420_allowed: Indicate that the bridge can handle YCbCr 420
-> +	 * output.
-> +	 */
-> +	bool ycbcr_420_allowed;
->   	/**
->   	 * @pre_enable_prev_first: The bridge requires that the prev
->   	 * bridge @pre_enable function is called before its @pre_enable,
+> Let me try to understand the following part:
+> 
+>> 4:
+>>   folioN50<->folioN49<->...filioN1<->folio1<->folio2...<->folioN-1<->
+>>   folioN51<->folioN52<->...folioN511<->folioN512
+> 
+>  >  Although those folios (N1-N50) have been finished writing back, they
+>  >  are still at the head of lru. When isolating folios from lru, it scans
+>  >  from tail to head, so it is difficult to scan those folios again.
+> 
+> What is the reason that "those folios (N1-N50) have finished writing back,
+> yet they remain at the head of the LRU"? Is it because their writeback_end
+> occurred while we were still looping in shrink_folio_list(), causing
+> folio_end_writeback()'s folio_rotate_reclaimable() to fail in moving
+> these folios, which are still in the "folio_list", to the tail of the LRU?
 > 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Yes, you are right.
+
+>>
+>>> btw, writeback isn't always async. it could be sync for zram and sync_io
+>>> swap. in that case, your patch might change the order of LRU. i mean,
+>>> for example, while a mTHP becomes cold, we always reclaim all of them,
+>>> but not part of them and put back part of small folios to the head of lru.
+>>>
+>>
+>> Yes, This can be changed.
+>> Although it may put back part of small folios to the head of lru, it can
+>> return in time from shrink_folio_list without causing much additional I/O.
+>>
+>> If you have understood this issue, do you have any suggestions to fix
+>> it? My patch may not be a perfect way to fix this issue.
+>>
+> 
+> My point is that synchronous I/O, like zRAM, doesn't have this issue and
+> doesn't require this fix, as writeback is always completed without
+> asynchronous latency.
+> 
+
+I have tested zRAM and found no issues.
+This is version 1, and I don't know whether this fix will be accepted.
+If it is accepted, perhaps this patch could be modified to apply only to
+asynchronous io.
+
+Best regards,
+Ridong
+
+> 
+>> Best regards,
+>> Ridong
+>>
+> 
+> Thanks
+> Barry
 
