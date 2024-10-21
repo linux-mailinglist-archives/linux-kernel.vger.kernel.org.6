@@ -1,191 +1,204 @@
-Return-Path: <linux-kernel+bounces-373655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39A49A59E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42239A59D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C69282035
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D851C212BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C6C194151;
-	Mon, 21 Oct 2024 05:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8991CF287;
+	Mon, 21 Oct 2024 05:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DXdnrwhv"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2080.outbound.protection.outlook.com [40.107.94.80])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b7Ovei4D"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8AB7462
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729489693; cv=fail; b=lv5DJJDVBbXOBmKp3K5NO3zU25UXNMWeYptZAmRCGNyAVf2SqmQbsFcOAOl5SDNMuFTt6deHgYgMFQpo0WYSijNPYJbGrI7J+OijeORq+HHKBnMSgBhg10+6ZWfzF95miOua/nvCwkizGm/YZgvi16c/bh/k8UM+NVBDyxubCA4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729489693; c=relaxed/simple;
-	bh=XUiEj+2HFquZ9XOrg796H/UWQZLLUVizhbxQudCBQWo=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=ZerOxL84/PsVqg72QjvC1AKuyjbM7mgAWWYy0cA23ekcq1J5j7RQ7JrSbkvvA97F2zw0UxOHeLSdLY7B+/82cCoGKJXFH1+0zD449FuCsYPSv+4SY/OZoKVdm4tFvA2BWRse94QvsGpDgr+5uVGF+l0Uxmpg25COvBTRV5SGJjY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DXdnrwhv; arc=fail smtp.client-ip=40.107.94.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a9TdC9T2z8J7+U6SsNxVZB3clo1gykqJQzeaY2ggC2x1BKlNL5CFCTwT3gxWebxCw5F3tHdZHiuQpGKZ8p9tVWE6Xvtdi5LkZeH9JdZ+wu23fbOcNvVGjqoT+QZPBrhgWQFHl3cXxzOspmKtUW3eLRpYQucBVFZTdThnbXNxGp4t+12y5Ccw3VkHcPtfCUdl4+rguCeo2rgMzt2k457JzRhMV0iG5NFy48FWV67ynzOs0GX7d9kM1dOy9gYkG3JiWeFjtLmmu0OyabxKqsOQeui2mZtJk+QtcDs6yNIJ5wJYyfSyGx/dEzOvA12uBe5lMNxtZjMw+SzrRfKhvRyWwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Di3Ds/TCdLRufhT+Kcc+vjwk4Dekk0D72TavI6aYSmo=;
- b=mIoNBdL4sajCWIDUIProPGaoHgD51PzPpbQ0dGzhYfRsRQXAZ341edOXZ2mFcDN75+tIyQp+nA5LkVYgHBpX8eujNuJm/TTwNI7yXUixqPAAUYSl+mZM+ZtM3p5CgF+x1gFZWqNDv4g8qWNGCXE0JYvoi5BaCi2oLKjw5GGnU6lz5mP54LIsNm6hYYXahvmwUdFj1MfwYMUoifg0S1L1mSHZFQTv9MJOv7Jfj4Nvg/Pv6a4IT1dYTRHpuuyT7PUxNGwLK126I+YuRLezafVwF9R98n+73vuQk4mKmMCGNJBw9tka/wSqNMSx3QtvjrxwR+Po0WMh3ByzEkSjJkbF2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Di3Ds/TCdLRufhT+Kcc+vjwk4Dekk0D72TavI6aYSmo=;
- b=DXdnrwhvvVwHul5DLN1bc926SdZBL6GdpyZvDZHsNN1L7TZuUh9gJ0YfhMcUNKeHX1uccI64MtdP68mbxVfvu1zcl6pdF+EKSiw/h5wjctFCdoYnywnHDTxw3bThty6CNuk4AlKV52cqYZLey8hvGJHp+Dj/6TyY8GKqMsmjgRdYN3ZviqqvQ/lvDidkDwtHjZmrjCmmZkkSSD6ADekZeJUlvNF69O/ALjyXmcA+V2+RKr3qMwWoDCcC7158ydxt3SwBwVNlH6coD/HcCors6AStO6hYrfyxd27g5SnS2l2PH8yQgA0Y6oaCRi8sAjVpTl8Bk0e1j7eTMQ/vgYsN6g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SJ0PR12MB6711.namprd12.prod.outlook.com (2603:10b6:a03:44d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 05:48:08 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 05:48:08 +0000
-References: <20241018223411.310331-1-jhubbard@nvidia.com>
- <87y12ibbew.fsf@nvdebian.thelocal>
- <142152a5-d265-4aa5-b103-dede882f9715@nvidia.com>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, LKML
- <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, David Hildenbrand
- <david@redhat.com>, Shigeru Yoshida <syoshida@redhat.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Minchan Kim <minchan@kernel.org>, Pasha Tatashin
- <pasha.tatashin@soleen.com>
-Subject: Re: [PATCH v3] mm/gup: stop leaking pinned pages in low memory
- conditions
-Date: Mon, 21 Oct 2024 16:39:55 +1100
-In-reply-to: <142152a5-d265-4aa5-b103-dede882f9715@nvidia.com>
-Message-ID: <87ttd6atxi.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY8P282CA0024.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:29b::13) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED65634;
+	Mon, 21 Oct 2024 05:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729489302; cv=none; b=tv92V0n5sbe0h30GXeR1jpnfvJVpCzuY8SAsD6DQD3X/yYE8w5cYaqxLhJYD8H1HV3l+JPxmHQG9IkBIoqf4/wH56sSQm5QgP1O/vgVWvEBJreK+LKDtP0BZpozEV6UdWH/0l++0CAjIEwaCVO4jNQDSm2n5/ngOMgxKdB1x3pM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729489302; c=relaxed/simple;
+	bh=x15yRLhgy42+yizJ86mU28DoOslmxHJB5vdr0m9Jm+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CdicnGy1g3R3rY/OdSzLqCR4nvGIUsVoq7KbICP+rc/xh1+v9bI858hVUXrj8RLwb9htfRirzlH+5R3WAAn8QpdBEWjlYm+TdVMasKyDa33AQXpOjnGOhKpsQlw5xUXvqq74Kd7DIeZufAMYYVqtmWxGv/Vy6+w9vOq5DIvlJ6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b7Ovei4D; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49KNHeBB014302;
+	Mon, 21 Oct 2024 05:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OI+g/PDRqVZ95UWxsvAz05m79blc6jc1PXoXbNyQswA=; b=b7Ovei4DFeFWBJ0Z
+	wC+yHk5XzuTgof4wrQkk7Mwnyh3mc0DLyZEDo0rvIex9U90w7eqSyqbCpf0VVhF9
+	O+UaWCU17fV8k69zKZhE3eSo/cu3+dszW1lHxqJu1/jCZo9fv4L/PeWJcyJFTwn4
+	zxWw2wrKLHAaRxkxsknJUHOAUSIOdLhxiCKOpzGjC5eBRLE2UaQwBcEBu4GSJ1Vr
+	Rv7bJhKcbho2QrvIgZez5UYNnz93WZ6vW1WE0aGOObN3MzhDYN4DbD79SmwVRWBD
+	nsvp2+BYnQX4H6vUDH3A39g/zf8NA2bjUdjGAVf11xiOEjXAZxqrdQMbD8W7cG4l
+	m3p0lQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vuua0v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 05:41:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49L5fLt2005526
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 05:41:21 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 20 Oct
+ 2024 22:41:14 -0700
+Message-ID: <01cbb389-1966-4501-a22d-7227765d1eb9@quicinc.com>
+Date: Mon, 21 Oct 2024 11:11:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ0PR12MB6711:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fd078b8-7596-4a2d-a9c6-08dcf193f0ed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HGW4ygDrUST5XonBcvOCpoWo1931NPVBuWM/vWo4eD9v4nFaBwuhvnJyfQM4?=
- =?us-ascii?Q?HFlMXaKt7G9pMLr+8MK/fNOsKs29qX+ZCCXx5h/lhCGfp8s8t2XKGX5VHS4y?=
- =?us-ascii?Q?rrHLHGavpTGMf0vsXi2V/TV0zgngu/q7J1pqjsdauJhS3G0oO9bShx6L/JV+?=
- =?us-ascii?Q?bJ8zCGQgqbQxYK1oteLY9tPaiQTAyvhzo0b/ygCcTRVV4VuaOEWx8jq2h8Zd?=
- =?us-ascii?Q?zEaDUs58ZXPQXD3gwKVCsPxovK+LW1iLK7qFEjXEO3vlIqq4nvzbgt61u79y?=
- =?us-ascii?Q?Ld52yRsI2Gkpfy1JzxhGZOPV/Gl8bToJVtUxtN3592rkhKdeoSpK/+dJrzKJ?=
- =?us-ascii?Q?dd94oonIYbnl/RKZdI/SPH9gib5B7MHdbTG60T2XBwW/rWrgb2TrNJ4/CLdq?=
- =?us-ascii?Q?NGMTc4c3T9X0rqAX4vi4lMnrZk76P62ziqTzMNgF3V1W/dybyAJgTB8SM5TB?=
- =?us-ascii?Q?esE+jYArxrA1jZYF2gNTjZFSjH48ZWuZozhKKEDilnISUdK2l+g4OZ6cMVti?=
- =?us-ascii?Q?bm5JIvD9XBMZRvY2pItN1Lb8fKNCAxJrwEnU+BEYwNIA78VaeK26aWmOhGs9?=
- =?us-ascii?Q?YYKdm1KOM1J6tfoUcC2leMoHwOvIJWei20AJi7a0wCN8meZBYzzBSCq8f0eD?=
- =?us-ascii?Q?V4F0zq9dOBbLywTVgueLUX6lWIDpcSP+7uO6KqgdaffXuSknjToB0cqAvZ+E?=
- =?us-ascii?Q?lQyApJnpdppRl15C0DrS4IdM+7czf/HKRjO0FGHFNIaG6jkjL2VWyPnYtowx?=
- =?us-ascii?Q?u5zZZ7bUMuT+XpzZ3M9A9BXdOOziz7yVc0uePak0LNwpIKd10yRou13NN5WA?=
- =?us-ascii?Q?G2vys3L9To3opmoWBVeqdgxkqn545yx+JvUZCur2iBQFkrVvyVsqefQLlp4h?=
- =?us-ascii?Q?VHELgUXwHKg//YZVhtaYIWl7nyiWB2CkZwXDX16egNH9+afF4J+WsyhshIU2?=
- =?us-ascii?Q?fnZKGkqMVc8rBhme3nsxmtPVo8JMT/oYAY7xBdvJf41Y3s6+ppIVOCBK01Sr?=
- =?us-ascii?Q?efLXU88jNNK1qY2UTXkoRuC73/h7jrLyPfabXmcNnJwyjIQGAsfj6zurRJ7m?=
- =?us-ascii?Q?wQ6M6YltLT6//vT1oh8kz4gZai1ggm7NE2fQkdtP0gxIj3UK5i8Xap1Qjjsn?=
- =?us-ascii?Q?2U6BCrAuTaCZKLcZz5LqZBA2xu1rJD2pvClk82Sl3ZX08zCeltRuZ6lg4Msy?=
- =?us-ascii?Q?ohLcflbfZe487dJKYXdvJZPGDJSGqcW9VmdlagbBqmn4BBaGq7/3HkIVIzxJ?=
- =?us-ascii?Q?aZwj5qehzZewqM7aMPqaaxJp5IEzBFkdAIG6E1tkE/BJRLmatuGO+ig/5ozF?=
- =?us-ascii?Q?iOSEBBdgIBfrn/zdcTvYB2xX?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VGgTXPO0RlowAVEOy6aDQHzcDXLJRaSizevD+gG1uqqRsjMZi/Fpj/qDBKzi?=
- =?us-ascii?Q?TduDq0EB1eznRuk6sFs8C0VZz1ifiQbMmfgL+n81oUTTQKUNL+z48uyyAdeC?=
- =?us-ascii?Q?r1BVEm9aY693nwGzQGf8ulRMCbiCPrsM0u7+Gl9Rc7NzUL+6o3w4J3lsg+ag?=
- =?us-ascii?Q?c9+WchxGCAv8nIydIGD/3eKTpP8VX91MJORfrHRSfr8BhvZul/C06oP8lm/w?=
- =?us-ascii?Q?j+dp0S2cQOKdGoFtIWBFz6xRq4OCtg3ggq/JCsJh4vrFfQDv5nvAXf7YzL5B?=
- =?us-ascii?Q?RoLxmzvTI542rF0DfMNbfymLjVTxC5PXR6JkH3f4m4YfGFDgi4tUyWDCFzK+?=
- =?us-ascii?Q?OmPXwMQCSOKUMTSyo/LCXkL4DUGQrI0bYZvzTmuD2WgqHlwXIpNqY25vcVkz?=
- =?us-ascii?Q?xxyo3jaYFLtFbb+ROElzEadZEMo0c4YCg4e/F2JE032edvJC4Lcp6/gKg2Ji?=
- =?us-ascii?Q?jdYIqLWkmkGAsfaoikxfPZckZ/nyW8x6VOv/T2zooEIWLDGJLgkoB/PqAisS?=
- =?us-ascii?Q?CsEBVTOrD8jVtjFpnduA2Z98Co3o2tA8rf4aHU2jDPrDw6B2v34xxAhsGtLa?=
- =?us-ascii?Q?8GHBy6IVS8qWeAItlQEfhPNOIMInCaMcUE9epNW0+rDaS/aCy7oScTzkLVA4?=
- =?us-ascii?Q?DlkfrTSy3koLGvObGjhHkO6HDC1nrWcnpLjBwwTSymfgdGdVS1nd9gjer4Dv?=
- =?us-ascii?Q?fAC6DPW0KZUxXkZXgyuslvG62lqvjwFrFLg4SrEiyyN+CVH/+TkK2/CGEpeX?=
- =?us-ascii?Q?dqH7LWgFf9GFirzI/PbviRkEV/0Y7nRedoZGOjdW6cxBJR8riTfFd2zWkmAq?=
- =?us-ascii?Q?LQkCoPsavrPDKHITty9zasnKndCMcSI1LP+c8V4f0jSV03PNXVI2MIMybbLX?=
- =?us-ascii?Q?zcoxcRZhLFT2a0be0XfsPSuRsGgIU+Sz2JqdT0HH1vEmV9QFO6FAr412cPjw?=
- =?us-ascii?Q?VZ6pBWdHOC9NgNMVr5l9lvp9zuW9jJFC9ba2venOMjgHtFzJuUqG2WfbA31G?=
- =?us-ascii?Q?1VhHW8caFWyWVTRX3ftpzH82BItpzxUxBLsNfayoAKoZJhVCpVUVFgUyQ74y?=
- =?us-ascii?Q?MzmT73DUWnf9r49ZRohB0nqI8QnnZiHwJlyDxV4mFu0BA6WrHnCmBMOqhZKn?=
- =?us-ascii?Q?7offvsiyHf7ei6jGFbKq8tjbN3n6yrEgyb0xeEPB1nBHyuT9iyd/4LUPsWW5?=
- =?us-ascii?Q?exMNvCWNuIRBje+USyL/jZKMAJByQFM05kQODX8ygexMBSmbDex3ev5uVQ/c?=
- =?us-ascii?Q?vYkq3POJeu1y0+VkWB6ki1lXGy7+qgXjcf8nwbHCg5jyKJjRcpoX+JBzjyxs?=
- =?us-ascii?Q?RpFrJ6YhnUmYe/XTx1qrsjMp503Sp58PWRauU9dxAmqleWBSGvpVkttNcACU?=
- =?us-ascii?Q?CnYJANqov9TMYxfEZX3xnaczbmqY/aVhE38EbJUxePlOgok6Q57mezDTRdxx?=
- =?us-ascii?Q?3eG7r4gpIRzwZ/H4Huup05mQ+Uvz1YrnYN2ZgqlTke+9fTCeXh6pkVPknruc?=
- =?us-ascii?Q?IFN7PfMM6sMtkqYkilIsD/L6HQZQ63sjfJI8XGkSo48uZs/L+4eUAJcEdwll?=
- =?us-ascii?Q?FVuptLsTFakYkt/pwzrQj8aJss/vT2qpgqQUXnxQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fd078b8-7596-4a2d-a9c6-08dcf193f0ed
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 05:48:08.5832
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lB5LKH1IXjKROlZtiTom/XL1MpuRuRNJH4zY2zsO5loLLAu1Ut6N0FpJ0JkfWW9Hn5JTurr2dSQMV9J3phJd8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6711
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 2/6] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>
+References: <20241017123626.204421-1-quic_srichara@quicinc.com>
+ <20241017123626.204421-3-quic_srichara@quicinc.com>
+ <nznisr4aqpe65fovvk3q3r6capmqj4jm4xsqufjib2b7vax4xx@6r3tzaar2w3p>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <nznisr4aqpe65fovvk3q3r6capmqj4jm4xsqufjib2b7vax4xx@6r3tzaar2w3p>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BvccQ3eEA3DBohRrCELpz3wod20lmi_E
+X-Proofpoint-GUID: BvccQ3eEA3DBohRrCELpz3wod20lmi_E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 mlxscore=0 clxscore=1015
+ suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210038
 
 
-John Hubbard <jhubbard@nvidia.com> writes:
 
-> On 10/20/24 4:26 PM, Alistair Popple wrote:
->> John Hubbard <jhubbard@nvidia.com> writes:
->> [...]
->>> @@ -2437,8 +2440,10 @@ static long check_and_migrate_movable_pages(unsigned long nr_pages,
->>>   	long i, ret;
->>>     	folios = kmalloc_array(nr_pages, sizeof(*folios), GFP_KERNEL);
->>> -	if (!folios)
->>> +	if (!folios) {
->>> +		unpin_user_pages(pages, nr_pages);
->> ie. Doesn't this unpinning need to happen in
->> check_and_migrate_movable_folios()?
->
-> It already does.
->
-> check_and_migrate_movable_folios() calls
-> migrate_longterm_unpinnable_folios(), which unpins if errors occur.
+On 10/18/2024 11:43 AM, Krzysztof Kozlowski wrote:
+> On Thu, Oct 17, 2024 at 06:06:22PM +0530, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> Add binding for the Qualcomm IPQ5424 Global Clock Controller
+>>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>>   [V4] Added 2 new PCIE clks to end of the list, preserving default order
+>>
+>>   .../bindings/clock/qcom,ipq5332-gcc.yaml      |  40 ++-
+>>   include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
+>>   include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
+>>   3 files changed, 499 insertions(+), 7 deletions(-)
+>>   create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> index 9193de681de2..ef1fd9d9f8da 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> @@ -4,31 +4,35 @@
+>>   $id: http://devicetree.org/schemas/clock/qcom,ipq5332-gcc.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>> -title: Qualcomm Global Clock & Reset Controller on IPQ5332
+>> +title: Qualcomm Global Clock & Reset Controller on IPQ5332 and IPQ5424
+>>   
+>>   maintainers:
+>>     - Bjorn Andersson <andersson@kernel.org>
+>>   
+>>   description: |
+>>     Qualcomm global clock control module provides the clocks, resets and power
+>> -  domains on IPQ5332.
+>> +  domains on IPQ5332 and IPQ5424.
+>>   
+>> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> -
+>> -allOf:
+>> -  - $ref: qcom,gcc.yaml#
+>> +  See also:
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,ipq5332-gcc
+>> +    enum:
+>> +      - qcom,ipq5332-gcc
+>> +      - qcom,ipq5424-gcc
+>>   
+>>     clocks:
+>> +    minItems: 5
+>>       items:
+>>         - description: Board XO clock source
+>>         - description: Sleep clock source
+>>         - description: PCIE 2lane PHY pipe clock source
+>>         - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+>>         - description: USB PCIE wrapper pipe clock source
+>> +      - description: PCIE 2-lane PHY2 pipe clock source
+>> +      - description: PCIE 2-lane PHY3 pipe clock source
+>>   
+>>     '#power-domain-cells': false
+>>     '#interconnect-cells':
+>> @@ -38,6 +42,28 @@ required:
+>>     - compatible
+>>     - clocks
+>>   
+>> +allOf:
+>> +  - $ref: qcom,gcc.yaml#
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: qcom,ipq5332-gcc
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          maxItems: 5
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: qcom,ipq5424-gcc
+>> +    then:
+>> +      properties:
+>> +        clocks:
+> 
+> This needs minItems: 7, unless clocks are really optional (but they
+> shouldn't be optional). I think I missed this part last time.
 
-Right you are.
+ok, got it, will update and send V5.
 
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Regards,
+  Sricharan
 
-As an aside for future clean-ups we could probably get something nicer
-if we reversed the process of pin/migrate to migrate/pin. In other words
-if FOLL_LONGERM try and migrate the entire range first out of
-ZONE_MOVABLE first. Migration invovles walking page tables and getting a
-reference on the pages anyway, so if it turns out there is nothing to
-migrate you haven't lost anything performance wise.
 
-> thanks,
 
 
