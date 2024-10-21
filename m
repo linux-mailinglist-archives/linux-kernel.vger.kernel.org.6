@@ -1,124 +1,74 @@
-Return-Path: <linux-kernel+bounces-374526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40D39A6B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:06:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F7D9A6B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17A751C2277A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A953D283C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DCF1F8933;
-	Mon, 21 Oct 2024 14:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FSrckexO"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8133E1F8EE6;
+	Mon, 21 Oct 2024 14:06:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF711DF754
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0191EF93E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519552; cv=none; b=Hmd0Y3kUwaYAeUxTvCjyUAn5Qt7nZQKNOgxtYA8zJc8UWaZZFxc2syZJG8nTE3KXp+hFW0vMnbxnAYyqxrtLbKThTzYfFCvS/UY5aeG+RobG4+/cdOO1Oi1eyQdZNWc8esj+9pvu/TVN6/RsYD1cluLeiTG9jRHQ6erpsc7QEE0=
+	t=1729519565; cv=none; b=KOC0zwKNBrhhP+IfH3peo7Tt4PaThsKbQL78ysXcaUGJLz1btnBY1S+6XKKaZ9Ovg4mYdy077H2h13G4wzFLfblaadX4TX0l8jjTdAf6gMqxqXToC1WomRtjV44wWfzYb9GZ+pGgWRLVItp64iPPTzxxC+ZbhDiHXCUty5t1o68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519552; c=relaxed/simple;
-	bh=eedBscw/LGWNdzKVkTU7WWL5VO1Qm3yPV32Z9qjHYBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyNrZTVPyhzHmnzzsin8j9tYb0Rfs2iqT7q6sy2/6p90bHMCAniDRIZ9sTCTyWZTSPF9O9Vny7mYf+XRfQt9znyiioXH0hBjMDdUg/QNuDlNTBNg9WxZD+NGF010MrWV1gLPDwLXstk2RkFfvZ4iF9WokitenvU1Y0F+qZpJrXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FSrckexO; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso3459769a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729519550; x=1730124350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVisE+PE807hpO8CSAN7tilp7Z5USiSARLUB5mQ6sGE=;
-        b=FSrckexOgwmjvmNzAZf4P15GD6f/ullMommleZNlODPiqg1U9kP/ThP9EmGTzO95rA
-         4L+8KFs5W7DHXeruEccgXZo5Zc8qaU4i5y3cm45J1xT+LiMbsvkWR7wJOkR3DfLiU0jp
-         mkvdWAbCNHGaDOuhj5eGSyYSbNWhLfVFzuPIQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729519550; x=1730124350;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lVisE+PE807hpO8CSAN7tilp7Z5USiSARLUB5mQ6sGE=;
-        b=rNzaRvlpVmyAcQO1hsbJC/Fbc/4uA/czWCS4yuRS49vMmcUL3mpfF3G67fZ+8cAcrR
-         6s06GW5eKCJSsdcKiOrOBEkdhrauY9UFFnW8f7UCVTsmztUdZ0yXedSG4mycbC0p8hs9
-         K0tPoHGOKRHHJMt7fcg1f1Z3BSt8Ab9NqexeGfjHaUU2jE64NowE+Q0tlNKWnjr48J1o
-         OFbfhR1GL3tiJNzA/Oy1kieF40kDBmt3md2LD+3HqoykXbcQcfeINMP9pxIjyUjREnyh
-         Pt2lSDud7YjY/VbIqKJ2YZuTs482pNGsJmB06L8ImE98+spkKHjhWvYLqRk1z6XaGaKz
-         3XIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoQUtCRm1tBz8XFDyKf2bavnXq8zB6PbqWi6wnT1u0HumbS9Z8VefKo1boQJd/RMSuEW8MulCNXrBbHGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqV14FTMoB1+9IPRa8B/P1HeteOVpyhg8aTiJsZp+xthXybJYY
-	hQAX79vdw2+U8IDhBmh6AADkIbSiZXl/YDeUJtgOIwrETqQy/2DXuphXQB0ToA==
-X-Google-Smtp-Source: AGHT+IFKl8bzamnuWMLgNJkuqVRi9dnOVZzxVFFalqgJLx3tvd/wT7dAvKU2gZg1sxaZIisSRMrfSg==
-X-Received: by 2002:a05:6a21:350d:b0:1d9:ea5:19da with SMTP id adf61e73a8af0-1d96b6b6ed5mr25344637.17.1729519549873;
-        Mon, 21 Oct 2024 07:05:49 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ecc1:dced:8a05:e4d8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab57e36sm3133318a12.43.2024.10.21.07.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 07:05:49 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] arm64: dts: mediatek: mt8186-corsola: Fix GPU supply coupling max-spread
-Date: Mon, 21 Oct 2024 22:05:36 +0800
-Message-ID: <20241021140537.3049232-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+	s=arc-20240116; t=1729519565; c=relaxed/simple;
+	bh=RdSbHwplxKkRtpn4nU2crh0BEc1V2zUy2aWfL7hIpUo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=f7lZ5PkODDeg4tLtYFy83YsDciJ1iFh0Jvci9+8Oxv1DyNltH1NftevZptda/WChyvfgLFRI7aCYX6swtUZ5Qw413jUHRw5E8P3qHF7OyJe7mLgRecWV8XVyeZTL7jUKiBQvxJXz6mJRGjW0Kl/SO/aO5k7qpw9EGFefVsiH4hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA75C4CEC3;
+	Mon, 21 Oct 2024 14:06:04 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 1DECF106045D; Mon, 21 Oct 2024 16:06:02 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andrew Davis <afd@ti.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20241010203622.839625-6-u.kleine-koenig@baylibre.com>
+References: <20241010203622.839625-6-u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH] power: Switch back to struct platform_driver::remove()
+Message-Id: <172951956208.338778.8570247421746540890.b4-ty@collabora.com>
+Date: Mon, 21 Oct 2024 16:06:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-The GPU SRAM supply is supposed to be always at least 0.1V higher than
-the GPU supply. However when the DT was upstreamed, the spread was
-incorrectly set to 0.01V.
 
-Fixes: 8855d01fb81f ("arm64: dts: mediatek: Add MT8186 Krabby platform based Tentacruel / Tentacool")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Noticed this while trying to align the downstream Mali driver to the
-upstream device tree and binding.
+On Thu, 10 Oct 2024 22:36:24 +0200, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/power/ to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> [...]
 
- arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-index cf288fe7a238..db2aca079349 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-@@ -1352,7 +1352,7 @@ mt6366_vgpu_reg: vgpu {
- 				regulator-allowed-modes = <MT6397_BUCK_MODE_AUTO
- 							   MT6397_BUCK_MODE_FORCE_PWM>;
- 				regulator-coupled-with = <&mt6366_vsram_gpu_reg>;
--				regulator-coupled-max-spread = <10000>;
-+				regulator-coupled-max-spread = <100000>;
- 			};
- 
- 			mt6366_vproc11_reg: vproc11 {
-@@ -1561,7 +1561,7 @@ mt6366_vsram_gpu_reg: vsram-gpu {
- 				regulator-ramp-delay = <6250>;
- 				regulator-enable-ramp-delay = <240>;
- 				regulator-coupled-with = <&mt6366_vgpu_reg>;
--				regulator-coupled-max-spread = <10000>;
-+				regulator-coupled-max-spread = <100000>;
- 			};
- 
- 			mt6366_vsram_others_reg: vsram-others {
+[1/1] power: Switch back to struct platform_driver::remove()
+      commit: 83bce34420eaf91506957703bf9a31d8581ed6cb
+
+Best regards,
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
