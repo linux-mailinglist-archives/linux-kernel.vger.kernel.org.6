@@ -1,152 +1,111 @@
-Return-Path: <linux-kernel+bounces-374642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F399A6DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB179A6DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722DB1C214CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9FC5B2205D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2443C2E859;
-	Mon, 21 Oct 2024 15:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9447D84A57;
+	Mon, 21 Oct 2024 15:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uvUvGHx8"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmhpHZ76"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494EF3D68
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA37839EB;
+	Mon, 21 Oct 2024 15:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523867; cv=none; b=nL0HVG7moMAt0xJ7lzCUXB0FL9ZFluBgHPiqkf8AmyMxEYQYC+YMArn6lXkn/U3XBhwZt5xrkkd3MKOmuqQDGb89vQaGQrbI7OZJTFl/l8eHfpSZEqxLsC8cX8fXKKiFMUdKNCNWACwk1xK2s+qZXI52gUht22OVInSLU99nHRw=
+	t=1729524018; cv=none; b=HDG6h61csYMQ9OuEazWPNw0WgHFqhP9x/pDJxvwyJ1uO0+bn87F7tYKhegLC/BTUSH/myMscDTmb6Pe6j0AMvnkx8rH++GXt3RGF7nJo4b2leK3drIkuLbrGzXOoa6DCBG8dcGtFkTN4CPQRLuDRBxH0DwAhU/Py7wN/DYktJ1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523867; c=relaxed/simple;
-	bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W2IpujyLsZPC7sTA9QD4ge25qh7e5YleH0iduYVpn5bTGd2JxoALe/C2VMKb+JLiy6hCRulhFsSLpN/2qr6GrsWZDwFTAdaSMfeiI5o0UmbNaid7rphuVU/TlhQ+wnk/mVcVArPR6NplrNif+iXUjUb481BcIR4fvzeV2Zy+nTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uvUvGHx8; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ece998fe6so237713f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729523863; x=1730128663; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
-        b=uvUvGHx8EfIaqf4oFv+7ALNFSao2mm38bBfZVxdLVej0j8b6J3BCG2K1VpYUy7mLX5
-         JI64GQ2A4dUdneKHDdfb+vLH38WMxszisQ9DjtA38vsy9pvG3rr43GF5f99ZZgFpVbqa
-         TWnsnK++R29lGiIGwmnUwRarAQcKwQpx4PXzE1npjADkjmVWlaHX1jaTGgB6+Njv6wRk
-         Tn9Zm8TuGvix12UeJ3xz/KgKFtAKZe/Xgh5+vvhZCFgzxxpUgdLUV+V/HxwYr3onOSYD
-         ZCtwWyX3Ck+AUdtIKlPpFARclO6+vpn8YPREMZ84KJDwRCLbUYlq+czBD5pp1TmElo0m
-         ohCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729523863; x=1730128663;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ue02lMRudYtVcCxNR1YICNN//ST0W+NT0Xn2W1fgzCU=;
-        b=wUBturg3PXWD8at2ouAf9dwxenEVMIhKuxj5uvvUIzODrjUYKBM3N5174r4HorYxjA
-         L9gBmGMghGRBcEGnwE6dRz6cEAHZiV3ffCDk9IxAuXMlLG4S4Mrx4O+mjaX8F8ReFP3n
-         FKIw+ps4vhw3ovimPkMr27f7Hql0mAT55DWr/IxCX0ZANcqkR06DgIIuOEuR4hADXBFq
-         TTyAHblwfCast1foT995/HGMep75Y+/n7bLcakgAWTyPm99GgGCsPDUThQt3zdq4nM8y
-         F19PJINfuTIMC7XHe5I/mKdULx+e4TO4sIXdsKQ2UInKtjdFgb2y76LUPllqGMAxdsA+
-         5j/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1rR7kcl5xw+bGvzVg6EniZI2SCzL/rQAuvDeDHoM2QnMQSJ62k2gtomFeMJskDQe77NYI/Di8F2Iw9+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN/0VBgJn+IDu2meMH4T8Y1NdMR1zAAax9Z5mtFgvAKwdnc+Lz
-	nmFn38SmNogxkfQRwckFLGr/wEZlW0Lm176cyc7SD+wmWKgZbgeW1diN9ehQX00=
-X-Google-Smtp-Source: AGHT+IHLggBfC8qlk0ctTOzUDi6lswf4EKGzztL3/AzNpGYOi8l65VOaIyIRWfA9PPw0hIL7QGTskQ==
-X-Received: by 2002:a5d:6484:0:b0:37d:4988:a37e with SMTP id ffacd0b85a97d-37eab73d2fcmr3572770f8f.13.1729523863437;
-        Mon, 21 Oct 2024 08:17:43 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47b74sm4548200f8f.27.2024.10.21.08.17.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 08:17:42 -0700 (PDT)
-Message-ID: <0c5d174f-7cff-46a8-bbbd-b116e12cb09c@linaro.org>
-Date: Mon, 21 Oct 2024 17:17:40 +0200
+	s=arc-20240116; t=1729524018; c=relaxed/simple;
+	bh=RavReSX2R+y8sjDIaSr5xuC8/7DPGyL/PZkXGUjWQVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pG8ptarRfEaJmqqRJC6dASlloWLWD2qmvRBH5zZejiMgyV4Ryc0qzY6EE51Elx9Bo/C1jhYZbMBdi1ptprm4JMU/iZ6nDwa21HwqzR5NR9E3dCRp3x+ML1hPdyH5Ds1WuALQVuuJCi4sm8yi5j4CMhA+6Imwo75DK1lDzouJIYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmhpHZ76; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC68C4CEC3;
+	Mon, 21 Oct 2024 15:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729524017;
+	bh=RavReSX2R+y8sjDIaSr5xuC8/7DPGyL/PZkXGUjWQVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pmhpHZ76WDX3Cl6P6yjNDmStEyFyI0VipaHFzpxzl3uIqxpvpdCIr1KAelqXms9N1
+	 vYf0grGEm/fE4dxTTMa8XzSvXF7Q9qQiTyaXSj0gTS39zx8/rQs/XELobkpMFEAHDa
+	 BIXnh6bHqKf1RuGV3QtbsC+HMw14hNFmdvDyqUTSyhZt4JzKSPY7HX/pHBf4qk7Den
+	 oamJHH90d6RsurSO2HDoMQANGrh3b4Z8Z5o5MQqNkpT/gK7Qc2Ve3GfNuqwoVb+QTr
+	 pBrtsEjb1Cfm12NCnO6PtYRyUhq8Pr2xRDfSfM24nNgDLVd5bc2s/sSFyiNjnd06S1
+	 dMEDwAsb8YUiw==
+Date: Mon, 21 Oct 2024 17:20:12 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Igor Pylypiv <ipylypiv@google.com>,
+	Niklas Cassel <niklas.cassel@wdc.com>, linux-ide@vger.kernel.org,
+	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ata: libata: Clear DID_TIME_OUT for ATA PT commands
+ with sense data
+Message-ID: <ZxZxLK7eSQ_bwkLe@ryzen.lan>
+References: <20240909154237.3656000-2-cassel@kernel.org>
+ <ZxYz871I3Blsi30F@ly-workstation>
+ <ZxZD-doogmnZGfRI@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] arm64: defconfig: Enable STM protocol and source
- configs
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Bjorn Andersson <quic_bjorande@quicinc.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241021090317.5934-1-quic_jinlmao@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241021090317.5934-1-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxZD-doogmnZGfRI@ryzen.lan>
 
-On 21/10/2024 11:03, Mao Jinlong wrote:
-> COERSIGHT_STM config is enabled. Refer to Documentation/trace/stm.rst,
-> to make software trace sources go through STM(System Trace Module),
-> need to enable STP (System Trace Protocol) protocols and stm sources
-> configs. With COERSIGHT_STM config, protocol configs and stm source
-> configs, STM function will be fully functional.
+On Mon, Oct 21, 2024 at 02:07:21PM +0200, Niklas Cassel wrote:
+> Hello Yi Lai,
+> 
+> On Mon, Oct 21, 2024 at 06:58:59PM +0800, Lai, Yi wrote:
+> > Hi Niklas Cassel,
+> > 
+> > Greetings!
+> > 
+> > I used Syzkaller and found that there is INFO: task hung in blk_mq_get_tag in v6.12-rc3
+> > 
+> > After bisection and the first bad commit is:
+> > "
+> > e5dd410acb34 ata: libata: Clear DID_TIME_OUT for ATA PT commands with sense data
+> > "
+> 
+> It might be that your bisection results are accurate.
+> 
+> However, after looking at the stacktraces, I find it way more likely that
+> bisection has landed on the wrong commit.
+> 
+> See this series that was just queued (for 6.13) a few days ago that solves a
+> similar starvation:
+> https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
+> 
+> You could perhaps run with v6.14-rc4 (which should be able to trigger the bug)
+> and then try v6.14-rc4 + that series applied, to see if you can still trigger
+> the bug?
 
-I still do not understand why we want it. Which boards, which SoCs use
-it or will benefit from it?
+Another patch that might be relevant:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e972b08b91ef48488bae9789f03cfedb148667fb
 
-Best regards,
-Krzysztof
+Which fixes a use after delete in rq_qos_wake_function().
+(We can see that the stack trace has rq_qos_wake_function() before
+getting stuck forever in rq_qos_wait())
 
+Who knows what could go wrong when accessing a deleted entry, in the
+report there was a crash, but I could image other surprises :)
+The fix was first included in v6.12-rc4.
+
+
+Kind regards,
+Niklas
 
