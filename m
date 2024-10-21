@@ -1,209 +1,466 @@
-Return-Path: <linux-kernel+bounces-374416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011F59A69E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C229A69E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB8F2B22905
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD95C28188E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961B418E373;
-	Mon, 21 Oct 2024 13:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD13F1F1311;
+	Mon, 21 Oct 2024 13:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dtBYNT/W"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2046.outbound.protection.outlook.com [40.107.102.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U733GCvE"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B843C1DDF5;
-	Mon, 21 Oct 2024 13:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516566; cv=fail; b=pJipkNIE4Z/Uze90u14BkpBl5swqxThQR1DDWf13BzZ54TRWY5kmmCJuzDeAwlZK9pWhcyOm1qw/xQ1wjbKquVq/qAoT/VSqfgobIlTK/ZGZE/x4EAZf4WUaMug9ZJn09s3sbSgjy/86UibRCXaoNd6iWLBxxW0JtH6VXb0ffe0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516566; c=relaxed/simple;
-	bh=nYRZD6qq5D7F89Mhbl9+80qyOQ8vwOq8Af44G/BcwU8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kQSIie91RVUccNkJSfsogFdEKsAZb1q8qurq+WmMWpJUKZ3cxw8jE8cPO61yfiyPsSvdS3Oaz9+v5VboFvPlK66cGN8d3Lpe9vEDGD5MZf8XP74055485SK4oXDp6LZgyDMm7q2BEzZZVBQdbeaHICFP3Py+aEm/vWBaJENgNiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dtBYNT/W; arc=fail smtp.client-ip=40.107.102.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tx79n0HWhd3erbNoEHxZE570x3XW23sYriyPNEeTte65ADaJ7zjRqF3I5H/RFFbOfEsboE7SE2+2ZcrlSd4haqFZUyZzkHkBQcwNltaWByxN96EhIDN0/j3qTbeWrZp6ZsvF6KBlY/dRgLmNKSnLFoJX3vr1jkowNCJcAAFzqLqPJM/3V4cNGQt1jU+U7sZ0cu9MSS0xV8v9HXT3DE0X4o86CafyjH15r0kdJAAyi0CrSEugjJVN0Ak40s3878jh6HTXq2fY9MjtJ2gkFSqPMoLIyDLS64hy4io9CrI0EWUV4ymMb3LjVcQhFvGBDRpwolsTJJveLA+fTayBGP6k3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ll5BP7lLvCF85yOjbIydzNytfczXHKh7ZTs59Wg4bS8=;
- b=w5MYYjzozs9BqRfRnOL2awlUwwr4OvzAtJvrz3PPERFLs/48hLwlTGOTbH7P1YwmFBiRez0lUZpcP6J2Nlok3ACr4t2o/cnPIRP5FEZtth7AVxmJHX8J5FsQaQOPNPSUy4jFonaZKu+qZApvwqo5NhijAB5mbprGCgtOh0CKaNEboF2lqBj205HpJ2YDSJaD1eB+9kHB9p3HFIjA6cF9bjxdH5IgfhBnUd8OGhA/8Y20UEQoyhAxSRAu1RbyzcL4LWYkbDId109AL0pcTHi74twazVtI8jzVW5ZeKFOhX7EqUP7D/xeFHIJ3AmosDGsKhCSx1JbEST7funAkcHYGNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ll5BP7lLvCF85yOjbIydzNytfczXHKh7ZTs59Wg4bS8=;
- b=dtBYNT/WMUsTx9Dl6t/hOFdm7mUuJSSXweCiGjayNjKMT4O0WQejzePUQLqjl8MC9fCx9oVg1xvwJJW8oJTtiZ1ry7BtCsrrEV2kh1a7V+1+PF2dNvqwKlmp3Bg8WuaxIuSdHLSBQcQyXfRfz0uWtJHaETEy2rndYDfsRp2kcb0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by PH0PR12MB8823.namprd12.prod.outlook.com (2603:10b6:510:28e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.23; Mon, 21 Oct
- 2024 13:16:01 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8048.017; Mon, 21 Oct 2024
- 13:16:01 +0000
-Message-ID: <135dcf22-bfd1-4624-958c-599f0f3d49dc@amd.com>
-Date: Mon, 21 Oct 2024 18:45:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq/amd-pstate-ut: Add fix for min freq unit test
-To: Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20241017173439.4924-1-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20241017173439.4924-1-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0027.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:97::11) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F312746A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729516691; cv=none; b=Ev7QgMKHt3JjU+jpj7WO9oWXkR6mx1+SnzBF4b51vsaQAgg/zC504kkQeE8arzEX2yqo4TQwzhV3XthQgBobDxlfWO2Pj4V5pjR34qv4s8SefYK/PgBSab7V7SHlw03CMxFUjiwlULWOVMDAl+KTtbV3oEjMsxi+nXgN4iaWFac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729516691; c=relaxed/simple;
+	bh=XaRMg+f7cflBfn5wPAG2tP25rkrQhgvqHCAjcE8xvp4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ly2bMXb6ixNQ7UV/UfSaeAgicjmn3F6NGx0F/3r99Gq7HOu3N+J3gUmoQBEjOWr9f+GhzLBVMEE1hKqGrdg+ImdMTegl3tCQhwTMaxgEeb6WLK8TdHd2Ek8cWdD0KEj9U8tAs+y7xvxU2L5BZDBNyK/TLMMVh00W+71t292Zfxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U733GCvE; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3497c8eb0so49853347b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729516688; x=1730121488; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZBkjIHcG7OWC6gCwIlTzf2OKyASXwsEtH5zcLRwbP3o=;
+        b=U733GCvE7V4mSZvdm5uxgCgOW7JRLzCNukCnyJU+vzdAqGT+lP+jc0iTul/MHLcE78
+         IF2rHjdbWSbG9GilP/s6m+LIwxomtlxF2G98fVrUOH+oFpbxUR+4tTTobOIf8C1IuTKG
+         mc8Ig67eF6yaYm9Ubn9HJ57tww6v4jzGWLQdRjIHK3+HujRIKydmGqM62jMApM+LyDZx
+         teTxggtYN5d/11hsjLOAOl2E19cBfA+XduhPMw0l4ls8T5/lhB0apDRIdaTakHMR5BWC
+         TYKK2533OjUfzFbxcwpltdR2qfGmJgtVAT84FTVBVwodNUVSDsj/ERg6zx7Ef4QpU4y1
+         CmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729516688; x=1730121488;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZBkjIHcG7OWC6gCwIlTzf2OKyASXwsEtH5zcLRwbP3o=;
+        b=dauDI6d4fMLtpxGbiK9sqUZrKdscpCVTqcd9BJQ72gvIUA+SlIQiVZCTaJIZ6hyMjC
+         Dtda4yaGHG0I/xnQtEae9YStJq1BZ2ANmDDF7fSivnmKskuk+hw2gl181uEKxb/RzOGj
+         mSkXx/1w9vTX452EQM3ApkxX23hStBM0lJqLkbZ14CPGaMF9c4F2hijpwn6JhzMZNkT4
+         nzztRLFXtu9jmJbCMvbSlqEZQbeoy0FbKjkikf9jlaSJORvQL4SEumvOFcx4aNHNtLYa
+         sROoZ5O3zjvWbXMc9/FjrV5hhjWX1VA5smOxMHjGh87tF4RKBDrTx5hRfwit1PSJr+hq
+         qkOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOcia/sP69aZgdTaxqdFxfXrF7dXVBvQR2AGjtuPw0WkuJj29pUdVMBr+M37WO7EmragD4uiiG4e2BLFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL9Cc5LcTmE+hjeojtWisX9Q/+4gTbgzCXwE05j1fLx8di1t1Y
+	1MTlC/Aq0hIoJ/+kWdp/6+VxbxioYWM8MyUIcNqBhMQ4y4gyt2iZRzqsudj+70gBixTSXeYBmbD
+	b0wb6kBjgIkyadw==
+X-Google-Smtp-Source: AGHT+IEz77/LgiLflf6rDHflHeUbyjxMBDMmGS9KBB0pyLptaezR9lCjX57ED8/E82i9VJ+oV1GNHLaMyentTIc=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:2d04:b0:6e2:c1c7:ec27 with SMTP
+ id 00721157ae682-6e5a3d1cb28mr802287b3.1.1729516687767; Mon, 21 Oct 2024
+ 06:18:07 -0700 (PDT)
+Date: Mon, 21 Oct 2024 13:17:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|PH0PR12MB8823:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5a3c4a8-c4c6-4844-a90c-08dcf1d2823a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YXUwZkdndDdGVUhqS0NSOHBSR3h3aGlLbisyVzh3N0dCa25wMGsrL0UyNk9k?=
- =?utf-8?B?emJ1MjFod3hMclFrNDNMVENFQWIzNXBTMkRERXdWa2NJeWNCSE0ybnc5ODE4?=
- =?utf-8?B?dHZzd3dRdHVWZzNEY2IrWW5mWnRuZ0pDM0E0M05uK2NNT3VKN2xtSzVEdkho?=
- =?utf-8?B?VDdYYjloRFR1SjlIUFoyWUF5QTlFZ1psLzNnWExXcDhNQk1JTDVibEF3dlhW?=
- =?utf-8?B?ZGFMYmNTLzFQYlF2RVAvZjhzZm5mTVNFYkhjQ2pURVZPTndRQUUyUE90Sm42?=
- =?utf-8?B?VEdFNnUzZjBYcWxqMDV4WFdUblFkeFhFaS9PRGhnZGxVa1E0MXQvZDB1MFYr?=
- =?utf-8?B?OEVFdVNvc2Y1QTl6a2hTdkN3YkVFVTRFd3RMN29KaklicmpiOWY4MGt2MzdG?=
- =?utf-8?B?QXNseTZ2LzZOM1B4ZTlVVW9VeGY2NldkeWtja1lZa2xIbUEyZGNDUXl6cEdh?=
- =?utf-8?B?eEVUWjFDbkgydFp1cnd2ZXR0akNyKzVBWUtySEphRGJaWHNORUcvVW41VTVv?=
- =?utf-8?B?Q3lJOGdIV1h3ejZ2OWZUYWJGVTJncFpHelVCeEluMzhLNTlOd0tMYXRCYy84?=
- =?utf-8?B?VEZuVTRib1JZWFNaOVdwRy9WYWQzNFV2M3pLQ2cyOGI2Q0hjT0hlTzh4aU9S?=
- =?utf-8?B?VTBRcnZUNFlVd3BscVJVRVVIRm9wRVBEZm9DaTJWNjBtcGdmMHcrc3piVkVI?=
- =?utf-8?B?MnlFWGtUc25jY2pEcXF6ajV1Uk1BclQ3Z29iT1RxQ0dZd0VlTDRFZWQremc5?=
- =?utf-8?B?clNSZFcwWlZuMllBSEt4WSs3T2RGMkp5L3dqK0FrRHRMdzRUTGJRRjdoMkFo?=
- =?utf-8?B?elJWeS9lM0JhZy9YNEJaVm5MeWdWeHpQUEw1RWIreHh3ZlFJb2FseHo4TjNI?=
- =?utf-8?B?NUJUT1lNRkdlKy9UbFFyMkQrVGVjZVNMalcwSlZWSmRBSEc0bnV4cHRlbDhK?=
- =?utf-8?B?R3I5RGZMSkxpTzJ1MHloTlI1MlIwRXc2amxHcWFtVFk2elpjSnlNZzVzZXpt?=
- =?utf-8?B?TjJHOGJJUC9JM0RLeThUU2NwQVpWdGxocDlxbU9zSW5Zb3pMbnBVQmh4OWNh?=
- =?utf-8?B?dnc0V1RCRm4wbVNpRzNvcmhZRUtqR3dURGVJMmVnQ1J3Z0NnTWZZSGlGZXRO?=
- =?utf-8?B?Ym5FRWZXejhIbkxTbmVjc25LZEVqME9XNm9kcTBibmx6blNORXBQZXZJTXJ1?=
- =?utf-8?B?WDhxTXBnVzdqYXJTbXhGNklLNlNSN1BxN0lodXJrWUJqaDVYNnFvaTA1L3V0?=
- =?utf-8?B?czJFekE0WjM3bGZaaVl2eFpQcmtia09YQkJqdmpaK1JtZkVQVzF0S1RRZVR0?=
- =?utf-8?B?eVN1Y0QwME5VSW80R1ZBalVrak9raFVvaHBidElXcHQwb2V3eEMzUXYwdXRq?=
- =?utf-8?B?TjlIYnkwRXNwTXJwZ1FHaStpWmowNG1Zazg5RFVZbTNKR1BjRlFuTDdDTlRt?=
- =?utf-8?B?UkNUdGZmQmZDaWJlVjZ2cm9kbVc1YWFKYXRzb2ZIRTNVM2FldFNiSGlNN2pF?=
- =?utf-8?B?VWlxWUdwY1RIK0pPS0VNY1dhQU1lY1I2TmMxbDBENGpFZDZDcFJ3T3ZMNXEz?=
- =?utf-8?B?alBBTjhwTktQOTR1WlFkZVk3SXk0bEhMdm93Vjg2NjdTQ1g2cW5jS1JNVEFp?=
- =?utf-8?B?eThnakJWQUpHOGZ1OVlyVEN2VkZkdkFIbSt5Z3h4WmIzZm9uYVl6aklhZnpy?=
- =?utf-8?B?TlRwZDZpbDJEV0k5NTNwWTJpSVJ0WHptR3dJa1VGKzBVcFdmMkJuMUI4c1l3?=
- =?utf-8?Q?wV8xVNlAkdjfvVBWs/Vu708cQL3yug7bq3FW720?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Vy9sa2p3NmN6TENwemtYZkxZMjNCSW5KK2lLYURZT2Q4N0dOWDNPNC9KdGtE?=
- =?utf-8?B?b09tL0JsNVhSRUhVK2ZHSG1LWldrYTkzdTlVNXBLRmdOM0RUaXJZM3FUZWFS?=
- =?utf-8?B?N1dhNWQ2WDB1YkFRYnJuR3lxYnNCQmVqSlJadWpSU28ydlAyUis3SGVzR3Jz?=
- =?utf-8?B?OExpb3oyY0RISjZiaERFMnpVUHdMcVRCMzE5SndiVVRCWkpNYmpCa0F4TGp2?=
- =?utf-8?B?bzhxWUt6ZDNHWlVCMXNwZlk0d0kxeGViMDhOT0Q4djlBM1BwcDVQajJmMGEw?=
- =?utf-8?B?cDVyWlluVm5IMUZhQ0hhWUxjV3JpSWQ5cklHU3djVDFVMVBvaHlzanlKQ3hG?=
- =?utf-8?B?eEpsb0VNVG9QV0FZNXllbGoxTlk4NVhLUWgyZEdXYVNlMTNwWFNNbTMyWkpT?=
- =?utf-8?B?N1poQ1kraGttVnpWV1c1K2Q0ak1MZ1dDMmlVZ1g3clBEZ0RSUGdlRnpBY2dP?=
- =?utf-8?B?OUVrbGZ1R2wyTjlTRmM1ZVFNeVpSN1ZlY0txYzFrbkszY1ZJYzAzT2FqdUN5?=
- =?utf-8?B?bmI0SWlwOWhmQ3BzR1BHSk1Makl2ajQ1elRwMTVubFM0SWxienlGYTNTWG5P?=
- =?utf-8?B?ZGkzMS8rVE84dkFkYm1iTVhNc3ZkVWVacFY0MW96NFZYSjZLVDRYWHVyZ1Nr?=
- =?utf-8?B?Mjh1U3NhMnpuQ0IzbXVYeTdGMFNHNmVVR0xMRWFaNmhIM0VUMFpRZC9nYXU1?=
- =?utf-8?B?dDg2cnpOV3FnR3pyY1ZMTkRVWWtJeFdBWnYyZ1VsVGpGaDBHb2NLYVpQQ05i?=
- =?utf-8?B?ZURyUWlmZE9Zd2p5b0lIUHlNRjVaT0tlbWVGelZJYWMwR2p1ZW9yQS9UK0VF?=
- =?utf-8?B?ZGd1WTNqdzVveUI3KzVNSVVqY0FnOFNGYnhrTEFnY0k2aUhnM2NYT2ZrdVJJ?=
- =?utf-8?B?WUhsVEJBYUUxMEhNcS9XK0NVUHU1UzB3bVp1eWJnREJqWnhwbzA4SlJLNXhN?=
- =?utf-8?B?U3VFdUFDZDZLYmRHTEpNVC9LTUdMWVJzVHJPVml4QnNwSGFiakJ4OEF1T0Rm?=
- =?utf-8?B?SFpoQytLQ0dDL1dPbjlEbmN4VE5ORVRLYy9KTzlkMlJpVlVaVnBqaUQrWGI0?=
- =?utf-8?B?Ni9FQkhvMmEzUElHUWhBYThIcFhmMHdTMUU3S0srZVlxcVA5aTNrdTc5T1hp?=
- =?utf-8?B?b2c1SGM0VHhBcm1SRXZYQlBmS3NkdjdxSlJEY1NOVi9uSzNXNU9VRmorWHVI?=
- =?utf-8?B?ak4vWEwzRHh0ZHJkWFcwaVo3Y0ZjK0tEdkNEcWdVSWt0d2ErdzJYWlBjeXUv?=
- =?utf-8?B?Zmw2akc3M1V0cWpsM2ZNNkhLZHl4V28wZW1zcUc3bzRVeUx4VEhBWUNYdTBo?=
- =?utf-8?B?d1ZBdUdWbEJKSXBxVEJCUFRYR0dwaGVVNjdBU2pYcTFRSmdSbzFVemV4OFFM?=
- =?utf-8?B?eDRRR3RWTVVjUXl1TGVUcVVSZ2NiRCttdmJCaHFDWU1hMURGNi9nNlgvQnpF?=
- =?utf-8?B?L3d4dzJuVkkvWlRNdW90K2YvcysrVENYekxjVXp2NzNlTll6c0ZUVWtnMnNa?=
- =?utf-8?B?SkVEMytTbGVKYVErNDExaGZRd1BYRFEvM1YzV1grbWlqdUllOFJSNE1jSHlT?=
- =?utf-8?B?M1JHb28rUzlnU3BNZU0wVmkvMjlLVHBJaGMrWVpUYStYeFVwSGFhVWliQTc5?=
- =?utf-8?B?N08rckYvRmNTNDNOQ0lHa0QxaXlnTUhSREZCNXlNczZhV0xoQ1paWlFNUzdp?=
- =?utf-8?B?Ym5hN3pFTVVPVXZrcFJiWTMrTm1PN3N4cERUaitxdkV2RlRlUGo5VTVUY2Y0?=
- =?utf-8?B?S1NtQ2VVYVd6cDFEd0ExUk1rTVpDUEwwdFFjbFV4ZGtLYlBBNzEzaEZFMFFp?=
- =?utf-8?B?Q2NBeWJyRlFMSDNnemZXcTBvaXpNOEpIZnAwa0poaDhmeU9nbmhDbkN6QjJo?=
- =?utf-8?B?SzgrdzltQWtOSWhQMS8zS2liMGlibGcxRkF2dndlQWU4YVpJbkt6ZXlTdFBn?=
- =?utf-8?B?eVpldmFreHNOQlEzWXNBV0tTNmJ4N3FhcGhqVWZzaDNNdHIzR0I5VVRGLzZq?=
- =?utf-8?B?bllUK3lHalhpYmRwOXhVeUJEc3YxQTJSSXUyS2pGUFVmZkQzL1NKVGpxUUdm?=
- =?utf-8?B?R0R5WGxFa3JLVDI2VU1FMWF6OFp1ajAwRWgvMVV6cGpnSGNiUGVkcVdGQTlw?=
- =?utf-8?Q?UoItWyC0IcIfzEypL8pAO6zD8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5a3c4a8-c4c6-4844-a90c-08dcf1d2823a
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 13:16:01.3214
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 834VpnwKS2qg1hpXPAF3CSna7zhskLcHHkqs+jCIGhHRTaFdrpuNHWTJTWoF9ohx5UaL/SAnT0WBnpsc2UOiEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8823
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGJUFmcC/3XMQQ7CIBCF4asY1mKYGWjVlfcwLoBOK4mKKbXRm
+ N5d2o1a4/K95PufInEbOInt4ila7kMK8ZKHWS6EP9pLwzJUeQtUqNUaC5k62wUvz7eO79Jqh7h
+ mxYW1IpNry3W4T7n9Ie9jSF1sH1O9h/H9E+pBgrSgmUswBdS0a2JsTrzy8SzGUo+fupxpzBrK2 hM6VET4o+mtN6BmmrI2jl0F4Kqa3I/WH5rmWmftzcYYo4EAyy89DMMLYgAZVWMBAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13994; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=XaRMg+f7cflBfn5wPAG2tP25rkrQhgvqHCAjcE8xvp4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnFlRvHmSBvZuTZqTJi5gj2TrqIHN6rd2MYN4z1
+ Icy3IaHwi2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZxZUbwAKCRAEWL7uWMY5
+ RjM0D/wMlfFYK81dKyh8ZIJykv0wj7O5hnlM8tZNe7s3nO8AZqlLmv5br2OeI3GLYuqxs5qkdjG
+ G1KIHzzVfrkuQyNdAR98gzHkPjb1NTmD9Lpf1Fw9su34/hAKhz7/4nHJVg6MdjjhgGC85ijzXSX
+ deiWKKiJGXJPyhjqE3VmRTaGBcVndzoaeeU/21uNyjHUb04tDX/Pz2zU56l78Ui+oZaVbPiV7g+
+ 0i6K8Fh7MBXHhhCKPAMnxhLS7RlcGDa6IJaud5N3MsNHtAgnfJvmVdYGqoGltqsecvEK/IXDsKv
+ KJtcYBotG+7TqZX/lBGTstetc4WFBV5GrpE+v4T9GRzltPdMcnuLslOGx/VBWCQQtmQXQW9Q4+4
+ Xu6gn9QmbS1hOUMnU/sNJ36U2ZXIZoRaYK3y+ASKpOJ8Pl5/EHKAA+OEWtTWd5TnJjJiI7j25mB
+ CjIyMiHF44buK4l5KNamNFxn5DC6rUTkwvNClO09cEqthT8CWPH5vIPr/P9/gSnd284KB8Dgd1y
+ DTGoBayvs31E/tQJxLrVeEJJgjbc1uEMROlBaRohVof5dFBcabchd8QBXrIfSmquJdVW0+lN1ov
+ xDkDml+Ga6K7AMUySWAueArKimJ7MmZJ2OXqbqTS1zLt3OSjpIKD+HNWpECA6U9msj+Wt+w3BjW eae2gmPRJB4IV0w==
+X-Mailer: b4 0.13.0
+Message-ID: <20241021-static-mutex-v5-1-8d118a6a99b7@google.com>
+Subject: [PATCH v5] rust: add global lock support
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hello Mario,
+Add support for creating global variables that are wrapped in a mutex or
+spinlock. Optionally, the macro can generate a special LockedBy type
+that does not require a runtime check.
 
-On 10/17/2024 11:04 PM, Mario Limonciello wrote:
-> commit 642aff3964b0f ("cpufreq/amd-pstate: Set the initial min_freq to
-> lowest_nonlinear_freq") changed the iniital minimum frequency to lowest
-> nonlinear frequency, but the unit tests weren't updated and now fail.
-> 
-> Update them to match this same change.
+The implementation here is intended to replace the global mutex
+workaround found in the Rust Binder RFC [1]. In both cases, the global
+lock must be initialized before first use. The macro is unsafe to use
+for the same reason.
 
-Thanks for the fix, looks good to me.
+The separate initialization step is required because it is tricky to
+access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+require changes to the C side. That change will happen as a follow-up to
+this patch.
 
-Regards,
-Dhananjay
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08ba9197f637@google.com/#Z31drivers:android:context.rs [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+This patch is based on top of rust-next as it depends on:
+https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+---
+Changes in v5:
+- Adjust syntax as discussed in the last meeting.
+- Fix various warnings.
+- Link to v4: https://lore.kernel.org/r/20240930-static-mutex-v4-1-c59555413127@google.com
 
-> 
-> Fixes: 642aff3964b0f ("cpufreq/amd-pstate: Set the initial min_freq to lowest_nonlinear_freq")
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate-ut.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-> index f66701514d906..a261d7300951e 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -227,10 +227,10 @@ static void amd_pstate_ut_check_freq(u32 index)
->  			goto skip_test;
->  		}
->  
-> -		if (cpudata->min_freq != policy->min) {
-> +		if (cpudata->lowest_nonlinear_freq != policy->min) {
->  			amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
-> -			pr_err("%s cpu%d cpudata_min_freq=%d policy_min=%d, they should be equal!\n",
-> -				__func__, cpu, cpudata->min_freq, policy->min);
-> +			pr_err("%s cpu%d cpudata_lowest_nonlinear_freq=%d policy_min=%d, they should be equal!\n",
-> +				__func__, cpu, cpudata->lowest_nonlinear_freq, policy->min);
->  			goto skip_test;
->  		}
->  
+Changes in v4:
+- Evaluate `$value` in the surrounding scope.
+- Make types `pub(crate)` to avoid "private type in public interface"
+  errors when using the macro.
+- Add trylock method.
+  - using https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+- Add Send/Sync implementations of LockedBy.
+- Fix examples so they compile.
+- Link to v3: https://lore.kernel.org/r/20240910-static-mutex-v3-1-5bebd11bdf3b@google.com
+
+Changes in v3:
+- Rewrite to provide a macro instead.
+- Link to v2: https://lore.kernel.org/r/20240827-static-mutex-v2-1-17fc32b20332@google.com
+
+Changes in v2:
+- Require `self: Pin<&Self>` and recommend `Pin::static_ref`.
+- Other doc improvements including new example.
+- Link to v1: https://lore.kernel.org/r/20240826-static-mutex-v1-1-a14ee71561f3@google.com
+---
+ rust/kernel/sync.rs             |   1 +
+ rust/kernel/sync/lock.rs        |  31 +++++-
+ rust/kernel/sync/lock/global.rs | 234 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 265 insertions(+), 1 deletion(-)
+
+diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+index 0ab20975a3b5..2e97e22715db 100644
+--- a/rust/kernel/sync.rs
++++ b/rust/kernel/sync.rs
+@@ -14,6 +14,7 @@
+ 
+ pub use arc::{Arc, ArcBorrow, UniqueArc};
+ pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
++pub use lock::global::global_lock;
+ pub use lock::mutex::{new_mutex, Mutex};
+ pub use lock::spinlock::{new_spinlock, SpinLock};
+ pub use locked_by::LockedBy;
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 90cc5416529b..9b3b401f3fcc 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -7,12 +7,14 @@
+ 
+ use super::LockClassKey;
+ use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
+-use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
++use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned, pin::Pin};
+ use macros::pin_data;
+ 
+ pub mod mutex;
+ pub mod spinlock;
+ 
++pub(super) mod global;
++
+ /// The "backend" of a lock.
+ ///
+ /// It is the actual implementation of the lock, without the need to repeat patterns used in all
+@@ -124,6 +126,33 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
+             }),
+         })
+     }
++
++    /// # Safety
++    ///
++    /// Before any other method on this lock is called, `global_lock_helper_init` must be called.
++    #[doc(hidden)]
++    pub const unsafe fn global_lock_helper_new(state: Opaque<B::State>, data: T) -> Self {
++        Self {
++            state,
++            data: UnsafeCell::new(data),
++            _pin: PhantomPinned,
++        }
++    }
++
++    /// # Safety
++    ///
++    /// * This lock must have been created using `global_lock_helper_new`.
++    /// * Must only be called once for each lock.
++    #[doc(hidden)]
++    pub unsafe fn global_lock_helper_init(
++        self: Pin<&Self>,
++        name: &'static CStr,
++        key: &'static LockClassKey,
++    ) {
++        // SAFETY: The pointer to `state` is valid for the duration of this call, and both `name`
++        // and `key` are valid indefinitely.
++        unsafe { B::init(self.state.get(), name.as_char_ptr(), key.as_ptr()) }
++    }
+ }
+ 
+ impl<T: ?Sized, B: Backend> Lock<T, B> {
+diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
+new file mode 100644
+index 000000000000..803f19db4545
+--- /dev/null
++++ b/rust/kernel/sync/lock/global.rs
+@@ -0,0 +1,234 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Support for defining statics containing locks.
++
++/// Defines a global lock.
++///
++/// The global mutex must be initialized before first use. Usually this is done by calling `init`
++/// in the module initializer.
++///
++/// # Examples
++///
++/// A global counter.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     unsafe(uninit) static MY_COUNTER: Mutex<u32> = 0;
++/// }
++///
++/// fn increment_counter() -> u32 {
++///     let mut guard = MY_COUNTER.lock();
++///     *guard += 1;
++///     *guard
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_COUNTER.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++///
++/// A global mutex used to protect all instances of a given struct.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     unsafe(uninit) static MY_MUTEX: Mutex<(), Guard = MyGuard, LockedBy = LockedByMyMutex> = ();
++/// }
++///
++/// /// All instances of this struct are protected by `MY_MUTEX`.
++/// struct MyStruct {
++///     my_counter: LockedByMyMutex<u32>,
++/// }
++///
++/// impl MyStruct {
++///     /// Increment the counter in this instance.
++///     ///
++///     /// The caller must hold the `MY_MUTEX` mutex.
++///     fn increment(&self, guard: &mut MyGuard) -> u32 {
++///         let my_counter = self.my_counter.as_mut(guard);
++///         *my_counter += 1;
++///         *my_counter
++///     }
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_MUTEX.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++#[macro_export]
++macro_rules! global_lock {
++    {
++        $(#[$meta:meta])* $pub:vis
++        unsafe(uninit) static $name:ident: $kind:ident<$valuety:ty
++            $(, Guard = $guard:ident $(, LockedBy = $locked_by:ident)?)?
++        > = $value:expr;
++    } => {
++        $crate::macros::paste! {
++            #[allow(non_camel_case_types)]
++            type [< __static_lock_ty_ $name >] = $valuety;
++            #[allow(non_upper_case_globals)]
++            const [< __static_lock_init_ $name >]: [< __static_lock_ty_ $name >] = $value;
++
++            #[allow(dead_code, non_camel_case_types, non_snake_case, unreachable_pub)]
++            mod [< __static_lock_mod_ $name >] {
++                use super::[< __static_lock_ty_ $name >] as Val;
++                use super::[< __static_lock_init_ $name >] as INIT;
++                type Backend = $crate::global_lock_inner!(backend $kind);
++                type GuardTyp = $crate::global_lock_inner!(guard $kind, Val $(, $guard)?);
++
++                /// Wrapper type for a global lock.
++                pub struct [< __static_lock_wrapper_ $name >] {
++                    inner: $crate::sync::lock::Lock<Val, Backend>,
++                }
++
++                impl [< __static_lock_wrapper_ $name >] {
++                    /// # Safety
++                    ///
++                    /// Must be used to initialize `super::$name`.
++                    pub(super) const unsafe fn new() -> Self {
++                        let state = $crate::types::Opaque::uninit();
++                        Self {
++                            // SAFETY: The user of this macro promises to call `init` before calling
++                            // `lock`.
++                            inner: unsafe {
++                                $crate::sync::lock::Lock::global_lock_helper_new(state, INIT)
++                            }
++                        }
++                    }
++
++                    /// Initialize the global lock.
++                    ///
++                    /// # Safety
++                    ///
++                    /// This method must not be called more than once.
++                    pub unsafe fn init(&'static self) {
++                        // SAFETY:
++                        // * This type can only be created by `new`.
++                        // * Caller promises to not call this method more than once.
++                        unsafe {
++                            $crate::sync::lock::Lock::global_lock_helper_init(
++                                ::core::pin::Pin::static_ref(&self.inner),
++                                $crate::c_str!(::core::stringify!($name)),
++                                $crate::static_lock_class!(),
++                            );
++                        }
++                    }
++
++                    /// Lock this global lock.
++                    pub fn lock(&'static self) -> GuardTyp {
++                        $crate::global_lock_inner!(new_guard $($guard)? {
++                            self.inner.lock()
++                        })
++                    }
++
++                    /// Lock this global lock.
++                    #[allow(clippy::needless_question_mark)]
++                    pub fn try_lock(&'static self) -> Option<GuardTyp> {
++                        Some($crate::global_lock_inner!(new_guard $($guard)? {
++                            self.inner.try_lock()?
++                        }))
++                    }
++                }
++
++                $(
++                pub struct $guard($crate::sync::lock::Guard<'static, Val, Backend>);
++
++                impl ::core::ops::Deref for $guard {
++                    type Target = Val;
++                    fn deref(&self) -> &Val {
++                        &self.0
++                    }
++                }
++
++                impl ::core::ops::DerefMut for $guard {
++                    fn deref_mut(&mut self) -> &mut Val {
++                        &mut self.0
++                    }
++                }
++
++                $(
++                pub struct $locked_by<T: ?Sized>(::core::cell::UnsafeCell<T>);
++
++                // SAFETY: `LockedBy` can be transferred across thread boundaries iff the data it
++                // protects can.
++                unsafe impl<T: ?Sized + Send> Send for $locked_by<T> {}
++
++                // SAFETY: `LockedBy` serialises the interior mutability it provides, so it is `Sync` as long as the
++                // data it protects is `Send`.
++                unsafe impl<T: ?Sized + Send> Sync for $locked_by<T> {}
++
++                impl<T> $locked_by<T> {
++                    pub fn new(val: T) -> Self {
++                        Self(::core::cell::UnsafeCell::new(val))
++                    }
++                }
++
++                impl<T: ?Sized> $locked_by<T> {
++                    pub fn as_ref<'a>(&'a self, _guard: &'a $guard) -> &'a T {
++                        // SAFETY: The lock is globally unique, so there can only be one guard.
++                        unsafe { &*self.0.get() }
++                    }
++
++                    pub fn as_mut<'a>(&'a self, _guard: &'a mut $guard) -> &'a mut T {
++                        // SAFETY: The lock is globally unique, so there can only be one guard.
++                        unsafe { &mut *self.0.get() }
++                    }
++
++                    pub fn get_mut(&mut self) -> &mut T {
++                        self.0.get_mut()
++                    }
++                }
++                )?)?
++            }
++
++            use [< __static_lock_mod_ $name >]::[< __static_lock_wrapper_ $name >];
++            $( $pub use [< __static_lock_mod_ $name >]::$guard;
++            $( $pub use [< __static_lock_mod_ $name >]::$locked_by; )?)?
++
++            $(#[$meta])*
++            #[allow(private_interfaces)]
++            $pub static $name: [< __static_lock_wrapper_ $name >] = {
++                // SAFETY: We are using this to initialize $name.
++                unsafe { [< __static_lock_wrapper_ $name >]::new() }
++            };
++        }
++    };
++}
++pub use global_lock;
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! global_lock_inner {
++    (backend Mutex) => { $crate::sync::lock::mutex::MutexBackend };
++    (backend SpinLock) => { $crate::sync::lock::spinlock::SpinLockBackend };
++    (guard Mutex, $val:ty) => {
++        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::mutex::MutexBackend>
++    };
++    (guard SpinLock, $val:ty) => {
++        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::spinlock::SpinLockBackend>
++    };
++    (guard $kind:ident, $val:ty, $name:ident) => { $name };
++    (new_guard { $val:expr }) => { $val };
++    (new_guard $name:ident { $val:expr }) => { $name($val) };
++}
+
+---
+base-commit: 6ce162a002657910104c7a07fb50017681bc476c
+change-id: 20240826-static-mutex-a4b228e0e6aa
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
