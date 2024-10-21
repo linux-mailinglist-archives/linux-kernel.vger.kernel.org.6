@@ -1,94 +1,231 @@
-Return-Path: <linux-kernel+bounces-374128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B939A6489
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A79CC9A648F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85302281016
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6330C280F3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F4E1E1C19;
-	Mon, 21 Oct 2024 10:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA311F7073;
+	Mon, 21 Oct 2024 10:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="AM0IwWyk"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHpCrYBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60851F4FD1
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C4F1F1306;
+	Mon, 21 Oct 2024 10:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507342; cv=none; b=ty04nPxxIktE2xF+f+rITvRE46W8z6cBdFsaI43yE84nXIFCQvoZ7IxB6qSKave7HD5QiZ05plXUREAZWH4XCWsjkQAEC/bx9lxFJK1i27HBnR3bKhwsMr0m8TQHFtsN5YhY7mDM6E7tyhzAlH+UJ9Z3ZFsgxXYAYYzSKqtclFU=
+	t=1729507349; cv=none; b=pu0IHQwtlcbq001JidDI9tJlNkWzRqBsPrjwhwBb15Ngw5gUyS5OtxMmjRd0bv686sPlzFDtFA3N1cLsoQSwHHLHPtHdKL86kNryMKiY+HWPKd7Hu/hoJy/1W5Dofm4uKPDsDjpIKxrrFQmsCLa3hpgfkMNPBFmKu44LfMZW+Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507342; c=relaxed/simple;
-	bh=lGlERMYtz5SnLQLwOGVAIXCz87xRgIubq9/dH5MFKxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFO3eulItkFg/HmEX53nT32gMW1cPiyJOll6h8b3+QMjHNwsENKsOw44EKsGftIQKBFaLzH8E3ujcg6WkHG2TdYlG4xn5FSRs8T62uI6OtD8FnFKHVUzdWaG0iRQwuFkcL63StwIdfc+AvE42xFxBFD9t1OBoa80TAcABdpj3GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=AM0IwWyk; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4a46eeb84a0so956787137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1729507338; x=1730112138; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CROML7dAJaONpnsbzUaZW2t8Il+NSf2ScEsMHxaPnXE=;
-        b=AM0IwWyk5Bi7vP/FjK+dBxt8SOPiE89M5zrMMuwzTnxgjNLiW3qfx20BvKPOGIFJM4
-         fmcxeB7W2xkyXLyHUyrPmxdf/6RBQTly2vyYuBuh2M290XkxlDG5/bbtjbeeI+pgRBPr
-         /i2/qXDeDq7+2FKZlnyLB8lraasiOwXoxsoy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729507338; x=1730112138;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CROML7dAJaONpnsbzUaZW2t8Il+NSf2ScEsMHxaPnXE=;
-        b=duWz0qNL5kw7ctyjQ0wxIfEkwNERZQL397KY+Ory4Ng+7t3u3rXRVcUwHpZ49tH9/n
-         bqlS2DIvlKB722BD8Subhvlyw6FYc6FKmCwf49gpFAwWc76eq6OUXfl1z6iIJZ5nDZ4J
-         KTQs55J02rMqd+yY8jhcx3EQZRZZTGmFF4TMKWGlE7xwAc5dE2YWEkgiGIGa3YmniPQk
-         ip/wVBwjtAcvjmjV08DYjb+NR21vRmuR3oBKMEh+C02AF/rXDrbvhJv8pA0OZt5EyR6A
-         dPi4OyyIYu3qM1WYlSieM1Me/ue4+JHkG+mW6OJyi2beUL8+NeS+cbyPa7gJBgvt3IS2
-         8ofQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYr4B62pgugjWNY5htIHSuBoEb0lxGLcjYELgwzvLY0xgcqnzF3w/t12QpmRAHmmtjkda0Poq6r7uir7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3CS+qIBr4xoY3/aoVNSkWd1NNpmLJTrqabRl+9BMdUvFqzZE1
-	4lV4aAjUecHGvYRpsPe7pA2mwE3bLKMT6vrOw4Cos7SB/Fit3PTXf0pv8+Wpnp1QkbU4O3Z1RuR
-	2TGdq6BdscFLUExp/g0fEFGhnsMfIMpifL0XdLw==
-X-Google-Smtp-Source: AGHT+IF1Ku/Or8mDvMjmkzrfK8UuA03VpibHFZYdfjhYwkRLLhL+F0cs6ozQJUKX5mt29gqDjdXeNaCFn3JIdUBJ4NM=
-X-Received: by 2002:a05:6102:3a0d:b0:4a4:950a:cb1f with SMTP id
- ada2fe7eead31-4a5d6bb2175mr8957269137.22.1729507338663; Mon, 21 Oct 2024
- 03:42:18 -0700 (PDT)
+	s=arc-20240116; t=1729507349; c=relaxed/simple;
+	bh=kk5ERdXa6RnKmIBP1ElSg2khKqiXcvPAlSRRS7M+dbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ipgh/x2AFIrVLhSZY0emJlqWngyfGPyGz1/8ujp023TK9G0zHbt8b5o9Kk7c6sl3yUB1wNNRH6KE9uJxeFzAaoMXnO7jgVs+RFxj5/N3zJgX6l4l+Xe2NQlH6Njsg6vUaUb0CK4eKTjGT/GtQfdh0DkL1eWmaGJe19s+t4871hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHpCrYBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1E6C4CEC3;
+	Mon, 21 Oct 2024 10:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729507349;
+	bh=kk5ERdXa6RnKmIBP1ElSg2khKqiXcvPAlSRRS7M+dbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uHpCrYBmW9XdrWMffJCzDEHYWeBxvvY6s19dpu4KOjnV96nbJ9LEQA8iIaF3DMMdk
+	 q69/7tTtoQ8v/Stf0ntrhyHtCTGWI/GYsE3T0bxYCdHaLi/+4MQ91glyLd+G0n+V0S
+	 oqNG0VV3QlukjMnRR6UKjR0zsymqNZSMTzRargWvoIwXFCt5GZRGs+Rh5Cv9em95RI
+	 1+aTLBal3slzWx8JlqXMh+5OLD2Dgr9+DAxDNoBpYi3bW3hOn0WxLh4vWP1PRHYT/f
+	 PZvaLB7TTVS533qkxP0MSN+YzQDZUv65Njjm9B7WqkER8ewOUdweKLWSYDLr6lE7l6
+	 Q+2gaOIyvUsIg==
+Date: Mon, 21 Oct 2024 11:42:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] net: dsa: vsc73xx: implement packet
+ reception via control interface
+Message-ID: <20241021104224.GE402847@kernel.org>
+References: <20241020205452.2660042-1-paweldembicki@gmail.com>
+ <20241020205452.2660042-2-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com> <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
- <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com>
- <CAJfpegu=U7sdWvw63ULkr=5T05cqVd3H9ytPOPrkLtwUwsy5Kw@mail.gmail.com> <CAJnrk1aQwfvb51wQ5rUSf9N8j1hArTFeSkHqC_3T-mU6_BCD=A@mail.gmail.com>
-In-Reply-To: <CAJnrk1aQwfvb51wQ5rUSf9N8j1hArTFeSkHqC_3T-mU6_BCD=A@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 21 Oct 2024 12:42:07 +0200
-Message-ID: <CAJfpegsKbt=r+aY57cuSwyBe090aJQ6gh2eZ=o_Bo1PxrHyXwQ@mail.gmail.com>
-Subject: Re: [syzbot] [fuse?] WARNING in fuse_writepages
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241020205452.2660042-2-paweldembicki@gmail.com>
 
-On Fri, 18 Oct 2024 at 20:13, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Sun, Oct 20, 2024 at 10:54:51PM +0200, Pawel Dembicki wrote:
+> Some types of packets can be forwarded only to and from the PI/SI
+> interface. For more information, see Chapter 2.7.1 (CPU Forwarding) in
+> the datasheet.
+> 
+> This patch implements the routines required for link-local reception.
+> This kind of traffic can't be transferred through the RGMII interface in
+> vsc73xx.
+> 
+> The packet receiver poller uses a kthread worker, which checks if a packet
+> has arrived in the CPU buffer. If the header is valid, the packet is
+> transferred to the correct DSA conduit interface.
+> 
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 
-> I guess we don't run into this warning in the original code because if
-> there are no dirty pages, write_cache_pages() calls into
-> folio_prepare_writeback() which skips the folio if it's not dirty.
+Hi Pawel,
 
-Added the revert to fuse.git#for-next.  Hopefully the syzbot reports
-will go away.
+This is not a full review, but I noticed a problem that I wanted to bring
+to your attention. Please wait a day or so for others to provide a proper
+review before posting a v2.
 
-Thanks,
-Miklos
+Thanks!
+
+> ---
+>  drivers/net/dsa/vitesse-vsc73xx-core.c | 174 +++++++++++++++++++++++++
+>  drivers/net/dsa/vitesse-vsc73xx.h      |   4 +
+>  2 files changed, 178 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
+
+...
+
+> @@ -373,6 +415,7 @@
+>  #define VSC73XX_POLL_SLEEP_US		1000
+>  #define VSC73XX_MDIO_POLL_SLEEP_US	5
+>  #define VSC73XX_POLL_TIMEOUT_US		10000
+> +#define VSC73XX_RCV_POLL_INTERVAL	100
+>  
+>  #define VSC73XX_IFH_MAGIC		0x52
+>  #define VSC73XX_IFH_SIZE		8
+> @@ -834,6 +877,115 @@ static void vsc73xx_deferred_xmit(struct kthread_work *work)
+>  	kfree(xmit_work);
+>  }
+>  
+> +static void vsc73xx_polled_rcv(struct kthread_work *work)
+> +{
+> +	struct vsc73xx *vsc = container_of(work, struct vsc73xx, dwork.work);
+> +	u16 ptr = VSC73XX_CAPT_FRAME_DATA;
+> +	struct dsa_switch *ds = vsc->ds;
+> +	int ret, buf_len, len, part;
+> +	struct vsc73xx_ifh ifh;
+> +	struct net_device *dev;
+> +	struct dsa_port *dp;
+> +	struct sk_buff *skb;
+> +	u32 val, *buf;
+> +	u16 count;
+> +
+> +	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_SYSTEM, 0, VSC73XX_CAPCTRL, &val);
+> +	if (ret)
+> +		goto queue;
+> +
+> +	if (!(val & VSC73XX_CAPCTRL_QUEUE0_READY))
+> +		/* No frame to read */
+> +		goto queue;
+> +
+> +	/* Initialise reading */
+> +	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE, VSC73XX_BLOCK_CAPT_Q0,
+> +			   VSC73XX_CAPT_CAPREADP, &val);
+> +	if (ret)
+> +		goto queue;
+> +
+> +	/* Get internal frame header */
+> +	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
+> +			   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &ifh.datah);
+> +	if (ret)
+> +		goto queue;
+> +
+> +	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
+> +			   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &ifh.datal);
+> +	if (ret)
+> +		goto queue;
+> +
+> +	if (ifh.magic != VSC73XX_IFH_MAGIC) {
+> +		/* Something goes wrong with buffer. Reset capture block */
+> +		vsc73xx_write(vsc, VSC73XX_BLOCK_CAPTURE,
+> +			      VSC73XX_BLOCK_CAPT_RST, VSC73XX_CAPT_CAPRST, 1);
+> +		goto queue;
+> +	}
+> +
+> +	if (!dsa_is_user_port(ds, ifh.port))
+> +		goto release_frame;
+> +
+> +	dp = dsa_to_port(ds, ifh.port);
+> +	dev = dp->user;
+> +	if (!dev)
+> +		goto release_frame;
+> +
+> +	count = (ifh.frame_length + 7 + VSC73XX_IFH_SIZE - ETH_FCS_LEN) >> 2;
+> +
+> +	skb = netdev_alloc_skb(dev, len);
+
+len does not appear to be initialised here.
+
+Flagged by W=1 builds.
+
+> +	if (unlikely(!skb)) {
+> +		netdev_err(dev, "Unable to allocate sk_buff\n");
+> +		goto release_frame;
+> +	}
+> +
+> +	buf_len = ifh.frame_length - ETH_FCS_LEN;
+> +	buf = (u32 *)skb_put(skb, buf_len);
+> +	len = 0;
+> +	part = 0;
+> +
+> +	while (ptr < count) {
+> +		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
+> +				   VSC73XX_BLOCK_CAPT_FRAME0 + part, ptr++,
+> +				   buf + len);
+> +		if (ret)
+> +			goto free_skb;
+> +		len++;
+> +		if (ptr > VSC73XX_CAPT_FRAME_DATA_MAX &&
+> +		    count != VSC73XX_CAPT_FRAME_DATA_MAX) {
+> +			ptr = VSC73XX_CAPT_FRAME_DATA;
+> +			part++;
+> +			count -= VSC73XX_CAPT_FRAME_DATA_MAX;
+> +		}
+> +	}
+> +
+> +	/* Get FCS */
+> +	ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
+> +			   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &val);
+> +	if (ret)
+> +		goto free_skb;
+> +
+> +	/* Everything we see on an interface that is in the HW bridge
+> +	 * has already been forwarded.
+> +	 */
+> +	if (dp->bridge)
+> +		skb->offload_fwd_mark = 1;
+> +
+> +	skb->protocol = eth_type_trans(skb, dev);
+> +
+> +	netif_rx(skb);
+> +	goto release_frame;
+> +
+> +free_skb:
+> +	kfree_skb(skb);
+> +release_frame:
+> +	/* Release the frame from internal buffer */
+> +	vsc73xx_write(vsc, VSC73XX_BLOCK_CAPTURE, VSC73XX_BLOCK_CAPT_Q0,
+> +		      VSC73XX_CAPT_CAPREADP, 0);
+> +queue:
+> +	kthread_queue_delayed_work(vsc->rcv_worker, &vsc->dwork,
+> +				   msecs_to_jiffies(VSC73XX_RCV_POLL_INTERVAL));
+> +}
+
+...
+
+-- 
+pw-bot: changes-requested
 
