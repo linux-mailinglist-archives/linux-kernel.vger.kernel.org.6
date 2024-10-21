@@ -1,182 +1,133 @@
-Return-Path: <linux-kernel+bounces-374244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4959A6763
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4A69A6737
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19D1282717
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9991F21B2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23BE1F4279;
-	Mon, 21 Oct 2024 11:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBF11E883C;
+	Mon, 21 Oct 2024 11:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FDAmz3LM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPtKl6Bg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438DA1E9067;
-	Mon, 21 Oct 2024 11:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786FD1E884E;
+	Mon, 21 Oct 2024 11:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511857; cv=none; b=qnjlRE6ashupa5Fr13MHmM4qhNGH71AXyEIe84yLvFxH0PXBPFR3wt/1WhLV03Ve3H9qvmTRuWnJblNQRqMrQIbxSBRbjY8Ikg5jSfpoalNYovRMj1GfFLEFn8p9w5bHo5ozGC1cLgS7BDMT8RBCw9FwU1vlk3RW1RAktTKIKn4=
+	t=1729511798; cv=none; b=nBVVvYw6Kwc7ec6WjVaXBpvcedKckg3Z3vNcZMAuSItN1CAuBtIseTchs4Q4P5m6GrvdRxJxgnqNEDiWss53v35so07DH3L06qQNt0nPLFF22K3CtJfFpf8nEzNX6EQ2BfFK1KTYKkZqQAIiAPOXpa1Si9/gW5Zypcocdy3lT7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511857; c=relaxed/simple;
-	bh=2y1GCQZBRBYZS1sVf+pkOo6lue4Idv5rJvJjFwqyFw8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNGSJYp18jdIcIh/iPuCn0/4/tq3NsCTI4TJwjF33tcVECYYk5MwzpiB6MQq7dC4q2+DdVPGRGZgL7Ts6/mtcQGMXRwFHkeRN+QBUAMwaFSgXe3KwanlVQ/eAAaQCkxsj5YKvMrLoY9YPKv91juyUObhksiLCxDJbBPlg3wSzy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FDAmz3LM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LAfqPV026569;
-	Mon, 21 Oct 2024 11:57:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pbr+kpcekDk7H3+i3QQpglOu11PBbfEMDlaz70GM/2g=; b=FDAmz3LM97pdH7gp
-	whQLv2sQI/OKGeZuW72cosXYn3OMLnVv8rotYLRAYOz09AjhfZLyX05f8eug5htt
-	vHBqtnrwbgBrSFBrODPDwjwwtOSym8hBaweeUcX9hs8HhNpOYxjKR+Gtn9BFnr7Y
-	4DKe4sMeLXbmCREYDnalL1/ys4qA5Jnev1XrdpYEliU/xDP/xpEzF7sBvfkwm39Z
-	Wvx4B2ezbCMc3tHWkeFo3shw78g0fXsSeKt0z1Vw3kSxYAEf0TiXZXwoHtl9rFrQ
-	xsHCwf16kA6D0t4AfxwEcYz3yjk3lSaISwwrbTcbRvYhjEYPcpzwGvCgHUzVC1Ru
-	jNEjqQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6tsmgvq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 11:57:24 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LBvNwN017333
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 11:57:23 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 21 Oct 2024 04:57:18 -0700
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_mdalam@quicinc.com>
-Subject: [PATCH v12 8/8] arm64: dts: qcom: ipq9574: Remove eMMC node
-Date: Mon, 21 Oct 2024 17:26:20 +0530
-Message-ID: <20241021115620.1616617-9-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241021115620.1616617-1-quic_mdalam@quicinc.com>
-References: <20241021115620.1616617-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1729511798; c=relaxed/simple;
+	bh=iZKzS4vmBiEZsEttEtxZcIb92mfcq/gi05eIuco9YVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iUHwda2d8VLiNRTPBIBzdyOgxTtmo1ad7c8L/1h/RT8SSEiGJ/1uhHfsC9rVKnM1IvcwBBhlO7fyg1fYKOxdCLudKOGdryw/MxcovJGN8cCSiqBkghWAp318vOx1fBPPe47lSWNAPK0Qci7qJ6jQSsfTzz3Pwf82kt0Tnp8qwYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPtKl6Bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C44EC4CEE8;
+	Mon, 21 Oct 2024 11:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729511798;
+	bh=iZKzS4vmBiEZsEttEtxZcIb92mfcq/gi05eIuco9YVA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GPtKl6Bggt4/TamihrTZBB77XXeeJpGHQQXXlzjlEZKJsozvj2Agb8oOpdfFEhHP5
+	 /zCWStUHugubB24PJxmQXJdvgtMhwxMvXUVKcyfD8ru0bvCBIYUUxJfT+MZfKsmKDc
+	 f16aEDpzRJ3CkV+e2dizG+4/aCHSNSJD9GaI0Qxl/QeDdAqxDD3xTFJSfR65jyNGU4
+	 HTOD/YuqWJhbOm3uAYUWLqXarDdM6dT/LI+PuVvi72JOwitrLkBqF7guAxaZG0kOYg
+	 a2xuMBZ0w6MnBxy+uEc83TPLO9xrdlISEStDlXNMqIOLI3Vhn0YnDR01I3pN5GvYi9
+	 HAyvCdcW3W2fg==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e5f9712991so2075948b6e.2;
+        Mon, 21 Oct 2024 04:56:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU25diKch/9lrvlhuHyH2Wvnn0h661i/OZpfP5hKVTLZrfBGOhHq789yxoqGAXGREZp8S7sU2qlpKks@vger.kernel.org, AJvYcCU3ufUWMwhKo9ZZs6a3jXJS9t/l8qAK+H37FtAl9enmaGsdThmqSYgnm8Z8gei59VnsRHRX7idgyVwL11Dl@vger.kernel.org, AJvYcCWPeqMcbm2JHiUhqicYX+WhsmiO1PYwkUNuU/dT7O5FWiz7G2QG0ekUonOTFWgZpkvxUCZGgCjB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDR36VDb1o/0ZDdg3g/Dy2fD/DL4xTMNufRB2X6vJGMFFTIC4L
+	XyKqhGv0MVjujfYje1NY2kQEuISdylgLeBwVoLooLISLqaf2yF9skD8Nr319zyyNha6AJ+98GKr
+	oRL5087oa2GtVoNJ2qky+ybIjf5c=
+X-Google-Smtp-Source: AGHT+IG5XhnUvagQdAMqem7+z6gKQWhQFAFH3ahh4zbsV1c6ekkCAHEo7YEbfB1J8j3e+1DzqVdfJ0Kk90T2t2VoakA=
+X-Received: by 2002:a05:6871:5824:b0:277:c28c:147e with SMTP id
+ 586e51a60fabf-2892c352bb2mr8523011fac.21.1729511797250; Mon, 21 Oct 2024
+ 04:56:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3FzxB4XtOctpp5BDsjpEZKdYGyjPQyFn
-X-Proofpoint-ORIG-GUID: 3FzxB4XtOctpp5BDsjpEZKdYGyjPQyFn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 spamscore=0 mlxlogscore=991 phishscore=0 adultscore=0
- mlxscore=0 clxscore=1015 bulkscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210085
+References: <20241017-lg-gram-pro-keyboard-v2-1-7c8fbf6ff718@heusel.eu>
+In-Reply-To: <20241017-lg-gram-pro-keyboard-v2-1-7c8fbf6ff718@heusel.eu>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Oct 2024 13:56:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hkNWNb912Ye7cgPVhLyCEHynNFtf0=xWiv0hBbPPwsAw@mail.gmail.com>
+Message-ID: <CAJZ5v0hkNWNb912Ye7cgPVhLyCEHynNFtf0=xWiv0hBbPPwsAw@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: resource: Add LG 16T90SP to irq1_level_low_skip_override[]
+To: Christian Heusel <christian@heusel.eu>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dirk Holten <dirk.holten@gmx.de>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove eMMC node for rdp433, since rdp433
-default boot mode is norplusnand
+On Thu, Oct 17, 2024 at 1:16=E2=80=AFPM Christian Heusel <christian@heusel.=
+eu> wrote:
+>
+> The LG Gram Pro 16 2-in-1 (2024) the 16T90SP has its keybopard IRQ (1)
+> described as ActiveLow in the DSDT, which the kernel overrides to EdgeHig=
+h
+> which breaks the keyboard.
+>
+> Add the 16T90SP to the irq1_level_low_skip_override[] quirk table to fix
+> this.
+>
+> Reported-by: Dirk Holten <dirk.holten@gmx.de>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219382
+> Cc: stable@vger.kernel.org
+> Suggested-by: Dirk Holten <dirk.holten@gmx.de>
+> Signed-off-by: Christian Heusel <christian@heusel.eu>
+> ---
+> Note that I do not have the relevant hardware since I'm sending in this
+> quirk at the request of someone else.
+> ---
+> Changes in v2:
+> - fix the double initialization warning reported by the kernel test
+>   robot, which accidentially overwrote another quirk
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
+Applied as 6.12-rc material, thanks!
 
-Change in [v12]
-
-* Updated commit header and commit message
-
-* Removed sdhci node from rdp433.dts file
- 
-Change in [v11]
-
-* No change
-
-Change in [v10]
-
-* No change
-
-Change in [v9]
-
-* No change
-
-Change in [v8]
-
-* No change
-
-Change in [v7]
-
-* No Change
-
-Change in [v6]
-
-* Updated commit message
-
-Change in [v5]
-
-* No Change
-
-Change in [v4]
-
-* No change
-
-Change in [v3]
-
-* Removed co-developed by 
-
-Change in [v2]
-
-* Posted as initial eMMC disable patch
-
-Change in [v1]
-
-* This patch was not included in v1
-
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 12 ------------
- 1 file changed, 12 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 1bb8d96c9a82..7b5e417f9b8d 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -15,18 +15,6 @@ / {
- 	compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
- };
- 
--&sdhc_1 {
--	pinctrl-0 = <&sdc_default_state>;
--	pinctrl-names = "default";
--	mmc-ddr-1_8v;
--	mmc-hs200-1_8v;
--	mmc-hs400-1_8v;
--	mmc-hs400-enhanced-strobe;
--	max-frequency = <384000000>;
--	bus-width = <8>;
--	status = "okay";
--};
--
- &tlmm {
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
--- 
-2.34.1
-
+> - Link to v1: https://lore.kernel.org/r/20241016-lg-gram-pro-keyboard-v1-=
+1-34306123102f@heusel.eu
+> ---
+>  drivers/acpi/resource.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+> index 129bceb1f4a27df93439bcefdb27fd9c91258028..7fe842dae1ec05ce6726af2ae=
+4fcc8eff3698dcb 100644
+> --- a/drivers/acpi/resource.c
+> +++ b/drivers/acpi/resource.c
+> @@ -503,6 +503,13 @@ static const struct dmi_system_id irq1_level_low_ski=
+p_override[] =3D {
+>                         DMI_MATCH(DMI_BOARD_NAME, "17U70P"),
+>                 },
+>         },
+> +       {
+> +               /* LG Electronics 16T90SP */
+> +               .matches =3D {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
+> +                       DMI_MATCH(DMI_BOARD_NAME, "16T90SP"),
+> +               },
+> +       },
+>         { }
+>  };
+>
+>
+> ---
+> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+> change-id: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
+>
+> Best regards,
+> --
+> Christian Heusel <christian@heusel.eu>
+>
 
