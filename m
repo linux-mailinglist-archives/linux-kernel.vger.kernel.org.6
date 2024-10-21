@@ -1,163 +1,180 @@
-Return-Path: <linux-kernel+bounces-373612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7EA9A5964
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:00:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3EB9A5961
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462E2B2165D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:00:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2A9B21087
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521A01990D0;
-	Mon, 21 Oct 2024 04:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79296193402;
+	Mon, 21 Oct 2024 04:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROfo3rCr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="prbskjbr"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EC0187FE4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA21CF5F6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729483240; cv=none; b=dBYbQnsSl6XrT5isRgbY4t1ogIlXylzOetMzp4kUePr2RogyKKNHDQfBAc4JpAtNQE4Y1q4iL6VSe9BPEAdfwC94X3GPa4wz2gOs19T28SSg9LlS5YRWbOXZeCE7e7ln3nQNol0WhEtQNge418H+yd3nJm2UbZjNUd03g8008b8=
+	t=1729483208; cv=none; b=J9WkO7iFBUZUiU51sPBAWe4j9bAgW7XbFZNpVxqd6RDzKtWX37NHVcGAjy6CFA8/JKoWQ5XiddECZKbCVDC0iKNOs/qE9shaZtv/iEzvxHlGrNyrViEhbI6H8ymVbjot8WZilpHw7cesPpA/+/unCLJtj78v7/gj4z52eTksYLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729483240; c=relaxed/simple;
-	bh=KPwaQfgL5UdQTL0Ck0/QRdf944jj7b2G8Gs0rKT8LNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JAh0cRh5l5lLilMbaxP86/d0vj4UwsyAXA71OL2gyxoQrEgBTGIHQKGA8AQ3mv10TalI/U8BvoxTcsT5G3slFZxw5cqtcwo/u0noiK/nuHlPIm7RaV5qiOGmOW3o3JPbrXwJ4gkC4vLirGItOVlGEPkDviQ5vbwnsKIpGjsG4yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROfo3rCr; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729483239; x=1761019239;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=KPwaQfgL5UdQTL0Ck0/QRdf944jj7b2G8Gs0rKT8LNI=;
-  b=ROfo3rCr8zDdxmDVQteucAoKKLUbrOPnupLWDd/emdzS0xdgx5KvXRaV
-   YvczU0mN8eA7sytKT2WzY7tEH9kQYwwhDUgitMKqCTdYFwccckBiexktQ
-   dNivFf8E23l6wuZ1g3Rhw/AP3Vtj1DdwS57177uZqqCQI8BDlw+eQ2I/a
-   ucQ2cLLBdkoCfbEHoIZWfrT2JeBiHNZhLLSEoka94qVAeGvFC9bJTfrOB
-   BaAeNETg41Hnl95UT6JYggpBxDBoVdD5CAE0ba3faOEF+fy4gxCBwNz7R
-   nuvIm/D3vMldUYcevd9agvJVdpMPfTVzqNfP5UBxa2VwHFoCumA8c9f5q
-   g==;
-X-CSE-ConnectionGUID: ILCacb7wS4eGbHRxRMOdEw==
-X-CSE-MsgGUID: x+G5jcsWRJWm+tjhZjKERQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28829391"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28829391"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 21:00:38 -0700
-X-CSE-ConnectionGUID: PzDkbZPtRjymmlY6O+0eKw==
-X-CSE-MsgGUID: zTyqm3CzRXuiSKauEsgw6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
-   d="scan'208";a="79052803"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 Oct 2024 21:00:36 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2jas-000R8C-1W;
-	Mon, 21 Oct 2024 04:00:34 +0000
-Date: Mon, 21 Oct 2024 11:59:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: drivers/ata/pata_gayle.c:53:27: sparse: sparse: incorrect type in
- argument 1 (different address spaces)
-Message-ID: <202410211139.nbQGaA39-lkp@intel.com>
+	s=arc-20240116; t=1729483208; c=relaxed/simple;
+	bh=DrckcV2kxWdF4O8bs2o6wk3We2ows/aBCuLkrYyGf8E=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jS6cjwdF3F2SZdCMmaAiK0C1o11qE/xdrW28LD3R1eZhfAU/epvrTud9I05Z1vBt9GhV1HKgsfJHkT74FzPMn62IxzOvTT7mpFW0bvBligIaQ2BWswbApzyVq6qCpYFXh+rZaJCpbOq65y6iPduy6d2PcZ2oWCEY+r4mVRO+xbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=prbskjbr; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241021035959epoutp01eed155be62c3a2ab9ebc578f5e5fa1eb~AW85sjBXY1583415834epoutp01s
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:59:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241021035959epoutp01eed155be62c3a2ab9ebc578f5e5fa1eb~AW85sjBXY1583415834epoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729483199;
+	bh=DrckcV2kxWdF4O8bs2o6wk3We2ows/aBCuLkrYyGf8E=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=prbskjbruzN/N3wMXSqN6mbtHVcfizlxljqN6BIyT0SglKP6krFchF++7LjZskNsF
+	 eFr8+nuxRdMJuK205aKy0/BiMncmnEHK5uxPk369Xo783Z9DUW6Rd7hxaIpzwNkc28
+	 NMlTm0zNDy3fbnafss5FU0Yv9BMw8QJM5ghdHStU=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241021035958epcas2p36b1336c717708daf8c2475905002991e~AW85P4xQY2977329773epcas2p3J;
+	Mon, 21 Oct 2024 03:59:58 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX1mG1lccz4x9Pp; Mon, 21 Oct
+	2024 03:59:58 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0E.07.09811.EB1D5176; Mon, 21 Oct 2024 12:59:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241021035957epcas2p12cb34aa86daaa4ad40dfc3e9ffa0bd4f~AW84hyfeK0308303083epcas2p1Q;
+	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241021035957epsmtrp2bc2076bb8b41b96211b8b5ab2110d72a~AW84hAF1c2662026620epsmtrp2h;
+	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
+X-AuditID: b6c32a48-84fb870000002653-6f-6715d1be3ef0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A7.07.07371.DB1D5176; Mon, 21 Oct 2024 12:59:57 +0900 (KST)
+Received: from KORCO119526 (unknown [10.229.18.158]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241021035957epsmtip1e4df4989b9e2b0b6d50a96005193f9f5~AW84TW1Ya1845318453epsmtip1j;
+	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
+From: =?utf-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Sam	Protsenko'"
+	<semen.protsenko@linaro.org>
+Cc: "'Wim Van Sebroeck'" <wim@linux-watchdog.org>, "'Guenter Roeck'"
+	<linux@roeck-us.net>, "'Rob Herring'" <robh@kernel.org>, "'Krzysztof
+ Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, "'Byoungtae Cho'" <bt.cho@samsung.com>
+In-Reply-To: <005c01db1ae8$544a1e40$fcde5ac0$@samsung.com>
+Subject: RE: [PATCH 2/3] watchdog: s3c2410_wdt: add support for
+ exynosautov920 SoC
+Date: Mon, 21 Oct 2024 12:59:57 +0900
+Message-ID: <000001db236d$b18432c0$148c9840$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIPcUUdHl+Ei7bfUILxdnz4wpISqAFKfb4qAog0DUQCf1lgZgMTgJO5AgAvTqixzJ6GIA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmue6+i6LpBk8Xclk8mLeNzeL+pz4m
+	izV7zzFZzD9yjtXi5ax7bBabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awWzzvA4o9
+	fvmP2YHXY9OqTjaPO9f2sHmsXLOG1WPzknqPnd8b2D36tqxi9Pi8SS6APSrbJiM1MSW1SCE1
+	Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoWiWFssScUqBQQGJxsZK+
+	nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdkbvxjfsBd0iFefu
+	tTI1MG4U7mLk5JAQMJF43XWTtYuRi0NIYAejROvx80wQzidGiVcvDzJDON8YJY7u/8kO0/Li
+	9WsWiMReRomXE86zQzgvGSW2v2tgA6liE7CQWHLtA9AsDg4RgXiJfW+VQWqYBTYyS2xobweL
+	cwpYSfxZywhSLiwQIrGkazETiM0ioCrx4dpnFhCbV8BSorfrMyuELShxcuYTsDizgLbEsoWv
+	mSEOUpD4+XQZWI2IQJjEjQ2nmSFqRCRmd7ZB1ZzhkFh+JALCdpE4f/U81DPCEq+Ob4GypSQ+
+	v9vLBmHnS6xceYIJwq6RuNe2iwXCtpdYdAYUEBxA8zUl1u/SBzElBJQljtyCuoxPouPwX3aI
+	MK9ER5sQhKkqMX1ZAMQMaYmJM9ayTWBUmoXkrVlI3pqF5PxZCKsWMLKsYhRLLSjOTU8tNiow
+	gcd0cn7uJkZwKtby2ME4++0HvUOMTByMhxglOJiVRHiVSkTThXhTEiurUovy44tKc1KLDzGa
+	AgN6IrOUaHI+MBvklcQbmlgamJiZGZobmRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
+	1LLKPGPf8i9B+zYeC7i/Q37261uL7MXmvhb8Mq2U65ThtPzX870+2P1s2Zc4YZdSze6FMa+k
+	nXcGSzyM8r3q4fPQIPTKPzEN8ble5/cuFZNl1bE+z3Xpv4OOH3Pn19IpnJNOachdXbJCi+GX
+	tdinDd2Tt5vUtIe22TxNLFd5t23DOfeFL2d12lXd+7NHwUq8VfDTkRf7D0yYG7Npq16N+uy+
+	WIXQ3BMxPWfXnYs63OPYJLMzc7F0nppga6WvqdpywbPrG6Ss3KznzD59aSrrX4ONM9bXxTAL
+	HLvgprnsXmbM8sf7j5zJ+5uiYqKyf0OArYSAeUkng9XJFaYZnIcS+xdu9Hplx3rg9qoztdpl
+	QUosxRmJhlrMRcWJAKRhgKNOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSnO7ei6LpBjMuaVk8mLeNzeL+pz4m
+	izV7zzFZzD9yjtXi5ax7bBabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awWzzvA4o9
+	fvmP2YHXY9OqTjaPO9f2sHmsXLOG1WPzknqPnd8b2D36tqxi9Pi8SS6APYrLJiU1J7MstUjf
+	LoEr49fm16wFb/kq3p65xtLAeJKni5GTQ0LAROLF69csXYxcHEICuxklln09xgKRkJY48vsF
+	G4QtLHG/5QgrRNFzRonupitgRWwCFhJLrn1gArFFBOIl/l84zwZSxCywm1li849lUGOfMEms
+	P9zJ3sXIwcEpYCXxZy0jSIOwQJBEy/mlrCA2i4CqxIdrn8GG8gpYSvR2fWaFsAUlTs58AhZn
+	FtCWeHrzKZy9bOFrZojrFCR+Pl3GCnFEmMSNDaeZIWpEJGZ3tjFPYBSehWTULCSjZiEZNQtJ
+	ywJGllWMkqkFxbnpucmGBYZ5qeV6xYm5xaV56XrJ+bmbGMHxqaWxg/He/H96hxiZOBgPMUpw
+	MCuJ8CqViKYL8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1ILUIJsvEwSnV
+	wNR9avY5t6Zz5/f9vZV+JG+6pllFQaPNWm3jKoHTByZkWIamvF10ovpe8ME/2yuNf835UR64
+	n1WKtc9LKjK/2PnpfM/F7f19lboHBXXUb/X5PZPO7Cu4c64hraT44ZKHJveYqldsEp897f88
+	t0CvV3MP6W+5/WfzjwO6Nf7cUxPN918Qu679qGNasor82k3FJxfpKoqyRsb7eZ8UZOlaYN99
+	ke2G76TnVg0zzz4oOsboICLwiOvb3/0xDVMefEuJe7WI79QlrsK683J/vzy9IJ6qdfhc/epj
+	C1gF/lmkfah3eiWa1aTOZs/8nP1RgAbHkwMzkr+IH9a2LpS74hcb4mUgG5D0Wvw5s4rDBq7L
+	65RYijMSDbWYi4oTASwKGuE+AwAA
+X-CMS-MailID: 20241021035957epcas2p12cb34aa86daaa4ad40dfc3e9ffa0bd4f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b
+References: <CGME20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b@epcas2p4.samsung.com>
+	<20240913080325.3676181-1-trunixs.kim@samsung.com>
+	<20240913080325.3676181-3-trunixs.kim@samsung.com>
+	<CAPLW+4k0rpS0F14sqMGPbq_m=aMqK+g=PZewtZYYroQ+OQBeOQ@mail.gmail.com>
+	<000101db1ae5$96c111f0$c44335d0$@samsung.com>
+	<005c01db1ae8$544a1e40$fcde5ac0$@samsung.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   42f7652d3eb527d03665b09edac47f85fb600924
-commit: c7db3832ff19a9a1116c1b3d435c9db165a2f2f8 m68k: io: Mark mmio read addresses as const
-date:   1 year, 1 month ago
-config: m68k-randconfig-r132-20241021 (https://download.01.org/0day-ci/archive/20241021/202410211139.nbQGaA39-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241021/202410211139.nbQGaA39-lkp@intel.com/reproduce)
+Hi Alim,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410211139.nbQGaA39-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/ata/pata_gayle.c:53:27: sparse: sparse: cast removes address space '__iomem' of expression
->> drivers/ata/pata_gayle.c:53:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
-   drivers/ata/pata_gayle.c:53:27: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
-   drivers/ata/pata_gayle.c:53:27: sparse:     got unsigned short [usertype] *
-   drivers/ata/pata_gayle.c:55:28: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/ata/pata_gayle.c:55:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
-   drivers/ata/pata_gayle.c:55:28: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
-   drivers/ata/pata_gayle.c:55:28: sparse:     got unsigned short [usertype] *
-   drivers/ata/pata_gayle.c:65:35: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/ata/pata_gayle.c:65:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
-   drivers/ata/pata_gayle.c:65:35: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
-   drivers/ata/pata_gayle.c:65:35: sparse:     got unsigned short [usertype] *
-   drivers/ata/pata_gayle.c:69:36: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/ata/pata_gayle.c:69:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
-   drivers/ata/pata_gayle.c:69:36: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
-   drivers/ata/pata_gayle.c:69:36: sparse:     got unsigned short [usertype] *
-   drivers/ata/pata_gayle.c:181:29: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/ata/pata_gayle.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +53 drivers/ata/pata_gayle.c
-
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  40  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  41  /* FIXME: is this needed? */
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  42  static unsigned int pata_gayle_data_xfer(struct ata_queued_cmd *qc,
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  43  					 unsigned char *buf,
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  44  					 unsigned int buflen, int rw)
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  45  {
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  46  	struct ata_device *dev = qc->dev;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  47  	struct ata_port *ap = dev->link->ap;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  48  	void __iomem *data_addr = ap->ioaddr.data_addr;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  49  	unsigned int words = buflen >> 1;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  50  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  51  	/* Transfer multiple of 2 bytes */
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  52  	if (rw == READ)
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16 @53  		raw_insw((u16 *)data_addr, (u16 *)buf, words);
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  54  	else
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  55  		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  56  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  57  	/* Transfer trailing byte, if any. */
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  58  	if (unlikely(buflen & 0x01)) {
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  59  		unsigned char pad[2] = { };
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  60  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  61  		/* Point buf to the tail of buffer */
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  62  		buf += buflen - 1;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  63  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  64  		if (rw == READ) {
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  65  			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  66  			*buf = pad[0];
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  67  		} else {
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  68  			pad[0] = *buf;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  69  			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  70  		}
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  71  		words++;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  72  	}
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  73  
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  74  	return words << 1;
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  75  }
-9ab27d1d35fda0 Bartlomiej Zolnierkiewicz 2018-03-16  76  
-
-:::::: The code at line 53 was first introduced by commit
-:::::: 9ab27d1d35fda0c5fce624083e92546a8545e7e5 ata: add Amiga Gayle PATA controller driver
-
-:::::: TO: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-:::::: CC: Tejun Heo <tj@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar=40samsung.com>
+> Sent: Thursday, October 10, 2024 4:45 PM
+> To: '=EA=B9=80=ED=83=9C=EC=99=84'=20<trunixs.kim=40samsung.com>;=20'Sam=
+=20Protsenko'=0D=0A>=20<semen.protsenko=40linaro.org>=0D=0A>=20Cc:=20'Wim=
+=20Van=20Sebroeck'=20<wim=40linux-watchdog.org>;=20'Guenter=20Roeck'=0D=0A>=
+=20<linux=40roeck-us.net>;=20'Rob=20Herring'=20<robh=40kernel.org>;=20'Krzy=
+sztof=20=0D=0A>=20Kozlowski'=20<krzk+dt=40kernel.org>;=20'Conor=20Dooley'=
+=20<conor+dt=40kernel.org>;=0D=0A>=20linux-watchdog=40vger.kernel.org;=20de=
+vicetree=40vger.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org;=20l=
+inux-arm-kernel=40lists.infradead.org;=20linux-=0D=0A>=20samsung-soc=40vger=
+.kernel.org;=20'Byoungtae=20Cho'=20<bt.cho=40samsung.com>=0D=0A>=20Subject:=
+=20RE:=20=5BPATCH=202/3=5D=20watchdog:=20s3c2410_wdt:=20add=20support=20for=
+=0D=0A>=20exynosautov920=20SoC=0D=0A>=20=0D=0A>=20Hi=20Taewan=0D=0A>=20=0D=
+=0A>=20>=20-----Original=20Message-----=0D=0A>=20>=20From:=20=EA=B9=80=ED=
+=83=9C=EC=99=84=20<trunixs.kim=40samsung.com>=0D=0A>=20>=20Sent:=20Thursday=
+,=20October=2010,=202024=2012:56=20PM=0D=0A>=20>=20To:=20'Sam=20Protsenko'=
+=20<semen.protsenko=40linaro.org>=0D=0A>=20>=20Cc:=20'Wim=20Van=20Sebroeck'=
+=20<wim=40linux-watchdog.org>;=20'Guenter=20Roeck'=0D=0A>=20>=20<linux=40ro=
+eck-us.net>;=20'Rob=20Herring'=20<robh=40kernel.org>;=20'Krzysztof=0D=0A>=
+=20>=20Kozlowski'=20<krzk+dt=40kernel.org>;=20'Conor=20Dooley'=20<conor+dt=
+=40kernel.org>;=0D=0A>=20>=20'Alim=20Akhtar'=20<alim.akhtar=40samsung.com>;=
+=20linux-=0D=0A>=20>=20watchdog=40vger.kernel.org;=20devicetree=40vger.kern=
+el.org;=20linux-=0D=0A>=20>=20kernel=40vger.kernel.org;=20linux-arm-kernel=
+=40lists.infradead.org;=20linux-=0D=0A>=20>=20samsung-soc=40vger.kernel.org=
+;=20'Byoungtae=20Cho'=20<bt.cho=40samsung.com>=0D=0A>=20>=20Subject:=20RE:=
+=20=5BPATCH=202/3=5D=20watchdog:=20s3c2410_wdt:=20add=20support=20for=0D=0A=
+>=20>=20exynosautov920=20SoC=0D=0A>=20>=0D=0A>=20>=20Hi,=0D=0A>=20>=0D=0A>=
+=20>=20Thank=20you=20for=20your=20review.=0D=0A>=20>=20Yes,=20cl0=20is=20co=
+rrect=20not=20cl1.=0D=0A>=20>=20I=20will=20apply=20it=20to=20v2=20patch.=0D=
+=0A>=20>=0D=0A>=20Don=E2=80=99t=20send=20a=20top=20up=20reply,=20context=20=
+get=20lost.=20Configure=20your=20email=20client=0D=0A>=20properly=20to=20se=
+nd=20a=20inline=20reply.=0D=0A=0D=0AThanks.=20I'll=20bear=20that=20in=20min=
+d.=0D=0A>=20=0D=0A>=20>=20Best=20regards,=0D=0A>=20>=20Taewan=20Kim.=0D=0A>=
+=20>=0D=0A>=20=0D=0A=0D=0A=0D=0A
 
