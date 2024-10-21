@@ -1,290 +1,107 @@
-Return-Path: <linux-kernel+bounces-373734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D8E9A5AF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DED9A5B1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CADD1F213FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D3B1C2152B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A847F1D2718;
-	Mon, 21 Oct 2024 06:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8123D1D0DCB;
+	Mon, 21 Oct 2024 06:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6yyz7ZQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="KBzUJF3p"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365801DF730
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729493278; cv=none; b=dF9AkWiFOHbyUINfwgxgSVDaohzcnloksTx4NTvWxB6F3vA/sdZayHOboBFGOotFz8aqlEsofaaXzFTaqFeDHq1/kECkRp0939nSSNYb1Y/gal4eawsgZ/GMy4ZUzzBixkl2A5ZxGKeE2KTaTC2r7mMEUAzsbXxOV1b5btGnONY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729493278; c=relaxed/simple;
-	bh=teyMIfpNNQjSsb5MbXyVqzP1VIlH5kdTfogRdrP4p8U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tX4dXG9JVFDlpEFJuyCgAKbydEN9nhVZEEY4F1pwFTqqjxPVhjTAGsbCWtDgIe6XA8g5QcgSJMG1yVVbE0rOyZvuY7bjibu9ck7BxfsuTbFIz6Ztq9wp6bpZJpseeltWZgcXcXmdkFLlG51/MmlQsSQt6OChxjCSZCvA9IeJegE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6yyz7ZQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729493274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=teyMIfpNNQjSsb5MbXyVqzP1VIlH5kdTfogRdrP4p8U=;
-	b=H6yyz7ZQHfOJWxDQybm0UBGe0/oNi9DhJrT6zT7tpjtTexTcwOt0JzQY8Amy4NLVvnVbjA
-	Xi2DatgmBicfvR3VXskiKwJhoV3hy3sOnt5UHDm3IIVCiL+6grEtWOk5WBE54nubgIXcXi
-	QBWW19Wvy8uPGrR8ZoWXTz7SD4722Ao=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-bLm8Jv4tOKy-98TfRNAUmg-1; Mon, 21 Oct 2024 02:47:50 -0400
-X-MC-Unique: bLm8Jv4tOKy-98TfRNAUmg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431604a3b47so23449745e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 23:47:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729493269; x=1730098069;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=teyMIfpNNQjSsb5MbXyVqzP1VIlH5kdTfogRdrP4p8U=;
-        b=ghANi3qyYtNpNL3ivqBAk42Lx4v6B6cvBoA8TcZpadVJ0XQm9mHcjxcxSPMxh6PRoR
-         xGAtWdvkUsY5Y/CM48ytaxtk/6gLV62M4c1w/ilVy6QWsl0IUM5shVotd26JTMU8KydW
-         Cx4RaTEqmT6kxUV8DHqN64xWLqVQEVbxV/Us88abDIpiE4kt67ohEAf2IyEAg1nnXNxT
-         y89PBQK7hSWdlyflsP0OLZRvkpvmJXB4kb8XuYCLlv6rMhXL1BCWzRY+TftkfJGs+Ee6
-         6wDOWQG1GgrMFk+igsfXKMQAy57g/J+l+95A/ObA7gVGAwz9X/cIhKRMymQKcPMM0lZL
-         FUoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXURsxm5OGpeOlE5Z0/6vJGSkZrz2JDfv24OGD1HIvly/n8E2LV0cZDOoI816t9swuuTYjBTcyetMjQICE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzn0C8pYmN3i8WswRMnHvn1666rYtjQayXq/zOsqQ9MUpY8IJh
-	SfHDaQv8qo0f1arjXH1WJGDN8GlPz+75a7HDnuw6bbm7y/L5DZ/NBOonloK9zNeqJ0J4QaF+ueR
-	c6asnxwzuG3SejWU8lT0gbCluYXlEp+XADuw9yGfz7FzOMfoxzaVPOgBTlgfD6w==
-X-Received: by 2002:a05:600c:3591:b0:431:4c14:abf4 with SMTP id 5b1f17b1804b1-4316163a1b2mr84026025e9.14.1729493269438;
-        Sun, 20 Oct 2024 23:47:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVZgn1S+/IbVUHVqZogTbkz5rvgpgAowACslYYkYZ99T9pAyCEi5NExPZQP+nHcWcbmjh9Bw==
-X-Received: by 2002:a05:600c:3591:b0:431:4c14:abf4 with SMTP id 5b1f17b1804b1-4316163a1b2mr84025225e9.14.1729493268971;
-        Sun, 20 Oct 2024 23:47:48 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82d449800aee93296d73e68da.dip.versatel-1u1.de. [2001:16b8:2d44:9800:aee9:3296:d73e:68da])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570f89sm45821675e9.7.2024.10.20.23.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 23:47:48 -0700 (PDT)
-Message-ID: <1f90d885f0e8dc2e8d9b2b7e88700b4cdb19d84c.camel@redhat.com>
-Subject: Re: [PATCH 13/13] PCI: Deprecate pci_intx(), pcim_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Alex Williamson
- <alex.williamson@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, Niklas
- Cassel <cassel@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj
- Natikar <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov
- <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>,  Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Chen Ni <nichen@iscas.ac.cn>,  Mario Limonciello
- <mario.limonciello@amd.com>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>,  Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>,  Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Mostafa Saleh
- <smostafa@google.com>,  Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu
- <yi.l.liu@intel.com>, Christian Brauner <brauner@kernel.org>, Ankit Agrawal
- <ankita@nvidia.com>, Eric Auger <eric.auger@redhat.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>, Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Rui Salvaterra <rsalvaterra@gmail.com>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Date: Mon, 21 Oct 2024 08:47:46 +0200
-In-Reply-To: <20241018234537.GA770692@bhelgaas>
-References: <20241018234537.GA770692@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D6A1D0E1A;
+	Mon, 21 Oct 2024 06:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729493363; cv=pass; b=ib21ixMQh8+k5h0Rg37Qubv0P/u2hLqafBM0SxNhzm+zO7T/Vvn6ukQFSxvf04xoQL8EtXd78U65odwhl9ZynIPW5BjfoHSl+ydQfI88EP51l6W4bPYyhWPkzt2CTWvH/xOL6aLHEdo6BwWA2QkHfvsUJxFf4B5cdkpHWz4hTF8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729493363; c=relaxed/simple;
+	bh=O31qd5SCkfOYqmj8pjHYTWjM/5OuBWMei43eQiK/a+I=;
+	h=Message-ID:Date:MIME-Version:Cc:From:To:Subject:Content-Type; b=Gph7isqcRXiT98eZViBb1O2mEaCkcI1hwgA620mSWO4vBGVrzlKvGegc6JlM/N0NHh+dOxIUOaYHGqmtsRsiWCeB5AeO6QF0ve+jfsfDFKEydH0+7nhYJYgr6RqyUNmc/pS9xVHSWBRArdJ4ZEUXtYjwTMk4GIVU2vJD49hUG0s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=KBzUJF3p; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729493345; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Gh7OYhG8mPDzF2AxEmqphfR9zhQAvQfUh5+TBVlbGhO2yONNOS4oHjDKAGO+O4pt03ILd/AhxtWX7K7lDb5hSML/6xPPoYC3VKE7dU1Hq4VO3yysIwQ6gkA4UWbsZvsiLYQGRPqHpNfE9CsYnZJ6jpQcm9q8M7NeU7GyYoDU/l0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729493345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=v8iHK6bjZYLzIOEmNBVWQXJWM7Hq1uPf06zA4c17Sso=; 
+	b=i4oWBID16wvPn/fu4spRBm+YDtEQ+uyXci34sOkDWWsDeUBCxj2tpnZ520s25KpqQJvKLvrxtCsjKYEyMfkH0GAWOji5F9gZh5XBOo0jyqeg6gey914tVMRjUDqHH4cTgrO9+wBMSn/JpeX2KYpMQVkGcCG09Q4bmTkydDZj4pQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729493345;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:From:From:To:To:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=v8iHK6bjZYLzIOEmNBVWQXJWM7Hq1uPf06zA4c17Sso=;
+	b=KBzUJF3pV1I1LM5ZMXZwq7xhAOC/2iybKdC1qUwB31FLsdWX6rLOHfRq5VXtfJbh
+	O1mFrAGNH2lXuiZ2KNDHMhqo4BCAFHl84V8Mde29Hz01T6iNiWI5ASdAxiPSMS9rDk2
+	Nwrbc92XhOzBqar4ee9yt8DUev5iFk7Wjg24M8pU=
+Received: by mx.zohomail.com with SMTPS id 1729493342530119.03883380317552;
+	Sun, 20 Oct 2024 23:49:02 -0700 (PDT)
+Message-ID: <3d07e4c3-e413-4378-82da-265a477bedb3@collabora.com>
+Date: Mon, 21 Oct 2024 11:48:57 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Shuah Khan <skhan@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
+ "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+ Andrea Arcangeli <aarcange@redhat.com>, Kim Phillips <kim.phillips@arm.com>
+Subject: [Bug Report] Wrong value of __NR_userfaultfd in asm-generic/unistd.h
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, 2024-10-18 at 18:45 -0500, Bjorn Helgaas wrote:
-> On Wed, Oct 16, 2024 at 10:53:16AM +0200, Philipp Stanner wrote:
-> > On Wed, 2024-10-16 at 10:43 +0200, Heiner Kallweit wrote:
-> > > On 16.10.2024 08:57, Philipp Stanner wrote:
-> > > > On Tue, 2024-10-15 at 13:53 -0600, Alex Williamson wrote:
-> > > > > On Tue, 15 Oct 2024 20:51:23 +0200
-> > > > > Philipp Stanner <pstanner@redhat.com> wrote:
-> > > > >=20
-> > > > > > pci_intx() and its managed counterpart pcim_intx() only
-> > > > > > exist
-> > > > > > for
-> > > > > > older
-> > > > > > drivers which have not been ported yet for various reasons.
-> > > > > > Future
-> > > > > > drivers should preferably use pci_alloc_irq_vectors().
-> > > > > >=20
-> > > > > > Mark pci_intx() and pcim_intx() as deprecated and encourage
-> > > > > > usage
-> > > > > > of
-> > > > > > pci_alloc_irq_vectors() in its place.
-> > > > >=20
-> > > > > I don't really understand this.=C2=A0 As we've discussed
-> > > > > previously
-> > > > > pci_alloc_irq_vectors() is, unsurprisingly, for allocating
-> > > > > PCI
-> > > > > IRQ
-> > > > > vectors while pci_intx() is for manipulating the INTx disable
-> > > > > bit
-> > > > > on
-> > > > > PCI devices.=C2=A0 The latter is a generic mechanism for
-> > > > > preventing
-> > > > > PCI
-> > > > > devices from generating INTx, regardless of whether there's a
-> > > > > vector
-> > > > > allocated for it.=C2=A0 How does the former replace the latter an=
-d
-> > > > > why
-> > > > > do
-> > > > > we
-> > > > > feel the need to deprecate the latter?
-> > > > >=20
-> > > > > It feels like this fits some narrow narrative and makes all
-> > > > > users
-> > > > > of
-> > > > > these now deprecated functions second class citizens.=C2=A0 Why?=
-=C2=A0
-> > > > > At
-> > > > > it's
-> > > > > root these are simply providing mask and set or mask and
-> > > > > clear
-> > > > > register
-> > > > > bit operations.=C2=A0 Thanks,
-> > > >=20
-> > > > I got the feeling from the RFC discussion that that was
-> > > > basically
-> > > > the
-> > > > consensus: people should use pci_alloc_irq_vectors(). Or did I
-> > > > misunderstand Andy and Heiner?
-> > > >=20
-> > > I think there are two different use cases for pci_intx().
-> > > At first there are several drivers where the direct usage of
-> > > pci_intx()
-> > > can be eliminated by switching to the pci_alloc_irq_vectors()
-> > > API.
-> > >=20
-> > > And then there's usage of pci_intx() in
-> > > drivers/vfio/pci/vfio_pci_intrs.c
-> > > drivers/xen/xen-pciback/conf_space_header.c
-> > > There we have to keep the (AFAICS unmanaged) pci_intx() calls.
-> >=20
-> > There is also the usage within PCI itself, in MSI. Patch =E2=84=968 tou=
-ches
-> > that.
-> >=20
-> > It's why I think this series should land before anyone should port
-> > direct pci_intx() users to the irq vectors function, because the
-> > latter
-> > also uses pci_intx() and its own devres, which sounds explosive to
-> > me.
-> >=20
-> > > > I'm perfectly happy with dropping this patch and continue
-> > > > offering
-> > > > pci{m}_intx() to users, since after removing that hybrid
-> > > > hazzard I
-> > > > don't see any harm in them anymore.
->=20
-> So is the bottom line that we should drop *this* patch and apply the
-> rest of the series?
+Hi,
 
-Yes Sir, that's the idea
+The asm-generic/unistd.h file has wrong __NR_userfaultfd syscall number which
+doesn't even depend on the architecture. This has caused failure of a selftest
+which was fixed recently [1]. 
 
-Regards,
-P.
+grep -rnIF "#define __NR_userfaultfd"
+tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define __NR_userfaultfd 374
+arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define __NR_userfaultfd 323
+arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
+arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
 
->=20
-> > > > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > > > > > ---
-> > > > > > =C2=A0drivers/pci/devres.c | 5 ++++-
-> > > > > > =C2=A0drivers/pci/pci.c=C2=A0=C2=A0=C2=A0 | 5 ++++-
-> > > > > > =C2=A02 files changed, 8 insertions(+), 2 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> > > > > > index 6f8f712fe34e..4c76fc063104 100644
-> > > > > > --- a/drivers/pci/devres.c
-> > > > > > +++ b/drivers/pci/devres.c
-> > > > > > @@ -435,7 +435,7 @@ static struct pcim_intx_devres
-> > > > > > *get_or_create_intx_devres(struct device *dev)
-> > > > > > =C2=A0}
-> > > > > > =C2=A0
-> > > > > > =C2=A0/**
-> > > > > > - * pcim_intx - managed pci_intx()
-> > > > > > + * pcim_intx - managed pci_intx() (DEPRECATED)
-> > > > > > =C2=A0 * @pdev: the PCI device to operate on
-> > > > > > =C2=A0 * @enable: boolean: whether to enable or disable PCI INT=
-x
-> > > > > > =C2=A0 *
-> > > > > > @@ -443,6 +443,9 @@ static struct pcim_intx_devres
-> > > > > > *get_or_create_intx_devres(struct device *dev)
-> > > > > > =C2=A0 *
-> > > > > > =C2=A0 * Enable/disable PCI INTx for device @pdev.
-> > > > > > =C2=A0 * Restore the original state on driver detach.
-> > > > > > + *
-> > > > > > + * This function is DEPRECATED. Do not use it in new code.
-> > > > > > + * Use pci_alloc_irq_vectors() instead (there is no
-> > > > > > managed
-> > > > > > version, currently).
-> > > > > > =C2=A0 */
-> > > > > > =C2=A0int pcim_intx(struct pci_dev *pdev, int enable)
-> > > > > > =C2=A0{
-> > > > > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > > > > > index 7ce1d0e3a1d5..dc69e23b8982 100644
-> > > > > > --- a/drivers/pci/pci.c
-> > > > > > +++ b/drivers/pci/pci.c
-> > > > > > @@ -4477,11 +4477,14 @@ void pci_disable_parity(struct
-> > > > > > pci_dev
-> > > > > > *dev)
-> > > > > > =C2=A0}
-> > > > > > =C2=A0
-> > > > > > =C2=A0/**
-> > > > > > - * pci_intx - enables/disables PCI INTx for device dev
-> > > > > > + * pci_intx - enables/disables PCI INTx for device dev
-> > > > > > (DEPRECATED)
-> > > > > > =C2=A0 * @pdev: the PCI device to operate on
-> > > > > > =C2=A0 * @enable: boolean: whether to enable or disable PCI INT=
-x
-> > > > > > =C2=A0 *
-> > > > > > =C2=A0 * Enables/disables PCI INTx for device @pdev
-> > > > > > + *
-> > > > > > + * This function is DEPRECATED. Do not use it in new code.
-> > > > > > + * Use pci_alloc_irq_vectors() instead.
-> > > > > > =C2=A0 */
-> > > > > > =C2=A0void pci_intx(struct pci_dev *pdev, int enable)
-> > > > > > =C2=A0{
-> > > > >=20
-> > > >=20
-> > > >=20
-> > >=20
-> >=20
->=20
+The number is dependent on the architecture. The above data shows that it
+is different for different arch:
+x86	374
+x86_64	323
+ARM     347/358
 
+It seems include/uapi/asm-generic/unistd has wrong 282 value in it. Maybe I'm
+missing some context.. Please have a look at it.
+
+The __NR_userfaultfd was added to include/uapi/asm-generic/unistd.h in
+09f7298100ea ("Subject: [PATCH] userfaultfd: register uapi generic syscall (aarch64)").
+
+[1] https://lore.kernel.org/all/20240912103151.1520254-1-usama.anjum@collabora.com 
+
+-- 
+BR,
+/Muhammad Usama Anjum
 
