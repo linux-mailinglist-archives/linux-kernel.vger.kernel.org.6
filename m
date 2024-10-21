@@ -1,64 +1,52 @@
-Return-Path: <linux-kernel+bounces-375086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B169A90B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:12:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258379A90B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D03D1C21C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF1B1F2314D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6F51FA24A;
-	Mon, 21 Oct 2024 20:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2A51FBC92;
+	Mon, 21 Oct 2024 20:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WbGovaSh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iuo1xN94"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7421E0B86;
-	Mon, 21 Oct 2024 20:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BD61F8EEC;
+	Mon, 21 Oct 2024 20:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729541534; cv=none; b=TYnD7ti+jOQbj8xWRA9XlgzkGwUA2M7JvH7au0J0YcmOhAAhnDXu1p8Obw5g2PFQSHYKiJMaYFTvHpxK+rPMUYL7jlFeGLc7mjrEnHfGFTtQxDhJrdgQwVJleMQra7rhhVTZqKspr7pxRp5yXxJv7gIHb+e1yHxKZDpQNXzoIxk=
+	t=1729541592; cv=none; b=ZYwZNnIzvHS8dZV1qCYzYF0QwGaE7tjJ6nDa9OvzjhpNB54Tx3c8Y1XsOA2VRhAbGFiNx1yF+H2or/biDFaTTSWLlq+vR+p9ffYaTg6GWTRR4sNJhAqB4kyV1izjVQ39qsmycClaNJG5wk5T3Kpx+STteBKXyCeAi1/2/mOcc8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729541534; c=relaxed/simple;
-	bh=AYKAy8kRv/KlBYsd4552FKww1jl+KPz+UHnCXuIjWvk=;
+	s=arc-20240116; t=1729541592; c=relaxed/simple;
+	bh=5I/+WnSIh7ZTj3Ga0psfjktPdutzjm6moTImzEaKQW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/HmNkMPJ22bYEpkPIiw2nGvcuWFOmD/EM0yVcNoRr21opUkOGBgc8n+MOIW4dGQa4i0anM2eHGVlp5t8ne8DsqmnRtacdF6pz4a9Bns3YkxgUZVLlociqCSRw5uW7SX7R6H2StdNmQYpcnQvm81/pQkK8WZTG16IYcL/NRDC4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WbGovaSh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=JiAR7jPGZVyniVYgsyzhTrVFkBxrsyzn+u1ozZll4gs=; b=WbGovaSh2+kETD4rZMBu4yuvou
-	kbrUuxWHfUIzYyQIoQjny4pF+wRtx9TQHjw3tOwM3FjgEs5Q29XT/+qt/AnMfA1+uIhDVU+zbeQ8a
-	8cKV5LL3HQ9fPRsmnvlJ/+dvafxINaVFDfonQeDQNZJZ2OV+l+kFDXT5/TiAtAifP3qQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2yko-00AlWw-5x; Mon, 21 Oct 2024 22:11:50 +0200
-Date: Mon, 21 Oct 2024 22:11:50 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Michael Chan <michael.chan@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Potnuri Bharat Teja <bharat@chelsio.com>,
-	Christian Benvenuti <benve@cisco.com>,
-	Satish Kharat <satishkh@cisco.com>,
-	Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/2][next] UAPI: ethtool: Use __struct_group() in struct
- ethtool_link_settings
-Message-ID: <53721db6-f4b1-4394-ab2a-045f214bd2fa@lunn.ch>
-References: <cover.1729536776.git.gustavoars@kernel.org>
- <e9ccb0cd7e490bfa270a7c20979e16ff84ac91e2.1729536776.git.gustavoars@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+T0llHnWogz2O5XntWNujAEt0UgtL76qwu/AVeIsYQdIhjNiTqRQXge708wLNLq5XJGb8Fxx7+oPFC7ycephFyPIBC2rLtry/KR4AYQTsBzIMu5Vr4Vsa8nfw/Zc8+vqOf+1MSiUfBtrumRRIwAtrLjf3w2osC5+iH5ZuLYT7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iuo1xN94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A743C4CEC3;
+	Mon, 21 Oct 2024 20:13:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729541592;
+	bh=5I/+WnSIh7ZTj3Ga0psfjktPdutzjm6moTImzEaKQW0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iuo1xN94Rs2Bn2DyDG0QmNr4niT48ZHch9GxgPDRmF7o067lncwie3plP0dtmD6Jz
+	 2qEZSmQszFXnlvzMR16Qj0J6FN5g1SHDOfLAq+I7fydMbf6HEEP2NhI2/aYuCR835S
+	 1vfX0hBaZr7ByQNDZLZolxSKGFv9Oe7sviLOKBcnp/bf2PSqGfVPH0LnTDNIXiNvRs
+	 itXIjyP2kEDM8H7iIzYmwQFLzTw0XaN/ts/Ny3XvbFhTjRpbBcQmhT/1AqPva2ayva
+	 /6TTzClNXQOpET+ZTN+v1Y/GHVPpdFnr5FJVEBFK1zxv/3clRnYfNT+md+nDV7WHr0
+	 TE9EJQDBLGyKA==
+Date: Mon, 21 Oct 2024 10:13:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched-ext: Use correct annotation for strings in kfuncs
+Message-ID: <Zxa113xfLj4Dffyk@slm.duckdns.org>
+References: <20241021201143.2010388-1-memxor@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,52 +55,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9ccb0cd7e490bfa270a7c20979e16ff84ac91e2.1729536776.git.gustavoars@kernel.org>
+In-Reply-To: <20241021201143.2010388-1-memxor@gmail.com>
 
->  struct ethtool_link_settings {
-> -	__u32	cmd;
-> -	__u32	speed;
-> -	__u8	duplex;
-> -	__u8	port;
-> -	__u8	phy_address;
-> -	__u8	autoneg;
-> -	__u8	mdio_support;
-> -	__u8	eth_tp_mdix;
-> -	__u8	eth_tp_mdix_ctrl;
-> -	__s8	link_mode_masks_nwords;
-> -	__u8	transceiver;
-> -	__u8	master_slave_cfg;
-> -	__u8	master_slave_state;
-> -	__u8	rate_matching;
-> -	__u32	reserved[7];
-> +	/* New members MUST be added within the __struct_group() macro below. */
-> +	__struct_group(ethtool_link_settings_hdr, hdr, /* no attrs */,
-> +		__u32	cmd;
-> +		__u32	speed;
-> +		__u8	duplex;
-> +		__u8	port;
-> +		__u8	phy_address;
-> +		__u8	autoneg;
-> +		__u8	mdio_support;
-> +		__u8	eth_tp_mdix;
-> +		__u8	eth_tp_mdix_ctrl;
-> +		__s8	link_mode_masks_nwords;
-> +		__u8	transceiver;
-> +		__u8	master_slave_cfg;
-> +		__u8	master_slave_state;
-> +		__u8	rate_matching;
-> +		__u32	reserved[7];
-> +	);
->  	__u32	link_mode_masks[];
+On Mon, Oct 21, 2024 at 01:11:43PM -0700, Kumar Kartikeya Dwivedi wrote:
+> The sched-ext kfuncs with bstr suffix need to take a string, but that
+> requires annotating the parameters with __str suffix, as right now the
+> verifier will treat this parameter as a one-byte memory region.
+> 
+> Fixes: f0e1a0643a59 ("sched_ext: Implement BPF extensible scheduler class")
+> Fixes: 07814a9439a3 ("sched_ext: Print debug dump after an error exit")
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 
-Dumb C question. What are the padding rules for a union, compared to
-base types? Do we know for sure the compiler is not going pad this
-structure differently because of the union?
+Applied to sched_ext/for-6.12-fixes.
 
-It is however nicely constructed. The 12 __u8 making 3 32bit words, so
-we have a total of 12 32bit words, or 6 64bit words, before the
-link_mode_masks[], so i don't think padding is technically an issue,
-but it would be nice to know the C standard guarantees this.
+Thanks.
 
-	Andrew
+-- 
+tejun
 
