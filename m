@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-374326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5039A688D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5C89A68A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B9D1F28008
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F97B2603A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F651EF92C;
-	Mon, 21 Oct 2024 12:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1471D1F7A;
+	Mon, 21 Oct 2024 12:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X1x2io/Q"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5AMsEu/"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A18A1EF0B8
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3531F1D1E74;
+	Mon, 21 Oct 2024 12:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513966; cv=none; b=jaanJt0P4Acs2I3O1wwEamvxsLIY78MnxOxfiWG0Qdpk17Ox81kcfRStroRJ6Kdu58lBuMlC3w9cdoQifBYP0GhZ2831hcDydF2G3ONIoTIQt3MaNjTOjTyMLKshqTjQJar/cvvBxVmurXuiiecfQuUINNgJ97qBXBRKgW2N80o=
+	t=1729513999; cv=none; b=L8mLEoKnz4CGvpAJ4LGaxQg2DN7aBAiBufqm3SEYL1LlWfaiB7BjrevGdRf0bYIAKhuVqlm00loC7cOU1HbdGe0Cm0YKqtOwD3g5t9V1rJIXBMa0fdnuzh3gBU5x9x2JNcUDVeUNUiTOwxZbgoiONdT3YhE2LwlFA6n0H13+fuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513966; c=relaxed/simple;
-	bh=4XJdHOeLB0HksEUioBvTCNJuvmjFzA4qDeHZmTgcxDo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZszR7FnVM+JkaquP13jbzYB6LqKPI9hh8xpXH4Y72CcqtoVqMtGyP6XApAbWuQzgYc2W25QIn6q+wTD0d+IHJ6gOw8c7t91cc6UOIhzZlRkicNy/tUbnBJn+WM+dXxq0UxaX3UC2FHx0LFKEQBKvxF3bqPZkJ2aMd0VAInB0TCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X1x2io/Q; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431481433bdso46836725e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:32:44 -0700 (PDT)
+	s=arc-20240116; t=1729513999; c=relaxed/simple;
+	bh=ejiqaAdhq5qfu9otvu22vewTVMeGi2U0wyEZsSO5aOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OijM4ep9lKIzERiqnI86aK9MZMbqFEWH7fmXAIo0E+F3BPSXUbR0UYo68MOOunFp3c1Bg1GnWiAX0O/elzj9g2i2eGp/ooYrAxlhw/MZb0XpBOO+/i4jJm5IsLUTub4PYLs0nDRf/4nhlNmWPoCTBHVv5XUu2qnofUmaGfZZV3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5AMsEu/; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c693b68f5so46650505ad.1;
+        Mon, 21 Oct 2024 05:33:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513963; x=1730118763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xK977l4SMZlVVZ120SxoAqshGqpipjnvBMfJGymAJIY=;
-        b=X1x2io/QqWxUP6JOdsuunUNEE9UbQELC8Q/q0Ev6A597GwfGT7xI/m+JfPCdEYdl3S
-         dzFzlZ37bp+8QP7qCvKmCIUJxib4YLkx0MmpbA9Rdhrv1GLWBlPcK4l0H/gNStm8AX1V
-         VdcXL+iYI4jXHmb5XRrPtoy2incHiHxveBMGb52qwrPYVgC00J+hYdruKUEF/HjYw14y
-         LFxoA0tIiiTrNcKlbONsVDVOznmeAQ8Ynf32sHvVg0GknwZiMxBevZTomxBUXeXabn90
-         eh/xQgUeKuTGZidX63Bq8dbUHuw/KUuOfnhrAbRL5po1Y8kYDxrN9vWZCRHpF6EeLrHm
-         wncA==
+        d=gmail.com; s=20230601; t=1729513997; x=1730118797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IWr06tAJ0KdIua+ulYntzk6Q5W0gCnfB6uWlDXNeTVQ=;
+        b=G5AMsEu/EDSeWEJibn7D4lqc96Hi6SU2VvfhEy0u9FF7tkwkAXUWpj3kS+u7lA6oK+
+         tsZRwUl3qeQx2e8iRQikgHIAJVqz5M47ZHBZLqU7Ad73gC1QsHlwoqUYmwooz/VsHx0n
+         U17kM1+lRzC58FdU23RkbRgE+H+Na/JEOZ+QIebA0bdZEYUk7nvYOOFooX5XAVifZWKM
+         Ib/ocu2dzOsY1PV47MLliGgHnBsXvazEhYUyiTZwHb+KYUp+afJtVryOinNiK6mK4Jvi
+         cKrw5D9CS10f5QKoZdWf+Rrp+8ggV/ev8AdZkZ0DfosR4adW/K+1my/NmxWE8ITs1fTQ
+         /Pwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513963; x=1730118763;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xK977l4SMZlVVZ120SxoAqshGqpipjnvBMfJGymAJIY=;
-        b=Ltr0PHG/HtsUcaDLw5HsRQgM3+9qcWiiSFTKxZoWr/YlFM+nNe48YPsBu9iDDtrgUU
-         LW7ZuIIV/GmI3BVsluwzV2Z+ehMUmuQb2+ONkwoo1ptq9X7hAziK07zHViFyaCxmle1X
-         FokfKCRhnxxxOd9XsHU7qqcdtx/qTXiOh2jB4Vi2uZ1I2iKbLka4g9Y7C04r1k0Hh6mD
-         qEBLK+tM+G9lZhm7YjNV7Xcxc/ICaTI5J5z8uM1AquAg73ZksGt8zv9kc0lNbFTq4Qsh
-         BDYyDXVusjWcs4sNnJ/4/91Aml2/FxhDJP1lkGJ45pKIsjK7HD49nJNWJ/UPVl4f9lAi
-         nIZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL2CjhghJrF1xPXGk+HNE7O3oDyyBP9DWhIdz1S984qd5pzgqNYdUdI22hcIxcyvCrkNmUxt8nEV4Si4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAnGDhOdjLjivEdM1hy4orvnxsB4TrN8GwTGiXzIpvz1OpVrvk
-	/nhXxK07MpmjpHD1Oy0bCbOQ51RpljaRxEfFSjswljw8oQqORS3tdmyjBDz9Jns=
-X-Google-Smtp-Source: AGHT+IEF5fcgC6ODgI4jJBJx2i1qOREjjBxmOShJ8ylB9dd5vueXyrRW5QKR45FnVPpf8X+wIJuZhg==
-X-Received: by 2002:adf:ec8a:0:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-37eb487c281mr7320360f8f.40.1729513962869;
-        Mon, 21 Oct 2024 05:32:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a587f4sm4249896f8f.52.2024.10.21.05.32.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:32:42 -0700 (PDT)
-Message-ID: <a2d20619-0724-4b16-a9a5-4a3680f21c99@linaro.org>
-Date: Mon, 21 Oct 2024 14:32:40 +0200
+        d=1e100.net; s=20230601; t=1729513997; x=1730118797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IWr06tAJ0KdIua+ulYntzk6Q5W0gCnfB6uWlDXNeTVQ=;
+        b=Yj5QbWoGsIa/JMJlwQFJFn9G/zxeE5Ch4uLUSBX7Uw6rBwRBN3+Jle//WeEnTu6aWK
+         0IWeEBHBrNgx8wHWABSGnxSbP8jlJ7erCBrVTui5Sc5dirkyluWR7Bij5s14SWMIuAgO
+         dzy0Gf7cTlBNI9SiiFg++ZRje2fW3t/ENDZB0w6N3uikVwlUDEMc/BW8iReAUlqC5skn
+         MizCfkQbX9H4Ddt9136iCwTfeW08oGFp5IEYkILs0wWbohcB1CvgEZb9fDXCos3E1GO/
+         U0r9aXKSonwt3uv1SASg1D9S5l+ECEtFI6yiiyvZ2oxQ7fXNiti/ZTFGCgg8AwiFxjkL
+         MaEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlN9owBHb8ZZRLrLZhOdtEscPNz5TmnPycLEgw39MeiI53sNdGQH1qOPLRlNRBnUFfxsFDbQAD35Caj7g=@vger.kernel.org, AJvYcCWIBD6WcnmMW0Z2JGIcs9H65l0PwsqJJDOHmWzj7GyGfb7dhEnkq9uDxBkox3hNtxbX99le@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5y3xXgIMooevhwRkvQEkllCgtSXhHjgIqkJWf/AixktUsXrh
+	p18javLpkm3CAxzxjGyTXbCvSmRAiptM3Zy5U3g3SoNVG8bZo0a3vbwZLg9+2BBXqLvVb34sl/v
+	WmiEjinpzz3iWl+3Sas4FqheWK3/7Q502
+X-Google-Smtp-Source: AGHT+IEBKgxGvKxKhz/8CKojloZs/8eqrLK8r+hnT6vg5Dv+IIz17qH26yYr+zgPHEtfbKG/YvoIZB9ecYQYn0hxuC0=
+X-Received: by 2002:a05:6a21:6b0b:b0:1d9:275b:4ee1 with SMTP id
+ adf61e73a8af0-1d92c5089b5mr14316536637.24.1729513997341; Mon, 21 Oct 2024
+ 05:33:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/6] drm/bridge: add ycbcr_420_allowed support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241020125119.14751-1-qiang.zhang1211@gmail.com>
+ <ZxWO6BmRutOC0RnZ@pavilion.home> <CALm+0cW=1PAVhjHKM+aXLHHzsD0+7pbVDvmm+kxvff7r=Di2tA@mail.gmail.com>
+ <CALm+0cV-s+gYDXKQV9dYWEr-ui6aJ6DZzvyNhW6H2T39WtPjWw@mail.gmail.com> <ZxY-jRKBf8672czT@localhost.localdomain>
+In-Reply-To: <ZxY-jRKBf8672czT@localhost.localdomain>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Mon, 21 Oct 2024 20:33:05 +0800
+Message-ID: <CALm+0cXwL2fjF9njuWDRX3cmnUqyPjNKAeWQaWZ6S+BedC3MXQ@mail.gmail.com>
+Subject: Re: [PATCH] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+>
+> Le Mon, Oct 21, 2024 at 07:01:02PM +0800, Z qiang a =C3=A9crit :
+> > > For the non-nocb cpus set during boot, the corresponding
+> > > rcuop kthread, we should park directly, otherwise
+> > > WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp)) will be triggered.
+>
+> Ah but this case is different. kthread_park() is called on
+> the kthread that is freshly created. In that case it is
+> parked before the kthread even had a chance to call its handler
+> (which is rcu_nocb_cb_kthread()).
+>
+> See these lines in kthread():
+>
+>         /* OK, tell user we're spawned, wait for stop or wakeup */
+>         __set_current_state(TASK_UNINTERRUPTIBLE);
+>         create->result =3D current;
+>         /*
+>          * Thread is going to call schedule(), do not preempt it,
+>          * or the creator may spend more time in wait_task_inactive().
+>          */
+>         preempt_disable();
+>         complete(done);
+>         schedule_preempt_disabled();
+>         preempt_enable();
+>
+>         ret =3D -EINTR;
+>         if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+>                 cgroup_kthread_ready();
+>                 __kthread_parkme(self);
+>                 ret =3D threadfn(data);
+>         }
+>
 
-On 18/10/2024 23:49, Dmitry Baryshkov wrote:
-> One of the features that drm_bridge_connector can't handle currently is
-> setting of the ycbcr_420_allowed flag on the connector. Add the flag to
-> the drm_bridge struct and propagate it to the drm_connector as AND of
-> all flags in the bridge chain.
-> 
-> As an example of the conversion, enable the flag on the DW HDMI bridge,
-> MSM DP bridge, display connector drivers (for DisplayPort and HDMI
-> outputs) and AUX bridges.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Dmitry Baryshkov (6):
->        drm/display: bridge_connector: handle ycbcr_420_allowed
->        drm/atomic: add interlaced and ycbcr_420 flags to connector's state dump
->        drm/bridge: display-connector: allow YCbCr 420 for HDMI and DP
->        drm/bridge: aux: allow interlaced and YCbCr 420 output
->        drm/msm/dp: migrate the ycbcr_420_allowed to drm_bridge
+Ah, Thanks!
+get it, I ignored parkme in kthread(),
+will update and resend.
 
-How do you plan to merge this serie ?
+Thanks
+Zqiang
 
->        drm/bridge: dw-hdmi: set bridge's ycbcr_420_allowed flag
-> 
->   drivers/gpu/drm/bridge/aux-bridge.c            |  4 ++++
->   drivers/gpu/drm/bridge/aux-hpd-bridge.c        |  4 ++++
->   drivers/gpu/drm/bridge/display-connector.c     |  4 ++++
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c      |  3 +++
->   drivers/gpu/drm/display/drm_bridge_connector.c |  6 ++++--
->   drivers/gpu/drm/drm_atomic.c                   |  2 ++
->   drivers/gpu/drm/msm/dp/dp_display.c            |  4 ++--
->   drivers/gpu/drm/msm/dp/dp_drm.c                | 10 ++++------
->   drivers/gpu/drm/msm/dp/dp_drm.h                |  7 ++++---
->   include/drm/drm_bridge.h                       |  5 +++++
->   10 files changed, 36 insertions(+), 13 deletions(-)
-> ---
-> base-commit: 7f796de9da37b78e05edde94ebc7e3f9ee53b3b4
-> change-id: 20241018-bridge-yuv420-aab94d4575de
-> 
-> Best regards,
 
-Neil
+>
+>
+> So really rcu_rdp_is_offloaded() has to be true (but we can
+> warn if it's not. Though we already have a test for this in
+> nocb_cb_wait()).
+>
+> Thanks.
 
