@@ -1,169 +1,196 @@
-Return-Path: <linux-kernel+bounces-374185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39669A6687
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:21:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCB79A6670
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421C51F22D96
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:21:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CC3B25951
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDD91E7C01;
-	Mon, 21 Oct 2024 11:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875E81E765D;
+	Mon, 21 Oct 2024 11:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ulqzTF6d";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JxpTRpOJ"
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLaH7Jer"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60D1E3DD8;
-	Mon, 21 Oct 2024 11:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61EC1D221A;
+	Mon, 21 Oct 2024 11:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729509685; cv=none; b=Whf2MuuPQXxhN/Xb3O6KnmBj4yDmMKiqoferT1dhWZszytnZFM0crv6ZoinZxswJ4D0Q7FREkvHE6qcJihB+YjSg9eAI48jSbbbbVNO7ZPjysUaG27nBmIJ/0vVvMLHY/ylYCsKp1znhA+WVFEyxa7DRwI8w0I1+g49pw5Vd5Iw=
+	t=1729509487; cv=none; b=KOyWCfY6q5p5D+yFj3YU9S0Up09USOJFL+OCX8twzIwxnhlrGwmo/Kb32ZG6lRihOmzB3M5FVBNOBuN6IO4bdvX3VUzMRg8YlvJmU2eVQpzCYzlVdfV0jL1WmhyYOAkrR9pngY99AklCGlivHD8stt1kF9/6jSXE/96Qw6QHD4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729509685; c=relaxed/simple;
-	bh=mHxtqJKALMM2JzQ4QjvJxiwzCfXdEBolIhZyDxg/CEU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=UEVZrAsozR9YFiA+NbmP9YT+mhCzPBc+KzMdzvBcSfUeCjlDCIdEDzaZhjLlKH/L7iO0S2gjV041M2h8WRVLhZv3IBw0Gzj61OLpFnX1IAUDJNnGE4u3kANfmi+yzPXC5hhleQPNo7blxlDclJtFcowwP/+ySXfK3iAXcT07gmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ulqzTF6d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JxpTRpOJ; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailflow.phl.internal (Postfix) with ESMTP id 1134D200206;
-	Mon, 21 Oct 2024 07:21:22 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 21 Oct 2024 07:21:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729509682;
-	 x=1729516882; bh=fvD3ctpqrCWAfhRvwnz/vMYY3oWGeyeXaHqmlBQJW9U=; b=
-	ulqzTF6dqm9TDZQpemlAVPsLUXyYkvNAzrfcULOOPesTtIz+Z4Ai0z12HABf1ctb
-	23jnEQISppKaZtN6R9jusvv7XqVCi0GMq66sPA8O1L7cdwWtoeVCMtKVTY2w3haz
-	rR27LXnZBNV800rflp1teAMig+lDUvZYxCWza+PX2DR439QxbF0PkDODEoGNUrfW
-	uGbdoE84+5R3BJtwqf3G5Velav1VcdQq1cU6M6bhPD4PYg0M+daEBboU4PXXFuFP
-	6Yl3lx39pHOGWiPPfJt+bY029hBO3KTVN6+6fzhbPZfDaS3w3qYPY+gJMUHqeNuK
-	jUSdbxK0JB8OePnbvxPktA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729509682; x=
-	1729516882; bh=fvD3ctpqrCWAfhRvwnz/vMYY3oWGeyeXaHqmlBQJW9U=; b=J
-	xpTRpOJ4uJFwt33ULhA4kXA4a69HtyOOzm7oX2UNenK3N/lPf3Zz1ZBrrZnSJNYZ
-	wQAzuMzfS4Ki7UDhYhHkMeh/yNkBJufymBB/OQTgsngdWT9YJl7jWeFKgOK5Y88Y
-	spFb7baVoJP9/V7CXc0MIMDhLF13YbMlhL3dYiqR6EfIMoWXO1tdm8GFNOyH5WKM
-	vJPia/cKnpVJ3vVqUzwCxhP3JUsM9zzdcgzWBH879ZQBBxJf+/Zf5BLdrJyDeDpm
-	bjQoUwGM+18gRD90QgYWxo0Hx2AiPhq0U+bV5AfGcFGBppQPrm5TCZ+HKwBRszPT
-	Z42mn8unbo1AXgbzzs5cQ==
-X-ME-Sender: <xms:MTkWZ22VTNkVIywiKLmtz380cPoWc7iOcVWQx0cbwZL_zea-JlVLLw>
-    <xme:MTkWZ5GpTeL7YzfMr3FRdWC5EOA-Ex1W4Xq2UVEGQF2VCJyx3kpnP8L8tMW9sVCAS
-    puxE_DA0EG9LBRlhZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledggedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehl
-    uhhiiidruggvnhhtiiesghhmrghilhdrtghomhdprhgtphhtthhopehprghtrhhikhdrrh
-    drjhgrkhhosghsshhonhesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrtggvlhes
-    hhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhutggrshdruggvmhgrrhgthhhise
-    hinhhtvghlrdgtohhmpdhrtghpthhtoheprhhoughrihhgohdrvhhivhhisehinhhtvghl
-    rdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:MTkWZ-7QdSiiIGy0vrhYQCsmMwygcvB-Q-0Wm6NmjI3Y8Q1M0bbqnw>
-    <xmx:MTkWZ301K1iwMIhsTcnFUngtniJVM2fWmbJjNAvDI5KAN7BEu1xNvw>
-    <xmx:MTkWZ5HY801U3mzpDI6Nkai1KBdpOODBwoYuAdLiNoXCOdAjHV96fA>
-    <xmx:MTkWZw8Y-CkdqEhfxR3RiTbMpKUABg-0CW3NZxU18UUaJHLwCQjamQ>
-    <xmx:MjkWZ-s9DCM7I8in58DNLWEmCFENsnEANFLsBcYnqsHEooUFVPU72N_x>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 268142220071; Mon, 21 Oct 2024 07:21:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729509487; c=relaxed/simple;
+	bh=YLAvMjhW1HB7PsV5gBYZNiIntTf5JhMxPwr43QqPZCs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ccNT7Toy7txGtn1k2T6pj5V7CDFgNvhbI24ntgCZAK4XaJqxCXCF3pt37PSfRsno7xKYSsPbYN/Q21T/I7mE+j48k+LeUKV2eV7+zJ9z1lwTCbr/M8lF5LzMbJ0BC94Q89E6y9QST0AQIyiWSKOHOhvojVkZpnch/DLKacMCm0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLaH7Jer; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539983beb19so4688718e87.3;
+        Mon, 21 Oct 2024 04:18:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729509484; x=1730114284; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Xfj/EnKxXdQvjQtOfFijWCS2fwYORZ845i4D/RptAbo=;
+        b=eLaH7Jer9y4J7SA7s2/0Akv5L6JPIaE/cjblGeitJRcGf4CCoidlMkG0qv+SU/BYxu
+         jPRUhVEVoZaBNHSNIS3brnexGt1DSYrAzrQxFR/zFu5xrmV9hWpUqck/2JjtKBCpAH82
+         92rrS0CgIsn3kMU81zcE7YCnQ9mFFY4FwxbOPGg6aILnqqlW2DE7LxmqWMkAmYSjNaHk
+         jTPw9Kmn0aTsLgMGfBtDGvv1jt6ytelVtnBftiPJsh23ZKuozC2Lg+iX5SRvjKQFV977
+         pCu5AqNzWRmQqN/jx383HGBUJtUk/9zmrI35gPKEoGHZogUss/4IqEey8Nj9VpCFWbo4
+         H3pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729509484; x=1730114284;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xfj/EnKxXdQvjQtOfFijWCS2fwYORZ845i4D/RptAbo=;
+        b=ZEEhVPGLCS/lsgJhFdFWdlCz6h3P38X6vUfz+xMMs+O2VLWD+gq+xGrnoOkN0gfgPu
+         xbTuFPyKgICx4/QoW1hsBlSV6r0KuiQWscdvTHknSDsgsHSFqITMQpLCTLGm20UXT/cK
+         I847btyKeEQah9CdCzenzg2k+ODjzIrvSFN73YlqFFsAOlvPFA3/uEAshEguNhLPJqHZ
+         Ky26TIFC/PDAsIPSCaeydZmOGpss/jzhQoJ/Ztpw2Izs2pwMYJNrQJALqNlagGRUvcH9
+         xH0ROuNoqNRDdgKgyylbzd40BRijZxpkkaryFIh4UJM1I0o1T4CrxBMT+WWyg5xPY1/Q
+         VjCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc9nTZArqop4FUPLfuzY6VK5cjYy+nmV/Jw2Wnu9PuHPM19X+aC/XAwAOy8z7kYzKkC8XnSxAbN70Gn5Qu@vger.kernel.org, AJvYcCVvzHVfswcg/IeqOeN/MJXMUr1D490Ael85KeSfItmCXhYnKA9KCZsVLUIqbkyo4hlZJO/jJfieLipM@vger.kernel.org, AJvYcCWHJxLWWbor5KvXg+QZudFJ4YE6mqVr0IwHXX/xarYGCUmby5pXJkmHe8YWBMz7oX6T7E+ILs4nO/oD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu8+s7y5pPRxRf80TiXKDgN0sINjx3m3NxftUD5J9v028iJZsW
+	pxoFJ3PXFS+8pCLPVIP3zCTbHMCuRchB17SMytpxTUo/wuHZLJaddOp0yK3L0NG9zi1C
+X-Google-Smtp-Source: AGHT+IHDeK0DwiMkPDbC0HMtjNt1Y+661gRF6ZAnCpztH0AGj/ZblZ//B49e4j2AvMw4oSApJIsfNA==
+X-Received: by 2002:a05:6512:23a0:b0:53a:40e:d55f with SMTP id 2adb3069b0e04-53a1545382cmr5067882e87.15.1729509483281;
+        Mon, 21 Oct 2024 04:18:03 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571e3asm191957666b.147.2024.10.21.04.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 04:18:02 -0700 (PDT)
+Message-ID: <037d7ebb4d037edb32f9d717e456ab545621ea94.camel@gmail.com>
+Subject: Re: [PATCH v2 4/5] iio: adc: ad7380: fix supplies for ad7380-4
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, David Lechner	
+ <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown	
+ <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org
+Date: Mon, 21 Oct 2024 13:22:19 +0200
+In-Reply-To: <20241021-ad7380-fix-supplies-v2-4-2ca551b3352a@baylibre.com>
+References: <20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com>
+	 <20241021-ad7380-fix-supplies-v2-4-2ca551b3352a@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 21 Oct 2024 11:21:00 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>, "Brian Cain" <bcain@quicinc.com>,
- "Marcel Holtmann" <marcel@holtmann.org>,
- "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
- "Patrik Jakobsson" <patrik.r.jakobsson@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Dave Airlie" <airlied@redhat.com>,
- "Gerd Hoffmann" <kraxel@redhat.com>,
- "Lucas De Marchi" <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "Heiko Carstens" <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Message-Id: <c7592bd4-a9f9-43b0-a243-0fb2ef6bb83d@app.fastmail.com>
-In-Reply-To: <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
-References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com>
- <20241008-b4-has_ioport-v8-3-793e68aeadda@linux.ibm.com>
- <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
- <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
- <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
-Subject: Re: [PATCH v8 3/5] drm: handle HAS_IOPORT dependencies
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024, at 10:58, Thomas Zimmermann wrote:
-> Am 21.10.24 um 12:08 schrieb Arnd Bergmann:
->> On Mon, Oct 21, 2024, at 07:52, Thomas Zimmermann wrote:
->> --- a/drivers/gpu/drm/tiny/bochs.c
->> +++ b/drivers/gpu/drm/tiny/bochs.c
->> @@ -112,14 +112,12 @@ static void bochs_vga_writeb(struct bochs_devic=
-e *bochs, u16 ioport, u8 val)
->>   	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
->>   		return;
->>  =20
->> -	if (bochs->mmio) {
->> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
+On Mon, 2024-10-21 at 12:00 +0200, Julien Stephan wrote:
+> ad7380-4 is the only device in the family that does not have an internal
+> reference. It uses "refin" as a required external reference.
+> All other devices in the family use "refio"" as an optional external
+> reference.
+>=20
+> Fixes: 737413da8704 ("iio: adc: ad7380: add support for ad738x-4 4 channe=
+ls
+> variants")
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
 
-I meant IS_ENABLED() of course.
+Hi Julien,
 
-> For all functions with such a pattern, could we use:
->
-> bool bochs_uses_mmio(bochs)
+Patch looks good. Sorry if this already came out in the previous version or=
+ in
+the other patchset you mention but shouldn't this fix come first in the ser=
+ies?
+
+Anyways, for the patch itself:
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+> =C2=A0drivers/iio/adc/ad7380.c | 36 ++++++++++++++++++++++++++----------
+> =C2=A01 file changed, 26 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index
+> e257f78d63edd7910fcb936ec5344922f8e70b99..65096717f0dd3ea6a4ff7020bc544d6=
+2b84c
+> b8fd 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -89,6 +89,7 @@ struct ad7380_chip_info {
+> =C2=A0	bool has_mux;
+> =C2=A0	const char * const *supplies;
+> =C2=A0	unsigned int num_supplies;
+> +	bool external_ref_only;
+> =C2=A0	const char * const *vcm_supplies;
+> =C2=A0	unsigned int num_vcm_supplies;
+> =C2=A0	const unsigned long *available_scan_masks;
+> @@ -431,6 +432,7 @@ static const struct ad7380_chip_info ad7380_4_chip_in=
+fo =3D
 > {
->  =C2=A0=C2=A0=C2=A0 return !IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mm=
-io
-> }
->
-> void writeb_func()
-> {
->  =C2=A0=C2=A0=C2=A0 if (bochs_uses_mmio()) {
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writeb()
-> #if CONFIG_HAS_IOPORT
->  =C2=A0=C2=A0=C2=A0 } else {
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 outb()
-> #endif
->  =C2=A0=C2=A0=C2=A0 }
+> =C2=A0	.num_simult_channels =3D 4,
+> =C2=A0	.supplies =3D ad7380_supplies,
+> =C2=A0	.num_supplies =3D ARRAY_SIZE(ad7380_supplies),
+> +	.external_ref_only =3D true,
+> =C2=A0	.available_scan_masks =3D ad7380_4_channel_scan_masks,
+> =C2=A0	.timing_specs =3D &ad7380_4_timing,
+> =C2=A0};
+> @@ -1047,17 +1049,31 @@ static int ad7380_probe(struct spi_device *spi)
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to enable power supplies\n");
+> =C2=A0	msleep(T_POWERUP_MS);
+> =C2=A0
+> -	/*
+> -	 * If there is no REFIO supply, then it means that we are using
+> -	 * the internal 2.5V reference, otherwise REFIO is reference voltage.
+> -	 */
+> -	ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "refio");
+> -	if (ret < 0 && ret !=3D -ENODEV)
+> -		return dev_err_probe(&spi->dev, ret,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get refio regulator\n");
+> +	if (st->chip_info->external_ref_only) {
+> +		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
+> +							=C2=A0=C2=A0=C2=A0=C2=A0 "refin");
+> +		if (ret < 0)
+> +			return dev_err_probe(&spi->dev, ret,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get refin
+> regulator\n");
+> +
+> +		st->vref_mv =3D ret / 1000;
+> =C2=A0
+> -	external_ref_en =3D ret !=3D -ENODEV;
+> -	st->vref_mv =3D external_ref_en ? ret / 1000 : AD7380_INTERNAL_REF_MV;
+> +		/* these chips don't have a register bit for this */
+> +		external_ref_en =3D false;
+> +	} else {
+> +		/*
+> +		 * If there is no REFIO supply, then it means that we are
+> using
+> +		 * the internal reference, otherwise REFIO is reference
+> voltage.
+> +		 */
+> +		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
+> +							=C2=A0=C2=A0=C2=A0=C2=A0 "refio");
+> +		if (ret < 0 && ret !=3D -ENODEV)
+> +			return dev_err_probe(&spi->dev, ret,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get refio
+> regulator\n");
+> +
+> +		external_ref_en =3D ret !=3D -ENODEV;
+> +		st->vref_mv =3D external_ref_en ? ret / 1000 :
+> AD7380_INTERNAL_REF_MV;
+> +	}
+> =C2=A0
+> =C2=A0	if (st->chip_info->num_vcm_supplies > ARRAY_SIZE(st->vcm_mv))
+> =C2=A0		return dev_err_probe(&spi->dev, -EINVAL,
+>=20
 
-Yes, that helper function look fine, but it should then
-be either __always_inline or a macro. With that, the
-#ifdef is not needed since gcc only warns if there is
-a path that leads to outb() actually getting called.
-
-      Arnd
 
