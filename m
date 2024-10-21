@@ -1,146 +1,266 @@
-Return-Path: <linux-kernel+bounces-375162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C93A9A91BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:05:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DD39A91C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28E0EB22051
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF771F23401
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70DC1E22F8;
-	Mon, 21 Oct 2024 21:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973041E22E8;
+	Mon, 21 Oct 2024 21:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Sc1KRoNj"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OytrXp+Y"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132DD1A256B;
-	Mon, 21 Oct 2024 21:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20381E22F6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 21:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729544751; cv=none; b=fZADY63KpSrkMXkTnCARO1hk27MQoA/BsJUI1DdudfZySdauuq6jrDR/3WiPu+oOmgLF3SfvphvC+eEVDpwdJHN81kbJ1lIB4JNGMk4KlVnNM7xIKzRTSNY45ckkSkXB8vSYbtQNaT0f5yEWVlUpymi5P2870FUc7rczv1MZWL0=
+	t=1729545030; cv=none; b=BTjXn9zzRiDk9uPnNJtTbnDDNDfzcaD7QHN84UdkAUtKnZe4IH9abNLxpPZzdtRMTU4Wv288jpAu6JDX8oHsVxpFulTfZt1HJrNdPRz2M2Obra/fg0WIt2XG6l8TRYDFmwMIs7Kq4z/VFGD801B+ELZoE+7HnhmSG9sjTWBoUuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729544751; c=relaxed/simple;
-	bh=Smd8t82w9m3mCyHmKUSvSk1Z+qczq1yELOAf47WKppU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5s0fNb9mX0vaxtzQO9l7iiG2ZecNme1ZsPMKit0o0ljxkPIK3K83gVrtg8EmX5xTyfmUMxlwcuvQ7mNFCpsRGgJv7W3yZXuOGmS/S8QStXlOi0l7cBp+/r3NKo5bcedHYuaGcz2RMzorohEGiZNd9mbiqURUqVNoITZ6RUYGbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Sc1KRoNj; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729544736; x=1730149536; i=w_armin@gmx.de;
-	bh=q59TIsh8rTZbf71iz3CnokQM71XdNJfMqkOzlbZ158A=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Sc1KRoNjjAysjgJuDvcoWJyBHsY97VuJh4tz1mjFdolDN09iZrzNrlcclhSmTc9F
-	 N2q5jKlqSI0QrRYCfkh8sJKj4e37Ioh4kKlSfXePj6X5Tmh6GaErtkFsHXT3O7cgu
-	 zHebvbB+GzD5/KPfQ08ZJC8PNp+YL3L5m20F+2yJbvGs6cTUPzyFaCdDgQcFvbWzp
-	 wQ23ys9MY6FPFUrVa3sCodSYhuAd5S9g2sldwoWKHmKbko9Ake953WFUkin2PFgDS
-	 /DxB8GW460fW5h4spPCbkErgjPKfrnMyNLOwzU9dt7xl+mMajyaJeaULuMuyoFwmt
-	 +NHA8aUUumNpsoEkDg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5wPh-1t0Xgx2EOZ-00F7EU; Mon, 21
- Oct 2024 23:05:36 +0200
-Message-ID: <82773fea-5d0a-49a8-b7d7-0c41b5d51ca9@gmx.de>
-Date: Mon, 21 Oct 2024 23:05:35 +0200
+	s=arc-20240116; t=1729545030; c=relaxed/simple;
+	bh=5IIUFhB9sePGpz0UvFjR2T7FCcjJPQ8x1nt2FAFMzcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rkIwoPm1L14K91G2apG9/Z9Ks3PbkCYiOowD5PCpwtNLyCKjO9XCrQaWWvsaLp20KUkNxcQwEi2EueSOpAeujLSowbNfxMHkjY9wITMxsWmfyVwBR1Rffhbrn4WSdvzsYxuJBf18mG18RRTMToWNAWSybSKNme/GVkz4piSXH14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OytrXp+Y; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so5061772e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729545027; x=1730149827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YGaNgV0yGhUkl94jFkqUnmK0xlXlM006gLHr3N50u1A=;
+        b=OytrXp+YqyhAAI8HQWXOeh5NdL16ACr71196LzeNlhUsu92FEasp7a/yM33ekTrTDG
+         Zs08sa/blWMsLHYTi5RWCTou/Jafpqtc2a2LTFZ0r0QCPOUsMu10Q1Pp4e9e1eP181CI
+         9E7PJFZX8nALVA6PehBgOEoZ4AzBSr6BiX1UJg3x820WwueWDdeJKivs2iOdgYvPSgq+
+         Pk8xO6/atfCKbkiU2JSDBsTB+daoUWsVfDfbrh+wsm93YN/+yfVaDy7PHNLTKbbZCp1I
+         U5e0iJBQEIbhTLZ2x4wFhjIS+qhdh+t7qwbOeRfXYxspXRqJFbsWJIXYXEeIi9OdEcMa
+         4ioQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729545027; x=1730149827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YGaNgV0yGhUkl94jFkqUnmK0xlXlM006gLHr3N50u1A=;
+        b=p+th31PKGyG8aegFV1y/emsPTuec9T98yzfqkZWLU6EpQdZB97P0swJcxoKO+gbjSJ
+         2rcXf/ohDXblYSZyxx5crI1T1p7/QyZsLyCV/b6IjRzJlqg9Z4VSBEtL4SmDB/Vz7kxa
+         Uj6qZCbLBcZSTA8D5sQtB1PzEFiVhY6wI8VU/Vk9o3yd6298WvbTRv+YiVzD0gKkkpL3
+         UqPz7d/aBK/3PWwsR3k5veV3xn70RWPPjlAcSM4axGJP9bBeBgcbTFecJZkjT2TMYFF+
+         +Fn6aTwCQ99EFArOfgettXUBdnUKcfd5hunQApxwhW4LyrwRKGas2ZPLRyVTq50P5Kmq
+         8rDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWi/JY4GIiFQ//AfJEcH+aDHl6KRE2rhPYgcjCYJsz5gUXg4qJop/Wo4reFAabt9ApvJu++COHdK36aG3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRmDumYpJHQJWrd3Y71S3rXwAq/PsxKp34pEwNCZl4/QMV8nAT
+	U+nGlmlWUFu7ECICx6J/B7Ely17n9YLkM6241ylfqZFPPSEUkcUG3jH4jZZwoPXVhQkwLZmR+iE
+	Xh6XWCfltoIsDB4GnrciGsy6NnZVHKLCL9Oci
+X-Google-Smtp-Source: AGHT+IH1UKPItaNggnum/3HGt/QwNhyRPmr6T8JA58WOYdnUxoMuqAbfHyTjT6Sc+2PC+sqJEVSMurrFtH3WTqnUMRI=
+X-Received: by 2002:a05:6512:3b13:b0:539:e911:d20e with SMTP id
+ 2adb3069b0e04-53b13a2213fmr149122e87.47.1729545026794; Mon, 21 Oct 2024
+ 14:10:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: dell-wmi: Ignore suspend notifications
-To: Hans de Goede <hdegoede@redhat.com>, pali@kernel.org
-Cc: ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, siddharth.manthan@gmail.com
-References: <20241014220529.397390-1-W_Armin@gmx.de>
- <40a76a97-b3e4-42cb-bee2-ca54731cc8ef@redhat.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <40a76a97-b3e4-42cb-bee2-ca54731cc8ef@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9Xgtzb780cTuQfEHfyZ8y97jegEKjzq3rz2eAzHxNFUQHPJCAqo
- K/kxj18nmaZKqCluVqMt2UYD3rafebeWBQSOjUUaAQw5iksCvxc8I1sAeOJ9uRmCaoMXA7M
- k9YKu49aJfKKQ6MYQ3VPAzBZHYWMXLFXfiU0/F0cuyzfjR+0nKW+J8IpxV8FUBINvIXev7x
- uahb/hZObvaK54SgU4sRA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ofOFg3X4ey8=;46HlejFl2gDjqkBgodnCMs7GW0G
- SB0t9X4Ole8cz71jKWkUCqa4E0veD7qxtP3WuXXMN9c4lbyWcXXAG0pd2jgQlTs551B0CHbjg
- IlMmobkJVGFWt26VDfNdA/7YIUoLlcHfDj9bchNDz5nNm2fyLbubs/dLHdY+tzWmAZ8VUR9xw
- WpVcFcbE41+xDHY9/QqApNIf8j0Nn2mJ7l0x+di4hxBh6wn+OSStrTm/h10SFd2oDOJE11jGK
- RhFNhVyf+TB/hgEm0hY5gCXJPbh79Vx8wZIOTEEeeVEDFoVuBnIHr2nB9XCJPNEwJEIqed7TG
- 3Uxcwqg3ozVyjxLPVUki0kX27Y+IIKrSlWjlHRm7O/0ANXzk5We8dsQIn08v5KEQezdlmopNA
- 7QF3qhwECJ4GxSdHFUzWuJ6EyLG8vxYMKgzMI0xgW31z4MiIzpCVIcqFdxAYJzGVjGQrqPxrD
- 06nkiLvAG+3nSrczhudzgX8bC29wXsNt7Eayi9bKp3nVf80leOmVLj4/Ur/Quj7KEl6F3R41V
- gxc5hFn1nZVegtfVt0V414OAEer0xSlp6yyJzHSvu2SQaoDWNDsOFEr9SJ8idmY1iLASGOB4s
- wQGTX0sm51c8HiHlFiBCJ4gaTE7IFMefvRcnU6FcA57XMOWOdneZbx+Ev/37fItdEnPJlTFPK
- quQEOgFWKpWqXPgWGFbPP/g2yg65h/9GOoDKvFmgh8iHs0/HUNaLXB0mRZD6HqJmarQwjIjTy
- n9oYQSPr9iYSxO53a8nI8ZjgTdgr+jfrCVQdFuxSkjet7p+Yan47xsama1MciLAYsw1GYxI5l
- 4yNYP5w6WGw/+ryb7Z5HTwNw==
+References: <20241018105026.2521366-1-usamaarif642@gmail.com> <20241018105026.2521366-2-usamaarif642@gmail.com>
+In-Reply-To: <20241018105026.2521366-2-usamaarif642@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 21 Oct 2024 14:09:48 -0700
+Message-ID: <CAJD7tkYEe10Xw-8azM-80pHv6YjvosZDHTdZfYttAuD5u1+s8A@mail.gmail.com>
+Subject: Re: [RFC 1/4] mm/zswap: skip swapcache for swapping in zswap pages
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	david@redhat.com, willy@infradead.org, kanchana.p.sridhar@intel.com, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, riel@surriel.com, 
+	shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Kairui Song <kasong@tencent.com>, 
+	Kairui Song <ryncsn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 21.10.24 um 16:23 schrieb Hans de Goede:
+On Fri, Oct 18, 2024 at 3:50=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+> As mentioned in [1], there is a significant improvement in no
+> readahead swapin performance for super fast devices when skipping
+> swapcache.
 
-> Hi,
->
-> On 15-Oct-24 12:05 AM, Armin Wolf wrote:
->> Some machines like the Dell G15 5155 emit WMI events when
->> suspending/resuming. Ignore those WMI events.
->>
->> Tested-by: siddharth.manthan@gmail.com
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> Thank you for your patch, I've applied this patch to my review-hans
-> branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
->
-> Note it will show up in my review-hans branch once I've pushed my
-> local branch there, which might take a while.
->
-> I will include this patch in my next fixes pull-req to Linus
-> for the current kernel development cycle.
->
-> Regards,
->
-> Hans
+FYI, Kairui was working on removing the swapcache bypass completely,
+which I think may be a good thing:
+https://lore.kernel.org/lkml/20240326185032.72159-1-ryncsn@gmail.com/
 
-Thanks :)
+However, that series is old, since before the large folio swapin
+support, so I am not sure if/when he intends to refresh it.
 
->> ---
->> For some reason mjg59@srcf.ucam.org causes a local error in processing.
->> ---
->>   drivers/platform/x86/dell/dell-wmi-base.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
->> index 502783a7adb1..24fd7ffadda9 100644
->> --- a/drivers/platform/x86/dell/dell-wmi-base.c
->> +++ b/drivers/platform/x86/dell/dell-wmi-base.c
->> @@ -264,6 +264,15 @@ static const struct key_entry dell_wmi_keymap_type_0010[] = {
->>   	/*Speaker Mute*/
->>   	{ KE_KEY, 0x109, { KEY_MUTE} },
->>
->> +	/* S2Idle screen off */
->> +	{ KE_IGNORE, 0x120, { KEY_RESERVED }},
->> +
->> +	/* Leaving S4 or S2Idle suspend */
->> +	{ KE_IGNORE, 0x130, { KEY_RESERVED }},
->> +
->> +	/* Entering S2Idle suspend */
->> +	{ KE_IGNORE, 0x140, { KEY_RESERVED }},
->> +
->>   	/* Mic mute */
->>   	{ KE_KEY, 0x150, { KEY_MICMUTE } },
->>
->> --
->> 2.39.5
->>
+In his approach there is still a swapin path for synchronous swapin
+though, which we can still utilize for zswap.
+
+>
+> With large folio zswapin support added in later patches, this will also
+> mean this path will also act as "readahead" by swapping in multiple
+> pages into large folios. further improving performance.
+>
+> [1] https://lore.kernel.org/all/1505886205-9671-5-git-send-email-minchan@=
+kernel.org/T/#m5a792a04dfea20eb7af4c355d00503efe1c86a93
+>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  include/linux/zswap.h |  6 ++++++
+>  mm/memory.c           |  3 ++-
+>  mm/page_io.c          |  1 -
+>  mm/zswap.c            | 46 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 54 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> index d961ead91bf1..e418d75db738 100644
+> --- a/include/linux/zswap.h
+> +++ b/include/linux/zswap.h
+> @@ -27,6 +27,7 @@ struct zswap_lruvec_state {
+>  unsigned long zswap_total_pages(void);
+>  bool zswap_store(struct folio *folio);
+>  bool zswap_load(struct folio *folio);
+> +bool zswap_present_test(swp_entry_t swp, int nr_pages);
+>  void zswap_invalidate(swp_entry_t swp);
+>  int zswap_swapon(int type, unsigned long nr_pages);
+>  void zswap_swapoff(int type);
+> @@ -49,6 +50,11 @@ static inline bool zswap_load(struct folio *folio)
+>         return false;
+>  }
+>
+> +static inline bool zswap_present_test(swp_entry_t swp, int nr_pages)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline void zswap_invalidate(swp_entry_t swp) {}
+>  static inline int zswap_swapon(int type, unsigned long nr_pages)
+>  {
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 03e5452dd0c0..49d243131169 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4289,7 +4289,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>         swapcache =3D folio;
+>
+>         if (!folio) {
+> -               if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
+> +               if ((data_race(si->flags & SWP_SYNCHRONOUS_IO) ||
+> +                   zswap_present_test(entry, 1)) &&
+>                     __swap_count(entry) =3D=3D 1) {
+>                         /* skip swapcache */
+>                         folio =3D alloc_swap_folio(vmf);
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 4aa34862676f..2a15b197968a 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -602,7 +602,6 @@ void swap_read_folio(struct folio *folio, struct swap=
+_iocb **plug)
+>         unsigned long pflags;
+>         bool in_thrashing;
+>
+> -       VM_BUG_ON_FOLIO(!folio_test_swapcache(folio) && !synchronous, fol=
+io);
+>         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>         VM_BUG_ON_FOLIO(folio_test_uptodate(folio), folio);
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 7f00cc918e7c..f4b03071b2fb 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1576,6 +1576,52 @@ bool zswap_store(struct folio *folio)
+>         return ret;
+>  }
+>
+> +static bool swp_offset_in_zswap(unsigned int type, pgoff_t offset)
+> +{
+> +       return (offset >> SWAP_ADDRESS_SPACE_SHIFT) <  nr_zswap_trees[typ=
+e];
+
+I am not sure I understand what we are looking for here. When does
+this return false? Aren't the zswap trees always allocated during
+swapon?
+
+> +}
+> +
+> +/* Returns true if the entire folio is in zswap */
+
+There isn't really a folio at this point, maybe "Returns true if the
+entire range is in zswap"?
+
+Also, this is racy because an exclusive load, invalidation, or
+writeback can cause an entry to be removed from zswap. Under what
+conditions is this safe? The caller can probably guarantee we don't
+race against invalidation, but can we guarantee that concurrent
+exclusive loads or writebacks don't happen?
+
+If the answer is yes, this needs to be properly documented.
+
+> +bool zswap_present_test(swp_entry_t swp, int nr_pages)
+> +{
+> +       pgoff_t offset =3D swp_offset(swp), tree_max_idx;
+> +       int max_idx =3D 0, i =3D 0, tree_offset =3D 0;
+> +       unsigned int type =3D swp_type(swp);
+> +       struct zswap_entry *entry =3D NULL;
+> +       struct xarray *tree;
+> +
+> +       while (i < nr_pages) {
+> +               tree_offset =3D offset + i;
+> +               /* Check if the tree exists. */
+> +               if (!swp_offset_in_zswap(type, tree_offset))
+> +                       return false;
+> +
+> +               tree =3D swap_zswap_tree(swp_entry(type, tree_offset));
+> +               XA_STATE(xas, tree, tree_offset);
+
+Please do not mix declarations with code.
+
+> +
+> +               tree_max_idx =3D tree_offset % SWAP_ADDRESS_SPACE_PAGES ?
+> +                       ALIGN(tree_offset, SWAP_ADDRESS_SPACE_PAGES) :
+> +                       ALIGN(tree_offset + 1, SWAP_ADDRESS_SPACE_PAGES);
+
+Does this work if we always use ALIGN(tree_offset + 1,
+SWAP_ADDRESS_SPACE_PAGES)?
+
+> +               max_idx =3D min(offset + nr_pages, tree_max_idx) - 1;
+> +               rcu_read_lock();
+> +               xas_for_each(&xas, entry, max_idx) {
+> +                       if (xas_retry(&xas, entry))
+> +                               continue;
+> +                       i++;
+> +               }
+> +               rcu_read_unlock();
+> +               /*
+> +                * If xas_for_each exits because entry is NULL and
+
+nit: add () to the end of function names (i.e. xas_for_each())
+
+> +                * the number of entries checked are less then max idx,
+
+s/then/than
+
+> +                * then zswap does not contain the entire folio.
+> +                */
+> +               if (!entry && offset + i <=3D max_idx)
+> +                       return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+>  bool zswap_load(struct folio *folio)
+>  {
+>         swp_entry_t swp =3D folio->swap;
+> --
+> 2.43.5
 >
 
