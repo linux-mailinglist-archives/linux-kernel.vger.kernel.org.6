@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-373972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13B09A6005
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:31:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BED29A600B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE311F224F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3568D1F2330A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9971E5719;
-	Mon, 21 Oct 2024 09:29:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F11E5711;
-	Mon, 21 Oct 2024 09:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9241E32C6;
+	Mon, 21 Oct 2024 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="pRYAp1aB"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F54C8EB;
+	Mon, 21 Oct 2024 09:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502973; cv=none; b=u6ay5PWrWKj+EQIPfKSlEMSthiVc5RguiTehy9Ui8QgpVJge1CzrOJQycmZDfWEQT/SfD4oLa6jipP+K6WoVXvE87bMsZyuacPGRft+xRoMUki7DxzBIWWKgX82DPnAw5ITfYX9FAgDS3YQVnRwtB7FUNh80f0cEO8gJ8vgF+aY=
+	t=1729503040; cv=none; b=W/29U1IsaGx2MlEQjhkhg/5P8ipk5LAGetDBa588f+Beu2Rew0Cr658kfsEdkHe0XipPHjykjfi9LiA/QrvmMoGmE8ZpiK/aYQ9QjuVr3HcsW7UPhzkdxfhsByC4zVONHzmsTZAoELIRLh8XIJjjDrkXNEpfti60vCYIIjKNCqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502973; c=relaxed/simple;
-	bh=KHZGBTePI06aPYFpJe30SY8OJD30zQRv1KsUWqnJxas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BlQuxr8MfpbvP0erWFyrRDPkWQpRVKyxX6wQ83Y0riK/3Xm8T00PbPHBwMwqtFWDJUpgxk01XUFBqg3fuFFOgab8dZcv5bda8q+BQ/w/ADo63zhkZwAOBW1E3GhSD+srZSBjk6dVsxwtQhxqWW4OqCqFGw8OLYaX6vUen0Mtkjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6E72DA7;
-	Mon, 21 Oct 2024 02:30:00 -0700 (PDT)
-Received: from [10.57.87.148] (unknown [10.57.87.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F16103F73B;
-	Mon, 21 Oct 2024 02:29:29 -0700 (PDT)
-Message-ID: <e7a45262-ec83-4638-bd44-d5605c5b17a7@arm.com>
-Date: Mon, 21 Oct 2024 10:29:28 +0100
+	s=arc-20240116; t=1729503040; c=relaxed/simple;
+	bh=XNMRCMkK6PDEJ8+GAYVR/SX2ZAGnKDe+KC2cYYCVSAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTtyUTCUS0xvotmuxOUKIP5gE18eZjJTqTedzQrxgmnR/ZzD4MMJxu2LYxoVKLX8Ofc2jmjrOcP3IK8et8DTB3oMcH0xVVI97K3oIg4G4BMfdse+LED2RPTWi4cGQPq2SuaOtgfLG02hlBtMr7ILMbt+/3IkR64FXxp9RpGnLxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=pRYAp1aB; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=oPeQwjN5+Aqq+N6ZgX8E0B65rXeXBqrPsgK5gCG/RgQ=;
+	b=pRYAp1aB+13bgEr/Hfoomff0biQmXjPhLbmJ6ax0d7TeH3gnpgBPeqXtZBFYwR
+	XKePqdJlcE5Y0g5G0hfbRjdthjOyqSUVFl7bLq63Y0xLVRN8tS0IYvE4+uy+lmSK
+	4Wt6E2CbFsZbzM+jTD+cByeWeZx0KTQT/XspaUdFE65mI=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgC3e9AcHxZnHv6EAA--.4810S3;
+	Mon, 21 Oct 2024 17:30:06 +0800 (CST)
+Date: Mon, 21 Oct 2024 17:30:04 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Conor Dooley <conor@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: arm: fsl: drop usage of Toradex SOMs
+ compatible alone
+Message-ID: <ZxYfHMViwfCQEdNY@dragon>
+References: <20241004160842.110079-1-francesco@dolcini.it>
+ <20241004-enforcer-absently-e3a056284991@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fgraph: Give ret_stack its own kmem cache
-Content-Language: en-GB
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20241019152719.321772eb@rorschach.local.home>
- <bf425884-b355-4da9-8e2b-6da693f2760b@arm.com>
- <20241021043738.4d55a6a1@rorschach.local.home>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241021043738.4d55a6a1@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-enforcer-absently-e3a056284991@spud>
+X-CM-TRANSID:Mc8vCgC3e9AcHxZnHv6EAA--.4810S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZF15Cw1Utw1rJw4UtFW7twb_yoWxZFb_uF
+	ZIgryxJrZ5CF4UXa9I9rn0qr9rK3WSvr15tay3Gw1fAas5ZrW8G34kJr97Z34xGa12krsx
+	AanI9r1fu343ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1uHq7UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgd-ZWcWDekz3wAAs2
 
-On 21/10/2024 09:37, Steven Rostedt wrote:
-> On Mon, 21 Oct 2024 08:58:11 +0100
-> Ryan Roberts <ryan.roberts@arm.com> wrote:
+On Fri, Oct 04, 2024 at 05:24:11PM +0100, Conor Dooley wrote:
+> On Fri, Oct 04, 2024 at 06:08:42PM +0200, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > The Toradex SOMs cannot be used alone without a carrier board, so drop
+> > the usage of its compatible alone.
 > 
->>> @@ -1290,6 +1305,16 @@ int register_ftrace_graph(struct fgraph_ops *gops)
->>>  
->>>  	mutex_lock(&ftrace_lock);
->>>  
->>> +	if (!fgraph_stack_cachep)
->>> +		fgraph_stack_cachep = kmem_cache_create("fgraph_stack",
->>> +							SHADOW_STACK_SIZE,
->>> +							SHADOW_STACK_SIZE, 0, NULL);  
->>
->> (I don't have any experience with this code, but...) is there any value/need to
->> destroy the cache in unregister_ftrace_graph()? I guess you would need to
->> refcount it, so its created on the first call to register and destroyed on the
->> last call to unregister?
-> 
-> No, we can't destroy it. In fact, we can't destroy the stacks
-> themselves until the task exits. This is because a function could have
-> been traced and its return address gets replaced by the fgraph return
-> code. Then it goes to sleep. For example, say you were tracing poll,
-> and systemd did a poll and you traced it. Now it may be sleeping
-> forever, waiting for some input. When it finally wakes up and exits the
-> function, it will need to get its original return address back.
-> 
-> The ret_stack holds the original return address that is needed when the
-> function finishes. Thus, its not safe to free it even when tracing is
-> finished. The callbacks may not be called when tracing is done, but the
-> ret_stack used to do the tracing will be called long after tracing is
-> over.
-> 
-> Now I'm looking at being able to free stacks by scanning all the tasks
-> after tracing is over and if the stack isn't being used (it's easy to
-> know if it is or not) then we can free it. But for those cases where
-> they are still being used, then we just have to give up and leave it be.
+> FYI, alot of what you're removing here appears in the $som.dtsi files.
+> I don't think that matters at all, since the dtsi files need to be
+> included somewhere - but figured I'd point it out in case the platform
+> maintainer for fsl cares.
 
-Ah, gotya. Thanks for the explanation!
+Thanks for pointing it out, Conor!
 
-> 
-> -- Steve
+I would say we should remove the compatible from dtsi files before
+dropping it from bindings.
+
+Shawn
 
 
