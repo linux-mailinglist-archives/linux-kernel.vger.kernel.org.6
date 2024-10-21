@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-374724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AAA9A6F02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 943BD9A6F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DBAF1C22203
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94251C2030F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1822D1D0405;
-	Mon, 21 Oct 2024 16:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71111E9088;
+	Mon, 21 Oct 2024 16:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1KtfWm4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WnzhvlNU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CBE1CB535;
-	Mon, 21 Oct 2024 16:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB31E47AD;
+	Mon, 21 Oct 2024 16:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526662; cv=none; b=XTmiT6wRPdVUUhtlG69UfSN9wDLKyecCs2/lAKMLydQ06iqfM0TzsE/RTgyyIYz+7guAlW1mqorzt/lVEqvD7qy8gmZ1wgR8lwWN+sOfRML7c9wlo+TedU4oIv297E+vKDxgeUvNqvEMtr8TSY44H/wScrK+jROt23L1mUdrufU=
+	t=1729526667; cv=none; b=puGfucJNNcNDqWVA0yISee0uKeeXOgcvPil2Liz2RfuzZXppBo7AEAGLbEItUmNvq4CsrYpdw1G0dOGF/8FIZdjZMJcY2zttvDXkCkrAgDU3EAiGwHjUbGIBVZRvAD2Qjqjdt8WP8R+63e4HLdQqP/7f+GpVtt4EZwcYOZLhWS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526662; c=relaxed/simple;
-	bh=TJh/DD/sfJgskbjJKAccoygie3yLsjjKsgBPtkfXTus=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rduFHNqO18PR4yuUNDADkFPy8PyMm6Fd8/KY09nnYD0BbExvKPYQ4rjK3LMHMuYYF04Mpl43+BMKvchwXpuo1vZ+FikEwszdRFqUKh8swy3TOLjeEyCEvixCJPMC2aHZ30aSgh64GHnv8Lk/LFxxpgSUn+Zl7kSiYMAfF0lE6e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1KtfWm4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F13C4CECD;
-	Mon, 21 Oct 2024 16:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729526660;
-	bh=TJh/DD/sfJgskbjJKAccoygie3yLsjjKsgBPtkfXTus=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Q1KtfWm4+hf6dSHS8s6VVmODdTYta8dKUbMxhqfJvs/6iLyf6Yu4v87wHj9mv+Rgf
-	 d49geA3ugWnB6Wwu6bZpu69UZjTS2LAZ5fGrt2CMQNNT7HpmJwLhUeK3ryl9ndXf+N
-	 KacJTveyyl3YYRYf2N18J1KPOCkZQswnGUTr1lWjxA29yKqyZKoiOO9y8H42H18pjE
-	 ZUGJQ/5OrI+ihDaEBOwja7z7dbP+2POHTm3/BoN5p9ityxh0ijrsBhATf3Xv2byROr
-	 4Yf8qMp3ecpXPOosBhcqGSIb8BprdScRbJQwQg63R/dAGTAV1Pi67f8WfL4kRCTVZa
-	 xMIqLtu8AVkAA==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Mon, 21 Oct 2024 09:04:15 -0700
-Subject: [PATCH] media: dvbdev: Avoid using uninitialized ret in
- dvb_register_device()
+	s=arc-20240116; t=1729526667; c=relaxed/simple;
+	bh=NL+4/LzqhG5DQhyBo4s8Tz4jSgHK8KIC8B9jAve3quc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOq45cbL/7IZouneX3CvLLS1oej5kYXXTWjtck5kD33DlDu5po5s55tX3UMrGh6EdDcV2a3jJ+jUcS/A+2ofxLxDn+hehc6CnvOMnCZW0WvfatGVEvE54LpLdle0zZVYoO6w4QCn1NMZw5TjF4xUGgjgHvz9mAl0Z/lrtypNHbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WnzhvlNU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=f9aYH+x6gNVLLNdDAZPgbvN0mWCyYxKH2GG7iO1Wl7Y=; b=WnzhvlNUN6sZc9f1yvS/HqH8Yp
+	p/EFSUsHn8p2P1NpBFy6xghFT86CX9gMKiDmW585mguvwZMd95YWSdgO1xjGQVxkKSjRtd8o+wv0T
+	YIm+hoGfhVZvnHw4iPGUzCkdbqZ7CAX/UAJhkBullDrH25afPXu0xcT4Iz0Q+yl0Co50=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t2utJ-00AkNI-TR; Mon, 21 Oct 2024 18:04:21 +0200
+Date: Mon, 21 Oct 2024 18:04:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 0/2] pinctrl: qcom: Introduce Pinctrl for QCS8300
+Message-ID: <1e73d96c-6a60-4bd7-87bf-4af4956aea7e@lunn.ch>
+References: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
+ <f9dace93-f6c7-40c2-a6d2-60ce8043aa72@lunn.ch>
+ <5fa2080a-f59e-405e-ba52-69d7293e2739@quicinc.com>
+ <145d9036-6cd8-4aeb-80d0-b3d86b84f2cf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-dvbdev-fix-uninitialized-return-v1-1-a704945f20e5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAH57FmcC/x2NwQrCMBAFf6Xs2YUmFC3+SvEQ3RddKGvZtEEs/
- XeDx4FhZqcCVxS6djs5qhZ9W4Nw6ujxSvYEqzSm2Mch9DGw1LugctYPb6amq6ZZvxB2rJsbn5G
- HMF4kp5yoVRZHc/+H6XYcP+05qgtxAAAA
-X-Change-ID: 20241021-dvbdev-fix-uninitialized-return-6ef4187dfafa
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, patches@lists.linux.dev, 
- kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1489; i=nathan@kernel.org;
- h=from:subject:message-id; bh=TJh/DD/sfJgskbjJKAccoygie3yLsjjKsgBPtkfXTus=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOli1S0/O2WXncv6+1yBjfNd0/TF3X9mCdfuZ9j5w1Di7
- 6XLc4tnd5SyMIhxMciKKbJUP1Y9bmg45yzjjVOTYOawMoEMYeDiFICJWD1nZFh1QLOxeaKigvyX
- vffNfpx9xvPu0tMPLqorL8+7wbbL2NKY4X/QBlWjMAPlNyl3axOeRhXtON0Q8HHpOsOdcRVLT1/
- JXssMAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <145d9036-6cd8-4aeb-80d0-b3d86b84f2cf@quicinc.com>
 
-When CONFIG_DVB_DYNAMIC_MINORS is not enabled, clang warns (or errors
-with CONFIG_WERROR=y):
+On Mon, Oct 21, 2024 at 12:27:36PM +0800, Jingyi Wang wrote:
+> 
+> 
+> On 10/21/2024 10:32 AM, Jingyi Wang wrote:
+> > 
+> > 
+> > On 10/19/2024 2:08 AM, Andrew Lunn wrote:
+> >> On Fri, Oct 18, 2024 at 11:19:30AM +0800, Jingyi Wang wrote:
+> >>> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+> >>> QCS8300 SoC.
+> >>>
+> >>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> >>
+> >> I'm curious why you are Cc: netdev for a pin controller patch?  Did
+> >> ./scripts/get_maintainer.pl say you should?
+> >>
+> > The cc list was generated by the b4 tools.
+> 
+> double checked with ./scripts/get_maintainer.pl, also get the list:
+> netdev@vger.kernel.org (open list:PTP HARDWARE CLOCK SUPPORT:Keyword:(?:\b|_)ptp(?:\b|_))
+> 
+> I think the list should be added for keyword match in the driver.
 
-  drivers/media/dvb-core/dvbdev.c:554:10: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-    554 |                 return ret;
-        |                        ^~~
+I assume this is a PTP pin probably a 1 pps output, not an actual PTP
+driver hidden within the pinctrl? If so, please edit the list and
+remove netdev and Richard. You might want to review the other emails
+and see if they all make sense.
 
-Use the return code -EINVAL directly, like the CONFIG_DVB_DYNAMIC_MINORS
-block does.
-
-Fixes: 972e63e895ab ("media: dvbdev: prevent the risk of out of memory access")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202410201717.ULWWdJv8-lkp@intel.com/
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/media/dvb-core/dvbdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 14f323fbada719f717fb7fe9f6f2a3ce81e609a3..5bb36be911f615afa1f3a7a13f974b67b3216edd 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -551,7 +551,7 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
- 		kfree(dvbdev);
- 		*pdvbdev = NULL;
- 		mutex_unlock(&dvbdev_register_lock);
--		return ret;
-+		return -EINVAL;
- 	}
- #endif
- 	dvbdev->minor = minor;
-
----
-base-commit: ba9cf6b430433e57bfc8072364e944b7c0eca2a4
-change-id: 20241021-dvbdev-fix-uninitialized-return-6ef4187dfafa
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+	Andrew
 
