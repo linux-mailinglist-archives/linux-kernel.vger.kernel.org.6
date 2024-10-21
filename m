@@ -1,117 +1,76 @@
-Return-Path: <linux-kernel+bounces-373847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD419A5DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BF09A5DBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBF0281BD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC1B4B218B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C34A1E0E16;
-	Mon, 21 Oct 2024 07:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897FB1E1026;
+	Mon, 21 Oct 2024 07:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jMqWE15B"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kx8vG8LF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4857D1DFE22;
-	Mon, 21 Oct 2024 07:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D421DFE22;
+	Mon, 21 Oct 2024 07:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729497265; cv=none; b=Ya+dDFbKwjISRb+fg64k5WnbeGPP0DfZ/vDRQrGkiRMXGYCLdADombNkXVmw/0WdnMijeq70O/VZ32+SgTpmLyj6Ax5JxPbRgfR/5VkHzum83I8yCDvbZndrsSYvfEaazR0LpvSY7OG+jTknNa+6U2hVryWk1y7RFflwJz0GZDA=
+	t=1729497274; cv=none; b=BxNokTdA3iY4ANQQE9ndEh+ObfOO5iUB/jtao4vkd7TdVDJOGlsQkL9CRo/V6SlgOWUFU4N0LGhF0KJuVlRrimLQEmk43qs2Ri8LVtv/Dy4SgOh+1Qjg+Xw7VijBg97dSPUuDB5BmeKGMUwqNSzGVfDJfU/oWQwaFU97Caq0BgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729497265; c=relaxed/simple;
-	bh=gDYHLfdoCtStAMCGUx3Ay1RPR+kNQscBH8of2jY0cfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=svYLUZtIH3V+BThKv/5VA+hHGDarLaps/9AC1tVs70qaImdUkNHoQjbNJ5o/S88djlPGjr4LsTZMfZqLqyBXeJOHaI+asqMOWN0zjb6rcpSsaV/hNaJv4SMx9bsIGBiYI0s7G7i9frC54UIdTuG7UCllqKa70IpfUAV67Fi7x5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jMqWE15B; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729497255; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=JJokq+lp+EynznNIydiE+AjMIqmPGCXE2TWW4BFGqdU=;
-	b=jMqWE15BaEv0HaFZXCqqOqwg/R5UgEsILlvhkgYmo+IYnWCjX5/FcCkJpdcPmoULzdAYpSJJb9Y2LTIDT+YVw3nnzUufwJTRm9xqUYvZzYcImDdYeDZdLDattJXBmYqTgHulE3ps7uyg9A3XUVCqNCkGmySLieKVNALAy+VvJuw=
-Received: from 30.221.130.170(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHYCPSr_1729497253 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 21 Oct 2024 15:54:14 +0800
-Message-ID: <ab1a99aa-4732-4df6-97c0-e06cca2527e3@linux.alibaba.com>
-Date: Mon, 21 Oct 2024 15:54:12 +0800
+	s=arc-20240116; t=1729497274; c=relaxed/simple;
+	bh=6359T+D+9oRpIhkYbz4Y7iD91c89IBjAmXYD+Y3JrtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K98i58T1xkOHQtnURPYuNiI0epSSYmwvf56RyIPhf9oWarw8Ml/WVz6cRZWL2UUObVKiVXolIEbakNNfrrIPjpEnmHJCUvb8lsbjbTi1mNFPx3CtJePGPhdYj/epkZGIqq0bLpN8Rqn4aZrG/FJixxdtj1IdhIsOumY7wnw1y0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kx8vG8LF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A950FC4CEC3;
+	Mon, 21 Oct 2024 07:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729497274;
+	bh=6359T+D+9oRpIhkYbz4Y7iD91c89IBjAmXYD+Y3JrtQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kx8vG8LFj5ak8fzzyCPr+V5wikO2BRTG4JW1YeyfyHd8lghUrCjHziO4y04SefVHn
+	 9nzFgoeT/AIYKGUPlMZsuHtSdN49DINLUxVpJrarvuheWXfegxXcm00pSx0/ttn56U
+	 b7mlWnOdUH1Nxpuyb4znOTYC6m3KS3KkJb3rG2pfDHytjZoGSoB8gIZ47Ec9a3x4qg
+	 7Y4Wf2CbRAFgBe39euB0oUiM7NC5Xzwy89dSdKKo4mwDPvToexgEEvq91M/YESupvI
+	 Jauky9sPnLsqvrrVXq9sgqIFsage8izTqLo5hJFeJjflGZEI9MWOfoY6XdTyBaITXG
+	 p7EnwPNdwkwaA==
+Date: Mon, 21 Oct 2024 09:54:30 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom: Add GPU clocks for QCS8300
+Message-ID: <wbkon6izhasg2jn2fqkjbzcawn7qx444kb7dvfoncaqkcr7gry@vote5okvj4gs>
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-1-859095e0776c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
-To: Christian Brauner <brauner@kernel.org>, Gao Xiang <xiang@kernel.org>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
- Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@infradead.org>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
- <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018-qcs8300-mm-patches-v1-1-859095e0776c@quicinc.com>
 
-Hi Christian,
+On Fri, Oct 18, 2024 at 04:42:29PM +0530, Imran Shaik wrote:
+> Add support for qcom GPU clock controller bindings for QCS8300 platform.
 
-On 2024/10/10 17:48, Christian Brauner wrote:
-> On Wed, 09 Oct 2024 11:31:50 +0800, Gao Xiang wrote:
->> As Allison reported [1], currently get_tree_bdev() will store
->> "Can't lookup blockdev" error message.  Although it makes sense for
->> pure bdev-based fses, this message may mislead users who try to use
->> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
->> then.
->>
->> Add get_tree_bdev_flags() to specify extensible flags [2] and
->> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
->> since it's misleading to EROFS file-backed mounts now.
->>
->> [...]
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
-> 
-> [1/2] fs/super.c: introduce get_tree_bdev_flags()
->        https://git.kernel.org/vfs/vfs/c/f54acb32dff2
-> [2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
->        https://git.kernel.org/vfs/vfs/c/83e6e973d9c9
+Why are you adding defines to SA8775p header? Commit msg should explain
+non-obvious contents.
 
-Anyway, I'm not sure what's your thoughts about this, so I try to
-write an email again.
+Best regards,
+Krzysztof
 
-As Allison suggested in the email [1], "..so probably it should get
-fixed before the final release.".  Although I'm pretty fine to leave
-it in "vfs.misc" for the next merge window (6.13) instead, it could
-cause an unnecessary backport to the stable kernel.
-
-Or if there is some other potential concern about these two patches?
-Also I hope my previous reply about a redundant blank line removal
-in the first patch might be useful too [2].
-
-[1] https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-[2] https://lore.kernel.org/r/8ec1896f-93da-4eca-ab69-8ae9d1645181@linux.alibaba.com
-
-Thanks,
-Gao Xiang
 
