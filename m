@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-373979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FB79A6027
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:34:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF9C9A602D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5761F218EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C202863C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1471E32D8;
-	Mon, 21 Oct 2024 09:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FF11E411D;
+	Mon, 21 Oct 2024 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKqDrK4Z"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="FcTQec5S"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C5D1E105F;
-	Mon, 21 Oct 2024 09:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72301E3DC9;
+	Mon, 21 Oct 2024 09:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503224; cv=none; b=T6QayznAoQfzHiy5dH+0KjEOwBXQ0mGmYri0KEnxA43IV7Y7jUOgJRLKCywssUYuF9iQX9pfyPlgCO5NPGNOnLOyH5OoF93kjrHpjrL+WBknsUeX/eT4mDS0HrP2lRNULP79wryoadJ6vuWvHXCNKdxWQm0M1AdwfvEcisrK3rw=
+	t=1729503239; cv=none; b=bXtnFXe+VAYTBjO42Jh4ZN0SQdzlRDIryFiZ8SfGoc+lJshAPWUQ1VHDi5/qCPf8cJ+FqyEqHdWAc57//NPHJDHGikPn2UNhRZJ3cw64DSDU4tGLt+hfCEke9kNBAaB57f6+xl3Q9DD+I9DQhgTF4YoRSjWCJi1vVt+nMZKidQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503224; c=relaxed/simple;
-	bh=+hvwglD+xMIZQSpeY8TNOenvPPVT8cBwFOr0rdwiYac=;
+	s=arc-20240116; t=1729503239; c=relaxed/simple;
+	bh=lt4MyRKSRDATgIILLvQBERHTvt0iMENs897PEB75t5s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cj7M5FgJq2+243EztZS27PL0xfzgWiFugBmFJwS4CMx15oxAufJ4pr13ISMpKN+uVBniAxmVVUFHC2mQqATKVXy04x6g1axm6vQ6H5WXyGYX/94B3WlugNzPP/b/onYF+sZmT7Q2MI5OhKWtbmb9vQdqCqju1IyPExCoVx4E9gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKqDrK4Z; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e6075cba82so802645b6e.0;
-        Mon, 21 Oct 2024 02:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729503222; x=1730108022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+hvwglD+xMIZQSpeY8TNOenvPPVT8cBwFOr0rdwiYac=;
-        b=TKqDrK4ZHHexPu241KbOYrz7beOcgqJY2cdu6h/Ttf1Va/pXkux39IazndxGVfs7Qt
-         O9AcIX+cKv84C4QtYDcpK0+URkiUF0YaVpNIDcyn2bQYvuidmRL/kHYmmkSw+wpKGfHz
-         q/hxu+KActzJBXF8z/i0NfkJB2WCX4pK34pwLzXH2WCcFFWNLVENTMx/5IzRZMY+jBOO
-         MWw52sJMAxXlMjEjyejCDxgjKGKCNAigryXKklFMwsFXD9QtMaDw31NHb4jo1UHz9XSD
-         sKrDs67iLr5xmQLJAic95QC2+V5zaygc2raUO6B2HcqS5DedryDAHMvGJ2AmhBJl8MAN
-         /N9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729503222; x=1730108022;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+hvwglD+xMIZQSpeY8TNOenvPPVT8cBwFOr0rdwiYac=;
-        b=mUGcbI5t6WD4T40k++DEPwL3o80AtG+36fFFL7dInmJb9+CZF6bwRCPCeip3BWKcW3
-         p9evn8attXCWrA44kUPi98OzXeKtmQGJiX/crLGFFzgUf8H3JgULdkLq6DNqE8bvueFG
-         VGaS9diRAqwjrdcntdeUf0HpetFrhzDG3/7WTprDp80HjIj0bepB3TxWcFFNSNX88L1o
-         2J78bHB3mcMwcFU/xuPuI7NhMozwnXIcgSdJAzDZYIFxneZxqK6tE1tNSFfhaMYyp+ny
-         EAfYFF1V6TeRv21thedIU0cajQ8+cRqvgGI9w9DEZvtshlDBWf3sx6NldJUxy0tPMiG1
-         0XRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnYraZn/ebn0SgOX200PkN+Kw8/zrkb8I0nmZidmBoyfYxeGZEmxcioZ+NLcWAmL+68+KQcStVgftFNnro@vger.kernel.org, AJvYcCVQ6eAEbsidRpyzxOECMMMAh/kO0eWYHg9I2Rrrk/NUFUIXe/hlm5vvxbjsTq7+4e5yDGdaiqcPVP6q2HfKws8=@vger.kernel.org, AJvYcCWMZup/cxxBZSzBk0Fsri26mj4IYXd+8cPv2tWUaz5EqahP/fryT9V3YCjIJ4hTV6LxnfuiyOMyhWGpN6DTvmYX6A==@vger.kernel.org, AJvYcCXc+ZqwWc8usuKaDoKmaLjxf3BQfwTBt6tnjv3+cOXYGIP+cU4/wKDNxbeTk8OLJca+TUfaHDBrc1kD@vger.kernel.org, AJvYcCXselr8F6nm3S2Hg/1DJOKkgEZFC4atPplgOnitqQG9Ge1zGOXZQKWau/dYVY/dt0mR5K2fMESFFrqar1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtyaA2Ow+eXVvwHB6xxvGokJuk+/JOksFUiee1ztKJU+yi+ozY
-	JfGTZcQ8Q4pPNAImRciqBvHbx/8y+MxZ0kWpEm4EAz9rpKWk2Xm0
-X-Google-Smtp-Source: AGHT+IHEqtcKiYTdbqqfRyoy/XfAUa5oXZdBUPYTVW5peAzxo1UMbv5yHBrUak4k0TnoMhvzjBSbUQ==
-X-Received: by 2002:a05:6808:13c4:b0:3e3:a99a:433f with SMTP id 5614622812f47-3e602c87dc9mr8847801b6e.13.1729503221785;
-        Mon, 21 Oct 2024 02:33:41 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafd36esm2637774a12.6.2024.10.21.02.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 02:33:40 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 87E574396293; Mon, 21 Oct 2024 16:33:37 +0700 (WIB)
-Date: Mon, 21 Oct 2024 16:33:37 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de,
-	kent.overstreet@linux.dev, msakai@redhat.com, corbet@lwn.net,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Enhance min heap API with non-inline functions
- and optimizations
-Message-ID: <ZxYf8VvQIZv9_Y1j@archie.me>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6OOJ0MGmtfqg8KUyxhbBrzVixZ7JXsnIFiZ0KUXk2mIed5TDPUudnZMeRxBb0RE0KvdN8b+coJrwC6/0N0+qhYJj0eThdn4kOQFpUZbB8OZYzAA8BAu1tzq+vmhh8eyQ/ku0+CUX3XcsgYynAtL1976Xe7q5eDMmeddZZ+s+8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=FcTQec5S; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id E662F1F910;
+	Mon, 21 Oct 2024 11:33:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1729503235;
+	bh=eJXnu31+KUwObtPMQI/tdF00wkFhCU+yalKssA5xKhc=;
+	h=Received:From:To:Subject;
+	b=FcTQec5SbDkOpuLJvOFzdYzEGGCZOQ13xmRb/wCI0Av+k2ODoqIF1UMOmiWxP07/8
+	 h4CsGMHrmLHmjSzEJHgvcEbBQIXQ8LdmP6NTI1HO6TcPEhpqEAYrG7oeg5koxoUTnq
+	 OexK1UhlZNGTihs447k1jPpF4VWksMqfsz3zHqY/kHNYNFmFr8keEJ+hoJfidoVmsU
+	 MWTxTgcLkyeWOR+wpQXT6MrMaMDglJSOWAD+xSV7Bv9XsWT5lELWEhPwpiW+inWSZj
+	 Hveb9xxsGR7d3sCCFciVQ5HjzN0rESESM9oKQn1K4TtII7YiI1dlMjYnPuIdPKF+38
+	 sH1PibwksrkMA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id A0AE97FA52; Mon, 21 Oct 2024 11:33:54 +0200 (CEST)
+Date: Mon, 21 Oct 2024 11:33:54 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: Conor Dooley <conor@kernel.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: arm: fsl: drop usage of Toradex SOMs
+ compatible alone
+Message-ID: <ZxYgAijbgKJyKpkC@gaggiata.pivistrello.it>
+References: <20241004160842.110079-1-francesco@dolcini.it>
+ <20241004-enforcer-absently-e3a056284991@spud>
+ <ZxYfHMViwfCQEdNY@dragon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AZgPemEmi7boKc4w"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241020040200.939973-1-visitorckw@gmail.com>
+In-Reply-To: <ZxYfHMViwfCQEdNY@dragon>
 
+On Mon, Oct 21, 2024 at 05:30:04PM +0800, Shawn Guo wrote:
+> On Fri, Oct 04, 2024 at 05:24:11PM +0100, Conor Dooley wrote:
+> > On Fri, Oct 04, 2024 at 06:08:42PM +0200, Francesco Dolcini wrote:
+> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > 
+> > > The Toradex SOMs cannot be used alone without a carrier board, so drop
+> > > the usage of its compatible alone.
+> > 
+> > FYI, alot of what you're removing here appears in the $som.dtsi files.
+> > I don't think that matters at all, since the dtsi files need to be
+> > included somewhere - but figured I'd point it out in case the platform
+> > maintainer for fsl cares.
+> 
+> Thanks for pointing it out, Conor!
+> 
+> I would say we should remove the compatible from dtsi files before
+> dropping it from bindings.
 
---AZgPemEmi7boKc4w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll send a v2 to address this.
 
-On Sun, Oct 20, 2024 at 12:01:50PM +0800, Kuan-Wei Chiu wrote:
-> Add non-inline versions of the min heap API functions in lib/min_heap.c
-> and updates all users outside of kernel/events/core.c to use these
-> non-inline versions. To mitigate the performance impact of indirect
-> function calls caused by the non-inline versions of the swap and
-> compare functions, a builtin swap has been introduced that swaps
-> elements based on their size. Additionally, it micro-optimizes the
-> efficiency of the min heap by pre-scaling the counter, following the
-> same approach as in lib/sort.c. Documentation for the min heap API has
-> also been added to the core-api section.
+Francesco
 
-What tree (and commit) this series is based on?
-
-Confused...
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---AZgPemEmi7boKc4w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxYf7AAKCRD2uYlJVVFO
-oxXdAP9wQqt51VFB/Z0o1sG9jAlrumF8GTPSGUKzrPnp/NQr1wD/SJT0xCbRALqQ
-/PjGaG28z15cfomZT4A3WrBSIvSSmgo=
-=BKhT
------END PGP SIGNATURE-----
-
---AZgPemEmi7boKc4w--
 
