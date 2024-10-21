@@ -1,45 +1,73 @@
-Return-Path: <linux-kernel+bounces-374131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B959A657B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:57:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AF59A64BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFF2FB2E6FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3442D1C22098
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480EF1E573F;
-	Mon, 21 Oct 2024 10:44:19 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16081EF08B;
+	Mon, 21 Oct 2024 10:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYXAi/7+"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2496B1E32B1;
-	Mon, 21 Oct 2024 10:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC841EE02C;
+	Mon, 21 Oct 2024 10:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507458; cv=none; b=kN1WwFfML2uLWfcOw7xjt+9LAsDehxe86sEFzjtnsCtLUoJgGBJ7NZD235EhI/cRo7EU6xHMRYd6OJFOEO9rmxrWNJenM9+Dq1R5l+kYlcomizmKpeNrBXfx0OiR0GaRAnojx+qica6mM5gFHSwulaSkNW2pzXajJc45CISnzxI=
+	t=1729507471; cv=none; b=tM6IF2FroVGjA0Wd5Q5c+2+SPfWyz6ln1CDP+Habku9bTd+4BE7gq0JIQWD72mDda5ojaUKnFeX/ICYl7NLiquna1+nYKA6wYx78Ej6BWNKbEPL5n6M+RoBQf4GZss86PTjRpR0obpH1cLT2Y2rnLin3ZvZXJ4p8NmogdWZHeuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507458; c=relaxed/simple;
-	bh=aKibnnChL7ppBa28//JCFhonLN2ZBROjgZQWz9aMYoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MPHguTCEtr10ZWmFYY3EnxvHISnDaQBPFrS4he4zKtyW8U+We2agZ12jaOHE50xchkRTJ4WqQincjzgYi6Nh8FlA9ZsC/PGwO8sNoVoxP2sdnAN4qOT9khyJcrwMCFGq+jjAJsILk91Fx6+NoXkcKpGZQ1crRl8G1iPmSniKYCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XXBj86vrZz1jBG4;
-	Mon, 21 Oct 2024 18:42:52 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6020D1402D0;
-	Mon, 21 Oct 2024 18:44:13 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 21 Oct 2024 18:44:12 +0800
-Message-ID: <06a3d2cd-04d3-4d59-871c-4c6d7383ce11@huawei.com>
-Date: Mon, 21 Oct 2024 18:44:12 +0800
+	s=arc-20240116; t=1729507471; c=relaxed/simple;
+	bh=h9yByxAgFZegd+2L/+PzE+UZHLY9RpCHJvII6XKUzjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GnXfCJ1wlsdKU2MP+hsTG2wuCobGYrgcplU87NME8bb1nrTeJ+pZJVuGd3OHqfndySmJFRVZdJepp2TLHTaamMGy2YuN1+oudYRhUlrCDl+BhxTGh5LHAf11COlccnuf+oJdf5w8rTt+Z3aeStfeWpohejpkuLsQhrRP+KzP9DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYXAi/7+; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so3224911f8f.2;
+        Mon, 21 Oct 2024 03:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729507467; x=1730112267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2YjHc/MhGgRsnDDylmRAlAOK5o68LWuyNGszJ2NKgCU=;
+        b=ZYXAi/7+By1vFq1NcYjXIJAhU0vH5vuDE4Bkm41BoNg6aJ8ayFSvRNzFhtD7O02cZs
+         /OihmTajA/WSRNRCTfxMs9CdUyOnZu/ZW3UFGWrG47OOkS+b8U7MvW661hOPIsW8Fsrt
+         8fimr19i034T438u4Rh2NQlPPIA9bMCs2LIWztgYOptPimuMFOfApZiJnRfUAL12iCH5
+         wC5FEJuFjbqgKwiZd2LunZQZGciXCd45ALfKMqfUzvHJHRsIj3i+n/92qvBhWugNhFRw
+         UtN41WbNzYTBRGNdiFyzIgpR2TdZ7koVdvfeJHs8wfxqeflobqaFZ8Zsx2Keidr/oyNr
+         Sgdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729507467; x=1730112267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2YjHc/MhGgRsnDDylmRAlAOK5o68LWuyNGszJ2NKgCU=;
+        b=PHX65Pc/50ZEYkt53Zx90gdDqZyatlBuU+/2sGh1X2LK17JET6nCjUwrbzOu6bh2ka
+         g3bgjCbtBHxZk1mFu2mM6owKzkIE4UTVvWnhrLcyq7rk8wbMoWgoBV1igliy5dSJ/OOj
+         LSNCvpR81XSrBb4dnxJAauuTn0X/kh61nxEropR5nr+OJxC5KbO4t9K/ce4Q3tJ5teMj
+         DnBu7qnJLynIe51FEJFIR4AN50OiPRcFqzwGPBFWjnpUG0K+yUE0+PHPYTHECvq/UvOK
+         275aJwCTW1WsQSfeGG74ABlzgfRHoBzzqsNmJsKQXXZ+0PQtawrSPmGOfl/jt9LIkHH8
+         YhQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVny7c5WHVMy2FvGqVRV+7NXI+apnIPQr+fygSiHqz9AXHFN3h3zVI3LJZhPNStI8a7zVeq+WgxowY=@vger.kernel.org, AJvYcCXWpaiJKqwzCjVDdI1yAfx1yo8k+6dJ9QsfwbovBkMPq6SiX5TZC6Mw29byxsEZtqljRlIslNn9TawDXiz5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyciMfsZyxJWImMMf0qjDGCHE6Jcdxr8evr/90KgrcBCqqhZDjH
+	SWJOvKvmONJIfDK7xxj+ojVbDASkPMC4p7nIudEUV423G2LNkKs9
+X-Google-Smtp-Source: AGHT+IHPTofyAuIjaaxVNDH15uhPKU3Wv587rTdWyPLXQFd/z5ndZagFBChY25BrMPxCqVMt4KOugQ==
+X-Received: by 2002:a05:6000:1544:b0:37d:5047:76d8 with SMTP id ffacd0b85a97d-37ebd3c36demr8342275f8f.59.1729507466803;
+        Mon, 21 Oct 2024 03:44:26 -0700 (PDT)
+Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a64daasm4005514f8f.64.2024.10.21.03.44.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 03:44:26 -0700 (PDT)
+Message-ID: <ca158172-a100-4af6-98de-083d77cd9ed8@gmail.com>
+Date: Mon, 21 Oct 2024 11:44:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,204 +75,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: insn: Simulate nop instruction for better
- uprobe performance
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <ast@kernel.org>,
-	<puranjay@kernel.org>, <andrii@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-References: <20240909071114.1150053-1-liaochang1@huawei.com>
- <ZweyA3tZc1BiBcb6@J2N7QTR9R3>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <ZweyA3tZc1BiBcb6@J2N7QTR9R3>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC 3/4] mm/zswap: add support for large folio zswapin
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ david@redhat.com, willy@infradead.org, kanchana.p.sridhar@intel.com,
+ yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
+ ryan.roberts@arm.com, ying.huang@intel.com, riel@surriel.com,
+ shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20241018105026.2521366-1-usamaarif642@gmail.com>
+ <20241018105026.2521366-4-usamaarif642@gmail.com>
+ <CAGsJ_4xyDMUDxVhi0bzZJ4jAd_Hw8Hn25+4epO9u9=iu0QMdoA@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4xyDMUDxVhi0bzZJ4jAd_Hw8Hn25+4epO9u9=iu0QMdoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200013.china.huawei.com (7.221.188.133)
 
 
 
-在 2024/10/10 18:52, Mark Rutland 写道:
-> On Mon, Sep 09, 2024 at 07:11:14AM +0000, Liao Chang wrote:
->> v2->v1:
->> 1. Remove the simuation of STP and the related bits.
->> 2. Use arm64_skip_faulting_instruction for single-stepping or FEAT_BTI
->>    scenario.
+On 21/10/2024 06:49, Barry Song wrote:
+> On Fri, Oct 18, 2024 at 11:50 PM Usama Arif <usamaarif642@gmail.com> wrote:
 >>
->> As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
->> counterintuitive result that nop and push variants are much slower than
->> ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
->> which excludes 'nop' and 'stp' from the emulatable instructions list.
->> This force the kernel returns to userspace and execute them out-of-line,
->> then trapping back to kernel for running uprobe callback functions. This
->> leads to a significant performance overhead compared to 'ret' variant,
->> which is already emulated.
+>> At time of folio allocation, alloc_swap_folio checks if the entire
+>> folio is in zswap to determine folio order.
+>> During swap_read_folio, zswap_load will check if the entire folio
+>> is in zswap, and if it is, it will iterate through the pages in
+>> folio and decompress them.
+>> This will mean the benefits of large folios (fewer page faults, batched
+>> PTE and rmap manipulation, reduced lru list, TLB coalescing (for arm64
+>> and amd) are not lost at swap out when using zswap.
+>> This patch does not add support for hybrid backends (i.e. folios
+>> partly present swap and zswap).
 >>
->> Typicall uprobe is installed on 'nop' for USDT and on function entry
->> which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
->> and fp into stack regardless kernel or userspace binary. In order to
->> improve the performance of handling uprobe for common usecases. This
->> patch supports the emulation of Arm64 equvialents instructions of 'nop'
->> and 'push'. The benchmark results below indicates the performance gain
->> of emulation is obvious.
->>
->> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
->>
->> xol (1 cpus)
->> ------------
->> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
->> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
->> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
->> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
->> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
->> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
->>
->> emulation (1 cpus)
->> -------------------
->> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/prod)
->> uprobe-push: 1.743 ± 0.006M/s  (1.743M/prod)
->> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/prod)
->> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/prod)
->> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/prod)
->> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/prod)
->>
->> As shown above, the performance gap between 'nop/push' and 'ret'
->> variants has been significantly reduced. Due to the emulation of 'push'
->> instruction needs to access userspace memory, it spent more cycles than
->> the other.
->>
->> As Mark suggested [1], it is painful to emulate the correct atomicity
->> and ordering properties of STP, especially when it interacts with MTE,
->> POE, etc. So this patch just focus on the simuation of 'nop'. The
->> simluation of STP and related changes will be addressed in a separate
->> patch.
->>
->> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
->> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
->>
->> CC: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->> CC: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 >> ---
->>  arch/arm64/include/asm/insn.h            |  6 ++++++
->>  arch/arm64/kernel/probes/decode-insn.c   |  9 +++++++++
->>  arch/arm64/kernel/probes/simulate-insn.c | 11 +++++++++++
->>  arch/arm64/kernel/probes/simulate-insn.h |  1 +
->>  4 files changed, 27 insertions(+)
+>>  mm/memory.c | 13 +++-------
+>>  mm/zswap.c  | 68 ++++++++++++++++++++++++-----------------------------
+>>  2 files changed, 34 insertions(+), 47 deletions(-)
 >>
->> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
->> index 8c0a36f72d6f..dd530d5c3d67 100644
->> --- a/arch/arm64/include/asm/insn.h
->> +++ b/arch/arm64/include/asm/insn.h
->> @@ -549,6 +549,12 @@ static __always_inline bool aarch64_insn_uses_literal(u32 insn)
->>  	       aarch64_insn_is_prfm_lit(insn);
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 49d243131169..75f7b9f5fb32 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -4077,13 +4077,14 @@ static bool can_swapin_thp(struct vm_fault *vmf, pte_t *ptep, int nr_pages)
+>>
+>>         /*
+>>          * swap_read_folio() can't handle the case a large folio is hybridly
+>> -        * from different backends. And they are likely corner cases. Similar
+>> -        * things might be added once zswap support large folios.
+>> +        * from different backends. And they are likely corner cases.
+>>          */
+>>         if (unlikely(swap_zeromap_batch(entry, nr_pages, NULL) != nr_pages))
+>>                 return false;
+>>         if (unlikely(non_swapcache_batch(entry, nr_pages) != nr_pages))
+>>                 return false;
+>> +       if (unlikely(!zswap_present_test(entry, nr_pages)))
+>> +               return false;
+>>
+>>         return true;
 >>  }
->>  
->> +static __always_inline bool aarch64_insn_is_nop(u32 insn)
->> +{
->> +	return aarch64_insn_is_hint(insn) &&
->> +	       ((insn & 0xFE0) == AARCH64_INSN_HINT_NOP);
->> +}
-> 
-> Can we please make this:
-> 
-> static __always_inline bool aarch64_insn_is_nop(u32 insn)
-> {
-> 	return insn == aarch64_insn_gen_nop();
-> }
-> 
-> That way we don't need to duplicate the encoding details, and it's
-> "obviously correct".
-
-Absolutely agree.
-
-> 
->> +
->>  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
->>  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
->>  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
->> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
->> index 968d5fffe233..be54539e309e 100644
->> --- a/arch/arm64/kernel/probes/decode-insn.c
->> +++ b/arch/arm64/kernel/probes/decode-insn.c
->> @@ -75,6 +75,15 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
->>  enum probe_insn __kprobes
->>  arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
+>> @@ -4130,14 +4131,6 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+>>         if (unlikely(userfaultfd_armed(vma)))
+>>                 goto fallback;
+>>
+>> -       /*
+>> -        * A large swapped out folio could be partially or fully in zswap. We
+>> -        * lack handling for such cases, so fallback to swapping in order-0
+>> -        * folio.
+>> -        */
+>> -       if (!zswap_never_enabled())
+>> -               goto fallback;
+>> -
+>>         entry = pte_to_swp_entry(vmf->orig_pte);
+>>         /*
+>>          * Get a list of all the (large) orders below PMD_ORDER that are enabled
+>> diff --git a/mm/zswap.c b/mm/zswap.c
+>> index 9cc91ae31116..a5aa86c24060 100644
+>> --- a/mm/zswap.c
+>> +++ b/mm/zswap.c
+>> @@ -1624,59 +1624,53 @@ bool zswap_present_test(swp_entry_t swp, int nr_pages)
+>>
+>>  bool zswap_load(struct folio *folio)
 >>  {
->> +	/*
->> +	 * While 'nop' instruction can execute in the out-of-line slot,
->> +	 * simulating them in breakpoint handling offers better performance.
->> +	 */
->> +	if (aarch64_insn_is_nop(insn)) {
->> +		api->handler = simulate_nop;
->> +		return INSN_GOOD_NO_SLOT;
->> +	}
+>> +       int nr_pages = folio_nr_pages(folio);
+>>         swp_entry_t swp = folio->swap;
+>> +       unsigned int type = swp_type(swp);
+>>         pgoff_t offset = swp_offset(swp);
+>>         bool swapcache = folio_test_swapcache(folio);
+>> -       struct xarray *tree = swap_zswap_tree(swp);
+>> +       struct xarray *tree;
+>>         struct zswap_entry *entry;
+>> +       int i;
+>>
+>>         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+>>
+>>         if (zswap_never_enabled())
+>>                 return false;
+>>
+>> -       /*
+>> -        * Large folios should not be swapped in while zswap is being used, as
+>> -        * they are not properly handled. Zswap does not properly load large
+>> -        * folios, and a large folio may only be partially in zswap.
+>> -        *
+>> -        * Return true without marking the folio uptodate so that an IO error is
+>> -        * emitted (e.g. do_swap_page() will sigbus).
+>> -        */
+>> -       if (WARN_ON_ONCE(folio_test_large(folio)))
+>> -               return true;
+>> -
+>> -       /*
+>> -        * When reading into the swapcache, invalidate our entry. The
+>> -        * swapcache can be the authoritative owner of the page and
+>> -        * its mappings, and the pressure that results from having two
+>> -        * in-memory copies outweighs any benefits of caching the
+>> -        * compression work.
+>> -        *
+>> -        * (Most swapins go through the swapcache. The notable
+>> -        * exception is the singleton fault on SWP_SYNCHRONOUS_IO
+>> -        * files, which reads into a private page and may free it if
+>> -        * the fault fails. We remain the primary owner of the entry.)
+>> -        */
+>> -       if (swapcache)
+>> -               entry = xa_erase(tree, offset);
+>> -       else
+>> -               entry = xa_load(tree, offset);
+>> -
+>> -       if (!entry)
+>> +       if (!zswap_present_test(folio->swap, nr_pages))
+>>                 return false;
+> 
+> Hi Usama,
+> 
+> Is there any chance that zswap_present_test() returns true
+> in do_swap_page() but false in zswap_load()? If that’s
+> possible, could we be missing something? For example,
+> could it be that zswap has been partially released (with
+> part of it still present) during an mTHP swap-in?
+> 
+> If this happens with an mTHP, my understanding is that
+> we shouldn't proceed with reading corrupted data from the
+> disk backend.
+> 
+
+If its not swapcache, the zswap entry is not deleted so I think
+it should be ok?
+
+We can check over here if the entire folio is in zswap,
+and if not, return true without marking the folio uptodate
+to give an error.
+
+
+>>
+>> -       zswap_decompress(entry, &folio->page);
+>> +       for (i = 0; i < nr_pages; ++i) {
+>> +               tree = swap_zswap_tree(swp_entry(type, offset + i));
+>> +               /*
+>> +                * When reading into the swapcache, invalidate our entry. The
+>> +                * swapcache can be the authoritative owner of the page and
+>> +                * its mappings, and the pressure that results from having two
+>> +                * in-memory copies outweighs any benefits of caching the
+>> +                * compression work.
+>> +                *
+>> +                * (Swapins with swap count > 1 go through the swapcache.
+>> +                * For swap count == 1, the swapcache is skipped and we
+>> +                * remain the primary owner of the entry.)
+>> +                */
+>> +               if (swapcache)
+>> +                       entry = xa_erase(tree, offset + i);
+>> +               else
+>> +                       entry = xa_load(tree, offset + i);
+>>
+>> -       count_vm_event(ZSWPIN);
+>> -       if (entry->objcg)
+>> -               count_objcg_events(entry->objcg, ZSWPIN, 1);
+>> +               zswap_decompress(entry, folio_page(folio, i));
+>>
+>> -       if (swapcache) {
+>> -               zswap_entry_free(entry);
+>> -               folio_mark_dirty(folio);
+>> +               if (entry->objcg)
+>> +                       count_objcg_events(entry->objcg, ZSWPIN, 1);
+>> +               if (swapcache)
+>> +                       zswap_entry_free(entry);
+>>         }
+>>
+>> +       count_vm_events(ZSWPIN, nr_pages);
+>> +       if (swapcache)
+>> +               folio_mark_dirty(folio);
 >> +
->>  	/*
->>  	 * Instructions reading or modifying the PC won't work from the XOL
->>  	 * slot.
->> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
->> index 22d0b3252476..5e4f887a074c 100644
->> --- a/arch/arm64/kernel/probes/simulate-insn.c
->> +++ b/arch/arm64/kernel/probes/simulate-insn.c
->> @@ -200,3 +200,14 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
->>  
->>  	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+>>         folio_mark_uptodate(folio);
+>>         return true;
 >>  }
->> +
->> +void __kprobes
->> +simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
->> +{
->> +	/*
->> +	 * Compared to instruction_pointer_set(), it offers better
->> +	 * compatibility with single-stepping and execution in target
->> +	 * guarded memory.
->> +	 */
->> +	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
->> +}
-> 
-> Can we please delete the comment? i.e. make this:
-> 
-> 	void __kprobes
-> 	simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-> 	{
-> 		arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-> 	}
-> 
-> With those two changes:
-
-I wrote this comment to ensure I don't misunderstand the usage of
-arm64_skip_faulting_instruction() here. This comment should be removed from
-the final patch.
-
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> ... and I can go chase up fixing the other issues in this file.
-> 
-> Mark.
-> 
-> 
->> diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
->> index e065dc92218e..efb2803ec943 100644
->> --- a/arch/arm64/kernel/probes/simulate-insn.h
->> +++ b/arch/arm64/kernel/probes/simulate-insn.h
->> @@ -16,5 +16,6 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
->>  void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
->>  void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
->>  void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
->> +void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
->>  
->>  #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
->> -- 
->> 2.34.1
->>
+>> --
+>> 2.43.5
 >>
 > 
-
--- 
-BR
-Liao, Chang
+> Thanks
+> barry
 
 
