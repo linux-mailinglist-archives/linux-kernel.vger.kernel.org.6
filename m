@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-374630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EE49A6DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDC09A6DC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF42F1F22501
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80442282D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672141F943A;
-	Mon, 21 Oct 2024 15:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B831FB3CB;
+	Mon, 21 Oct 2024 15:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aqz0JA1e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bt0EUuMo"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0HF2jZDA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WeY5DLKy"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB77A1E7677;
-	Mon, 21 Oct 2024 15:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7731FAC3B;
+	Mon, 21 Oct 2024 15:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523590; cv=none; b=VcUQVDVG8se3ioYWe844CsxPhiAsbAj4chS6VX6Vv5vV8lJ7N5Ib8lujzFLpj2lx+EC2JNUoS4XgPR+PYp3slQ/w+F4rw5nyUN8cyW2mPDbNhUOsmuS9yQe7q/GfYMjVspUtxNWvvQilwAMYZiqwl5VUvMJSxzd8RPKUNuDxxk0=
+	t=1729523595; cv=none; b=pTY/KacfYdzctliPY0ZffwmDD6iR6q1lsB+wwAChABJZc3+EFlB5eYBjlES/rxhQnsdxiBwLrDc+fKjBZwWjgu4HQpPs19vecHtcHhQ6mtPIL8hEibo9FgXTl+d5mnx0oPXOvR8XueMZ08jcJTS0FQ5Mnuffo3ub3fJnYynmzFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523590; c=relaxed/simple;
-	bh=5P2NQ2LTGqAw9tTdB+yi629BK+jCITFq2F+INjGiWE0=;
+	s=arc-20240116; t=1729523595; c=relaxed/simple;
+	bh=QjIvZlCtVBiBsmsnr8cISyDYLEv8628810IVww1WNSg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oU1aqxQ4M30/dLamIV26sXaDIQRnk/oUxmTPzpfLQ43MOsM2OIabf8bNTcKEEUjXADb1I5gAo8KY4Q3+ZBxiEXl1CDvIJ2I61MfbUwtZTHQfsVqOLAXl3ArfzJMswcuM9mcN0+p/aYQTL0JO4TnEpdpsh+htSjxjrsG5oSec6BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aqz0JA1e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bt0EUuMo; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=L4LspOB1TaSomrWA4IBdgN4kgl/dx7bqWPV1ZxZ6S8yHCDWv0cqzgzyN4/Z4CSW6ME4Ze+PoyJGFcHAbS+lMXSVbwNXByWu6Ek/q0QXrgqBXC9n3ci8097HF/adwxRDIvrMxTfhEj+nUuE9wIw5JgEK8uIYXwPUnp3kjAohTenc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0HF2jZDA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WeY5DLKy; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4mJYXpgOv9Nb7Ka4YZwNzbNkv6qUKCXI6IA+AOiHpw0=;
-	b=aqz0JA1e6EeyFYhZrVsWivhxlRtoaOJPvtOlZgPaez4aAgYGdKbf+VtkSIlB4x0yt630Qr
-	8KJuyBA5pIpIZa8ik9mXHddNUJFU68vUETZpzgUTPv+QaijhRp2+Bd5TnD2uVs+gBpo6Gr
-	WqgkAWYXLwVxRTVvCTjo7n5MpytrngZyNnHhnPBZR+1PcsDagkpj3iNObLuhIya609Rs5h
-	3uHPkpHLZKUoJ/g2Yy2XAbn83lUFRXJ2G9yrLgHZoM2jPfhWox1Pjl+SdAeozWAyIr2MzL
-	18+ZCEpeBY6kcFuzGIgyQlpaG0ya5rjZc4PvkgUw6HB4aAaiToqFkd8WcwfiLA==
+	bh=HaEaP85s+bDV/FR3UNIae3NhDHTKAM5R8mgLmDl9h4A=;
+	b=0HF2jZDAXbmVVSgQ6C909u3k9wAUIjb5QwKmPFALR1hwemXqQft7BwtjujT4D1xRW460GW
+	uwiJ5fGXhxuNtxopfV+jG//m2aUk6ugATphTWuvJ8Q69NVo0nFJ3BULKvcghCV7v8Dl5Jq
+	Q9LlejV0LMuU7kuGyMxDs48z1UrkfVKkGnrtoH25+HWx7VuOlF++AMp/EuKINMQTqmgcbR
+	dx43OP5ikRlFIc03+PBTulOLqUt6zssS7XGfpGW4rmRHK2VKN5yn64FJWjYQ7Fo2KvBwV9
+	7WO2D4F2jDtuUIouWHi4jRhw2Hefs+ThkR4ukmUT8zBvABStt2ICTXiOotTKdA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1729523587;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4mJYXpgOv9Nb7Ka4YZwNzbNkv6qUKCXI6IA+AOiHpw0=;
-	b=Bt0EUuMo3fNCd6WivN40VtziHpHTDLxPNT8znL9fd6ifNCCpdgyFgUGoMWN4sscs6wdb7Q
-	K5fX91JEUfMNaKDw==
+	bh=HaEaP85s+bDV/FR3UNIae3NhDHTKAM5R8mgLmDl9h4A=;
+	b=WeY5DLKyyb2I3Br33YRRtuMkTu3/UaKNldq7aX4F8R4F7RrE1hS+3GyQJaTrmHX8H0HGhP
+	58by9NFPNJIm1mCw==
 To: linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -70,9 +70,9 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 1/3] tracing: Replace TRACE_FLAG_IRQS_NOSUPPORT with its config option.
-Date: Mon, 21 Oct 2024 17:08:40 +0200
-Message-ID: <20241021151257.102296-2-bigeasy@linutronix.de>
+Subject: [PATCH v2 2/3] tracing: Record task flag NEED_RESCHED_LAZY.
+Date: Mon, 21 Oct 2024 17:08:41 +0200
+Message-ID: <20241021151257.102296-3-bigeasy@linutronix.de>
 In-Reply-To: <20241021151257.102296-1-bigeasy@linutronix.de>
 References: <20241021151257.102296-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -85,63 +85,96 @@ Content-Transfer-Encoding: quoted-printable
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-The TRACE_FLAG_IRQS_NOSUPPORT flag is used by tracing_gen_ctx.*() to
-signal that CONFIG_TRACE_IRQFLAGS_SUPPORT is not enabled and tracing IRQ
-flags is not supported.
+The scheduler added NEED_RESCHED_LAZY scheduling. Record this state as
+part of trace flags and expose it in the need_resched field.
 
-This could be replaced by using the 0 as flags and then deducting that
-there is no IRQFLAGS_SUPPORT based on the config option. The downside is
-that without CONFIG_TRACE_IRQFLAGS_SUPPORT we can not distinguish
-between no-IRQ passed flags and callers which passed 0. On the upside we
-have room for one additional flags which could be used for LAZY_PREEMPTION.
+Record and expose NEED_RESCHED_LAZY.
 
-Remove TRACE_FLAG_IRQS_NOSUPPORT and set it flags are 0 and
-CONFIG_TRACE_IRQFLAGS_SUPPORT is not set.
+[bigeasy: Commit description, documentation bits.]
 
-[bigeasy: Commit descrption.]
-
+Reviewed-by: Ankur Arora <ankur.a.arora@oracle.com>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/trace_events.h |    7 +++----
- kernel/trace/trace_output.c  |    2 +-
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ Documentation/trace/ftrace.rst |    4 ++++
+ include/linux/trace_events.h   |    1 +
+ kernel/trace/trace.c           |    2 ++
+ kernel/trace/trace_output.c    |   14 +++++++++++++-
+ 4 files changed, 20 insertions(+), 1 deletion(-)
 
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -1036,9 +1036,13 @@ explains which is which.
+ 		be printed here.
+=20
+   need-resched:
++	- 'B' all, TIF_NEED_RESCHED, PREEMPT_NEED_RESCHED and TIF_RESCHED_LAZY is=
+ set,
+ 	- 'N' both TIF_NEED_RESCHED and PREEMPT_NEED_RESCHED is set,
+ 	- 'n' only TIF_NEED_RESCHED is set,
+ 	- 'p' only PREEMPT_NEED_RESCHED is set,
++	- 'L' borg PREEMPT_NEED_RESCHED and TIF_RESCHED_LAZY is set,
++	- 'b' borg TIF_NEED_RESCHED and TIF_RESCHED_LAZY is set,
++	- 'l' only TIF_RESCHED_LAZY is set
+ 	- '.' otherwise.
+=20
+   hardirq/softirq:
 --- a/include/linux/trace_events.h
 +++ b/include/linux/trace_events.h
-@@ -184,8 +184,7 @@ unsigned int tracing_gen_ctx_irq_test(un
-=20
+@@ -185,6 +185,7 @@ unsigned int tracing_gen_ctx_irq_test(un
  enum trace_flag_type {
  	TRACE_FLAG_IRQS_OFF		=3D 0x01,
--	TRACE_FLAG_IRQS_NOSUPPORT	=3D 0x02,
--	TRACE_FLAG_NEED_RESCHED		=3D 0x04,
-+	TRACE_FLAG_NEED_RESCHED		=3D 0x02,
+ 	TRACE_FLAG_NEED_RESCHED		=3D 0x02,
++	TRACE_FLAG_NEED_RESCHED_LAZY	=3D 0x04,
  	TRACE_FLAG_HARDIRQ		=3D 0x08,
  	TRACE_FLAG_SOFTIRQ		=3D 0x10,
  	TRACE_FLAG_PREEMPT_RESCHED	=3D 0x20,
-@@ -211,11 +210,11 @@ static inline unsigned int tracing_gen_c
-=20
- static inline unsigned int tracing_gen_ctx_flags(unsigned long irqflags)
- {
--	return tracing_gen_ctx_irq_test(TRACE_FLAG_IRQS_NOSUPPORT);
-+	return tracing_gen_ctx_irq_test(0);
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2544,6 +2544,8 @@ unsigned int tracing_gen_ctx_irq_test(un
+ 		trace_flags |=3D TRACE_FLAG_NEED_RESCHED;
+ 	if (test_preempt_need_resched())
+ 		trace_flags |=3D TRACE_FLAG_PREEMPT_RESCHED;
++	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && tif_test_bit(TIF_NEED_RES=
+CHED_LAZY))
++		trace_flags |=3D TRACE_FLAG_NEED_RESCHED_LAZY;
+ 	return (trace_flags << 16) | (min_t(unsigned int, pc & 0xff, 0xf)) |
+ 		(min_t(unsigned int, migration_disable_value(), 0xf)) << 4;
  }
- static inline unsigned int tracing_gen_ctx(void)
- {
--	return tracing_gen_ctx_irq_test(TRACE_FLAG_IRQS_NOSUPPORT);
-+	return tracing_gen_ctx_irq_test(0);
- }
- #endif
-=20
 --- a/kernel/trace/trace_output.c
 +++ b/kernel/trace/trace_output.c
-@@ -460,7 +460,7 @@ int trace_print_lat_fmt(struct trace_seq
- 		(entry->flags & TRACE_FLAG_IRQS_OFF && bh_off) ? 'D' :
- 		(entry->flags & TRACE_FLAG_IRQS_OFF) ? 'd' :
- 		bh_off ? 'b' :
--		(entry->flags & TRACE_FLAG_IRQS_NOSUPPORT) ? 'X' :
-+		!IS_ENABLED(CONFIG_TRACE_IRQFLAGS_SUPPORT) ? 'X' :
+@@ -463,17 +463,29 @@ int trace_print_lat_fmt(struct trace_seq
+ 		!IS_ENABLED(CONFIG_TRACE_IRQFLAGS_SUPPORT) ? 'X' :
  		'.';
 =20
- 	switch (entry->flags & (TRACE_FLAG_NEED_RESCHED |
+-	switch (entry->flags & (TRACE_FLAG_NEED_RESCHED |
++	switch (entry->flags & (TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCHED=
+_LAZY |
+ 				TRACE_FLAG_PREEMPT_RESCHED)) {
++	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCHED_LAZY | TRACE_FLAG_=
+PREEMPT_RESCHED:
++		need_resched =3D 'B';
++		break;
+ 	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_PREEMPT_RESCHED:
+ 		need_resched =3D 'N';
+ 		break;
++	case TRACE_FLAG_NEED_RESCHED_LAZY | TRACE_FLAG_PREEMPT_RESCHED:
++		need_resched =3D 'L';
++		break;
++	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCHED_LAZY:
++		need_resched =3D 'b';
++		break;
+ 	case TRACE_FLAG_NEED_RESCHED:
+ 		need_resched =3D 'n';
+ 		break;
+ 	case TRACE_FLAG_PREEMPT_RESCHED:
+ 		need_resched =3D 'p';
+ 		break;
++	case TRACE_FLAG_NEED_RESCHED_LAZY:
++		need_resched =3D 'l';
++		break;
+ 	default:
+ 		need_resched =3D '.';
+ 		break;
 
