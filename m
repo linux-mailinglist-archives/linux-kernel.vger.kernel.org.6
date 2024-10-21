@@ -1,176 +1,182 @@
-Return-Path: <linux-kernel+bounces-374789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115CA9A7006
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A17B9A700E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 559A4B210F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:48:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E23B20D65
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB3D1E7C32;
-	Mon, 21 Oct 2024 16:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F211EABA9;
+	Mon, 21 Oct 2024 16:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+VYqa+3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tg9AormP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481E1C7B81
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CAF1E906E;
+	Mon, 21 Oct 2024 16:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529284; cv=none; b=uKJi2HgYej/Tr44ySACn8R9XggwG8lte9LqaJNF1t3cYzGpcIwyl1IEC/fTmCMMJsAMoVOVz1Swd4STsVuIDRA7Qmc1xkIUDfWGYRS1ML0cPimnPSSEzjku6/sgMoGyjCy5Fc8AQBkO5+z+dZ6FgfC3sh2tqCAKIqCWdZff7T4s=
+	t=1729529309; cv=none; b=UGetsx5sq+PW2TxPr9K/hHF6NrsBCAITmbCWLsg06yDaTrziWK5VDpqH1h64PHkETqJl9CpBbI+xFqvEsy7940s3YQJzUQwliP52Dgcc5sy26FJk+7T+x8vtRyDBKfxzEYcEG6Vknea/dGLlG9h1+6bQxaeEm91qNzDNfdcxBr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529284; c=relaxed/simple;
-	bh=5NnBU2Ai6e6DvESDM4ffFKsUHcu7Qz3Puk15NxCcewQ=;
+	s=arc-20240116; t=1729529309; c=relaxed/simple;
+	bh=y88CpT+n2HdoRrfctihIvqBAw/nq7qai6p50KHNi9PI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRBYtmkExLpUVdwBt1DS48q63H6D+ZQQ0TRXcryeVUcGMUAkNbFEjyRE5UpeyKN+rT+lkAbE/7HGfw5muE9OCXge8/bLL+x8LBhZr1c8PAG87SSpuRXTyZjUAhPrmzI+M2qvxX7ZQ38DavOQOgZRJ7gN+1dN3EM4VDrMkXQ70wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+VYqa+3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA32C4CEC3;
-	Mon, 21 Oct 2024 16:48:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGhCX1QpprnRrk6l+hSL165sU6ymX2Byj0RuyxSEsJ3Ft5DIhpgJ8QSAcAGV2PjGmhguypi70oYwvR6moEyvd0amXM4WHM2+kh4eww/xBV9BVECQnQx/9VvBtL3inaPEV++4p0d3dmj2U4duOfA2Xh6OaTs9zNMYGTu9VbiGKeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tg9AormP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FBBC4CEC3;
+	Mon, 21 Oct 2024 16:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729529284;
-	bh=5NnBU2Ai6e6DvESDM4ffFKsUHcu7Qz3Puk15NxCcewQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=G+VYqa+37hpm72UQZLUjE1UuP171yXiQb3W3N86uxbEROIYmmqYLAUa0RZZl47ECo
-	 pYwjo5Am7ZPX5uVlZJE6429mhxIvQKILaT2vI5XwKjhxJkbilna71riqdyn6mmT1n1
-	 l7M+7AUSPIsmGXEsvEveJ6Gc+SgBRNvfYe6ZZDad3I7mTFGGjCWBozPxpwH+TRv+vc
-	 sDXXKUeitUqTqD9foYQKe8DNR3sIt7CP4ZKOrtvBXIBXyBg1LW48FQcQrD9zmlCAGW
-	 FqVofMd8Rlfxhk5ybFn3h9KPm7PcK50d2fj0CHAYIIaCqk7/wP+lI57mH6JQCj1oZF
-	 UD+uLg1jIP9Vw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id BE156CE0DFD; Mon, 21 Oct 2024 09:48:03 -0700 (PDT)
-Date: Mon, 21 Oct 2024 09:48:03 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c6cbc343-01c3-4a38-8723-cc44e83dedf7@paulmck-laptop>
- <20241011081847.r2x73XIr@linutronix.de>
- <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
- <20241011144341.mQKXkGkm@linutronix.de>
- <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
- <20241015112224.KdvzKo80@linutronix.de>
- <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
- <20241017070710.U9bTJFMS@linutronix.de>
- <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
- <20241021112755.m7dWNbc0@linutronix.de>
+	s=k20201202; t=1729529309;
+	bh=y88CpT+n2HdoRrfctihIvqBAw/nq7qai6p50KHNi9PI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tg9AormP7oj96Nxs3Hyh2cbZX/WEiqqxEmm+RWJB8AzCWl7pwu7FKZAJ9YUiBY6Eb
+	 O5qRi6WYvMfb15NkUuyCjBItfUyi6LHK7tdujb5j6GnK6UpmsHZKq9fGfHl9JmMEXj
+	 7yxEwxfNiBvb77sZYvY9oIwdzMtfoELesLuwvXbdQccqJgu/nAHpW230oDq+To01+m
+	 5TMGNCrlyeXRT7nKObiVEhbU/mnXai4GaQLyC5pOQvtduRLrQgJY5K1PHGFAIwjicX
+	 YIQzR/+OqxkMjXvL7C8hfrN2m+jmJlPHkzddAOMtLEkAhokoODjGCEhF2/YNrc1RBz
+	 Ij944FdRnuh4g==
+Date: Mon, 21 Oct 2024 17:48:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Guodong Xu <guodong@riscstar.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, rafal@milecki.pl,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>,
+	Alexandru Stan <ams@frame.work>, Daniel Schaefer <dhs@frame.work>,
+	Sandie Cao <sandie.cao@deepcomputing.io>,
+	Yuning Liang <yuning.liang@deepcomputing.io>,
+	Huiming Qiu <huiming.qiu@deepcomputing.io>, linux@frame.work,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] riscv: dts: starfive: add DeepComputing FML13V01
+ board device tree
+Message-ID: <20241021-crimson-translate-291eaba4e640@spud>
+References: <20241020134959.519462-1-guodong@riscstar.com>
+ <20241020134959.519462-4-guodong@riscstar.com>
+ <ae5gels34ozgzrcrwz53wj22hoy5cq3crn3dmkhitxlffmnavt@6lbmrcpjmqyd>
+ <20241021-unroll-empower-3ab903615d6d@spud>
+ <c048d270-7a07-4807-b816-0f4e0aeb67f7@kernel.org>
+ <2b449955-6596-4c9a-9799-f15d186e260f@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HM8xtjn6x2CDD6Fw"
+Content-Disposition: inline
+In-Reply-To: <2b449955-6596-4c9a-9799-f15d186e260f@riscstar.com>
+
+
+--HM8xtjn6x2CDD6Fw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021112755.m7dWNbc0@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 01:27:55PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-10-18 10:38:15 [-0700], Paul E. McKenney wrote:
-> > > > > I don't think this is always the case because the "preemptible" users
-> > > > > would also get this and this is an unexpected change for them.
-> > > > 
-> > > > Is this series now removing PREEMPT_NONE and PREEMPT_VOLUNTARY?
-> > > no, not yet. It is only adding PREEMPT_LAZY as new model, next to
-> > > PREEMPT_NONE and PREEMPT_VOLUNTARY. But is is likely to be on schedule.
-> > > 
-> > > > As conceived last time around, the change would affect only kernels
-> > > > built with one of the other of those two Kconfig options, which will
-> > > > not be users expecting preemption.
-> > > 
-> > > If you continue to use PREEMPT_NONE/ PREEMPT_VOLUNTARY nothing changes
-> > > right now.
-> > 
-> > Good, thank you!
-> > 
-> > Presumably PREEMPT_NONE=y && PREEMPT_LAZY=y enables lazy preemption,
-> > but retains non-preemptible RCU.
-> 
-> PREEMPT_NONE=y && PREEMPT_LAZY=y is exclusive. Either NONE or LAZY.
+On Mon, Oct 21, 2024 at 08:44:16AM -0500, Alex Elder wrote:
+> On 10/21/24 7:47 AM, Krzysztof Kozlowski wrote:
+> > On 21/10/2024 13:16, Conor Dooley wrote:
+> > > On Mon, Oct 21, 2024 at 09:17:59AM +0200, Krzysztof Kozlowski wrote:
+> > > > On Sun, Oct 20, 2024 at 09:49:59PM +0800, Guodong Xu wrote:
+> > > > > From: Sandie Cao <sandie.cao@deepcomputing.io>
+> > > > > +&camss {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +&csi2rx {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > >=20
+> > > You can drop these two, I marked them disabled in the common file
+> > > earlier this week.
+> > > 1
+> > > > > +
+> > > > > +&gmac0 {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +&i2c0 {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +&pwm {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +&pwmdac {
+> > > > > +	status =3D "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +&spi0 {
+> > > > > +	status =3D "disabled";
+> > > >=20
+> > > > If your board has to disable all these, then they should not have b=
+een
+> > > > enabled in DTSI in the first place. Only blocks present and working=
+ in
+> > > > the SoC (without amny external needs) should be enabled.
+> > > >=20
+> > > > I suggest to fix that aspect first.
+> > >=20
+> > > Eh, I don't think I agree. Having 5 disables here is a lesser evil th=
+an
+> > > reproducing 90% of jh7110-common.dtsi or shunting a bunch of stuff
+> > > around. Emil?
+> >=20
+> > Why reproducing 90%? Only enable would be here, no? Or you want to say
+> > the common DTSI has things which do not exist?
+>=20
+> For what it's worth, I agree with Krzysztof.  In the (long) cover
+> page we pointed this out, and offered to do it in a followup patch.
+> But if requested we can do it now.
+>=20
+> So in v6, a new patch would be inserted before the other three,
+> and it would:
+> - Remove the status =3D "okay" lines for those nodes that are not enabled
+>   in this new platform, in "jh7110-common.dtsi"
+> - Add nodes where appropriate in:
+>     jh7110-milkv-mars.dts
+>     jh7110-pine64-star64.dts
+>     jh7110-starfive-visionfive-2.dtsi
+>   They'll look like this, to enable the ones disabled above, e.g.:
+>     &gmac0 {
+>         status =3D "okay";
+>     };
+>=20
+>     &i2c0 {
+>         status =3D "okay";
+>     };
+>=20
+> You guys should come to agreement, but I do think what Krzysztof says
+> is the right approach.  And unless convinced otherwise, this will be
+> what shows up in the next version of this series.
 
-Ah, I was thinking in terms of the previous lazy-preemption patch series,
-and just now got around to looking at the new one.  Apologies for my
-confusion!
+Ultimately, it is up to Emil how he wants these laid out.
 
-> > > > If PREEMPT_NONE and PREEMPT_VOLUNTARY are still around, it would be
-> > > > far better to make PREEMPT_RCU depend on neither of those being set.
-> > > > That would leave the RCU Kconfig settings fully automatic, and this
-> > > > automation is not to be abandoned lightly.
-> > > 
-> > > Yes, that was my intention - only to make is selectable with
-> > > LAZY-preemption enabled but without dynamic.
-> > > So you are not complete against it.
-> > 
-> > Help me out here.  In what situation is it beneficial to make PREEMPT_RCU
-> > visible, given that PREEMPT_NONE, PREEMPT_VOLUNTARY, PREEMPT, and
-> > PREEMPT_FULL already take care of this automatically?
-> 
-> We have now NONE, VOLUNTARY, PREEMPT, PREEMPT_RT (as in choose one).
-> 
-> This series changes it to NONE, VOLUNTARY, PREEMPT, LAZY, LAZIEST.
-> Ignore LAZIEST. PREEMPT_RT is a on/ off bool.
+--HM8xtjn6x2CDD6Fw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In terms of preemptibility, isn't the order from least to most preemptible
-NONE, VOLUNTARY, LAZIEST, LAZY, PREEMPT, and PREEMPT_RT?  After all,
-PREEMPT will preempt more aggressively than will LAZY which in turn
-preempts more aggressively than LAZIEST.
+-----BEGIN PGP SIGNATURE-----
 
-And I finally do see the later patch in Peter's series that removes
-PREEMPT_RT from the choice.  Plus I need to look more at LAZIEST in
-order to work out whether Peter's suckage is our robustness.  ;-)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxaF1gAKCRB4tDGHoIJi
+0n25AP9w+mgLPG37PWo0lketQlmgfBvb0mnm/q/uq+DyENNPiwEA0d6noRdXHH1D
+VAVdOopja8BtMCTOjnpc/8inYN+MbQQ=
+=T8RS
+-----END PGP SIGNATURE-----
 
-> Based on my understanding so far, you have nothing to worry about.
-> 
-> With NONE + VOLUNTARY removed in favor of LAZY or without the removal
-> (yet)  you ask yourself what happens to those using NONE, go to LAZY and
-> want to stay with !PREEMPT_RCU, right?
-> With LAZY and !PREEMPT_DYNAMIC there is still PREEMPT_RCU as of now.
-> And you say people using !PREEMPT_DYNAMIC + LAZY are the old NONE/
-> VOLUNTARY users and want !PREEMPT_RCU.
-
-Yes.
-
-> This could be true but it could also attract people from PREEMPT which
-> expect additional performance gain due to LAZY and the same "preemption"
-> level. Additionally if PREEMPT gets removed because LAZY turns out to be
-> superior then PREEMPT_DYNAMIC makes probably no sense since there is
-> nothing to switch from/ to.
-
-We definitely have users that would migrate from NONE to LAZY.  Shouldn't
-their needs outweigh the possible future users that might (or might not)
-find that (1) LAZY might be preferable to PREEMPT for some users and
-(2) That those users would prefer that RCU be preemptible?
-
-> Therefore I would suggest to make PREEMPT_RCU 
-> - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> - selected for LAZY && PREEMPT_DYNAMIC
-> - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
->   !PREEMPT_DYNAMIC)
-> 
-> Does this make sense to you?
-
-Not really.  At the very least, default no.
-
-Unless LAZIEST makes the most sense for us (which will take time to
-figure out), in which case make PREMPT_RCU:
-
-- hard-defined =n for LAZIEST.
-- selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-- selected for LAZY && PREEMPT_DYNAMIC
-- the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-  !PREEMPT_DYNAMIC)
-
-Or am I still missing some aspect of this series?
-
-							Thanx, Paul
+--HM8xtjn6x2CDD6Fw--
 
