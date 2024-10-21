@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-374252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64FA9A677A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74409A678A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4FD81C21ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717FD1F23350
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D6A1EABD1;
-	Mon, 21 Oct 2024 12:03:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73161EABDA;
+	Mon, 21 Oct 2024 12:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jWS+NcXQ"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E451E9090;
-	Mon, 21 Oct 2024 12:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6377C1E47A1;
+	Mon, 21 Oct 2024 12:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512184; cv=none; b=XnmGjtJAn8uXyKl8roHPuTnKweicvgyX6OyV4NBz37m/16eiOlzKXsrs6NkE9LL5za0f3c8TOMDAciIKRJDWSKgQUNBl1AaUZaMzUlhIJUVTojib4O/IEwFmC5zWjtdIuB3OLPDl3lxin0VvGle+z1pSwVcxN9mhNV2VN6Oiu3g=
+	t=1729512331; cv=none; b=kCP9uLTB8l1jDW8Ha4lr2cr64Vm2oOWBuBkPAkCkQRSFwUHjIyb3byddLu3bT1Oxw30sgeLVpOlB8cjsly9aJEh74chgvN2AhsFnJXXEl4ZCc93XxCIgugBFWVlNIL/gw5FgQRbyrUXbur9LClRLyHPR1shvfuOtLu1u0nq2tR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512184; c=relaxed/simple;
-	bh=wLc56yfBrI+GsGTQNi0QL709D7IVdO7b1wOCRHOM9O0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYAB7k/hL3rI/kL387S57VWg5OFsel3XjOvq6IJKMd81Vq6X1vKbRMck6pB7lPOt9QcAmwQzZSn1JOeAcIe+H2r/WUYdw0Fd5odYxOuau5iX40oV4PfeEdXjx0zk1CsjG/6gq1/0I0WSHsUbiZta3rBq7x67UPJmgiJYccNz6aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E27C4CEE6;
-	Mon, 21 Oct 2024 12:02:58 +0000 (UTC)
-Date: Mon, 21 Oct 2024 13:02:56 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: "Okanovic, Haris" <harisokn@amazon.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-	"wanpengli@tencent.com" <wanpengli@tencent.com>,
-	"cl@gentwo.org" <cl@gentwo.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"mtosatti@redhat.com" <mtosatti@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-Message-ID: <ZxZC8Pg1qwULeirJ@arm.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
- <20240925232425.2763385-2-ankur.a.arora@oracle.com>
- <Zw5aPAuVi5sxdN5-@arm.com>
- <7f7ffdcdb79eee0e8a545f544120495477832cd5.camel@amazon.com>
- <ZxEYy9baciwdLnqh@arm.com>
- <87h69amjng.fsf@oracle.com>
- <ZxJBAubok8pc5ek7@arm.com>
- <87jze5kzhp.fsf@oracle.com>
+	s=arc-20240116; t=1729512331; c=relaxed/simple;
+	bh=LNsUbmG85GNCpHXIN0EE9pk1aZO5pmFOBVXwhrOrgn4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OAUS7Gu5K1wc+JAvRENkS9rSkcePwfsG6y7ar9hK0gPyKXOmLZDXrZbWloJxoTWZ3GgOexgEMcm0QErOw0sQY9m0bSX1C/kZlQBiAPVNaEuDbd97ShzZYA2ytLbc5Q27jNhbkFW6dpI8Fr+kKe2lydODbXY2rFLOdIWXlBHoGI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=jWS+NcXQ; arc=none smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1729512329; x=1761048329;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LNsUbmG85GNCpHXIN0EE9pk1aZO5pmFOBVXwhrOrgn4=;
+  b=jWS+NcXQp+xWRun5mm5t/vz84B5vRst0vQd4f/3mShUur83t/MO/k7G9
+   PQX5WoxeX7pjFFkl6nULzCjVG9J0387kEyjm/tjIcGrvh94o0oqc+jmFZ
+   gJCKdgSUlnhinfUvRCsv1OHsCR8Ddl0TGDV9Zosl3It6yzao4E4rxYPQJ
+   JPGbSmyvAudWEqYM2811bxYo5ycC+oAG9RnaFs/PqdGPPOTfJ69aq96K0
+   od63gfIkRQCYjLzGSmxffpHzoX1whuKUjIjglAkehxjFbldqNNH/EMP38
+   ny8Km47dW8K7vxAVFHXi/zNAVQHPqysNAKDHmO69KiEMULtggALq8VHxk
+   w==;
+X-CSE-ConnectionGUID: uQs5uvWdQdq2rDiTzI/wNA==
+X-CSE-MsgGUID: PxGId1zkQzuscQIb4773PQ==
+X-IronPort-AV: E=Sophos;i="6.11,220,1725292800"; 
+   d="scan'208";a="29967095"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Oct 2024 20:05:28 +0800
+IronPort-SDR: 6716351a_MzVUalNWPUUcDEqCDZRcbMFk/t+bAsQKwrExsGzXg4iFHKq
+ pJdjQte/w3nn2HWtdt+hr3Gw10TrW8kRwMFiiaw==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 04:03:54 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 05:05:27 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH 0/4] Untie the host lock entanglement - part 1
+Date: Mon, 21 Oct 2024 15:03:09 +0300
+Message-Id: <20241021120313.493371-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jze5kzhp.fsf@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 12:00:34PM -0700, Ankur Arora wrote:
-> Catalin Marinas <catalin.marinas@arm.com> writes:
-> > On Thu, Oct 17, 2024 at 03:47:31PM -0700, Ankur Arora wrote:
-> >> So maybe the right thing to do would be to keep smp_cond_load_timeout()
-> >> but only allow polling if WFxT or event-stream is enabled. And enhance
-> >> cpuidle_poll_state_init() to fail if the above condition is not met.
-> >
-> > We could do this as well. Maybe hide this behind another function like
-> > arch_has_efficient_smp_cond_load_timeout() (well, some shorter name),
-> > checked somewhere in or on the path to cpuidle_poll_state_init(). Well,
-> > it might be simpler to do this in haltpoll_want(), backed by an
-> > arch_haltpoll_want() function.
-> 
-> Yeah, checking in arch_haltpoll_want() would mean that we can leave all
-> the cpuidle_poll_state_init() call sites unchanged.
-> 
-> However, I suspect that even acpi-idle on arm64 might end up using
-> poll_idle() (as this patch tries to do:
-> https://lore.kernel.org/lkml/f8a1f85b-c4bf-4c38-81bf-728f72a4f2fe@huawei.com/).
-> 
-> So, let me try doing it both ways to see which one is simpler.
-> Given that the event-stream can be assumed to be always-on it might just
-> be more straight-forward to fallback to cpu_relax() in that edge case.
+While trying to simplify the ufs core driver with the guard() macro [1],
+Bart made note of the abuse of the scsi host lock in the ufs driver.
+Indeed, the host lock is deeply entangled in various flows across the
+driver, as if it was some occasional default synchronization mean.
 
-I agree, let's go with the simplest. If one has some strong case for
-running with the event stream disabled and idle polling becomes too
-energy inefficient, we can revisit and add some run-time checks.
+Here is the first part of defusing it, replace some of its occurrences
+of host registers accesses, with a dedicated host register lock. 
+
+Doing this in phases seems like a reasonable approach, given the myriad
+use.
+
+
+[1] https://lore.kernel.org/linux-scsi/0b031b8f-c07c-42ef-af93-7336439d3c37@acm.org/
+
+Avri Altman (4):
+  scsi: ufs: core: Introduce a new host register lock
+  scsi: ufs: core: Use reg_lock to protect UTMRLCLR
+  scsi: ufs: core: Use reg_lock to protect UTRLCLR
+  scsi: ufs: core: Use reg_lock to protect HCE register
+
+ drivers/ufs/core/ufshcd.c | 38 ++++++++++++++++++++++++--------------
+ include/ufs/ufshcd.h      |  3 +++
+ 2 files changed, 27 insertions(+), 14 deletions(-)
 
 -- 
-Catalin
+2.25.1
+
 
