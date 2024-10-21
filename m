@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-373561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2E39A58D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:26:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8FF9A58DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846291F21632
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294FA1C20EEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB80819BA6;
-	Mon, 21 Oct 2024 02:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA917C9B;
+	Mon, 21 Oct 2024 02:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JOQT2Vhn"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMDLsoee"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC4826AD4;
-	Mon, 21 Oct 2024 02:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A4A3D994
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729477605; cv=none; b=ZNOAWvbUTthx7QWn8yXN1ihFrP3RR2Iu5PZoonRRlNcq5aD4qgYMcDW8eZuw562mabWAzor4WzoKODU7fVILTi80620PXjSFwKsJm16U6MMTQNyWW6c9eD89NDEw2hBHsnHOi7EuCtTDhnswT09EEJYRdltH2ZsGkPiF10QueyM=
+	t=1729477626; cv=none; b=l+6XpwBYxbwqfrsb4QtAhkzkIcdm8a7YTLOHZ2CvVvlpknAHqwjgDJU4Y5Pn6bESkYZIolMFA6vv0RKbMFUmR0E+xYia2bXzOFZy05QPKUNOyZK2zEs0bHJ4l5s46OOIEqbsSZAkU5j9PW3gSKIfoXd5+JbC5cmVLhH5YKA3mVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729477605; c=relaxed/simple;
-	bh=8NLqK3AVMeZiXQChdve8JYeLasiVdjP+6oz/9UzqccU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TBjAhqb1LTc0jaR21Z5X09ql722OFKuxorlRQ0aJ8LKqYA3/Oa0zmt+cXxYfi0AxKXs4Z23a9oFYxK8bvxmk+KEjLAY+IsEm47+lFH5j/0MwBKWMyb3Glx/4yC7DoXXNFEsowPdlfBNfXVSid04MjGUeUVMH8HENu+kkZ2rq8R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JOQT2Vhn; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729477597;
-	bh=UASnbxobhGG6DSLgORQp5BbAH2KEC3TdJk6N+I+qWrw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JOQT2VhnXjOYr4T8vjEqynn3Pi75XzUkzaU7Fiv5mVz+3rad0jGIVSmvWrwH5Xvaj
-	 WXNplJor0ZVxg9Lr63eGHQpbFwMu3uz/iK6CO2ItsjgR9kX10kePFxa0ZeeUcDs2eY
-	 vIuM/VbWKvNkNDqhDZ+Im0EUDielU9cWbQ+nOQnLqkDUOkRKiAZPgXzBb53BsaSukE
-	 CkW1j3T/jVZlAlOxo1e9zbfyXbKh5gfKRw6pJHRNfB5vW3iTMzPww9lfAmk06nlGPL
-	 VFuv7w8qtcfwLT/DV0XI4zLqwS2HJCEgP3YdCEgmqNB9Ur7nr4F0WPSIM3s0D/Dp0u
-	 z/49IxkG/fsbQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1729477626; c=relaxed/simple;
+	bh=wChIIOljRZMbMsClGwWazXIABPZWJ1X/9rhsdtrKznQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxjuXeTPSftq1RokazghgvyPWvxm9efy5IQhexkMbBhkifaYEt8alWht8NBBrKHAG4XP1mj3hOwo4JjBzjm87kD1II1LUgZ7Id57mBWYc061JbSQr12elC7N1PgyHDtN4MSEi9Vh3hE+yZjFlVe6nv95/loBSHxQ4x6nrf83/ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMDLsoee; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729477623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+sjMziFfxbGDr6d+iWUv4ZQCz7jkJM/gB/nV/7pRVlc=;
+	b=SMDLsoeedojgzwHeaYgr1chxujM4zCfqTXgwfHIaj7R08DmqT8fjMpk7JhrKSAgD5lu47A
+	fxG2Zs1VKlPT7SgVG+x1QqGMgNVKqYv+kxBc6OnCQImPx/aou/n28nGrwR1wiDnEXdDQl8
+	ehZh6/qjR7XnqSsMdmx6ryUMyCSOEgI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-353-mJgu-wZ7M3C4MjtQVk-IAw-1; Sun,
+ 20 Oct 2024 22:27:02 -0400
+X-MC-Unique: mJgu-wZ7M3C4MjtQVk-IAw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XWzhY36btz4wc1;
-	Mon, 21 Oct 2024 13:26:36 +1100 (AEDT)
-Date: Mon, 21 Oct 2024 13:26:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Petr Pavlu <petr.pavlu@suse.com>
-Subject: linux-next: manual merge of the ftrace tree with Linus' tree
-Message-ID: <20241021132636.39d409f8@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEDDE195609D;
+	Mon, 21 Oct 2024 02:26:59 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.25])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F4C119560A3;
+	Mon, 21 Oct 2024 02:26:53 +0000 (UTC)
+Date: Mon, 21 Oct 2024 10:26:48 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+	dhowells@redhat.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iov_iter: don't require contiguous pages in
+ iov_iter_extract_bvec_pages
+Message-ID: <ZxW76N4hU2_4Zs3E@fedora>
+References: <20241011132047.1153249-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8qU8ZLy.=gn/pMmWq3ajouZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011132047.1153249-1-hch@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
---Sig_/8qU8ZLy.=gn/pMmWq3ajouZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 11, 2024 at 03:20:22PM +0200, Christoph Hellwig wrote:
+> The iov_iter_extract_pages interface allows to return physically
+> discontiguous pages, as long as all but the first and last page
+> in the array are page aligned and page size.  Rewrite
+> iov_iter_extract_bvec_pages to take advantage of that instead of only
+> returning ranges of physically contiguous pages.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> [hch: minor cleanups, new commit log]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+> 
+> v3:
+>  - open code the iterator
+>  - improve commit log and comments
 
-Hi all,
+Hello Jens,
 
-Today's linux-next merge of the ftrace tree got a conflict in:
+Gentle ping...
 
-  kernel/trace/ring_buffer.c
 
-between commit:
 
-  09661f75e75c ("ring-buffer: Fix reader locking when changing the sub buff=
-er order")
+thanks,
+Ming
 
-from Linus' tree and commit:
-
-  1f1c2bc9d075 ("ring-buffer: Limit time with disabled interrupts in rb_che=
-ck_pages()")
-
-from the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/trace/ring_buffer.c
-index 3ea4f7bb1837,696d422d5b35..000000000000
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@@ -6757,9 -6800,14 +6803,10 @@@ int ring_buffer_subbuf_order_set(struc
-  						     struct buffer_page, list);
-  		list_del_init(&cpu_buffer->reader_page->list);
- =20
- -		/* The cpu_buffer pages are a link list with no head */
- +		/* Install the new pages, remove the head from the list */
-  		cpu_buffer->pages =3D cpu_buffer->new_pages.next;
- -		cpu_buffer->new_pages.next->prev =3D cpu_buffer->new_pages.prev;
- -		cpu_buffer->new_pages.prev->next =3D cpu_buffer->new_pages.next;
-+ 		cpu_buffer->cnt++;
- -
- -		/* Clear the new_pages list */
- -		INIT_LIST_HEAD(&cpu_buffer->new_pages);
- +		list_del_init(&cpu_buffer->new_pages);
- =20
-  		cpu_buffer->head_page
-  			=3D list_entry(cpu_buffer->pages, struct buffer_page, list);
-
---Sig_/8qU8ZLy.=gn/pMmWq3ajouZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcVu9wACgkQAVBC80lX
-0Gw24gf+POIQmLhrGdGaCvlGHVHPnY1n4LL4CFcr5HE3i6zDU65G6Y6PtxVWjS1F
-t8TuMNM0DqQY4A4tTPKu0W34lAdKS+lultEerPxHseGfrLBvkept/DdJ41JZ9z8U
-fFVboKfehDdgN9mWB1HO8RGztx2MwqLwcO1lN2U+XNWp7Z5fCsVJu8z/YIvvChfB
-jnYerHhAucVtSff9OsPGhmuN7uk916c9zJroHIHOlxSiX4CUUvSZPZ6h7SdDzmTx
-m0D8ZEBNP1OrWazQDWD1AWf8rKR3UamD4UZ2+5pZT/wdRi21oxwv3bcaJ+CNlwUx
-owy+DKnFyjhS58bl80ajO9zZqTwGrA==
-=X0Jx
------END PGP SIGNATURE-----
-
---Sig_/8qU8ZLy.=gn/pMmWq3ajouZ--
 
