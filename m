@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-374798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077629A7024
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:53:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2BB9A7026
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F545B213F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77F4EB21269
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F161E9088;
-	Mon, 21 Oct 2024 16:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2408C1E9097;
+	Mon, 21 Oct 2024 16:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TZAnD6hu"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="na8G+TZO"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F11D2B3C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48A219939E;
+	Mon, 21 Oct 2024 16:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729529580; cv=none; b=E23+M2i+7nBiCNDvfUtK/d2sbE1290YrlpyUFwR58CJ8JrIlbfdPClfgLT9WlO/h126Xb+iTkeXZj66TOmjXcbjPp41zemuJSW4fSYAqqAua7Vm0O0yy44wYd8ZdNNPm1fGH1uy6z7+LMoFSRyZt3cSKOBeLXU+YF6sZK5t8xg4=
+	t=1729529625; cv=none; b=sPMGdEVbkcnIy1WiYJ8G0MAYMetkMOLxpcGxjBl0NqATmyhxpIhIDt0fneIzG0iVqIycMTqk6J68XsfhIxiwXzBeVzrYJ+3W7XucF4mkPxcRhgXCCC9fWHnQZ5e7HM8YvThzT1CncHfF1444PRCUyi01hdHytd5KBqPyURQxTmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729529580; c=relaxed/simple;
-	bh=BpnLZMowJalrbQKUv23P7u9lcA6cVv0aDf/cLXF9Cgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CHnGCIExiMSz5xtFuHqoeWJOodxvVrozNdktKSEffCAoypVA8Fq82/76d7tjMwHBDk7qNf0fAG1v5ID5+Y+WrEWi1LuGoioW5RzzseRfD1EY+XJCdU+aWhdfl/RzqaKAWxQgnHaBJGmglfjc4/H3VHr0lmfkRRIIVnfWsSS/kpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TZAnD6hu; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a4c303206eso4308825ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:52:56 -0700 (PDT)
+	s=arc-20240116; t=1729529625; c=relaxed/simple;
+	bh=EsXxXxRJGbVJjy7LzZen8w+LBc3iNCB/jR5qIBgfuDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIBWNTOepqolDbIs1vdgu7qmmez90iGRgFdAq8mFaqGXFEcD92WWa61LFj+eJXarLeRm1aJ6oBn3FTJQVW3ZEh5u8SVmt3RW/qqMjc5szipZrMpeoTRgXQpuH0GXzRkR20opfsh0p6mIxGMHg+FIGOLDKIfVJsq/XP97ArUAQ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=na8G+TZO; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea7d509e61so2008264a12.1;
+        Mon, 21 Oct 2024 09:53:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729529576; x=1730134376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gfh0Sg6Ju5mOvFo4y0H7LztT2uP3kP9lZo3T9Q32ISI=;
-        b=TZAnD6hum6zANwepzCGs8qvOY/7IylFC81kS7Bn4nzqAW6sqI38j6YkQ1BKExNYfjH
-         aY1SiB7srX+JJoJuR6t1EGxI4+lQubnw+cZfSakh5f6ejzD0mWL3OhI9aqgwEAtmTdZj
-         z0B5QMJxbJ8Rz/C+QOm1jI2cOBApXILlsJ30uEIfEBn1rJARR6to/VSDMe+7IsjpUQyj
-         PSducra5Hv7zZxEnDJd3bQbgB1HOXCFn71/LEd8ZJx9jyKMV1ZZZJvAugcVEpDtBIA+0
-         uHhFHrdKbKHYPLNKj4va40IgmmfFxIAWbyiPZAT5C5SJRW78kPme2xI7E6CtNeSZHoWf
-         pD7g==
+        d=gmail.com; s=20230601; t=1729529623; x=1730134423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nL3YgHyMFpNOAixJJrESMWkfYaHFaFLkhmt9ZVqRAnk=;
+        b=na8G+TZOXfZq0eR5MSo/2BDUNylW99/35au4mVstt21Fgb9ehslyzkB9SPvcMpJ4QP
+         UtxjMXfQbp5vP4xPt2ewm3hC91I0PRpv+QwUSNnT/1oZNw+u1tbffV06PqYi/X5MfHq2
+         J2F1CI+DHY7tU7otGW+I86KeEpvHm+RzASwvdsTsmnQNL3aPRZ45iXFFyUTlHLgmompi
+         gqOTm93HXJQt7gxP06SdNnRfAS7laRn16gDiZ68Pn0wPo303yLvS44kjh/+kyRdM7+UX
+         Z2nn8CzyBCiJ4gZjarF1V+/a9HqjkjuUGWZWpW0nZ28X4Bl7VbxSscmvIZV9gE1sqAci
+         3y9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729529576; x=1730134376;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gfh0Sg6Ju5mOvFo4y0H7LztT2uP3kP9lZo3T9Q32ISI=;
-        b=K+z96RzCZBi8wRNR1uAwxs5kT/ZkaYBp2BqTavzDLygaBeRRZIz2yZfD3oDvSEmqMx
-         2V1/Vif4M4SMjZJWOno3cibDAb2rlmWu25RJR6F9qH2ODhRQsMqiSC8DHsgGQg5h3zGT
-         YtI2kLW6VaEsWKS8Rh58TaLQ4MWy6p0XUSdEwSskmNeaNMrO1vXOas1qIigmx05zGYHQ
-         B8rf6XaGIgvjWcmxV6vi9XXck1wB8y4ELrDXNL0Eo3JEx+WY52Vowyreka/mKBDNe8WN
-         g97is4lVeDIrBMAY/tDLWBq7fQxkuXXydXZEQ3pOXVBm584tcVJtIBiNxxQo9+2O7svg
-         VAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhln26nxfEb5dTU8i0Nd0HKQyfnATha2a1hfialkHzBapSMo6kc/wQOaQyeSmkpFpKl5yIW2YXQ+UmR1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz94dmMZ2zNaQTdWoqdAjZrlBdD3/w91KzNmiTL3rpUv7K45N2a
-	ljb+TYYqZp0P4k7D76t62h2BcgtqhHRoCEoyRg4gWcAQYoGdkzt4NmOJQpzkYCo=
-X-Google-Smtp-Source: AGHT+IHgIdN+JiAiTnsRm5UTY+2lg8bIR9zHN/yKc4d9aueVUi/2xx+2pYTCq9c/VJYIUPz83ozKlw==
-X-Received: by 2002:a05:6e02:b2a:b0:3a0:8d60:8b7d with SMTP id e9e14a558f8ab-3a3f4060bfbmr122347365ab.11.1729529576137;
-        Mon, 21 Oct 2024 09:52:56 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400b634d4sm12614975ab.58.2024.10.21.09.52.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 09:52:55 -0700 (PDT)
-Message-ID: <dc1b937f-7695-4b55-8981-b36dd0baf761@kernel.dk>
-Date: Mon, 21 Oct 2024 10:52:54 -0600
+        d=1e100.net; s=20230601; t=1729529623; x=1730134423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nL3YgHyMFpNOAixJJrESMWkfYaHFaFLkhmt9ZVqRAnk=;
+        b=pX+F3DOfzjjcPaylYPuySrhOB6YD65n9vBzL0V32dndA1PYBixTtBsEISFt5JVV1eg
+         vjvtB4G9F+wXwqTw0TwbBcZuQ+4uo0BDOxduZEhNXRcWHqCynWbFeTih8jpXdCxEI0qH
+         aN7RcFEVL/KN9DE6VwHISly0qzQE8uyZq82EZ+vLjFUbIIx4ZB0mhWBjM+yJ/D9J4JBc
+         XpTaEzuPHHYLPRIMYfOpZGDaAeBY3WFjRwRv6V1oOkYQXcnGiT1D9gQ3IGDUyOFBCh3X
+         QA+zVapm8OMSbQ48wJ6YmdaUXL6gNsHtJUicaZsHPiJjDGtBV4ZpFZCof+sUTs9Y4+9z
+         qZWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP0SPR6qxFFBTvT/t2+G0mlAOTR8tNv6ZgPXfNWMgS+iUxPVCFtSzlBT3dvZwMWSy4peiPQXvzySF7URRO@vger.kernel.org, AJvYcCWBOBMOPTm6hDzwQ7QYoycM0iFhOn/jnq+ysQ8lUSksVMrXK3NB9DXPnbK4mI98Wj+HqlQ=@vger.kernel.org, AJvYcCWHgeqE7JRJIxzpF0Z8v/PMZwyNpR5lBa3V8wzMWuRyyrr3PtEo8BwhipF/8E4yio3CIVmrNzX0wWQTBTtnwRu4wnmt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCFkOyGnRd/l/ged9JqydDWVsYquHEKD3/omijKEdtJfIoAuOL
+	Ju3GnUBX7uasT6e8MAmpPkj1IGoI1YkMSNOW7lN91TRuVxVf1qnh/Z+YrhCJR9T/C/OwUpa3crL
+	3oS+SO0pESfN775xGbhNESbrj3amfAA==
+X-Google-Smtp-Source: AGHT+IFLhyt/FNbKxokMI7+5ri0OxjGVa0fqnTmdI1cFqhmTSWuQybenV2Z8i205GSE3E7Vy10ElfcHJ4DGhQSfpZVo=
+X-Received: by 2002:a05:6a20:2d27:b0:1d9:1af2:9697 with SMTP id
+ adf61e73a8af0-1d96b89a174mr608264637.47.1729529622813; Mon, 21 Oct 2024
+ 09:53:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Breno Leitao <leitao@debian.org>, Christoph Hellwig <hch@lst.de>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241021120631.5ed43983@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241021120631.5ed43983@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241008002556.2332835-1-andrii@kernel.org> <20241008002556.2332835-3-andrii@kernel.org>
+ <20241018101647.GA36494@noisy.programming.kicks-ass.net> <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
+ <20241021104815.GC6791@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241021104815.GC6791@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 21 Oct 2024 09:53:30 -0700
+Message-ID: <CAEf4BzbW7twYKPuU+ERy0z6Mfre8n_NswaR9Jxz03z-M312wKw@mail.gmail.com>
+Subject: Re: [PATCH v2 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
+ lifetime (with timeout)
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/20/24 7:06 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the block tree got a conflict in:
-> 
->   block/elevator.c
-> 
-> between commit:
-> 
->   b4ff6e93bfd0 ("elevator: do not request_module if elevator exists")
-> 
-> from Linus' tree and commit:
-> 
->   a2c17a5ea44f ("block: return void from the queue_sysfs_entry load_module method")
-> 
-> from the block tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Mon, Oct 21, 2024 at 3:48=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, Oct 18, 2024 at 11:22:09AM -0700, Andrii Nakryiko wrote:
+>
+> > > So... after a few readings I think I'm mostly okay with this. But I g=
+ot
+> > > annoyed by the whole HPROBE_STABLE with uprobe=3DNULL weirdness. Also=
+,
+> > > that data_race() usage is weird, what is that about?
+> >
+> > People keep saying that evil KCSAN will come after me if I don't add
+> > data_race() for values that can change under me, so I add it to make
+> > it explicit that it's fine. But I can of course just drop data_race(),
+> > as it has no bearing on correctness.
+>
+> AFAICT this was READ_ONCE() vs xchg(), and that should work. Otherwise I
+> have to yell at KCSAN people again :-)
+>
 
-I'll cooperate better with myself :-)
+sounds good, READ_ONCE() it is :)
 
-Merge looks good - just did it on my end too for my for-next branch, and
-it's identical. Your next pull of the block for-next branch should merge
-cleanly.
+> > > And then there's the case where we end up doing:
+> > >
+> > >   try_get_uprobe()
+> > >   put_uprobe()
+> > >   try_get_uprobe()
+> > >
+> > > in the dup path. Yes, it's unlikely, but gah.
+> > >
+> > >
+> > > So how about something like this?
+> >
+> > Yep, it makes sense to start with HPROBE_GONE if it's already NULL, no
+> > problem. I'll roll those changes in.
+> >
+> > I'm fine with the `bool get` flag as well. Will incorporate all that
+> > into the next revision, thanks!
+> >
+> > The only problem I can see is in the assumption that `srcu_idx < 0` is
+> > never going to be returned by srcu_read_lock(). Paul says that it can
+> > only be 0 or 1, but it's not codified as part of a contract.
+>
+> Yeah, [0,1] is the current range. Fundamentally that thing is an array
+> index, so negative values are out and generally safe to use as 'error'
+> codes. Paul can't we simply document that the SRCU cookie is always a
+> positive integer (or zero) and the negative space shall not be used?
+>
+> > So until we change that, probably safer to pass an extra bool
+> > specifying whether srcu_idx is valid or not, is that OK?
+>
+> I think Changeing the SRCU documentation to provide us this guarantee
+> should be an achievable goal.
 
--- 
-Jens Axboe
+agreed, I'll let Paul handle that, but will assume srcu_idx < 0 can't
+legally happen
+
+>
+> > (and I assume you want me to drop verbose comments for various states, =
+right?)
+>
+> I axed the comments because I made them invalid and didn't care enough
+> to fix them up. If you like them feel free to amend them to reflect the
+> new state of things.
+
+got it, I'll update where necessary
 
