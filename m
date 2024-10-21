@@ -1,91 +1,93 @@
-Return-Path: <linux-kernel+bounces-374426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591A99A6A08
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0173E9A6A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC27B21DFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07CE1F24822
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43D11F7061;
-	Mon, 21 Oct 2024 13:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E4B11CAF;
+	Mon, 21 Oct 2024 13:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWsxTbPG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QkH5yNv+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B01A194C62;
-	Mon, 21 Oct 2024 13:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8834F1F427D;
+	Mon, 21 Oct 2024 13:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517076; cv=none; b=El91wnxpULrpbqXUY6S6CSExt/k2I9jbDMA8pdVxKrdYpuIXUVYWZs2V7Jd2Y64NthKqdQmCR7QKgOGn4YJnK5H7BARq93eX+YHedpAJ39sHkw7nj41XPvenr9hVBxs/VbXDRUg7xV/rO9VwRd50sX22zX5PY/LhlsQ/nsVwMAQ=
+	t=1729517095; cv=none; b=ev59y3WnnhRU67o0QWGGb7Y3vc7iCahIF+5/Qindly+oNrstGqXhBMssKat/Zo85iw9rusfRb1HBxl+OChoZso8SHJRpoX9eHswpHdwgVNlSuPRcs2gKcLO3VQNuMI1lcSZRaSLM+FKninOGfw7Ih4PaP+63e50adEKjjqV+Yio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517076; c=relaxed/simple;
-	bh=r+zKiREXrZk5D3hxSgQ1MLCydswkdcdo/IqSPLFxAWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuIqulCbtFsa/+dX0hoK+pPDh5yg/Z+CVXtDzCV4/sSCpZ6+BpRmQuu+0iF7+gnO2nli9AiDYiZf7JCBejIIV18anB5B9opfaRRB49Ow8g9nIkGbYhI40nDATAcamp6r0xWGkkI0HWh61MjxIzYUH55rPkHg6zzivtuA/L5Azuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWsxTbPG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB81C4CEC3;
-	Mon, 21 Oct 2024 13:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729517075;
-	bh=r+zKiREXrZk5D3hxSgQ1MLCydswkdcdo/IqSPLFxAWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gWsxTbPGKx0cuJ9J/kh30dMOTlRZR+9/CWo5V2FcZTzrNBRYRKRm+ujHIVxqunvU4
-	 ZZlkSSHGQQIDNPanNODaIgSwNEDDliuHmbuPzci+SjsajdMSRAoj82GX0b9L/IJRL2
-	 G8bd8i13vlEEekzqaIg20o0xYgVC+TpUsPO0jstYxJFwv3OD38Vul1AMM7AjHVA8x9
-	 wuWeeAS/Zf3rp9kXhHLpWl2pWbsZSx+b1fiH8rERPJBOkcv7RxwMEKgKRdxzrYlsFr
-	 4XIgjymK3cmA8NGyGn1lJqRS80CvIQReuXwGQwfb1IQ3EuF1eA8B8lxodIAnWl52g/
-	 GqObBs9XY/2bQ==
-Date: Mon, 21 Oct 2024 15:24:30 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>, 
-	Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
- <20241016135155.otibqwcyqczxt26f@quack3>
- <20241016-luxus-winkt-4676cfdf25ff@brauner>
- <ZxEnV353YshfkmXe@infradead.org>
+	s=arc-20240116; t=1729517095; c=relaxed/simple;
+	bh=rV80u/k3jOFu4yEbtYLRmEDMmculFGX04fxA7xDWrDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qhnpxF0kxrfkUc2jlYC5HxOqkzuS7PgzZQb6KFEWOzqxXVbNfjzGfgjMuKfpWtNgFbFJY/TUDppw/KretWeBivIm8z08NxCCGXGLzLOgWOuJvNosGk7/p04j0ynQgVbwTycDqTfEo0kGwnRIhXKYvpM5EN7QBBOd8pqChn42BCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QkH5yNv+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729517091;
+	bh=rV80u/k3jOFu4yEbtYLRmEDMmculFGX04fxA7xDWrDo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QkH5yNv+zWr45ie1/RbYl8VSty1fYMUxHfvI3d1i9SQ9926R/L36aSBkdIXw+mpZC
+	 eA/QXlfzhA7ultJn5U6zlHtjjmYFrsxa0Go7qZjWy9hQNKON0U9wfsH1JHXWVWrrAO
+	 Nioy0UR6Nhdc9StYFcim4XfxkKkFe+m90OmLf8c2V0yq3Bwf5zajynwQWLE2uJ3HfH
+	 qmDazi7CK/KErpIAaG/5Ow61Mz8nB1qdyGa2feF2j5iou7z6xPmnDBicPZJj9Qz3Td
+	 DMMAiBs1eoKllORIYdCSor0tljhNmCl0968vTNR1f1wMGgQ1w7s1Wm5IPRXsW3TSAh
+	 oXWGMDKL2AubA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9EE1017E3616;
+	Mon, 21 Oct 2024 15:24:50 +0200 (CEST)
+Message-ID: <88b78bd6-2333-494b-909b-9fa73cffff75@collabora.com>
+Date: Mon, 21 Oct 2024 15:24:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZxEnV353YshfkmXe@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] Input: mtk-pmic-keys - Add support for MT6328
+To: Yassine Oudjana <yassine.oudjana@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ jason-ch chen <Jason-ch.Chen@mediatek.com>,
+ Chen Zhong <chen.zhong@mediatek.com>, Flora Fu <flora.fu@mediatek.com>,
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241018081050.23592-1-y.oudjana@protonmail.com>
+ <20241018081050.23592-7-y.oudjana@protonmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241018081050.23592-7-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 08:03:51AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 16, 2024 at 04:51:37PM +0200, Christian Brauner wrote:
-> > > 
-> > > I think that getting user.* xattrs from bpf hooks can still be useful for
-> > > introspection and other tasks so I'm not convinced we should revert that
-> > > functionality but maybe it is too easy to misuse? I'm not really decided.
-> > 
-> > Reading user.* xattr is fine. If an LSM decides to built a security
-> > model around it then imho that's their business and since that happens
-> > in out-of-tree LSM programs: shrug.
+Il 18/10/24 10:10, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> By that argument user.kfuncs is even more useless as just being able
-> to read all xattrs should be just as fine.
+> Add a compatible string and related data for the PMIC keys on the
+> MT6328 PMIC.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-bpf shouldn't read security.* of another LSM or a host of other examples...
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
