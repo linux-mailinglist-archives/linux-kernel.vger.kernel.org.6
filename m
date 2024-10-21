@@ -1,199 +1,146 @@
-Return-Path: <linux-kernel+bounces-373989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E9F9A6041
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA08D9A604C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC73B287684
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766B22818BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211041E32AC;
-	Mon, 21 Oct 2024 09:38:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AE2198837;
+	Mon, 21 Oct 2024 09:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qshzu1NG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982DA198837;
-	Mon, 21 Oct 2024 09:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEAD1E32C3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503484; cv=none; b=ZgFIDGxtwW8NeRWEnfmXz3swZzjoiixPSGAVZKJv6QEAkdpyBeQW6TOmwYd9Vy5p7yD9iw0RhaV4IfIiV5E3oOgOrD+Dim+1TRdvxqpK6uFI/OeVdbVqx5Wg67cMFRPW1c0PgdmUFPyWIHXoi3RDni+9MNOnUVnzWWmmanT+h/s=
+	t=1729503530; cv=none; b=OZKUFell6k9Dk5y4KArGapKGF4fr+oUUS9phx5LQgxVG6hxiZrUckzjaNq62GRWNQ4AE3A9I+DsvykGMYN+kURHdh8qnFYTMXkgESFqGYIjuvoLYnnTHpb3BXsgfTTjYydQNPJ66PH3SH/XbDWbZ/nlBly4we3W0j0/zhKul7Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503484; c=relaxed/simple;
-	bh=PEW3DFyuQciELtV+7Gvo/3gVm39aoucp79oCe+Jyz9Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FMGI1WZPZlD3uyKwy4jHwJ65J4jPq1VMRPNvZ8gyepoJm7dwyfxduPwxdTBMUSCSS8J33NG4Gnc/SZqWISpLKStPGxY65I78eRxlAULfrOYhoA1mCHBs98noIg9Pfz5QduL0ml3zjK342zF0J1Z08uwFe040S4kNBQyJ4CTpYIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XX9Cz06ftz6GBTY;
-	Mon, 21 Oct 2024 17:35:59 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 507A31409EA;
-	Mon, 21 Oct 2024 17:37:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 21 Oct
- 2024 11:37:54 +0200
-Date: Mon, 21 Oct 2024 10:37:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 22/28] cxl/region/extent: Expose region extent
- information in sysfs
-Message-ID: <20241021103752.00002741@Huawei.com>
-In-Reply-To: <6712a846dad09_2cee2945a@iweiny-mobl.notmuch>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-22-c261ee6eeded@intel.com>
-	<20241010160142.00005a5c@Huawei.com>
-	<6712a846dad09_2cee2945a@iweiny-mobl.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729503530; c=relaxed/simple;
+	bh=NhBL1wZH7ZwZciKbpoNjPbtqWf7fDFxHOe8r+ilIxpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KoDgQwLRcRpN2bVZpeZrE9bml+kQAMpOf/j8mYCyCsQhb/miMOF3uiivL1ZizUE6IxRw0rgYn1ZGEeTTxXUnaaZYsUpmF168+rczYCiTt5t4/mEbeSY3uuevKuX3kgsX3YZGPp1b/3C1LXTnUo/0X+ec6q+TN7ww+ru1WCTmTBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qshzu1NG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L8VwJd014493
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:38:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gn+gkmOeUyjRBUooDRR+2My5sXvmwkHI88BMxZAlKmE=; b=Qshzu1NGPFV8rsTh
+	txIOPB3GFuckqrBScsLkjnrIuuT7jhuJiOz6yvjMOpWyZRN5rKHEvIet1nKtgOxZ
+	xRjTgCApXxaGFy5Uspt38X1yhYRPKGdbw5DykooS4TvsXhfT5crN/yTF1rG8WthK
+	o/PWB8BUzZUpcpjGci3nE1zaFet6EfRwlt64/kco889eZ/zeYDjKA6vcoaKwJHih
+	PbX/R/39BknU39Mxqa1Wu09I1z48fwrNB7LCoTlsfEQ2ambgf+1dyAepy5wDpAgm
+	vBTMHBogS3iqAZuJ35s4zfihjB5vgQMoXKc4cOqb9wNNTfkfpVBpyZIP2p2mRejF
+	4cI7Dw==
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkhd0937-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:38:46 +0000 (GMT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ab67710b5so43736839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:38:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729503526; x=1730108326;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gn+gkmOeUyjRBUooDRR+2My5sXvmwkHI88BMxZAlKmE=;
+        b=ScpeDzMuelnvPoj9E44j8Wt36NgWrQOlFMFAEcAo16UVTJt769kMcdZnXfLwI6h2HN
+         NjKZfLIxoFZ3SOqi/GdEidKI2UfOtjGrafsjtLlqgFdyoeQuQNhsNsFRTBPqqJHLKDxD
+         LWoYgVIf0fjm4PRLsiOqRZGZzPnvDoGH4OZX7sT2aRyeKGdlieKGcqJSG48L/ytUaUPT
+         a/BBw5BGXr7xZPw88ELgrv4VxlxMcNQ4bD6zKFkFmuQXy2AFetWqVFJP1LcbYsOPJY/U
+         xw0XSaJpafQvag0juxj60QEZmrxNo5fSj9Y55AyC5mSioVIJGU/c5qYorHBXL8/4qbqg
+         XSmg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1k7Yv2HHApBEW00pR9NdhMuqGuu2GoSgpLzRdDujH/s7XfLFei/wcU+b2ne0O4C55/90H1G22h7YkWV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4caZQETjwAga+6VC5iYs7trM9j+MQkZi0wjQpdyI+YCpfleBF
+	tvD2st3IDYWpJ4Hu/qypzvP5y8B4vWRuK54VCfJ7k1E8KMxLkPR/4bpTT2weLwnHEkqtn+K9eM2
+	v1DS875pL8ICWagFa1eioL+3CWorxT6SAr+w6ROIeY4gHxHQOuAcDrWpbqWkk3xk=
+X-Received: by 2002:a05:6e02:b2f:b0:3a2:6cd7:3255 with SMTP id e9e14a558f8ab-3a3f40b41afmr29448915ab.6.1729503526132;
+        Mon, 21 Oct 2024 02:38:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/wHHBGM3zQyx0/OSXW35rXmYHrOpG+GrEQovUlYPyc88a/4376jQdZSvI4nY76nZm9i7w0w==
+X-Received: by 2002:a05:6e02:b2f:b0:3a2:6cd7:3255 with SMTP id e9e14a558f8ab-3a3f40b41afmr29448885ab.6.1729503525721;
+        Mon, 21 Oct 2024 02:38:45 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6225sm185228266b.11.2024.10.21.02.38.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 02:38:44 -0700 (PDT)
+Message-ID: <1543ae2a-76ff-4b36-adae-37076e48b7f8@oss.qualcomm.com>
+Date: Mon, 21 Oct 2024 11:38:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] drm/msm/adreno: Add support for ACD
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Proofpoint-ORIG-GUID: BYILm7P2guZnCx6-_wagUdzXlfDlwI6N
+X-Proofpoint-GUID: BYILm7P2guZnCx6-_wagUdzXlfDlwI6N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ mlxscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=920
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410210069
 
-On Fri, 18 Oct 2024 13:26:14 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On 11.10.2024 10:29 PM, Akhil P Oommen wrote:
+> ACD a.k.a Adaptive Clock Distribution is a feature which helps to reduce
+> the power consumption. In some chipsets, it is also a requirement to
+> support higher GPU frequencies. This patch adds support for GPU ACD by
+> sending necessary data to GMU and AOSS. The feature support for the
+> chipset is detected based on devicetree data.
+> 
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
 
-> Jonathan Cameron wrote:
-> > On Mon, 07 Oct 2024 18:16:28 -0500
-> > ira.weiny@intel.com wrote:
-> >   
-> > > From: Navneet Singh <navneet.singh@intel.com>
-> > > 
-> > > Extent information can be helpful to the user to coordinate memory usage
-> > > with the external orchestrator and FM.
-> > > 
-> > > Expose the details of region extents by creating the following
-> > > sysfs entries.
-> > > 
-> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y
-> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
-> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/length
-> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/tag
-> > > 
-> > > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> > > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > >   
-> > Trivial comments inline.
-> > 
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> 
-> Thanks!
-> 
-> >   
-> > > ---
-> > > Changes:
-> > > [djiang: Split sysfs docs up]
-> > > [iweiny: Adjust sysfs docs dates]
-> > > ---
-> > >  Documentation/ABI/testing/sysfs-bus-cxl | 32 ++++++++++++++++++
-> > >  drivers/cxl/core/extent.c               | 58 +++++++++++++++++++++++++++++++++
-> > >  2 files changed, 90 insertions(+)
-> > > 
-> > > diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> > > index b63ab622515f..64918180a3c9 100644
-> > > --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> > > +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> > > @@ -632,3 +632,35 @@ Description:
-> > >  		See Documentation/ABI/stable/sysfs-devices-node. access0 provides
-> > >  		the number to the closest initiator and access1 provides the
-> > >  		number to the closest CPU.
-> > > +
-> > > +What:		/sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
-> > > +Date:		December, 2024
-> > > +KernelVersion:	v6.13
-> > > +Contact:	linux-cxl@vger.kernel.org
-> > > +Description:
-> > > +		(RO) [For Dynamic Capacity regions only] Users can use the
-> > > +		extent information to create DAX devices on specific extents.
-> > > +		This is done by creating and destroying DAX devices in specific
-> > > +		sequences and looking at the mappings created.   
-> > 
-> > Similar to earlier patch, maybe put this doc for the directory, then
-> > have much less duplication?
-> >   
-> 
-> But none of the other directories are done this way so I'm inclined to keep it.
+[...]
 
-Fair enough. Maybe a topic for a future cleanup to reduce duplication.
+> +
+> +	/* Initialize qmp node to talk to AOSS */
+> +	gmu->qmp = qmp_get(gmu->dev);
+> +	if (IS_ERR(gmu->qmp)) {
+> +		cmd->enable_by_level = 0;
+> +		return dev_err_probe(gmu->dev, PTR_ERR(gmu->qmp), "Failed to initialize qmp\n");
+> +	}
 
-> 
-> >   
-> > > Extent offset
-> > > +		within the region.
-> > > +
-> > > +What:		/sys/bus/cxl/devices/dax_regionX/extentX.Y/length
-> > > +Date:		December, 2024
-> > > +KernelVersion:	v6.13
-> > > +Contact:	linux-cxl@vger.kernel.org
-> > > +Description:
-> > > +		(RO) [For Dynamic Capacity regions only] Users can use the
-> > > +		extent information to create DAX devices on specific extents.
-> > > +		This is done by creating and destroying DAX devices in specific
-> > > +		sequences and looking at the mappings created.  Extent length
-> > > +		within the region.
-> > > +
-> > > +What:		/sys/bus/cxl/devices/dax_regionX/extentX.Y/tag
-> > > +Date:		December, 2024
-> > > +KernelVersion:	v6.13
-> > > +Contact:	linux-cxl@vger.kernel.org
-> > > +Description:
-> > > +		(RO) [For Dynamic Capacity regions only] Users can use the
-> > > +		extent information to create DAX devices on specific extents.
-> > > +		This is done by creating and destroying DAX devices in specific
-> > > +		sequences and looking at the mappings created.  Extent tag.  
-> > 
-> > Maybe say we are treating it as a UUID?  
-> 
-> ok...  How about?
-> 
-> <quote>
-> ...  looking at the mappings created.  UUID extent tag.
-That's fine.
+I'm still in favor of keeping qmp_get where it currently is, so that
+probe can fail/defer faster
 
-> </quote>
-> 
-> > > diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
-> > > index 69a7614ba6a9..a1eb6e8e4f1a 100644
-> > > --- a/drivers/cxl/core/extent.c
-> > > +++ b/drivers/cxl/core/extent.c
-> > > @@ -6,6 +6,63 @@  
-> >   
-> > > +static struct attribute *region_extent_attrs[] = {
-> > > +	&dev_attr_offset.attr,
-> > > +	&dev_attr_length.attr,
-> > > +	&dev_attr_tag.attr,
-> > > +	NULL,  
-> > No need for trailing comma (one of my 'favourite' review comments :)  
-> 
-> I'm noticing...  :-D
-Maybe I'll one day add to checkpatch.  If it weren't written in perl
-I'd do it now ;)
-
-Jonathan
-
-> 
-> Ira
-> 
-
+Konrad
 
