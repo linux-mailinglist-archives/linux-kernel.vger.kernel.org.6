@@ -1,198 +1,174 @@
-Return-Path: <linux-kernel+bounces-374158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139CB9A65BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:02:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6116C9A65BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833021F23466
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E500C1F23A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A65B1E47A6;
-	Mon, 21 Oct 2024 11:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942161E1C19;
+	Mon, 21 Oct 2024 11:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0zY4SADx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pGLFkVZO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r+K3Yuud";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IsJP6oUJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQ7iSXQO"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB9B433A8;
-	Mon, 21 Oct 2024 11:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E313A1CD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508514; cv=none; b=UirBtaXiFcX1ws0hDz19d4ikb9PCg8SiGxEtUxrV+ZpIZet7A6yL6wglZ/r4BUsNGiTH1OeRrU/4HVScVqGcwIkdyhkpSYfQBPPcwWjQ5Idna79vMrVfLvUte//Z2WrPR+yM1R3FYtQ9NA0cHrADfnHyqbUALZNTIJGUcFQ4Cok=
+	t=1729508526; cv=none; b=H3g1OqqFoOcBTpFA3FQT9QsiUlioA3gxW2RC/CvexwECFwbe+UmC8RXkzXVZl5Tfnn3Y6GJq5Jt0vF5vTeip0oQaBjWsmtFrqyvjBopoJ9L2rHG9/tiy5OBPtUStPi/QHUUWRgxqTHvrHCeUlHSgjqqW6qv2m/lQhHUpEjlACAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508514; c=relaxed/simple;
-	bh=jorGozgVpW4u1CaRniCglpQMWBa1SRn8DmG0l5OqEqA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IIk1ry2pLNsb0B8mHXkG2We/xYAJKnwBhNZ6zi9UEoO39cVWgLQacMCB3hF/7xrU33qaktHG5WXLdgvMXktoVFOJqg/jf+X2MaWEAjnbCSjPGb/j0ltEzgmDD8QivceyYAnnjb9ZeoXAT1i5m8Cy4MD/wUfG2dYWhGZGiQ5uMkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0zY4SADx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pGLFkVZO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r+K3Yuud; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IsJP6oUJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 346D81FC0B;
-	Mon, 21 Oct 2024 11:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729508511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/uzAZqwrffz0GfZcbbFJAi1Cc8srHYcy5A6w/IXR620=;
-	b=0zY4SADxy8Xl2DRUgszXaCfSqWj6xnjnzF9DAqaAVfSWLO5EYVxYVUJx8hjqCu9RHrYbb1
-	0w7M5ccDUXdU4xbK0kBqffMaInGVFQY0Ez+h7+0Xn/b9KJuQZEJzhnEzzHyR8rhMf/wgUR
-	IVSdUz44ejRGNo/MH09pzIDsef0huYE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729508511;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/uzAZqwrffz0GfZcbbFJAi1Cc8srHYcy5A6w/IXR620=;
-	b=pGLFkVZOGNXKIQPKd+V8yRm6RRCPuvFkAs1n5vM/DXIoyEhyvIynLhEQJiQDabiUe/eRuK
-	zRhWD+9cf5iAbPCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729508509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/uzAZqwrffz0GfZcbbFJAi1Cc8srHYcy5A6w/IXR620=;
-	b=r+K3YuudzUMt4JgnchyCyrcuhbE18OcY5kvB2g9TiLZCdZBQxn/Gc+Ih2B5tIfLBFY2cTZ
-	Gi0OmMPYPcuHt4FUgEEv33cnYiHhh+J2DnKbwSjO7UTHtro88S9aRnSqW331+K+vcTBFei
-	QAkSOVP20DNgmymOqKgAFgfsrEUUA5c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729508509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/uzAZqwrffz0GfZcbbFJAi1Cc8srHYcy5A6w/IXR620=;
-	b=IsJP6oUJOuIp7I+7Ixaj+8Bh1Pqr3PG47+MQGKUqhJt0NynYDd9cuPLUD7hbq5tzBmoSNi
-	Ct4qTwbGF3e8v1Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 717AC13A8F;
-	Mon, 21 Oct 2024 11:01:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id o8pkGpw0FmcnFAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 21 Oct 2024 11:01:48 +0000
-Message-ID: <d7ed9074-449c-4f63-8d65-167a83b8b03b@suse.de>
-Date: Mon, 21 Oct 2024 13:01:48 +0200
+	s=arc-20240116; t=1729508526; c=relaxed/simple;
+	bh=7nNaav5rY0OVijNkjo4ryxicbGYxAKgnlEw2GCf+yrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nBTlsay/PrQI/WdvWy0mcfhYYrZ1t7dkAweGpuaSkTxCNO6kl3sDFuOeOXz1XG4dGDvK6D74az97FnQHeiaXO6M15r3EK5vZ58IvpPrRe5IDqzK+mootSzHmyLT1xT7gn9HQSB/PmEXhHj2AwdpY9PrEuchKfKZKh/DSE7M1km0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQ7iSXQO; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e6044f9561so1281125b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729508524; x=1730113324; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3KEnxCRvJxHLUHwDo6LAN7RNla4DoUTlDGrHx8mrkYs=;
+        b=eQ7iSXQOiSDfC5h/SoIBPNXmVEi+L+ao8bjcbj2XF6znyJItbpgJ3YwdH6Tnem6JPg
+         0gF58vFebF+4ltsceyv+E2kpdSIbVAJ99E5K74+7hkJcCkpEn5PB3ltwZkhchbFUqWt2
+         poVduhezCl4r1G4rQs7En8w/WMy/7yrEEudAwmdbF/HNq0E7XQ9e25uk1paJrr4C/7uQ
+         sw4V9H8Ry+acArStWFmuYOD1+XUdevH0MOM8Bb9eRvgMBlDiuqC6MGtflo+AGeNVOWdW
+         TPqInCf2umkgP/LOekVaRwqzWEbc7waikWkVREYEmRq1CJHACFkFxaRX3rdUPfS5lnm6
+         oyHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729508524; x=1730113324;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3KEnxCRvJxHLUHwDo6LAN7RNla4DoUTlDGrHx8mrkYs=;
+        b=DSwWiQ0bbrjcvQNwLPQhAv7sbZ+7HnohfAG2vcUQdfyR3ai8GP8NYw4GHZpAGoUBMC
+         jV/wz4Ddgji1DoGoEZu8ZwriLbdl4l8g8uRC99ypexLVd4Ov1SzrhVJwyhcLddy0noR8
+         E4QT5jzm207Np6O8aD+SS83AE27mAdH7K7Gb1Cqkgbzb4DDe1JFKjGSqAWEhzTve+nbN
+         PfLXpgcvXw6Nv5Qjlc9Clu5sCAQacQrxLjm1j1+bZ6MrNp9AgmhbH0b/Ge/wVmBIwmxZ
+         U44TQ1759WALhzUENrz0ZUANHSjY8rbNkpKTOoIwKNplkBYWMSh/4mYFYUoR0Ou2eKKv
+         m6Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXontWTKs3fzw2cMiyQZaYpSzOzFmZeZMZgKf8413HxWSMlxb+lH0IwvNvPpi1bOaQkVGd3crUAPZIHHD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEpDQebeQP80sjhDUbZ+GfNK+YJ5g6wCMjYhD1k1wdxfp1uWcr
+	i73+CD9zFDJWRSq6tJafARrdpeKVh1U97Xvh7nhaEQTfHQBZW5krlDZRG/zJ/Vdd3zTqPKR5IdX
+	+DjTQk6JuESpkgRdKP+uUK9glF81M/OyKH+Lmtw==
+X-Google-Smtp-Source: AGHT+IHvdIXPDe2YEV1+7SFaHz0hdIX8uJm2BxidzbXIrl1aadRtmsEbTSvHB1GJZ9NGNT34ilz+0JXG84igEBttV/4=
+X-Received: by 2002:a05:6808:1284:b0:3e6:147d:f13 with SMTP id
+ 5614622812f47-3e6147d0fdcmr1647722b6e.5.1729508523794; Mon, 21 Oct 2024
+ 04:02:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/5] drm: handle HAS_IOPORT dependencies
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Arnd Bergmann <arnd@arndb.de>, Niklas Schnelle <schnelle@linux.ibm.com>,
- Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Dave Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>
-References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com>
- <20241008-b4-has_ioport-v8-3-793e68aeadda@linux.ibm.com>
- <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
- <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
- <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
-Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	FREEMAIL_TO(0.00)[arndb.de,linux.ibm.com,quicinc.com,holtmann.org,gmail.com,linux.intel.com,kernel.org,ffwll.ch,redhat.com,intel.com,linuxfoundation.org,orcam.me.uk];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLykjg6e7ifkwtw7jmpw7b9yio)];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241002201555.3332138-1-peter.griffin@linaro.org>
+ <20241002201555.3332138-2-peter.griffin@linaro.org> <ZwN/d8l7Mk6x2GHP@vaman>
+ <CADrjBPrRrwEyg0p+6kfVoZGbPdvW6K3fa9paUoLyg_bHHScgHg@mail.gmail.com> <ZxED5/HdlBLWqesE@vaman>
+In-Reply-To: <ZxED5/HdlBLWqesE@vaman>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 21 Oct 2024 12:01:52 +0100
+Message-ID: <CADrjBPpyTz6ytYXRkTSYGxhBCTkKjMPmopXyrvbPOQg1OiBcFA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] phy: Add UFS phy hibernate modes
+To: Vinod Koul <vkoul@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Bart Van Assche <bvanassche@acm.org>, Avri Altman <avri.altman@wdc.com>, quic_stummala@quicinc.com
+Cc: kishon@kernel.org, krzysztof.kozlowski@linaro.org, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, kernel-team@android.com, 
+	willmcvicker@google.com, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Vinod,
 
+Thanks for your feedback!
+
+On Thu, 17 Oct 2024 at 13:32, Vinod Koul <vkoul@kernel.org> wrote:
 >
-> I'd review a separate series for such a change.
+> On 08-10-24, 11:30, Peter Griffin wrote:
+>
+> > > > +     PHY_MODE_DP,
+> > > > +     PHY_MODE_UFS_HIBERN8_ENTER,
+> > > > +     PHY_MODE_UFS_HIBERN8_EXIT,
+> > >
+> > > I am not sure I like this. why should this be the model? Phy drivers
+> > > should listen to pm events and handle this in pm_suspend/resume calls,
+> > > why do we need this special mode here...
+> >
+> > There are a couple of reasons I added it here:
+> >
+> > 1) Whilst link hibern8 mode can be used as part of runtime PM and
+> > system PM, it is also used outside of those contexts by ufshcd.c. The
+> > host controller can enable UFSHCD_CAP_HIBERN8_WITH_CLK_GATING (which
+> > will be the case for gs101 / Pixel 6) and the UFS clocks are gated and
+> > link put into hibern8 mode for periods of inactivity. When that
+> > happens the rest of the system isn't entering any sort of sleep state.
+> >
+> > 2) From looking at the existing code upstream ufs-qcom.c and
+> > phy-qcom-qmp-ufs.c look to have similar requirements in that it needs
+> > to program a set of specific register values depending on the UFS
+> > gear. To achieve that they added PHY_MODE_UFS_HS_B and
+> > PHY_MODE_UFS_HS_A modes here and then use phy_set_mode_ext() API in
+> > ufs_qcom_power_up_sequence() to signal to the phy driver the UFS gear,
+> > which is then used to choose which set of values to program to the
+> > phy.
+> >
+> > The two new UFS phy modes added here for hibern8 are for a very
+> > similar purpose (to choose a bunch of register values to program), so
+> > I considered it consistent with what was already being done upstream
+> > to signal between UFS host drivers and UFS phy drivers. Arguably I
+> > guess we could have one "mode" PHY_MODE_UFS_HIBERN8 and use the
+> > submode parameter to indicate whether we are entering (1) or exiting
+> > (0) from it. I wasn't really sure what the rules/guidelines for the
+> > submode parameter were though.
+>
+> Yes but not exactly. The HIBERN8_ENTER|EXIT sound like PM events rather
+> than a PHY mode. If this is resultant from inactivity, then we should
+> hook this up to runtime pm ?
 
-Could also be a single patch here, of course.
+As I mentioned above HIBERN8 is implemented and runs independently of
+runtime pm in the upstream UFS stack. To be clear that isn't a
+ufs-exynos thing, but rather the core ufs stack in
+drivers/ufs/core/ufshcd.c.
 
+I've added Bart, Alim, Avri to this thread, as they are listed as
+reviewers of the core ufshcd file and also Sahitya who originally
+introduced this UFSHCD_CAP_HIBERN8_WITH_CLK_GATING functionality.
+Hopefully they can provide more details as to why hibern8 has been
+implemented like this outside of runtime pm. The original commit where
+this was introduced is
 
+commit 1ab27c9cf8b63dd8dec9e17b5c17721c7f3b6cc7
+Author: Sahitya Tummala <quic_stummala@quicinc.com>
+Date:   Thu Sep 25 15:32:32 2014 +0300
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+    ufs: Add support for clock gating
 
+which mentions in the description that the timeout is typically less
+than the runtime suspend timeout.
+
+I think the main difference here versus other SoC UFS controllers and
+UFS phys is that the others don't appear to need any additional phy
+register writes when entering/leaving hibern8, which the ufs-exynos
+phy does. It looks like all the hibern8 callbacks upstream in the core
+UFS stack were added by Samsung for ufs-exynos. In downstream they
+don't split the ufs controller and ufs phy parts into separate
+drivers, it is all done from the controller glue driver so it isn't an
+issue.
+
+With regards to whether it is a "mode" or not, HIBERN8 is a M-Phy
+power state, but then PHY_MODE_UFS_HS_A and  PHY_MODE_UFS_HS_B are
+also m-phy power states (HS_BURST with rate A or HS_BURST with rate b)
+so it seemed in keeping with what you are already doing here.
+
+regards,
+
+Peter.
 
