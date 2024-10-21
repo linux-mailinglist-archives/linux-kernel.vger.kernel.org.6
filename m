@@ -1,77 +1,115 @@
-Return-Path: <linux-kernel+bounces-374806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EDB9A7066
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD0B9A7067
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFAD1F21B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B326CB21FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4391EABB2;
-	Mon, 21 Oct 2024 17:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983871EF093;
+	Mon, 21 Oct 2024 17:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uc5T0c5o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="kA3gMl4h";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MTLizXYG"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B4F1C330C;
-	Mon, 21 Oct 2024 17:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63151C330C;
+	Mon, 21 Oct 2024 17:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530090; cv=none; b=U0CJgLAsgoEDABlZqhvpkrCq+Kj301vFQLiXuGdcFiQXs3eEfxuCRN8Om8oWd/EMJNAqJYv6S7kld2ayzga4T5DLwHqNWWGe0JSBoIHgEG7B33pW7e88CMGgKP8m2SOoWCfMpzcH/G6h6D2misaDlViGx24py65SBqavlboFBTg=
+	t=1729530100; cv=none; b=umxL/qsppxN59ayZd0akUNRkCTjTW69Whaw/n3OOJ65zf/o25llR5J2FCAY3LnuVfJv6o/6dHIq5XEjel7LbujY19dZcJgSImZFufkws0tkYTebtp8thMZ4miBsUBClX/ziw7iGjhYKITTtY/kHjFHpEorsiApS2SwlULeynCws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530090; c=relaxed/simple;
-	bh=ykBAlA5lF/Xip95YGx6pvzf/iefPqGDL1Qm98SfmVio=;
+	s=arc-20240116; t=1729530100; c=relaxed/simple;
+	bh=EdrW4QyQlhTewuPVfOLFcxOIGlObb6XfUuBmUv9yjPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pfk9t8GKcdFyJpxHHzmxE/jaCDNFA6Izspzmf61YEKtUnNVJiBt3pWFwBWU/ZuCth/oaRyVJT9K1aDhuBhSnVSX9NWTnVFll6m8yCcKndunZaKwhx0jmy5OV59HVd0eHxIpoakqXVXOzUfQrHOC0y9q9tdWjKwH0K8wCuBthJwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uc5T0c5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF69C4CEC3;
-	Mon, 21 Oct 2024 17:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729530090;
-	bh=ykBAlA5lF/Xip95YGx6pvzf/iefPqGDL1Qm98SfmVio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uc5T0c5oIDl+NEZXEJV+MK8MYSXdzj965ZqjZbtRyjuOzq/QXX5tN0UDajUsCH5tx
-	 5+PL13v0aHtQC1cJ/zpC4pTYZIg8kdti50Uv1XUSC5G5Ubt+cKUeVB9i/xVzO6IX90
-	 8zBNoYPovc4LbFTKzsEZNk+S0DIkaPqGAe62SS7pS5dlhPHoh6lGWLM78/RsYNsSh0
-	 nTsnAbjMZAPIbgzd7fY/Tfi/jlfdFbc+pggQFVra+ZFWiTsn+95KNUkGeILuh7GoP0
-	 p4sd3gxB0Y4AidJUzGmzVXNwOxUYSXtdLly3TTWO3fFyhrDPVngYBPTe5hbIAApTo3
-	 SnEOZkeZ3/DHg==
-Date: Mon, 21 Oct 2024 18:01:21 +0100
-From: Will Deacon <will@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>,
-	linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v17 07/16] tracing: Add ftrace_fill_perf_regs() for perf
- event
-Message-ID: <20241021170121.GA26122@willie-the-truck>
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
- <172904035199.36809.9900108557809424653.stgit@devnote2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=spNbk9bKoraGFDyH3wf48fAyl6xtulL/5kZZ0eicXraU74FTkzxTjOyY/THK2d4jUwYYNZSjlDobUn/NKJ2+1/J9PnAwpywnw2vzTWXwT/O15+e3HORcj5soLGClfV/LEuFE5kKO8jDaWoqnwYnk424l4kH7BqAIubOA89RbKGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=kA3gMl4h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MTLizXYG; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 92B6E25400DF;
+	Mon, 21 Oct 2024 13:01:37 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Mon, 21 Oct 2024 13:01:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1729530097; x=1729616497; bh=0Cp/HfzuQ/
+	MdndVSy8g4lWxf16i11f2fUzT7z2EWKY0=; b=kA3gMl4hNlwQUJBN0El7vPwZmb
+	tHNQEyh8XFScbu4/dKOAZKsJ/znUd5g9YaXVDJ08hZVXzUGeOEVhSgvVvPculIvZ
+	9Hob6qPNMq2H50lkS6IukZQ/Yp7kOZGJKkQKl8d0b+yhfFeFkS/zXfVZst/jftLW
+	aAwlJd0LaXSA4xAYv3KZiMmo4SM+8FZ7/cfEiawfR4Yn//PWYki31yGhF2LvxNmQ
+	JwFCImqTX5sXW7MOQnggjH6fKf6v0A+R83Qt38yFyUwI7ai2StkrpZjOiFixDih2
+	fFfFt5k7OJKx9D3L+zDMIfiJcFhTQwWzX8d6hgPZzqj0cDZNKAOx4KfbPmdA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729530097; x=1729616497; bh=0Cp/HfzuQ/MdndVSy8g4lWxf16i1
+	1f2fUzT7z2EWKY0=; b=MTLizXYGUWuhuuU/jMFO7jL8+HFW3oNzCoLcTiFeeQIu
+	0PszXAa2/JI8o+npKACIgFtw2ErBC8xFGVO4qpBouQGZdXZv8aFfPpDqlcqza0kp
+	0NZPm4ey035NyASqfy6irrhn10R25ABcd94JGPdIlSMHsuGU8IKRR0ow6Id7ZCoJ
+	D/Zm4L6SfLPwVsMABITYKYXGQazU4z6dEK+SAG/wHpDPI8m7sttTLM6M9ZPp/nkt
+	T59c7TaZus8kwn61EUQpVVSmC2h2E99vYH40+i8C4wBZTYJERvnk2+eVtZ/Ey28A
+	GhdYGNKX3AdEkGHOweFCZPnCHHqULOCRar6pujWLRA==
+X-ME-Sender: <xms:8YgWZxi6EBu8QHK7JK8e0L8DEENnALhA4lYvrOOEtAxn8oJCtP7I7A>
+    <xme:8YgWZ2DoZjNXWfX-BTZklWzria2DPobpI8PeIVYVQeRpVoYXFgQybjb6AKmrAd5AF
+    T-rZlpgmx3q0biNagY>
+X-ME-Received: <xmr:8YgWZxGJd8d48xSgawyFbcjW6UykXpduMiaYrwmwyn1loG0s6sNV8godW5BTmwsCcGTRP0C5U3NEEmgsIlN7NJYc0Hwz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledguddtkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenfghrlhcuvffnffculdeftddmnecujfgurhepfffhvfevuffk
+    fhggtggujgesthdtredttddtvdenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepudekgeff
+    tdefiefhheetvedvieeuteetlefgfedvhfelueefgeeiudeiudfhkeeinecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgr
+    rhhrrdgttgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmoh
+    hrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumhesthhosghluhigrdgtohhmpd
+    hrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgt
+    phhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtg
+    hpthhtoheplhhinhhugidqsggtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:8YgWZ2QOmrGfUKvIGQOhXPzkCkUkA5WQZWwAtqxnP5vfdWY7Ua79Ug>
+    <xmx:8YgWZ-y8-T8y4LGPB-fX5aS-l_a45_qUu7cG23eHMVk9M5z33qQRiA>
+    <xmx:8YgWZ84UiO9Dmon_rS2AhGrMK7fkPNOQma_aXQ05akDKqwyof0drEg>
+    <xmx:8YgWZzyBJ4Te7--8i8aHmuovxDme4klsNLJsQFiXndKRPAkZG_Nm_A>
+    <xmx:8YgWZ5pI5pLNLilpi0V_sU7_PJFarjt7RUm_rtTKX8VicfY4LkxckR7T>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 13:01:35 -0400 (EDT)
+Date: Mon, 21 Oct 2024 19:01:32 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, ojeda@kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <ZxaI7EcpK3HIm0by@archlinux>
+References: <202410031424.45E5D19@keescook>
+ <Zv8RIs-htdc-PtXB@archlinux>
+ <202410040958.C19D3B9E48@keescook>
+ <ZwNb-_UPL9BPSg9N@archlinux>
+ <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+ <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+ <ZxB-uh1KzfD4ww2a@archlinux>
+ <20241017165522.GA370674@thelio-3990X>
+ <ZxWvcAPHPaRxp9UE@archlinux>
+ <CANiq72=yYDcG=ef9TxCCECwjSgW-5zFoTJqcjrWGOALCvaW0SA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,68 +118,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <172904035199.36809.9900108557809424653.stgit@devnote2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANiq72=yYDcG=ef9TxCCECwjSgW-5zFoTJqcjrWGOALCvaW0SA@mail.gmail.com>
 
-On Wed, Oct 16, 2024 at 09:59:12AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 21 08:04:03, Miguel Ojeda wrote:
+> > Also after gcc 15 is released I don't think a version check for gcc
+> > should be necessary. I only see an explicit version check as required
+> > when we know a certain version is broken. Otherwise I would prefer using
+> > the build test.
 > 
-> Add ftrace_fill_perf_regs() which should be compatible with the
-> perf_fetch_caller_regs(). In other words, the pt_regs returned from the
-> ftrace_fill_perf_regs() must satisfy 'user_mode(regs) == false' and can be
-> used for stack tracing.
+> Yeah, build tests are nice, although they require spawning a process
+> and so on, which (as far as I understand) we try to minimize. Version
+> checks also have the advantage that it is easy to remember/check when
+> we can remove the checks themselves when we upgrade the minimum
+> versions.
 > 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Naveen N Rao <naveen@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> 
-> ---
->   Changes in v16:
->    - Fix s390 to clear psw.mask according to Heiko's suggestion.
-> ---
->  arch/arm64/include/asm/ftrace.h   |    7 +++++++
->  arch/powerpc/include/asm/ftrace.h |    7 +++++++
->  arch/s390/include/asm/ftrace.h    |    6 ++++++
->  arch/x86/include/asm/ftrace.h     |    7 +++++++
->  include/linux/ftrace.h            |   31 +++++++++++++++++++++++++++++++
->  5 files changed, 58 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-> index d344c69eb01e..6493a575664f 100644
-> --- a/arch/arm64/include/asm/ftrace.h
-> +++ b/arch/arm64/include/asm/ftrace.h
-> @@ -146,6 +146,13 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
->  	return regs;
->  }
->  
-> +#define arch_ftrace_fill_perf_regs(fregs, _regs) do {		\
-> +		(_regs)->pc = arch_ftrace_regs(fregs)->pc;			\
-> +		(_regs)->regs[29] = arch_ftrace_regs(fregs)->fp;		\
-> +		(_regs)->sp = arch_ftrace_regs(fregs)->sp;			\
-> +		(_regs)->pstate = PSR_MODE_EL1h;		\
-> +	} while (0)
 
-arm64 bit looks correct to me:
+If the goal is to minimize the need for build tests, I think we should
+go with Nathan's suggestion of keeping the build test for now (to
+support pre-release gcc versions) and remove it and just go with
+versions checks for both gcc and clang once gcc 15 is released.
 
-Acked-by: Will Deacon <will@kernel.org>
+Best Regards
+Jan
 
-Will
 
