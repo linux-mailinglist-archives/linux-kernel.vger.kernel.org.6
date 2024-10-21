@@ -1,153 +1,192 @@
-Return-Path: <linux-kernel+bounces-374418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAC19A69E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1D29A69E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405ED1F2237F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CEEF1F21468
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8221F428F;
-	Mon, 21 Oct 2024 13:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000C61F429E;
+	Mon, 21 Oct 2024 13:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZBO6xGu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JZXV8mmZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D5E1E1C3B;
-	Mon, 21 Oct 2024 13:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4B31E0B96;
+	Mon, 21 Oct 2024 13:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516709; cv=none; b=TlTtBlqBuXCroza6yQz2eilb8yF0dnydh8Y7ppgzjDEYm5dbJnIb72DLIT1TCotpyVuCfvCfBNKoXEfNOe1jBOd8X3L0jxaGbe9IVdnH977F7UF92gCADDxsOQ8AR6LVR9NC/WWymEgtTHsApOMuwvMXnf/YzhP8IvjjHb+AwqQ=
+	t=1729516763; cv=none; b=NkLo48xN0OQbzrK7vzm3i+KNkS3VF95A9/3cTOlwBSoH6R6TO+LejT5TWZRXxSLA2xMNOLjKyo5mWfMb2oyGzbef6IJPwZha1IHkHWIOGADW1kxTqwIgvoSBDOuDRkXdvjk+cWa8FC5dfJ9olZkj2jiHOJDbZzRR5N33+XQUwJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516709; c=relaxed/simple;
-	bh=ai3fjlvIFrMIPL3yL7pIMzbZFTs1xDvVwbDDipH4J68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTHMr+7SE403DcSnpX5N0v0eGEJpWYoAliV0rP6rCOv4r61FJAh/YxXTm0LllTiGWYIHlrVMoMxBj7eBnpLkmPI+8+G0avn0NU8q1/7/R5+BdJgb5FhXDbDQS9ITsaGn2HhYyZaQG458Ye9uln++tKbfCC0cqjSEsDHSE4NtQhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZBO6xGu; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729516707; x=1761052707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ai3fjlvIFrMIPL3yL7pIMzbZFTs1xDvVwbDDipH4J68=;
-  b=PZBO6xGukSQi3v0cmdftCgaaz9vNTpj9McPixJwO8/ALhrndLpKeiQeW
-   AoFzcOUQagUNxaGys2MQxLhOJn+LjEdYTHFNYJHSXftcfeW+N1BYCb8YN
-   uM/4QAuf508nHqpZZC+U6Xb7jQ5m3Ice0x64jTh8IIkhhFlGDYZndl3k8
-   NoZvDblTDt+XgwVg6e1wtfNybZ9GHcVFH+Y2Yd5kL3BtVcpp2BMKZ83PN
-   X36KfobJRsfN+AqAaVerQ9RzJ7ZqZY/N4dUaozr+UnC7X5ucWrs0gbzhv
-   uz/uF9jRzK3o07qQLYkJ+6nCA7N9bNq/N4KuPVLnDctv3zfUwytz2TTzC
-   Q==;
-X-CSE-ConnectionGUID: xlgkevAtQ9SmTqczfi+z8A==
-X-CSE-MsgGUID: /PReO6RSTkelEXDIe1jDBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="40368885"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="40368885"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 06:18:26 -0700
-X-CSE-ConnectionGUID: OFEfAP9dREqogMk2yqwixw==
-X-CSE-MsgGUID: p5cuxn8xQfmY6lvCmFpe7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="79874134"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 21 Oct 2024 06:18:21 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2sIc-000SBG-36;
-	Mon, 21 Oct 2024 13:18:18 +0000
-Date: Mon, 21 Oct 2024 21:17:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v5 4/5] perf test: Add hwmon "PMU" test
-Message-ID: <202410212129.7qRTRilb-lkp@intel.com>
-References: <20241017063555.366065-5-irogers@google.com>
+	s=arc-20240116; t=1729516763; c=relaxed/simple;
+	bh=fN8/CgKj3jJU9zdFPli8qQkTQ7X5G/HUovnFn/qYabk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K8OgPX1wAds1xYN0sBjXP1fRAYVaIbwQ9finG8qZ39U1Z1Njc8IvWiO4ka8sNRj8AHZvuZrA28JjliDEvD4wLTaWa4pY6QAh/XkRbN/td5H4EBdNlJqA1I+r1A3j/91jOFQvD3L4eRFjonZTUojbTL5gQjjf0GSBAGH3lojk6SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JZXV8mmZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9fQvC000739;
+	Mon, 21 Oct 2024 13:19:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=8Pj7g62BnpTOi3u3ZuTsxArKua2YZFJAJxMs8s4ddoc=; b=JZ
+	XV8mmZbJphLECAEKanjJXIh/0wp9dZ+50zpUqP8Dk7iXdaioKmQhZ8clfEoGG5Ki
+	mMdmqTUwzFhfESHvmf5wa4y6QQCpQNar7MHuaHqDJ0lmyqWeAdtHUgy4dRrzUIjK
+	JpamJc0TA0uRIIkOAO/QUXR9URYHQj/fALxU45Gg5Yt822vYsqO2gd7p8pwSfqT/
+	L83KVVs3G9jsLQ4PHLWQJJcuxF4NwaGmwumpHnh64xBIgDylckYLi0Znn9DUFTaf
+	YWHJ48T/1oJnVP+bwSoRj8cBtF/5FBn2/ejXvpcon1pgzfw//FSqWJgscTKcEpRM
+	MBYsyfiTF2W+mIbilygg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmj10sg5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 13:19:17 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LDJGYO007636
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 13:19:16 GMT
+Received: from hu-faisalh-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 21 Oct 2024 06:19:14 -0700
+From: Faisal Hassan <quic_faisalh@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman
+	<mathias.nyman@intel.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Faisal Hassan
+	<quic_faisalh@quicinc.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] xhci: Fix Link TRB DMA in command ring stopped completion event
+Date: Mon, 21 Oct 2024 18:49:04 +0530
+Message-ID: <20241021131904.20678-1-quic_faisalh@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017063555.366065-5-irogers@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zgONXSfcHytGlMCGPm8K7vtHvR-Ya4c7
+X-Proofpoint-ORIG-GUID: zgONXSfcHytGlMCGPm8K7vtHvR-Ya4c7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 mlxlogscore=961 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210095
 
-Hi Ian,
+During the aborting of a command, the software receives a command
+completion event for the command ring stopped, with the TRB pointing
+to the next TRB after the aborted command.
 
-kernel test robot noticed the following build errors:
+If the command we abort is located just before the Link TRB in the
+command ring, then during the 'command ring stopped' completion event,
+the xHC gives the Link TRB in the event's cmd DMA, which causes a
+mismatch in handling command completion event.
 
-[auto build test ERROR on perf-tools-next/perf-tools-next]
-[also build test ERROR on next-20241021]
-[cannot apply to tip/perf/core perf-tools/perf-tools linus/master acme/perf/core v6.12-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+To handle this situation, an additional check has been added to ignore
+the mismatch error and continue the operation.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Rogers/tools-api-io-Ensure-line_len_out-is-always-initialized/20241017-143759
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
-patch link:    https://lore.kernel.org/r/20241017063555.366065-5-irogers%40google.com
-patch subject: [PATCH v5 4/5] perf test: Add hwmon "PMU" test
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241021/202410212129.7qRTRilb-lkp@intel.com/reproduce)
+Fixes: 7f84eef0dafb ("USB: xhci: No-op command queueing and irq handler.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
+---
+Changes in v2:
+- Removed traversing of TRBs with in_range() API.
+- Simplified the if condition check.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410212129.7qRTRilb-lkp@intel.com/
+v1 link:
+https://lore.kernel.org/all/20241018195953.12315-1-quic_faisalh@quicinc.com
 
-All errors (new ones prefixed by >>):
+ drivers/usb/host/xhci-ring.c | 43 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 38 insertions(+), 5 deletions(-)
 
-   Makefile.config:665: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR
-     PERF_VERSION = 6.12.rc3.g552cc7c00b6d
-   tests/hwmon_pmu.c: In function 'do_test':
->> tests/hwmon_pmu.c:149:17: error: implicit declaration of function 'strlcpy'; did you mean 'strncpy'? [-Werror=implicit-function-declaration]
-     149 |                 strlcpy(str, test_event, sizeof(str));
-         |                 ^~~~~~~
-         |                 strncpy
-   cc1: all warnings being treated as errors
-   make[7]: *** [tools/build/Makefile.build:105: tools/perf/tests/hwmon_pmu.o] Error 1
-   make[7]: *** Waiting for unfinished jobs....
-   make[6]: *** [tools/build/Makefile.build:158: tests] Error 2
-   make[5]: *** [Makefile.perf:777: tools/perf/perf-test-in.o] Error 2
-   make[5]: *** Waiting for unfinished jobs....
-   util/hwmon_pmu.c: In function 'parse_hwmon_filename':
-   util/hwmon_pmu.c:175:9: error: implicit declaration of function 'strlcpy'; did you mean 'strncpy'? [-Werror=implicit-function-declaration]
-     175 |         strlcpy(fn_type, filename, sizeof(fn_type));
-         |         ^~~~~~~
-         |         strncpy
-   cc1: all warnings being treated as errors
-   make[7]: *** [tools/build/Makefile.build:106: tools/perf/util/hwmon_pmu.o] Error 1
-   make[7]: *** Waiting for unfinished jobs....
-   make[6]: *** [tools/build/Makefile.build:158: util] Error 2
-   make[5]: *** [Makefile.perf:789: tools/perf/perf-util-in.o] Error 2
-   make[4]: *** [Makefile.perf:292: sub-make] Error 2
-   make[3]: *** [Makefile:76: all] Error 2
-
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index b2950c35c740..de375c9f08ca 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -126,6 +126,29 @@ static void inc_td_cnt(struct urb *urb)
+ 	urb_priv->num_tds_done++;
+ }
+ 
++/*
++ * Return true if the DMA is pointing to a Link TRB in the ring;
++ * otherwise, return false.
++ */
++static bool is_dma_link_trb(struct xhci_ring *ring, dma_addr_t dma)
++{
++	struct xhci_segment *seg;
++	union xhci_trb *trb;
++
++	seg = ring->first_seg;
++	do {
++		if (in_range(dma, seg->dma, TRB_SEGMENT_SIZE)) {
++			/* found the TRB, check if it's link */
++			trb = &seg->trbs[(dma - seg->dma) / sizeof(*trb)];
++			return trb_is_link(trb);
++		}
++
++		seg = seg->next;
++	} while (seg != ring->first_seg);
++
++	return false;
++}
++
+ static void trb_to_noop(union xhci_trb *trb, u32 noop_type)
+ {
+ 	if (trb_is_link(trb)) {
+@@ -1718,6 +1741,7 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 
+ 	trace_xhci_handle_command(xhci->cmd_ring, &cmd_trb->generic);
+ 
++	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
+ 	cmd_dequeue_dma = xhci_trb_virt_to_dma(xhci->cmd_ring->deq_seg,
+ 			cmd_trb);
+ 	/*
+@@ -1725,17 +1749,26 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 	 * command.
+ 	 */
+ 	if (!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) {
+-		xhci_warn(xhci,
+-			  "ERROR mismatched command completion event\n");
+-		return;
++		/*
++		 * For the 'command ring stopped' completion event, there
++		 * is a risk of a mismatch in dequeue pointers if we abort
++		 * the command just before the link TRB in the command ring.
++		 * In this scenario, the cmd_dma in the event would point
++		 * to a link TRB, while the software dequeue pointer circles
++		 * back to the start.
++		 */
++		if (!(cmd_comp_code == COMP_COMMAND_RING_STOPPED &&
++		      is_dma_link_trb(xhci->cmd_ring, cmd_dma))) {
++			xhci_warn(xhci,
++				  "ERROR mismatched command completion event\n");
++			return;
++		}
+ 	}
+ 
+ 	cmd = list_first_entry(&xhci->cmd_list, struct xhci_command, cmd_list);
+ 
+ 	cancel_delayed_work(&xhci->cmd_timer);
+ 
+-	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
+-
+ 	/* If CMD ring stopped we own the trbs between enqueue and dequeue */
+ 	if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
+ 		complete_all(&xhci->cmd_ring_stop_completion);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
 
