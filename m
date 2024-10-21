@@ -1,152 +1,125 @@
-Return-Path: <linux-kernel+bounces-374014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3C39A609E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B49F9A60A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CC21C216F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6501C21D68
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6CE1E32D9;
-	Mon, 21 Oct 2024 09:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5AB1E1C28;
+	Mon, 21 Oct 2024 09:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GNG6ZYxw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FCIdtY3u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CF11799F;
-	Mon, 21 Oct 2024 09:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA8C1E3DE5;
+	Mon, 21 Oct 2024 09:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504215; cv=none; b=oqSDEAryHfvXoVILlVqVz4JuNlLVn02sV2qArEEgltrwlZBHo+d8H/cA+A05nQElrwMb+UchYg9rT9/SEOM3IgJ2GlVQdwi3YGsq+FLhbhEtgr7BfpYQ4OqqenVByTudLO8ly3LZffecmcqXS6L9cOUhvOZ8/XcBVL0k/UrfM5o=
+	t=1729504219; cv=none; b=sqs/tVV69BZ1CHS1wFGslzE7U43JoaAtImdGsU1tA5OzToclD0bGY2INx1Wo9lG8kXsDXNdgoJLMUFhEWrHOhib8kvF3/ueyLe7/ko+0DSozIo4swOfuwUBnb+MaS3DTjHfs3bljdFbqZN08imrhBWHFZHe/ECCgSJVOj7AIVv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504215; c=relaxed/simple;
-	bh=U0oqEStiYZJ98uv4UxNz4a8ia9sskVGUaw9gfGhLCmU=;
+	s=arc-20240116; t=1729504219; c=relaxed/simple;
+	bh=ufZj5KJ8xe6+IodZV9ZmqRwQrB+3AGHdNlOA+5RhqFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nEAhjl+4ohjEmFAUlMyzKNiY09wpt5G5cNjLN+tHX6Pty/CuUM9ewTi8VLqVCJo1Dh0oO+ta45SZBQLnhjp75fb8JWVttw7nmwCbezh6E/T5lU555bDPFUTHsX7yIHxcNh8wr4T4KRccv52hoUfUHTN/AIakhbcQeggma2vcx+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GNG6ZYxw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2LNZc002383;
-	Mon, 21 Oct 2024 09:50:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=aqMGkICfk0oBk84AN6gBXNwwsoQple
-	6ymUOJwx62Jx0=; b=GNG6ZYxwB+3EzS5oBPLoJtHsamH2Gx7BQjbS6pG/ECLT87
-	EzEUohJLkGJUwZv/Zh5gXcXf2o8FwPiqtEJiGkIYK0HMQ+25BimNUlgzGVkGpmdd
-	POX7CrG+EBjZVOmz3g/b1F+f0gUUJJqLrx3q/5la+KftcuB+zDLZ7akkLsoZQaJF
-	AByl2Vs1SNXiQhimDuXEkVcYUG3Ry5eBmc8q5WPeM9NLHvhqLTZJuQFj9Jl4HGvG
-	xfd7bIZP1tM32DVBAo/vya4sMFEbbWPniHxFXp/vftg7zUO3hi5bSwo5Q2nOM8s8
-	ZJ/1h17W7nRFZiDWFOfFrilIEH6XTU//BthM4K0A==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hm8d82-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 09:50:12 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L7WAwb026443;
-	Mon, 21 Oct 2024 09:50:12 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42cq3s5ts1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 09:50:11 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49L9o7nm29557160
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Oct 2024 09:50:08 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E1D8C2004E;
-	Mon, 21 Oct 2024 09:50:07 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66A4E20040;
-	Mon, 21 Oct 2024 09:50:07 +0000 (GMT)
-Received: from osiris (unknown [9.171.37.192])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 21 Oct 2024 09:50:07 +0000 (GMT)
-Date: Mon, 21 Oct 2024 11:50:06 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 06/11] s390/kvm: Stop using gmap_{en,dis}able()
-Message-ID: <20241021095006.6950-B-hca@linux.ibm.com>
-References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
- <20241015164326.124987-7-imbrenda@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hffU8CqyGSLczN1/H1r1h7FJb+kxjHFBB5OvV+s2HwbGauNuT1m/bHMAZtc9wTf39htCIuOuuAleYzdg4V0R3ZjLMp2OOkee6G2KJRX1gvrZ+gLYFGcwFGTV9LFgRzDrYpwgmx+gO9JFiqcQ91PdHnhub4VVRW2pGOMs+2STBH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FCIdtY3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 422F8C4CEC3;
+	Mon, 21 Oct 2024 09:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729504218;
+	bh=ufZj5KJ8xe6+IodZV9ZmqRwQrB+3AGHdNlOA+5RhqFk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCIdtY3uwcc3JYZWK01pnISQaKH2uSVHEDhWh6puv/2TxktpfcKFzbWhJX659Q+lL
+	 Gc1FNz5tOUbWn0GWBEOdp9UJP4AU5/Prd4cNbtvnxCJYtLoTX2EJyzLp53nknXLTP5
+	 YNDIDkPc1KOGRB7dF9WD1+UDB35IbloqL4Z0ISmE=
+Date: Mon, 21 Oct 2024 11:50:16 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] lib: string_helpers: fix potential snprintf() output
+ truncation
+Message-ID: <2024102125-sneezing-strive-d5c1@gregkh>
+References: <20241021091417.37796-1-brgl@bgdev.pl>
+ <2024102113-shame-mooned-4f1b@gregkh>
+ <CAMRc=Mc0Qg9GkUsU-7QYPPQ-isZniABWYxtGLQ5KW1TAuZSA-A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015164326.124987-7-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 5e6sV7_4IxI48fu2PqjW3yDXMFtPJ6ro
-X-Proofpoint-GUID: 5e6sV7_4IxI48fu2PqjW3yDXMFtPJ6ro
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 mlxscore=0 adultscore=0 mlxlogscore=546 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210068
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc0Qg9GkUsU-7QYPPQ-isZniABWYxtGLQ5KW1TAuZSA-A@mail.gmail.com>
 
-On Tue, Oct 15, 2024 at 06:43:21PM +0200, Claudio Imbrenda wrote:
-> Stop using gmap_enable(), gmap_disable(), gmap_get_enabled().
+On Mon, Oct 21, 2024 at 11:36:32AM +0200, Bartosz Golaszewski wrote:
+> On Mon, Oct 21, 2024 at 11:34 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Oct 21, 2024 at 11:14:17AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > The output of ".%03u" with the unsigned int in range [0, 4294966295] may
+> > > get truncated if the target buffer is not 12 bytes.
+> > >
+> > > Fixes: 3c9f3681d0b4 ("[SCSI] lib: add generic helper to print sizes rounded to the correct SI range")
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  lib/string_helpers.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Hi,
+> >
+> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> > a patch that has triggered this response.  He used to manually respond
+> > to these common problems, but in order to save his sanity (he kept
+> > writing the same thing over and over, yet to different people), I was
+> > created.  Hopefully you will not take offence and will fix the problem
+> > in your patch and resubmit it so that it can be accepted into the Linux
+> > kernel tree.
+> >
+> > You are receiving this message because of the following common error(s)
+> > as indicated below:
+> >
+> > - You have marked a patch with a "Fixes:" tag for a commit that is in an
+> >   older released kernel, yet you do not have a cc: stable line in the
+> >   signed-off-by area at all, which means that the patch will not be
+> >   applied to any older kernel releases.  To properly fix this, please
+> >   follow the documented rules in the
+> >   Documentation/process/stable-kernel-rules.rst file for how to resolve
+> >   this.
+> >
+> > If you wish to discuss this problem further, or you have questions about
+> > how to resolve this issue, please feel free to respond to this email and
+> > Greg will reply once he has dug out from the pending patches received
+> > from other developers.
+> >
+> > thanks,
+> >
+> > greg k-h's patch email bot
 > 
-> The correct guest ASCE is passed as a parameter of sie64a(), there is
-> no need to save the current gmap in lowcore.
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Acked-by: Steffen Eiden <seiden@linux.ibm.com>
-> ---
->  arch/s390/kvm/kvm-s390.c | 7 +------
->  arch/s390/kvm/vsie.c     | 4 +---
->  2 files changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index cfe3f8182aa5..df778a4a011d 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -3719,7 +3719,6 @@ __u64 kvm_s390_get_cpu_timer(struct kvm_vcpu *vcpu)
->  void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->  {
->  
-> -	gmap_enable(vcpu->arch.enabled_gmap);
->  	kvm_s390_set_cpuflags(vcpu, CPUSTAT_RUNNING);
->  	if (vcpu->arch.cputm_enabled && !is_vcpu_idle(vcpu))
->  		__start_cpu_timer_accounting(vcpu);
-> @@ -3732,8 +3731,6 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
->  	if (vcpu->arch.cputm_enabled && !is_vcpu_idle(vcpu))
->  		__stop_cpu_timer_accounting(vcpu);
->  	kvm_s390_clear_cpuflags(vcpu, CPUSTAT_RUNNING);
-> -	vcpu->arch.enabled_gmap = gmap_get_enabled();
-> -	gmap_disable(vcpu->arch.enabled_gmap);
+> Did something change? I typically don't add Cc: stable@vger.kernel.org
+> to the fixes I send and this is the first time I'm getting this email.
 
-I guess you want to get rid of enabled_gmap as well, since it becomes
-unused with this patch:
+The bot doesn't catch everyone.
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 603b56bfccd3..51201b4ac93a 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -750,8 +750,6 @@ struct kvm_vcpu_arch {
- 	struct hrtimer    ckc_timer;
- 	struct kvm_s390_pgm_info pgm;
- 	struct gmap *gmap;
--	/* backup location for the currently enabled gmap when scheduled out */
--	struct gmap *enabled_gmap;
- 	struct kvm_guestdbg_info_arch guestdbg;
- 	unsigned long pfault_token;
- 	unsigned long pfault_select;
+> I can resend of course.
 
-Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
+If you want it added to the stable trees, you MUST put the proper tags
+in it.  Otherwise you are at the mercy of us sweeping the tree when we
+get bored to find patches where developers/maintainers didn't tag things
+properly :)
+
+thanks,
+
+greg k-h
 
