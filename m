@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-373966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2C79A5FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 707E09A5FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC681C21461
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:26:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A05E28263D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C731E32BC;
-	Mon, 21 Oct 2024 09:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7141E3DD9;
+	Mon, 21 Oct 2024 09:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nEtEdCJr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMAeYRHf"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D141E1C0F;
-	Mon, 21 Oct 2024 09:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DC11E32C6;
+	Mon, 21 Oct 2024 09:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502738; cv=none; b=XaBEFFYwVFtzAAplWpxhGOexbCuDfzea62PZN0x2nK6Pdd3or72zhaVV0TFtC+maxxbQT6G9mprtMyBt67z7WIUFwPAegNzMZ4L0+dFf2lMfsDy2Qo8MjDO5j8D4LXLmRhRQ5muI0d3gewsBzRsBLj7fiMXC9uNz+COj0V56mIk=
+	t=1729502748; cv=none; b=TZ25Y8Y73q6bkSPR3e27iWUEGTtuOD+JVeYZoZmAP1sfR7cz/UvEtJdtVi1tpSqq22AKIaMgtqyBAWJd4By9oO1SWE/xPvJPw9dIULgKj7fKSpoHaaXBfJVl7aQpOLahUvAE316Gm/JzW/DxVeARaCAReT8WnsAHOmFSgJaL5I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502738; c=relaxed/simple;
-	bh=az3ST4yKQO1us9La4XNRz5pm1652UmW7o5mq2zeYkKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=LkTsUGmoQJwo9iav/v/6dIM8Y5HDpMassZUIjBssNiA5G6gEwPEJtCKdLqSusf6auYD59a2XJmWBChJNxtiZp4GyvIEUf76vXvFMO/nJgO8u2mchBXbhom32TC8rweigS6LGuNzyqTQqsOCEYcXu4eYuftJBhNA04u6K6AeJ5tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nEtEdCJr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L8Vp2D014299;
-	Mon, 21 Oct 2024 09:25:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=ryzM+UHBU4Bb
-	aXP1dpvs3Okdt/gwCxSKTmxPF2TiCEs=; b=nEtEdCJrerTG5qOZujczWJ0spUsO
-	iK/d37yNo7VbSI2Q5j3M0ufVsejJwbCYuqM+B6Mr9vZFtbU1yXBKB5QR+sqfjoge
-	xJAlkYRu8zZk1KcSREiAQA/PGtOsN2E0+I33aBz/XCLKTEDJgFgumfz3CkhuiO4R
-	nvqXbESYe1ecmc2IOeJ3Nu0JdmChs7DhuC4rFDb5YG/ZBQYEwlE5xfhh/k2+2AEU
-	dyx7HW97S5sPRQ942zkTlywG7Kqw6+fu+DM6VcYeAFI0q9aEakLvTT4zoxWx4YV/
-	6Ge8hh8QXbxtcZNDiQECmp+Lz/XcL2Ki56eE1fH91sQiSkw0TX7jI16zEg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkhd07sc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 09:25:34 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L8tBho003519;
-	Mon, 21 Oct 2024 09:25:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 42cp9rb6s9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 21 Oct 2024 09:25:33 +0000
-Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49L9Ld4Z019774;
-	Mon, 21 Oct 2024 09:25:32 GMT
-Received: from hu-devc-lv-u18-c.qualcomm.com (hu-vtanuku-lv.qualcomm.com [10.47.206.121])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTP id 49L9PWxF025908;
-	Mon, 21 Oct 2024 09:25:32 +0000
-Received: by hu-devc-lv-u18-c.qualcomm.com (Postfix, from userid 410733)
-	id 5417B5005B0; Mon, 21 Oct 2024 02:25:32 -0700 (PDT)
-From: Visweswara Tanuku <quic_vtanuku@quicinc.com>
-To: linux-kernel@vger.kernel.org
-Cc: srinivas.kandagatla@linaro.org, linux-sound@vger.kernel.org,
-        Visweswara Tanuku <quic_vtanuku@quicinc.com>
-Subject: [PATCH] slimbus: messaging: Free transaction ID in delayed interrupt scenario
-Date: Mon, 21 Oct 2024 02:25:05 -0700
-Message-Id: <20241021092505.31240-1-quic_vtanuku@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cGK4F46DWsca6usXkkhkUf05UiQdA22i
-X-Proofpoint-GUID: cGK4F46DWsca6usXkkhkUf05UiQdA22i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- phishscore=0 spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- mlxscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=799
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410210067
+	s=arc-20240116; t=1729502748; c=relaxed/simple;
+	bh=oys9EWp0+ZDi6O702j7ITYfHMy36XMdPdEAfHWz8hWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4/0SvGHSKtt3WAlJRCPWgB3m7GC4WJjHhcFT/n6L39WunCY4BjhhK4OiaNTYbT0DZ3IYTwyJEb955ZiJXyn7i+JnI09FZdicpDumSds7/ZuecCQn3927iyc6cyTVSp2FawhhuEyQwXvLr6OHSPLZw3Oi+Em9Irbcv8BILPv2t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMAeYRHf; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso627423366b.3;
+        Mon, 21 Oct 2024 02:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729502744; x=1730107544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oys9EWp0+ZDi6O702j7ITYfHMy36XMdPdEAfHWz8hWs=;
+        b=dMAeYRHfcE2p5Y0CydlA7XHaVHSniWNafzWPhGIPqamXZwEIgdoRt6ePHMBFwpMN0H
+         2g8XuV3HzhMrvAxXV5nmekHFHEOsk52iPHYuQZMRrj9wzh/tmf1SxGYzU/WKqIriLNK+
+         KF52Rrhip1Y3/U7gpXGnMo9+e3kEypNFpFymywfES0aBHN5FXa/E62vR3S9ZuY76Fd7K
+         fJJG1dGQPEvHiD/J/Uk2omHxgQie1uNaALRZT+fepvGUJBHu3a8GclHcTkZ4F7dvQ1Mj
+         waQ0spcS+cLe9lyxhdWYvIfZq6z9ffBC95YtznBJkd6savPcdZUX8sFS1uVYKCfQyaGn
+         LVmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729502744; x=1730107544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oys9EWp0+ZDi6O702j7ITYfHMy36XMdPdEAfHWz8hWs=;
+        b=B198osq82WD3zr1PzjgcOh5hgpybSvdOsPnll8HgOcy4XNHUjJr5hOYw9CyBAXWFx+
+         fxS4o5cYGMyazO3WTppZgSZdpv0QFUluMTSyROklQp7Y6ELtjxAeAhxOKk73StmE347W
+         thr21jUwMTTY3AjgG5lKUKau63qvr3hfHc2vvZuMnlc1cIC54kb75YpeYsb+rlEM6P5c
+         5ZONSm+DPFHVgejeH2d2w9A6sskPI42UtDAiQn4CgV82QLjaf9xvTYNqhBXRq+13Zim7
+         TMIIIbUkxO/GYUncLfjTEx+fJY7FEyKWmBrlJkCEyF/qHJvrS4glbw6du9BjSOxPowrI
+         9rPA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8zXPBCd5QBhoD/NKazvGg0dFxdIvtUEQMgGa3qBO/epZozGi0cnejiqMYMfXxc+HbnrI0wNbwuhxzbA0U@vger.kernel.org, AJvYcCVgFWL1mDk11Y9xv7RI8N9JsJgMpniLZPce10lPlVpOkVgxwkDA3PoL40H7f3jIOvHYof9oWvjWaEI5krR+ZB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQESAp+XWyqmHpWZbAyPogErey4z0mFSz9P8sEu2tArEqO/bh
+	c70mlHPDyOMfGjt0ROA0fP6a0CJ+kWEauBXco89KRKsTzPizAsVLCIywkFVA3LVWkKutAZIqTMw
+	1Ve6GL2+FEAoFOsLmAF9Gu979rCw=
+X-Google-Smtp-Source: AGHT+IFm0gLisyhcjjngukS6vY82O8oUsw8+7BEJEc5i6j2uKOeRa+iIFgxIFXU1mwUV53zDxim0xYmh1qovBiBWu8o=
+X-Received: by 2002:a17:907:7296:b0:a9a:f84:fefd with SMTP id
+ a640c23a62f3a-a9a69bad1admr1212265066b.36.1729502744282; Mon, 21 Oct 2024
+ 02:25:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241021091417.37796-1-brgl@bgdev.pl>
+In-Reply-To: <20241021091417.37796-1-brgl@bgdev.pl>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 21 Oct 2024 12:25:07 +0300
+Message-ID: <CAHp75VdOvcfp8ZiONr9viieT9JavvZYMfS+wX8x40JyZuzfyUg@mail.gmail.com>
+Subject: Re: [PATCH] lib: string_helpers: fix potential snprintf() output truncation
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In case of interrupt delay for any reason, slim_do_transfer()
-returns timeout error but the transaction ID (TID) is not freed.
-This results into invalid memory access inside
-qcom_slim_ngd_rx_msgq_cb() due to invalid TID.
+On Mon, Oct 21, 2024 at 12:14=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> The output of ".%03u" with the unsigned int in range [0, 4294966295] may
+> get truncated if the target buffer is not 12 bytes.
 
-Fix the issue by freeing the TID in slim_do_transfer() before
-returning timeout error to avoid invalid memory access.
+I got the same warning last week, thanks for fixing it!
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Call trace:
-__memcpy_fromio+0x20/0x190
-qcom_slim_ngd_rx_msgq_cb+0x130/0x290 [slim_qcom_ngd_ctrl]
-vchan_complete+0x2a0/0x4a0
-tasklet_action_common+0x274/0x700
-tasklet_action+0x28/0x3c
-_stext+0x188/0x620
-run_ksoftirqd+0x34/0x74
-smpboot_thread_fn+0x1d8/0x464
-kthread+0x178/0x238
-ret_from_fork+0x10/0x20
-Code: aa0003e8 91000429 f100044a 3940002b (3800150b)
----[ end trace 0fe00bec2b975c99 ]---
-Kernel panic - not syncing: Oops: Fatal exception in interrupt.
-
-Signed-off-by: Visweswara Tanuku <quic_vtanuku@quicinc.com>
----
- drivers/slimbus/messaging.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
-index 242570a5e565..455c1fd1490f 100644
---- a/drivers/slimbus/messaging.c
-+++ b/drivers/slimbus/messaging.c
-@@ -148,8 +148,9 @@ int slim_do_transfer(struct slim_controller *ctrl, struct slim_msg_txn *txn)
- 	}
- 
- 	ret = ctrl->xfer_msg(ctrl, txn);
--
--	if (!ret && need_tid && !txn->msg->comp) {
-+	if (ret == -ETIMEDOUT) {
-+		slim_free_txn_tid(ctrl, txn);
-+	} else if (!ret && need_tid && !txn->msg->comp) {
- 		unsigned long ms = txn->rl + HZ;
- 
- 		time_left = wait_for_completion_timeout(txn->comp,
--- 
-2.17.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
