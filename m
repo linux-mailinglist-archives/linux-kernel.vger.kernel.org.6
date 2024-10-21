@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-374974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B653C9A72B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:56:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9229A72AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5768AB216B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70384B21480
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB68B1FB3F1;
-	Mon, 21 Oct 2024 18:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1BF1FB3D7;
+	Mon, 21 Oct 2024 18:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YmPtr4KD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W9XtjbD9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9CA1EF941;
-	Mon, 21 Oct 2024 18:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58141FAC31
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729536974; cv=none; b=MXmhfEvqp8usLy2Jqe4KKQGni+WFfsf6NpLIfP1PGPwmj+mS2tr6Ye25psXGoaPOkVOjhiAntja9gmtBOwtCNUhqtpYYWXrvBLTH8yYirhweKU4qNlqWd9qRia4emJDdqAEvxWAQFVFB7xOVk6DcS28hnGtSiUnaKBWn6sjqjbE=
+	t=1729536950; cv=none; b=hLlXCrRJxcjrn1tc/IzKcYHk4dKWh/oABTtQnl89aHasaOU+p2isEDs+G0DeANw+4ioWt2DJaO9bRoXl0it+Oa2r7li046bbApaCu7TWSqcWX0GzkG2tVcFruU3lfC303SguzqXQHXPrpvkb6KeAmXHArCm2bCrmMdwFFIOjUeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729536974; c=relaxed/simple;
-	bh=lIREXPfTxHHLbn3YJ8H4USRe1T/jVPt02K3V9MZRiKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L3zW2WZ6AXamYHADx9FtWQ74HZ8UcuS0Jpu1NRQAFAN63SxPAHGD7JhN+dr1HUmNtRrdlk845CFiSXUWVt+tHEW6JDfy8eeAapaYToBBILdXaX99/OZz12trYTHfrtKfVGAkdV/JdaS97wdYIpLEIlTRZU5PjjIXHLUYGQVAzlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YmPtr4KD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LAGqcT032495;
-	Mon, 21 Oct 2024 18:55:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5XLMtvzM1nOasHAiJkjAODtNLkbF8wU3AvMOd9jqSFQ=; b=YmPtr4KDFuWo6pOn
-	eHRviEEsQe60+eMJ/JBBB8508T+fi9eFyfbgHx5VXGfe2WzLYm8EsvICaYQNeZc4
-	Zh0AomgOFBdS851HKr5VcWgceQ1XpZSezEly29z2PEmfs3mydjXAW694prvuaM0a
-	dfQAUEHheMRDGrJdSGhVPyqzJlY51LANKuPWlhQBE5BONvkupKVMPskfn18flugU
-	0Q0VMdSFKSULLHogBpiXmxxS6ZDNmGrKW/wWXiiuPzhzHpnA5dxQirjngNRs1mSF
-	MeM1nopbHTLuuX7jgiyPeKlP/SrYAten6aiuhphvjzofNkfu8mJQploMNPfzYCsq
-	TquRUQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vuws65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 18:55:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LIthZM009576
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 18:55:43 GMT
-Received: from [10.110.77.200] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
- 2024 11:55:42 -0700
-Message-ID: <874efba8-3051-4f5a-9fec-93d1b81527c9@quicinc.com>
-Date: Mon, 21 Oct 2024 11:55:36 -0700
+	s=arc-20240116; t=1729536950; c=relaxed/simple;
+	bh=P94yeCZ1yUprg6wEzxiZ9AkuF/1MTkg1vdVbCLsHZ0k=;
+	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
+	 In-Reply-To:Content-Type; b=RaMqDO4HZJf8zoa+iAN052PJrLh17E1uz5FZU9b1+Vg6jfbDlBLJuHbvXFtKWPjCtApffa6u+7o+NAynDerET5KP4GmH0to8y0E1d//Hou/SuX+G/XD55YlswCcLKnPuWFHXooeG95zhk1b9qDyqJMIc4d2WmDDiZeul1N9i1t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W9XtjbD9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729536947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XBkJ6hUVM4B8eeUJkxTpyoBu12NtgYMeTdK6LmP0Sx4=;
+	b=W9XtjbD9exqR3KcIhmofS3gSobCPBoLQ/rBjOk7kj4lTB6YDk4MD7znupBCuz7HmdNdUaP
+	tBsYGiio8nEdGH94BHnqZzQdeHbUAycYMl4l+9WVn+8gMdekRufV/JCTlaH7GaBwFu510i
+	E14bauvJmpLQM0xbAXUx0gP/QNUt7+c=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-V6wUKwbBNCGSW9O3q9Oieg-1; Mon, 21 Oct 2024 14:55:46 -0400
+X-MC-Unique: V6wUKwbBNCGSW9O3q9Oieg-1
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-84937f5859bso691198241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:55:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729536945; x=1730141745;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBkJ6hUVM4B8eeUJkxTpyoBu12NtgYMeTdK6LmP0Sx4=;
+        b=MP5LI0nvQD+mtpg/VaGo0Jyp4iN3h7DlMiz6KZGHvnGW6XQwAzcjC5zAVawkidUdi3
+         LlOlFBAdnClYrnNTQtiPs17WJSdcZBWtMxZZ9tuFgvwayuAD3mXPLvK/q+rZ9M3hGZOo
+         ddISsCOUzwoqLYv1XeJjgqsUn2MT4CawBFACn3MbIvFQmibwi5PXeUWeFWeRoePVAEkN
+         7T7be+kyM5kt7QhTY5iCwF6x60y8HEqwaV1kl4Zlr3fdQLSdWGzEb3KwjbU1DZ56fhVr
+         mF0EDARyc96pyn44XoE0AB+9Azw0F+o/IVQBtPxfI9laVLZxSgHTY7IpSHsrNYKHlC1S
+         egQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/+Kd51TdvZPd4pWz+ObwWHvD0fXDZRDsBkrcToR2Gctvn2ZIIsQHsKfZejH1X3FfFEzcPLij1HG8hvVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSOj7GONeaCkiNpIzzZrxqRPY3h9g9GWVvmCFVL4+Y/J/eSkye
+	YdtCuPoTsMMHqdgRmmiVF7gvwhIFM6VnzL/NHKxZY/mOL1glsxx6JFGFtMMom+5tOnaYp5l4XV1
+	RxqV/+at6cTXrBgV4+RBQvFJPpQ3PwORJlPZB+18LsOZxhqpcD+NDnHXqUKnobw==
+X-Received: by 2002:a05:6102:38cb:b0:4a3:c516:3173 with SMTP id ada2fe7eead31-4a5d6ae510bmr9645984137.12.1729536945685;
+        Mon, 21 Oct 2024 11:55:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFidBydUUsOgzIfYFVhv13IqsAmtwVFb+t47/0xhYXC+BA6NbCa2gpPvYQ9JU6flUBkSbmWjA==
+X-Received: by 2002:a05:6102:38cb:b0:4a3:c516:3173 with SMTP id ada2fe7eead31-4a5d6ae510bmr9645967137.12.1729536945375;
+        Mon, 21 Oct 2024 11:55:45 -0700 (PDT)
+Received: from [192.168.1.18] (pool-68-160-135-240.bstnma.fios.verizon.net. [68.160.135.240])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c6398bsm20764881cf.30.2024.10.21.11.55.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 11:55:44 -0700 (PDT)
+Message-ID: <da00cde9-ca61-266d-2185-7664c1bade68@redhat.com>
+Date: Mon, 21 Oct 2024 14:55:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] drm/msm/dp: migrate the ycbcr_420_allowed to
- drm_bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <20241019-bridge-yuv420-v1-5-d74efac9e4e6@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241019-bridge-yuv420-v1-5-d74efac9e4e6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241017200132.21946-1-mvetter@suse.com>
+ <20241017200132.21946-2-mvetter@suse.com>
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Subject: Re: [PATCH v5 1/3] selftests: livepatch: rename KLP_SYSFS_DIR to
+ SYSFS_KLP_DIR
+In-Reply-To: <20241017200132.21946-2-mvetter@suse.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tBwOM2Y67cd156TfEpblrnq1TA2pSL2U
-X-Proofpoint-GUID: tBwOM2Y67cd156TfEpblrnq1TA2pSL2U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxlogscore=782 bulkscore=0 spamscore=0 mlxscore=0 clxscore=1011
- suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210136
 
+On 10/17/24 16:01, Michael Vetter wrote:
+> @@ -246,12 +246,12 @@ function unload_lp() {
+>  function disable_lp() {
+>  	local mod="$1"
+>  
+> -	log "% echo 0 > /sys/kernel/livepatch/$mod/enabled"
+> -	echo 0 > /sys/kernel/livepatch/"$mod"/enabled
+> +	log "% echo 0 > $SYSFS_KLP_DIR/$mod/enabled"
+> +	echo 0 > "$SYSFS_KLP_DIR"/mod"/enabled
 
+Nit: syntax error here, should be (quotation fix and $mod is a variable):
 
-On 10/18/2024 2:49 PM, Dmitry Baryshkov wrote:
-> Instead of forcing the ycbcr_420_allowed flag to be set on the created
-> drm_connector, set it on the drm_bridge instance and allow
-> drm_bridge_connecgtor to propagate it to the drm_connector.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_display.c |  4 ++--
->   drivers/gpu/drm/msm/dp/dp_drm.c     | 10 ++++------
->   drivers/gpu/drm/msm/dp/dp_drm.h     |  7 ++++---
->   3 files changed, 10 insertions(+), 11 deletions(-)
-> 
+  echo 0 > "$SYSFS_KLP_DIR/$mod/enabled"
 
-For MSM part,
+With that, the test works for me.
 
-Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+-- 
+Joe
 
 
