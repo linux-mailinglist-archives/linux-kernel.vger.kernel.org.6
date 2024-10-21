@@ -1,127 +1,79 @@
-Return-Path: <linux-kernel+bounces-375072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26ECE9A9084
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:03:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9463C9A9087
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B930BB2236A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91461C219E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862371DD55B;
-	Mon, 21 Oct 2024 20:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1748F1DE899;
+	Mon, 21 Oct 2024 20:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iwuYN0p3"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZq7KagU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A65E19E968;
-	Mon, 21 Oct 2024 20:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607811C7B68;
+	Mon, 21 Oct 2024 20:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729540987; cv=none; b=SEAuJzpA8lBkb8d+48d+v6DwZkUwMECCgp0ZWidZiMIIHXx0mqmVz+QyZZpyR00R1OrtP1w96REKTwzFzunYdDxz4gqqb3YFr/DbE6umOhuvL/YmNSMIhEuFvlPVZZeKi8sLG1j0eCBuC1wUHmN8EP3ZR7J4Qu7wjwiYJ2yZfTo=
+	t=1729541011; cv=none; b=j1RTtmRo0jXcmb7eABzDJfYPd/e7NsjlfKZBEpp7TZrXnHRC42wC+Za7xyS7CueObNhmGOwlFPXzvJesrDwbLJB/Yk/mvoA6JKsTuRS/P6jED66kke1QhtYAA8uzan1VVMy8VAOI9vGhkpcMBN1XLpRgEaOjxYiooAW2jMf/eeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729540987; c=relaxed/simple;
-	bh=UvWylO9B6Jf2VwFrBEacupcT8ysDV+xcoKNh/mgpwck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHbS1Fo9RM9FWIxLs2sMqN/Uafp9SQbcqMP5iIiOagl1QBy/qssCKtHKnUVlnJxyDNxckglPWqj8EYXfzV2OVQJPWbYjuAmaxuzy7Q2JZLOyyfVwCkTKTosThCArhjuQyyLo4WeNBi8ZJ4uEuQa5M20DaliaZXpI8+u4YYV7gmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iwuYN0p3; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XXR7Y5Bd9zlgMVX;
-	Mon, 21 Oct 2024 20:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729540983; x=1732132984; bh=6P+xsL+aOkZWfgD+SKkmyPNz
-	41unPwat0uepuJTOhnc=; b=iwuYN0p3zXpaL0/n1r6ezyZsCMYTNvJHSOgUOCSW
-	UtyCTjMn4HEQ3wXjVdvV5xR1IN+uSJydZx4wIWmHGe+Oz6zNg81Gbws9PFoVcCJB
-	2Evb12xyJQ19URiOE2Kv+UiEZADruYT+sqQmYT+2gSPhhIyY08L0cOi2YQJcBV+8
-	wMo15HImrBPrUPlwqkAnVV8nWXt31LAlyyMQlPVLFyA1nPope8B4eHIa9tyHOU1L
-	OMCnZ/RuUsIf4Po/cqu3IUaMByzY+VczMPh+4xF67+cOY4Fp/OBeeEfD7bHMVaIF
-	HX/zImHtVlhLpx51HEo3unUeEw85Ci6iQ5BXYB283GzAuQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Cnyap0vg_rY8; Mon, 21 Oct 2024 20:03:03 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XXR7V1fRVzlgMVW;
-	Mon, 21 Oct 2024 20:03:01 +0000 (UTC)
-Message-ID: <c58e4fce-0a74-4469-ad16-f1edbd670728@acm.org>
-Date: Mon, 21 Oct 2024 13:02:59 -0700
+	s=arc-20240116; t=1729541011; c=relaxed/simple;
+	bh=sD10DBlg01qhCNJYHcQ+IAgWJ459cwJbzGBdUa+jktY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGP5HgutuENUi22ZWuANFYlBxCc3QGMldrMqt17u0GjHILwSVaxP6PD+l5+ujHyUIqpL+tZzOqc730sjp+k7oTZTMOo9DTH3h8lL8QVTdi3lvF/JRmbfZFO+czcywrfyfap8hrt8+UHN+32OPMJ2WT+dC29rczw9GeUZjs2SY4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZq7KagU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBF8C4CEC3;
+	Mon, 21 Oct 2024 20:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729541010;
+	bh=sD10DBlg01qhCNJYHcQ+IAgWJ459cwJbzGBdUa+jktY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DZq7KagU5Pmzy0HRTHRadL54AZsH5ZmDbsiHaSoZ4povYXXZGFAb3oFzzThKY7+Kg
+	 D39wS9/GdSbYOcAOhKke7v58NlLzfErNKTsGkDIbYqQ9gWfy95vLEg3Tk+zUX7HPEJ
+	 TwpmY5+fITc+3o+lythfjAWUERqX4uxgCj4cNCnQ6aAFPU/poscFNGAHvuN/Lg5Wpj
+	 AKJ7dQ8FtcQgf93kemOm3mW2wqBTa1pbb45Icx/upwmJxQoA9FTKWC6M10CEMrEIcA
+	 i7xMlMpsZIXqS1X+DRRT0LFzsXOfSKXHtRux27+e9sQKS2oJHTleYz3JFehfu79ZUz
+	 Y/SpBn39M+IBQ==
+Date: Mon, 21 Oct 2024 10:03:29 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+	mkoutny@suse.com, john.fastabend@gmail.com,
+	roman.gushchin@linux.dev, quanyang.wang@windriver.com,
+	ast@kernel.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	chenridong@huawei.com, wangweiyang2@huawei.com
+Subject: Re: [PATCH v1 0/2] Only cgroup v2 can be attached by bpf programs
+Message-ID: <ZxazkW-OcK_nSqYg@slm.duckdns.org>
+References: <20241018081520.694139-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] scsi: ufs: core: Use reg_lock to protect HCE register
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241021120313.493371-1-avri.altman@wdc.com>
- <20241021120313.493371-5-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241021120313.493371-5-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018081520.694139-1-chenridong@huaweicloud.com>
 
-On 10/21/24 5:03 AM, Avri Altman wrote:
-> Use the host register lock to serialize access to the Host Controller
-> Enable (HCE) register as well, instead of the host_lock.
+On Fri, Oct 18, 2024 at 08:15:18AM +0000, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
 > 
-> Signed-off-by: Avri Altman <avri.altman@wdc.com>
-> ---
->   drivers/ufs/core/ufshcd.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 4eee737a4fd5..3cc8ffc6929f 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -4795,9 +4795,9 @@ void ufshcd_hba_stop(struct ufs_hba *hba)
->   	 * Obtain the host lock to prevent that the controller is disabled
->   	 * while the UFS interrupt handler is active on another CPU.
->   	 */
-> -	spin_lock_irqsave(hba->host->host_lock, flags);
-> +	spin_lock_irqsave(&hba->reg_lock, flags);
->   	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
-> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
-> +	spin_unlock_irqrestore(&hba->reg_lock, flags);
->   
->   	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
->   					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
+> Only cgroup v2 can be attached by bpf programs. This patchset reverts
+> commit 04f8ef5643bc ("cgroup: Fix memory leak caused by missing
+> cgroup_bpf_offline") and avoid cgroup_bpf_inherit and cgroup_bpf_offline
+> being call in cgroup v1.
 
-Hi Avri,
+Applied to cgroup/for-6.13.
 
-How about proceeding as follows for ufshcd_hba_stop():
-* Remove the comment above the ufshcd_writel() call and add a
-   disable_irq() call instead.
-* Call enable_irq() after ufshcd_writel() has finished and before
-   ufshcd_wait_for_register() is called.
-* Do not hold any lock around the ufshcd_writel() call.
+Thanks.
 
-Although the legacy interrupt is disabled by some but not all
-ufshcd_hba_stop() callers, I think it is safe to nest disable_irq()
-calls. From kernel/irq/manage.c:
-
-void __disable_irq(struct irq_desc *desc)
-{
-	if (!desc->depth++)
-		irq_disable(desc);
-}
-
-Thanks,
-
-Bart.
+-- 
+tejun
 
