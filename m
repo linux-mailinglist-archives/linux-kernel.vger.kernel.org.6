@@ -1,314 +1,300 @@
-Return-Path: <linux-kernel+bounces-373634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29509A599B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E389A599E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95D11C20FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:55:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39051C20848
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5497C191F60;
-	Mon, 21 Oct 2024 04:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A24192D80;
+	Mon, 21 Oct 2024 04:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9ttUxhR"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512DF28F7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fnxB6X/i"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174B32AD2C;
+	Mon, 21 Oct 2024 04:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729486505; cv=none; b=FzTPzLAe52dOHcd4fRdED1hvCGMQS1kFdE7jiPxM36vgG/4SDCRB1jl/VX8NzmFvYqyzhLCQ0YbC4WGAdjASjgABZiWkOLF7xxqL18IgAbRRBEtdJwh4R0ThzYcbKMIVxapwG6h1INWTQ0XOUSEyqxNjr9bc7QchBTTygVf0juE=
+	t=1729486646; cv=none; b=cJtFc+dc59y3oRFInq+cByR/72Mcvi5N5YoCDgGNh6K/KNQvSuLj2ikGnyG5MyIahfuIxfQYd71F0t9HaDXK0VYs8uoZzFjxN17NV7zbtPZErDQVZwwpjmw/raZIWdIvLm4iqFSA3WMD/FnqibieFVO1BEmax/8U8jg6V3HjHvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729486505; c=relaxed/simple;
-	bh=QqNMwzKW8TqDU6N5Vst1qs1/ZnqGmuJVjkMYt3zhPFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioZk7TZVXLYNsHCkE+g9rZ3bAocCaW/aworKSVE9brO1By/i8EFtZkrY6ji6Sn6ZY2rb1MXbEwZc51W8Bncwfr5du76g0cnMK8FbLhqZe4ZUX/6jSC6OILw3fQIK92QR55OaN0813opBO6vDHhu2StEwmLxSdmoNwk8g64vAYeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9ttUxhR; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53a0c160b94so1893082e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729486501; x=1730091301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6U1RWkDpBLtv6ScO5BY3mmJK87haac1ESyN1ito8E4s=;
-        b=V9ttUxhRL6WwKY/k2WsgxHmJ+ocxEl3J/jtSI0Nafr8SxDgj2TcPnTmN3++b1RNnJ9
-         KuJ9ikWHVwVIY5XUae5glbRV407xktTvC+UqZMXV1iP/8LPs1F7LIAsXmBfpuht7vleu
-         YGnlNBPZlBxL1kpuxJHj3rvDqIYMOz6y5R3E9HIF44bYXIA5mz8znplNoLbajL1Hscgy
-         xThbGTZXL7Y0X9L2ruBaiZocQyogKgYjyZU7SBnK78TQrc/8kt/VJgQcNzBlpacAc+Xs
-         LwkZUqS+Qe1rnGs0Cksr5iWoqeO0E3B6LT6J7THCLOMWVpOiXwX0PdR3KeK3POY8GMLE
-         iGmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729486501; x=1730091301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6U1RWkDpBLtv6ScO5BY3mmJK87haac1ESyN1ito8E4s=;
-        b=KkvnVTVR2IQTeQcC9avQie/NHrAUSxnjb/fdF/98kIPW7N0JrhsAmu9ZyoJdAEE2rZ
-         STpAsCu1zvfGmqBf3V5herziRYjQbo6KQs1TTdzQnmE/xBcQHibbuohsRFqsRb69pUip
-         MPOSt/GbLxmii/eLbptjyePLwt19tTFgT0o2VZFjdIugGwSWopnB/g+p8hJ0vKkZAjyC
-         bH44VdRQfw8+b/0UwgjS/Gf3BtR+SeKyU0SNqJNw5Hj/ENLkZ9IQVMx+Ci1vehu2GFhF
-         N7DZmiz+va4SB/KUK3j9+00lF/JrNI9xcMq71pIOvPlGjlcokT9NxDnPGpx7xmwrjyeT
-         27gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWICuZXsOwQGfKUsaQLWwmglcX7aRBFbHicSvUQa7krU5r/s+k8h+lYaEMoP4Xlwj1cX/2dYzB7zcWeLtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo3WRV7IzJFkciLzU7IFS6cZNjkfKIJsPf3U0kFTf7w2+4gq+g
-	p6iMrP9x9TP6vQZKoUa7eTk1NeQAJ8EkIS5AGgP6iZRjA+gtTeozISjzE3TexwwNTG2dIAzHbJ6
-	eY6d+3mCJ5mhQfv47uv4VmRJeV1BRpS+Q
-X-Google-Smtp-Source: AGHT+IFGKjEPPKjASZcUAhSNC04pzwZ3RqX0DEVh4g5m3w9MumFRPT4Zo938Qm08ENXRqMBRBcFN8UQi2Nh4ABOg2HI=
-X-Received: by 2002:a05:6512:12cb:b0:539:9594:b226 with SMTP id
- 2adb3069b0e04-53a1522dba5mr4307322e87.34.1729486500871; Sun, 20 Oct 2024
- 21:55:00 -0700 (PDT)
+	s=arc-20240116; t=1729486646; c=relaxed/simple;
+	bh=nA4L1EIs0CJmFdbhOKgmF42HiPk0C8XciPXqgDh9BYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WksSnufRL6tTQUQvSGgMTkgkpFmXej8Hc/8+I3mLkvNsiAaCQyzQtteQDu2rDp6e9knJ7ZwwALltGyZSa3IRHPmYm1YBfG6UAZwfVG/3KgRiwOXZEQmcGvRaiLGvVwWG+tHFKykuz/FWxtrhDMVQ5RBnMDQP5ksqFk8Ui4dp8J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fnxB6X/i; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id B5871210B2CA; Sun, 20 Oct 2024 21:57:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B5871210B2CA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729486644;
+	bh=syY/iGQkpe+CyutoarYlcVdyYg0GvcX35N/agCmu/fY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fnxB6X/i707nDyqKpz0nCJXgE3hL7HfIGNo5TuF9PXKnWvGUbaBc6ip3U4F/zkaQj
+	 cXaSvzmv+g64odGGYe5YFLe/D/4EGrRpvbjqrv7F5yPAkuiFdGJIW2P8G6U0b0uNH6
+	 PSj5W2QMz/KBpUWxjeLN3txyxe3gEnK31DMHIlVg=
+Date: Sun, 20 Oct 2024 21:57:24 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	John Starks <jostarks@microsoft.com>, jacob.pan@linux.microsoft.com,
+	Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: Re: [PATCH 1/2] Drivers: hv: vmbus: Wait for offers during boot
+Message-ID: <20241021045724.GB25279@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20241018115811.5530-1-namjain@linux.microsoft.com>
+ <20241018115811.5530-2-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017064449.5235-1-suhua1@kingsoft.com> <ZxStKvw6HwminDub@kernel.org>
-In-Reply-To: <ZxStKvw6HwminDub@kernel.org>
-From: Su Hua <suhua.tanke@gmail.com>
-Date: Mon, 21 Oct 2024 12:54:23 +0800
-Message-ID: <CALe3CaDuZ9Ehd=csC9h-GnJ0PgLT11AKvSWpFBvUxNfTkUyrxQ@mail.gmail.com>
-Subject: Re: [PATCH] memblock: Uniform initialization all reserved pages to MIGRATE_MOVABLE
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, suhua <suhua1@kingsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018115811.5530-2-namjain@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-> On Thu, Oct 17, 2024 at 02:44:49PM +0800, suhua wrote:
-> > Subject: memblock: Uniform initialization all reserved pages to MIGRATE=
-_MOVABLE
->
-> I'd suggest:
->
-> memblock: uniformly initialize all reserved pages to MIGRATE_MOVABLE
+On Fri, Oct 18, 2024 at 04:58:10AM -0700, Naman Jain wrote:
+> Channels offers are requested during vmbus initialization and resume
 
-Thanks for the correction.
+Nit: s/vmbus/VMBus
 
-> > Currently when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the reserve=
-d
-> > pages are initialized to MIGRATE_MOVABLE by default in memmap_init.
-> >
-> > Reserved memory mainly stores the metadata of struct page. When
-> > HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=3DY and hugepages are allocate=
-d,
-> > the memory occupied by the struct page metadata will be freed.
->
-> The struct page metadata is not freed with HVO, it is rather pages used f=
-or
-> vmemmap.
+> from hibernation. Add support to wait for all channel offers to be
+> delivered and processed before returning from vmbus_request_offers.
+> This is to support user mode (VTL0) in OpenHCL (A Linux based
+> paravisor for Confidential VMs) to ensure that all channel offers
+> are present when init begins in VTL0, and it knows which channels
+> the host has offered and which it has not.
 
-Yes, I will update the description.
+Usermode isn't necessarily of VTL0, and this issue was actually identified
+at a higher VTL in OpenHCL. However, this change isn't specific to OpenHCL,
+but is intended for general use. I would prefer if the commit message were
+either more generic or precisely aligned with the specific issue it's
+addressing.
 
-> > Before this patch:
-> > when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the freed memory was
-> > placed on the Movable list;
-> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT=3DY, the freed memory was placed =
-on
-> > the Unmovable list.
-> >
-> > After this patch, the freed memory is placed on the Movable list
-> > regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT is set.
-> >
-> > Eg:
->
-> Please add back the description of the hardware used for this test and ho=
-w
-> much huge pages were allocated at boot.
+> 
+> This is in analogy to a PCI bus not returning from probe until it has
+> scanned all devices on the bus.
+> 
+> Without this, user mode can race with vmbus initialization and miss
+> channel offers. User mode has no way to work around this other than
+> sleeping for a while, since there is no way to know when vmbus has
+> finished processing offers.
+> 
+> With this added functionality, remove earlier logic which keeps track
+> of count of offered channels post resume from hibernation. Once all
+> offers delivered message is received, no further offers are going to
+> be received. Consequently, logic to prevent suspend from happening
+> after previous resume had missing offers, is also removed.
+> 
+> Co-developed-by: John Starks <jostarks@microsoft.com>
+> Signed-off-by: John Starks <jostarks@microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/hv/channel_mgmt.c | 38 +++++++++++++++++++++++---------------
+>  drivers/hv/connection.c   |  4 ++--
+>  drivers/hv/hyperv_vmbus.h | 14 +++-----------
+>  drivers/hv/vmbus_drv.c    | 16 ----------------
+>  4 files changed, 28 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> index 3c6011a48dab..ac514805dafe 100644
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@ -944,16 +944,6 @@ void vmbus_initiate_unload(bool crash)
+>  		vmbus_wait_for_unload();
+>  }
+>  
+> -static void check_ready_for_resume_event(void)
+> -{
+> -	/*
+> -	 * If all the old primary channels have been fixed up, then it's safe
+> -	 * to resume.
+> -	 */
+> -	if (atomic_dec_and_test(&vmbus_connection.nr_chan_fixup_on_resume))
+> -		complete(&vmbus_connection.ready_for_resume_event);
+> -}
+> -
+>  static void vmbus_setup_channel_state(struct vmbus_channel *channel,
+>  				      struct vmbus_channel_offer_channel *offer)
+>  {
+> @@ -1109,8 +1099,6 @@ static void vmbus_onoffer(struct vmbus_channel_message_header *hdr)
+>  
+>  		/* Add the channel back to the array of channels. */
+>  		vmbus_channel_map_relid(oldchannel);
+> -		check_ready_for_resume_event();
+> -
+>  		mutex_unlock(&vmbus_connection.channel_mutex);
+>  		return;
+>  	}
+> @@ -1297,12 +1285,11 @@ EXPORT_SYMBOL_GPL(vmbus_hvsock_device_unregister);
+>  /*
+>   * vmbus_onoffers_delivered -
+>   * This is invoked when all offers have been delivered.
+> - *
+> - * Nothing to do here.
+>   */
+>  static void vmbus_onoffers_delivered(
+>  			struct vmbus_channel_message_header *hdr)
+>  {
+> +	complete(&vmbus_connection.all_offers_delivered_event);
+>  }
+>  
+>  /*
+> @@ -1578,7 +1565,8 @@ void vmbus_onmessage(struct vmbus_channel_message_header *hdr)
+>  }
+>  
+>  /*
+> - * vmbus_request_offers - Send a request to get all our pending offers.
+> + * vmbus_request_offers - Send a request to get all our pending offers
+> + * and wait for all offers to arrive.
+>   */
+>  int vmbus_request_offers(void)
+>  {
+> @@ -1596,6 +1584,10 @@ int vmbus_request_offers(void)
+>  
+>  	msg->msgtype = CHANNELMSG_REQUESTOFFERS;
+>  
+> +	/*
+> +	 * This REQUESTOFFERS message will result in the host sending an all
+> +	 * offers delivered message.
+> +	 */
+>  	ret = vmbus_post_msg(msg, sizeof(struct vmbus_channel_message_header),
+>  			     true);
+>  
+> @@ -1607,6 +1599,22 @@ int vmbus_request_offers(void)
+>  		goto cleanup;
+>  	}
+>  
+> +	/* Wait for the host to send all offers. */
+> +	while (wait_for_completion_timeout(
+> +		&vmbus_connection.all_offers_delivered_event, msecs_to_jiffies(10 * 1000)) == 0) {
 
-Well, the new patch will add this information.
+Nit: Can simply put 10000 instead of 10*1000
 
-> > echo 500000 > /proc/sys/vm/nr_hugepages
-> > cat /proc/pagetypeinfo
-> >
-> > before=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable     51      2      1     28=
-     53     35     35     43     40     69   3852
-> > Node    0, zone   Normal, type      Movable   6485   4610    666    202=
-    200    185    208     87     54      2    240
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Unmovable =E2=89=88 15GB
-> >
-> > after=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable      0      1      1      0=
-      0      0      0      1      1      1      0
-> > Node    0, zone   Normal, type      Movable   1563   4107   1119    189=
-    256    368    286    132    109      4   3841
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> >
-> > Signed-off-by: suhua <suhua1@kingsoft.com>
->
-> checkpatch.pl gives this warning:
->
-> WARNING: From:/Signed-off-by: email address mismatch: 'From: suhua <suhua=
-.tanke@gmail.com>' !=3D 'Signed-off-by: suhua <suhua1@kingsoft.com>'
-> Please update the commit authorship or signed-off to match.
->
-> Also, Signed-off-by should use a known identity, i.e. Name Lastname.
+> +		pr_warn("timed out waiting for all offers to be delivered...\n");
 
-Oh, this is my oversight.
+I know we are moving from async to sync, so earlier we never checked this.
+But what if some channel timed out do we want to handle this case ? Or put
+a comment why this is OK.
 
-> > ---
-> >  mm/mm_init.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index 4ba5607aaf19..6dbf2df23eee 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -722,6 +722,10 @@ static void __meminit init_reserved_page(unsigned =
-long pfn, int nid)
-> >               if (zone_spans_pfn(zone, pfn))
-> >                       break;
-> >       }
-> > +
-> > +     if (pageblock_aligned(pfn))
-> > +             set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVAB=
-LE);
-> > +
-> >       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> >  }
-> >  #else
-> > --
-> > 2.34.1
-> >
+We could set error from here as well, but I see vmbus_request_offers return value
+is never checked.
 
-Sincerely yours,
-Su
-
-Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B410=E6=9C=8820=E6=97=
-=A5=E5=91=A8=E6=97=A5 15:15=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Oct 17, 2024 at 02:44:49PM +0800, suhua wrote:
-> > Subject: memblock: Uniform initialization all reserved pages to MIGRATE=
-_MOVABLE
->
-> I'd suggest:
->
-> memblock: uniformly initialize all reserved pages to MIGRATE_MOVABLE
->
-> > Currently when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the reserve=
-d
-> > pages are initialized to MIGRATE_MOVABLE by default in memmap_init.
-> >
-> > Reserved memory mainly stores the metadata of struct page. When
-> > HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=3DY and hugepages are allocate=
-d,
-> > the memory occupied by the struct page metadata will be freed.
->
-> The struct page metadata is not freed with HVO, it is rather pages used f=
-or
-> vmemmap.
->
-> > Before this patch:
-> > when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the freed memory was
-> > placed on the Movable list;
-> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT=3DY, the freed memory was placed =
-on
-> > the Unmovable list.
-> >
-> > After this patch, the freed memory is placed on the Movable list
-> > regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT is set.
-> >
-> > Eg:
->
-> Please add back the description of the hardware used for this test and ho=
-w
-> much huge pages were allocated at boot.
->
-> > echo 500000 > /proc/sys/vm/nr_hugepages
-> > cat /proc/pagetypeinfo
-> >
-> > before=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable     51      2      1     28=
-     53     35     35     43     40     69   3852
-> > Node    0, zone   Normal, type      Movable   6485   4610    666    202=
-    200    185    208     87     54      2    240
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Unmovable =E2=89=88 15GB
-> >
-> > after=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable      0      1      1      0=
-      0      0      0      1      1      1      0
-> > Node    0, zone   Normal, type      Movable   1563   4107   1119    189=
-    256    368    286    132    109      4   3841
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> >
-> > Signed-off-by: suhua <suhua1@kingsoft.com>
->
-> checkpatch.pl gives this warning:
->
-> WARNING: From:/Signed-off-by: email address mismatch: 'From: suhua <suhua=
-.tanke@gmail.com>' !=3D 'Signed-off-by: suhua <suhua1@kingsoft.com>'
-> Please update the commit authorship or signed-off to match.
->
-> Also, Signed-off-by should use a known identity, i.e. Name Lastname.
->
-> > ---
-> >  mm/mm_init.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index 4ba5607aaf19..6dbf2df23eee 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -722,6 +722,10 @@ static void __meminit init_reserved_page(unsigned =
-long pfn, int nid)
-> >               if (zone_spans_pfn(zone, pfn))
-> >                       break;
-> >       }
-> > +
-> > +     if (pageblock_aligned(pfn))
-> > +             set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVAB=
-LE);
-> > +
-> >       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> >  }
-> >  #else
-> > --
-> > 2.34.1
-> >
->
-> --
-> Sincerely yours,
-> Mike.
+> +	}
+> +
+> +	/*
+> +	 * Flush handling of offer messages (which may initiate work on
+> +	 * other work queues).
+> +	 */
+> +	flush_workqueue(vmbus_connection.work_queue);
+> +
+> +	/* Flush processing the incoming offers. */
+> +	flush_workqueue(vmbus_connection.handle_primary_chan_wq);
+> +	flush_workqueue(vmbus_connection.handle_sub_chan_wq);
+> +
+>  cleanup:
+>  	kfree(msginfo);
+>  
+> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
+> index f001ae880e1d..8351360bba16 100644
+> --- a/drivers/hv/connection.c
+> +++ b/drivers/hv/connection.c
+> @@ -34,8 +34,8 @@ struct vmbus_connection vmbus_connection = {
+>  
+>  	.ready_for_suspend_event = COMPLETION_INITIALIZER(
+>  				  vmbus_connection.ready_for_suspend_event),
+> -	.ready_for_resume_event	= COMPLETION_INITIALIZER(
+> -				  vmbus_connection.ready_for_resume_event),
+> +	.all_offers_delivered_event = COMPLETION_INITIALIZER(
+> +				  vmbus_connection.all_offers_delivered_event),
+>  };
+>  EXPORT_SYMBOL_GPL(vmbus_connection);
+>  
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index d2856023d53c..80cc65dac740 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -287,18 +287,10 @@ struct vmbus_connection {
+>  	struct completion ready_for_suspend_event;
+>  
+>  	/*
+> -	 * The number of primary channels that should be "fixed up"
+> -	 * upon resume: these channels are re-offered upon resume, and some
+> -	 * fields of the channel offers (i.e. child_relid and connection_id)
+> -	 * can change, so the old offermsg must be fixed up, before the resume
+> -	 * callbacks of the VSC drivers start to further touch the channels.
+> +	 * Completed once the host has offered all channels. Note that
+> +	 * some channels may still be being process on a work queue.
+>  	 */
+> -	atomic_t nr_chan_fixup_on_resume;
+> -	/*
+> -	 * vmbus_bus_resume() waits for "nr_chan_fixup_on_resume" to
+> -	 * drop to zero.
+> -	 */
+> -	struct completion ready_for_resume_event;
+> +	struct completion all_offers_delivered_event;
+>  };
+>  
+>  
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 9b15f7daf505..bd3fc41dc06b 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -2427,11 +2427,6 @@ static int vmbus_bus_suspend(struct device *dev)
+>  	if (atomic_read(&vmbus_connection.nr_chan_close_on_suspend) > 0)
+>  		wait_for_completion(&vmbus_connection.ready_for_suspend_event);
+>  
+> -	if (atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) != 0) {
+> -		pr_err("Can not suspend due to a previous failed resuming\n");
+> -		return -EBUSY;
+> -	}
+> -
+>  	mutex_lock(&vmbus_connection.channel_mutex);
+>  
+>  	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
+> @@ -2456,17 +2451,12 @@ static int vmbus_bus_suspend(struct device *dev)
+>  			pr_err("Sub-channel not deleted!\n");
+>  			WARN_ON_ONCE(1);
+>  		}
+> -
+> -		atomic_inc(&vmbus_connection.nr_chan_fixup_on_resume);
+>  	}
+>  
+>  	mutex_unlock(&vmbus_connection.channel_mutex);
+>  
+>  	vmbus_initiate_unload(false);
+>  
+> -	/* Reset the event for the next resume. */
+> -	reinit_completion(&vmbus_connection.ready_for_resume_event);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -2502,14 +2492,8 @@ static int vmbus_bus_resume(struct device *dev)
+>  	if (ret != 0)
+>  		return ret;
+>  
+> -	WARN_ON(atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) == 0);
+> -
+>  	vmbus_request_offers();
+>  
+> -	if (wait_for_completion_timeout(
+> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
+> -		pr_err("Some vmbus device is missing after suspending?\n");
+> -
+>  	/* Reset the event for the next suspend. */
+>  	reinit_completion(&vmbus_connection.ready_for_suspend_event);
+>  
+> -- 
+> 2.34.1
+> 
 
