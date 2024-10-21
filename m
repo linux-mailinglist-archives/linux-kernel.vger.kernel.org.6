@@ -1,133 +1,224 @@
-Return-Path: <linux-kernel+bounces-373605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8BB9A5953
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:50:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E3F9A5954
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E401C20ABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF369281C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31A7191F81;
-	Mon, 21 Oct 2024 03:50:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCAF175D5E;
+	Mon, 21 Oct 2024 03:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Lxa4I7xp"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10F514A90;
-	Mon, 21 Oct 2024 03:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DE224D7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729482612; cv=none; b=OyyTh5CTqtUTbPqO0WNgSfzCsbJe4tFtOHIm59MG9w6FTmbufZnqUFSxzznFQkOJU6HrcdEBluwznIi+gN49Sgd94uBmocLGbbqgrZQ5qI0D0VJEQ2N6GrxLXWblFblwCIcveJBbFuQMhllOdENiG0mS9YQ+oExBdJIfKvoIbnc=
+	t=1729482821; cv=none; b=BZcZJkPTx3Ey3dPyEXQj0o61rub0VsOBnGGGXFSUPi50MWcin0+FyNg+R0n4elVaykcAG34QxTiQOUUn/GjbmVxRycWhuVXETU+jx+/63ZihUsAFMjlqoOcG1yQt/n5neI75DAZhJm1BH8AO0SlwpTGqSGbITj5AYMvY2y7R0ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729482612; c=relaxed/simple;
-	bh=VBVq64KzIeORvBH6bdB4o5p4FZIgXwfweBCOqWHtGJ4=;
-	h=Subject:To:References:From:Cc:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cvnvquIzs8BeyMF3afQEq4zyVRBecX3GPpkWBCU96oLuarGTqqI9GN4IRagHPNhl2stebSigtK+QLWZbyvSyfIWLwx7cDk0Yx0+rFAVNSIrmh5W5mowgBxronOlzNq6V+q8VKu10lLEUa8S171FXRbbBIUIZyt0kj+mCYiTC0TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XX1Xb5Q1Pz4f3jkv;
-	Mon, 21 Oct 2024 11:49:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F345E1A092F;
-	Mon, 21 Oct 2024 11:50:03 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP4 (Coremail) with SMTP id gCh0CgBnm8dlzxVnYwe6Eg--.31108S2;
-	Mon, 21 Oct 2024 11:50:00 +0800 (CST)
-Subject: Re: [syzbot] [fuse?] kernel BUG in fuse_dev_do_write
-To: syzbot <syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com>,
- joannelkoong@gmail.com, josef@toxicpanda.com
-References: <6715ae99.050a0220.10f4f4.003b.GAE@google.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Cc: hdanton@sina.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, miklos@szeredi.hu, mszeredi@redhat.com,
- syzkaller-bugs@googlegroups.com
-Message-ID: <4901e9a6-f870-c30a-d910-732843d91a0f@huaweicloud.com>
-Date: Mon, 21 Oct 2024 11:49:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1729482821; c=relaxed/simple;
+	bh=xAV0OJ2NBAgDx4oLJoHFMb0VAIAriKiUdhRy+3TmJeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YpgKwiwlT38ScXzPOJjz8TIgMz71PLQjy9C4CSPTPOv2mbPpIrMuS1TpBhrjVNqaRdBjdCXBzRXlmNzTxCBiKt1Drr8/h6wVyqVdPfgKU3xnYTomEhHqcImolwILNCIau7mZ6i6cSuGn5DRTrm78Trg0gATXgE1tZbGqYhe8sCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Lxa4I7xp; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729482810; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=460rUbhGp5zEzs1mKnFE2uOmq0Yn2bdzP+DneVG8znI=;
+	b=Lxa4I7xptgVwl30z7s2an/9DQ3lDBLgXMaBPNZS2w/S9PoQ2kiwHjcI7zdEZetnDwHXM71Y15BQxAngWDdcCKlByfTw+uUFaEMNkC4SI6gNkv8FZDPkAKiDs/zradtHlaVpScSuS9ckJZV41JN8qMC+gmg8MpTcx0eSqOoJ7FfQ=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHUg8ZR_1729482805 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 21 Oct 2024 11:53:30 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Chunhai Guo <guochunhai@vivo.com>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v2 1/3] erofs: get rid of erofs_{find,insert}_workgroup
+Date: Mon, 21 Oct 2024 11:53:21 +0800
+Message-ID: <20241021035323.3280682-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6715ae99.050a0220.10f4f4.003b.GAE@google.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:gCh0CgBnm8dlzxVnYwe6Eg--.31108S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWrKF4xGF4UGF1UXr48Xrb_yoW5Jr17pr
-	W8GrZrKrWUtry8JF17XFyjgryqqr98Z3yUXFyUWFy8u3W5Jr1q9r4IqrWjgr4UGr48Xr10
-	qF15Ar1Fv3WkXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi,
+Just fold them into the only two callers since
+they are simple enough.
 
-On 10/21/2024 9:30 AM, syzbot wrote:
-> syzbot has bisected this issue to:
->
-> commit 5d9e1455630d0f464f169bbd637dbb264cbd8ac8
-> Author: Josef Bacik <josef@toxicpanda.com>
-> Date:   Mon Sep 30 13:45:18 2024 +0000
->
->     fuse: convert fuse_notify_store to use folios
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=120dc25f980000
-> start commit:   15e7d45e786a Add linux-next specific files for 20241016
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=110dc25f980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=160dc25f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=65d101735df4bb19d2a3
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1623e830580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16582f27980000
->
-> Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
-> Fixes: 5d9e1455630d ("fuse: convert fuse_notify_store to use folios")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> .
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v1: https://lore.kernel.org/r/20241017115705.877515-1-hsiangkao@linux.alibaba.com
+change since v1:
+ - !grp case should be handled properly mentioned by Chunhai;
 
-It seems fuse_notify_store invokes folio_zero_range() incorrectly. The
-third argument of folio_zero_range() should be the to-copy length
-instead of the total length. The following patch will fix the problem:
+ fs/erofs/internal.h |  5 +----
+ fs/erofs/zdata.c    | 38 +++++++++++++++++++++++++---------
+ fs/erofs/zutil.c    | 50 +--------------------------------------------
+ 3 files changed, 30 insertions(+), 63 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5edad55750b0..87e39c9343c4 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1668,7 +1668,7 @@ static int fuse_notify_store(struct fuse_conn *fc,
-unsigned int size,
-                err = fuse_copy_page(cs, &page, offset, this_num, 0);
-                if (!folio_test_uptodate(folio) && !err && offset == 0 &&
-                    (this_num == folio_size(folio) || file_size == end)) {
--                       folio_zero_range(folio, this_num,
-folio_size(folio));
-+                       folio_zero_range(folio, this_num,
-folio_size(folio) - this_num);
-                        folio_mark_uptodate(folio);
-                }
-                folio_unlock(folio);
-
-Will post a formal patch later.
-
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4efd578d7c62..8081ee43cd83 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -457,10 +457,7 @@ void erofs_release_pages(struct page **pagepool);
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
+ void erofs_workgroup_put(struct erofs_workgroup *grp);
+-struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
+-					     pgoff_t index);
+-struct erofs_workgroup *erofs_insert_workgroup(struct super_block *sb,
+-					       struct erofs_workgroup *grp);
++bool erofs_workgroup_get(struct erofs_workgroup *grp);
+ void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
+ void erofs_shrinker_register(struct super_block *sb);
+ void erofs_shrinker_unregister(struct super_block *sb);
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index a569ff9dfd04..bb1b73d99d07 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -714,9 +714,10 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
+ {
+ 	struct erofs_map_blocks *map = &fe->map;
+ 	struct super_block *sb = fe->inode->i_sb;
++	struct erofs_sb_info *sbi = EROFS_SB(sb);
+ 	bool ztailpacking = map->m_flags & EROFS_MAP_META;
+ 	struct z_erofs_pcluster *pcl;
+-	struct erofs_workgroup *grp;
++	struct erofs_workgroup *grp, *pre;
+ 	int err;
+ 
+ 	if (!(map->m_flags & EROFS_MAP_ENCODED) ||
+@@ -752,15 +753,23 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
+ 		pcl->obj.index = 0;	/* which indicates ztailpacking */
+ 	} else {
+ 		pcl->obj.index = erofs_blknr(sb, map->m_pa);
+-
+-		grp = erofs_insert_workgroup(fe->inode->i_sb, &pcl->obj);
+-		if (IS_ERR(grp)) {
+-			err = PTR_ERR(grp);
+-			goto err_out;
++		while (1) {
++			xa_lock(&sbi->managed_pslots);
++			pre = __xa_cmpxchg(&sbi->managed_pslots, grp->index,
++					   NULL, grp, GFP_KERNEL);
++			if (!pre || xa_is_err(pre) || erofs_workgroup_get(pre)) {
++				xa_unlock(&sbi->managed_pslots);
++				break;
++			}
++			/* try to legitimize the current in-tree one */
++			xa_unlock(&sbi->managed_pslots);
++			cond_resched();
+ 		}
+-
+-		if (grp != &pcl->obj) {
+-			fe->pcl = container_of(grp,
++		if (xa_is_err(pre)) {
++			err = xa_err(pre);
++			goto err_out;
++		} else if (pre) {
++			fe->pcl = container_of(pre,
+ 					struct z_erofs_pcluster, obj);
+ 			err = -EEXIST;
+ 			goto err_out;
+@@ -789,7 +798,16 @@ static int z_erofs_pcluster_begin(struct z_erofs_decompress_frontend *fe)
+ 	DBG_BUGON(fe->owned_head == Z_EROFS_PCLUSTER_NIL);
+ 
+ 	if (!(map->m_flags & EROFS_MAP_META)) {
+-		grp = erofs_find_workgroup(sb, blknr);
++		while (1) {
++			rcu_read_lock();
++			grp = xa_load(&EROFS_SB(sb)->managed_pslots, blknr);
++			if (!grp || erofs_workgroup_get(grp)) {
++				DBG_BUGON(grp && blknr != grp->index);
++				rcu_read_unlock();
++				break;
++			}
++			rcu_read_unlock();
++		}
+ 	} else if ((map->m_pa & ~PAGE_MASK) + map->m_plen > PAGE_SIZE) {
+ 		DBG_BUGON(1);
+ 		return -EFSCORRUPTED;
+diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
+index 37afe2024840..218b0249a482 100644
+--- a/fs/erofs/zutil.c
++++ b/fs/erofs/zutil.c
+@@ -214,7 +214,7 @@ void erofs_release_pages(struct page **pagepool)
+ 	}
+ }
+ 
+-static bool erofs_workgroup_get(struct erofs_workgroup *grp)
++bool erofs_workgroup_get(struct erofs_workgroup *grp)
+ {
+ 	if (lockref_get_not_zero(&grp->lockref))
+ 		return true;
+@@ -231,54 +231,6 @@ static bool erofs_workgroup_get(struct erofs_workgroup *grp)
+ 	return true;
+ }
+ 
+-struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
+-					     pgoff_t index)
+-{
+-	struct erofs_sb_info *sbi = EROFS_SB(sb);
+-	struct erofs_workgroup *grp;
+-
+-repeat:
+-	rcu_read_lock();
+-	grp = xa_load(&sbi->managed_pslots, index);
+-	if (grp) {
+-		if (!erofs_workgroup_get(grp)) {
+-			/* prefer to relax rcu read side */
+-			rcu_read_unlock();
+-			goto repeat;
+-		}
+-
+-		DBG_BUGON(index != grp->index);
+-	}
+-	rcu_read_unlock();
+-	return grp;
+-}
+-
+-struct erofs_workgroup *erofs_insert_workgroup(struct super_block *sb,
+-					       struct erofs_workgroup *grp)
+-{
+-	struct erofs_sb_info *const sbi = EROFS_SB(sb);
+-	struct erofs_workgroup *pre;
+-
+-	DBG_BUGON(grp->lockref.count < 1);
+-repeat:
+-	xa_lock(&sbi->managed_pslots);
+-	pre = __xa_cmpxchg(&sbi->managed_pslots, grp->index,
+-			   NULL, grp, GFP_KERNEL);
+-	if (pre) {
+-		if (xa_is_err(pre)) {
+-			pre = ERR_PTR(xa_err(pre));
+-		} else if (!erofs_workgroup_get(pre)) {
+-			/* try to legitimize the current in-tree one */
+-			xa_unlock(&sbi->managed_pslots);
+-			cond_resched();
+-			goto repeat;
+-		}
+-		grp = pre;
+-	}
+-	xa_unlock(&sbi->managed_pslots);
+-	return grp;
+-}
+-
+ static void  __erofs_workgroup_free(struct erofs_workgroup *grp)
+ {
+ 	atomic_long_dec(&erofs_global_shrink_cnt);
+-- 
+2.43.5
 
 
