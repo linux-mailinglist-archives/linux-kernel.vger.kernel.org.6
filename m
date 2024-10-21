@@ -1,74 +1,45 @@
-Return-Path: <linux-kernel+bounces-374304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B189A6838
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:25:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94579A6844
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134021C22644
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9558A28164A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5551C1FAC43;
-	Mon, 21 Oct 2024 12:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/nnmgpF"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8146B1F4712;
+	Mon, 21 Oct 2024 12:22:24 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66BE1FA258
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEBC1F8EF4
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513329; cv=none; b=mRs8fqkW6WJ9t8hralFOmwirAq2drD18nDjVvmHSTAbPrWtaJTuplqFsa1ubp8wu/Jdq9m1o5TDO2xTib0Jc/rhI+O09DEb4w+qsnQ70Qc2AWUi+MrrcXTPLaL9LIsOCjM6vvlsVWbBVhYa2M2CNjbSh98aUucXxNm2FoN1FHDE=
+	t=1729513344; cv=none; b=L7CZWLqINp+SsD5ufT/vLsRIx+gL5ZOKUMoTErKuRDT+c+WcjJnqilJb8Vs+1nwWXJP1Mqx1Lx6zzeXV3nkQ676QfJuQN5YlchnVVbtXGZ5mqql+C7f27hJuSTNcp/ubRwufeoYB5nGTzfizLraTj6XGbNICbHXGgFL4AtL0zEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513329; c=relaxed/simple;
-	bh=VNm+Z+GuNY45MeBsi9JopYeSlLAi+VCxGcvvs7IZJZo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=k38ROA1b3zij74cgjCcaSvByubRWmlaLmcu+mbs1C6M4m3BxVaRZx3JdFtOi/VokgxyMUFPL1ALwYQLemrXFrYSKFyYi356bUAnLAlfIQIUl8Go5N/qcixAruHce53/EOLhn4Dsxvf+x0itnxmrx+vyn3OIS4YN20CgPZD+F344=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H/nnmgpF; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so30574375e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513325; x=1730118125; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zVxPf0R6OmO+zjigETxEhoMwIqTaXzt8Q91vN2UcpAg=;
-        b=H/nnmgpFnIPv8DZl3uEFppUK5KAVi8cYuCRDj8LsrtIXK9sIB5TOLxyvn2xxp5R2dV
-         1K1Y04Ic+1YBS2YxZGL3AfUSe+NGVzn+RYks0B7Na9lGy5mk9QCg31suH1VNPWMNH56s
-         nXYeVWqZPkRA4IcvYhYO1b4sfJ4zG27BmQzEvKhjncpLoynmK2LBVt69oWuWm9oRXuYV
-         PynZRgK2K9EIwKvxO6RsPKW4IiPtpbNKgedj0L4oI68sjN3XfXUDo9XBPyOimHJT76kN
-         qc57REgrDGKDYrk5ulyOu4kv6icbAkS5T9VBIx5QRZ5JiwzV5aydTGDsoovlEjnCF1qQ
-         QbIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513325; x=1730118125;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zVxPf0R6OmO+zjigETxEhoMwIqTaXzt8Q91vN2UcpAg=;
-        b=CFOId3ZLZHIllSKD8+GHa7nIPMnH+MuMcROJGsXXziPk4H98StIQlbyQeQwrukJlaM
-         IGTSQzURAyYYpyFPKSLJ/WMlrYofhUiG5dNhh2N3Q5FvUmGlB7oO71Y9qlqZKETaPqbj
-         ukVKWZDV9dJph+HzZ4fPwzQIjEcrSlVOSQptZulQyrqpq3PXfdVVcNLcUkSigNOIAJAF
-         KEzZrrQ4Um2V1sNMLVzuhMZe+dKggH9gkgt7Ovgd7Wgnz6KJKUBevGdbtOS9duc0UIv7
-         OBuKIKVEHZwgNw4igdUccXVnQiAFFfQ8GCznODxSC4L/DcLXlv639GlgM+FoIrl8i6dE
-         BRcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGvAdoAuo/EPPq80dMN7R3TPgy87iTupFeYARdmIwh6bC1CHSqj6RutN8YwQqrspL5fpSWpQViy8H0cGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVSd0NBE8SliZ9DQdr5y7zigK9Lq00Pw1MntKKkwqKtm1ct95F
-	sjrQwj8o/RE4C7qk5VaLb1sgoWfyPG97etPYb74xul/+kdvRZX5nfffyHyu9TKw=
-X-Google-Smtp-Source: AGHT+IHyQh/KMBpfMGndxtXbnNWnzzSYlm90QV2Xju1MFqQdskUrpq1ciVZg0HQrZ+6Ir3Ko1FLMYQ==
-X-Received: by 2002:a05:600c:1c0a:b0:431:55c1:f440 with SMTP id 5b1f17b1804b1-43161697388mr95910385e9.30.1729513325019;
-        Mon, 21 Oct 2024 05:22:05 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c3173sm55892195e9.33.2024.10.21.05.22.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:22:04 -0700 (PDT)
-Message-ID: <d38c09eb-145f-4859-a681-74124fe4ab7c@linaro.org>
-Date: Mon, 21 Oct 2024 14:22:03 +0200
+	s=arc-20240116; t=1729513344; c=relaxed/simple;
+	bh=9R3YmXDHWIRc6Eh0htjnmyFUrHACkQQOeU/5t5RnlqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b2ZAlrHGLli9oAbKrZvfCcib3NHKNNNHYu3GwaPVkT9EhhSAzBLpg+DdEZYP5CyfU9J6wOQq0NGcbmRirX+zkdJYi0k5IGgnQmU4Z/MH6qtXzjmKpIE3J8hpuskR/MqUW7jTrRqiO3tbgGEKtEZSt10YIyGXxxoKO7kIoL7VH5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XXDtJ2shXz2Fb4l;
+	Mon, 21 Oct 2024 20:20:56 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 18BB41401F1;
+	Mon, 21 Oct 2024 20:22:17 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 21 Oct 2024 20:22:15 +0800
+Message-ID: <c95252f7-12a7-49b8-8bf6-2ff3ada845ff@huawei.com>
+Date: Mon, 21 Oct 2024 20:22:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,222 +47,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 6/6] phy: qualcomm: qmp-pcie: add support for SAR2130P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org>
- <20241021-sar2130p-phys-v2-6-d883acf170f7@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241021-sar2130p-phys-v2-6-d883acf170f7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH drm-dp 3/4] drm/hisilicon/hibmc: add dp kapi moduel in
+ hibmc drivers
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-4-shiyongbang@huawei.com>
+ <eslfc3ejjjpbw5wuf4khcoixeaitpb47iwf6kug7cryplcxcui@sieiyekdpczn>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <eslfc3ejjjpbw5wuf4khcoixeaitpb47iwf6kug7cryplcxcui@sieiyekdpczn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On 21/10/2024 12:33, Dmitry Baryshkov wrote:
-> Add PCIe QMP PHY configuration for the Qualcomm SAR2130P platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 141 +++++++++++++++++++++++++++++++
->   1 file changed, 141 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 1ca1f21b1cc225f435da9c775c97dfa142117f95..c2ba411c6c90fbbc1b3e96b02e8e63c565f254f9 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -2725,6 +2725,101 @@ static const struct qmp_phy_init_tbl sa8775p_qmp_gen4x2_pcie_ep_pcs_alt_tbl[] =
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_INSIG_SW_CTRL7, 0x00),
->   };
->   
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_rc_serdes_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_EN_CENTER, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER1, 0x31),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER2, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE0, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE0, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE1, 0x4c),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE1, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CLK_ENABLE1, 0x90),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYS_CLK_CTRL, 0x82),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_IVCO, 0x07),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE0, 0x02),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE1, 0x02),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE0, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE1, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE0, 0x36),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE1, 0x36),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_EN_SEL, 0x08),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BG_TIMER, 0x0e),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP_EN, 0x42),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE0, 0x08),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE0, 0x1a),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE1, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE1, 0x34),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE0, 0x82),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE1, 0x68),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE0, 0xab),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE0, 0xea),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE0, 0x02),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE1, 0xab),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE1, 0xaa),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE1, 0x02),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE_MAP, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CLK_SELECT, 0x34),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_HSCLK_SEL_1, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORECLK_DIV_MODE1, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CMN_CONFIG_1, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_ADDITIONAL_MISC_3, 0x0f),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORE_CLK_EN, 0xa0),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_pcs_lane1_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_PCIE_V6_PCS_LANE1_INSIG_SW_CTRL2, 0x01),
-> +	QMP_PHY_INIT_CFG(QPHY_PCIE_V6_PCS_LANE1_INSIG_MX_CTRL2, 0x01),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_rc_tx_tbl[] = {
-> +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_TX_BIST_MODE_LANENO, 0x00, 2),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_rc_pcs_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_V6_PCS_G12S1_TXDEEMPH_M6DB, 0x17),
-> +	QMP_PHY_INIT_CFG(QPHY_V6_PCS_G3S2_PRE_GAIN, 0x2e),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_ep_serdes_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_EN_SEL, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BG_TIMER, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYS_CLK_CTRL, 0x07),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_IVCO, 0x07),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE0, 0x28),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE1, 0x28),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE0, 0x0d),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE1, 0x0d),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE0, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE1, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP_EN, 0x42),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE0, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE0, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE1, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE1, 0x09),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE0, 0x19),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE1, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_INTEGLOOP_GAIN0_MODE0, 0xfb),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_INTEGLOOP_GAIN1_MODE0, 0x03),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_INTEGLOOP_GAIN0_MODE1, 0xfb),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_INTEGLOOP_GAIN1_MODE1, 0x03),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE_MAP, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_HSCLK_SEL_1, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORECLK_DIV_MODE1, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CMN_CONFIG_1, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CMN_MODE, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORE_CLK_EN, 0xa0),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_ep_pcs_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_V6_PCS_G12S1_TXDEEMPH_M6DB, 0x17),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sar2130p_qmp_gen3x2_pcie_ep_pcs_misc_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_PCIE_V6_PCS_PCIE_EQ_CONFIG1, 0x1e),
-> +	QMP_PHY_INIT_CFG(QPHY_PCIE_V6_PCS_PCIE_POWER_STATE_CONFIG2, 0x14),
-> +	QMP_PHY_INIT_CFG(QPHY_PCIE_V6_PCS_PCIE_POWER_STATE_CONFIG4, 0x07),
-> +};
-> +
->   struct qmp_pcie_offsets {
->   	u16 serdes;
->   	u16 pcs;
-> @@ -3290,6 +3385,49 @@ static const struct qmp_phy_cfg msm8998_pciephy_cfg = {
->   	.skip_start_delay	= true,
->   };
->   
-> +static const struct qmp_phy_cfg sar2130p_qmp_gen3x2_pciephy_cfg = {
-> +	.lanes = 2,
-> +
-> +	.offsets		= &qmp_pcie_offsets_v5,
-> +
-> +	.tbls = {
-> +		.tx		= sm8550_qmp_gen3x2_pcie_tx_tbl,
-> +		.tx_num		= ARRAY_SIZE(sm8550_qmp_gen3x2_pcie_tx_tbl),
-> +		.rx		= sm8550_qmp_gen3x2_pcie_rx_tbl,
-> +		.rx_num		= ARRAY_SIZE(sm8550_qmp_gen3x2_pcie_rx_tbl),
-> +		.pcs		= sm8550_qmp_gen3x2_pcie_pcs_tbl,
-> +		.pcs_num	= ARRAY_SIZE(sm8550_qmp_gen3x2_pcie_pcs_tbl),
-> +		.pcs_lane1	= sar2130p_qmp_gen3x2_pcie_pcs_lane1_tbl,
-> +		.pcs_lane1_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_pcs_lane1_tbl),
-> +	},
-> +	.tbls_rc = &(const struct qmp_phy_cfg_tbls) {
-> +		.serdes		= sar2130p_qmp_gen3x2_pcie_rc_serdes_tbl,
-> +		.serdes_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_rc_serdes_tbl),
-> +		.tx		= sar2130p_qmp_gen3x2_pcie_rc_tx_tbl,
-> +		.tx_num		= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_rc_tx_tbl),
-> +		.pcs		= sar2130p_qmp_gen3x2_pcie_rc_pcs_tbl,
-> +		.pcs_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_rc_pcs_tbl),
-> +		.pcs_misc	= sm8550_qmp_gen3x2_pcie_pcs_misc_tbl,
-> +		.pcs_misc_num	= ARRAY_SIZE(sm8550_qmp_gen3x2_pcie_pcs_misc_tbl),
-> +	},
-> +	.tbls_ep = &(const struct qmp_phy_cfg_tbls) {
-> +		.serdes		= sar2130p_qmp_gen3x2_pcie_ep_serdes_tbl,
-> +		.serdes_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_ep_serdes_tbl),
-> +		.pcs		= sar2130p_qmp_gen3x2_pcie_ep_pcs_tbl,
-> +		.pcs_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_ep_pcs_tbl),
-> +		.pcs_misc	= sar2130p_qmp_gen3x2_pcie_ep_pcs_misc_tbl,
-> +		.pcs_misc_num	= ARRAY_SIZE(sar2130p_qmp_gen3x2_pcie_ep_pcs_misc_tbl),
-> +	},
-> +	.reset_list		= sdm845_pciephy_reset_l,
-> +	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-> +	.vreg_list		= qmp_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-> +	.regs			= pciephy_v5_regs_layout,
-> +
-> +	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-> +	.phy_status		= PHYSTATUS,
-> +};
-> +
->   static const struct qmp_phy_cfg sc8180x_pciephy_cfg = {
->   	.lanes			= 2,
->   
-> @@ -4639,6 +4777,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
->   	}, {
->   		.compatible = "qcom,sa8775p-qmp-gen4x4-pcie-phy",
->   		.data = &sa8775p_qmp_gen4x4_pciephy_cfg,
-> +	}, {
-> +		.compatible = "qcom,sar2130p-qmp-gen3x2-pcie-phy",
-> +		.data = &sar2130p_qmp_gen3x2_pciephy_cfg,
->   	}, {
->   		.compatible = "qcom,sc8180x-qmp-pcie-phy",
->   		.data = &sc8180x_pciephy_cfg,
-> 
+Hi Dmitry,
+There're some format problems with the previous replies. Send it again here.
+Thanks for your advices, I'll resolve the problems you mentioned.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> On Mon, Sep 30, 2024 at 06:06:09PM +0800, shiyongbang wrote:
+>> From: baihan li <libaihan@huawei.com>
+>>
+>> Build a kapi level that hibmc driver can enable dp by
+>> calling these kapi functions.
+>>
+>> Signed-off-by: baihan li <libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |  2 +-
+>>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    | 20 ++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c  | 12 ++---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h  | 48 +++++++++++++++++++
+>>   4 files changed, 75 insertions(+), 7 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 94d77da88bbf..693036dfab52 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>> new file mode 100644
+>> index 000000000000..a6353a808cc4
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>> @@ -0,0 +1,20 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_CONFIG_H
+>> +#define DP_CONFIG_H
+>> +
+>> +#define DP_BPP 24
+>> +#define DP_SYMBOL_PER_FCLK 4
+>> +#define DP_MIN_PULSE_NUM 0x9
+>> +#define DP_MSA1 0x20
+>> +#define DP_MSA2 0x845c00
+>> +#define DP_OFFSET 0x1e0000
+>> +#define DP_HDCP 0x2
+>> +#define DP_INT_RST 0xffff
+>> +#define DP_DPTX_RST 0x3ff
+>> +#define DP_CLK_EN 0x7
+>> +#define DP_SYNC_EN_MASK 0x3
+>> +#define DP_LINK_RATE_CAL 27
+> I think some of these defines were used in previous patches. Please make
+> sure that at each step the code builds without errors.
+>
+>> +
+>> +#endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
+>> index 4091723473ad..ca7edc69427c 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
+>> @@ -64,12 +64,12 @@ static void hibmc_dp_set_tu(struct hibmc_dp_dev *dp, struct dp_mode *mode)
+>>   	rate_ks = dp->link.cap.link_rate * DP_LINK_RATE_CAL;
+>>   	value = (pixel_clock * bpp * 5000) / (61 * lane_num * rate_ks);
+>>   
+>> -	if (value % 10 == 9) { /* 10: div, 9: carry */
+>> -		tu_symbol_size = value / 10 + 1; /* 10: div */
+>> +	if (value % 10 == 9) { /* 9 carry */
+>> +		tu_symbol_size = value / 10 + 1;
+>>   		tu_symbol_frac_size = 0;
+>>   	} else {
+>> -		tu_symbol_size = value / 10; /* 10: div */
+>> -		tu_symbol_frac_size = value % 10 + 1; /* 10: div */
+>> +		tu_symbol_size = value / 10;
+>> +		tu_symbol_frac_size = value % 10 + 1;
+>>   	}
+>>   
+>>   	drm_info(dp->dev, "tu value: %u.%u value: %u\n",
+>> @@ -158,7 +158,7 @@ static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct dp_mode *mode)
+>>   	dp_write_bits(dp->base + DP_VIDEO_CTRL,
+>>   		      DP_CFG_STREAM_HSYNC_POLARITY, mode->h_pol);
+>>   
+>> -	/* MSA mic 0 and 1*/
+>> +	/* MSA mic 0 and 1 */
+>>   	writel(DP_MSA1, dp->base + DP_VIDEO_MSA1);
+>>   	writel(DP_MSA2, dp->base + DP_VIDEO_MSA2);
+>>   
+>> @@ -167,7 +167,7 @@ static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct dp_mode *mode)
+>>   	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_RGB_ENABLE, 0x1);
+>>   	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_VIDEO_MAPPING, 0);
+>>   
+>> -	/*divide 2: up even */
+>> +	/* divide 2: up even */
+>>   	if (timing_delay % 2)
+>>   		timing_delay++;
+>>   
+> This should be squashed into the previous commits.
+>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
+>> new file mode 100644
+>> index 000000000000..6b07642d55b8
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.h
+>> @@ -0,0 +1,48 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_KAPI_H
+>> +#define DP_KAPI_H
+>> +
+>> +#include <linux/types.h>
+>> +#include <drm/drm_device.h>
+>> +#include <drm/drm_encoder.h>
+>> +#include <drm/drm_connector.h>
+>> +#include <drm/drm_print.h>
+>> +#include <linux/delay.h>
+> Sort the headers, please.
+>
+>> +
+>> +struct hibmc_dp_dev;
+>> +
+>> +struct dp_mode {
+>> +	u32 h_total;
+>> +	u32 h_active;
+>> +	u32 h_blank;
+>> +	u32 h_front;
+>> +	u32 h_sync;
+>> +	u32 h_back;
+>> +	bool h_pol;
+>> +	u32 v_total;
+>> +	u32 v_active;
+>> +	u32 v_blank;
+>> +	u32 v_front;
+>> +	u32 v_sync;
+>> +	u32 v_back;
+>> +	bool v_pol;
+>> +	u32 field_rate;
+>> +	u32 pixel_clock; // khz
+> Why do you need a separate struct for this?
+
+I can try to use drm_mode function and refactor this struct, but they're insufficient for our scenarios.
+Here's change template bellow:
+struct dp_mode {
+         sturct videomode mode;
+         u32 h_total;
+         u32 h_blank;
+         u32 v_total;
+         u32 v_blank;
+         u32 field_rate;
+};
+static void dp_mode_cfg(struct dp_mode *dp_mode, struct drm_display_mode *mode)
+{
+         dp_mode->field_rate = drm_mode_vrefresh(mode);
+         drm_display_mode_to_videomode(mode, &dp_mode->vmode);
+         dp_mode->h_total = mode->htotal;
+         dp_mode->h_blank = mode->htotal - mode->hdisplay;
+         dp_mode->v_total = mode->vtotal;
+         dp_mode->v_blank = mode->vtotal - mode->vdisplay;
+
+}
+
+
+>> +};
+>> +
+>> +struct hibmc_dp {
+>> +	struct hibmc_dp_dev *dp_dev;
+>> +	struct drm_device *drm_dev;
+>> +	struct drm_encoder encoder;
+>> +	struct drm_connector connector;
+>> +	void __iomem *mmio;
+>> +};
+>> +
+>> +int hibmc_dp_kapi_init(struct hibmc_dp *dp);
+>> +void hibmc_dp_kapi_uninit(struct hibmc_dp *dp);
+>> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct dp_mode *mode);
+>> +void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
+> It looks like this should also be defined earlier.
+>
+>> +
+>> +#endif
+>> -- 
+>> 2.33.0
+>>
 
