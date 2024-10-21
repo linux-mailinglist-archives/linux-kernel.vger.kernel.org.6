@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-374673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826BE9A6E67
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0624F9A6E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81AE1C21B91
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E1441C21F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E951C460D;
-	Mon, 21 Oct 2024 15:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crN4GJzR"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC44131182;
-	Mon, 21 Oct 2024 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FE01C4623;
+	Mon, 21 Oct 2024 15:42:00 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6B4131182;
+	Mon, 21 Oct 2024 15:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729525245; cv=none; b=F1rVvFtnyqJKU5qL0RtVSV0g9yhGjB5vImFkRC9Am7YW2nOjsYZnJ23N7waLWwAXVFU5W1hWs0DNFC29GRwVP9PWXdQK/LRaN+yKRCkowwdNxZxjm2dRGXmDDXhal4uAaRTuLH9Vg5uVC9PAccHpxvhDXf+GqAjLD5NBJlAgBKQ=
+	t=1729525319; cv=none; b=cuQ2sb1HFAKrFskxXFOAtP3IgZ3WuaXkda63ERZGAsZnMrgl0O34zoJWFojiz8ANW5reU5O6rdtJTmOPoJRhqqRb0ZiC1X4XiodvWWyzSJqcPiJDX7ljEAP6OiEGdZlTdIPreOZBMidYCzJP3vpyl45lwL4z6Eb/YryXVbv7zxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729525245; c=relaxed/simple;
-	bh=ifLaVKX5f4pjIkahfUVbVfbWhI693YQo3t5omuqgSrg=;
+	s=arc-20240116; t=1729525319; c=relaxed/simple;
+	bh=mvpJ5q6wbG2OGv2ExzGIZ+pg2uE2gGkv1J9IXoMKJ4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uld2efJgr+wz9/wKoUkJ5ENiJD7Od54FkAsExypu/maCrfCKcn+8L98G6iOPY65O8mA5YB7O0bdnhhf+Zd4yA8j+w6Tl6+T42+3eW80A52hF2O5T4Q+RReybkWfRUAQXHAD68IR8DdFnjTPxhDytiBfX0yjgX+xW1M3KrzRwl3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=crN4GJzR; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb3110b964so40579041fa.1;
-        Mon, 21 Oct 2024 08:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729525241; x=1730130041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kv5UT6mtcpe+cnb4k9m/wVUK0gKv8OfPDi6E9+ZSQzA=;
-        b=crN4GJzRmMhRb0cwNbbtntzmSaMrDdpRBzDDGZLXRi1FB0IK1z3T3po6G3jTZU6Gtf
-         GXid8DqM1p6NSjKpefxt/X7w4OBIdtuTdBOzm8WMnFCwAqY4fJdUvcXvSGO4/s6MehBQ
-         YEWKMwiH02iOT5pb1f9bl0OZpp7sWnz24AUmcKLqoWtmGpMfBUEDOiFZzALBY/THaix5
-         P6dpQ92w+Cbq/XAkQhyW2OYZW8FCMF8jRRqdDYBIhtuiEvQ7oEAPCuPT6Fre+CoPD9Mn
-         sBawzPccDdH3bfX0wgKPd4CpC1kfMdbzDIVsfgLeN0RYzBfmvKGNa8JwRLlQmxi0qyog
-         aRyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729525241; x=1730130041;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kv5UT6mtcpe+cnb4k9m/wVUK0gKv8OfPDi6E9+ZSQzA=;
-        b=p3KGqgD76Oej5kvu+6+CX77DyopDwtObxFaJ1LZzBJFSNgo3JmQ8WzYsZ1xnMaLZe6
-         ZGZPtFprASh1emBvQsjBKEYLhXPECGPI200nFkNQgyw09ldAySDLszsi7zY5UzwV6GQS
-         nB2/rOayUlpnbiAS0ciqGoiNIUS8coWou9HAKeIWETBi/5srmiNo5kQlU2ZQK65zq1yk
-         McxVHoB4fhf2tVxblgglKNigya18NGTKr5Kt0+D37efsDK/VOCuZs/n4taNRw7LRLB0A
-         KAqNX3JLHj/gYFcoGvN1HD3b97GeZhTmzPWvmM1bcss7qC9PEgB/BPrBYh+dYAeL/LwL
-         jPfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVD2GJ+bhtCFTr6Gt3+Kic6XSdypPwo5UcP5J6+5DDYnBFOkC8f0oJKYmOBwPbOuqasMy+ToQclzBI=@vger.kernel.org, AJvYcCVNIhl4FcoAoAEvJUYV5njKavwQ2VsmnILwRdKwuiq5BO9NpAvJqyfSb3gXpCaaqhYnln/3FZa1fiw6j7YgkZ21/JM=@vger.kernel.org, AJvYcCVz2EInZg/sbml2FfFgxHYY8gQ96MWASxIOta/+G9P1EQg9V/0Qrm0p7NVkGuKBixnT/eyTi89c@vger.kernel.org, AJvYcCXL+uCYV3lYjyUZr8w9bB4N7HSctXn+NruB+EKXkOM7l086/XOO64cgS+gLE4OM6o21YdRQsAp9VtY=@vger.kernel.org, AJvYcCXXxDNwk7bxVhb6IiGV6pxNvI55TUawgg0lUlo2X8LAs9ND1r355SsmHFm9TIpfSswuvSF1maRjYvnopinA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzeH1tihXGA7VDx3gHnyUfhromGW0umIz8ell9pUUrKF1zVVPJ
-	K3wl2f+UEcFYOrm/tSfPO0C4GVa05ONI6WDch4XV/y6uXx6m4mOU8BS0og==
-X-Google-Smtp-Source: AGHT+IFkQVd4FvCnjeIZN1QcmBJUx78OKRBL8umpe0S6Nsvo84HcjKcLxgJwz2/j/IsIFpL/2Eq0jg==
-X-Received: by 2002:a05:651c:1541:b0:2f7:65c5:c92 with SMTP id 38308e7fff4ca-2fb82eaf006mr44503811fa.20.1729525241030;
-        Mon, 21 Oct 2024 08:40:41 -0700 (PDT)
-Received: from ?IPV6:2a00:1fa0:4321:8ef5:e514:855b:c891:f732? ([2a00:1fa0:4321:8ef5:e514:855b:c891:f732])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ae12273sm5218741fa.115.2024.10.21.08.40.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 08:40:39 -0700 (PDT)
-Message-ID: <2b8dc3a4-5017-4028-89a0-7267ff3b48a1@gmail.com>
-Date: Mon, 21 Oct 2024 18:40:38 +0300
+	 In-Reply-To:Content-Type; b=Mx2lsDlPrb/KLlPm5FMQQk1BsN/7JL37CQyVzFLfySebU2lDw1q724/r9jiXbXgn/IfAmMFAYQ56yFCsM2f61G6qif687a0J8mpP58W6/jW5Hs0UPcqU+uDwlPPNyxVk9mgCPQ+Rd8BRyoQnHJH3iRyOHgJBc4S9M7tVHabCFoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app1 (Coremail) with SMTP id HgEQrADHzX0LdhZnXh9PCA--.21720S2;
+	Mon, 21 Oct 2024 23:40:59 +0800 (CST)
+Received: from [192.168.1.6] (unknown [183.94.68.188])
+	by gateway (Coremail) with SMTP id _____wC3sPsJdhZnqLGEAA--.29413S2;
+	Mon, 21 Oct 2024 23:40:58 +0800 (CST)
+Message-ID: <7a11cfd9-523d-4650-951b-52a128af691d@hust.edu.cn>
+Date: Mon, 21 Oct 2024 23:40:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,48 +41,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH/RFC] MAINTAINERS: Re-add cancelled Renesas driver sections
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Paul Barker <paul.barker.ct@bp.renesas.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
+Subject: Re: [PATCH 2/2] docs/zh_CN: add the translations of
+ kbuild/reproducible-builds.rst
+To: Jonathan Corbet <corbet@lwn.net>, si.yanteng@linux.dev,
+ Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
- <20241021150447.GC4176464@ragnatech.se>
-Content-Language: en-US
-From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-In-Reply-To: <20241021150447.GC4176464@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1729259177.git.dzm91@hust.edu.cn>
+ <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
+ <87r089tqwi.fsf@trenco.lwn.net>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <87r089tqwi.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:HgEQrADHzX0LdhZnXh9PCA--.21720S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFyrKrWkZr4kGrW8XFWkWFg_yoWDurgEyr
+	10v3yakw1UJFn3AaykJrn3Ary09anYgr1Ut3Z8tr97t3yDJr4UXF4qqrn2vFWUWF4akrWx
+	CwsYqrn3Wr17ujkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbPAYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
+	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
+	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
+	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
+	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XVy3UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On 10/21/24 6:04 PM, Niklas Söderlund wrote:
-[...]
 
->> Removing full driver sections also removed mailing list entries, causing
->> submitters of future patches to forget CCing these mailing lists.
+On 2024/10/21 23:30, Jonathan Corbet wrote:
+> Dongliang Mu <dzm91@hust.edu.cn> writes:
+>
+>> Finish the translation of kbuild/reproducible-builds.rst and move
+>> reproducible-builds.rst from TODO to the main body.
 >>
->> Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Update to commit 114ff6fe6cfb ("Documentation: kbuild: Add description
+>> of git for reproducible builds")
+>>
+>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 >> ---
->> Anyone who wants to take over maintenance for these drivers?
-> 
-> In case Sergei is not interested to keep looking after the RAVB and/or 
-> SUPERH Ethernet drivers I would be happy to do so.
+>>   .../translations/zh_CN/kbuild/index.rst       |   2 +-
+>>   .../zh_CN/kbuild/reproducible-builds.rst      | 114 ++++++++++++++++++
+>>   2 files changed, 115 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
+>>
+> I've applied this (patch #1 was already applied).
 
-   I am still interested, of course... but looks like I'm not allowed to anymore. :-/
+Thanks Jon. I originally would like to push llvm.rst and 
+reproducible-builds.rst as a patchset.
 
-> In either case should not the maintainer entry in the bindings documents
-> also be updated?
+But I incidently cherry-pick the wrong commit and generate an incorrect 
+patchset. My apology :/
 
-   These still have my Gmail address... I'm not sure yet what to do with it...
+Since this patch is applied, I will then send the translation of 
+llvm.rst as a separate patch.
 
-[...]
+Dongliang Mu
 
-MBR, Sergey
+>
+> jon
 
 
