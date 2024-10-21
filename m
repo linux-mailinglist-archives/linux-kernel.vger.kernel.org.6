@@ -1,478 +1,196 @@
-Return-Path: <linux-kernel+bounces-374276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6997F9A67C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:17:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F24E9A67CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E7F1C214B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:17:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5211C21B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0916E1F4731;
-	Mon, 21 Oct 2024 12:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1982B1F4716;
+	Mon, 21 Oct 2024 12:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUe+GzHv"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b="WqxcV6Ly"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021074.outbound.protection.outlook.com [52.101.129.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1121F429E;
-	Mon, 21 Oct 2024 12:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512999; cv=none; b=j+4W2ubybPVHwsys//psHfY8VSnSETqUWB1+ycR1WXzixu0grqmf2FvdDWdPEJXyp7qM5BJA8EVQIIxjZsN59ImH7CG5pVbjP48q2nb+BXAcaL/gfk+x2axJYYn7v16+EF0XHVPtlDKaYyKJSN2uzSjQjvgRRf7I+R6pz/ga7VA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512999; c=relaxed/simple;
-	bh=/QxQgtbGT9pHMWSRh6CJ+3Iapq9VtlZs324F6K7mp+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MwV/kXVMBUUidFk1Mj8ksbzrLq4j1qC6a4YMbDhJnOqEOSehpUjXp8FzV5BJlMJgXnjmJL3dutoh65oDDIWeLs5gvbxRRIzTebLUFEx4WSm1nYYOfAfm6Vr6HOiS4inpSg4h0YqqifHq5aXYffPbz8MTdTiHRh0llOVfAgg1w0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUe+GzHv; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a0472306cso590744466b.3;
-        Mon, 21 Oct 2024 05:16:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8131F470E;
+	Mon, 21 Oct 2024 12:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729513029; cv=fail; b=mCFj/FMQKVZ6sz7S3ETfzwUCWc9mFOZBESIpT5MzOQzUdFBs7WKd4Mgpeyb/epyNPLD1cBLRtpUSJdPnGDSj7JzAx5GcyyaQWYTYzlAjOWWlRrGHvEYo49Fsj8COlfVxSLqQU71M2xsJi1lCQqX4uF4F3K4iEOiWEn87+IH/xFc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729513029; c=relaxed/simple;
+	bh=zcdVxIt41F3+w91XSdSp1Gl7i+Fe85WDDMkL94g8Eyk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GwTgvM+hBuZKeiP7eUrmkXOdNfKyjoZbEa+yNbBdyphQy4lOkBLKMLxF5BYGgtCx3uZryEgU4klFXylqcRuoNiNKPvt5Q0783pTKV2BVCKE0IC0ICkO2IuxLAH0RQhvS//SwrBP7gcOlx0FLXwGm3aall+EtcGFZUh3LAuL+BY0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com; spf=pass smtp.mailfrom=fibocom.com; dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b=WqxcV6Ly; arc=fail smtp.client-ip=52.101.129.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fibocom.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G6XlhWkN1G41vlyr7OZOJjxRTffrZruOeGvqDbMsiQuyngZoBSnidtbUA5knv1r+OqMjJucYTImsTtRVNdvEEMY9fEen6VvuXi5L1G+HrOlNJMo15yxNGsktRV0Y+u1YAHbEzUQbZxjgjI+Ni74RyfJ5/72YNqXynWTFrMMofUK17vaFCo0dNC6Ae0BbyZytMldBgiXHXMyTZ3q1uwt44Tuu1IGzQs8X6wTt2U3TZYGGVu/tghdDwC5Rfy0tS63KvqohAm/v/mMwQWTqeR/vb0zgM4AAluq9BgrBtu/V9JhCkM5b41BQULntZsARaKh82RshL23DAfEtCeDESqAAdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oINRKQZNvFOYIJMSMWUZEIDIzq9b6A6ifP/Z4dH2tLY=;
+ b=HLkulrF+WfNgSNdsVZ70IIOZ5JjUCp/6SO2VwaGUY97z3lo4pw1zE0nKU/VPq8W+azTfS4syvQkZwAc9rhFzyEZz1E6uvzD0ix2b1w23oXPo6/JDn3NCw286YGDLNmygR2pGzuhT+xTtCgTReXfr5jGyGNwqhRN0q3gRT2l1adA5BuKxTh/vD5HtESYgGPNa0myqEcVZJ6ArlJ7MBog3XeZuHSTNP195dauZqO1Q10qh+9FCcVQNUxH1ZDcOJ38/Gmp3bRZw+Ei3dvqB7GZlVI3+EntIM9ztxje1aLNV5DTPzjFQUNasW17PHr3aBxvKvA+qkQnTr9UgdkaMLYOLeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fibocom.com; dmarc=pass action=none header.from=fibocom.com;
+ dkim=pass header.d=fibocom.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729512995; x=1730117795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=El61r44Z3jvNpsbA3bmUgLdX8Aii77RVSrXblKXqOh8=;
-        b=JUe+GzHvBQ0teKlY0Yqy5/kcBdN95ZQQfP9vGlw3Mh7FY4gVU51xki9SLSNqUtXGG4
-         s/kSn0SrXa6y8QPzD9hKjG2RZiZap7B6LcgjC2zB5Zw93fnO3nMBZPGbfgkTFEYjVAak
-         Ca7CG35VB5/vMCfJDRUXA9etJK/U9xiJ1APms390PBu36CV3yeSLp9ohKWPHmD9AC+Wy
-         SJmv7UmFvGYWviui4kVNjoomB1BWrDKRq3orPoUL3NvMvxRpToWUulV3YPvPeg9NCczI
-         zvxl+RngAF/JKudRTEY8JEJBlKX1VaCkIA7qVSS1L3E1BR2zeiQAH5PqgxdTY7H+Y7Up
-         ry/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729512995; x=1730117795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=El61r44Z3jvNpsbA3bmUgLdX8Aii77RVSrXblKXqOh8=;
-        b=qpn4lF9STIUbcg8OvGdnWITdft1fdY09YNDhcYH//lyOM3Fff7ef8vFRqrEZQCKpEc
-         iKKnW8nV00oF7ImQdPYChrFjkcddJCi0q3LxN5MEiZU9w6UuSTM5wIxBbbWZiVUgseLx
-         d9NbzwVosfEaZnmeqlTEbTYdgISmQqNcc1+h8OYPRutKpYX+dNnMPMzQWisni6nZn+6s
-         pUUxr9rOx/p3zc+BKa9o9lvduNYxtPjbCrpVdBXPBYi1dLDR9afg+x9e5S9O9hWF1VRf
-         TIT1ECR9RYWk3WoA/VjrIe8J+l2ZY4MJk3MSdN4vDtN/khDPsbJov0awL6LRUxFFG+z5
-         UvWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxEpA4f8TjmfnWZxx1OB/1DfkBsefe2H5QA2SKC0Cr06CGk50a6VNN9GGiL8z9sVwZdQSuZ7ZYiAZYjVou@vger.kernel.org, AJvYcCW1N3fL/3WUGP6JuMUyzO9CLOzXRlXXZTF8rsR3weD70pO9tG/xvmmcplJGwwcxu/kwgTMh3732su/N@vger.kernel.org, AJvYcCXmo8C/RjJg2fhVJ9UDEOUB4dGLg2m4nCUx08msJyVj0HZMHj7eVZq7TGxc8ZkBQFtrRvOtAJD2GN7d@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDrl1FtwcwLOv0M+PlxDKdD6f48vuX1wXJE4RfKSq4CzNbHecy
-	s3fDXgsLrLua1nn+C8qVSWBU3u3UQbn8MXQhkP4BfoFxi7qfERd5
-X-Google-Smtp-Source: AGHT+IEfAzgKuTl08mwpAKNMUEJ3JqHR+e9hh5pUDQ9yCvhlSfkERO+PIMvyot8OKHFebA3lMkgYQQ==
-X-Received: by 2002:a17:907:1c1b:b0:a9a:183a:b84e with SMTP id a640c23a62f3a-a9a69c98812mr1125296566b.40.1729512994421;
-        Mon, 21 Oct 2024 05:16:34 -0700 (PDT)
-Received: from zenbook.agu.edu.tr ([95.183.227.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6ee6sm197068966b.4.2024.10.21.05.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:16:33 -0700 (PDT)
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Sam Shih <sam.shih@mediatek.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
-	Yassine Oudjana <yassine.oudjana@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+ d=fibocomcorp.onmicrosoft.com; s=selector1-fibocomcorp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oINRKQZNvFOYIJMSMWUZEIDIzq9b6A6ifP/Z4dH2tLY=;
+ b=WqxcV6Ly5OkH+arEDYddBkVIbZ7Coy1ucrJpc7Nd1hO7uThmjYuheJpwrm76SqJVBRYQRHKzinfvnblgNL0E/BTbyl1kxVoOnbEXyWJmf2yMbxnM9+elADUMyRnfDBXrGiIF5rTa++FNWD47JEl1xJ4R/THRBkiPZsiJD99qTMI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fibocom.com;
+Received: from TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
+ by SG2PR02MB5604.apcprd02.prod.outlook.com (2603:1096:4:1cb::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.23; Mon, 21 Oct
+ 2024 12:16:58 +0000
+Received: from TY0PR02MB5766.apcprd02.prod.outlook.com
+ ([fe80::f53d:47b:3b04:9a8b]) by TY0PR02MB5766.apcprd02.prod.outlook.com
+ ([fe80::f53d:47b:3b04:9a8b%4]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 12:16:58 +0000
+From: Jinjian Song <jinjian.song@fibocom.com>
+To: chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	corbet@lwn.net,
 	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] clk: mediatek: Add drivers for MT6735 syscon clock and reset controllers
-Date: Mon, 21 Oct 2024 15:16:16 +0300
-Message-ID: <20241021121618.151079-3-y.oudjana@protonmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241021121618.151079-1-y.oudjana@protonmail.com>
-References: <20241021121618.151079-1-y.oudjana@protonmail.com>
+	helgaas@kernel.org,
+	danielwinkler@google.com,
+	korneld@google.com,
+	Jinjian Song <jinjian.song@fibocom.com>
+Subject: [net-next v1] net: wwan: t7xx: reset device if suspend fails
+Date: Mon, 21 Oct 2024 20:16:34 +0800
+Message-Id: <20241021121634.16278-1-jinjian.song@fibocom.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0153.apcprd04.prod.outlook.com (2603:1096:4::15)
+ To TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY0PR02MB5766:EE_|SG2PR02MB5604:EE_
+X-MS-Office365-Filtering-Correlation-Id: 850c40de-1cc0-4d9c-449e-08dcf1ca4237
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QhAeaMMMd/U2mkvJce/7RrvXLDlgEZt1vzttoxKGaaf07lnPHeA+FWaoLHvZ?=
+ =?us-ascii?Q?tNlfgzh1BUSc2Ox/vUrilJ+/NrfMW9jNVwdGR/1HDRTSvHUz10Wja7tPd3kc?=
+ =?us-ascii?Q?6H4kfcdeZ/Yx4ZPhgqgw4Km+rWO/L8oyucY7d3AU6v6XDJZ8CO+dBaIvptpi?=
+ =?us-ascii?Q?HGXmer6cYx934FFEPUPbfGrJphFYgFJCi856uYqoLb9Bl79oQY7dcTUjcVQb?=
+ =?us-ascii?Q?jS8fp9EcJHOdguvbbmXv3YAk9v5O9IIW2/u3mFP9KHB6oWGeo3Al+AeOqtmr?=
+ =?us-ascii?Q?anSAvTYbxSmE+gKJnMm+H129GJrNst4UXhUCTWnIrGSqox7qTIRS8iSLEKZA?=
+ =?us-ascii?Q?GCywr6uR07KldAEMpL+koU6lefacVo/O+NjaYWLXVIpmw5dz6I++yGGpl/EG?=
+ =?us-ascii?Q?yTosj5mt4KaDK0F2Odlp6GfIBHUELCwYM9DCzIzUBBLtja3uZPnTcvnPsF3c?=
+ =?us-ascii?Q?MgtWJdjGtSlkQcUqEsRTXY/UIA1xgsGVIQB/lmjovbGiHcuMw8RTmdLWCdda?=
+ =?us-ascii?Q?60p2Re7OXP0pU8Q+gzS/NuolAYZpqEIVGE9C/2tBz2xi01P3Z5lBmIyEFm3Z?=
+ =?us-ascii?Q?OJQa9v+nh/qFIi/xM4icIOazjBV13jkgSxeUydtHvA3tBZZzxaf8EqhCPzcF?=
+ =?us-ascii?Q?OgcK88rnHAMVEdwJmp7BgX24y80UtrjIVWScpc0yQnPp/52T/u0YPOROIS6e?=
+ =?us-ascii?Q?Uic7mBRNOvktAGPSJmSHC9P7O+Yo+EjMYrAz15e+nHKPT6Fw01LtYlEbEKth?=
+ =?us-ascii?Q?OJGg3kLKpVCqnDWnTVniiWrOlDO6xOQhQpglb2T5l8tTK0sSvjN13qR6GzoQ?=
+ =?us-ascii?Q?znzTWM+Cy2+1CAcq9PO9W56xwNul2KZYYGV/XQnSGGenRJlUHrtpHm5//jZ8?=
+ =?us-ascii?Q?dlYwSlrGni2ZV4UOVPh3bIvyYcu4ffaosLKgKxJhd6yWbnXiw9PcQFAGcYjk?=
+ =?us-ascii?Q?sQK0H64sgK2AGICYIn2gmeZPCAaEQkfGrEsctYc3JvjB8f/kevbjBvZRQoKt?=
+ =?us-ascii?Q?v19BpiVMlw34Jzif6SZ37QXOEe8IMki+TiH95naxaK1sgF0bbKURsAzGLebz?=
+ =?us-ascii?Q?hW9zK8cZNZYcEx/55GQtBhq5weFtr5jCaGlxj1q3duqZMVZWhtdgR96JedMQ?=
+ =?us-ascii?Q?VDg5zxvQTuibAqejVPuTLi5iT0vUHga5EeVeM3GQllc5IALqbpqXH+9ze+Jg?=
+ =?us-ascii?Q?kX6eas2zoLGt0e/tl1fkEEUKyoFzRU76lBcpHGdhsdN4T1K1f1IIJToiXEys?=
+ =?us-ascii?Q?tlKFJK24pdQ0ZIsZtHI7UU0BmLj6JHPM7wLXDGBmUOScJW/6PhplxCaG8eUD?=
+ =?us-ascii?Q?D2vu+byWR/8Zvo0AAIyROh1hlyVIOisHwdL2J+eyLkQLml5JxFQIDtDrmSoe?=
+ =?us-ascii?Q?rWHvqBLcuYedbD8MF5Ic8N95YAvZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR02MB5766.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mJbSNJpciQrVN/J8mMoe0C9IUhBYAWLlhQ7Azqa/TVkFkMQuJ2pF3I+5YANE?=
+ =?us-ascii?Q?JNqIvCCfXsSPTmdrtzdslyGg0xdeZnmS5bNUzy0GC445tWiwhSEGsw80XXkg?=
+ =?us-ascii?Q?Dhif31rD2gx9Rrz+jY02/UHmGRVd1bEiEVwSQoUH9Hm+WpqUIO3tqUDWyA09?=
+ =?us-ascii?Q?sm1l434sRbpDCV8qLTuJ+35r2u+/zNgVnxpaHlvWN9PAORBG6yuuyoUmQBrN?=
+ =?us-ascii?Q?MoQQ9V/m5A4FuAfawO31ix7MRGgSoXZd9dZCDbB4FO+gGsHC/JXDD9pEal18?=
+ =?us-ascii?Q?t9v3Y6LoIvLZDOXlcod5YeYmMPqi3a0xSkBvZpDg9o61vhiP+1Y02Ob9LljD?=
+ =?us-ascii?Q?GwTDY2gclTGfSZBfLQYaWTwY/DnPAEKc4MKoQ5fLnDYpw3zN+lnLFbO5YdUh?=
+ =?us-ascii?Q?txzRkyeT06FSrk7ID+F7OsKzTa9c9ob1r98uheOl4kwqb7eqeve5w6SdTgT6?=
+ =?us-ascii?Q?FrCMBYnXBDoodyOzI2qGSvOKwYhDWROA4UjWCKYOdqWwPzUVrPJ4UDzu986s?=
+ =?us-ascii?Q?3Ch4F0FF2zBeuVsaxXuCvK03HPL2vIHoja/El09AYsu6Ppd28g3gpEEl4CYc?=
+ =?us-ascii?Q?vUBfAuz30pWNsw4PUH7D2qN6zrUDmU/5kp+tGx7rXmrP7tiYr9zfW08zlmN0?=
+ =?us-ascii?Q?KUUbEzhnLZkigte5kKDRC06/JZoVPxaJ1nQHn29Xzjez+z+LRU2N6Ja/KbqH?=
+ =?us-ascii?Q?wfqzzuddsgmp8HGdYoM/PyvXzwnRxWD0kpNi8b5z1UHWjdlce4LUdkrvAAy4?=
+ =?us-ascii?Q?MnthbicfIDweomASV0aflIZnPylr/V0YNEJJLNqwlBzutyosA6M/FMbEqbYj?=
+ =?us-ascii?Q?XNnh/uiexhw4/eKJZWGq1fE7EjC8E/v4tzPh0Vp5J5ONqrwRFP8gVrZcrgm/?=
+ =?us-ascii?Q?qTKPriE986xmBeTbjEG4D5zbuwz5ImdKlMZiSxyZtApNyn1dmxqZcWEUw6DC?=
+ =?us-ascii?Q?zad1qA5ya2KjrklF0awdxjuwUpZYxHee5q98BDety6CGFzKb9F0HnbJd7lcU?=
+ =?us-ascii?Q?8b7tfwNymzSEQDFwPqIvmdbF0iASxv2vLn8NDAzdo3qda4j2SmeHpRUaKthY?=
+ =?us-ascii?Q?foNq3lnvEYF3hCJMq7RGQ7+2mfaZNL+H0vys3z5K0ltYeL1oHw5lrZn2bwQR?=
+ =?us-ascii?Q?U//qDbdm/iywUW8APk90God2Et6+WlA3a4qxzUh2smDjPAt56atido4sX4SJ?=
+ =?us-ascii?Q?D5woj9TudsW75HUND9HHBO15SOXoYWibuZZ9hC3wBeugwimTN3cbYlEed8Ae?=
+ =?us-ascii?Q?De4vA5fvRHo/v9bC+nX6Q7AB3Be16LbgUbEQBgTO9FEyskpsr67AknmH1Cti?=
+ =?us-ascii?Q?uF3c6DvgXS5lEbjj0ID/Ftsqopny7pK/8t+BxDUsud1y5aJyZ4D6fMOJO8Ji?=
+ =?us-ascii?Q?XXvuDtVuEk2bmy8jIzkN5C6ZjhmmlOYaC+YEiUMOxsKaOJOFIIDnA0xm+QE3?=
+ =?us-ascii?Q?C98dFRLv1q1SzG1bKTFA0Ssfy3ZnOeoMaknriUIXSHMc14htniKIoz2+4H9c?=
+ =?us-ascii?Q?o71wKhechs66GGKjGEpDcZeouV2DB/cXpE+G7W+jZcYZ0xCRUcaa73veia+W?=
+ =?us-ascii?Q?9KwoR5VBVAXipqE35JC9q52/FQBaYPINzfDbGMiKDa9LYDveLAawCaiEfY5B?=
+ =?us-ascii?Q?pQ=3D=3D?=
+X-OriginatorOrg: fibocom.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 850c40de-1cc0-4d9c-449e-08dcf1ca4237
+X-MS-Exchange-CrossTenant-AuthSource: TY0PR02MB5766.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 12:16:58.1194
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 889bfe61-8c21-436b-bc07-3908050c8236
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U87Y1GRSOsJ+7MWekGlfR4C6GHUnf/NDSecp9MHrg4Y8/77vgMDOoU4FSxPRTuqQDifYxB+rOCt+z2HOY8/yVm/+eqOYwlnXvb7PjXUtPXk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR02MB5604
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+If driver fails to set the device to suspend, it means that the
+device is abnormal. In this case, reset the device to recover.
 
-Add drivers for IMGSYS, MFGCFG, VDECSYS and VENCSYS clocks and resets
-on MT6735.
-
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
 ---
- MAINTAINERS                               |  4 ++
- drivers/clk/mediatek/Kconfig              | 32 +++++++++
- drivers/clk/mediatek/Makefile             |  4 ++
- drivers/clk/mediatek/clk-mt6735-imgsys.c  | 57 ++++++++++++++++
- drivers/clk/mediatek/clk-mt6735-mfgcfg.c  | 61 +++++++++++++++++
- drivers/clk/mediatek/clk-mt6735-vdecsys.c | 81 +++++++++++++++++++++++
- drivers/clk/mediatek/clk-mt6735-vencsys.c | 53 +++++++++++++++
- 7 files changed, 292 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+ drivers/net/wwan/t7xx/t7xx_pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25484783f6a0b..939f9d29fc9bf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14533,9 +14533,13 @@ L:	linux-clk@vger.kernel.org
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-+F:	drivers/clk/mediatek/clk-mt6735-imgsys.c
- F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
-+F:	drivers/clk/mediatek/clk-mt6735-mfgcfg.c
- F:	drivers/clk/mediatek/clk-mt6735-pericfg.c
- F:	drivers/clk/mediatek/clk-mt6735-topckgen.c
-+F:	drivers/clk/mediatek/clk-mt6735-vdecsys.c
-+F:	drivers/clk/mediatek/clk-mt6735-vencsys.c
- F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
- F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
- F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 7a33f9e92d963..4dd6d2d6263fd 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -133,6 +133,38 @@ config COMMON_CLK_MT6735
- 	  by apmixedsys, topckgen, infracfg and pericfg on the
- 	  MediaTek MT6735 SoC.
+diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
+index e556e5bd49ab..625f5679c3b0 100644
+--- a/drivers/net/wwan/t7xx/t7xx_pci.c
++++ b/drivers/net/wwan/t7xx/t7xx_pci.c
+@@ -427,6 +427,7 @@ static int __t7xx_pci_pm_suspend(struct pci_dev *pdev)
+ 	iowrite32(T7XX_L1_BIT(0), IREG_BASE(t7xx_dev) + ENABLE_ASPM_LOWPWR);
+ 	atomic_set(&t7xx_dev->md_pm_state, MTK_PM_RESUMED);
+ 	t7xx_pcie_mac_set_int(t7xx_dev, SAP_RGU_INT);
++	t7xx_reset_device(t7xx_dev, PLDR);
+ 	return ret;
+ }
  
-+config COMMON_CLK_MT6735_IMGSYS
-+	tristate "Clock driver for MediaTek MT6735 imgsys"
-+	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-+	select COMMON_CLK_MEDIATEK
-+	help
-+	  This enables a driver for clocks provided by imgsys
-+	  on the MediaTek MT6735 SoC.
-+
-+config COMMON_CLK_MT6735_MFGCFG
-+	tristate "Clock driver for MediaTek MT6735 mfgcfg"
-+	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-+	select COMMON_CLK_MEDIATEK
-+	help
-+	  This enables a driver for clocks and resets provided
-+	  by mfgcfg on the MediaTek MT6735 SoC.
-+
-+config COMMON_CLK_MT6735_VDECSYS
-+	tristate "Clock driver for MediaTek MT6735 vdecsys"
-+	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-+	select COMMON_CLK_MEDIATEK
-+	help
-+	  This enables a driver for clocks and resets provided
-+	  by vdecsys on the MediaTek MT6735 SoC.
-+
-+config COMMON_CLK_MT6735_VENCSYS
-+	tristate "Clock driver for MediaTek MT6735 vencsys"
-+	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-+	select COMMON_CLK_MEDIATEK
-+	help
-+	  This enables a driver for clocks provided by vencsys
-+	  on the MediaTek MT6735 SoC.
-+
- config COMMON_CLK_MT6765
-        bool "Clock driver for MediaTek MT6765"
-        depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 70456ffc6c492..6efec95406bd5 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -3,6 +3,10 @@ obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.
- obj-$(CONFIG_COMMON_CLK_MEDIATEK_FHCTL) += clk-fhctl.o clk-pllfh.o
- 
- obj-$(CONFIG_COMMON_CLK_MT6735) += clk-mt6735-apmixedsys.o clk-mt6735-infracfg.o clk-mt6735-pericfg.o clk-mt6735-topckgen.o
-+obj-$(CONFIG_COMMON_CLK_MT6735_IMGSYS) += clk-mt6735-imgsys.o
-+obj-$(CONFIG_COMMON_CLK_MT6735_MFGCFG) += clk-mt6735-mfgcfg.o
-+obj-$(CONFIG_COMMON_CLK_MT6735_VDECSYS) += clk-mt6735-vdecsys.o
-+obj-$(CONFIG_COMMON_CLK_MT6735_VENCSYS) += clk-mt6735-vencsys.o
- obj-$(CONFIG_COMMON_CLK_MT6765) += clk-mt6765.o
- obj-$(CONFIG_COMMON_CLK_MT6765_AUDIOSYS) += clk-mt6765-audio.o
- obj-$(CONFIG_COMMON_CLK_MT6765_CAMSYS) += clk-mt6765-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt6735-imgsys.c b/drivers/clk/mediatek/clk-mt6735-imgsys.c
-new file mode 100644
-index 0000000000000..c564f8f724324
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt6735-imgsys.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mediatek,mt6735-imgsys.h>
-+
-+#define IMG_CG_CON			0x00
-+#define IMG_CG_SET			0x04
-+#define IMG_CG_CLR			0x08
-+
-+static struct mtk_gate_regs imgsys_cg_regs = {
-+	.set_ofs = IMG_CG_SET,
-+	.clr_ofs = IMG_CG_CLR,
-+	.sta_ofs = IMG_CG_CON,
-+};
-+
-+static const struct mtk_gate imgsys_gates[] = {
-+	GATE_MTK(CLK_IMG_SMI_LARB2, "smi_larb2", "mm_sel", &imgsys_cg_regs, 0, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_CAM_SMI, "cam_smi", "mm_sel", &imgsys_cg_regs, 5, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_CAM_CAM, "cam_cam", "mm_sel", &imgsys_cg_regs, 6, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_SEN_TG, "sen_tg", "mm_sel", &imgsys_cg_regs, 7, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_SEN_CAM, "sen_cam", "mm_sel", &imgsys_cg_regs, 8, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_CAM_SV, "cam_sv", "mm_sel", &imgsys_cg_regs, 9, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_SUFOD, "sufod", "mm_sel", &imgsys_cg_regs, 10, &mtk_clk_gate_ops_setclr),
-+	GATE_MTK(CLK_IMG_FD, "fd", "mm_sel", &imgsys_cg_regs, 11, &mtk_clk_gate_ops_setclr),
-+};
-+
-+static const struct mtk_clk_desc imgsys_clks = {
-+	.clks = imgsys_gates,
-+	.num_clks = ARRAY_SIZE(imgsys_gates),
-+};
-+
-+static const struct of_device_id of_match_mt6735_imgsys[] = {
-+	{ .compatible = "mediatek,mt6735-imgsys", .data = &imgsys_clks },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver clk_mt6735_imgsys = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt6735-imgsys",
-+		.of_match_table = of_match_mt6735_imgsys,
-+	},
-+};
-+module_platform_driver(clk_mt6735_imgsys);
-+
-+MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
-+MODULE_DESCRIPTION("MediaTek MT6735 imgsys clock driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt6735-mfgcfg.c b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
-new file mode 100644
-index 0000000000000..1f5aedddf209d
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mediatek,mt6735-mfgcfg.h>
-+
-+#define MFG_CG_CON			0x00
-+#define MFG_CG_SET			0x04
-+#define MFG_CG_CLR			0x08
-+#define MFG_RESET			0x0c
-+
-+static struct mtk_gate_regs mfgcfg_cg_regs = {
-+	.set_ofs = MFG_CG_SET,
-+	.clr_ofs = MFG_CG_CLR,
-+	.sta_ofs = MFG_CG_CON,
-+};
-+
-+static const struct mtk_gate mfgcfg_gates[] = {
-+	GATE_MTK(CLK_MFG_BG3D, "bg3d", "mfg_sel", &mfgcfg_cg_regs, 0, &mtk_clk_gate_ops_setclr),
-+};
-+
-+static u16 mfgcfg_rst_ofs[] = { MFG_RESET };
-+
-+static const struct mtk_clk_rst_desc mfgcfg_resets = {
-+	.version = MTK_RST_SIMPLE,
-+	.rst_bank_ofs = mfgcfg_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(mfgcfg_rst_ofs)
-+};
-+
-+static const struct mtk_clk_desc mfgcfg_clks = {
-+	.clks = mfgcfg_gates,
-+	.num_clks = ARRAY_SIZE(mfgcfg_gates),
-+
-+	.rst_desc = &mfgcfg_resets
-+};
-+
-+static const struct of_device_id of_match_mt6735_mfgcfg[] = {
-+	{ .compatible = "mediatek,mt6735-mfgcfg", .data = &mfgcfg_clks },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver clk_mt6735_mfgcfg = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt6735-mfgcfg",
-+		.of_match_table = of_match_mt6735_mfgcfg,
-+	},
-+};
-+module_platform_driver(clk_mt6735_mfgcfg);
-+
-+MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
-+MODULE_DESCRIPTION("Mediatek MT6735 mfgcfg clock and reset driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-new file mode 100644
-index 0000000000000..f59b481aaa6da
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mediatek,mt6735-vdecsys.h>
-+#include <dt-bindings/reset/mediatek,mt6735-vdecsys.h>
-+
-+#define VDEC_CKEN_SET			0x00
-+#define VDEC_CKEN_CLR			0x04
-+#define SMI_LARB1_CKEN_SET		0x08
-+#define SMI_LARB1_CKEN_CLR		0x0c
-+#define VDEC_RESETB_CON			0x10
-+#define SMI_LARB1_RESETB_CON		0x14
-+
-+#define RST_NR_PER_BANK			32
-+
-+static struct mtk_gate_regs vdec_cg_regs = {
-+	.set_ofs = VDEC_CKEN_SET,
-+	.clr_ofs = VDEC_CKEN_CLR,
-+	.sta_ofs = VDEC_CKEN_SET,
-+};
-+
-+static struct mtk_gate_regs smi_larb1_cg_regs = {
-+	.set_ofs = SMI_LARB1_CKEN_SET,
-+	.clr_ofs = SMI_LARB1_CKEN_CLR,
-+	.sta_ofs = SMI_LARB1_CKEN_SET,
-+};
-+
-+static const struct mtk_gate vdecsys_gates[] = {
-+	GATE_MTK(CLK_VDEC_VDEC, "vdec", "vdec_sel", &vdec_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
-+	GATE_MTK(CLK_VDEC_SMI_LARB1, "smi_larb1", "vdec_sel", &smi_larb1_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
-+};
-+
-+static u16 vdecsys_rst_bank_ofs[] = { VDEC_RESETB_CON, SMI_LARB1_RESETB_CON };
-+
-+static u16 vdecsys_rst_idx_map[] = {
-+	[MT6735_VDEC_RST0_VDEC]		= 0 * RST_NR_PER_BANK + 0,
-+
-+	[MT6735_VDEC_RST1_SMI_LARB1]	= 1 * RST_NR_PER_BANK + 0,
-+};
-+
-+static const struct mtk_clk_rst_desc vdecsys_resets = {
-+	.version = MTK_RST_SIMPLE,
-+	.rst_bank_ofs = vdecsys_rst_bank_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(vdecsys_rst_bank_ofs),
-+	.rst_idx_map = vdecsys_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(vdecsys_rst_idx_map)
-+};
-+
-+static const struct mtk_clk_desc vdecsys_clks = {
-+	.clks = vdecsys_gates,
-+	.num_clks = ARRAY_SIZE(vdecsys_gates),
-+
-+	.rst_desc = &vdecsys_resets
-+};
-+
-+static const struct of_device_id of_match_mt6735_vdecsys[] = {
-+	{ .compatible = "mediatek,mt6735-vdecsys", .data = &vdecsys_clks },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver clk_mt6735_vdecsys = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt6735-vdecsys",
-+		.of_match_table = of_match_mt6735_vdecsys,
-+	},
-+};
-+module_platform_driver(clk_mt6735_vdecsys);
-+
-+MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
-+MODULE_DESCRIPTION("MediaTek MT6735 vdecsys clock and reset driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt6735-vencsys.c b/drivers/clk/mediatek/clk-mt6735-vencsys.c
-new file mode 100644
-index 0000000000000..8dec7f98492ac
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt6735-vencsys.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mediatek,mt6735-vencsys.h>
-+
-+#define VENC_CG_CON			0x00
-+#define VENC_CG_SET			0x04
-+#define VENC_CG_CLR			0x08
-+
-+static struct mtk_gate_regs venc_cg_regs = {
-+	.set_ofs = VENC_CG_SET,
-+	.clr_ofs = VENC_CG_CLR,
-+	.sta_ofs = VENC_CG_CON,
-+};
-+
-+static const struct mtk_gate vencsys_gates[] = {
-+	GATE_MTK(CLK_VENC_SMI_LARB3, "smi_larb3", "mm_sel", &venc_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
-+	GATE_MTK(CLK_VENC_VENC, "venc", "mm_sel", &venc_cg_regs, 4, &mtk_clk_gate_ops_setclr_inv),
-+	GATE_MTK(CLK_VENC_JPGENC, "jpgenc", "mm_sel", &venc_cg_regs, 8, &mtk_clk_gate_ops_setclr_inv),
-+	GATE_MTK(CLK_VENC_JPGDEC, "jpgdec", "mm_sel", &venc_cg_regs, 12, &mtk_clk_gate_ops_setclr_inv),
-+};
-+
-+static const struct mtk_clk_desc vencsys_clks = {
-+	.clks = vencsys_gates,
-+	.num_clks = ARRAY_SIZE(vencsys_gates),
-+};
-+
-+static const struct of_device_id of_match_mt6735_vencsys[] = {
-+	{ .compatible = "mediatek,mt6735-vencsys", .data = &vencsys_clks },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver clk_mt6735_vencsys = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt6735-vencsys",
-+		.of_match_table = of_match_mt6735_vencsys,
-+	},
-+};
-+module_platform_driver(clk_mt6735_vencsys);
-+
-+MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
-+MODULE_DESCRIPTION("Mediatek MT6735 vencsys clock driver");
-+MODULE_LICENSE("GPL");
 -- 
-2.47.0
+2.34.1
 
 
