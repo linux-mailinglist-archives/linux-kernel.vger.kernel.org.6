@@ -1,142 +1,194 @@
-Return-Path: <linux-kernel+bounces-373675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DAD9A5A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1FD9A5A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4B891C20FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADD8281943
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2644C1946A0;
-	Mon, 21 Oct 2024 06:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E7A2E403;
+	Mon, 21 Oct 2024 06:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw3CfYMO"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g0MdSgGP"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2389148FF9;
-	Mon, 21 Oct 2024 06:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A00194141
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729490659; cv=none; b=oAfEPmY/rr9M1tJaGQMzOBJySe5pHJkiR+Q3Sa/tQXcZIozYC/+hhgL9O1KfncQEnHYyH523ipBfscSar0YuMBscwdyEzKjQmEjLA4Gr96SSJvkLuUD9ct7nhmcJuGJuVXmAtZ7zIxoW3jcnrUl0Jua2nTNe/CLqC/74cYeSOOg=
+	t=1729490743; cv=none; b=EAWT/Kuj1A/142m5woDsMmFRzgDwrLqYA8mBaskAR4peO4jZygUim/LxSz/N5cApPGhcWP5F0rH1B2WljWH6SYLSpUYnJKUuPrXVMGT9oEES+gc0p42Puan7dwiC9RFqRXAbuCe+Kes+d+Z7Rcg6WxnwZf75Mv4WWv3phDtcb6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729490659; c=relaxed/simple;
-	bh=2fsWYvEi0IK73sUTq74gKefon2ZTtdpF9s5+XTn6UtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ub4LaHjd5udBayINQ4EexrnXUkt8pDSPJT8qELDxVENkrUcPKj+lXvP0ddLDYkCSfhtYXmAyRqXmwDJiCf3g1Yt6tXuuaOg03sPW+ybea6hmleY4riYSYqr17meR8Uscphcb9yYNKgQhf3OcfbEv//iTpdhbgfQ8x7Nm81cagkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bw3CfYMO; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2b720a0bbso840068a91.1;
-        Sun, 20 Oct 2024 23:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729490657; x=1730095457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pg0JsnBu9cMvcgcmJc1G+uprIvIAEsIzBiz3R+FFLKw=;
-        b=bw3CfYMOnrcFF5cjS4i+Qh2P2w3wlxGCoaTu9xHYeHx2GiqGgxg8i7Nh9kJk/JdjLB
-         LHBHWbm70xL4nnx4crrVUPBCJvmH1pWT9j08BN46hfmpC+9hyU/ChwaVTBEbQzqWdDnK
-         fleNQ4nmfinUSYHs6PW7jJMvxVC3HFWNqFwld2wMQVMEjKWM6/W0/US2kW7UUifW7HGK
-         6FJsXinIr3f6J01uusQUSz2wed6D9pU+zeCLtHnH4HWDKCK/rzm6EWBZneqBlv8YOdd1
-         ZeyBwe3wJltRcSmLUyDSrKA8By+9VJozK9aRsHWOAill6zLuKLSCkdJinb8HTpYQMnXR
-         /Aqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729490657; x=1730095457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pg0JsnBu9cMvcgcmJc1G+uprIvIAEsIzBiz3R+FFLKw=;
-        b=g5WyX2sNWAaRs0VZBJSH9kpJq4y4BEgWtuQ8nMF0mH//pMdKhYgYx445eJ9svRG3KP
-         NVveTfjEF5weLHR2geLWw+LJ9b9Q5uhrsgOv0un5dJeHERHTC/yAd/Yl8EY+HJFXVusz
-         ms2dFZPq9tUXcZgHn4SY6oTNF/DxnpfdkpvdnNwMQpRaHMav7r8s1QTxKheEgwnoP3Lc
-         D0X7Hn8rZv8CQdQ4hzWV7jIrklVAKgN12m0W91qZF3cbiBNf/xAKW4TkMcA6xfW6mo+f
-         NHwjfnzZ/dHZlG3bFePbDeQ1nWi0vc74y1hDUDE5ab4u7kMRpISwGDKsXfsLsF4snZdP
-         nExw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXnVaR+beYOKHZw/YCMN2qVqhA0T4Lkcc7fTF5plf3Twl0bLXMu/mwVeOeP23oO5wnooVH4Kv+yLJW0slB3A==@vger.kernel.org, AJvYcCV6uAKwXLef0qT3MfH5isB04aVzEc7OovDveHuo0UCxpbrYvFhsiwKmhTdTTRoOjlmBOFJlBGbNZZd4QVj5@vger.kernel.org, AJvYcCWaPVqNhXJMZinNEQdabn7iVA/83/N062Vysy9mNlo2Yp1SMAjGtqponDu0n6wQssQ6cPPKkdmtyQ5CV7eCcROG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr47xcTFH/TIhxJJ8Q7/muYtUOQbAB1v5blAPDzD+qOd0IF8tI
-	v6YbhD/JQSfvv0XS9hEJOX/WcUYqGMRm6abr3vHG9Qe7Pk6BpNczvBegfTtsp3Ui8akSCNI4kyW
-	YYKo4EnJPyZMQPfFr3CK4eHoSmyQ=
-X-Google-Smtp-Source: AGHT+IFTn6AyaH521mGGVsrVLQ1r+PtN4Lem3tmtd4HDqCECIc/0C2xjgjebgZGML6ZwL4dc7ldcwVwVP3BNKEybmnw=
-X-Received: by 2002:a17:902:d4c9:b0:20c:959e:f706 with SMTP id
- d9443c01a7336-20e5a76117dmr62142145ad.1.1729490656749; Sun, 20 Oct 2024
- 23:04:16 -0700 (PDT)
+	s=arc-20240116; t=1729490743; c=relaxed/simple;
+	bh=IIWio+BGWaSaW21PnnxARXZp4FionUCKZk/+r1D+oG8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ZgmN89d6397uvKGxIM869csaD0Jj2LUmRG1DXRKu3NRSzXlsglUhFE9BWgzweNqciqPiS8fVTVT0t0ua5AMMJ22y2kc51MetUTAMrGlx9no+R4YdNkPrL+Z8mQJJE0gOcPaUSaNki664ILdev+nCoJq2qMy9oBiH0uHc6MRZg+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g0MdSgGP; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241021060538epoutp02f4092487217c2b326168a0f602070bdf~AYqnJKbfg1649916499epoutp02P
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:05:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241021060538epoutp02f4092487217c2b326168a0f602070bdf~AYqnJKbfg1649916499epoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729490738;
+	bh=cb03jBzckq9Uro4zVi90gsorpfxSmMqhnETvcsGXro4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=g0MdSgGP6pbOZvRs9RMEYa2XzU2jIOV+twWysW48vjYmHvfDq+K2shIludSNSjOCd
+	 MviT5gtCmM52jFzhFQPnpGBZJoHsG8I6gakxwFXCAVoiNZHCP68ZDeXgdlUISqrWsr
+	 8BTBVTy13SWkmh4Tmb7YBK23e432fiG3Zh8ZtRFA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241021060537epcas2p37bee194c61b47e11eac304db9cf11964~AYqmoU-pd1337213372epcas2p3x;
+	Mon, 21 Oct 2024 06:05:37 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XX4YF2dRwz4x9Pr; Mon, 21 Oct
+	2024 06:05:37 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B8.C8.18950.03FE5176; Mon, 21 Oct 2024 15:05:36 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241021060535epcas2p1f716c45ee988775fb2a2b9790435126d~AYqkyqKGt1960619606epcas2p1W;
+	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241021060535epsmtrp2f0b46818128934af63d237155420f084~AYqkxv7BR0397203972epsmtrp2c;
+	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
+X-AuditID: b6c32a4d-1f1c070000004a06-6e-6715ef304a3a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.64.08227.F2FE5176; Mon, 21 Oct 2024 15:05:35 +0900 (KST)
+Received: from KORCO119526 (unknown [10.229.18.158]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241021060535epsmtip2fea2c687d755854e22e3c927d20cbb56~AYqkfoj_F3072430724epsmtip2O;
+	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
+From: =?utf-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Wim Van Sebroeck'"
+	<wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>, "'Rob
+ Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>
+Cc: <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, "'Byoungtae Cho'" <bt.cho@samsung.com>
+In-Reply-To: <f9bbe108-1a0d-451f-a1c7-14e8aadc76b5@kernel.org>
+Subject: RE: [PATCH v2 1/3] dt-bindings: watchdog: Document ExynosAutoV920
+ watchdog bindings
+Date: Mon, 21 Oct 2024 15:05:35 +0900
+Message-ID: <003f01db237f$3e707de0$bb5179a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux> <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux> <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux> <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux> <20241017165522.GA370674@thelio-3990X> <ZxWvcAPHPaRxp9UE@archlinux>
-In-Reply-To: <ZxWvcAPHPaRxp9UE@archlinux>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 21 Oct 2024 08:04:03 +0200
-Message-ID: <CANiq72=yYDcG=ef9TxCCECwjSgW-5zFoTJqcjrWGOALCvaW0SA@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ardb@kernel.org, ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKShxVw65UJgYXARO76wzJ5NcLQ6AK2VKhSAdj3/m8BY0zLI7DyOOGg
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmqa7Be9F0gyNTuC0ezNvGZnH/Ux+T
+	xZq955gs5h85x2rxctY9Novz5zewW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
+	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
+	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
+	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y+PHSYwFBwQr5p39y9TA
+	eIuvi5GTQ0LAROLhm7ksXYxcHEICexgl5j47zQThfGKUWPPkJyuE841RYtGOG2wwLRv/nINK
+	7GWUmL/jKzOE85JRYvX6BcwgVWwCFhJLrn0AmyUisIFJYuqZm6wgCWaB24wSO98bg9icAnYS
+	DzpWs4DYwgJxEm23L4E1swioSsxeuoMdxOYVsJS4f+w3C4QtKHFy5hMWiDnyEtvfzmGGOElB
+	4ufTZWDzRQTcJHY+6GCGqBGRmN3ZBnadhMAZDonX81ewQjS4SPzc9xzqH2GJV8e3sEPYUhKf
+	3+2FiudLrFx5ggnCrpG417aLBcK2l1h05idQPQfQAk2J9bv0QUwJAWWJI7egTuOT6Dj8lx0i
+	zCvR0SYEYapKTF8WADFDWmLijLVsExiVZiH5axaSv2YhuX8WwqoFjCyrGKVSC4pz01OTjQoM
+	dfNSy+ERnpyfu4kRnI61fHcwvl7/V+8QIxMH4yFGCQ5mJRFepRLRdCHelMTKqtSi/Pii0pzU
+	4kOMpsDQnsgsJZqcD8wIeSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFx
+	cEo1MFk3v33mUh3pr9NukMyYL9X1+84j7rrQZsVVtx38pt7b8Cg6ZWteT3rHpPSvEUbrflVk
+	Hmvc9VRRniGy+cChTbekZbYdsX187sTEk1yHukUZX8YtC7oQ9+9ix6L17n68XyYFT+hzffBx
+	Pe/vooNH19nlGhUant4iV7Bh5q1Z3ybaxWr8ntCZ3VW0YvqrD/2rNGIWeJjUP4tasa1h9vMH
+	1zkVAs7Eqm5O3Mjz117HsP1WB6fhI8l9YaHbKxhVH19cUDv7L9PNsJBTO3Ydfjj5j2zzBKu5
+	T3SfPUvY/kpBRvJH7ctDnypXn64WONy760pSzrZLHRoqu9fKVGk6l+n/56s/YOrA6sl74Vkm
+	e3hFFIcSS3FGoqEWc1FxIgBcolYoUAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSvK7+e9F0g7trlS0ezNvGZnH/Ux+T
+	xZq955gs5h85x2rxctY9Novz5zewW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
+	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx
+	8eMkxoIDghXzzv5lamC8xdfFyMkhIWAisfHPOdYuRi4OIYHdjBI/+n6zQySkJY78fsEGYQtL
+	3G85AlX0nFHizPtOVpAEm4CFxJJrH5hAEiICW5gkpr86xQjiMAs8ZJT4/+oAVMtXRon+3Y9Y
+	QFo4BewkHnSsBrOFBWIkDq48ywhiswioSsxeugNsN6+ApcT9Y79ZIGxBiZMzn4DZzALaEk9v
+	PoWy5SW2v53DDHGfgsTPp8vAThIRcJPY+aCDGaJGRGJ2ZxvzBEbhWUhGzUIyahaSUbOQtCxg
+	ZFnFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcmVpaOxj3rPqgd4iRiYPxEKMEB7OS
+	CK9SiWi6EG9KYmVValF+fFFpTmrxIUZpDhYlcd5vr3tThATSE0tSs1NTC1KLYLJMHJxSDUzS
+	rDeuPQvRd186jWfy/sdJTJ5qTtLZhZvk7Rsd597oVpp167JexekDzBFflFZ8WHvj7c4lapE/
+	BdYb6Ry6/0bC4sj0KxaL+tyfV02OObI5JrX7zkf3OUF3ljHMuLv/veqxhoMahwvfe0gd2h80
+	d2X+By3bzm97VSK3qEn1bzxpfa5v4YcqycorMkJuj/8lWJXs7NMLe6+YoWQnt4A77sIXj2Az
+	y8yqcpenqsqzr+18v1sxIMOD6dmONf1phw0/zNoT83VZbZ5WdfGftNBzkrZr+Ni790/LmfGn
+	l/Gfs91dtcM//3db8PLM/3F4sa2L2umjiilcu3azr2gV5f+iIligUWGymcG4JOHS7neXJhQr
+	sRRnJBpqMRcVJwIAzR8uDzsDAAA=
+X-CMS-MailID: 20241021060535epcas2p1f716c45ee988775fb2a2b9790435126d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241010111837epcas2p11dddc10945ca0648997dccaaf4854d93
+References: <20241010111807.3635504-1-trunixs.kim@samsung.com>
+	<CGME20241010111837epcas2p11dddc10945ca0648997dccaaf4854d93@epcas2p1.samsung.com>
+	<20241010111807.3635504-2-trunixs.kim@samsung.com>
+	<f9bbe108-1a0d-451f-a1c7-14e8aadc76b5@kernel.org>
 
-On Mon, Oct 21, 2024 at 3:33=E2=80=AFAM Jan Hendrik Farr <kernel@jfarr.cc> =
-wrote:
->
-> I think I prefer
->
->         depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
->
-> to make it more clear that the purpose is to disable this for clang
-> versions below 19.1.3, but keep it enabled for every other compiler
-> including pre-release gcc versions that pass the compile test.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Thursday, October 10, 2024 8:47 PM
+> To: Taewan Kim <trunixs.kim@samsung.com>; Wim Van Sebroeck <wim@linux-
+> watchdog.org>; Guenter Roeck <linux@roeck-us.net>; Rob Herring
+> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: linux-watchdog@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; Byoungtae Cho <bt.cho@samsung.com>
+> Subject: Re: [PATCH v2 1/3] dt-bindings: watchdog: Document ExynosAutoV920
+> watchdog bindings
+> 
+> On 10/10/2024 13:18, Taewan Kim wrote:
+> > From: Byoungtae Cho <bt.cho@samsung.com>
+> >
+> > Add "samsung-exynosautov920-wdt" compatible to the dt-schema document.
+> > ExynosAutoV920 is new SoC for automotive, similar to
+> > exynosautov9 but some CPU configurations are quite different.
+> >
+> > Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> > Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+> 
+> Shall we do the work twice?
 
-Do we want other tooling to see the attribute? i.e. if the build check
-gets removed, then that `depends on` would mean other tooling would
-see it, right?
+I missed it by mistake, I'm sorry.
+I will push v3 with tags.
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions,
+> under or above your Signed-off-by tag. Tag is "received", when provided in
+> a message replied to you on the mailing list. Tools like b4 can help here.
+> However, there's no need to repost patches *only* to add the tags. The
+> upstream maintainer will do that for tags received on the version they
+> apply.
+> 
+> https://protect2.fireeye.com/v1/url?k=19c96b19-46525206-19c8e056-
+> 000babdfecba-8f51e01dd01bb666&q=1&e=eb401f36-1904-4376-adea-
+> 9688adb1d657&u=https%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv6.5-
+> rc3%2Fsource%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%23L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
 
-> Also after gcc 15 is released I don't think a version check for gcc
-> should be necessary. I only see an explicit version check as required
-> when we know a certain version is broken. Otherwise I would prefer using
-> the build test.
 
-Yeah, build tests are nice, although they require spawning a process
-and so on, which (as far as I understand) we try to minimize. Version
-checks also have the advantage that it is easy to remember/check when
-we can remove the checks themselves when we upgrade the minimum
-versions.
-
-> I guess an alternative would be to just create a
-> CC_COUNTED_BY_BROKEN that is enabled for clang versions below 19.1.3
-> and continue to use __has_attribute together with that option. That
-> would make the build test unnecesarry. The downside is that it
-> will require checking both __has_attribute and
-> CONFIG_CC_COUNTED_BY_BROKEN for __counted_by support. So I think
-> CC_HAS_COUNTED_BY is better.
-
-Yeah, if we are going to need a new Kconfig symbol anyway, then let's
-make that the only thing to check. Otherwise we are in the "worst of
-both worlds", I would say.
-
-> I'll submit it once Bill's fix is in the release/19.x branch. Which
-> maintainer should I address this too? You (Nathan), Miguel, Kees, or
-> someone else?
-
-Sounds good -- if you want, you can send it to all of us and we can
-figure that out later.
-
-Thanks!
-
-Cheers,
-Miguel
 
