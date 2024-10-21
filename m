@@ -1,77 +1,92 @@
-Return-Path: <linux-kernel+bounces-373947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BDC9A5FA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604159A5FAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4DC1F22105
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11485281B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7CE1E231E;
-	Mon, 21 Oct 2024 09:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531501E285A;
+	Mon, 21 Oct 2024 09:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8sde/YV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2LO2f7C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1612A1E0B91
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF721E0B91;
+	Mon, 21 Oct 2024 09:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729501515; cv=none; b=FnIMJMVEGfZ7pqslatrwS+BFIlwfZNQqEHBZmUe1flGShml3vN8GxpGNRdLC9+miBw8jwqRx8bAh3QRvknU4BeTyKKfF29q6JiRzKucCGOJXL8j5eZwEZO+FbKJuVGOUnqe62KRrxUwnFvwb5eY9vZF+rEbgYBjbrEM0T3yLKTk=
+	t=1729501602; cv=none; b=Lbwpvd11P0SxFGd/vLahCujENH/xlvEAKSFxSFUyIZg7gQl1ynNwowEbJftFqeLlagDRdkEbYZfcIGeGMb7qr26yA7jaWphOr/EcdMNWrJYa3wXbyxY5IoiNf02BPOnREFoHcI0OyGY9pS5JA4fB5O85sDNnwuehYBBZJunN8c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729501515; c=relaxed/simple;
-	bh=U0XCZwW2pc6q4EXiiGWtDURI1Ew4V3wwkpW0XeXtwhw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QXMoj2AAPuaUVoCmLa1b44Oc9/FJ4nQSyWLRGCXdaHXuSUS89VD/xqbOJXVNq82bvjX7p9YLEIuKmRAa2RHa4YR3ysuRPlWINMFCgYgPKdn+AD8vZsgE+FCKx0IPU775SXp4CEQTJrsbbJWlkJbuJ5e7dt+po7sbMj4+yZW8cmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8sde/YV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC72C4CEC3;
-	Mon, 21 Oct 2024 09:05:13 +0000 (UTC)
+	s=arc-20240116; t=1729501602; c=relaxed/simple;
+	bh=+ZMNc1CMzmELhjMB7j/skx2+yKwY4xJ6OUJftzt0FZA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Wc5yCCmeYeboMz+/CqO3dr9HsSjslRkHFgmNnFenWRiHX3QSXtzUr79isyVDJzWaejozcnSnJy63Yxx4U6zrb4OlS/Bat5p02OoPQN2137/br7ECUVGxL0MF92iLTKOSE3QsfmEcChcVV+6xoEJbzwitsivKn128ox/u9Cum3LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2LO2f7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94912C4CEC3;
+	Mon, 21 Oct 2024 09:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729501514;
-	bh=U0XCZwW2pc6q4EXiiGWtDURI1Ew4V3wwkpW0XeXtwhw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=O8sde/YVzg77X8UJo7Cyw/S/OhIHVCZvplX1medByQIL1VzegoPx1+f6QH/iAeGPD
-	 qh+thcCscxCGndlYtoViuhtEk2dzkiW8fwK7AiZwQikfF8T6eHS1j1+KTqSVSxAFPf
-	 HJjKP08ddFIQFG554kQOAc+jrffUHFTlRg4DhjowOqt8nmD2tg+qIjCOZjnIi3qJqP
-	 pPL/4ervhQWspxfDxtKgL0Qi6q4VpVdDKZ/FSC4QNBMo808v4r8t54RTOoqNMvLpM3
-	 Zc03a2JFW2NAKWceYvKK+vSwT2/E2pqN0IkJHwBCE2vRNq9h3NT4FJ6pCD0Lnu+i6P
-	 UkQZgEz0ZnPZQ==
-Message-ID: <b91d43c6-8065-4b40-b622-8df1824515ea@kernel.org>
-Date: Mon, 21 Oct 2024 17:05:10 +0800
+	s=k20201202; t=1729501602;
+	bh=+ZMNc1CMzmELhjMB7j/skx2+yKwY4xJ6OUJftzt0FZA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=l2LO2f7CuDmW1chxODWB1XEmOgaTtTbOnvzYwSwMTRYvFNlPbhSYMidmE8Kbzfest
+	 2qrf9PcLNYyKn0qTAmYqKw9f7qCE06P562Wt2SoV2hekNOd9+AZsbkBuMFhZDFXgR8
+	 zaeWA+WWA2+IhkT8HzpJYInm26OtrxDQRpI8Inn8mA/668VSfU4CLjpnURsaYQAT4R
+	 /yjKJ8ZFn6I1QMqZ3z8cOyxU8vQUFSwmIJB/tgsgm7H1tf8WiC+rXau24VgoPXHmun
+	 iEu8W0lg5dN3DSLjW4ch47xsApsQqk+kInjGXec3J+AzeUqU5mgRLMCqvmNFibyy0l
+	 P/TlCqlt9h6Ug==
+From: Kalle Valo <kvalo@kernel.org>
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Cc: <ath12k@lists.infradead.org>,  <linux-wireless@vger.kernel.org>,  "Rob
+ Herring" <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  "Conor Dooley" <conor+dt@kernel.org>,  Jeff Johnson
+ <jjohnson@kernel.org>,  "Bjorn Andersson" <andersson@kernel.org>,  Konrad
+ Dybcio <konradybcio@kernel.org>,  <devicetree@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 16/22] wifi: ath12k: convert tasklet to BH workqueue
+ for CE interrupts
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+	<20241015182637.955753-17-quic_rajkbhag@quicinc.com>
+Date: Mon, 21 Oct 2024 12:06:37 +0300
+In-Reply-To: <20241015182637.955753-17-quic_rajkbhag@quicinc.com> (Raj Kumar
+	Bhagat's message of "Tue, 15 Oct 2024 23:56:31 +0530")
+Message-ID: <877ca1q0yq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: check curseg->inited before write_sum_page in
- change_curseg
-To: Yongpeng Yang <yangyongpeng1@oppo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20241021044801.1358850-1-yangyongpeng1@oppo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241021044801.1358850-1-yangyongpeng1@oppo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 2024/10/21 12:48, Yongpeng Yang wrote:
-> In the __f2fs_init_atgc_curseg->get_atssr_segment calling,
-> curseg->segno is NULL_SEGNO, indicating that there is no summary
-> block that needs to be written.
-> 
+Raj Kumar Bhagat <quic_rajkbhag@quicinc.com> writes:
 
-Fixes: 093749e296e2 ("f2fs: support age threshold based garbage collection")
+> Currently in Ath12k, tasklet is used to handle the BH context of CE
+> interrupts. However the tasklet is marked deprecated and has some
+> design flaws. To replace tasklets, BH workqueue support has been
+> added. BH workqueue behaves similarly to regular workqueues except
+> that the queued work items are executed in the BH context.
+>
+> Hence, convert the tasklet to BH workqueue for handling CE interrupts
+> in the BH context.
+>
+> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
+>
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
 
-> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+22 patches is a lot and I'm not going to look at this in detail, please
+reduce your patchset size. 10-12 patches is recommended. For example,
+this could be easily submitted separately.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-Thanks,
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
