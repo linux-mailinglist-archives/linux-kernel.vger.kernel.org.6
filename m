@@ -1,156 +1,190 @@
-Return-Path: <linux-kernel+bounces-374759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A659A6F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326319A6F86
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533A61F24F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580631C21456
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969751CCB4A;
-	Mon, 21 Oct 2024 16:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E863D1CBEB6;
+	Mon, 21 Oct 2024 16:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ux3dDeKq"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6M9c7RV"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E05176ADE;
-	Mon, 21 Oct 2024 16:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4406B199EB2
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528375; cv=none; b=HxuyYST2+ejpQfq6hsG6XLQoDUDuvxOw79ua7Hs/aVcc8fDBKPb77DSdzim/OIXIF+W5tusA8bLzOe06ISS5X+uQRmDgupWVmYj585zLj1krUJVVAjr8jLqB44BuhehI0Y+mulO7oLeaY8ZQf0El3Rt7v9bvB35CFT1+UvBY9uI=
+	t=1729528385; cv=none; b=IPOvnhXMdlphev1e8GSUI39KJPcJWfpcaXRq2wfyUuRscfgEW3I2ge9snD8m0BwZseo1NGiGHJMiOYkwlwu/VUrnccntisNl/jlOKjyTuKEcjQxT91rjP+NTbKyaW41QwpJeKDqyuk2udfvU8PBXCuBCjytx+h8vwCgR58Fc4SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528375; c=relaxed/simple;
-	bh=Yihx4OBCFOrFynTc74Tq18dgCbePHWLDh/fIeU6Vj9o=;
+	s=arc-20240116; t=1729528385; c=relaxed/simple;
+	bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e23t00oczr3I53x+KrqF/AalQ77Vkh7tv/8S2O1Ve98GK1H0BLglvA8IWJv41NGgCYPTKqLxnWbPpW5LM/2fy8RrIkigAFsQ1LKYSEmuNa+8avriDFPEYCJiLKc+vd3cdI5KSFZ5NFweKrs8/E2+vgDCjCrQIAv79ut82SXvjd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ux3dDeKq; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5eb5be68c7dso2360488eaf.0;
-        Mon, 21 Oct 2024 09:32:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=hfcVwZ3ZGOVsH5ZhWp4ug9RA9g7xAF921eF2NUREQg9YzM46nPRURUfYj4Y2QvG9svVlr2RMCSK4GVGx4bOmrAkS6XE1ibA5aw5b0WG7uskDqyZrK3gPxkWDtQmdwZ31qQzFdH2SGhsU1rSIZPF/up37w31DfFdV6dS8r3lfW6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n6M9c7RV; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608dddaa35so2731cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729528373; x=1730133173; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MrzY8FX0o3tCNAy1+JzEq7soWHSgKMYxkffvY3oKiR4=;
-        b=Ux3dDeKqrF5zrYHMENBOY41pzTWuCrFV/0CtL+TwNG3TV7vkj5NhX6IYiaQMOV7Zgx
-         d9/PYZNa5GpDLs8lg6o1YJMmqmJTpgGC+OR8SxwsGOK56ulWc2oTBPKfftVWB15jFJ+G
-         jsfoIE6Vxcu8GhOu1KK7Mxv5Sfl4LSZ/0c+KCtqJN/3668DlcTAoaqoO8MMRfq3GEFmu
-         /bF6q/OPfRAu3TYB7WQUMyRYkNq1cXAPG2Z3980zcedHjXnDQrLukIo15FT/a5C71hSp
-         9RgrqjgCACnL4NpvKMp+dfX+FYmS3J5SYfKH30WQgatravSWoKNj+TL7tsSaD7mdpl9J
-         uJ1g==
+        d=google.com; s=20230601; t=1729528382; x=1730133182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
+        b=n6M9c7RVzEEViJ1XxuCI3im2jeVzeN2MjKcPzEfFxyqpGPrro80d7rvy+M/tukB3n9
+         gZujALNvyTjaZ9pgECRNj/9GE/TQCmdh4xyT6/hMwdqmWdWa4ZVWyLIvHEtElb8G3crq
+         yZcj9w2axBanglhNnDcd0bNB14fB31cbB4LYFcC0BJ/lhTjxaSOAq5BJAEV1zKuPljTG
+         7UvtTvLZO43ZSWZkRwvf+EDLjeH0C9zEgx2XoqWFdVfpzkjV8yiuKyELFaf9lKgb+Oj2
+         tYH4SovYwr9BQdcY4yM+JhD2DpAZfOYAHLohuCEMHPpsZLPLPsxorSNDjS6z9Gcjzqq+
+         vYEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729528373; x=1730133173;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MrzY8FX0o3tCNAy1+JzEq7soWHSgKMYxkffvY3oKiR4=;
-        b=TNK12d9c4Av02+KXutWjIoqjEJlqEVz+tJTayY3smtwXai0p0APqQmFLAu1E9HX/3b
-         amF4a/qoBrjAwj6S5nHZIr0DWhL9GhHO+NqPRrhWfO+12k3CZn/GxkZA3peCakjDNwtm
-         ZY/OWvhnDAIWyYxI+U3vyQQGcnMEY7xx0Tvc6/TVBe+zyzixhfMUcEODDmVoKPi1FSGx
-         95hqutG28DLk0ON/KeUchmgWlCRfk/2KvPXq/T21ePaxM/RxtR/L7FE+C9drJERMqANG
-         n8+Rzk68qGeYgO9EKa39W8gor0m+HXpBOwCLb+wzLRD9FpS4NYHeAL44eKU0CntT6prI
-         ZDPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUg4s//DFRZOnsn6OZddoFik6whezC4uCFdBGys324KaIEwTa0TutGjx6SNZ404rUKn64iTfAp622rtffw2spVl+ds=@vger.kernel.org, AJvYcCVkOhryZwJnZeqUUO5zDMNj8H/hRiLY9kNfhYwlrQUXo96ySvqqSdPYic9AoiU9yE8rbstrwQoeIZFwJkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpQ375eU+SxAUwQvRr84Yk/DGiVL+6+pvCsDrgyXAb1NnhoC2E
-	i2Bq1CuE6s656PeVdmvYDVSm+0laqljxF2u8NB/MF70L+9NnjUjAyjk0O6w5f+EhUPyVE9RiMHV
-	/ONrESzkdKVB0cKAWRhdEBiHJtHo=
-X-Google-Smtp-Source: AGHT+IEn4t4ywdyEIc2ujFckXZRJ4voSSqvPHcqIRxybRnnDS2ybHZCLMiQBypVRPSAS4yG7uPp2TmoQ7GzRkKjgoYg=
-X-Received: by 2002:a05:6820:c91:b0:5e1:de92:6b66 with SMTP id
- 006d021491bc7-5eb8b3b2219mr8861843eaf.2.1729528373020; Mon, 21 Oct 2024
- 09:32:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729528382; x=1730133182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KhDaWTmJM6nlwXBFOjmpIqQOnLI9apyaahvjApCJ+z0=;
+        b=QPziJ1PDhl+rVb9jBYTCtUkUqA0lirVFOZDISekVDA/BlDmSobhj9alQ8R1XOwd7DE
+         RaISZojD7JWvPZqDhsoN7pAuSjDwsFOKPF/eDSMwPGiRtqO1dZHjlSH4RVtWXpIvo2lC
+         wfChmxy/BhzjgI4xiJaeV0N8dPmEnXEb2B/bzlNcYzcnylUictsVsaqVxFDuxKcfnSaI
+         z4Uj2eeE7m8BzMvozVnx3XwQn4nieqzJdbOwZad8AA+3e1xXsoZPSpN3z3XGW0a7mHud
+         +yWduzDXBu/MVS+QbHeCoFMD+Nr+hc0ntwjPqtaCrGpf+GQtqlQuUhRltbDIjPY4870n
+         0UrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1kzdbVRvA5vBQh8Pk/1t9y9dMzDQ3GOMrNxs80kzYHWbV+KQPhWVq61kiw9sugean1UTuLz6UHgakK94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaHPsxOFLXXu1kCaj+NDrF1NEY38Ic3C7SM9TtcB4WanxB7kD6
+	LmNeePimLM+sii0mjzHHDpdulEH8bsZ2uv/G6VIAP59JcU0LiaImJSvoOyUjQGaXiR+YD1Q0/vg
+	mIwfeCr4OViywNYwWrgIYWXGjjjvwYPlKzvvF
+X-Google-Smtp-Source: AGHT+IEQJ7/dyf+59nB7w/ddzz12Ku666cGjBPoxf5tsDd/h9NHtih3CUtvHgU9dx314ldpzIPEbnG3QzndRB2BJVaA=
+X-Received: by 2002:a05:622a:1a18:b0:460:77ac:8773 with SMTP id
+ d75a77b69052e-460bc5cf9c1mr4982821cf.26.1729528381808; Mon, 21 Oct 2024
+ 09:33:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-2-tudor.ambarus@linaro.org> <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
- <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org> <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
-In-Reply-To: <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Mon, 21 Oct 2024 11:32:40 -0500
-Message-ID: <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
- controllers w/ hw queues
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com, 
-	javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org, 
-	luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com, 
-	bjorn@rivosinc.com, ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	marcan@marcan.st, neal@gompa.dev, alyssa@rosenzweig.io, broonie@kernel.org, 
-	andre.draszik@linaro.org, willmcvicker@google.com, peter.griffin@linaro.org, 
-	kernel-team@android.com, vincent.guittot@linaro.org, 
-	daniel.lezcano@linaro.org
+References: <ZxKWBfQ_Lps93fY1@tiehlicka> <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
+ <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
+ <ZxYCK0jZVmKSksA4@tiehlicka> <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
+ <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com>
+ <ZxZ0eh95AfFcQSFV@tiehlicka> <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
+ <ZxZ52Kcd8pskQ-Jd@tiehlicka> <CAJuCfpFr2CAKvfyTCY2tkVHWG1kb4N2jhNe5=2nFWH0HhoU+yg@mail.gmail.com>
+ <ZxZ_99yLDhRMNr3p@tiehlicka>
+In-Reply-To: <ZxZ_99yLDhRMNr3p@tiehlicka>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 21 Oct 2024 09:32:50 -0700
+Message-ID: <CAJuCfpFk+1R8JQc+w6r6NUDsmjFnh9K1_42AvG+qTZq4vimwKg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
+	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
+	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On 10/18/24 8:49 AM, Tudor Ambarus wrote:
-
-> The active request is considered completed when TX completes. But it seems
-> that TX is not in direct relation with RX,
-
-TX and RX are assumed independent operations (which they are).
-TX is sending a message/request to the remote successfully. 'Success'
-can be indicated by any of the three methods  TXDONE_BY_{POLLING, IRQ,
-ACK}.
-You seem to assume it should always be an ACK where we receive an
-acknowledgment/response packet, which is not the case.
-
-...
-
->> Correct, and it is not meant to be.
->> You are assuming there is always an RX in response to a TX, which is
-
-> Not really. If there's no response expected, clients can set req->rx to NULL.
-
-You are assuming the default behaviour is that there is a reply
-associated with a TX, otherwise "clients can set req->rx to NULL".
-This api can be _used_ only for protocols that expect a response for
-each TX. For other protocols,  it is simply a passthrough wrapper (by
-doing things like req->rx = NULL). For handling this special case of
-Tx->Rx, maybe a higher level common helper function would be better.
-
-...
-
->> reasons, it is left to the user to tie an incoming RX to some previous
->> TX, or not.
-
-> Is there a specific driver that I can look at in order to understand the
-> case where RX is not tied to TX?
-
- Many...
- * The remote end owns sensors and can asynchronously send, say
-thermal, notifications to Linux.
- * On some platform the RX may be asynchronous, that is sent later
-with some identifying tag of the past TX.
- * Just reverse the roles of local and remote - remote sends us a
-request (RX for us) and we are supposed to send a response (TX).
-
-> Also, if you think there's a better way to enable controllers to manage
-> their hardware queues, please say.
+On Mon, Oct 21, 2024 at 9:23=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
+e:
 >
-Tying RX to TX has nothing to do with hardware queues. There can be a
-hardware queue and the protocol can still be
-"local-to-remote-broadcast".
+> On Mon 21-10-24 09:16:14, Suren Baghdasaryan wrote:
+> > On Mon, Oct 21, 2024 at 8:57=E2=80=AFAM Michal Hocko <mhocko@suse.com> =
+wrote:
+> > >
+> > > On Mon 21-10-24 08:41:00, Suren Baghdasaryan wrote:
+> > > > On Mon, Oct 21, 2024 at 8:34=E2=80=AFAM Michal Hocko <mhocko@suse.c=
+om> wrote:
+> > > > >
+> > > > > On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
+> > > > > [...]
+> > > > > > Yeah, I thought about adding new values to "mem_profiling" but =
+it's a
+> > > > > > bit complicated. Today it's a tristate:
+> > > > > >
+> > > > > > mem_profiling=3D0|1|never
+> > > > > >
+> > > > > > 0/1 means we disable/enable memory profiling by default but the=
+ user
+> > > > > > can enable it at runtime using a sysctl. This means that we ena=
+ble
+> > > > > > page_ext at boot even when it's set to 0.
+> > > > > > "never" means we do not enable page_ext, memory profiling is di=
+sabled
+> > > > > > and sysctl to enable it will not be exposed. Used when a distri=
+bution
+> > > > > > has CONFIG_MEM_ALLOC_PROFILING=3Dy but the user does not use it=
+ and does
+> > > > > > not want to waste memory on enabling page_ext.
+> > > > > >
+> > > > > > I can add another option like "pgflags" but then it also needs =
+to
+> > > > > > specify whether we should enable or disable profiling by defaul=
+t
+> > > > > > (similar to 0|1 for page_ext mode). IOW we will need to encode =
+also
+> > > > > > the default state we want. Something like this:
+> > > > > >
+> > > > > > mem_profiling=3D0|1|never|pgflags_on|pgflags_off
+> > > > > >
+> > > > > > Would this be acceptable?
+> > > > >
+> > > > > Isn't this overcomplicating it? Why cannot you simply go with
+> > > > > mem_profiling=3D{0|never|1}[,$YOUR_OPTIONS]
+> > > > >
+> > > > > While $YOUR_OPTIONS could be compress,fallback,ponies and it woul=
+d apply
+> > > > > or just be ignored if that is not applicable.
+> > > >
+> > > > Oh, you mean having 2 parts in the parameter with supported options=
+ being:
+> > > >
+> > > > mem_profiling=3Dnever
+> > > > mem_profiling=3D0
+> > > > mem_profiling=3D1
+> > > > mem_profiling=3D0,pgflags
+> > > > mem_profiling=3D1,pgflags
+> > > >
+> > > > Did I understand correctly? If so then yes, this should work.
+> > >
+> > > yes. I would just not call it pgflags because that just doesn't reall=
+y
+> > > tell what the option is to anybody but kernel developers. You could a=
+lso
+> > > have an option to override the default (disable profiling) failure st=
+rategy.
+> >
+> > Ok, how about "compressed" instead? Like this:
+> >
+> > mem_profiling=3D0,compressed
+>
+> Sounds good to me. And just to repeat, I do not really care about
+> specific name but let's just stay away from something as specific as
+> page flags because that is really not helping to understand the purpose
+> but rather the underlying mechanism which is not telling much to most
+> users outside of kernel developers.
 
-While I don't think we need the "Rx is in relation to some past Tx"
-api, I am open to ideas to better utilize h/w queues.
+Understood. Ok, I'll start changing my patchset to incorporate this
+feedback and will post the new version this week.
+Thanks for the input everyone!
 
-The h/w TX queue/fifo may hold, say, 8 messages while the controller
-transmits them to the remote. Currently it is implemented by
-.last_tx_done() returning true as long as fifo is not full.
-The other option, to have more than one TX in-flight, only complicates
-the mailbox api without fetching any real benefits because the
-protocol would still need to handle cases like Tx was successful but
-the remote rejected the request or the Rx failed on the h/w fifo
-(there could be rx-fifo too, right). Is where I am at right now.
-
-Regards,
-Jassi
+>
+> --
+> Michal Hocko
+> SUSE Labs
 
