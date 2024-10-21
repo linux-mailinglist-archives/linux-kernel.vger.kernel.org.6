@@ -1,219 +1,160 @@
-Return-Path: <linux-kernel+bounces-374938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B7F9A723D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:24:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E579A723F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE781F2630F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6901C22A82
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68C71F9AB1;
-	Mon, 21 Oct 2024 18:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855781F9A8C;
+	Mon, 21 Oct 2024 18:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0nZJKrTG"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPxYPei1"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7A21DACA1
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC371F9428;
+	Mon, 21 Oct 2024 18:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729535040; cv=none; b=YVkBDw08GxV4ho0xBrtzLtVbhlCgXriEFb9X5bR83SpiphdU5QBjs/aYmX4TNShBjkI3FstpvEijnNuAVddrSWgDwY54zGA2UX+e0fDqDQkKrsFSCJUEBnTCZq8F7qVGYjLrfLuY49OAqvFFlPMwwxoF3HKJAZIXdAs3AtDsBU4=
+	t=1729535071; cv=none; b=UxAJvGKzPH5MNVuk+Oa75CmXET9fz6gMFIEReTFHXgbdcqgYQDKt4hnLE96KQVH00bTWhgc7JhuwumO6C6GfUIcQliQAT2h6MAlndZt00B7tM2ZAhd/f7hVa+KofQuYo6rGvbJwk0zyinD0wug9MZB99Hd/YrcNjcdRj7J0/vfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729535040; c=relaxed/simple;
-	bh=8hO7WVmgs/54rE/Qnx5FskJRGtxef3jfJ04J3wZOwwg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ELhuwROH7PMSAUtsmsczol1mgMgB8qW50fgJljEDBXeYCqDnlp/AJMjSr0OFkbIyKVANtR03gRsyjWlCBfGWZsygQQFx3qxgo4cC6nt3k8/GUE6uHeTvSGkSKfI05uMhqWBmkcgZ8kWMIz0OG2E3Y+Zbt5ye66pLWg7yJFj50wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jrife.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0nZJKrTG; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jrife.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e32e8436adso66015177b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:23:57 -0700 (PDT)
+	s=arc-20240116; t=1729535071; c=relaxed/simple;
+	bh=0Ej3yNFCIOulKACEC48dP6ZyXceyyATvx1qUGxRdu1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ughZvc3C8B8emUisOYieoOyZfgaLz53jbDpAj8iOARM5QPqpFvtYf5eB1AMudU2plfdDjsqwC2T5k5V2KXnE0hZuWt0pzpc9lQMMeyVNcB0nvPyNDIuZyfmZ4rdD5zP1Xq8z5NpxDEOKT5DGaF59N4Z+MtF4XoOM2FeD64/1hVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPxYPei1; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-28847f4207dso2149762fac.0;
+        Mon, 21 Oct 2024 11:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729535037; x=1730139837; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bCHyWAzgLFh6Pz5pJ9aASJ+gjKaVKunSmhhMck3hZyU=;
-        b=0nZJKrTGc9HNp3zRFdJo5A52JGLbGL6pZq6tMspjwb8a+iBPAGxsinXdwmMJxmUaVc
-         e8Asp1Us6mDpmouteQD69ST4+vDaA4Mf3R62TUnr/WAmADWhlxPOxyfoXYvxJaCt0byA
-         Qw1kfLR0PevYzRqkr8MLbajzducDCfQlPWUe/xv8tfuC363dGavLTzdZEJHodQwwuDtV
-         2M/hKMKNK1gjwNoohM6gRGBwfB3kgl4PW2EYg5YCT2DVZAQW+2MR5ok6HwYcuT6VHbYC
-         bx4899LgiNwPVk27kCTNwz/tGDCnerCy/U0YEWYXh/mApp0i2gFmlNUq3Rijf7tWropu
-         DMVw==
+        d=gmail.com; s=20230601; t=1729535069; x=1730139869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=l1OugvVhfXnAwunfv+Eh5wItxlumFBT3ASYrQO7f4/A=;
+        b=JPxYPei1P4QeiRbq+uCIWalQZdoEb20SJi4qOG1PcmQP32iUMEUgzRxPKvS+Y15zjY
+         G6O9zKOUlz61UMRGNG4eJGyAz55Uzu0JMnHakVcg9sGFjLx/SCKL4+Uz6ISjSLkJiwfH
+         xIXk3rBeB3tv2BprErV/VHd7gVPWNBM6Yxt90u8y4JzfLfgzNZNBuCKb3j/gjk2FGUn5
+         +krcKLFtrquZ8GGE09Y3vvRNFkXBBGDIOy4woA86LodA3ohLnvNiG3TyY7iIGAbvb3d8
+         Zd2AL4v224hNi1CBr6LWsFT5rZulF1+FgghRs8uybosOBsPVgQHTnrjjDWqPqAw0cY4d
+         6aZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729535037; x=1730139837;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bCHyWAzgLFh6Pz5pJ9aASJ+gjKaVKunSmhhMck3hZyU=;
-        b=U2C0nDl6431Qs1IuleX2JvZT2shPkRHjdQlKpdIIDP/lt0TYg2bJ6PMfPtJ/9qfiNM
-         D+LsejqbISMpwey73LcpafjXfKD6MJCcA+ztKs4cR1v8iugowtqfK4odymabLY3ORxPe
-         fBkqyN6mRuAvRA7c11dTeCBtIwuDFescTkiXs3+3h4fVfD6mxBU0ziA06/nfb28ZVApx
-         XYkx6vewh7ToPFeqzhaVk8mz8otPK3SE0V/AIvlRohRc6gx3XU6GNCTWebiyZTcv6Txs
-         QxAjAR5/RsFfOCz4/ZPK/3RwsIrinHJjIADwVpj6I51S/rOptuRwNq6p79vEthAfD+JU
-         3mYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfGsWWtaK6QmF4XSdHhfzN65er5DZd3lbHYB0WLUEsHKuf+ar5KZzAP3wwTlTfQuGdNTmHuMUOamBgd0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1sRuWXw53/VgSpF0z0mLEto8gj6afCi939vPhJ5CuA0OfYuAc
-	Ye8j9GBKy3MTpYosri4ezy4kEALYzabczSPFedhh9GHlF9BI/L7fabp9FSorODoFlAVBAo20Mg=
-	=
-X-Google-Smtp-Source: AGHT+IGU9wQ/1p0Qc2O+WS90aQobDGhVJv5JsMEe6PkyP+aaKw6VNLs64wQj+yTMqXYj7j0ZxkJT/QBjqg==
-X-Received: from jrife-kvm.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:63c1])
- (user=jrife job=sendgmr) by 2002:a25:dc8d:0:b0:e2b:d018:9690 with SMTP id
- 3f1490d57ef6-e2bd0189713mr16383276.11.1729535037035; Mon, 21 Oct 2024
- 11:23:57 -0700 (PDT)
-Date: Mon, 21 Oct 2024 18:23:47 +0000
-In-Reply-To: <67121037.050a0220.10f4f4.000f.GAE@google.com>
+        d=1e100.net; s=20230601; t=1729535069; x=1730139869;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1OugvVhfXnAwunfv+Eh5wItxlumFBT3ASYrQO7f4/A=;
+        b=pJLXZYvV9tdPNRxxjgOKMP0bdJPAjEh1EARimmcgd8UTSFnkPYyDEuXLsNVW84j+AP
+         qYcp6PtxKC7WbupfmraB4QA/mpPzzNOLXyOb7Tlilrkso6sMhQaejAjTOciT+QNO3Bd4
+         pEJVN9CkEQ9OBOPE42sV464PKJcS5bxasVkD1Igh7yD9MjIKthZEPedJv2AWIKnhv0eO
+         vdDb3MXxjZ4jHa9mT4nOZADp+NfkIPjnoGe+/yO4aFJMeoPvSxj95q3rjlP1IPYmj4Pe
+         FMVAnlh/yl6cg8PL8TsN1nN5B3V2Inah6IHuOuMM2JgdY4ioAuEexZI1HfGVQj5npt1B
+         jZ1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUm/F1dr5bnRV2eK8bTDP/js1XGOSntBvmylaVxpdz9WNwvNM+Kwu0Mb541YLrV4+FkrAw6UznzphP5P+E=@vger.kernel.org, AJvYcCWpuJywmDtMg5fkTojEqhhWNzdZswgh7QL1PmWJKdVMrtfmBvx3p4DKz/sA0FING7tHK/ULk78Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYgnT9veqqfqbo4qjSTbIIK22EiwYB9ubu6z4F9vJEzh6DBvg
+	vfUfvWpS5uA+toUi/1+pIfQK+jCxqpfw9eIzAwSYtmF/qo8SjUnE
+X-Google-Smtp-Source: AGHT+IFfO8LDJdyDU2yShSiPwFNICBVbTtLI4Eq7i2BKXfuTxHW2fGWt79r3EUt9s99UYXSx3W/89A==
+X-Received: by 2002:a05:6871:151:b0:288:559d:5b5c with SMTP id 586e51a60fabf-2892c49ea77mr9627283fac.34.1729535069014;
+        Mon, 21 Oct 2024 11:24:29 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafabd4sm3303041a12.12.2024.10.21.11.24.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 11:24:28 -0700 (PDT)
+Message-ID: <fe528f18-a211-4cfb-9b5d-9930d685b231@gmail.com>
+Date: Mon, 21 Oct 2024 11:24:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <67121037.050a0220.10f4f4.000f.GAE@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241021182347.77750-1-jrife@google.com>
-Subject: Re: [syzbot] [trace?] [bpf?] KASAN: slab-use-after-free Read in
- bpf_trace_run2 (2)
-From: Jordan Rife <jrife@google.com>
-To: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, mathieu.desnoyers@efficios.com, 
-	mattbobrowski@google.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev, Jordan Rife <jrife@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/91] 6.1.114-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241021102249.791942892@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241021102249.791942892@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I performed a bisection and this issue starts with commit a363d27cdbc2
-("tracing: Allow system call tracepoints to handle page faults") which
-introduces this change.
-
-> + *
-> + * With @syscall=0, the tracepoint callback array dereference is
-> + * protected by disabling preemption.
-> + * With @syscall=1, the tracepoint callback array dereference is
-> + * protected by Tasks Trace RCU, which allows probes to handle page
-> + * faults.
->   */
->  #define __DO_TRACE(name, args, cond, syscall)				\
->  	do {								\
-> @@ -204,11 +212,17 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		if (!(cond))						\
->  			return;						\
->  									\
-> -		preempt_disable_notrace();				\
-> +		if (syscall)						\
-> +			rcu_read_lock_trace();				\
-> +		else							\
-> +			preempt_disable_notrace();			\
->  									\
->  		__DO_TRACE_CALL(name, TP_ARGS(args));			\
->  									\
-> -		preempt_enable_notrace();				\
-> +		if (syscall)						\
-> +			rcu_read_unlock_trace();			\
-> +		else							\
-> +			preempt_enable_notrace();			\
->  	} while (0)
-
-Link: https://lore.kernel.org/bpf/20241009010718.2050182-6-mathieu.desnoyers@efficios.com/
-
-I reproduced the bug locally by running syz-execprog inside a QEMU VM.
-
-> ./syz-execprog -repeat=0 -procs=5 ./repro.syz.txt
-
-I /think/ what is happening is that with this change preemption may now
-occur leading to a scenario where the RCU grace period is insufficient
-in a few places where call_rcu() is used. In other words, there are a
-few scenarios where call_rcu_tasks_trace() should be used instead to
-prevent a use-after-free bug when a preempted tracepoint call tries to
-access a program, link, etc. that was freed. It seems the syzkaller
-program induces page faults while attaching raw tracepoints to
-sys_enter making preemption more likely to occur.
-
-kernel/tracepoint.c
-===================
-> ...
-> static inline void release_probes(struct tracepoint_func *old)
-> {
-> 	...
-> 	call_rcu(&tp_probes->rcu, rcu_free_old_probes); <-- Here
-> 	...
-> }
-> ...
-
-kernel/bpf/syscall.c
-====================
-> static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
-> {
-> 	bpf_prog_kallsyms_del_all(prog);
-> 	btf_put(prog->aux->btf);
-> 	module_put(prog->aux->mod);
-> 	kvfree(prog->aux->jited_linfo);
-> 	kvfree(prog->aux->linfo);
-> 	kfree(prog->aux->kfunc_tab);
-> 	if (prog->aux->attach_btf)
-> 		btf_put(prog->aux->attach_btf);
+On 10/21/24 03:24, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.114 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> 	if (deferred) {
-> 		if (prog->sleepable) <------ HERE: New condition needed?
-> 			call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_rcu);
-> 		else
-> 			call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
-> 	} else {
-> 		__bpf_prog_put_rcu(&prog->aux->rcu);
-> 	}
-> }
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
 > 
-> static void bpf_link_free(struct bpf_link *link)
-> {
-> 	const struct bpf_link_ops *ops = link->ops;
-> 	bool sleepable = false;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.114-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> 	bpf_link_free_id(link->id);
-> 	if (link->prog) {
-> 		sleepable = link->prog->sleepable;
-> 		/* detach BPF program, clean up used resources */
-> 		ops->release(link);
-> 		bpf_prog_put(link->prog);
-> 	}
-> 	if (ops->dealloc_deferred) {
-> 		/* schedule BPF link deallocation; if underlying BPF program
-> 		 * is sleepable, we need to first wait for RCU tasks trace
-> 		 * sync, then go through "classic" RCU grace period
-> 		 */
-> 		if (prog->sleepable) <------ HERE: New condition needed?
-> 			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
-> 		else
-> 			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
-> 	} else if (ops->dealloc)
-> 		ops->dealloc(link);
-> }
+> thanks,
+> 
+> greg k-h
 
-After patching things locally to ensure that call_rcu_tasks_trace() is
-always used in these three places I was unable to induce a KASAN bug
-to occur whereas before it happened pretty much every time I ran 
-./sys-execprog within a minute or so.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-I'm a bit unsure about the actual conditions under which
-call_rcu_tasks_trace() should be used here though. Should there perhaps
-be another condition such as `preemptable` which is used to determine
-if call_rcu_tasks_trace() or call_rcu() should be used to free
-links/programs? Is there any harm in just using call_rcu_tasks_trace()
-every time in combination with rcu_trace_implies_rcu_gp() like it is
-in bpf_link_defer_dealloc_mult_rcu_gp()?
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-> static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)?
-> {
-> 	if (rcu_trace_implies_rcu_gp())
-> 		bpf_link_defer_dealloc_rcu_gp(rcu);
-> 	else
-> 		call_rcu(rcu, bpf_link_defer_dealloc_rcu_gp);
-> }
+There is a new warning that got picked up on ARM 32-buit:
 
-- Jordan
+fs/udf/namei.c:878:1: warning: the frame size of 1152 bytes is larger 
+than 1024 bytes [-Wframe-larger-than=]
+
+I was not able to locate a fix upstream for this, but it does appear to 
+come from ("udf: Convert udf_rename() to new directory iteration code").
+-- 
+Florian
 
