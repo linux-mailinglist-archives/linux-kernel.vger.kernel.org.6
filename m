@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-374105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2C59A6365
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:34:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786659A6383
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08ADF1C21ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F16281C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF32D1E7C11;
-	Mon, 21 Oct 2024 10:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4061E9074;
+	Mon, 21 Oct 2024 10:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L8K452Ew"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sJ3YCqw3"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B22A1E47A8;
-	Mon, 21 Oct 2024 10:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA201E32D7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729506719; cv=none; b=sb+G2p+JhpvLR8IwWcctVgGz7wA2zFOtmxR90lpWfyh3BTbWDGrj/fX1GCIkwiACvFXv+unBON3J/PqcePrAYQJR0URN1b91lcPYG9psinBreXGIQKDmvpfYtBmGsRASADar9ys8bf0CFfcOSZuVODYnew8plT/bynE8vXSYhtI=
+	t=1729506795; cv=none; b=PE3CcNkU8G/By7JlaWTSsQumtt4DrN8G+L2vhpDWKAVRalLylOfkaUepyKDkKau+iLOqZmiZgQG9McjMxGlTLqOUqncbLkyywGcaKd5Fq1684HDL/JkMR5p4/d1X33woNVwO2PNmZVWBy5l4WKqpLxttZa6Np0Zg76IaXSVRGOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729506719; c=relaxed/simple;
-	bh=YZCUVyUfC9oHB1G3sSi+PNeE6ieKKL19wAfEIPQup68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKxd9lZOIT/0LGwYFGAxIXqCISMEr62SdHNg6S1S6tm3Y26Q8GGUVTusJBf5fDMFC4YhZl6kO2gfc5Ats6mVbtWT30tJMJoWgH8UJLTEYMa9TG+jA5EvoLV657RBs+ApyCy+O14i6ktb/MV0SgyLNVnCFGzdNT5bxKvHWhCvyYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L8K452Ew; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=wi9e0+QnD1dTbzyWBEfkmQr/IejLdT70yHhTQuDJUYc=; b=L8K452Ewo82ZQfKAONe56ZGczR
-	22Yv4qFuuagkbhjGhDEgrCLL7cGoAXgtMs4a0H52VGFEdTmbECF5lUvTdXJ2hAUcn9vloNnLBwaEx
-	6511cxJ7EY72BqI3paOA8f+1gDgARpZnCvXHFEUFinMcFAHjH/W19QNU7dnBjdVqNq9CgugNJXhGO
-	BjQRxYQcCa6IicjOiOCvxRl8nvtc1yuFa7lfSMDvD0PTnOXl6ETALMDXADZG+FQcO9Zxj0j7W+Qqh
-	rWQbhB6LAAfm04mHFjn6/eTiLKREofnu5zcjbAbfZkwwSEm4AGQNfCC2IMsTey6uw2UF6t8ki4RO5
-	vekOssQA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t2phY-00000007t8k-3IUM;
-	Mon, 21 Oct 2024 10:31:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 00A4830073F; Mon, 21 Oct 2024 12:31:51 +0200 (CEST)
-Date: Mon, 21 Oct 2024 12:31:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jolsa@kernel.org, paulmck@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 1/2] uprobes: allow put_uprobe() from
- non-sleepable softirq context
-Message-ID: <20241021103151.GB6791@noisy.programming.kicks-ass.net>
-References: <20241008002556.2332835-1-andrii@kernel.org>
- <20241008002556.2332835-2-andrii@kernel.org>
- <20241018082605.GD17263@noisy.programming.kicks-ass.net>
- <CAEf4Bzb3xjTH7Qh8c_j95jEr4fNxBgG11a0sCe4hoF9chwUtYg@mail.gmail.com>
+	s=arc-20240116; t=1729506795; c=relaxed/simple;
+	bh=Vq2O95x6e7Hs1DzKvXYDscSROlBA9dAz4qml1ZBzo4k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XaAdYLqwJ4/eM5sj8oTq0XOYao02edeIx+Mi8iw65yGDeG0KZC/GeHmNWRH21OM/9BfQ9sfl2TX0QaZ2Fyv3I+kvaE8ocHcUlJueELMnmFNRKRP8WmaCltL0R/WeD0RQhy8PDIZakjvKKCFGfzh75knFrGkL3L2z0TNwGEgw44s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sJ3YCqw3; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5be4381dso42107771fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729506791; x=1730111591; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UTXT6Qy0j2/Ntg3Z49e6WSEz/eZy8Jlw8PKip8owHHU=;
+        b=sJ3YCqw3amNW0osDV+u5MxV1qVtBJ4ToD9wymUISqbjYh/UWrvOdVvK0iFuBhGqoXK
+         aWMVJi0YEOJ1d6rqr6SYl/JaXxOlU0L84HWSi4ZgMBw1C2LA+kOrRQ7UdLyQ6iI24edv
+         woFZx+Ja2yvKP0yVkR4fdZ5wr4KOrnlP+Oer0ol3UMuO2dJYqf2jqM0kyk/3K3ipQ2Cf
+         I2f5kOxaYuLSdF3V32k4YQCZ93+o8a5Wbrv27HrLEuPhlyVggu5CaqOgjuYDcmR3WA4t
+         VDxMw3b0ofC2wMMiCQwMTHW1GNZm7fbbGVI8Hv/wH5awC5NoI2qkCu4nnVRYy0dM01Gu
+         cqLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729506791; x=1730111591;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UTXT6Qy0j2/Ntg3Z49e6WSEz/eZy8Jlw8PKip8owHHU=;
+        b=UfTpo3NUQs4wwq9h0Mkq/FLwaDCNZNsP0rrnfrZlzJsqUruCBWCRa+W/AQokFYQh3u
+         jmtgGLUjcAFSq5u9eRF0Z3JOPpWt+NyPg1i0whO/mSHoXgFnFDw/4lOV0E8RppiN55Cm
+         F+HS15LmXMZnNb5PXVc9WdDU3b25bisSN4xusC7eZDfTbEio4ZI5/lKdrMe2ztMIKvtw
+         mx/yUhimXsfn/5tivGJLiawD9zTRIzm04vzMvVOBGipY1TkarjFB7KfKW2jv4hxtrrGe
+         V1W9AXKMbHNmr1qKl3gHD0C6zdwbXQbTHOIsaiJZygOSJGYYNfTYy0Th4ZsyF6hOvmnT
+         +ujw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8To5glzQrv++6aMyXr9HUXfnIc4GhgQ8aan52YjBTR3A2ZRMusAj2qpjLm8NbKD8vFm/B2VHGzD7NNEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKSnit2ps9O3/GFI+HqNsJDBBYvhKfrHGSYCbALiNDCE/sRP4g
+	/uhbDiwNkmT5xNMb+1jNJQpnv5DLYdvWLdbyOr6tkvpoMEsbvodwwCVJiVxFyJI=
+X-Google-Smtp-Source: AGHT+IHGW0q2lwoRj7S3rf9+iiedFfDzPTp7u5cQ3yIox9lL4ddIvW7Ltn33mCs9mL8+x1IN3JIGaA==
+X-Received: by 2002:a05:6512:318b:b0:539:de9c:c890 with SMTP id 2adb3069b0e04-53a1544c332mr5346248e87.42.1729506791288;
+        Mon, 21 Oct 2024 03:33:11 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a22420015sm454132e87.123.2024.10.21.03.33.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 03:33:10 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/6] phy: qualcomm: add support for USB+DP and PCIe PHYs
+ on SAR2130P
+Date: Mon, 21 Oct 2024 13:33:06 +0300
+Message-Id: <20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzb3xjTH7Qh8c_j95jEr4fNxBgG11a0sCe4hoF9chwUtYg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOItFmcC/13MQQqDMBCF4avIrJuSGSXWrnqP4iLaaAaKkUkJF
+ cndmwrddPk/eN8O0Qm7CNdqB3GJI4elBJ0qGL1dZqf4URpIU4MaWxWtENZ6VavfomrItHU9XDS
+ aDspnFTfx+/DufWnP8RVkO/iE3/UndX9SQqXVMGkzjc5SQ3h78mIlnIPM0OecP6lZppKrAAAA
+X-Change-ID: 20241017-sar2130p-phys-426733b80169
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1714;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=Vq2O95x6e7Hs1DzKvXYDscSROlBA9dAz4qml1ZBzo4k=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnFi3jHG8OPQet6L+ETGmWNYD1lBj7VW+leaQvs
+ ae5xw29CbuJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxYt4wAKCRAU23LtvoBl
+ uI3QD/4nXKaITIt5aPT/aRcRMosbLmFThrHwNilqfCZp5vHXvBNhs1Ynyeh+7i2DifmIldNE+8d
+ I7al4ryRbTYQUmzrcVV/mpTngLXuY4e9Qi1rAM2tWUBUP/2MGWeISmitd3tteL8NbjfspLN9ZBJ
+ 902lOqOy/oVWqMHdKdvmSWZh++o0tLCzTHNdwj7PdaBIk+WSmT8DKZiC3+/K+ylav1FJMBeT6g7
+ +OnFN/+hpTWdJp3r9euV53zbxCuE/azbbUCFbGYzEsJGUFDU/icjA7XYqs/RDEcqziblQ6eLtrQ
+ rCL1dI/q5KlX3+xiI1KEKtRHSSzkaJVeudpv+cRZcvDxfBJC9hYYACwNdObmw5fR4ld1rEpTyGC
+ t+5C3A7vEAO2MQadKmnKbd90z+4hjhwB0rAxSgRcWga1oz46OKTg69yPCmAV3v23oJ2Ddr8WYBe
+ nyCY8XLJyOIZksVTQS8xTzEPATuxPJ4PXD6XPgmusMSAJRCKb8lOMGhZROkwZ4lT1nFRx6Y5zCJ
+ PL10tRQ0OY1nxoBYPhrqpArJlsY4+2oEfCQkAEtaofS3V2b1TCwezIGZTbYDQhMgj1DY3bFoTbZ
+ vXtCX1nPn5+TNemkprgDL8GAdS79KqI1QhjpDhhF2EtAU6PsvhadK6ZpBoQwufQ5Ph+eaHQNGhS
+ 4XOEcZmRuEMj9ZQ==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Fri, Oct 18, 2024 at 11:22:00AM -0700, Andrii Nakryiko wrote:
-> On Fri, Oct 18, 2024 at 1:26 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Oct 07, 2024 at 05:25:55PM -0700, Andrii Nakryiko wrote:
-> > > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
-> > > makes it unsuitable to be called from more restricted context like softirq.
-> >
-> > This is delayed_uprobe_lock, right?
-> 
-> Not just delated_uprobe_lock, there is also uprobes_treelock (I forgot
-> to update the commit message to mention that). Oleg had concerns (see
-> [0]) with that being taken from the timer thread, so I just moved all
-> of the locking into deferred work callback.
-> 
->   [0] https://lore.kernel.org/linux-trace-kernel/20240915144910.GA27726@redhat.com/
+Add support for the USB+DP Combo PHY and PCIe PHY on the Qualcomm
+SAR2130P platform.
 
-Right, but at least that's not a sleeping lock. He's right about it
-needing to become a softirq-safe lock though. And yeah, unfortunate
-that.
+The DP part of the combo PHY wasn't yet tested, but it is not possible
+to support just the USB part of the PHY. DP part might require
+additional fixes later.
 
-> > So can't we do something like so instead?
-> 
-> I'll need to look at this more thoroughly (and hopefully Oleg will get
-> a chance as well), dropping lock from delayed_ref_ctr_inc() is a bit
-> scary, but might be ok.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Fixed the schema name in the patch 1 subject (Johan)
+- Link to v1: https://lore.kernel.org/r/20241019-sar2130p-phys-v1-0-bf06fcea2421@linaro.org
 
-So I figured that update_ref_ctr() is already doing the
-__update_ref_ctr() thing without holding the lock, so that lock really
-is only there to manage the list.
+---
+Dmitry Baryshkov (6):
+      dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Add SAR2130P compatible
+      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Add SAR2130P compatible
+      phy: qualcomm: qmp-combo: add support for SAR2130P
+      phy: qualcomm: qmp-pcie: split PCS_LANE1 region
+      phy: qualcomm: qmp-pcie: define several new registers
+      phy: qualcomm: qmp-pcie: add support for SAR2130P
 
-And that list is super offensive... That really wants to be a per-mm
-rb-tree or somesuch.
+ .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   |   2 +
+ .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   2 +
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 100 ++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 173 ++++++++++++++++++++-
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h |   5 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h |   5 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6.h    |   3 +
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6.h         |   2 +
+ .../phy/qualcomm/phy-qcom-qmp-qserdes-txrx-v6.h    |   1 +
+ 9 files changed, 284 insertions(+), 9 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241017-sar2130p-phys-426733b80169
 
-AFAICT the only reason it is a mutex, is because doing unbouded list
-iteration under a spinlock is a really bad idea.
-
-> But generally speaking, what's your concern with doing deferred work
-> in put_uprobe()? It's not a hot path by any means, worst case we'll
-> have maybe thousands of uprobes attached/detached.
-
-Mostly I got offended by the level of crap in that code, and working
-around crap instead of fixing crap just ain't right.
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
