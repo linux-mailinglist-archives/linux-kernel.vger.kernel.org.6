@@ -1,229 +1,476 @@
-Return-Path: <linux-kernel+bounces-373640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C219A59B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:21:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1217E9A59B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9FD2825CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205B81C21063
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FEE1946C9;
-	Mon, 21 Oct 2024 05:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A3B194AF9;
+	Mon, 21 Oct 2024 05:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="psNrO38m"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B+UJAAsb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200EE192D77
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317EAA41;
+	Mon, 21 Oct 2024 05:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729488072; cv=none; b=OlFlcwCBqkfzaOQ2RcHaM2tdLzw3KYBsObgRGIdp8Zd0HI+32y0QZAuFe4J9gxHTpgpZzlhelEat4zn7fkCYrVbtCDOSOSDH9Iz5r4qFHP6vhm5vLcwcj4S2aMB12ROaX8OPuFrzzbUycWq/x3eDIXOYmF8FiZMsZpgl3JDwA4Y=
+	t=1729488462; cv=none; b=eyhRPSxI8Z6vvOzflxP46Wa5UKT0KhsH4xrmuBBJ+O1v9N8hFMO2CAY6w+kQJVRZ9FWm+EZDB5yaA1ryj8qrIpodWeXceWNr/DS9PWFd8TFpTRjQ0UA8jiwYBNbteRfbUOjRatIlycSVH+/42X0VlQGWzDn4IuTF6fA2QSIZkXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729488072; c=relaxed/simple;
-	bh=VlKGcILGFP9kQ9qt0LflsuRpR3WhN3j25EmrcZfJZy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fUebzu0fXk2ObG/+kg1WmiVBfyWhb8Be+0gXhxxOIM+NNUhYfLUE/Odf8sv0QyzC+pUyoMLWnLzIWYhgOpd+0jn4odBslDMYvAsueAYkQrJxwHgIPatA5Y0QvLJITGhU6tQyuxanA9bGN/N2DJMtYIFwAr9bWiICe0Ee2L92lOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=psNrO38m; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <39af7887-9fc0-4a17-b4ff-3b57e038e9e2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729488067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YkXaaUUzJHMClQQeI/1CSrA2DJ33mmpNCuGv+myF8g4=;
-	b=psNrO38mOkzZuebJ9NmNB5VXHzWHVoNxn9YHkCu8w031VA45oxhdRHFgBDwdpRMxBYQ+ko
-	Dvp3h0htlgni94ifi4Vl+/6ft7YyZUgGDKZtEfS69xQ1gMRQnVTGrvLnT648e185Uoq5B9
-	Nl8yAxBfBr1XwulM2ybPDcB8BiGUkSQ=
-Date: Mon, 21 Oct 2024 13:20:57 +0800
+	s=arc-20240116; t=1729488462; c=relaxed/simple;
+	bh=InRyiTb6nxPAWDnRP0xzYkrqk7J91zSaCIZ7cWHYTe0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kONvQsGsN9nCnEBxKGvYidWfhnHHEDkx+pp6ZmunmBXnCQVS8jxpktW8oBhK7KqU0jeJwgLu9CKgO57mICR+mxzw7H2m6u/rY1roxNGm+jVyjAoUiWym3xhCPIyai3Lsrpl3RBAA25/ATdUesievG1ihqG2XNWtDDhv1UIZaByg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B+UJAAsb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2KKJA032591;
+	Mon, 21 Oct 2024 05:27:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0DtSUH
+	2xpDnSTxYmcBKHaWr0ThCq7vlTDn3zKKpv0K8=; b=B+UJAAsbzx7CjHaBhrL2Su
+	kr7ugdPN/o5MmdEaXGTw42wtG5InY3w/MfyoHWN4Fas7t4q4aRMBkt3nvrgD0Rnp
+	aIf3Q/l6op7Qm/9lNGD7UVYAyygfGQgkdS0z9OJnLmjnXmDPzJRC6whHFiTHciaA
+	hHOCh5glE8JCX+w6rR1YkKc1JOrzf4nCsZr95NB32QErPviUf9hVavjmGG2wQlQx
+	izNZd4DqqrCQ4xlqa7+Y4+7fsdMRXS7fT8b5mCS9TO+mij2xK1sEpNVeqzK1VxSa
+	IOmbd8G4TK6sasjtlmLTxgd+CsOEY8T7k4eo4hJK2KN8+wSIgHnM18nDAQ8KouCw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hm767f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 05:27:26 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L0aB1Z018613;
+	Mon, 21 Oct 2024 05:27:25 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42csaj4a9r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 05:27:25 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49L5ROKq24248962
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Oct 2024 05:27:24 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B7B858055;
+	Mon, 21 Oct 2024 05:27:24 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D14A55805B;
+	Mon, 21 Oct 2024 05:27:20 +0000 (GMT)
+Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com (unknown [9.171.58.205])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 21 Oct 2024 05:27:20 +0000 (GMT)
+Message-ID: <20f31d99374ef1ffa7dc7fc1a609074009742e00.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/1] cpuidle/menu: Address performance drop from
+ favoring physical over polling cpuidle state
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Christian Loehle <christian.loehle@arm.com>, rafael@kernel.org,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: gautam@linux.ibm.com
+Date: Mon, 21 Oct 2024 10:57:18 +0530
+In-Reply-To: <6ae997ca-9712-4497-b666-11b976b1816d@arm.com>
+References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+	 <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
+	 <9e5ef8ab0f0f3e7cb128291cd60591e3d07b33e4.camel@linux.ibm.com>
+	 <4c897ab4-d592-427b-9a97-79c2b14d5c46@arm.com>
+	 <6371848e9c260743f381be6e0114743ffab5e5bb.camel@linux.ibm.com>
+	 <6ae997ca-9712-4497-b666-11b976b1816d@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-26.el8_10) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: oSsYabgKE4Yaf22lNd7QzAiyBvsTPHJx
+X-Proofpoint-GUID: oSsYabgKE4Yaf22lNd7QzAiyBvsTPHJx
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] docs/zh_CN: add the translations of
- kbuild/reproducible-builds.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1729259177.git.dzm91@hust.edu.cn>
- <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210035
+
+On Thu, 2024-09-19 at 09:49 +0100, Christian Loehle wrote:
 
 
+Hi Christian, 
+
+> On 9/19/24 06:02, Aboorva Devarajan wrote:
+> > On Wed, 2024-08-21 at 11:55 +0100, Christian Loehle wrote:
+> > 
+> > > On 8/20/24 09:51, Aboorva Devarajan wrote:
+> > > > On Tue, 2024-08-13 at 13:56 +0100, Christian Loehle wrote:
+> > > > 
+> > ...
+> > > The wakeup source(s), since they don't seem to be timer events would be
+> > > interesting, although a bit of a hassle to get right. 
+> > > What's the workload anyway?
+> > > 
+> > 
+> > I identified the part of the internal workload responsible for performance
+> > improvement with the patch and it appears to be the OLTP queries, and yes
+> > the wakeup sources are not timer events.
+> > 
+> > ---------------------------------------------------------------------
+> > 
+> > Additionally to reproduce the issue using a more open and accessible
+> > benchmark, conducted similar experiments using pgbench and I observed
+> > similar improvements with the patch, particularly when running the
+> > read intensive select query benchmarks.
+> > 
+> > ---------------------------------------------------------------------
+> > System Details
+> > ---------------------------------------------------------------------
+> > $ lscpu
+> > Architecture:             ppc64le
+> >   Byte Order:             Little Endian
+> > CPU(s):                   224
+> >   On-line CPU(s) list:    0-223
+> > Model name:               POWER10 (architected), altivec supported
+> >   Model:                  2.0 (pvr 0080 0200)
+> >   Thread(s) per core:     8
+> >   Core(s) per socket:     3
+> >   Socket(s):              8
+> > Virtualization features:  
+> >   Hypervisor vendor:      pHyp
+> >   Virtualization type:    para
+> > ---------------------------------------------------------------------
+> > 
+> > $ cpupower idle-info
+> > CPUidle driver: pseries_idle
+> > CPUidle governor: menu
+> > analyzing CPU 0:
+> > 
+> > Number of idle states: 2
+> > Available idle states: snooze CEDE
+> > snooze:
+> > Flags/Description: snooze
+> > 
+> > Latency: 0
+> > Residency: 0
+> > Usage: 6229
+> > Duration: 402142
+> > CEDE:
+> > Flags/Description: CEDE
+> > Latency: 12
+> > Residency: 120
+> > Usage: 191411
+> > Duration: 36329999037
+> > 
+> > ---------------------------------------------------------------------
+> > PostgreSQL Benchmark:
+> > ---------------------------------------------------------------------
+> > 
+> > I ran pgbench with 224 clients and 20 threads for 600 seconds,
+> > performing only SELECT queries against the pgbench database to 
+> > evaluate performance under read-intensive workloads:
+> > 
+> > $ pgbench -c 224 -j 20 -T 600 -S pgbench
+> > 
+> > Latency:
+> > 
+> > > ---|-------------|------------|------------|
+> > >  # | Before (ms) | After (ms) | Change (%) |
+> > > Run| Patch       | Patch      |            |
+> > > ---|-------------|------------|------------|
+> > >  1 | 0.343       | 0.287      | -16.31%    |
+> > >  2 | 0.334       | 0.286      | -14.37%    |
+> > >  3 | 0.333       | 0.286      | -14.11%    |
+> > >  4 | 0.341       | 0.288      | -15.55%    |
+> > >  5 | 0.342       | 0.288      | -15.79%    |
+> > > ---|-------------|------------|------------|
+> > 
+> > Latency Reduction: After applying the patch, the latency decreased
+> > by 14% to 16% across multiple runs.
+> > 
+> > Throughput per second:
+> > 
+> > > ---|-------------|------------|------------|
+> > >  # | Before      | After      | Change (%) |
+> > > Run| Patch       | Patch      |            |
+> > > ---|-------------|------------|------------|
+> > >  1 | 652,544.23  | 780,613.42 | +19.63%    | 
+> > >  2 | 670,243.45  | 784,348.44 | +17.04%    |
+> > >  3 | 673,495.39  | 784,458.12 | +16.48%    |
+> > >  4 | 656,609.16  | 778,531.20 | +18.57%    |
+> > >  5 | 654,644.52  | 778,322.88 | +18.88%    |
+> > > ---|-------------|------------|------------|
+> 
+> Do you happen to have the idle stats here, too?
+> Especially above/below see comment below.
+
+I ran the benchmark again and collected the idle statistics on a different
+system since I no longer have access to the previous one.
+
+Here are the stats I gathered, including data for the menu, teo, and ladder governors:
+
+Metric                        | Ladder        | Teo           | Menu          | Menu Patched
+--------------------------------------------------------------------------------------------
+Transactions Processed        | 42,902,188    | 48,499,709    | 42,653,477    | 48,648,867   
+Latency (ms)                  | 0.313         | 0.277         | 0.315         | 0.276        
+TPS                           | 715,340.96    | 808,672.59    | 711,123.13    | 811,137.40  
+--------------------------------------------------------------------------------------------
+Total Usage Difference        | 46,680,184    | 66,348,992    | 47,892,509    | 62,366,337
+Usage Diff (CEDE)             | 46,680,184    | 7,612,960     | 45,421,436    | 19,237,430
+Usage Diff (Snooze)           | 0             | 58,736,032    | 2,471,073     | 43,128,907
+--------------------------------------------------------------------------------------------
+Total Time Difference (s)     | 5,552.20      | 5,242.75      | 5,534.62      | 5,238.46     
+Time Diff (CEDE)              | 5,552.20      | 2,497.89      | 5,431.91      | 3,324.99
+Time Diff (Snooze)            | 0.00          | 2,744.86      | 102.71        | 1,913.47
+--------------------------------------------------------------------------------------------
+Total Above Diff              | 40,381,398    | 4,520,998     | 38,942,725    | 15,072,345
+Above Diff (CEDE)             | 40,381,398    | 4,520,998     | 38,942,725    | 15,072,345
+Above Diff (Snooze)           | 0             | 0             | 0             | 0
+--------------------------------------------------------------------------------------------
+Total Below Diff              | 0             | 12,362,392    | 405,357       | 8,172,845
+Below Diff (CEDE)             | 0             | 0             | 0             | 0
+Below Diff (Snooze)           | 0             | 12,362,392    | 405,357       | 8,172,845
+--------------------------------------------------------------------------------------------
+% Above w.r.t. Usage          | 86.51%        | 6.82%         | 81.30%        | 24.17%
+--------------------------------------------------------------------------------------------
+% Below w.r.t. Usage          | 0%            | 18.64%        | 0.85%         | 13.10%
+--------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+
+Note:
+
+% Above w.r.t Usage = (Total Above Difference / Total Usage Difference) * 100
+% Below w.r.t Usage = (Total Below Difference / Total Usage Difference) * 100
 
 
-在 2024/10/18 21:47, Dongliang Mu 写道:
-> Finish the translation of kbuild/reproducible-builds.rst and move
-> reproducible-builds.rst from TODO to the main body.
->
-> Update to commit 114ff6fe6cfb ("Documentation: kbuild: Add description
-> of git for reproducible builds")
->
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+Menu, Teo, Ladder: This is with menu, teo and ladder governor enabled respectively on v6.12-rc1.
 
-Thanks,
-Yanteng
-> ---
->   .../translations/zh_CN/kbuild/index.rst       |   2 +-
->   .../zh_CN/kbuild/reproducible-builds.rst      | 114 ++++++++++++++++++
->   2 files changed, 115 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
->
-> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-> index c06268cf44be..0ba96aecb13a 100644
-> --- a/Documentation/translations/zh_CN/kbuild/index.rst
-> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
-> @@ -16,6 +16,7 @@
->       headers_install
->       gcc-plugins
->       kbuild
-> +    reproducible-builds
->   
->   TODO:
->   
-> @@ -24,7 +25,6 @@ TODO:
->   - makefiles
->   - modules
->   - issues
-> -- reproducible-builds
->   - llvm
->   
->   .. only::  subproject and html
-> diff --git a/Documentation/translations/zh_CN/kbuild/reproducible-builds.rst b/Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
-> new file mode 100644
-> index 000000000000..5f27ebf2fbfc
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
-> @@ -0,0 +1,114 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/kbuild/reproducible-builds.rst
-> +
-> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +============
-> +可重现的构建
-> +============
-> +
-> +通常希望使用相同工具集构建相同源代码是可重现的，即，输出始终完全相同。这使得能够验证
-> +二进制分发或嵌入式系统的构建基础设施未被篡改。这样也更容易验证源代码或工具的更改不会
-> +影响最终生成的二进制文件。
-> +
-> +`可重现构建项目`_ 提供了有关该主题的更多信息。本文档涵盖了构建内核可能不可重现的
-> +各种原因，以及如何避免这些问题。
-> +
-> +时间戳
-> +------
-> +
-> +内核在三个地方嵌入时间戳：
-> +
-> +* 通过 ``uname()`` 显示与包含在 ``/proc/version`` 中的版本字符串
-> +
-> +* initramfs 中的文件时间戳
-> +
-> +* 如果启动 ``CONFIG_IKHEADERS``，内核或相应模块中嵌入的内核头文件的时间戳，
-> +  通过 ``/sys/kernel/kheaders.tar.xz`` 显示
-> +
-> +默认情况下，时间戳为当前时间或内核头文件的修改时间。这个内容必须使用
-> +`KBUILD_BUILD_TIMESTAMP`_ 变量进行覆盖。如果你从某个 git 提交进行构建，
-> +可以使用其提交日期。
-> +
-> +内核 *不* 使用 ``__DATE__`` 和 ``__TIME__`` 宏，并在使用这些宏时启用警告。
-> +如果你合并的外部代码使用这些宏，则必须通过设置 `SOURCE_DATE_EPOCH`_ 环境
-> +变量来覆盖它们对应的时间戳。
-> +
-> +用户，主机
-> +----------
-> +
-> +内核在 ``/proc/version`` 中嵌入构建用户和主机名。必须使用
-> +`KBUILD_BUILD_USER 和 KBUILD_BUILD_HOST`_ 变量来覆盖这些设置。如果
-> +您从某个 git 提交进行构建，可以使用其提交者地址。
-> +
-> +绝对文件名
-> +----------
-> +
-> +当内核在树外构建时，调试信息可能包括源文件的绝对文件名。这些信息必须通过在
-> +`KCFLAGS`_ 变量中包含 ``-fdebug-prefix-map`` 选项来覆盖。
-> +
-> +根据使用的编译器，``__FILE__`` 宏在树外构建中也可能扩展为绝对文件名。Kbuild
-> +自动使用 ``-fmacro-prefix-map`` 选项来防止这种情况，前提是它被支持。
-> +
-> +可重现构建网站提供了有关这些 `prefix-map 选项`_ 的更多信息。
-> +
-> +在源包中的生成文件
-> +------------------
-> +
-> +在 ``tools/`` 子目录下，一些程序的构建过程并不完全支持树外构建。这可能导致后续
-> +使用如 ``make rpm-pkg`` 构建的源码包包含生成的文件。在构建源码包之前，您应该通过
-> +运行 ``make mrproper`` 或 ``git clean -d -f -x`` 来确保源码树是干净的。
-> +
-> +模块签名
-> +--------
-> +
-> +如果你启用 ``CONFIG_MODULE_SIG_ALL``，默认行为是为每次构建生成不同的临时密钥，
-> +从而导致模块不可重现。然而，将签名密钥包含在源代码中显然会违背签名模块的目的。
-> +
-> +一种方法是将构建过程分为几个部分，以便不可重现的部分可以作为源处理：
-> +
-> +1. 生成一个持久的签名密钥。将该密钥的证书添加到内核源代码中。
-> +
-> +2. 将 ``CONFIG_SYSTEM_TRUSTED_KEYS`` 符号设置为包括签名密钥的证书，将
-> +``CONFIG_MODULE_SIG_KEY`` 设置为空字符串，并禁用 ``CONFIG_MODULE_SIG_ALL``。
-> +最后，构建内核和模块。
-> +
-> +3. 为模块创建分离的签名，并将它们作为源发布。
-> +
-> +4. 附加模块签名并进行第二次构建。这可以重建模块，或使用步骤 2 的输出。
-> +
-> +结构随机化
-> +----------
-> +
-> +如果你启用 ``CONFIG_RANDSTRUCT``，则需要在 ``scripts/basic/randstruct.seed``
-> +中预生成随机种子，以便每次构建都使用相同的值。有关详细信息，请参见
-> +``scripts/gen-randstruct-seed.sh``。
-> +
-> +调试信息冲突
-> +------------
-> +
-> +这并非是个不可重现性的问题，而是生成的文件 *过于* 可重现的问题。
-> +
-> +一旦你设置了所有必要的变量来开展可重现构建，vDSO 的调试信息可能即使对于不同的内核版
-> +本也是相同的。这会导致不同内核版本的调试信息软件包之间发生文件冲突。
-> +
-> +为了避免这种情况，你可以通过在 vDSO 中包含一个任意的 salt 字符串，使其对于不同的
-> +内核版本是不同的。这种机制由 Kconfig 符号 ``CONFIG_BUILD_SALT`` 指定。
-> +
-> +Git
-> +---
-> +
-> +未提交的更改或 Git 中的不同提交 ID 也可能导致不同的编译结果。例如，在执行
-> +``git reset HEAD^`` 后，即使代码相同，编译期间生成的
-> +``include/config/kernel.release`` 也会不同，导致最终生成的二进制文件也不尽相同。
-> +有关详细信息，请参见 ``scripts/setlocalversion``。
-> +
-> +.. _KBUILD_BUILD_TIMESTAMP: kbuild.html#kbuild-build-timestamp
-> +.. _KBUILD_BUILD_USER 和 KBUILD_BUILD_HOST: kbuild.html#kbuild-build-user-kbuild-build-host
-> +.. _KCFLAGS: kbuild.html#kcflags
-> +.. _prefix-map 选项: https://reproducible-builds.org/docs/build-path/
-> +.. _可重现构建项目: https://reproducible-builds.org/
-> +.. _SOURCE_DATE_EPOCH: https://reproducible-builds.org/docs/source-date-epoch/
+Menu Patched: This is with menu governor enabled on v6.12-rc + 
+              https://lore.kernel.org/all/20240809073120.250974-2-aboorvad@linux.ibm.com/
+--------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+Inference:
+--------------------------------------------------------------------------------------------
+
+Transactions Processed: The number of transactions processed in Menu Patched is
+14.06% higher compared to Menu.
+
+Latency: There is a 12.38% reduction in latency in Menu Patched compared to Menu.
+
+TPS (Transactions Per Second): The TPS in Menu Patched is 14.06% higher than in
+Menu.
+--------------------------------------------------------------------------------------------
+
+While this patch hasn't completely eliminated the cpuidle miss ratio, but it
+has improved see Above w.r.t Usage, Below w.r.t Usage.
+
+I'll keep investigating why there's still a 24% miss rate in the "above" and
+13% in the "below" stats after the patch. This could be a different issue.
+Additionally, I've seen good performance improvements using the teo governor
+with the pgbench benchmark, although it didn't provide the same benefit in the
+original test.
+
+> 
+> > Transactions per second Improvement: The patch led to an increase in
+> > TPS, ranging from 16% to 19%.
+> > 
+> > This indicates that the patch significantly reduces latency while
+> > improving throughput (TPS).  pgbench is an OLTP benchmark and doesn't
+> > do timer based wakeups, this is in-line with the improvements
+> > I saw in the originally reported OLTP workload as well. 
+> > 
+> > ---------------------------------------------------------------------
+> > Additional CPU Idle test with custom benchmark:
+> > ---------------------------------------------------------------------
+> > I also wrote a simple benchmark [1] to analyze the impact of cpuidle
+> > state selection, comparing timer-based wakeups and non-timer
+> > (pipe-based) wakeups.
+> > 
+> > This test involves a single waker thread periodically waking up a
+> > single wakee thread, simulating a repeating sleep-wake pattern. The
+> > test was run with both timer-based and pipe-based wakeups, and cpuidle
+> > statistics (usage, time, above, below) were collected.
+> 
+> Thanks, pretty cool and just quickly checking it seems to be all there:
+> hrtimer, different cpusets for wakee and waker, the pipe wakeup.
+> That could be useful, only thing missing is the license header ;)
+
+sure, I will add this. Thanks for pointing it out.
+
+> 
+> > Timer based wakeup:
+> > 
+> > +------------------------+---------------------+---------------------+
+> > > Metric                 | Without Patch       | With Patch          |
+> > +------------------------+---------------------+---------------------+
+> > > Wakee thread - CPU     | 110                 | 110                 |
+> > > Waker thread - CPU     | 20                  | 20                  |
+> > > Sleep Interval         | 50 us               | 50 us               |
+> > > Total Wakeups          | -                   | -                   |
+> > > Avg Wakeup Latency     | -                   | -                   |
+> > > Actual Sleep time      | 52.639 us           | 52.627 us           |
+> > +------------------------+---------------------+---------------------+
+> > > Idle State 0 Usage Diff| 94,879              | 94,879              |
+> > > Idle State 0 Time Diff | 4,700,323 ns        | 4,697,576 ns        |
+> > > Idle State 1 Usage Diff| 0                   | 0                   |
+> > > Idle State 1 Time Diff | 0 ns                | 0 ns                |
+> > +------------------------+---------------------+---------------------+
+> > > Total Above Usage      | 0 (0.00%)           | (0.00%)             |
+> > +------------------------+---------------------+---------------------+
+> > > Total Below Usage      | 0 (0.00%)           | 0 (0.00%)           |
+> > +------------------------+---------------------+---------------------+
+> > 
+> > In timer-based wakeups, the menu governor effectively predicts the idle
+> > duration both with and without the patch. This ensures that there are
+> > few or no instances of "Above" usage, allowing the CPU to remain in the
+> > correct idle state.
+> > 
+> > The condition (s->target_residency_ns <= data->next_timer_ns) in the menu
+> > governor ensures that a physical idle state is not prioritized when a
+> > timer event is expected before the target residency of the first physical
+> > idle state.
+> > 
+> > As a result, the patch has no impact in this case, and performance
+> > remains stable with timer based wakeups.
+> > 
+> > Pipe based wakeup (non-timer wakeup):
+> > 
+> > +------------------------+---------------------+---------------------+
+> > > Metric                 | Without Patch       | With Patch          |
+> > +------------------------+---------------------+---------------------+
+> > > Wakee thread - CPU     | 110                 | 110                 |
+> > > Waker thread - CPU     | 20                  | 20                  |
+> > > Sleep Interval         | 50 us               | 50 us               |
+> > > Total Wakeups          | 97031               | 96583               |
+> > > Avg Wakeup Latency     | 7.070 us            | 4.879 us            |
+> > > Actual Sleep time      | 51.366 us           | 51.605 us           |
+> > +------------------------+---------------------+---------------------+
+> > > Idle State 0 Usage Diff| 1209                | 96,586              |
+> > > Idle State 0 Time Diff | 55,579 ns           | 4,510,003 ns        |
+> > > Idle State 1 Usage Diff| 95,826              | 5                   |
+> > > Idle State 1 Time Diff | 4,522,639 ns        | 198 ns              |
+> > +------------------------+---------------------+---------------------+
+> > +------------------------+---------------------+---------------------+
+> > > **Total Above Usage**  | 95,824 (98.75%)     | 5 (0.01%)           |
+> > +------------------------+---------------------+---------------------+     
+> > +------------------------+---------------------+---------------------+
+> > > Total Below Usage      | 0 (0.00%)           | 0 (0.00%)           |
+> > +------------------------+---------------------+---------------------+
+> > 
+> > In the pipe-based wakeup scenario, before the patch was applied, the 
+> > "Above" metric was notably high around 98.75%. This suggests that the
+> > menu governor frequently selected a deeper idle state like CEDE, even
+> > when the idle period was relatively short.
+> > 
+> > This happened because the menu governor is inclined to prioritize the
+> > physical idle state (CEDE) even when the target residency time of the
+> > physical idle state (s->target_residency_ns) was longer than the
+> > predicted idle time (predicted_ns), so data->next_timer_ns won't be
+> > relevant here in non-timer wakeups.
+> > 
+> > In this test, despite the actual idle period being around 50 microseconds,
+> > the menu governor still chose CEDE state, which has a target residency of
+> > 120 microseconds.
+> 
+> And the idle_miss statistics confirms that this was mostly wrong decisions
+> in hindsight.
+> I'll go through the menu code again, this indeed shouldn't be happening.
+> I'd be very surprised if upstream teo performed as badly (or actually badly
+> at all) on this, although it doesn't seem to help your actual workload,
+> would you mind giving that a try too?
+
+
+I ran a similar benchmark using teo cpuidle governor, presented the averaged out
+values across 10 runs (has low standard deviation). Below are the results for a
+pipe-based wakeup with an approximate 50 microsecond sleep interval:
+
+
+Pipe based wakeup with approx 50 us as sleep interval:
+
+Metric                    Ladder           Menu            Teo              Menu Patched
+----------------------------------------------------------------------------------------
+Wakeups                   579,690          579,951         578,328          578,363
+Avg wakeup latency (us)   7.456            7.112           4.46067          4.48733
+========================================================================================
+Sleep interval (us)       51.7333          51.7097         51.8533          51.8477
+========================================================================================
+State 0 Usage diff        0                7,324           578,361          578,407
+State 0 Time diff (ns)    0                340,115         2.75953e+07      2.75696e+07
+State 0 Above diff        0                0               0                0
+State 0 Below diff        0                0               0.333333         0.666667
+========================================================================================
+State 1 Usage diff        580,114          572,644         0.666667         9.33333
+State 1 Time diff (ns)    2.74189e+07      2.73901e+07     20.6667          445.333
+State 1 Above diff        579,993          572,535         0.666667         9.33333
+State 1 Below diff        0                0               0                0
+Total Above               579,993          572,535         0.666667         9.33333
+Total Below               0                0               0.333333         0.666667
+========================================================================================
+Total Above Percent       99.98%           98.7167%        0%               0%             --> [1]
+Total Below Percent       0%               0%              0%               0%
+========================================================================================
+
+Timer based wakeup with approx 50 us as sleep interval:
+
+Metric                    Ladder           Menu            Teo              Menu Patched
+----------------------------------------------------------------------------------------
+Sleep interval (us)        53.775           52.3687         52.746           52.327
+========================================================================================
+State 0 Usage diff         0                572,575         568,419          573,109
+State 0 Time diff (ns)     0                2.84142e+07     2.81956e+07      2.84548e+07
+State 0 Above diff         0                0               0                0
+State 0 Below diff         0                0.333333        1                0.333333
+========================================================================================
+State 1 Usage diff         558,285          0.333333        0                0
+State 1 Time diff (ns)     2.80965e+07      17              0                0
+State 1 Above diff         558,215          0.333333        0                0
+State 1 Below diff         0                0               0                0
+========================================================================================
+Total Above                558,215          0.333333        0                0
+Total Below                0                0.333333        1                0.333333
+========================================================================================
+Total Above Percent        99.99%           0%              0%               0%
+Total Below Percent        0%               0%              0%               0%
+========================================================================================
+
+
+[1] The results does show that the teo governor doesn't have this issue.
+
+> 
+> Regards,
+> Christian
+> 
+> > ---------------------------------------------------------------------
+> > 
+> > While timer-based wakeups performed well even without the patch, workloads
+> > that don't have timers as wakeup source but have predictable idle durations
+> > shorter than the first idle state's target residency benefit significantly
+> > from the patch.
+> > 
+> > It will be helpful to understand why prioritizing deep physical idle
+> > states over shallow ones even for short idle periods that don’t meet
+> > the target residency like mentioned above is considered more beneficial.
+> > 
+> > Is there something I could be missing here?
+> > 
+> > Any comments or suggestions will be really helpful.
+> > 
+> > [1] https://github.com/AboorvaDevarajan/linux-utils/tree/main/cpuidle/cpuidle_wakeup
+> > 
+> > Thanks,
+> > Aboorva
+> > 
 
 
