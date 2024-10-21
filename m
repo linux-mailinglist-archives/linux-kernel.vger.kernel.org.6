@@ -1,227 +1,179 @@
-Return-Path: <linux-kernel+bounces-374836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B969A70DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:17:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13E39A70E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6C6281977
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90099B23066
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322FD1EC00C;
-	Mon, 21 Oct 2024 17:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979FD1EB9FD;
+	Mon, 21 Oct 2024 17:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gzgAR9r8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F7vpcAWe"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF92D1C460D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF1647A73
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729531058; cv=none; b=gkoFqYE5KdVTyd9SDoaPBTvxM+OBkUH4mDVFch5YKQwDHGia1zuJI5SG4tGA2ihpxfRscalMimiO3IkMKLQ3C95fHr9LaobNpe4eolOquHeVJwhOvb3ttm494ktefY9joAybmwdfepDZbLkGKs+tg70s6XmtJra/aBpI1fc8axU=
+	t=1729531082; cv=none; b=U5sbOpop3+XMpZbbg1mThxz9ZKP/SSjULm5tqY5vH592wXcWDGsH/j+SHylWkVBNEL0Nmg+pyDakCblUiABCC2Drud5i7QCwHFZKK9tmpRjfTd5BldvtLb12Ot2mXf8mhkKgmNHZr/+CefNDSCrMXT64jJAjr0bXVSQgqIS1SPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729531058; c=relaxed/simple;
-	bh=Pssf58C9KYMaZ1C3qQd3lMGGHwG0fgPM4SOvOt42Fx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kgZWmSpd1Z+zQwrUUUMG0wnTewxrgSHvM4++CSO4NR47g3ujJTGQnAybgI8rfzfjLK4xtIrU7hicEyekaIMbFqHQwva+w5sW6H0VRV2CTXo+A+hSJ6GEr6mGSxUok3ZLBdRwdfg2Y126P7MFd2FdkQ10iroZA/oSbhOc4+/fRyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gzgAR9r8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729531054;
+	s=arc-20240116; t=1729531082; c=relaxed/simple;
+	bh=fCgCiuDuLoJvVoJvhhQSR9VWzmkZfR2GCjufwLxIMbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wwgw7/f90CUV2duZFOhQpSzqn65Dj4/FKo38DlUXff6xV7sNW46jxiLWrmRHr5MaC4FrApbsFAw5CiABlmdB8HSx0jc/1MipiNnf5Wwrw+mbnKrpwWfvKjhBjHbFv/B8pU53BI9Lr5KSmdbTqpdxDat11b3W+/sQ8tojzAsv8cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F7vpcAWe; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Oct 2024 17:17:53 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729531077;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nhOC5GPQkpePVojMReRZl5Tz4DJriOb7GbQOy4xKCGk=;
-	b=gzgAR9r8ePLiTsObE5BBWEckCjI6xxguSyRj8mdOGC/0ACX5PWVQPSEImGR3aa1KJ3m8GC
-	Nqkp+0w3rPLc6DBQ8LhZBgMNXKNYmMrI3XLG4HfsLN9eElRzOfUBn1/dWKPCzRuSKOB8t1
-	4xmY5BNvM1iqCEq/22Bgw1IGOhWYoHM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-58-XrErIfc8NsWeZ0_SMJMbZw-1; Mon,
- 21 Oct 2024 13:17:31 -0400
-X-MC-Unique: XrErIfc8NsWeZ0_SMJMbZw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 195C61954232;
-	Mon, 21 Oct 2024 17:17:30 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67EAC1955F4B;
-	Mon, 21 Oct 2024 17:17:29 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 6.12-rc5
-Date: Mon, 21 Oct 2024 13:17:28 -0400
-Message-ID: <20241021171728.274997-1-pbonzini@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L4SNZei01JeOBQ15iTYNw9RzviG1U9b/t4xS90culTc=;
+	b=F7vpcAWerwfV9NLZf23xW8XdUGEVI21G4wiz6MYWyOhKiEcKzzcwMjtXTa8TJqXMCgwntJ
+	yVyqmhBJcd9BfeZMJr7e1/JQMWpfqnR3BmZME0k8bi7pe5JkPsHnNxcyxwKamrmLGkvK07
+	SOaApyeYvQ0hFeDVGijl40JWfIF3ptU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+Message-ID: <ZxaMwfShUXDzQMwQ@google.com>
+References: <20241021164837.2681358-1-roman.gushchin@linux.dev>
+ <c5cd0ad5-9d9d-4df3-ab20-c5de2a380894@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5cd0ad5-9d9d-4df3-ab20-c5de2a380894@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-Linus,
+On Mon, Oct 21, 2024 at 07:01:59PM +0200, Vlastimil Babka wrote:
+> On 10/21/24 18:48, Roman Gushchin wrote:
+> > Syzbot reported [1] a bad page state problem caused by a page
+> > being freed using free_page() still having a mlocked flag at
+> > free_pages_prepare() stage:
+> > 
+> >   BUG: Bad page state in process syz.0.15  pfn:1137bb
+> >   page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
+> >   flags: 0x400000000080000(mlocked|node=0|zone=1)
+> >   raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
+> >   raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
+> >   page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+> >   page_owner tracks the page as allocated
+> >   page last allocated via order 0, migratetype Unmovable, gfp_mask
+> >   0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
+> >   3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
+> >    set_page_owner include/linux/page_owner.h:32 [inline]
+> >    post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+> >    prep_new_page mm/page_alloc.c:1545 [inline]
+> >    get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
+> >    __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
+> >    alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
+> >    kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+> >    kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+> >    kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
+> >    kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
+> >    vfs_ioctl fs/ioctl.c:51 [inline]
+> >    __do_sys_ioctl fs/ioctl.c:907 [inline]
+> >    __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+> >    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >    do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
+> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> >   page last free pid 951 tgid 951 stack trace:
+> >    reset_page_owner include/linux/page_owner.h:25 [inline]
+> >    free_pages_prepare mm/page_alloc.c:1108 [inline]
+> >    free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
+> >    vfree+0x181/0x2e0 mm/vmalloc.c:3361
+> >    delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
+> >    process_one_work kernel/workqueue.c:3229 [inline]
+> >    process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
+> >    worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
+> >    kthread+0x2df/0x370 kernel/kthread.c:389
+> >    ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> >    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > 
+> > The problem was originally introduced by
+> > commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
+> > clearance"): it was handling focused on handling pagecache
+> > and anonymous memory and wasn't suitable for lower level
+> > get_page()/free_page() API's used for example by KVM, as with
+> > this reproducer.
+> 
+> Does that mean KVM is mlocking pages that are not pagecache nor anonymous,
+> thus not LRU? How and why (and since when) is that done?
 
-The following changes since commit c8d430db8eec7d4fd13a6bea27b7086a54eda6da:
+KVM allows to mmap and mlock several pages allocated directly.
+Please, take a look at the reproducer:
+https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
 
-  Merge tag 'kvmarm-fixes-6.12-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2024-10-06 03:59:22 -0400)
+> 
+> > Fix it by moving the mlocked flag clearance down to
+> > free_page_prepare().
+> > 
+> > The bug itself if fairly old and harmless (aside from generating these
+> > warnings), so the stable backport is likely not justified.
+> 
+> But since there's a Cc: stable below, it will be backported :)
 
-are available in the Git repository at:
+My bad, I changed my mind in the last minute and added Cc: stable but
+forgot to drop this sentence.
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> 
+> > Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
+> > Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
+> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> > Cc: <stable@vger.kernel.org>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > ---
+> >  mm/page_alloc.c |  9 +++++++++
+> >  mm/swap.c       | 14 --------------
+> >  2 files changed, 9 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index bc55d39eb372..24200651ad92 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
+> >  	bool skip_kasan_poison = should_skip_kasan_poison(page);
+> >  	bool init = want_init_on_free();
+> >  	bool compound = PageCompound(page);
+> > +	struct folio *folio = page_folio(page);
+> >  
+> >  	VM_BUG_ON_PAGE(PageTail(page), page);
+> >  
+> > @@ -1053,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct page *page,
+> >  	if (memcg_kmem_online() && PageMemcgKmem(page))
+> >  		__memcg_kmem_uncharge_page(page, order);
+> >  
+> > +	if (unlikely(folio_test_mlocked(folio))) {
+> > +		long nr_pages = folio_nr_pages(folio);
+> > +
+> > +		__folio_clear_mlocked(folio);
+> > +		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
+> > +		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
+> > +	}
+> 
+> Why drop the useful comment?
 
-for you to fetch changes up to e9001a382fa2c256229adc68d55212028b01d515:
+Agree. Sounds like I need to restore the comment, drop no stable backport
+recommendation and send v2.
 
-  Merge tag 'kvmarm-fixes-6.12-3' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2024-10-20 12:10:59 -0400)
-
-After seeing your release commentary yesterday, well, this is not
-going to make rc5 smaller.  The short description is that there is
-mostly Arm stuff here (due to me sitting on submaintainer pull requests
-for perhaps too long) and a bit of everything for x86 (host, guest,
-selftests, docs).
-
-Paolo
-
-----------------------------------------------------------------
-ARM64:
-
-* Fix the guest view of the ID registers, making the relevant fields
-  writable from userspace (affecting ID_AA64DFR0_EL1 and ID_AA64PFR1_EL1)
-
-* Correcly expose S1PIE to guests, fixing a regression introduced
-  in 6.12-rc1 with the S1POE support
-
-* Fix the recycling of stage-2 shadow MMUs by tracking the context
-  (are we allowed to block or not) as well as the recycling state
-
-* Address a couple of issues with the vgic when userspace misconfigures
-  the emulation, resulting in various splats. Headaches courtesy
-  of our Syzkaller friends
-
-* Stop wasting space in the HYP idmap, as we are dangerously close
-  to the 4kB limit, and this has already exploded in -next
-
-* Fix another race in vgic_init()
-
-* Fix a UBSAN error when faking the cache topology with MTE
-  enabled
-
-RISCV:
-
-* RISCV: KVM: use raw_spinlock for critical section in imsic
-
-x86:
-
-* A bandaid for lack of XCR0 setup in selftests, which causes trouble
-  if the compiler is configured to have x86-64-v3 (with AVX) as the
-  default ISA.  Proper XCR0 setup will come in the next merge window.
-
-* Fix an issue where KVM would not ignore low bits of the nested CR3
-  and potentially leak up to 31 bytes out of the guest memory's bounds
-
-* Fix case in which an out-of-date cached value for the segments could
-  by returned by KVM_GET_SREGS.
-
-* More cleanups for KVM_X86_QUIRK_SLOT_ZAP_ALL
-
-* Override MTRR state for KVM confidential guests, making it WB by
-  default as is already the case for Hyper-V guests.
-
-Generic:
-
-* Remove a couple of unused functions
-
-----------------------------------------------------------------
-Cyan Yang (1):
-      RISCV: KVM: use raw_spinlock for critical section in imsic
-
-Dr. David Alan Gilbert (2):
-      KVM: Remove unused kvm_vcpu_gfn_to_pfn
-      KVM: Remove unused kvm_vcpu_gfn_to_pfn_atomic
-
-Ilkka Koskinen (1):
-      KVM: arm64: Fix shift-out-of-bounds bug
-
-Kirill A. Shutemov (1):
-      x86/kvm: Override default caching mode for SEV-SNP and TDX
-
-Marc Zyngier (3):
-      Merge branch kvm-arm64/idregs-6.12 into kvmarm/fixes
-      KVM: arm64: Don't eagerly teardown the vgic on init error
-      KVM: arm64: Shave a few bytes from the EL2 idmap code
-
-Mark Brown (1):
-      KVM: arm64: Expose S1PIE to guests
-
-Maxim Levitsky (1):
-      KVM: VMX: reset the segment cache after segment init in vmx_vcpu_reset()
-
-Oliver Upton (7):
-      KVM: arm64: Unregister redistributor for failed vCPU creation
-      KVM: arm64: nv: Keep reference on stage-2 MMU when scheduled out
-      KVM: arm64: nv: Do not block when unmapping stage-2 if disallowed
-      KVM: arm64: nv: Punt stage-2 recycling to a vCPU request
-      KVM: arm64: nv: Clarify safety of allowing TLBI unmaps to reschedule
-      KVM: arm64: vgic: Don't check for vgic_ready() when setting NR_IRQS
-      KVM: arm64: Ensure vgic_ready() is ordered against MMIO registration
-
-Paolo Bonzini (2):
-      Merge tag 'kvmarm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-      Merge tag 'kvmarm-fixes-6.12-3' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-
-Sean Christopherson (5):
-      KVM: x86/mmu: Zap only SPs that shadow gPTEs when deleting memslot
-      KVM: x86/mmu: Add lockdep assert to enforce safe usage of kvm_unmap_gfn_range()
-      KVM: x86: Clean up documentation for KVM_X86_QUIRK_SLOT_ZAP_ALL
-      KVM: nSVM: Ignore nCR3[4:0] when loading PDPTEs from memory
-      KVM: selftests: Fix out-of-bounds reads in CPUID test's array lookups
-
-Shameer Kolothum (1):
-      KVM: arm64: Make the exposed feature bits in AA64DFR0_EL1 writable from userspace
-
-Shaoqin Huang (4):
-      KVM: arm64: Disable fields that KVM doesn't know how to handle in ID_AA64PFR1_EL1
-      KVM: arm64: Use kvm_has_feat() to check if FEAT_SSBS is advertised to the guest
-      KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
-      KVM: selftests: aarch64: Add writable test for ID_AA64PFR1_EL1
-
-Vitaly Kuznetsov (1):
-      KVM: selftests: x86: Avoid using SSE/AVX instructions
-
- Documentation/virt/kvm/api.rst                    | 16 ++---
- Documentation/virt/kvm/locking.rst                |  2 +-
- arch/arm64/include/asm/kvm_asm.h                  |  1 +
- arch/arm64/include/asm/kvm_host.h                 |  7 +++
- arch/arm64/include/asm/kvm_mmu.h                  |  3 +-
- arch/arm64/include/asm/kvm_nested.h               |  4 +-
- arch/arm64/kernel/asm-offsets.c                   |  1 +
- arch/arm64/kvm/arm.c                              |  5 ++
- arch/arm64/kvm/hyp/nvhe/hyp-init.S                | 52 ++++++++-------
- arch/arm64/kvm/hypercalls.c                       | 12 ++--
- arch/arm64/kvm/mmu.c                              | 15 ++---
- arch/arm64/kvm/nested.c                           | 53 +++++++++++++---
- arch/arm64/kvm/sys_regs.c                         | 77 ++++++++++++++++++++---
- arch/arm64/kvm/vgic/vgic-init.c                   | 41 ++++++++++--
- arch/arm64/kvm/vgic/vgic-kvm-device.c             |  7 ++-
- arch/riscv/kvm/aia_imsic.c                        |  8 +--
- arch/x86/kernel/kvm.c                             |  4 ++
- arch/x86/kvm/mmu/mmu.c                            | 27 +++++---
- arch/x86/kvm/svm/nested.c                         |  6 +-
- arch/x86/kvm/vmx/vmx.c                            |  6 +-
- include/linux/kvm_host.h                          |  2 -
- tools/testing/selftests/kvm/Makefile              |  1 +
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 16 ++++-
- tools/testing/selftests/kvm/x86_64/cpuid_test.c   |  2 +-
- virt/kvm/kvm_main.c                               | 12 ----
- 25 files changed, 277 insertions(+), 103 deletions(-)
-
+Thank you for taking a look!
 
