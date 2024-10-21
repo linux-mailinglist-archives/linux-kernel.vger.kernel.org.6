@@ -1,211 +1,278 @@
-Return-Path: <linux-kernel+bounces-374587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3579A6C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32189A6C83
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1318CB2495A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A9282A33
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1E1FAC37;
-	Mon, 21 Oct 2024 14:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD71FA24B;
+	Mon, 21 Oct 2024 14:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jGnwPKS8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="edXrrwmQ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA8225D6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F91D1E7C34
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521968; cv=none; b=hS2Ht7S1JbGRJO+MXqG4yRWCOHmdfieuX0TKW3raujbPixl39IxuvP9UMMhPYvPg8iYb1WUVezA1AiCGe+amNKfq7fqWZDGlvtPLRetv0QCCVlTW/rQOMJflYPyVlsjWcIKuaRdfnPmLfxkVTjz7G5YfRX6afQjUaRRUQsvUZok=
+	t=1729521990; cv=none; b=ZGSrimgb8yAGR0Tf4vlnXIzcGPP1oQxErOxL4/YBsIa2pFeYsdh9VFC5O0faNzJBotKezz9sJhSPxgW38xwWf6osO3iY6ZFHPNKMDfDHBj8TZ2pA0yIvseafGYjnjA+L8/DLU92rPKA1G5F8l8mv5bYGDdTPDaaQEZKtx1jVfXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521968; c=relaxed/simple;
-	bh=DmQWkn1T9PFoG0NEwWjY8BdpxvZZCy1ZxEjLTxUCtIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WdteV6tp5ui3vvJJfVuSGglOseyPIiZUocxOwDeYQS6hBM3LDLM8kwRmy+IueS9xTsC0ekVtio9EOUuh9iQacGkWPOM2NgEUAkjx5Ue3NFJLUzguDpZHV07prZieB/Bmkm10WXTkfKdm0CvBNNsFktYZDEJJGUTEhNf2h9XBzOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jGnwPKS8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729521965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pBpP7qLCW9N3cROeVqgUltAMhaWq+ArP+b0NXa5W34=;
-	b=jGnwPKS8qS74KD5aFrJHBO6uvcQOyQtH0/KbZmBoUDA62QmnI/x2jTMrYUE3FnVDLfeZyu
-	nj3upWYkk+ZNkqmDB1inWNQBhboaUQBmANuj10rtKCldiqKzjKK55+hP5k1Kb4K6/9DPuD
-	1Aw6oTzZOgbl6KEY7frrmLzofO0AAb8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-ivkvQPDMOju3erII4yDL8Q-1; Mon, 21 Oct 2024 10:46:03 -0400
-X-MC-Unique: ivkvQPDMOju3erII4yDL8Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so36579555e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:46:03 -0700 (PDT)
+	s=arc-20240116; t=1729521990; c=relaxed/simple;
+	bh=ET2SqcFOVyWL1ZMQR047EaDNP6wWKMmrRf9/K7m2/Q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h0F+0YQ03peMPEPwW9/19PZd4n9bwWQYP+Sz1Zpjlxh2s7QlY6YLn+/rdMU72TpiiTNrKCb0KOh8OUxazUzXFhO9Sh24JOM7kvsUJ+zIsFCnpJ2uAzUubfGng9bK+55+XBRaXSvgKoqypIfk/eSVXJePHmwT2vNa4k4bqJGu2aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=edXrrwmQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f53973fdso3598014e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1729521985; x=1730126785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kdcnb8e+gAkVMVmccz9fiNE3PWRs3Kz7gMuReYmqkSU=;
+        b=edXrrwmQPP5N/L2bq9ZNLvzcUNt6sJQMFtxaP7vegQgIHdmST8S4Dj8c5JtD6VGjsZ
+         olg2cS2n3TEg1gcLb5m4YJ3vhmi3oUru0FatgYaJP/REZ+lQs6d15AZ+PTnVxth59mvm
+         qLe9y9dtUh7aB7CDfAkQJ4NdmWrmEGBg6LRFCg0JAfhyiQ/Qu4F4vWOn6THPMZCiAA5P
+         KCuvKFOjDaBqmV8ZRvw7jvOk8QFJflqNvdabMHuxePiW9AVK1DSddm3rOrtZqTfdid8F
+         E7LgsQ9+eVt++iFiQhLS6Kmug7Mke0vLYUXPNu0hJuziIN40LS67Hk7fEg+WSj0fjiD7
+         69Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729521962; x=1730126762;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pBpP7qLCW9N3cROeVqgUltAMhaWq+ArP+b0NXa5W34=;
-        b=vfCEa9f26clKfng+2SzLbJQt3ULYH6Dqhpa7Onf7mOHgr87vxqLgjaiAKdtcLnmEaC
-         ygB6p0EtXeH3Q/+zABSZHqmzJFLtqdZP3fVwA9UDXNF7Ar7G8d9tnd7jBtinS7x05LGO
-         FBZG+cdJISeq6NkrJnZYk+pKNHoqVTgzKlTA9+uLYr9Mujn6UIr+CqLu5hWhHe6tySZR
-         iHQ2sqY41XXRD5W4tKsh3eRBm3ofT8VR4QAnhAY9l/bxnxklOqpdeEzC9sO6386uDMEL
-         EcyTb9qWkv2kNdh+Hkm2CWlT4NemydonxGjLhyYmp36aIefSswtm3QHt6rQz5QchMnOy
-         TTEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8kbG33DwX6dT1jCgR9v2tCWqJxqPL21rb1hZRga8Oyuqm6+GmgdYUdGNKjz4b2lqyUc38WqfrPQEVT/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzizCNTp7XuZCZZTJgL+NUX8COnWAce0nmD2VNC5acuGnKNB9lC
-	L/J9tBEi/wCQsguPBM5vBY0bObHvYNyYq+4og5EGalIWDNXeuIkzvWsqCMhhQp0ymB7QbR74X3E
-	BjXv0UAkScpPWTPglntVctOYih84X2H1s7QZwpIVkES3wbX2PMh93NTFGBU+BEg==
-X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr101784455e9.30.1729521961927;
-        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnIcoVRRXbRUhxXReK6GpWNjdl0oiVGYJ9jq/7PmjHByyOKh4qiRtxhiYigJPvogBLyhVgLw==
-X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr101784205e9.30.1729521961507;
-        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fc77sm60419925e9.17.2024.10.21.07.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
-Message-ID: <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
-Date: Mon, 21 Oct 2024 16:45:59 +0200
+        d=1e100.net; s=20230601; t=1729521985; x=1730126785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kdcnb8e+gAkVMVmccz9fiNE3PWRs3Kz7gMuReYmqkSU=;
+        b=tTTci6aovAW890ERNYR8gDTMr0tqdM6ag4Pk/FM0iYr6N9EjjJTg2SqpXCzBSVraNU
+         lC9R4Jh+87DXQXYPDw8rVlmRYSYdSkTgPSXv8jby9yMWJBsUx1Z7R7xfs+z69uXGSJI+
+         qoi7HRU3qGUT7zStfohHP13F/F8sG6+IRVEORguh5BpWUfmCYnBYB3CGx1neAERFnXxK
+         DvDBIy/unmdl42BKC3fVaJ8R9/RasGAbKo99t6cVfLSnkkGVn9za1oKwARVvC55ZN7/u
+         pGcicQ0YbirNIK01TQD4fpPbVhNw57Z8Z/LcrjUfg7Yr64C0Emy9VMX/rvf/do3At0as
+         QkCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUltl+41mHSCQCmXocC810eZ8srwHWNidRRC3+lsqGVnfBiRUq9+PhJUqkgo10kWTimlyQEdcymMFd1qqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrvifbR/60tKb1al+r+geuw9fUjC/OzVwioDWEyRE/N8HgkSQ3
+	zlp+cuRZqyhLO4SSjHvzhyDQnmgptbDiePE3FdoOfeuIixJPPnFeGh2R42OY7vBAjqkluiwcPd4
+	EPjjBonRnlwsEaFcIQy1d7VDGrXuPmMN3c7F2
+X-Google-Smtp-Source: AGHT+IHf+afc+3dWOGjqHiHk7wI602WMKF/U5GM48Chg/0UeTO2DN7TWOG/oDA2tQT92u65DlKFaHyV+8qxw8jlm9XY=
+X-Received: by 2002:a05:6512:110f:b0:52f:27e:a82e with SMTP id
+ 2adb3069b0e04-53a15b8332fmr3505306e87.21.1729521985432; Mon, 21 Oct 2024
+ 07:46:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
-To: Alexander Egorenkov <egorenar@linux.ibm.com>
-Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
- borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
- eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
- hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
- svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
- xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
-References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
- <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
- <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241012150710.261767-1-devarsht@ti.com> <20241012150710.261767-2-devarsht@ti.com>
+ <3d85ac05-150b-4917-a374-5974d376e416@ideasonboard.com>
+In-Reply-To: <3d85ac05-150b-4917-a374-5974d376e416@ideasonboard.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Mon, 21 Oct 2024 10:46:12 -0400
+Message-ID: <CADL8D3ZiGA+XnyvyFCQbcK_SCffrfbhMXFpWzxWVjhuOFeu-Yg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/tidss: Clear the interrupt status for interrupts
+ being disabled
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, jyri.sarha@iki.fi, airlied@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	dri-devel@lists.freedesktop.org, simona@ffwll.ch, 
+	linux-kernel@vger.kernel.org, praneeth@ti.com, vigneshr@ti.com, 
+	aradhya.bhatia@linux.dev, s-jain1@ti.com, r-donadkar@ti.com, sam@ravnborg.org, 
+	bparrot@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Adding the e2e thread that has instigated this change.
+
+https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1=
+394222/am625-issue-about-tidss-rcu_preempt-self-detected-stall-on-cpu?pifra=
+gment-323307=3D1#pifragment-323307=3D2
+
+Summary of original problem: An AM62x device using the TIDSS driver,
+can lock up after hours of running.  The lock ups are often detected
+by the rcu_preempt system.  The lock ups turned out to be caused by an
+infinite interrupt loop (irq storm?) in the TIDSS_DISPC driver.
+
+The k3_clear_irqstatus function which is responsible for clearing the
+interrupt bits, only clear the the level 1 interrupts if the level 2
+ones are set.  This leaves a small window where if for whatever reason
+the level 2 interrupts aren't set but the level 1's are, then we will
+never clear the level 1 interrupt.
+
+The change as submitted is not sufficient to prevent the irq storm.
+I've tested these two patches for several weeks now and they reduce
+the frequency of the irq storm from once a day to once every few days,
+but don't prevent it.
+
+I suggest that the k3_clear_irqstatus function needs to be updated
+such that it's not possible for the level 1 DISPC_IRQSTATUS bit to
+remain uncleared.
+
+The following hack proposed by Bin and team removes the possibility of
+the irq storm happening, while introducing a small chance of clearing
+interrupts that weren't intended.  Though I would assume that if the
+level 2 interrupts aren't cleared, they would reassert the level 1
+DISPC_IRQSTATUS so maybe that's not much of a risk.  Most other
+drivers when clearing interrupts do a read and then write to clear
+interrupts so there is precedence.
+
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c
+b/drivers/gpu/drm/tidss/tidss_dispc.c
+index 60f69be36692..0b8a3d999c54 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc.c
++++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+@@ -900,27 +900,27 @@ static
+ void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t
+clearmask)
+ {
+     unsigned int i;
+-    u32 top_clear =3D 0;
+
+     for (i =3D 0; i < dispc->feat->num_vps; ++i) {
+         if (clearmask & DSS_IRQ_VP_MASK(i)) {
+             dispc_k3_vp_write_irqstatus(dispc, i, clearmask);
+-            top_clear |=3D BIT(i);
+         }
+     }
++
+     for (i =3D 0; i < dispc->feat->num_planes; ++i) {
+         if (clearmask & DSS_IRQ_PLANE_MASK(i)) {
+             dispc_k3_vid_write_irqstatus(dispc, i, clearmask);
+-            top_clear |=3D BIT(4 + i);
+         }
+     }
++
+     if (dispc->feat->subrev =3D=3D DISPC_K2G)
+         return;
+
+-    dispc_write(dispc, DISPC_IRQSTATUS, top_clear);
+-
+-    /* Flush posted writes */
+-    dispc_read(dispc, DISPC_IRQSTATUS);
++    /* Always clear the level 1 irqstatus (DISPC_IRQSTATUS) unconditionall=
+y
+Note I'm not sure we are confident in the reasoning outlined in this commen=
+t
++     * due to an IP bug where level 1 irq status (DISPC_IRQSTATUS)
+would get set delayed even
++     * after level 2 interrupt (DISPC_VID_IRQSTATUS,
+DISPC_VP_IRQSTATUS) is cleared.
++     */
++    dispc_write(dispc, DISPC_IRQSTATUS, dispc_read(dispc, DISPC_IRQSTATUS)=
+);
+
+I had proposed a more complete version of this patch but there hasn't
+been much discussion about it and I've mostly tested Bins version.
+
+ }
+
+
+On Mon, Oct 21, 2024 at 7:15=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> Hi,
+>
+> On 12/10/2024 18:07, Devarsh Thakkar wrote:
+> > It is possible that dispc_{k2g/k3}_set_irqenable can be called for
+> > disabling some interrupt events which were previously enabled. However
+> > instead of clearing any pending events for the interrupt events that ar=
+e
+> > required to be disabled, it was instead clearing the new interrupt even=
+ts
+> > which were not even enabled.
+>
+> That's on purpose. When we enable a new interrupt, we want to first
+> clear the irqstatus for that interrupt to make sure there's no old
+> status left lying around. If I'm not mistaken, enabling an interrupt
+> with an irqstatus bit set will immediately trigger the interrupt.
+>
+> > For e.g. While disabling the vsync events, dispc_k3_set_irqenable tries=
+ to
+> > clear DSS_IRQ_DEVICE_OCP_ERR which was not enabled per the old_mask at =
+all
+> > as shown below :
+> >
+> > "dispc_k3_set_irqenable : irqenabled - mask =3D 91, old =3D f0, clr =3D=
+ 1" where
+> > clr =3D (mask ^ old_mask) & old_mask
+>
+> That's a bit odd... Why was the DSS_IRQ_DEVICE_OCP_ERR not already
+> enabled? It is enabled in the tidss_irq_install().
+>
+> Or maybe it had been enabled by the driver, but as the HW doesn't
+> support that bit, it reads always as 0. I have an unsent patch to drop
+> DSS_IRQ_DEVICE_OCP_ERR.
+>
+> > This corrects the bit mask to make sure that it always clears any pendi=
+ng
+> > interrupt events that are requested to be disabled before disabling the=
+m
+> > actually.
+>
+> I think the point here makes sense: if we disable interrupts with
+> dispc_set_irqenable(), we don't want to see interrupt handling for the
+> disabled interrupts after the call.
+>
+> However, if you clear the irqstatus for an interrupt that will be
+> disabled, but clear it _before_ disabling the interrupt, the interrupt
+> might trigger right after clearing the irqstatus but before disabling it.
+>
+>   Tomi
+>
+> > Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Di=
+splay SubSystem")
+> > Reported-by: Jonathan Cormier <jcormier@criticallink.com>
+> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> > ---
+> >   drivers/gpu/drm/tidss/tidss_dispc.c | 8 ++++----
+> >   1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tids=
+s/tidss_dispc.c
+> > index 1ad711f8d2a8..b04419b24863 100644
+> > --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> > +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> > @@ -700,8 +700,8 @@ void dispc_k2g_set_irqenable(struct dispc_device *d=
+ispc, dispc_irq_t mask)
+> >   {
+> >       dispc_irq_t old_mask =3D dispc_k2g_read_irqenable(dispc);
+> >
+> > -     /* clear the irqstatus for newly enabled irqs */
+> > -     dispc_k2g_clear_irqstatus(dispc, (mask ^ old_mask) & mask);
+> > +     /* clear the irqstatus for irqs that are being disabled now */
+> > +     dispc_k2g_clear_irqstatus(dispc, (mask ^ old_mask) & old_mask);
+> >
+> >       dispc_k2g_vp_set_irqenable(dispc, 0, mask);
+> >       dispc_k2g_vid_set_irqenable(dispc, 0, mask);
+> > @@ -843,8 +843,8 @@ static void dispc_k3_set_irqenable(struct dispc_dev=
+ice *dispc,
+> >
+> >       old_mask =3D dispc_k3_read_irqenable(dispc);
+> >
+> > -     /* clear the irqstatus for newly enabled irqs */
+> > -     dispc_k3_clear_irqstatus(dispc, (old_mask ^ mask) & mask);
+> > +     /* clear the irqstatus for irqs that are being disabled now */
+> > +     dispc_k3_clear_irqstatus(dispc, (old_mask ^ mask) & old_mask);
+> >
+> >       for (i =3D 0; i < dispc->feat->num_vps; ++i) {
+> >               dispc_k3_vp_set_irqenable(dispc, i, mask);
+>
+
+
+--
+Jonathan Cormier
+Software Engineer
+
+Voice:  315.425.4045 x222
 
 
 
-Am 21.10.24 um 14:46 schrieb Alexander Egorenkov:
-> Hi David,
-> 
-> David Hildenbrand <david@redhat.com> writes:
-> 
->> Makes sense, so it boils down to either
->>
->> bool is_kdump_kernel(void)
->> {
->>            return oldmem_data.start;
->> }
->>
->> Which means is_kdump_kernel() can be "false" even though /proc/vmcore is
->> available or
->>
->> bool is_kdump_kernel(void)
->> {
->>            return dump_available();
->> }
->>
->> Which means is_kdump_kernel() can never be "false" if /proc/vmcore is
->> available. There is the chance of is_kdump_kernel() being "true" if
->> "elfcorehdr_alloc()" fails with -ENODEV.
-
-Thanks for having another look!
-
-> 
-> Do you consider is_kdump_kernel() returning "true" in case of zfcpdump or
-> nvme/eckd+ldipl dump (also called NGDump) okay ? Because
-> dump_available() would return "true" in such cases too.
-> If yes then please explain why, i might have missed a previous
-> explanation from you.
-
-I consider it okay because this is the current behavior after elfcorehdr_alloc() 
-succeeded and set elfcorehdr_addr.
-
-Not sure if it is the right think to do, though :)
-
-Whatever we do, we should achieve on s390 that the result of is_kdump_kernel() 
-is consistent throughout the booting stages, just like on all other architectures.
-
-Right now it goes from false->true when /proc/vmcore gets initialized (and only 
-if it gets initialized properly).
-
-> 
-> I'm afraid everyone will make wrong assumptions while reading the name
-> of is_kdump_kernel() and assuming that it only applies to kdump or
-> kdump-alike dumps (like stand-alone kdump), and, therefore, introduce
-> bugs because the name of the function conveys the wrong idea to code
-> readers. I consider dump_available() as a superset of is_kdump_kernel()
-> and, therefore, to me they are not equivalent.
- > > I have the feeling you consider is_kdump_kernel() equivalent to
-> "/proc/vmcore" being present and not really saying anything about
-> whether kdump is active ?
-
-Yes, but primarily because this is the existing handling.
-
-Staring at the powerpc implementation:
-
-/*
-  * Return true only when kexec based kernel dump capturing method is used.
-  * This ensures all restritions applied for kdump case are not automatically
-  * applied for fadump case.
-  */
-bool is_kdump_kernel(void)
-{
-	return !is_fadump_active() && elfcorehdr_addr != ELFCORE_ADDR_MAX;
-}
-EXPORT_SYMBOL_GPL(is_kdump_kernel);
-
-
-Which was added by
-
-commit b098f1c32365304633077d73e4ae21c72d4241b3
-Author: Hari Bathini <hbathini@linux.ibm.com>
-Date:   Tue Sep 12 13:59:50 2023 +0530
-
-     powerpc/fadump: make is_kdump_kernel() return false when fadump is active
-
-     Currently, is_kdump_kernel() returns true in crash dump capture kernel
-     for both kdump and fadump crash dump capturing methods, as both these
-     methods set elfcorehdr_addr. Some restrictions enforced for crash dump
-     capture kernel, based on is_kdump_kernel(), are specifically meant for
-     kdump case and not desirable for fadump - eg. IO queues restriction in
-     device drivers. So, define is_kdump_kernel() to return false when f/w
-     assisted dump is active.
-
-
-For my purpose (virtio-mem), it's sufficient to only support "kexec triggered 
-kdump" either way, so I don't care.
-
-So for me it's good enough to have
-
-bool is_kdump_kernel(void)
-{
-	return oldmem_data.start;
-}
-
-And trying to document the situation in a comment like powerpc does :)
-
--- 
-Cheers,
-
-David / dhildenb
-
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
 
