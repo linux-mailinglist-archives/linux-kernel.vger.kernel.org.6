@@ -1,130 +1,209 @@
-Return-Path: <linux-kernel+bounces-374324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50389A6895
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:34:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024169A6873
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC79B25DE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B14286A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD3E1D1E6D;
-	Mon, 21 Oct 2024 12:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+TOnV9a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917771EF0B8
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74C1EF95F;
+	Mon, 21 Oct 2024 12:31:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C442A1D7E52;
+	Mon, 21 Oct 2024 12:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513934; cv=none; b=cXezd8jtxB5NRlO+BPYLOw5t0+sO+oYstjZ1i+n7zPnAQXr62d4C7TLHengn5C14pWxUoXxqfFDrwdInQzCGc2x80g5hFNdf4p/cxE7l9xIwhNrwYEZlmnwqGwYKnRgvULbhkuEy9SnIXntDGo01b1LS15W9NfJUYs6thFQvU+Y=
+	t=1729513911; cv=none; b=fygaTn6A+f30DUdod27VvJqoU3ruIs2PffIKN+mnelwBkvikRZmaYgRGHVUuCKGIOQpXn3W7SiSTojbj9LRztu2kudxWGfQB00Hm32m4ANxkzr4ovZVvnJwOm8KoaO7CWcXDJ+/ySKTkYOmZyRkcMSVIq60v0rP6fgn5hxCyL44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513934; c=relaxed/simple;
-	bh=sMI+4p6bbn4mBhWbUnHVUAiUgRt6suBuPrQ3jUQZuYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dLCbFywU+L2EX4soCr4IBYZ7dgRKTAzHjqjsC1mQTaHAoSc4JaBgthr08+5GwiB4tGE2IH84YJULD3IZLz6gNCfb8TkxmYLYli3ESfHlJE0Xpjsqwp5zbyboeeopA4bp07pNb9O5F1baMmfP/lIi9lQ1Q++ehjTRlJzY3PRmb7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+TOnV9a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729513931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=171RL1+SWED9LX/FCBKVSSNEGIWh+rc7bti0upgcSBU=;
-	b=Z+TOnV9aPWc1AcHenY73HNwbteYHarYWCXT4FhQYkbwBrapLlAF3ScmO58/kUQRwn3T8FP
-	MZFtKRMyXJFPg0ChVfqkFE2PWrztccK/BpSDlTdygmVeJ1Cnc4BHqRUN7DLxFQNSXo0K68
-	uKPGYHncFokjmpNGvvhvrMvcUvW8QtE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-316--4m2MVPbNLGbiqHvXos0_A-1; Mon,
- 21 Oct 2024 08:32:09 -0400
-X-MC-Unique: -4m2MVPbNLGbiqHvXos0_A-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 514C819560B8;
-	Mon, 21 Oct 2024 12:32:08 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.226.67])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A0196300019D;
-	Mon, 21 Oct 2024 12:32:06 +0000 (UTC)
-From: tglozar@redhat.com
-To: rostedt@goodmis.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH] rtla/timerlat: Do not set params->user_workload with -U
-Date: Mon, 21 Oct 2024 14:31:40 +0200
-Message-ID: <20241021123140.14652-1-tglozar@redhat.com>
+	s=arc-20240116; t=1729513911; c=relaxed/simple;
+	bh=MnWzGo7DwqyMcq42G1nBex5rtgvT6WVtHq5ZyeomlBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=slgMavTZ75QnxR2qySDQkKEp8s1YJOXvnwQAbBRYg6JqjmQ37HG5wjCG6bE6XRw6b4OSak6vcqKYGchm+1vDis38PUUasC0ih4P7SMK1jJVVQAAnb9sMQlftYNJN6wOaxsicE5eUwkx8kz+/8Pk1grPc+55f2sZY5K8+1nzR+6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9897DA7;
+	Mon, 21 Oct 2024 05:32:18 -0700 (PDT)
+Received: from [10.57.64.219] (unknown [10.57.64.219])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3C6753F528;
+	Mon, 21 Oct 2024 05:31:47 -0700 (PDT)
+Message-ID: <b2f9aa93-a50a-4bfd-9df0-9e3a170404f8@arm.com>
+Date: Mon, 21 Oct 2024 13:31:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] coresight: dummy: Add static trace id support for
+ dummy source
+Content-Language: en-GB
+To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241018032217.39728-1-quic_jinlmao@quicinc.com>
+ <20241018032217.39728-4-quic_jinlmao@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241018032217.39728-4-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Tomas Glozar <tglozar@redhat.com>
+On 18/10/2024 04:22, Mao Jinlong wrote:
+> Some dummy source has static trace id configured in HW and it cannot
+> be changed via software programming. Configure the trace id in device
+> tree and reserve the id when device probe.
+> 
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
+>   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
+>   2 files changed, 70 insertions(+), 4 deletions(-)
+>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> new file mode 100644
+> index 000000000000..c7d975e75d85
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> @@ -0,0 +1,15 @@
+> +What:		/sys/bus/coresight/devices/dummy_source<N>/enable_source
+> +Date:		Oct 2024
+> +KernelVersion:	6.13
+> +Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
+> +Description:	(RW) Enable/disable tracing of dummy source. A sink should be activated
+> +		before enabling the source. The path of coresight components linking
+> +		the source to the sink is configured and managed automatically by the
+> +		coresight framework.
+> +
+> +What:		/sys/bus/coresight/devices/dummy_source<N>/traceid
+> +Date:		Oct 2024
+> +KernelVersion:	6.13
+> +Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
+> +Description:	(R) Show the trace ID that will appear in the trace stream
+> +		coming from this trace entity.
+> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
+> index bb85fa663ffc..602a7e89e311 100644
+> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+> @@ -11,10 +11,12 @@
+>   #include <linux/pm_runtime.h>
+>   
+>   #include "coresight-priv.h"
+> +#include "coresight-trace-id.h"
+>   
+>   struct dummy_drvdata {
+>   	struct device			*dev;
+>   	struct coresight_device		*csdev;
+> +	u8				traceid;
+>   };
+>   
+>   DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
+> @@ -72,6 +74,32 @@ static const struct coresight_ops dummy_sink_cs_ops = {
+>   	.sink_ops = &dummy_sink_ops,
+>   };
+>   
+> +/* User can get the trace id of dummy source from this node. */
+> +static ssize_t traceid_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	unsigned long val;
+> +	struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +
+> +	val = drvdata->traceid;
+> +	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
+> +}
+> +static DEVICE_ATTR_RO(traceid);
+> +
+> +static struct attribute *coresight_dummy_attrs[] = {
+> +	&dev_attr_traceid.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group coresight_dummy_group = {
+> +	.attrs = coresight_dummy_attrs,
+> +};
+> +
+> +static const struct attribute_group *coresight_dummy_groups[] = {
+> +	&coresight_dummy_group,
+> +	NULL,
+> +};
+> +
+>   static int dummy_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -79,6 +107,11 @@ static int dummy_probe(struct platform_device *pdev)
+>   	struct coresight_platform_data *pdata;
+>   	struct dummy_drvdata *drvdata;
+>   	struct coresight_desc desc = { 0 };
+> +	int ret, trace_id;
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+>   
+>   	if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
+>   
+> @@ -90,6 +123,25 @@ static int dummy_probe(struct platform_device *pdev)
+>   		desc.subtype.source_subtype =
+>   					CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
+>   		desc.ops = &dummy_source_cs_ops;
+> +		desc.groups = coresight_dummy_groups;
+> +
+> +		ret = coresight_get_static_trace_id(dev, &trace_id);
+> +		if (!ret) {
+> +			/* Get the static id if id is set in device tree. */
+> +			ret = coresight_trace_id_get_static_system_id(trace_id);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +		} else {
+> +			/* Get next available id if id is not set in device tree. */
+> +			trace_id = coresight_trace_id_get_system_id();
+> +			if (trace_id < 0) {
+> +				ret = trace_id;
+> +				return ret;
+> +			}
+> +		}
+> +		drvdata->traceid = (u8)trace_id;
+> +
+>   	} else if (of_device_is_compatible(node, "arm,coresight-dummy-sink")) {
+>   		desc.name = coresight_alloc_device_name(&sink_devs, dev);
+>   		if (!desc.name)
+> @@ -108,10 +160,6 @@ static int dummy_probe(struct platform_device *pdev)
+>   		return PTR_ERR(pdata);
+>   	pdev->dev.platform_data = pdata;
+>   
+> -	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> -	if (!drvdata)
+> -		return -ENOMEM;
+> -
+>   	drvdata->dev = &pdev->dev;
+>   	platform_set_drvdata(pdev, drvdata);
+>   
+> @@ -131,7 +179,10 @@ static void dummy_remove(struct platform_device *pdev)
+>   {
+>   	struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
+>   	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
 
-Since commit fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
-the default"), rtla-timerlat has been defaulting to
-params->user_workload if neither that or params->kernel_workload is set.
-This has unintentionally made -U, which sets only params->user_hist/top
-but not params->user_workload, to behave like -u unless -k is set,
-preventing the user from running a custom workload.
+^^ Why is this needed ? The rest looks fine to me
 
-Example:
-$ rtla timerlat hist -U -c 0 &
-[1] 7413
-$ python sample/timerlat_load.py 0
-Error opening timerlat fd, did you run timerlat -U?
-$ ps | grep timerlatu
-7415 pts/4    00:00:00 timerlatu/0
-
-Fix the issue by checking for params->user_top/hist instead of
-params->user_workload when setting default thread mode.
-
-Fixes: fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
-the default")
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
----
- tools/tracing/rtla/src/timerlat_hist.c | 2 +-
- tools/tracing/rtla/src/timerlat_top.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index a3907c390d67..829511a71222 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -1064,7 +1064,7 @@ timerlat_hist_apply_config(struct osnoise_tool *tool, struct timerlat_hist_param
- 	 * If the user did not specify a type of thread, try user-threads first.
- 	 * Fall back to kernel threads otherwise.
- 	 */
--	if (!params->kernel_workload && !params->user_workload) {
-+	if (!params->kernel_workload && !params->user_hist) {
- 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
- 		if (retval) {
- 			debug_msg("User-space interface detected, setting user-threads\n");
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 210b0f533534..3b62519a412f 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -830,7 +830,7 @@ timerlat_top_apply_config(struct osnoise_tool *top, struct timerlat_top_params *
- 	 * If the user did not specify a type of thread, try user-threads first.
- 	 * Fall back to kernel threads otherwise.
- 	 */
--	if (!params->kernel_workload && !params->user_workload) {
-+	if (!params->kernel_workload && !params->user_top) {
- 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
- 		if (retval) {
- 			debug_msg("User-space interface detected, setting user-threads\n");
--- 
-2.47.0
+>   
+> +	if (IS_VALID_CS_TRACE_ID(drvdata->traceid))
+> +		coresight_trace_id_put_system_id(drvdata->traceid);
+>   	pm_runtime_disable(dev);
+>   	coresight_unregister(drvdata->csdev);
+>   }
 
 
