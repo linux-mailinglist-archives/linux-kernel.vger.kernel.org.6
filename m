@@ -1,92 +1,163 @@
-Return-Path: <linux-kernel+bounces-374863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880B79A7140
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:42:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5699A7143
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D851F22FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2491283412
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB521F470A;
-	Mon, 21 Oct 2024 17:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CBA1EF945;
+	Mon, 21 Oct 2024 17:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtjsF4k5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeKNEo+P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ACD19342E;
-	Mon, 21 Oct 2024 17:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485A2178395
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532565; cv=none; b=NPxloTEVt82z8GdcHqhgneGIwtyHfQXHXJy7pQEPiP8DrcPhKBucys2vPp7fAMXROckdj8mhs9dsXz5z6l3iBuPRYXnHlfsQ/Cf5nnrPWaQKxS0W5wzfioesCjC5Qelu8IQdsDGPrhKmjDBbdA7jKuh8gW05n5l8UNiHURGWLMQ=
+	t=1729532648; cv=none; b=XWwy9hYKB48KDhSGtutl4MPoj6oUXKu0cTxy9txkt4SzqRWim8yF7ByOPhDu04xnyqYougu3RuK3T43q/qpmYlCdbO+uSEJ2Td5844NMdUImwN4vtq9RyOBVA/zaC0E0+xRPRKIBsTiPy+ftD2OviY1Eh2izX75rXbSekHZ1kgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532565; c=relaxed/simple;
-	bh=xmChHbw1/CYaBdNx4kF0TX8OXws82OtYzEZQwXFxW4U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Vtnw+Wlu0opFVjZZSJuD4ZzHQ6/mQ+28ynBFRyjpX0yaRTzY8z0sRir7Yr9M3U//GyMQbVJJDFgQTgUwuKbJDtEvCtsiIj9pvKJWIqOvSLJYo+zklfY2v5Cn9Qmn+Ug0dgQKOdkbHKLYRkWUBsECfUYlQSA3za9GV1xl+aWB+C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mtjsF4k5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6239C4CEC3;
-	Mon, 21 Oct 2024 17:42:44 +0000 (UTC)
+	s=arc-20240116; t=1729532648; c=relaxed/simple;
+	bh=zGJj8wrBgY1TcEriRxoBtO0t39RL8zcLJTjaqUOxzY8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NQkvh0gq3E36C5W92sEUvGhfqVNXgkLMdz+IDH/0LnAD0Uq5j1NGdA70uOnLllj6xEVF/HAapKTpO+IbU5FOLJe6ATo1ozK+a5IO2DAqweeJUYYHeca2M5jpKxVuMpfwDF/BAa3dLuY6aLOEVI5wJUKh1eK/oziggJ0iwmfylPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeKNEo+P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB781C4CECD;
+	Mon, 21 Oct 2024 17:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729532564;
-	bh=xmChHbw1/CYaBdNx4kF0TX8OXws82OtYzEZQwXFxW4U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mtjsF4k5+AHugZAdwokwJSG4rtEKPWfGnXGkY3PVUKk3H73RI3/H2QC90RYMDtajo
-	 zBIH2s+hHOZYHgwSF/rJ8+/aL22aKgyTsuKryyWD7+HogW8Q4qa3NxlFce9cj0sNR4
-	 yegCqYr9HFAMHSLBLp2WyuevvjLSu12K62Q/kIU90G/Rl2WhwyENjgl3UKHKFrKbqO
-	 7hIbqCKmrWNW64zTf8xKuLQhXlgeR6MNmQuFVrSfUZt/gyTBtPch71FtH/maCfs5D5
-	 CAdx3ukq9MGIyMikFM1kFPn9P/bqrjQj/xaJ6YSwWXktTuIuWIBhMP4xpwdjhioQXH
-	 maj1w0HbUxTFA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1373809A8A;
-	Mon, 21 Oct 2024 17:42:51 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1729532647;
+	bh=zGJj8wrBgY1TcEriRxoBtO0t39RL8zcLJTjaqUOxzY8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AeKNEo+PgMPOYrvyzCDrBcnFh+qCvuqpChah5uwy+BlnCB5mTEL13C3xX3gg9YwCp
+	 AzUoNRA2PTS9WY5sGKLsaqGQZ4heZ85QS4VJGbfqfgHew20oKzvHLUc2O0AsfHMCgi
+	 aBadvkfwgyS3FP4TSQE0GP+DqcUrz4AtZXB3LF3mgqBvh3zM8nV4o58kD9UvhAF64e
+	 zPN6L2oOqlBeCLBR0c1G5U52NNn5kRw3SCzZQ6G33OptOX3CEu+VTAfASBNZyHB0Qp
+	 O8QFyzdfoIkjEXNhuCnaD7/BlPt/DYe7RDHniNbjwXT1SnMPWyx/PD5O89G8JNC0/S
+	 CO34yYSkoTmag==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t2wRp-005Vkp-HQ;
+	Mon, 21 Oct 2024 18:44:05 +0100
+Date: Mon, 21 Oct 2024 18:44:04 +0100
+Message-ID: <86cyjt4ahn.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Rex Nie <rex.nie@jaguarmicro.com>
+Cc: mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	angus.chen@jaguarmicro.com
+Subject: Re: [PATCH] tools: arm64: add registers read/write tool for arm64
+In-Reply-To: <20241021150112.1194-1-rex.nie@jaguarmicro.com>
+References: <20241021150112.1194-1-rex.nie@jaguarmicro.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] Bluetooth: btintel_pcie: remove redundant assignment to
- variable ret
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172953257076.356311.8455128525618233771.git-patchwork-notify@kernel.org>
-Date: Mon, 21 Oct 2024 17:42:50 +0000
-References: <20241007161035.1205516-1-colin.i.king@gmail.com>
-In-Reply-To: <20241007161035.1205516-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: rex.nie@jaguarmicro.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, angus.chen@jaguarmicro.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello:
+On Mon, 21 Oct 2024 16:01:12 +0100,
+Rex Nie <rex.nie@jaguarmicro.com> wrote:
+>=20
+> The reg_ctrl kernel module can read/write most aarch64 system registers,
+> including EL0/1/2/3, which is very useful when hardware debuger (such
+> as ArmDS5/trace32) is unusable.
+>=20
+> The primary implementation of the reg_ctrl module is as follows:
+> 1. when the core can directly access the target register, it uses
+>    the MRS/MSR instructions to read/write register.
+> 2. Otherwise, it performs an SMC call to switch to EL3, where the
+>    register read/write is completed and then return to kernel mode.
+>    I implement an OEM Service in ATF to access register at EL3,
+>    using one SMC function ID for reading and another for writing register=
+s.
+>=20
+> test steps on my platform with 16x Arm Neoverse N2:
+> 1. insmod reg_ctrl.ko
+> 2. cd /sys/kernel/reg_ctrl/system/
+> 3. view the directory tree on DUT.
+> [root@localhost system]# tree
+> .
+> =E2=94=9C=E2=94=80=E2=94=80 control
+> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 VNCR_EL2
+> =E2=94=9C=E2=94=80=E2=94=80 id
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CCSIDR_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CLIDR_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CSSELR_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 CTR_EL0
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 DCZID_EL0
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64AFR0_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64AFR1_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64DFR0_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64DFR1_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64ISAR0_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64ISAR1_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64MMFR0_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64MMFR1_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ID_AA64PFR0_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 ID_AA64PFR1_EL1
+> =E2=94=9C=E2=94=80=E2=94=80 implementation_defined
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUACTLR_EL3
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUECTLR_EL1
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR2_EL3
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR4_EL3
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR5_EL3
+> =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 IMP_CPUPPMCR6_EL3
+> =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 IMP_CPUPPMCR_EL3
+> =E2=94=94=E2=94=80=E2=94=80 reset
+>     =E2=94=94=E2=94=80=E2=94=80 RMR_EL3
+>=20
+> 4. read EL1 register on core 0:
+> [root@localhost system]# taskset -c 0 cat id/ID_AA64PFR0_EL1
+> 0x1201111123111112
+>=20
+> 5. read EL3 register on core 1:
+> [root@localhost system]# taskset -c 1 cat implementation_defined/IMP_CPUP=
+PMCR4_EL3
+> 0x2000315a10000045
+>=20
+> 6. set bit 1 of IMP_CPUPPMCR4_EL3 regiter on core 1:
+> [root@localhost system]# taskset -c 1 echo 0x2000315a10000047 > implement=
+ation_defined/IMP_CPUPPMCR4_EL3
+>=20
+> 7. check if bit 1 is set:
+> [root@localhost system]# taskset -c 1 cat implementation_defined/IMP_CPUP=
+PMCR4_EL3
+> 0x2000315a10000047
+>=20
+> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+This sort of thing has been NAKed in the past (see [1]), because it is
+terribly unsafe. I'm afraid the kernel is not a validation tool, and
+while I understand that this can be useful in extremely narrow cases,
+it has no place in the upstream kernel.
 
-On Mon,  7 Oct 2024 17:10:35 +0100 you wrote:
-> The variable ret is being assigned -ENOMEM however this is never
-> read and it is being re-assigned a new value when the code jumps
-> to label resubmit. The assignment is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/bluetooth/btintel_pcie.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks,
 
-Here is the summary with links:
-  - [next] Bluetooth: btintel_pcie: remove redundant assignment to variable ret
-    https://git.kernel.org/bluetooth/bluetooth-next/c/e14edcbe88ba
+	M.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1] https://lore.kernel.org/all/20201130174833.41315-1-rongwei.wang@linux.a=
+libaba.com/
 
-
+--=20
+Without deviation from the norm, progress is not possible.
 
