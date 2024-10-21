@@ -1,119 +1,97 @@
-Return-Path: <linux-kernel+bounces-375209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6109A9323
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099C29A930E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7FDF1F22D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BF61C21EC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17C1FDFB1;
-	Mon, 21 Oct 2024 22:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158DE1FB3FE;
+	Mon, 21 Oct 2024 22:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ79nMOY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYLLQSY8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EE91C9EDA;
-	Mon, 21 Oct 2024 22:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BEC1C4609;
+	Mon, 21 Oct 2024 22:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729548972; cv=none; b=WSIU3QKyZX5v/s2E3n/y8WVF9hZNCeoJOgs6aPZ0vSK59jPl/M4zb1C2CmimVl9WRxew7vi2vSCJtTy+TwRkzDE7FYWk1cbQ0aANiCEEteK+U8xhGjyabcTZfFfyEqUSPLlZEK3G0vNGdQRlAKYplF+fgvTkXaYYVmcZj/oRIZc=
+	t=1729548786; cv=none; b=hFp0IbaG0dKI91gM+N1/dmU2ki05U7mAQ5XheQ5AQAo/yw+GYpZpkDxMBjDT6H0SgtHhQ7IKv1oAPjVjYPW2kATy4/eIkGVplxMi9vt7Iz+qkmcDSxVmjkMllLl5nAeh7GJvdWEX83yOmTvqv+30AX5s3J2QAuXZwo81TUJ2KF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729548972; c=relaxed/simple;
-	bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UTcwvkSQV2L4qADFX1xG7g3eVWMm4eQ0vjC6eUewHqF7BigQZA2bWO0ajeJupUuVKC+AUejhz7uLOUOokvxoKklxb2Axf1AoINeEWrfvq/1m12nt+l1OB98/LJ863YwCSsUr/s4eiEJDzXOZ2LVA7PUexCrH75rOnq+z6Rqjpg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ79nMOY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 361CCC4CEC3;
-	Mon, 21 Oct 2024 22:16:10 +0000 (UTC)
+	s=arc-20240116; t=1729548786; c=relaxed/simple;
+	bh=M5yWAF/R0QTARoO4jvZtiId1CKtuH6rgLGc/G5eCqss=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UiGjo/VqaK+39o48HXn8TCp5A+n8SuSarz/D+O8NeH7cgrckmEAj2nG8g42ASjiN51F693+/tFSXne0K53riNgRHqQf2sN0av1QVBhXTQGzBRnsKjhuMJ/cBieqa0RZRxEnXthmsJel0GHQ3wgzqp720VzWHK4059Pig8YA0kiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYLLQSY8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6DCCC4CEC3;
+	Mon, 21 Oct 2024 22:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729548971;
-	bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KZ79nMOYfWpzgBl7pJ2U5ZhwrEdOqPBKtVfE98BKOvGvbgmnQHLeYx2KBiO9qL3ML
-	 x5vhtgON7wW1Nkv9Zi0KrtMPWjBJw7JMhOY8NwgiyfpYH6h+7NmAIDPA8cN8wzNjJI
-	 3RtrgTACOFHKytJXtfrv2D6v64fLZhbkmvRY/jwg80osIY5+poDdLxtfNAQ2JOO7xT
-	 cYcLXf04Nlh+Z/TWuC2nkrwa7PZWP1UrHBJ32P6o4JrlHtj8sD4nyhj5l48xg324A1
-	 9Jyi0viYu5oUDhq5qkTLbcJw/LAiG0X5r3ruym1vU7rbZarUhuGmss2yFRnXCvITss
-	 Hwo6s5liITKjw==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 21 Oct 2024 23:11:40 +0100
-Subject: [PATCH] KVM: selftests: Fix build on on non-x86 architectures
+	s=k20201202; t=1729548785;
+	bh=M5yWAF/R0QTARoO4jvZtiId1CKtuH6rgLGc/G5eCqss=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=FYLLQSY8+hiNT27tq1xtyrBqatmAUSWCNIWcwsInBotQo7eCmN8NCQXAtoXNHbmaS
+	 13OuEUpib00MVT+3hTZk6KkcnqYLOZCFIREjZ4uV9MqAMZzkBySSZtNcEqaDf73v8j
+	 IYFu6f0fahr7+kLPMQXgW+kjBw3vQTGYNPHIkIz6Bz7FgwGjl+Vp76NIFuqTifj9f/
+	 aQXogLCrhlSHvMA5QbaIVXkzt3cgSI5B9mH/kMnizQEabmPaiJRRUyLFLZSslssQDD
+	 ymM3QECz+MwYnEjeIgGbnadXaEWQo2kYuzlipUavoVdO5vHSiG6ibqTHxwalJnQa9c
+	 pW3unPS9DnLIQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 74B77CE09F6; Mon, 21 Oct 2024 15:13:05 -0700 (PDT)
+Date: Mon, 21 Oct 2024 15:13:05 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	peterz@infradead.org, andrii@kernel.org
+Subject: [PATCH rcu] srcu: Guarantee non-negative return value from
+ srcu_read_lock()
+Message-ID: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241021-kvm-build-break-v1-1-625ea60ed7df@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJvRFmcC/x3MQQqAIBBA0avIrBtQsUVdJVpoTjVUFkoShHdPW
- r7F/y8kikwJevFCpMyJz1ChGgHTasNCyL4atNRGSa1wywe6m3ePLpLd0HStdeSnVpGEWl2RZn7
- +4zCW8gGvogcgYQAAAA==
-X-Change-ID: 20241021-kvm-build-break-495abedc51e0
-To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Vitaly Kuznetsov <vkuznets@redhat.com>, 
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=broonie@kernel.org;
- h=from:subject:message-id; bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhnSxSys7LC3EWFtO+05rmVSWMF9Fc9ZjjaXv/7UYF9ZafFp/
- nSG8k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYSMU69n92jv93ZW8Pa0xMnZfsL3
- 33ZZh2cpHj0v7AaRGsBbdffshbudw0OP0Lx/SCnx9/vK35JhnaU1pTo3Ljc+9lQZ0pDIpyDYdaIqqY
- 1uqX/zmtE9KrzHGv8uIRg1ClzKu7UhvuzH3NaVsiabTqW8PqZwahIj/Egj8mecxeKHAleS7v9NjIAJ
- FzemIPVdR+H+MKzClfKb/47V+Ba82GBT7TbDRqfN/VdLuu/p32evm7kMYJlzydmsOZK/jacjMX2r/N
- 2v1tSlD1R++2O1HevB9nCa1yWtJrcFQwnNHhssOWymDO007cfh+mCc0Wbw6xatl97vzKxA7LNQyHe7
- i4/aO7JNac3D1Vcaf+t6smQlayAA==
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX
-instructions") unconditionally added -march=x86-64-v2 to the CFLAGS used
-to build the KVM selftests which does not work on non-x86 architectures:
+For almost 20 years, the int return value from srcu_read_lock() has
+been always either zero or one.  This commit therefore documents the
+fact that it will be non-negative.
 
-  cc1: error: unknown value ‘x86-64-v2’ for ‘-march’
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org
 
-Fix this by making the addition of this x86 specific command line flag
-conditional on building for x86.
-
-Fixes: 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX instructions")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index e6b7e01d57080b304b21120f0d47bda260ba6c43..156fbfae940feac649f933dc6e048a2e2926542a 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -244,11 +244,13 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
- 	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
- 	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
- 	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
--	-march=x86-64-v2 \
- 	$(KHDR_INCLUDES)
- ifeq ($(ARCH),s390)
- 	CFLAGS += -march=z10
- endif
-+ifeq ($(ARCH),x86)
-+	CFLAGS += -march=x86-64-v2
-+endif
- ifeq ($(ARCH),arm64)
- tools_dir := $(top_srcdir)/tools
- arm64_tools_dir := $(tools_dir)/arch/arm64/tools/
-
----
-base-commit: d129377639907fce7e0a27990e590e4661d3ee02
-change-id: 20241021-kvm-build-break-495abedc51e0
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index bab1dae3f69e6..512a8c54ba5ba 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+  * a mutex that is held elsewhere while calling synchronize_srcu() or
+  * synchronize_srcu_expedited().
+  *
+- * The return value from srcu_read_lock() must be passed unaltered
+- * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+- * the matching srcu_read_unlock() must occur in the same context, for
+- * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+- * if the matching srcu_read_lock() was invoked in process context.  Or,
+- * for that matter to invoke srcu_read_unlock() from one task and the
+- * matching srcu_read_lock() from another.
++ * The return value from srcu_read_lock() is guaranteed to be
++ * non-negative.  This value must be passed unaltered to the matching
++ * srcu_read_unlock().  Note that srcu_read_lock() and the matching
++ * srcu_read_unlock() must occur in the same context, for example, it is
++ * illegal to invoke srcu_read_unlock() in an irq handler if the matching
++ * srcu_read_lock() was invoked in process context.  Or, for that matter to
++ * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
++ * from another.
+  */
+ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
+ {
 
