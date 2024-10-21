@@ -1,193 +1,316 @@
-Return-Path: <linux-kernel+bounces-375285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7859A942C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:29:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306A29A942F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3BF1F22B50
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E4CDB226AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB8D1FF5FD;
-	Mon, 21 Oct 2024 23:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EC61FF02B;
+	Mon, 21 Oct 2024 23:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHnrkhqa"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mERK4iuG"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283D31E3766;
-	Mon, 21 Oct 2024 23:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331CF178370
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729553342; cv=none; b=UNu707iSgTnL+Lijpil9+ciz5wLi/n/AD8UuDRWSHNfNximYpWhJ1iCaI21Z0BK0/1HZqQvnTutiXhk95h1/5Zd5VSz2+lzuq+CaGGT2pYQgtmHGDErdJ3OFbIUY8A5UMv84Sgo0zloc7N+jGlrGmX9UQSLjgG+tujb+dndlCiw=
+	t=1729553399; cv=none; b=GvxuJ9ODgULB0V5bfsRhpRHaLZSyOUkCf/1gR2I2zCYiYXicgFyQqo37Nh4DpyjNDnK+WLoPjI0+RdeeBFJdzr0rynWt3hOtJY0E+0yXFcFEkyPnrUJgq3CasKE8j1j9kZHCo1gXshm7DxpraUX4kpAr8bmCyeG8UUINdHfp6Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729553342; c=relaxed/simple;
-	bh=x2H3ahgB5xIvSFbzpAzCQsUV4OlJPhvj2R6p1tI+K3U=;
+	s=arc-20240116; t=1729553399; c=relaxed/simple;
+	bh=Z2WtKd6O2fmX/1ODuyVjapnZpocrcjgu3ALWC6pnK0k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d3P+gpF4s4MAHw7K6KPHEWFB32ruagV8b148R/yQ8vqOQ3sLXMfunV8CTTgLNUG4PDFGK60b287J+ZX9LWdJgCLjmbieOey8k1EE07lWXgciNWzAr3WXH75AyAfgiRC7csKAeSjQFQZm24gDhx9wANmxBnOpyHilNiavIrJZ/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHnrkhqa; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e57d89ffaso3887027b3a.1;
-        Mon, 21 Oct 2024 16:29:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=DcMi8FcsZ5fR9wEBF6Jc8IlbMTHn3DUbBP09CPyx0TncnP1a8VB4wW+tpaj+ca5DHoxGAYMJHAcXPO5XWaprZFcTGGTscL0W5ZhtY6fVAtFk5SPheHkGBoHfS34/wkdHBTzUxvd4Hjtdx0o6/sLxd+LoXmdyyC1AirIpzh55nJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mERK4iuG; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e681bc315so3217443b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729553340; x=1730158140; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729553397; x=1730158197; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b0ab/y3NIxWQ5IPwf4tlrWjgA/VWZRdS/usp1PdmtaA=;
-        b=iHnrkhqap5K634mmOogO0j3ONfofIj8H1Zg6CY7vmc35bA5Q5FmfDB7OlT3BwC5dx0
-         yYvExBpIE5OWte4BY0BwHL4DxIU2JcQX6CnMQygmW1QJAv+zC83xakHDlovIioKO0+ol
-         XwDodasG7zJbRBP7a3EO0/UC7ChV9aXLFm/Q/ksIX+EADzxCwEZAvT14m9WrNiTpJHPJ
-         lu6/MkPQJv8QwpKjHpcKpt1Sfu2e0zST4gxsXJTLxE/xB4TwlqLBd5cXUNsP+kgggf1t
-         958jFLmoKKdOUuVfWJHMKXVCuL3Wck5xaR1K9wV3ySs+ejeVhDy/TQ7zwYdt3Z+29jnT
-         oUbw==
+        bh=t2NyHY7mFxB4hr1x5ym1c1fkuAGIeYy0qR52394v8ow=;
+        b=mERK4iuGCyvzjT6N/xH/3/oY2oSWXKLik/tytNhhMGdsJE+g3InX1RrOEMt0yGDQEH
+         j3q4D2c23j0qRnBoHx4XAouvhLkAOU9XZAoggMGGXNybQNkmr1ZqBWUWOjAiNPd/2MjZ
+         y9yuop0aVKMixoJ/GK5srB8aPu1IgMdbBbknF2aa21tVZ5Lai9RpcECCaH3z5kjDqEid
+         8FEbXepdeo9K3k+LlrSFK/lS5LuEUFLOVmf7wJru1oBWm0qktJiMLWBRXpXDS5NT3YjR
+         60Mi7zVOpA+fVh8EElw6ps/m/e4Qqd4kiNladHg6upSTlq95NEUC3Eb2Ao5PJVzn8hzw
+         w3/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729553340; x=1730158140;
+        d=1e100.net; s=20230601; t=1729553397; x=1730158197;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b0ab/y3NIxWQ5IPwf4tlrWjgA/VWZRdS/usp1PdmtaA=;
-        b=VLG1pjUbMBVaX1Akq7Hp/Y5wz4V7UcDCpIZ119jpfgE2ZdxPnHvFojtfumEP4kIbGH
-         cUQDzreyYkvnisT8BWoYgWzp4d9kB+Lye3TiZ+LaaYi0kbG4u/HoRsrcH3X7NWyfjgvR
-         lH/4ECIwWD5vIgQDsHAVB4J9oougHEA97Sqpz6pgk/q5QVsioe50H0I6XH6l01Xis3xZ
-         j7Lf0eFhKxyrCqATG0c88G+1r1R9SV0nSmQXRF3nzDV1ospz6Ao4dSwLrRl19w0Je1Pj
-         CcqwRdk8Hzhywp2k289sIhw9fWHVoLVDoU95QxWncs7NUfoJe/L3b4sRLL0unG7SlNx5
-         FJMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYZGOHTsIkyMkc/Ht40QHVeXmMPrWXBcK5TGbRcXcf3zmMuTUyXcf7tAkfzkG3UvM3eCYpSiks+BjaLlKO@vger.kernel.org, AJvYcCVxvZ/8cLLLru0tHcs52qHUKO/ppxGI/eIbr2CJLGwhj3o5kzNAFS+H0XZVwfqjjpGd9eg=@vger.kernel.org, AJvYcCWuM8s4qDk+ZLfJO7dIX8zkxxyk7MqX/G5bEoHArLlRklQeRqFA5gS5iQQwD4MesL94faWVkD5a@vger.kernel.org, AJvYcCX6fk1U/ZPewCJ7rlevci7cEhSnJtfwLAjvEfHyIhtzqzJHJPnfyeoe+RVqAdJ/onRLqTdlbjdZ651hkdPV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhPVSX6MiEBBrOcAWtvywYj/2UmTa9wGfJMfmpMLCWQ62qP6iU
-	c7nppeMrm/4GBJP/uWagxUqwfrIGyjFZYOR6c7RqPyNdXK1yarc5FqYr64CyAQQjN7p+4WSic0H
-	LQMTcstJWsfLPuWuATyaSwKdIBQc=
-X-Google-Smtp-Source: AGHT+IE+UiBdod8YrP4CWXmEaQOA8OoWyHHG8IWleRCcBhZxXsjPZXGjvcba7orZTZIub5J+BX3UYq9GPtRAU8ZvLAE=
-X-Received: by 2002:a05:6a00:9282:b0:71e:587d:f268 with SMTP id
- d2e1a72fcca58-71edbbc153bmr2117649b3a.4.1729553340212; Mon, 21 Oct 2024
- 16:29:00 -0700 (PDT)
+        bh=t2NyHY7mFxB4hr1x5ym1c1fkuAGIeYy0qR52394v8ow=;
+        b=sQaSrEjYNhzDsCBaNYq73Q1t155c/D67ZErz4s1bwD0lCXDrhSZzo0UA6ovqYF7yCw
+         y5zWoUVnYcsiAEIRxzsnvmfLdEtAG/dLt5iGt7gm/tk1cLYr//muYqFXahVAL2jaeOD4
+         Wa0bY9e1hdXF4ZUXCAo8IT+R8MF4wvXJVyFWFo6WiUZUw5PU4LZmRGG6+uMCfo02/IhA
+         LDuJLCDJl1N06/cuKmWDnwB+wdc1fGjCk7jgPq69xyHRJkoPWxUqoDB81P6gWxzavR6U
+         vHSRmZazCfWGMMsybDSEcPtA/vhC9LD29NTnPMSZEUU0ftZRS+Sin4z9LKqNJRUJoQwF
+         Optg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkweGMIgltVYnNK0jAKZu7bUCshmS42qv74eOlnYXD7YDkFdM1qdOjQex4TsE3yRjWHqr2N/HAVD/Ue8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOYu6VEQjowini+QwOKXmjnETvMEgm/jwD3rjftpWLKx68Q33h
+	ADU50lYvNZWfqw56rsNQeCSM26tylM2g7nosFcfjtKr0OBCxxOxfIkh0T+cIYx9EKq3Dzrm6GOM
+	sg+RPh+el2QcsgaedLWvh8FMCQt7EHt79DM7e
+X-Google-Smtp-Source: AGHT+IETRJaHZlsiEAbTMWW5Y1/SYutPSqWlhc6bkNiSz1EnikRwyl+TiP+yLXrp3hPim9RxQluBfbx5mI1dAsLBdQc=
+X-Received: by 2002:aa7:8d4e:0:b0:71e:7f08:492c with SMTP id
+ d2e1a72fcca58-71edc13b786mr1742285b3a.1.1729553397078; Mon, 21 Oct 2024
+ 16:29:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021122112.101513-1-puranjay@kernel.org> <20241021122112.101513-5-puranjay@kernel.org>
-In-Reply-To: <20241021122112.101513-5-puranjay@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 21 Oct 2024 16:28:47 -0700
-Message-ID: <CAEf4BzY1LgCF1VOoAQkMdDTx87C0mfyftMvhvVU4GpsFc6fw5g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 4/5] selftests/bpf: Add benchmark for
- bpf_csum_diff() helper
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Eric Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>, 
-	Helge Deller <deller@gmx.de>, Jakub Kicinski <kuba@kernel.org>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jiri Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Mykola Lysenko <mykolal@fb.com>, netdev@vger.kernel.org, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Puranjay Mohan <puranjay12@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Yonghong Song <yonghong.song@linux.dev>
+References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
+In-Reply-To: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Mon, 21 Oct 2024 16:29:18 -0700
+Message-ID: <CAGETcx-LtuMJM1205FwMy0U-fetAKhFdon65qAxHKV3Q2cUOGQ@mail.gmail.com>
+Subject: Re: fw_devlinks preventing a panel driver from probing
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Linux Kernel List <linux-kernel@vger.kernel.org>, Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Devarsh Thakkar <devarsht@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 5:22=E2=80=AFAM Puranjay Mohan <puranjay@kernel.org=
-> wrote:
+Hi Tomi,
+
+Sorry it took a while to get back.
+
+On Mon, Sep 16, 2024 at 4:52=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
 >
-> Add a microbenchmark for bpf_csum_diff() helper. This benchmark works by
-> filling a 4KB buffer with random data and calculating the internet
-> checksum on different parts of this buffer using bpf_csum_diff().
+> Hi,
 >
-> Example run using ./benchs/run_bench_csum_diff.sh on x86_64:
+> We have an issue where two devices have dependencies to each other,
+> according to drivers/base/core.c's fw_devlinks, and this prevents them
+> from probing. I've been adding debugging to the core.c, but so far I
+> don't quite grasp the issue, so I thought to ask. Maybe someone can
+> instantly say that this just won't work...
 >
-> [bpf]$ ./benchs/run_bench_csum_diff.sh
-> 4                    2.296 =C2=B1 0.066M/s (drops 0.000 =C2=B1 0.000M/s)
-> 8                    2.320 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
-> 16                   2.315 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
-> 20                   2.318 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
-> 32                   2.308 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
-> 40                   2.300 =C2=B1 0.029M/s (drops 0.000 =C2=B1 0.000M/s)
-> 64                   2.286 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
-> 128                  2.250 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
-> 256                  2.173 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
-> 512                  2.023 =C2=B1 0.055M/s (drops 0.000 =C2=B1 0.000M/s)
+> So, we have two devices, DSS (display subsystem) and an LVDS panel. The
+> DSS normally outputs parallel video from its video ports (VP), but it
+> has an integrated LVDS block (OLDI, Open LVDS Display Interface). The
+> OLDI block takes input from DSS's parallel outputs. The OLDI is not
+> modeled as a separate device (neither in the DT nor in the Linux device
+> model) as it has no register space, and is controlled fully by the DSS.
+>
+> To support dual-link LVDS, the DSS has two OLDI instances. They both
+> take their input from the same parallel video port, but each OLDI sends
+> alternate lines forward. So for a dual-link setup the connections would
+> be like this:
+>
+> +-----+-----+         +-------+         +----------+
+> |     |     |         |       |         |          |
+> |     | VP1 +----+--->| OLDI0 +-------->|          |
+> |     |     |    |    |       |         |          |
+> | DSS +-----+    |    +-------+         |  Panel   |
+> |     |     |    |    |       |         |          |
+> |     | VP2 |    +--->| OLDI1 +-------->|          |
+> |     |     |         |       |         |          |
+> +-----+-----+         +-------+         +----------+
+>
+> As the OLDI is not a separate device, it also does not have an
+> independent device tree node, but rather it's inside DSS's node. The DSS
+> parallel outputs are under a normal "ports" node, but OLDI ports are
+> under "oldi-txes/ports" (see below for dts to clarify this).
+>
+> And I think (guess...) this is the root of the issue we're seeing, as it
+> means the following, one or both of which might be the reason for this
+> issue:
+>
+> - OLDI fwnodes don't have an associated struct device *. I think the
+> reason is that the OLDI media graph ports are one level too deep in the
+> hierarchy. So while the DSS ports are associated with the DSS device,
+> OLDI ports are not.
 
-you are not benchmarking bpf_csum_diff(), you are benchmarking how
-often you can call bpf_prog_test_run(). Add some batching on the BPF
-side, these numbers tell you that there is no difference between
-calculating checksum for 4 bytes and for 512, that didn't seem strange
-to you?
-
-pw-bot: cr
+This is the root cause of the issue in some sense. fw_devlink doesn't
+know that DSS depends on the VP. In the current DT, it only appears as
+if the OLDI depends on VP. See further below for the fix.
 
 >
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> ---
->  tools/testing/selftests/bpf/Makefile          |   2 +
->  tools/testing/selftests/bpf/bench.c           |   4 +
->  .../selftests/bpf/benchs/bench_csum_diff.c    | 164 ++++++++++++++++++
->  .../bpf/benchs/run_bench_csum_diff.sh         |  10 ++
->  .../selftests/bpf/progs/csum_diff_bench.c     |  25 +++
->  5 files changed, 205 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/benchs/bench_csum_diff.c
->  create mode 100755 tools/testing/selftests/bpf/benchs/run_bench_csum_dif=
-f.sh
->  create mode 100644 tools/testing/selftests/bpf/progs/csum_diff_bench.c
+> - The VP ports inside the DSS point to OLDI ports, which are also inside
+> DSS. So ports from a device point to ports in the same device (and back).
 >
+> If I understand the fw_devlink code correctly, in a normal case the
+> links formed with media graphs are marked as a cycle
+> (FWLINK_FLAG_CYCLE), and then ignored as far as probing goes.
+>
+> What we see here is that when using a single-link OLDI panel, the panel
+> driver's probe never gets called, as it depends on the OLDI, and the
+> link between the panel and the OLDI is not a cycle.
+>
+> The DSS driver probes, but the probe fails as it requires all the panel
+> devices to have been probed (and thus registered to the DRM framework)
+> before it can finish its setup.
+>
+> With dual-link, probing does happen and the drivers work. But I believe
+> this is essentially an accident, in the sense that the first link
+> between the panel and the OLDI still blocks the probing, but the second
+> links allows the driver core to traverse the devlinks further, causing
+> it to mark the links to the panel as FWLINK_FLAG_CYCLE (or maybe it only
+> marks one of those links, and that's enough).
+>
+> If I set fw_devlink=3Doff as a kernel parameter, the probing proceeds
+> successfully in both single- and dual-link cases.
+>
+> Now, my questions is, is this a bug in the driver core, a bug in the DT
+> bindings, or something in between (DT is fine-ish, but the structure is
+> something that won't be supported by the driver core).
+>
+> And a follow-up question, regardless of the answer to the first one:
+> which direction should I go from here =3D).
+>
+> The device tree data (simplified) for this is as follows, first the
+> dual-link case, then the single-link case:
+>
+> /* Dual-link */
+>
+> dss: dss@30200000 {
+>         compatible =3D "ti,am625-dss";
+>
+>         oldi-txes {
+>                 oldi0: oldi@0 {
+>                         oldi0_ports: ports {
+>                                 port@0 {
+>                                         oldi_0_in: endpoint {
+>                                                 remote-endpoint =3D <&dpi=
+0_out0>;
+>                                         };
+>                                 };
+>
+>                                 port@1 {
+>                                         oldi_0_out: endpoint {
+>                                                 remote-endpoint =3D <&lcd=
+_in0>;
+>                                         };
+>                                 };
+>                         };
+>                 };
+>
+>                 oldi1: oldi@1 {
+>                         oldi1_ports: ports {
+>                                 port@0 {
+>                                         oldi_1_in: endpoint {
+>                                                 remote-endpoint =3D <&dpi=
+0_out1>;
+>                                         };
+>                                 };
+>
+>                                 port@1 {
+>                                         oldi_1_out: endpoint {
+>                                                 remote-endpoint =3D <&lcd=
+_in1>;
+>                                         };
+>                                 };
+>                         };
+>                 };
+>         };
+>
+>         dss_ports: ports {
+>                 port@0 {
+>                         dpi0_out0: endpoint@0 {
+>                                 remote-endpoint =3D <&oldi_0_in>;
+>                         };
+>                         dpi0_out1: endpoint@1 {
+>                                 remote-endpoint =3D <&oldi_1_in>;
+>                         };
+>                 };
+>         };
+> };
+>
+> display {
+>         compatible =3D "microtips,mf-101hiebcaf0", "panel-simple";
 
-[...]
+In here, add this new property that I added some time back.
 
-> +
-> +static void csum_diff_setup(void)
-> +{
-> +       int err;
-> +       char *buff;
-> +       size_t i, sz;
-> +
-> +       sz =3D sizeof(ctx.skel->rodata->buff);
-> +
-> +       setup_libbpf();
-> +
-> +       ctx.skel =3D csum_diff_bench__open();
-> +       if (!ctx.skel) {
-> +               fprintf(stderr, "failed to open skeleton\n");
-> +               exit(1);
-> +       }
-> +
-> +       srandom(time(NULL));
-> +       buff =3D ctx.skel->rodata->buff;
-> +
-> +       /*
-> +        * Set first 8 bytes of buffer to 0xdeadbeefdeadbeef, this is lat=
-er used to verify the
-> +        * correctness of the helper by comparing the checksum result for=
- 0xdeadbeefdeadbeef that
-> +        * should be 0x3b3b
-> +        */
-> +
-> +       *(u64 *)buff =3D 0xdeadbeefdeadbeef;
-> +
-> +       for (i =3D 8; i < sz; i++)
-> +               buff[i] =3D '1' + random() % 9;
+post-init-providers =3D <&oldi-txes>;
 
-so, you only generate 9 different values for bytes, why? Why not full
-byte range?
+This tells fw_devlink that VP doesn't depend on this node for
+initialization/probing. This property is basically available to break
+cycles in DT and mark one of the edges of the cycles as "not a real
+init dependency".
 
-> +
-> +       ctx.skel->rodata->buff_len =3D args.buff_len;
-> +
-> +       err =3D csum_diff_bench__load(ctx.skel);
-> +       if (err) {
-> +               fprintf(stderr, "failed to load skeleton\n");
-> +               csum_diff_bench__destroy(ctx.skel);
-> +               exit(1);
-> +       }
-> +}
-> +
+You should do the same for the single link case too.
 
-[...]
+Hope that helps. Let me know.
+
+Thanks,
+Saravana
+
+>
+>         ports {
+>                 port@0 {
+>                         lcd_in0: endpoint {
+>                                 remote-endpoint =3D <&oldi_0_out>;
+>                         };
+>                 };
+>
+>                 port@1 {
+>                         lcd_in1: endpoint {
+>                                 remote-endpoint =3D <&oldi_1_out>;
+>                         };
+>                 };
+>         };
+> };
+>
+>
+> /* Single-link */
+>
+> dss: dss@30200000 {
+>         compatible =3D "ti,am625-dss";
+>
+>         oldi-txes {
+>                 oldi0: oldi@0 {
+>                         oldi0_ports: ports {
+>                                 port@0 {
+>                                         oldi_0_in: endpoint {
+>                                                 remote-endpoint =3D <&dpi=
+0_out0>;
+>                                         };
+>                                 };
+>
+>                                 port@1 {
+>                                         oldi_0_out: endpoint {
+>                                                 remote-endpoint =3D <&lcd=
+_in0>;
+>                                         };
+>                                 };
+>                         };
+>                 };
+>         };
+>
+>         dss_ports: ports {
+>                 port@0 {
+>                         dpi0_out0: endpoint@0 {
+>                                 remote-endpoint =3D <&oldi_0_in>;
+>                         };
+>                 };
+>         };
+> };
+>
+> display {
+>         compatible =3D "microtips,mf-101hiebcaf0", "panel-simple";
+>
+>         ports {
+>                 port@0 {
+>                         lcd_in0: endpoint {
+>                                 remote-endpoint =3D <&oldi_0_out>;
+>                         };
+>                 };
+>         };
+> };
+>
+>   Tomi
+>
 
