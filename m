@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-375164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEDE9A91C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:12:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4085E9A91CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094171F231EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616281C21DF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4301E22FA;
-	Mon, 21 Oct 2024 21:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D11E32A1;
+	Mon, 21 Oct 2024 21:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZRtS9R+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bal5nmP/"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796491C8FD6;
-	Mon, 21 Oct 2024 21:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F0C1E22FB
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 21:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729545119; cv=none; b=sv0xmN2VXLtJnlS7SdL7VDJMexsxq8pVFI4v1KfvkvWGHIA94Bzx9OK0EoKRwvZNBJsDsFuDj74vYo7/xPDvdwUaAt6vh+1qd1c335ujvQg+mBL5mzOk3MjiiFPhjCEZ00440mQNEueixlfW8vVWU8NoLlGGedalA2UOe3GDokA=
+	t=1729545155; cv=none; b=oHzuK84qFr2d5W9LGbrHOtlwmuRVnYF1oPDzh8fSyhgXEkxaaGW4PpRRs1V3uOFOOqE6cj/vJXyY2YaCE8cUn5Sy4kzm8p5Qvk3P8XAIxC2a6PEZi6Mj/Ieoeya2OAyp4eorcpsUCb3vXUfZSumyVpZPP3No3/rCc9V8H66/GLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729545119; c=relaxed/simple;
-	bh=PMQIm5ic//W4ZUrOlc9TwP4zzlIWpo2DNhQs18XRtDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTzhj8wT/XcOX3msYJlOBDB4CX9E6Rsx7pPsgZHyCTfu7ZjRHanDQ4R+EL5f8TC9SjK7eq3dXhuAzy0EYxouLIhU8grwUNb5Ik9ZZMb//UUoRmQSZTBU51cSxMT1ywrWVnfasPDGs7Zk/A7k6uBa4e+WlifRBPZwjAlIpBkP5xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZRtS9R+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66524C4CEC3;
-	Mon, 21 Oct 2024 21:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729545118;
-	bh=PMQIm5ic//W4ZUrOlc9TwP4zzlIWpo2DNhQs18XRtDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uZRtS9R+ludXUQr8/Zg/47dNSxlpeii1/YHWDD9OBp4xgTghPtSwZr7/KYd2tLWcF
-	 aa2D0MLUceWZrr3r0LAvNw4+1MVeprmLwtB29cklxvYxumm+ipL1Axf2hXSbItbHgm
-	 ciqyGEjHv34anKptFmv5bjPY9tZYqS4Lvp+l+TBnVb5ix8w///1IlR0K0t3xIfWcHM
-	 LH/EumJE5zCZhJx/ezEq37LBZRlhtmIzGtPxWBlm5+VfLIRy/KrVGV/t9PnctEn3mD
-	 Azcnkj3JIinCiYcZh4/HvVbGjXgpVub6IQv9+CUG9OdTi7okmIjY5/DYcYtLoqU0i/
-	 LuprNSbsc8y0Q==
-Date: Mon, 21 Oct 2024 22:11:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] dt-bindings: soc: bcm: Convert to Dt schema
-Message-ID: <20241021-handset-frolic-a910c4cb1669@spud>
-References: <20241019-raspberrypi-bcm2835-power-v1-1-75e924dc3745@gmail.com>
- <20241021-exposable-seventh-baed2b1442b6@spud>
- <pyizqjpxjgd6zdrhh65fklmyrxgxmlu2wmv7tzpdhdkwh7ifn6@efvaxhpekxtb>
+	s=arc-20240116; t=1729545155; c=relaxed/simple;
+	bh=vT8uNYu+6v08jfCmB1LZB7EQjXInFV7mAuG4Z1WlmKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gJEVA36DPOozujD2R+H7dLBSBQTXRDNRtlgDuDrwykBMZqQtpJplDIFP13OZilexp7Tj78B5CnZTDavReW8EVkoNj/dEbGXYko6cD1WerTkS6ZkIL7ky95DnCtQbOLqbPozwcPE8rh9iMdD3wz1ZlygpZjj6GDN6GBhDfo+8LxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bal5nmP/; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460a8d1a9b7so42711cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729545152; x=1730149952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V9SgtYJ7ruMEHetOUIPlHgPbj24nHZho9hMlB1OIKsU=;
+        b=Bal5nmP/YDOeazS02HBKQj3po7eam9fM35N8ckRv4t2eyayKGLV+lSqXxmcWz/oZvg
+         u3hbY20J9awjnSvboLN1O8SejIlXPKKQRjoMidML7pGfk2JbZ02JI3HQTnYNYWGVwl39
+         5bHywUf4Q+/nxjJxu+cbvw4uUmYScZUk6y1MYfs+Jo+pgDRi98CatUHOgGfahlIDiGNK
+         OKzBiof0s8oAfist9aaeWMHFCCDSmwZgj0czFKewjBXOVhtIzStgI8vtVQTc6lfp8fqt
+         HZFVQbpPydYYDdD/c6ohM5u+XRjOS6v2URl7wvMV4mFct31jJWyZ75SUELNLOGlDAZJ+
+         zlsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729545152; x=1730149952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V9SgtYJ7ruMEHetOUIPlHgPbj24nHZho9hMlB1OIKsU=;
+        b=U2cBdy8M9s/CXSMEdNKBfq3XrfM837yyQbfNLNI+kDHl3+yJOgHDKqLqgc4MyzTsyl
+         a6U5hQJnWTzSy4DH/D/tjD7m21Ti4yLP1BXVAFfrW2vpbNhG+V1kah/a8ODE6C9Q6BlQ
+         k7NMTOaXZhFYhIrBhsx35Z8Jx3sI8ZAKk6Y4Xj39cKseBwRVdLn29vxPdHEsbgHNLDKm
+         xYIzDtSOxdeUYQnghpKQqR46pxOYnBspk6LZo52mPuGY95OM8jcwQLHvoV48nKtNMgNB
+         cSn+v4CoMR/x06xkZWlvaOix3OEq31kggcV2TeXgSuvG4vuHaHQi+KUfpstQTXnZo4hv
+         7hIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtYJVuxmogGXrF8BKZFfhSinngGxY2rR3Rj0T+3eme2Kd7HVGYaVrYHKNGMnAqQXElfelhq5HPTM5DUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/NHsRnQGWHZAeuKBG6pnZ3gFB5t+Inqd4VffBBIskRs2b3III
+	P6UybO5pwoctq8FF/l4aQQtB/p96btyET5WJdxO6n7C2N39siqAZzbghSNephN8sL0Qn20aMA8X
+	uAD3eAYUZCfwsgo4qiFWHTQ+0ZDA9ylTCElcX
+X-Google-Smtp-Source: AGHT+IGzo2TISqKT3Jl9CfeQZcohbh2s1lnUXzilu8k+T0K2sU2TWbK8wa3xZAwv92x9q/+t8oEme9GGEjWaFA3FT2U=
+X-Received: by 2002:a05:622a:4b08:b0:460:afbd:4101 with SMTP id
+ d75a77b69052e-46100a7fcd1mr1133581cf.4.1729545151682; Mon, 21 Oct 2024
+ 14:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="VpBKaFiwjRspgXeg"
-Content-Disposition: inline
-In-Reply-To: <pyizqjpxjgd6zdrhh65fklmyrxgxmlu2wmv7tzpdhdkwh7ifn6@efvaxhpekxtb>
-
-
---VpBKaFiwjRspgXeg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241014213342.1480681-1-xur@google.com> <CAF1bQ=SQ9rFdwRk_waQvn4PW7x6T1uJmJ8qNqj04oRKmujkCQw@mail.gmail.com>
+ <20241020032523.GA3652325@thelio-3990X>
+In-Reply-To: <20241020032523.GA3652325@thelio-3990X>
+From: Rong Xu <xur@google.com>
+Date: Mon, 21 Oct 2024 14:12:19 -0700
+Message-ID: <CAF1bQ=QYnC+0EREWcp1-NXCtCC6KqJf7k0LRxqaTY7fxWSOZ8A@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] Add AutoFDO and Propeller support for Clang build
+To: Nathan Chancellor <nathan@kernel.org>, Stephane Eranian <eranian@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 06:13:17PM +0000, Karan Sanghavi wrote:
-> On Mon, Oct 21, 2024 at 12:39:28PM +0100, Conor Dooley wrote:
-> > On Sat, Oct 19, 2024 at 07:51:18PM +0000, Karan Sanghavi wrote:
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/power/raspberrypi-power.h>
-> >=20
-> > What do you use from this header?
-> >
-> Example for power node
-> power: power {
->         compatible =3D "raspberrypi,bcm2835-power";
->         firmware =3D <&firmware>;
->         #power-domain-cells =3D <1>;
->    };
->=20
-> Example for using the power domain
->=20
-> &usb {
->         power-domains =3D <&power RPI_POWER_DOMAIN_USB>;
->    };
->=20
-> We need the header for referring the power domain defines in the sub
-> nodes.
->=20
-> I didn't understood exactly how should I include the usb example thus
-> omitted it but if required can you please let me know how to add them.
+On Sat, Oct 19, 2024 at 8:25=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> Hi Rong,
+>
+> On Fri, Oct 18, 2024 at 11:20:02PM -0700, Rong Xu wrote:
+> > Thanks to all for the feedback and suggestions! We are ready to make an=
+y further
+> > changes needed. Is there anything else we can address for this patch?
+>
+> I will reply in a separate thread for visibility but I think one of the
+> biggest open questions at the moment is trying to find someone to
+> shepherd this code into mainline.
+>
+> > Also, we know it's not easy to test this patch, but if anyone has had a=
+ chance
+> > to try building AutoFDO/Propeller kernels with it, we'd really apprecia=
+te your
+> > input here. Any confirmation that it works as expected would be very he=
+lpful.
+>
+> I went to take this series for a spin in a virtual machine first as a
+> smoke test before attempting to boot on bare metal. This was done on a
+> server with an Intel Xeon Gold 6314U. The kernel booted fine but when I
+> went to run the command to generate the perf data from the
+> documentation, I get an error.
+>
+>   $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c 500009 -o /tm=
+p/perf.data -- make -j$(nproc) O=3Dout mrproper defconfig all
+>   Error:
+>   BR_INST_RETIRED.NEAR_TAKEN:k: PMU Hardware or event type doesn't suppor=
+t branch stack sampling.
+>
+> Do you know if this is expected for a virtual machine setup? I will
+> attempt to test the series on real hardware here soon, it is currently
+> tied up with investigating a regression in -next at the moment.
 
-There's usually no consumers in a provider binding example, and you have
-not included one, so the header isn't needed.
+We have never tested this patch in a KVM setup.
 
---VpBKaFiwjRspgXeg
-Content-Type: application/pgp-signature; name="signature.asc"
+As far as we know, LBR support in KVM is currently limited, and varies
+depending on the PMU virtualization model:
+(1) For legacy mode, LBR profiling might work under LBR virtualization
+(VLBR). However, we have not tested this.
+(2) For the new "Mediated vPMU passthru' mode, there is no LBR
+virtualization support at this point. So LBR profiling is not working.
 
------BEGIN PGP SIGNATURE-----
+I've included Stephance here. He should have more expertise on this topic.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxbDmgAKCRB4tDGHoIJi
-0vKGAP0VdfzTFXfbF3Xen/3fPcRaG2PatahrcoBFxliQispYnAEA7WXpT0vMR1xX
-Rnas3Xb/zcVB9q5tHofl1UV7Cs48kAc=
-=zotD
------END PGP SIGNATURE-----
-
---VpBKaFiwjRspgXeg--
+>
+> Cheers,
+> Nathan
 
