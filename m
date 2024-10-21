@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-374184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBD09A667E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39669A6687
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C255FB263D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421C51F22D96
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE61E1E7657;
-	Mon, 21 Oct 2024 11:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDD91E7C01;
+	Mon, 21 Oct 2024 11:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LZfS4iPL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ulqzTF6d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JxpTRpOJ"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39B1E5708
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60D1E3DD8;
+	Mon, 21 Oct 2024 11:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729509653; cv=none; b=GYBqoXBL6XEXJqlYe4U7fsl2uf3L7bBVd85Ow7BjUIdUJpH1xWXgTv4wfl+uy33Qk5NaNEmM8XQbknVFh4376+e186smkLTSB/xIYnWhnqCPjEkTyms+112ofxC5lmVI1swQE/G6cZgPTuiTJUWsHBDB9Bcjp6bdgG2bB27AEP8=
+	t=1729509685; cv=none; b=Whf2MuuPQXxhN/Xb3O6KnmBj4yDmMKiqoferT1dhWZszytnZFM0crv6ZoinZxswJ4D0Q7FREkvHE6qcJihB+YjSg9eAI48jSbbbbVNO7ZPjysUaG27nBmIJ/0vVvMLHY/ylYCsKp1znhA+WVFEyxa7DRwI8w0I1+g49pw5Vd5Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729509653; c=relaxed/simple;
-	bh=vN1ylj+X91hQZw4H17XL5HLnuy4ALKIQAm1oA5MM2rA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMmAy3HmYNoBtXB0PcSp7oXSR0gQOsdW2LkcT6UfxSN2D7i0iL7wYpsu2BElP3ubgL97RaUnSOCWh4DQfvJjUtyeiDPPvDZn3mxoSBqtkCWB2OiaodFwS5bLa6o/0aTmZ2f8VdoIDzY3PicqtGhwaHsDVsXiCJkvtmB8VSAPdiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LZfS4iPL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729509650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5EJq3nTCY2846K0vo9vaCnqoyl72A9YpQztvsfdIGoY=;
-	b=LZfS4iPLnPwXhszaGgO6nJTNGrL2cKd5yBH+39LUsgokaWhh4HtxDSZwr1mlp/7FlIEVXt
-	gTfy2ewLMuOb8i4FDdlBfo2XDa4/DiTIq+H/jHEhm3v+acH9GWuJ742jbaeFlhAgS9sXQH
-	8xDLWkf8PnOshIKVEMYxQg8d6u58b2U=
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
- [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-_sANJXSHMWmjTae5u-GYBA-1; Mon, 21 Oct 2024 07:20:48 -0400
-X-MC-Unique: _sANJXSHMWmjTae5u-GYBA-1
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-85010a3ceb0so506827241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:20:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729509648; x=1730114448;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EJq3nTCY2846K0vo9vaCnqoyl72A9YpQztvsfdIGoY=;
-        b=UEpTpQssE1vNdCEznaQKyZT++273i3Y9mQstRNXHsn/PFKeUyRCe09+sXTEgmLzh+c
-         YU9TnWIs4t7aIHrI23UreU14PqLJyemc4/wBtVDbECo43B5nNk719ry1Ayvke/IjLChd
-         w9ZiVrlm7DG36ijdjAuSOsq5oLJhSZ7hyZTmKBwkVx4dRtZCrt0NP1CJQkd7sPonnEzG
-         nNc+Dn5aYxzlebMlwq0rz8W/tIJUHrtmUzWbR9W7WSxE9mDcH92gh7q8vvEhPwU31mkT
-         qN3e/HBWL/F8nC45xro6LEBxNHmD3gL/5+fTmY6heg7H87roAcM9cTkYX/pN/8GF0Ge4
-         ue3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQlESo6VG+XX89hhPjGTHP8ehbu4ETnib8Y+pGJnlO8YAoqNGMkMv6/qsIQ4fCPq77ZlUj740a+MGzfy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYUuvVsHJ+sc6A7+/UPkn5nV00M92cSLICgWWE426zzu6lLQAJ
-	nTuRY3Mp8H8qMoM+Y1vdKpDagj/K2g6BrmIf9vuUNUI555dfJY/BuJtE9h6eGIoj3JQTh6J6Yp0
-	2kf0bNOOSu5X6BqiCnbo1xANeBTEhBbo0aSjXDg9Sg5EOAZd1i3r6gzv3HysPJQ==
-X-Received: by 2002:a05:6102:ccb:b0:4a3:ce37:9137 with SMTP id ada2fe7eead31-4a5d6b080cbmr9475730137.13.1729509648305;
-        Mon, 21 Oct 2024 04:20:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeyi/HIFqi2HtXCMmpe1qAaPmojvVF0iexyAfT2ooED6UKyLdMATTFLlU05hPn3kNpW2Vngw==
-X-Received: by 2002:a05:6102:ccb:b0:4a3:ce37:9137 with SMTP id ada2fe7eead31-4a5d6b080cbmr9475690137.13.1729509647916;
-        Mon, 21 Oct 2024 04:20:47 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c62e9esm16564851cf.27.2024.10.21.04.20.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 04:20:47 -0700 (PDT)
-Message-ID: <7213ebbd-49d1-422d-84f2-14b48a14ed82@redhat.com>
-Date: Mon, 21 Oct 2024 13:20:44 +0200
+	s=arc-20240116; t=1729509685; c=relaxed/simple;
+	bh=mHxtqJKALMM2JzQ4QjvJxiwzCfXdEBolIhZyDxg/CEU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UEVZrAsozR9YFiA+NbmP9YT+mhCzPBc+KzMdzvBcSfUeCjlDCIdEDzaZhjLlKH/L7iO0S2gjV041M2h8WRVLhZv3IBw0Gzj61OLpFnX1IAUDJNnGE4u3kANfmi+yzPXC5hhleQPNo7blxlDclJtFcowwP/+ySXfK3iAXcT07gmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ulqzTF6d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JxpTRpOJ; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailflow.phl.internal (Postfix) with ESMTP id 1134D200206;
+	Mon, 21 Oct 2024 07:21:22 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 21 Oct 2024 07:21:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729509682;
+	 x=1729516882; bh=fvD3ctpqrCWAfhRvwnz/vMYY3oWGeyeXaHqmlBQJW9U=; b=
+	ulqzTF6dqm9TDZQpemlAVPsLUXyYkvNAzrfcULOOPesTtIz+Z4Ai0z12HABf1ctb
+	23jnEQISppKaZtN6R9jusvv7XqVCi0GMq66sPA8O1L7cdwWtoeVCMtKVTY2w3haz
+	rR27LXnZBNV800rflp1teAMig+lDUvZYxCWza+PX2DR439QxbF0PkDODEoGNUrfW
+	uGbdoE84+5R3BJtwqf3G5Velav1VcdQq1cU6M6bhPD4PYg0M+daEBboU4PXXFuFP
+	6Yl3lx39pHOGWiPPfJt+bY029hBO3KTVN6+6fzhbPZfDaS3w3qYPY+gJMUHqeNuK
+	jUSdbxK0JB8OePnbvxPktA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729509682; x=
+	1729516882; bh=fvD3ctpqrCWAfhRvwnz/vMYY3oWGeyeXaHqmlBQJW9U=; b=J
+	xpTRpOJ4uJFwt33ULhA4kXA4a69HtyOOzm7oX2UNenK3N/lPf3Zz1ZBrrZnSJNYZ
+	wQAzuMzfS4Ki7UDhYhHkMeh/yNkBJufymBB/OQTgsngdWT9YJl7jWeFKgOK5Y88Y
+	spFb7baVoJP9/V7CXc0MIMDhLF13YbMlhL3dYiqR6EfIMoWXO1tdm8GFNOyH5WKM
+	vJPia/cKnpVJ3vVqUzwCxhP3JUsM9zzdcgzWBH879ZQBBxJf+/Zf5BLdrJyDeDpm
+	bjQoUwGM+18gRD90QgYWxo0Hx2AiPhq0U+bV5AfGcFGBppQPrm5TCZ+HKwBRszPT
+	Z42mn8unbo1AXgbzzs5cQ==
+X-ME-Sender: <xms:MTkWZ22VTNkVIywiKLmtz380cPoWc7iOcVWQx0cbwZL_zea-JlVLLw>
+    <xme:MTkWZ5GpTeL7YzfMr3FRdWC5EOA-Ex1W4Xq2UVEGQF2VCJyx3kpnP8L8tMW9sVCAS
+    puxE_DA0EG9LBRlhZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledggedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
+    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehl
+    uhhiiidruggvnhhtiiesghhmrghilhdrtghomhdprhgtphhtthhopehprghtrhhikhdrrh
+    drjhgrkhhosghsshhonhesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrtggvlhes
+    hhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhutggrshdruggvmhgrrhgthhhise
+    hinhhtvghlrdgtohhmpdhrtghpthhtoheprhhoughrihhgohdrvhhivhhisehinhhtvghl
+    rdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:MTkWZ-7QdSiiIGy0vrhYQCsmMwygcvB-Q-0Wm6NmjI3Y8Q1M0bbqnw>
+    <xmx:MTkWZ301K1iwMIhsTcnFUngtniJVM2fWmbJjNAvDI5KAN7BEu1xNvw>
+    <xmx:MTkWZ5HY801U3mzpDI6Nkai1KBdpOODBwoYuAdLiNoXCOdAjHV96fA>
+    <xmx:MTkWZw8Y-CkdqEhfxR3RiTbMpKUABg-0CW3NZxU18UUaJHLwCQjamQ>
+    <xmx:MjkWZ-s9DCM7I8in58DNLWEmCFENsnEANFLsBcYnqsHEooUFVPU72N_x>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 268142220071; Mon, 21 Oct 2024 07:21:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: kvm: Adds a judgment on the return value
-To: Liu Jing <liujing@cmss.chinamobile.com>, borntraeger@linux.ibm.com
-Cc: frankja@linux.ibm.com, imbrenda@linux.ibm.com, pbonzini@redhat.com,
- shuah@kernel.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021100644.3591-1-liujing@cmss.chinamobile.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20241021100644.3591-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Mon, 21 Oct 2024 11:21:00 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>, "Brian Cain" <bcain@quicinc.com>,
+ "Marcel Holtmann" <marcel@holtmann.org>,
+ "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+ "Patrik Jakobsson" <patrik.r.jakobsson@gmail.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Dave Airlie" <airlied@redhat.com>,
+ "Gerd Hoffmann" <kraxel@redhat.com>,
+ "Lucas De Marchi" <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "Heiko Carstens" <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Message-Id: <c7592bd4-a9f9-43b0-a243-0fb2ef6bb83d@app.fastmail.com>
+In-Reply-To: <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
+References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com>
+ <20241008-b4-has_ioport-v8-3-793e68aeadda@linux.ibm.com>
+ <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
+ <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
+ <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
+Subject: Re: [PATCH v8 3/5] drm: handle HAS_IOPORT dependencies
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 21, 2024, at 10:58, Thomas Zimmermann wrote:
+> Am 21.10.24 um 12:08 schrieb Arnd Bergmann:
+>> On Mon, Oct 21, 2024, at 07:52, Thomas Zimmermann wrote:
+>> --- a/drivers/gpu/drm/tiny/bochs.c
+>> +++ b/drivers/gpu/drm/tiny/bochs.c
+>> @@ -112,14 +112,12 @@ static void bochs_vga_writeb(struct bochs_devic=
+e *bochs, u16 ioport, u8 val)
+>>   	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
+>>   		return;
+>>  =20
+>> -	if (bochs->mmio) {
+>> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
 
+I meant IS_ENABLED() of course.
 
-Am 21.10.24 um 12:06 schrieb Liu Jing:
-> The global variable errno is not recommended to be assigned,
+> For all functions with such a pattern, could we use:
+>
+> bool bochs_uses_mmio(bochs)
+> {
+>  =C2=A0=C2=A0=C2=A0 return !IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mm=
+io
+> }
+>
+> void writeb_func()
+> {
+>  =C2=A0=C2=A0=C2=A0 if (bochs_uses_mmio()) {
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writeb()
+> #if CONFIG_HAS_IOPORT
+>  =C2=A0=C2=A0=C2=A0 } else {
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 outb()
+> #endif
+>  =C2=A0=C2=A0=C2=A0 }
 
-Just curious: from where is that information?
+Yes, that helper function look fine, but it should then
+be either __always_inline or a macro. With that, the
+#ifdef is not needed since gcc only warns if there is
+a path that leads to outb() actually getting called.
 
-Reading the man page:
-
-"errno is defined by the ISO C standard to be a modifiable lvalue
-  of type int, and must not be explicitly declared; errno may be a
-  macro.  errno is thread-local; setting it in one thread does not
-  affect its value in any other thread."
-
-Paired with
-
-"For some system calls and library functions (e.g.,
-  getpriority(2)), -1 is a valid return on success.  In such cases,
-  a successful return can be distinguished from an error return by
-  setting errno to zero before the call"
-
-Not objecting that relying on the rc looks cleaner.
-
->      and rc in the function does not check its return value, so it is fixed
-> 
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> ---
->   tools/testing/selftests/kvm/s390x/cmma_test.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/s390x/cmma_test.c b/tools/testing/selftests/kvm/s390x/cmma_test.c
-> index e32dd59703a0..c59c21f28bbd 100644
-> --- a/tools/testing/selftests/kvm/s390x/cmma_test.c
-> +++ b/tools/testing/selftests/kvm/s390x/cmma_test.c
-> @@ -210,7 +210,7 @@ static int vm_get_cmma_bits(struct kvm_vm *vm, u64 flags, int *errno_out)
->   	struct kvm_s390_cmma_log args;
->   	int rc;
->   
-> -	errno = 0;
-> +	*errno_out = 0;
->   
->   	args = (struct kvm_s390_cmma_log){
->   		.start_gfn = 0,
-> @@ -219,8 +219,10 @@ static int vm_get_cmma_bits(struct kvm_vm *vm, u64 flags, int *errno_out)
->   		.values = (__u64)&cmma_value_buf[0]
->   	};
->   	rc = __vm_ioctl(vm, KVM_S390_GET_CMMA_BITS, &args);
-> +	if (rc < 0) {
-> +		*errno_out = errno;
-> +	}
->   
-
-if (rc < 0)
-	*errno_out = errno;
-
--- 
-Cheers,
-
-David / dhildenb
-
+      Arnd
 
