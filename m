@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-373902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31719A5EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC649A5EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08D51C21363
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B492F2836C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E491E1C2D;
-	Mon, 21 Oct 2024 08:34:31 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF7E1E22F2;
+	Mon, 21 Oct 2024 08:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2QvAeHg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823271D0F76
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1294F1D0F76;
+	Mon, 21 Oct 2024 08:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729499671; cv=none; b=rKY9QJYLd/0GTtx2mNhN1f0qWRZKe6tw27rn2Evmpb+YOmA7NTicjk1W7Ax6flhH5KReO6s4JrqZGXrMI99LUQsqlRFRPEhMRUQe4kyIqMo9LWpxCd6za341HCVfrMcEJYbZa2uOolwKG8TktxGqKnirQBtpF2wDLp0baTNziJI=
+	t=1729499732; cv=none; b=ZifGCRTtRuubqp6m6DoTRdoRlFHBjl7opZx1cynDhBEvg/E+gc/X+jPU1FHo2JWkYVwsyHKXnrbhKwTivG9PUpWbNbFRqg8B9abWVAbahutfwa3bWnHXu28ccmj9ymY1kDQP5UU8k08KQYu1IrVEjoJem5VqyUrTaIx663ikWlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729499671; c=relaxed/simple;
-	bh=XU8o2WZZZAB7gSPAv2O20qXXZQ9Z1te3GzZRn0W0oTc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dvQRk9GWedCIDcodv3WKpeYJElQHLEexhxGCs4aX3rvahkKzdOJf1snuv6Wt55iXNjUafJ7kRhrj726Gt87gvSlq7JfQ7xdsnSqKlYwFj01XGvA16pPOJLGF6UZtqKGhywkBLADWlKr/Yvy6jmhzLhUVOrD83h3sEMKDcNvRnik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso33384335ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:34:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729499668; x=1730104468;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EMjfFkhxpj6Tyr8/Ow2y3KJJJ/7bNVau0WrSqtwkCAs=;
-        b=iQe/Jdb83xY4gYyIoS3aBYsTYBt53p3v/Tg/jBXc2megAsky0BmBXl84H93it7s0VQ
-         MB7Ln50mh4fX1bOzW1LSk3tqm//k1AA0lR3BS7QIPVXT6iYSY5XFz8S83U/eu7J370+Y
-         nL7z8CNEaDovNjWXmc1z9bIexO8FBJZrQN8jFO0wVEdZrQq8UJwgTm3YqQX6soPy2Ecw
-         OoYbLpJaEJG1hRjhB+J3mOpB7pDIiozM7DpqRtivFEFINry2BgCiSlK6ambi5WbzsUlY
-         YVJShVby1eXHQocTe704pyfnEkxdxdLiybfyB8QUZCyCVPfF3iXUC+nGJkAt2kkws9oq
-         4EOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhfnrCy0I1dd+LcGJzb0VG0izAgkMDZaEm+GQF20moLiHk42tPQB6SJ9+DNg/OcWn61jYJuX3MW1Z5RZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz65X4w3WKSygdtBVW8AQE8qS8Dv9TQa27E3vBI4+Vuf4d0zGHF
-	4h+24j585tG5nLNKTbcjAVVYZ6mlgWyvupZoWeFMtcNvJrRSBHbnuby5nuYDSyD4cgbB+dcWn+3
-	u2b+v1QxQRWltLxEdC2QanNgViJMU86adrgfy/T0hHnKziEaok3OQuf8=
-X-Google-Smtp-Source: AGHT+IH6pKUvJqlfItRP5S/8YUn7NiAOX/hauIj9Fm5rYracYxmLjFpilAeCZkIN0Rc3usLGK9IJUFvoijf17MWeWA+F99Rbq4mJ
+	s=arc-20240116; t=1729499732; c=relaxed/simple;
+	bh=FkaMvQc080r/OnG8E8ERhiVl7thWGOwKq3t+EBfEcAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=msz017ELB+8d0ffZZD7BlE1oj5KE9F4N/GlD2tydGuViTZePVBix71r05l3s6xgGKsTNlWSjbFE8fLD0zTYBY6NS8tRN36zsRXKQgpHikjTmuO0okDgKLUizO1lX1QO7SwM5E3EHjIFy2na6SDgZej9zX4mxvsZjCjUsa66Qlqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2QvAeHg; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729499730; x=1761035730;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FkaMvQc080r/OnG8E8ERhiVl7thWGOwKq3t+EBfEcAo=;
+  b=c2QvAeHgMdk9OYrTkf3YMew3Z0totxTGqwapLiE8nzD0vdMXj7q7jgOB
+   hwxr9QsYGey0ZvlK55zFwGpyadL9jdm0huK3+N37aZF+aMl/t8YoGyrJr
+   HrFZH9Rq9C7lNJ+JozVIEUTfEDl73xapqEbj2VeIF2UPfOj0PKTILE2HG
+   equSQHDfJHHoHw9V5W+a3XCV6MaWagyhNNWe1AhW/FhHb3ijo5sS0AZbu
+   A0pa0PvQO4VBLHDYy4T06k8zGtiO2gr3PFDTz3kPbji0D8OoIcf39lxKm
+   ABuHV69wA1ntIPRBqrIvPaSG/HlcZTpBn4dG5N8JUx6hfW/AemxBkg08H
+   w==;
+X-CSE-ConnectionGUID: N02P0MzoSi2TuYxEmMAy+w==
+X-CSE-MsgGUID: lqshXKphT2SY1P2RPWDd4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="28422947"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="28422947"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:35:29 -0700
+X-CSE-ConnectionGUID: bGz8EDNMQXKWVeo7/kBbLw==
+X-CSE-MsgGUID: 0CtfNHd7SliWf5a92bBphw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="79461463"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:35:27 -0700
+Message-ID: <1cb07b5d-1e42-44a4-bc0f-adc03433eb90@intel.com>
+Date: Mon, 21 Oct 2024 16:35:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d99:b0:3a0:9cd5:92f7 with SMTP id
- e9e14a558f8ab-3a3f409feb5mr76220495ab.17.1729499668417; Mon, 21 Oct 2024
- 01:34:28 -0700 (PDT)
-Date: Mon, 21 Oct 2024 01:34:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67161214.050a0220.1e4b4d.0051.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in vfs_set_acl
-From: syzbot <syzbot+0ec57cf5875fb74b1749@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/25] KVM: TDX: Do TDX specific vcpu initialization
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+ <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
+ <isaku.yamahata@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-19-rick.p.edgecombe@intel.com>
+ <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
+ <1a200cd3-ad73-4a53-bc48-661f7d022ac0@intel.com>
+ <1be47d7f9d4b812c110572d8b413ecdbb537ceb7.camel@intel.com>
+ <aa3d2db8-e72c-42e2-b08f-6a4c9ad78748@intel.com>
+ <0136dbcb2712828859447bc7696974e643a76208.camel@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <0136dbcb2712828859447bc7696974e643a76208.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 10/18/2024 10:20 PM, Edgecombe, Rick P wrote:
+> On Fri, 2024-10-18 at 10:21 +0800, Xiaoyao Li wrote:
+>>> KVM usually leaves it up to userspace to not create nonsensical VMs. So I
+>>> think
+>>> we can skip the check in KVM.
+>>
+>> It's not nonsensical unless KVM announces its own requirement for TD
+>> guest that userspace VMM must provide valid CPUID leaf 0x1f value for
+>> topology.
+> 
+> How about adding it to the docs?
 
-syzbot found the following issue on:
+OK for me.
 
-HEAD commit:    1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=142b1fd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ec57cf5875fb74b1749
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>
+>> It's architectural valid that userspace VMM creates a TD with legacy
+>> topology, i.e., topology enumerated via CPUID 0x1 and 0x4.
+>>
+>>> In that case, do you see a need for the vanilla tdh_vp_init() SEAMCALL
+>>> wrapper?
+>>>
+>>> The TDX module version we need already supports enum_topology, so the code:
+>>>   	if (modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM)
+>>>   		err = tdh_vp_init_apicid(tdx, vcpu_rcx, vcpu->vcpu_id);
+>>>   	else
+>>>   		err = tdh_vp_init(tdx, vcpu_rcx);
+>>>
+>>> The tdh_vp_init() branch shouldn't be hit.
+>>
+>> We cannot know what version of TDX module user might use thus we cannot
+>> assume enum_topology is always there unless we make it a hard
+>> requirement in KVM that TDX fails being enabled when
+>>
+>>     !(modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM)
+> 
+> We will depend on bugs that are fixed in TDX Modules after enum topology, so it
+> shouldn't be required in the normal case. So I think it would be simpler to add
+> this tdx_features0 conditional. We can then export one less SEAMCALL and will
+> have less configurations flows to worry about on the KVM side.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d3858ef614f2/disk-1d227fcc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c3bc0a9537f9/vmlinux-1d227fcc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/50778a472926/bzImage-1d227fcc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ec57cf5875fb74b1749@syzkaller.appspotmail.com
-
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff88805ac19b98, owner = 0x0, curr 0xffff888028243c00, list empty
-WARNING: CPU: 1 PID: 6279 at kernel/locking/rwsem.c:1368 __up_write kernel/locking/rwsem.c:1367 [inline]
-WARNING: CPU: 1 PID: 6279 at kernel/locking/rwsem.c:1368 up_write+0x502/0x590 kernel/locking/rwsem.c:1630
-Modules linked in:
-CPU: 1 UID: 0 PID: 6279 Comm: syz.5.261 Not tainted 6.12.0-rc2-syzkaller-00205-g1d227fcc7222 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__up_write kernel/locking/rwsem.c:1367 [inline]
-RIP: 0010:up_write+0x502/0x590 kernel/locking/rwsem.c:1630
-Code: c7 c7 00 be 0a 8c 48 c7 c6 80 c0 0a 8c 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 53 e8 d3 42 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6a fd ff ff 48 c7 c1 00 25 1d 90 80 e1 07 80 c1 03
-RSP: 0018:ffffc900032efb20 EFLAGS: 00010292
-RAX: 220090bc865dbe00 RBX: ffffffff8c0abee0 RCX: 0000000000040000
-RDX: ffffc9000b6b1000 RSI: 000000000000a04b RDI: 000000000000a04c
-RBP: ffffc900032efc00 R08: ffffffff8155e402 R09: fffffbfff1cf9fd8
-R10: dffffc0000000000 R11: fffffbfff1cf9fd8 R12: 0000000000000000
-R13: ffff88805ac19b98 R14: 1ffff9200065df6c R15: dffffc0000000000
-FS:  00007fbdc01a26c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f94b6826920 CR3: 0000000063cca000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:820 [inline]
- vfs_set_acl+0x9c8/0xa60 fs/posix_acl.c:1143
- do_setxattr fs/xattr.c:626 [inline]
- path_setxattr+0x3bd/0x4d0 fs/xattr.c:658
- __do_sys_setxattr fs/xattr.c:676 [inline]
- __se_sys_setxattr fs/xattr.c:672 [inline]
- __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:672
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbdbf37dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbdc01a2038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-RAX: ffffffffffffffda RBX: 00007fbdbf536058 RCX: 00007fbdbf37dff9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000020000100
-RBP: 00007fbdbf3f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbdbf536058 R15: 00007ffc82e49b58
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+I'm a little bit confused. what does "add this tdx_feature0 conditional" 
+mean?
 
