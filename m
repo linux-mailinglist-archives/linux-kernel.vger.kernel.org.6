@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-375293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49AC9A9441
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:39:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCAD99A9449
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5E11F22F8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C261C2297F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11F61FF5EB;
-	Mon, 21 Oct 2024 23:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D9D1FF7D9;
+	Mon, 21 Oct 2024 23:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlmJFdG4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B4FRDqRK"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132881E377A;
-	Mon, 21 Oct 2024 23:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C831FF044
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729553942; cv=none; b=M+Jak7geg24VekaJhbXA0rYzeREsj2js7egSbmcsDdbwkW8RoRGeABa5FOvPC/Fc/fWd3zlqLKZrw9AbetlZUmYkdVaTmOJijQdmnZ2alsrjp/76jT94CFhuI4GzpRlHH3VqtPIeacnnmTJl3oIJbputH1UVKtTy6iDmToBt6Dw=
+	t=1729553993; cv=none; b=EqsACwY/PZPhNCW1BhcNy5GW7VXGY7WgbRhCzIb2QFJeg56QXMtZJ2OhCuXVNAP4UktErDMLCDxhYjzwQLHmVnG0b7zgk67RWau3oUvjaL7dWeswi3G7QBXHJ26hchtclXhklwFrcyBmtGGNxtEuTRLulTtLs9Xfvsu46Kh/LdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729553942; c=relaxed/simple;
-	bh=8qnMmFH0MXE6Lj7BejyTMYR4Q9lLJBOkGOACB4p65Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqqisjR2GRP/RnCBbPcDuaEHcKYj6DXfb0LNZtCMrb+wLS4a6tFZpYWZ/m7zfouKkrgHsesPqgR1igrUUlgTpldsuchla1qjTxpcJPVgoN6B4fzM2yfrf2BxfWbe5lrEhQ1sNjY6yiNFaGtEK+SyTt5Y+4KsstUQJbrc97XzW1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlmJFdG4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD8BC4CEC3;
-	Mon, 21 Oct 2024 23:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729553941;
-	bh=8qnMmFH0MXE6Lj7BejyTMYR4Q9lLJBOkGOACB4p65Z8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=SlmJFdG4UyEk0Tq6sBDLnlhUO1/r57NMe9kYQtlDl+5xbdB8lqr3cW2B7izWC83Pp
-	 xA0oRXEwpqi5zO5INQSfhIxg9z9p8J0pM/Qn0KQb7aYfPPQFD2C1dkNmjFDlUqu95b
-	 V9O8eNCSb6XS7oljJIxjxc4QcaYwYli/9BDwWUmMvvNv/B65dlLuR6ekWFJrkzTjnh
-	 tJ60U9kt81sXOuoYUBixo2po4MHPleB88ixwUbwX5/9RdNlbAQVMJyYAiCUpSTfxA5
-	 e/WpE97ZUWxLvdss8DXpPygy3K7ITFIFmut5JM422EbVjZEWBcqARwYuHFrQ0Yev72
-	 bzCDdhHO5vcOg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 261EBCE0F74; Mon, 21 Oct 2024 16:39:01 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:39:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <53b980b3-6bdb-4331-a627-f6e775d23eb1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ZxZ8MStt4e8JXeJb@sashalap>
+	s=arc-20240116; t=1729553993; c=relaxed/simple;
+	bh=9Mjk+knGxo9nQGglniMu8WtjiPcCZiTfSPn+6KQqmgY=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=sfTZ1f+MQnKXTIzFIWs+vC/Sy+eDiqjApR51YX2BGQgxfs9/0hO7ilLplJcZ/V89lbGFzn7tguGADbxNKSgXrUn96/9OPD4DRS1IuMwsh4G9HrCa0ZLWOHEixeC1gVeCZCZ2PqyjWhXBCC/0rgNPzgJ3j5rLza0oX5ZFVuJ3/7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B4FRDqRK; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b15416303aso346810685a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729553989; x=1730158789; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5e2lRCBhF/0lrzI1nrw+s1eH3A9IyPYDFt7tmHKeZEQ=;
+        b=B4FRDqRKcaXEsQ//LBESnkawFmz/cI2L8teK23drofWiu86po54i+Jmpgw0/dFNdze
+         YQCu1kUfCGmgBgvwV0yAepGWwGWwfxf3x/ebdrE/kRYvCytocfehOmw+dpLludhxI2DQ
+         D/BKYp5q5VHz9Vo6sw2ITl5PvT2Dm3Xc0kn92xekAY2E+uMIO6eTKI60FcFQO4eGUT31
+         OUZwJkyBDdfmV8HOqqyg8UXmc/5vzIFEESga7lB0uJWyQCydBW3U3KVwd3+e2E4LQgQ7
+         ITjgpVIgQ/2d+WElpNBfZK/TN54B6wNxU59bYyX3G6N2H5WSfuZHVcD/30USnOEkkyY7
+         15rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729553989; x=1730158789;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5e2lRCBhF/0lrzI1nrw+s1eH3A9IyPYDFt7tmHKeZEQ=;
+        b=XpeA1tCxccmv5ZCiQ065c5BJrT/XQ9NFpxU4fQTLeZSWpdY/i3ZRDkM33tGLDrlIPH
+         HyMOuQISV0OsK/BYqOP1JqoPFqVYUfl7v9zltUz1IPziSqrDy9NTi/fSaG0jQx+qaDj7
+         jUBMQ1OYGIYez1zJ8Lvvtd7z1DJnmx/1RO+k3JzDG09aRKQNTOUg89D/JvyFd+6fZe+S
+         0l+egCljJP3yBZRsoX6JBMx7FpAdH5GgGmkf/oOck5hK1Gcj5etbqsu5tIeWCHUTzcZR
+         Qtb4mG3WUdAAv4ZXn5fLX3lXhYtArVGZewVihmSn/IXfcj0TRsYE9uk0auYqAPSAgRfv
+         hJig==
+X-Forwarded-Encrypted: i=1; AJvYcCUYjTyHRrQM+sXR6Mg+i3nxlF6NtfzU2DDKhfKM1iv/A/xuUsZPfTy+c5gkVwkIYs9yUOcTy8Y8VQ0X/J4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCSYSIV/e1VuY7bVPxUmAhThU/iSv+pNo41pTsFze9KKwfJu9G
+	4zmp6ez3llFduwik4euqA1zwuyQTX8xY8Fb8Xz/j1Qy0UnvCVLJjjT6MXT5sdQ==
+X-Google-Smtp-Source: AGHT+IGc+EQuKBMmGMWGtVywnHwWIVFIhDEjXA67LbbrFi385rmMBG2jWd5aax6vHPWRTUq/OlgvAA==
+X-Received: by 2002:a05:6214:44a1:b0:6cb:9b65:5c75 with SMTP id 6a1803df08f44-6cde15d2f09mr209558626d6.32.1729553989320;
+        Mon, 21 Oct 2024 16:39:49 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008fe843sm23160626d6.45.2024.10.21.16.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 16:39:48 -0700 (PDT)
+Date: Mon, 21 Oct 2024 19:39:48 -0400
+Message-ID: <dad74779768e7c00d2a3c9bf8c60045d@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxZ8MStt4e8JXeJb@sashalap>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20241021_1626/pstg-lib:20241021_1624/pstg-pwork:20241021_1626
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, linux-integrity@vger.kernel.org, netdev@vger.kernel.org, audit@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-nfs@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 1/6] LSM: Ensure the correct LSM context releaser
+References: <20241014151450.73674-2-casey@schaufler-ca.com>
+In-Reply-To: <20241014151450.73674-2-casey@schaufler-ca.com>
 
-On Mon, Oct 21, 2024 at 12:07:13PM -0400, Sasha Levin wrote:
-> Hi folks,
+On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> The linux-next tree we all know and love is widely used by the kernel
-> community for integration work. It offers several advantages:
+> Add a new lsm_context data structure to hold all the information about a
+> "security context", including the string, its size and which LSM allocated
+> the string. The allocation information is necessary because LSMs have
+> different policies regarding the lifecycle of these strings. SELinux
+> allocates and destroys them on each use, whereas Smack provides a pointer
+> to an entry in a list that never goes away.
 > 
-> 	1. Early detection of conflicts between matinainer trees
+> Update security_release_secctx() to use the lsm_context instead of a
+> (char *, len) pair. Change its callers to do likewise.  The LSMs
+> supporting this hook have had comments added to remind the developer
+> that there is more work to be done.
 > 
-> 	2. Catching most new build errors/warnings
+> The BPF security module provides all LSM hooks. While there has yet to
+> be a known instance of a BPF configuration that uses security contexts,
+> the possibility is real. In the existing implementation there is
+> potential for multiple frees in that case.
 > 
-> However, it faces significant testing challenges:
-> 
-> 	1. Contains a mix of "ready-to-go" code and experimental additions
-> 
-> 	2. A single "bad" piece of code can affect testing of everything else
-> 
-> 	3. Low barrier of entry, encouraging inclusion over exclusion
-> 
-> 	4. While linux-next offers early conflict resolution and
-> 	identifies build issues, it is very difficult to actually test
-> 	due to the abundance of runtime issues it tends to have
-> 
-> These factors combine to make linux-next a valuable tool for integration
-> but problematic for comprehensive testing.
-> 
-> During the Maintainer's Summit, Linus Torvalds expressed concerns about
-> the quality of testing that code receives before he pulls it. The
-> subsequent discussion side-tracked to the testability of linux-next, but
-> we didn't directly address Linus's original concern about pre-pull
-> testing quality.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-integrity@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: audit@vger.kernel.org
+> Cc: netfilter-devel@vger.kernel.org
+> To: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: linux-nfs@vger.kernel.org
+> Cc: Todd Kjos <tkjos@google.com>
+> Reviewed-by: Serge Hallyn <sergeh@kernel.org>
+> ---
+>  drivers/android/binder.c                | 24 ++++++-------
+>  fs/ceph/xattr.c                         |  6 +++-
+>  fs/nfs/nfs4proc.c                       |  8 +++--
+>  fs/nfsd/nfs4xdr.c                       |  8 +++--
+>  include/linux/lsm_hook_defs.h           |  2 +-
+>  include/linux/security.h                | 35 +++++++++++++++++--
+>  include/net/scm.h                       | 11 +++---
+>  kernel/audit.c                          | 30 ++++++++---------
+>  kernel/auditsc.c                        | 23 +++++++------
+>  net/ipv4/ip_sockglue.c                  | 10 +++---
+>  net/netfilter/nf_conntrack_netlink.c    | 10 +++---
+>  net/netfilter/nf_conntrack_standalone.c |  9 +++--
+>  net/netfilter/nfnetlink_queue.c         | 13 ++++---
+>  net/netlabel/netlabel_unlabeled.c       | 45 +++++++++++--------------
+>  net/netlabel/netlabel_user.c            | 11 +++---
+>  security/apparmor/include/secid.h       |  2 +-
+>  security/apparmor/secid.c               | 11 ++++--
+>  security/security.c                     |  8 ++---
+>  security/selinux/hooks.c                | 11 ++++--
+>  19 files changed, 167 insertions(+), 110 deletions(-)
 
-I have to ask...
+...
 
-Wouldn't more people testing -next result in more pressure to fix
-linux-next problems quickly?  Or perhaps more pressure for people to
-avoid linux-next?  But this later would also apply to a new linus-next.
-Unless Linus were to start rejecting pull requests that had not been
-in linu[sx]-next for "long enough", whatever that might be.  ;-)
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index 1bc2d0890a9f..8303bbcfc543 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -1127,14 +1122,14 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
+>  		secid = addr6->secid;
+>  	}
+>  
+> -	ret_val = security_secid_to_secctx(secid, &secctx, &secctx_len);
+> +	ret_val = security_secid_to_secctx(secid, &ctx.context, &ctx.len);
+>  	if (ret_val != 0)
+>  		goto list_cb_failure;
+>  	ret_val = nla_put(cb_arg->skb,
+>  			  NLBL_UNLABEL_A_SECCTX,
+> -			  secctx_len,
+> -			  secctx);
+> -	security_release_secctx(secctx, secctx_len);
+> +			  ctx.len,
+> +			  ctx.context);
 
-							Thanx, Paul
+Nitpicky alignment issue; please keep the arguments aligned as they
+are currently.
 
-> In an attempt to address the concerns, we're trying out a new "linus-next"
-> tree is being created and maintained with the following characteristics:
-> 
-> 	1. Composed of pull requests sent directly to Linus
-> 
-> 	2. Contains branches destined for imminent inclusion by Linus
-> 
-> 	3. Higher code quality expectation (these are pull requests that
-> 	maintainers expect Linus to pull)
-> 
-> 	4. Continuous tree (not daily tags like in linux-next),
-> 	facilitating easier bisection
-> 
-> The linus-next tree aims to provide a more stable and testable
-> integration point compared to linux-next, addressing the runtime issues
-> that make testing linux-next challenging and focusing on code that's
-> about to be pulled by Linus.
-> 
-> linus-next is (expected to be) particularly effective before the merge
-> window opens, as maintainers tend to send their pull requests early,
-> allowing for more thorough testing of to-be-merged changes.
-> 
-> We also want to avoid altering the existing workflow. In particular:
-> 
-> 	1. No increase in latency. If anything, the expectation is that
-> 	the cadence of merges would be improved given that Linus will
-> 	need to do less builds and tests.
-> 
-> 	2. Require "sign up" for the tree like linux-next does. Instead,
-> 	pull requests are monitored and grabbed directly from the
-> 	mailing list.
-> 
-> Tree location: `git://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git linus-next`
-> 
-> Current testing:
->   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
->   - KernelCI: https://t.ly/KEW7F
-> 
-> Feedback and suggestions for improving usability are welcome!
-> 
-> -- 
-> Thanks,
-> Sasha
-> 
+> +	security_release_secctx(&ctx);
+>  	if (ret_val != 0)
+>  		goto list_cb_failure;
+>  
+
+--
+paul-moore.com
 
