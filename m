@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-374677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0624F9A6E72
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA4D9A6E6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E1441C21F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FD61F2454F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FE01C4623;
-	Mon, 21 Oct 2024 15:42:00 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6B4131182;
-	Mon, 21 Oct 2024 15:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546E21C4629;
+	Mon, 21 Oct 2024 15:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iEq9C0ur"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3FC1C4627
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729525319; cv=none; b=cuQ2sb1HFAKrFskxXFOAtP3IgZ3WuaXkda63ERZGAsZnMrgl0O34zoJWFojiz8ANW5reU5O6rdtJTmOPoJRhqqRb0ZiC1X4XiodvWWyzSJqcPiJDX7ljEAP6OiEGdZlTdIPreOZBMidYCzJP3vpyl45lwL4z6Eb/YryXVbv7zxM=
+	t=1729525274; cv=none; b=KU3Lj15CgSk8FuXtiBldyLwxmz0MISzX+bhHM5EQQ1GGcmNrt1tFMKUy47g111HAf31YdEf2dW/osGsgOnE+A9qWpBA73iHkq0irbIisYaFNEnGItbYgpAsH7SMxcagTf2avPvN6X7sjtB+AC6OYIx3Q68UHhNuHO8xsJRCXE1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729525319; c=relaxed/simple;
-	bh=mvpJ5q6wbG2OGv2ExzGIZ+pg2uE2gGkv1J9IXoMKJ4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mx2lsDlPrb/KLlPm5FMQQk1BsN/7JL37CQyVzFLfySebU2lDw1q724/r9jiXbXgn/IfAmMFAYQ56yFCsM2f61G6qif687a0J8mpP58W6/jW5Hs0UPcqU+uDwlPPNyxVk9mgCPQ+Rd8BRyoQnHJH3iRyOHgJBc4S9M7tVHabCFoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrADHzX0LdhZnXh9PCA--.21720S2;
-	Mon, 21 Oct 2024 23:40:59 +0800 (CST)
-Received: from [192.168.1.6] (unknown [183.94.68.188])
-	by gateway (Coremail) with SMTP id _____wC3sPsJdhZnqLGEAA--.29413S2;
-	Mon, 21 Oct 2024 23:40:58 +0800 (CST)
-Message-ID: <7a11cfd9-523d-4650-951b-52a128af691d@hust.edu.cn>
-Date: Mon, 21 Oct 2024 23:40:56 +0800
+	s=arc-20240116; t=1729525274; c=relaxed/simple;
+	bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dBVSVD4Zu2IOOQR9rx94MePVvD70nzttfn5lc8rcQglHsuEtkOzpI5tUwmN9JeivOBp+XDvJr0w3to33dSyme/5EvYTTSFBYtL5AFDoY59d3vAGX1ykmbH6JeonLbUgxn1WwEhstujdUCfxUbaK4JAMx+nnz+SGwCzn/HJH44lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iEq9C0ur; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460a8d1a9b7so337151cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729525271; x=1730130071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
+        b=iEq9C0uroFXo5MUPHevr6AGJ9PJx0a+lgHaZfxW/z2aRhYk7lHfVn8WMKLllLKYY/D
+         woE67qvC2YGtusobVGIv4ZnXxRkF44UASyqcZSPc/y77jyex6jXcovPXEmSVDRDUl1CU
+         OPOCudnKtUgMyWurtWICqoNt/2L2qp5dnlfSOO8BO+3OKEgUQiJrWbiOAaBFeIPinI/4
+         SK91VYfovmq3/nZJQsCM8w3Tk0kQIkv+OR7wloOD06tCwnXRkaoszXzof9JICuWArkkV
+         NDBo/YsAx2aBT308OXmH0U7GY1+89icX/EPY3GYwuFqmr55R+G8UQ/z7PMaq730Vl89e
+         jALQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729525271; x=1730130071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QgCvodO46hTTI5gZ6i2TOnJZBpE8dcVMjVLVj2nnCnQ=;
+        b=a6M6NAYgTDN8T9hYiDNSGZ/NAHJ6ycEy3lSCEc/ntB7Gji0TWQbtMQpbzecyCD9hcB
+         kREfR3eXGnaklN3r7g1eo9dR6pKwmVdpK0Dio2y0Riyn7Pq3f1aS2uB1L6YJzjbny5VR
+         /9S/R4+CLFcK+iyBaLT385ZN7788KaEPJv2n9YkDa77WJiX9itlWJxt4rT/vlv9w+6KY
+         hF5LB9fTLPRG3x/e0lIZaDc53uL1NyR25p66KlEhOyLoCkDeCydxzDrKXwJRQAnyidjA
+         qPXwzrXDJWGj/Crkl1IJG6m3OhDqPNBtWCYx5KlQLYQTuYhvdOjLDfDECD+B8qxGVIkM
+         QDig==
+X-Forwarded-Encrypted: i=1; AJvYcCX6K8TsfoGzwPoLfrhy6keFzPlWUxGc0RwMVHCIPiabPkqoryLMzt0I7IazPMGK7FLQoGeM7Fh6U3PvuoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn+SBwQ9in4Dx4rj6GONudghx9hz6DePdYaZWSDOVBthgkfdm4
+	WuKJ1VmM4XlDBjifZeKBz41tRXZTok95UoZt4+YyRqs5ZmnDQDiDe0DOlHl0OyjRXYHx6QMRTkN
+	wviJ0NypE+z1ijOgWp0u7/fKC4g0pNwWfoLUk
+X-Google-Smtp-Source: AGHT+IExtPufc3i1BL5ORPSIurwCGrgj6wuZl2/Fc9n60P6WgQQhEtufE2gQBIUUvs6EKf6872QUIbUZidcdeHoRLZY=
+X-Received: by 2002:ac8:5742:0:b0:460:900e:d6f2 with SMTP id
+ d75a77b69052e-460be412160mr3854491cf.1.1729525271200; Mon, 21 Oct 2024
+ 08:41:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] docs/zh_CN: add the translations of
- kbuild/reproducible-builds.rst
-To: Jonathan Corbet <corbet@lwn.net>, si.yanteng@linux.dev,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1729259177.git.dzm91@hust.edu.cn>
- <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
- <87r089tqwi.fsf@trenco.lwn.net>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <87r089tqwi.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:HgEQrADHzX0LdhZnXh9PCA--.21720S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFyrKrWkZr4kGrW8XFWkWFg_yoWDurgEyr
-	10v3yakw1UJFn3AaykJrn3Ary09anYgr1Ut3Z8tr97t3yDJr4UXF4qqrn2vFWUWF4akrWx
-	CwsYqrn3Wr17ujkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbPAYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
-	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
-	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2
-	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
-	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
-	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
-	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
-	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XVy3UUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+References: <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+ <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+ <ZxJcryjDUk_LzOuj@tiehlicka> <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
+ <ZxKWBfQ_Lps93fY1@tiehlicka> <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
+ <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
+ <ZxYCK0jZVmKSksA4@tiehlicka> <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
+ <CAJuCfpE_aSyjokF=xuwXvq9-jpjDfC+OH0etspK=G6PS7SvMFg@mail.gmail.com> <ZxZ0eh95AfFcQSFV@tiehlicka>
+In-Reply-To: <ZxZ0eh95AfFcQSFV@tiehlicka>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 21 Oct 2024 08:41:00 -0700
+Message-ID: <CAJuCfpGHKHJ_6xN4Ur4pjLgwTQ2QLkbWuAOhQQPinXNQVONxEA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
+	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
+	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2024/10/21 23:30, Jonathan Corbet wrote:
-> Dongliang Mu <dzm91@hust.edu.cn> writes:
+On Mon, Oct 21, 2024 at 8:34=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
+e:
 >
->> Finish the translation of kbuild/reproducible-builds.rst and move
->> reproducible-builds.rst from TODO to the main body.
->>
->> Update to commit 114ff6fe6cfb ("Documentation: kbuild: Add description
->> of git for reproducible builds")
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> ---
->>   .../translations/zh_CN/kbuild/index.rst       |   2 +-
->>   .../zh_CN/kbuild/reproducible-builds.rst      | 114 ++++++++++++++++++
->>   2 files changed, 115 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
->>
-> I've applied this (patch #1 was already applied).
-
-Thanks Jon. I originally would like to push llvm.rst and 
-reproducible-builds.rst as a patchset.
-
-But I incidently cherry-pick the wrong commit and generate an incorrect 
-patchset. My apology :/
-
-Since this patch is applied, I will then send the translation of 
-llvm.rst as a separate patch.
-
-Dongliang Mu
-
+> On Mon 21-10-24 08:05:16, Suren Baghdasaryan wrote:
+> [...]
+> > Yeah, I thought about adding new values to "mem_profiling" but it's a
+> > bit complicated. Today it's a tristate:
+> >
+> > mem_profiling=3D0|1|never
+> >
+> > 0/1 means we disable/enable memory profiling by default but the user
+> > can enable it at runtime using a sysctl. This means that we enable
+> > page_ext at boot even when it's set to 0.
+> > "never" means we do not enable page_ext, memory profiling is disabled
+> > and sysctl to enable it will not be exposed. Used when a distribution
+> > has CONFIG_MEM_ALLOC_PROFILING=3Dy but the user does not use it and doe=
+s
+> > not want to waste memory on enabling page_ext.
+> >
+> > I can add another option like "pgflags" but then it also needs to
+> > specify whether we should enable or disable profiling by default
+> > (similar to 0|1 for page_ext mode). IOW we will need to encode also
+> > the default state we want. Something like this:
+> >
+> > mem_profiling=3D0|1|never|pgflags_on|pgflags_off
+> >
+> > Would this be acceptable?
 >
-> jon
+> Isn't this overcomplicating it? Why cannot you simply go with
+> mem_profiling=3D{0|never|1}[,$YOUR_OPTIONS]
+>
+> While $YOUR_OPTIONS could be compress,fallback,ponies and it would apply
+> or just be ignored if that is not applicable.
 
+Oh, you mean having 2 parts in the parameter with supported options being:
+
+mem_profiling=3Dnever
+mem_profiling=3D0
+mem_profiling=3D1
+mem_profiling=3D0,pgflags
+mem_profiling=3D1,pgflags
+
+Did I understand correctly? If so then yes, this should work.
+
+> --
+> Michal Hocko
+> SUSE Labs
 
