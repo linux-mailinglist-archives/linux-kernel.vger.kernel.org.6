@@ -1,85 +1,76 @@
-Return-Path: <linux-kernel+bounces-374208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE6C9A66DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41C39A66E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB87282D7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DAE28188E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719F61E7C1E;
-	Mon, 21 Oct 2024 11:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FA1E7C1C;
+	Mon, 21 Oct 2024 11:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3wb6XlN"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnUZcBiw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013021E1C22;
-	Mon, 21 Oct 2024 11:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618BF946C;
+	Mon, 21 Oct 2024 11:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729510979; cv=none; b=W0P1Ji8uXCfsVnOO5JLtZrglBhcCvOr8uKr66tTyH7TOUgIGgm9YhaCKPgauNZk6Q0w4LubZb1pw+Y04UkRv0Kd0GDT+VBCIW2k6+CfSHkg9o/87UFT/R54dy2pwYu3iNLVP/L6VQG2k1FylVSWVIiw8nfUokXW8pQl1cacpXEc=
+	t=1729511019; cv=none; b=ZAT4g455xk6A4Dk57SRA+1JLkLjh7yA+oZzxqWFyPgIcuaaJb7X0MaKlmowLLNsFLbv1dywD96VAvHw7H/mpXvSADIYwhkA6GH5yUDeSNkt4Hn6g1tX55iAjY4vOjM01I0vrTDeSXDcNI8qggNJ0DPW1ez4EiRfVkCH1At35aWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729510979; c=relaxed/simple;
-	bh=Xlpe+4NZVygqUfAYbeG1l2q/sC9oUMjZlGGCCv2/+1k=;
+	s=arc-20240116; t=1729511019; c=relaxed/simple;
+	bh=awMHKeW2IqFLj8Un2Mvc6m+8vNSs8NS5bptZgfjy3Vc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYSCcV11LhL9mkUkX6B3o2lcbzYifl4CRGHd+NPtRj1Z2phh5MPRU23uOJIcOcCKylUVnj3GRcoCGIlNXiYyn5UTsB6c86EByY8XOXVwqDUnv3PSzmcotRi+ps+IFYEPUv2CdvSq3bqB2FK42/ij5N4GnT4TIpx99FQ6cv4ae70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3wb6XlN; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9589ba577so636575a12.1;
-        Mon, 21 Oct 2024 04:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729510976; x=1730115776; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xlpe+4NZVygqUfAYbeG1l2q/sC9oUMjZlGGCCv2/+1k=;
-        b=M3wb6XlNydL/oKvhnuXEZqYP1066z5Zjz01xjMZ+/aMf1/8orcWRMH5R754O0PEN/6
-         PzKFW3Ny7ZPg4Gs15V3yTlctrYiNJkvKAJGcPwwmqFlCVWFp8fRUagWaKhUBU0hsGd5n
-         uf2VbCM34JHTlPD3z4oXsiWQbVaDoRNcNTqCJfnWbWZQJRdUfaAm0huXqJlPNczrzbtd
-         V52ziZQcFoTNC2L+8sD4U5EC3KZXAWQCCwXGv27mY8akEGIfbpTraytpZNL84XPQT70h
-         lbr0N73+Gs/1WTzOaJTv1/by3SxmhL9lCW9AsK6P6mS+3dyHv65bbF8BHRrqQZym8vMX
-         F2vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729510976; x=1730115776;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xlpe+4NZVygqUfAYbeG1l2q/sC9oUMjZlGGCCv2/+1k=;
-        b=EAjeR1b9AGn8Aq57l6S6GDdvO1KBUKB4IzgPDp84bZDtsbavFE0fL0hZI2davJIn6V
-         k7tsD1bQzFLwFrnT9FkwraadeoFU/BVJLFibQSr+js9y/ob+91cHqFby0YxgbB64p6DB
-         3V0NTJ/RzCvSaLIZDziWnL3srvWT8tzIK93+bZ4U2eudXatjsvmBAhXiy2zqeYtMn3Ui
-         5mop8qzxWAB2ysnDdLfIEi1LmzyiHsPHTtQdOrK1e/1Beqku7JK1xpIr0TncXdjG/Ces
-         oJIj3it9e3V0CDYHQCotf1LNdcwweqjy4P8GgLtFuikkox13sCYBFXBLWGhpBGfU3bEh
-         jslg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTzIoHDBt2+RrbvIKScA4r/bKN+wDTLR9AFjXiSkGBAK1vtBcspHqOnly0VIysm28PQqjUkmLtMxzyARQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsKzkDb0zlwZXK/5PXksvqIuCC32POafVx/oc7gNuanSQdNThP
-	I+MZzgh0+J1EkVlypTL5xLqMeUkF2G+M78VXkZrGJayua0VbzvE8
-X-Google-Smtp-Source: AGHT+IFteQ1L5ugUmQsKdOnz02qLtbs55pYvogPiCLx1JZQY/ANGN4EUXz2/F9lCZQtJtBH6UE3U+Q==
-X-Received: by 2002:a05:6402:3585:b0:5c9:7f8b:4fcf with SMTP id 4fb4d7f45d1cf-5ca0ae8753cmr4060146a12.6.1729510976024;
-        Mon, 21 Oct 2024 04:42:56 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b4e4sm1818093a12.61.2024.10.21.04.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 04:42:55 -0700 (PDT)
-Date: Mon, 21 Oct 2024 14:42:52 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] net: dsa: vsc73xx: implement packet
- reception via control interface
-Message-ID: <20241021114252.u6wa2eqj4bv5fv55@skbuf>
-References: <20241020205452.2660042-1-paweldembicki@gmail.com>
- <20241020205452.2660042-2-paweldembicki@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XXAIaA5MWxmuqTLOmsMOhfzM9I4cKDD9+0BZUgJy0dQ5PewKt9jXyC8xE4e73ZrO7GkWFOagCV1s90axhsJkjmopclZxGR2nw+Vtrzo7P4Gb4hCTvPTxuB8Sn3wmO5xffGbp2FCOJ8Gj4UmMtePZZveIWpPbsoHnADQWKgogKRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnUZcBiw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83058C4CEC3;
+	Mon, 21 Oct 2024 11:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729511019;
+	bh=awMHKeW2IqFLj8Un2Mvc6m+8vNSs8NS5bptZgfjy3Vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YnUZcBiwYN0oUEeEN8LXcEyIIfpko9fRGTmgbdH9YqBuPYZSZ6fd1nAx3SYHnTtZ6
+	 0+kKjJEolyA7JaHYxeB1sERy/Bx0qJVDrUbBIrelx+n9qu30MtD+oRvnqdh/8FjREZ
+	 1LkgNq/GG215kUUqZXU0mnCR8rXbaIKnXbgL8J49OpXiLNEQ8YLUuGiDMBSzbqyUzi
+	 5xrjZJwdCHucJLpgaWYm/Wd+iqQmJaXwiYXdMlVIfubyCRZJUlS2Lp7nwvIUWGN29N
+	 BIHjAFRwmJnNv1adZRa1v6DMrh8XfZk0jxPnpaLxgAIXB/RIHi8eLd+Wnk9LCHUIkk
+	 wvtzlsVf2oaqQ==
+Date: Mon, 21 Oct 2024 13:43:31 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Marsden <greg.marsden@oracle.com>,
+	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: Re: [RFC PATCH v1 34/57] sata_sil24: Remove PAGE_SIZE compile-time
+ constant assumption
+Message-ID: <ZxY-Y6GF0m_wTfyD@ryzen.lan>
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-34-ryan.roberts@arm.com>
+ <ZxDUZMDf2Xfz2tvi@ryzen.lan>
+ <7aa84080-6845-496a-a394-30d334632298@arm.com>
+ <ZxEISOhaqRvHlc3U@ryzen.lan>
+ <2f578256-7e56-491f-a4ca-ad6caa72b7ae@arm.com>
+ <ZxY1KAvGpyIzARtX@ryzen.lan>
+ <8e1e0824-1022-4f8f-9753-e134c7244d3a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,12 +79,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241020205452.2660042-2-paweldembicki@gmail.com>
+In-Reply-To: <8e1e0824-1022-4f8f-9753-e134c7244d3a@arm.com>
 
-On Sun, Oct 20, 2024 at 10:54:51PM +0200, Pawel Dembicki wrote:
-> The packet receiver poller uses a kthread worker, which checks if a packet
-> has arrived in the CPU buffer. If the header is valid, the packet is
-> transferred to the correct DSA conduit interface.
+On Mon, Oct 21, 2024 at 12:26:15PM +0100, Ryan Roberts wrote:
+> On 21/10/2024 12:04, Niklas Cassel wrote:
+> > On Mon, Oct 21, 2024 at 10:24:37AM +0100, Ryan Roberts wrote:
+> >> On 17/10/2024 13:51, Niklas Cassel wrote:
+> >>> On Thu, Oct 17, 2024 at 01:42:22PM +0100, Ryan Roberts wrote:
+> > 
+> > (snip)
+> > 
+> >> That said, while investigating this, I've spotted a bug in my change. paddr calculation in sil24_qc_issue() is incorrect since sizeof(*pp->cmd_block) is no longer PAGE_SIZE. Based on feedback in another patch, I'm also converting the BUG_ONs to WARN_ON_ONCEs.
+> > 
+> > Side note: Please wrap you lines to 80 characters max.
+> 
+> Yes sorry, I turned off line wrapping for that last mail because I didn't want
+> it to wrap the copy/pasted patch. I'll figure out how to mix and match for future.
+> 
+> > 
+> > 
+> >>
+> >> Additional proposed change, which I'll plan to include in the next version:
+> >>
+> >> ---8<---
+> >> diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
+> >> index 85c6382976626..c402bf998c4ee 100644
+> >> --- a/drivers/ata/sata_sil24.c
+> >> +++ b/drivers/ata/sata_sil24.c
+> >> @@ -257,6 +257,10 @@ union sil24_cmd_block {
+> >>         struct sil24_atapi_block atapi;
+> >>  };
+> >>  
+> >> +#define SIL24_ATA_BLOCK_SIZE   struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE)
+> >> +#define SIL24_ATAPI_BLOCK_SIZE struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE)
+> >> +#define SIL24_CMD_BLOCK_SIZE   max(SIL24_ATA_BLOCK_SIZE, SIL24_ATAPI_BLOCK_SIZE)
+> >> +
+> >>  static const struct sil24_cerr_info {
+> >>         unsigned int err_mask, action;
+> >>         const char *desc;
+> >> @@ -886,7 +890,7 @@ static unsigned int sil24_qc_issue(struct ata_queued_cmd *qc)
+> >>         dma_addr_t paddr;
+> >>         void __iomem *activate;
+> >>  
+> >> -       paddr = pp->cmd_block_dma + tag * sizeof(*pp->cmd_block);
+> >> +       paddr = pp->cmd_block_dma + tag * SIL24_CMD_BLOCK_SIZE;
+> >>         activate = port + PORT_CMD_ACTIVATE + tag * 8;
+> >>  
+> >>         /*
+> >> @@ -1192,7 +1196,7 @@ static int sil24_port_start(struct ata_port *ap)
+> >>         struct device *dev = ap->host->dev;
+> >>         struct sil24_port_priv *pp;
+> >>         union sil24_cmd_block *cb;
+> >> -       size_t cb_size = PAGE_SIZE * SIL24_MAX_CMDS;
+> >> +       size_t cb_size = SIL24_CMD_BLOCK_SIZE * SIL24_MAX_CMDS;
+> >>         dma_addr_t cb_dma;
+> >>  
+> >>         pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
+> >> @@ -1265,8 +1269,8 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+> >>         u32 tmp;
+> >>  
+> >>         /* union sil24_cmd_block must be PAGE_SIZE */
+> > 
+> > This comment should probably be rephrased to be more clear then, since like
+> > you said sizeof(union sil24_cmd_block) will no longer be PAGE_SIZE.
+> 
+> How about:
+> 
+> /*
+>  * union sil24_cmd_block must be PAGE_SIZE once taking into account the 'sge'
+>  * flexible array members in struct sil24_atapi_block and struct sil24_ata_block
+>  */
 
-s/conduit/user/
+Sounds good to me!
+
+
+Kind regards,
+Niklas
 
