@@ -1,236 +1,220 @@
-Return-Path: <linux-kernel+bounces-375014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C909A8AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:25:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C6E9A8F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72BA7B21B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:25:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D0DB21B52
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47DA1D0E2F;
-	Mon, 21 Oct 2024 19:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435CA1FC7E8;
+	Mon, 21 Oct 2024 19:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="erQlEZ4F"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTx2N/QS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1BD1F9A8F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D60F1F9A8F;
+	Mon, 21 Oct 2024 19:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729538738; cv=none; b=tu7o///Jo+YP57sATll8jUmEv8Rgszpp+qfhjhbt2X1SCKDWV7AO78026skBajE0RYulOBYlk5Kma5xPT/ZjSuI66xaLHgfpJp+3QU+x6LmyoBwRiOeNR3yZb8SW1+T3ARNdGRrNSttVzg+73tISpqK1JaUt+pJF2XBwbTyB2Oo=
+	t=1729538742; cv=none; b=rkXcrkW1VlwHUcwxhmtqen8+WU0gohaBJp3omEzyXCPTiMFK/BmjrO2eBRSNBau5+ZLgi5331tOByJIu4GdqRFoH3vvXvY0qCAsEJTjnkQWoo08ZUjK8nzJ+70+qy8FAsNCZByL56VF+2GrJEoqbE9LJVRg4HRUxuHsqu+8GMsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729538738; c=relaxed/simple;
-	bh=39yXzsbEVAnhGU9F9Q4jIZeDJdzY9UAjmvAgreporMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDxlS0nKly7SnXR2ciIXFgKMA75fEaxXgFl/B51nurZZmjt+axtm0ru3+Q0WJHZlpJEWwswqszFJnOc1mXZxRkThwtto4sQLHPiqkCWFJ6dzHk5JFVZChjyqfs10ANt5p3Qekj3mgY2DIYtDK5+k0L/flZzHwX+6aZQKOLZcnJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=erQlEZ4F; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a47ec4ef2cso1174642137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729538735; x=1730143535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ddjIRK0h2N+TtLtOm19QTadObnytcTIMmkiX9ZGErp4=;
-        b=erQlEZ4FM9o+/f8aqVeBi1U6hjv7uO000SJ4IWZYOrfkz0wq8V17IckWxolrAnAamM
-         LRjgmxhbYLkFU7KdnrvdcuXVqJE3y25VcCMA0NfOdNBEhu61fiHyT0X5osRcc6w36nXX
-         st62NI4sldFLFp2wcul9xx7vglMTqo7fShPXmULS1WTIhya2O/SUq4p0rvQbq0vdC/jr
-         ARgRZiwuV/F9ZIH2rl7v8V0Ii1Gh+2Z4Jrr5d8G4sOKk3Pli1AqV9nXNaJEXN3VRXj5j
-         9ViJQrWK4vKitu6KmAc+OJZ1R6y7GA5LvRVe849pyxcauiX8eWuvk6EvwpzIprnKVuXt
-         hDcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729538735; x=1730143535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ddjIRK0h2N+TtLtOm19QTadObnytcTIMmkiX9ZGErp4=;
-        b=ADfo8TFLVFlqmkPzAt+1ScMTxwchWrwGHCqKsnyfwZuP4jtQdLzwXgr6f25ZexG/NH
-         1y2bF0tGLylCJZamSxKX8D/zwZfCMghyadQJ23TiMA0x9vghMLfw17TUCI6h3K2lrwfR
-         fPdCdIXJ1s4SUtFomqxzl2OX1O860gOTa+SqPgGWTzLXFfYmicP8x4q0l8JgMCcSzrJs
-         dCckCC2B+nBgXnfm4HF4E+TET4xXMbnOMqv/1fM7syU8tqhpaV2oilW1yiWBxWGNqj+a
-         qug4zyiMnaTrLS6qBg91K3tGrUSfxn20hgGUaLIts3WNIMo31EeNCBfcmI81PgQOsRW/
-         YVOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvgBPnKX4UiBJ+jtI3G7/HIkb5/f3mEh0T/qOjbk9Z/PQ6D9TFLLqr+f3g1yVQH9npP3nRZb9kOfHk390=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4pZmBxURs2UZMZMPmQAjCB1FjCgyE1Zrp10EEqTkD56ot9UA4
-	9wDOMABV98DemkX2YyfRnlD4R9lDezv4iiILGVwx+3Grhjh5ED0ga9xDfWyXs/p7ABZcVTEiAyf
-	92IOH9DpdoACYdHHc5CCDU3/c+e/XZZCRs2UAcjaeICfMc3rFgBg=
-X-Google-Smtp-Source: AGHT+IHqjjHFZnJR7XHWSlS4Z0c2Ba7H3ulN6LRShf5mzStW412b1YId+gX/N/k5EJ+koqn0VKg+qW7lpGT9P4yN0Zc=
-X-Received: by 2002:a05:6102:c8c:b0:4a3:dd83:c0bc with SMTP id
- ada2fe7eead31-4a5d6ac17e3mr9459635137.15.1729538734673; Mon, 21 Oct 2024
- 12:25:34 -0700 (PDT)
+	s=arc-20240116; t=1729538742; c=relaxed/simple;
+	bh=ksmH7UHJO5j1wW2rszUCfSOGl7fU6+eXe5cH9r6EN/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eO8kten+ym7b7HgCld5zT3LNIGxjlRSDWIrgelfU3l1UibB3wRxGr7aQfz++n0SNWSYDKfZMPF3VSup7KvLWK6ijVLz0zFU+2/rG4+0sxcBIv4x7gtFzkL08++q3Q+vlwOPqcTgeHf8LBlpv6fF7TqrdgMXt6bNvfaMvZlkD+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTx2N/QS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3833C4CEC7;
+	Mon, 21 Oct 2024 19:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729538742;
+	bh=ksmH7UHJO5j1wW2rszUCfSOGl7fU6+eXe5cH9r6EN/g=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=bTx2N/QSBk6DNyud2g9rkEANooANRKTWnQLfnmpwo0SAgX1Rdl86ZwEZsUtC3UEJS
+	 HDAvehHAD5z8Ddm6dpIshllFVtX6fx5JMnTxvEvKPfN0rLT7mc9bY/dE1SThyDZKXZ
+	 fs9VJs3omNmZTkW+fzXl3wD/Q7zoAC/rz3FA1RGd9o9236WZHEH3giy7ujKlgcIZF3
+	 QdaZZfdptzCDKu18UJm0L5YR4BrfdW/9/itbJEjw9M1XoTKRU9uRvpxEK2rfcxxwZs
+	 GhWICCBud5Gj+mtIoE3MvArX4yljrQW8z+lGKNWliXYwPxqbO6gMDkML2PnbtJxhAW
+	 EGANCrXMo36zg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7CCC0CE09F6; Mon, 21 Oct 2024 12:25:41 -0700 (PDT)
+Date: Mon, 21 Oct 2024 12:25:41 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
+ <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+ <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
+ <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
+ <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
+ <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+ <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021102247.209765070@linuxfoundation.org>
-In-Reply-To: <20241021102247.209765070@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 22 Oct 2024 00:55:23 +0530
-Message-ID: <CA+G9fYsmcUHgwL44T8cWdOr=qs0NyNZjP2kotKVOi=cGXt=ZQQ@mail.gmail.com>
-Subject: Re: [PATCH 5.15 00/82] 5.15.169-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
 
-On Mon, 21 Oct 2024 at 16:15, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.169 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.15.169-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Oct 14, 2024 at 11:55:05AM -0700, Paul E. McKenney wrote:
+> On Thu, Oct 10, 2024 at 04:28:38PM -0700, Paul E. McKenney wrote:
+> > On Thu, Oct 10, 2024 at 08:01:35AM -0700, Paul E. McKenney wrote:
+> > > On Thu, Oct 10, 2024 at 01:24:11PM +0200, Tomas Glozar wrote:
+> > > > st 2. 10. 2024 v 11:01 odesílatel Tomas Glozar <tglozar@redhat.com> napsal:
+> > > > >
+> > > > > FYI I have managed to reproduce the bug on our infrastructure after 21
+> > > > > hours of 7*TREE03 and I will continue with trying to reproduce it with
+> > > > > the tracers we want.
+> > > > >
+> > > > > Tomas
+> > > > 
+> > > > I successfully reproduced the bug also with the tracers active after a
+> > > > few 8-hour test runs on our infrastructure:
+> > > > 
+> > > > [    0.000000] Linux version 6.11.0-g2004cef11ea0-dirty (...) #1 SMP
+> > > > PREEMPT_DYNAMIC Wed Oct  9 12:13:40 EDT 2024
+> > > > [    0.000000] Command line: debug_boot_weak_hash panic=-1 selinux=0
+> > > > initcall_debug debug console=ttyS0 rcutorture.n_barrier_cbs=4
+> > > > rcutorture.stat_interval=15 rcutorture.shutdown_secs=25200
+> > > > rcutorture.test_no_idle_hz=1 rcutorture.verbose=1
+> > > > rcutorture.onoff_interval=200 rcutorture.onoff_holdoff=30
+> > > > rcutree.gp_preinit_delay=12 rcutree.gp_init_delay=3
+> > > > rcutree.gp_cleanup_delay=3 rcutree.kthread_prio=2 threadirqs
+> > > > rcutree.use_softirq=0
+> > > > trace_event=sched:sched_switch,sched:sched_wakeup
+> > > > ftrace_filter=dl_server_start,dl_server_stop trace_buf_size=2k
+> > > > ftrace=function torture.ftrace_dump_at_shutdown=1
+> > > > ...
+> > > > [13550.127541] WARNING: CPU: 1 PID: 155 at
+> > > > kernel/sched/deadline.c:1971 enqueue_dl_entity+0x554/0x5d0
+> > > > [13550.128982] Modules linked in:
+> > > > [13550.129528] CPU: 1 UID: 0 PID: 155 Comm: rcu_torture_rea Tainted: G
+> > > >        W          6.11.0-g2004cef11ea0-dirty #1
+> > > > [13550.131419] Tainted: [W]=WARN
+> > > > [13550.131979] Hardware name: Red Hat KVM/RHEL, BIOS 1.16.3-2.el9 04/01/2014
+> > > > [13550.133230] RIP: 0010:enqueue_dl_entity+0x554/0x5d0
+> > > > ...
+> > > > [13550.151286] Call Trace:
+> > > > [13550.151749]  <TASK>
+> > > > [13550.152141]  ? __warn+0x88/0x130
+> > > > [13550.152717]  ? enqueue_dl_entity+0x554/0x5d0
+> > > > [13550.153485]  ? report_bug+0x18e/0x1a0
+> > > > [13550.154149]  ? handle_bug+0x54/0x90
+> > > > [13550.154792]  ? exc_invalid_op+0x18/0x70
+> > > > [13550.155484]  ? asm_exc_invalid_op+0x1a/0x20
+> > > > [13550.156249]  ? enqueue_dl_entity+0x554/0x5d0
+> > > > [13550.157055]  dl_server_start+0x36/0xf0
+> > > > [13550.157709]  enqueue_task_fair+0x220/0x6b0
+> > > > [13550.158447]  activate_task+0x26/0x60
+> > > > [13550.159131]  attach_task+0x35/0x50
+> > > > [13550.159756]  sched_balance_rq+0x663/0xe00
+> > > > [13550.160511]  sched_balance_newidle.constprop.0+0x1a5/0x360
+> > > > [13550.161520]  pick_next_task_fair+0x2f/0x340
+> > > > [13550.162290]  __schedule+0x203/0x900
+> > > > [13550.162958]  ? enqueue_hrtimer+0x35/0x90
+> > > > [13550.163703]  schedule+0x27/0xd0
+> > > > [13550.164299]  schedule_hrtimeout_range_clock+0x99/0x120
+> > > > [13550.165239]  ? __pfx_hrtimer_wakeup+0x10/0x10
+> > > > [13550.165954]  torture_hrtimeout_us+0x7b/0xe0
+> > > > [13550.166624]  rcu_torture_reader+0x139/0x200
+> > > > [13550.167284]  ? __pfx_rcu_torture_timer+0x10/0x10
+> > > > [13550.168019]  ? __pfx_rcu_torture_reader+0x10/0x10
+> > > > [13550.168764]  kthread+0xd6/0x100
+> > > > [13550.169262]  ? __pfx_kthread+0x10/0x10
+> > > > [13550.169860]  ret_from_fork+0x34/0x50
+> > > > [13550.170424]  ? __pfx_kthread+0x10/0x10
+> > > > [13550.171020]  ret_from_fork_asm+0x1a/0x30
+> > > > [13550.171657]  </TASK>
+> > > > 
+> > > > Unfortunately, the following rcu stalls appear to have resulted in
+> > > > abnormal termination of the VM, which led to the ftrace buffer not
+> > > > being dumped into the console. Currently re-running the same test with
+> > > > the addition of "ftrace_dump_on_oops panic_on_warn=1" and hoping for
+> > > > the best.
+> > > 
+> > > Another approach would be rcupdate.rcu_cpu_stall_suppress=1.
+> > > 
+> > > We probably need to disable RCU CPU stall warnings automatically while
+> > > dumping ftrace buffers, but the asynchronous nature of printk() makes
+> > > it difficult to work out when to automatically re-enable them...
+> > 
+> > And in the meantime, for whatever it is worth...
+> > 
+> > The pattern of failures motivated me to add to rcutorture a real-time
+> > task that randomly preempts a randomly chosen online CPU.  Here are
+> > the (new and not-to-be-trusted) commits on -rcu's "dev" branch:
+> > 
+> > d1b99fa42af7 ("torture: Add dowarn argument to torture_sched_setaffinity()")
+> > aed555adc22a ("rcutorture: Add random real-time preemption")
+> > b09bcf8e1406 ("rcutorture: Make the TREE03 scenario do preemption")
+> > 
+> > Given these, the following sort of command, when run on dual-socket
+> > systems, reproduces a silent failure within a few minutes:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 4h --configs "4*TREE03" --kconfig "CONFIG_NR_CPUS=4" --trust-make
+> > 
+> > But on my laptop, a 30-minute run resulted in zero failures.  I am now
+> > retrying with a four-hour laptop run.
+> 
+> And this silent failure was me hurting myself with a change to scripting
+> to better handle test hosts disappearing (it does sometimes happen).
+> With the scripting fixed, I am getting simple too-short grace periods,
+> though only a few per 8-hour 400*TREE03 4-CPU guest-OS run.
+> 
+> > I am also adjusting the preemption duration and frequency to see if a
+> > more edifying failure mode might make itself apparent.  :-/
+> 
+> But no big wins thus far, so this will be a slow process.  My current test
+> disables CPU hotplug.  I will be disabling other things in the hope of
+> better identifying the code paths that should be placed under suspicion.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Disabling CPU hotplug seems to make the problem go away (though
+all I can really say is that I am 99% confident that it reduces the
+problem's incidence by at least a factor of two).  This problem affects
+non-preemptible kernels and non-preemptible RCU, though it is possible
+that use of the latter reduces the failure rate (which is of course *not*
+what you want for testing).
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+A number of experiments failed to significantly/usefully increase the
+failure rate.
 
-NOTE:
------
-The following build warnings have been noticed on 32-bit kernel builds.
-fs/udf/namei.c:747:12: warning: stack frame size (1544) exceeds limit
-(1024) in 'udf_rename' [-Wframe-larger-than]
-  747 | static int udf_rename(struct user_namespace *mnt_userns,
-struct inode *old_dir,
-      |
+The problem does not seem to happen on straight normal call_rcu()
+grace periods (rcutorture.gp_normal=1), synchronize_rcu() grace periods
+(rcutorture.gp_sync=1), or synchronize_rcu_expedited() grace periods.
+Of course, my reproduction rate is still low enough that I might be
+fooled here.
 
-Build log link,
-------------
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2nkFEUWzJg4an4au6=
-tEGcCBQ873/
+However, the problem does occur reasonably often on polled grace periods
+(rcutorture.gp_poll=1 rcutorture.gp_poll_exp=1 rcutorture.gp_poll_full=1
+rcutorture.gp_poll_exp_full=1).  This might be a bug in the polling
+code itself, or it might be because polling grace periods do not incur
+callback and/or wakeup delays (as in the bug might still be in the
+underlying grace-period computation and polling makes it more apparent).
+This also appears to have made the problem happen more frequently,
+but not enough data to be sure yet.
 
-## Build
-* kernel: 5.15.169-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 4d74f086d8cf173c105457670e3c58190f13c06c
-* git describe: v5.15.168-83-g4d74f086d8cf
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
-.168-83-g4d74f086d8cf
+Currently, rcutorture does millisecond-scale waits of duration randomly
+chosen between zero and 15 milliseconds.  I have started a run with
+microsecond-scale waits of duration randomly chosen between zero and
+128 microseconds.  Here is hoping that this will cause the problem to
+reproduce more quickly, and I will know more this evening, Pacific Time.
 
-## Test Regressions (compared to v5.15.167-692-g63cec7aeaef7)
-
-## Metric Regressions (compared to v5.15.167-692-g63cec7aeaef7)
-
-## Test Fixes (compared to v5.15.167-692-g63cec7aeaef7)
-
-## Metric Fixes (compared to v5.15.167-692-g63cec7aeaef7)
-
-## Test result summary
-total: 50075, pass: 36724, fail: 1689, skip: 11593, xfail: 69
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 102 total, 102 passed, 0 failed
-* arm64: 29 total, 29 passed, 0 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 24 total, 24 passed, 0 failed
-* riscv: 8 total, 8 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 25 total, 25 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+							Thanx, Paul
 
