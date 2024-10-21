@@ -1,168 +1,134 @@
-Return-Path: <linux-kernel+bounces-374388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717529A696E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442669A6968
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35A51F230E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0575B284C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10621F4FCD;
-	Mon, 21 Oct 2024 13:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB411E573E;
+	Mon, 21 Oct 2024 13:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="RrUyksJp"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mr7Mmsg9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CCF1E1C3B;
-	Mon, 21 Oct 2024 13:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B005A1E511;
+	Mon, 21 Oct 2024 13:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515709; cv=none; b=FaEIHzCdEvainMvBonKOC/E5F1ACVbc43PfYlRkW6pCDYef/HNtUhqAVpheNI8pyy2U04GWWTMU6kKOWLFrUJbOo4yWK+E38n+JzNLOtDOGvWuUVIz5DBZeTU1+eVIkUu1oWqSFuhuy4hYRTL5/CIIbiBhAWSTKAVwd9wCnl8+c=
+	t=1729515673; cv=none; b=CIlGnn7yowjvBKxL/xUyYP3+0y/oKSTymVWlt5MEXd20S9ApTXY/P6Xxplzqreb9DKKJqEMQV9MRNEeT3CO8HNkcBme2bGWiuItaFBqrpijigWbLJnkkaPKFwk1mmaKL9Su/fAtbt9HImggrtDJFnI4phebKKdOqh14xHVL0Jo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515709; c=relaxed/simple;
-	bh=5WIiJRHapCI51H3ywtVbIwi2/+VgCkDEos8mKc5J250=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=keqtujQcaRaNloGjzmaH8r2Ro9vygfXN0d1el/bfrf1RWlETm1j/H0hmTddm5tOSlvBgQTVmwZepXrCexR0qrfL4cmlUYT1qO63m/JAJgVM/HNr9hrWCqwuXgnGwvCNGhGeRtzLaIp6U3NRQKJScL/vwXmkmf5HVhrrD5eAG854=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=RrUyksJp; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729515666; x=1730120466; i=deller@gmx.de;
-	bh=S31lOP+pBSP5U2YXLz1j7FzuDouUQIPICU9YpCJx6pM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RrUyksJpseZgPuTP195pPBxQPiioi4h8ADAWE5o54SiaTh0TVbBsiMwky5w97p+m
-	 DxrjjPAO6RGNi5LpYioKl/LRZ5KjtVjvczMfzFtgCaa7fN9y5WyC3h5NB831JRvK8
-	 wH6Oo96mUWZVr10KJj/43tEYW1YNTJnmySoF4Xo08vZ36QVHTZvho/sd7icvDb9j6
-	 xoi1aQebK4RAkJqbUDYr55yXlrJoxMje3kUB9FJfEH5dVy2WHwkHL5ElfNS12ucQS
-	 5nOUJfdsck7dLspfcKtkcwPiuOkDf96MATT64ybjnK3ET/yifgZF2qV49tQkxAqmp
-	 E2C4yyCPdh/JE8tL4Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbRk3-1tegp63y2r-00jD37; Mon, 21
- Oct 2024 15:01:06 +0200
-Message-ID: <31b8ea3b-f765-43c0-9cee-49bc13064f04@gmx.de>
-Date: Mon, 21 Oct 2024 15:01:01 +0200
+	s=arc-20240116; t=1729515673; c=relaxed/simple;
+	bh=ej3qu3+gaDVBh2zajSPGQQs7YptzCBhIISJg5FqP5Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5ZtuoIcg0SaY/bUg6AxnNeeVoE5gKwRXe1BGTnhmTvevYeIzGar/FL/MJUEaiHtlJAT1DdRLSzHQZ7IfDnJxuDeNC2nbc6R7tCivHUPqQg6vdfsZe2Ik1ccE40ofcyOmCzHJS6EveFi59rj7VrYcGJiv+onrpfXyUUtzcrQt14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mr7Mmsg9; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729515672; x=1761051672;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ej3qu3+gaDVBh2zajSPGQQs7YptzCBhIISJg5FqP5Ys=;
+  b=Mr7Mmsg9MXZzJkKHMP9+WvMb+mz93qt9QnjuND8Q8X+v3BMp+vP8gaeW
+   31hWq9jkBze2zicISOWWv4FMtofRLzG/E88AO+/fdicJ6Qr1YWlniLolq
+   eXG6tZwZuSMA90SLWzWZg0yfZCKeZdq9L2wOjbiJZvFZm7W87QfUvMfVo
+   Q4WdoBexXfHiOmUDIRZBvo1KkcWAhkNBF7gcRnreLRZA9tiovlFA0QQqs
+   i7XCOicWKd+5OQHTGPbk47YCTDOglUcLQ1av8dfKHIg/GZn4Xf6jBEK7u
+   6FH0r4nb9nlteIVMY6PwZVj58QwWcc8kubtAaEm9zeKV9qgcI/RVyyPRj
+   g==;
+X-CSE-ConnectionGUID: SSPZ41cCQn+dXCJq9kjd3A==
+X-CSE-MsgGUID: 3AT0bh6jSGy0U90EEV1wSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29162840"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29162840"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 06:01:12 -0700
+X-CSE-ConnectionGUID: Ff3P9/pOT8ipqVHXPAl0nQ==
+X-CSE-MsgGUID: pm4T5JBTSeeKY95E78IYqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="79871502"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa010.fm.intel.com with SMTP; 21 Oct 2024 06:01:07 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Oct 2024 16:01:06 +0300
+Date: Mon, 21 Oct 2024 16:01:06 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-arm-msm@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] usb: typec: qcom-pmic-typec: use
+ fwnode_handle_put() to release fwnodes
+Message-ID: <ZxZQks8_rkYge-yf@kuha.fi.intel.com>
+References: <20241020-qcom_pmic_typec-fwnode_remove-v2-0-7054f3d2e215@gmail.com>
+ <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 3/5] selftests/bpf: don't mask result of
- bpf_csum_diff() in test_verifier
-To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Eduard Zingerman <eddyz87@gmail.com>,
- Eric Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- Martin KaFai Lau <martin.lau@linux.dev>, Mykola Lysenko <mykolal@fb.com>,
- netdev@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
- Paolo Abeni <pabeni@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Puranjay Mohan <puranjay12@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Yonghong Song <yonghong.song@linux.dev>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-4-puranjay@kernel.org>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20241021122112.101513-4-puranjay@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:auOFnIpJiEAk5Fa+WnLI7piJej8lx32XA4spabM23qTpWruFFW0
- x9RKJMkeWcfOznhlofvKhgm9WtmKsFg4w84LUTLBA+1Cyamc0nrgV60EhEjgr19Fgatv0ET
- gPn4Rhjf4UO2qnoK0tLfKBsmXkteb6Zm5n025m/axF5Bt4QbTksjm2VKrZJD7F8fixdp1Bu
- C9ObDiS11JU4Nvc5DZC4Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j0s9SkIkIbM=;zhXl8zxLSqKXpXKKLXyaonLGtQ+
- LEYdrhsYbwyNnBjZIMn8HZtMJxoCIkPzzUclL5So2coka+o1of1cN2v9yt41wzNpkVdnUX4xX
- u6u3gZfxkIHhe8f+XE6FYF5T0ZXiAD/e7Ux5BMt7B1UxF5HdgwnOHii3R27zcoFISoYtPX+2y
- aQxIx02Yx/Booqmvb7pHgfq1VyeqVmU8JDq3pqhr1rximZOCRFNvpRq5WoXtXV48JlQSr1YSH
- Lzlb+pBOU1jrp/iJgBsORGnwsPEFhNMz45e+CxVue02ZssG1ZbpFdUmGK4th9tFtiamrktX9l
- Ed87q0CmPrKUTzjUi/oA+MD8PsMQ04tGWF9nkuUsV4TPeJO78pdHixtEKK25f2jrb28S4Otou
- RTMv27VNzr+bdaUlvYGgcwkSaIoxp2aGQVG0MZZh9Pjhujtu6BcM6sYn3xQWkdNMCXCSjVCEw
- GmSywMchy0yd1vzIVrCA5AuZr/99jYAIKwlaJp39EE8817GG54jIKk0x+f111P1o3HGMJKc65
- dN9vWRHfd5TNGJ/118t+pmJnlUtnQbvWIXYJnmxLUmqsD9FRA1SDF4gqRRehAAzZTFRbsm6tW
- XVIpFUcHT7zikq4NKnEItqVExAzS/6zVS3+N/ZjVKPC3vwEUsq2w9hJ3k8cK9Sl/us96FQAWQ
- 2gQAw33Sb7Q4LA+4YCVRz3WVz/9hur2fWWqiSi/AVXxno8yRZme+w9bJAjDDdj9D43RYEV/7B
- AxuCIo18ZP2DWAo+yDDMxiDlsJq7ECAzlXpxWyFXJpvur/OVUPi0K2/0nJkeayDh655gXPsb1
- NpwICZ2XMgePgnH0CBN1eJUw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
 
-On 10/21/24 14:21, Puranjay Mohan wrote:
-> The bpf_csum_diff() helper has been fixed to return a 16-bit value for
-> all archs, so now we don't need to mask the result.
->
-> ...
-> --- a/tools/testing/selftests/bpf/progs/verifier_array_access.c
-> +++ b/tools/testing/selftests/bpf/progs/verifier_array_access.c
-> @@ -368,8 +368,7 @@ __naked void a_read_only_array_2_1(void)
->   	r4 =3D 0;						\
->   	r5 =3D 0;						\
->   	call %[bpf_csum_diff];				\
-> -l0_%=3D:	r0 &=3D 0xffff;					\
-> -	exit;						\
-> +l0_%=3D:	exit;						\
+On Sun, Oct 20, 2024 at 02:56:34PM +0200, Javier Carrasco wrote:
+> The right function to release a fwnode acquired via
+> device_get_named_child_node() is fwnode_handle_put(), and not
+> fwnode_remove_software_node(), as no software node is being handled.
+> 
+> Replace the calls to fwnode_remove_software_node() with
+> fwnode_handle_put() in qcom_pmic_typec_probe() and
+> qcom_pmic_typec_remove().
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Instead of dropping the masking, would it make sense to
-check here if (r0 >> 16) =3D=3D 0 ?
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Helge
+> ---
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
+> index 2201eeae5a99..73a159e67ec2 100644
+> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
+> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
+> @@ -123,7 +123,7 @@ static int qcom_pmic_typec_probe(struct platform_device *pdev)
+>  port_unregister:
+>  	tcpm_unregister_port(tcpm->tcpm_port);
+>  fwnode_remove:
+> -	fwnode_remove_software_node(tcpm->tcpc.fwnode);
+> +	fwnode_handle_put(tcpm->tcpc.fwnode);
+>  
+>  	return ret;
+>  }
+> @@ -135,7 +135,7 @@ static void qcom_pmic_typec_remove(struct platform_device *pdev)
+>  	tcpm->pdphy_stop(tcpm);
+>  	tcpm->port_stop(tcpm);
+>  	tcpm_unregister_port(tcpm->tcpm_port);
+> -	fwnode_remove_software_node(tcpm->tcpc.fwnode);
+> +	fwnode_handle_put(tcpm->tcpc.fwnode);
+>  }
+>  
+>  static const struct pmic_typec_resources pm8150b_typec_res = {
+> 
+> -- 
+> 2.43.0
+
+-- 
+heikki
 
