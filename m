@@ -1,207 +1,388 @@
-Return-Path: <linux-kernel+bounces-374352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121609A68DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:43:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510A99A68E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F021C2160C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:43:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB8FB21A91
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F601F9424;
-	Mon, 21 Oct 2024 12:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25221F1310;
+	Mon, 21 Oct 2024 12:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YMQyYUmX"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="OysBoxRO"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF541F8F01
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA04C1D1310;
+	Mon, 21 Oct 2024 12:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514509; cv=none; b=F3r0TgaBrUoQr/7QqjPPfiC4iu88kixkqdg1CWZnOvwGF3JDaQx9d68GBaGBmgQ4YMHTgohZki2QOcT7v2hmUD/qTpjH+sevEyAY/wBSIAAWRnNf44ZLfl/b6qDrv9iaLj6asuW8peX2rSTOv17r30/VFKf77gtybwm6OUQtmHI=
+	t=1729514468; cv=none; b=NsyJfiiAmu3iDFv6ZBINflqwONcFiJVjPDqbr8NkrhKcQhpurj27BRjUJmLrqGnaeltBdShHh2zli1Y/nggtrDHBXsjFVqkbKhuG5aymDwez1aKZGtAOiKZccsLPIoeZbLY07kTmMmreeWv95COaCpIRbbymYWkXyXBSNfrZFm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514509; c=relaxed/simple;
-	bh=FcAs0kiOHRD1fvgyMKd2WJEXtRqjslAMwz3NIAN5It0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ic9lWjsh6M7wE1Np1cG0vjfyPO5S5dKR7R/XCP6qCCTHL7+oH2oxhK53X9y+kjFt4HPeU2R403CTAp4KJ+p5SUTIBtobMhLVKHpM3j4cSfOFqa926OjUt3rGmhXZqUC/20np6YiVYm2fz9dz0nENOJs6gbO9yh3p/rJeiJHawjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YMQyYUmX; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so1930617f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729514505; x=1730119305; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LBP96gSZJELbHsXLNxR5YSM2dT8EQquriFqivC5gwA4=;
-        b=YMQyYUmXYPFU8zEedCKj+g8bNyxuRoG4KVpJWWXPiNQfxHkuiV/EV6U1QQxZMDiwMd
-         PuFknfiR9/egSeDYh7ML8/SFE3Mk8iSzBms0N7HQUBlVQS0s7q6fdIE1BbYBZYFI1KHO
-         MzPDC3aqOlxAQchex8dHNRpQYAiWgQo8pnRoJFMG4nCJIKXmOSYqLIa3j2E/az2CyEeq
-         OdHxXrozcNO7ZaovVhpSd26/u1neKiJrF5eKp06Vr3uCpngqSIjtgQemKkhSGdKJpONj
-         2ZJSfIPa3TGkY3wmsiLjWr/TloEsO6/tLQJV20x/oOsZkBcpfomUi3SSO0sVrfMbF2S5
-         AiAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729514505; x=1730119305;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LBP96gSZJELbHsXLNxR5YSM2dT8EQquriFqivC5gwA4=;
-        b=cpFIOE8rlJlwdrwk5hFhIR9gez92SLuj3j54G4oqUwDUDXuym1j9BDVQc/hVIf57c8
-         Sya2z3ZZUIZOKt9oOdisIa3fh8eTtJgayLqAdYJT/JnaDv7Uqd1/792kcID+i3VXhr0c
-         fa7Vq2SV94dV6bLTAo9+xI1h3u02nfLOYaklZ4/dbS/V75cLo2B4rdMqn89PjSzSgNY1
-         cdo5iSUUUS0+48Cy203HNrT6hNuAlWQpesTOxfoHRM3yBWu3Zk0LJg9GqqbRieCAi5Gq
-         F+ky1du0xvlsUD0wXxuWC8nvmTABPcn5knY7ELKyqBPV9j9xb99smHPtsCYpisJUhOFb
-         jdBA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+7d5GrfdCB5mgbqpuA1p6kv5VjGlTBpzLtbbl8Xvt6Ani+08t/ZRNsW+UpR6TBNMPH/o9ARI6M15AQB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8UB3nPJQyt2w4gUB15EpD/M5V5zlSaAawS/1IZhV9sy3afCIs
-	gq0I1hULZDzYhEpezKClU/qUgykw4JUXpU/CM1M6/W1/8EvdclFFmbkvelmAS4s=
-X-Google-Smtp-Source: AGHT+IGM2/WfM0tOEBUv03Z9qDm3SI3Qo9VgfGIfH2z9fiR+i8m8qjF8I4XxedP9BQLYFF0OVpUo6g==
-X-Received: by 2002:adf:ffc5:0:b0:37d:5338:872c with SMTP id ffacd0b85a97d-37ea2136f6emr6648486f8f.1.1729514505222;
-        Mon, 21 Oct 2024 05:41:45 -0700 (PDT)
-Received: from [127.0.1.1] (host-82-61-199-210.retail.telecomitalia.it. [82.61.199.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc88esm55996075e9.46.2024.10.21.05.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:41:44 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Mon, 21 Oct 2024 14:40:18 +0200
-Subject: [PATCH v7 8/8] iio: dac: adi-axi-dac: add registering of child fdt
- node
+	s=arc-20240116; t=1729514468; c=relaxed/simple;
+	bh=BCeF9JXt9qTUZ9ovOcpS/RK5Lz3VTojSM3p95XaLgYM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BaLUeUAIQ9SoGLAsNHqS2JSPwW7vW9SHiT+jLjNif3ExBqn/TF3pcdtbveegaL/OiwG2H94vGZrF5x6YCenhtxT4x1ypYmDDd30BawAthg0i/ZBirkAe70nulrQ7NzaMiX+DPMK1EOq6Jr2VTB38IEfuUvKqOXhD1xpr3bsyVbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=OysBoxRO; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L7X56P026105;
+	Mon, 21 Oct 2024 05:40:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=w5txLHkToEiekJfqCBwHzU6GN
+	aYOgBx52aZbHKtYgpE=; b=OysBoxROJYTAEwdAWlRcr8sDCkKG6vnOPv/T5vg/+
+	HR+2BazFiNKapb+y/na5I2Z+9dcbpPQLb94WKJejZArayCkQcEfnDQMhVKFZoYmG
+	umvdHKqGusVSmQDjxQIN8wbp0I43JFoFP6ereudogXNqMkhvZ9p9wkXIY6ubHymY
+	fv+1VeMxirk7+Z4iYofG0Rm3xgbTFw353ZF6CrTF13LuyJoNRUkytsFpwVDRoyXn
+	db0715qQl3+QtghijNrp6wr5/XH4/54FTkIjdNwsK1FZPpoycge3uR8FZRXXX73e
+	bY3vavAASCRa2rgX2zE4/ybJWjKzNMHhwP9NT6cWLsBEw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42djnmrk90-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 05:40:48 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 21 Oct 2024 05:40:46 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 21 Oct 2024 05:40:46 -0700
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with SMTP id E7F803F7048;
+	Mon, 21 Oct 2024 05:40:41 -0700 (PDT)
+Date: Mon, 21 Oct 2024 18:10:40 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+CC: <mike.leach@linaro.org>, <james.clark@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gcherian@marvell.com>, Anil Kumar Reddy <areddy3@marvell.com>,
+        "Tanmay
+ Jagdale" <tanmay@marvell.com>
+Subject: Re: [PATCH v10 5/8] coresight: tmc: Add support for reading crash
+ data
+Message-ID: <20241021124040.GA929726@hyd1403.caveonetworks.com>
+References: <20240916103437.226816-1-lcherian@marvell.com>
+ <20240916103437.226816-6-lcherian@marvell.com>
+ <f1acfd07-7317-4b7e-bb81-ea9a894f25ac@arm.com>
+ <20241017114054.GC896339@hyd1403.caveonetworks.com>
+ <05ed4a6f-cb41-4953-a654-9988f0fcd373@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-8-969694f53c5d@baylibre.com>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
-In-Reply-To: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
-To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dlechner@baylibre.com, 
- Mark Brown <broonie@kernel.org>, 
- Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <05ed4a6f-cb41-4953-a654-9988f0fcd373@arm.com>
+X-Proofpoint-GUID: E0ksCmPdMJ2sw12NOWznG_WvKs8EnugA
+X-Proofpoint-ORIG-GUID: E0ksCmPdMJ2sw12NOWznG_WvKs8EnugA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+Hi Suzuki,
 
-Change to obtain the fdt use case as reported in the
-adi,ad3552r.yaml file in this patchset.
+On 2024-10-18 at 15:16:17, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
+> On 17/10/2024 12:40, Linu Cherian wrote:
+> > On 2024-10-03 at 18:55:54, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
+> > > Hi Linu
+> > > 
+> > > On 16/09/2024 11:34, Linu Cherian wrote:
+> > > > * Add support for reading crashdata using special device files.
+> > > >     The special device files /dev/crash_tmc_xxx would be available
+> > > >     for read file operation only when the crash data is valid.
+> > > > 
+> > > > * User can read the crash data as below
+> > > > 
+> > > >     For example, for reading crash data from tmc_etf sink
+> > > > 
+> > > >     #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
+> > > 
+> > > There are some comments below, please take a look.
+> > > 
+> > > > 
+> > > > Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
+> > > > Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
+> > > > Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> > > > ---
+> > > > Changelog from v9:
+> > > > - Removed READ_CRASHDATA mode meant for special casing crashdata read
+> > > > - Added new fields full, len, offset to struct tmc_resrv_buf
+> > > 
+> > > Why do we need "full" ? See more on that below.
+> > > 
+> > > >     so as to have a common read function for ETR and ETF
+> > > > - Introduced read file operation, tmc_crashdata_read
+> > > >     specific to crashdata reads common for both ETR and ETF
+> > > > - Introduced is_tmc_crashdata_valid function
+> > > >     Special device file /dev/crash_tmc_xxx will be available only when
+> > > >     crashdata is valid.
+> > > > - Version checks added to crashdata validity checks
+> > > > - Mark crashdata as invalid when user starts tracing with ETR sink in
+> > > >     "resrv" buffer mode
+> > > > 
+> > > >    .../hwtracing/coresight/coresight-tmc-core.c  | 206 +++++++++++++++++-
+> > > >    .../hwtracing/coresight/coresight-tmc-etf.c   |  36 +++
+> > > >    .../hwtracing/coresight/coresight-tmc-etr.c   |  63 ++++++
+> > > >    drivers/hwtracing/coresight/coresight-tmc.h   |  18 +-
+> > > >    include/linux/coresight.h                     |  12 +
+> > > >    5 files changed, 333 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > index 54bf8ae2bff8..47b6b3f88750 100644
+> > > > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > @@ -105,6 +105,125 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
+> > > >    	return mask;
+> > > >    }
+> > > > +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata)
+> > > > +{
+> > > > +	struct tmc_crash_metadata *mdata;
+> > > > +
+> > > > +	if (!tmc_has_reserved_buffer(drvdata) ||
+> > > > +	    !tmc_has_crash_mdata_buffer(drvdata))
+> > > > +		return false;
+> > > > +
+> > > > +	mdata = drvdata->crash_mdata.vaddr;
+> > > > +
+> > > > +	/* Check version match */
+> > > > +	if (mdata->version != CS_CRASHDATA_VERSION)
+> > > > +		return false;
+> > > > +
+> > > > +	/* Check data integrity of metadata */
+> > > > +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
+> > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > +			"CRC mismatch in tmc crash metadata\n");
+> > > > +		return false;
+> > > > +	}
+> > > > +	/* Check data integrity of tracedata */
+> > > > +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
+> > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > +			"CRC mismatch in tmc crash tracedata\n");
+> > > > +		return false;
+> > > > +	}
+> > > > +	/* Check for valid metadata */
+> > > > +	if (!mdata->valid) {
+> > > 
+> > > minor nit: This could be checked right after the VERSION and we verify
+> > > the CRC anyway later and thus could skip all the CRC calculations if
+> > > !valid.
+> > 
+> > 
+> > Ack.
+> > 
+> > > 
+> > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > +			"Data invalid in tmc crash metadata\n");
+> > > > +		return false;
+> > > > +	}
+> > > > +
+> > > > +	return true;
+> > > > +}
+> > > > +
+> > > > +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata)
+> > > > +{
+> > > > +	int ret = 0;
+> > > > +	unsigned long flags;
+> > > > +	struct tmc_crash_metadata *mdata;
+> > > > +	struct coresight_device *csdev = drvdata->csdev;
+> > > > +
+> > > > +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> > > > +
+> > > > +	if (!is_tmc_crashdata_valid(drvdata)) {
+> > > > +		ret = -ENXIO;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	mdata = drvdata->crash_mdata.vaddr;
+> > > > +	/*
+> > > > +	 * Buffer address given by metadata for retrieval of trace data
+> > > > +	 * from previous boot is expected to be same as the reserved
+> > > > +	 * trace buffer memory region provided through DTS
+> > > > +	 */
+> > > > +	if (drvdata->resrv_buf.paddr != mdata->trace_paddr) {
+> > > > +		dev_dbg(&csdev->dev, "Trace buffer address of previous boot invalid\n");
+> > > 
+> > > Couldn't this be made part of the "is_tmc_crashdata_valid()" and not
+> > > repeated everytime we do the read ? Surely, this can't change after
+> > > boot.
+> > 
+> > Ack. Will move.
+> > 
+> > > 
+> > > > +		ret = -EINVAL;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	/* Sink specific crashdata mode preparation */
+> > > > +	ret = crashdata_ops(csdev)->prepare(csdev);
+> > > > +	if (ret)
+> > > > +		goto out;
+> > > > +
+> > > > +	if (mdata->sts & 0x1)
+> > > > +		coresight_insert_barrier_packet(drvdata->buf);
+> > > > +
+> > > > +	drvdata->reading = true;
+> > > 
+> > > Why are we dealing with drvdata->reading ? That is supposed to be only
+> > > for the normal trace reading ?
+> > 
+> > Ack. Will remove, we dont need this.
+> > 
+> > > 
+> > > > +out:
+> > > > +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata)
+> > > > +{
+> > > > +	int ret;
+> > > > +	unsigned long flags;
+> > > > +	struct coresight_device *csdev = drvdata->csdev;
+> > > > +
+> > > > +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> > > > +
+> > > > +	/* Sink specific crashdata mode preparation */
+> > > > +	ret = crashdata_ops(csdev)->unprepare(csdev);
+> > > > +
+> > > > +	drvdata->reading = false;
+> > > 
+> > > 
+> > > 
+> > > > +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> > > > +
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +static inline ssize_t tmc_get_resvbuf_trace(struct tmc_drvdata *drvdata,
+> > > > +					  loff_t pos, size_t len, char **bufpp)
+> > > > +{
+> > > > +	s64 offset;
+> > > > +	ssize_t actual = len;
+> > > > +	struct tmc_resrv_buf *rbuf = &drvdata->resrv_buf;
+> > > > +
+> > > > +	if (pos + actual > rbuf->len)
+> > > > +		actual = rbuf->len - pos;
+> > > > +	if (actual <= 0)
+> > > > +		return actual;
+> > > 
+> > > return 0 ? Because, we went beyond the file position, not because there was
+> > > an error. So, that it doesn't look like we are suppressing an ERROR ?
+> > 
+> > 
+> > return 0 looks fine to me. Will recheck on this.
+> > 
+> > > 
+> > > 
+> > > > +
+> > > > +	/* Compute the offset from which we read the data */
+> > > > +	offset = rbuf->offset + pos;
+> > > > +	if (offset >= rbuf->size)
+> > > > +		offset -= rbuf->size;
+> > > > +
+> > > > +	/* Adjust the length to limit this transaction to end of buffer */
+> > > > +	actual = (actual < (rbuf->size - offset)) ?
+> > > > +		actual : rbuf->size - offset;
+> > > > +
+> > > > +	*bufpp = (char *)rbuf->vaddr + offset;
+> > > > +
+> > > > +	return actual;
+> > > > +}
+> > > > +
+> > > >    static int tmc_read_prepare(struct tmc_drvdata *drvdata)
+> > > >    {
+> > > >    	int ret = 0;
+> > > > @@ -224,6 +343,70 @@ static const struct file_operations tmc_fops = {
+> > > >    	.llseek		= no_llseek,
+> > > >    };
+> > > > +static int tmc_crashdata_open(struct inode *inode, struct file *file)
+> > > > +{
+> > > > +	int ret;
+> > > > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > +						   struct tmc_drvdata,
+> > > > +						   crashdev);
+> > > > +
+> > > > +	ret = tmc_read_prepare_crashdata(drvdata);
+> > > 
+> > > I don't see the point of this "prepare" and unprepare callbacks, as they
+> > > can be made generic by populating the mdata->rrp,rwp fields accordingly ?
+> > > 
+> > > i.e., while populating the mdata-> fields, for ETR, do what you do now.
+> > > For ETF you could :
+> > > 
+> > > mdata->rrp = 0;
+> > > mdata->dba = 0;
+> > > mdata->rwp = drvdata->len;
+> > > mdata->size = drvdata->len >> 2;
+> > > mdata->sts = TMC_STS_FULL;
+> > 
+> > Agree with your point that this would get rid of sink specific
+> > callbacks.
+> > 
+> > But few points to consider before we go with the above approach,
+> > 
+> > * mdata register snapshots wont be true to their definition,
+> >    with such encodings.
+> > 
+> >    We had a similar discussion on this earlier regarding mdata->size,
+> >    ie. We decided to stick to register format instead of storing bytes.
+> >    https://lore.kernel.org/linux-arm-kernel/20240620041054.GC125816@hyd1403.caveonetworks.com/
+> 
+> Understood. But whoever fills in the metdata does need to fill the
+> mdata information above ? Including calculating the hash. So, I think it
+> is fair to say that mdata is populated in a way that makes sense
+> just by looking at it. In fact, we should :
+> 
+> 
+> mdata->dba = <address of the tracedata>
+> mdata->rrp = mdata->dba;
+> mdata->rwp = mdata->rrp + drvdata->len;
+> mdata->size = drvdata->len >> 2;
+> mdata->sts = TMC_STS_FULL;
+> 
+> Rather than filling in 0's.
 
-The DAC device is defined as a child node of the backend.
-Registering the child fdt node as a platform devices.
 
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
- drivers/iio/dac/adi-axi-dac.c | 53 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+Okay, will make this change for ETF and avoid the sink specific
+callbacks.
 
-diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
-index 9d6809fe7a67..7f7ef3e219ba 100644
---- a/drivers/iio/dac/adi-axi-dac.c
-+++ b/drivers/iio/dac/adi-axi-dac.c
-@@ -29,6 +29,8 @@
- #include <linux/iio/buffer.h>
- #include <linux/iio/iio.h>
- 
-+#include "ad3552r-hs.h"
-+
- /*
-  * Register definitions:
-  *   https://wiki.analog.com/resources/fpga/docs/axi_dac_ip#register_map
-@@ -97,6 +99,7 @@ struct axi_dac_info {
- 	unsigned int version;
- 	const struct iio_backend_info *backend_info;
- 	bool has_dac_clk;
-+	bool has_child_nodes;
- };
- 
- struct axi_dac_state {
-@@ -723,6 +726,35 @@ static int axi_dac_bus_reg_read(struct iio_backend *back, u32 reg, u32 *val,
- 	return regmap_read(st->regmap, AXI_DAC_CUSTOM_RD_REG, val);
- }
- 
-+static void axi_dac_child_remove(void *data)
-+{
-+	platform_device_unregister(data);
-+}
-+
-+static int axi_dac_create_platform_device(struct axi_dac_state *st,
-+					  struct fwnode_handle *child)
-+{
-+	struct ad3552r_hs_platform_data pdata = {
-+		.bus_reg_read = axi_dac_bus_reg_read,
-+		.bus_reg_write = axi_dac_bus_reg_write,
-+	};
-+	struct platform_device_info pi = {
-+		.parent = st->dev,
-+		.name = fwnode_get_name(child),
-+		.id = PLATFORM_DEVID_AUTO,
-+		.fwnode = child,
-+		.data = &pdata,
-+		.size_data = sizeof(pdata),
-+	};
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_full(&pi);
-+	if (IS_ERR(pdev))
-+		return PTR_ERR(pdev);
-+
-+	return devm_add_action_or_reset(st->dev, axi_dac_child_remove, pdev);
-+}
-+
- static const struct iio_backend_ops axi_dac_generic_ops = {
- 	.enable = axi_dac_enable,
- 	.disable = axi_dac_disable,
-@@ -865,6 +897,26 @@ static int axi_dac_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "failed to register iio backend\n");
- 
-+	if (st->info->has_child_nodes) {
-+		device_for_each_child_node_scoped(&pdev->dev, child) {
-+			int val;
-+
-+			/* Processing only reg 0 node */
-+			ret = fwnode_property_read_u32(child, "reg", &val);
-+			if (ret)
-+				return dev_err_probe(&pdev->dev, ret,
-+						     "invalid reg property.");
-+			if (val != 0)
-+				return dev_err_probe(&pdev->dev, -EINVAL,
-+						     "invalid node address.");
-+
-+			ret = axi_dac_create_platform_device(st, child);
-+			if (ret)
-+				return dev_err_probe(&pdev->dev, -EINVAL,
-+						     "cannot create device.");
-+		}
-+	}
-+
- 	dev_info(&pdev->dev, "AXI DAC IP core (%d.%.2d.%c) probed\n",
- 		 ADI_AXI_PCORE_VER_MAJOR(ver),
- 		 ADI_AXI_PCORE_VER_MINOR(ver),
-@@ -882,6 +934,7 @@ static const struct axi_dac_info dac_ad3552r = {
- 	.version = ADI_AXI_PCORE_VER(9, 1, 'b'),
- 	.backend_info = &axi_ad3552r,
- 	.has_dac_clk = true,
-+	.has_child_nodes = true,
- };
- 
- static const struct of_device_id axi_dac_of_match[] = {
+> 
+> 
+> > 
+> > * We will have more comparable code between normal trace buffer reading
+> >    and reading trace buffer after panic with sink specific callbacks,
+> >    even though we keep the code seperate.
+> 
+> Lets not create "customs" here. We have a callback for a reason. i.e,
+> the ETF has an internal SRAM which is not accessible directly by the CPU
+> and ETR uses normal RAM.
+> 
+> While in this case, we have the data in CPU accessible RAM and the
+> "driver" in this case is crash handling and can be agnostic of where
+> the data was captured (ETF vs ETR)
 
--- 
-2.45.0.rc1
 
+Okay fine.
+
+> 
+> 
+> Suzuki
+> 
+> 
+> > 
+> > Please let me know your thoughts on this.
+> 
+> 
+> 
 
