@@ -1,131 +1,195 @@
-Return-Path: <linux-kernel+bounces-374501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EA79A6B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B49A6B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543DF282267
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A901F21B2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0F01F8F1D;
-	Mon, 21 Oct 2024 13:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84D1F8931;
+	Mon, 21 Oct 2024 13:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjcTtZZY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N8iIYyQZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805941F4FAB;
-	Mon, 21 Oct 2024 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF11F4717
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519047; cv=none; b=fk56+yvpGjW46XtNJHEh0n3G5G1f40UyHM1pANu3nURSgEptbe8/h6peXyfE36kqJkKM+macQ1ddOFIisdua9CBF+cvuWXge2Bp7sc2Scfmwcu0mcGHJJEmjJyteK/2di3qh4R7fMfw84eCVlT+F9Yqwb8kHvG71B22Or4VMOn0=
+	t=1729519095; cv=none; b=mNxn+SyzeTEy+Wx76MFVrgFuwIHAnM2YUZmDIXYURm39K4YJUGHi8X0//xZvJOTZuYodPLCsSdptjMNeGIC3iIOYe9qGLLqHCpW14dX/lYoJGNxOrD2UFgqkoQSKJXIJkjcBPJCkqXFA+7X2TGv60mIZHe3Kx3pZh0rTl0NW1n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519047; c=relaxed/simple;
-	bh=Dpacqvghjn+prdNdw3RYq6t7J0XmTTREpNbPYnoLUrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuK9Ix8InYJlUVl9gZCAsg5MJYn95VsrloSTfeOBfl31YJP0Pqvq4cCsWN585T9MiM58Wc0tGXIbFyaJwfzVDZ3BZQ/kAyhfpFOcQD2Rr3Fad6/pcKMXO0wh3R9XDKw+htq+z7mZQhCJswzy5djsfjiMePhhlyWsIn/Ks9l5cAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjcTtZZY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEC8C4CEC3;
-	Mon, 21 Oct 2024 13:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729519047;
-	bh=Dpacqvghjn+prdNdw3RYq6t7J0XmTTREpNbPYnoLUrU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=CjcTtZZYTojvnp6s7clNB5dxncnCSBBXNhCVQc/Og6/p52mTFfYTX2As9rfdlXcmg
-	 wr6bO3JP5AL/X1UOyNuJfk40xyW6a2TmOscAKqwuTVybqXa6WDyeEWkYM8vbYBj+F5
-	 pw0+YSW1Sg67Sa+aezPOT2nKpkgZpmjycb1eQPtOGvfbCGqfUVpVpLCQmMlQpVZ7A/
-	 0HwcyHMM+hQFh0nWupBDa64V63Di1jx3d5J+UzAc93xz+c4FnMukS/s6JOq5TsN6/P
-	 1jmDs5Yca5x/mw0/hR1PM9SsTs4r8znoVg0Yute46kOtKJroaoPx2UBYQC+wt57wpQ
-	 9ABize7D40V+g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7D3B8CE0DFD; Mon, 21 Oct 2024 06:57:26 -0700 (PDT)
-Date: Mon, 21 Oct 2024 06:57:26 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, oleg@redhat.com,
-	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
- lifetime (with timeout)
-Message-ID: <b70994c4-04dd-4120-8598-fe1d604a07d8@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241008002556.2332835-1-andrii@kernel.org>
- <20241008002556.2332835-3-andrii@kernel.org>
- <20241018101647.GA36494@noisy.programming.kicks-ass.net>
- <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
- <20241021104815.GC6791@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729519095; c=relaxed/simple;
+	bh=NPhBoj3xcxNlJXTqklaF506IqEIEDAzTVf1JM8EHZD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tK86QhzGmOJ6/NocMD3G4DSZo1tdMINoxHgKN8Wod8JmLd3HhDIj4hloVYlUtBh18LjXgZMICGx/T5t4UAMOVEPZZWcpjOueRiBkh+Gn8dSUAOn8r8ubQZXxqAE07di5QfKcL9QS06fvoGcd1NdlpMkghi3GvlfrA6BnJgj+Vao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N8iIYyQZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9UE7P019311
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OI7Wh1fO6bHFXo1JQ2ZRfpx/pcAU9uIg8fircEPSrek=; b=N8iIYyQZQDBb9wae
+	XDu6UWUeU8JwCQDB/K7WWmfH104Se6MFWPl8QeLsBsWI7qXEgGWbByrcr78uhLhc
+	nAxgNVD4eXoqfGRt2x5MWYGXqqAVZpl+zCJ0FeDJbdkwkshqPzNfVj7yeauJ6wiw
+	+seHBCy4mBdgtS926WY9YL2VyL54TlwCTyigFXNETaSKPLjtcWtl862P/rdVA/Sf
+	QDzqEUaQSCjLJc8RvrzNXkbHeT/jEODvwrfWmscsy/N0qFUzeGGULhc28DtLNYeT
+	1un6ORL6VViWekNt0dqyiujeNTP2FaE2CZkq7jfZanJd+4YUHihP6Udt/OfXE9wS
+	eoTIhg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vc50xh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:11 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cda6fd171bso11611666d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:58:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729519090; x=1730123890;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OI7Wh1fO6bHFXo1JQ2ZRfpx/pcAU9uIg8fircEPSrek=;
+        b=m9IDu9vP0Hx0uYyn7JBKZ4jGBs+KfGs27p1+PoN/P/gvPOpDVg5qGzGpo8vNFwqqaQ
+         kSB1wYkjOikBjjtN3xX94CTduHVFlfne9brVA8WPQtnDlJYObquHrwjqkRbcuT0WIW9N
+         qQgppfGzs0l0ZdpgpBIvaKHVBek0loDIjtYDhecZJ1mKLHIk0RSFbU5dKY7HBCImqJze
+         DkJov6Ts6B9aVVZazJ9FS3KTAZJvX8mzDpVApvSm/yV/6nqkdaWi8Mo60r/AzxM3ILzP
+         03pMcDi9sEssJlqDXmDEQbT5nafeJe6YqwO8mDj7I0Z3YSw2U8qBpnkCAJBHRs8WgLil
+         l/7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXCsf1Im5FsW50oiAs0O2wU+qWnN6yDLu9Dr4N+zuJFFSFuH5yYiycu7kEkHWZVXmEyJ3ekhOUKaXA52Xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJwJ7rhE6h4vBBJK9LgumTfmaEACz808MqpFqB7O6CoKF4IVv5
+	Q5DFmIx1axmWrjNM3RLvPnRMfT/c1kGQizu4DrpnBK8M1HLbnkHlIDnB9LcZ8LbG2kOG9J4tabv
+	1nIA3bFXDKt+hPKAqGfrPTXzVievmysM7C5HyYNxbhCtU3vcMo0XGUbJdU7k97ZQ=
+X-Received: by 2002:ad4:5ae2:0:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6cde14be181mr79937956d6.3.1729519090077;
+        Mon, 21 Oct 2024 06:58:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCScMjTKswmyH1uzl8JIZj7OfIdN55ExFoP9OG2mAym/s4cspQQgTi+8KuXBFsGXeVZUKm3A==
+X-Received: by 2002:ad4:5ae2:0:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6cde14be181mr79937766d6.3.1729519089768;
+        Mon, 21 Oct 2024 06:58:09 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b974sm1964000a12.67.2024.10.21.06.58.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 06:58:09 -0700 (PDT)
+Message-ID: <24a674f5-17ba-49d1-a865-77f907a05c65@oss.qualcomm.com>
+Date: Mon, 21 Oct 2024 15:58:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021104815.GC6791@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] soc: qcom: llcc: add support for SAR2130P and
+ SAR1130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
+ <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org>
+ <7fa066b6-a214-4866-9d0a-f75896531d84@oss.qualcomm.com>
+ <CAA8EJprvQTGABZ6LAq1qXRfPgOz7VzxPuKnRz_EO_4S6tveXgQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CAA8EJprvQTGABZ6LAq1qXRfPgOz7VzxPuKnRz_EO_4S6tveXgQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: OduracxbdD8eesNq01aS3rstZAjmYolm
+X-Proofpoint-ORIG-GUID: OduracxbdD8eesNq01aS3rstZAjmYolm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ spamscore=0 phishscore=0 bulkscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410210100
 
-On Mon, Oct 21, 2024 at 12:48:15PM +0200, Peter Zijlstra wrote:
-> On Fri, Oct 18, 2024 at 11:22:09AM -0700, Andrii Nakryiko wrote:
+On 21.10.2024 3:13 PM, Dmitry Baryshkov wrote:
+> On Mon, 21 Oct 2024 at 14:04, Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> On 19.10.2024 6:26 PM, Dmitry Baryshkov wrote:
+>>> Implement necessary support for the LLCC control on the SAR1130P and
+>>> SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
+>>> shift and also require manual override for num_banks.
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>  drivers/soc/qcom/llcc-qcom.c       | 468 ++++++++++++++++++++++++++++++++++++-
+>>>  include/linux/soc/qcom/llcc-qcom.h |  12 +
+>>>  2 files changed, 474 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+>>> index a470285f54a875bf2262aac7b0f84ed8fd028ef1..ef84fe3b2af4e777126a8308bfd4ec47b28aeae2 100644
+>>> --- a/drivers/soc/qcom/llcc-qcom.c
+>>> +++ b/drivers/soc/qcom/llcc-qcom.c
+>>> @@ -32,6 +32,7 @@
+>>>  #define ATTR1_FIXED_SIZE_SHIFT        0x03
+>>>  #define ATTR1_PRIORITY_SHIFT          0x04
+>>>  #define ATTR1_MAX_CAP_SHIFT           0x10
+>>> +#define ATTR1_MAX_CAP_SHIFT_sar       0x0e
+>>>  #define ATTR0_RES_WAYS_MASK           GENMASK(15, 0)
+>>>  #define ATTR0_BONUS_WAYS_MASK         GENMASK(31, 16)
+>>>  #define ATTR0_BONUS_WAYS_SHIFT        0x10
+>>> @@ -140,6 +141,11 @@ struct qcom_llcc_config {
+>>>       bool need_llcc_cfg;
+>>>       bool no_edac;
+>>>       bool irq_configured;
+>>> +     /*
+>>> +      * special workarounds for SAR2130P and similar platforms which have
+>>> +      * slightly different register mapping.
+>>> +      */
+>>> +     bool is_sar_chip;
+>>
+>> This is not the only odd ball, please make max_cap_width variable
 > 
-> > > So... after a few readings I think I'm mostly okay with this. But I got
-> > > annoyed by the whole HPROBE_STABLE with uprobe=NULL weirdness. Also,
-> > > that data_race() usage is weird, what is that about?
-> > 
-> > People keep saying that evil KCSAN will come after me if I don't add
-> > data_race() for values that can change under me, so I add it to make
-> > it explicit that it's fine. But I can of course just drop data_race(),
-> > as it has no bearing on correctness.
-> 
-> AFAICT this was READ_ONCE() vs xchg(), and that should work. Otherwise I
-> have to yell at KCSAN people again :-)
-> 
-> > > And then there's the case where we end up doing:
-> > >
-> > >   try_get_uprobe()
-> > >   put_uprobe()
-> > >   try_get_uprobe()
-> > >
-> > > in the dup path. Yes, it's unlikely, but gah.
-> > >
-> > >
-> > > So how about something like this?
-> > 
-> > Yep, it makes sense to start with HPROBE_GONE if it's already NULL, no
-> > problem. I'll roll those changes in.
-> > 
-> > I'm fine with the `bool get` flag as well. Will incorporate all that
-> > into the next revision, thanks!
-> > 
-> > The only problem I can see is in the assumption that `srcu_idx < 0` is
-> > never going to be returned by srcu_read_lock(). Paul says that it can
-> > only be 0 or 1, but it's not codified as part of a contract.
-> 
-> Yeah, [0,1] is the current range. Fundamentally that thing is an array
-> index, so negative values are out and generally safe to use as 'error'
-> codes. Paul can't we simply document that the SRCU cookie is always a
-> positive integer (or zero) and the negative space shall not be used?
+> I'm not sure what you mean here. Moving max_cap_width to the drv_data
+> / configuration? Or do you mean something else?
 
-We are looking at a few approaches, but they all guarantee that the
-return value will be non-negative.  My current guess is that we will
-just document this non-negative return value, but in all cases, you
-should feel free to assume non-negative starting now.
+Match data (qcom_llcc_config) is fine, as qcom_llcc_cfg_program is only
+called from .probe.
 
-							Thanx, Paul
+max_cap_width would be a new field that denotes the width of MAX_CAP
+(which seems to always be at [31:n])
 
-> > So until we change that, probably safer to pass an extra bool
-> > specifying whether srcu_idx is valid or not, is that OK?
 > 
-> I think Changeing the SRCU documentation to provide us this guarantee
-> should be an achievable goal.
+>>
+>> [...]
+>>
+>>> +     /*
+>>> +      * For some reason register returns incorrect value here.
+>>> +      * List compatibles instead of using .is_sar_chip since there might be
+>>> +      * SAR-like chips which have other number of banks.
+>>> +      */
+>>> +     if (of_device_is_compatible(dev->of_node, "qcom,sar1130p-llcc") ||
+>>> +         of_device_is_compatible(dev->of_node, "qcom,sar2130p-llcc")) {
+>>> +             num_banks = 2;
+>>> +     } else {
+>>> +             ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+>>> +             if (ret)
+>>> +                     goto err;
+>>> +
+>>> +             num_banks &= LLCC_LB_CNT_MASK;
+>>> +             num_banks >>= LLCC_LB_CNT_SHIFT;
+>>> +     }
+>>>
+>>> -     num_banks &= LLCC_LB_CNT_MASK;
+>>> -     num_banks >>= LLCC_LB_CNT_SHIFT;
+>>>       drv_data->num_banks = num_banks;
+>>
+>> This too
 > 
-> > (and I assume you want me to drop verbose comments for various states, right?)
-> 
-> I axed the comments because I made them invalid and didn't care enough
-> to fix them up. If you like them feel free to amend them to reflect the
-> new state of things.
+> This can probably go to qcom_llcc_config.
+
+Yep
+
+Konrad
 
