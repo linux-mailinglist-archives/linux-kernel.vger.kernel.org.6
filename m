@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-373929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1962A9A5F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A049A5F26
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4399281379
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66FE1F21850
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1FF1E1C10;
-	Mon, 21 Oct 2024 08:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837DF1E32AD;
+	Mon, 21 Oct 2024 08:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D9SCqohr"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PS8dEyx5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676DC1E04AE;
-	Mon, 21 Oct 2024 08:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB041E2852;
+	Mon, 21 Oct 2024 08:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729500608; cv=none; b=lIZKS86PMqwIzgjz+YwKOD6GPWzJ0Sj3FGkKZ18cfDSPT3iRrotj4Ad5MpYMy5CjL/DDtPs+Y1Qg7gnuByppQOAG7DMWOp8evBPA3qI//OepZZzR97wkT6HhiA7/0eQQkU0iOU3I+ZrlmM3uN+DD6TZbAdICPVHzWXBeSeZ5pMI=
+	t=1729500626; cv=none; b=VLv75myTntWioh4n3UUOx5DdeZYYBRQPKfk7wIoAP9ITB+g/Oj7OtSAjRVXF5LtZkxDILkWbHjPZB2b2Vec5tRagnf8L1+EqNrTTpEUJbAFvbfWzXRF9zwvbgEgr69aonwUc58kZF015lgKBOTzaxsbCCctH82YjtvHPuCOXfQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729500608; c=relaxed/simple;
-	bh=O2hUSO9XJcSqU7n57bCbyj4P8NhmLYjDvJ/Qgc8/bXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ezPAbjWDKbdwucE7Al4l2MFs7HU1+ga+U6pBptmHytSXD+CBYtMLG5zz+GiJV/nzCh3rZnZgcUx/0Ds9PxVpgxftKrD8NdsuDT4J+aqsE8+0GB2vwrf6Sxe/KXOzV0unCRKVPV39WaScQFxT+SNS9T3Px5KUxKny4IdYtGp05n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D9SCqohr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=zV4wxDX1Qa7PkB/5K30LtQhBxEEMmOdT6d6M993cF98=; b=D9SCqohrM5rvLbyAuE3c7kihE2
-	mVUxeaNJrRiFNdeLgmhmfgXuHcHcaRadELoxOfp92LmnCgQzNL5lG0Py6QoYKzFa+cG+Bwvfy0UHs
-	gW5sdGSUK47ukg5fLtHNUfzxPLGvp/qHw5YNgya8aalPjB9nOqjWrRl0p004ExnVVNWQzIHlwqISG
-	b2ExLBZC+rMYGLVvfhnPlDi9cKs2BJOc03RYFhjjPauj0lFOxH5enpb7pLnWjGxaEstJzj+j6924S
-	oFS8K3/JtfjtpeJgUWSGIKgoeLEStBUrHgr9Czec+PpHLI/zKoBwCPgzhO4uOuUnAURESa0RcKZsV
-	3LdRtC3A==;
-Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t2o6v-0000000G5GM-1T3t;
-	Mon, 21 Oct 2024 08:49:58 +0000
-Message-ID: <85eefbd5-bc90-4cb8-807f-6d1ee195e7f4@infradead.org>
-Date: Mon, 21 Oct 2024 17:49:49 +0900
+	s=arc-20240116; t=1729500626; c=relaxed/simple;
+	bh=ljYznu+p6F7JvIl+/lFMuTG9Vfco1IGNVduSQjOikQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ryz/DOG+mTkkI25IxKP5zqUAG7XBnap63nWL3p4fi3xg8ptj8tR3OHxRwSz9iOJ/KdUsR1D9pHs5ff+Fv30ERFesRFJ9uCjucR7L8mA9QHSLKo2QbbMibjNpg79dKrmCa2D0zvIOGrt5ya/cVi+Gfa5s1qEjEAmr2R6nHQKUoJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PS8dEyx5; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729500626; x=1761036626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ljYznu+p6F7JvIl+/lFMuTG9Vfco1IGNVduSQjOikQw=;
+  b=PS8dEyx5uqekXB8S1e0M/A3htCju824lj2+/YWvx7HGIczYEnyADKOzg
+   ROCMggpWZaGP6Mc/qY7hTBnD6ByjzAwmuduC87NfudjjkTSqslfVSYVMN
+   kUDnbzQiZxZRAjz8txB30CVIrlLRp08HYn0RaaYfv/Ea2TfV0P14Qizgg
+   qheXVrwheyxOqgNF0qPPGrESiXHH0151YtYdFTgB0YPNUeLb51aaATeaA
+   m15vkvMkCsM1h96Suh7xJsnhvhOjRjjUlSUXVLfMxv/My7tC3noZCn1Bd
+   I2QL74ZiAe73SzOkq1VkY1R7wazot85VopOa1IAMKc5ws2XKFc2XvvSh6
+   A==;
+X-CSE-ConnectionGUID: PC9MNQGgQKG1tkDnRhDMHg==
+X-CSE-MsgGUID: 1sCfaTcJTF2WgbsID7I3Ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="32779649"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="32779649"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:50:25 -0700
+X-CSE-ConnectionGUID: lfGGcHr6SYWM8q40aX3pkA==
+X-CSE-MsgGUID: vNSM7wWRTI+gO2kUrklwJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="84253339"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 21 Oct 2024 01:50:23 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 985A412B; Mon, 21 Oct 2024 11:50:21 +0300 (EEST)
+Date: Mon, 21 Oct 2024 11:50:21 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v2 2/3] platform/x86: intel_scu_ipc: Simplify code with
+ cleanup helpers
+Message-ID: <20241021085021.GB275077@black.fi.intel.com>
+References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com>
+ <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] powerpc/ps3: replace open-coded sysfs_emit function
-To: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>,
- mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- naveen@kernel.org, maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
-References: <ZxMV3YvSulJFZ8rk@mail.google.com>
-Content-Language: en-US
-From: Geoff Levand <geoff@infradead.org>
-In-Reply-To: <ZxMV3YvSulJFZ8rk@mail.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com>
 
-Hi Paulo,
-
-On 10/19/24 11:13, Paulo Miguel Almeida wrote:
-> sysfs_emit() helper function should be used when formatting the value
-> to be returned to user space.
+On Mon, Oct 21, 2024 at 11:38:52AM +0300, Andy Shevchenko wrote:
+> Use macros defined in linux/cleanup.h to automate resource lifetime
+> control in the driver. The byproduct of this change is that the
+> negative conditionals are swapped by positive ones that are being
+> attached to the respective calls, hence the code uses the regular
+> pattern, i.e. checking for the error first.
 > 
-> This patch replaces open-coded sysfs_emit() in sysfs .show() callbacks
-> 
-> Link: https://github.com/KSPP/linux/issues/105
-> Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-> ---
->  arch/powerpc/platforms/ps3/system-bus.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platforms/ps3/system-bus.c
-> index b9a7d9bae687..afbaabf182d0 100644
-> --- a/arch/powerpc/platforms/ps3/system-bus.c
-> +++ b/arch/powerpc/platforms/ps3/system-bus.c
-> @@ -453,10 +453,9 @@ static ssize_t modalias_show(struct device *_dev, struct device_attribute *a,
->  	char *buf)
->  {
->  	struct ps3_system_bus_device *dev = ps3_dev_to_system_bus_dev(_dev);
-> -	int len = snprintf(buf, PAGE_SIZE, "ps3:%d:%d\n", dev->match_id,
-> -			   dev->match_sub_id);
->  
-> -	return (len >= PAGE_SIZE) ? (PAGE_SIZE - 1) : len;
-> +	return sysfs_emit(buf, "ps3:%d:%d\n", dev->match_id,
-> +			  dev->match_sub_id);
->  }
->  static DEVICE_ATTR_RO(modalias);
+> Tested-by: Ferry Toth <fntoth@gmail.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I tested this on PS3 and it seems to work OK.
-Thanks for your contribution.
-
-Acked-by: Geoff Levand <geoff@infradead.org>
-
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
