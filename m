@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-374547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB199A6BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:12:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FC29A6BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2F1280D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D482E280A72
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450131F9A85;
-	Mon, 21 Oct 2024 14:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5871F9AAE;
+	Mon, 21 Oct 2024 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="r4kvZTeQ"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wxpfwnjX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dv0Ajaei"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6451F427B;
-	Mon, 21 Oct 2024 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BECA1F4FB9;
+	Mon, 21 Oct 2024 14:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519900; cv=none; b=EsUnpJFl2UkbSJbvVSJnVlLDrVQy34nMwDqqVZFOR0oelBbRsNRqj8tFpLtgkN1jm/TiRBUymLZA4zVwzHu7HIlVnVOnRrLPU+djSzG7VcOmUD28mDy/i0RavxTgX8Kl9eauPqe8HUpU0ZuLJKfGt6PuVnhq+q5N80PnLhegOEQ=
+	t=1729519885; cv=none; b=qFwE+CZXv5zjsyD4ewEy+TGRxwyeOhhtC9Vz1qjhARaBQHcXzu3uZOI874g9805ruBKYCOgWtDNKcUU5KoyVmGWyAnpRrwiWKxu2Uxr+heYqlIq9SVIi54n/fr63jdjtHA+r6c0QymuFlyoBA/vrqpIswXSJoBx1i9jVySy6h1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519900; c=relaxed/simple;
-	bh=r12XCv7wGjmgJ0EEIi5AyKG2WXF2DeRO+CdRaxJvlks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhgZnEmp4s0J3azxZ9InIUgrIhgmwkOelg4i0ESFnzAyHqHx/CgQrKVTs1N0dMPE2BWxuVfOV6rEQsBqXf5uzH8PRX+xXa6TDhYiqt0O64C+Itdr7hYAfz5G8kA+QaRe8yYWbSNZRD0YKAZtIhrMbLplhU+FzzmhkvBJy/YJeTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=r4kvZTeQ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7K5v5ZY4zeUHGzQFv6PebieE5LwgNrwfdhsPGijF2ik=; b=r4kvZTeQKPzFsBGVTHgUYy+0YZ
-	ppHjYn/ra/ADYAFKKcXttGtKerJ0yHoFkifnPIDSWcbYyen3gPlZEsb5pfadAclUgpZ1S95wWPp5z
-	zj7eCkHk3gGPdtKeWXF8Bjt3ZQlZwk49URuG9iBm0VgI7/SL01YYkxBB9gIBq+elopD0mm1bsY4qn
-	U4445THvEsbgpn7Chu5aBzbbLF6/eebtS7EgN1cYHd4nhjss5Ciz02OPw27K9nRAROvjEfhflzDGf
-	0/2yiYpzzn7ho0MMzChf6ErEfEy4i8V7vZP44n2tOY5LNEGmufxRddaadDF70Ebglscw59n6xN6pT
-	RGK1uTPQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51242)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1t2t7w-0003V4-0Z;
-	Mon, 21 Oct 2024 15:11:20 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1t2t7p-0001n9-0G;
-	Mon, 21 Oct 2024 15:11:13 +0100
-Date: Mon, 21 Oct 2024 15:11:12 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	=?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH 0/4] net: dsa: Add Airoha AN8855 support
-Message-ID: <ZxZhADBe6UtdCTsu@shell.armlinux.org.uk>
-References: <20241021130209.15660-1-ansuelsmth@gmail.com>
- <20241021133605.yavvlsgp2yikeep4@skbuf>
+	s=arc-20240116; t=1729519885; c=relaxed/simple;
+	bh=b/cW38UmE3Pv76IHe4RPgR096CPrB/Pvt0IRGOkpP/U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jgSsN9HKfXo2ldB6ujay6H2XpHNROud+ROpOo4E2m15jYVMIclr963nB8HJmHzYEd0unNNAaVTcpzBlw8h0sv51YxNtNOf+9Dnnj/OVFbJ6s1uNSlSBDLA2UMp0gPUhcZ18eRTSSGb1bKJyH2i43WgStczU9vY36mZVmBKbB4DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wxpfwnjX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dv0Ajaei; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729519881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uX3cYUCg0C3YKx6EmlFEipnB4MzYOAQ48LbD1o4kUOs=;
+	b=wxpfwnjXqTMfV9S2UECFbZ7QBnCB8nOxPdiMmaIGKniEmliHqLsndr4NxVwDJ2/O5sHQG8
+	AQbH0Z3K/dbvv+Ng4c6nM5/ljqDUivc0STxOT/IX1v+0xwv0roFXAuUetD7puY20QH5o7/
+	nNIR95PfOuHz8anb1DEBUADi5n4cekNY8VJQtTcGpqHQ1mMq57erlcXUJ72HZAHEwGzlrp
+	XqlFQ/W2znK53SE2bl9qB6wPRVKON8Jw7cJMC8J2DKztey/+VVO4bkqNxDgvSh/7rf0A6X
+	4UeJXMP8Hy3BB2TVKhftXpqqBufc0ZVHLY4TaNVkmdFCCwDDY7VWD9me1ENP9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729519881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uX3cYUCg0C3YKx6EmlFEipnB4MzYOAQ48LbD1o4kUOs=;
+	b=dv0Ajaeim9j8QL4yXE0A+Wmil/cwevlLfy0I5GBbsismvMz9aq3bbC4KB58qgfGPIQkFOp
+	PzfpLHKqaNT+HpAA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
+In-Reply-To: <ZxZYKe0t7jWX-_1K@pathway.suse.cz>
+References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
+ <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+ <84plnz29zv.fsf@jogness.linutronix.de> <ZxDl-VcVAI8DGM40@pathway.suse.cz>
+ <847ca5rigk.fsf@jogness.linutronix.de> <ZxZYKe0t7jWX-_1K@pathway.suse.cz>
+Date: Mon, 21 Oct 2024 16:17:20 +0206
+Message-ID: <8434kpfsvr.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021133605.yavvlsgp2yikeep4@skbuf>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain
 
-On Mon, Oct 21, 2024 at 04:36:05PM +0300, Vladimir Oltean wrote:
-> On Mon, Oct 21, 2024 at 03:01:55PM +0200, Christian Marangi wrote:
-> > It's conceptually similar to mediatek switch but register and bits
-> > are different.
-> 
-> Is it impractical to use struct regmap_field to abstract those
-> differences away and reuse the mt7530 driver's control flow? What is the
-> relationship between the Airoha and Mediatek IP anyway? The mt7530
-> maintainers should also be consulted w.r.t. whether code sharing is in
-> the common interest (I copied them).
+On 2024-10-21, Petr Mladek <pmladek@suse.com> wrote:
+>> That will not work because migrate_enable() can only be called from
+>> can_sleep context. Instead, the migrate_disable()/enable() should be at
+>> the few (one?) call sites where printk_loud_console_enter()/exit() is
+>> used from task context.
+>
+> Hmm, if I get it correctly, we could not use migrate_disable() in
+> __handle_sysrq() because it can be called also in atomic context,
 
-That thought crossed my mind while reviewing patch 3. I compared the
-PMCR and PMSR, a lot of the bits are in completely different places
-between the two. I didn't check further, but I got the feeling that
-would invite more complexity.
+I am talking about callers of __handle_sysrq() and/or their callers.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+For example write_sysrq_trigger() could do:
+
+	migrate_disable();
+	__handle_sysrq(c, false);
+	migrate_enable();
+
+Or a new wrapper could be introduced for this purpose:
+
+static inline void wrapper handle_sysrq_task(u8 key, bool check_mask)
+{
+	migrate_disable();
+	__handle_sysrq(key, check_mask);
+	migrate_enable();
+}
+
+A quick grep shows about 25 call sites to check.
+
+> I do not see any easy way how to distinguish whether it was called in
+> an atomic context or not.
+
+There is no clean way to do that. If this information is needed, it must
+be tracked by the call chain.
+
+> So, I see three possibilities:
+>
+>   1. Explicitly call preempt_disable() in __handle_sysrq().
+>
+>      It would be just around the the single line or the help. But still,
+>      I do not like it much.
+
+Not acceptable for PREEMPT_RT since sysrq is exposed to external inputs.
+
+>   2. Avoid the per-CPU variable. Force adding the LOUD_CON/FORCE_CON
+>      flag using a global variable, e.g. printk_force_console.
+>
+>      The problem is that it might affect also messages printed by
+>      other CPUs. And there might be many.
+>
+>      Well, console_loglevel is a global variable. The original code
+>      had a similar problem.
+
+If disabling migration is not an option for you, this would be my second
+choice. I assume tagging too many messages is better than not tagging
+enough. And, as you say, this is effectively what the current code is
+trying to do.
+
+>   3. Add the LOUD_CON/FLUSH_CON flag via a parameter. For example,
+>      by a special LOGLEVEL_FORCE_CON, similar to LOGLEVEL_SCHED.
+>
+>      I might work well for __handle_sysrq() which calls the affected
+>      printk() directly.
+>
+>      But it won't work, for example, for kdb_show_stack(). It wants
+>      to show messages printed by a nested functions.
+
+Right, this has limited usefulness and might miss the important things,
+which tend to be within helper functions.
+
+John
 
