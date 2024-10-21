@@ -1,242 +1,126 @@
-Return-Path: <linux-kernel+bounces-374067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EC59A61D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:08:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80199A61F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7C71C2588D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D241C25AAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB6D1E47A0;
-	Mon, 21 Oct 2024 10:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2591E3DDE;
+	Mon, 21 Oct 2024 10:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ne/IPE08";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c+yT9YJV"
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ngDYBB+z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36171974F4;
-	Mon, 21 Oct 2024 10:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12CC1E0087;
+	Mon, 21 Oct 2024 10:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729505324; cv=none; b=j2lKbzfhBazpnPxoJgrUIq/b3CzRVm1J1QrVg4fm7eNuTs5XN2K+jrb3NPnOA2TlMQfTAzyGlLP8TeOAJT9g+yWi+9xsFtZpOGTU8pLS9gws3/lxtHpEE1R7QtBGJYYDFrjGGPRqs94oUafOLpsL5F8vb0olf6Ylco73RHRmxRo=
+	t=1729505344; cv=none; b=Oy5S/rL4ffEU3/Sr/mQn5h0tM9KKf/kYNK83v6Yt+juDgfE7pm24ExJr1OjUUJ+WsyfSiEdxyeBRx3aeBZ4EvRHSATp33k3nn0aKXCok8b/4XxGZwYrw3H7GQKKLTKmj43h0/jOb/fmpInXOnDXDeoaWqyMjT3tV/5RcNkXkMT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729505324; c=relaxed/simple;
-	bh=Wmxsy2S2l7rPsX04lUxjnO6Uob6a4ayEHcsoLJ8T0TA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=M61bpl9XXg90T+wdGPK0xMTYsQkG+9UMjq7XiVJzdksapHgQsJsOpV4LLZerR43NwXWvzSwjPH+EcUd770KlKhUkZYhw8PauumVPAjaFyfpSHphNDs9K08Diw4j+2ZjFVrNkCWfQI9CEBKtemhmjeAyc3GqsQt92rjxRdL6/A6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ne/IPE08; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c+yT9YJV; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailflow.phl.internal (Postfix) with ESMTP id BAD6B2001BC;
-	Mon, 21 Oct 2024 06:08:41 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 21 Oct 2024 06:08:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729505321;
-	 x=1729512521; bh=ghSlNe0tmFIbW8pbUYudW/CbWTjZ+S6+ujlr6qqnF/E=; b=
-	ne/IPE08UonRdshCEbTY4eWggIuJdw7ggRLwVWX6T78qDjRqTQRxe8A6YsUhbWkX
-	fIjZUVpDjQEEtkjJlKtRrQ4SzcACH9iXutk4zanQBogR4otxUePp6c6f1IjcMh20
-	EHYmUpptTI/quDvu8UjQi8cNIZ1tO11br17DIeQbvohy5u+KEpGpa69ULQPI/WMV
-	Ci8IqRqEH5xOzjI16MWAtEJ56raEr0Wi5FT44Hr8BoB4dzFA7DgYJhnIpFXC9r6P
-	+yH6cvNHjo3+zsJmhNTDhNzqy9nmPdQ0cC2UY1Be+GpI1+K6KfZQC4IdLuzXGg3s
-	lpgYr94GWBUllJMI63hVxg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729505321; x=
-	1729512521; bh=ghSlNe0tmFIbW8pbUYudW/CbWTjZ+S6+ujlr6qqnF/E=; b=c
-	+yT9YJVNdsrrwGaHaBDLiJ9XZ4izTUNteC1asRAHk8AdWfX3WorexOGb71M8j4uC
-	zORjv/TdqGZDpylQB0WryzahKC4T3PQnVwuG1fgtzPPCVzBEpdXnGLxATCsmIig/
-	H96DDBEWYMOty9sHtCLaZ93EKfqIQ9GQUldQShv6EqsRiJ2YyaiOSfUhYdT4UfU7
-	MEZh6q1r48ORtasV2o1IOR+T/D2+qmbYUNoOyJCD12cuIgp1CNyi58VEbLkN3AqD
-	3i05ArUpxC7CCQcPNoNHHDKliwuCUHAyCxhbku0HVNvpSCwTHglC6p6cDZaamA4N
-	UtpN4HsdEnl6gCT6kEuwQ==
-X-ME-Sender: <xms:KSgWZ6S6R2n1f2T0QCQexTgiV-KSMlaMM2gkoOq12JijmTNZ1Da6pA>
-    <xme:KSgWZ_zrX9SKSefI_hsukUWNkowAAXFNzJVOU5WQN8cskfd-UktwCKcRh5niCSPF9
-    B-wUzhhhk-7zGgwpLQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehl
-    uhhiiidruggvnhhtiiesghhmrghilhdrtghomhdprhgtphhtthhopehprghtrhhikhdrrh
-    drjhgrkhhosghsshhonhesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrtggvlhes
-    hhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhutggrshdruggvmhgrrhgthhhise
-    hinhhtvghlrdgtohhmpdhrtghpthhtoheprhhoughrihhgohdrvhhivhhisehinhhtvghl
-    rdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:KSgWZ306jKZbZyxIuNn24nj8C_gZvqx8j2vZtEOD83IWkVo0nTYHqw>
-    <xmx:KSgWZ2ChYHyNQtPFROKXIN2jjht4D_m7Shh_6ifCQapVKZZio003WA>
-    <xmx:KSgWZzi65AZ8OiKDEBbUvjM6UWP-jI8InMkFEuc1FbIPK1bIuuD40g>
-    <xmx:KSgWZyo2OCvdSDoNogZ2pNuyd_R1Z-2mydlod75TWuAx6fAolN5qiA>
-    <xmx:KSgWZ05XjI0ejUOeJbkMdLt1Sg5fEKNECBVD0njAWDAczeUufW1V0bbf>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 003F42220071; Mon, 21 Oct 2024 06:08:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729505344; c=relaxed/simple;
+	bh=18+jnM85UjW+wbWkxa7PX1839a1zgtzyUj59Bn2HJi8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=C0HJsSWDxswra6jMTEP9aFTL0asWkmxepTjkEg1knE6hZZwqSHf1OeQaiT3VqukA++LU/HcKDQmsnEToZTTYZra2Xelyr41ORJ6RLUAeFW/bT4AGnq5wE0/0dU4ULo7ZXyF4AXMPkJ7R9l0DlGYChfLwt9jPfyVanci2yKvgjbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ngDYBB+z; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729505343; x=1761041343;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=18+jnM85UjW+wbWkxa7PX1839a1zgtzyUj59Bn2HJi8=;
+  b=ngDYBB+zNqeGQ4b+fDE1ffjl8cQz8OLAPJ8LsN60BrJFx92eVNX4MjS0
+   ajvfTCiP9R771GTTCqWHzPlFrXoBZrgP0SQLqnGKBNbJEUP6i2K9PP7EL
+   LLvkO0TLtd2MzDhZgbGQrjKT2EGscVfu8b7KMOxlMGBp5GabaFTKJ6GVo
+   pMb5406hfHHohvP1N8NPz9NaBMpe8ad4vq18BgWBrkIncTJmJhvfi/yLW
+   SmnvS9HAbrgHH2EfnYoZtd8Qox8qTsL1XwFX0MMpiWds/dZ67Y00vBCaG
+   GmYvBG2600/nkq3thThW4JcuxOg/FDcOnSwRoDutzvC4X1PXnj2zrVYLQ
+   g==;
+X-CSE-ConnectionGUID: ytRcUNLsTRSjb9roJG11KQ==
+X-CSE-MsgGUID: 8q6LIrgnSTW4ZBveSvZCEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="29101157"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="29101157"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:09:02 -0700
+X-CSE-ConnectionGUID: Uq3XoKk9TNG9/w8SInjXiA==
+X-CSE-MsgGUID: UiiZ5kuNRKGms2jEQavPug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="79832816"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.201])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:08:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 21 Oct 2024 13:08:55 +0300 (EEST)
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    Andy Shevchenko <andy@kernel.org>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v2 2/3] platform/x86: intel_scu_ipc: Simplify code with
+ cleanup helpers
+In-Reply-To: <CAHp75VejavDObi4PMLPVCO==YCTRkOvV-uOOSyx_=74bOSrKxQ@mail.gmail.com>
+Message-ID: <e4ede6f5-6459-862a-adb9-fdd6f9524c51@linux.intel.com>
+References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com> <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com> <28078013-a643-af8e-22be-f36c75790ba5@linux.intel.com>
+ <CAHp75VejavDObi4PMLPVCO==YCTRkOvV-uOOSyx_=74bOSrKxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 21 Oct 2024 10:08:19 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>, "Brian Cain" <bcain@quicinc.com>,
- "Marcel Holtmann" <marcel@holtmann.org>,
- "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
- "Patrik Jakobsson" <patrik.r.jakobsson@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Dave Airlie" <airlied@redhat.com>,
- "Gerd Hoffmann" <kraxel@redhat.com>,
- "Lucas De Marchi" <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "Heiko Carstens" <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Message-Id: <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
-In-Reply-To: <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
-References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com>
- <20241008-b4-has_ioport-v8-3-793e68aeadda@linux.ibm.com>
- <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
-Subject: Re: [PATCH v8 3/5] drm: handle HAS_IOPORT dependencies
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="8323328-1909606106-1729504337=:1065"
+Content-ID: <dd84cda3-68ba-895e-1ee3-e448909d4566@linux.intel.com>
 
-On Mon, Oct 21, 2024, at 07:52, Thomas Zimmermann wrote:
-> Am 08.10.24 um 14:39 schrieb Niklas Schnelle:
-d 100644
->> --- a/drivers/gpu/drm/qxl/Kconfig
->> +++ b/drivers/gpu/drm/qxl/Kconfig
->> @@ -2,6 +2,7 @@
->>   config DRM_QXL
->>   	tristate "QXL virtual GPU"
->>   	depends on DRM && PCI && MMU
->> +	depends on HAS_IOPORT
->
-> Is there a difference between this style (multiple 'depends on') and the 
-> one used for gma500 (&& && &&)?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-No, it's the same. Doing it in one line is mainly useful
-if you have some '||' as well.
+--8323328-1909606106-1729504337=:1065
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <9697b3e8-66b6-c22a-bdcc-aca957226134@linux.intel.com>
 
->> @@ -105,7 +106,9 @@ static void bochs_vga_writeb(struct bochs_device *bochs, u16 ioport, u8 val)
->>   
->>   		writeb(val, bochs->mmio + offset);
->>   	} else {
->> +#ifdef CONFIG_HAS_IOPORT
->>   		outb(val, ioport);
->> +#endif
->
-> Could you provide empty defines for the out() interfaces at the top of 
-> the file?
+On Mon, 21 Oct 2024, Andy Shevchenko wrote:
 
-That no longer works since there are now __compiletime_error()
-versions of these funcitons. However we can do it more nicely like:
+> On Mon, Oct 21, 2024 at 12:32=E2=80=AFPM Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> > On Mon, 21 Oct 2024, Andy Shevchenko wrote:
+>=20
+> ...
+>=20
+> > IMO, this change is doing too many things at once and it's hard to just=
+ify
+> > why those changes must be kept in the same patch. If the guard() change
+> > is done first and only then the logic reversions, both patches would
+> > probably be near trivial to review for correctness.
+>=20
+> Are you insisting on this?
+> Because that's how I have done similar changes in the past all over
+> the kernel, and IIRC you are the first one asking for this :-)
 
-diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
-index 9b337f948434..034af6e32200 100644
---- a/drivers/gpu/drm/tiny/bochs.c
-+++ b/drivers/gpu/drm/tiny/bochs.c
-@@ -112,14 +112,12 @@ static void bochs_vga_writeb(struct bochs_device *bochs, u16 ioport, u8 val)
- 	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
- 		return;
- 
--	if (bochs->mmio) {
-+	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
- 		int offset = ioport - 0x3c0 + 0x400;
- 
- 		writeb(val, bochs->mmio + offset);
- 	} else {
--#ifdef CONFIG_HAS_IOPORT
- 		outb(val, ioport);
--#endif
- 	}
- }
- 
-@@ -128,16 +126,12 @@ static u8 bochs_vga_readb(struct bochs_device *bochs, u16 ioport)
- 	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
- 		return 0xff;
- 
--	if (bochs->mmio) {
-+	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
- 		int offset = ioport - 0x3c0 + 0x400;
- 
- 		return readb(bochs->mmio + offset);
- 	} else {
--#ifdef CONFIG_HAS_IOPORT
- 		return inb(ioport);
--#else
--		return 0xff;
--#endif
- 	}
- }
- 
-@@ -145,32 +139,26 @@ static u16 bochs_dispi_read(struct bochs_device *bochs, u16 reg)
- {
- 	u16 ret = 0;
- 
--	if (bochs->mmio) {
-+	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
- 		int offset = 0x500 + (reg << 1);
- 
- 		ret = readw(bochs->mmio + offset);
- 	} else {
--#ifdef CONFIG_HAS_IOPORT
- 		outw(reg, VBE_DISPI_IOPORT_INDEX);
- 		ret = inw(VBE_DISPI_IOPORT_DATA);
--#else
--		ret = 0xffff;
--#endif
- 	}
- 	return ret;
- }
- 
- static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
- {
--	if (bochs->mmio) {
-+	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
- 		int offset = 0x500 + (reg << 1);
- 
- 		writew(val, bochs->mmio + offset);
- 	} else {
--#ifdef CONFIG_HAS_IOPORT
- 		outw(reg, VBE_DISPI_IOPORT_INDEX);
- 		outw(val, VBE_DISPI_IOPORT_DATA);
--#endif
- 	}
- }
- 
-> And the in() interfaces could be defined to 0xff[ff].
->
-> I assume that you don't want to provide such empty macros in the 
-> kernel's io.h header?
+Well, I know I could go through the patch as is and likely find out it's=20
+correct. But as is, it requires clearly more effort that it would if those=
+=20
+two things would be separated. The contexts would be much smaller and=20
+focused if you split this into two and since you know the end result (the=
+=20
+current patch), the second patch is just the diff of the first to it.
 
-That was the original idea many years ago, but Linus rejected
-my pull request for it, so Niklas worked through all drivers
-individually to add the dependencies instead.
+I'm not saying it's always required but TBH, this patch definitely would=20
+get simpler to read if you split it into two. So to answer your question,=
+=20
+it's more of a judgement call than insisting it always.
 
-     Arnd
+
+--=20
+ i.
+--8323328-1909606106-1729504337=:1065--
 
