@@ -1,387 +1,124 @@
-Return-Path: <linux-kernel+bounces-374525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E116C9A6B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D40D39A6B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B361C2086A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17A751C2277A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5CF1F9A8E;
-	Mon, 21 Oct 2024 14:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DCF1F8933;
+	Mon, 21 Oct 2024 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iu8ALFKA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FSrckexO"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223FE1F9A8F;
-	Mon, 21 Oct 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519517; cv=fail; b=imBbbcZcAOSAFUoo/r6SMI83RZuNqLF2d0g5Zf4sAQjZIGnTCQGsUQWjtKaQKfxHuIa+5N/fR2Ubqm4oYroB+sMqTRMjVrkTkgwVOl2h+JeBXyoooKQc0q186K/Yus14suEqKUfRdOSTIVzftIZrJ51hjfBE/YI2rTmBISKmbg4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519517; c=relaxed/simple;
-	bh=o3uEcmrUhndbyBrTfWB/276eCnehUHTySx5OlXFGNOU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JsS7gGPwtbIQnen2Z15BWVMEogOykLm94ugk+OdOXduUlMNsLMwv4Z6mawvUme+7ZUtPZscUD3i5lPu+tYSkqSOrjpTg/9Z+88sJctYTcTpcwIBoIGAg5aLstJNA2f32Pyf5VtRwU8jlC0dJ+pBkaXv03mrp1mIWR1earZJ4S4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iu8ALFKA; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729519516; x=1761055516;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=o3uEcmrUhndbyBrTfWB/276eCnehUHTySx5OlXFGNOU=;
-  b=iu8ALFKAi6Tdk9/PbhOS393FUZBST7oWSw7xbxB50wGQYopSCQaS34wk
-   hYXlXi1NdDhHN/nSTHGey7twk7hKek1foBSg9HZLs97Xs7pwl7W4E13bL
-   xiwe6D9yo+75YSY5i/wQmgRgcC9jwuDNzJzheqlp/k+MDcxJgcOakX01I
-   yJnnajPHufJT+FeFob0cw62ORdgGu+ITUL9wQxtsJJ1wpq+1896/ESpRo
-   w0xyTuuYkOQpPMNmXvPDoT/XmKkkNpAl/UIJ+rqZWJ/CriBq/WILBkp+x
-   N/yQJPwVSMekzLGnTa3Gzd9L8GkvahmJgjbHfjafWAKZc93RGLLADaXTR
-   A==;
-X-CSE-ConnectionGUID: oZHFE0WEQ921U/ICCpUsPQ==
-X-CSE-MsgGUID: ZLTOZJsqQmSH7xKFcEYPTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46469245"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46469245"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:04:50 -0700
-X-CSE-ConnectionGUID: GEueAy7rRCW7cp2tLE1xbg==
-X-CSE-MsgGUID: KC7MElVEQZmjXs8vQbCHYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="84326996"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 07:04:50 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 21 Oct 2024 07:04:49 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 07:04:49 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.45) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 21 Oct 2024 07:04:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HZxPrGsjDeGLXNsWlDxXuwZIISSbEf9bvlZhu9csytQSwUlpyCcU+1DOuVFIct5JDKmdJJIMrmwpssSjhlBiipxDChvSHzHlQqj967CFQa5Z0MZke6wS27MtopVTPyMOJQwMMPvDyOZ+L4M5VNj9qsfPBJDsv7Ft27+LDPxscv0ZmjAu5gytyYbL/+Vs5su7iHH/n8ZdL2WslQ6erVtjGhBJgEXVrLqyn8bFjLH/XCmV7+mu8QG4SS21l83yNm833xGBlrA8DaGEs1qAXNGGURRbY6wXPbLNgFYGV2wQLnUoEBzbTcWgY+XvqNy9QQyAiswa+r0fah8mf6O2DFvTxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QGVqqoYTCXZwUFWdpB9g6VvlDgkp9dZynb6xH58jP7s=;
- b=IFcfx8vCA7wVC7OU3/H+N3lkFZ9i3QYzn87v/yfX6r4GvR3eG5ubrRluPfdotI+eUSZAvvGMtBcMVpl6+gtI/yz7gc7z60lUJfdauv0/nlP6C4srXrBgXpzoyVjw8hbI/rasSPk87c6T8//KuIZ1B1wmpqNXehVoLLRpHgi5G6LSE+L+fV4L+OVWY9uZDVq+J4Yz9ly0ic19lbQ6uFIvXxq7VuTWAYBozzffebytj7di/RutzfKUN10DTfnqmr7ScWk/uMp+tjrGZ3cXzvzTY3A/SA/pDZifKh6X+AWO7n6T7vPJ1wvnQ4WJkrGoIhxjg5v/Jd1MeZiOzEDZM7t3LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SA1PR11MB5924.namprd11.prod.outlook.com (2603:10b6:806:23b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 14:04:44 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 14:04:44 +0000
-Date: Mon, 21 Oct 2024 09:04:36 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ira Weiny
-	<ira.weiny@intel.com>
-CC: "Li, Ming4" <ming4.li@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Fan
- Ni" <fan.ni@samsung.com>, Navneet Singh <navneet.singh@intel.com>, "Jonathan
- Corbet" <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, "Dan
- Williams" <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 21/28] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <67165f7447c77_8cb17294f0@iweiny-mobl.notmuch>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-21-c261ee6eeded@intel.com>
- <4337ddd9-312b-4fb7-9597-81e8b00d57cb@intel.com>
- <6706de3530f5c_40429294b8@iweiny-mobl.notmuch>
- <20241010155014.00004bdd@Huawei.com>
- <67117e57479b3_2cee2942d@iweiny-mobl.notmuch>
- <20241018100307.000008a9@Huawei.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241018100307.000008a9@Huawei.com>
-X-ClientProxiedBy: MW4PR03CA0307.namprd03.prod.outlook.com
- (2603:10b6:303:dd::12) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF711DF754
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729519552; cv=none; b=Hmd0Y3kUwaYAeUxTvCjyUAn5Qt7nZQKNOgxtYA8zJc8UWaZZFxc2syZJG8nTE3KXp+hFW0vMnbxnAYyqxrtLbKThTzYfFCvS/UY5aeG+RobG4+/cdOO1Oi1eyQdZNWc8esj+9pvu/TVN6/RsYD1cluLeiTG9jRHQ6erpsc7QEE0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729519552; c=relaxed/simple;
+	bh=eedBscw/LGWNdzKVkTU7WWL5VO1Qm3yPV32Z9qjHYBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyNrZTVPyhzHmnzzsin8j9tYb0Rfs2iqT7q6sy2/6p90bHMCAniDRIZ9sTCTyWZTSPF9O9Vny7mYf+XRfQt9znyiioXH0hBjMDdUg/QNuDlNTBNg9WxZD+NGF010MrWV1gLPDwLXstk2RkFfvZ4iF9WokitenvU1Y0F+qZpJrXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FSrckexO; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso3459769a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729519550; x=1730124350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVisE+PE807hpO8CSAN7tilp7Z5USiSARLUB5mQ6sGE=;
+        b=FSrckexOgwmjvmNzAZf4P15GD6f/ullMommleZNlODPiqg1U9kP/ThP9EmGTzO95rA
+         4L+8KFs5W7DHXeruEccgXZo5Zc8qaU4i5y3cm45J1xT+LiMbsvkWR7wJOkR3DfLiU0jp
+         mkvdWAbCNHGaDOuhj5eGSyYSbNWhLfVFzuPIQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729519550; x=1730124350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lVisE+PE807hpO8CSAN7tilp7Z5USiSARLUB5mQ6sGE=;
+        b=rNzaRvlpVmyAcQO1hsbJC/Fbc/4uA/czWCS4yuRS49vMmcUL3mpfF3G67fZ+8cAcrR
+         6s06GW5eKCJSsdcKiOrOBEkdhrauY9UFFnW8f7UCVTsmztUdZ0yXedSG4mycbC0p8hs9
+         K0tPoHGOKRHHJMt7fcg1f1Z3BSt8Ab9NqexeGfjHaUU2jE64NowE+Q0tlNKWnjr48J1o
+         OFbfhR1GL3tiJNzA/Oy1kieF40kDBmt3md2LD+3HqoykXbcQcfeINMP9pxIjyUjREnyh
+         Pt2lSDud7YjY/VbIqKJ2YZuTs482pNGsJmB06L8ImE98+spkKHjhWvYLqRk1z6XaGaKz
+         3XIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoQUtCRm1tBz8XFDyKf2bavnXq8zB6PbqWi6wnT1u0HumbS9Z8VefKo1boQJd/RMSuEW8MulCNXrBbHGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqV14FTMoB1+9IPRa8B/P1HeteOVpyhg8aTiJsZp+xthXybJYY
+	hQAX79vdw2+U8IDhBmh6AADkIbSiZXl/YDeUJtgOIwrETqQy/2DXuphXQB0ToA==
+X-Google-Smtp-Source: AGHT+IFKl8bzamnuWMLgNJkuqVRi9dnOVZzxVFFalqgJLx3tvd/wT7dAvKU2gZg1sxaZIisSRMrfSg==
+X-Received: by 2002:a05:6a21:350d:b0:1d9:ea5:19da with SMTP id adf61e73a8af0-1d96b6b6ed5mr25344637.17.1729519549873;
+        Mon, 21 Oct 2024 07:05:49 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ecc1:dced:8a05:e4d8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab57e36sm3133318a12.43.2024.10.21.07.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 07:05:49 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] arm64: dts: mediatek: mt8186-corsola: Fix GPU supply coupling max-spread
+Date: Mon, 21 Oct 2024 22:05:36 +0800
+Message-ID: <20241021140537.3049232-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB5924:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a52e199-6c77-42bf-ee1b-08dcf1d95095
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9Rmv7GU1UdmoNM80QfqEhJOBJiUiZy8ANKQgTwVTNfJUDkIPe/eGLuZD/ka9?=
- =?us-ascii?Q?nT8s7Pcm7S992Bp9+FlQztep/pltdZAvAo4dGvZuDaFPdKn1ilFGO7jswwYr?=
- =?us-ascii?Q?Yar/eFHT8mSJslnzDLHXTVD4NRrNKIdu6e0HebgHXdG6EvF9BQdjXMiTxowD?=
- =?us-ascii?Q?R05YfQMfI/LgO/OmgWLqBeQ0Cz8sHvhJ2POB+o6MEE+sT1BaKuOtCcgbJAa7?=
- =?us-ascii?Q?b+peVrI2kJGn+p4/l0PqbICh6bIISp0VYEz9dlwPJyuhHVQApcs0LZVz6i92?=
- =?us-ascii?Q?QfOacazS/3vaqjmNojhwe8qTcLF3esnicKEVDww1H1KkemI3Dtzvv9PnrI3A?=
- =?us-ascii?Q?ueymIkeg59PijbAIAVBOI7Bo+4Kamdkw+W8bLreYTcB7+r5/J5/9OGHOWhdS?=
- =?us-ascii?Q?yrGm+Q5KpTCKFuGNxrBpDTha3feJsBuakZ4F59R19KiXdDK9f7wJEkWQhu12?=
- =?us-ascii?Q?Mr5Zv0d6tGsVepUm0f3FhOlgh/ABbWAPfIoWM7y289SYQrZZkHUNlRnUYWCa?=
- =?us-ascii?Q?cE4MwsyRFjOrTbzZKLdfPPuv9SelbNzOItDiYmnWmvgNyy2BSbUnAXaouGlI?=
- =?us-ascii?Q?WEx1XVusKAdZzKYpDRcqZgKsjwcjGDiZP/nSrf88FgZryf1gHDeXWDZkdQJ+?=
- =?us-ascii?Q?dHlOJbc6pUO8HjusyxAnj1zFGmy8k/IF/nrdbOSH7Rt3RDwZz+4WS2UkQcaN?=
- =?us-ascii?Q?LIWinu/kUhHJHbMkM3k0mB4ptADpb3Az2oXkdYo2iqAk5fM4H0Jc/dBWC+1K?=
- =?us-ascii?Q?iU9q3P6Zivy0rr0vl3dbJIpCprtoGhibkJ4M8yJtEuPyEPsRmKCRFDg0NadD?=
- =?us-ascii?Q?+wOOumdpcp8e8PAsq8P68ViCN4fH9KCJwuwb+qwtBaoh2uXD3E0VWDHTmwES?=
- =?us-ascii?Q?pS0Cf2u2zYJQb7rbqkijnG1cspbrHQ4gAaJDwapuBWX7D/Y+OB+qvl3Y9J6o?=
- =?us-ascii?Q?zwL4jGdImCiM8TGMHBdHCViHXmgZDYYzX5+oH8EyLwVHf0dOTxO2mZNlEtxd?=
- =?us-ascii?Q?9np9pZVvfmf7tNaiR/LbsI+cWCAWkqzmgy3jb7kT0r5LsmbyCTPygcaWLwLE?=
- =?us-ascii?Q?nsWztgu3bFbh/2iJ6Fe9otSHhGUioNdPICpeBDJBNy+p99QPCx0tQ/TQsMlY?=
- =?us-ascii?Q?XeVIxyZZ8n6VSHgO2zShFPoHbnuCMeSgV3XDeCqqPvolMRezDgtGLMLRbjhK?=
- =?us-ascii?Q?EDhW2sh6pQyDQFL5UWfbSIHT6o1imn0bo8lxghnKGJyoUp7/RPn2UnvDOvS6?=
- =?us-ascii?Q?KCd7VvxjOsC9ZNR41CndDiJ19qb4whGd5AfjeJ+dgQYjfBAzVO/4/rm/4N3d?=
- =?us-ascii?Q?kDpAseMFFYJ/gAFmzxyl8bi3?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7Zh6beXqdh3xyqh8TzpLXRxY6d9GwwqoIR7EWDCrvfNOXPAnDYxK3OKA1TJ8?=
- =?us-ascii?Q?o3euwWhf2fN2Kqf/w2arCFqRFA0JbBHoGIIG9Q7v8DV226/wWxORWbJ75ehD?=
- =?us-ascii?Q?bA4f9Y17Zy0/wtLI7VPHyIijdRxO1G0nU+NnKoo2/ijcwrlNghH2ZaYbeafV?=
- =?us-ascii?Q?sBgb9fKmwsYqGzF3QjTq+G9nN0HhTK4D5OO2ZS6F7XfGDjmuIC9SvXVJYlnw?=
- =?us-ascii?Q?kEbrItJBg9xhtx2WeYyZRxGSwOBZTDrrrKLckIWpkszB2h8zJEVFgcjZc1n8?=
- =?us-ascii?Q?mrlEWmbsyaF8KmE/PiE2WORjaCIBi7bNO7hNLf6fgEmXgOMX/Wqc5IY7A9+T?=
- =?us-ascii?Q?Ui3gVfOp0yYa29n9g1KGaZg28YfrGai+r3ZmcLzhB3h0Zi0KJnQxsLv4AmM8?=
- =?us-ascii?Q?qdC6iKIgnSflJqueJYXs+y0giepkc977AiJdPbCYRcUvCenJ+3nrgt+hCK8A?=
- =?us-ascii?Q?JQOjYKhVXm28mS2fp3zliGYywLcLnz3/iUKe6GqXpNRJPyyxeuCV71hGVgWx?=
- =?us-ascii?Q?tF98trb+1efkSp5Xpeh0qcuoWlIdfcHhLAHRV6VGxDL3M5XVzw8Zm0EGiOiT?=
- =?us-ascii?Q?SBY2dGRt5bzyUlySNnu4neucMBO9wOkwh2gAypd3cbpSF6VjJ7ZS7Y10xY74?=
- =?us-ascii?Q?Lfw6Jzs8wfkHNwW/F6vIGb1TotLxVI6cCjN21c0RW1i+E4I47XaXcNnI7iNB?=
- =?us-ascii?Q?8Vk7LWcmE7LZzSbzBZZGN0AQ5smjsnVb1dpt6fS5Px4NFBmtBCTzs69d+9aT?=
- =?us-ascii?Q?9R2z1UoAsRzQArCgvp0sz2x8qfHyHgsOmhst2wui/8b8rmAKBN6qwpLIrbNJ?=
- =?us-ascii?Q?1lo/iwRA2ef8gbQT3xVtfGlBgbgzAF5O8CV5LY/+PBSnVFiHPJbe0rnrUzcW?=
- =?us-ascii?Q?g0OymDEhHbYrFYtmOO56k+Po7LXCGtIvZvlD8JFtwA3tap5cn7Z6xdFe1iCs?=
- =?us-ascii?Q?mA3U4ygd9L6WTPelU2R7fiuB0rNSX2RObPkvgVevSFJpI220LbIJP7pf/rZI?=
- =?us-ascii?Q?aOHXtbm+nLYc0mN7ZJ3ZDCq6lARx0LF5asFE7hVtziqO0KcbrmhMt9IOQC1B?=
- =?us-ascii?Q?oZAcoLT7MKCQLpGoECaD1+vTg+f81pGs4JRAaqqt/J4aH7aPLa1pR7y7bgjE?=
- =?us-ascii?Q?fgMlZ1367NQ/Ii4ufvQKOpSG3tOxsceqpclV41OcKiJJtHnus3ryK3MlwIc7?=
- =?us-ascii?Q?Nbo5zz1X0QYpYFOPkCZzhTggEcSr16yhCIlaocmHYVaQ2l/Bn+bVhUEQQLL1?=
- =?us-ascii?Q?xzP6lqmunKrhm7LHnaUxLSFB+JM1O2x5L/A5FTw+fuL8kM7KvZK3ptr+ru8K?=
- =?us-ascii?Q?5r+s12B9YCvC51MEXoTAu42O3SqBPUGA6SsoEbsp9dtLdbkIqR4f+xBcbkZ1?=
- =?us-ascii?Q?7E00aqMDMN6gPx7/HkdI/X4QIn72bLY0K7lvhZX7nyNWuxuwsP1zdtUds71K?=
- =?us-ascii?Q?2aftEHGTee0h9doGr33e2nJ7ZrP285kzfrBme2/OKVYGiYreGzIWFPa5Bn5r?=
- =?us-ascii?Q?R7VdA75GkLUzfzdhXufdGN/Urw+m2dlNAGtAdDO+jThwcdRq+c41cnrcOKhA?=
- =?us-ascii?Q?9pZaEz4S2QjeAp2UP0XhMzI++6Un336PWpcYhtJP?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a52e199-6c77-42bf-ee1b-08dcf1d95095
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 14:04:44.5046
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VIa/nJxg+ES1147eeIxb+NngAymS7nFtnmfPVSSnwTeOKvs68PwVIJRRoSzhCPKVukV3gDhkofvD+SKk71vPtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5924
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Jonathan Cameron wrote:
-> On Thu, 17 Oct 2024 16:15:03 -0500
-> Ira Weiny <ira.weiny@intel.com> wrote:
-> 
-> > Jonathan Cameron wrote:
-> > > On Wed, 9 Oct 2024 14:49:09 -0500
-> > > Ira Weiny <ira.weiny@intel.com> wrote:
-> > >   
-> > > > Li, Ming4 wrote:  
-> > > > > On 10/8/2024 7:16 AM, ira.weiny@intel.com wrote:    
-> > > > > > From: Navneet Singh <navneet.singh@intel.com>
-> > > > > >    
-> > 
-> > [snip]
-> > 
+The GPU SRAM supply is supposed to be always at least 0.1V higher than
+the GPU supply. However when the DT was upstreamed, the spread was
+incorrectly set to 0.01V.
 
-[snip]
+Fixes: 8855d01fb81f ("arm64: dts: mediatek: Add MT8186 Krabby platform based Tentacruel / Tentacool")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Noticed this while trying to align the downstream Mali driver to the
+upstream device tree and binding.
 
-> > 
-> > So...  for clarity among all of us here is the new function.  I'm not thrilled
-> > with the use of a goto but I think it is ok here.
-> 
-> Easy enough to avoid and I don't think it hurts readability much to do so.
+ arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I disagree...  See below.
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+index cf288fe7a238..db2aca079349 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+@@ -1352,7 +1352,7 @@ mt6366_vgpu_reg: vgpu {
+ 				regulator-allowed-modes = <MT6397_BUCK_MODE_AUTO
+ 							   MT6397_BUCK_MODE_FORCE_PWM>;
+ 				regulator-coupled-with = <&mt6366_vsram_gpu_reg>;
+-				regulator-coupled-max-spread = <10000>;
++				regulator-coupled-max-spread = <100000>;
+ 			};
+ 
+ 			mt6366_vproc11_reg: vproc11 {
+@@ -1561,7 +1561,7 @@ mt6366_vsram_gpu_reg: vsram-gpu {
+ 				regulator-ramp-delay = <6250>;
+ 				regulator-enable-ramp-delay = <240>;
+ 				regulator-coupled-with = <&mt6366_vgpu_reg>;
+-				regulator-coupled-max-spread = <10000>;
++				regulator-coupled-max-spread = <100000>;
+ 			};
+ 
+ 			mt6366_vsram_others_reg: vsram-others {
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-> 
-> Your code should work though.
-> 
-> > 
-> > Ira
-> > 
-> > static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,      
-> >                                struct xarray *extent_array, int cnt)           
-> > {                                                                              
-> >        struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;                    
-> >        struct cxl_mbox_dc_response *p;                                         
-> >        struct cxl_mbox_cmd mbox_cmd;                                           
-> >        struct cxl_extent *extent;                                              
-> >        unsigned long index;                                                    
-> >        u32 pl_index;                                                           
-> >        int rc;                                                                 
-> >                                                                                
-> >        size_t pl_size = struct_size(p, extent_list, cnt);                      
-> >        u32 max_extents = cnt;                                              
-> >                                                                                
-> >        /* May have to use more bit on response. */                             
-> >        if (pl_size > cxl_mbox->payload_size) {                                 
-> >                max_extents = (cxl_mbox->payload_size - sizeof(*p)) /           
-> >                              sizeof(struct updated_extent_list);               
-> >                pl_size = struct_size(p, extent_list, max_extents);
->              
-> >        }                                                                       
-> >                                                                                
-> >        struct cxl_mbox_dc_response *response __free(kfree) =                   
-> >                                                kzalloc(pl_size, GFP_KERNEL);   
-> >        if (!response)                                                          
-> >                return -ENOMEM;                                                 
-> >                                                                                
-> >        pl_index = 0;                                                           
-> >        if (cnt == 0)                                                           
-> >                goto send_zero_accepted;
-> >        xa_for_each(extent_array, index, extent) {                              
-> >                response->extent_list[pl_index].dpa_start = extent->start_dpa;  
-> >                response->extent_list[pl_index].length = extent->length;        
-> >                pl_index++;                                                     
-> >                response->extent_list_size = cpu_to_le32(pl_index);    
-> 
-> Why set this here - to me makes more sense to set it only once but I can
-> see the logic either way.
-
-I put it here to group it with the changing of pl_index.  It is extra work.
-
-Since I'm resending I'll make the quick change.
-
->          
-> >   
-> >                if (pl_index == max_extents) {                                  
-> >                        mbox_cmd = (struct cxl_mbox_cmd) {                      
-> >                                .opcode = opcode,                               
-> >                                .size_in = struct_size(response, extent_list,   
-> >                                                       pl_index),               
-> >                                .payload_in = response,                         
-> >                        };                                                      
-> >                                                                                
-> >                        response->flags = 0;                                    
-> >                        if (pl_index < cnt)                                     
-> >                                response->flags &= CXL_DCD_EVENT_MORE;          
-> >                                                                                
-> >                        rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);        
-> >                        if (rc)                                                 
-> >                                return rc;                                      
-> >                        cnt -= pl_index;                                        
-> >                        pl_index = 0;                                          
-> >                }                                                               
-> >        }                                                                       
-> >                                                                                
-> >        if (!pl_index)                                                          
-> >                return 0;                                                       
-> >                                                                                
-> > send_zero_accepted:                                                            
-> >        mbox_cmd = (struct cxl_mbox_cmd) {                                      
-> >                .opcode = opcode,                                               
-> >                .size_in = struct_size(response, extent_list,                   
-> >                                       pl_index),                               
-> >                .payload_in = response,                                         
-> >        };                                                                      
-> >                                                                                
-> >        response->flags = 0;                                                    
-> >        return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);                      
-> > }                
-> 
-> 
-> Alternative form for what you have...
-
-Sure but lots of indentation on the common path which I have grown
-to avoid...  :-/
-
-Looking at this fresh...  A helper function works best.
-
-
-
-static int send_one_response(struct cxl_mailbox *cxl_mbox,
-                             struct cxl_mbox_dc_response *response,
-                             int opcode, u32 extent_list_size, u8 flags)
-{
-        struct cxl_mbox_cmd mbox_cmd = (struct cxl_mbox_cmd) {
-                .opcode = opcode,
-                .size_in = struct_size(response, extent_list, extent_list_size),
-                .payload_in = response,
-        };
-
-        response->extent_list_size = cpu_to_le32(extent_list_size);
-        response->flags = flags;
-        return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-}
-
-static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
-                                struct xarray *extent_array, int cnt)
-{
-        struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
-        struct cxl_mbox_dc_response *p;
-        struct cxl_extent *extent;
-        unsigned long index;
-        u32 pl_index;
-
-        size_t pl_size = struct_size(p, extent_list, cnt);
-        u32 max_extents = cnt;
-
-        /* May have to use more bit on response. */
-        if (pl_size > cxl_mbox->payload_size) {
-                max_extents = (cxl_mbox->payload_size - sizeof(*p)) /
-                              sizeof(struct updated_extent_list);
-                pl_size = struct_size(p, extent_list, max_extents);
-        }
-
-        struct cxl_mbox_dc_response *response __free(kfree) =
-                                                kzalloc(pl_size, GFP_KERNEL);
-        if (!response)
-                return -ENOMEM;
-
-        if (cnt == 0)
-                return send_one_response(cxl_mbox, response, opcode, 0, 0);
-
-        pl_index = 0;
-        xa_for_each(extent_array, index, extent) {
-                response->extent_list[pl_index].dpa_start = extent->start_dpa;
-                response->extent_list[pl_index].length = extent->length;
-                pl_index++;
-
-                if (pl_index == max_extents) {
-                        u8 flags = 0;
-                        int rc;
-
-                        if (pl_index < cnt)
-                                flags &= CXL_DCD_EVENT_MORE;
-                        rc = send_one_response(cxl_mbox, response, opcode,
-                                               pl_index, flags);
-                        if (rc) 
-                                return rc;
-                        cnt -= pl_index;
-                        pl_index = 0;
-                }
-        }
-
-        if (!pl_index) /* nothing more to do */
-                return 0;
-        return send_one_response(cxl_mbox, response, opcode, pl_index, 0);
-}
 
