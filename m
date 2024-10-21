@@ -1,279 +1,361 @@
-Return-Path: <linux-kernel+bounces-374814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BE89A709C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365D59A70B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B6E28198B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5853283933
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB1F1EBA07;
-	Mon, 21 Oct 2024 17:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1AC1EF093;
+	Mon, 21 Oct 2024 17:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M1uWKc6P"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jx1wrq2m"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DECE5FEE4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AC547A73;
+	Mon, 21 Oct 2024 17:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530455; cv=none; b=fvXzNEo5ZFssV69P3lAtrUMlQnAev1lvLUnh1PqrXjE9072BSDv+NRUZH6gVru9Bn3dNg+RQvPWKxx+WymXlvudbk54neXVGPbd1uGVPeZLg9dwI3nf5NqJVLtOpfcqyRya3Il76cB2ikU7Iad5kZOFpTN4wg/jZKZ1+rTJtC6c=
+	t=1729530631; cv=none; b=su8eyJp+pIVQrDOS5srBRbPl/H0N5TGKWMzNz1p2YG8D236WlwfYJa6oPqfYw53scGgXSKUwm+Nx9ZWuTiiosvJ23z3g8RBqx4eqS1RY76+LHAN1XmjWwkg29HIkU25aIhPGiyqQ8t12EU9jgkJqwBBZ6/N/a/nL+wgqQG4LW5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530455; c=relaxed/simple;
-	bh=7vrfWB5WrTWf0h+U1F37EUhfoH8IbtutV29jICF/fEo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfnHMB9rrc0nJdUQhR9wAVdzeWrSVjsjeJUYiPewN3opKKpUnn2+/I+pWMmIddKMEIb2M8h1IeZgxsLIyMKnFNP8A7ukihi8atJEdAOg94NDwwHbfIU4nimPps7wr28rupMKWfgt1vESL5TCxiwpuEezldqhoi69LMwCrEzHbcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M1uWKc6P; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a99ebb390a5so1069179166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729530450; x=1730135250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1fzWHWXCAzDgmWq67RRGZJvTtBysz8yIfOAsQ6M82Y=;
-        b=M1uWKc6PyX2RCZD8ZNzujTi81oqytXYsdoBN9Nc1mOHT59RJQi9GNnfAqX1qIqRSMp
-         9GwKZA2LKGomFRrfRmKG8eDwSDdSYQzzanvbeOLr39AB7Tnrx18fvcPtXHarVcpxV9wb
-         CKHF1AD/pNKWnZSeKstJD5L7lDhGf6GO0p2N3mxb9+CdG/iXmVp3RJjB1q61+edTp1ZO
-         9KZmLUswSmWRA3l9wVqo8lthE4LNzqazf6k11vQSq+/uKC6qn0DxoTN9V3O1qZ4/+9YN
-         4fbMOS42UvIJE7T7tRCABxGZats90AjGl9Say88CKrYYyRgOsXHw+bzUSmW3AJ0jP72H
-         dqiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729530450; x=1730135250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R1fzWHWXCAzDgmWq67RRGZJvTtBysz8yIfOAsQ6M82Y=;
-        b=sQ8vW24OxYTVRAD0vTGwF6OmPpaT/RGvWhPrk1s+sLclFb3h6WnvvxdjBu9DJIaf+C
-         4XiF3YreFhBVD4bDCJfvom1Q/J1UzogqfhGBy7ZhSlGde4DSBTeiY8yCjAIecSs0Trez
-         RxDBkdExpHoPaSB6IIv02brPv2JmuoAQCA0KUFNrKwrhMASpiPdapk5nk5MjXT2CAloU
-         Cqm4/T03DkX7AU40BRZFrVW6OqW5af3P29tJoz+nBh9EqzKlE3kJ6kA95BgkwR9Ko+0w
-         9qqdqPB0e2fpiGLY3tIz6VPn+NVsnt4rRjbEy8lYwowMGxlR1ZH1BFuBgmP4yUVnzU8Y
-         Jw7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUugvcoFVdgVlxGEkTjI55dIVvBLsYOShrmqfB2zGrZzZV2G4O0EXhv6sOOadnO1pnlZI4sHk6BbDp+GJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj9il+NrClePRay2W4i85L/nX0yoi7U56J2TQ/J4MCkMoXcABc
-	5n86SXPZI6cUXfr5GSC/PlSICY7QWRW0UanDrwsovBNhthj81ZTphUzu3ku1n88=
-X-Google-Smtp-Source: AGHT+IH8Qx4ewqPHCyDHdSihJ2G5kCb8Eh+Lq4JPwgxoxbykep04isusVWNXUkEnJTI73qGFKifEKg==
-X-Received: by 2002:a17:907:3f95:b0:a9a:17be:fac7 with SMTP id a640c23a62f3a-a9aaa52671dmr32704966b.14.1729530449552;
-        Mon, 21 Oct 2024 10:07:29 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d62b8sm227099766b.25.2024.10.21.10.07.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 10:07:29 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 21 Oct 2024 19:07:50 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 01/14] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-Message-ID: <ZxaKZsXCHIYLwrfT@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <74199551e7a9e43a9aa2e1ed1a678493e7a8fb2c.1728300189.git.andrea.porta@suse.com>
- <bznpgisxve5y34lu6hj6mlahd7r5fq2wz565nieiwvihwqbnzx@v6uk4mifhkhp>
+	s=arc-20240116; t=1729530631; c=relaxed/simple;
+	bh=1c4PdRriiS/iBNfIH4SwhgYqlrt7Y3TPuqnGiKSh1eU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zogc4ZM9dUxd9IA+4akIk5vcKf+uCN3hP+9Syp4ZCOOfpbIjJlFVLwafC0iR2xn16x/A1dkjrUyfWQ4ahcViIC8jD+Jc1ro19F//FliXan3hcQa6h49H8eyOnNgMZFJ29s/0Y+HahKWCD6YHv8gjUVAssPvdfW8/bIzM7aN7ok4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jx1wrq2m; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 2vtrtah4RQI3S2vtrtiuDL; Mon, 21 Oct 2024 19:09:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729530546;
+	bh=mw2F5SJ/CHyQYWKNFVkI3SI/zipNvCqITe7rm4FQeuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=jx1wrq2mL6gLmw2KideZ3NykWqIGyoSnkguxnch8WVCHaRBvt1cYFA7BJnCJssvaN
+	 RIv8KymBkyLQENV5+kW1aonnV/FQ6BnoNn0LhwIZ0mi5CRBnVUfS/jipQOUKydZzZW
+	 2lCTFQbqSvIU81reXWB6xO1U6FIFr+ITDGVlJ5KYh+guLrl+O8T2Ux51HtHSSulFLM
+	 CzGXUDLvoASaHCLnlX5K/KCSdk8MA7zBrdVQsx6O+h3VALp+MvbsxTPI6vuiUUcdNY
+	 QKqhcNMNnXADOxorX+9ueOeaSXQMumwtVRH7jRcH5F33yYRSpXFGOnbO8j5GGA7e/C
+	 dtL0mT3DRDcOQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 21 Oct 2024 19:09:06 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <ab57dbee-59b8-4ec0-91dd-4818b6b28446@wanadoo.fr>
+Date: Mon, 21 Oct 2024 19:08:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bznpgisxve5y34lu6hj6mlahd7r5fq2wz565nieiwvihwqbnzx@v6uk4mifhkhp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 2/2] ASoC: codecs: Add aw88081 amplifier driver
+To: wangweidong.a@awinic.com
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+ rf@opensource.cirrus.com, neil.armstrong@linaro.org,
+ pierre-louis.bossart@linux.dev, luca.ceresoli@bootlin.com,
+ wangweidong.a@awinic.com, arnd@arndb.de, quic_pkumpatl@quicinc.com,
+ herve.codina@bootlin.com, masahiroy@kernel.org, shenghao-ding@ti.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yijiangtao@awinic.com
+References: <20241018094320.113477-1-wangweidong.a@awinic.com>
+ <20241018094320.113477-3-wangweidong.a@awinic.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241018094320.113477-3-wangweidong.a@awinic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
-
-On 08:31 Tue 08 Oct     , Krzysztof Kozlowski wrote:
-> On Mon, Oct 07, 2024 at 02:39:44PM +0200, Andrea della Porta wrote:
-> > Add device tree bindings for the clock generator found in RP1 multi
-> > function device, and relative entries in MAINTAINERS file.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../clock/raspberrypi,rp1-clocks.yaml         | 62 +++++++++++++++++++
-> >  MAINTAINERS                                   |  6 ++
-> >  .../clock/raspberrypi,rp1-clocks.h            | 61 ++++++++++++++++++
-> >  3 files changed, 129 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> >  create mode 100644 include/dt-bindings/clock/raspberrypi,rp1-clocks.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > new file mode 100644
-> > index 000000000000..5e2e98051bf3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > @@ -0,0 +1,62 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 clock generator
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description: |
-> > +  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
-> > +  VIDEO), and each PLL output can be programmed though dividers to generate
-> > +  the clocks to drive the sub-peripherals embedded inside the chipset.
-> > +
-> > +  Link to datasheet:
-> > +  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: raspberrypi,rp1-clocks
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    description:
-> > +      The index in the assigned-clocks is mapped to the output clock as per
+Le 18/10/2024 à 11:43, 
+wangweidong.a-tUEr1MkLeujQT0dZR+AlfA@public.gmane.org a écrit :
+> From: Weidong Wang <wangweidong.a-tUEr1MkLeujQT0dZR+AlfA@public.gmane.org>
 > 
-> How assigned-clocks is related to this? Drop.
-
-This node provides clock for several peripherals, and for minimum functionality
-at least 3 clocks have to be setup through assigned-clocks (and
-assigned-clock-rates). That should be done in this same node (the provider of the
-clocks) because those clocks are shared among peripherals or clock generators,
-so cannot be described from consumers or we could incur in multiple declaration of
-the same clock. I dropped the assigned-clocks and assigned-clock-rates from the
-example section because Conor commented (see the first patchset version) that
-according to him those properties were not relevant there, maybe I failed to produce
-a careful explanation about why they are important. What should be the right course
-of action, then? Just drop that description or leave it as it is (maybe augmenting
-it with what I've explained here) and add again the dropped properties in the
-example? I would be inclined to vote for the latter, but I'm not sure... 
-
+> The driver is for amplifiers aw88081 of Awinic Technology Corporation.
+> The awinic AW88081 is an I2S/TDM input, high efficiency digital
+> Smart K audio amplifier
 > 
-> > +      definitions in dt-bindings/clock/raspberrypi,rp1-clocks.h.
-> 
-> Use full paths, so they can be validated. This applies to all your
-> patches.
+> Signed-off-by: Weidong Wang <wangweidong.a-tUEr1MkLeujQT0dZR+AlfA@public.gmane.org>
+> ---
 
-Ack.
+Hi,
 
-> 
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    const: rp1-xosc
-> 
-> Drop clock-names, redundant. Or just "xosc". Hyphens are not recommended
-> character and rp1 is redundant.
+...
 
-Ack.
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/firmware.h>
 
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - '#clock-cells'
-> > +  - clocks
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
-> > +
-> > +    rp1 {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1_clocks: clocks@c040018000 {
-> 
-> Drop unused label.
+Sometimes, alphabecal order is prefered.
 
-Ack.
+> +#include <linux/regmap.h>
+> +#include <sound/soc.h>
+> +#include "aw88081.h"
+> +#include "aw88395/aw88395_device.h"
+> +
+> +static const struct regmap_config aw88081_regmap_config = {
+> +	.val_bits = 16,
+> +	.reg_bits = 8,
+> +	.max_register = AW88081_REG_MAX,
+> +	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.val_format_endian = REGMAP_ENDIAN_BIG,
+> +};
 
-> 
-> > +            compatible = "raspberrypi,rp1-clocks";
-> > +            reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +            #clock-cells = <1>;
-> > +            clocks = <&clk_rp1_xosc>;
-> > +            clock-names =  "rp1-xosc";
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index c27f3190737f..75a66e3e34c9 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19380,6 +19380,12 @@ F:	Documentation/devicetree/bindings/media/raspberrypi,pispbe.yaml
-> >  F:	drivers/media/platform/raspberrypi/pisp_be/
-> >  F:	include/uapi/linux/media/raspberrypi/
-> >  
-> > +RASPBERRY PI RP1 PCI DRIVER
-> > +M:	Andrea della Porta <andrea.porta@suse.com>
-> > +S:	Maintained
-> > +F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	include/dt-bindings/clock/rp1.h
-> > +
-> >  RC-CORE / LIRC FRAMEWORK
-> >  M:	Sean Young <sean@mess.org>
-> >  L:	linux-media@vger.kernel.org
-> > diff --git a/include/dt-bindings/clock/raspberrypi,rp1-clocks.h b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
-> > new file mode 100644
-> > index 000000000000..b7c1eaa74eae
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
-> > @@ -0,0 +1,61 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> 
-> Any reason for different license?
+...
 
-Not really, I'll revert it back to the usual (GPL-2.0-only OR BSD-2-Clause), as
-the other schemas.
+> +static int aw88081_dev_check_syspll(struct aw_device *aw_dev)
+> +{
+> +	int ret;
+> +
+> +	ret = aw88081_dev_check_mode1_pll(aw_dev);
+> +	if (ret) {
+> +		dev_dbg(aw_dev->dev, "mode1 check iis failed try switch to mode2 check");
+> +		ret = aw88081_dev_check_mode2_pll(aw_dev);
+> +		if (ret) {
+> +			dev_err(aw_dev->dev, "mode2 check iis failed");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return ret;
 
-Many thanks,
+Here and in some other places, return 0; could be used to be more explicit.
 
-Andrea
+> +}
 
-> 
-> > +/*
-> > + * Copyright (C) 2021 Raspberry Pi Ltd.
-> > + */
-> 
-> Best regards,
-> Krzysztof
-> 
+...
+
+> +static int aw88081_reg_update(struct aw88081 *aw88081, bool force)
+> +{
+> +	struct aw_device *aw_dev = aw88081->aw_pa;
+> +	int ret;
+> +
+> +	if (force) {
+> +		ret = regmap_write(aw_dev->regmap,
+> +					AW88081_ID_REG, AW88081_SOFT_RESET_VALUE);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = aw88081_dev_fw_update(aw88081);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		if (aw_dev->prof_cur != aw_dev->prof_index) {
+> +			ret = aw88081_dev_fw_update(aw88081);
+> +			if (ret)
+> +				return ret;
+> +		} else {
+> +			ret = 0;
+
+This else could be removed, and an explicit return 0; used below at the 
+end of the function.
+
+> +		}
+> +	}
+> +
+> +	aw_dev->prof_cur = aw_dev->prof_index;
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int aw88081_profile_info(struct snd_kcontrol *kcontrol,
+> +			 struct snd_ctl_elem_info *uinfo)
+> +{
+> +	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
+> +	struct aw88081 *aw88081 = snd_soc_component_get_drvdata(codec);
+> +	char *prof_name, *name;
+> +	int count, ret;
+> +
+> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
+> +	uinfo->count = 1;
+> +
+> +	count = aw88081->aw_pa->prof_info.count;
+> +	if (count <= 0) {
+> +		uinfo->value.enumerated.items = 0;
+> +		return 0;
+> +	}
+> +
+> +	uinfo->value.enumerated.items = count;
+> +
+> +	if (uinfo->value.enumerated.item >= count)
+> +		uinfo->value.enumerated.item = count - 1;
+> +
+> +	name = uinfo->value.enumerated.name;
+> +	count = uinfo->value.enumerated.item;
+> +
+> +	ret = aw88081_dev_get_prof_name(aw88081->aw_pa, count, &prof_name);
+> +	if (ret) {
+> +		strscpy(uinfo->value.enumerated.name, "null",
+> +						strlen("null") + 1);
+
+Np real use fot this hand computed length. Using the 2 parameters 
+version of strscpy() should just be fine, I think.
+
+> +		return 0;
+> +	}
+> +
+> +	strscpy(name, prof_name, sizeof(uinfo->value.enumerated.name));
+
+If  uinfo->value.enumerated.name was used directly as in the if block 
+above, then 'name' could be removed and the 2 parameters only variant of 
+strscpy() coulb be used instead, I think.
+
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int aw88081_init(struct aw88081 *aw88081, struct i2c_client *i2c, struct regmap *regmap)
+> +{
+> +	struct aw_device *aw_dev;
+> +	unsigned int chip_id;
+> +	int ret;
+> +
+> +	/* read chip id */
+> +	ret = regmap_read(regmap, AW88081_ID_REG, &chip_id);
+> +	if (ret) {
+> +		dev_err(&i2c->dev, "%s read chipid error. ret = %d", __func__, ret);
+> +		return ret;
+> +	}
+> +	if (chip_id != AW88081_CHIP_ID) {
+> +		dev_err(&i2c->dev, "unsupported device");
+> +		return -ENXIO;
+> +	}
+> +
+> +	dev_dbg(&i2c->dev, "chip id = %x\n", chip_id);
+> +
+> +	aw_dev = devm_kzalloc(&i2c->dev, sizeof(*aw_dev), GFP_KERNEL);
+> +	if (!aw_dev)
+> +		return -ENOMEM;
+> +
+> +	aw88081->aw_pa = aw_dev;
+> +	aw_dev->i2c = i2c;
+> +	aw_dev->regmap = regmap;
+> +	aw_dev->dev = &i2c->dev;
+> +	aw_dev->chip_id = AW88081_CHIP_ID;
+> +	aw_dev->acf = NULL;
+> +	aw_dev->prof_info.prof_desc = NULL;
+> +	aw_dev->prof_info.count = 0;
+
+No need to init here, and channel below, unless an explicit 0 is more 
+informative than the kzalloc() above.
+
+> +	aw_dev->prof_info.prof_type = AW88395_DEV_NONE_TYPE_ID;
+> +	aw_dev->channel = 0;
+> +	aw_dev->fw_status = AW88081_DEV_FW_FAILED;
+> +	aw_dev->fade_step = AW88081_VOLUME_STEP_DB;
+> +	aw_dev->volume_desc.ctl_volume = AW88081_VOL_DEFAULT_VALUE;
+> +	aw_dev->volume_desc.mute_volume = AW88081_MUTE_VOL;
+> +	aw88081_parse_channel_dt(aw88081);
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int aw88081_request_firmware_file(struct aw88081 *aw88081)
+> +{
+> +	const struct firmware *cont = NULL;
+> +	int ret;
+> +
+> +	aw88081->aw_pa->fw_status = AW88081_DEV_FW_FAILED;
+> +
+> +	ret = request_firmware(&cont, AW88081_ACF_FILE, aw88081->aw_pa->dev);
+> +	if (ret)
+> +		return dev_err_probe(aw88081->aw_pa->dev, ret,
+> +					"load [%s] failed!", AW88081_ACF_FILE);
+> +
+> +	dev_dbg(aw88081->aw_pa->dev, "loaded %s - size: %zu\n",
+> +			AW88081_ACF_FILE, cont ? cont->size : 0);
+> +
+> +	aw88081->aw_cfg = devm_kzalloc(aw88081->aw_pa->dev, cont->size + sizeof(int), GFP_KERNEL);
+> +	if (!aw88081->aw_cfg) {
+> +		release_firmware(cont);
+> +		return -ENOMEM;
+> +	}
+> +	aw88081->aw_cfg->len = (int)cont->size;
+> +	memcpy(aw88081->aw_cfg->data, cont->data, cont->size);
+> +	release_firmware(cont);
+> +
+> +	ret = aw88395_dev_load_acf_check(aw88081->aw_pa, aw88081->aw_cfg);
+> +	if (ret) {
+> +		dev_err(aw88081->aw_pa->dev, "load [%s] failed !", AW88081_ACF_FILE);
+
+return dev_err_probe() to be consistent and less verbose.
+
+> +		return ret;
+> +	}
+> +
+> +	mutex_lock(&aw88081->lock);
+> +	/* aw device init */
+> +	ret = aw88081_dev_init(aw88081, aw88081->aw_cfg);
+> +	if (ret)
+> +		dev_err(aw88081->aw_pa->dev, "dev init failed");
+
+return dev_err_probe() to be consistent?
+
+> +	mutex_unlock(&aw88081->lock);
+> +
+> +	return ret;
+> +}
+
+
+...
+
+> +static int aw88081_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct aw88081 *aw88081;
+> +	int ret;
+> +
+> +	ret = i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C);
+> +	if (!ret)
+> +		return dev_err_probe(&i2c->dev, -ENXIO, "check_functionality failed");
+> +
+> +	aw88081 = devm_kzalloc(&i2c->dev, sizeof(*aw88081), GFP_KERNEL);
+> +	if (!aw88081)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&aw88081->lock);
+> +
+> +	i2c_set_clientdata(i2c, aw88081);
+> +
+> +	aw88081->regmap = devm_regmap_init_i2c(i2c, &aw88081_regmap_config);
+> +	if (IS_ERR(aw88081->regmap)) {
+> +		ret = PTR_ERR(aw88081->regmap);
+> +		return dev_err_probe(&i2c->dev, ret, "failed to init regmap: %d\n", ret);
+
+No need to repeat 'ret' at theend of the message.
+
+> +	}
+> +
+> +	/* aw pa init */
+> +	ret = aw88081_init(aw88081, i2c, aw88081->regmap);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_snd_soc_register_component(&i2c->dev,
+> +			&soc_codec_dev_aw88081,
+> +			aw88081_dai, ARRAY_SIZE(aw88081_dai));
+> +	if (ret)
+> +		dev_err(&i2c->dev, "failed to register aw88081: %d", ret);
+
+dev_err_probe() to be consistent?
+
+> +
+> +	return ret;
+> +}
+
+...
+
+CJ
 
