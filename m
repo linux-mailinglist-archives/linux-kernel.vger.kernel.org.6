@@ -1,180 +1,179 @@
-Return-Path: <linux-kernel+bounces-374645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92679A6E00
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:22:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D2B9A6E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A611C2099A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719541F22E6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6FE12FB0A;
-	Mon, 21 Oct 2024 15:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108B7126C0D;
+	Mon, 21 Oct 2024 15:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="WrFeqS+Y"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a+YNRUWG"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E509126F2A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524108; cv=none; b=YG9DWJrhaEP87x1gtJaHimySBOPM2oIXC7OK62s1sMeo9ltAjyf0fLw1VgMU4L+46ebP3C95//1mb1/tsL2HAEG+mYyjqbcT0OypDNqfhN9E2O45y0abBD8CFzcJT36P0BcZrkGRR6NtQ+yt7B0R+HISiZFVKvdVZoKd/oyHptE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524108; c=relaxed/simple;
-	bh=PWJXLI/zc9+YfPp0JQp12zzhzEBvi/Lb9IqoZrMgbPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S8nS230ZNgwBhywXp54V0tzDF2Qwlmo7L+QWHberqGUBr0BD64l+RVRGwWRjkx9npOFbcvGQwf3Un9Sjcs5qLBiVzDSz7sO/QiCGukul4lLsFcL4cZWoMMyTXukRPW4Sp3olahHule9HmpoBqYzWHmE7G8/Mb/Z8QMq9pXeRSIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=WrFeqS+Y; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e3f35268so2800612e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=criticallink.com; s=google; t=1729524104; x=1730128904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1LJXhrYQrk3gwAFgilc+sphvRBz6z5yynh7/PAYChQI=;
-        b=WrFeqS+Ysiuhw7Eo/UpXWMqXdXbx/SsjTo0ysaERqcoXnajWcqZGzKA3Z/hH8Fswfe
-         5vje7pCj4mj8Mv++qf9y499PRavdJwrXDVP5V5GeWNMykN6c2jYViMIvKH9IfWd9nccL
-         eNhmmoGDxHfQqwMcRBHlyWZCKRjyUFuNSQKKzNtXpqnj3RKDNIwWVfdfQbIy8Tg9ebgl
-         bymHK1HfcGKPBrpzgqyYkQ5+BXZQNQ1kAWAYOMEWBGUc0IRYcgtdJ0qh40SRZ8Z3EBmi
-         EvBeULylkA7d5baT2RGQvFQqXzAOe2OxC8tIVNdH4eQI9ueDTLmh+FE6X1YSnjFIEaSy
-         UpRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729524104; x=1730128904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1LJXhrYQrk3gwAFgilc+sphvRBz6z5yynh7/PAYChQI=;
-        b=GpHV9jy3a3ttEW8Kp8+p63pnwhOKaIUgyRhHUQKXhUMGtCbbJXPQjmjMedUFHZ6B0a
-         tpnIexr+7hgyRRx9lWcyofXpMn6PLiNvImhvtE2xkE/8+bqOvTlxansoJOXkj5YJaZaV
-         c7ygvuTbE1ekwu4/keIqCvGgwsVsXt24oawJr92udqjO28aBv5vQdrk+JYpoeAUfJCai
-         mZLZVE/rFeRkheh3K/X2WbmispIUHDGTD6twtp3Sb5lDFand+vBnCNZLjUiaBOBikwg2
-         4wR6Dg74P+1nMONgtRguWrpGCuMQOq8o6WvHK0qnJv6KCnNWUuRsFp2fc3/hMgUDTKU2
-         ecZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkC9kjUpOOst9TdazoqJz6i7ObQ4ywZF8Qws0Jh27VoMVxfzMlgGV18BJphsQrPRfBVS7G2HEhWkeJJTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi3vZZ2Sg1VkJunsT2o9jTbnXpn/CIfoQJif3mcNVTd0yTjyYS
-	Ad5u4gTjuQdYAnjGpQgqc7kDJd4TegqLUPH8eUuuKUAyQw6sX2GRRMlcYNu3ckefieObh1wLAnN
-	OAoqkXbbNoeWOlytrDwpXiZj/BdE6NB6ujJ5X
-X-Google-Smtp-Source: AGHT+IFXYdf/1S8sUivCEKQLffjqH0HbVL7pn9283MDgZzq8osSfS/mtwn0YAPg2ee14WNWmqyFbTcTg/tuCM+FRyAI=
-X-Received: by 2002:a05:6512:31c1:b0:535:6cde:5c4d with SMTP id
- 2adb3069b0e04-53a1520bfaemr7096304e87.3.1729524103994; Mon, 21 Oct 2024
- 08:21:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDC280025;
+	Mon, 21 Oct 2024 15:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729524140; cv=fail; b=Je5K6sTV4BPjk7ojYMiKkP6LdSkvYU1gWZOaWVQ7A6F2iAGr+Lhx1YRz3e1ea2Kx93ivtEIJa5Xim9yPR/eqk8sDc8/JD12S6Fisu3Sx82ZcaAqlrTHIagXwxNmYT3oj5tuAe6lMF0+VG1226hp98Sj17i41vmuT6QAeMizSbWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729524140; c=relaxed/simple;
+	bh=tsI4cl9qmx6aAEpZ6CCuCu793xcEZ1MgujWyeDuOd1Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jUgvM+TmT3aLCmTJDF30ETVxcGCmSfnlAG9TlOMS3DfZFQZV8GWNcioRpsQfZcF0qLHE1r5Lams+X001HnnXN0u1GOyqTyb46Kf7Ty1WgZUfc50pIvw+4ax3CTqQbi7J1/ifSPM6i82/R88upveIhIMgzgfST4CDEumotFgfKL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a+YNRUWG; arc=fail smtp.client-ip=40.107.237.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xTl1t/uIfSbo66/A+WxprKpnuJcKHx7KDGMUfIwCjG3j+cDm+Au6IuLP75qcnCfa2IpxI4xWmVloZPzHkjp2yZi/h7auP/w4TCMgDL3rBUbVa9LuCJfUapvjSp8RD03qSOM8sOX7uhBayaEh8zvsAB3eka52Vcn6PBy726795fAg/+RX88dBOCTaLNsl+8ShB2hzdJW3ZDWAZ9dz9jMNWDyGBF+Wu4eQ+KCpks6Hz6RPQ8XJtuXsnXqCc2Qk8J+gZFOX//L7aXnCGn/0FxB4mzhGIW1r0q7lYsfokWei8/6As8DvCkITEOy0dGZAQZQvdcAmV0reKJOWiwTdJZ74Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AXKm/m67ODqCkMzK2GtWLC/I+v2qYA/Nfpot+c2Mwxg=;
+ b=l5+Xnx4YlXDvFvMw70Lx8lCekw9o2xvu8l/sZMPRbFGSns7OE+oo4TjJN+doFW1mLZ46tk3y/VJWopssX79agQQoCevoNPz6gTJpeF7HnDQhhF52mw844/IfcoHF0kDdj1dmj+kZ991zCNUeZvmS5tosybK/1M0SRaBM6kmDS2AIfK/HqyE4IyxLPTMAwtwOb2DKkoY+nXCoFBRnm9wCqvHI/6qgyT/nETik8qaLYjztqiYnd0sznS/kuNyr9G3BCjY+O7n8fPj35s0/zSHqWfY2E0pNqeJlXELywbdpZJILcWagNpILTM+ejoF5lPn3zRonspcKAieJEGl/Dh/m3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AXKm/m67ODqCkMzK2GtWLC/I+v2qYA/Nfpot+c2Mwxg=;
+ b=a+YNRUWGYmN0XgTcap6Ox9bNXIQHVgK2lNHEVNzPWqr6rMLXq6/CeN7EIgRfhoXu5e+p58dcCO17mCmm4cXWTsyqHIm3SgN7e7TVQ1Ay59nYTWafeWxHTkOemVmVAe7ZKc9DpcHHgpCfSgcco9jHsBRlTwQh695u6LnPKEvITYE=
+Received: from MN2PR15CA0050.namprd15.prod.outlook.com (2603:10b6:208:237::19)
+ by SJ0PR12MB7005.namprd12.prod.outlook.com (2603:10b6:a03:486::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 15:22:11 +0000
+Received: from BL6PEPF0001AB4D.namprd04.prod.outlook.com
+ (2603:10b6:208:237:cafe::69) by MN2PR15CA0050.outlook.office365.com
+ (2603:10b6:208:237::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29 via Frontend
+ Transport; Mon, 21 Oct 2024 15:22:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4D.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.14 via Frontend Transport; Mon, 21 Oct 2024 15:22:10 +0000
+Received: from purico-9eb2host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Oct
+ 2024 10:22:09 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: <bp@alien8.de>, <tony.luck@intel.com>, <linux-edac@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <avadhut.naik@amd.com>,
+	<john.allen@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: [PATCH] RAS/AMD/ATL: Add debug prints for DF register reads
+Date: Mon, 21 Oct 2024 15:21:58 +0000
+Message-ID: <20241021152158.2525669-1-yazen.ghannam@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com> <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
-In-Reply-To: <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
-From: Jon Cormier <jcormier@criticallink.com>
-Date: Mon, 21 Oct 2024 11:21:32 -0400
-Message-ID: <CADL8D3ZcvynQCGLCcbK=U9-2WB758abLcKaNkTtXN8Y7s=dyqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/7] drm/tidss: Fix issue in irq handling causing
- irq-flood issue
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Bin Liu <b-liu@ti.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4D:EE_|SJ0PR12MB7005:EE_
+X-MS-Office365-Filtering-Correlation-Id: e12e6829-246f-4f06-6690-08dcf1e42204
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XNhVNix+HH10kCsQKaU7aNrfTJwE6NYXtLCn2qBVIlEKSnzAH+U/V+QbjQ3z?=
+ =?us-ascii?Q?KiRNz0tVw3EEy/w2uY0FrFVTE06+YB1nfZTQUwnFcMWLa5sbB+JeDIAd3Y9D?=
+ =?us-ascii?Q?EhRuoOB3dVofN9r1qOXo2t6VCIZjB3BJ5eXCP9PUyYxtaODpVmLFgLUJwNAu?=
+ =?us-ascii?Q?RQvBWqwBgvlDPWqEVyCjLaBEVPeDgmjHTkstLFYzN1GJIdN+q2u/v1Nh1v7w?=
+ =?us-ascii?Q?plKHdRSTcV1F8Ya76Cc9zBOh8lp5brcqXkGN6tOEGR5Ktbwm3Y9N1C9yOsfC?=
+ =?us-ascii?Q?El/HuR8VhJ/1ZJMceHB3lUO6B34TnylNA8dtayr+BJmQVK1DOMJW9ZchAElf?=
+ =?us-ascii?Q?r1Ba68HVUCjowRWRq6nFFchJ74ZvgEqHGHp+Uf7lsRHLmUqYO8vDrB1X2Unb?=
+ =?us-ascii?Q?CPjdGniwHJZIuzaDDrOAO5cXRE6TbSIxgzPtkPhhHFdLW4FWNQCSKu323fYz?=
+ =?us-ascii?Q?/4cw5aLyGo0/qZ1CtgD2NZJ2WSO3SSztGvsOVqUHlLJFD9EgyA1QVhbZuHiC?=
+ =?us-ascii?Q?HJ1lcTA2Lnvxdo9CGvxCOW2oS8hwRQOXCGG7M+2eNorqe4ltxp5kSp2ItJDc?=
+ =?us-ascii?Q?CHTEoC5RG1yam1kpGlob9FOk9y21ihU+7prRQWUXKeUyPQRglrQK5+FdjFl3?=
+ =?us-ascii?Q?Ap4tRkeqzVlHT+X0d2o25qTI6TdHVaz8N/ND5jmg0kATm0LYoawyV/V7QoJn?=
+ =?us-ascii?Q?ARQWaLX2S8PHXrsJtP7KmwuKEkAF8t+tbAqzbbeFBJWmFcRJnb0e8Te3a9pC?=
+ =?us-ascii?Q?YLnGSBQAIufQugv4DDx5SKEgLdRZCdU97DeSCuCzNYQqsUqsv/zz/xESD0J4?=
+ =?us-ascii?Q?7n85eSdNulm/kREM7Rq++kyFePevQPFHKl4y1p+WQPKV5WvdDRTEmN5Lc2na?=
+ =?us-ascii?Q?pMVJJBSdLh49xoZDmt/ALjK5FdBDcahqwAfv/TiJxaGmWDbVeFSJxCQO5m/0?=
+ =?us-ascii?Q?hGhQ5hhO4S1+mlzAB9W6dTeiRYwCoVWdQvAOhTlK0r4n5cHj3z/zTvjY7E4t?=
+ =?us-ascii?Q?htmAfqnZtb9HkKOSrrvhuNmIY9+b7zlfKKmsAo8kcxc2AmN85+/N7JzMvVaG?=
+ =?us-ascii?Q?GmgsOD+tbzn5h9DE0TDXorhA+F/tSoeMhapSHQsUgDw8VCct6Rd3MyHFeXrS?=
+ =?us-ascii?Q?o5/U3XWtj5NxdSp76eS+DU4gjYtcxaQvernV/qfGVCaQ5LPBwOLYFVVeqf/d?=
+ =?us-ascii?Q?CuTZ493VDYEdjdaPvuWC0xMbm/861cHgyQdSQKIq8D8nQIdPjgqBWy1zcHRC?=
+ =?us-ascii?Q?w+324friMYTyGjyloptKamFoNTpFHoHwPA6HT6Z0h84ieZrzOyE86zMEGa0q?=
+ =?us-ascii?Q?4H05sOwElmXKcjrhlE1gdkWzu9JoJFvPH0Z7us6EIm+S0P3KWojIJQRiLU3G?=
+ =?us-ascii?Q?YW0G2YkqWedei00zUOTcnSBz0UGicjcz3QooyqavnTBnTZ6CWQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 15:22:10.4537
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e12e6829-246f-4f06-6690-08dcf1e42204
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB4D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7005
 
-On Mon, Oct 21, 2024 at 10:08=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
->
-> It has been observed that sometimes DSS will trigger an interrupt and
-> the top level interrupt (DISPC_IRQSTATUS) is not zero, but the VP and
-> VID level interrupt-statuses are zero.
->
-> As the top level irqstatus is supposed to tell whether we have VP/VID
-> interrupts, the thinking of the driver authors was that this particular
-> case could never happen. Thus the driver only clears the DISPC_IRQSTATUS
-> bits which has corresponding interrupts in VP/VID status. So when this
-> issue happens, the driver will not clear DISPC_IRQSTATUS, and we get an
-> interrupt flood.
->
-> It is unclear why the issue happens. It could be a race issue in the
-> driver, but no such race has been found. It could also be an issue with
-> the HW. However a similar case can be easily triggered by manually
-> writing to DISPC_IRQSTATUS_RAW. This will forcibly set a bit in the
-> DISPC_IRQSTATUS and trigger an interrupt, and as the driver never clears
-> the bit, we get an interrupt flood.
->
-> To fix the issue, always clear DISPC_IRQSTATUS. The concern with this
-> solution is that if the top level irqstatus is the one that triggers the
-> interrupt, always clearing DISPC_IRQSTATUS might leave some interrupts
-> unhandled if VP/VID interrupt statuses have bits set. However, testing
-> shows that if any of the irqstatuses is set (i.e. even if
-> DISPC_IRQSTATUS =3D=3D 0, but a VID irqstatus has a bit set), we will get=
- an
-> interrupt.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Co-developed-by: Bin Liu <b-liu@ti.com>
-> Signed-off-by: Bin Liu <b-liu@ti.com>
-> Co-developed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
-> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
-> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Disp=
-lay SubSystem")
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+The ATL will fail early if the DF register access fails due to missing
+PCI IDs in the amd_nb code. There aren't any clear indicators on why the
+ATL will fail to load in this case.
 
-I assume a reviewed by doesn't make sense since I co-developed this
-patch but adding my tested by, hopefully, that makes sense.
+Add a couple of debug print statements to highlight reasons for failure.
 
-Tested an equivalent patch for several weeks.
-Tested-by: Jonathan Cormier <jcormier@criticallink.com>
->
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/=
-tidss_dispc.c
-> index 1ad711f8d2a8..f81111067578 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -780,24 +780,20 @@ static
->  void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t cl=
-earmask)
->  {
->         unsigned int i;
-> -       u32 top_clear =3D 0;
->
->         for (i =3D 0; i < dispc->feat->num_vps; ++i) {
-> -               if (clearmask & DSS_IRQ_VP_MASK(i)) {
-> +               if (clearmask & DSS_IRQ_VP_MASK(i))
->                         dispc_k3_vp_write_irqstatus(dispc, i, clearmask);
-> -                       top_clear |=3D BIT(i);
-> -               }
->         }
->         for (i =3D 0; i < dispc->feat->num_planes; ++i) {
-> -               if (clearmask & DSS_IRQ_PLANE_MASK(i)) {
-> +               if (clearmask & DSS_IRQ_PLANE_MASK(i))
->                         dispc_k3_vid_write_irqstatus(dispc, i, clearmask)=
-;
-> -                       top_clear |=3D BIT(4 + i);
-> -               }
->         }
->         if (dispc->feat->subrev =3D=3D DISPC_K2G)
->                 return;
->
-> -       dispc_write(dispc, DISPC_IRQSTATUS, top_clear);
-> +       /* always clear the top level irqstatus */
-> +       dispc_write(dispc, DISPC_IRQSTATUS, dispc_read(dispc, DISPC_IRQST=
-ATUS));
->
->         /* Flush posted writes */
->         dispc_read(dispc, DISPC_IRQSTATUS);
->
-> --
-> 2.43.0
->
+A common scenario is missing support for new hardware. If the ATL fails
+to load on a system, and there is interest to support it, then dynamic
+debugging can be enabled to help find the cause for failure. If there is
+no interest in supporting ATL on a new system, then these failures will
+be silent.
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+---
+ drivers/ras/amd/atl/access.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ras/amd/atl/access.c b/drivers/ras/amd/atl/access.c
+index ee4661ed28ba..c2334f8f9add 100644
+--- a/drivers/ras/amd/atl/access.c
++++ b/drivers/ras/amd/atl/access.c
+@@ -70,12 +70,16 @@ static int __df_indirect_read(u16 node, u8 func, u16 reg, u8 instance_id, u32 *l
+ 	u32 ficaa = 0;
+ 
+ 	node = get_accessible_node(node);
+-	if (node >= amd_nb_num())
++	if (node >= amd_nb_num()) {
++		pr_debug("Node %u is out of bounds\n", node);
+ 		goto out;
++	}
+ 
+ 	F4 = node_to_amd_nb(node)->link;
+-	if (!F4)
++	if (!F4) {
++		pr_debug("DF function 4 not found\n");
+ 		goto out;
++	}
+ 
+ 	/* Enable instance-specific access. */
+ 	if (instance_id != DF_BROADCAST) {
+-- 
+2.43.0
+
 
