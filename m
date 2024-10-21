@@ -1,76 +1,136 @@
-Return-Path: <linux-kernel+bounces-375300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386DB9A9462
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0889A9463
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF56F1F23054
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B83E283B79
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A51E6DFE;
-	Mon, 21 Oct 2024 23:47:10 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760C1E7657;
+	Mon, 21 Oct 2024 23:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbJmDbix"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3125610A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C62310A3E;
+	Mon, 21 Oct 2024 23:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729554430; cv=none; b=lCshVjJc7F0iJImMjTijuQAzZ3FhVEJNhnya/jRbU1xvu9b9Uwzn23+BZWmLOdL/5wSxS766hAaNF/FGc1y7jmvCEEoEFynLnxP4rBmoPr1XkKG5oJ5yzHm+xMHBp/ZjqSO7rNHOso3f/jjDgAFNR0bMwZ90t340e7NoDHgRFmc=
+	t=1729554664; cv=none; b=RUE9QwKIvO9Q0IM2wtaDht5/FepH0R0ZZzpeGTl+mca3DVbG5czWepWVcUZmjS6HAawCLf9n+pOcukM/M6+GUDv/8xPS5SZtzF3QD4bXC99dGESGxzE9TzMlS2tTQw7jlJU8EfSAKmm+cnumRTRvi+HAZNGKX7bDHsOqNxSrD4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729554430; c=relaxed/simple;
-	bh=NozUlYNWVVY69UHyf2ZmgXbQwHoJfzdmSjRDHo/h90U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JpJev4cGVwfeDOX7aTR17OtRTvIM0fgN1DgIxr519iq98BEmJQvRvZnUbNTPX/78tMqwsFb7bdmsYDggRZPMhLwb04bJ5WXCAUIcjBu0dmvz2kZiVMsbwCBeGkDcEAuuAylkPPhypqJK/MOI0D9bmBU62g2jt/tLaV2CrRlX4CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so494333239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:47:08 -0700 (PDT)
+	s=arc-20240116; t=1729554664; c=relaxed/simple;
+	bh=93xD4Tmdxtey8zA31B+sDxPb2lgtp53gthKrr3LUyrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YTOKGX3iz2KfwaPsGCe5CvNAzgpOJqbm2rbF9PlfAWpnzOevmPem1xHLGU+M5OQyoO1HirUEsVaUlcRPU//g4N9bA58BpPvSNxprjs2qt680MWpR4DHtmYi1sJcGCN1w9htdM/ShmaINKESJvhSw19apt1ujktHayQUUqdaDo3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbJmDbix; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so4250318a12.0;
+        Mon, 21 Oct 2024 16:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729554659; x=1730159459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DsstOehMPTk25wTqFefncYy9YI2o+RkqFZwG3Mp+20=;
+        b=mbJmDbixVKW4qVbvRTFDYfZtC8uFMX5C2SZnB2hoO7sc5ZYMLpHc7ON+HPC6rywDLv
+         B/8bmnv3ox596YP7zXlOnZuZWIhV0RatO0Nw6tBvtgiVaqzmz0kBHzqaHKPXUGAln5Xd
+         iZZZfDwfhvwQfYRAUlaFHUxR78gZYQM46f4fzpNXsHmCVJFRk5IS7dbDl79FzKyjlkzN
+         lABEfFdSiWTPOGys3VztgqXGFkSqORnxD7KJ4s8TybtVaMrZyHAldcTUZlyt4I9HfBJx
+         jqmtwoypyfdNu1BE0Dg04HQUkUflokRouGFX8gBYe1lyaQpjQbT+zTXWM+vJ38o0nZ75
+         to9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729554428; x=1730159228;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NozUlYNWVVY69UHyf2ZmgXbQwHoJfzdmSjRDHo/h90U=;
-        b=EnI5rAcMLR0wAeQXbqsPqWOgXqjii2aUwrrOBCBwBqozYrVvu+TwBTS8HzaRMKDcH0
-         WpVuodR2CUtS/XsSfQS/afuUGUBCCzets95jCb+kimCN5tvAZCEUa4hy415dA6pOQSS+
-         R6fOSnnayKkN5LGfr+oHTJE6wzxxjI76ehqO6VcrANyPpJP0eITcZrPClNHrue2Um6Kf
-         jGyvCir6g9bmY9rla2rKnE+FjjxTc8k5aZQ1qaKMdaaZhNbBQJUjV1BotygoprMnZLzZ
-         rIo1mNLIJj4wwU1Z2x9iov3k9XZpgHULCqfGqbUDhHGB2zZI0HMthOy5SyMxg7gUK6Kl
-         Lyog==
-X-Gm-Message-State: AOJu0YznHVguNvFj8NOTsUIeAGEapa5vtey+4Cejb29ZMJAuV6k+8I7n
-	UxfgZ77SR9Ea+6WEW5kUFy4Sl/JGHF5CBuxFaCShaKZlOW/P1DLlBOl/7j9Cj2sXmKq8+7FDsAV
-	Wt6zszgrnSp7Crh55adNXK9BcHOi7yoBJtuUJN0NstOJvtFVvgMkDejc=
-X-Google-Smtp-Source: AGHT+IEMKaudX1MdQ3ht8IKE/btIw4tGjk8coSr7XV3Z2xJ4OIvLAHqzgnHhcvVmSDFPlcmhz5WH62Tf2EW+KGEhrSCS36PyNCSU
+        d=1e100.net; s=20230601; t=1729554659; x=1730159459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/DsstOehMPTk25wTqFefncYy9YI2o+RkqFZwG3Mp+20=;
+        b=jRnLUieqNMXviUTCFh6dW0Ef85t4L0PJ7zNax8Hcl60ukCPESBFcWDUdXzgs2uwoUT
+         qcIWWdWnMFj5Z/3icMQDHyqmNcSFIZg7dw2iPGdDWLsLh97K4BLfKj98JH1H7XUH+IeB
+         cFcAFHYFE7FmTpGsf/X0VtSk/bLGBYHZGo9Enn4fZsCsvKNMIvLBlzXYc3+zRR9A27px
+         2pfUxs9145RR67gIVyDcIfZ69JokhmsqwdKum0YOl1hh7pq7Wcadd4e8ir61lq6gEukh
+         9MQJ604W7ehB0E5ylG83MGPvYcYyxqXLCI7A7M1WBaGLWPuXGKzEj0DoIUeAZwGeUDLX
+         UBqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz/QhZbAy4yQohNv7pgMrUBYXYpOtJ59NaFNA9fZUtffnKk8qDHNcvS5cz/NMJbpa1FYuLTN1rMuSU+w8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT2SZV/HdTgsqN2LJpNHN5Tf1CPDwmNcxohc9GpcuaEB+RZvWj
+	JU/eMKqKAX24eiu0cWqQx/8Y7fCiIozEsvjEd2LjaaTudqd6vfhIiKp+kfvOgxKgBKrXZJblaH8
+	r7cIC5pzdIPWROnpxuE0ydIZne2Y=
+X-Google-Smtp-Source: AGHT+IEzDjVyVWT29AJGbIwG7b2eflJUodQhWYTjVwmzTK10zwWUN+8xkMDjNVQIaTnlgDUgrc3HbwPS9mkt07D9sfM=
+X-Received: by 2002:a05:6a20:ac43:b0:1d6:97f2:71b4 with SMTP id
+ adf61e73a8af0-1d92c4bac83mr19878033637.1.1729554658722; Mon, 21 Oct 2024
+ 16:50:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc3:b0:3a1:a243:c7a6 with SMTP id
- e9e14a558f8ab-3a3f40531c5mr115406215ab.10.1729554428242; Mon, 21 Oct 2024
- 16:47:08 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:47:08 -0700
-In-Reply-To: <66eefd0c.050a0220.3195df.0061.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6716e7fc.050a0220.1e4b4d.0065.GAE@google.com>
-Subject: Re: [syzbot] retest repro if bug still valid
-From: syzbot <syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+In-Reply-To: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 21 Oct 2024 16:50:44 -0700
+Message-ID: <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
+To: paulmck@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon, Oct 21, 2024 at 3:13=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> For almost 20 years, the int return value from srcu_read_lock() has
+> been always either zero or one.  This commit therefore documents the
+> fact that it will be non-negative.
+>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrii Nakryiko <andrii@kernel.org
+>
+> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> index bab1dae3f69e6..512a8c54ba5ba 100644
+> --- a/include/linux/srcu.h
+> +++ b/include/linux/srcu.h
+> @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp=
+, int read_flavor);
+>   * a mutex that is held elsewhere while calling synchronize_srcu() or
+>   * synchronize_srcu_expedited().
+>   *
+> - * The return value from srcu_read_lock() must be passed unaltered
+> - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+> - * the matching srcu_read_unlock() must occur in the same context, for
+> - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+> - * if the matching srcu_read_lock() was invoked in process context.  Or,
+> - * for that matter to invoke srcu_read_unlock() from one task and the
+> - * matching srcu_read_lock() from another.
+> + * The return value from srcu_read_lock() is guaranteed to be
+> + * non-negative.  This value must be passed unaltered to the matching
+> + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
+> + * srcu_read_unlock() must occur in the same context, for example, it is
+> + * illegal to invoke srcu_read_unlock() in an irq handler if the matchin=
+g
+> + * srcu_read_lock() was invoked in process context.  Or, for that matter=
+ to
+> + * invoke srcu_read_unlock() from one task and the matching srcu_read_lo=
+ck()
+> + * from another.
 
-***
+For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
+Presumably the same non-negative index will be returned/consumed there
+as well, right? Can we add a blurb to that effect for them as well?
 
-Subject: retest repro if bug still valid
-Author: gianf.trad@gmail.com
+Otherwise LGTM, thanks!
 
-#syz test
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+>   */
+>  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp=
+)
+>  {
 
