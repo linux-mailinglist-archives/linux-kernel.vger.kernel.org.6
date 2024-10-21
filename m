@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-373753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0630F9A5C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED1D9A5C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8211F2232B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBFF1C217B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2851D0F69;
-	Mon, 21 Oct 2024 07:05:41 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DC01D0F66;
+	Mon, 21 Oct 2024 07:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zqbzj7H9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDAB1CF5F6;
-	Mon, 21 Oct 2024 07:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741431940A2;
+	Mon, 21 Oct 2024 07:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494341; cv=none; b=a28SRGYp3C2Qikft3iinC08/+BEEQuQlMNV1BzOZcaI5jRr4tkM33D2v5bKsfus+8qPMbHcZB20xUe3/JXkhsLtXjjEGFMNrfIE1xHgHsGfAbfFm64wfcMsMtpDaumsapOObnAeawxWkgaE8oIIfoah46h2rAgvNI2xwT5zESf0=
+	t=1729494481; cv=none; b=Sh3J5PoCRbz5UqNQ6wQ+v1q9n7Yem4JgE9zqEOvJ5o+1z7g2dN0LpAkksX0WBZYakkhxBdicNQqyMY0+cXLItNdTLr6cjkm+HfwXCicuyYQlXY/Oo2DlGz1033crIeVzQcry3DTwS5QqGCgZW9cTXjVIHIDxSOUzfem3T0HX74c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494341; c=relaxed/simple;
-	bh=84wmG/QqjIrtQQLbrCFY1D3Z/opjPo88jrJz0k32RHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sp7ILWUiYfrXOA7+qW2xMLF0kzXPWtwNicCdCOYsr6WQsaELELJDnT3uqXJMS1o/cnEVtLyOyHiTLQPDMiWZrDpnvivBOOT0qFNTTk2+JtyPm5GGTdeQvh2SKqbzJxaVqPLG/9Df5EF7koAUsBMjOV2ASfsPWATPbgHmNurZgNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so32629175e9.0;
-        Mon, 21 Oct 2024 00:05:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729494337; x=1730099137;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UuyasMgkP9ACihQpzbrksqcPeP7uWQUhYgegjJyc8I8=;
-        b=oWAX9jY4mg6GduD2A37rkVYcnpRZkJkpKToXfWAa0eFD95AAyy919yzBt3S45d4ydJ
-         +PhCNMwCpq3DKiGpy+cSkllmB1ynCGB9G7IOphLbq4aYCkTatH91N1jariOiIcXO1Pw4
-         DgiD6RHSHBJ+YbGZEuc75VJNuz1M1UBfEsCU9oIqOlr86DQLcCdyT1k6ihGHi/7Q2Gej
-         joD9TkDeBaNMoXuLbuVGTL26h5AJCL05Gd3a+DIqsn65RmPiWeA9V3O/KKiVdY97E8Mb
-         7e5Zm0URQB8lNwyRy/08c3slxUN3Dr7QqwDYyFXTYg3/WJjpC65PQOU3nMhi9NUuOKjT
-         CKxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvafrsSCEJ8sh5xFX6uaknFZ6vn0H74LkREStDvTI47Iy6WfAiqjNCtzwzB7IWFaM8gqbqBLXasjzDdw==@vger.kernel.org, AJvYcCWMWC5Qo+/sN2yNHmX7aebm+GHepmnowq+lVWO08bJnXKWiV/Aa5QJeFu/ozwenPaqP60QamA6psUd9Txi/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMzkETLrpEw32dSgOYmONvZmp/lJyCp/g3MrZYuv7fvmmPI93H
-	bAZ7ZAMUaRAYy4xX/21xtBEpj03v6Nf80FPh1hVgbYiucNTD94WO
-X-Google-Smtp-Source: AGHT+IG8O0M5kVa+Y0zMRDEF4giA3frmfFmV6DY0Rv6ItTOkBc3uE4a++W6C/asLcaygteal3Y9uQA==
-X-Received: by 2002:a05:600c:1d09:b0:430:57f2:bae5 with SMTP id 5b1f17b1804b1-4316169a968mr69435105e9.27.1729494337054;
-        Mon, 21 Oct 2024 00:05:37 -0700 (PDT)
-Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570c79sm46756225e9.3.2024.10.21.00.05.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 00:05:36 -0700 (PDT)
-Message-ID: <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
-Date: Mon, 21 Oct 2024 10:05:34 +0300
+	s=arc-20240116; t=1729494481; c=relaxed/simple;
+	bh=jgiYG0Ek2ZJK/rdl0cvnO5WUT2lSdDlxtVCEzXGPlM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTR9E5tLPUNOyYlcdg76F7JiIMtpkHyLb/TKfXjvIDOdyFmOXMo5jGsYAEm6gdwpVCLtLN2Z6/kjLQyRwA7CmH2YeCAPVJVJHk0DiRYBv+mz2pZSRJy321HQ4/qNTblUTEY0pUYYUV98go56UvOgUmSo0T0acF/JLvLNXl7ttHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zqbzj7H9; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729494480; x=1761030480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jgiYG0Ek2ZJK/rdl0cvnO5WUT2lSdDlxtVCEzXGPlM4=;
+  b=Zqbzj7H9jmiLeBxOO1POiwka8dTsXSkpqs3dKp8tIt6BO2uXbIiRfHY9
+   ZVQX2znsXohsULOua7yFS/TH8AsRymg4Squ4Y/rki25lKKosaPQqqcV5V
+   4Szt8fkyXC7AjQ8dsMKSLAQZ+ltTNmgZOu0ppinENVwf1Q9obaOgz7esH
+   Akxx90Y1PbW2U77oupo8VBCKa/QabzBr4FdQsg0XYVi9H2zZu6xNCluAW
+   9TMDjf7CR6TdOJe0gD1Kp9Ze1vFUUlyTetCCdbL8HAKf68xqh0AJOT0RM
+   yLtKkQlfGni/AD/+WcPQIEYcLy+wcBJX6U57kM29uwYkuP+Zwq0JvFJvr
+   g==;
+X-CSE-ConnectionGUID: QGQz3Dt1S8GZyVQUZmByZg==
+X-CSE-MsgGUID: XBBnkWyUQ4O5lC6FOH7+Yw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="28398053"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="28398053"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:07:59 -0700
+X-CSE-ConnectionGUID: g8ZTj4VQRKGVGBiGDjDB5g==
+X-CSE-MsgGUID: S4MppS4yTayb9wJK/YalEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="83433920"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:07:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t2mW7-00000005P6t-2fsQ;
+	Mon, 21 Oct 2024 10:07:51 +0300
+Date: Mon, 21 Oct 2024 10:07:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-cxl@vger.kernel.org
+Subject: Re: [PATCH 2/3] printf: Add print format (%pra) for struct range
+Message-ID: <ZxX9x82ME7GRnVl9@smile.fi.intel.com>
+References: <20241018-cxl-pra-v1-0-7f49ba58208b@intel.com>
+ <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-To: Ming Lei <ming.lei@redhat.com>, zhuxiaohui <zhuxiaohui400@gmail.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
- <ZxWwvF0Er-Aj-rtX@fedora>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <ZxWwvF0Er-Aj-rtX@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Fri, Oct 18, 2024 at 02:46:25PM -0500, Ira Weiny wrote:
+> The use of struct range in the CXL subsystem is growing.  In particular,
+> the addition of Dynamic Capacity devices uses struct range in a number
+> of places which are reported in debug and error messages.
+> 
+> To wit requiring the printing of the start/end fields in each print
+> became cumbersome.  Dan Williams mentions in [1] that it might be time
+> to have a print specifier for struct range similar to struct resource
+> 
+> A few alternatives were considered including '%par', '%r', and '%pn'.
+> %pra follows that struct range is similar to struct resource (%p[rR])
+> but needs to be different.  Based on discussions with Petr and Andy
+> '%pra' was chosen.[2]
+> 
+> Andy also suggested to keep the range prints similar to struct resource
+> though combined code.  Add hex_range() to handle printing for both
+> pointer types.
+> 
+> Finally introduce DEFINE_RANGE() as a parallel to DEFINE_RES_*() and use
+> it in the tests.
+
+...
+
+>  	case 'R':
+>  	case 'r':
+> -		return resource_string(buf, end, ptr, spec, fmt);
+> +		return resource_and_range(fmt, buf, end, ptr, spec);
+
+Since you are going to have a new version, I think this should be _or_ instead
+of _and_.
 
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-On 21/10/2024 4:39, Ming Lei wrote:
-> On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
->> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
->>
->> It is observed that nvme connect to a nvme over fabric target will
->> always fail when 'nohz_full' is set.
->>
->> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
->> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
->> and when nvme connect to a remote target, it may fails on this stack:
->>
->>          blk_mq_alloc_request_hctx+1
->>          __nvme_submit_sync_cmd+106
->>          nvmf_connect_io_queue+181
->>          nvme_tcp_start_queue+293
->>          nvme_tcp_setup_ctrl+948
->>          nvme_tcp_create_ctrl+735
->>          nvmf_dev_write+532
->>          vfs_write+237
->>          ksys_write+107
->>          do_syscall_64+128
->>          entry_SYSCALL_64_after_hwframe+118
->>
->> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
->> blk_mq_ctx on the hw queue.
->>
->> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
->> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
->> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
->> is not isolated.
-> blk_mq_alloc_request_hctx()
-> 	...
-> 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
-> 	...
->
-> It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
-> online CPUs, both are same actually from this viewpoint.
->
-> It is one long-time problem for nvme fc.
-
-For what nvmf is using blk_mq_alloc_request_hctx() is not important. It 
-just needs a tag from that hctx. the request execution is running where 
-blk_mq_alloc_request_hctx() is running.
 
