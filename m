@@ -1,125 +1,168 @@
-Return-Path: <linux-kernel+bounces-373687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE829A5A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71FB9A5A4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB7B1C20FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6BB1F23100
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581A5194C6C;
-	Mon, 21 Oct 2024 06:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2109D1CF5D4;
+	Mon, 21 Oct 2024 06:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FK+B3arm"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XyflKhhh"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51EFBA27
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBE419415E;
+	Mon, 21 Oct 2024 06:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729491872; cv=none; b=LDtJZsjNy+nfVKP/hNspmVZA1byQ1nWlScWs5Ra7WpMoLAtU0lHiFfuYLR+p6TsQgI/OVHSa5296gUdv0450yrBAPoO3ErIx9D/rj7BxpQ6WjkpxMLbJuFlsB7Jb/N6ZDJqwNZ3f78yhmQupC8HaGZ3Jjtiw8q7/nu6xEi1RREI=
+	t=1729492060; cv=none; b=eK9DSWWnYbdchFnK77L9kyWaNlnyW4GUipVjwgmXMiqeXqXP4drcIhhIvutBdvd7rfybo63cilI49T4tpucbEqVcWRFcNtSaFxFejyt5mHYyqvFBEqP7MMLFfhn4r1+YX3KFKP3YAeiynVhpL7faI6oMNqi8be82CZDulvErIKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729491872; c=relaxed/simple;
-	bh=f11ejA1l9/H2DWs2gZUzG9D8f8wLrPik18NyuCvtUgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aq/Fppb2KdED0yFmV2OOcbIT0hIEUhAZoLH3y8NZjzV+QuIS9Y08+pLnjhBBvqKCo2lpsH+8cV7ipgNMi/jMnBJQAEwxAHtil7Zrv48RGP/c3sW17A9CugvdCS7Ge0UftCg8gGs/K1oaFfy2aeD+ZNGFnJ1XBx7DyXZ+1fiNBBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FK+B3arm; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729491862; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=9WBl8yacujzHX99xcGir0o4nf+sIFejUzFXCXxbuoNg=;
-	b=FK+B3armmKcS1Q9KVEMhZv/btoODwJhhhyKbeVD0h/LVgv1D2U9+8BD6S6vYJYuYSvuW9OtRMBXNHZYIYXbKpXT0UUrjfnTRgZNVCLfTR1UhHnT824bHsSS/TObOnJd2Kz+QAkm+9B1DAy1gMZuB48Ky46MLBqgqH+nf1Hj2Eaw=
-Received: from 30.74.144.131(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHWxOcW_1729491859 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 21 Oct 2024 14:24:20 +0800
-Message-ID: <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
-Date: Mon, 21 Oct 2024 14:24:18 +0800
+	s=arc-20240116; t=1729492060; c=relaxed/simple;
+	bh=I4Z2GVo7dzKhtMIspZuk0y8cpnMFZZ0OvJLpnwrppFY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WfFD8LdoilECUGkb37Z9crxdklWK1xtSgrIZwyeXgsLcfq5t84T/k5vpA2m97aDyXQcK92XfXw82gEts3b7AtLjeXHDPMdae+hevkZlio4dz7g4F0n2Uro1FDJgP4ISLyKzDDRDZxeN2A6TZY+Omvie5ByHWlZNhVCLMNmtQf64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XyflKhhh; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c805a0753so34258525ad.0;
+        Sun, 20 Oct 2024 23:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729492058; x=1730096858; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s56c+/LO6NBVWgMpiwpkhSioI6B4YvZqh4mtUGgHfdc=;
+        b=XyflKhhhIOkyC5VpaQWK7xvTld5Vtcfwj8anHjOqk0HQUO0qLhpZCuJ2cVcM/6xbU2
+         1IuA/zC3xwY/+KRBQQtXnUhz2OnTxQ61MOWPQNz7NLnaXpFXCIJvIzcGFdhOWQPLH/oj
+         tb8nuSbcNbWVOZmXktkuhNZLifUghPhoZOu8w5P34ik/rlAl3qr94zzsTGDFujL0spYQ
+         29QrT/SiF/XcrPkergxyvUMa2w/+UvilCw47Cad6pvz27DK/udw5r9LpJ2in1WerJVj7
+         gEgwn8jxVbY9/JrmOKR38w8W8mZ5CpxLsMnwM0QwH/7w5C8L1a4ob1LOTr94mvTeKhml
+         ip1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729492058; x=1730096858;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s56c+/LO6NBVWgMpiwpkhSioI6B4YvZqh4mtUGgHfdc=;
+        b=n41oBhjjxFUdyHU7M7PDdp+wmBwMdxDe3z9tqhQ7c6M+KZks0Wh8UirEpSPcs0DyiV
+         QMm8y5uci9TBIgkKExsURDQUMgi2whDUsWzWzDiO06lfCLqQF43feTpiaoAbj2CDyun6
+         jami7grHdjKHNVN4C/sF+uKgcE51BNO7keWxdXiTqtJGPS8Qp0wfdkWtQAcpZLe6zAAO
+         vb/W5PjqrNQP/NvBoEcZ7QnQCFVLIjCxn5lV6I/r1oyYgdiru3Sd0BsnIgt3cCSiPek7
+         LFbNpJGPp44ZKRXfytCooVj1mYUFp6dLKEZhS6MnVIWwHsggEyxktPWOdEroM0UeZ1LB
+         XIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+C/EYCkItKyQOPgibj0JPDpUQH5r+Mw5Zl+WtlheyFAha4nD1TuA6XaitV1wgZ/h8TR3zEZjKli4=@vger.kernel.org, AJvYcCUqB6z6ELAYGovDlxt3hhpLUS/gl//QLKeujQKcNMTNC0jRH8313I4UDrPLpti95NOfEUl5v9X5yiCMojMh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFKZu+ApEvzUnk845e1PTa1tOSyl/TfPDgWTQ5igMzGhEWh+u/
+	116o4AJjjAfoKpe+56oeak4DPYUkYGSy3mi9BxEIqy2vTFA9W4ebbYRcYSU=
+X-Google-Smtp-Source: AGHT+IGG/B7+Tn5iB7renUdnGDg7/rv1JOu3+Pd4cAaEkQR1SOfQ7EInkZJFb3oU73e0M7B7NsaYmQ==
+X-Received: by 2002:a05:6a21:6b0b:b0:1d9:ae4:91ef with SMTP id adf61e73a8af0-1d92c5087b3mr14838800637.22.1729492057856;
+        Sun, 20 Oct 2024 23:27:37 -0700 (PDT)
+Received: from localhost (2001-b400-e38e-c9a7-dd38-775c-4093-c057.emome-ip6.hinet.net. [2001:b400:e38e:c9a7:dd38:775c:4093:c057])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad3677b2sm2700255a91.20.2024.10.20.23.27.36
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Oct 2024 23:27:37 -0700 (PDT)
+From: Tyrone Ting <warp5tw@gmail.com>
+X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	wsa@kernel.org,
+	rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com,
+	warp5tw@gmail.com,
+	tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com,
+	tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com,
+	JJLIU0@nuvoton.com,
+	kfting@nuvoton.com
+Cc: openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/4] i2c: npcm: read/write operation, checkpatch
+Date: Mon, 21 Oct 2024 14:27:28 +0800
+Message-Id: <20241021062732.5592-1-kfting@nuvoton.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com,
- da.gomez@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <Zw_IT136rxW_KuhU@casper.infradead.org>
- <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
- <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+
+This patchset includes the following fixes:
+
+- Enable the target functionality in the interrupt handling routine 
+  when the i2c transfer is about to finish.
+- Correct the read/write operation procedure.
+- Introduce a software flag to handle the bus error (BER) condition
+  which is not caused by the i2c transfer.
+- Modify timeout calculation.
+- Assign the client address earlier logically.
+- Use an i2c frequency table for the frequency parameters assignment.
+- Coding style fix.
+
+The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
+
+Addressed comments from:
+- Andy Shevchenko : https://lore.kernel.org/lkml/ZwkFWVC3_5xr6OQW
+  @smile.fi.intel.com/
+- Andy Shevchenko : https://lore.kernel.org/lkml/ZwkFwABviY8ClyUo
+  @smile.fi.intel.com/
+
+Changes since version 6:
+- Modify code comments.
+- Remove redundant code check.
+- Remove i2c address mask.
+
+Changes since version 5:
+- Correct "EAGAIN" to "-EAGAIN" in the commit message.
+- Configure the bus->dest_addr by calling i2c_8bit_addr_from_msg()
+  and remove the I2C_M_RD flag when calling i2c_recover_bus().
+- Fix the commit message which meets a too small wrapping limit.
+
+Changes since version 4:
+- Add more description for the codes.
+- Modify the term "function" to "function()" in the commit message
+and code comments.
+
+Changes since version 3:
+- Remove "Bug fixes" in the cover letter title.
+- Modify the term "function" to "func()" in the commit message and
+  code comments.
+- Correct the coding style.
+
+Changes since version 2:
+- Add more explanations in the commit message and code modification.
+- Use lower character names for declarations.
+- Remove Fixes tags in commits which are not to fix bugs.
+
+Changes since version 1:
+- Restore the npcm_i2caddr array length to fix the smatch warning.
+- Remove unused variables.
+- Handle the condition where scl_table_cnt reaches to the maximum value.
+- Fix the checkpatch warning.
+
+Charles Boyer (1):
+  i2c: npcm: Enable slave in eob interrupt
+
+Tyrone Ting (3):
+  i2c: npcm: Modify timeout evaluation mechanism
+  i2c: npcm: Modify the client address assignment
+  i2c: npcm: use i2c frequency table
+
+ drivers/i2c/busses/i2c-npcm7xx.c | 424 ++++++++++++++++++++++++-------
+ 1 file changed, 328 insertions(+), 96 deletions(-)
 
 
+base-commit: 663bff1ddfe4ecbba3bcf4a74646bb388b1ad5b2
+-- 
+2.34.1
 
-On 2024/10/17 19:26, Kirill A. Shutemov wrote:
-> On Thu, Oct 17, 2024 at 05:34:15PM +0800, Baolin Wang wrote:
->> + Kirill
->>
->> On 2024/10/16 22:06, Matthew Wilcox wrote:
->>> On Thu, Oct 10, 2024 at 05:58:10PM +0800, Baolin Wang wrote:
->>>> Considering that tmpfs already has the 'huge=' option to control the THP
->>>> allocation, it is necessary to maintain compatibility with the 'huge='
->>>> option, as well as considering the 'deny' and 'force' option controlled
->>>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
->>>
->>> No, it's not.  No other filesystem honours these settings.  tmpfs would
->>> not have had these settings if it were written today.  It should simply
->>> ignore them, the way that NFS ignores the "intr" mount option now that
->>> we have a better solution to the original problem.
->>>
->>> To reiterate my position:
->>>
->>>    - When using tmpfs as a filesystem, it should behave like other
->>>      filesystems.
->>>    - When using tmpfs to implement MAP_ANONYMOUS | MAP_SHARED, it should
->>>      behave like anonymous memory.
->>
->> I do agree with your point to some extent, but the ‘huge=’ option has
->> existed for nearly 8 years, and the huge orders based on write size may not
->> achieve the performance of PMD-sized THP in some scenarios, such as when the
->> write length is consistently 4K. So, I am still concerned that ignoring the
->> 'huge' option could lead to compatibility issues.
-> 
-> Yeah, I don't think we are there yet to ignore the mount option.
-
-OK.
-
-> Maybe we need to get a new generic interface to request the semantics
-> tmpfs has with huge= on per-inode level on any fs. Like a set of FADV_*
-> handles to make kernel allocate PMD-size folio on any allocation or on
-> allocations within i_size. I think this behaviour is useful beyond tmpfs.
-> 
-> Then huge= implementation for tmpfs can be re-defined to set these
-> per-inode FADV_ flags by default. This way we can keep tmpfs compatible
-> with current deployments and less special comparing to rest of
-> filesystems on kernel side.
-
-I did a quick search, and I didn't find any other fs that require 
-PMD-sized huge pages, so I am not sure if FADV_* is useful for 
-filesystems other than tmpfs. Please correct me if I missed something.
-
-> If huge= is not set, tmpfs would behave the same way as the rest of
-> filesystems.
-
-So if 'huge=' is not set, tmpfs write()/fallocate() can still allocate 
-large folios based on the write size? If yes, that means it will change 
-the default huge behavior for tmpfs. Because previously having 'huge=' 
-is not set means the huge option is 'SHMEM_HUGE_NEVER', which is similar 
-to what I mentioned:
-"Another possible choice is to make the huge pages allocation based on 
-write size as the *default* behavior for tmpfs, ..."
 
