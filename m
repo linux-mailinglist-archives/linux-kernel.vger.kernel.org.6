@@ -1,191 +1,223 @@
-Return-Path: <linux-kernel+bounces-373763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0519A5C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D81999A5C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091F51C21DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A4F1C21DDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB891D14E7;
-	Mon, 21 Oct 2024 07:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7D61D0E30;
+	Mon, 21 Oct 2024 07:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WMP29ypG"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="eKamUIes"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2102.outbound.protection.outlook.com [40.107.105.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351B61D0F7E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494920; cv=none; b=P9Wi287XTolNG8dT6m1DYjARxculjepceYAqDE2oDAo37WRjQkWxJ1R5snKaBaEXbU0GjMD9FKoCGDO7JWnFVIoA8+lbqyeBLL2dVmwWsy6jh66Mj4Lno/BGLOZRjYUVvygTjhU5CqsWlpXkJa3SWbRMQ9stE9MHPgijaSOwwVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494920; c=relaxed/simple;
-	bh=sL8/i6Di5DcQQ9guTOuVoJfEK/9WK5BriuxDQuYcHww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwlluU2lq4JwVyWu+wSNAQiE7vl5MNVyJXVczjrSCZieYamRBYejK5ySBb+HXK6wBJxgdcPpHnlVHLj2ji7/ANvjyiRvKAkdVIA0Ergq+tUz3B6Q425TnIxOjCJt6JQb3erXwWMwQEv1uUWpnF921u4aPWdJzWz7GHKHi3YYBNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WMP29ypG; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso40209461fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729494916; x=1730099716; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O66gPrArBhu1Lkf2k94VS51buUsSbDnUdJxUilOqKoU=;
-        b=WMP29ypG/qGF998oKaduFfCCWqK7yqGwZpt/VcKPMSIMD/Qp6lYHcIt7in5ddrZxi6
-         JO9L7J/5f4UQ2lbpCkYdks2k3DeKSAIfoJlTKg/Wt6TDyoXBvUg6DQZpKRVy2KOFDdow
-         FyqoAkFmeTqFlcx0JH3bolwTLcKRlVgrMcTtPd63gObp0Rf3UwPgqyxWlw7rxrqgm9V4
-         yQ7PROmmC+Qp37bqpdo+Xqr5ztvn5YUlTaF651FlPIQjCeQwc7KdcJL5bVcWhWj1pwv3
-         0zKAituZ/bTKt+VKtTAE/LFNfq9K7EolxfsYNbYdMWE2OMZ2amwc0MF44cQ+lG1DSOR7
-         9MoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729494916; x=1730099716;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O66gPrArBhu1Lkf2k94VS51buUsSbDnUdJxUilOqKoU=;
-        b=P+YeOQKeWfO7M1OWwF/LAfru+B4FbPy25x1Uf8L/80uNvJpHaVtcaxla4D5K/3adTk
-         rqaC7yRXV1rhyyAtOMKVAzqLC1rimodQhMOC0Aqyipk8Njiug6hUcrG6TDEVxHgveMNZ
-         PWaWgw6LCTdPKzeYgADVdT9WPn0Wjsn04bmSskGe1BVY4nNwPmdLnUncnjLhy6L9le2x
-         boTS7d0FzY5s6Z1JC88wVF7yNj0b5pVvtwnIGrs4SBUucPm8JNd1rwL1svEbIvxQOUVs
-         VYL5rnatyaU0zMUZsczeZr+q9NB9qVWDpebrpwU1N2OkAC2IxzrS25NV43z4jEok6ebm
-         W4pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa7fCJULpBYbXi0KzmICMTxXjHNmfu5ZEvGyWAnPYcFPNBhLNUOh7wfDEr7RPU2yZvtDFDBGTa1yscz/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjvmz3AhDDBcrdn5qpvqIrj2gXhlvkD3Ia+40N6GtHgwfbCj2m
-	taxfYfwbEurpxhiYaw//PLrdO5GAD04o2meiQw/9LI/G6FUob3pBY8g+ZqoSeK4=
-X-Google-Smtp-Source: AGHT+IETEFXR8/cKXRm1qK4kLTWa+k3b+HsgghOppLGOl3d3G+/sF4TWEhiXzLustHLoNu+OGM33Cw==
-X-Received: by 2002:a05:6512:39cd:b0:539:8ade:2d0 with SMTP id 2adb3069b0e04-53a155092a2mr4776049e87.51.1729494916059;
-        Mon, 21 Oct 2024 00:15:16 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d641esm169229666b.3.2024.10.21.00.15.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:15:15 -0700 (PDT)
-Date: Mon, 21 Oct 2024 09:15:14 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>, nphamcs@gmail.com,
-	roman.gushchin@linux.dev, muchun.song@linux.dev,
-	akpm@linux-foundation.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, lnyng@meta.com
-Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
- controller
-Message-ID: <ZxX_gvuo8hhPlzvb@tiehlicka>
-References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
- <ZxI0cBwXIuVUmElU@tiehlicka>
- <20241018123122.GB71939@cmpxchg.org>
- <ZxJltegdzUYGiMfR@tiehlicka>
- <il346o3nahawquum3t5rzcuuntkdpyahidpm2ctmdibj3td7pm@2aqirlm5hrdh>
- <CAN+CAwOHE_J3yO=uMjAGamNKHFc7WXETDutvU=uWzNv5d33zYg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5801CF5E0;
+	Mon, 21 Oct 2024 07:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729494945; cv=fail; b=tQXAdlJuT0n33KXKF0nEddzbVJRemFAcyqeGCnQyzxzyu7bnQoMyZ1D0jcHnfUTZK9YaHxASS4J1VtqG0GJFC5Y+ogw5aT/xAlC1mw5PyRJTUTd97a9JAQO0AntuqcVTLKrXLZTITVodrv47S92oFF99dAMVBCvKcy7BzSGr8YI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729494945; c=relaxed/simple;
+	bh=Ctd0f6L4K1XhFc7JeBoR6LmMSQMEs5ngVfPaLiXd+BI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P1LvUQKmoywg+7b9exlqjQTB6jpi+Y18qTcsIlXIF6xAuZRqFuuFCMmy1la2d/JQvlH4uU06pRn2qG38sCZNOtnMoqw4AXKThnctbWOJh7yJFHglgZCD6dD47dlNHFGBGzC4JC/CoEUa+kQRjBKnffD5IDnAhj22veyzqnK8WAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=eKamUIes; arc=fail smtp.client-ip=40.107.105.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vPUffj3VCtsGE7UpIUTTBi42o7B7iPZgfu+LWaOhRfU+htKZh2ikxoo53/iD1PSb24ZwT6Ip6kq2s+un+WdM1ctOGUv7uUpN1g9ThAHPdzfG4OADNYKzVeWiovxLPPEKKAXE+9mGYUhTJS3tRHMmVKPLfLtJ46vhtTQWFYqyqaV7wi22DFimV2Grc8/MKNqRtGdK0jZ/Gi5PCUDsWy9BCsDl46D7WFWisNdLPauJgFQgqcl6DR5S48neudUsgoIIV3hSnkSFFsn5RNdtFGOAKxQps51vJxn2E1+vAkSQ/UC2pgCzaTkHp0pILv0EAG9OeyVtZrMzPOUWdj/+VRL5Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ctd0f6L4K1XhFc7JeBoR6LmMSQMEs5ngVfPaLiXd+BI=;
+ b=V68Bbilpx1W6+rWwh7lFhvIa2d9prd1QWrwCitYl+BRmzHgj1cU75XLhbrrew+wJoPNUlfCIwDr3b/qcuQN1yqYuHt4BTiPN02cAD48xdbBf4hf1M48xTZAbWFMcd3jRYIGHMn58qzHpC9ETYLFlowNIiM+z4CSZIcCpJGVyzsYEHzd6UqA7t8d6uuayL1f6YqYjeyF+yjy1s/uHxKlOzxVfiz6qU9A0G+vqHg9S5+W1nj7gRlXG7oRY3TcQahY3Ji0itMETMJuQeCwZUGCfyCz990G5IIL1PTtDmXbn2YyGjAKju2uFGFUz2TLhHzsawpdQJQbdyVqzhL8/rPV4uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ctd0f6L4K1XhFc7JeBoR6LmMSQMEs5ngVfPaLiXd+BI=;
+ b=eKamUIesA6Wm0e+2OtZ9h9OY9EvzMwH39USqhh9i2IayNgQ1yf/KLDTky6V4JdmE7etr53y6xH28S2+Qg6hHyqqP/sPuEFJhxlLWW4Mu6Ws4/fcGXAzJQh3WMaIPWM0UTKnwiuYWqeICGKVsdMjPA/GXyW+8Fg5R1JX+0pBkLJ8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by VI1PR10MB3501.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:132::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.15; Mon, 21 Oct
+ 2024 07:15:39 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.8093.013; Mon, 21 Oct 2024
+ 07:15:39 +0000
+Message-ID: <48e42fa7-f36e-4d38-b60b-51c9a6748de6@kontron.de>
+Date: Mon, 21 Oct 2024 09:15:38 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] arm64: dts: imx8mp-msc-sm2s-ep1: Add HDMI connector
+To: Marek Vasut <marex@denx.de>, Liu Ying <victor.liu@nxp.com>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ stefan@agner.ch, dmitry.baryshkov@linaro.org
+References: <20241018064813.2750016-1-victor.liu@nxp.com>
+ <20241018064813.2750016-4-victor.liu@nxp.com>
+ <69cc9c59-99c0-479d-8143-63698cc56111@denx.de>
+ <4d1c434e-e7bd-4e53-b110-1f26eb06c59c@nxp.com>
+ <06bb1733-1742-4847-8436-8f9d8d4b7c46@denx.de>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <06bb1733-1742-4847-8436-8f9d8d4b7c46@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR5P281CA0051.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f0::20) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAN+CAwOHE_J3yO=uMjAGamNKHFc7WXETDutvU=uWzNv5d33zYg@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|VI1PR10MB3501:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98f299f1-036b-4dfc-cd07-08dcf1a02aba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dUJSWEpkKzlxZlE2bVNFNnVuTGFtVnZCU2I2ZHkxTEJwVzdxT0VaMWNIak1v?=
+ =?utf-8?B?c2NSNEpRVWlxKzJreEJyaXd2S1pIUHlCeHVBaGZUK3J4dFVxdEVqaWNoMEFR?=
+ =?utf-8?B?Q3ZUb3ZUQkxLeGtOOXVZeWNnaVJoUm9GRG92T3VUenRDc2IxcTJ1Z2M3V3BG?=
+ =?utf-8?B?cTUzOHBlN09PbE1KWnlueXFuTWtZVHIwdmszT2JFSFFHTU14QVBaUlV1TjRt?=
+ =?utf-8?B?YXg0eFBVZWxENE04dGpwSE5IYXhveFd6cEhTa3hydkZWWnVnU2pPQWFjS3k2?=
+ =?utf-8?B?TUZ2MzZPeWFXKzE2MWEweUdJMDlxc1A0R1hwSlZyUlFlRlVlK2hKZVdzSHA5?=
+ =?utf-8?B?WHRYYVhYcEdBangzN0lNeENFdXB1eVcrbUY1ZktWSzFHaSs0bnYyV2c4bCtH?=
+ =?utf-8?B?TGpEb3o0emUxZVlVVzJYYjROZjAzdUlKZDFZOTE1MVJOMHdNR0dycFMycEZo?=
+ =?utf-8?B?M3AzZ005akNoQXFldmFoY0xKbjVRblk2NGRoRW5pM3l2ZHYrMW9SdFhwV1ZQ?=
+ =?utf-8?B?YnpLRkxzVURkK1MrMS9vRnloS2lwT2xmMW1PY250K1FMK3pjRDJnU0ZGRC8r?=
+ =?utf-8?B?YjFUSVJlRzNFYmo5UEZvLzNPYmZIczlxZVFzUkJwNFhTTkY4YUpMNnowb2VL?=
+ =?utf-8?B?Y0x3YWM5eFJmRjVQNy9yMkxva00ySkJhcDRGa2FPem9lSGdZSG93RjhTMXB2?=
+ =?utf-8?B?VVkzZjE5T2FZZkxSU1MvNnNLMWRTZkY0VTBFNzZ0OFZyS1hRUUQ0cEd4QThG?=
+ =?utf-8?B?aUZaNmtJV2x6c1h1ZytSdjk2cURCWmRjZFFiV1hwV2ZZaU5XRUJLUTFuWTU1?=
+ =?utf-8?B?c0pkR1hPWUtabmw2OW1hWVlXYmtSMlFuTUhBQllWbHNBcG8zMGVQTmdSMFd2?=
+ =?utf-8?B?N1YrMnFtYXJoQnZnaXFycURSRmN3STM5UTlpcERVUFl2cUFvZGZIc2hNMFNh?=
+ =?utf-8?B?ZU5XZkFtdzhLWEdBYzRSUDVaM0k0elV3RkdUYWhBazAza1RpZG1DbVlTQkhF?=
+ =?utf-8?B?MnZhWUZKc3lNOFNaUGluY2N4RExyenRPN25oRVNqTUwxbHhrLzlnNVQxTHJ2?=
+ =?utf-8?B?U09HT1lBbVFwcFl5K3ZTSjZtZnVUR01VSklUNHRnYXNXc0ZtTDdZbUZBbUQ3?=
+ =?utf-8?B?NU9HekFEQmdMa0Z1Tmw3TUtwOEpUMkJLK0ErWVZMSWtmbTJadlh0eC9uVWVr?=
+ =?utf-8?B?bDFPMEpobzRYV3orSHR1NVlTVDZaL3Buck52U3lsR1FGNDYxQmFiblVWN0NX?=
+ =?utf-8?B?YXhuZUhrN3Z0cFA0aGlxVmVib2luRXR5azk4cGNKdjlMMHZZTDhmTm9PS05J?=
+ =?utf-8?B?bU5pM01lUXRud0FvY3FMaVRGRmhJWmFmRHpLUUkrYldUMlNuUmRtY3BaRW1Q?=
+ =?utf-8?B?ZTZsWVdqZ1pyT2hRdUdKbGxlUkRlRlUyczlSclhKa2JUNmVTaWNEMCtPVDRo?=
+ =?utf-8?B?YmxPSEFKTTgvb2lBaG5sR0ZRQmFxSEhiVHJWR3g4SnVGL084VkNUTmFzN00x?=
+ =?utf-8?B?WFNmU3hpSmtMYUxKQUd6dlVobmJjd0VUMHpxRCtLbzkzSEdudnlQMk1aUEdw?=
+ =?utf-8?B?aVNneTgrQllRRUxweTViTHErczFGcXFSU0ZBVXZsQVkxaGs5OVFuM1cvcUF1?=
+ =?utf-8?B?ZHlUQzg2NHBYb2tVVXBrSVlsM0NBS2VFdXhjSjlVT01WNjhHMi9uYS9YR01F?=
+ =?utf-8?B?RmhFN05uTER5UHpjWlFwZ1VLcnMxcC9WSEd4RW9TN3FvR3JFZEhHVVMvaDZX?=
+ =?utf-8?Q?rIKnBZ77P9kC19oqOW6nkE57u2FO/ZF7/itBVJ8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UUpheEY4WWRkZjRkUXdkMzBjdEdwbkI1anpVVGRFVGRnMXNBMkJIak42YVVo?=
+ =?utf-8?B?bHcyNkxOdnlYNm9zeXpuc1I5d3JXZ0RMRXNMYThocnFZb3FjdUlqNDJ2R0Va?=
+ =?utf-8?B?eU1zY2VwYzRZS3MzLzBKQ1I0d25OZ3VJNUhlSnVaZkVaZzNETlRtcGdnc3ZS?=
+ =?utf-8?B?T3d5Q2xtc3NmK3RJUmIxeVRadnRxZWRET3pZcnNETUgzMXZEMG55TGl3amFN?=
+ =?utf-8?B?c2NhczFqNmpzMHFTdC9tUi85aEI4ZzkyWlB5QjFCZ0tnMS9nMmc0OWRvd09Y?=
+ =?utf-8?B?TVlYd21IOWUweG9iR29ka01sOVppM21OekVuUmxXZTZvT0pxMkJkV3h1NkJF?=
+ =?utf-8?B?ZnN1ZEQ1Y3ViMmw3NEdGY3RjS1BpWXJzM0xSNm5YcVJsRHlsUlJRRGQ2enpL?=
+ =?utf-8?B?bDVicTk4aEZialRzQUUrdkF3U2FBODBjTDY1ajJuUXBYclFneWxCTDhJdDZo?=
+ =?utf-8?B?Q2Fwb1Q2dkNXaHZ6QzVqNk0wWXlXOWcwamJ4dlM1QUU0U2dNUy90RXpjdDIz?=
+ =?utf-8?B?S3l0ZUkrMEhkblhrZFdUSTRHL04rV2N6UGpuT0Z5ZjVEWHVtZW5RWVp2MzI3?=
+ =?utf-8?B?TUhyRGs0emQrNVBuRkVEVFNYK2tmWmhETHFWQU9ZdjlIU2Fia0J2VFJoN3NK?=
+ =?utf-8?B?WlRscWtGdkNuQm9yV3N0ekQ4MkJQS2pKWjVWY1hVZkhManh6M0MvR3crcnFu?=
+ =?utf-8?B?eVBTTWlkSnAwVUVSaUxuSjUzTkZVOXpwK0crRFVESStKYlp4a3ZZdlY3MmJG?=
+ =?utf-8?B?RmFVcFJGM2NvWERhMW5YZXcxbDAvYllIeXR1Q0s1a2NFdXErU29QM0hHWE1N?=
+ =?utf-8?B?VGpiMUxuOUNhSUlEeS93WU83bmhFTXZ2NEMxSS9ma0xETzhWQzBZbkdBbmFC?=
+ =?utf-8?B?bVNSMUNCNEd2QkpmYnc4eXdMRTUzYXBxbjRDMFdhNkFtL2pGM1BqZTB3TjVV?=
+ =?utf-8?B?SllIQ20vQ1lLNVFGcnhIaUpleHVxOG1JeHZUclU1OEpzMnRXWDRESnpzdzBl?=
+ =?utf-8?B?bFBjZjhualJXd0xzMStCN0d4NjlxUmZsOFJQM1BOK3prYStJSW0vRXZGTEdv?=
+ =?utf-8?B?aTgxUEZHclVRQ3c5M1ZMczZpZDlCVkJMM3FmTXl6ayttTkxtY0hReTl6MUFp?=
+ =?utf-8?B?YnZ1Y1NLcGVPa2JTTXVLeWFzS3d6QUU1cy85bHltNVJrYnVydWFmc2Zaa09p?=
+ =?utf-8?B?am50MjRsV3liVWl1TnBBdTIvL1JGaVlxZWN0dGtydUJTcG9LYWlzQ01RZ2Jn?=
+ =?utf-8?B?N3hvMVhEWHlEbEZVaUVRenMzWEhQbmY5LzZJb09yajhjWWVuWjU4TUNwRU1h?=
+ =?utf-8?B?RXlVUWVPdmJUV3dqeExQbDNQeVJMdkE3a2RXaWR3d0M5QTJacEpPdU1Mb2xD?=
+ =?utf-8?B?d0I5Sy9aUWx0RG5Ma25sN3hZaGhqc1pGbWJuTFhHaFRuTnpHQnByVkJYK0tn?=
+ =?utf-8?B?blVTSkNJeU41dExFNC9RTlcrdVpuMkxyR1pEcWt2RjliaXFGRXhaMVN4ZzhP?=
+ =?utf-8?B?WC81bjFyS1gvTkVsSHAwdUZHOE5hZzZTVE1mRUd0NS85ZkRRQ1hXc2w0cGxi?=
+ =?utf-8?B?WFN0ZEp6aW1tR0t5MFhQd1pOSzhEaDhZOGVESDkwdUFTN0I4VWFqSnhIWkdI?=
+ =?utf-8?B?TFBNeHZRd0VRQng1VFdJQytQdGh6S21QNGZJYjZqUCtNdkprODU3czkxS1dC?=
+ =?utf-8?B?MnU4dGZ4bjExb2RhNVlQcm1zcDRNdGJyanErbVQ4M2pUNUFWV1BMV3ZKeEFi?=
+ =?utf-8?B?WlhZOHVaQTdYYVhRU2JMYUpqVjF6K3BmVU1FeTFMelI3QnVPWGUrYjQycDFq?=
+ =?utf-8?B?Nkpnank3UElqWGZGUFhjN0lHOWlmK0w0UFg3WnlkL3lqRkxITTA3L2xsek84?=
+ =?utf-8?B?VFV1d1RXM0FTcDBlTkxlWUk0RHpBQml3dzJoekptbjROSE5VSVdtUDUwaVhH?=
+ =?utf-8?B?VC8vS3pEVnd2VnYxazI0RTZUd2ZFenZDYkJWd3UwalVXUGtmUi9hWlhHblFu?=
+ =?utf-8?B?R2l4WVdQdmRlZ0VWS0hBUWR5R0hKREdPUlJEaUU1c1ZjaVRxblFvWFluVjY4?=
+ =?utf-8?B?SU9YaXRUTm4xZE5IaGZtQXpVelU3Q0hhL2tRQTBtSkFxeEltekUzaDZtcEkr?=
+ =?utf-8?B?aTVCZzhod1ZFOUl4ZFJqRFUySHVndlZxWC9YZkRBaVN0Y0Jta042SnhtNVA0?=
+ =?utf-8?B?anc9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98f299f1-036b-4dfc-cd07-08dcf1a02aba
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 07:15:39.4888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eiqdcfRANHJRtcurj254bc/gVm9P1foZ0AIeUKkouPDb8ZrEXvOgV9QJ8mp82ygDSI5/Q+KYxri7KeXHdivvVdjCGLTD5HqeQzISaE60z4E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3501
 
-On Fri 18-10-24 14:38:48, Joshua Hahn wrote:
-> On Fri, Oct 18, 2024 at 2:11 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > On Fri, Oct 18, 2024 at 03:42:13PM GMT, Michal Hocko wrote:
-[...]
-> > > and it would be great to have an explanation why the lack of tracking
-> > > has proven problematic. Also the above doesn't really explain why those
-> > > who care cannot really enabled hugetlb controller to gain the
-> > > consumption information.
-> >
-> > Let me give my take on this. The reason is the ease and convenience to
-> > see what is happening when I see unexpectedly large memory.current
-> > value. Logically I would look at memory.stat to make sense of it.
-> > Without this I have to remember that the user might have hugetlb memcg
-> > accounting option enabled and they are use hugetlb cgroup to find the
-> > answer. If they have not enabled hugetlb cgroup then I am in dark.
+On 18.10.24 11:35 AM, Marek Vasut wrote:
+> On 10/18/24 11:00 AM, Liu Ying wrote:
+>> On 10/18/2024, Marek Vasut wrote:
+>>> On 10/18/24 8:48 AM, Liu Ying wrote:
+>>>> Add a HDMI connector to connect with i.MX8MP HDMI TX output.
+>>>> This is a preparation for making the i.MX8MP LCDIF driver use
+>>>> drm_bridge_connector which requires the DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>>>> flag.  With that flag, the DW HDMI bridge core driver would
+>>>> try to attach the next bridge which is the HDMI connector.
+>>>>
+>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>>> ---
+>>>>    .../dts/freescale/imx8mp-msc-sm2s-ep1.dts     | 19 ++++++++++++++
+>>>> +++++
+>>>>    1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dts
+>>>> b/arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dts
+>>>> index 83194ea7cb81..b776646a258a 100644
+>>>> --- a/arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dts
+>>>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dts
+>>>> @@ -15,6 +15,17 @@ / {
+>>>>                 "avnet,sm2s-imx8mp-14N0600E", "avnet,sm2s-imx8mp",
+>>>>                 "fsl,imx8mp";
+>>>>    +    hdmi-connector {
+>>>> +        compatible = "hdmi-connector";
+>>>> +        type = "a";
+>>> Shouldn't this also have a 'label' property ?
+>>
+>> 'label' property is not required by hdmi-connector.yaml and there
+>> are in-tree hdmi-connector nodes that haven't got it.
+>> I tried to find schematics for the board online, but failed.
+>> I don't have the board to see the label printed in silk layer, either.
+>>
+>> If anyone can provide a valid label name, I may add it.
+> For the Kontron board, Frieder might be able to look it up for you ?
 
-Yes, I thought that this was an acceptable limitation of the accounting.
-If that is not the case then it is really preferable to mention reasons
-in the changelog. The reasoning was that hugetlb controller which would
-be a natural source of that information is not really great because of
-an overhead which hasn't really been evaluated - hence my questioning.
-
-[...]
-
-> Aside from consistency between the two files, we can see benefits in
-> observability. There are many reasons userspace might be intersted in
-> understanding the hugeTLB footprint of cgroups. To name a few, system
-> administrators might want to verify that hugeTLB usage is distributed as
-> expected across tasks: i.e. memory-intensive tasks are using more hugeTLB
-> pages than tasks that don't consume a lot of memory, or is seen to fault
-> frequently. Note that this is separate from wanting to inspect the
-> distribution for limiting purposes (in that case, it makes sense to use
-> the controller)
-
-Please add this information into the changelog.
-
-> 2. Why can't you enable the hugeTLB controller, if tracking is so important?
-> 
-> By turning on the hugeTLB controller, we gain all of the observability
-> that I mentioned above; users can just check the respective hugetlb files.
-> However, the discrepancy between memory.stat and memory.current is still
-> there. When I check memory.current, I expect to be able to explain the usage
-> by looking at memory.stat and trying to understand the breakdown, not by going
-> into the various hugetlb controller files to check how/if the memory is
-> accounted for.
-
-Well, as mentioned in the previous response this has been an acceptable
-limitation of the hugetlb accounting. It is fair to reconsider this
-based on existing experience but that should be a part of the changelog.
-
-> But even if we are okay with this, I think it might be overkill to
-> enable the hugeTLB controller for the convenience of being able to inspect
-> the hugeTLB usage for cgroups. This is especially true in workloads where
-> we can predict what usage patterns will be like, and we do not need to enforce
-> specific limits on hugeTLB usage.
-
-I am sorry but I do not understand the overkill part of the argument.
-Is there any runtime or configuration cost that is visible?
-
-> 3. What if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled?
-> 
-> This is a great point. The way the patch is currently implemented, it
-> should still do the accounting to memory.stat, even if
-> CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled. This would give us the reverse
-> problem where hugeTLB usage that is reported in the statistics are no longer
-> accounted for in current...
-
-Exactly! And this is a problem.
-
-> I think it makes sense to show hugeTLB statistics in memory.stat only if
-> hugeTLB is accounted for in memory.current as well (i.e. check if
-> CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is enabled before doing the accounting,
-> or move the accounting from hugeTLB alloc/free --> hugeTLB charge/uncharge,
-> which should only happen if hugeTLBs are accounted for in memory.current).
-> 
-> What do you think?
-
-yes, not only shown but also accounted only if the feature is enabled
-because we do not want to introduce any (even tiny) overhead for feature
-that is not enabled.
-
-TL;DR
-1) you need to make the stats accounting aligned with the existing
-   charge accounting.
-2) make the stat visible only when feature is enabled
-3) work more on the justification - i.e. changelog part and give us a
-   better insight why a) hugetlb cgroup is seen is a bad choice and b) why
-   the original limitation hasn't proven good since the feature was
-   introduced.
-
-Makes sense?
--- 
-Michal Hocko
-SUSE Labs
+The Kontron PCB doesn't have a silkscreen label for the connector. The
+schematic has the label "X801" for the part and the signals on the
+connector are prefixed with "HDMI_CON".
 
