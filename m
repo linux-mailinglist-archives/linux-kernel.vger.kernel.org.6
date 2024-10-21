@@ -1,195 +1,232 @@
-Return-Path: <linux-kernel+bounces-374503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092B49A6B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:58:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C229A6B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A901F21B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65376281991
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84D1F8931;
-	Mon, 21 Oct 2024 13:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F311FCF78;
+	Mon, 21 Oct 2024 14:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N8iIYyQZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gb8kvIxg"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF11F4717
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4595E1FBF72;
+	Mon, 21 Oct 2024 14:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519095; cv=none; b=mNxn+SyzeTEy+Wx76MFVrgFuwIHAnM2YUZmDIXYURm39K4YJUGHi8X0//xZvJOTZuYodPLCsSdptjMNeGIC3iIOYe9qGLLqHCpW14dX/lYoJGNxOrD2UFgqkoQSKJXIJkjcBPJCkqXFA+7X2TGv60mIZHe3Kx3pZh0rTl0NW1n8=
+	t=1729519220; cv=none; b=mksd2psacdy4S0QRoUjT+e2/mMn+pmVd1O897o6B2Dv3C4vxXa5qPt/Ty4m0IyBGSVDIvMUC6RuKbeOCsHZGc77l0PYTXJWyFzUEDV5wmmGhTgUzN4jxhbswr4l9ZrFbHCJ8VimozxQTMoAO74a9cyXOCo0CSAahHc4gdF4Kl6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519095; c=relaxed/simple;
-	bh=NPhBoj3xcxNlJXTqklaF506IqEIEDAzTVf1JM8EHZD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tK86QhzGmOJ6/NocMD3G4DSZo1tdMINoxHgKN8Wod8JmLd3HhDIj4hloVYlUtBh18LjXgZMICGx/T5t4UAMOVEPZZWcpjOueRiBkh+Gn8dSUAOn8r8ubQZXxqAE07di5QfKcL9QS06fvoGcd1NdlpMkghi3GvlfrA6BnJgj+Vao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N8iIYyQZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9UE7P019311
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OI7Wh1fO6bHFXo1JQ2ZRfpx/pcAU9uIg8fircEPSrek=; b=N8iIYyQZQDBb9wae
-	XDu6UWUeU8JwCQDB/K7WWmfH104Se6MFWPl8QeLsBsWI7qXEgGWbByrcr78uhLhc
-	nAxgNVD4eXoqfGRt2x5MWYGXqqAVZpl+zCJ0FeDJbdkwkshqPzNfVj7yeauJ6wiw
-	+seHBCy4mBdgtS926WY9YL2VyL54TlwCTyigFXNETaSKPLjtcWtl862P/rdVA/Sf
-	QDzqEUaQSCjLJc8RvrzNXkbHeT/jEODvwrfWmscsy/N0qFUzeGGULhc28DtLNYeT
-	1un6ORL6VViWekNt0dqyiujeNTP2FaE2CZkq7jfZanJd+4YUHihP6Udt/OfXE9wS
-	eoTIhg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vc50xh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:58:11 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cda6fd171bso11611666d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:58:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729519090; x=1730123890;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OI7Wh1fO6bHFXo1JQ2ZRfpx/pcAU9uIg8fircEPSrek=;
-        b=m9IDu9vP0Hx0uYyn7JBKZ4jGBs+KfGs27p1+PoN/P/gvPOpDVg5qGzGpo8vNFwqqaQ
-         kSB1wYkjOikBjjtN3xX94CTduHVFlfne9brVA8WPQtnDlJYObquHrwjqkRbcuT0WIW9N
-         qQgppfGzs0l0ZdpgpBIvaKHVBek0loDIjtYDhecZJ1mKLHIk0RSFbU5dKY7HBCImqJze
-         DkJov6Ts6B9aVVZazJ9FS3KTAZJvX8mzDpVApvSm/yV/6nqkdaWi8Mo60r/AzxM3ILzP
-         03pMcDi9sEssJlqDXmDEQbT5nafeJe6YqwO8mDj7I0Z3YSw2U8qBpnkCAJBHRs8WgLil
-         l/7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXCsf1Im5FsW50oiAs0O2wU+qWnN6yDLu9Dr4N+zuJFFSFuH5yYiycu7kEkHWZVXmEyJ3ekhOUKaXA52Xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJwJ7rhE6h4vBBJK9LgumTfmaEACz808MqpFqB7O6CoKF4IVv5
-	Q5DFmIx1axmWrjNM3RLvPnRMfT/c1kGQizu4DrpnBK8M1HLbnkHlIDnB9LcZ8LbG2kOG9J4tabv
-	1nIA3bFXDKt+hPKAqGfrPTXzVievmysM7C5HyYNxbhCtU3vcMo0XGUbJdU7k97ZQ=
-X-Received: by 2002:ad4:5ae2:0:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6cde14be181mr79937956d6.3.1729519090077;
-        Mon, 21 Oct 2024 06:58:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCScMjTKswmyH1uzl8JIZj7OfIdN55ExFoP9OG2mAym/s4cspQQgTi+8KuXBFsGXeVZUKm3A==
-X-Received: by 2002:ad4:5ae2:0:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6cde14be181mr79937766d6.3.1729519089768;
-        Mon, 21 Oct 2024 06:58:09 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b974sm1964000a12.67.2024.10.21.06.58.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 06:58:09 -0700 (PDT)
-Message-ID: <24a674f5-17ba-49d1-a865-77f907a05c65@oss.qualcomm.com>
-Date: Mon, 21 Oct 2024 15:58:07 +0200
+	s=arc-20240116; t=1729519220; c=relaxed/simple;
+	bh=aY0YypQAngRekw2GELmtGYkeTWjSw4VkDJVyIfxc2hA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=r/I/7+Oh6vCG/QX1MdMKT8gq9349goTY/cLPrvapI3cMU+n9P0nFDq6pbrAFtbT4wmXdjJWz7GWADB+Q+RdyQ7kNikBAF4tz9WS85QxV05mjq/ogOoIsoagtFZCVYdDmgEGbsUvdX43w93plsJjcSAsnOwPa0ole3Kxft9PSSmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gb8kvIxg; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729519218; x=1761055218;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=aY0YypQAngRekw2GELmtGYkeTWjSw4VkDJVyIfxc2hA=;
+  b=gb8kvIxgzLXDVvHAB7c8RiMhfiqqH4gVtP8Qlbox3IvBLhe7y58u3sF9
+   R4hR3ruPHKs/DwTbxHnuecUVbmVMqB6ISm9JygohtBX3zgL+LDzxc5MOt
+   ZSWCCM5OO8pQPw5qqtQm6nzkV/YWcpklMggVxjpveotmV4QeqIcCjAQL0
+   dQtjqLvDOuAABdbzXDr5QgZe9yUp3yEthtk4kJ+tKJO2D9XCWHVaVwKLW
+   6TtMyPBncnCJFtJ+iScCnBpHVQqRMO8EGj4h9rJgiJYqWIXFjsmM2o5tU
+   Km/d42dbZAlzICmYG+0vgTH5xaHNMsCuUYCNo5N9pqq/erCzki1v0yG/L
+   A==;
+X-CSE-ConnectionGUID: Ky42XnPuQxK/Okp36Nw4mA==
+X-CSE-MsgGUID: bBh1YTz8SNKwmHppzXUp1A==
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="200707744"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 06:59:14 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 21 Oct 2024 06:58:54 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 21 Oct 2024 06:58:50 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next 00/15] net: sparx5: add support for lan969x switch
+ device
+Date: Mon, 21 Oct 2024 15:58:37 +0200
+Message-ID: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] soc: qcom: llcc: add support for SAR2130P and
- SAR1130P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
- <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org>
- <7fa066b6-a214-4866-9d0a-f75896531d84@oss.qualcomm.com>
- <CAA8EJprvQTGABZ6LAq1qXRfPgOz7VzxPuKnRz_EO_4S6tveXgQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAA8EJprvQTGABZ6LAq1qXRfPgOz7VzxPuKnRz_EO_4S6tveXgQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: OduracxbdD8eesNq01aS3rstZAjmYolm
-X-Proofpoint-ORIG-GUID: OduracxbdD8eesNq01aS3rstZAjmYolm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 phishscore=0 bulkscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210100
+X-B4-Tracking: v=1; b=H4sIAA1eFmcC/x2NQQqDMBAAvyJ77oLGRk2/Ij3EuNaFdiubYAPi3
+ 5v2OAzMHBBJmSLcqgOUdo78lgLNpYKwenkQ8lwYTG2uTd10GDev2eLTi+tcxvjhFFaclXdSNNg
+ HWqzth9a1A5TIprRw/g9GEEoolBPci5l8JJzUS1h/g5dngfP8AhHsB92RAAAA
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <andrew@lunn.ch>, Lars Povlsen
+	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
+	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
+	<ast@fiberby.net>, <maxime.chevallier@bootlin.com>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Steen Hegelund
+	<steen.hegelund@microchip.com>, <devicetree@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-On 21.10.2024 3:13 PM, Dmitry Baryshkov wrote:
-> On Mon, 21 Oct 2024 at 14:04, Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 19.10.2024 6:26 PM, Dmitry Baryshkov wrote:
->>> Implement necessary support for the LLCC control on the SAR1130P and
->>> SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
->>> shift and also require manual override for num_banks.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>  drivers/soc/qcom/llcc-qcom.c       | 468 ++++++++++++++++++++++++++++++++++++-
->>>  include/linux/soc/qcom/llcc-qcom.h |  12 +
->>>  2 files changed, 474 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
->>> index a470285f54a875bf2262aac7b0f84ed8fd028ef1..ef84fe3b2af4e777126a8308bfd4ec47b28aeae2 100644
->>> --- a/drivers/soc/qcom/llcc-qcom.c
->>> +++ b/drivers/soc/qcom/llcc-qcom.c
->>> @@ -32,6 +32,7 @@
->>>  #define ATTR1_FIXED_SIZE_SHIFT        0x03
->>>  #define ATTR1_PRIORITY_SHIFT          0x04
->>>  #define ATTR1_MAX_CAP_SHIFT           0x10
->>> +#define ATTR1_MAX_CAP_SHIFT_sar       0x0e
->>>  #define ATTR0_RES_WAYS_MASK           GENMASK(15, 0)
->>>  #define ATTR0_BONUS_WAYS_MASK         GENMASK(31, 16)
->>>  #define ATTR0_BONUS_WAYS_SHIFT        0x10
->>> @@ -140,6 +141,11 @@ struct qcom_llcc_config {
->>>       bool need_llcc_cfg;
->>>       bool no_edac;
->>>       bool irq_configured;
->>> +     /*
->>> +      * special workarounds for SAR2130P and similar platforms which have
->>> +      * slightly different register mapping.
->>> +      */
->>> +     bool is_sar_chip;
->>
->> This is not the only odd ball, please make max_cap_width variable
-> 
-> I'm not sure what you mean here. Moving max_cap_width to the drv_data
-> / configuration? Or do you mean something else?
+== Description:
 
-Match data (qcom_llcc_config) is fine, as qcom_llcc_cfg_program is only
-called from .probe.
+This series is the second of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-max_cap_width would be a new field that denotes the width of MAX_CAP
-(which seems to always be at [31:n])
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
-> 
->>
->> [...]
->>
->>> +     /*
->>> +      * For some reason register returns incorrect value here.
->>> +      * List compatibles instead of using .is_sar_chip since there might be
->>> +      * SAR-like chips which have other number of banks.
->>> +      */
->>> +     if (of_device_is_compatible(dev->of_node, "qcom,sar1130p-llcc") ||
->>> +         of_device_is_compatible(dev->of_node, "qcom,sar2130p-llcc")) {
->>> +             num_banks = 2;
->>> +     } else {
->>> +             ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
->>> +             if (ret)
->>> +                     goto err;
->>> +
->>> +             num_banks &= LLCC_LB_CNT_MASK;
->>> +             num_banks >>= LLCC_LB_CNT_SHIFT;
->>> +     }
->>>
->>> -     num_banks &= LLCC_LB_CNT_MASK;
->>> -     num_banks >>= LLCC_LB_CNT_SHIFT;
->>>       drv_data->num_banks = num_banks;
->>
->> This too
-> 
-> This can probably go to qcom_llcc_config.
+        1) Prepare the Sparx5 driver for lan969x (merged)
 
-Yep
+    --> 2) add support lan969x (same basic features as Sparx5
+           provides excl. FDMA and VCAP).
 
-Konrad
+        3) Add support for lan969x VCAP, FDMA and RGMII
+
+== Lan969x in short:
+
+The lan969x Ethernet switch family [1] provides a rich set of
+switching features and port configurations (up to 30 ports) from 10Mbps
+to 10Gbps, with support for RGMII, SGMII, QSGMII, USGMII, and USXGMII,
+ideal for industrial & process automation infrastructure applications,
+transport, grid automation, power substation automation, and ring &
+intra-ring topologies. The LAN969x family is hardware and software
+compatible and scalable supporting 46Gbps to 102Gbps switch bandwidths.
+
+== Preparing Sparx5 for lan969x:
+
+The main preparation work for lan969x has already been merged [1]. 
+
+After this series is applied, lan969x will have the same functionality
+as Sparx5, except for VCAP and FDMA support. QoS features that requires
+the VCAP (e.g. PSFP, port mirroring) will obviously not work until VCAP
+support is added later.
+
+== Patch breakdown:
+
+Patch #1-#4  do some preparation work for lan969x
+
+Patch #5     adds new registers required by lan969x
+
+Patch #6     adds initial match data for lan969x
+
+Patch #7     defines the lan969x register differences
+
+Patch #8     adds lan969x constants to match data
+
+Patch #9     adds some lan969x ops in bulk
+
+Patch #10    adds PTP function to ops
+
+Patch #11    adds lan969x_calendar.c for calculating the calendar
+
+Patch #12    makes additional use of the is_sparx5() macro to branch out
+             in certain places.
+
+Patch #13    documents lan969x in the dt-bindings
+
+Patch #14    introduces new concept of devicetree target
+
+Patch #15    introduces new concept of per-SKU features
+
+[1] https://lore.kernel.org/netdev/20241004-b4-sparx5-lan969x-switch-driver-v2-0-d3290f581663@microchip.com/
+
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: andrew@lunn.ch
+To: Lars Povlsen <lars.povlsen@microchip.com>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: horatiu.vultur@microchip.com
+To: jensemil.schulzostergaard@microchip.com
+To: Parthiban.Veerasooran@microchip.com
+To: Raju.Lakkaraju@microchip.com
+To: UNGLinuxDriver@microchip.com
+To: Richard Cochran <richardcochran@gmail.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: jacob.e.keller@intel.com
+To: ast@fiberby.net
+To: maxime.chevallier@bootlin.com
+Cc: netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Steen Hegelund <steen.hegelund@microchip.com>
+Cc: devicetree@vger.kernel.org
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Daniel Machon (15):
+      net: sparx5: add support for lan969x SKU's and core clock
+      net: sparx5: change spx5_wr to spx5_rmw in cal update()
+      net: sparx5: change frequency calculation for SDLB's
+      net: sparx5: add sparx5 context pointer to a few functions
+      net: sparx5: add registers required by lan969x
+      net: lan969x: add match data for lan969x
+      net: lan969x: add register diffs to match data
+      net: lan969x: add constants to match data
+      net: lan969x: add lan969x ops to match data
+      net: lan969x: add PTP handler function
+      net: lan969x: add function for calculating the DSM calendar
+      net: sparx5: use is_sparx5() macro throughout
+      dt-bindings: net: add compatible strings for lan969x SKU's
+      net: sparx5: add compatible strings for lan969x and verify the target
+      net: sparx5: add feature support
+
+ .../bindings/net/microchip,sparx5-switch.yaml      |  17 +-
+ MAINTAINERS                                        |   7 +
+ drivers/net/ethernet/microchip/Kconfig             |   1 +
+ drivers/net/ethernet/microchip/Makefile            |   1 +
+ drivers/net/ethernet/microchip/lan969x/Kconfig     |   5 +
+ drivers/net/ethernet/microchip/lan969x/Makefile    |  13 +
+ drivers/net/ethernet/microchip/lan969x/lan969x.c   | 349 +++++++++++++++++++++
+ drivers/net/ethernet/microchip/lan969x/lan969x.h   |  56 ++++
+ .../ethernet/microchip/lan969x/lan969x_calendar.c  | 190 +++++++++++
+ .../net/ethernet/microchip/lan969x/lan969x_regs.c  | 223 +++++++++++++
+ drivers/net/ethernet/microchip/sparx5/Makefile     |   1 +
+ .../ethernet/microchip/sparx5/sparx5_calendar.c    |  72 +++--
+ .../net/ethernet/microchip/sparx5/sparx5_fdma.c    |   2 +-
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    | 272 +++++++++++++++-
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |  76 ++++-
+ .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 132 ++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_mirror.c  |  10 +-
+ .../net/ethernet/microchip/sparx5/sparx5_netdev.c  |  26 +-
+ .../net/ethernet/microchip/sparx5/sparx5_packet.c  |  16 +-
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |  46 +++
+ drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |  13 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_qos.c |   3 +-
+ .../net/ethernet/microchip/sparx5/sparx5_regs.c    |   5 +-
+ .../net/ethernet/microchip/sparx5/sparx5_regs.h    |   5 +-
+ .../net/ethernet/microchip/sparx5/sparx5_sdlb.c    |  10 +-
+ .../ethernet/microchip/sparx5/sparx5_tc_flower.c   |   5 +
+ 26 files changed, 1471 insertions(+), 85 deletions(-)
+---
+base-commit: 30d9d8f6a2d7e44a9f91737dd409dbc87ac6f6b7
+change-id: 20241016-sparx5-lan969x-switch-driver-2-7cef55783938
+
+Best regards,
+-- 
+Daniel Machon <daniel.machon@microchip.com>
+
 
