@@ -1,76 +1,72 @@
-Return-Path: <linux-kernel+bounces-374209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41C39A66E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B4D9A66E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DAE28188E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C281C21EB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FA1E7C1C;
-	Mon, 21 Oct 2024 11:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DDE1E7C3E;
+	Mon, 21 Oct 2024 11:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnUZcBiw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPFG2UnD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618BF946C;
-	Mon, 21 Oct 2024 11:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4EF1E7C24;
+	Mon, 21 Oct 2024 11:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511019; cv=none; b=ZAT4g455xk6A4Dk57SRA+1JLkLjh7yA+oZzxqWFyPgIcuaaJb7X0MaKlmowLLNsFLbv1dywD96VAvHw7H/mpXvSADIYwhkA6GH5yUDeSNkt4Hn6g1tX55iAjY4vOjM01I0vrTDeSXDcNI8qggNJ0DPW1ez4EiRfVkCH1At35aWM=
+	t=1729511042; cv=none; b=ORMHHT1aDmMNd2/VazwpSk4dPhgvGYspqx+apVEk4j+BIUNNbU00frWlVXIz74Q9hoNX9aPtVvSTUFyIh3KkkqZOtBNCgqYMHWgctoBaW4UGautCytNz3Wtnr+lul0/mIjm96QJzkB4Y7GuFy/ZEdepIP3kpJAsT9aYihgQjT6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511019; c=relaxed/simple;
-	bh=awMHKeW2IqFLj8Un2Mvc6m+8vNSs8NS5bptZgfjy3Vc=;
+	s=arc-20240116; t=1729511042; c=relaxed/simple;
+	bh=AJ/DqPzoLPYjvF0DStKqvbOtkyW/e+moS4T9f9nXyqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXAIaA5MWxmuqTLOmsMOhfzM9I4cKDD9+0BZUgJy0dQ5PewKt9jXyC8xE4e73ZrO7GkWFOagCV1s90axhsJkjmopclZxGR2nw+Vtrzo7P4Gb4hCTvPTxuB8Sn3wmO5xffGbp2FCOJ8Gj4UmMtePZZveIWpPbsoHnADQWKgogKRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnUZcBiw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83058C4CEC3;
-	Mon, 21 Oct 2024 11:43:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=D54RrNHvBFwjftNcJlBMa3Ij0xfpTlHO1rUnS82CStun5rffJaMGh1zXKhQ9puxMU+pcR1PODu5htyWYcBeQSerKgwih54WmFFBlkqWlo+HPMDaYlUz/dIEFhmYyAJ9uzaNWh3PzXbDxankHgOXt+7Ri+brvzb29oVpzeBI0Jk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPFG2UnD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02AA8C4CEC3;
+	Mon, 21 Oct 2024 11:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729511019;
-	bh=awMHKeW2IqFLj8Un2Mvc6m+8vNSs8NS5bptZgfjy3Vc=;
+	s=k20201202; t=1729511042;
+	bh=AJ/DqPzoLPYjvF0DStKqvbOtkyW/e+moS4T9f9nXyqQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YnUZcBiwYN0oUEeEN8LXcEyIIfpko9fRGTmgbdH9YqBuPYZSZ6fd1nAx3SYHnTtZ6
-	 0+kKjJEolyA7JaHYxeB1sERy/Bx0qJVDrUbBIrelx+n9qu30MtD+oRvnqdh/8FjREZ
-	 1LkgNq/GG215kUUqZXU0mnCR8rXbaIKnXbgL8J49OpXiLNEQ8YLUuGiDMBSzbqyUzi
-	 5xrjZJwdCHucJLpgaWYm/Wd+iqQmJaXwiYXdMlVIfubyCRZJUlS2Lp7nwvIUWGN29N
-	 BIHjAFRwmJnNv1adZRa1v6DMrh8XfZk0jxPnpaLxgAIXB/RIHi8eLd+Wnk9LCHUIkk
-	 wvtzlsVf2oaqQ==
-Date: Mon, 21 Oct 2024 13:43:31 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: Re: [RFC PATCH v1 34/57] sata_sil24: Remove PAGE_SIZE compile-time
- constant assumption
-Message-ID: <ZxY-Y6GF0m_wTfyD@ryzen.lan>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-34-ryan.roberts@arm.com>
- <ZxDUZMDf2Xfz2tvi@ryzen.lan>
- <7aa84080-6845-496a-a394-30d334632298@arm.com>
- <ZxEISOhaqRvHlc3U@ryzen.lan>
- <2f578256-7e56-491f-a4ca-ad6caa72b7ae@arm.com>
- <ZxY1KAvGpyIzARtX@ryzen.lan>
- <8e1e0824-1022-4f8f-9753-e134c7244d3a@arm.com>
+	b=qPFG2UnDVHfwXTPxm6/dIYV2yc8SrdzSZjAUbW5bfUU9txzgGGCDLhEveKdAqHc+0
+	 WfC7DIo7X1e7eisVg7uwKVasVx6+hUkKkSuQXaVpEOTy/FvGJzco3VnSNoTv+92scF
+	 WWJgX+rwjhW3AOlhM5b7gtA1pCqvF3KEEGbdSl/steiVuxGqvQrdMP9mbvWm19ezzU
+	 j+syt2dsRwW6p3fHyFmxQ+isz8rl6180ifHI2cbt49Yck1ecLQXqEra4QJ6ty695Fc
+	 WkaoG2t9iBRyZjxmo2sydyVzk6imdEtruIvB/ceaODruCdKixQ3QGkvpsBSImK8qwq
+	 gbhSxRwyxfYow==
+Date: Mon, 21 Oct 2024 12:43:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH net-next v4 0/3] Add the dwmac driver support for T-HEAD
+ TH1520 SoC
+Message-ID: <20241021114354.GF402847@kernel.org>
+References: <20241020-th1520-dwmac-v4-0-c77acd33ccef@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,80 +75,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e1e0824-1022-4f8f-9753-e134c7244d3a@arm.com>
+In-Reply-To: <20241020-th1520-dwmac-v4-0-c77acd33ccef@tenstorrent.com>
 
-On Mon, Oct 21, 2024 at 12:26:15PM +0100, Ryan Roberts wrote:
-> On 21/10/2024 12:04, Niklas Cassel wrote:
-> > On Mon, Oct 21, 2024 at 10:24:37AM +0100, Ryan Roberts wrote:
-> >> On 17/10/2024 13:51, Niklas Cassel wrote:
-> >>> On Thu, Oct 17, 2024 at 01:42:22PM +0100, Ryan Roberts wrote:
-> > 
-> > (snip)
-> > 
-> >> That said, while investigating this, I've spotted a bug in my change. paddr calculation in sil24_qc_issue() is incorrect since sizeof(*pp->cmd_block) is no longer PAGE_SIZE. Based on feedback in another patch, I'm also converting the BUG_ONs to WARN_ON_ONCEs.
-> > 
-> > Side note: Please wrap you lines to 80 characters max.
+On Sun, Oct 20, 2024 at 07:35:59PM -0700, Drew Fustini wrote:
+> This series adds support for dwmac gigabit ethernet in the T-Head TH1520
+> RISC-V SoC along with dts patches to enable the ethernet ports on the
+> BeagleV Ahead and the LicheePi 4A.
 > 
-> Yes sorry, I turned off line wrapping for that last mail because I didn't want
-> it to wrap the copy/pasted patch. I'll figure out how to mix and match for future.
+> The pinctrl-th1520 driver, pinctrl binding, and related dts patches are
+> in linux-next so there are no longer any prerequisite series that need
+> to be applied first.
 > 
-> > 
-> > 
-> >>
-> >> Additional proposed change, which I'll plan to include in the next version:
-> >>
-> >> ---8<---
-> >> diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
-> >> index 85c6382976626..c402bf998c4ee 100644
-> >> --- a/drivers/ata/sata_sil24.c
-> >> +++ b/drivers/ata/sata_sil24.c
-> >> @@ -257,6 +257,10 @@ union sil24_cmd_block {
-> >>         struct sil24_atapi_block atapi;
-> >>  };
-> >>  
-> >> +#define SIL24_ATA_BLOCK_SIZE   struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE)
-> >> +#define SIL24_ATAPI_BLOCK_SIZE struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE)
-> >> +#define SIL24_CMD_BLOCK_SIZE   max(SIL24_ATA_BLOCK_SIZE, SIL24_ATAPI_BLOCK_SIZE)
-> >> +
-> >>  static const struct sil24_cerr_info {
-> >>         unsigned int err_mask, action;
-> >>         const char *desc;
-> >> @@ -886,7 +890,7 @@ static unsigned int sil24_qc_issue(struct ata_queued_cmd *qc)
-> >>         dma_addr_t paddr;
-> >>         void __iomem *activate;
-> >>  
-> >> -       paddr = pp->cmd_block_dma + tag * sizeof(*pp->cmd_block);
-> >> +       paddr = pp->cmd_block_dma + tag * SIL24_CMD_BLOCK_SIZE;
-> >>         activate = port + PORT_CMD_ACTIVATE + tag * 8;
-> >>  
-> >>         /*
-> >> @@ -1192,7 +1196,7 @@ static int sil24_port_start(struct ata_port *ap)
-> >>         struct device *dev = ap->host->dev;
-> >>         struct sil24_port_priv *pp;
-> >>         union sil24_cmd_block *cb;
-> >> -       size_t cb_size = PAGE_SIZE * SIL24_MAX_CMDS;
-> >> +       size_t cb_size = SIL24_CMD_BLOCK_SIZE * SIL24_MAX_CMDS;
-> >>         dma_addr_t cb_dma;
-> >>  
-> >>         pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
-> >> @@ -1265,8 +1269,8 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
-> >>         u32 tmp;
-> >>  
-> >>         /* union sil24_cmd_block must be PAGE_SIZE */
-> > 
-> > This comment should probably be rephrased to be more clear then, since like
-> > you said sizeof(union sil24_cmd_block) will no longer be PAGE_SIZE.
+> Changes in v4:
+>  - Rebase on next for pinctrl dependency
+>  - Add 'net-next' prefix to subject per maintainer-netdev.rst
+>  - Add clocks, clock-names, interrupts and interrupt-names to binding
+>  - Simplify driver code by switching from regmap to regualar mmio
 > 
-> How about:
+> Changes in v3:
+>  - Rebase on v6.12-rc1
+>  - Remove thead,rx-internal-delay and thead,tx-internal-delay properties
+>  - Remove unneeded call to thead_dwmac_fix_speed() during probe
+>  - Fix filename for the yaml file in MAINTAINERS patch
+>  - Link: https://lore.kernel.org/linux-riscv/20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com/
 > 
-> /*
->  * union sil24_cmd_block must be PAGE_SIZE once taking into account the 'sge'
->  * flexible array members in struct sil24_atapi_block and struct sil24_ata_block
->  */
+> Changes in v2:
+>  - Drop the first patch as it is no longer needed due to upstream commit
+>    d01e0e98de31 ("dt-bindings: net: dwmac: Validate PBL for all IP-cores")
+>  - Rename compatible from "thead,th1520-dwmac" to "thead,th1520-gmac"
+>  - Add thead,rx-internal-delay and thead,tx-internal-delay properties
+>    and check that it does not exceed the maximum value
+>  - Convert from stmmac_dvr_probe() to devm_stmmac_pltfr_probe() and
+>    delete the .remove_new hook as it is no longer needed
+>  - Handle return value of regmap_write() in case it fails
+>  - Add phy reset delay properties to the BeagleV Ahead device tree
+>  - Link: https://lore.kernel.org/linux-riscv/20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com/
+> 
+> Changes in v1:
+>  - remove thead,gmacapb that references syscon for APB registers
+>  - add a second memory region to gmac nodes for the APB registers
+>  - Link: https://lore.kernel.org/all/20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com/
+> 
+> ---
+> Emil Renner Berthing (1):
+>       riscv: dts: thead: Add TH1520 ethernet nodes
+> 
+> Jisheng Zhang (2):
+>       dt-bindings: net: Add T-HEAD dwmac support
+>       net: stmmac: Add glue layer for T-HEAD TH1520 SoC
+> 
+>  .../devicetree/bindings/net/snps,dwmac.yaml        |   1 +
+>  .../devicetree/bindings/net/thead,th1520-gmac.yaml | 115 +++++++++
+>  MAINTAINERS                                        |   2 +
+>  arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  91 +++++++
+>  .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 119 +++++++++
+>  arch/riscv/boot/dts/thead/th1520.dtsi              |  50 ++++
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig        |  10 +
+>  drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c  | 268 +++++++++++++++++++++
+>  9 files changed, 657 insertions(+)
+> ---
+> base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+> change-id: 20241020-th1520-dwmac-e14cc8f8427b
 
-Sounds good to me!
+Hi Drew, all,
 
+This series is targeted at net-next, but it doesn't apply there.
+I'm unsure what the way forwards is, but I expect that at a minimum
+the patchset will need to be reposted in some form.
 
-Kind regards,
-Niklas
+-- 
+pw-bot: cr
+
 
