@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-374286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED459A67FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F76C9A67FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A301E1F237F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7421C20F63
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803BA1F8F1D;
-	Mon, 21 Oct 2024 12:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35F1F940D;
+	Mon, 21 Oct 2024 12:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PVkU8iWl"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5NvzLEn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7C1F8EEB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4963A1F4FB0;
+	Mon, 21 Oct 2024 12:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513079; cv=none; b=QdBI0tMvIwEh/9W90j7S0qr0Eim+vKdBbk6FyVUPfIb8hvjWPUmO6H43Y1PYRVz/pf6mJxEpCr7FCfB2vRztop34OPhCuECZKT2bHaMHNQiXyESIs0XF5mR+YYaxAua0U1BckY7s+K4W186AR6QB8kQHpvV8SndFymIxPmRrmmk=
+	t=1729513091; cv=none; b=nJK9I3SMqoOdWQWb/n+Whb9PSWIeOFXtHCnIEkQ7SyPtFY2d/TdIOIaTJiR3rUBFobRhf1II287eEhhYK8Ao0NkuWJGSF+O9t6tV7Uug4t4a1SXHHYLJCnWD/QWKM8jgC6jwXiSDpGs+CqFGh1OvV3zHMYKg/K7stqWEXrpnwa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513079; c=relaxed/simple;
-	bh=4giwL2CaQe0H4v/rRaHyXf8blNfxXtNrj6bnr1BfiVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fBI7WlU4VK7AkQ8mSzfyIJ+6C/pkx24JtjSa/Q8CHpUBG+h7Lq8AZodPlbX8rVQIbmIeBo1J4+0z/KwFH90sQ+/XiqtHA9I/VgiKOTanKqHM4qHUDQXmO5fNz0UG8OZsrZadUw9IIoZlmFOTLD1Uz5a3guAzzG8I3fesAtxCGY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PVkU8iWl; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53a007743e7so5150929e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513076; x=1730117876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=prphtPU0Rb62bRXSWJ4X3+5cxLNBcE3V+GKAi8EyFnY=;
-        b=PVkU8iWlwk5lmHO8BVlS4IkookqjZjx/4frfdt/rGE2Zlnoo1iIZgHwPgG6vWEJ4l7
-         ytKNg8muLJqtluDQVKqK0kZawZCUxM0i6mLyM2ORlSdp7GsZSnE4a29HDo8kQFEBvVsN
-         bKdcp/YsXJVqtxC1AUyJZtgX//tK63xtYkqRQOOKa9I77Ejm1hR27CRvK1IfLs0aDsUf
-         qrsZNDcuqKvVLy0Lhe6H6MRZGnS35fWHRFHUJ+DqighC1QMG7IArPqHcoH8n4FdygE5a
-         u4YVFM1xWGaRsmtqx48oHzgH54ve3ZH6EVcO2R3WKRGIZzqaVZtiCMD3V0wa9llUHhdu
-         fYxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513076; x=1730117876;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=prphtPU0Rb62bRXSWJ4X3+5cxLNBcE3V+GKAi8EyFnY=;
-        b=lSJ4E57t+uTwy44Hyq2J00uY+s25Ux+gYMTXwnlgBkbZyS23lmyjbjxtW0HA411k8o
-         +nMBUBzHUlnKtT7vcDmV+uirq+oAEuEuJ4IqSfvbiEqLRpnrHBSbKRuRN2X78KpKScZv
-         jTjPKUJIyO9PV/9p0BtVpQjZ1REVaC548A4QpNye0Pfa7kxgh6qFva+bAQvtxLC1+QHF
-         A3aQfnAhOYGJkRNaJ60iSYc+GyA+0/sORCOya///7e/Gtl4maftPPS4i0D5gVj9OCaV1
-         jXJq1huSwONpa/j2K3TMJzPOWio+RvY9sH2fzSHgNn/AqyJQytjFBhXtQQBdX499v2kY
-         pT2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWf07UcfP793dMAkJM3SBkpFYDgq4+s0igqIWgkNQ4q+J2UjabXvYYvqev3tEIvHxjEaxOrRTjVQmYMEMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkqz8JIPqpYTnUSBtzEwoMRVqh4cirLOz7irfXsc1sPS/zfxDU
-	Gfj8mrydO+lYFXqhB8OeY6Oyii6jmMRAFGAkQ9OUd4bRdEJsUqBWus11ANqhklI=
-X-Google-Smtp-Source: AGHT+IFNrDA2mdhvvKnYVCFjWkWFdc+2kOvP18TFsD7M+Ufianm1YsNMhkTyVIEclzmrFo67RWAnAQ==
-X-Received: by 2002:a05:6512:3a8d:b0:539:f1e3:ca5e with SMTP id 2adb3069b0e04-53a154fa75fmr5584953e87.44.1729513075791;
-        Mon, 21 Oct 2024 05:17:55 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a22431454sm464210e87.212.2024.10.21.05.17.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:17:55 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: quic_abhinavk@quicinc.com,
-	robdclark@gmail.com,
-	airlied@gmail.com,
-	Yang Li <yang.lee@linux.alibaba.com>
-Cc: dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next v2] drm/msm: Remove unneeded semicolon
-Date: Mon, 21 Oct 2024 15:17:44 +0300
-Message-Id: <172950935861.2053501.17039063548411571436.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240918023357.59399-1-yang.lee@linux.alibaba.com>
-References: <20240918023357.59399-1-yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1729513091; c=relaxed/simple;
+	bh=fJF3sv1WK29g491H9+hsq1JOT1porgzkvgomaG6Ledw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVNY+immZTyL/Xc39ETenLHBkvG94cNE6ZSejcO+Wndl74c5k5Fq9orpK/kNZs+zj690Yb441x6Jq3ifXn8B7U/Z2GJXw2r9PWaanzNTuleY4RF0likgVbrk4N0VoYLG2uJDQU3yXncMREAv+ky+B2hVbXFErMzJVuxHCHxZPzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5NvzLEn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B0AC4CEC3;
+	Mon, 21 Oct 2024 12:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729513090;
+	bh=fJF3sv1WK29g491H9+hsq1JOT1porgzkvgomaG6Ledw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M5NvzLEnUIfSqKtpJxwNDMzakIDzjY7CACpZ/ItWVCBMAppqUukiTWn21NbgAgPuO
+	 /EdtycJo+5CkYX0osKx1t1bfv/uvbnOTvTQw40ZlYRG2PO4Z5m8YSEn1IIQVeCA5UW
+	 8I4EsKn9JmEhP0AUNOXtlakZbSomGTo5prJdr5c/rlRlBT/LYtVBoLoj3znWcMVnNc
+	 ygfKpAbsag0y3B03PbHHpkK3qJ0tiwA96ZWsCZFH4/tReON0RB8Z6bRA6NnYRmJmjf
+	 WU8ltnuf3sFSpNykC7ejhoI9y276DrIp5pGKkqJ+VRq670+mrGpQ4IYfc8foWc46US
+	 7JBeelvJY7eMA==
+Date: Mon, 21 Oct 2024 13:18:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
+	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org,
+	heiko.stuebner@cherry.de, rafal@milecki.pl,
+	linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI
+ programming driver
+Message-ID: <20241021-depravity-scale-6123da541538@spud>
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <ZxG70kzjsvT3UBlQ@yilunxu-OptiPlex-7050>
+ <20241018-chump-juvenile-dc368d3d2f2c@spud>
+ <ZxW4DJOES77ifOC9@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Wt9DGYSdOGciyjI4"
+Content-Disposition: inline
+In-Reply-To: <ZxW4DJOES77ifOC9@yilunxu-OptiPlex-7050>
 
 
-On Wed, 18 Sep 2024 10:33:57 +0800, Yang Li wrote:
-> ./drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c:282:2-3: Unneeded semicolon
-> 
-> This patch removes an unneeded semicolon after a switch statement in the
-> pll_get_post_div function. Adding a semicolon after a switch statement is
-> unnecessary and can lead to confusion in the code structure.
-> 
-> 
-> [...]
+--Wt9DGYSdOGciyjI4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Mon, Oct 21, 2024 at 10:10:20AM +0800, Xu Yilun wrote:
+> On Fri, Oct 18, 2024 at 05:58:44PM +0100, Conor Dooley wrote:
+> > On Fri, Oct 18, 2024 at 09:37:22AM +0800, Xu Yilun wrote:
+> > > On Fri, Sep 27, 2024 at 04:14:42PM +0200, iansdannapel@gmail.com wrot=
+e:
+> > > > From: Ian Dannapel <iansdannapel@gmail.com>
+> > > >=20
+> > > > Add a new driver for loading binary firmware to volatile
+> > > > configuration RAM using "SPI passive programming" on Efinix FPGAs.
+> > > >=20
+> > > > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> > > > ---
+> > > >  drivers/fpga/Kconfig                    |  10 ++
+> > > >  drivers/fpga/Makefile                   |   1 +
+> > > >  drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++=
+++++
+> > > >  3 files changed, 222 insertions(+)
+> > > >  create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
+> > > >=20
+> > > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > > > index 37b35f58f0df..eb1e44c4e3e0 100644
+> > > > --- a/drivers/fpga/Kconfig
+> > > > +++ b/drivers/fpga/Kconfig
+> > > > @@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
+> > > >  	  FPGA manager driver support for Xilinx FPGA configuration
+> > > >  	  over slave serial interface.
+> > > > =20
+> > > > +config FPGA_MGR_EFINIX_SPI
+> > > > +	tristate "Efinix FPGA configuration over SPI passive"
+> > > > +	depends on SPI
+> > > > +	help
+> > > > +	  This option enables support for the FPGA manager driver to
+> > > > +	  configure Efinix Trion and Titanium Series FPGAs over SPI
+> > > > +	  using passive serial mode.
+> > > > +	  Warning: Do not activate this if there are other SPI devices
+> > > > +	  on the same bus as it might interfere with the transmission.
+> > >=20
+> > > Sorry, this won't work. As you can see, the conflict usage of CS caus=
+es
+> > > several concerns. Just a text here is far from enough.
+> > >=20
+> > > You need to actively work with SPI core/controller drivers to find a
+> > > solution that coordinate the usage of this pin.
+> >=20
+> > Why does it even impact other SPI devices on the bus? It's not /their/
+> > CS line that is being modified here, it is the line for the FPGA's
+> > programming interface, right?
+> > What am I missing here that makes it any different to any other SPI
+> > device that may need it's CS toggled?
+>=20
+> IIUC, now spi core or controller driver should fully responsible for
+> HW operations of CS. And every good behaved spi device driver should
+> declare their logical CS index defined by SPI controller and let SPI
+> core/controller driver to proxy the CS change.
+>=20
+> But if this spi device driver directly aquires CS, it conflicts with
+> the controller and just fails.
 
-[1/1] drm/msm: Remove unneeded semicolon
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/00adf52efec3
+Right, I don't think you answered my question here at all, but just
+reading over the kconfig text again I think I understand what it means.
+I'd interpreted this as other devices being impacted by what this driver
+is doing, but actually it is talking about other devices on the bus
+interfering with this one because of how it handles the chip select.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+--Wt9DGYSdOGciyjI4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxZGfQAKCRB4tDGHoIJi
+0orWAQDW1clt+xNoVd8+K4hwkETBaQSqcDeo3EyjcnhtdNtidAD/Tyrn1QgIt56w
+C4eWfh6Id3Pl5G2xcXBOJXfI3Ese1Qk=
+=Ue1A
+-----END PGP SIGNATURE-----
+
+--Wt9DGYSdOGciyjI4--
 
