@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-375206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D70C9A9312
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:15:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806E39A9328
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A0D1F22CA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA981C222C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387651FDF98;
-	Mon, 21 Oct 2024 22:15:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C271C68BC;
-	Mon, 21 Oct 2024 22:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424B01FF036;
+	Mon, 21 Oct 2024 22:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cSx5KWTL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c0wDeuB8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46CF1FEFD2;
+	Mon, 21 Oct 2024 22:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729548900; cv=none; b=X1SizMTLsvpTdj2PQK5GAYHV2/UzqZrQLsJrsUaw/o4SYPGUBBuTtUdCXF+83U6pesJewkN49bRV3pCnSVzsrui4Zdoi+295xWmwUYleqnV9hWmXsmaaevrOaSKt8WMmQjpOoTlrkHShoNKBHWV4yySaKHchMmxTn/MDMRsINAM=
+	t=1729548975; cv=none; b=RSjq+pxpc5EsRC86hIPbV6+jSldcxzYPAm19SO27saSc/FLr35CWGJ1d0wDoHUzyJt/AOgVKSfA8h9rItNaVbQZ30B+wonMg7TOIxfUYG5ZDBW3YTl6mckk23y8ARQAWQWi8e/iH3JS7MxQKhwmvQ4A+49PLGc/Jz1FmKwBkuZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729548900; c=relaxed/simple;
-	bh=W9HY08KdiLPFLFE6KN3n1h29/2yl4jr6VssCyrQZpCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+zUQ1yElAhbHiQBOYcvvIk1bVUzria9Ae/4U7lRuRfbBEP7aBErPlPK0VCj7UyuAvL9fOYvYlTnhUFYGNOMEx6v5K79Aq7DcPHI4/hqYDmO6Br6W68ohCZ1k6stg6ZvcNp1tUAGXqtn6pWH3+GLS0G/+eTfnbgDKirXYtIMxzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C35AA497;
-	Mon, 21 Oct 2024 15:15:27 -0700 (PDT)
-Received: from [10.57.65.103] (unknown [10.57.65.103])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C424C3F71E;
-	Mon, 21 Oct 2024 15:14:56 -0700 (PDT)
-Message-ID: <6b8787ee-31a1-4d09-a856-dd69f8c5ae28@arm.com>
-Date: Mon, 21 Oct 2024 23:16:06 +0100
+	s=arc-20240116; t=1729548975; c=relaxed/simple;
+	bh=o/21IDi3z+3r/CfWZohnh+gwI8lcHwVWkH/yH95StvA=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=VOOf8tb0jgyKDQeod5TvzmWs0DZ6idZDO1xtJIIHqRQRBRO928D0zrrmVPbfIkr/33Z5tMfnZKHf6TxX1QQpI2uJ5rWIaxQJCV7TlA+ao7lIyFB+rhhYm8eQ5M56rXbFscDEHYEWHqsYZklcN0DgqDCd/ObS5tHKjgRe2M++rkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cSx5KWTL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c0wDeuB8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 21 Oct 2024 22:16:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729548970;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=F/VQH6ij6E//+e6oHqxact1RCWdlNziDjscxF7SHn/A=;
+	b=cSx5KWTLQfVlVsanarHTdIPWf0b2r7oSvQGO8goTivqT115Hvof/Xo/jnfWgO1HDZhTxPY
+	YalStZhRT2tYj63JDs+KOhWrwuLVX2Rz8h8ZionNCS/PldjTtDSwyfVbEXrh4XD24x5S2y
+	ti5k2FeAeNIuASee2ZeAIADX9q2irKfg2XAdKP1a393Bm/aozcBKoVrTP2MsPZ/gTKIlYM
+	5tkUkyuc9OFaCejjhyFGfP2ROkGLpgK6QWhUKOfJpHNlzq4l01dU2hQqMkNp7HyJYayqoV
+	uEozhMY7ukCVrWrQYYIZA3DdeuXw7gNK/jR9f5Vh2bO7JGjX4ARULELTRkQM9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729548970;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=F/VQH6ij6E//+e6oHqxact1RCWdlNziDjscxF7SHn/A=;
+	b=c0wDeuB8QM+B/AbKR/7i28++aq2WdmwkDQW5LAOVemEEL7dJyOOldKtA3pd0erhV5WbJZm
+	WGc4Hzxbfui4cXDQ==
+From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/lam: Disable ADDRESS_MASKING in most cases
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Sohil Mehta <sohil.mehta@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] thermal: core: Initialize thermal zones before
- registering them
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <2215082.irdbgypaU6@rjwysocki.net>
- <3336146.44csPzL39Z@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3336146.44csPzL39Z@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172954896978.1442.12851270945186118443.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/urgent branch of tip:
 
+Commit-ID:     3267cb6d3a174ff83d6287dcd5b0047bbd912452
+Gitweb:        https://git.kernel.org/tip/3267cb6d3a174ff83d6287dcd5b0047bbd912452
+Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+AuthorDate:    Tue, 23 Jan 2024 19:55:21 -08:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Mon, 21 Oct 2024 15:05:43 -07:00
 
-On 10/4/24 20:05, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Since user space can start interacting with a new thermal zone as soon
-> as device_register() called by thermal_zone_device_register_with_trips()
-> returns, it is better to initialize the thermal zone before calling
-> device_register() on it.
-> 
-> Fixes: d0df264fbd3c ("thermal/core: Remove pointless thermal_zone_device_reset() function")
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a new iteration of
-> 
-> https://lore.kernel.org/linux-pm/10527854.nUPlyArG6x@rjwysocki.net/
-> 
-> v1 -> v2: Fix typo in the subject
-> 
-> ---
->   drivers/thermal/thermal_core.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1465,6 +1465,7 @@ thermal_zone_device_register_with_trips(
->   		thermal_zone_destroy_device_groups(tz);
->   		goto remove_id;
->   	}
-> +	thermal_zone_device_init(tz);
->   	result = device_register(&tz->device);
->   	if (result)
->   		goto release_device;
-> @@ -1503,7 +1504,6 @@ thermal_zone_device_register_with_trips(
->   
->   	mutex_unlock(&thermal_list_lock);
->   
-> -	thermal_zone_device_init(tz);
->   	/* Update the new thermal zone and mark it as already updated. */
->   	if (atomic_cmpxchg(&tz->need_update, 1, 0))
->   		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-> 
-> 
-> 
+x86/lam: Disable ADDRESS_MASKING in most cases
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Linear Address Masking (LAM) has a weakness related to transient
+execution as described in the SLAM paper[1]. Unless Linear Address
+Space Separation (LASS) is enabled this weakness may be exploitable.
+
+Until kernel adds support for LASS[2], only allow LAM for COMPILE_TEST,
+or when speculation mitigations have been disabled at compile time,
+otherwise keep LAM disabled.
+
+There are no processors in market that support LAM yet, so currently
+nobody is affected by this issue.
+
+[1] SLAM: https://download.vusec.net/papers/slam_sp24.pdf
+[2] LASS: https://lore.kernel.org/lkml/20230609183632.48706-1-alexander.shishkin@linux.intel.com/
+
+[ dhansen: update SPECULATION_MITIGATIONS -> CPU_MITIGATIONS ]
+
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc:stable@vger.kernel.org
+Link: https://lore.kernel.org/all/5373262886f2783f054256babdf5a98545dc986b.1706068222.git.pawan.kumar.gupta%40linux.intel.com
+---
+ arch/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2852fcd..16354df 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2257,6 +2257,7 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
+ config ADDRESS_MASKING
+ 	bool "Linear Address Masking support"
+ 	depends on X86_64
++	depends on COMPILE_TEST || !CPU_MITIGATIONS # wait for LASS
+ 	help
+ 	  Linear Address Masking (LAM) modifies the checking that is applied
+ 	  to 64-bit linear addresses, allowing software to use of the
 
