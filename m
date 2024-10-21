@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-374191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9725D9A6696
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1979A6698
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA13282077
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CABE1F21122
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB21E7C1E;
-	Mon, 21 Oct 2024 11:30:07 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA241E47BC;
+	Mon, 21 Oct 2024 11:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7lJvJhG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165FC1E7C26;
-	Mon, 21 Oct 2024 11:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F78946C;
+	Mon, 21 Oct 2024 11:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729510207; cv=none; b=ub0hkIpxAqmGPmaRB6orb28LsTwI495raPV9glToywBUHbOycyXnTkgQAIWquJZaBBjwSHpLAf379vw0c/IbBydWxo+uj1DeVTDS7dpVEZMmrhsdJ3aOTkEYk4FGtiigveeYmbzneniX4hiC0yDBHe7oZcP0e0QMxsExNN9kod0=
+	t=1729510316; cv=none; b=pyWgqKeXFMWYAQVcfsm6hN8rUkq8t0EMBU225ej430oNUTeKlv53p/cW28a8jm1ENAqWxfHBPosevrPXef7iKxPbVVrRXUs3mesqEs/7UJ3uoAuqm+eFSPc/0sVSbu+yQymIqKOcht2OFJpDXz2bioXy0ABjGa0VypBt9q5KAYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729510207; c=relaxed/simple;
-	bh=K5GkbffwOE1U2oBrMiRamUsxE1wrltguIEEmB0wp4PU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WwVVyp0++xf2DnYkWVHsW4cuB03oMkdosx7b4gL3HZFwxlX9RitSOirm4DcVaIhMXTjeU3e+3HnITyoW6idq+jJ65AnbIX7FECniFqgjZnAGlCIdud3emoWKry7HPm63D84OqRT+CoA2fI9eHxKtGA6tzAe/kSDv0TcVISGnGGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so44569495e9.1;
-        Mon, 21 Oct 2024 04:30:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729510203; x=1730115003;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTJfKmuI0AsDNtueSvfDv1B8tVY2xfxReUx3Zx8L+Is=;
-        b=cpqq2MZmJvXv1DfNmQ5jpY+1yjgPfz0TjfALGCWv6nRYjTwOH65qpG97W/z/2RZwA3
-         EMJqvvHTvekj8rw9AyJwtYIif1M1J5G3FRaCcwk/oQFMLZkz1YvdtL00fneNo58voxwN
-         QuEO3Vc0bhLN3dm1nn3UI19fauBhq5st9yjE4IU4JSmu/k3SskRPSBa0GCgFGIbnhdgz
-         g4qBzqJHaRvHdCQ9iz7z4gSGDakryrIplF8Pb2uAn8IpyQ8X0vcH41oBxo4bKDYvGScW
-         s2EVCQ7nbIlJZsEVEuf/++aJugzR30+Vwqz4Nup8w+8BIyagMzh2gs345FLVm9ac9OHg
-         siSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUblRol2H6NFCQQt8xovcPWDS4XtLyS8kEFaERudIrQtH/BIzsLegGgg5THixVU1nUvyFASN4sBQZ/OMyKD@vger.kernel.org, AJvYcCWVLVqUsZmUUo0QT5YnKEGP2LCA1kLmelOPKjyfQl22oo2MCsMTuy45dADPujbavkyBC/7dznizR7p4OA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT3omV2c/nYosrDKmeR9mwUM3+ZGrZnov9hOBweKWbYPZlJvWq
-	kRU2kSlWiibnsOdwbWtc3I6XLP1C6LRZ249jrYsvj8D/nlh7KlFs
-X-Google-Smtp-Source: AGHT+IHbayAJI3QNFHIobPOQHH8sUh2FU4OTF56IrfvdfLiWAa5xFFH0sEWOcjkLHMaJUaVVOZyUtg==
-X-Received: by 2002:adf:e40a:0:b0:37d:39f8:a77a with SMTP id ffacd0b85a97d-37eab0faa93mr6301280f8f.8.1729510203166;
-        Mon, 21 Oct 2024 04:30:03 -0700 (PDT)
-Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm4129957f8f.72.2024.10.21.04.30.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 04:30:02 -0700 (PDT)
-Message-ID: <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me>
-Date: Mon, 21 Oct 2024 14:30:01 +0300
+	s=arc-20240116; t=1729510316; c=relaxed/simple;
+	bh=J0zBoYFiOTykW8Law91kLm0hJhEtQJW6lJdP6o5iTI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXFYvWTlZMPumGyX/cTvxJBLbD/ZO0oie6++wVn43UP1wm+9UiJlsMOn2hgBpUE8uw76Dd2AK6oGks5zniat3tA/XkCbu8oHFOMMOMTT6eY6yCVtu+JFzNp6wNw2Ugusf9WKn7vywhvEmIOf8tHvwoWhQHrgLGpsx42fKrE07rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7lJvJhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E145FC4CEE6;
+	Mon, 21 Oct 2024 11:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729510315;
+	bh=J0zBoYFiOTykW8Law91kLm0hJhEtQJW6lJdP6o5iTI8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K7lJvJhGUrxWU2WIY+OI4ktOJEJSJxz33ISShrZpu9ynwuV/uj9iPKkOPEixZIsCF
+	 7nAZMNGREsUlJbrxmmrGZS4MiCo/5tqHhh7F3R9wSCRE2f68Fq6nkWKgNN1mpZf1wF
+	 8MYmiu5yeJ/nzMaw0tRbTIu6+aAxDUOYmZZ7Z5U/6RlkdU5oQvSt6+/c39FTeBGPTQ
+	 5VnqcjClgyUYetB7bVeYLvkXSDg3VB1vk3Sl+qP3P/nRjvxAbKdb6dwzRVkb+xFroN
+	 E/4hwruP19EtYqXUz7gAeCxOJZ6PkdR3AeGatPNUNJdfgKIIjDiKYWFtW4jg2eAfQA
+	 KPVQ7V6Ifx9SA==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2884e7fad77so2184412fac.2;
+        Mon, 21 Oct 2024 04:31:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1oGkgwONKj8zdGjtYbKDO2BoAn5HjjSdt3WNMp2Husfunz3r4M/6v65eoOuvBStn8TkeTFheuT8s6C/Na@vger.kernel.org, AJvYcCVDzkUEhDDf5u89Xp+N7WzwLswwvQtIbK8dcHv2FmfGNjvOx1+VFsOjswONlUDaNdjseUC5X011u4aY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEB5CLjK1YXu+YxjNxSL4lI1zfyqspUclKu9yhkc2Y2NcBkbEq
+	P4715IzW5ot55Rxg4dM8kXgRTqmEB1F35Jr97n9AW6tb5RTZ/NbytphdZXtkslirB4GAxxWKAcQ
+	wml3fG5tWUZLK1Az0OABrriLpSKs=
+X-Google-Smtp-Source: AGHT+IFt4ge8WV0JxcxW1+Jvsk3+SEx6KoTHso5Pd7ODssDknRfmMMHS4dTVUQVgmAgWsNQQaJ8yLdnfkV8OSTU/RD4=
+X-Received: by 2002:a05:6870:b28c:b0:27b:583b:bfa8 with SMTP id
+ 586e51a60fabf-2892c302f6bmr7955282fac.17.1729510315090; Mon, 21 Oct 2024
+ 04:31:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-To: Ming Lei <ming.lei@redhat.com>
-Cc: zhuxiaohui <zhuxiaohui400@gmail.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
- <ZxWwvF0Er-Aj-rtX@fedora> <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
- <ZxYRXvyxzlFP_NPl@fedora>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <ZxYRXvyxzlFP_NPl@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241017035940.4067922-1-payamm@google.com>
+In-Reply-To: <20241017035940.4067922-1-payamm@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Oct 2024 13:31:39 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hbg_5VLCT3cXgK4WkCTwNAUGrUuRe66DoCHf6xydsTzQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hbg_5VLCT3cXgK4WkCTwNAUGrUuRe66DoCHf6xydsTzQ@mail.gmail.com>
+Subject: Re: [PATCH] acpi: zero-initialize acpi_object union structure
+To: Payam Moradshahi <payamm@google.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-
-On 21/10/2024 11:31, Ming Lei wrote:
-> On Mon, Oct 21, 2024 at 10:05:34AM +0300, Sagi Grimberg wrote:
->>
->>
->> On 21/10/2024 4:39, Ming Lei wrote:
->>> On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
->>>> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
->>>>
->>>> It is observed that nvme connect to a nvme over fabric target will
->>>> always fail when 'nohz_full' is set.
->>>>
->>>> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
->>>> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
->>>> and when nvme connect to a remote target, it may fails on this stack:
->>>>
->>>>           blk_mq_alloc_request_hctx+1
->>>>           __nvme_submit_sync_cmd+106
->>>>           nvmf_connect_io_queue+181
->>>>           nvme_tcp_start_queue+293
->>>>           nvme_tcp_setup_ctrl+948
->>>>           nvme_tcp_create_ctrl+735
->>>>           nvmf_dev_write+532
->>>>           vfs_write+237
->>>>           ksys_write+107
->>>>           do_syscall_64+128
->>>>           entry_SYSCALL_64_after_hwframe+118
->>>>
->>>> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
->>>> blk_mq_ctx on the hw queue.
->>>>
->>>> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
->>>> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
->>>> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
->>>> is not isolated.
->>> blk_mq_alloc_request_hctx()
->>> 	...
->>> 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
->>> 	...
->>>
->>> It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
->>> online CPUs, both are same actually from this viewpoint.
->>>
->>> It is one long-time problem for nvme fc.
->> For what nvmf is using blk_mq_alloc_request_hctx() is not important. It just
->> needs a tag from that hctx. the request execution is running where
->> blk_mq_alloc_request_hctx() is running.
-> I am afraid that just one tag from the specified hw queue isn't enough.
+On Thu, Oct 17, 2024 at 5:59=E2=80=AFAM Payam Moradshahi <payamm@google.com=
+> wrote:
 >
-> The connection request needs to be issued to the hw queue & completed.
-> Without any online CPU for this hw queue, the request can't be completed
-> in case of managed-irq.
+> The way in which acpi_object union is being initialized varies based on
+> compiler type, version and flags used. Some will zero-initialize the
+> entire union structure and some will only initialize the first N-bytes
+> of the union structure.
 
-None of the consumers of this API use managed-irqs. the networking stack
-takes care of steering irq vectors to online cpus.
+Any details?
+
+> This could lead to uninitialized union members.
+
+So this is working around a compiler bug AFAICS.
+
+If the compiler has this bug, is it guaranteed to compile the rest of
+the kernel correctly?
+
+> This bug was confirmed by observing non-zero value for object->processor
+> structure variables.
+
+Where has it been observed?  What compiler version(s)? etc.
+
+> non-zero initialized members of acpi_object union structure causes
+> incorrect error reporting by the driver.
+>
+> If a BIOS is using "Device" statement as opposed to "Processor"
+> statement, object variable may contain uninitialized members causing the
+> driver to report "Invalid PBLK length" incorrectly.
+>
+> Using memset to zero-initialize the union structure fixes this issue and
+> also removes the dependency of this function on compiler versions and
+> flags being used.
+>
+> Tested: Tested on ARM64 hardware that was printing this error and
+> confirmed the prints were gone.
+>
+> Also confirmed this does not cause regression on ARM64 and X86
+> machines.
+>
+> Signed-off-by: Payam Moradshahi <payamm@google.com>
+> ---
+>  drivers/acpi/acpi_processor.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.=
+c
+> index 7cf6101cb4c73..6696ad4937d21 100644
+> --- a/drivers/acpi/acpi_processor.c
+> +++ b/drivers/acpi/acpi_processor.c
+> @@ -275,7 +275,7 @@ static inline int acpi_processor_hotadd_init(struct a=
+cpi_processor *pr,
+>
+>  static int acpi_processor_get_info(struct acpi_device *device)
+>  {
+> -       union acpi_object object =3D { 0 };
+> +       union acpi_object object;
+>         struct acpi_buffer buffer =3D { sizeof(union acpi_object), &objec=
+t };
+>         struct acpi_processor *pr =3D acpi_driver_data(device);
+>         int device_declaration =3D 0;
+> @@ -284,6 +284,8 @@ static int acpi_processor_get_info(struct acpi_device=
+ *device)
+>         unsigned long long value;
+>         int ret;
+>
+> +       memset(&object, 0, sizeof(union acpi_object));
+> +
+>         acpi_processor_errata();
+>
+>         /*
+> --
 
