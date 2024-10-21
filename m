@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-374275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBD59A67C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:16:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6997F9A67C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17861F21D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E7F1C214B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640471F4716;
-	Mon, 21 Oct 2024 12:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0916E1F4731;
+	Mon, 21 Oct 2024 12:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/uodws2"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUe+GzHv"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526EB1E201F;
-	Mon, 21 Oct 2024 12:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1121F429E;
+	Mon, 21 Oct 2024 12:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512996; cv=none; b=BVC441SLCZw1J1iRuPEquZHXc3IFOI4tL4n/TiPt9XHHdX5oDmt1UPW2Bmd6v1A25y4pb4wcOTJjbnMHz5Ed8Fv4VUaQZvP6KHbEiGjy4Tlw08M4wYcXiulAQTzCA1PE7dWFa0HTqf64JDfQVETVtPFfiMfft/R8hEMJp8fJ2rc=
+	t=1729512999; cv=none; b=j+4W2ubybPVHwsys//psHfY8VSnSETqUWB1+ycR1WXzixu0grqmf2FvdDWdPEJXyp7qM5BJA8EVQIIxjZsN59ImH7CG5pVbjP48q2nb+BXAcaL/gfk+x2axJYYn7v16+EF0XHVPtlDKaYyKJSN2uzSjQjvgRRf7I+R6pz/ga7VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512996; c=relaxed/simple;
-	bh=4UQQzST5pmQb67GxTCh7C60YCaXxUS/3ehBdrNjhohg=;
+	s=arc-20240116; t=1729512999; c=relaxed/simple;
+	bh=/QxQgtbGT9pHMWSRh6CJ+3Iapq9VtlZs324F6K7mp+k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FkqYMD2nGnCfNO1Pu/Cyfa545ukbU8sOlZjixN77ogPGvM4ida2bXyljrA+vzsOA8baUv0WikpoHpWZdRPLE4Q+KYYod0r2hd4M9ZVtQIz63CyM/qnkAbIIJ8yZgq7NUEjrOfX/ZXEjANr2VM5iPaJTfpmez7KoaIde+HGlSvtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/uodws2; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=MwV/kXVMBUUidFk1Mj8ksbzrLq4j1qC6a4YMbDhJnOqEOSehpUjXp8FzV5BJlMJgXnjmJL3dutoh65oDDIWeLs5gvbxRRIzTebLUFEx4WSm1nYYOfAfm6Vr6HOiS4inpSg4h0YqqifHq5aXYffPbz8MTdTiHRh0llOVfAgg1w0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUe+GzHv; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so60380541fa.0;
-        Mon, 21 Oct 2024 05:16:34 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a0472306cso590744466b.3;
+        Mon, 21 Oct 2024 05:16:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729512992; x=1730117792; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729512995; x=1730117795; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uTVtbHUUOZj0Fo+dP6D7qhW4pSqQbmSUEEadn5eVpyk=;
-        b=O/uodws26ovR9nvVa3Rwis5P+rv3OrSIifGYd2fqTh8z6klgQzNOL66GUbNs6McO+K
-         FxZOAQ7zBtUPShlPvVKi6LkGxAimhSVRsEAvkT/+JE8gOHTGygCCv+nPRiLWj4+sJgHW
-         kvHidIu6bUdxiqxiT0H2bk48zPm+Nv77tnGlx0AHvqiPitliexgwpJvifrcRCV4CHhWX
-         zHBz7bn302v9TGNZXSOmM7DleyxeRQZPMEYLMecOpd5aeyxT5Zbfc8uRhQUvaJaga5Qs
-         eR7H+oPxo1Ioi7PxWIoWpqOopQcGUKLy1VWQAOkUu/OgnvgtcFtrdRrWkWkDMRD0medP
-         JEbg==
+        bh=El61r44Z3jvNpsbA3bmUgLdX8Aii77RVSrXblKXqOh8=;
+        b=JUe+GzHvBQ0teKlY0Yqy5/kcBdN95ZQQfP9vGlw3Mh7FY4gVU51xki9SLSNqUtXGG4
+         s/kSn0SrXa6y8QPzD9hKjG2RZiZap7B6LcgjC2zB5Zw93fnO3nMBZPGbfgkTFEYjVAak
+         Ca7CG35VB5/vMCfJDRUXA9etJK/U9xiJ1APms390PBu36CV3yeSLp9ohKWPHmD9AC+Wy
+         SJmv7UmFvGYWviui4kVNjoomB1BWrDKRq3orPoUL3NvMvxRpToWUulV3YPvPeg9NCczI
+         zvxl+RngAF/JKudRTEY8JEJBlKX1VaCkIA7qVSS1L3E1BR2zeiQAH5PqgxdTY7H+Y7Up
+         ry/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729512992; x=1730117792;
+        d=1e100.net; s=20230601; t=1729512995; x=1730117795;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uTVtbHUUOZj0Fo+dP6D7qhW4pSqQbmSUEEadn5eVpyk=;
-        b=Fu1bXFZ5boOHGHcvS7RchiZg/3FelLLREXWBGxARpBb718yS3ox/bwZRZSIUjOj0Tb
-         pvd15ussIkMHnaagx9YK0MHNo07154rZLLhxqtdgAAFWFjS7NdF4WQnbxSGJJIMHSM4N
-         xpCETP3Dzl1uEOCNfn78iVMf5n5WgjEaM0v+Hbg00y0Tj8td/4FOhvgDysYU0igCJHgv
-         +BfS65Z9g0NDCnUOvHLTfa8Vb3fktj6czAPctsUfNqCb2ad6QbTao59CqWFJ/FjLEYhk
-         WlUSPxBRyjcqSBiWGz2mP7IIv7kR9L10ujH+Va82FbanwONEAwar0hMa5XpOjfIWSOHC
-         GLVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3MOxt6pP4Kyq3dES0efMROm0lqDOrdt4eHr3gg7A5JWQK2U4kJTug+u+qK66NmJ78pgcjgs95vOXW@vger.kernel.org, AJvYcCUILcMQ/HDnLxA38Pu8ndqxVYsOZcLDxy/aGWK5KRvUBuybPxuzoFd46l6CIVNqUKzOTXlsbo/VeqwObgnl@vger.kernel.org, AJvYcCVVC9X2gJz1P0DDbYiiRcufbkGo9coO6qNE6/p72exFB5HPiRebWA/T11jd8Z0zul0Ra68tZPfagv3T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzmcG7nK8xNIa28w4y9L7IJb6JEc8MeQL3jMh6kaCl/x6Nd91b
-	jTvGOsKcpSBpj+2kc2arnIA12B0mD3zHG4F97OF91sqESRHjEigw
-X-Google-Smtp-Source: AGHT+IEm0Ja1MxSFcWf7f2KGhUWcvjXbHvNe9J2o5guzSmTzD587KByO1eC9ACbJeOYsW3chN/7xMw==
-X-Received: by 2002:a05:6512:3b89:b0:52c:cd77:fe03 with SMTP id 2adb3069b0e04-53a1544481emr9066938e87.14.1729512992115;
-        Mon, 21 Oct 2024 05:16:32 -0700 (PDT)
+        bh=El61r44Z3jvNpsbA3bmUgLdX8Aii77RVSrXblKXqOh8=;
+        b=qpn4lF9STIUbcg8OvGdnWITdft1fdY09YNDhcYH//lyOM3Fff7ef8vFRqrEZQCKpEc
+         iKKnW8nV00oF7ImQdPYChrFjkcddJCi0q3LxN5MEiZU9w6UuSTM5wIxBbbWZiVUgseLx
+         d9NbzwVosfEaZnmeqlTEbTYdgISmQqNcc1+h8OYPRutKpYX+dNnMPMzQWisni6nZn+6s
+         pUUxr9rOx/p3zc+BKa9o9lvduNYxtPjbCrpVdBXPBYi1dLDR9afg+x9e5S9O9hWF1VRf
+         TIT1ECR9RYWk3WoA/VjrIe8J+l2ZY4MJk3MSdN4vDtN/khDPsbJov0awL6LRUxFFG+z5
+         UvWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxEpA4f8TjmfnWZxx1OB/1DfkBsefe2H5QA2SKC0Cr06CGk50a6VNN9GGiL8z9sVwZdQSuZ7ZYiAZYjVou@vger.kernel.org, AJvYcCW1N3fL/3WUGP6JuMUyzO9CLOzXRlXXZTF8rsR3weD70pO9tG/xvmmcplJGwwcxu/kwgTMh3732su/N@vger.kernel.org, AJvYcCXmo8C/RjJg2fhVJ9UDEOUB4dGLg2m4nCUx08msJyVj0HZMHj7eVZq7TGxc8ZkBQFtrRvOtAJD2GN7d@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDrl1FtwcwLOv0M+PlxDKdD6f48vuX1wXJE4RfKSq4CzNbHecy
+	s3fDXgsLrLua1nn+C8qVSWBU3u3UQbn8MXQhkP4BfoFxi7qfERd5
+X-Google-Smtp-Source: AGHT+IEfAzgKuTl08mwpAKNMUEJ3JqHR+e9hh5pUDQ9yCvhlSfkERO+PIMvyot8OKHFebA3lMkgYQQ==
+X-Received: by 2002:a17:907:1c1b:b0:a9a:183a:b84e with SMTP id a640c23a62f3a-a9a69c98812mr1125296566b.40.1729512994421;
+        Mon, 21 Oct 2024 05:16:34 -0700 (PDT)
 Received: from zenbook.agu.edu.tr ([95.183.227.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6ee6sm197068966b.4.2024.10.21.05.16.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6ee6sm197068966b.4.2024.10.21.05.16.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:16:31 -0700 (PDT)
+        Mon, 21 Oct 2024 05:16:33 -0700 (PDT)
 From: Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -86,9 +86,9 @@ Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] dt-bindings: clock: mediatek: Add bindings for MT6735 syscon clock and reset controllers
-Date: Mon, 21 Oct 2024 15:16:15 +0300
-Message-ID: <20241021121618.151079-2-y.oudjana@protonmail.com>
+Subject: [PATCH 2/2] clk: mediatek: Add drivers for MT6735 syscon clock and reset controllers
+Date: Mon, 21 Oct 2024 15:16:16 +0300
+Message-ID: <20241021121618.151079-3-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241021121618.151079-1-y.oudjana@protonmail.com>
 References: <20241021121618.151079-1-y.oudjana@protonmail.com>
@@ -102,162 +102,376 @@ Content-Transfer-Encoding: 8bit
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Add device tree bindings for syscon clock and reset controllers (IMGSYS,
-MFGCFG, VDECSYS and VENCSYS).
+Add drivers for IMGSYS, MFGCFG, VDECSYS and VENCSYS clocks and resets
+on MT6735.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 ---
- .../bindings/clock/mediatek,syscon.yaml           |  4 ++++
- MAINTAINERS                                       |  6 ++++++
- .../dt-bindings/clock/mediatek,mt6735-imgsys.h    | 15 +++++++++++++++
- .../dt-bindings/clock/mediatek,mt6735-mfgcfg.h    |  8 ++++++++
- .../dt-bindings/clock/mediatek,mt6735-vdecsys.h   |  9 +++++++++
- .../dt-bindings/clock/mediatek,mt6735-vencsys.h   | 11 +++++++++++
- .../dt-bindings/reset/mediatek,mt6735-mfgcfg.h    |  9 +++++++++
- .../dt-bindings/reset/mediatek,mt6735-vdecsys.h   | 10 ++++++++++
- 8 files changed, 72 insertions(+)
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
- create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
- create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+ MAINTAINERS                               |  4 ++
+ drivers/clk/mediatek/Kconfig              | 32 +++++++++
+ drivers/clk/mediatek/Makefile             |  4 ++
+ drivers/clk/mediatek/clk-mt6735-imgsys.c  | 57 ++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c  | 61 +++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vdecsys.c | 81 +++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vencsys.c | 53 +++++++++++++++
+ 7 files changed, 292 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-index 10483e26878fb..a86a64893c675 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-@@ -28,6 +28,10 @@ properties:
-               - mediatek,mt2712-mfgcfg
-               - mediatek,mt2712-vdecsys
-               - mediatek,mt2712-vencsys
-+              - mediatek,mt6735-imgsys
-+              - mediatek,mt6735-mfgcfg
-+              - mediatek,mt6735-vdecsys
-+              - mediatek,mt6735-vencsys
-               - mediatek,mt6765-camsys
-               - mediatek,mt6765-imgsys
-               - mediatek,mt6765-mipi0a
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 2ce38c6c0e6ff..25484783f6a0b 100644
+index 25484783f6a0b..939f9d29fc9bf 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -14537,11 +14537,17 @@ F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
+@@ -14533,9 +14533,13 @@ L:	linux-clk@vger.kernel.org
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/clk/mediatek/clk-mt6735-apmixedsys.c
++F:	drivers/clk/mediatek/clk-mt6735-imgsys.c
+ F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
++F:	drivers/clk/mediatek/clk-mt6735-mfgcfg.c
  F:	drivers/clk/mediatek/clk-mt6735-pericfg.c
  F:	drivers/clk/mediatek/clk-mt6735-topckgen.c
++F:	drivers/clk/mediatek/clk-mt6735-vdecsys.c
++F:	drivers/clk/mediatek/clk-mt6735-vencsys.c
  F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
-+F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+ F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
  F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
-+F:	include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
- F:	include/dt-bindings/clock/mediatek,mt6735-pericfg.h
- F:	include/dt-bindings/clock/mediatek,mt6735-topckgen.h
-+F:	include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
-+F:	include/dt-bindings/clock/mediatek,mt6735-vencsys.h
- F:	include/dt-bindings/reset/mediatek,mt6735-infracfg.h
-+F:	include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
- F:	include/dt-bindings/reset/mediatek,mt6735-pericfg.h
-+F:	include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 7a33f9e92d963..4dd6d2d6263fd 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -133,6 +133,38 @@ config COMMON_CLK_MT6735
+ 	  by apmixedsys, topckgen, infracfg and pericfg on the
+ 	  MediaTek MT6735 SoC.
  
- MEDIATEK MT76 WIRELESS LAN DRIVER
- M:	Felix Fietkau <nbd@nbd.name>
-diff --git a/include/dt-bindings/clock/mediatek,mt6735-imgsys.h b/include/dt-bindings/clock/mediatek,mt6735-imgsys.h
++config COMMON_CLK_MT6735_IMGSYS
++	tristate "Clock driver for MediaTek MT6735 imgsys"
++	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	help
++	  This enables a driver for clocks provided by imgsys
++	  on the MediaTek MT6735 SoC.
++
++config COMMON_CLK_MT6735_MFGCFG
++	tristate "Clock driver for MediaTek MT6735 mfgcfg"
++	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	help
++	  This enables a driver for clocks and resets provided
++	  by mfgcfg on the MediaTek MT6735 SoC.
++
++config COMMON_CLK_MT6735_VDECSYS
++	tristate "Clock driver for MediaTek MT6735 vdecsys"
++	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	help
++	  This enables a driver for clocks and resets provided
++	  by vdecsys on the MediaTek MT6735 SoC.
++
++config COMMON_CLK_MT6735_VENCSYS
++	tristate "Clock driver for MediaTek MT6735 vencsys"
++	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	help
++	  This enables a driver for clocks provided by vencsys
++	  on the MediaTek MT6735 SoC.
++
+ config COMMON_CLK_MT6765
+        bool "Clock driver for MediaTek MT6765"
+        depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 70456ffc6c492..6efec95406bd5 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -3,6 +3,10 @@ obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.
+ obj-$(CONFIG_COMMON_CLK_MEDIATEK_FHCTL) += clk-fhctl.o clk-pllfh.o
+ 
+ obj-$(CONFIG_COMMON_CLK_MT6735) += clk-mt6735-apmixedsys.o clk-mt6735-infracfg.o clk-mt6735-pericfg.o clk-mt6735-topckgen.o
++obj-$(CONFIG_COMMON_CLK_MT6735_IMGSYS) += clk-mt6735-imgsys.o
++obj-$(CONFIG_COMMON_CLK_MT6735_MFGCFG) += clk-mt6735-mfgcfg.o
++obj-$(CONFIG_COMMON_CLK_MT6735_VDECSYS) += clk-mt6735-vdecsys.o
++obj-$(CONFIG_COMMON_CLK_MT6735_VENCSYS) += clk-mt6735-vencsys.o
+ obj-$(CONFIG_COMMON_CLK_MT6765) += clk-mt6765.o
+ obj-$(CONFIG_COMMON_CLK_MT6765_AUDIOSYS) += clk-mt6765-audio.o
+ obj-$(CONFIG_COMMON_CLK_MT6765_CAMSYS) += clk-mt6765-cam.o
+diff --git a/drivers/clk/mediatek/clk-mt6735-imgsys.c b/drivers/clk/mediatek/clk-mt6735-imgsys.c
 new file mode 100644
-index 0000000000000..f250c26c5eb4d
+index 0000000000000..c564f8f724324
 --- /dev/null
-+++ b/include/dt-bindings/clock/mediatek,mt6735-imgsys.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/mediatek/clk-mt6735-imgsys.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_MT6735_IMGSYS_H
-+#define _DT_BINDINGS_CLK_MT6735_IMGSYS_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
 +
-+#define CLK_IMG_SMI_LARB2		0
-+#define CLK_IMG_CAM_SMI			1
-+#define CLK_IMG_CAM_CAM			2
-+#define CLK_IMG_SEN_TG			3
-+#define CLK_IMG_SEN_CAM			4
-+#define CLK_IMG_CAM_SV			5
-+#define CLK_IMG_SUFOD			6
-+#define CLK_IMG_FD			7
++#include "clk-gate.h"
++#include "clk-mtk.h"
 +
-+#endif /* _DT_BINDINGS_CLK_MT6735_IMGSYS_H */
-diff --git a/include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h b/include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
++#include <dt-bindings/clock/mediatek,mt6735-imgsys.h>
++
++#define IMG_CG_CON			0x00
++#define IMG_CG_SET			0x04
++#define IMG_CG_CLR			0x08
++
++static struct mtk_gate_regs imgsys_cg_regs = {
++	.set_ofs = IMG_CG_SET,
++	.clr_ofs = IMG_CG_CLR,
++	.sta_ofs = IMG_CG_CON,
++};
++
++static const struct mtk_gate imgsys_gates[] = {
++	GATE_MTK(CLK_IMG_SMI_LARB2, "smi_larb2", "mm_sel", &imgsys_cg_regs, 0, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_CAM_SMI, "cam_smi", "mm_sel", &imgsys_cg_regs, 5, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_CAM_CAM, "cam_cam", "mm_sel", &imgsys_cg_regs, 6, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_SEN_TG, "sen_tg", "mm_sel", &imgsys_cg_regs, 7, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_SEN_CAM, "sen_cam", "mm_sel", &imgsys_cg_regs, 8, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_CAM_SV, "cam_sv", "mm_sel", &imgsys_cg_regs, 9, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_SUFOD, "sufod", "mm_sel", &imgsys_cg_regs, 10, &mtk_clk_gate_ops_setclr),
++	GATE_MTK(CLK_IMG_FD, "fd", "mm_sel", &imgsys_cg_regs, 11, &mtk_clk_gate_ops_setclr),
++};
++
++static const struct mtk_clk_desc imgsys_clks = {
++	.clks = imgsys_gates,
++	.num_clks = ARRAY_SIZE(imgsys_gates),
++};
++
++static const struct of_device_id of_match_mt6735_imgsys[] = {
++	{ .compatible = "mediatek,mt6735-imgsys", .data = &imgsys_clks },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver clk_mt6735_imgsys = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt6735-imgsys",
++		.of_match_table = of_match_mt6735_imgsys,
++	},
++};
++module_platform_driver(clk_mt6735_imgsys);
++
++MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
++MODULE_DESCRIPTION("MediaTek MT6735 imgsys clock driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt6735-mfgcfg.c b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
 new file mode 100644
-index 0000000000000..d2d99a48348a0
+index 0000000000000..1f5aedddf209d
 --- /dev/null
-+++ b/include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_MT6735_MFGCFG_H
-+#define _DT_BINDINGS_CLK_MT6735_MFGCFG_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
 +
-+#define CLK_MFG_BG3D			0
++#include "clk-gate.h"
++#include "clk-mtk.h"
 +
-+#endif /* _DT_BINDINGS_CLK_MT6735_MFGCFG_H */
-diff --git a/include/dt-bindings/clock/mediatek,mt6735-vdecsys.h b/include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
++#include <dt-bindings/clock/mediatek,mt6735-mfgcfg.h>
++
++#define MFG_CG_CON			0x00
++#define MFG_CG_SET			0x04
++#define MFG_CG_CLR			0x08
++#define MFG_RESET			0x0c
++
++static struct mtk_gate_regs mfgcfg_cg_regs = {
++	.set_ofs = MFG_CG_SET,
++	.clr_ofs = MFG_CG_CLR,
++	.sta_ofs = MFG_CG_CON,
++};
++
++static const struct mtk_gate mfgcfg_gates[] = {
++	GATE_MTK(CLK_MFG_BG3D, "bg3d", "mfg_sel", &mfgcfg_cg_regs, 0, &mtk_clk_gate_ops_setclr),
++};
++
++static u16 mfgcfg_rst_ofs[] = { MFG_RESET };
++
++static const struct mtk_clk_rst_desc mfgcfg_resets = {
++	.version = MTK_RST_SIMPLE,
++	.rst_bank_ofs = mfgcfg_rst_ofs,
++	.rst_bank_nr = ARRAY_SIZE(mfgcfg_rst_ofs)
++};
++
++static const struct mtk_clk_desc mfgcfg_clks = {
++	.clks = mfgcfg_gates,
++	.num_clks = ARRAY_SIZE(mfgcfg_gates),
++
++	.rst_desc = &mfgcfg_resets
++};
++
++static const struct of_device_id of_match_mt6735_mfgcfg[] = {
++	{ .compatible = "mediatek,mt6735-mfgcfg", .data = &mfgcfg_clks },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver clk_mt6735_mfgcfg = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt6735-mfgcfg",
++		.of_match_table = of_match_mt6735_mfgcfg,
++	},
++};
++module_platform_driver(clk_mt6735_mfgcfg);
++
++MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
++MODULE_DESCRIPTION("Mediatek MT6735 mfgcfg clock and reset driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
 new file mode 100644
-index 0000000000000..f94cec10c89ff
+index 0000000000000..f59b481aaa6da
 --- /dev/null
-+++ b/include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_MT6735_VDECSYS_H
-+#define _DT_BINDINGS_CLK_MT6735_VDECSYS_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
 +
-+#define CLK_VDEC_VDEC			0
-+#define CLK_VDEC_SMI_LARB1		1
++#include "clk-gate.h"
++#include "clk-mtk.h"
 +
-+#endif /* _DT_BINDINGS_CLK_MT6735_VDECSYS_H */
-diff --git a/include/dt-bindings/clock/mediatek,mt6735-vencsys.h b/include/dt-bindings/clock/mediatek,mt6735-vencsys.h
++#include <dt-bindings/clock/mediatek,mt6735-vdecsys.h>
++#include <dt-bindings/reset/mediatek,mt6735-vdecsys.h>
++
++#define VDEC_CKEN_SET			0x00
++#define VDEC_CKEN_CLR			0x04
++#define SMI_LARB1_CKEN_SET		0x08
++#define SMI_LARB1_CKEN_CLR		0x0c
++#define VDEC_RESETB_CON			0x10
++#define SMI_LARB1_RESETB_CON		0x14
++
++#define RST_NR_PER_BANK			32
++
++static struct mtk_gate_regs vdec_cg_regs = {
++	.set_ofs = VDEC_CKEN_SET,
++	.clr_ofs = VDEC_CKEN_CLR,
++	.sta_ofs = VDEC_CKEN_SET,
++};
++
++static struct mtk_gate_regs smi_larb1_cg_regs = {
++	.set_ofs = SMI_LARB1_CKEN_SET,
++	.clr_ofs = SMI_LARB1_CKEN_CLR,
++	.sta_ofs = SMI_LARB1_CKEN_SET,
++};
++
++static const struct mtk_gate vdecsys_gates[] = {
++	GATE_MTK(CLK_VDEC_VDEC, "vdec", "vdec_sel", &vdec_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
++	GATE_MTK(CLK_VDEC_SMI_LARB1, "smi_larb1", "vdec_sel", &smi_larb1_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
++};
++
++static u16 vdecsys_rst_bank_ofs[] = { VDEC_RESETB_CON, SMI_LARB1_RESETB_CON };
++
++static u16 vdecsys_rst_idx_map[] = {
++	[MT6735_VDEC_RST0_VDEC]		= 0 * RST_NR_PER_BANK + 0,
++
++	[MT6735_VDEC_RST1_SMI_LARB1]	= 1 * RST_NR_PER_BANK + 0,
++};
++
++static const struct mtk_clk_rst_desc vdecsys_resets = {
++	.version = MTK_RST_SIMPLE,
++	.rst_bank_ofs = vdecsys_rst_bank_ofs,
++	.rst_bank_nr = ARRAY_SIZE(vdecsys_rst_bank_ofs),
++	.rst_idx_map = vdecsys_rst_idx_map,
++	.rst_idx_map_nr = ARRAY_SIZE(vdecsys_rst_idx_map)
++};
++
++static const struct mtk_clk_desc vdecsys_clks = {
++	.clks = vdecsys_gates,
++	.num_clks = ARRAY_SIZE(vdecsys_gates),
++
++	.rst_desc = &vdecsys_resets
++};
++
++static const struct of_device_id of_match_mt6735_vdecsys[] = {
++	{ .compatible = "mediatek,mt6735-vdecsys", .data = &vdecsys_clks },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver clk_mt6735_vdecsys = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt6735-vdecsys",
++		.of_match_table = of_match_mt6735_vdecsys,
++	},
++};
++module_platform_driver(clk_mt6735_vdecsys);
++
++MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
++MODULE_DESCRIPTION("MediaTek MT6735 vdecsys clock and reset driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt6735-vencsys.c b/drivers/clk/mediatek/clk-mt6735-vencsys.c
 new file mode 100644
-index 0000000000000..e5a9cb4f269ff
+index 0000000000000..8dec7f98492ac
 --- /dev/null
-+++ b/include/dt-bindings/clock/mediatek,mt6735-vencsys.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/mediatek/clk-mt6735-vencsys.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_MT6735_VENCSYS_H
-+#define _DT_BINDINGS_CLK_MT6735_VENCSYS_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
 +
-+#define CLK_VENC_SMI_LARB3			0
-+#define CLK_VENC_VENC			1
-+#define CLK_VENC_JPGENC			2
-+#define CLK_VENC_JPGDEC			3
++#include "clk-gate.h"
++#include "clk-mtk.h"
 +
-+#endif /* _DT_BINDINGS_CLK_MT6735_VENCSYS_H */
-diff --git a/include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h b/include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
-new file mode 100644
-index 0000000000000..c489242b226e2
---- /dev/null
-+++ b/include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++#include <dt-bindings/clock/mediatek,mt6735-vencsys.h>
 +
-+#ifndef _DT_BINDINGS_RESET_MT6735_MFGCFG_H
-+#define _DT_BINDINGS_RESET_MT6735_MFGCFG_H
++#define VENC_CG_CON			0x00
++#define VENC_CG_SET			0x04
++#define VENC_CG_CLR			0x08
 +
-+#define MT6735_MFG_RST0_AXI		0
-+#define MT6735_MFG_RST0_G3D		1
++static struct mtk_gate_regs venc_cg_regs = {
++	.set_ofs = VENC_CG_SET,
++	.clr_ofs = VENC_CG_CLR,
++	.sta_ofs = VENC_CG_CON,
++};
 +
-+#endif /* _DT_BINDINGS_RESET_MT6735_MFGCFG_H */
-diff --git a/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h b/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
-new file mode 100644
-index 0000000000000..90ad73af50a3f
---- /dev/null
-+++ b/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++static const struct mtk_gate vencsys_gates[] = {
++	GATE_MTK(CLK_VENC_SMI_LARB3, "smi_larb3", "mm_sel", &venc_cg_regs, 0, &mtk_clk_gate_ops_setclr_inv),
++	GATE_MTK(CLK_VENC_VENC, "venc", "mm_sel", &venc_cg_regs, 4, &mtk_clk_gate_ops_setclr_inv),
++	GATE_MTK(CLK_VENC_JPGENC, "jpgenc", "mm_sel", &venc_cg_regs, 8, &mtk_clk_gate_ops_setclr_inv),
++	GATE_MTK(CLK_VENC_JPGDEC, "jpgdec", "mm_sel", &venc_cg_regs, 12, &mtk_clk_gate_ops_setclr_inv),
++};
 +
-+#ifndef _DT_BINDINGS_RESET_MT6735_VDECSYS_H
-+#define _DT_BINDINGS_RESET_MT6735_VDECSYS_H
++static const struct mtk_clk_desc vencsys_clks = {
++	.clks = vencsys_gates,
++	.num_clks = ARRAY_SIZE(vencsys_gates),
++};
 +
-+#define MT6735_VDEC_RST0_VDEC			0
++static const struct of_device_id of_match_mt6735_vencsys[] = {
++	{ .compatible = "mediatek,mt6735-vencsys", .data = &vencsys_clks },
++	{ /* sentinel */ }
++};
 +
-+#define MT6735_VDEC_RST1_SMI_LARB1		1
++static struct platform_driver clk_mt6735_vencsys = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt6735-vencsys",
++		.of_match_table = of_match_mt6735_vencsys,
++	},
++};
++module_platform_driver(clk_mt6735_vencsys);
 +
-+#endif /* _DT_BINDINGS_RESET_MT6735_VDECSYS_H */
++MODULE_AUTHOR("Yassine Oudjana <y.oudjana@protonmail.com>");
++MODULE_DESCRIPTION("Mediatek MT6735 vencsys clock driver");
++MODULE_LICENSE("GPL");
 -- 
 2.47.0
 
