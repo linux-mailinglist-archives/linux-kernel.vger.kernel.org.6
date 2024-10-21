@@ -1,158 +1,246 @@
-Return-Path: <linux-kernel+bounces-374812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67CA9A708B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A728E9A7095
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E03B1F2196B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DE91F21BCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C481EF95D;
-	Mon, 21 Oct 2024 17:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1EB1E9072;
+	Mon, 21 Oct 2024 17:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmYY5Esa"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lviy4j23"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD2C1E8838;
-	Mon, 21 Oct 2024 17:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF231EE029
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530297; cv=none; b=TdzX3r1zN9PiMDH1kuCVTUrgSProCWB7WgCSi5e1NuJGC/s4WoU0J/Gn1jQXzbiAAIBjKy/zZozQcanBbVF3gbNmCGcayiE4lciEMvgVGDG4oCAy4xfEKZWk2J+cmEWKJHzoVFAuVRvavtQ1ApUgcP77IuqiLIVSU9IwjCpBFq8=
+	t=1729530336; cv=none; b=esTcftftjCEFwZutK2FtDDxXg1KqzPFXI6yFXqIJC/cZLPq3OdtAmUPL6D0tEth2lwxz1S35o+J+CBBUeVvalCXXpz21U8rihSNoxcz2QdJi1awzUBNT1gvICYqOY9S5wUVOJdwBSURvu7hpj7kK7kzSIGHwQL1qYTq67iqoxr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530297; c=relaxed/simple;
-	bh=CR5RjoyQjmJ04onc1gUas0ad+msgrElFQsuZL2VMhg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bBIlojKivQvF5wjsT3cLAYNoh4AhzrvXUOTHDCx3uSZBMSklsCkjU9ERGLMROF3kIw0lkru8dg/wCrYykXF91gxUfWDb6apyLzilxCcdDxpjq/5dGQ+aHlYsIbiOXKALdHstc61Wf5k1D4XY/ppeY2hSkglT1mwzkWYUKbolHbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmYY5Esa; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e4e481692so3921441b3a.1;
-        Mon, 21 Oct 2024 10:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729530295; x=1730135095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQG6MR1AENI44ceUDAJNSQ0PP8riW7rnDgze7XGFkjc=;
-        b=MmYY5Esavq423IKt5JTW5b/WFtbH4MAvNZR3NNo3xWuWFAV4aBht278kBFKaplyG1X
-         wmX+ct32HQs4uBzCqVPE1VJLDJvH8TN0F5g3GDryiXZ+LCV6ht9zMcbrRC1cRv/CAk/q
-         OhLG/4A2L/XjEfGYs4filL3mWOewwRUbvKB4VzLv5uDGrxtLvrs42UVRZ7QDs18LmiSi
-         Yn6uDTOs8E1ifeX8/agysaGMtRc0zywk/r4yjiDgAQAzX4BDlnpCdZZAmX0Qb7MeDMdB
-         cbOuqM3esN9kVkrIMznQ/jH6A50Z5I/xFjam+4iTDS/0SQ4QhsMjTc/okl7gG83hOK7K
-         C6tw==
+	s=arc-20240116; t=1729530336; c=relaxed/simple;
+	bh=BomtKaAPp6iAz+DjK4Ovy8TY3LXZVC4CilUm6HW8a7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=astcutLLlT9C08bZYh2sTJBqmDuwOqSeMeFk23oMtWECh9ZCBCU4/ptkKrYGpf/igrtbk6YYeWPyzLMfRKy9G/sohm5G9fNLHxdJMMS1IJQ71XmtM7uSeV0j7Y92ih2l8ONa57hEUuWyPo0slWotwFXO37z+3euQCHuB4l8JDDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lviy4j23; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729530332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ODNFoAFliz5OgzyG0IVB5Hkf8p1AwS86NAZGmNqXWvA=;
+	b=Lviy4j23J23jvJtSeIaPQnx6tdAaf5ZBdBYoiE/QVW3J18tXh4EW3AWik4aFkfDa0E+iOG
+	KD1PN1e8dy73c7lnIwPA+YCXVOK5I4Fqlr7UF1Z2r9b3VZoJ6UVnFyIIJWuPe7fXnqCi5y
+	iwn57PTtyG0tcuOOuwKnD/oKWmE8AXg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-461-w9j_Km9yNj-uW6-tKWewtQ-1; Mon, 21 Oct 2024 13:05:31 -0400
+X-MC-Unique: w9j_Km9yNj-uW6-tKWewtQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d533a484aso2754380f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:05:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729530295; x=1730135095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CQG6MR1AENI44ceUDAJNSQ0PP8riW7rnDgze7XGFkjc=;
-        b=c8U4In53Xh28X3D9wbZFNS/ED8YhkOmIgDsf2xAXa8JH8y43DzY4GnoGuO/cBlHfKI
-         ki2bBmQMZdBBQVLg/GtYwnnc55fedOE/3I+RpNSzlaAL3553uddsROjoZyC5FxmjseZm
-         H9zsI5TT+u3EnTK479Bl5D7K8pz5NXGP6CYllfss2V6tw8YGyCf8GQPLu/vO2malXOkm
-         Kc3iKQRuMLrqBB1w4xvmRQW13G8kf0s3ssKOYyFfqIgSXqAlyYGYa3ODFRbQIkTzzBBE
-         V/6xiHwNa3f5hyVf/Y8Cf7U/Teau0LCym9IATw0ho8if9+EQ8kXfsMqten1WSrsA6qEz
-         czgg==
-X-Forwarded-Encrypted: i=1; AJvYcCV98qJWkb8v00cF8EL+eEGywC+FvTsAZ/J13HNnkDofkJVOs55f2W+KTvPnwntzatMQBYw=@vger.kernel.org, AJvYcCWSkBbYCiPegsm6SMrZ649Gm29rYBLPUtb8w89TwZNbmheuK9jS2I29rSfth1M6jUmMkWRFDs8z5scKS9sc@vger.kernel.org, AJvYcCXovAmEBKy1C8GPUzGAh6xekzwLyLEXyP6bsMIS7V+KTSZGB7pF7NzNDuyrR4rvGiwdDtWAcVCMIHTTwFTTdaduq+jF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3u/yGTBdtInPQjIKQs7Ucuz+3gJPU8YqMJtfnMeUFAp7FvIpG
-	GUEHic+AKLQP1dKaV7NZlD3VI20Ks87jHFrGlM554COOzwB4xadAsS0qpru0pufHvxhmLzp63tv
-	dDK7id9VV0WP/oKASGOU7JHGhdTY=
-X-Google-Smtp-Source: AGHT+IEay4FYcmWDyON/XJSoe4K5dh73uhcv1K355uE7k7CYuYjr+hj+dv937U/aUdp++6LOQ1wbUKe7+LSa3MzXpMc=
-X-Received: by 2002:a05:6a00:3e0f:b0:71e:4a1b:2204 with SMTP id
- d2e1a72fcca58-71ea331b398mr15912077b3a.25.1729530295151; Mon, 21 Oct 2024
- 10:04:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729530330; x=1730135130;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ODNFoAFliz5OgzyG0IVB5Hkf8p1AwS86NAZGmNqXWvA=;
+        b=EeQMW4U2Pv+lBXBcp5CrAatWvHVadP73jE80VtbeGEkU5uoLtSoL4LD6M72+3yEPZA
+         izY8qiUBs7iJdfm1L+OInzHpTu1vjY22Ud5PQKv0P3hXSD8KiGwsqGP4oaUtkFytG7KT
+         5burn1yjybyrHOheLISOpglpuz5U3NcBNOEpj2+UOBWE2m+9CrPcgVaIAAIA+Up09po2
+         3wKyhCfkElw7XaJXpaStUCIAoStdqgTzX5siLHfGJdq2Yr1c0bZbBaV2WHcdAUz76toh
+         SyHGI50zSt4XtK0uMNjd91kyiXIK6EOy67gKKrn1e3zmueq8XVCXXHoizsG0K07HMKAN
+         2pqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhBLABd/FRkI3aPJH5wqpPpkvSF6TLmZilZ6brod4u2qKNOcS745Dk+quw1pFmYdshwBaDJthG+uJ/v4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0lL4l5X8EYZ6rZPSw5eTm0trTy8Kv0ef66F3MSYmRubRfX36I
+	Crly/5HCdVc6J/XRyA6tnAWItDivsg+qGqpXuMmYccOpxiqvc96RzMRMRTzIUECAdQ3c8PKVSrS
+	nba8/KbARqfNT0xTitW2WTuJbiq1CHM6qE3CCouUzy4gi/vJsT6cJv32xNN0u8Q==
+X-Received: by 2002:adf:ebcc:0:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-37ef12592f2mr219274f8f.2.1729530329679;
+        Mon, 21 Oct 2024 10:05:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUTnwrLPg/73ylsRI4bN+xpIrLXb6FnuLzamY0QaA1YpeEYZTdOBb6wYzS9gKLu1Yn5Y7vhQ==
+X-Received: by 2002:adf:ebcc:0:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-37ef12592f2mr219239f8f.2.1729530329187;
+        Mon, 21 Oct 2024 10:05:29 -0700 (PDT)
+Received: from [192.168.3.141] (p5b0c6747.dip0.t-ipconnect.de. [91.12.103.71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f50b176sm63467975e9.0.2024.10.21.10.05.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 10:05:28 -0700 (PDT)
+Message-ID: <b13a83f4-c31c-441d-b18e-d63d78c4b2fb@redhat.com>
+Date: Mon, 21 Oct 2024 19:05:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008002556.2332835-1-andrii@kernel.org> <20241008002556.2332835-2-andrii@kernel.org>
- <20241018082605.GD17263@noisy.programming.kicks-ass.net> <CAEf4Bzb3xjTH7Qh8c_j95jEr4fNxBgG11a0sCe4hoF9chwUtYg@mail.gmail.com>
- <20241021103151.GB6791@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241021103151.GB6791@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 21 Oct 2024 10:04:43 -0700
-Message-ID: <CAEf4BzYc-YACW6XnHMVZLE+8_zJqkaJWBKE4iNeo3Jfj9RwaNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 tip/perf/core 1/2] uprobes: allow put_uprobe() from
- non-sleepable softirq context
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] mm: madvise: implement lightweight guard page
+ mechanism
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Muchun Song <muchun.song@linux.dev>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
+ Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ linux-kselftest@vger.kernel.org, Sidhartha Kumar
+ <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
+ Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>
+References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
+ <fce49bbbfe41b82161a37b022c8eb1e6c20e1d85.1729440856.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <fce49bbbfe41b82161a37b022c8eb1e6c20e1d85.1729440856.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 3:31=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Fri, Oct 18, 2024 at 11:22:00AM -0700, Andrii Nakryiko wrote:
-> > On Fri, Oct 18, 2024 at 1:26=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > On Mon, Oct 07, 2024 at 05:25:55PM -0700, Andrii Nakryiko wrote:
-> > > > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), w=
-hich
-> > > > makes it unsuitable to be called from more restricted context like =
-softirq.
-> > >
-> > > This is delayed_uprobe_lock, right?
-> >
-> > Not just delated_uprobe_lock, there is also uprobes_treelock (I forgot
-> > to update the commit message to mention that). Oleg had concerns (see
-> > [0]) with that being taken from the timer thread, so I just moved all
-> > of the locking into deferred work callback.
-> >
-> >   [0] https://lore.kernel.org/linux-trace-kernel/20240915144910.GA27726=
-@redhat.com/
->
-> Right, but at least that's not a sleeping lock. He's right about it
-> needing to become a softirq-safe lock though. And yeah, unfortunate
-> that.
->
-> > > So can't we do something like so instead?
-> >
-> > I'll need to look at this more thoroughly (and hopefully Oleg will get
-> > a chance as well), dropping lock from delayed_ref_ctr_inc() is a bit
-> > scary, but might be ok.
->
-> So I figured that update_ref_ctr() is already doing the
-> __update_ref_ctr() thing without holding the lock, so that lock really
-> is only there to manage the list.
->
-> And that list is super offensive... That really wants to be a per-mm
-> rb-tree or somesuch.
+On 20.10.24 18:20, Lorenzo Stoakes wrote:
+> Implement a new lightweight guard page feature, that is regions of userland
+> virtual memory that, when accessed, cause a fatal signal to arise.
+> 
+> Currently users must establish PROT_NONE ranges to achieve this.
+> 
+> However this is very costly memory-wise - we need a VMA for each and every
+> one of these regions AND they become unmergeable with surrounding VMAs.
+> 
+> In addition repeated mmap() calls require repeated kernel context switches
+> and contention of the mmap lock to install these ranges, potentially also
+> having to unmap memory if installed over existing ranges.
+> 
+> The lightweight guard approach eliminates the VMA cost altogether - rather
+> than establishing a PROT_NONE VMA, it operates at the level of page table
+> entries - poisoning PTEs such that accesses to them cause a fault followed
+> by a SIGSGEV signal being raised.
+> 
+> This is achieved through the PTE marker mechanism, which a previous commit
+> in this series extended to permit this to be done, installed via the
+> generic page walking logic, also extended by a prior commit for this
+> purpose.
+> 
+> These poison ranges are established with MADV_GUARD_POISON, and if the
+> range in which they are installed contain any existing mappings, they will
+> be zapped, i.e. free the range and unmap memory (thus mimicking the
+> behaviour of MADV_DONTNEED in this respect).
+> 
+> Any existing poison entries will be left untouched. There is no nesting of
+> poisoned pages.
+> 
+> Poisoned ranges are NOT cleared by MADV_DONTNEED, as this would be rather
+> unexpected behaviour, but are cleared on process teardown or unmapping of
+> memory ranges.
+> 
+> Ranges can have the poison property removed by MADV_GUARD_UNPOISON -
+> 'remedying' the poisoning. The ranges over which this is applied, should
+> they contain non-poison entries, will be untouched, only poison entries
+> will be cleared.
+> 
+> We permit this operation on anonymous memory only, and only VMAs which are
+> non-special, non-huge and not mlock()'d (if we permitted this we'd have to
+> drop locked pages which would be rather counterintuitive).
+> 
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Suggested-by: Jann Horn <jannh@google.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   arch/alpha/include/uapi/asm/mman.h     |   3 +
+>   arch/mips/include/uapi/asm/mman.h      |   3 +
+>   arch/parisc/include/uapi/asm/mman.h    |   3 +
+>   arch/xtensa/include/uapi/asm/mman.h    |   3 +
+>   include/uapi/asm-generic/mman-common.h |   3 +
+>   mm/madvise.c                           | 168 +++++++++++++++++++++++++
+>   mm/mprotect.c                          |   3 +-
+>   mm/mseal.c                             |   1 +
+>   8 files changed, 186 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/uapi/asm/mman.h
+> index 763929e814e9..71e13f27742d 100644
+> --- a/arch/alpha/include/uapi/asm/mman.h
+> +++ b/arch/alpha/include/uapi/asm/mman.h
+> @@ -78,6 +78,9 @@
+>   
+>   #define MADV_COLLAPSE	25		/* Synchronous hugepage collapse */
+>   
+> +#define MADV_GUARD_POISON 102		/* fatal signal on access to range */
+> +#define MADV_GUARD_UNPOISON 103		/* revoke guard poisoning */
 
-Probably hard to justify to add that to mm_struct, tbh, given that
-uprobe+refcnt case (which is USDT with semaphore) isn't all that
-frequent, and even then it will be active on a very small subset of
-processes in the system, most probably. But, even if (see below),
-probably should be a separate change.
+Just to raise it here: MADV_GUARD_INSTALL / MADV_GUARD_REMOVE or sth. 
+like that would have been even clearer, at least to me.
 
->
-> AFAICT the only reason it is a mutex, is because doing unbouded list
-> iteration under a spinlock is a really bad idea.
->
-> > But generally speaking, what's your concern with doing deferred work
-> > in put_uprobe()? It's not a hot path by any means, worst case we'll
-> > have maybe thousands of uprobes attached/detached.
->
-> Mostly I got offended by the level of crap in that code, and working
-> around crap instead of fixing crap just ain't right.
->
+But no strong opinion, just if somebody else reading along was wondering 
+about the same.
 
-Ok, so where are we at? Do you insist on the delayed_ref_ctr_inc()
-rework, switching uprobe_treelock to be softirq-safe and leaving
-put_uprobe() mostly as is? Or is it ok, to do a quick deferred work
-change for put_uprobe()  to unblock uretprobe+SRCU and land it sooner?
-What if we split this work into two independent patch sets, go with
-deferred work for uretprobe + SRCU, and then work with Oleg and you on
-simplifying and improving delayed_uprobe_lock-related stuff?
 
-After all, neither deferred work nor delayed_ref_ctr_inc() change has
-much practical bearing on real-world performance. WDYT?
+I'm hoping to find more time to have a closer look at this this week, 
+but in general, the concept sounds reasonable to me.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
