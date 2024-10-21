@@ -1,89 +1,53 @@
-Return-Path: <linux-kernel+bounces-373744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B759A5BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:58:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15EE9A5BE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD3A282600
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720791C21682
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C4D1D0E19;
-	Mon, 21 Oct 2024 06:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB191D0E30;
+	Mon, 21 Oct 2024 06:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1o9ZO03"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AYIsNk0f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E6F15575F;
-	Mon, 21 Oct 2024 06:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E871D0DF6;
+	Mon, 21 Oct 2024 06:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729493884; cv=none; b=lNZwx26ACldlekEWPwJ7MNdsQyy61u/rQy9oJ75v2ua4zOJ6GYbswQSMIM114eVYwXQvD+Xk7mypoqiwI2t77qP7t/hGlH7FkPcAPt8JtuF/iK0OufS5K31cqfsbHeI0ypFby9FY7Vkq9kyHgsPVypPWMlfVz/maCFbNY9ZhdM8=
+	t=1729493980; cv=none; b=GSWC+yHjbni55Wbbx28MDZ73D1E+rwxz/LTWH9pRHq+kLC9ZmV6c1JMhuqollLoC1wXCfeMfE+f7wR07cMB+7tBlLqc2xRcirjVnIQcsNnkJNTdMzrp2aE2XYqUcYaqbZHIHhJThpWAKkJ3moBEHlmTYz0NBEiHlVUxegYJjcxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729493884; c=relaxed/simple;
-	bh=IiPcz/ByZa0vEMsnAb+L+ohy/99zqiBcnsh87LOh/Lk=;
+	s=arc-20240116; t=1729493980; c=relaxed/simple;
+	bh=sqJe+SYePyCORlcWttoZCNBV3dX9EBKVbW24Bl/SPdk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQzh7V1Fb//0PL+5FyvfuYonsmSyDmxhLnFXSk96SaYoLugPGvcaSglVItFRXVBjF/wJEwwIMzFF7+m/iTtvdDUAKWHR3g9LldUUfKeL/SEv+ybkrDK8PpvuuUDqde/evvoi28htAyeW+Un+D0WKs0KX/8WKQ0k4Oq75SRmcM2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1o9ZO03; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729493882; x=1761029882;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IiPcz/ByZa0vEMsnAb+L+ohy/99zqiBcnsh87LOh/Lk=;
-  b=Z1o9ZO03WX44w77UQ5nMG4q+la058ychSbeE7XaYU6woCkUxsgQgziya
-   z2FnyQ4hL/lPncBAtEc6d+HR50bDBkqO1wbZmxOkKU8RwHPxeNtpx8GYR
-   Xa9m6SKhFkjIgVRrlhPwMyVoy5bvqQkfmwxEDBElgGoTaiyKIdgCSO8X+
-   ZJxxmWbMd1sN1mZuQgTo9ITBv+6cIwtkC0h4hmwxIVfzzqddJWQ8RH6CI
-   05VO66rKP/UpSxfQlqmd7gkMDv/kD7B8EYQMcJQQ7D1ttSUMHpPXsvVhU
-   jBukf+ObUcJQJOtA/3IfNlTVDNTRJ6WbxVeGcCR9dFb3BGdhl3Osqde2t
-   A==;
-X-CSE-ConnectionGUID: zr92viR1R5CMBqWtW+bSmg==
-X-CSE-MsgGUID: TXGEKVcaQPyPuJ6EQzt4ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="29081696"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="29081696"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 23:58:02 -0700
-X-CSE-ConnectionGUID: Dc6fbp8TShqAwhD/eE668w==
-X-CSE-MsgGUID: aCechL/iTkKb3hcV7J22Gw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="84223930"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 23:57:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t2mMT-00000005OxN-44c7;
-	Mon, 21 Oct 2024 09:57:53 +0300
-Date: Mon, 21 Oct 2024 09:57:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Subject: Re: [PATCH 2/3] printf: Add print format (%pra) for struct range
-Message-ID: <ZxX7cfx2kOssqR2H@smile.fi.intel.com>
-References: <20241018-cxl-pra-v1-0-7f49ba58208b@intel.com>
- <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
- <6712bf8240b8d_10a03294a6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDXnzCCKZosHjbSthhYzOMvsiNIb4Vcxk5RRSJCV5dxnFcaMtZOO3axsvgWcbIpm+9zukCqkYQXY+38mAs3Y4iyHzuhx40UH0JYasxJOjKC0O73GHBpG9NY0jM8xs+ituDVD9zm5edN70p2z634Sv67By5LU9VaVL32psfgvaG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AYIsNk0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FAB1C4CECD;
+	Mon, 21 Oct 2024 06:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729493980;
+	bh=sqJe+SYePyCORlcWttoZCNBV3dX9EBKVbW24Bl/SPdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AYIsNk0fGuwE2EAH47lCz5VnfTV2jCfOQPg1WzZh5Ehf+Y6kY8I9mxZRPjNhw0elt
+	 D2rUxNKfgl5rB9QTHOdDft/zxXd05Es89gOI9FmmAIUH8lB9r3IzqksSL7ZvF/664/
+	 ylKIJDVWE6eRIxUuyJsMIOphrutj/u0LW9WAjVqk=
+Date: Mon, 21 Oct 2024 08:59:37 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mihai Sain <mihai.sain@microchip.com>
+Cc: richard.genoud@bootlin.com, jirislaby@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] tty: atmel_serial: Use
+ devm_platform_ioremap_resource()
+Message-ID: <2024102151-showy-partake-a2aa@gregkh>
+References: <20241021064321.3440-1-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +56,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6712bf8240b8d_10a03294a6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241021064321.3440-1-mihai.sain@microchip.com>
 
-On Fri, Oct 18, 2024 at 01:05:22PM -0700, Dan Williams wrote:
-> Ira Weiny wrote:
-
-...
-
-> > +	%pra    [range 0x0000000060000000]
-> > +
-> > +For printing struct range.  struct range holds an arbitrary range of u64
-> > +values.  If start is equal to end only print the start value.
+On Mon, Oct 21, 2024 at 09:43:21AM +0300, Mihai Sain wrote:
+> Simplify the request port function by using a single call
+> to devm_platform_ioremap_resource().
 > 
-> I was going to say "why this special case that does not exist for the
-> %pr case?", but then checked the code and found it *does* do this for %pr.
-> So if you're going to document this special case for %pra might as well
-> update the documentation for %pr too.
+> This will also enhance the printing from /proc/iomem:
 > 
-> Alternatively, drop the new %pra documentation for this corner case as
-> accommodating the U64_MAX size range case is arguably a mistake in the
-> caller.
+> cat /proc/iomem | grep flexcom ; cat /proc/iomem | grep serial
+> 
+> f0004000-f00041ff : f0004000.flexcom flexcom@f0004000
+> f8020000-f80201ff : f8020000.flexcom flexcom@f8020000
+> f0004200-f00043ff : f0004200.serial serial@200
+> f8020200-f80203ff : f8020200.serial serial@200
+> fffff200-fffff3ff : fffff200.serial serial@fffff200
+> 
+> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+> ---
+>  drivers/tty/serial/atmel_serial.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 
-You probably meant "...(U64_MAX + 1) size..." as we end up with the same value.
-But yeah, I also noticed the same.
+Why is this a rfc?  What needs to be done before you want it merged?
 
--- 
-With Best Regards,
-Andy Shevchenko
+thanks,
 
-
+greg k-h
 
