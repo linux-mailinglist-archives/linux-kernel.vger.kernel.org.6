@@ -1,225 +1,233 @@
-Return-Path: <linux-kernel+bounces-373898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817BC9A5EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2790D9A5EAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA2F283350
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D769D2835F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762321D2707;
-	Mon, 21 Oct 2024 08:30:59 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947991E22EE;
+	Mon, 21 Oct 2024 08:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBlA4LFI"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B714D717
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2A31E1C04;
+	Mon, 21 Oct 2024 08:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729499459; cv=none; b=JXfpLMiDbsllolWKeuessthYrvSALCbf1NfKwgLUekJ9t4yu4YMmFFO4z19IBIM0oaGC3aNYb2bAg9+SJFLqSMHDErqeCuXPtGtCRz56WDi4kEOJN4dISPvqnVyj7F6Ph6p0RJcuy4l3qDBkqqNgtac5GGfQPNAr1Da/Txh1jY0=
+	t=1729499480; cv=none; b=d2a05+ebspnymfcANM4OzhM5G8e21buAqjwAVQf3oDvb/3lxJux2yvZOB8RBYb4xV6wWjAemdyCNHLZ6ciz1NqMK595qZgJf2eOCKF1wdFisaiEj1x1Jh1kDcatP99bU1Xy/KKwizpfhoHej7ucQMZVgFHGZuQMyC9zDTgaBgYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729499459; c=relaxed/simple;
-	bh=1NhGQNyXr3Ml6ZpRnO1CQeZ9cPAZqcXLsZA0IySBvEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d7kFVz5eC1Qcl07hk5upq6YhwU4R2X8NooaUJzQ7M4zH663Uz1DtApB2SPwOlgrGXrlyBSUijT5/hiRaLXk1YjIfH3Wpg9WkVLOazyhigUZID3wzmPRPJeImA/o4grEY297i34Wp1v2W4OtidTcJC3vDrm4wqBmdQKT0X8D3CFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XX7lJ46LRz2Df32;
-	Mon, 21 Oct 2024 16:29:32 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 104AB1A0188;
-	Mon, 21 Oct 2024 16:30:53 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 21 Oct 2024 16:30:52 +0800
-Message-ID: <0b5e67da-cd23-5159-250a-9f4722655784@huawei.com>
-Date: Mon, 21 Oct 2024 16:30:51 +0800
+	s=arc-20240116; t=1729499480; c=relaxed/simple;
+	bh=MD6Uf54kQklPW5l/RSWbga3pHtBfLo6lZNNoUwS0V+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=asSQlyG8xm2WbFNh2ntTk+VIdCjpvaAjnJkCoGStJ+gHf6Ekii4O2rtkOg42M49B5f9LrXaF6UAT1iv2RKOciWOOU02x1x6VGkikXuihfNKTev0pSWW73FLzAyB8O8q85mgmdDJhXfx50ihNhVpV3PbIefxhtQ00CGz0zG/0Co8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CBlA4LFI; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2846550b3a.2;
+        Mon, 21 Oct 2024 01:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729499477; x=1730104277; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WRyh0Vzw6taWDVUX+oDeXTnTCcIR54UGFKGb/Q0q7Hk=;
+        b=CBlA4LFI5tG572cYcwGX1pObe6lPaNTwK/LfzedwjZWxJAlVci6Ke+FTwoOtuum87d
+         xWapfbJSVaHlNVGuOyl9s0FSslNzrRhJN2EcMvEwzi/Vy1AhMymXzFkpXladQ9qcb5pd
+         NFY/wGw6RDEhzSqtjm1VCpEOC1qRHKNIt5QJUipM2goCD22pQ6SYv4EGTMxUiUUiTkN+
+         8mrT98ukp/FukE1sv6Wr3fs9j640aF6MNVXzj6+U6VLwmyMt49zHpYCfPyA/b8wdgptZ
+         pV3+LlSHKPdoLeuLV+iuDbhUtO78J4bRU93LQvGKM60QwPuUgAdDbpBt9qbIw99U8sFb
+         OA0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729499477; x=1730104277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WRyh0Vzw6taWDVUX+oDeXTnTCcIR54UGFKGb/Q0q7Hk=;
+        b=reHFgGpShCNPczp9XJGWZhF4b6Qq+uSOLZwOaA5VX8KJyVMmvB43nEQ6XhNNl6Bjdm
+         rTNy+0P2X20Y15x3s6tDQWwfvSlrrhn8x8Af5ob3tpruhTzpAJMt76/GUZfMRXjrxKXZ
+         6zsknxdpl15HIei3kVOE+SmXxFc3VkzUSazv2Q9W/5/2C6mf6xSG2PXDtT4Iv7ezecSv
+         SBtIb74JrfRiQsAeo8Bhsniy41Vj8Kjr9lShlgAPH3t0pI8gy+b6ZDRaQyCLGhvD13rU
+         RtxW2q1MMMSIstheXSR2ump26C/J2wTfHLSlek7G5kXGXHDSPu0Tfez3ab8vbXUSckmA
+         6HVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQdTFj6RyRi3dRsCzM9q21lIMHFynGJzvRXQ3VbrVw+gy8iy9YnWIJTHWZtRt31h1Tmu0Zv5+GuX1COuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1PBygbZMPNwOtjNv0uwmaROKvx6mecI9XIjQ+neY0izj0DGrO
+	Mg138ZZEuVCm7Ib06vaBrnSlGGWcdqwaF5ujvk/e7ybScvhrWoruyDWAn6A4KI0=
+X-Google-Smtp-Source: AGHT+IG+yja0MCxe5HR+sdvH5GTRKbHFUQfGxkxwGggkTNxfctjkE+Wvudin9ZKae5yE8asxbONcNw==
+X-Received: by 2002:a05:6a20:bb28:b0:1d9:3456:b71e with SMTP id adf61e73a8af0-1d93456ba08mr9808967637.12.1729499476908;
+        Mon, 21 Oct 2024 01:31:16 -0700 (PDT)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d73easm2317771b3a.111.2024.10.21.01.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 01:31:15 -0700 (PDT)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>,
+	Andy Gospodarek <andy@greyhouse.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCH net] bonding: add ns target multicast address to slave device
+Date: Mon, 21 Oct 2024 08:30:52 +0000
+Message-ID: <20241021083052.2865-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<kees@kernel.org>, <wad@chromium.org>, <rostedt@goodmis.org>,
-	<arnd@arndb.de>, <ardb@kernel.org>, <broonie@kernel.org>,
-	<rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240629085601.470241-1-ruanjinjie@huawei.com>
- <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Commit 4598380f9c54 ("bonding: fix ns validation on backup slaves")
+tried to resolve the issue where backup slaves couldn't be brought up when
+receiving IPv6 Neighbor Solicitation (NS) messages. However, this fix only
+worked for drivers that receive all multicast messages, such as the veth
+interface.
 
+For standard drivers, the NS multicast message is silently dropped because
+the slave device is not a member of the NS target multicast group.
 
-On 2024/10/17 23:25, Mark Rutland wrote:
-> Hi,
-> 
-> On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
->> Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
->> to use the generic entry infrastructure from kernel/entry/*. The generic
->> entry makes maintainers' work easier and codes more elegant, which aslo
->> removed a lot of duplicate code.
-> 
->>  arch/arm64/Kconfig                    |   1 +
->>  arch/arm64/include/asm/entry-common.h | 172 ++++++++++++
->>  arch/arm64/include/asm/ptrace.h       |   5 +
->>  arch/arm64/include/asm/stacktrace.h   |   5 +-
->>  arch/arm64/include/asm/syscall.h      |   6 +-
->>  arch/arm64/include/asm/thread_info.h  |  23 +-
->>  arch/arm64/kernel/entry-common.c      | 368 +++++---------------------
->>  arch/arm64/kernel/ptrace.c            |  90 -------
->>  arch/arm64/kernel/signal.c            |   3 +-
->>  arch/arm64/kernel/syscall.c           |  18 +-
->>  include/linux/entry-common.h          |  90 +++++++
->>  include/linux/thread_info.h           |  13 +
->>  kernel/entry/common.c                 |  37 +--
->>  13 files changed, 395 insertions(+), 436 deletions(-)
->>  create mode 100644 arch/arm64/include/asm/entry-common.h
-> 
-> Looking at this I have a few concerns, which I've tried to explain
-> below.
-> 
-> Firstly, this is difficult to review (and will be difficult to test,
-> queue. and debug in future) because lots of independent changes are made
-> all at once. I think that needs to be split out more.
-> 
-> It would be good if preparatory rework/cleanup could be split into a few
-> patches that we could consider queueing before the rest of the series,
-> or even if we decide to not pick the rest of the series. For example,
-> patch 2 should be split into:
-> 
-> * One patch that replaces arm64's interrupts_enabled() with
->   regs_irqs_disabled(), removing interrupts_enabled() entirely rather
->   than implementing regs_irqs_disabled() using interrupts_enabled().
+To address this, we need to make the slave device join the NS target
+multicast group, ensuring it can receive these IPv6 NS messages to validate
+the slave’s status properly.
 
-Yes, only the new version is needed, another interrupts_enabled() should
- be removed.
+Fixes: 4e24be018eb9 ("bonding: add new parameter ns_targets")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+---
+Another way is to set IFF_ALLMULTI flag for slaves. But I think that
+would affect too much.
+---
+ drivers/net/bonding/bond_main.c    | 11 ++++++++
+ drivers/net/bonding/bond_options.c | 44 +++++++++++++++++++++++++++++-
+ include/net/bond_options.h         |  2 ++
+ 3 files changed, 56 insertions(+), 1 deletion(-)
 
-> 
->   That'll require updating existing users, but the end result will be
->   more consistent and have fewer lines of code.
-> 
-> * One patch that changes on_thread_stack() from a macro to a function.
->   The commit message for patch 2 currently says:
-> 
->   >  Make on_thread_stack() compatible with generic entry.   
->  
->   ... but it's not clear to me *what* that incompatibility is, and that
->   should be explained in the commit message.
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index b1bffd8e9a95..04ccbd41fb0c 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2350,6 +2350,11 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
+ 	if (bond_mode_can_use_xmit_hash(bond))
+ 		bond_update_slave_arr(bond, NULL);
+ 
++#if IS_ENABLED(CONFIG_IPV6)
++	if (slave_dev->flags & IFF_MULTICAST)
++		/* set target NS maddrs for new slave */
++		slave_set_ns_maddr(bond, slave_dev, true);
++#endif
+ 
+ 	if (!slave_dev->netdev_ops->ndo_bpf ||
+ 	    !slave_dev->netdev_ops->ndo_xdp_xmit) {
+@@ -2503,6 +2508,12 @@ static int __bond_release_one(struct net_device *bond_dev,
+ 	/* recompute stats just before removing the slave */
+ 	bond_get_stats(bond->dev, &bond->bond_stats);
+ 
++#if IS_ENABLED(CONFIG_IPV6)
++	if (slave_dev->flags & IFF_MULTICAST)
++		/* clear all target NS maddrs */
++		slave_set_ns_maddr(bond, slave_dev, false);
++#endif
++
+ 	if (bond->xdp_prog) {
+ 		struct netdev_bpf xdp = {
+ 			.command = XDP_SETUP_PROG,
+diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+index 95d59a18c022..823cb93d2853 100644
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -1234,17 +1234,41 @@ static int bond_option_arp_ip_targets_set(struct bonding *bond,
+ }
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
++/* convert IPv6 address to link-local solicited-node multicast mac address */
++static void ipv6_addr_to_solicited_mac(const struct in6_addr *addr,
++				       unsigned char mac[ETH_ALEN])
++{
++	mac[0] = 0x33;
++	mac[1] = 0x33;
++	mac[2] = 0xFF;
++	mac[3] = addr->s6_addr[13];
++	mac[4] = addr->s6_addr[14];
++	mac[5] = addr->s6_addr[15];
++}
++
+ static void _bond_options_ns_ip6_target_set(struct bonding *bond, int slot,
+ 					    struct in6_addr *target,
+ 					    unsigned long last_rx)
+ {
++	unsigned char target_maddr[ETH_ALEN], slot_maddr[ETH_ALEN];
+ 	struct in6_addr *targets = bond->params.ns_targets;
+ 	struct list_head *iter;
+ 	struct slave *slave;
+ 
++	if (!ipv6_addr_any(target))
++		ipv6_addr_to_solicited_mac(target, target_maddr);
+ 	if (slot >= 0 && slot < BOND_MAX_NS_TARGETS) {
+-		bond_for_each_slave(bond, slave, iter)
++		if (!ipv6_addr_any(&targets[slot]))
++			ipv6_addr_to_solicited_mac(&targets[slot], slot_maddr);
++		bond_for_each_slave(bond, slave, iter) {
+ 			slave->target_last_arp_rx[slot] = last_rx;
++			/* remove the previous maddr on salve */
++			if (!ipv6_addr_any(&targets[slot]))
++				dev_mc_del(slave->dev, slot_maddr);
++			/* add new maddr on slave if target is set */
++			if (!ipv6_addr_any(target))
++				dev_mc_add(slave->dev, target_maddr);
++		}
+ 		targets[slot] = *target;
+ 	}
+ }
+@@ -1290,6 +1314,24 @@ static int bond_option_ns_ip6_targets_set(struct bonding *bond,
+ 
+ 	return 0;
+ }
++
++void slave_set_ns_maddr(struct bonding *bond, struct net_device *slave_dev,
++			bool add)
++{
++	struct in6_addr *targets = bond->params.ns_targets;
++	unsigned char slot_maddr[ETH_ALEN];
++	int i;
++
++	for (i = 0; i < BOND_MAX_NS_TARGETS; i++) {
++		if (!ipv6_addr_any(&targets[i])) {
++			ipv6_addr_to_solicited_mac(&targets[i], slot_maddr);
++			if (add)
++				dev_mc_add(slave_dev, slot_maddr);
++			else
++				dev_mc_del(slave_dev, slot_maddr);
++		}
++	}
++}
+ #else
+ static int bond_option_ns_ip6_targets_set(struct bonding *bond,
+ 					  const struct bond_opt_value *newval)
+diff --git a/include/net/bond_options.h b/include/net/bond_options.h
+index 473a0147769e..c6c5c1333f37 100644
+--- a/include/net/bond_options.h
++++ b/include/net/bond_options.h
+@@ -160,6 +160,8 @@ static inline void __bond_opt_init(struct bond_opt_value *optval,
+ void bond_option_arp_ip_targets_clear(struct bonding *bond);
+ #if IS_ENABLED(CONFIG_IPV6)
+ void bond_option_ns_ip6_targets_clear(struct bonding *bond);
++void slave_set_ns_maddr(struct bonding *bond, struct net_device *slave_dev,
++			bool add);
+ #endif
+ 
+ #endif /* _NET_BOND_OPTIONS_H */
+-- 
+2.46.0
 
-This change is not needed, I'll remove it.
-
-> 
-> * One patch that splits report_syscall() into report_syscall_enter() and
->   report_syscall_exit(). This should have no functional change.
-
-Yes, that will be more clear.
-
-> 
-> Patch 3 in particular is very hard to follow because several unrelated
-> complex systems are updated simultaneously. It would be really nice if
-> we could move to the generic sycall code separately from moving the rest
-> of the entry code, as the sycall handling code is a particularly
-> important ABI concern, and it's difficult to see whether we're making
-> ABI changes (accidentaly or knowingly).
-> 
-> Can we split that up (e.g. splitting the generic code first into
-> separate entry and syscall files), or are those too tightly coupled for
-> that to be possible?
-
-It will be hard, but I will try to split it, they are surely tightly
-coupled which make the 3th patch too big when I try to switch to generic
-entry.
-
-> 
-> At the end of the series, pt_regs::{lockdep_hardirqs,exit_rcu} still
-> exist, though they're unused. It would be nicer if we could get rid of
-> those in a preparatory patch, e.g. have enter_from_kernel_mode() and
-> exit_to_kernel_mode() use an irqentry_state_t (or a temporary
-> arm64-specific version). That would make the subsequent changes clearer
-> since we'd already have the same structure.
-
-You are totally right, when I do as you said, the third switch patch is
-more smoother and more comprehensible.
-
-> 
-> In the end result, there's a lot of bouncing between noinstr functions
-> where things are inlined today. For example, el0_da() calls
-> irqentry_enter_from_user_mode(), which is an out-of-line noinstr wrapper
-> for enter_from_user_mode(), which is an __always_inline function in a
-> header. It would be nice to avoid unnecessary bouncing through
-> out-of-line functions. I see s390 and x86 use enter_from_user_mode()
-> directly.Yes, the enter_from_user_mode() is enough, there is no need to use the
-wrapper irqentry_enter_from_user_mode().
-
-> 
-> There's also some indirection that I don't think is necessary *and*
-> hides important ordering concerns and results in mistakes. In
-> particular, note that before this series, enter_from_kernel_mode() calls
-> the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
-> management is performed by __enter_from_kernel_mode():
-> 
-> 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
-> 	{
-> 	        __enter_from_kernel_mode(regs);
-> 		mte_check_tfsr_entry();
-> 		mte_disable_tco_entry(current);
-> 	}
-> 
-> ... whereas after this series is applied, those MTE checks are placed in
-> arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
-> necessary lockdep+RCU management. That is broken.
-
-Yes, these MTE checks can be wrapped in arm64 version
-enter_from_kernel_mode() code, and the new defined arch functions can be
-removed.
-
-> 
-> It would be better to keep that explicit in the arm64 entry code with
-> arm64-specific wrappers, e.g.
-> 
-> 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
-> 	{
-> 		irqentry_state_t state = irqentry_enter(regs);
-> 		mte_check_tfsr_entry();
-> 		mte_disable_tco_entry(current);
-> 
-> 		return state;
-> 	}
-> 
-> ... which would avoid the need for arch_enter_from_kernel_mode(), make
-> that ordering obvious, and would remove the need to modify all the
-> callers.
-> 
-> Likewise for the user entry/exit paths, which would avoid the visual
-> imbalance of:
-> 	
-> 	irqentry_enter_from_user_mode();
-> 	...
-> 	exit_to_user_mode_wrapper()
-> 
-
-Yes, it is not clear, we can eliminate this sense of imbalance by
-renaming them and wrap them.
-
-> Thanks,
-> Mark.
-> 
 
