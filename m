@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-374854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BF19A7123
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:37:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AAF9A7127
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297241F23010
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87982282AF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED791F12FC;
-	Mon, 21 Oct 2024 17:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965AA1F4FD1;
+	Mon, 21 Oct 2024 17:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="385f+IkR"
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="et37ahJ/"
 Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FC4199239;
-	Mon, 21 Oct 2024 17:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3571EBA02;
+	Mon, 21 Oct 2024 17:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532233; cv=none; b=LRmEBGsX4tMjoEXeM/MzxYwNc+++Q3A7PtaWJrtdy91rYor/lcz2DOegqc4HZwC42SNEYVRHjdEkiSOOlbV02fjbkA+5zrTTbHZy9iQI4neZSOL6DA+qlrfpJgWKxq4A8rlV2I+IlrtMwnNX+LM6vaZAz1C/3y8ZREEl7eM+DTc=
+	t=1729532234; cv=none; b=bIxqvHEka3va4kHlUrFumYP3Veiv26YxV4IMqx+ZrR9/6NQROgSzQN4Px+2NZTmdH3ZNB+c29XR78iJsQzE5tAme9ErpPBtbo/ZspgNF8ShE9jmOxfIYMoZbi3wR5eUzWvDaGlIbmPhH8T+/+6EsXnvkbl3GN28ZwxcNU7Uqq7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532233; c=relaxed/simple;
-	bh=0ssP+/C45v+G+qhQEUwDcfAMflnQ9ClkL/fOR4zIRX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=X8QzdZchv3ZwxsozzJE8n+/LdC1LE9A5WizcsHv0VOXAklKgCwBtl0CMup5coqeVXLiz6KXhbgL8cMN3OjR8wIzjkDnCCbdfSYZtL6E8v4iLNjEQk8RhmvhWys6WLeyZL9dntfD8nUUWgcR8NqVueivEiPejJlsiKoSiAnT2oyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=385f+IkR; arc=none smtp.client-ip=178.238.236.174
+	s=arc-20240116; t=1729532234; c=relaxed/simple;
+	bh=6UrIP3x6Q4VvkyT70SfUcwoNeQTbMiQIeBKEpg8X6M0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SPAAXkHSx/ZXa9nt63QPOUlm8C+3aNclNpk63VzzUivjaCiNiDzNYi5cXfqZ0jQtZeswqYjPmAOK2nh84n+vGFA46V66d0DTISJdW3jQZ7nQfqlo1FwcqHBIINGANw4ktiZV17XKtmPLJ0H7BG5fgX6du8CXgGHYBIFc0FHMWHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=et37ahJ/; arc=none smtp.client-ip=178.238.236.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=y7dzIerB/KI11ADRmN80B/zGm4FVlX7K4IYPNpBrSck=; b=385f+IkRCbWxq59mxLMVgH21Wb
-	YDipVHsEzRS8CEZEbEu527EEEoBo17dv0eOTkAW1Ivt44/E9htOhk538HdAT+JSQylZbxD+j1CHl5
-	+6b9dJ9TvwxY6+mq9yxFy0oz8fhUBMHovau6reGScFw8jfYEWw2CQHdW2RAqMtum6KKYOjLfoqMpq
-	FiwhNI2QDCF5ZEiYD7bPZxPXKWL4n1n+nY933Zfck/XF729NsJoBu+hpWLM40rwETDbz1Zc56PmyR
-	dx98rEe/sy0R4bQyDJv0uAmyR1Gsvkjn8UyYdi6WXkCIu/z7g/UQUaKRE+AsHrZ3uh4WzcQf9Qqw/
-	DRm5b7wg==;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=CCs37GV7vVuBh26VL6pxUZ05QQRqLswyJ0vwq4ol3vg=; b=et37ahJ/YgSY/9THd1KxieZ+If
+	Qv33CctofhSfbbBH+kOgN9L1FTTNItsmaY/oQWhL29hVpYCNQgBmxNzqXNVHnLrX/K0VMFjhwuOO8
+	sJFmiF7EBoxbfJ7k2wvdkoJF18s3uMKtdKkvQfV7KX1dG9Ex1UAsX1e1yVmxGTQ94WWsmiJEQuPWg
+	dIqXSaBE1bhWjFctcO2FA9uAEsw5QQrpHi3t8gb49v+KZTxAy7nCBv/EPVqYMhnU2YKCsFla1p3+2
+	EUZ2zwsqRB2oLws1jS0qdmCzNt9ryuRQ6do82Mu+1yvQBUI3Q/vZ+RKspFyF1+8l+PkUxlaFhhhCu
+	1um1dPzg==;
 From: Andreas Kemnade <andreas@kemnade.info>
 To: Shawn Guo <shawnguo@kernel.org>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
@@ -53,11 +54,12 @@ To: Shawn Guo <shawnguo@kernel.org>,
 	devicetree@vger.kernel.org,
 	Rob Herring <robh@kernel.org>
 Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 0/3] ARM: dts: add Kobo Clara 2E
-Date: Mon, 21 Oct 2024 19:36:28 +0200
-Message-Id: <20241021173631.299143-1-andreas@kemnade.info>
+Subject: [PATCH 1/3] dt-bindings: arm: fsl: add compatible strings for Kobo Clara 2E
+Date: Mon, 21 Oct 2024 19:36:29 +0200
+Message-Id: <20241021173631.299143-2-andreas@kemnade.info>
 X-Mailer: git-send-email 2.39.5
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20241021173631.299143-1-andreas@kemnade.info>
+References: <20241021173631.299143-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,26 +68,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a basic device tree for the Kobo Clara 2E Ebook reader.
-It is equipped with an i.MX6SLL SoC. EPDC PMIC drivers
-are not ready for mainline yet.
+Adds compatible strings for the Kobo Clara 2E eBook reader.
+There are two variants differing in the EPD PMIC used.
 
-Andreas Kemnade (3):
-  dt-bindings: arm: fsl: add compatible strings for Kobo Clara 2E
-  ARM: dts: imx: Add devicetree for Kobo Clara 2E
-  ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- .../devicetree/bindings/arm/fsl.yaml          |   8 +
- arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
- .../dts/nxp/imx/imx6sll-kobo-clara2e-a.dts    |  23 +
- .../dts/nxp/imx/imx6sll-kobo-clara2e-b.dts    |  23 +
- .../nxp/imx/imx6sll-kobo-clara2e-common.dtsi  | 514 ++++++++++++++++++
- arch/arm/configs/imx_v6_v7_defconfig          |   2 +
- 6 files changed, 572 insertions(+)
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-common.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177e..a78903076269b 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -620,6 +620,14 @@ properties:
+               - kobo,librah2o
+           - const: fsl,imx6sll
+ 
++      - description: i.MX6SLL Kobo Clara 2e Rev. A/B
++        items:
++          - enum:
++              - kobo,clara2e-a
++              - kobo,clara2e-b
++          - const: kobo,clara2e
++          - const: fsl,imx6sll
++
+       - description: i.MX6SX based Boards
+         items:
+           - enum:
 -- 
 2.39.5
 
