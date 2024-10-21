@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-373885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4613A9A5E74
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:20:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB559A5E76
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25BC283275
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:20:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C7D6B21B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D6E1E22EB;
-	Mon, 21 Oct 2024 08:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA61E1C27;
+	Mon, 21 Oct 2024 08:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0ctVuCK"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8b9hxgd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B51E1C3A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB54F1E1C19;
+	Mon, 21 Oct 2024 08:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729498783; cv=none; b=bnn/D6eZ2bCj/F1lURh5I91S7GY+soasoA/7GtZf1xalOEoLJCTeBvGsSJ3UcIr9rLiXIHJ0cebc6GpyEbBYwFbKvlSDEAezmC5O27VlbhchbRYTxvGZNczp/OyFFT0X48mi3yP+MMPeNModcyeOvdfFU2q+AoeLCHj64CtD+xo=
+	t=1729498791; cv=none; b=aQOuhicSTjkKu6Qub0sudyhRgfGlXseZiCk9zRs3Md7ancBVsMXVaC84Oxxzz9Yg617WzNVz56vZgfF6oBKH6qJlWxWuDJXKhALVecBN6dTyfXS+eIMTB7iCXEQGEMy21IElTNEs4YduDVP3Ou91X1O4lKPc1M++J6PsOj/mEd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729498783; c=relaxed/simple;
-	bh=mmy0lUHY10XMceDWyuEECF+zZB2RmGtgnb3/AvNSYCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kmETHNpQcGFRv6I2WQRUYdg63cGsSTSKYXmcd1SoknPQhoywy8B4RodFvgWx9nPn1nKiLTGkrCy61N0J7qwNByeYliudbiGZa2U3NQdFsEGq94JZ3AvXPmhz4jYFRiTi+QMMIt15n19PuAiUE+fKrKXZA6FzapoPKZ5t1O3bOmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0ctVuCK; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso33234875e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729498780; x=1730103580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yHRPgg+q8bk3cyQ9cnZf7YUjXWEJzbMQoHFo/LIaFgA=;
-        b=S0ctVuCKHuLGQgfyGJ7LamZxDqA3okHH+MVYQZFrT9i6KFSG1YmZxr204byiIjnASY
-         jT4ecbxRpgI6dMmeRBLseyBVMQNnlANIC+YbD01mFm4e6WfybX+ocSuHP12k3eQ/yDhY
-         5x+W+RnVD3BUwfeeY4FchwgHhU1nOzFYskPwVoQg/+Fp8s57XrRFEPWDh37t4Xuya9ca
-         JO0kKPk/vhUPZrcJKWQLc2/K0TNcHYG1PX3e1dZB88w6FMiq/GN2Zxyoy8+DrzvhrJJl
-         BzoILzcERpEj6nQgEqTkCn/TIs1/kzcfE1ctkoFELELzFEJLJpQWHnI7H8izXtX6Kokk
-         V7/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729498780; x=1730103580;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHRPgg+q8bk3cyQ9cnZf7YUjXWEJzbMQoHFo/LIaFgA=;
-        b=B0BWVknF6AHw4X2YsfQWES86oGRRouIOMlSS1LsyrdM5ZivbbZyZ6cWhHz9Sludw5i
-         j/mEJHwH5CEBMdcwNoIsG1W83F++PHb3tiS6FR4JG1/FEmFU/F76T2Wja+M0tvLlZLU9
-         9fd5X8S9GsVZmSQPumpSOcN6KIusfz9tBJOSrQVznI6uLP0dong5n+e3YLONtDX5w3wm
-         Cue6yy1SmAbNKjXlBi6CRpU1pPsaiGqd4dUta9GdZ8Pi1apv87f7mRwIr0ZDlzk1rlha
-         /oUtOUK9iKSlvdUkr6frE1awBtzO3M17MUBLdRYpab4ZsX03ocpDY3WJcgOGNcw3PA9M
-         v3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXaya6xiMd27rb35Q6K0Bjd+6jYyKpi++5Be0rgF8UkKPYadSIULC9K6HvmX0t3caGh0w73+pxG7YQdsKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh5K8n4KruJyKuVeWij81RWSoEGMMpKSHF01VHuUHFeZ55lEgL
-	n8Bji+mP79ivK7tZWmwchGDnvv5CxGXTuLurHCUH0MBl5089m0GwFdmAiXmpAt4=
-X-Google-Smtp-Source: AGHT+IED/LBgjQ55uXpNqcKrHvKk9qFESp+rHavpuh2rAeQBHY5Zz4n7XG5LLtXWp2zMyidtrRUo/g==
-X-Received: by 2002:a05:600c:3591:b0:431:4c14:abf4 with SMTP id 5b1f17b1804b1-4316163a1b2mr86387655e9.14.1729498780195;
-        Mon, 21 Oct 2024 01:19:40 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4316f58f1fdsm48847795e9.28.2024.10.21.01.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 01:19:39 -0700 (PDT)
-Message-ID: <19198432-6d86-4763-80e8-4dd163e65d2f@linaro.org>
-Date: Mon, 21 Oct 2024 10:19:39 +0200
+	s=arc-20240116; t=1729498791; c=relaxed/simple;
+	bh=zlmRWwuTPMFj9WwZa+0qdZTSrOAPHiyed6f5Pgikw10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQ3Z8E5h+ALFOlv7QSipuzkMDo8dbpzYza6VqgZbLAVBNcRXs8YCgy+L0bMaxVKsuhsyWJPAxhwawbZYD1kb49sLUw7jyC4i9wiT7jj0U84ZzAPsgxzuH1EEP2O9sg5cGJo8g0O6tXt1AwjPu0YV6KjU+zneNmAuRRnPTCCYlqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8b9hxgd; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729498790; x=1761034790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zlmRWwuTPMFj9WwZa+0qdZTSrOAPHiyed6f5Pgikw10=;
+  b=W8b9hxgdWWEXs1VStqWhjOGLTtdnMUjqla3q6su3hHTJpqaBj1iKif3F
+   sGbn1nuaU5H+qv8Hhma3w+CBY3Ckoxuykaz4MFWBbrqxJd8sepimGimPC
+   ph+WrWZhOQ5Lg0IWWwnr3Fpj49megwJNiJIEF2QRV9o4rbmIymaFKQZrU
+   diGGn4qfMT13oCa2PdunVacy10uQ9XRyV9DyqISJbO00WSA8Zm4endsTp
+   FcYDO+yhjh3nGY7vsTdMqv3VpmoOcgAPDxyckC4ogTHQ3ZcLsGMKSbCb7
+   m+AlBeFOqDnUJZ/PF2U2HqEDFXjIQzSMGEE/Zk2RZPGYzt3VskHkNu4fA
+   A==;
+X-CSE-ConnectionGUID: zZF0O7lZSLqzRA4FlErQ9A==
+X-CSE-MsgGUID: R3/4BvKrQq6Ooge0ZjxGWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46436265"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46436265"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:19:50 -0700
+X-CSE-ConnectionGUID: EWBVwNPaTIOCftOgIlaSOQ==
+X-CSE-MsgGUID: 54dYTpVHQe68Xwai9pjvnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="83448319"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:19:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t2nde-00000005QKp-24KK;
+	Mon, 21 Oct 2024 11:19:42 +0300
+Date: Mon, 21 Oct 2024 11:19:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Baojun Xu <baojun.xu@ti.com>, robh+dt@kernel.org, lgirdwood@gmail.com,
+	perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+	shenghao-ding@ti.com, navada@ti.com, 13916275206@139.com,
+	v-hampiholi@ti.com, v-po@ti.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, liam.r.girdwood@intel.com,
+	yung-chuan.liao@linux.intel.com, broonie@kernel.org,
+	antheas.dk@gmail.com
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Add speaker id check for ASUS
+ projects
+Message-ID: <ZxYOnqRue6zpaWl8@smile.fi.intel.com>
+References: <20241018071118.3298-1-baojun.xu@ti.com>
+ <ZxJVCb13lQ4h2KRD@smile.fi.intel.com>
+ <8734kpkjns.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [pm?] WARNING in thermal_thresholds_flush
-To: syzbot <syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, lukasz.luba@arm.com,
- rafael@kernel.org, rui.zhang@intel.com, syzkaller-bugs@googlegroups.com
-References: <67124175.050a0220.10f4f4.0012.GAE@google.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <67124175.050a0220.10f4f4.0012.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8734kpkjns.wl-tiwai@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Mon, Oct 21, 2024 at 09:19:19AM +0200, Takashi Iwai wrote:
+> On Fri, 18 Oct 2024 14:31:05 +0200,
+> Andy Shevchenko wrote:
+> > On Fri, Oct 18, 2024 at 03:11:18PM +0800, Baojun Xu wrote:
 
-Hi,
+...
 
-I found the issue. I'll send a fix for that in a moment
-
-Thanks for reporting
-
-   -- D.
-
-On 18/10/2024 13:07, syzbot wrote:
-> Hello,
+> > > +			// Speaker id is not valid, use default.
+> > > +			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
+> > > +			spk_id = 0;
+> > > +		}
+> > > +		scnprintf(tas_priv->coef_binaryname,
+> > 
+> > Why 'c' variant? You do not check the return value anyway. So, what's the point?
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=123c2f27980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f24dd060c1911fe54c85
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1192f887980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1417e830580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
+> There is a difference between snprintf() and scnprintf().
+> With W=1, the compiler (at least the recent gcc version) will warn you
+> when the string truncation may happen in the former case while not
+> complaining for the latter.
+> So, when the truncation is intentional and acceptable (that's
+> certainly most cases), the use of scnprintf() will result in less
+> warnings.
 
+Yes, which is a papering over the potential problem, right?
+I agree that in this case it might be not critical or even
+practical to check for an error, but in general the whole lot
+of s*nprintf() should be used with this is in mind.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+With Best Regards,
+Andy Shevchenko
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+
 
