@@ -1,146 +1,174 @@
-Return-Path: <linux-kernel+bounces-374161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FE69A65C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:04:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31BD9A65DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF81283041
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B7CEB22DA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249E41E25E3;
-	Mon, 21 Oct 2024 11:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85831E47A1;
+	Mon, 21 Oct 2024 11:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMo0M35g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TepYvfmM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6698D39FD6;
-	Mon, 21 Oct 2024 11:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CE71E1C19
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508655; cv=none; b=BLZUeJnCg8gAcKu2kAEYdlv+Hp9PqCT3oGtCXV1wjr3wsKt0mh5KNCl3wOcQrdKuxGfE0yIrjBm2QjetXnW+KKfk6HXdjfQXzFuN0INlTIS5UEc3qtCq8RWUORgQMFAx/j5g8xe5UQ5RbfLItm/KwnTKZbP4i6anHe5lQxnFM+o=
+	t=1729508679; cv=none; b=OZwrVWbFulvXrfj2/f6pos2juAijNt+/1hX8+RO+k//RwYFS698TXS0j3LPYsLbN8sPDvAWlw2F2LePp2e+nuaoUPvdjpoL88HbfqRriy0SmK4qsXLjbnJOb9l3vRh2CJidfymlexyZwYdX8WtZFhTZqY9+ezNC5cWGIo8rfdHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508655; c=relaxed/simple;
-	bh=V2y7vo9LKGOZ0tWW9XkDgj45tINelaxj5+/uHLJyjvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JA9mzSjE8AmlIR3fYIZHZBsYRdb9NKkPR7861Zbho65wdMUI7YGfKIr1+iMaG6thmb7O51XqpAcYG4JQ7KjUSCjj+7x4heUMkru0NDi5IJURwbUU9eXmflGA/Tp7XF6R+qlvwv54hVL8zNnPEfvnHTNolyZ9hywxYtA6kW2Tp8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMo0M35g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C431AC4CEC3;
-	Mon, 21 Oct 2024 11:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729508655;
-	bh=V2y7vo9LKGOZ0tWW9XkDgj45tINelaxj5+/uHLJyjvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XMo0M35gln5n5YBsOzPzLQvm37tYESmeI89JvjV5mKLuiw28JenGK69a1rBEJ2+7+
-	 WsrIZhcviLD3dBhbO9wFY/86/NNMRulS0xI0cMvbM4yU7ZMDldEPlxtFCjAjICToSo
-	 kY6SIHL1MEqf0OE9zIVaClb7PcVGvRL1dCmD+EPZ9R/IagMJ2E0krfoC43JJYcIaAA
-	 sFig3yBqrwK7HFZrmkW/glJqPb13wRp/1ObO1GfJwY0XrJ+u229Y8BO/CrJDIOAWGo
-	 Xl/unMeQAxU1TxeLhI1n+eXkewP4OrdOVr4EJ9nx2QSecGrNDnOUb8wr9ei3XveoN+
-	 tRk5lexWW8cdQ==
-Date: Mon, 21 Oct 2024 13:04:08 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: Re: [RFC PATCH v1 34/57] sata_sil24: Remove PAGE_SIZE compile-time
- constant assumption
-Message-ID: <ZxY1KAvGpyIzARtX@ryzen.lan>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-34-ryan.roberts@arm.com>
- <ZxDUZMDf2Xfz2tvi@ryzen.lan>
- <7aa84080-6845-496a-a394-30d334632298@arm.com>
- <ZxEISOhaqRvHlc3U@ryzen.lan>
- <2f578256-7e56-491f-a4ca-ad6caa72b7ae@arm.com>
+	s=arc-20240116; t=1729508679; c=relaxed/simple;
+	bh=LvxPIKw0Wc6uzyJGMhWnJXsVOAN4ixv2zbjyRPGFRrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G9Z2GCWxx/qlaP8QIrd0LvnM5Blo1UNZR8aN70++9kmMpEQb6xHKcWMx66NEqHfgFj9PwxkbmYjuGFHHmNv2a6OBRiGryCYTHq0doaAsJIKNkCvdrjaoiRYSRoxOEKDwX6BrdHB6epBxTLZSPmuGmNTBodBaD+cWaek8fNJ8x0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TepYvfmM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LAM3sE009222
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:04:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dcngVYJfUYun0KaV2VXI+C+nI+5NsaRAfwQ2oaU47dA=; b=TepYvfmMQ7RGWfx8
+	kzP7XkguUVIeG4R0XvPn39g3Eom5MfLBIfc9Rln1F3NRBZTEbjdpbXCFdleAXA9V
+	jpJhj2QId88OZh5ZjVm+51DXiMTADJ2m/EchfJfb7AucbPRASXHvyaIh/Dn35l/s
+	ODcbLlnTaqc1zzcq27y9GzPG8ilJL3lMhVsjXqotU+qf6YR8yioOT38mCwT0hQ/c
+	JNA887n6+e/iJWbFbX/torkg6J3UvubSkMrBpGZA1kalCwldKF8vXMlTnLy1vmYQ
+	6jGu0SaN20Qfe2gxf2ZhVZC0FTKCIdegaumZahHY+2L31w0DTmNc0Yd9y4nbOy0M
+	cEwQfw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj4b6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:04:36 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe40565feso11610456d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:04:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729508675; x=1730113475;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dcngVYJfUYun0KaV2VXI+C+nI+5NsaRAfwQ2oaU47dA=;
+        b=QEN6h+gFnhAizk+sz5FKzqpmyiOKBlXqP2VfG1sp6HTtGerncy7xR+S83zJ49vRbcZ
+         8YbVAUaJ5H4CVW/j/4uhHKFDt7+iU2lwT2OR2OtMwF6NH8DogafoswD5WJAZG/F7iZm2
+         c9hDD8dc0oe8srVfMDSr50xJpEsIiXtqp1jWb6u52XPamGLRoExw4GePRlhXviiefA1Q
+         D09IP3N8KQkLNsTS/3nG6Kif8fmiC68bXNEdIytZSCNVYe6grQ8Cn5kReg8wtXn850nj
+         bWNDm8SzFQXDaHjb0KhUeHROeUiS6IYkzQpO3RnsVZSvcVbk05TV/tSEDebfjWhye+GM
+         nYFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrTZTRr21ba/mTdYx0Iw2p9p/6lDoRJVrHOBQFPsYLitfcCOOfCnV+tgchvuxLRaRG6A+5xRnBO7TWKIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+nQmWY4K5I763zB0K86TdOdkaaoi5ZQ9FkCtw8DaBmfh/VUa+
+	hhwuoe4WHVvreoRQzns14i5LDg89Wqtz3uWFliLgLpOZ3+6Lf/+8cwf2BER8YF32CJ2oaFykbvn
+	SuZ05LpjSOPWWCSYl47ONaF/yBbGwPStZ8ieYIYc3iJZZST1Q04PaKExGizBJSmg=
+X-Received: by 2002:a05:6214:2268:b0:6c5:3338:45d5 with SMTP id 6a1803df08f44-6cde1635d54mr69115596d6.10.1729508675361;
+        Mon, 21 Oct 2024 04:04:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSOUk7F+0PG+KYcCOi0xlveTYyYfaksaIxdy5jdFMTlNyIJZuGZYLXKfzZqdvLn3luov5JYA==
+X-Received: by 2002:a05:6214:2268:b0:6c5:3338:45d5 with SMTP id 6a1803df08f44-6cde1635d54mr69115376d6.10.1729508675042;
+        Mon, 21 Oct 2024 04:04:35 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ed80fsm190291766b.46.2024.10.21.04.04.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 04:04:34 -0700 (PDT)
+Message-ID: <7fa066b6-a214-4866-9d0a-f75896531d84@oss.qualcomm.com>
+Date: Mon, 21 Oct 2024 13:04:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f578256-7e56-491f-a4ca-ad6caa72b7ae@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] soc: qcom: llcc: add support for SAR2130P and
+ SAR1130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
+ <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 9BNSEuKPffXi1qX8B1loWWlQ40Iu3HtP
+X-Proofpoint-ORIG-GUID: 9BNSEuKPffXi1qX8B1loWWlQ40Iu3HtP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410210078
 
-On Mon, Oct 21, 2024 at 10:24:37AM +0100, Ryan Roberts wrote:
-> On 17/10/2024 13:51, Niklas Cassel wrote:
-> > On Thu, Oct 17, 2024 at 01:42:22PM +0100, Ryan Roberts wrote:
-
-(snip)
-
-> That said, while investigating this, I've spotted a bug in my change. paddr calculation in sil24_qc_issue() is incorrect since sizeof(*pp->cmd_block) is no longer PAGE_SIZE. Based on feedback in another patch, I'm also converting the BUG_ONs to WARN_ON_ONCEs.
-
-Side note: Please wrap you lines to 80 characters max.
-
-
+On 19.10.2024 6:26 PM, Dmitry Baryshkov wrote:
+> Implement necessary support for the LLCC control on the SAR1130P and
+> SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
+> shift and also require manual override for num_banks.
 > 
-> Additional proposed change, which I'll plan to include in the next version:
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/soc/qcom/llcc-qcom.c       | 468 ++++++++++++++++++++++++++++++++++++-
+>  include/linux/soc/qcom/llcc-qcom.h |  12 +
+>  2 files changed, 474 insertions(+), 6 deletions(-)
 > 
-> ---8<---
-> diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
-> index 85c6382976626..c402bf998c4ee 100644
-> --- a/drivers/ata/sata_sil24.c
-> +++ b/drivers/ata/sata_sil24.c
-> @@ -257,6 +257,10 @@ union sil24_cmd_block {
->         struct sil24_atapi_block atapi;
->  };
->  
-> +#define SIL24_ATA_BLOCK_SIZE   struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE)
-> +#define SIL24_ATAPI_BLOCK_SIZE struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE)
-> +#define SIL24_CMD_BLOCK_SIZE   max(SIL24_ATA_BLOCK_SIZE, SIL24_ATAPI_BLOCK_SIZE)
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index a470285f54a875bf2262aac7b0f84ed8fd028ef1..ef84fe3b2af4e777126a8308bfd4ec47b28aeae2 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -32,6 +32,7 @@
+>  #define ATTR1_FIXED_SIZE_SHIFT        0x03
+>  #define ATTR1_PRIORITY_SHIFT          0x04
+>  #define ATTR1_MAX_CAP_SHIFT           0x10
+> +#define ATTR1_MAX_CAP_SHIFT_sar       0x0e
+>  #define ATTR0_RES_WAYS_MASK           GENMASK(15, 0)
+>  #define ATTR0_BONUS_WAYS_MASK         GENMASK(31, 16)
+>  #define ATTR0_BONUS_WAYS_SHIFT        0x10
+> @@ -140,6 +141,11 @@ struct qcom_llcc_config {
+>  	bool need_llcc_cfg;
+>  	bool no_edac;
+>  	bool irq_configured;
+> +	/*
+> +	 * special workarounds for SAR2130P and similar platforms which have
+> +	 * slightly different register mapping.
+> +	 */
+> +	bool is_sar_chip;
+
+This is not the only odd ball, please make max_cap_width variable
+
+[...]
+
+> +	/*
+> +	 * For some reason register returns incorrect value here.
+> +	 * List compatibles instead of using .is_sar_chip since there might be
+> +	 * SAR-like chips which have other number of banks.
+> +	 */
+> +	if (of_device_is_compatible(dev->of_node, "qcom,sar1130p-llcc") ||
+> +	    of_device_is_compatible(dev->of_node, "qcom,sar2130p-llcc")) {
+> +		num_banks = 2;
+> +	} else {
+> +		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+> +		if (ret)
+> +			goto err;
 > +
->  static const struct sil24_cerr_info {
->         unsigned int err_mask, action;
->         const char *desc;
-> @@ -886,7 +890,7 @@ static unsigned int sil24_qc_issue(struct ata_queued_cmd *qc)
->         dma_addr_t paddr;
->         void __iomem *activate;
+> +		num_banks &= LLCC_LB_CNT_MASK;
+> +		num_banks >>= LLCC_LB_CNT_SHIFT;
+> +	}
 >  
-> -       paddr = pp->cmd_block_dma + tag * sizeof(*pp->cmd_block);
-> +       paddr = pp->cmd_block_dma + tag * SIL24_CMD_BLOCK_SIZE;
->         activate = port + PORT_CMD_ACTIVATE + tag * 8;
->  
->         /*
-> @@ -1192,7 +1196,7 @@ static int sil24_port_start(struct ata_port *ap)
->         struct device *dev = ap->host->dev;
->         struct sil24_port_priv *pp;
->         union sil24_cmd_block *cb;
-> -       size_t cb_size = PAGE_SIZE * SIL24_MAX_CMDS;
-> +       size_t cb_size = SIL24_CMD_BLOCK_SIZE * SIL24_MAX_CMDS;
->         dma_addr_t cb_dma;
->  
->         pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
-> @@ -1265,8 +1269,8 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->         u32 tmp;
->  
->         /* union sil24_cmd_block must be PAGE_SIZE */
+> -	num_banks &= LLCC_LB_CNT_MASK;
+> -	num_banks >>= LLCC_LB_CNT_SHIFT;
+>  	drv_data->num_banks = num_banks;
 
-This comment should probably be rephrased to be more clear then, since like
-you said sizeof(union sil24_cmd_block) will no longer be PAGE_SIZE.
+This too
 
-
-> -       BUG_ON(struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE) != PAGE_SIZE);
-> -       BUG_ON(struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE) > PAGE_SIZE);
-> +       WARN_ON_ONCE(SIL24_ATAPI_BLOCK_SIZE != PAGE_SIZE);
-> +       WARN_ON_ONCE(SIL24_ATA_BLOCK_SIZE != PAGE_SIZE - 16);
->  
->         ata_print_version_once(&pdev->dev, DRV_VERSION);
-> ---8<---
+Konrad
 
