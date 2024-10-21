@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-374435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50519A6A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5729A6A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD4A1F24918
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB256282273
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4DF1F80A9;
-	Mon, 21 Oct 2024 13:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681751E1C3B;
+	Mon, 21 Oct 2024 13:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TnZuXthQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Vf7B2c8q"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8667611CAF;
-	Mon, 21 Oct 2024 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9394194C62;
+	Mon, 21 Oct 2024 13:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517223; cv=none; b=OOKcGin94OUFDUpscKxJpTTRsDzeGeAfSPETsj8G3MwntoRqY0LUdl3beRj7J8wzQ5lpUr4FS1P7Q5g87u3NDbZeUhUwUF5kYxLeU4/6HiVHw8ZKcSoMFbtuF7w7lLDPRCg3BG6VVhO7GVXF8a4STy/PQgy3KbWrh7EisU/qHx8=
+	t=1729517258; cv=none; b=XHdNsCvJDCtK1qsEyfhDGk6CeqbU/qy15F3nfo/LHkjG+CLSspIgYKE6q4dfWj8+eXeerrvJZDTyArky0/MAgqu87n5fklnV31if+aFY4RhFWFihfbBaKESnohe6xRg4lXstu8suyhmNdup8NkTfDq35xC+I7m4Wqz7Ubv8UkJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517223; c=relaxed/simple;
-	bh=vHZReT131qYAQIRC36w6bRZrUk6yYQYEHOdtxNEqOno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MmxobyLVGTZd1uNOF0IH8LsGO8nNlB7Z83LRkfzciz1VpaX2qFgVNwr6M+Rb5q3z3Ga1NJ1mbeP8imTPx5C9KmmvjrmTpKrk5V5PABnJTo0GWXzlnxdy/ZIMFvzGI2UzX6ZDg12UtE6fSVGybQl/bHpFs1PDUFp88SobTqnkGGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TnZuXthQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729517219;
-	bh=vHZReT131qYAQIRC36w6bRZrUk6yYQYEHOdtxNEqOno=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TnZuXthQvTvqIhI8Sk0kmleB2OdsE5pZJAKJEu6M9GTGF5o3H/F5pLZdggbNWEQn3
-	 SlmKIjoMYCie61uHVofuM+knmQgknm8OnkVORHsChJeutmZjIkjgsE9FSz5f4K/1Za
-	 djl8BqkvzfKo7GTgjoQXmgFxWxYeFtkIZ0t6OOEMyX4i3V+17XWmt0nCzSJ9wL4Lji
-	 fkgODNJOHDGPfRVgShXup1iXHj9yyEqa2AFZMNZaBHrlA5ug/mqjSNaCbGBK3YEuYO
-	 BjFsyiDALgYpdl81UrSz1mfyB73toOQaYW406f3Jgbd7meprGe02KAWJjqda3ZY3kU
-	 HjTRbLZVyCqYg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9D98617E3612;
-	Mon, 21 Oct 2024 15:26:59 +0200 (CEST)
-Message-ID: <3e218c65-608c-437d-a464-6502a8dcea6f@collabora.com>
-Date: Mon, 21 Oct 2024 15:26:59 +0200
+	s=arc-20240116; t=1729517258; c=relaxed/simple;
+	bh=tpUMAOXEdQHMV/LTUs7UVRMGe8vwcmFVR8ILTP6wDLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgjJ39/SPbkfxoEEvKp6Outra8aYaTb1aAwpvSTeMYDJWof2Jp1oiveCJ5pMiN6RPvrC5GROseioX1Eruql29KmaFoGMFv+g6EN9HWsyZ/GxzsdqqarXm0oJSNhdAbWZD5mlqRwlLy5DuQJX7v5zd7cWG9VN01rxje78dOro05M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Vf7B2c8q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=oyGvjz3/Hib5fIbnXMnThAnbAp+YfY0g/qjJuNmpK4E=; b=Vf7B2c8qiEwkPVEwyBcYyfO60W
+	ioO34B4XYd++tnetkNAqExZEqPVXB5v/j6vULA/sT4YpCzZMazXIqcCo/A8XKYr0pvhjeRmAujCHP
+	uEQiS7X6XEbId/OSkwXV1uow9Eku1mO7mWIrIf174yXI9Lp4onWcoSU3gm4sfrnNbrLA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t2sRK-00Aj01-4D; Mon, 21 Oct 2024 15:27:18 +0200
+Date: Mon, 21 Oct 2024 15:27:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+Message-ID: <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-5-inochiama@gmail.com>
+ <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
+ <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8186-corsola-voltorb: Merge
- speaker codec nodes
-To: Chen-Yu Tsai <wenst@chromium.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241018082113.1297268-1-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241018082113.1297268-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
 
-Il 18/10/24 10:21, Chen-Yu Tsai ha scritto:
-> The Voltorb device uses a speaker codec different from the original
-> Corsola device. When the Voltorb device tree was first added, the new
-> codec was added as a separate node when it should have just replaced the
-> existing one.
-> 
-> Merge the two nodes. The only differences are the compatible string and
-> the GPIO line property name. This keeps the device node path for the
-> speaker codec the same across the MT8186 Chromebook line. Also rename
-> the related labels and node names from having rt1019p to speaker codec.
-> 
-> Cc: <stable@vger.kernel.org> # v6.11+
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> It is related to the RGMII delay. On sg2044, when the phy 
+> sets rx-delay, the interal mac is not set the same delay, 
+> so this is needed to be set.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+This is the wrong way to do it. Please look at how phy-mode should be
+used, the four different "rgmii" values. Nearly everybody gets this
+wrong, so there are plenty of emails from me in the netdev list about
+how it should be done.
 
+    Andrew
 
+---
+pw-bot: cr
 
