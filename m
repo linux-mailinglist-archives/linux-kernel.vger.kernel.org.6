@@ -1,128 +1,211 @@
-Return-Path: <linux-kernel+bounces-374364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7189A6911
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285D99A6918
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9FC28280C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A861B1F2186A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484AD1F4736;
-	Mon, 21 Oct 2024 12:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC981F4FD5;
+	Mon, 21 Oct 2024 12:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGuDbay+"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BxinkhbI"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26EB1D1E7A;
-	Mon, 21 Oct 2024 12:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D901E8853
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515013; cv=none; b=nsE1dQjy4ZLjDHfNPHVPJESgXLXpnUz5KqR5TnhzFC9IDsLWs3IXfK9OGbKzoPkuYRxuoZkAuzSdUrrHV+YfDZR9sFwLS2wkYqMTWI/jvUgKpsxYnz8y3unFdL36FgkI7ze5l5uXlYy/Y+Grk8xjRFOo62i+KXClE4QQNuwg7d8=
+	t=1729515073; cv=none; b=km6DNUObY9AGQlQvIKY0jsnv4DjW9QavYdarHE6Wiy8j5v8syBzar3KiSIGCEjwphiapBiLAUlXjJvVbYAvWM+AfJkZ8grL2zPqNgBBMowhoD9F+cgGAUGfM9YIC9iu+xEw4u2jL80fVuqH6xN3Hj57hLdRPPAQgEzB/T2EfCVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515013; c=relaxed/simple;
-	bh=7+WybbgX8eJAkMNsicvpmq9LMNsc3BufzyLQqCYGQLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEFuHF6nB1RSHzfcZRvrqqJTkaFKSKS6+4PlN3AAgX3hby0RYiV0xU4G3knMJwxvzb56apJ/Dt4A/oySD8jRx+ZAK2WFrnnLwKoW5ZAFphHNINVupwW4G0iBbDb3mY4eKKBgytnDHjTITVI0g2uE4u2BzKEaa1V2K5rqIwO+BFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGuDbay+; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso3561958f8f.3;
-        Mon, 21 Oct 2024 05:50:11 -0700 (PDT)
+	s=arc-20240116; t=1729515073; c=relaxed/simple;
+	bh=V94Ij3ae1rZVmL+jxKjTKUB+2p4lVCFw5V42wkRlmNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EIWh6f0TGEOKeIcOamlaQzZvY+mtb/PH9jra8UvS4lgC0EK5DHN0k0YpJrTyDl2kLIa2iJnfEYGvZEQhajEI5ptU1kaUtRSsxSzMzQnTy7ntpB/M/8AsFrRbfQIsvZVK/MvPCZB/VoEmHrh4ByJpA+Ab0GaiXhrXB7joN0ibWj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BxinkhbI; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e3f35268so2523811e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729515010; x=1730119810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ny2EzjP6BQ8EDbZh2xO7tlOnTQLXpJSSlQMga51ck5s=;
-        b=lGuDbay+whuVUKmH8wbpHzvRithE+WvmRUZjAurpiQJ6ufdIO99S8/Ahu5t7UHySqU
-         2l1MVNa8rEd3ikVF6t7pEPbUj7Tm6Ha3wBR5AKhas+DPojwgRr5wJ/cqHRPotJyo9GMv
-         EhgkAolZVjW0vwoa1s0VdF51JPHwCYNPTlb0L6IBIWJchMcYC6Led2QRq4+TdX+ZmEW+
-         ZUtvvlxIE+getl+zCYLRAg7S3J7QbT7rRUdNa8ZNqDBB2JRP/N34u2Er9uW9aN2NOvFP
-         H0FjiQ8lWa8L0jkOIg0+59CLvx8ZjkdEEBH4Jyl3RUNiu+Bf+J6J5QW+xXBrb4nfJwgz
-         j3Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729515010; x=1730119810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729515068; x=1730119868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ny2EzjP6BQ8EDbZh2xO7tlOnTQLXpJSSlQMga51ck5s=;
-        b=XvDcCOCBo6ZpUax76JFNuhMulMbj9X+5xOaRMKMOtN9KbV0L7ITAzZlSSkcxqjQpnv
-         k3Ml+1serqbRqfMAE+Ke21S7R5M2mZhivGaLvZv2j1bK3v8AbJJLVgdl+RHzuVjEspUm
-         A27QT2587UB2gpx+wkRW/lH/htb1srBI/n3urn8mFNRUUp0TojMB12ZvXdPLaZGAZMzJ
-         MA8XkzBm4R6X1gtpE+T9Xi6mdi4Wa5lqod4tjVTFm7DqPLagBDUUGJxtW9N24aBq1eui
-         3HJNA5CTSI6xGkK+KgdRDYgj+url/r5UFI/MdkI4tY34oBx3NBhGZ1T/nx/tdgDjTybz
-         ZfCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuOjPs+vJTsQPCHXRd7jpLb2rNW1UQlZ+cc0KQdMKHpToJzXxEoVXE6rGQKyx+k41CbWpaYBfTlwbaBSw=@vger.kernel.org, AJvYcCVriMOu3VcBU9napwY8M0BHfs6+VQAgAb8SOvRwJhC8eA2coSIYVEDjxiGB1EjSX2s0Sy6VgZ+euwOWJN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ9jRqadIiwNZp0c6YUGTx+rGmiwjx2zaFJHDWVms+VRdrSSv/
-	a8ZaFlORlJgU0SvI1RtrQz6GyhZqEOI3Jl5Hfr8JUkCnu2qI7Oh1
-X-Google-Smtp-Source: AGHT+IEAd4G54DP9Gc8AV0E85ByBWJ8OgZpAqArfj+Z35pEgsQmtE6MKuAwRT3EfahSpc4WUOuY+eA==
-X-Received: by 2002:adf:f8c7:0:b0:37c:d57d:71cd with SMTP id ffacd0b85a97d-37ebd3a30dcmr6732276f8f.52.1729515009956;
-        Mon, 21 Oct 2024 05:50:09 -0700 (PDT)
-Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a485dcsm4273254f8f.34.2024.10.21.05.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:50:09 -0700 (PDT)
-Date: Mon, 21 Oct 2024 14:50:07 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-Cc: jckuo@nvidia.com, vkoul@kernel.org, kishon@kernel.org, 
-	jonathanh@nvidia.com, nkristam@nvidia.com, linux-phy@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
-Message-ID: <v4ng6ctnwymoorzbaqo3xsbqtd6ocg73iau56m7ineykbpxsi6@hgv4y66d36or>
-References: <20240930191101.13184-1-kdipendra88@gmail.com>
+        bh=y4x0frPjt5/BOSJ9+yy/X3eM08JC+jz1BkqZ97LB2LU=;
+        b=BxinkhbIolaZt7V0mXqJwX1rjsQq5gLUkpj0/0egfWJIczRp+6fczOr0/MloDhqncM
+         oPL66Jwead4z/83KS3lQGCWG2r9xa2IM5mq3FNUDY+V0WwujlXUo8WK3jzyfIMOEMdeo
+         a5/I9l2xjPh9+MauM35OH2Yklj6Xz3+0+30wYDvNUO2wBffp3Z11tx6UczFj7xOcTtf/
+         lo5bt/v5jZpxxRVopqBV9k/Oag/Q5S1m3UcaOaMJc6ZI6tKz1KUcd2dhCBJXA+EaAihk
+         jripIz+9Fw+89KcmYLyeItz+3aZQ0cfU2NNJMe/h5jgI/DH+u5w+/6I/XAJAH5ZaVT8M
+         hPnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729515068; x=1730119868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y4x0frPjt5/BOSJ9+yy/X3eM08JC+jz1BkqZ97LB2LU=;
+        b=VW16H8wGG9ey6Mbn+WEfv4ut7bpXSbIz+iHOQXxeZhgidhPzvOk+HiTpRBvNKVh3c9
+         6+lj7pAoeCwTFItqI58wGR2FKJyhslE+I6nQ+/crxsCZQVmcMywDowJsapcCSfsm+P30
+         zAk4Oz8dCE8fY3hX5pdMR04pq6LK7MPo8hmj44rnyPyO6PKdiKNng6JHKchj+JfdaDdl
+         S043ZBBHjuUOLfuy8J703gnswSnnsFggHBkvArnlsuztC3et2qEutm1MYGAq7ZlyTf5u
+         YaBK2/4b7kuyJ7P1w5sm6loQ8OIeiLEPgCCWQT+qTVN7mwwC4ayFN4beBWWmWFbtYr7v
+         e60g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmKUB8jHWOrB5uxQ9UHScr5yvvZ61FYZIXkN2BwWjJZdZ+AVv+fL7CrccgezqCClyHQkAqA8nxDblBEpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywBOwrtR5vPxdGzA7UngPTqBx9GXsoT50XQ9ULLtpD+4HjZjN7
+	MkGzikItdMR/2arhcA+lsHRkHKlLd5eAbFVfgHk4xDJfgIbYgJkxi8IWx9bz2MnvJOWQBUgwxw9
+	HT8KjQcbiR6Pu4NVg6rNou3Ut01rXDywP/mjSxg==
+X-Google-Smtp-Source: AGHT+IE+MWgG9ymZWSMfk2GnXFlKQTXntyhXseGsCdBrJgITVmJEdzAzJOSda4D1TD0k+L/IINSDoacMOfpYM6ib3uo=
+X-Received: by 2002:a05:6512:1383:b0:539:d428:fbdd with SMTP id
+ 2adb3069b0e04-53a1546d2f9mr5522728e87.53.1729515068095; Mon, 21 Oct 2024
+ 05:51:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nyexhj7aoiso3top"
-Content-Disposition: inline
-In-Reply-To: <20240930191101.13184-1-kdipendra88@gmail.com>
-
-
---nyexhj7aoiso3top
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com>
+ <20241021-ad7380-fix-supplies-v2-4-2ca551b3352a@baylibre.com> <037d7ebb4d037edb32f9d717e456ab545621ea94.camel@gmail.com>
+In-Reply-To: <037d7ebb4d037edb32f9d717e456ab545621ea94.camel@gmail.com>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Mon, 21 Oct 2024 14:50:55 +0200
+Message-ID: <CAEHHSvZxrt3cPmmLwNj9nts9KhBWg4CwnzWnoTXYJL30AbJBsA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] iio: adc: ad7380: fix supplies for ad7380-4
+To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
-MIME-Version: 1.0
 
-On Mon, Sep 30, 2024 at 07:11:00PM +0000, Dipendra Khadka wrote:
-> Add error pointer check after tegra_xusb_find_lane().
->=20
-> Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
-> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> ---
->  drivers/phy/tegra/xusb.c | 2 ++
->  1 file changed, 2 insertions(+)
+Le lun. 21 oct. 2024 =C3=A0 13:18, Nuno S=C3=A1 <noname.nuno@gmail.com> a =
+=C3=A9crit :
+>
+> On Mon, 2024-10-21 at 12:00 +0200, Julien Stephan wrote:
+> > ad7380-4 is the only device in the family that does not have an interna=
+l
+> > reference. It uses "refin" as a required external reference.
+> > All other devices in the family use "refio"" as an optional external
+> > reference.
+> >
+> > Fixes: 737413da8704 ("iio: adc: ad7380: add support for ad738x-4 4 chan=
+nels
+> > variants")
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+>
+> Hi Julien,
+>
+> Patch looks good. Sorry if this already came out in the previous version =
+or in
+> the other patchset you mention but shouldn't this fix come first in the s=
+eries?
+>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Hi Nuno,
+That was my plan at first, but doing the
+devm_regulator_get_enable_read_voltage() first, simplifies the next
+changes ... and also eases the review :)
 
---nyexhj7aoiso3top
-Content-Type: application/pgp-signature; name="signature.asc"
+If needed I can do the rebase
 
------BEGIN PGP SIGNATURE-----
+Cheers
+Julien
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcWTf8ACgkQ3SOs138+
-s6Fxeg/8CQxyMg/0RjT7XVFwK6GWeQolN/rpQBX76LH9QVf2dd9MH6tLXjcmRhbO
-dKW6TvkSnAG42z8q4Z8jrnPG3IhcR9ElV/Qddh2N8BfH5i/OZ0p9VQOHDYMxvV0n
-SCybULwwRHm/l6smmCAold+hHaKrb8J3YbHqZUVw0weRoKgvRH63DYsBt2GJExz+
-lzjHv55Lva0sqMemJNMDZ76bYsTHXlhQynMspfopAfbG9O6i/SCxti81Qde+tm/N
-9M7qynuPRyoj5CI9DV9JZaR3DUAlBjCKl2A2kD/ZxoTiQ6bTlR+4zge3cDWpq9VR
-0z+3cYo1XWJ+MmU7iA/AmAPxw1+gA5rRUSHbEFokBKhK64F1bYbr1PKqjtKq/i2D
-htU+/yyUE4EBBYg5LhNfYV9S58egs1pPHiDr48D4yqWwRT+n2g5u3cn4Rp5IBomI
-0fp1ZWtnil/QMwdNLBAK1q0WNmvKl35YxmQ+Mcj68um7S31212iblIgntjDX/FJr
-i1in1E+sNouSARS+znU4dQcs5m642gVlNA25xw+fR77NkZD6VdhT1jS7i9AQkjBT
-MhVxNFqrsGW1+hRoU7VpUaJYk5pKUIkQqmRBSeCwqtbEzUonorZ6AZzIAUGPgZIe
-mpJdZ93LLRgxDiDiVRg/FBzEVwXTlxxln2aFkD/abIWLUExfmeA=
-=9qzA
------END PGP SIGNATURE-----
-
---nyexhj7aoiso3top--
+> Anyways, for the patch itself:
+>
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>
+> >  drivers/iio/adc/ad7380.c | 36 ++++++++++++++++++++++++++----------
+> >  1 file changed, 26 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> > index
+> > e257f78d63edd7910fcb936ec5344922f8e70b99..65096717f0dd3ea6a4ff7020bc544=
+d62b84c
+> > b8fd 100644
+> > --- a/drivers/iio/adc/ad7380.c
+> > +++ b/drivers/iio/adc/ad7380.c
+> > @@ -89,6 +89,7 @@ struct ad7380_chip_info {
+> >       bool has_mux;
+> >       const char * const *supplies;
+> >       unsigned int num_supplies;
+> > +     bool external_ref_only;
+> >       const char * const *vcm_supplies;
+> >       unsigned int num_vcm_supplies;
+> >       const unsigned long *available_scan_masks;
+> > @@ -431,6 +432,7 @@ static const struct ad7380_chip_info ad7380_4_chip_=
+info =3D
+> > {
+> >       .num_simult_channels =3D 4,
+> >       .supplies =3D ad7380_supplies,
+> >       .num_supplies =3D ARRAY_SIZE(ad7380_supplies),
+> > +     .external_ref_only =3D true,
+> >       .available_scan_masks =3D ad7380_4_channel_scan_masks,
+> >       .timing_specs =3D &ad7380_4_timing,
+> >  };
+> > @@ -1047,17 +1049,31 @@ static int ad7380_probe(struct spi_device *spi)
+> >                                    "Failed to enable power supplies\n")=
+;
+> >       msleep(T_POWERUP_MS);
+> >
+> > -     /*
+> > -      * If there is no REFIO supply, then it means that we are using
+> > -      * the internal 2.5V reference, otherwise REFIO is reference volt=
+age.
+> > -      */
+> > -     ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "refio"=
+);
+> > -     if (ret < 0 && ret !=3D -ENODEV)
+> > -             return dev_err_probe(&spi->dev, ret,
+> > -                                  "Failed to get refio regulator\n");
+> > +     if (st->chip_info->external_ref_only) {
+> > +             ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
+> > +                                                          "refin");
+> > +             if (ret < 0)
+> > +                     return dev_err_probe(&spi->dev, ret,
+> > +                                          "Failed to get refin
+> > regulator\n");
+> > +
+> > +             st->vref_mv =3D ret / 1000;
+> >
+> > -     external_ref_en =3D ret !=3D -ENODEV;
+> > -     st->vref_mv =3D external_ref_en ? ret / 1000 : AD7380_INTERNAL_RE=
+F_MV;
+> > +             /* these chips don't have a register bit for this */
+> > +             external_ref_en =3D false;
+> > +     } else {
+> > +             /*
+> > +              * If there is no REFIO supply, then it means that we are
+> > using
+> > +              * the internal reference, otherwise REFIO is reference
+> > voltage.
+> > +              */
+> > +             ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
+> > +                                                          "refio");
+> > +             if (ret < 0 && ret !=3D -ENODEV)
+> > +                     return dev_err_probe(&spi->dev, ret,
+> > +                                          "Failed to get refio
+> > regulator\n");
+> > +
+> > +             external_ref_en =3D ret !=3D -ENODEV;
+> > +             st->vref_mv =3D external_ref_en ? ret / 1000 :
+> > AD7380_INTERNAL_REF_MV;
+> > +     }
+> >
+> >       if (st->chip_info->num_vcm_supplies > ARRAY_SIZE(st->vcm_mv))
+> >               return dev_err_probe(&spi->dev, -EINVAL,
+> >
+>
 
