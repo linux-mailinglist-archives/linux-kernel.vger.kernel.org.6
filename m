@@ -1,206 +1,173 @@
-Return-Path: <linux-kernel+bounces-375152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F82F9A91A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6788A9A9157
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1101C24C92
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96BAB1C21BE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91131FE0EF;
-	Mon, 21 Oct 2024 20:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD151FDFB8;
+	Mon, 21 Oct 2024 20:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b="iQaT7NUx"
-Received: from matoro.tk (matoro.tk [104.188.251.153])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CKXNTed6"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681941C9EDD;
-	Mon, 21 Oct 2024 20:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.188.251.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732E51FBF56
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729543867; cv=none; b=FIiRgUCItOxC//LSXC0bJvj6ToX3Orx1eltk3R8i3w1VfsJCOuOMT7Vk+Ghmmh+ESsbyULqdc3qF20BFtO+u8B51PgxiUG6RmqxdzDlj07UHW1pF7JdwYJNKIDKnS5cwGqN0ZCCxDoizv9dKJqrg9LdMkyAT+8805/5MkQHBwGw=
+	t=1729543023; cv=none; b=nTzrCrQtYR0klsOQqhtosEeJbkg7TyDCo1JEsX3ms+6D/yK8ic6d/ONbaD7x2ZnxpoSHe/d7JYFw2C5OCcSB1FwLYmOSCgqd1jccTySwRHcO4JVlVYl8uYpkzK2QXOga/T2klWpdsQOCsmli6Tsy+3FVYoNUyjhwSyu1Km3bAyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729543867; c=relaxed/simple;
-	bh=owsn1q/hvcIZGEc2BuA64YfBEhtF/nMpTR5LxSzQUwQ=;
-	h=MIME-Version:Date:From:To:Subject:Message-ID:Content-Type; b=gABZw7yB3WYYViBFcZ0o/SL9ImsPmuZRdIn3auqgBpQpijUjR7h7jupNlGjC/Y8Xue6f9XN17ongHcg5z+y0cbI2k6vTbEWDHLSFNZ2ZGbfboXh4HFpiCwGsMqQOKKuj1HY7F2lw3xql78KO/n26iessYgB9T6t7A/CUIFOSNx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk; spf=pass smtp.mailfrom=matoro.tk; dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b=iQaT7NUx; arc=none smtp.client-ip=104.188.251.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matoro.tk
-DKIM-Signature: a=rsa-sha256; bh=4AoEF/INFuOSvZ5yTzU8RRLz1qRNjLhxw4DMjISGWWM=;
- c=relaxed/relaxed; d=matoro.tk;
- h=Subject:Subject:Sender:To:To:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
- i=@matoro.tk; s=20240828; t=1729542952; v=1; x=1729974952;
- b=iQaT7NUxeo4cDq2HUa0+f41L6SbFSe3vI8lqA1lBFVUf9hGXfxsZAZw/H7R6OlAj0YRpylhg
- Z696ElGZjr6eIqkQKCzO5HUfIti6rYzLZgeNifEaIeoPXLfSjVX3NRgFyz8fxHhEiwgSjvSnBpi
- YlxYgPdjh2C6KNMDPYea+NbLKtA9LTO/ZOH3EfhI0zLGx4aXRzVTQsJtA7zRVHXVQI+Le0snP/U
- xj0rIo3hkB0ENb3KQvJHHNeTuDl2Zmui66WIxNmR9AiL8xH06YwKM6qviaj9bcebCgiOKKZPmQO
- hsfGRSOqnxwwVKtlSJTAvix/jdwd3JwIX90lyLB5lO9aoGEB/CzoVbIbUCntjm+o55afZWcWn9t
- 8mcG1wp5F6CAgoJ2M6YibCVu+LKf+Ln/vZ10SOO2gil8RZk+32wNmRvGthMkoiMeKv/AHdq/Q/H
- sJbSRYl2EzCmCq4o6evSc4tYksqV1Agah98ez6Oy6W2suVU3QrQyKQabeFaeAhbm6wtvyHJ5yMI
- dvtm0tv6Xm/Lhx12fWgwYxO1ga0kuWIxiSV/o99V1e0wI9tUowkPkZo9tvQbSo5MM7YfNIjtmnT
- DOw+Zq/E98owE5tDOr1/HOmmDc5jmeyzKPV/FcF8oYln4PrQsYhZQvPonFKML0C85NFMcSVN/J9
- uvXPz9ik1c4=
-Received: by matoro.tk (envelope-sender
- <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id 4eb3a98f; Mon, 21 Oct
- 2024 16:35:52 -0400
+	s=arc-20240116; t=1729543023; c=relaxed/simple;
+	bh=3BLj+3yhD748I/r0mF9XZVwihCLj7hfN2EkqM3NrUIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OAEw7kWlk3Y+xCl5lZJvvExW+j6XNm019O4X+jpvB/iR6aTOkJt8LwYtG+WG07xOSfeHcrnVOug4HTZhFZQgnPIsxc3QQDB/yE5lpWvstuWlqhkLjuZhYioS5GvE3KxQY0dZkkP95YXeg28lctNoiMDj342e8WH2NYB9kl+pU+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CKXNTed6; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83ab3413493so157606539f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729543020; x=1730147820; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0LDzS8XBxlPJ8LeGX1kjubIGqVbUJ8pCbQpYyZJmaIw=;
+        b=CKXNTed6y37vETdFMkTIROyMUBi5n5WSeDuUG5+4C4mCE1aD4kYhXyoAWFECjb34ES
+         eadfKx8Qq/PgZGjb+dolOPauLfE0xKZcYWlHyd5NwhJdY6r14lqzVVU3N86JM6Nps2u7
+         8DPdbZsjNXuSARgtwssQOEvl/zDLL7GwuMSpc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729543020; x=1730147820;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LDzS8XBxlPJ8LeGX1kjubIGqVbUJ8pCbQpYyZJmaIw=;
+        b=bRhI7x7Uqgf/wajf6/iulsJI+e2lmRUJKFlXTzuTI294wu/tQ+tIUZHiuLy09G5iTI
+         j4vg+04O/5/XRwZ6BaZ0XOpeIdga3He5TP6WLITMTiY0A7bT1jStJHTjh2ec8GTxjXgm
+         8G3rVb3DYhQfGq6cgls2IKT9OAxdD/vHA81IbZwmYAE+N0Z/ll3Q5DynnUo2zCiNir9i
+         xtw1c1rNlWiN/4JrubbR/HJc/31w3bZriIT+szW0nTMzfjljGghtVhEYXhmU66C+R+aM
+         ieEINahvDPLZQv/0UJZROaZlH1b4EG1AFqSPbXyIiDnlrJOfWbiIFFZkUxaIuxt+io1T
+         cfKQ==
+X-Gm-Message-State: AOJu0Yx8YRQKZZriinU//8M+CFz0eodtt3OBDhvm2e3ApvJPvX639Xml
+	h1DgAVa4ZPCBgdHpRHIn5RzvOvS1zzWmgaxnIqtlEeoivZKa4JE/S/FqJRI3frhXJvJcgy+NxFK
+	6
+X-Google-Smtp-Source: AGHT+IEig6+d2k16HjNVgjv3iEenex2U3S+h9GabtGXCrH8EGB9qAuXmoSN7JYXZE23N3jGZCOBnig==
+X-Received: by 2002:a05:6602:6018:b0:82a:3552:6b26 with SMTP id ca18e2360f4ac-83aba66aaa5mr917333239f.15.1729543020429;
+        Mon, 21 Oct 2024 13:37:00 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a661aeesm1205668173.179.2024.10.21.13.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 13:36:59 -0700 (PDT)
+Message-ID: <d8cfed44-3bc0-4774-b39c-05fa0b82f6d8@linuxfoundation.org>
+Date: Mon, 21 Oct 2024 14:36:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 21 Oct 2024 16:35:52 -0400
-From: matoro <matoro_mailinglist_kernel@matoro.tk>
-To: linux-input@vger.kernel.org, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Input: xpad - enable & autodetect Flydigi extra buttons
-Message-ID: <42fe05eb92b4b03791a78c8cbc552562@matoro.tk>
-X-Sender: matoro_mailinglist_kernel@matoro.tk
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] implement set_enabled functions on powercap.c
+To: Vishnu Sanal T <t.v.s10123@gmail.com>, linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, trenn@suse.com, shuah@kernel.org,
+ jwyatt@redhat.com, jkacur@redhat.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241019124233.194140-2-t.v.s10123@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241019124233.194140-2-t.v.s10123@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-This adds a framework for supporting additional features on devices
-piggybacking an existing USB vendor/product ID but distinguishing
-themselves via the idProduct field.  This is necessary because the
-Flydigi Vader Pro series controllers reuse the same vendor/product ID as
-orginal Microsoft Xbox 360 controllers.
+On 10/19/24 06:42, Vishnu Sanal T wrote:
+> Implement the functions sysfs_set_enabled, powercap_set_enabled,
+> and powercap_zone_set_enabled on powercap.c.
+> 
+> Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+> ---
+>   tools/power/cpupower/lib/powercap.c | 43 +++++++++++++++++++++++++----
+>   1 file changed, 37 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+> index 94a0c69e55ef..1cf2b0de5536 100644
+> --- a/tools/power/cpupower/lib/powercap.c
+> +++ b/tools/power/cpupower/lib/powercap.c
+> @@ -70,6 +70,29 @@ static int sysfs_get_enabled(char *path, int *mode)
+>   	return ret;
+>   }
+>   
+> +static int sysfs_set_enabled(char *path, int mode)
+> +{
+> +	int fd;
+> +	char yes_no = (char) (mode + '0');
+> +	int ret = 0;
+> +
+> +	fd = open(path, O_RDWR);
+> +	if (fd == -1) {
+> +		ret = -1;
+> +		goto out;
+> +	}
+> +
+> +	if (write(fd, &yes_no, 1) != 1) {
+> +		ret = -1;
+> +		goto out_close;
+> +	}
+> +
+> +out_close:
+> +	close(fd);
+> +out:
+> +	return ret;
+> +}
+> +
 
-The MAP_FLYDIGI_BUTTONS is a new mapping for the C, Z, and Circle face
-buttons on Flydigi 360-compatible controllers.  It has been tested on
-the Vader 3 Pro and Vader 4 Pro.
+Why can't this all be simplified using system("echo 1 filename")
 
-These controllers additionally have 4 back paddles, same as the Xbox
-Elite controller, so it is included in the extra feature list.
+That goes for existing get routines.
 
-Thanks-to: Matthew Carter <m@ahungry.com>
-See: https://github.com/paroj/xpad/pull/268
-Signed-off-by: Matoro Mahri <matoro_mailinglist_kernel@matoro.tk>
----
-  drivers/input/joystick/xpad.c | 53 ++++++++++++++++++++++++++++++++++-
-  1 file changed, 52 insertions(+), 1 deletion(-)
+>   int powercap_get_enabled(int *mode)
+>   {
+>   	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+> @@ -77,12 +100,11 @@ int powercap_get_enabled(int *mode)
+>   	return sysfs_get_enabled(path, mode);
+>   }
+>   
+> -/*
+> - * TODO: implement function. Returns dummy 0 for now.
+> - */
+>   int powercap_set_enabled(int mode)
+>   {
+> -	return 0;
+> +	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+> +
+> +	return sysfs_set_enabled(path, mode);
+>   }
+>   
+>   /*
+> @@ -180,8 +202,17 @@ int powercap_zone_get_enabled(struct powercap_zone *zone, int *mode)
+>   
+>   int powercap_zone_set_enabled(struct powercap_zone *zone, int mode)
+>   {
+> -	/* To be done if needed */
+> -	return 0;
+> +	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP;
+> +
+> +	if ((strlen(PATH_TO_POWERCAP) + strlen(zone->sys_name)) +
+> +	    strlen("/enabled") + 1 >= SYSFS_PATH_MAX)
+> +		return -1;
+> +
+> +	strcat(path, "/");
+> +	strcat(path, zone->sys_name);
+> +	strcat(path, "/enabled");
+> +
+> +	return sysfs_set_enabled(path, mode);
+>   }
+>   
+>   
 
-diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 2b8370ecf42a..5088a97de73e 100644
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -83,6 +83,7 @@
-  #define MAP_SELECT_BUTTON		(1 << 3)
-  #define MAP_PADDLES			(1 << 4)
-  #define MAP_PROFILE_BUTTON		(1 << 5)
-+#define MAP_FLYDIGI_BUTTONS		(1 << 6)
-
-  #define DANCEPAD_MAP_CONFIG	(MAP_DPAD_TO_BUTTONS |			\
-  				MAP_TRIGGERS_TO_BUTTONS | MAP_STICKS_TO_NULL)
-@@ -387,6 +388,19 @@ static const struct xpad_device {
-  	{ 0x0000, 0x0000, "Generic X-Box pad", 0, XTYPE_UNKNOWN }
-  };
-
-+// A "flavor" is an aftermarket variant of an existing model supporting
-+// additional features.
-+static const struct xpad_flavor {
-+	u16 idVendor;
-+	u16 idProduct;
-+	char *product;
-+	u8 mapping;
-+} xpad_flavor[] = {
-+	{ 0x045e, 0x028e, "Flydigi VADER3", MAP_PADDLES | MAP_FLYDIGI_BUTTONS },
-+	{ 0x045e, 0x028e, "Flydigi VADER4", MAP_PADDLES | MAP_FLYDIGI_BUTTONS },
-+	{ 0x0000, 0x0000, NULL, 0 }
-+};
-+
-  /* buttons shared with xbox and xbox360 */
-  static const signed short xpad_common_btn[] = {
-  	BTN_A, BTN_B, BTN_X, BTN_Y,			/* "analog" buttons */
-@@ -444,6 +458,13 @@ static const signed short xpad_btn_paddles[] = {
-  	-1						/* terminating entry */
-  };
-
-+/* used for extra buttons in addition to paddles on Flydigi Vader Pro 
-series*/
-+static const signed short xpad_btn_extra[] = {
-+	BTN_TRIGGER_HAPPY9, BTN_TRIGGER_HAPPY10, /* C, Z face buttons */
-+	BTN_TRIGGER_HAPPY11,			 /* circle */
-+	-1						/* terminating entry */
-+};
-+
-  /*
-   * Xbox 360 has a vendor-specific class, so we cannot match it with only
-   * USB_INTERFACE_INFO (also specifically refused by USB subsystem), so we
-@@ -898,6 +919,17 @@ static void xpad360_process_packet(struct usb_xpad 
-*xpad, struct input_dev *dev,
-  		input_report_abs(dev, ABS_RZ, data[5]);
-  	}
-
-+	/* Additional buttons for Flydigi Vader Pro series presenting as 360 pad. 
-*/
-+	if (xpad->mapping & MAP_FLYDIGI_BUTTONS) {
-+		input_report_key(dev, BTN_TRIGGER_HAPPY9, data[19] & BIT(0));   // C
-+		input_report_key(dev, BTN_TRIGGER_HAPPY10, data[19] & BIT(1));  // Z
-+		input_report_key(dev, BTN_TRIGGER_HAPPY5, data[19] & BIT(3));   // 
-Leftmost paddle (M2)
-+		input_report_key(dev, BTN_TRIGGER_HAPPY6, data[19] & BIT(5));   // Second 
-to leftmost (M4)
-+		input_report_key(dev, BTN_TRIGGER_HAPPY7, data[19] & BIT(4));   // Second 
-to rightmost (M3)
-+		input_report_key(dev, BTN_TRIGGER_HAPPY8, data[19] & BIT(2));   // 
-Rightmost paddle (M1)
-+		input_report_key(dev, BTN_TRIGGER_HAPPY11, data[20] & BIT(0));  // Circle
-+	}
-+
-  	input_sync(dev);
-
-  	/* XBOX360W controllers can't be turned off without driver assistance */
-@@ -1958,6 +1990,13 @@ static int xpad_init_input(struct usb_xpad *xpad)
-  			input_set_capability(input_dev, EV_KEY, xpad_btn_paddles[i]);
-  	}
-
-+	/* set up extra face buttons if the controller has them */
-+	if (xpad->mapping & MAP_FLYDIGI_BUTTONS) {
-+		for (i = 0; xpad_btn_extra[i] >= 0; i++) {
-+			input_set_capability(input_dev, EV_KEY, xpad_btn_extra[i]);
-+		}
-+	}
-+
-  	/*
-  	 * This should be a simple else block. However historically
-  	 * xbox360w has mapped DPAD to buttons while xbox360 did not. This
-@@ -2012,7 +2051,7 @@ static int xpad_probe(struct usb_interface *intf, const 
-struct usb_device_id *id
-  	struct usb_device *udev = interface_to_usbdev(intf);
-  	struct usb_xpad *xpad;
-  	struct usb_endpoint_descriptor *ep_irq_in, *ep_irq_out;
--	int i, error;
-+	int i, j, error;
-
-  	if (intf->cur_altsetting->desc.bNumEndpoints != 2)
-  		return -ENODEV;
-@@ -2046,6 +2085,18 @@ static int xpad_probe(struct usb_interface *intf, 
-const struct usb_device_id *id
-  	xpad->udev = udev;
-  	xpad->intf = intf;
-  	xpad->mapping = xpad_device[i].mapping;
-+
-+	if (udev->product) {	// Only worry about extra flavors if a product string 
-is present
-+		for(j = 0; xpad_flavor[j].idVendor; j++) {
-+			if (le16_to_cpu(udev->descriptor.idVendor) == xpad_flavor[j].idVendor &&
-+			    le16_to_cpu(udev->descriptor.idProduct) == xpad_flavor[j].idProduct 
-&&
-+			    !strcmp(udev->product, xpad_flavor[j].product)) {
-+				xpad->mapping |= xpad_flavor[j].mapping;
-+				break;
-+			}
-+		}
-+	}
-+
-  	xpad->xtype = xpad_device[i].xtype;
-  	xpad->name = xpad_device[i].name;
-  	xpad->packet_type = PKT_XB;
--- 
-2.47.0
-
+thanks,
+-- Shuah
 
