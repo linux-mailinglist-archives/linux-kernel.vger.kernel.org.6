@@ -1,221 +1,130 @@
-Return-Path: <linux-kernel+bounces-374322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0359A6880
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:32:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50389A6895
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4525BB2257C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:31:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC79B25DE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5821EF08B;
-	Mon, 21 Oct 2024 12:31:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01241E573C;
-	Mon, 21 Oct 2024 12:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD3E1D1E6D;
+	Mon, 21 Oct 2024 12:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+TOnV9a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917771EF0B8
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513892; cv=none; b=ZYVu9+tFDKYJIbJ9rJXdxTeM/d30cGuBuo3yGRVTUjIak2sTh3L94aB95hgj41mRYEoZ5S82GbU5dbU1QES6TLGhQiyBzfLPOB/scJfb1t7hQwS1gKLr0AVYAtFmuN0K1dyyavKr8Hwyyi0T4YKh9nczH+CKFSp78b8et4Emy0o=
+	t=1729513934; cv=none; b=cXezd8jtxB5NRlO+BPYLOw5t0+sO+oYstjZ1i+n7zPnAQXr62d4C7TLHengn5C14pWxUoXxqfFDrwdInQzCGc2x80g5hFNdf4p/cxE7l9xIwhNrwYEZlmnwqGwYKnRgvULbhkuEy9SnIXntDGo01b1LS15W9NfJUYs6thFQvU+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513892; c=relaxed/simple;
-	bh=m92wye5DSFwxaHNNOjb5jrze6SyyyYf5jrfaCtnsBgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P0sGqztXGWsSsZtpeRhEX543wabVleSgqDSccOSoRWqUN1395ni0O9SuzbXf1FpzxHvLyNW7973qwt9QYruMdVtiEXkNMgnBKrGpoL1lHVWg0dI0s7GRxLRxkbZaQWkxrrxlAvYB0hWur/bpbyTkKrLeDYPdZ7kDF7IhX63/mHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A40C9DA7;
-	Mon, 21 Oct 2024 05:31:58 -0700 (PDT)
-Received: from [10.57.64.219] (unknown [10.57.64.219])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A7BE33F528;
-	Mon, 21 Oct 2024 05:31:27 -0700 (PDT)
-Message-ID: <b1b17552-646e-42e8-bd00-9c7ae6835612@arm.com>
-Date: Mon, 21 Oct 2024 13:31:26 +0100
+	s=arc-20240116; t=1729513934; c=relaxed/simple;
+	bh=sMI+4p6bbn4mBhWbUnHVUAiUgRt6suBuPrQ3jUQZuYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dLCbFywU+L2EX4soCr4IBYZ7dgRKTAzHjqjsC1mQTaHAoSc4JaBgthr08+5GwiB4tGE2IH84YJULD3IZLz6gNCfb8TkxmYLYli3ESfHlJE0Xpjsqwp5zbyboeeopA4bp07pNb9O5F1baMmfP/lIi9lQ1Q++ehjTRlJzY3PRmb7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+TOnV9a; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729513931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=171RL1+SWED9LX/FCBKVSSNEGIWh+rc7bti0upgcSBU=;
+	b=Z+TOnV9aPWc1AcHenY73HNwbteYHarYWCXT4FhQYkbwBrapLlAF3ScmO58/kUQRwn3T8FP
+	MZFtKRMyXJFPg0ChVfqkFE2PWrztccK/BpSDlTdygmVeJ1Cnc4BHqRUN7DLxFQNSXo0K68
+	uKPGYHncFokjmpNGvvhvrMvcUvW8QtE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-316--4m2MVPbNLGbiqHvXos0_A-1; Mon,
+ 21 Oct 2024 08:32:09 -0400
+X-MC-Unique: -4m2MVPbNLGbiqHvXos0_A-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 514C819560B8;
+	Mon, 21 Oct 2024 12:32:08 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.226.67])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A0196300019D;
+	Mon, 21 Oct 2024 12:32:06 +0000 (UTC)
+From: tglozar@redhat.com
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH] rtla/timerlat: Do not set params->user_workload with -U
+Date: Mon, 21 Oct 2024 14:31:40 +0200
+Message-ID: <20241021123140.14652-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] coresight: etm4x: Fix PID tracing when perf is run in
- an init PID namespace
-Content-Language: en-GB
-To: Julien Meunier <julien.meunier@nokia.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Leo Yan <leo.yan@linux.dev>
-Cc: stable@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240925131357.9468-1-julien.meunier@nokia.com>
- <20241008200226.12229-1-julien.meunier@nokia.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241008200226.12229-1-julien.meunier@nokia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Julien
+From: Tomas Glozar <tglozar@redhat.com>
 
+Since commit fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
+the default"), rtla-timerlat has been defaulting to
+params->user_workload if neither that or params->kernel_workload is set.
+This has unintentionally made -U, which sets only params->user_hist/top
+but not params->user_workload, to behave like -u unless -k is set,
+preventing the user from running a custom workload.
 
-On 08/10/2024 21:02, Julien Meunier wrote:
-> The previous implementation limited the tracing capabilities when perf
-> was run in the init PID namespace, making it impossible to trace
-> applications in non-init PID namespaces.
-> 
-> This update improves the tracing process by verifying the event owner.
-> This allows us to determine whether the user has the necessary
-> permissions to trace the application.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
-> Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
-> ---
-> Changes in v2:
-> * Update comments
-> ---
->   drivers/hwtracing/coresight/coresight-etm4x-core.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 66d44a404ad0..cf41c42399e1 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -693,9 +693,9 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->   		config->cfg |= TRCCONFIGR_TS;
->   	}
->   
-> -	/* Only trace contextID when runs in root PID namespace */
-> +	/* Only trace contextID when the event owner is in root PID namespace */
->   	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
-> -	    task_is_in_init_pid_ns(current))
-> +	    task_is_in_init_pid_ns(event->owner))
->   		/* bit[6], Context ID tracing bit */
->   		config->cfg |= TRCCONFIGR_CID;
->   
-> @@ -709,8 +709,8 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->   			ret = -EINVAL;
->   			goto out;
->   		}
-> -		/* Only trace virtual contextID when runs in root PID namespace */
-> -		if (task_is_in_init_pid_ns(current))
-> +		/* Only trace virtual contextID when the event owner is in root PID namespace */
-> +		if (task_is_in_init_pid_ns(event->owner))
->   			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
+Example:
+$ rtla timerlat hist -U -c 0 &
+[1] 7413
+$ python sample/timerlat_load.py 0
+Error opening timerlat fd, did you run timerlat -U?
+$ ps | grep timerlatu
+7415 pts/4    00:00:00 timerlatu/0
 
-Unfortunately this is not safe. i.e., event->owner is not guaranteed to
-be stable (even NULL or an invalid pointer) (e.g. kernel created events 
-or task exit raced event_start on another CPU).
+Fix the issue by checking for params->user_top/hist instead of
+params->user_workload when setting default thread mode.
 
-That said, one thing to note is that the ETM4x driver parses the event 
-config in each "event_start" call back, instead of doing once during the
-event_init. If we move this to a onetime parsing at the event_init, with
-additional checks in place (e.g, !is_kernel_event()), we may be able to
-solve it.
+Fixes: fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
+the default")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+---
+ tools/tracing/rtla/src/timerlat_hist.c | 2 +-
+ tools/tracing/rtla/src/timerlat_top.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
-e.g., I hit the following on my Juno, while running basic perf session:
-
-$ perf record -e cs_et//u -m ,256M -- /multi-threaded-workload
-
-
-
----8>---
-
-[  243.467425] Unable to handle kernel NULL pointer dereference at 
-virtual address 00000000000004b8
-[  243.475288] Mem abort info:
-[  243.475295]   ESR = 0x0000000096000006
-[  243.484097] Mem abort info:
-[  243.486890]   EC = 0x25: DABT (current EL), IL = 32 bits
-[  243.490644]   ESR = 0x0000000096000006
-[  243.493438]   SET = 0, FnV = 0
-[  243.498757]   EC = 0x25: DABT (current EL), IL = 32 bits
-[  243.502508]   EA = 0, S1PTW = 0
-[  243.505564]   SET = 0, FnV = 0
-[  243.510882]   FSC = 0x06: level 2 translation fault
-[  243.514025]   EA = 0, S1PTW = 0
-[  243.517080] Data abort info:
-[  243.521962]   FSC = 0x06: level 2 translation fault
-[  243.525104]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[  243.527986] Data abort info:
-[  243.532868]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[  243.538360]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[  243.541242]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[  243.546299]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[  243.551791] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000906d25000
-[  243.557109]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[  243.562166] [00000000000004b8] pgd=0800000906d2b003
-[  243.568615] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000906d25000
-[  243.573933] , p4d=0800000906d2b003
-[  243.578816] [00000000000004b8] pgd=0800000906d2b003
-[  243.585265] , pud=0800000906d2b003
-[  243.588668] , p4d=0800000906d2b003
-[  243.593551] , pmd=0000000000000000
-[  243.596954] , pud=0800000906d2b003
-[  243.600356]
-[  243.603760] , pmd=0000000000000000
-[  243.607165] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-[  243.608653]
-[  243.612058] Modules linked in: coresight_cti coresight_cpu_debug 
-coresight_stm coresight_etm4x coresight_tmc coresight_replicator 
-coresight_funnel coresight_tpiu coresight ip_tables x_tables ipv6
-[  243.637327] CPU: 1 UID: 0 PID: 413 Comm: sort-thread Not tainted 
-6.12.0-rc4+ #286
-[  243.644839] Hardware name: ARM LTD ARM Juno Development Platform/ARM 
-Juno Development Platform, BIOS EDK II Feb  1 2019
-[  243.655649] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS 
-BTYPE=--)
-[  243.662637] pc : task_active_pid_ns+0x8/0x28
-[  243.666937] lr : etm4_enable+0x538/0x7a8 [coresight_etm4x]
-[  243.672459] sp : ffffffc0859a3b20
-[  243.675783] x29: ffffffc0859a3b20 x28: 0000000000000001 x27: 
-ffffff880701bfb0
-[  243.682959] x26: ffffff8804dad900 x25: ffffff88045b4e08 x24: 
-ffffff88045b4d30
-[  243.690132] x23: ffffff880732c080 x22: ffffff8804cf6d08 x21: 
-ffffff880732c118
-[  243.697305] x20: ffffff880732a800 x19: 0000000000000000 x18: 
-0000000000000000
-[  243.704477] x17: 000000000000004a x16: 0000000000000075 x15: 
-0000000000000007
-[  243.711649] x14: 0000000000000131 x13: 0000019d0000019b x12: 
-003000000000000c
-[  243.718822] x11: 000000000000004a x10: 0000000000001790 x9 : 
-ffffffc07bd1a2a0
-[  243.725995] x8 : ffffff8805c1ab70 x7 : 0000000000000000 x6 : 
-ffffff8802ba6d80
-[  243.733167] x5 : 0000000000000000 x4 : ffffff8805c1ab70 x3 : 
-ffffff8807a53c80
-[  243.740339] x2 : 0000000000004000 x1 : ffffff8807a53c80 x0 : 
-0000000000000000
-[  243.747511] Call trace:
-[  243.749964]  task_active_pid_ns+0x8/0x28
-[  243.753911]  etm_event_start+0x160/0x208 [coresight]
-[  243.758926]  etm_event_add+0x48/0x78 [coresight]
-[  243.763587]  event_sched_in+0xc8/0x1a8
-[  243.767357]  merge_sched_in+0x1e4/0x578
-[  243.771213]  visit_groups_merge.constprop.0.isra.0+0x20c/0x4d8
-[  243.777071]  ctx_sched_in+0x1c8/0x250
-[  243.780750]  perf_event_sched_in+0x68/0xa8
-[  243.784866]  __perf_event_task_sched_in+0x1dc/0x360
-[  243.789765]  finish_task_switch.isra.0+0x13c/0x2f8
-[  243.794576]  schedule_tail+0x1c/0xc8
-[  243.798169]  ret_from_fork+0x4/0x20
-[  243.801681] Code: 811705e8 ffffffc0 aa1e03e9 d503201f (f9425c00)
-[  243.807791] ---[ end trace 0000000000000000 ]---
-[  259.636480] Kernel panic - not syncing: Oops: Fatal exception
-[  259.642246] SMP: stopping secondary CPUs
-[  260.806180] SMP: failed to stop secondary CPUs 2-4
-[  260.810992] Kernel Offset: disabled
-[  260.814488] CPU features: 0x08,c0000043,40200000,0200421b
-[  260.819902] Memory Limit: none
-[  277.740579] ---[ end Kernel panic - not syncing: Oops: Fatal 
-exception ]---
-
->   	}
->   
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index a3907c390d67..829511a71222 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -1064,7 +1064,7 @@ timerlat_hist_apply_config(struct osnoise_tool *tool, struct timerlat_hist_param
+ 	 * If the user did not specify a type of thread, try user-threads first.
+ 	 * Fall back to kernel threads otherwise.
+ 	 */
+-	if (!params->kernel_workload && !params->user_workload) {
++	if (!params->kernel_workload && !params->user_hist) {
+ 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
+ 		if (retval) {
+ 			debug_msg("User-space interface detected, setting user-threads\n");
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 210b0f533534..3b62519a412f 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -830,7 +830,7 @@ timerlat_top_apply_config(struct osnoise_tool *top, struct timerlat_top_params *
+ 	 * If the user did not specify a type of thread, try user-threads first.
+ 	 * Fall back to kernel threads otherwise.
+ 	 */
+-	if (!params->kernel_workload && !params->user_workload) {
++	if (!params->kernel_workload && !params->user_top) {
+ 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
+ 		if (retval) {
+ 			debug_msg("User-space interface detected, setting user-threads\n");
+-- 
+2.47.0
 
 
