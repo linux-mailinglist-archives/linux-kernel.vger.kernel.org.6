@@ -1,97 +1,80 @@
-Return-Path: <linux-kernel+bounces-375643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DEE9A9889
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:34:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A779A988D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B6C2809AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C05D1F241F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA4013E04C;
-	Tue, 22 Oct 2024 05:32:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A714E2C0
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B180139590;
+	Tue, 22 Oct 2024 05:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsIsfUVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9A13F42F;
+	Tue, 22 Oct 2024 05:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575170; cv=none; b=klH0kLNRyKQf0Os92Ng5ReUtkzz29crFwjNZkKF3kQ9MyXnquUuc/OKB6SliYAByaxklzoeRhuuHHlJ7K1FuT6Qq2iKIwjYH7EVkMyUFFKzJGWDxVpst+ooe7Wd698qESncCOCgjHI9q+PbUNHUMGmhQcLc38sn58Di/NhNq2OI=
+	t=1729575175; cv=none; b=GNA1fNBVWPN6Ki3GICQA6w9xr3Fycg88DMCICyAXapU+q/Xt7Do7mh+YjJsiROAJ8nOOYLvHu3UwZ8Bt0B3FnwszwCKUFhIqwV0qRznteJxlReTJpLZYQmfDksAbzUD1/ski6ObFHAraObz5PvPxp/Djgzw7uhwYyrctzkscmMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575170; c=relaxed/simple;
-	bh=klBGEygVzhQU/86nQVQBI+lq9rDTajBrNF5mvSu2oiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QxK8MXp9abEfmrNWKQCpvoSNOezcJcrVe/JlYWVsegy7uUjoYD4oEMr8wg1Y4931l7xQ8GM/elFQv801uHb2f7kCIf9Pz9N/V1Gm4YnqWA1AJjiONye5zaP3K9AvTNXUaTMk5HM6gHYqY+fmllLp3DdCXhlNXYxPgZK7lgm3DL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4034A497;
-	Mon, 21 Oct 2024 22:33:17 -0700 (PDT)
-Received: from [10.163.41.149] (unknown [10.163.41.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C1E03F528;
-	Mon, 21 Oct 2024 22:32:45 -0700 (PDT)
-Message-ID: <30227b5e-a15a-4c77-b35e-db04fde0686d@arm.com>
-Date: Tue, 22 Oct 2024 11:02:42 +0530
+	s=arc-20240116; t=1729575175; c=relaxed/simple;
+	bh=eh5c4h3CkGCO/mZQgkwvM/qIDAYGPN9tRfVaEHgegAs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NIOuhdacbS7n9HrAwtgZAgsZAnAR8VK+ABvbvKA1rIZPKW3clOwPxzx3Wsupy2Ze75OGQ59c1wmYx75eFPrT1Jez2NoRrF7svBxAhAAKh1pfTek8gUjW+HB9XDoAKqWfFcZaCkM7UFOFTgOB7Fz5Y30jWNuS5i7DfD/7BkjgGKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SsIsfUVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E074C4CEC3;
+	Tue, 22 Oct 2024 05:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729575175;
+	bh=eh5c4h3CkGCO/mZQgkwvM/qIDAYGPN9tRfVaEHgegAs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SsIsfUVB+2l3Nx+c5HhekukYSvbFt9KNQKkmpjgIisTuWv8fIZMtuLUVhWwYgX/0z
+	 cFdK6lO17/JXUnO3gCEU/tBnP6zIvkM4vtM9Axpx9EbjYm6TTh6D0nIczLxpjwjq9R
+	 5mKh1EKIkTCaY9InQnTBJGeqEU/jqMfil4VR5cYAfmyIlsY7Q3nXiXxhhfpgX8UEJc
+	 7lrdeL25eo7cLo3YNCwR5mkY6eMmWpwUdd94RoxLloPDnM7pPGSs2nAatJVr13Xnad
+	 EIR/b9DXI3gz+lxC22/j5MJT5LY7NknUemeQnDR5SeFuGg1+byIPaa0VYGzc0a7Lw+
+	 GMIeoIbUZb4TA==
+From: Vinod Koul <vkoul@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241017-sar2130p-dma-v1-1-e6aa6789f116@linaro.org>
+References: <20241017-sar2130p-dma-v1-1-e6aa6789f116@linaro.org>
+Subject: Re: [PATCH] dt-bindings: dma: qcom,gpi: Add SAR2130P compatible
+Message-Id: <172957517301.489113.3658561077139339207.b4-ty@kernel.org>
+Date: Tue, 22 Oct 2024 11:02:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Remove unused has_isolate_pageblock
-To: Luoxi Li <kaixa@kiloview.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-References: <20241018092235.2764859-1-kaixa@kiloview.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241018092235.2764859-1-kaixa@kiloview.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-
-On 10/18/24 14:52, Luoxi Li wrote:
-> has_isolate_pageblock() has been unused since commit 55612e80e722
-> ("mm: page_alloc: close migratetype race between freeing and stealing")
+On Thu, 17 Oct 2024 21:11:49 +0300, Dmitry Baryshkov wrote:
+> Document compatible for GPI DMA controller on SAR2130P platform.
 > 
-> Remove it.
 > 
-> Signed-off-by: Luoxi Li <kaixa@kiloview.com>
-> ---
->  include/linux/page-isolation.h | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-> index c16db0067090..73dc2c1841ec 100644
-> --- a/include/linux/page-isolation.h
-> +++ b/include/linux/page-isolation.h
-> @@ -3,10 +3,6 @@
->  #define __LINUX_PAGEISOLATION_H
->  
->  #ifdef CONFIG_MEMORY_ISOLATION
-> -static inline bool has_isolate_pageblock(struct zone *zone)
-> -{
-> -	return zone->nr_isolate_pageblock;
-> -}
->  static inline bool is_migrate_isolate_page(struct page *page)
->  {
->  	return get_pageblock_migratetype(page) == MIGRATE_ISOLATE;
-> @@ -16,10 +12,6 @@ static inline bool is_migrate_isolate(int migratetype)
->  	return migratetype == MIGRATE_ISOLATE;
->  }
->  #else
-> -static inline bool has_isolate_pageblock(struct zone *zone)
-> -{
-> -	return false;
-> -}
->  static inline bool is_migrate_isolate_page(struct page *page)
->  {
->  	return false;
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Applied, thanks!
+
+[1/1] dt-bindings: dma: qcom,gpi: Add SAR2130P compatible
+      commit: e7a614cc8847f469370ea29604be966ee16f07e9
+
+Best regards,
+-- 
+~Vinod
+
+
 
