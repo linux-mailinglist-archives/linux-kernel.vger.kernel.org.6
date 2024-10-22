@@ -1,225 +1,94 @@
-Return-Path: <linux-kernel+bounces-376370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60619AB07F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A68A9AB08F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E841B2210B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECF8284347
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906471A01CC;
-	Tue, 22 Oct 2024 14:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3071A1A0715;
+	Tue, 22 Oct 2024 14:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faZ/P8XJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JXJdiNI2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE0C19E96A;
-	Tue, 22 Oct 2024 14:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3BF1A254E;
+	Tue, 22 Oct 2024 14:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606313; cv=none; b=sTFID2yP+1LBacYvpeUdZYTIn2kmVGr6Jvqdvf5E5OcxjFqq/+VYR0jo2MVu981uxh41VxjTnVudQXrRYR8d8k3APXmE73EwBGZXypWJ+D4oAQAMOFN9MtsVaDP+j6C/i4GLmYJACSNU2sVEHLxsMcM4iFc82k37Qfr7O7GaTXw=
+	t=1729606369; cv=none; b=jtHpj19xaZ6WYOIKa0xwVvLYAT5vSgv2P1hbi49hGvaNj+Byq6mA5jt+vxiiwL4jIahTYymFt2Vc7NiWan07d4oPKtnpq7GVhu+i6cqlnIPaQbVxjHTm6UHi7DV9g7RRtfGbOGDwk+i4twmmlcdoco7VCpbMLpraJeOgZQwGzbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606313; c=relaxed/simple;
-	bh=98iJScxQ5+xWTfcAyb0DIQja42BOHYt0I6p6JMozmpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bXepJhRrClyiGuWlNpuczFStxWiDpXZVww7ON3OmomtrnPts8o/hdmONkmWt+HDFjEDrFHT9WeGZIRJVBtOtgP8VxPhxCnR8crh1u51CQilUZ378Gp5aIivJiXAQhBHahpMPE8KfnykpFPlmkm1/91AxxoNnk9KFKp9w85of7VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faZ/P8XJ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729606311; x=1761142311;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=98iJScxQ5+xWTfcAyb0DIQja42BOHYt0I6p6JMozmpY=;
-  b=faZ/P8XJdXXwnVi7jihDA5t4IlXPjzCIif2FpZrlUIxWGfGo7AxZtcCJ
-   Mc00Q9kCJBWnuU1i/Cb/IIKziGOZUsWcrWouLLaiZ0RCe2waICP7Yq4G0
-   dHwLlfOftT1RP0+0knfuCIElKrK+xgZ2TUXRN2WUDFAF5qidf/5ojIn3o
-   npaYAAz1OsyvKyOwFqm7Z+OjCUxcwlK4gA0dC2OcnFYBgFxb6IjCCJr5s
-   xxvs8AwTpAcr5ZUqYzra7+ITvDq+1ytHg7GYJyVD7kNFVYhyRVK0CUYm4
-   pw5nWEg8uiYy745A8pYHZ1xgPDyc3PDp8mVdjSzODQFiQyrzQBVQE9HqK
-   w==;
-X-CSE-ConnectionGUID: JoENZd9GSHWWaie42rLh0w==
-X-CSE-MsgGUID: RGxeN4xOQNKixWEFm+VDrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="39761579"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="39761579"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 07:11:50 -0700
-X-CSE-ConnectionGUID: La+zPVeBSeOmWFkXwGEz8Q==
-X-CSE-MsgGUID: EGreTNpuRkiixkh4YmEXrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="83862597"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa003.fm.intel.com with SMTP; 22 Oct 2024 07:11:46 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 22 Oct 2024 17:11:45 +0300
-Date: Tue, 22 Oct 2024 17:11:45 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	s=arc-20240116; t=1729606369; c=relaxed/simple;
+	bh=ukwBhYBAAKhIR6/yPX8LrgNrHHvJO02TkgEHoIYKB6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jeyHDaySZ6EeCm51Uo6msg1DINqAL63VoynXVWHWZl70WlfaNfx90O5WGMJ8qA++3kqiGVYxfY21iGSoQu/O2IGxLxHceSQN1gGZvurXuNc1CGWxKKKntMF0Aiq4KOd9fM3Ym2bjO3N3HLQJnzNqf44pvEZKI7rDDt5z6Inzn1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JXJdiNI2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=d/zGrPtBECfUn9Wxr74oIUe8eBmH+ZAAzMoPX4DpgiU=; b=JXJdiNI2wuQdoiGf5sMJ16a76m
+	2nZj0BQ81sYF0+L4PPq8a7qW/Oyh4YKWJrj4WDNv6wDHba6XvCREFyBraJzPB5ONupiNpK3y1MXyi
+	faxyhbqsdnLFel4szgxVQu0V/p7yYPwE+9mZInnFw09R5n3IsF8vXSzT7K4cfona7Oj0QCdaxy33O
+	d3HKvsOkGS4McdZvYiPqphPdLssCCvLoaWcs+IA2YVhQGlU930hkTNR1Fh+xUTGJmqO0CVX6GK108
+	l29UkInWIeC/gNmrGRwod+ef/d2hYWJbtJ1vMfmpbs44rbj1NTvUz/76Oi8HLx6Q339pEX41cMkbX
+	baNcbsFg==;
+Received: from [213.70.40.217] (helo=phil.sntech)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t3Fck-0005eb-L4; Tue, 22 Oct 2024 16:12:38 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jagan Teki <jagan@edgeble.ai>,
 	Rob Herring <robh@kernel.org>,
+	Andy Yan <andyshrk@163.com>,
+	Tianling Shen <cnsztl@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <ZxeyoRYPZP3Feg6T@kuha.fi.intel.com>
-References: <20241022-x1e80100-ps8830-v3-0-68a95f351e99@linaro.org>
- <20241022-x1e80100-ps8830-v3-2-68a95f351e99@linaro.org>
+	Chris Morgan <macromorgan@hotmail.com>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: rockchip: Add FriendlyARM NanoPi R3S
+Date: Tue, 22 Oct 2024 16:12:25 +0200
+Message-ID: <172960632903.1476617.9941592027677995572.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241020173946.225960-1-cnsztl@gmail.com>
+References: <20241020173946.225960-1-cnsztl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022-x1e80100-ps8830-v3-2-68a95f351e99@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Mon, 21 Oct 2024 01:39:45 +0800, Tianling Shen wrote:
+> Add devicetree binding for FriendlyARM NanoPi R3S.
+> 
+> 
 
-Couple of nitpicks.
+Applied, thanks!
 
-On Tue, Oct 22, 2024 at 01:26:55PM +0300, Abel Vesa wrote:
-> +static int ps8830_retimer_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct typec_switch_desc sw_desc = { };
-> +	struct typec_retimer_desc rtmr_desc = { };
-> +	struct ps8830_retimer *retimer;
-> +	bool skip_reset = false;
-> +	int ret;
-> +
-> +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
-> +	if (!retimer)
-> +		return -ENOMEM;
-> +
-> +	retimer->client = client;
-> +
-> +	mutex_init(&retimer->lock);
-> +
-> +	if (of_property_read_bool(dev->of_node, "ps8830,boot-on"))
-> +		skip_reset = true;
+[1/2] dt-bindings: arm: rockchip: Add FriendlyARM NanoPi R3S
+      commit: 1e94bfea52bee081c42ab922c19156dd3d2bade8
+[2/2] arm64: dts: rockchip: Add FriendlyARM NanoPi R3S board
+      commit: 50decd493c8394c52d04561fe4ede34df27a46ba
 
-        skip_reset = device_property_present(dev, "ps8830,boot-on");
-
-> +	retimer->regmap = devm_regmap_init_i2c(client, &ps8830_retimer_regmap);
-> +	if (IS_ERR(retimer->regmap)) {
-> +		ret = PTR_ERR(retimer->regmap);
-> +		dev_err(dev, "failed to allocate register map: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = ps8830_get_vregs(retimer);
-> +	if (ret)
-> +		return ret;
-> +
-> +	retimer->xo_clk = devm_clk_get(dev, "xo");
-> +	if (IS_ERR(retimer->xo_clk))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
-> +				     "failed to get xo clock\n");
-> +
-> +	retimer->reset_gpio = devm_gpiod_get(dev, "reset",
-> +					     skip_reset ? GPIOD_OUT_LOW : GPIOD_OUT_HIGH);
-> +	if (IS_ERR(retimer->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
-> +				     "failed to get reset gpio\n");
-> +
-> +	retimer->typec_switch = fwnode_typec_switch_get(dev->fwnode);
-
-	retimer->typec_switch = typec_switch_get(dev);
-
-> +	if (IS_ERR(retimer->typec_switch))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
-> +				     "failed to acquire orientation-switch\n");
-> +
-> +	retimer->typec_mux = fwnode_typec_mux_get(dev->fwnode);
-
-	retimer->typec_mux = typec_mux_get(dev);
-
-> +	if (IS_ERR(retimer->typec_mux)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
-> +				    "failed to acquire mode-mux\n");
-> +		goto err_switch_put;
-> +	}
-> +
-> +	sw_desc.drvdata = retimer;
-> +	sw_desc.fwnode = dev_fwnode(dev);
-> +	sw_desc.set = ps8830_sw_set;
-> +
-> +	ret = drm_aux_bridge_register(dev);
-> +	if (ret)
-> +		goto err_mux_put;
-> +
-> +	retimer->sw = typec_switch_register(dev, &sw_desc);
-> +	if (IS_ERR(retimer->sw)) {
-> +		ret = PTR_ERR(retimer->sw);
-> +		dev_err(dev, "failed to register typec switch: %d\n", ret);
-> +		goto err_aux_bridge_unregister;
-> +	}
-> +
-> +	rtmr_desc.drvdata = retimer;
-> +	rtmr_desc.fwnode = dev_fwnode(dev);
-> +	rtmr_desc.set = ps8830_retimer_set;
-> +
-> +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
-> +	if (IS_ERR(retimer->retimer)) {
-> +		ret = PTR_ERR(retimer->retimer);
-> +		dev_err(dev, "failed to register typec retimer: %d\n", ret);
-> +		goto err_switch_unregister;
-> +	}
-> +
-> +	ret = clk_prepare_enable(retimer->xo_clk);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable XO: %d\n", ret);
-> +		goto err_retimer_unregister;
-> +	}
-> +
-> +	ret = ps8830_enable_vregs(retimer);
-> +	if (ret)
-> +		goto err_clk_disable;
-> +
-> +	/* delay needed as per datasheet */
-> +	usleep_range(4000, 14000);
-> +
-> +	if (!skip_reset)
-> +		gpiod_set_value(retimer->reset_gpio, 0);
-> +
-> +	return 0;
-> +
-> +err_clk_disable:
-> +	clk_disable_unprepare(retimer->xo_clk);
-> +err_retimer_unregister:
-> +	typec_retimer_unregister(retimer->retimer);
-> +err_switch_unregister:
-> +	typec_switch_unregister(retimer->sw);
-> +err_aux_bridge_unregister:
-> +	if (!skip_reset)
-> +		gpiod_set_value(retimer->reset_gpio, 1);
-> +
-> +	clk_disable_unprepare(retimer->xo_clk);
-> +err_mux_put:
-> +	typec_mux_put(retimer->typec_mux);
-> +err_switch_put:
-> +	typec_switch_put(retimer->typec_switch);
-> +
-> +	return ret;
-> +}
-
-thanks,
-
+Best regards,
 -- 
-heikki
+Heiko Stuebner <heiko@sntech.de>
 
