@@ -1,149 +1,109 @@
-Return-Path: <linux-kernel+bounces-376074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345709A9FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDEA9A9FA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948A7284046
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA575283D16
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83C4199236;
-	Tue, 22 Oct 2024 10:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE79219993C;
+	Tue, 22 Oct 2024 10:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="J+DCi0ow";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="J+DCi0ow"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEOF1kZw"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53498145B24;
-	Tue, 22 Oct 2024 10:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B368C145B24
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591698; cv=none; b=M4OWV5IdoS3iZWy0V83Qf1s8peaxDkM7xLKRMRf6X4LoE39Pxf0HJFNgS3PsG8MOr6fXJ4VkEEALJ4jPVImiZVBLribECvfTrGQRpfDWZcA+rXtUXYygwcF0vw70Be9nCDIeZOT3UmhfHWB7w/G2RfGBSJePflsdlEcBErSQBSQ=
+	t=1729591850; cv=none; b=GgiWZdde91I8g+KK73LD93rPcpVz+sNrFtGqCLZVQGBKGXhpl8j95f347X08lHaePmFEGAsxNyAs2TqdupLgOZwRjJeXB2EvuQuB/bIWLunFj9fXIZWvHQBw6V9UlV8jCFE8cJbu2XH/UfwqgQ2arEwoBBxzO1T1mgUNJ5A+P4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591698; c=relaxed/simple;
-	bh=t6th0mob8gstI1rzG1JnaZ2g9CAZoZsgyiKifgrHybI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mOglSmJjPsCNFqB+JXDEY+YZLvR5D1+OyF5/VzzLMOLIGMvwp8iTtbPBbu45ag+8zRadqeFWiOt35HnQ4pUIoRiaxcdBnDEMpLvUzlEIZn7Nqn0Ul0r6HlAeJhmXzGQbD9YeKuabwNNfZAo75dJ7BhdU7ZQrtBVpwai7mX3mMZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=J+DCi0ow; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=J+DCi0ow; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7118E1FBAB;
-	Tue, 22 Oct 2024 10:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729591694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=WtxN72IlcYz/BWCQ0zqCtJ3Z0vWTVDAayPutpwTk1jo=;
-	b=J+DCi0owGnFbR9TWiddOWl3YUiMSGZs9wAdPlpyx22QlhUze6CtwYP5rTa2caDhuYWdfcs
-	zYyK9+egFjH+cP597y1+baOKwDXFyukhUEd2WCqgfX+Hv7eHa62qzxQa9cKfeKDo9/26NF
-	PYheBobFhIPgfzGFQXoPqQw+UzrYqhk=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=J+DCi0ow
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729591694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=WtxN72IlcYz/BWCQ0zqCtJ3Z0vWTVDAayPutpwTk1jo=;
-	b=J+DCi0owGnFbR9TWiddOWl3YUiMSGZs9wAdPlpyx22QlhUze6CtwYP5rTa2caDhuYWdfcs
-	zYyK9+egFjH+cP597y1+baOKwDXFyukhUEd2WCqgfX+Hv7eHa62qzxQa9cKfeKDo9/26NF
-	PYheBobFhIPgfzGFQXoPqQw+UzrYqhk=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A97C13894;
-	Tue, 22 Oct 2024 10:08:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lse5BI55F2f4HAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 22 Oct 2024 10:08:14 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] kvm/x86: simplify kvm_mmu_do_page_fault() a little bit
-Date: Tue, 22 Oct 2024 12:08:12 +0200
-Message-ID: <20241022100812.4955-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729591850; c=relaxed/simple;
+	bh=l02kqcQ9cL+j9dk7KMW/HwsByexeA6HHNyuuj1uQZKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZQMEahZYP4v9NEBTvOmq4B3sOLZhmhOuTcM9B9rqdaITkwR2EPpersh2KEh24Ne6kCTrmiVq1GdiGeLkQDuYAJCYScivao+GvK5EL3ziyOvlqWFRH68XT53ed/No+1ON4M2KOQgWBgATzv1vRxZeK/pnfhpRPasDNK2TwTboq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEOF1kZw; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a9aa8895facso151285266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729591847; x=1730196647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I0XkPZgcEMW+/3AwEKfGZ5bDzJZW7q1GrcVHCJ7Qg2I=;
+        b=cEOF1kZwvMwh3mfZlzYXKsrgEnTolU72+HMF/aTD3VfKEQeNqHXAFAh/C5hq/YSFVH
+         Lrgo1NBkQgpF1VRETbq3SfzmcirynOUtmG1RnWoaVcbsJgwQLLSJmnZ6rovHHvHTgz+L
+         bRHE1aHKc2FBRc/xxzfaCkjPDGd2U1Yq1FNAoohNKf/0n8jWzSwEeKVag3vvB/GHJvhz
+         FZ6PrIFuAoxdbtLLP1yX/p8voFwTua+brcVEBsVOszA1K2PkWHvtBJTkGAX075BMUy42
+         kYpmgworixiCAo7oS2wXOj8tWmS+JSvzg2vlF72CJBVNcsF52NGC2qq+/EeHJwvf9F1t
+         iuhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729591847; x=1730196647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I0XkPZgcEMW+/3AwEKfGZ5bDzJZW7q1GrcVHCJ7Qg2I=;
+        b=sdLlCfTZ2Gjea7B3dl2WH4TYNOwabL/tL7E172/Q2LETijhPMxdPKo5G8hgVOFMVZR
+         ny41JtXpkhA/hLIZ3HEIWj1QIJZDH6uw3CRjcGBj2blub/d/bYIA71ys5WqN5upeasnU
+         cJYufWAW5H0551Lrj1+QkZudTZo63cjdj2NYNhmrSdiIlTo6DZRADdWuv+s962pkOA5i
+         gUqRGF1lW4tTl2+5iYdRKH7zzsVQOBbtbPELyt36xYDfrwH87n/vBCrXHfLWZ9ErVz9b
+         bWQcbVMZq3PbelTs5GazZKiFIfAG67RN2ncjMqmz4KJpFdA8Z+YH6kNOxzSuIGSm1tZi
+         fJ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtqFqBJK24KENue5Ig7GxmInxqyY/U7CLqGeCemyHY9xarZCSHA4wbc7YRpPBHf1+fBPjuCtX8S6B5ulI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4y0gc7SYYGPuzhO60ekoqLtIMFknYJk37nsVHxA8AgEcmyTZ7
+	p28ASy4MnR8gM6WcVNTsGR3Bf/ovgMwEPeHxoYQGZ+kmgj+hHAXohIWf3Fl4pt3PppaiibMXIHq
+	dJEMOyUaAQk/DjmrUvkbNYd245cI=
+X-Google-Smtp-Source: AGHT+IGIyEihK3Mtb6v1K+Ax6jxg45G93wVNM1WGGsQR9w5ebdeLcl4zRT/OUGIBMg64f6YeDuNlwSSvzJfeIYDlJEA=
+X-Received: by 2002:a17:907:7f15:b0:a99:43e5:ac37 with SMTP id
+ a640c23a62f3a-a9a69a73b51mr1529901766b.15.1729591846813; Tue, 22 Oct 2024
+ 03:10:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 7118E1FBAB
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241022074035.139897-1-andrea.righi@linux.dev>
+In-Reply-To: <20241022074035.139897-1-andrea.righi@linux.dev>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Tue, 22 Oct 2024 12:10:10 +0200
+Message-ID: <CAP01T76UiJAPVM1-KaiYyJLgDt37brdDUCT=NLOUxCuG850W-w@mail.gmail.com>
+Subject: Re: [PATCH for-6.12-fixes] sched_ext: fix fmt__str variables in kfuncs
+To: Andrea Righi <andrea.righi@linux.dev>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Testing whether to call kvm_tdp_page_fault() or
-vcpu->arch.mmu->page_fault() doesn't make sense, as kvm_tdp_page_fault()
-is selected only if vcpu->arch.mmu->page_fault == kvm_tdp_page_fault.
+On Tue, 22 Oct 2024 at 09:40, Andrea Righi <andrea.righi@linux.dev> wrote:
+>
+> Commit 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in
+> kfuncs") renamed some parameters without updating the body of the
+> functions, triggering build errors like this:
+>
+> kernel/sched/ext.c:6881:45: error: =E2=80=98fmt=E2=80=99 undeclared (firs=
+t use in this function)
+> 6881 |       if (bstr_format(&scx_exit_bstr_buf, fmt, data, data__sz) >=
+=3D 0)
+>      |                                             ^~~
+>
+> Fix by renaming also the varibles in the affected kfuncs.
+>
+> Fixes: 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in kf=
+uncs")
+> Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+> ---
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/kvm/mmu/mmu_internal.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Ah, thanks, this is embarrassing.
+I didn't realize sched-ext was disabled in the .config when testing
+this with other patches in the queue.
+Sorry about that.
 
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index c98827840e07..6eae54aa1160 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -322,10 +322,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
- 	}
- 
--	if (IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) && fault.is_tdp)
--		r = kvm_tdp_page_fault(vcpu, &fault);
--	else
--		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
-+	r = vcpu->arch.mmu->page_fault(vcpu, &fault);
- 
- 	/*
- 	 * Not sure what's happening, but punt to userspace and hope that
--- 
-2.43.0
-
+Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 
