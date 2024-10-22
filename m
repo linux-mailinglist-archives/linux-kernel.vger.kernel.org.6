@@ -1,88 +1,136 @@
-Return-Path: <linux-kernel+bounces-376526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5761E9AB2BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:54:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAED9AB2C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1845D281D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC99B1C22740
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E651A705B;
-	Tue, 22 Oct 2024 15:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DE91BC068;
+	Tue, 22 Oct 2024 15:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAKEv18a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="oKd6iqyE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SgzCi/kL"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AB513AD3F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FED1BBBD4;
+	Tue, 22 Oct 2024 15:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612290; cv=none; b=MGLIHY+foiCNvPhIk/QXXcV3xSmTAm/bjHjg2yagm4TjfrLhYO32trOlcCBqzqe+WkkB8HPmP0QCyPzVaKF+MO/Kv4d/OVv8M8RnTGnF8USPUq7XXBWMzULnHnRuwmaGDtADl/FnBCjFhmIIfmPatcI2SXsVlFH/KeMrlVVfVfA=
+	t=1729612309; cv=none; b=ZN4qqz6C6dZDecVvIBh2Wm+m0MZTFHfT5dCrYfc0DLl1j4CcymN9KdAZRrhhDlk0tkLp7PwMOXpt9WaCn1cP2b4WHLHmqDQFtJ3/7cjfQRivShiChhMYrxl5Uenvu8n9h1Iu9OERK4eEhmzsYolr/Z981o6briRYqIVo/Hs+hxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612290; c=relaxed/simple;
-	bh=TGHjo7ux9zVk06eBs97w3tERf69Lss5aal67kmZ/qvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aclftkv1OEBwKtsutuFd/0mWgegulKrHXpKX27jRdzxzysSJGYyYAdaLUYWteDNL8vHig/uejETMNXx94m1rqd086VDh50h3gMYUh6qIUcvDzYvLVW/De1MDzVR79vZJMqjUug9c2l5q1mUyo75rCGePgEJPGQSeY2nBSLIJQ4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAKEv18a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58066C4CEC3;
-	Tue, 22 Oct 2024 15:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729612288;
-	bh=TGHjo7ux9zVk06eBs97w3tERf69Lss5aal67kmZ/qvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bAKEv18aNEbvsQBh5hFl8/aXagEFU4NGr4xRcRvMjxC/B1Oj5Sy3wjcH/0HeIuw8L
-	 ixG6CcMItIKGkns2J5BUxItEJng76RDtNpgrXEK3rs/apDEOIpmJr7oDjVjr1oCORi
-	 m+Dxqfn3X+pcNqvVmfhPoCVfPfK7+LLGUVRPBo1Lt6qSDNRi3SAabZ+xfQXHlya8Yb
-	 mt0bImaaQL3RmQbQ2OMjDhNe1jtm8RsiSTZvsYca/S5CaIvWoETwu5w2oZ1sjpIp5h
-	 9lT8KeDAgWjy2gnjnL/JIqE8UwUxxLcO9TTlZlxhZhY3kfDTCNuiqp7a1RxFt13Tjr
-	 MYIKmhxrGtC4w==
-Date: Tue, 22 Oct 2024 09:51:25 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Abhishek Bapat <abhishekbapat@google.com>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Prashant Malani <pmalani@google.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring
- namespaces
-Message-ID: <ZxfJ_TfT7MMGWs4X@kbusch-mbp>
-References: <20241016213108.549000-1-abhishekbapat@google.com>
- <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
- <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com>
- <Zxe8e2zS5dA61Jou@kbusch-mbp>
- <6b00d25e-fe6a-4552-9945-d6181af83137@grimberg.me>
+	s=arc-20240116; t=1729612309; c=relaxed/simple;
+	bh=bMv2RfvG9XOlaqwsh9pWcR+b/BxW9RG7eKVnppfP8I4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rxVrhF1ht3+YI+YHqlryioADTyeop3XQ0UMC7e8dAQ1SwncO9egR/9acvD0Eupu/VIw1tx44ldoDgDL59mM2J3jjn64IHEvKkDUqVLFojvvLfqfxFi1pQ1iSKXW7OditiP1DXhwRee1ELIOInFTJa1AACVSoYsuU0STmqSqu5QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=oKd6iqyE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SgzCi/kL; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 988FB114006D;
+	Tue, 22 Oct 2024 11:51:45 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 22 Oct 2024 11:51:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1729612305; x=
+	1729698705; bh=bMv2RfvG9XOlaqwsh9pWcR+b/BxW9RG7eKVnppfP8I4=; b=o
+	Kd6iqyEiDpRtN35gRiJ92Kkz+F69tppDxnQbeZnrTrqx1YTN+gceD2ccts9FBWe2
+	iuAGu6sPHeRDziXeQC5szmiY+QzdU2rUYtTK+WknWSC/0+Ni03/r9UUq50hVnyTw
+	GBbb6TS9VIXUdkU2gWMvSpjrc9xBDX6ACrelIQmFlSdo+LmLxiDjIz22xZpmCYoS
+	SQeFVCLN2jRFqEKFXFpefDiRB5d/K9T/24CBvDoY3Hkzi5ES59VIVCCmm/PgtZhJ
+	8WFaB6jZBmVx0H8CX12dgMDpiYg8oVCOToJc4ZzoPde9Pf0aG+j2Ylau8s7VXuGY
+	ubb9p3AEXrGGNwEcMafAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729612305; x=1729698705; bh=bMv2RfvG9XOlaqwsh9pWcR+b/BxW
+	9RG7eKVnppfP8I4=; b=SgzCi/kLKNULWEkNLsNuO7VpO9/McUFBf5Ssw8MyxtmN
+	EQiOYzxIenk4T182Rdf4GrHS0p9nxIPqfhIhD2HjIiGK9VMkJx/RBUE7xLCu9mJE
+	cT+ofCwsx7TPV1XNJAjQCZBwkKj5x46ZdhwsCEYSx169SCIaKi3peeIpbt+mE9yx
+	XHCZXFKQyJI3gpWIbdZDnpYSLPPgrKFt03Clqjwve7WUMpZgLcLPxkjcKb7Tbr94
+	zsCGRXFiOR8YMZ3JK3tqGR/mTuVZ56ey9NNXO8OrjJVRiK/Vi87KFppHqRVsxa2W
+	ap7vHLVlR0+nIf2vJ+9+3wNzD+cVJvmNPOCZEqf3EA==
+X-ME-Sender: <xms:EcoXZ062gl3ep7O_H8vnsxl3zLr56WY_xXyd0JtPYNkSiq7Wr8O0wA>
+    <xme:EcoXZ17PTzzCZX2JwqQTHr5t8NW_4UzlXaedr0C3WGT0GIBCYPG3acBM8btYERDAj
+    EIpE5OFiEEqdevGOg>
+X-ME-Received: <xmr:EcoXZzcXUgiKHj788_KSM3BnNrRmqsjC7mlvQwTMz2LcVBlou-jV_02Rfj0sHE_ECvvMMBz7EqxsBNsNx8GC4pPsLzUHWrVvzpQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefujghffffkfgggtgesthdtredttdertden
+    ucfhrhhomheplfhushhtihhnucghvghishhsuceojhhushhtihhnsehjuhhsthhinhifvg
+    hishhsrdgtohhmqeenucggtffrrghtthgvrhhnpefgueegueeiheffkeektdetfffgffeu
+    ieekvdefieejvdefiefgvefhiefhfefgveenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehjuhhsthhinhesjhhushhtihhnfigvihhsshdrtgho
+    mhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hphhhilhhmsehmrghnjhgrrhhordhorhhgpdhrtghpthhtohepuggvrhgvkhhjohhhnhdr
+    tghlrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvges
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhiihhosehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgrrhhssehmvght
+    rghfohhordguvg
+X-ME-Proxy: <xmx:EcoXZ5K4Zqm1mu1hSR8xDO3MLAiTxQZnHlAQIggxo4mbApUn5_psdw>
+    <xmx:EcoXZ4KGa2mYDjD4eV0OJxvXvF8p67lh2oLBMccaRFoobuoXCGkeog>
+    <xmx:EcoXZ6ytX7qhhGEj3nH1-YQQY2RJOdJ8f2fsI2Z6Qsln6OC79xZ_AA>
+    <xmx:EcoXZ8IL8wWk_EdoLFMptBmd8rns3VouqBqu4uzAmiF9PIOlU4RuUQ>
+    <xmx:EcoXZ6CAYSMmhUXxqwBiYSLLq8JAz3DDV53GQcOUqlSA3m5B15qymTj8>
+Feedback-ID: icf614246:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Oct 2024 11:51:43 -0400 (EDT)
+From: Justin Weiss <justin@justinweiss.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,  Jonathan Cameron
+ <jic23@kernel.org>,  Lars-Peter Clausen <lars@metafoo.de>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  linux-iio@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  "Derek J .
+ Clark" <derekjohn.clark@gmail.com>,  Philip =?utf-8?Q?M=C3=BCller?=
+ <philm@manjaro.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: iio: imu: bmi270: Add Bosch BMI260
+In-Reply-To: <ynhv4c4pyj72nsof6wwkaon22i6chd4ux5cb7hv4tmblwhv3aq@564biida44ii>
+	(Krzysztof Kozlowski's message of "Mon, 21 Oct 2024 09:38:55 +0200")
+References: <20241020220011.212395-1-justin@justinweiss.com>
+	<20241020220011.212395-4-justin@justinweiss.com>
+	<ynhv4c4pyj72nsof6wwkaon22i6chd4ux5cb7hv4tmblwhv3aq@564biida44ii>
+Date: Tue, 22 Oct 2024 08:51:43 -0700
+Message-ID: <87froom8z4.fsf@justinweiss.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b00d25e-fe6a-4552-9945-d6181af83137@grimberg.me>
+Content-Type: text/plain
 
-On Tue, Oct 22, 2024 at 06:35:11PM +0300, Sagi Grimberg wrote:
-> On 22/10/2024 17:53, Keith Busch wrote:
-> > On Thu, Oct 17, 2024 at 02:32:18PM -0700, Abhishek Bapat wrote:
-> > 
-> > The request_queue is owned by the block layer, so that seems like an
-> > okay place to export it, but attached to some other device's sysfs
-> > directory instead of a gendisk.
-> > 
-> > I'm just suggesting this because it doesn't sound like this is an nvme
-> > specific problem.
-> 
-> Won't it be confusing to find queue/ directory in controller nvmeX sysfs
-> entry?
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-It's the attributes of the request queue associated with that
-controller, so I think a queue/ directory under it makes sense. That's
-how it looks for gendisks, so why not for disk-less queues?
+> On Sun, Oct 20, 2024 at 03:00:07PM -0700, Justin Weiss wrote:
+>> Add compatible ID for Bosch BMI260 to BMI270 documentation.
+>
+> This we see from the diff. Say something about the hardware, are they
+> compatible? No? What are the differences?
 
-Many queue attributes only make sense for gendisks, though, so maybe
-need to tweak visibility if we decide to do it like this.
+Got it, I'll update the commit message.
+
+The bmi260 has nearly identical register maps and capabilities as the
+bmi270, but the devices have different chip IDs and require different
+initialization firmware.
+
+Thanks,
+Justin
+
+> Best regards,
+> Krzysztof
 
