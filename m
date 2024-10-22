@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-376283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB579AA2A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE4E9AA2AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46672835B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A578228371B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6E319DF52;
-	Tue, 22 Oct 2024 13:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1919DF4F;
+	Tue, 22 Oct 2024 13:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KILpdxhx"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDJfnbUG"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CB81E495;
-	Tue, 22 Oct 2024 13:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFDB19D063;
+	Tue, 22 Oct 2024 13:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602123; cv=none; b=CA3skcOkwK1j++I0x4epU/Vf0IzfdX7zlZ7uWFdM88ET737wswk6/N78tWRK6djSIVxBu1RoQGqZ7aw18zXyStRaBcNZ/I6n9hyd3X92E+VqUnH/HwNZaqMEG2wp1DzM16p7LVPoeLX7DqSbQl8RpPpVE+x3CQcCUeZt2TruwcE=
+	t=1729602169; cv=none; b=NnaSz6FN+gJtAcnYeqFIeYlnCSZ9RzeOSKMiHivt5dfmhZIXiPDdXA8r+/8yeZgKxo5W8sLoxK0tKxZrCcJ0TAjb6Qr3KUa7rU7ucsEg1xQyz5OCkjUgr5k1kSNWSQZJ9I79Fs21YnZbZGcVT4i5M54rj+Hj9s6e7liHdYrUEOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602123; c=relaxed/simple;
-	bh=RM1Iagv7/+ihEj/00nA7D03DRcyAyMZcoLX4kHiEl0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dRpudAsZkZvmqhH2X/wIv4iulcqR/JJzok3KCa/fJtF+6Rp+19bNAc4Ng0uWzHvgrDGa9Q0nvHiHlwD9LNN2MNxa9mzF3qyMnuI2iI4C6y/52+lQCaVTdZpWzx1pHij0xkYe9gkj+MPw8uC7Yhw4MEKxiKTJHv+JTTilL9j7cw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KILpdxhx; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1729602169; c=relaxed/simple;
+	bh=ZSse1Eg98+LMzutfh1nuHu9lTL5IQL+O8CsCAOf6TnQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=o3iJqe7sJlNOO9sOMR7alfF3RJbOVizpTxy2wUWUp69pVcfHSqnOaXyaz6Y3LxExLF9YHtYElUfr+Xnr+yhl4Qcfh8AykeLHXZMb7CMz3zD0nEnuYrsT5oMcYy9BqLnVGXPmUzbEW+TUWXYTWSaebvkweo57Z8B/JeNA6lNokuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDJfnbUG; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a156513a1so776470866b.0;
-        Tue, 22 Oct 2024 06:02:01 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20e6981ca77so39683325ad.2;
+        Tue, 22 Oct 2024 06:02:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729602120; x=1730206920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6pWtU539HclzlpXbphjo1lka7lQnsT/2C0cPK3L1Ws4=;
-        b=KILpdxhxsaSGlkXpdXKKrMRGqhcdXAwkbs61CCVUPLx72zN7AQLg2RzRKh+adrEmCA
-         RnTDrLSp08qGEICbFiCa5/xAqN+NlDAlWgxAymYsaSfa5IxEP8Hse5PiDWRUR0DCLt1o
-         spQ37iHnfWUbeFcAcDgjlkJvxVwTvRGSnmw9+Y9uvnRYluVtGhETEFj2agcGbAcnozqe
-         GsBzpw0B0xx5hzY4sjlBKsoQ+og3wkksBhWULm/QHK7G6HIEHRox97CSm9ldk8UuGweg
-         0NA4ZpX/S7mjjoz8ZM+BhXTag/g3vzrdkbBZsiemkUL6W1L2Jp83UPC6oLEpX+6aLUfX
-         9u5A==
+        d=gmail.com; s=20230601; t=1729602166; x=1730206966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q90p0I1RamExvHkraCkhdLHfJUzwCzfvv1jVPeRZmCQ=;
+        b=dDJfnbUGCtLam88FBwi4u0n3635kXshDNqSmbwjbwrU0G5zXFUldW69/+uVQ9YdeZL
+         boVBuB34SVFPUMJc8UgGmOenpZH1HqJ2VjPawTtHumPB90CzXYI12DlQ1TwxYiW6SH7d
+         tKcf4oJHObOdKT1fhMAJ/k23baxqd52Vza6qnE/SYt5UErz9OCCwB9f7xIyJdFCBK1t7
+         GsFRKpajcuWSDsBTXFIkAtcYtXS19ESIY7jiYp5ABAPBRgn+8X299DMZH3hEX7pXdnO3
+         KXuCXobG5GUwQ2puZ/Sxm1OSxvfnVbThCDq2aEKsvC7gRVNljmjp7TaTo2Iuh3YtMiWl
+         yhyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729602120; x=1730206920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pWtU539HclzlpXbphjo1lka7lQnsT/2C0cPK3L1Ws4=;
-        b=r1tWHfjXRlz8S0phff7DS5qeYWULQaeax15FxsG+gkJ3U+Fa7my7LHrUZ2anRlTnYP
-         Al081TZe+NGBEVc7O1JxSHcfmyw+g4Veq98jCycf+x51F+i1kBZQIT470c8d3t9iJvXg
-         /Nl+j9WNXPOx4FosoOi9ksv2LZHxWVKezzupRUtB+Gwykkot8fVgYe60Afe9egs2OroY
-         YZ1uma4F40cggeM3yiiYXFpCaXCXdqkzIL8ZuBl9kM3oqu4kZAH2b9HkeD9MAZCk293/
-         LrbQUi3rGnyzfYFGDDIJISveeOu3Vn38JSVPt54zSXLcXXaUtS94tYL5zOZarXAqsvSM
-         deCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDLoHVVMSUzsVjF/tfOsJnrIDnJQmQ4CWewYss4Zez06PxdYBE1Rg7uVy1sCdltxLoTjIwPP2ma2CG@vger.kernel.org, AJvYcCWZhW73ogUCmQL6NHfgUWmSiy1UZK+oKJwcRrJOWNe/1r4HHk4n8gIOgZ8smRe5sY0qykbvKugb5ul9EgVZ@vger.kernel.org, AJvYcCX6uJ+HpqLlOsE1hbUzXrcBBSYooDVuOoPc9g6p0wNYoxx/Xskhb3gkvCpSOliozLR1AHV4X4XD@vger.kernel.org, AJvYcCXqmioUnkQTN32Qpk2yaNlR9x2D7OW3qMbf5nn/T8EHCzbJtPw+NVW6WqkUeSAJAGCNwonyc+nJmdPWL/9P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyK78g2wE3lbXdb/j8U2aM8isfoQl+mgV2IFH4POx5wjBqPHvn
-	vE8zRztBqLO2z+Qeocq49bkcjFB1gDXpBSijoX/XEdFPCvrEUiJX
-X-Google-Smtp-Source: AGHT+IHXUyC1ucZ/7ROlomRD6RpENKJHXAb9NYyC6eICFKGRYARGSJ2mzgvjwP3wzwn1DBoCLy827w==
-X-Received: by 2002:a17:907:1c24:b0:a9a:55dd:bc23 with SMTP id a640c23a62f3a-a9a6995d035mr1379304066b.8.1729602118125;
-        Tue, 22 Oct 2024 06:01:58 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e6asm337429366b.126.2024.10.22.06.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 06:01:57 -0700 (PDT)
-Message-ID: <4c129bca-017c-4123-b9e8-547881b246c8@gmail.com>
-Date: Tue, 22 Oct 2024 15:01:56 +0200
+        d=1e100.net; s=20230601; t=1729602166; x=1730206966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q90p0I1RamExvHkraCkhdLHfJUzwCzfvv1jVPeRZmCQ=;
+        b=VJt6yikLqZZwWWyZzvRq/lSslaC41vZYC05BCwvdJx9VadONSkv00OaYO4CfyL/0+J
+         nIKzwUmE9PLQRI6UGtWIwQIXnq1ji/nS8ZbwP/qtsE8YB3C0PaBgHGCQ8UFjiOcJBfQY
+         RGsZP0OUgfIIGGfCi8qoo1zoUtWDsebwLu20TF1d4qS5+/6IsmI/oXcrPfxUmMsWXhVH
+         hUlFqZKFUT3oT1kEKMOm4CIYRXnNUDnTWFsYwzeP3OQVEJeYMr60vbIh9HiBObfGFCIg
+         LbcNL6KcYdVr46/BTbrhqle9H/ZTAlkVEupVd5r0yPI9gBl0HYszvw9mbcoSE7jmQW/0
+         Lpew==
+X-Forwarded-Encrypted: i=1; AJvYcCUE5zj5p0qnEko1BsE8B48nzyZh7cvUIkmBgI9vG9z4MmuLda1evHifzb/YuWmsMPMsFingvuMqpY8N@vger.kernel.org, AJvYcCX9IJ5EPDrgEaLsagAGTr+WCBUj8pceQbFITauwvXSVJAYtGoyzDhmCtgiOFR5CmkGfjg2mLrqtscsuuA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww7xD3dYxilRmDL22Os0IBbA+cpgPST5eliO2ptQLjelrQ8Gnu
+	X2hPSXmFok9cMnFGMCKKVoVCnY+z7VpF4ltN5cYssGieutNN4cDY
+X-Google-Smtp-Source: AGHT+IFCcz86yrNVz77sdnjYCsihCqlHFylImqt1Dq571tcbh5Glp/tYRtgDnA6h/bGZmqK8QLdFbQ==
+X-Received: by 2002:a17:902:d2cd:b0:20b:9998:e2f4 with SMTP id d9443c01a7336-20e985dbd00mr25114295ad.61.1729602165948;
+        Tue, 22 Oct 2024 06:02:45 -0700 (PDT)
+Received: from localhost (220-135-95-34.hinet-ip.hinet.net. [220.135.95.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0dba22sm42542085ad.220.2024.10.22.06.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 06:02:45 -0700 (PDT)
+Sender: AceLan Kao <acelan@gmail.com>
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PCI: pciehp: Fix system hang during resume with daisy-chained hotplug controllers
+Date: Tue, 22 Oct 2024 21:02:43 +0800
+Message-ID: <20241022130243.263737-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
- <8ec5512b-a8ea-432c-84aa-f920470c056d@nexus-software.ie>
-Content-Language: hu
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <8ec5512b-a8ea-432c-84aa-f920470c056d@nexus-software.ie>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Bryan,
+A system hang occurs when multiple PCIe hotplug controllers in a daisy-chained
+setup (like a Thunderbolt dock with NVMe storage) resume from system sleep.
+This happens when both the dock and its downstream devices try to process PDC
+events at the same time through pciehp_request().
 
-2024. 10. 22. 11:53 keltezéssel, Bryan O'Donoghue írta:
-> On 22/10/2024 10:45, Gabor Juhos wrote:
->> The comment before the config of the GPLL3 PLL says that the
->> PLL should run at 930 MHz. In contrary to this, calculating
->> the frequency from the current configuration values by using
->> 19.2 MHz as input frequency defined in 'qcs404.dtsi', it gives
->> 921.6 MHz:
->>
->>    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x0
->>    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
->>    921600000.00000000000000000000
->>
->> Set 'alpha_hi' in the configuration to a value used in downstream
->> kernels [1][2] in order to get the correct output rate:
->>
->>    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x70
->>    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
->>    930000000.00000000000000000000
->>
->> The change is based on static code analysis, compile tested only.
->>
->> [1] https://git.codelinaro.org/clo/la/kernel/msm-5.4/-/blob/
->> kernel.lnx.5.4.r56-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L335
->> [2} https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/blob/
->> kernel.lnx.5.15.r49-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L127
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for
->> QCS404")
->> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> It should be possible to test / verify this change with debugcc on qcs404
-> 
-> https://github.com/linux-msm/debugcc/blob/master/qcs404.c
+This patch changes pciehp_request() to atomic_or(), which adds the PDC event to
+ctrl->pending_events atomically. This change prevents the race condition by
+making the event handling atomic across multiple hotplug controllers during
+resume.
 
-Thank you for the suggestion. Unfortunately, I have no suitable hardware to test
-that.
+The bug was found with an Intel Thunderbolt 4 Bridge (8086:0b26) dock and a
+Phison NVMe controller (1987:5012), where the system would hang if both devices
+tried to handle presence detect changes during resume.
 
--Gabor
+Changes:
+  v2:
+    * Replace pciehp_request() with atomic_or() to fix race condition
+
+  v1:
+    * https://lore.kernel.org/lkml/Zvf7xYEA32VgLRJ6@wunner.de/T/
+    * Remove pci_walk_bus() call
+    * Fix appeared to work due to lower reproduction rate
+
+Fixes: 9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
+Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+---
+ drivers/pci/hotplug/pciehp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ff458e692fed..56bf23d55c41 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -332,7 +332,7 @@ static int pciehp_resume_noirq(struct pcie_device *dev)
+ 			ctrl_dbg(ctrl, "device replaced during system sleep\n");
+ 			pci_walk_bus(ctrl->pcie->port->subordinate,
+ 				     pci_dev_set_disconnected, NULL);
+-			pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
++			atomic_or(PCI_EXP_SLTSTA_PDC, &ctrl->pending_events);
+ 		}
+ 	}
+ 
+-- 
+2.43.0
+
 
