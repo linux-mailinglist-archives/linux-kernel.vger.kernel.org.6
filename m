@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-376045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738B39A9F34
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:51:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBA99A9E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDC91F22EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136A41C23158
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838E3199229;
-	Tue, 22 Oct 2024 09:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fJbPglXI"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8693198A2C;
+	Tue, 22 Oct 2024 09:35:17 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A2D187330
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675F338DF9;
+	Tue, 22 Oct 2024 09:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590689; cv=none; b=tDm5DjOspT/iR9Rz3K3vS7dFybMn/ZtnS6o2SX0vPUraTWsw1CqzHkXSGcTdZ3fi5yvHKmMEEYP9XVEIl7Qc6JpothFr0gbCLkHrURMEScQKh/du79hgyMV4ZuLnaunMckxO6ExlcuNsKW/BiAqSGZ5sM6JBuy6pgxun0eBn92M=
+	t=1729589717; cv=none; b=feJzNVxn4HtvM9Rf8c80CzFduAG3W6Nelfra2pALQEDt/MKOXlS7/etuIidmeC3JyUXj/kBAe6d53UCsHemAYpooi87vd9jEGL40kopuHdW108twgSz7ED3OQwHfKTCaSI8JjR4ELJTdRzdQToAhZ6jx9s8g8UbVQUBFnTx9Gu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590689; c=relaxed/simple;
-	bh=JsWWmLr80OvZZgtqzSLI+3NO59wkVjAXXzhBndm6rPs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YdHo+S7Vm2WvSH8mBQfVN5je8OCTH5QFeBWATsprFoGwLdYhbD/0xg3yVY7kiikXcQzkBAcSowhFVemdXj9XkQI8x1iqxmOcfx1RT2p0N4Ka079St0gUAmDSz/3a7MBT4H1Y2GThgxjPZ7yxffmZ/KAl4/gEBPhsOBya+aF/+rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fJbPglXI; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so60189515e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729590685; x=1730195485; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9uhSsPjuLDUWqYOIT4n8318oMtxdXxpij17XIrTsXE=;
-        b=fJbPglXIIS2dknfgtbeunLcmjIXpFQlBmw2BrAwiOAVZu/rdZj3Y1BtqdRg7g9kyZ2
-         KhbNffz+hPm0J7WJIASZ6gyLBudGKgRGmBEHYcw0DaMlPYhGucp/SLET0JPqenbhLtQX
-         qmU0f5Hh6tMoJFEY12pF2sTMa5ybFiiffOmCsMzR12mB6dvVSQVym8q8QjYFK6HjiB9R
-         ZIi+pjGd6feUpyy9J15oOzryXiIffbLE+d+3Hh96C8UbUtykTGCBM3nw9gyOqW4BLk8l
-         nm9zZzkdAus6FSw6wJHglp9sjPmrGF46cd2GugZ+7niwhSsjuFuc2Ya4Z6JMxorbjwnm
-         +vyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729590685; x=1730195485;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9uhSsPjuLDUWqYOIT4n8318oMtxdXxpij17XIrTsXE=;
-        b=khrpvuDihACkRrZxV3PZppsaxIhP0z8iaVig7dK2g2ZBv9JTPcG+XRQpDhOS8tZSh3
-         IurzCzOkU/ZAhkKOFmoEbfR4+vRg7b5CRjWbGr/PRpzh7gYM6Om9BUYQdbxkumZOUsMX
-         tf4FkyUxaZwrQzJo4cXzOzOgovCEuJ8mMymeXjHDJ6AoHRpfA8sClDpRcYJdnYeOMPHR
-         bXImwBAPaAnYvV0Bk76Fd3CDCXQU3S/CmuSsIx4pd6KEnJRWpspyLGWBxa6cdwSpr48m
-         TXU1AsO/MqX0fJdfBPX/xocw0wPifS54/F/luEL3JgV2of195M/OVw5DSJXFjvcs1aP/
-         /UUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXozjyuwG41Mlc9Vk6WEMCElrm8w1YpeiWmgqQswciFPkGvQ6nri5l+neWHPpAGo5EA1elWUWti2aP9+UA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxygX4ouwuG0rRC+QSnduOy9BexUQoITWtLaG7uUGE8MxPOyAjO
-	V3sRKj9e9NkVK7mQWwo6owvl6OkR5VlehT4awOP3HN9B+k8AmN80HaErJ5UqGiw=
-X-Google-Smtp-Source: AGHT+IG4BjZjQ2Z2dqGHg8e13po3OOXPlOkZEZh2gmQz0kEl9ezHR/+UkwbK17+DbKxR73ieabZKcw==
-X-Received: by 2002:a05:600c:6747:b0:430:5356:ac92 with SMTP id 5b1f17b1804b1-4316161fb1dmr109088635e9.7.1729590685185;
-        Tue, 22 Oct 2024 02:51:25 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570de0sm83095085e9.6.2024.10.22.02.51.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:51:24 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,  <devicetree@vger.kernel.org>,
-  Kevin Hilman <khilman@baylibre.com>,  "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>,  <linux-amlogic@lists.infradead.org>,
-  <linux-arm-kernel@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Philipp Zabel <p.zabel@pengutronix.de>,  Rob Herring <robh@kernel.org>,
-  Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH v4 0/5] Add A1 Soc audio clock controller driver
-In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com> (Jan
-	Dakinevich's message of "Fri, 13 Sep 2024 15:11:47 +0300")
-References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
-Date: Tue, 22 Oct 2024 11:51:24 +0200
-Message-ID: <1jplnsjwir.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1729589717; c=relaxed/simple;
+	bh=Rp2YAPmT6eb5+b/9irGQcM/XdUNlyVMMg51kRmiKBqs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q6mAjqQ5Idtzb4/Z5FdwTpbhqT9GS4zBFPluzmdUkbVwDV+i79T+h680ykwtW9qUk+2OMk2Hx25FdSKNbiIQcgcN7FYvmHWJopwEGyNY9EzwK4RHEw1bbFYD3C555z5IFXUIA3z9KuhBjT7cwbM0h9/F9nl6ovR6phiQ0vRFGuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XXn6J41w6z1T8mM;
+	Tue, 22 Oct 2024 17:33:12 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id D4C5C1402CA;
+	Tue, 22 Oct 2024 17:35:12 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Oct
+ 2024 17:35:12 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <clm@fb.com>, <josef@toxicpanda.com>, <Johannes.Thumshirn@wdc.com>,
+	<dsterba@suse.com>, <mpdesouza@suse.com>, <gniebler@suse.com>
+CC: <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH v2] btrfs: Fix passing 0 to ERR_PTR in btrfs_search_dir_index_item()
+Date: Tue, 22 Oct 2024 17:52:08 +0800
+Message-ID: <20241022095208.1369473-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri 13 Sep 2024 at 15:11, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+ret may be zero in btrfs_search_dir_index_item() and should not passed
+to ERR_PTR(). Now btrfs_unlink_subvol() is the only caller to this,
+reconstructed it to check ERR_PTR(-ENOENT) while ret >= 0, this fix
+smatch warnings:
 
-> This series adds support for audio clock and reset controllers on A1 SoC family.
->
+fs/btrfs/dir-item.c:353
+ btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
 
-Split the reset part out of the series (I'd suggest adding VAD reset
-support while at it). Also remove the DT patch, since it will depends on
-both patchset.
+Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+v2: return ERR_PTR(-ENOENT) while ret >= 0
+---
+ fs/btrfs/dir-item.c | 4 ++--
+ fs/btrfs/inode.c    | 7 ++-----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-Drop the RFC tag, at v4 I think that phase is over.
-
-> Dependency: [4]
->
-> Changes v3 [3] -> v4
->  - Use auxiliary reset device implemented in [4]
->  - Split the driver into files
->  - Use common with axg-audio yaml schema
->  - Unify clock-names with axg-audio
->
-> Changes v2 [2] -> v3
->  - reset:
->    * added auxiliary device
->  - yaml:
->    * added declaration of optional clocks
->    * fixed names in example and another cosmetics
->  - clocks:
->    * reworked naming
->    * stop using of "core" clock name
->    * fixed wrong parenting
->
-> Changes v1 [1] -> v2:
->  - Detached from v1's series (patch 2, 3, 4, 25).
->  - Reuse some of defines from axg-audio;
->  - Split the controller into two memory regions.
->
-> Links:
->  [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
->  [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
->  [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
->  [4] https://lore.kernel.org/lkml/9a4377fe27d8eb940399e452b68fb5a6d678929f.camel@pengutronix.de/
->
-> Jan Dakinevich (5):
->   reset: amlogic: add support for A1 SoC in auxiliary reset driver
->   clk: meson: axg: share the set of audio helper macro
->   dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
->     driver
->   clk: meson: a1: add the audio clock controller driver
->   arm64: dts: meson: a1: add the audio clock controller
->
->  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
->  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  48 +++
->  drivers/clk/meson/Kconfig                     |  14 +
->  drivers/clk/meson/Makefile                    |   3 +
->  drivers/clk/meson/a1-audio-clkc.c             | 359 ++++++++++++++++++
->  drivers/clk/meson/a1-audio-drv.c              | 104 +++++
->  drivers/clk/meson/a1-audio-vad-clkc.c         |  85 +++++
->  drivers/clk/meson/a1-audio.h                  | 131 +++++++
->  drivers/clk/meson/axg-audio.c                 | 138 +------
->  drivers/clk/meson/meson-audio.h               | 143 +++++++
->  drivers/reset/amlogic/reset-meson-aux.c       |   9 +
->  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++
->  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++
->  13 files changed, 1051 insertions(+), 137 deletions(-)
->  create mode 100644 drivers/clk/meson/a1-audio-clkc.c
->  create mode 100644 drivers/clk/meson/a1-audio-drv.c
->  create mode 100644 drivers/clk/meson/a1-audio-vad-clkc.c
->  create mode 100644 drivers/clk/meson/a1-audio.h
->  create mode 100644 drivers/clk/meson/meson-audio.h
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
->  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-
+diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
+index d3093eba54a5..1ea5d8fcfbf7 100644
+--- a/fs/btrfs/dir-item.c
++++ b/fs/btrfs/dir-item.c
+@@ -345,8 +345,8 @@ btrfs_search_dir_index_item(struct btrfs_root *root, struct btrfs_path *path,
+ 			return di;
+ 	}
+ 	/* Adjust return code if the key was not found in the next leaf. */
+-	if (ret > 0)
+-		ret = 0;
++	if (ret >= 0)
++		ret = -ENOENT;
+ 
+ 	return ERR_PTR(ret);
+ }
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index acb206d5da3b..7569c8b27f9f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4373,11 +4373,8 @@ static int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
+ 	 */
+ 	if (btrfs_ino(inode) == BTRFS_EMPTY_SUBVOL_DIR_OBJECTID) {
+ 		di = btrfs_search_dir_index_item(root, path, dir_ino, &fname.disk_name);
+-		if (IS_ERR_OR_NULL(di)) {
+-			if (!di)
+-				ret = -ENOENT;
+-			else
+-				ret = PTR_ERR(di);
++		if (IS_ERR(di)) {
++			ret = PTR_ERR(di);
+ 			btrfs_abort_transaction(trans, ret);
+ 			goto out;
+ 		}
 -- 
-Jerome
+2.34.1
+
 
