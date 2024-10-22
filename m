@@ -1,327 +1,190 @@
-Return-Path: <linux-kernel+bounces-376159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FE39AA0FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C79AA0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5009C1F23590
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BABFE283958
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70F219CCEA;
-	Tue, 22 Oct 2024 11:16:38 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9DB19B3EE;
+	Tue, 22 Oct 2024 11:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fim+r2Dl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FAF199FB5;
-	Tue, 22 Oct 2024 11:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2A219ABCE;
+	Tue, 22 Oct 2024 11:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729595798; cv=none; b=iBJFK5ejtUQg4/j3htYUYXASjXGdzEfrEeeEOofkBJsCGxMmRK9JQFl7re1oNqKtOktMtrx4L9hXVFyJ8x96DqvToed1mFAvG3YVYkis2nIha2N6ZDpmIfrEYNY1eVWJMQNRsTGN/h9JQuqWGJowFBW5/9D6GybNmCyDU9HhWoA=
+	t=1729595437; cv=none; b=MpxQdrc1NLPEsJIRKwKxo6ZzKFEM3TCPl8u3fWE272+uACemP1UD8AoXfa91eAPo5ourvqTpS0QhDfi3pOjQyh63fs8Yi8qrKKh2FP29ELLzOlpVEGLNnAvLOuO/GvZ/PevTxH8jAxGOuuAIw0eN7s6wiqA4HPPIiCUd3hJmNr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729595798; c=relaxed/simple;
-	bh=KCSF3pqS1j1j3qpR6oOvsDHmOE/iiaihE4/0TDGLTjE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xm+KmfaHR3bMIvZcAtjM6uMXhPODeX2S7wpGIM5aI6/0hSLFNg0bUPMvuMULviA0CIH+g4ds35TDvjlA1SfliyyMISpsj+TnKYoJHsek64DTakvSNs8FAos0EwhW6eZsWZc5u/h67r0FRA3BkZR+9tLcRZNjytAR8YUv3s1TWB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XXqPg50Jqz1ynKK;
-	Tue, 22 Oct 2024 19:16:39 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 994821A0188;
-	Tue, 22 Oct 2024 19:16:32 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Oct 2024 19:16:32 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
-	<tangchengchang@huawei.com>
-Subject: [PATCH for-rc 5/5] RDMA/hns: Fix cpu stuck caused by printings during reset
-Date: Tue, 22 Oct 2024 19:10:17 +0800
-Message-ID: <20241022111017.946170-6-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
-References: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1729595437; c=relaxed/simple;
+	bh=awy8Txfxl/b/Ye7wPJXnCcKrNXCFRaKfOcFe6QzT1NE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=sCtAMlRiNp3NIJzcMeMnwy6ckQYkHrHlI2NvMlWU9Tx8m9hl7c7hbWr46vbinmUOldLF3fZ+SXQBQ6Cs5VwuXQ6LTm2PuNrzt55HVJVm+0tpjjG3Ps8sAM2G5L77jrle0Le4w2ZesDtQ+8EY8ardp374vUDqMnF0l4P7Zb+a7tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fim+r2Dl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M81dB9001014;
+	Tue, 22 Oct 2024 11:10:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=56zH7F3EgO2m
+	r7feNZfL+IutKIWg/6a3q4Ql76PAJGA=; b=Fim+r2Dl3+jSi0GSzVwNy3TqRAZv
+	6K03M6wD9WMRL7CBHjg5NSI9Ez3Cwn2ysSi8bZqpCRLwUTYu/sqAsirJgfIwq82w
+	fSuul29JU9AN2+/6cn6f5Z5PEXEX53/DG216EPAOgrCuFbmKQHdRqhjtV+bHsNym
+	WjaPCwR3Fkpa3YYKwdQm5kn9ZI65H6SpTBv32g7b3qUDocYc+NLEopZd0/YFCSmO
+	GDaf94wM4MYpOIqJj+u4WquLzFGbZcNYINF3eVXrduHc+RUBQ4ImCddsi8RKGsyG
+	VDDS/yokAo9xSF1t4eraMrBb75+JQUko3NAYRC/GolCiYygfmzhKy0sqhQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmj13ysj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 11:10:33 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBATlN014826;
+	Tue, 22 Oct 2024 11:10:29 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 42cpacqq82-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 22 Oct 2024 11:10:29 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49MBASc7014820;
+	Tue, 22 Oct 2024 11:10:28 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-rampraka-hyd.qualcomm.com [10.213.109.119])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 49MBASBx014819;
+	Tue, 22 Oct 2024 11:10:28 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2305851)
+	id A000657304B; Tue, 22 Oct 2024 16:40:27 +0530 (+0530)
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
+        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
+        quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
+        kernel@quicinc.com
+Subject: [PATCH 1/1] mmc: sdhci-msm: Toggle the FIFO write clock after ungate
+Date: Tue, 22 Oct 2024 16:40:25 +0530
+Message-Id: <20241022111025.25157-1-quic_rampraka@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: E9Ebcoff7Pv7MQGiiOe7l4hoNcK9dFKQ
+X-Proofpoint-ORIG-GUID: E9Ebcoff7Pv7MQGiiOe7l4hoNcK9dFKQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=999 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220071
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
-From: wenglianfa <wenglianfa@huawei.com>
+For Qualcomm SoCs with sdcc minor version 6B and more, command path
+state machine is getting corrupted post clock ungate which is leading
+to software timeout.
 
-During reset, cmd to destroy resources such as qp, cq, and mr may fail,
-and error logs will be printed. When a large number of resources are
-destroyed, there will be lots of printings, and it may lead to a cpu
-stuck.
+Toggle the write fifo clock to reset the async fifo to fix this issue.
 
-Delete some unnecessary printings and replace other printing functions
-in these paths with the ratelimited version.
-
-Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-Fixes: c7bcb13442e1 ("RDMA/hns: Add SRQ support for hip08 kernel mode")
-Fixes: 70f92521584f ("RDMA/hns: Use the reserved loopback QPs to free MR before destroying MPT")
-Fixes: 926a01dc000d ("RDMA/hns: Add QP operations support for hip08 SoC")
-Signed-off-by: wenglianfa <wenglianfa@huawei.com>
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_cq.c    |  4 +-
- drivers/infiniband/hw/hns/hns_roce_hem.c   |  4 +-
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 73 ++++++++++------------
- drivers/infiniband/hw/hns/hns_roce_mr.c    |  4 +-
- drivers/infiniband/hw/hns/hns_roce_srq.c   |  4 +-
- 5 files changed, 41 insertions(+), 48 deletions(-)
+ drivers/mmc/host/sdhci-msm.c | 41 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_cq.c b/drivers/infiniband/hw/hns/hns_roce_cq.c
-index 4ec66611a143..4106423a1b39 100644
---- a/drivers/infiniband/hw/hns/hns_roce_cq.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_cq.c
-@@ -179,8 +179,8 @@ static void free_cqc(struct hns_roce_dev *hr_dev, struct hns_roce_cq *hr_cq)
- 	ret = hns_roce_destroy_hw_ctx(hr_dev, HNS_ROCE_CMD_DESTROY_CQC,
- 				      hr_cq->cqn);
- 	if (ret)
--		dev_err(dev, "DESTROY_CQ failed (%d) for CQN %06lx\n", ret,
--			hr_cq->cqn);
-+		dev_err_ratelimited(dev, "DESTROY_CQ failed (%d) for CQN %06lx\n",
-+				    ret, hr_cq->cqn);
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e113b99a3eab..c2ccdac21232 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -146,6 +146,7 @@
+ /* CQHCI vendor specific registers */
+ #define CQHCI_VENDOR_CFG1	0xA00
+ #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
++#define RCLK_TOGGLE BIT(1)
  
- 	xa_erase_irq(&cq_table->array, hr_cq->cqn);
+ struct sdhci_msm_offset {
+ 	u32 core_hc_mode;
+@@ -290,6 +291,7 @@ struct sdhci_msm_host {
+ 	u32 dll_config;
+ 	u32 ddr_config;
+ 	bool vqmmc_enabled;
++	bool toggle_fifo_clk;
+ };
  
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
-index ee5d2c1bb5ca..f84521be3bea 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
-@@ -672,8 +672,8 @@ void hns_roce_table_put(struct hns_roce_dev *hr_dev,
- 
- 	ret = hr_dev->hw->clear_hem(hr_dev, table, obj, HEM_HOP_STEP_DIRECT);
- 	if (ret)
--		dev_warn(dev, "failed to clear HEM base address, ret = %d.\n",
--			 ret);
-+		dev_warn_ratelimited(dev, "failed to clear HEM base address, ret = %d.\n",
-+				     ret);
- 
- 	hns_roce_free_hem(hr_dev, table->hem[i]);
- 	table->hem[i] = NULL;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index aa42c5a9b254..b6a0498a7b03 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -373,19 +373,12 @@ static int set_rwqe_data_seg(struct ib_qp *ibqp, const struct ib_send_wr *wr,
- static int check_send_valid(struct hns_roce_dev *hr_dev,
- 			    struct hns_roce_qp *hr_qp)
- {
--	struct ib_device *ibdev = &hr_dev->ib_dev;
--
- 	if (unlikely(hr_qp->state == IB_QPS_RESET ||
- 		     hr_qp->state == IB_QPS_INIT ||
--		     hr_qp->state == IB_QPS_RTR)) {
--		ibdev_err(ibdev, "failed to post WQE, QP state %u!\n",
--			  hr_qp->state);
-+		     hr_qp->state == IB_QPS_RTR))
- 		return -EINVAL;
--	} else if (unlikely(hr_dev->state >= HNS_ROCE_DEVICE_STATE_RST_DOWN)) {
--		ibdev_err(ibdev, "failed to post WQE, dev state %d!\n",
--			  hr_dev->state);
-+	else if (unlikely(hr_dev->state >= HNS_ROCE_DEVICE_STATE_RST_DOWN))
- 		return -EIO;
--	}
- 
- 	return 0;
+ static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+@@ -1162,6 +1164,39 @@ static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
+ 	return ret;
  }
-@@ -2775,8 +2768,8 @@ static int free_mr_modify_rsv_qp(struct hns_roce_dev *hr_dev,
- 	ret = hr_dev->hw->modify_qp(&hr_qp->ibqp, attr, mask, IB_QPS_INIT,
- 				    IB_QPS_INIT, NULL);
- 	if (ret) {
--		ibdev_err(ibdev, "failed to modify qp to init, ret = %d.\n",
--			  ret);
-+		ibdev_err_ratelimited(ibdev, "failed to modify qp to init, ret = %d.\n",
-+				      ret);
+ 
++/*
++ * After MCLK ugating, toggle the FIFO write clock to get
++ * the FIFO pointers and flags to valid state.
++ */
++static void sdhci_msm_toggle_fifo_write_clk(struct sdhci_host *host)
++{
++	u32 config;
++	struct mmc_ios ios = host->mmc->ios;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
++
++	if ((msm_host->tuning_done || ios.enhanced_strobe) &&
++		host->mmc->ios.timing == MMC_TIMING_MMC_HS400) {
++		/*
++		 * Select MCLK as DLL input clock.
++		 */
++		config = readl_relaxed(host->ioaddr + msm_offset->core_dll_config_3);
++		config |= RCLK_TOGGLE;
++		writel_relaxed(config, host->ioaddr + msm_offset->core_dll_config_3);
++
++		/* ensure above write as toggling same bit quickly */
++		wmb();
++		udelay(2);
++
++		/*
++		 * Select RCLK as DLL input clock
++		 */
++		config &= ~RCLK_TOGGLE;
++		writel_relaxed(config, host->ioaddr + msm_offset->core_dll_config_3);
++	}
++}
++
+ static void sdhci_msm_set_cdr(struct sdhci_host *host, bool enable)
+ {
+ 	const struct sdhci_msm_offset *msm_offset = sdhci_priv_msm_offset(host);
+@@ -2587,6 +2622,9 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	if (core_major == 1 && core_minor >= 0x71)
+ 		msm_host->uses_tassadar_dll = true;
+ 
++	if (core_major == 1 && core_minor >= 0x6B)
++		msm_host->toggle_fifo_clk = true;
++
+ 	ret = sdhci_msm_register_vreg(msm_host);
+ 	if (ret)
+ 		goto clk_disable;
+@@ -2720,6 +2758,9 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+ 				       msm_host->bulk_clks);
+ 	if (ret)
  		return ret;
- 	}
- 
-@@ -3421,8 +3414,8 @@ static int free_mr_post_send_lp_wqe(struct hns_roce_qp *hr_qp)
- 
- 	ret = hns_roce_v2_post_send(&hr_qp->ibqp, send_wr, &bad_wr);
- 	if (ret) {
--		ibdev_err(ibdev, "failed to post wqe for free mr, ret = %d.\n",
--			  ret);
-+		ibdev_err_ratelimited(ibdev, "failed to post wqe for free mr, ret = %d.\n",
-+				      ret);
- 		return ret;
- 	}
- 
-@@ -3461,9 +3454,9 @@ static void free_mr_send_cmd_to_hw(struct hns_roce_dev *hr_dev)
- 
- 		ret = free_mr_post_send_lp_wqe(hr_qp);
- 		if (ret) {
--			ibdev_err(ibdev,
--				  "failed to send wqe (qp:0x%lx) for free mr, ret = %d.\n",
--				  hr_qp->qpn, ret);
-+			ibdev_err_ratelimited(ibdev,
-+					      "failed to send wqe (qp:0x%lx) for free mr, ret = %d.\n",
-+					      hr_qp->qpn, ret);
- 			break;
- 		}
- 
-@@ -3474,16 +3467,16 @@ static void free_mr_send_cmd_to_hw(struct hns_roce_dev *hr_dev)
- 	while (cqe_cnt) {
- 		npolled = hns_roce_v2_poll_cq(&free_mr->rsv_cq->ib_cq, cqe_cnt, wc);
- 		if (npolled < 0) {
--			ibdev_err(ibdev,
--				  "failed to poll cqe for free mr, remain %d cqe.\n",
--				  cqe_cnt);
-+			ibdev_err_ratelimited(ibdev,
-+					      "failed to poll cqe for free mr, remain %d cqe.\n",
-+					      cqe_cnt);
- 			goto out;
- 		}
- 
- 		if (time_after(jiffies, end)) {
--			ibdev_err(ibdev,
--				  "failed to poll cqe for free mr and timeout, remain %d cqe.\n",
--				  cqe_cnt);
-+			ibdev_err_ratelimited(ibdev,
-+					      "failed to poll cqe for free mr and timeout, remain %d cqe.\n",
-+					      cqe_cnt);
- 			goto out;
- 		}
- 		cqe_cnt -= npolled;
-@@ -5061,10 +5054,8 @@ static int hns_roce_v2_set_abs_fields(struct ib_qp *ibqp,
- 	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
- 	int ret = 0;
- 
--	if (!check_qp_state(cur_state, new_state)) {
--		ibdev_err(&hr_dev->ib_dev, "Illegal state for QP!\n");
-+	if (!check_qp_state(cur_state, new_state))
- 		return -EINVAL;
--	}
- 
- 	if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
- 		memset(qpc_mask, 0, hr_dev->caps.qpc_sz);
-@@ -5325,7 +5316,7 @@ static int hns_roce_v2_modify_qp(struct ib_qp *ibqp,
- 	/* SW pass context to HW */
- 	ret = hns_roce_v2_qp_modify(hr_dev, context, qpc_mask, hr_qp);
- 	if (ret) {
--		ibdev_err(ibdev, "failed to modify QP, ret = %d.\n", ret);
-+		ibdev_err_ratelimited(ibdev, "failed to modify QP, ret = %d.\n", ret);
- 		goto out;
- 	}
- 
-@@ -5463,7 +5454,9 @@ static int hns_roce_v2_query_qp(struct ib_qp *ibqp, struct ib_qp_attr *qp_attr,
- 
- 	ret = hns_roce_v2_query_qpc(hr_dev, hr_qp->qpn, &context);
- 	if (ret) {
--		ibdev_err(ibdev, "failed to query QPC, ret = %d.\n", ret);
-+		ibdev_err_ratelimited(ibdev,
-+				      "failed to query QPC, ret = %d.\n",
-+				      ret);
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -5471,7 +5464,7 @@ static int hns_roce_v2_query_qp(struct ib_qp *ibqp, struct ib_qp_attr *qp_attr,
- 	state = hr_reg_read(&context, QPC_QP_ST);
- 	tmp_qp_state = to_ib_qp_st((enum hns_roce_v2_qp_state)state);
- 	if (tmp_qp_state == -1) {
--		ibdev_err(ibdev, "Illegal ib_qp_state\n");
-+		ibdev_err_ratelimited(ibdev, "Illegal ib_qp_state\n");
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -5564,9 +5557,9 @@ static int hns_roce_v2_destroy_qp_common(struct hns_roce_dev *hr_dev,
- 		ret = hns_roce_v2_modify_qp(&hr_qp->ibqp, NULL, 0,
- 					    hr_qp->state, IB_QPS_RESET, udata);
- 		if (ret)
--			ibdev_err(ibdev,
--				  "failed to modify QP to RST, ret = %d.\n",
--				  ret);
-+			ibdev_err_ratelimited(ibdev,
-+					      "failed to modify QP to RST, ret = %d.\n",
-+					      ret);
- 	}
- 
- 	send_cq = hr_qp->ibqp.send_cq ? to_hr_cq(hr_qp->ibqp.send_cq) : NULL;
-@@ -5609,9 +5602,9 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
- 
- 	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
- 	if (ret)
--		ibdev_err(&hr_dev->ib_dev,
--			  "failed to destroy QP, QPN = 0x%06lx, ret = %d.\n",
--			  hr_qp->qpn, ret);
-+		ibdev_err_ratelimited(&hr_dev->ib_dev,
-+				      "failed to destroy QP, QPN = 0x%06lx, ret = %d.\n",
-+				      hr_qp->qpn, ret);
- 
- 	hns_roce_qp_destroy(hr_dev, hr_qp, udata);
- 
-@@ -5905,9 +5898,9 @@ static int hns_roce_v2_modify_cq(struct ib_cq *cq, u16 cq_count, u16 cq_period)
- 				HNS_ROCE_CMD_MODIFY_CQC, hr_cq->cqn);
- 	hns_roce_free_cmd_mailbox(hr_dev, mailbox);
- 	if (ret)
--		ibdev_err(&hr_dev->ib_dev,
--			  "failed to process cmd when modifying CQ, ret = %d.\n",
--			  ret);
-+		ibdev_err_ratelimited(&hr_dev->ib_dev,
-+				      "failed to process cmd when modifying CQ, ret = %d.\n",
-+				      ret);
- 
- err_out:
- 	if (ret)
-@@ -5931,9 +5924,9 @@ static int hns_roce_v2_query_cqc(struct hns_roce_dev *hr_dev, u32 cqn,
- 	ret = hns_roce_cmd_mbox(hr_dev, 0, mailbox->dma,
- 				HNS_ROCE_CMD_QUERY_CQC, cqn);
- 	if (ret) {
--		ibdev_err(&hr_dev->ib_dev,
--			  "failed to process cmd when querying CQ, ret = %d.\n",
--			  ret);
-+		ibdev_err_ratelimited(&hr_dev->ib_dev,
-+				      "failed to process cmd when querying CQ, ret = %d.\n",
-+				      ret);
- 		goto err_mailbox;
- 	}
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
-index 846da8c78b8b..b3f4327d0e64 100644
---- a/drivers/infiniband/hw/hns/hns_roce_mr.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
-@@ -138,8 +138,8 @@ static void hns_roce_mr_free(struct hns_roce_dev *hr_dev, struct hns_roce_mr *mr
- 					      key_to_hw_index(mr->key) &
- 					      (hr_dev->caps.num_mtpts - 1));
- 		if (ret)
--			ibdev_warn(ibdev, "failed to destroy mpt, ret = %d.\n",
--				   ret);
-+			ibdev_warn_ratelimited(ibdev, "failed to destroy mpt, ret = %d.\n",
-+					       ret);
- 	}
- 
- 	free_mr_pbl(hr_dev, mr);
-diff --git a/drivers/infiniband/hw/hns/hns_roce_srq.c b/drivers/infiniband/hw/hns/hns_roce_srq.c
-index c9b8233f4b05..70c06ef65603 100644
---- a/drivers/infiniband/hw/hns/hns_roce_srq.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_srq.c
-@@ -151,8 +151,8 @@ static void free_srqc(struct hns_roce_dev *hr_dev, struct hns_roce_srq *srq)
- 	ret = hns_roce_destroy_hw_ctx(hr_dev, HNS_ROCE_CMD_DESTROY_SRQ,
- 				      srq->srqn);
- 	if (ret)
--		dev_err(hr_dev->dev, "DESTROY_SRQ failed (%d) for SRQN %06lx\n",
--			ret, srq->srqn);
-+		dev_err_ratelimited(hr_dev->dev, "DESTROY_SRQ failed (%d) for SRQN %06lx\n",
-+				    ret, srq->srqn);
- 
- 	xa_erase_irq(&srq_table->xa, srq->srqn);
- 
++
++	if (msm_host->toggle_fifo_clk)
++		sdhci_msm_toggle_fifo_write_clk(host);
+ 	/*
+ 	 * Whenever core-clock is gated dynamically, it's needed to
+ 	 * restore the SDR DLL settings when the clock is ungated.
 -- 
-2.33.0
+2.17.1
 
 
