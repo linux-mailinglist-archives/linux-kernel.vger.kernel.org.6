@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel+bounces-376241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808859AA202
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C4D9AA204
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6E6281090
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2322821CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806019C56C;
-	Tue, 22 Oct 2024 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XncRKz3h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9342819C56C;
+	Tue, 22 Oct 2024 12:21:27 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA6146D78
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E09146D78
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729599520; cv=none; b=bejeSSGgcBHawrC0VmeMduDUJkgCA0nmBTeLObXIUmK1jnoOBpm/Ccn6dnrPhAdJd++qgAUapL9b3CZ2qeNv25PIeqTKDbtawsZP/rwMnzuV5OB83D6SI86W0yNNc9b6vza0z0K5+UmnYSAwUNr1UnqQgkrRZ/B0b0Y3dIgtQBs=
+	t=1729599687; cv=none; b=lh3Bn1W+2qeTRMYNr+QGxs1zphYcsjBLosM6cOPyxe1PdXeg1YWDPR8pX/pNx6Fs4vgGZxZeEGOxzPqyarIuDbGlPflhcYHMD3wbm6s/vhOy5ZdsmNfPOA59Sv6A5/t06LbNUZi2Y7sm/fmtKp18XKe7Gu2ByjC35JbIPu1Q0/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729599520; c=relaxed/simple;
-	bh=SXeVUfAlj7hbKusjdOmca52nvnTR1J2o8DeVLgBTJhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QGCf+YwjzC98t1Yxx0E5fiYyzqmRlHqpHptUMFH+9GsOapQCXSDmp/3xA8a3V+6LPcK/j4a462ETeTZw6oLr5JT/rotvBVNQuaCJWJeASxAKLMzxM40lZR/vkpkonv90d1b0SBf8SYcS1A73BS8z1i+LARN9cT/XZijx6dUDQ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XncRKz3h; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729599518; x=1761135518;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=SXeVUfAlj7hbKusjdOmca52nvnTR1J2o8DeVLgBTJhs=;
-  b=XncRKz3hEmb8yvVo6Rj2i77XyU2iFgJjjLL53Uj3eNlQm8G02LdBIMCg
-   jdxLAC/KZWzQXluX/HAPS2kH3pR28CyaSlDkmlCa4pw9xNNlJIz9i8ZS9
-   giijWcdmMpeURYAcCO/mzFlC8dTwVQyJBCyaRoRzxj7C7ozqIQJeZ8atu
-   W2RQmF/GyRGamsXC9Xz6B7nCv07l3o6K1y62AeKaD3l6nEt4kE9ZwKf2p
-   ZXb7bZtzGFDqKNFwsptBkWEv/YV3aaYe0VtO7I7K0IlVCpccjT8km7Und
-   wk2gpG+Eu9JifARcqM4oGXHgVy25VCCWHnKIi5Pig7MKBq5EbQebreWAE
-   g==;
-X-CSE-ConnectionGUID: xF7CJyUnQtS3F4Yqbd/6Zg==
-X-CSE-MsgGUID: 1kDj+2L/R1GebOfemVscRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="32940156"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="32940156"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:18:38 -0700
-X-CSE-ConnectionGUID: wEVM4qEcR/GEgCPChR7LHA==
-X-CSE-MsgGUID: w54+uPc6T5m3H2v+ehz+Ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="117287590"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 22 Oct 2024 05:18:36 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3DqL-000TYk-28;
-	Tue, 22 Oct 2024 12:18:33 +0000
-Date: Tue, 22 Oct 2024 20:17:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michael Chan <michael.chan@broadcom.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-	Andy Gospodarek <andrew.gospodarek@broadcom.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Simon Horman <horms@kernel.org>
-Subject: drivers/net/ethernet/broadcom/bnxt/bnxt.c:5333:6-25: WARNING:
- atomic_dec_and_test variation before object free at line 5336.
-Message-ID: <202410222004.wyOjgwYT-lkp@intel.com>
+	s=arc-20240116; t=1729599687; c=relaxed/simple;
+	bh=qiwrh4paZdZOhvzfnyjIhPiCK11Yls/d0o/bwPwYjKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eaPSQ8n74PV5s5XFqZn9cCiMrDD1lVrVQS68jQkvbYYIgBiRpJgoc1lw3N124aJaEdBOxz6B43lePYGgh/4w68BfTz4Fc/Ucj034tTSooZmqM9kFU5xLfOJs8DYbHqzcEaWJR0lnqFqW7KoT0ddpmHwYjgH4LqpveWxgCAH1iRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXrp44BWNzpX8V;
+	Tue, 22 Oct 2024 20:19:24 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id B97D018010F;
+	Tue, 22 Oct 2024 20:21:21 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 22 Oct 2024 20:21:20 +0800
+Message-ID: <0ba91907-d3f5-4665-9a63-0b10b5d03f38@huawei.com>
+Date: Tue, 22 Oct 2024 20:21:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-5-shiyongbang@huawei.com>
+ <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+ <277b126d-e17c-4ef9-a6fe-56f36061606e@huawei.com>
+ <CAA8EJpontTXUd0TzvwJZ4gCZ2i6vdB8+PqE+W3ChCuBH3WkfaA@mail.gmail.com>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <CAA8EJpontTXUd0TzvwJZ4gCZ2i6vdB8+PqE+W3ChCuBH3WkfaA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c2ee9f594da826bea183ed14f2cc029c719bf4da
-commit: 1f6e77cb9b328f2ec145e73be97cab6fec838678 bnxt_en: Add bnxt_l2_filter hash table.
-date:   10 months ago
-config: arc-randconfig-r052-20241022 (https://download.01.org/0day-ci/archive/20241022/202410222004.wyOjgwYT-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
+Okay, I'll fix them.
+Thanks,
+Baihan
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410222004.wyOjgwYT-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/net/ethernet/broadcom/bnxt/bnxt.c:5333:6-25: WARNING: atomic_dec_and_test variation before object free at line 5336.
-
-vim +5333 drivers/net/ethernet/broadcom/bnxt/bnxt.c
-
-  5330	
-  5331	void bnxt_del_l2_filter(struct bnxt *bp, struct bnxt_l2_filter *fltr)
-  5332	{
-> 5333		if (!atomic_dec_and_test(&fltr->refcnt))
-  5334			return;
-  5335		spin_lock_bh(&bp->ntp_fltr_lock);
-> 5336		hlist_del_rcu(&fltr->base.hash);
-  5337		if (fltr->base.flags) {
-  5338			clear_bit(fltr->base.sw_id, bp->ntp_fltr_bmap);
-  5339			bp->ntp_fltr_count--;
-  5340		}
-  5341		spin_unlock_bh(&bp->ntp_fltr_lock);
-  5342		kfree_rcu(fltr, base.rcu);
-  5343	}
-  5344	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> On Mon, 21 Oct 2024 at 14:54, s00452708 <shiyongbang@huawei.com> wrote:
+>> Thanks, I will modify codes according to your comments, and I also
+>> replied some questions or reasons why I did it below.
+>>
+>>> On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
+>>>> From: baihan li <libaihan@huawei.com>
+>>>>
+>>>> To support DP interface displaying in hibmc driver. Add
+>>>> a encoder and connector for DP modual.
+>>>>
+>>>> Signed-off-by: baihan li <libaihan@huawei.com>
+>>>> ---
+>>>>    drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+>>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
+>>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
+>>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
+>>>>    4 files changed, 217 insertions(+), 2 deletions(-)
+>>>>    create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>>>
+> [...]
+>
+>>>> +
+>>>> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>>> +{
+>>>> +    int count;
+>>>> +
+>>>> +    count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+>>>> +                                 connector->dev->mode_config.max_height);
+>>>> +    drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
+>>> What? Please parse EDID instead.
+>>> I'll add aux over i2c r/w and get edid functions in next patch.
+> At least please mention that it's a temporal stub which will be changed later.
+>
+>>>> +
+>>>> +    return count;
+>>>> +}
+>>>> +
+> [...]
+>
+>>>> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>>>               return ret;
+>>>>       }
+>>>>
+>>>> +    /* if DP existed, init DP */
+>>>> +    if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
+>>>> +         DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
+>>>> +            ret = hibmc_dp_init(priv);
+>>>> +            if (ret)
+>>>> +                    drm_err(dev, "failed to init dp: %d\n", ret);
+>>>> +    }
+>>>> +
+>>>>       ret = hibmc_vdac_init(priv);
+>>>>       if (ret) {
+>>>>               drm_err(dev, "failed to init vdac: %d\n", ret);
+>>>> -            return ret;
+>>> Why?
+>>> We have two display cables, if VGA cannot work, this change makes DP
+>>> still work.
+> But that has nothing to do with init errors. If initialising (aka
+> probing) VGA fails, then the driver init should fail. At the runtime
+> the VGA and DP should be independent and it should be possible to
+> drive just one output, that's true.
+>
 
