@@ -1,133 +1,98 @@
-Return-Path: <linux-kernel+bounces-375854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E020B9A9BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:03:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53DB9A9BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71748284D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E011F22B32
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A2915D5B7;
-	Tue, 22 Oct 2024 08:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K6uBTYvk"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13E15574C;
+	Tue, 22 Oct 2024 08:02:44 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D241514F6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6D31547E7;
+	Tue, 22 Oct 2024 08:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729584176; cv=none; b=AVs/9wo/2uis9VlyHk7DWILI5wITr+cP0/Oe1x/s0JliHE41AgFUcrTocM4iX1kL4SnSr64DR62gTby91e/oL3MO7Vy4Kc4IbqHFw/5lC+j5Wp1iW31CtFNz1GAZfjLUWQsWDZRvugDvSkXeaLMqw21iFovHFtSfj92hDM+uz7g=
+	t=1729584164; cv=none; b=cJF/9BqFdCShYO/cPkI0TLbc20gq7/Tw7lFmTwoRHb54iZU8OT8ua0e67EjBl5zyC0SOuMp/xMoVJeUaKBDWXNo5bCX98nDHtkrHDnJV7KRrm3oxHDDB6iy54R3CRnMO9Vb1xNOuYxWMszDmeNUcF4K3q8Jjne52tj30ykmfXcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729584176; c=relaxed/simple;
-	bh=+F0JhNdgzeINwJGp8wLr2K56CdFX9zvu92jlmDr2FQs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=SwwWeodqGEdQDnl9RW9I2FzctQOFIxxBlQ5ef1mktuYCjGn3TaacLgo0ROcxY9Wn59+EBRxCpEt3s7G6vvOUkiLxOvuG4x+odoxdiCg+ei2U2E/vBGJdmcWcyDcAtb8JrNcz1+NZ5qObQrWwSvDXHdZdRHR025uooZ1YtrFQKIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K6uBTYvk; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729584172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MNvdWP267aP5o9FLGaB5KaigNk7jDTNgJvyHFcfALiU=;
-	b=K6uBTYvk2SRHTpQPbDtBnARpREGqFyHQk6pP2hVJdTafViKwieJNvCottH+Ugiz7peJ/E0
-	Fa9pd4AdMwCuE6AYqswexHWfo0FIUkOGLq6IZsqRbK3yWl8XB1h6J4N/c001QsY6gMheM0
-	LdMLYlkFuTk5biLBFMqgEbOfVBIye3g=
+	s=arc-20240116; t=1729584164; c=relaxed/simple;
+	bh=oCUTSGwDs7RFdUrI4qSb5E1YozgvfzPLYAgYrjMGUB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R/7lHAvbxnnfDlUGolOxvpM7hwlJ22WsRWoG96dxc/w50rkbREGwAeLvN+7fYGTeDoJ1UN7RfruCG96VCM2OX/naB5sb+2QEhLH3pUGHfBeV3IoriMRuqazB4J3cK36XfMGM9j5DGFpZ87kcWo0HHeBwcHmYav6dRb/y8+FpSPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: fc8e6466904b11efa216b1d71e6e1362-20241022
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:915dfc21-dc4d-4c7f-bfe7-792eca6b2949,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:5397b80a9d1b813ee247a6ffe9014e6d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,URL:1
+	1|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: fc8e6466904b11efa216b1d71e6e1362-20241022
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <jiangyunshui@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 82723815; Tue, 22 Oct 2024 16:02:30 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id E0F13E000E85;
+	Tue, 22 Oct 2024 16:02:29 +0800 (CST)
+X-ns-mid: postfix-67175C15-7706351480
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 6A248E000E85;
+	Tue, 22 Oct 2024 16:02:28 +0800 (CST)
+From: Yunshui Jiang <jiangyunshui@kylinos.cn>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	Yunshui Jiang <jiangyunshui@kylinos.cn>
+Subject: [PATCH] tests: hsr: Increase timeout to 10 minutes
+Date: Tue, 22 Oct 2024 16:02:23 +0800
+Message-ID: <20241022080223.718547-1-jiangyunshui@kylinos.cn>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] block: remove redundant explicit memory barrier from
- rq_qos waiter and waker
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <c297cba9-5136-46b6-b2a4-5169a1a3f7cf@linux.dev>
-Date: Tue, 22 Oct 2024 16:02:11 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- axboe@kernel.dk,
- josef@toxicpanda.com,
- oleg@redhat.com,
- linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <A88698A8-4334-4521-BEE9-39910D37C3DF@linux.dev>
-References: <20241021085251.73353-1-songmuchun@bytedance.com>
- <c297cba9-5136-46b6-b2a4-5169a1a3f7cf@linux.dev>
-To: Chengming Zhou <chengming.zhou@linux.dev>
-X-Migadu-Flow: FLOW_OUT
 
+The time-consuming HSR test, hsr_ping.sh, actually needs 7 min to run.
+Around 375s to be exact, and even more on a debug kernel or kernel with
+other network security limits. The timeout setting for the kselftest is
+currently 45 seconds, which is way too short to integrate hsr tests to
+run_kselftest infrastructure. So, HSR test needs an explicit setting.
+And to leave us some slack, use 10 min as default timeout.
 
+Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
+---
+ tools/testing/selftests/net/hsr/settings | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tools/testing/selftests/net/hsr/settings
 
-> On Oct 22, 2024, at 15:53, Chengming Zhou <chengming.zhou@linux.dev> =
-wrote:
->=20
-> On 2024/10/21 16:52, Muchun Song wrote:
->> The memory barriers in list_del_init_careful() and =
-list_empty_careful()
->> in pairs already handle the proper ordering between data.got_token
->> and data.wq.entry. So remove the redundant explicit barriers. And =
-also
->> change a "break" statement to "return" to avoid redundant calling of
->> finish_wait().
->> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
->=20
-> Good catch! Just a small nit below, feel free to add:
->=20
-> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
->=20
->> ---
->>  block/blk-rq-qos.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
->> index dc510f493ba57..9b0aa7dd6779f 100644
->> --- a/block/blk-rq-qos.c
->> +++ b/block/blk-rq-qos.c
->> @@ -218,7 +218,6 @@ static int rq_qos_wake_function(struct =
-wait_queue_entry *curr,
->>   		return -1;
->>     	data->got_token =3D true;
->> - 	smp_wmb();
->>   	wake_up_process(data->task);
->>   	list_del_init_careful(&curr->entry);
->>   	return 1;
->> @@ -274,10 +273,9 @@ void rq_qos_wait(struct rq_wait *rqw, void =
-*private_data,
->>  			 * which means we now have two. Put our local =
-token
->>  			 * and wake anyone else potentially waiting for =
-one.
->>  			 */
->> - 			smp_rmb();
->>   			if (data.got_token)
->>   				cleanup_cb(rqw, private_data);
->> - 			break;
->> + 			return;
->>   		}
->=20
-> Would it be better to move this acquire_inflight_cb() above out of
-> the do-while(1) since we rely on the waker to get inflight counter
-> for us?
-
-I also noticed about this and I am working on this. Will send a separate
-patch for this refactoring later.
-
-Thanks.
-
->=20
-> Thanks.
->=20
->>   io_schedule();
->>   has_sleeper =3D true;
+diff --git a/tools/testing/selftests/net/hsr/settings b/tools/testing/sel=
+ftests/net/hsr/settings
+new file mode 100644
+index 000000000000..a62d2fa1275c
+--- /dev/null
++++ b/tools/testing/selftests/net/hsr/settings
+@@ -0,0 +1 @@
++timeout=3D600
+--=20
+2.45.2
 
 
