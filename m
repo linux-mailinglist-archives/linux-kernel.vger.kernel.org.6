@@ -1,112 +1,161 @@
-Return-Path: <linux-kernel+bounces-375873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A565F9A9C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:15:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2069A9C29
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE22B1C2198B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:15:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EE48B2369A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2486E161310;
-	Tue, 22 Oct 2024 08:15:10 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E216C444;
+	Tue, 22 Oct 2024 08:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ka8qOXVc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1990C154449;
-	Tue, 22 Oct 2024 08:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAA5154C03;
+	Tue, 22 Oct 2024 08:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729584909; cv=none; b=C49uk3bAzKSAlXhYW0nnDC1RaI766jdO9wdyZluocc2cpLJ8I1FmS78qOsE0359c9a+K2FVxOoacZo6RSrDCkpHVgDjOOSYRQsK6KwUHE2eIzZLqB0iXJ1bespKX5xWi3Vnk3Ftojc1Iwtys4hD9sGVgv5+NzbD1SgvCG/TxMM0=
+	t=1729584922; cv=none; b=KiP5/7mwX5sWCLU4MT3R+eVVW3Dom4IYiG3EsYR7QZKMie6Z3unijmZ2HbH5tpG/JlHYKLuokODl9NSk33dEd1vRc0ol8BJk7PHxQQ/NaLegBt0A3vm5j9+Ha0NEKilp/onXdoFzs2uXcRyA5Uhqnhk1Z2Jy84DL42GWQiihl94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729584909; c=relaxed/simple;
-	bh=U/NWSJgaG/brbJend3A20v2opbdbYHUDm1HqwMQNmf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dWRc2mzKzyetSPN+DKDL8ggoTk3Rmah1d/uBpfruX5IDBUGXS4d6+325z5jNqVUFVB9hj0Id19bSFZiX7vR8XoCdHuIHiESW+8es1KrTaDZwmj9xPQ9yAMgUArIHNxP28QpUCV/9+c+lfT5LX/xMXmgHxk+HYQjUxSGmrt4t0oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b8b30d62904d11efa216b1d71e6e1362-20241022
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:7729fda8-c9bb-4a49-896e-2ac0cd3266e4,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:7003421bac135d5387b6f2f01a2421f5,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b8b30d62904d11efa216b1d71e6e1362-20241022
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <aichao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1439359024; Tue, 22 Oct 2024 16:14:55 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 8C17916002085;
-	Tue, 22 Oct 2024 16:14:55 +0800 (CST)
-X-ns-mid: postfix-67175EFF-4220401986
-Received: from localhost.localdomain (unknown [172.25.120.86])
-	by node4.com.cn (NSMail) with ESMTPA id BE0C616002085;
-	Tue, 22 Oct 2024 08:14:54 +0000 (UTC)
-From: Ai Chao <aichao@kylinos.cn>
-To: jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ai Chao <aichao@kylinos.cn>
-Subject: [PATCH] hwmon: (it87) Add support for IT8625E
-Date: Tue, 22 Oct 2024 16:14:53 +0800
-Message-Id: <20241022081453.75253-1-aichao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729584922; c=relaxed/simple;
+	bh=ED+LZhJhE26ThOoJvug3eIlGNitTZP5Mq2j85RJfjA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRRP3RlGixPeXa1gCBxiNdj0qbKxfNOJlNPkf0dcjFqMIcFDRvmv9W5PPVTETFpPqCkqi0+e4uNaaiqKemjij5HXn81aE3Fur6nGVbapucu6oCBq+zpypAyo30Ea20CDHj3bQL7ibDp93kIL/deRMnvW0EBFASBMJ7fpLU8RiUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ka8qOXVc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37DE2C4CEC3;
+	Tue, 22 Oct 2024 08:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729584921;
+	bh=ED+LZhJhE26ThOoJvug3eIlGNitTZP5Mq2j85RJfjA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ka8qOXVcbwuemlUXAnev4yBNY0NkM0WPW5XLI2Xv4xxSRjyH2PXtU1NX3OeQQ1DqR
+	 ctV44H/93iiU+iazoEDmIAcF5UZlUtyLumdw5/bvqk7vAAeb2umOphDF2hdmITv4ld
+	 5Iq6FRxkQjSZIt1WfCG9ItMlVz6K7gqcLxGb4rgwoDr2ASCacNwpF3uanbgPb5c8pY
+	 dmIJzrGspNAFodoW1mSkKN/8r2EBNy0dgzSPREN8z22O5DGrXCZIL8ZzrHbShW5Vpq
+	 lwbDuU/CqHqZGvzLufVCMgNNZyoGCyFecBoChO1JyWdy2dvwbzlFK+QBWnObrV4fjq
+	 6YfyORkX7yN9Q==
+Date: Tue, 22 Oct 2024 10:15:19 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_jesszhan@quicinc.com, mchehab@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
+	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
+ converter
+Message-ID: <20241022-amazing-fresh-agouti-fb6eda@houat>
+References: <20241021064446.263619-1-victor.liu@nxp.com>
+ <20241021064446.263619-13-victor.liu@nxp.com>
+ <20241021-thick-cockle-of-popularity-c5e28c@houat>
+ <889594b9-e6cb-4d90-b959-cd0258b2f166@nxp.com>
+ <20241022-wondrous-fractal-lion-aedcd9@houat>
+ <7a83230b-292c-4e28-813d-a07ea1b6a66a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="u3pcdhq2tn2xfgvk"
+Content-Disposition: inline
+In-Reply-To: <7a83230b-292c-4e28-813d-a07ea1b6a66a@nxp.com>
+
+
+--u3pcdhq2tn2xfgvk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
+ converter
+MIME-Version: 1.0
 
-Add support for IT8625E on Centerm P410.
+On Tue, Oct 22, 2024 at 04:10:51PM +0800, Liu Ying wrote:
+> Hi Maxime,
+>=20
+> On 10/22/2024, Maxime Ripard wrote:
+> > On Tue, Oct 22, 2024 at 03:36:47PM +0800, Liu Ying wrote:
+> >> Hi Maxime,
+> >>
+> >> On 10/21/2024, Maxime Ripard wrote:
+> >>> On Mon, Oct 21, 2024 at 02:44:43PM +0800, Liu Ying wrote:
+> >>>> +static int it6263_bridge_atomic_check(struct drm_bridge *bridge,
+> >>>> +				      struct drm_bridge_state *bridge_state,
+> >>>> +				      struct drm_crtc_state *crtc_state,
+> >>>> +				      struct drm_connector_state *conn_state)
+> >>>> +{
+> >>>> +	struct drm_display_mode *mode =3D &crtc_state->adjusted_mode;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	ret =3D drm_atomic_helper_connector_hdmi_check(conn_state->connect=
+or,
+> >>>> +						     conn_state->state);
+> >>>> +	if (ret)
+> >>>> +		return ret;
+> >>>> +
+> >>>> +	return mode->clock > MAX_PIXEL_CLOCK_KHZ ? -EINVAL : 0;
+> >>>
+> >>> drm_atomic_helper_connector_hdmi_check will already make that check, =
+so
+> >>> it's redundant.
+> >>
+> >> MAX_PIXEL_CLOCK_KHZ is 150MHz. With 150MHz pixel clock rate, we'll get
+> >> 150MHz HDMI character rate for 8bpc and 187.5MHz HDMI character rate
+> >> for 10bpc, both are lower than MAX_HDMI_TMDS_CHAR_RATE_HZ =3D 225MHz.
+> >=20
+> > I guess? I have no idea how that's relevant though. Where are those
+> > constraints coming from, and why aren't you checking for them in
+> > tmds_char_rate_valid?
+>=20
+> All constraints come from IT6263 data sheet. They are also mentioned
+> in IT6263 product link(commit message contains the link).
+>=20
+> https://www.ite.com.tw/en/product/cate1/IT6263
+>=20
+> "
+> LVDS RX
+> Support input clock rate up to 150 MHz
+>=20
+> HDMI TX
+> Support link speeds of up to 2.25 Gbps (link clock rate of 225 MHz)=20
+> "
+>=20
+> If no objection, I'll check mode clock rate against
+> MAX_PIXEL_CLOCK_KHZ in tmds_char_rate_valid.
 
-Signed-off-by: Ai Chao <aichao@kylinos.cn>
----
- drivers/hwmon/it87.c | 3 +++
- 1 file changed, 3 insertions(+)
+If you don't support bpc other than 8, and no other format than RGB,
+then it's a good enough approximation.
 
-diff --git a/drivers/hwmon/it87.c b/drivers/hwmon/it87.c
-index e233aafa8856..fac7b10d51bc 100644
---- a/drivers/hwmon/it87.c
-+++ b/drivers/hwmon/it87.c
-@@ -15,6 +15,7 @@
-  *            IT8620E  Super I/O chip w/LPC interface
-  *            IT8622E  Super I/O chip w/LPC interface
-  *            IT8623E  Super I/O chip w/LPC interface
-+ *            IT8625E  Super I/O chip w/LPC interface
-  *            IT8628E  Super I/O chip w/LPC interface
-  *            IT8705F  Super I/O chip w/LPC interface
-  *            IT8712F  Super I/O chip w/LPC interface
-@@ -163,6 +164,7 @@ static inline void superio_exit(int ioreg, bool noexi=
-t)
- #define IT8623E_DEVID 0x8623
- #define IT8628E_DEVID 0x8628
- #define IT87952E_DEVID 0x8695
-+#define IT8625E_DEVID 0x8625
-=20
- /* Logical device 4 (Environmental Monitor) registers */
- #define IT87_ACT_REG	0x30
-@@ -2782,6 +2784,7 @@ static int __init it87_find(int sioaddr, unsigned s=
-hort *address,
- 	case IT8622E_DEVID:
- 		sio_data->type =3D it8622;
- 		break;
-+	case IT8625E_DEVID:
- 	case IT8628E_DEVID:
- 		sio_data->type =3D it8628;
- 		break;
---=20
-2.25.1
+It should be documented though
 
+Maxime
+
+--u3pcdhq2tn2xfgvk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxdfFgAKCRAnX84Zoj2+
+dkBpAYCTeWy3zA6iD+/mbISTuTA/oxVJr3H30Y/l4YAaYrxfiRnjSilMM+ckG3ph
+I3wUIxkBgO6JaDPbvX/C2fiSO1tM2GF/EadgjnJcVNSM3abhxJrUp3a2Z7LivwPC
+xgrGePQkkQ==
+=x6hs
+-----END PGP SIGNATURE-----
+
+--u3pcdhq2tn2xfgvk--
 
