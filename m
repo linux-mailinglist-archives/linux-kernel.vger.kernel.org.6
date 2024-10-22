@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-375655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099AB9A98C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:42:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645059A98CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46501F23598
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFF31F23BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8DD13AA2E;
-	Tue, 22 Oct 2024 05:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20AD13A87C;
+	Tue, 22 Oct 2024 05:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="c5MaUZ3t"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDKsibgb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CAB13B59E;
-	Tue, 22 Oct 2024 05:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E51E4BE;
+	Tue, 22 Oct 2024 05:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575735; cv=none; b=iKMl3ehm01w63X5Krm/JUiIrcGlJFRqBnJUXP4nOQu949TNqFPHpovZh2lrp34+S4flPjpdKAYSJ3/eNY5Vsf2socRTsoFIDchg7lDR2JC2H5oECzSHpfwUZ80VbUZiSDWTHweZqQsovnGapLYHX8r+Ttv85cEgm5YFdRX9OjPU=
+	t=1729575812; cv=none; b=NMqGKAvbVSvbwYqbyi514g+SAzmDn9zFKq/LjcL4+kQn23sQ5fAt0/xp8DP24x2YPkWJcVlvniV6x6JaSMklfbYlE3g5Ho4W0Fdkb2o9NJdezsTecHBCQHwIBs0dIm8nlM09hmome9dfie6aL1jkHyWTyWlD3NV9n01ySQ4NyxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575735; c=relaxed/simple;
-	bh=ITGPMDLWm1cpr9OdganmwN/ZJufyuOaNs7Ifn1uexTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LKQoqeWXGqNViZ0nyiPf3MoTmfS0Tj6PRXzwuD5g2aflz9+1it4qOhG1CJKLkBlRoXzPAEBDu0S5W3YWEZXUJ27d0vqSxSGP1YSuHzuoL9lPa7l6oFUpaFUIou05VNJ1qhoIGALOa7hZeHMPj0Za5ffy8HPPX2S+PgDyJGvlULY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=c5MaUZ3t; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 37E8E20004;
-	Tue, 22 Oct 2024 05:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1729575731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0OvqaX/hJ3L/xnjQ+i7iCYEcS54tFywcWXvR7vkK5io=;
-	b=c5MaUZ3tbaNyEtgwjwrVzYpYWklJbdpcujBLdw8rFoZNr2QTu6Yg2cvbaW9382lSSM69wD
-	3IP1VDH8IK+hfbg0O6sP8Hnt5w7ELY4Vs07zd5m9n40ht5uuPBWFi2XkoZGY19SJ32Walz
-	buZLuQtKuCfgc/rYLEWB2+uMMNtHkKesp0IQx5lXaKcun+STjvyr8aP5Py3G2C8w7Wgny9
-	43NBGVn/ZCb8O4cFmP90vx745zSSNJqwxjJEJ5Eto78x3jNoGd5L4w+hzZWA6FNgnOmdT3
-	/PpmgU/bKAOHnhqpo+Kb7hm5/YS6N75TnBmTs1UvbS1KOQ8evzOfFXRRLx55eQ==
-Message-ID: <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
-Date: Tue, 22 Oct 2024 07:42:10 +0200
+	s=arc-20240116; t=1729575812; c=relaxed/simple;
+	bh=+tgEFzOiGB/X1K/inNjx4X+zCiG9JwpQTBPGx2P1THg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=k58YSCXEFB8XtR9y1vmv+ixV0EI0Gs5Z+lgm0x4RZFVc7mYazo0Q/I1N1b5OakuUBnSAdt/s1tQzPysxdVPWHUqSP0ln6AN5OM4gKpazkZrHbuYEhSwiYpdKdTiq2wLkOzqOxcZ+UAWyzGg3a62kK7PzhY8EITyAZGL/jupcY5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDKsibgb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJtmPi016339;
+	Tue, 22 Oct 2024 05:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kq+QHhxooHdq8lD5/mJnkE7tP6DLk6t6/J7Was3bh6w=; b=dDKsibgbslCdXzrv
+	cWnHi8I4YafuR2s1k5oXKF/WtCFMo/XBB/I63DA3PDnKUcVGSZFNEixiL8ZHJ5/9
+	MSLkbNC+ztNN6osWl4Ah1IaeR71Rq4B44grAjCdY4DdoWfxKZAYtjQ/Ow4upCaFZ
+	TKO4lkaUHOUzd1FfrB17dkSwnUhXe/u7DuJd9rB84M/4zfaGVTEjkLd5/qsk1BFb
+	Cm1VWp7v3/OYUrdmXL3cZSaeHNqrEwbswJIfMKaXFt42ZOsVQTyC7qYrdfyXjA8t
+	nIJyyImf4IUICJzin0vVVUHU/vdjU5tkONQjNPpXhrIzGZRIV8nKCcAbf3aeY1Ny
+	flWsOg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj709r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 05:43:25 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M5hOtC012986
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 05:43:24 GMT
+Received: from [10.218.44.178] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
+ 2024 22:43:21 -0700
+Message-ID: <21630547-552b-43e0-906f-840610327876@quicinc.com>
+Date: Tue, 22 Oct 2024 11:13:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,71 +64,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
- <20241022012809.1ef083cd@rorschach.local.home>
+Subject: Re: [PATCH v2 2/2] firmware: qcom: qcom_tzmem: Implement sanity
+ checks
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
+ <20241014111527.2272428-3-quic_kuldsing@quicinc.com>
+ <CAMRc=MfR8rK3EnZx3_9rxkwgv6f8jA4X0u0cGBkpJ89d5i1MKw@mail.gmail.com>
+ <f46a9180-ca71-458e-9693-ed9badc85e72@quicinc.com>
 Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <20241022012809.1ef083cd@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+In-Reply-To: <f46a9180-ca71-458e-9693-ed9badc85e72@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: d7MX-jmdXmSX8xMu7If1g32ahpQaQe6F
+X-Proofpoint-ORIG-GUID: d7MX-jmdXmSX8xMu7If1g32ahpQaQe6F
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410220036
 
-Hi Steve,
 
-On 22/10/2024 07:28, Steven Rostedt wrote:
-> On Mon, 21 Oct 2024 11:44:42 +0200
-> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+
+On 10/16/2024 2:31 PM, Kuldeep Singh wrote:
 > 
->> The TRACE_IRQFLAGS_SUPPORT requires the architecture to call
->> trace_hardirqs_off() when interrupts are disabled and
->> trace_hardirqs_on() when they are enabled.
->> Add those calls to do_IRQ function.
+> On 10/14/2024 6:38 PM, Bartosz Golaszewski wrote:
+>> On Mon, Oct 14, 2024 at 1:19 PM Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
+>>>
+>>> The qcom_tzmem driver currently has exposed APIs that lack validations
+>>> on required input parameters. This oversight can lead to unexpected null
+>>> pointer dereference crashes.
+>>>
 >>
->> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->> ---
->>   arch/m68k/Kconfig      | 1 +
->>   arch/m68k/kernel/irq.c | 2 ++
->>   2 files changed, 3 insertions(+)
+>> The commit message is not true. None of the things you changed below
+>> can lead to a NULL-pointer dereference.>
+>>> To address this issue, add sanity for required input parameters.
+>>>
+>>> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+>>> ---
+>>>  drivers/firmware/qcom/qcom_tzmem.c | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+>>> index 92b365178235..977e48fec32f 100644
+>>> --- a/drivers/firmware/qcom/qcom_tzmem.c
+>>> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+>>> @@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
+>>>
+>>>         might_sleep();
+>>>
+>>> +       if (!config->policy)
+>>> +               return ERR_PTR(-EINVAL);
 >>
->> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
->> index cc26df907bfe3c8143a931d259eceabb16af7411..ab3375475721fa63418c40d4ba6ac76679ebc77d 100644
->> --- a/arch/m68k/Kconfig
->> +++ b/arch/m68k/Kconfig
->> @@ -39,6 +39,7 @@ config M68K
->>   	select OLD_SIGSUSPEND3
->>   	select UACCESS_MEMCPY if !MMU
->>   	select ZONE_DMA
->> +	select TRACE_IRQFLAGS_SUPPORT
->>   
->>   config CPU_BIG_ENDIAN
->>   	def_bool y
->> diff --git a/arch/m68k/kernel/irq.c b/arch/m68k/kernel/irq.c
->> index 9ab4f550342e5de11c528f55781432675ffd66bf..74cf60ebbc4bca51f3caa4046dbd2bdb02355711 100644
->> --- a/arch/m68k/kernel/irq.c
->> +++ b/arch/m68k/kernel/irq.c
->> @@ -21,9 +21,11 @@ asmlinkage void do_IRQ(int irq, struct pt_regs *regs)
->>   {
->>   	struct pt_regs *oldregs = set_irq_regs(regs);
->>   
->> +	trace_hardirqs_off();
->>   	irq_enter();
->>   	generic_handle_irq(irq);
->>   	irq_exit();
->> +	trace_hardirqs_on();
+>> This is already handled by the default case of the switch.
 > 
-> This part of the patch shouldn't be needed because those shoudl be
-> called by irq_enter() and irq_exit(). Does this not work if you don't
-> have these?
+> Ack. Need to drop.
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L218
+> 
+> While examining qcom_tzmem_pool_free under the same principle, it
+> appears the following check is unnecessary.
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
+> 
 
-Thanks for your quick review !
-Indeed, it works without those lines, so the patch is now a one-liner 
-:-). I will wait for the second part to be reviewed before sending v2.
+Bartosz,
+I am thinking to remove below check in next rev like mentioned above.
+https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
 
-JM
+Do you have any other opinion here?
+Please let me know.
+
+-- 
+Regards
+Kuldeep
 
