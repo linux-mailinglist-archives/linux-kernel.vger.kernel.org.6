@@ -1,214 +1,109 @@
-Return-Path: <linux-kernel+bounces-376105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCFC9AA019
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:30:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F09AA01C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8080F1C2197E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C282876F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D42C19AD97;
-	Tue, 22 Oct 2024 10:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4921993AF;
+	Tue, 22 Oct 2024 10:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G8Dr3vNn"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZugQ+dNW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D92D198A25
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1635218E02D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729592978; cv=none; b=GFsL1Mvk9OklPgWHUCdd3O+PIjIE5YNCeUKvnrwpPDxdOfcEnTkgroj87PT58bpw0ErnDvjvva/hrm08gBq0Ehnha502aYYESyXhlUYSlz+61BPHhbtrtL71ZsojjPDjSafe3ZFmUYIwom9LOkfPJf/Pwrm3klek1cJYdPUbakA=
+	t=1729593061; cv=none; b=LOD6HvJBoWT4OrjntWkLqdXSp4PwzgTQ9BgB9Lg+/CUWRu/6porgUgRpxFZSpJAuFx8XY6UmcFts2BMQNaXoKJeauQ0FmvYbDOly1rDbiUFMtNpo9jgDP9Yu0sMiggeV68LKSjlOJIthsTTCyAwbxDE8cFMNlLuj/tP4uTFB8I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729592978; c=relaxed/simple;
-	bh=6C7NgU3MUhl3Hi2Nc5pua0VwmoKshs0V30agMvqeRcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FXG1vCUqY5X8uswibWIEbX8APKMX8IB3Xnz49EODnu4xAJykDcabr3k0K/pV5W6MyQ5yQaun/AFHIC30B9dz/s6z1ucC/622LPAx/giU6a99nxuneDRo668VGFdhL7R8KwhT/7b3Zxa73LcYNmfPY5j4Z+3Yj5VTrrSc37W3Fx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G8Dr3vNn; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb3110b964so47972881fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729592975; x=1730197775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cfQ5R5W4pAP72bBv+ZRad0B8K8sGOGYh/mrciyj4lTs=;
-        b=G8Dr3vNn+oU4NLpM/No4zyI0jB3rTolxsBhHWttfDE/4zP2O2V3BwxdL1OA0SUHL5Q
-         rnH6WnNVsyqxMzKcbbjgfqgbGCt2oH7XJ10ZPR8QWk/z08qbbGvd1FT6KJbfpxaxhs1Y
-         yGR3DMbKGhaYiyq7D8IeSgLZYUsxCiuv0Xypk0mqx17xz/dwlFARxuGzmxG9TcFj1AeI
-         LgGfp/kF35hMKkEGZr+i1FYWA7XTOQvzywxLbYl9VUskWJ3RR+Fr5m9vri+5oCNYypZn
-         ARfsk1l5zvIebPV66QJQhOVlIpSbGtGRMM6EiLiNY3a/Ioj1UYiVz1vtFVYS+eiGhwvO
-         KwrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729592975; x=1730197775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cfQ5R5W4pAP72bBv+ZRad0B8K8sGOGYh/mrciyj4lTs=;
-        b=m1+upwNKasyFf8Se+2JH0/w7nm6+y4LY3ho5qNXgU8NCd8lEHCMvVSr18z1F5+gEKC
-         n9BQv9bCXBspY6RBcFMCZmeQUe5jfhpfmzQbhm9a0qaWETpCLqWE3IG8gpXWSa0vAXA9
-         kfxigpx9EyXZBA4+ONFOmVyIYpiem5R4GwOzNCFO/obrP5eTLzZsn9ukKoHLeLNGkaS6
-         l2C5oT/42aESOS9X6ht4stCCMY56GwWSaJpU1dovw2G1bN3f2QMxcK3wGLY1T8dOy+gR
-         Vp9HWQiUB9Ltx1DAWhBkbbg992sVuUC3ZXI0DzfDwDfxmnw/5+7s7BDUJXeAFy5FyLNV
-         KZZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcTNzH5p3QODAFKqk3FP6z+t0ngt1v9A/pARciWwVk5ksQk/kGbIsGkmltSFImagXwlJ9MbmRZ8qYFtFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEv+CI8e857IGqzqyqopg8vnYrsh4m8OyMB/rhEBcnokcnmMfd
-	LrxX1S4QNBkXtCRDbWj1NTbaxy45J6U5Tdf2Wudhbiuu6fHn+9PVfk71N2EEilU3UaH1M83CWsS
-	upWaAZwMlzCz+/yKZinvAxaNAhG5W22d8J/+p
-X-Google-Smtp-Source: AGHT+IGKAlOEl7E9oTff9kvgfX+LWcozQrfXlOfU+OSgTq5j864f3oHwCQZ6UD+oFhycuC6vhTNHl9ohjhFSF3njz6w=
-X-Received: by 2002:a05:651c:551:b0:2fa:d4ef:f222 with SMTP id
- 38308e7fff4ca-2fb8320b662mr59323601fa.38.1729592974448; Tue, 22 Oct 2024
- 03:29:34 -0700 (PDT)
+	s=arc-20240116; t=1729593061; c=relaxed/simple;
+	bh=ckwdXkesd1lkAUGXB2NkOvoDnLV225VqIN/edVwVwvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qZDjm2PtPDaTPgj7Gz7UfS7zcKvKzKNj+BKuUWwLwgjr4GSOn01NfFnI2I5PiIF900xSKci+iB0/YXw+NFV0kO/v6fGE0gwA1wzpGM28CgI0Xhx/TnsxJqGauX14wZntJmRjxPNjRdvQ7OQj67xbnCh3RMREC0eTYaZTDQz+RxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZugQ+dNW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729593058;
+	bh=ckwdXkesd1lkAUGXB2NkOvoDnLV225VqIN/edVwVwvc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZugQ+dNW06+dJxsk1cWVB+lYF0mpPSqkQYI/H3V6ossWlAgrWOLWyA7p1B8q27PrB
+	 l8twj9/sEBjLFl18AyixCNfEeif9uS6QGxJryyxGUL2ERta8Q/6JNYh1P4VOOnL/HT
+	 OD8VsV2vB2lVJ+GvQtvk3T/3m/CO1B/C+lKCjyYcaCFJHg9SXZyvPSLRV/T1zu0iYK
+	 wZD6FUFQZ6Cma4BpUAnRnoSOv0p9g7yZcy6hjeTw8ow3jZ4G8UeCQZTAp7PquALZdQ
+	 Fm+qFuO8iCbEz1QfJCb3hPBvdc4kUxCi5Ci8oxEDNBTZ4t6qN4X8groTTTNdpt3/wN
+	 JldAru3d8U/Jg==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CBB9D17E1522;
+	Tue, 22 Oct 2024 12:30:57 +0200 (CEST)
+Date: Tue, 22 Oct 2024 12:30:52 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ faith.ekstrand@collabora.com
+Subject: Re: [PATCH] drm/syncobj: ensure progress for syncobj queries
+Message-ID: <20241022123052.3e0f3f17@collabora.com>
+In-Reply-To: <20241017162054.2701638-1-olvaffe@gmail.com>
+References: <20241017162054.2701638-1-olvaffe@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022085759.1328477-1-wangliang74@huawei.com>
-In-Reply-To: <20241022085759.1328477-1-wangliang74@huawei.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 22 Oct 2024 12:29:21 +0200
-Message-ID: <CANn89iLJGbm0Jr9CVFo6K8jetF2jX0EqVBUR3a1L=PPSSLCygA@mail.gmail.com>
-Subject: Re: [PATCH net] net: fix crash when config small gso_max_size/gso_ipv4_max_size
-To: Wang Liang <wangliang74@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, idosch@nvidia.com, 
-	kuniyu@amazon.com, stephen@networkplumber.org, dsahern@kernel.org, 
-	lucien.xin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 10:40=E2=80=AFAM Wang Liang <wangliang74@huawei.com=
-> wrote:
->
-> Config a small gso_max_size/gso_ipv4_max_size can lead to large skb len,
-> which may trigger a BUG_ON crash.
->
-> If the gso_max_size/gso_ipv4_max_size is smaller than MAX_TCP_HEADER + 1,
-> the sk->sk_gso_max_size is overflowed:
-> sk_setup_caps
->     // dst->dev->gso_ipv4_max_size =3D 252, MAX_TCP_HEADER =3D 320
->     // GSO_LEGACY_MAX_SIZE =3D 65536, sk_is_tcp(sk) =3D 1
->     sk->sk_gso_max_size =3D sk_dst_gso_max_size(sk, dst);
->         max_size =3D dst->dev->gso_ipv4_max_size;
->             sk->sk_gso_max_size =3D max_size - (MAX_TCP_HEADER + 1);
->             sk->sk_gso_max_size =3D 252-(320+1) =3D -69
->
-> When send tcp msg, the wrong sk_gso_max_size can lead to a very large
-> size_goal, which cause large skb length:
-> tcp_sendmsg_locked
->     tcp_send_mss(sk, &size_goal, flags);
->         tcp_xmit_size_goal(sk, mss_now, !(flags & MSG_OOB));
->
->             // tp->max_window =3D 65536, TCP_MSS_DEFAULT =3D 536
->             new_size_goal =3D tcp_bound_to_half_wnd(tp, sk->sk_gso_max_si=
-ze);
->                 new_size_goal =3D sk->sk_gso_max_size =3D -69
->
->             // tp->gso_segs =3D 0, mss_now =3D 32768
->             size_goal =3D tp->gso_segs * mss_now;
->                 size_goal =3D 0*32768 =3D 0
->
->             // sk->sk_gso_max_segs =3D 65535, new_size_goal =3D -69
->             new_size_goal < size_goal:
->                 tp->gso_segs =3D min_t(u16, new_size_goal / mss_now,
->                      sk->sk_gso_max_segs);
->                 // new_size_goal / mss_now =3D 0x1FFFF -> 65535
->                 // tp->gso_segs =3D 65535
->                 size_goal =3D tp->gso_segs * mss_now;
->                 size_goal =3D 65535*32768 =3D 2147450880
->
->     if new_segment:
->         skb =3D tcp_stream_alloc_skb()
->         copy =3D size_goal; // copy =3D 2147450880
->     if (copy > msg_data_left(msg)) // msg_data_left(msg) =3D 2147479552
->         copy =3D msg_data_left(msg); // copy =3D 2147450880
->     copy =3D min_t(int, copy, pfrag->size - pfrag->offset); // copy =3D 2=
-1360
->     skb_copy_to_page_nocache
->         skb_len_add
->             skb->len +=3D copy; // skb->len add to 524288
->
+On Thu, 17 Oct 2024 09:20:53 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-I find this explanation way too long. No one will bother to double
-check your claims.
-
-I would simply point out that an underflow in sk_dst_gso_max_size()
-leads to a crash,
-because sk->sk_gso_max_size would be much bigger than device limits.
-
-
-> The large skb length may load to a overflowed tso_segs, which can trigger
-> a BUG_ON crash:
-> tcp_write_xmit
->     tso_segs =3D tcp_init_tso_segs(skb, mss_now);
->         tcp_set_skb_tso_segs
->             tcp_skb_pcount_set
->                 // skb->len =3D 524288, mss_now =3D 8
->                 // u16 tso_segs =3D 524288/8 =3D 65535 -> 0
->                 tso_segs =3D DIV_ROUND_UP(skb->len, mss_now)
->     BUG_ON(!tso_segs)
->
-> To solve this issue, the minimum value of gso_max_size/gso_ipv4_max_size
-> should be checked.
->
-> Fixes: 46e6b992c250 ("rtnetlink: allow GSO maximums to be set on device c=
-reation")
-> Fixes: 9eefedd58ae1 ("net: add gso_ipv4_max_size and gro_ipv4_max_size pe=
-r device")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> Userspace might poll a syncobj with the query ioctl.  Call
+> dma_fence_enable_sw_signaling to ensure dma_fence_is_signaled returns
+> true in finite time.
+> 
 > ---
->  net/core/rtnetlink.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index e30e7ea0207d..a0df1da5a0a6 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -2466,6 +2466,12 @@ static int validate_linkmsg(struct net_device *dev=
-, struct nlattr *tb[],
->                 return -EINVAL;
->         }
->
-> +       if (tb[IFLA_GSO_MAX_SIZE] &&
-> +           (nla_get_u32(tb[IFLA_GSO_MAX_SIZE]) < MAX_TCP_HEADER + 1)) {
-> +               NL_SET_ERR_MSG(extack, "too small gso_max_size");
-> +               return -EINVAL;
-> +       }
+> 
+> panvk hits this issue when timeline semaphore is enabled.  It uses the
+> transfer ioctl to propagate fences.  dma_fence_unwrap_merge converts the
+> dma_fence_chain to a dma_fence_array.  dma_fence_array_signaled never
+> return true unless signaling is enabled.
 
-Modern way would be to change ifla_policy[] : This is where we put such lim=
-its.
+Looks like a bugfix to me. Should we add Fixes+Cc-stable tags so it
+gets backported to stable branches.
 
-Look for NLA_POLICY_MIN() uses in the tree.
-
+> ---
+>  drivers/gpu/drm/drm_syncobj.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+> index 4fcfc0b9b386c..58c5593c897a2 100644
+> --- a/drivers/gpu/drm/drm_syncobj.c
+> +++ b/drivers/gpu/drm/drm_syncobj.c
+> @@ -1689,6 +1689,9 @@ int drm_syncobj_query_ioctl(struct drm_device *dev, void *data,
+>  			    DRM_SYNCOBJ_QUERY_FLAGS_LAST_SUBMITTED) {
+>  				point = fence->seqno;
+>  			} else {
+> +				/* ensure forward progress */
+> +				dma_fence_enable_sw_signaling(fence);
 > +
->         if (tb[IFLA_GSO_MAX_SEGS] &&
->             (nla_get_u32(tb[IFLA_GSO_MAX_SEGS]) > GSO_MAX_SEGS ||
->              nla_get_u32(tb[IFLA_GSO_MAX_SEGS]) > dev->tso_max_segs)) {
-> @@ -2485,6 +2491,12 @@ static int validate_linkmsg(struct net_device *dev=
-, struct nlattr *tb[],
->                 return -EINVAL;
->         }
->
-> +       if (tb[IFLA_GSO_IPV4_MAX_SIZE] &&
-> +           (nla_get_u32(tb[IFLA_GSO_IPV4_MAX_SIZE]) < MAX_TCP_HEADER + 1=
-)) {
-> +               NL_SET_ERR_MSG(extack, "too small gso_ipv4_max_size");
-> +               return -EINVAL;
-> +       }
+>  				dma_fence_chain_for_each(iter, fence) {
+>  					if (iter->context != fence->context) {
+>  						dma_fence_put(iter);
 
-Same here.
-
-> +
->         if (tb[IFLA_GRO_IPV4_MAX_SIZE] &&
->             nla_get_u32(tb[IFLA_GRO_IPV4_MAX_SIZE]) > GRO_MAX_SIZE) {
->                 NL_SET_ERR_MSG(extack, "too big gro_ipv4_max_size");
-> --
-> 2.34.1
->
 
