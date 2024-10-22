@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-376646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CE19AB467
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1DB9AB469
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A90FB21A34
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:51:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE779B21843
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0130E1B654C;
-	Tue, 22 Oct 2024 16:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D022A1BC07E;
+	Tue, 22 Oct 2024 16:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHIC81dB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4B1VtzAN"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3471A3AB8;
-	Tue, 22 Oct 2024 16:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F2F1A0BE1;
+	Tue, 22 Oct 2024 16:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615910; cv=none; b=EKP5Yyr0l+oBxXW5QWdSHVlolrTniQBlAsLyKuBT8h+uKvN9niibH7+BKMwek/mMkCVbWg+ttKijkzpLKFSd4LirWoFyNugNhVuA7g6TlF3ECtMJsB46Pm4I2YaIA40L18cu/3mIhsQT08BcunbwJ2+prQRedxVLErpwOF/AbIM=
+	t=1729615959; cv=none; b=i/rj81Hx09SNWsivWCuWe7lS/ZsHDVTs0ft3V2ww123Rq/lyIiwfLqJ/ndcTWGStO/DrcR6WbXosWXrxsTcg2oVNn8mo4P/FUs5deUIEImCj7Lko/L9zYIxTSGa+ybRQJv/0fbj83olfDK8OrPl6w0XF7oXi0FoY07r1HjGbej8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615910; c=relaxed/simple;
-	bh=G+lVpa+HnPdLU2XGwcAvTF5ynzGYq9w6uSs7iS+poiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4CwRnLNL2mXfGzLfLTaCM5/Ev8+gLTsKVrC/4DkTIWfPjbEEp2WLKQSRYUmiTKZO3XQbt+fjStv4cTxwazmxrAo7bRGygSEwmkRhlP9iTuM4tpDIvBQpvEAdN+83FiFdUXO9rYBvDWmnxW9N3wzPo9FwH1IxTowxV6wuADCILs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHIC81dB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59311C4CEC3;
-	Tue, 22 Oct 2024 16:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729615909;
-	bh=G+lVpa+HnPdLU2XGwcAvTF5ynzGYq9w6uSs7iS+poiM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rHIC81dBP9ugP/4tCZ8LXztynVpyHDmlQDRf1SqH02QlVBi73aXTrcEd1Ya1jfdIm
-	 dkTRdc31gQW6eiaTi3qmX6iCf6c7GUpSdSLueYyyq3bwP6uzC0GqmQmYeJljzTQgJQ
-	 UntfusMGk/vzWjxLqQN87jgNrOPxXzxCbBuFch5Q1gG8TT8NGVHv96p5Z57PsrVBx+
-	 SchaGgBEBrF4tr3UWQW2zxwZXjOEv5v6/RiOmijniM6r1aaUqf5Oug9Qh7I5ZKP0u4
-	 4ggcgVFh7Lyb0XXeT5r9YF2Dqjd5nV3B+uHyQpjFEt3VX9hPvUxAMDnBkQ/NCE9CcV
-	 ov2TFuVQDVevw==
-Date: Tue, 22 Oct 2024 17:51:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jason-Hsu <jasonhell19@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joel@jms.id.au, andrew@codeconstruct.com.au, patrick@stwcx.xyz,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	yang.chen@quantatw.com, jerry.lin@quantatw.com
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: ventura: add Meta Ventura BMC
-Message-ID: <20241022-clean-rebate-e986d6a82a05@spud>
-References: <20241022021724.2322506-1-jasonhell19@gmail.com>
+	s=arc-20240116; t=1729615959; c=relaxed/simple;
+	bh=cyc/ZiF5n6uYSYLfwn2PX1FXyF1iFS/NEFDK2UYNYkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tP+q3OFHcQc9n63hqAeImnoFBOt1mFHoCdpDzz0L8JWIyx+UcxDQy65dmO5Syee3siPXc+s37YuMTOpmw/guKhXVkk8hO2aWxEywsywX/biJwjsiORvPPPQxCh3QwT6XeSJ9iqlUTgBW8n3dPZmLprncIjz86kI0FaYJ4DeKDhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4B1VtzAN; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XXysK1THvz6ClY9C;
+	Tue, 22 Oct 2024 16:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729615955; x=1732207956; bh=cyc/ZiF5n6uYSYLfwn2PX1FX
+	yF1iFS/NEFDK2UYNYkw=; b=4B1VtzAN+Vq026Ma2lpVXkEFF6AgAa6ghSHDCO+G
+	47l81HbyBIS4OeWAOEhGr20rDPgHHcbytD69mw0Wo1OMtinMiztRJSPMONJwjTf+
+	7Qy6qn0hS8fOBZIDs6zcQ1mioyaXnv5Ezc9s5uh0sLVl4zM9Y3jDAVU+4/ROixjs
+	JdhlObBZE5jMSmyj/rvrAAtIqsFZTKNYKneWhA/md/NVvmLmRUEC/9X9IMCW4/15
+	G51WWdDewsVOrjH3AL96urKbkO2F7yKsx8tfcdDR0scAk+ib81U54uXxg5F/tSLJ
+	bqFwkUWLxu+ckBXXDDX1UO93MKnlYmWh+XP0lUf5aCrAQw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id WdlDwu1m5XBl; Tue, 22 Oct 2024 16:52:35 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XXysG5Gjcz6ClY8w;
+	Tue, 22 Oct 2024 16:52:34 +0000 (UTC)
+Message-ID: <37bc724a-ea62-4d17-ba8b-a3c5cb1d9ae5@acm.org>
+Date: Tue, 22 Oct 2024 09:52:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o2l81eJhq7XAs0r5"
-Content-Disposition: inline
-In-Reply-To: <20241022021724.2322506-1-jasonhell19@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] scsi: ufs: core: Remove redundant host_lock calls
+ around UTMRLCLR
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241022074319.512127-1-avri.altman@wdc.com>
+ <20241022074319.512127-3-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241022074319.512127-3-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/22/24 12:43 AM, Avri Altman wrote:
+> There is no need to serialize single read/write calls to the host
+> controller registers. Remove the redundant host_lock calls that protect
+> access to the task management request List cLear register: UTMRLCLR.
 
---o2l81eJhq7XAs0r5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 22, 2024 at 10:17:24AM +0800, Jason-Hsu wrote:
-> Add Linux device tree related to Meta(Facebook) Ventura specific devices =
-connected to BMC(AST2600) SoC.
-> Add subject prefix for the patch.
->=20
-> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
-
-The indentation in here is very inconsistent. Please fix that.
-
---o2l81eJhq7XAs0r5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfYIQAKCRB4tDGHoIJi
-0iUgAQDUmHPH4stEsqpdhMw9XHmJe8bKOJjTaat6ZehhyI3fNgD+J4CDQVPiHtlr
-y+45Gh+Rxio1Oy/A586b7BrY+pdXeAQ=
-=sZs2
------END PGP SIGNATURE-----
-
---o2l81eJhq7XAs0r5--
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
