@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-376352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914889AB025
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1479AA585
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 487EE283EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A191F214ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84919F41C;
-	Tue, 22 Oct 2024 13:54:43 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800319F110;
+	Tue, 22 Oct 2024 13:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="raPJJXvb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7502619F110;
-	Tue, 22 Oct 2024 13:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C1C19E836;
+	Tue, 22 Oct 2024 13:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729605283; cv=none; b=PSXYKjwxx7Pz1F4l1ZORnJpFhnSo+ivJRCpihFrxoSc9UPfRnxyRR/5iNwaMO+o4yStH6gIWRJF9ATH1Xf/x69rpf+nxTB1m7G3IYMHSIJqdEGqNagcv2e43BqKNdgMhkSPGMwKZlg2CnMImE3XPGajbwcu8keKFFrCB0sJDhFA=
+	t=1729604659; cv=none; b=mwvRdCruMzbOxnDC7As9t1eupQseTSaFr21uai+cwLWMRaw6vYnn4XTngsrBjJXlglClAdrqp918mISUpI9cdTFRD6HDlaek7e5AWXOlTAMqdfrFZI5TWOpIcU1VQHikrV30SCSI5qeKFBdiQHNcoekm4xSggHOfAAcsRvgIyCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729605283; c=relaxed/simple;
-	bh=1RuQV7IHtget8xAZ/49F3q4nCzlg6g7Nc8l27myNw2s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p8ejWX6gC202M5R/opeP8WfaTh43U0m+lreDOtNq9ZxHvARUZ8rsqokOU7LQgDR8aXn7GVX01eBOLDNK6vBMolTni4knwuQiO/+ZQVLfnvd0nEeW38uWA99CVdgx55zdaz5boRFKwymz5hLfE6jnprhD2agtrXKjlhxDNmKkBek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XXttD4G8RzyTdC;
-	Tue, 22 Oct 2024 21:53:08 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 28E5D18009E;
-	Tue, 22 Oct 2024 21:54:39 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 22 Oct
- 2024 21:54:38 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
-	<gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-	<linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH] drivers/staging/iio/frequency/ad9832.c: fix division by zero in ad9832_calc_freqreg()
-Date: Tue, 22 Oct 2024 13:43:54 +0000
-Message-ID: <20241022134354.574614-1-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729604659; c=relaxed/simple;
+	bh=ottGwOKZ3ymjkiIWssqkHiG4TV1fGDBzEirqNxc8ikU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/0HFknVxEJFNqqIz7MtTetS9JKLjCtNvO7f4of+h+aaWtoF5+Qu0TBQ7t1xwFvUKicJeTVKnck1OCevWgg2brWZXu63DpahNy2OKDY3DJvBsZ5JEV91WOyhNycSpjEkEO32uDPT8If4QmGuEJc6LDBvwduApIY3Eim1CLT5n7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=raPJJXvb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC43C4CEE6;
+	Tue, 22 Oct 2024 13:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729604658;
+	bh=ottGwOKZ3ymjkiIWssqkHiG4TV1fGDBzEirqNxc8ikU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=raPJJXvbXaNixDs9Yo5CA6e/2maVu0m2Xq1ltHywp5lBCEKVFstYFKx7pV3oh52qd
+	 Xad7eJF0RSI3QnOSS34qyq8kvjzwAdckei8gHOOtiXX436RKF2tVuPKtvpUENQHCrT
+	 FImAEFQkORNjefBx8nR3b6JQCZIY0o9H9WLLJPnA=
+Date: Tue, 22 Oct 2024 15:44:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/91] 6.1.114-rc1 review
+Message-ID: <2024102207-neuter-phobia-cb39@gregkh>
+References: <20241021102249.791942892@linuxfoundation.org>
+ <CA+G9fYtXZfLYbFFpj25GqFRbX5mVQvLSoafM1pT7Xff6HRMeaA@mail.gmail.com>
+ <2024102216-buckskin-swimmable-a99d@gregkh>
+ <20241022091418.tbmk3sswlzsv7azu@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022091418.tbmk3sswlzsv7azu@quack3>
 
-In the ad9832_write_frequency() function, clk_get_rate() might return 0.
-This can lead to a division by zero when calling ad9832_calc_freqreg().
-The check if (fout > (clk_get_rate(st->mclk) / 2)) does not protect
-against the case when fout is 0. The ad9832_write_frequency() function
-is called from ad9832_write(), and fout is derived from a text buffer,
-which can contain any value.
+On Tue, Oct 22, 2024 at 11:14:18AM +0200, Jan Kara wrote:
+> On Tue 22-10-24 10:56:34, Greg Kroah-Hartman wrote:
+> > On Tue, Oct 22, 2024 at 01:38:59AM +0530, Naresh Kamboju wrote:
+> > > On Mon, 21 Oct 2024 at 16:11, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > This is the start of the stable review cycle for the 6.1.114 release.
+> > > > There are 91 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.114-rc1.gz
+> > > > or in the git tree and branch at:
+> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > > > and the diffstat can be found below.
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > > 
+> > > The arm allmodconfig build failed due to following warnings / errors with
+> > > toolchain clang-19.
+> > > For all other 32-bit arch builds it is noticed as a warning.
+> > > 
+> > > * arm, build
+> > >   - clang-19-allmodconfig
+> > > 
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > 
+> > > Build warning / error:
+> > > -----------
+> > > fs/udf/namei.c:747:12: error: stack frame size (1560) exceeds limit
+> > > (1280) in 'udf_rename' [-Werror,-Wframe-larger-than]
+> > >   747 | static int udf_rename(struct user_namespace *mnt_userns,
+> > > struct inode *old_dir,
+> > >       |            ^
+> > > 1 error generated.
+> > 
+> > Odd that this isn't seen in newer kernels, any chance you can bisect?
+> 
+> Glancing over the commits in stable-rc it seems the series is missing
+> commit 0aba4860b0d021 ("udf: Allocate name buffer in directory iterator on
+> heap").
 
-Link: https://lore.kernel.org/all/2024100904-CVE-2024-47663-9bdc@gregkh/
-Fixes: ea707584bac1 ("Staging: IIO: DDS: AD9832 / AD9835 driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- drivers/staging/iio/frequency/ad9832.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks, I'll go queue that up now.
 
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index 6c390c4eb26d..492612e8f8ba 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -129,12 +129,15 @@ static unsigned long ad9832_calc_freqreg(unsigned long mclk, unsigned long fout)
- static int ad9832_write_frequency(struct ad9832_state *st,
- 				  unsigned int addr, unsigned long fout)
- {
-+	unsigned long clk_freq;
- 	unsigned long regval;
- 
--	if (fout > (clk_get_rate(st->mclk) / 2))
-+	clk_freq = clk_get_rate(st->mclk);
-+
-+	if (!clk_freq || fout > (clk_freq / 2))
- 		return -EINVAL;
- 
--	regval = ad9832_calc_freqreg(clk_get_rate(st->mclk), fout);
-+	regval = ad9832_calc_freqreg(clk_freq, fout);
- 
- 	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
- 					(addr << ADD_SHIFT) |
--- 
-2.34.1
-
+greg k-h
 
