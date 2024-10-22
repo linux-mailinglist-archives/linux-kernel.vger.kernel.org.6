@@ -1,118 +1,93 @@
-Return-Path: <linux-kernel+bounces-376108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053E69AA02A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C951B9AA030
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC91C21A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03FA11C2168E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CCC19AA56;
-	Tue, 22 Oct 2024 10:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ERtG32q+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913C199FDE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2BA199FDE;
+	Tue, 22 Oct 2024 10:38:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D273C15574F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729593484; cv=none; b=Umkf9/45kcpBUwxrHstVmxBOGMfNtHr/fP3tix0i0d2/ch8VuPXQN7lP0igoJpD5OoTgQKhDNtyzVYGn29CsCN6/+XJstDVPtbP9wcVgQtpU9gQHVU9pH9zWY0aAW/tlDzyZQ143M7063HZe6QmvV9uat6CwU/3Ceoi+W86Vck4=
+	t=1729593538; cv=none; b=a9F3Ps0fUSrdq40HJAb/8fCGgLViBn3SBJeMXAZutVo/2pI091SL3mV3Gn+YwMBFbfyclOpn14Ln1topyTh9wk5/bma7mDM+c13ZyAc3qHvK5ya37SC4RKASP0O6NmE5Ih2gxgUMJlYRHT+Bq562LxY3++0jab4XqOa3KTh3rR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729593484; c=relaxed/simple;
-	bh=ffFIq/gaiGrXB3V8+8QiuT3BPvz/9MKGdcuUtNI5Sac=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y2a5NGm/cP2i9XkpBZ4RxhNXedixbaqQ3/uWnJ/aOtAN1uHtb7/wgNmlmU8ZcT2G1+A/CSXHeYp1A9hjf5fMz4rz8c2T7J0VRvViWcJvwsUEfCuI58LZ8PwOvCQyIC97KxhSey3zUtH0R3azNvQ9MfgeFQFDFOy6+bg2opkdU+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ERtG32q+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729593481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ffFIq/gaiGrXB3V8+8QiuT3BPvz/9MKGdcuUtNI5Sac=;
-	b=ERtG32q+3SUdrqsZxQiURJwZq64n71jT5Bq6CXbeHaeo43lT0veL0yIxMCkMp0/v85NCeM
-	fR05PGHtfpK5nz36oaQk5DqlVfjWtDoS1xUN/MUtTstgdXaxpUfp8R/WrRyxQeinI6VGcj
-	X/0S3ClvE6WVz+k+8wThVoklpHu03b8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-ikaIhP-mOrW6R4vvr2xHJg-1; Tue, 22 Oct 2024 06:38:00 -0400
-X-MC-Unique: ikaIhP-mOrW6R4vvr2xHJg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a0d8baa2cso602541466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:37:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729593479; x=1730198279;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ffFIq/gaiGrXB3V8+8QiuT3BPvz/9MKGdcuUtNI5Sac=;
-        b=CXgy2sMxtqZV10sl9DYFrUJ0mgLKOQKqvH9ksVsmyyOetIBZbPcOPJUNkEIDrxTzET
-         SKZClhGuOPtI4jzR35kTMIXOe8GbTrV41p37hLROgC3k9d+5gxKra46oCGvp8YbxICfR
-         kdav0T95FABZRqLDB5+AZ0a380uqejeTQanDmcNapu6q0+M98xFzxzUxT3dT7ExXazty
-         ZVwhZ/pkqnwwwD6q23Jh4dQ7UEsIDKeRT02xdEGs/70vP406jo5SUot3RmLXUpWE+jIs
-         aDdW7rhKqR+jsDeLlKUMx1QNX8D7hJ4sxhxKd7uwQjrEePRTRPJbeCnqeCFMj7RybHru
-         7n8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDJEkjc9v+SBImm89UTFCSqGhHOdBCvQB/NaqCW7UFIBIsFWpDCnHVYX+0tcSGLdbaKM16XgUZ4djeKVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuYgvzhys2VgkiMRAd9k1aaAZDDEg0vL1RmJHPqBj+bnaqlkre
-	7gdNvPMc+ZULn2TyShmcVonn99smqlXfmQvI8dBujbXXaDwmZ4WPyagEWNKFmYqSzmhwBhAPuwm
-	nlCV+pY4qcFT0YKrBd8SsojubDx6Z7JTnKHKWaaMN3z6fE4zwa0KytHfmqLy55g==
-X-Received: by 2002:a17:907:2cc7:b0:a9a:170d:67b2 with SMTP id a640c23a62f3a-a9aaa5d907fmr283642666b.29.1729593478893;
-        Tue, 22 Oct 2024 03:37:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEripPrAITA/WLQwqo9WurNo58xCXU6eZjF2PPYNfcl+DENvnVnrciJi0HPoUTYPFfXpqprVw==
-X-Received: by 2002:a17:907:2cc7:b0:a9a:170d:67b2 with SMTP id a640c23a62f3a-a9aaa5d907fmr283637166b.29.1729593478361;
-        Tue, 22 Oct 2024 03:37:58 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9157363asm323363266b.173.2024.10.22.03.37.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 03:37:57 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 4B16E160B2E6; Tue, 22 Oct 2024 12:37:57 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi
- <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Jussi Maki
- <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek
- <andy@greyhouse.net>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Nikolay Aleksandrov <razor@blackwall.org>, Simon
- Horman <horms@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Hangbin Liu
- <liuhangbin@gmail.com>
-Subject: Re: [PATCHv3 net-next 2/2] Documentation: bonding: add XDP support
- explanation
-In-Reply-To: <20241021031211.814-3-liuhangbin@gmail.com>
-References: <20241021031211.814-1-liuhangbin@gmail.com>
- <20241021031211.814-3-liuhangbin@gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 22 Oct 2024 12:37:57 +0200
-Message-ID: <87sesoh18a.fsf@toke.dk>
+	s=arc-20240116; t=1729593538; c=relaxed/simple;
+	bh=F83EyKFMQOyvBEdzWoHL44fvx1r2PCtrUVdBNSUwcO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ns4/3+iVSjMdoRe//fj1+CbnZahz16LUs/l2G005NqbTrzZIL0oLbwQbU/V7WvR32BtQHbqQ8V7ZF6YagzaHkuZa53rZwfhkjhC4ScLmMpHi8LIJCbn+YvkAQ5N3LNe/lFH4rQpVArGjh4kvVjKmSmL3/slwsVtNZCvsnNNwZI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2CBA1042;
+	Tue, 22 Oct 2024 03:39:25 -0700 (PDT)
+Received: from [10.57.65.71] (unknown [10.57.65.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25E0D3F71E;
+	Tue, 22 Oct 2024 03:38:51 -0700 (PDT)
+Message-ID: <fca25741-c89f-43ea-95af-5e3232d513fc@arm.com>
+Date: Tue, 22 Oct 2024 11:38:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ARM/nommu: Fix typo "absense"
+To: WangYuli <wangyuli@uniontech.com>, linux@armlinux.org.uk, jgg@ziepe.ca,
+ jroedel@suse.de, robh@kernel.org, catalin.marinas@arm.com,
+ jsnitsel@redhat.com, robin.murphy@arm.com, baolu.lu@linux.intel.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ alexandre.torgue@st.com, sza@esh.hu, benjamin.gaignard@linaro.org,
+ arnd@arndb.de, rmk+kernel@armlinux.org.uk, hch@lst.de,
+ guanwentao@uniontech.com
+References: <104F90E5B8D0EC97+20241017032929.105068-1-wangyuli@uniontech.com>
+Content-Language: en-GB
+From: Vladimir Murzin <vladimir.murzin@arm.com>
+In-Reply-To: <104F90E5B8D0EC97+20241017032929.105068-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hangbin Liu <liuhangbin@gmail.com> writes:
+On 10/17/24 04:29, WangYuli wrote:
+> There is a spelling mistake of 'absense' in comments which
+> should be 'absence'.
+> 
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+> ---
+>  arch/arm/mm/dma-mapping-nommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+> index 97db5397c320..fecac107fd0d 100644
+> --- a/arch/arm/mm/dma-mapping-nommu.c
+> +++ b/arch/arm/mm/dma-mapping-nommu.c
+> @@ -39,7 +39,7 @@ void arch_setup_dma_ops(struct device *dev, bool coherent)
+>  		/*
+>  		 * Cache support for v7m is optional, so can be treated as
+>  		 * coherent if no cache has been detected. Note that it is not
+> -		 * enough to check if MPU is in use or not since in absense of
+> +		 * enough to check if MPU is in use or not since in absence of
+>  		 * MPU system memory map is used.
+>  		 */
+>  		dev->dma_coherent = cacheid ? coherent : true;
+> -- 2.45.2
+> 
 
-> Add document about which modes have native XDP support.
->
-> Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+Unless it is already taken by someone, please, upload the patch in
+RMK's patch system [1]
 
+[1] https://www.arm.linux.org.uk/developer/patches/
+
+
+Vladimir
 
