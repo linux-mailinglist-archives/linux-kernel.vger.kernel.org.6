@@ -1,136 +1,300 @@
-Return-Path: <linux-kernel+bounces-376978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BBC9AB851
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A3D9AB84F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0ED028498D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108F0284A74
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A88D1CCEF9;
-	Tue, 22 Oct 2024 21:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDD31CCEE8;
+	Tue, 22 Oct 2024 21:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SuIQIHE+"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nl0Su0dp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237E41CCEF5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631758; cv=none; b=kpiMFq5whzxAPV6nzSrE5gcNgXYZy0tHVYhOF+3nUnNJzrzAuz87Fol/8gtNozOqsxgnQvOleCy7ZUJxobx5CDx3ZUpedUp24QjaPQrTswE4wFnoVKE462TOoCBNnkluvObKrL3X9G9sEUatEcj2ZhCtw/TdE6v3R5YEi+pwEMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631758; c=relaxed/simple;
-	bh=r2jEZ9rg4kKDBi31FwDdcBmXtd9BG0z4ETOMrQsS8KI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VwmbrsQFnK1oti3H9NN6lLl+TVKkka/idg6sP03flciq80kT3cRIuvzdBnVBnVAqfWumdunLs1xfvT3Xv2k37Xx1Rr77rzfEPrwrUcybtv/g3E0y7dWGcolrRCIgiHTnsMun/L+AfmsimF9NGjvIwKHAWxLpNZ0sdIz/AGDbHag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SuIQIHE+; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43153c6f70aso25305e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729631755; x=1730236555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MdUm3KNWQIjqYQ7AyrEbFp7iBDzg82iIjXFUakJE6os=;
-        b=SuIQIHE+OtWaZ6rjDFDhOPS7LZ8Y7xXuW0gJluDrfYPKVn7pNNrfzlp5WIvF6bCW/W
-         qcebLYdrfirNDOrp4LaokKB6pRLxgXFJwgS+z0DqwPADh+YPtCpdTAyfc/hXH5eO8ypZ
-         nCQbG+9jzYysio6ZF8/DpW2HrFyeCs1xr+z5b/Y2QtXWsnE2VaTTYdZeAwseu7V1o+CT
-         SS/kav3pQxPwa/29shHWbzAYXEfvhOsciKmuHDNyS7kRCTaG2JEl8kWLlJ0DlTeTz5sU
-         kgeXQspEmc5sZoWbPa0EPoksm5gKCj+uuog7T/t3YSf7f03gbjwi5h1J016q/MuX+/nh
-         MkFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729631755; x=1730236555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MdUm3KNWQIjqYQ7AyrEbFp7iBDzg82iIjXFUakJE6os=;
-        b=n/tO2U/bPnQ3P07hlcaI+ND/nBXqggchj7NCIbwwXQeDlbs3RaFhvUxwJAcu0MJlap
-         KAn3tok4HF+sXQ+VzqV1MdyM5yQtjV8r2AJaREhD+lHrJFDDgBD1ccRq+VgcD2MCdeLZ
-         fkWaISKeeawKoQ+Z6xImVtzCFPg5gxHR2/3kKSofqfcAkTn6+yD5Q0weXO4fP0QlAOy9
-         /qrjFMBh8pAf6Rg3rg2QTsX+9ik9qv9UX7Qh4fk20Ro5VcRgjiOv3lXJDwcFncsS7G7p
-         vHchSZEkVbtH4QxlooGr452UKQAEoiFPtA1PfAT/arNU/LdJuchPPADS4Tu6tCLet3z8
-         eiXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ/uyHDNK/lsfKyvzzGMo/ZNkw/cWlqbqVKGZRy/qEdBnEEtI42GxZBBSqTFvl1RTBrQEFifmroijEroE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZF7q7ItJqlD5rdxTYGzlb5MfVNCOnVHrp4Fg1+wuYZTPxG+rs
-	HDLlc0cjA2Xa/QTrmn+Q3Bm2TH9L/8+OmE1Xg4yG2e5SzA/YygJXFuEv16hV9Opql+uxhsrrI7Z
-	UPir0s5TYmnCoB3F8D06OL7RTa4Ihy05pqKR4
-X-Google-Smtp-Source: AGHT+IGtrqV60ZkV3BGIQyPZYzwOEUmaX+5yYuXLJqZC8XpI8oT/zOjATJNvODovgWW0J2IbZP9DDr391T0f57IVmbg=
-X-Received: by 2002:a05:600c:4e12:b0:42b:8ff7:bee2 with SMTP id
- 5b1f17b1804b1-431851b8022mr138205e9.5.1729631755169; Tue, 22 Oct 2024
- 14:15:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BCE153565;
+	Tue, 22 Oct 2024 21:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729631739; cv=fail; b=J+Q4vhS6YbZj5SzoNzvtvJhR20Yyn5womv0RrSXqjmQe7ITMGuwBSEUmWd52inERh8xSnN9XBr/oxcyfvFACXB3pAovDL2oiFGsfubUWZbkXQGKT6cH5zaPztUa9Jmj8U/DgcbMb33k/Ya7gCUf1A+Sv23aqxiqUaA2aKYTUtEs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729631739; c=relaxed/simple;
+	bh=mfl/dQB9DLRfB1y1X6noO//WSr3J8xLiqjTCWU3NU7M=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pU+/pmxgMhF4m2kQ8b+M8toOILWssLvx6llWwV3LQe8OfOeHKZYV8eueQhwucSHY1+EA2AQEf4uLkeBrym13+qTQdid3nTFKeQPKwlhVftPrfj2hrkA9JwW80iRsWy6aSVbzkXnSPLS9QHASKq60zfuik/s/NEDz6/E2CeEr3tk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nl0Su0dp; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729631738; x=1761167738;
+  h=message-id:date:subject:to:references:from:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=mfl/dQB9DLRfB1y1X6noO//WSr3J8xLiqjTCWU3NU7M=;
+  b=nl0Su0dpknW+goFmL79dAxcrmX1YZAUzcHu6YOBwZ6fb8lUgjh2arF7K
+   1CygCza973anqcpVFOtvw6SuAyMrSrr2nWojeaE7kyey3AbQQ29oCZ96a
+   5qk/VAEOco5xtrClZhez0bohOkvj5P9rQNN/JNOe64C6/zv7tWPGMzgpw
+   DIFSM4nT/zz2F1emS4AB5Z046F/RRmWWmc4z5yrdMGv9WsFblb5nWhLMu
+   nrim6+mKEP+LzHLas+oiQ1skXzpp/43rUpqYmEbTGKrWxn5Yn6eCpdMND
+   XfcV/sw1FYNjrz8zUmf9zmHAA34Zpvko5qKBRjtbcnR0F7s0sXoXeXxsk
+   A==;
+X-CSE-ConnectionGUID: oElAD8kRQqOnQkSFEFVa9Q==
+X-CSE-MsgGUID: Y0JJWVY0RAOBkjeNWFvi8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29295173"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="29295173"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 14:15:37 -0700
+X-CSE-ConnectionGUID: iMni0fe6ToycsjOuqiTL9Q==
+X-CSE-MsgGUID: bKB+xy6gQGW9odeD9Cujbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="80325961"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Oct 2024 14:15:37 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 22 Oct 2024 14:15:36 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 22 Oct 2024 14:15:36 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 14:15:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DD2IXs3OvmV+Iw0v6s+xsKmcN2sZa1LxmJ68QsyUzsNwCaQm83NaIGo+PaYylTJZbgaJctbgNSKtPw+VyHfpNKoAm9izOeddJOSpNjnTMu1S6vgl9MyPl0LgoNvf2pcdLTSDBTrgWgg7EFSq3SJ/wweED2NHKYLsjz1NGAzzWLvRcn3sX8rkkWyiU8XW/bqAhD26FDAkPHJJt78swDhcxg8H/gm6/V8+2NThVWJhc/5Qj7IsFcLJVuh5G9QF9Wu72D12bKO8lb2hP17w7BSKPOaT73mksnvVMZSnt4//s41zcJ4fEPSILV8+LrOtl/vGvOV1jmEEFyeMd4SoEu/jzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AHHExUSoToiEw/7oTADSnE/UQES2LJU035sAHxBvSIE=;
+ b=rFkmy2UC+//eyqaGhJA1k/ccF62VT6k2qmMIePC04MRESFpNx0wBymGcnHXzG8E36vbjcTnxuuGKXgFmRmZfY8uHFuM97jKq1JMBZzqIGwyBi89E3IUTOmMfqGTPjsZa5PD0XwPnn8Ppa/mDNL45sNvtDh6liomb/b6VSAzj1+cUBn0ltX2DkqSg20Ag78rTJalD6ncUN0gpP4n6ERrqmNZQPlUN5HZT/C2XDxN5f1BO6d64JPHjv7AmnruXvLxSKrzR7SL6rm4dc4X7aycKpd7RD30ExpVo9KzmVI/IiHwkBb6RMsHKWxijyrpmFwF9XdMAp8hJ9Fzf+MIfJOaaCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by LV1PR11MB8852.namprd11.prod.outlook.com (2603:10b6:408:2b5::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 21:15:32 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 21:15:29 +0000
+Message-ID: <270a914d-3b50-4eee-b564-1b8cff82facc@intel.com>
+Date: Tue, 22 Oct 2024 14:15:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [RFC iwl-net] e1000: Hold RTNL when e1000_down
+ can be called
+To: Joe Damato <jdamato@fastly.com>, <netdev@vger.kernel.org>,
+	<dmantipov@yandex.ru>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
+ Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Simon
+ Horman" <horms@kernel.org>, "moderated list:INTEL ETHERNET DRIVERS"
+	<intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>
+References: <20241022172153.217890-1-jdamato@fastly.com>
+ <ZxgEb0N0cJt1BRte@LQ3V64L9R2> <ZxgVRX7Ne-lTjwiJ@LQ3V64L9R2>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <ZxgVRX7Ne-lTjwiJ@LQ3V64L9R2>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR05CA0105.namprd05.prod.outlook.com
+ (2603:10b6:a03:e0::46) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729628198.git.lorenzo.stoakes@oracle.com> <e67b7f6c682bddbea2fe8b2d87b8441e4d2ea6e6.1729628198.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <e67b7f6c682bddbea2fe8b2d87b8441e4d2ea6e6.1729628198.git.lorenzo.stoakes@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 22 Oct 2024 23:15:18 +0200
-Message-ID: <CAG48ez0oqGgfF-UTOc9eWC_TrZ-pF1Ek_cUjzArxHEsM_TT2gg@mail.gmail.com>
-Subject: Re: [PATCH hotfix 6.12 3/8] mm: refactor map_deny_write_exec()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|LV1PR11MB8852:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69adfbe6-923b-4120-1377-08dcf2dea815
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?KzhwOGVFUGRwc1hSWWpnM0d4Y1puWmdkWFZ0ekxPaWU5bWhnalI5SDJqQXVa?=
+ =?utf-8?B?T0pVZExUd0J2WVR2RWVqNVZHUGJCSVdReXhuZmRFdjczUjBzSWVNTCtiT0s3?=
+ =?utf-8?B?SG9ERFlyaXh2TytGZU9jOWdFd3NjN1NDNnlLa2pCS2FVMERIT0VvUm5QMzJK?=
+ =?utf-8?B?K2FUaW1OcGpzZWhCMzZYZmgrMHBzRlU2TE1RTXNQTXNWNEdOMGhZZmh0Y0Iz?=
+ =?utf-8?B?LzM0V3JtczhMYnI0OUpnTHFad1dES0w4cEsrWE9TQ1dGSllRYjh2Z0lVcVFv?=
+ =?utf-8?B?SjRLdXVNRDd2T0tVd0YyZjdHakI5dDV0ZmdZYll4SXBicFFMZTJ1V2pNSWQy?=
+ =?utf-8?B?cGl5bkhYSko2YlVaYXNMQWszOFl2bTZLdVBEZWtMYjh0b2N3UzZZVXZXbVlr?=
+ =?utf-8?B?ejhXWWMzcHZTTDNwREFGZXdya2hUQzArd0lUaWVUb0NGRmEyd2hoUm45eGMw?=
+ =?utf-8?B?R3JnU3IvT0NQWVZNQ25XRzU3aWZzTjZxaTYvUHJKV1VYMjdxOWpRUWNRM2ZQ?=
+ =?utf-8?B?Q0tLdVNRTlloUEZRZm9wOGNIeGNZMWRSbWV3S1NXN3RLMmNWSjZ5Ym9VWndR?=
+ =?utf-8?B?VlRNV1pHTkhza0VhRWQ0Q3ZqSGMybnc0TjgxQVRwOUJZNTU0ekpmZHVUZWw1?=
+ =?utf-8?B?MnZJODRTSWl3aEE4cHlVUTU5UXIvZVhFdk5OeFVjN2twZlRJRzVUSGNEUmVx?=
+ =?utf-8?B?azlFN0JEQ0pKb0N3SHJtM20zYUs2ZnNpano2ZHBZdUlXL3FPK1FuNWt6K3hX?=
+ =?utf-8?B?clNjRTVXSThXN0ZTVnJWa1hFbzQvRE1iRVZYUTkzQ1VyNjJscU0rY2hEL3pL?=
+ =?utf-8?B?K3Vvc1hnTE43R2FKUEpOK2QycU40Z2t4ZzZUMjkrMHovUy9nUStyTytxUGU0?=
+ =?utf-8?B?cmo0d2hWSTZvNURSUGVsR2dtOEpndnBpOTJhUmpWdWRUTE1HMVQvVCtpdTlI?=
+ =?utf-8?B?VFMybmk3UnE5YjFaTVhWSW85Y3RLdjc2Q3lqYVI3K2x3NEhBR1BrUUsycm9t?=
+ =?utf-8?B?ZThlUERkSHQ1Y3BYVTdZemFTaytMSVRJSU5jRzhvZ1BXNmJueFpYSkxYYUdB?=
+ =?utf-8?B?OWpVekxWa1ZsYkVnNS82ODFIeUtyeVRWclE2WGRzMUtFbFFQY000RENJaU5o?=
+ =?utf-8?B?Z21rNHBjdlhWY3hCQytRTWVQRS9LQUhFb1N1NTczYlVqZ2N2cmZFMG1uaDJi?=
+ =?utf-8?B?MWlZRGxyMHZJUWx6NWJoRXk5ZjNoZEM2Uk5FaXIwcDZhV2hlTTJEQW9EbSsx?=
+ =?utf-8?B?a2FWc2dOVVdNK1M2ckJ6UUdOSWYwd3NWMGVENXpwcFpaQ25GcmljMWgxTEVl?=
+ =?utf-8?B?eGdxOTIvalgrQ2gvU2JQa1pDMTNFSkN0UjFuQ2dScHBIV1VzVHdwM1JTQWxq?=
+ =?utf-8?B?Zzk1SDJvM1J4ZGNVVXRiMjRLTlBjU09Fa1h5ZlJTd1Z0ai9jaWFzdmJyMlRz?=
+ =?utf-8?B?SHN3Q2hKa01IQ3JQZlBVN1FOeHhma1Qra1dVdXRJVUJ2Y1NramNZZk90d3U2?=
+ =?utf-8?B?aGhtTG9yQ2pGcDU5cDVuTzdmb3VmRDltNDRSWVBiZHNDL0NOVkFTYWowVTdK?=
+ =?utf-8?B?UmZKcmdLdjYzeWtpd01NdlJsZUkxMnZwdG8wQUxpVHgzL2VqY25JY01UdWlI?=
+ =?utf-8?B?R2ZPcEJvS2x0T1hEUUk2d0xKa2FPalRQNkgvZnFlQTF3azQyK005eTVhSmF6?=
+ =?utf-8?B?NWc5OE80ZUlSRzBZSTQxNW1TTFMrQjFYcUNYOEdsUE5uNGV1Z0tLVDZtM2JP?=
+ =?utf-8?B?WTUvZlZ5T3FkdWhoQXBraTJUeDFnNVNpNEVVeW9TeGt1eGhjYTVyL2pGV0Ns?=
+ =?utf-8?Q?fZe/XPKa41VB0MlG9DDP0Vl8/j8L4uW2O3774=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RU9ZYWhCNFZsNzlJL05nL2NRTERWSWd5c1pKaWp3OTVHVFNHL0pGYUladjJ3?=
+ =?utf-8?B?eDNIb0lzbFpKeUlsU2V4c2JTa2k3OXNyVTFrQ3UwR2trcksyQ3NYQXk1TGN4?=
+ =?utf-8?B?TDhEVlZEWUg1WmJWNFhtZU5pRnJUYWFQMTFsdjZkejNlSi9aMktEaTVNaktR?=
+ =?utf-8?B?Yi9QWmROVDJua1BCcUgrcERCT1VHZXVjVWdrQzZjYXRjSEFoQVp6WEVMZFBR?=
+ =?utf-8?B?Z2s5REJLeDZRVENQZVZZcG9xaE9ZR2JsaXZyZkhaczNXUi9lTlkvVTNSTG9K?=
+ =?utf-8?B?WU1WSWpPTGEvdE4zSmtYL0J6WWpsOGNkQ1dEa3ZMNmpFVzh2bUZMQllQSjcz?=
+ =?utf-8?B?UllWS3ZmT1lJVnN6cjZsaE9oTFNjMUJ2UXZUL3BkMmFmM3cwYWlnRS9oVHdh?=
+ =?utf-8?B?RzYwaytjTFZ4L3FnN3RNb283STZPZVJCRzNna3prNVc4eHNsRTdqbmoxbGw0?=
+ =?utf-8?B?NXN5cjRIVTc3TVdHdDE5RnhvZmJhY1pBRFUvbGh3MHc0ajlRaWFEV0o3S1pq?=
+ =?utf-8?B?bHNTNk54QTlGTTQ4Q1I2RVU1QnAwMmN3NCtLWU1nMXNqSENwUXNEc2Vvczl3?=
+ =?utf-8?B?cHdwcEZtdDd0cnBCcXAyK2xzL0pCaDFQWEFISDZ5MUh6bUpMVjBsUy9YRE5q?=
+ =?utf-8?B?MFJkQnZPS3k4YUY5WDkzT2QrKzBOYmhFTkgvQnpuZlVaZjJCbFd2RUNMRkdK?=
+ =?utf-8?B?MksxMVNzVVRHOWtHTWp6TFFoWVEwUUJJV0NubmxPcWNmUGE1cDhOM1hnNXJr?=
+ =?utf-8?B?ZXpjcHlrNUZjWnNWemU0N3pqQ0FtTlBXQmJRbWZybm0xdTltR2pDT3hKTVVE?=
+ =?utf-8?B?MDhZc1l0dVlGODAzY0kwTjJyMXdiV28yREpoQTZrcUF4RlNpd3o5cW1MNWV5?=
+ =?utf-8?B?S2RkL2tBMXJtTCtoakR1MmdVdFgxR3VlVFdrOFpJOUxMdFBBTG1ISnNHVUtY?=
+ =?utf-8?B?Y09KVC8vSmRGRVl3M1dJakxxRGZidnIyTWNSL2R5UlllVEhNNjlRZ3BFMHh2?=
+ =?utf-8?B?M0VWZE8yMjBRaVNtUlp6bVpFdFBHNE9OUVZvZ3phSnA2R0gxMHF3eUIwTEox?=
+ =?utf-8?B?UzBkcHpaK3EwSjYyK2VuVzdreWcreXFvVk1MRU1HZFBPVWdOOWZlM2lybnpi?=
+ =?utf-8?B?VGw3aEI1NENhOTJBL0k2YzBhN0ZkZzRrVHpHbW40UDdUTDhVZ1FsQS9SY3h6?=
+ =?utf-8?B?QTRwMnRnRnMwZE1ETDVKcEQrb0Vid3c2OXZUZ256S0IxWXNITjR5ZW53VEJZ?=
+ =?utf-8?B?VENCdDlJU2IrWVozT21HN2VkellBVExuanJudzFMa01peGtobjJnd2xkNm15?=
+ =?utf-8?B?SWt0T3doOWxLSmRhbjk0cU90VUI1dFpJR043blpKcDZkb2gwMDFNWEJlei9w?=
+ =?utf-8?B?UnNoYm1KSTV4ZWluRlZOdU15MFVLNUtVUEZsbjdqTHVyamw3UE4yNjBwZEZ3?=
+ =?utf-8?B?bWxTSXVOY3RvWHRudmo3elMrL21KVkJhUEZZVzJpdkhCYjJSaVpFZXBqblRS?=
+ =?utf-8?B?NS8rZERCcmx6cGZvdTBDVVVkMXh3b2JVNVFNSXdQN2RiNUxmWi9NNEZQVDdx?=
+ =?utf-8?B?Wm92LzZWbGlKR0RvdWx4bFlZdjgzMEFYOEcwTUZpbHlIenlHQWx0cHlpOTg1?=
+ =?utf-8?B?Um5KUEhqS2tzUjRITnpHMWlHUjVxTlY5M2FhUE8xeHFHSXhlaDNRV0k5VS9O?=
+ =?utf-8?B?VUlFUnBiWHcyTnRKSVFmcCt6eU9nU2Z2MEUxL2lyTWtTZlRJVWxoRDNxOVpx?=
+ =?utf-8?B?VGVlWEVCdDBwdXJWeHY2d3Y1WGRxVmxYOE5WVEhhWldvcXRadlc0aGwvZG9z?=
+ =?utf-8?B?S2VBYmV4ek10dHlTSW1aZE9ML0RieEhOdytDMzZYbGFoc1RFbGhIZnd5ZUVV?=
+ =?utf-8?B?ZkdGb0RBUi91NFV0TGZoMUQwWmFEeDFZYjI5RHVOL3FXZjNFSnpMd2VaRjJq?=
+ =?utf-8?B?ak9YaDZLOFpOVDczYi9HWmhwODdHdExPdUEyOERUQkd3NWt5N3l1V2lLVy9L?=
+ =?utf-8?B?WTJCNWw1cWJDSE9tYmkyWktXK0JNVTdEOVlWMjluTjdOYVJ6UVpoYXUzdTJ0?=
+ =?utf-8?B?VjhPd1VBbHlIVDJjdCtMdHVCaFJwTlErSHFLS0ZoVUN6cFphV0c2N1lBSzF0?=
+ =?utf-8?B?WUc5b05qSjZVMFJCV1VKSlAzem1zYWFCZUFKZDVsYVJmMDZNQ0RGOERNQU1n?=
+ =?utf-8?B?NGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69adfbe6-923b-4120-1377-08dcf2dea815
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 21:15:29.7608
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5mDCeMgqaD6Sf9QbdIl89S+R0VhllDYcIXnQW9EMWj6EtDxqOW2vd0W8161CmE5k4NVdUIFxBKIl91zHe711N1GLGHtg/1TQXC8VwpiAgwQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV1PR11MB8852
+X-OriginatorOrg: intel.com
 
-On Tue, Oct 22, 2024 at 10:41=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> Refactor the map_deny_write_exec() to not unnecessarily require a VMA
-> parameter but rather to accept VMA flags parameters, which allows us to u=
-se
-> this function early in mmap_region() in a subsequent commit.
->
-> While we're here, we refactor the function to be more readable and add so=
-me
-> additional documentation.
->
-> Reported-by: Jann Horn <jannh@google.com>
-> Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() f=
-ails")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Reviewed-by: Jann Horn <jannh@google.com>
-
-[..]
-> -static inline bool map_deny_write_exec(struct vm_area_struct *vma,  unsi=
-gned long vm_flags)
-> +static inline bool map_deny_write_exec(unsigned long old, unsigned long =
-new)
->  {
-> +       /* If MDWE is disabled, we have nothing to deny. */
->         if (!test_bit(MMF_HAS_MDWE, &current->mm->flags))
->                 return false;
->
-> -       if ((vm_flags & VM_EXEC) && (vm_flags & VM_WRITE))
-> +       /* If the new VMA is not executable, we have nothing to deny. */
-> +       if (!(new & VM_EXEC))
-> +               return false;
-> +
-> +       /* Under MDWE we absolutely do not accept writably executable... =
-*/
-> +       if (new & VM_WRITE)
->                 return true;
->
-> -       if (!(vma->vm_flags & VM_EXEC) && (vm_flags & VM_EXEC))
-> +       /* ...nor newly executable VMAs. */
-
-nit: maybe clarify this as "nor existing VMAs newly becoming
-executable" or something like that
 
 
-> +       if (!(old & VM_EXEC))
->                 return true;
->
->         return false;
+On 10/22/2024 2:12 PM, Joe Damato wrote:
+> On Tue, Oct 22, 2024 at 01:00:47PM -0700, Joe Damato wrote:
+>> On Tue, Oct 22, 2024 at 05:21:53PM +0000, Joe Damato wrote:
+>>> e1000_down calls netif_queue_set_napi, which assumes that RTNL is held.
+>>>
+>>> There are a few paths for e1000_down to be called in e1000 where RTNL is
+>>> not currently being held:
+>>>   - e1000_shutdown (pci shutdown)
+>>>   - e1000_suspend (power management)
+>>>   - e1000_reinit_locked (via e1000_reset_task delayed work)
+>>>
+>>> Hold RTNL in two places to fix this issue:
+>>>   - e1000_reset_task
+>>>   - __e1000_shutdown (which is called from both e1000_shutdown and
+>>>     e1000_suspend).
+>>
+>> It looks like there's one other spot I missed:
+>>
+>> e1000_io_error_detected (pci error handler) which should also hold
+>> rtnl_lock:
+>>
+>> +       if (netif_running(netdev)) {
+>> +               rtnl_lock();
+>>                 e1000_down(adapter);
+>> +               rtnl_unlock();
+>> +       }
+>>
+>> I can send that update in the v2, but I'll wait to see if Intel has suggestions
+>> on the below.
+>>  
+>>> The other paths which call e1000_down seemingly hold RTNL and are OK:
+>>>   - e1000_close (ndo_stop)
+>>>   - e1000_change_mtu (ndo_change_mtu)
+>>>
+>>> I'm submitting this is as an RFC because:
+>>>   - the e1000_reinit_locked issue appears very similar to commit
+>>>     21f857f0321d ("e1000e: add rtnl_lock() to e1000_reset_task"), which
+>>>     fixes a similar issue in e1000e
+>>>
+>>> however
+>>>
+>>>   - adding rtnl to e1000_reinit_locked seemingly conflicts with an
+>>>     earlier e1000 commit b2f963bfaeba ("e1000: fix lockdep warning in
+>>>     e1000_reset_task").
+>>>
+>>> Hopefully Intel can weigh in and shed some light on the correct way to
+>>> go.
+> 
+> Regarding the above locations where rtnl_lock may need to be held,
+> comparing to other intel drivers:
+> 
+>   - e1000_reset_task: it appears that igc, igb, and e100e all hold
+>     rtnl_lock in their reset_task functions, so I think adding an
+>     rtnl_lock / rtnl_unlock to e1000_reset_task should be OK,
+>     despite the existence of commit b2f963bfaeba ("e1000: fix
+>     lockdep warning in e1000_reset_task").
+> 
+>   - e1000_io_error_detected:
+>       - e1000e temporarily obtains and drops rtnl in
+>         e1000e_pm_freeze
+>       - ixgbe holds rtnl in the same path (toward the bottom of
+>         ixgbe_io_error_detected)
+>       - igb does NOT hold rtnl in this path (as far as I can tell)
+>       - it was suggested in another thread to hold rtnl in this path
+>         for igc [1].
+>        
+>      Given that it will be added to igc and is held in this same
+>      path in e1000e and ixgbe, I think it is safe to add it for
+>      e1000, as well.
+> 
+>  - e1000_shutdown: 
+>    - igb holds rtnl in the same path,
+>    - e1000e temporarily holds it in this path (via
+>      e1000e_pm_freeze)
+>    - ixgbe holds rtnl in the same path
+> 
+> So based on the recommendation for igc [1], and the precedent set in
+> the other Intel drivers in most cases (except igb and the io_error
+> path), I think adding rtnl to all 3 locations described above is
+> correct.
+> 
+> Please let me know if you all agree. Thanks for reviewing this.
+> 
+> 
+[1]:
+https://lore.kernel.org/netdev/40242f59-139a-4b45-8949-1210039f881b@intel.com/
+
+I agree with this assessment.
 
