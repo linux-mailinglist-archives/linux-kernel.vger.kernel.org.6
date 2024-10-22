@@ -1,214 +1,105 @@
-Return-Path: <linux-kernel+bounces-375823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FEC9A9B53
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F88B9A9B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE89281F1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460771F230C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198C8153BE4;
-	Tue, 22 Oct 2024 07:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BA315534D;
+	Tue, 22 Oct 2024 07:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="J0NNUdij"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2061.outbound.protection.outlook.com [40.107.103.61])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="n68CvutR"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDDA13E8AE;
-	Tue, 22 Oct 2024 07:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729582907; cv=fail; b=gvCGIICC+8nkkGZjFjnCg0VF/AUu+iMm933wy8CaPB45EWFEWUbVvjI/EAw2vd8Xi6D2JY5JF44hhMIw56mdE8FHA2XgdO65G2iNEZ11Hr21GGDXlNLNkf+37w7NP34/dicBCBoKcP7x0u6mo3R5L+gC3xrKq+jMi3DN2DKmSok=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729582907; c=relaxed/simple;
-	bh=F+xZgo6sTomk12jQtrtuYwVvjHUbtWQEKNIgNVZcYrU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ceAjlE9OvG5JJSIj/xYrUp+jnUhxCS6zIFUg4hhoLmiaJ8Py0rl/k4r+6GcKI2i7Kk7v83p9eHC7pqJ/oN2C0g/Bvp7i4KZBDYmDUVEUu/ITOs3eQuRfnUVKqHkVaF8Z5pgv70xliYcUya8DV+DaUt0ksNvMU2TEqCaOfzHjXoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=J0NNUdij; arc=fail smtp.client-ip=40.107.103.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qt3gw3ZZ7U8Al4DFNoXZiFE9j10Y7Iam2Xm4NPGG2n9/cB2pXBGDA8y8qHkmb65c/khpMHy6OkLazflboX5UJQlWs376ysf93STqB50Py/EDKLzYoy6C7TPMK8adn0N+61gTOrtwNB2tY/BakHvuBdZ0YdfNC+jGExLnzixJxjQEFb9JRrNjGmSusIISvUC/axXTalisovw7VuNX7xxTXzplbYBVifriRDJOdNurDIXMtmVI9UN+0K1l/1h+bSVCkEXrbLr8UWYby7XvrHDJJJYcY0Mymq8lzoaCNvNhWxIKMuWa6mZPhNEV/LCMOwi7PFSi71jJidm8p9zKwXLYAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oe1pjV1Z0SRgdvTdVs8Y7Kv9fCm3/dOc0yS0cBrou18=;
- b=WL6aNkUko2KfXuPzr/z6PLbk4WqxcetB5139Qo0Ivu+0f2JTuhwYwkWgp4GfkUU8VpNs1XDOUr5hPdalIsGpHcCO/DR1OYbJsz9f9eBiPESYYZf3b+pgSyI7KNoAE16EJYntQyWZEqYUxMDh3KObYrwn9WAqEO75kLmYmxIWV3i8zTVdhIy5rLqeXtNN4w9MSWlaJNVCF6g80fV5ylexhiIkIZJmRhMwQe2s4v3bEYoGZvHSMFdas/OqvyjVJxy4/dLHbWasERAUV4jDC0eeoAKp7G42E8CuO4EAjCD0yHukgg1ZXgTrKC3tHhs4Jdg2LiH71Qzczl7pmRL/VuQxuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oe1pjV1Z0SRgdvTdVs8Y7Kv9fCm3/dOc0yS0cBrou18=;
- b=J0NNUdijzPku18cYHAiTYNoSk5qgRB6/aJOXcE6y2lcUS6yqNFzkxaQ/FxSSKJse7JXjyDq5a36teGOX8WEFsj1VHLmvb9WcXqHH+vNxQIwpTVaxsmj2dP5Q4BScPJ/zK1rHrYJEr1AzW4c3YBiYy3Bv8fsYBQ1iclqyBon2FRnD4Dv9s94+0up0OOcjlMjUQubig5pDj5unGiMZg3H1u5sGYdVzOBZIiY0QdH5qmH9mSi3+0ImqQkA+P3n9pXtcZkChjx4vqa4u4OLgJTVQScxEWHk60DE7DgrKK0RyLyJjfu0RBRsBF9xX6TjEdNtarYpd0q1SMTwTBIHvxU3P/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GV1PR04MB9071.eurprd04.prod.outlook.com (2603:10a6:150:22::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20; Tue, 22 Oct
- 2024 07:41:41 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 07:41:41 +0000
-Message-ID: <74ead950-5ab9-4a2b-8520-5af7a4931f45@nxp.com>
-Date: Tue, 22 Oct 2024 15:42:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/15] dt-bindings: display:
- panel-simple-lvds-dual-ports: Reference lvds-dual-ports.yaml
-To: Rob Herring <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com,
- mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
- tomi.valkeinen@ideasonboard.com, quic_bjorande@quicinc.com,
- geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de,
- nfraprado@collabora.com, thierry.reding@gmail.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de,
- biju.das.jz@bp.renesas.com
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-10-victor.liu@nxp.com>
- <20241021194020.GA1011261-robh@kernel.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20241021194020.GA1011261-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR0401CA0034.apcprd04.prod.outlook.com
- (2603:1096:820:e::21) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1499414A4F0;
+	Tue, 22 Oct 2024 07:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729583129; cv=none; b=BTZr/bn3Vj4u5iTdD5HZvrdr/DxrcCusCNsgXotQZHaK0CiaC1yHJmZbgKSJyHFNFcrrVv5pfDVt5W2wazJuIVDAPxp1WIzhTjtEfysx0F5N7v65QG7huTmQId/aHE8ocVJBOQ53T7uVX1yqohHSIseCqm/DXRPNY+ZaLH6QQ44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729583129; c=relaxed/simple;
+	bh=P+sigj3NdXbec5NDcpWfBeJ9hag3FsGgKYoz1DFkHtw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eEgRKwrRGfpVBfmTM2PH8tsK/t90B5enthCfkcexoX5dUsrfA0JL+D+r4i7QNDEQ/32Hx8RlFLk7eL/LgdC2VHjNbayW+ZDYVybXnKxi66NyUj2sSVRs0dciiynxYxkjD8UWD75/iQgrTwnq1OemH9gbR7UHzXXY3t5VWJq5Tko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=n68CvutR; arc=none smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1729583127; x=1761119127;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P+sigj3NdXbec5NDcpWfBeJ9hag3FsGgKYoz1DFkHtw=;
+  b=n68CvutRB9K5VDpT5jp9RNJgOAMJ1ukc54Pg8NrMrXaI4Tpha75qyure
+   eGrz1BZVOYxQJv4v705vV+pcbLH065loLWhI9E5OKDhE6JW6Lz6fZptV1
+   Hj/2eIgRibeH0oz9GcwFTfRJciLlpDRvoNvxejAMahYdszl13HzzZKohv
+   4Msljthz4clRPiNlTZGaee3ZkmPbvzznmSno/IejSu2LkuiMQ3y/sTAEH
+   CLNGnnKZBtVebsRwv0BxJ6mbXupxhMdiWa8+nCOzR+Qu7hYkFSUao/K/o
+   BhbVi7ACJZAIBL694FaF/lTtdiyy8T6hrnzZfP5TMMos/quY7Vo+X2xnW
+   Q==;
+X-CSE-ConnectionGUID: 3zbmKEDRS6ebS4td2hEx2A==
+X-CSE-MsgGUID: NxY1sKxRS06oQh/uDMpd1g==
+X-IronPort-AV: E=Sophos;i="6.11,222,1725292800"; 
+   d="scan'208";a="30533951"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Oct 2024 15:45:27 +0800
+IronPort-SDR: 671749a7_If94Cuvg/ILrXCfjOUoEf8xqOCIcyTOjN/7T3KIfYNfi62C
+ mIlkSs/6DXEzlFFRU7VHjXrZpvpe9BOQeD3XVGw==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 23:43:52 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Oct 2024 00:45:25 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v2 0/3] Untie the host lock entanglement - part 1
+Date: Tue, 22 Oct 2024 10:43:16 +0300
+Message-Id: <20241022074319.512127-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GV1PR04MB9071:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34af82c4-a5d0-4910-066b-08dcf26cf7e8
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?SDVDR0IxZUhOa2FHSXR0Zm9GL3NMOEZnMVJtUjhZTGRNQk1ERXV0RkxqR0Nn?=
- =?utf-8?B?QWxFd1hiNi9HMnJnaXhkaDluN3I0SUV2ZGZZQ090RURTMWkxbXJLRE1lb3lT?=
- =?utf-8?B?SnVveWJwQUpWbDZmenNWS056RmtuNld4S0doOEZ5RDZxTE05dy81L05Tcldh?=
- =?utf-8?B?RGpKQjdWbGZldStYMmxUT052ZHpLaW1wTnQxZThIVDRsQUtjT0JCa3ZuSEl4?=
- =?utf-8?B?WlFLQlBhS3dtZHRLRVJvMnVwNlU0NDRiZ3BxNkl6bzIzam40QnE4VDhtdjA0?=
- =?utf-8?B?RnJxNkFOOWpLM2JCMW1lVGdaVlpER1dwVDBnQ05pYk5XTklGQ1ZWZWJzWXdB?=
- =?utf-8?B?cTRpbXFPdkFGcU5scXZsUWRxWjl2cWdrejlvWW5vQVk5UmlPd2JZMW8xLzYw?=
- =?utf-8?B?Zmt1V0haWm02NitSRDNXVXZ6TmhZZklhSzY4TnpYQktkcGhScjMxazRhWEds?=
- =?utf-8?B?d3BydEFsTkZmUmRyYWZjUnRvekdEcTR4TkkrN3JhOS9vRnZGaCtSelZSaGs5?=
- =?utf-8?B?ZjczWUFBOEhjc3lMelR1M3hYMHNrcHA0ei93UTVxSnZ5SDZSZ1N4cWlUYitv?=
- =?utf-8?B?K21oc3YrTnY1V2c2Q2R3SU1IbUNlclNBNW9xOWd5a2tYeEl1Z1QzMnlJbld5?=
- =?utf-8?B?UFRweHRvbkJ1MWZ1cVI4TlRnekVXMVByc0QvdjljZGFRL2ZqaktCdHNTZGhI?=
- =?utf-8?B?THJtcWVnbjhzUGpiaEtyWDZsRHQvUFZrQTJ1a2l2SEljWnVKOXU2YXV6ellz?=
- =?utf-8?B?WFdFT25WdVVIK1ZKUFZMaHh2M0xJRW0yeWVqRWIvUHN1Z0Z1Ly85VFpNQkpS?=
- =?utf-8?B?WkZieVBUNTZPVEY2b24zdFMrby9ienFxSG1OVmJ5bGRjcEdBM2ZRdWZVcXlY?=
- =?utf-8?B?UzUwL0hNRTRQUGg5L3o0a3ZOUUtSbmlXQlNRcXY3dWJMcG4zQlorT1hrVGdD?=
- =?utf-8?B?OTdUbzJQWEU1QmxnTFpkSWM0b2F5dFJueEdLZERqVkxyU01GMjJQc1h3cEdZ?=
- =?utf-8?B?TFZwNGEweGgwcTVEbEQ5Zms0enlxOTFJQ2djWll0Yi82RWoxRzBVcjBWT1FD?=
- =?utf-8?B?a3FFSFhXNTlMamY1RkdXQTMxVjJRMXVLK29iN05PM0VLVXRDc2p0dVc5cXFx?=
- =?utf-8?B?SlJ4czE2U09zSjhUUlBWT2NMNXAzNXdFb1k2TkoxVFdPQm5MTlgyOCtlZnN1?=
- =?utf-8?B?NDgvNXMyRzBZejRnK2c4TXVkZFNVMlBVckZoMWp3cEdhOXFvRWZ6Rld2ZHhJ?=
- =?utf-8?B?cXloL0RQNkRaQTBvSXRyZWR6N0xBSU1yWGJJTmYxSEwvRGVidVJyc1ZqK3BD?=
- =?utf-8?B?UFlzK3hRdkJYbTg5SUxFY3E0Uzh4Kzg0d3NHcVI0R0RiYjJ5VGlDckU1SWxX?=
- =?utf-8?B?M2ZWcGxhT2NhaDhjUEdFQWVMWERhc3ZRQTJFejR5b3U2RVZXL0xDU2J3SFJW?=
- =?utf-8?B?KzY3SHdZYmlrQXpxZjBoNGJud1ZIK1hsWTJLUmRNVFR2MHRuakp4QTJlVnlG?=
- =?utf-8?B?bGl1U2JYamM3WXpsdm1oWm5CcTg4WGsvVlpvZE01U0IwTzk5eHREYTd1N095?=
- =?utf-8?B?Q2Q4TnpRNHVVdmlOZXdzV1p4anVISnJZbVJYblErK014alIzN2lrM1V3OXZO?=
- =?utf-8?B?NGtnQVlyWERvSGZVcnBMV1plcGp1b0dRNkxtR0J0bXVqMTJnR1I1UTRXS2Vp?=
- =?utf-8?B?VWNlR3hNWE00KzlWdnduTithQStDaW1OVlBQQ3pHeWhJcXZrRzBsN1lHTjhL?=
- =?utf-8?Q?NmlNUM9m86EY0JwLIDSmh/LA0lZpherhDfLIPtG?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Q0ZTMWZKdlJnRDZPOWQ4blpJNDhLT1pxMUE0RlJKRzBZZFhUOWFCWHZwY0Jv?=
- =?utf-8?B?S0s0OEtsNlZkcTA4b2dOQTNlMGthWGJyZjlKamRObmhVcmo0VnNndC8yWVl4?=
- =?utf-8?B?OWZIOU9oYlNJT01oSEdUVjRLdEZyVG9UdVZqVVMvRE9Pdkw1WW9PZEZBbzk1?=
- =?utf-8?B?dTFMWk5kOU5VcUVoUUZwamx4MTdVNWVtcEhIRG04WHQvUUJlZTNYQjEzLy9x?=
- =?utf-8?B?cFNkNGhuangxWUVFc0s2TVlya1FMYUptdmxKSktQbEEzbU5yVlhSZkdkSi9H?=
- =?utf-8?B?ajdwNFpScVU4Z2R5ZzRjM011a3RwMURlU1hKcEZMNTQ2Q0lrTzg2cWFKSXQ4?=
- =?utf-8?B?cTF3R2xKMTFtbDkvRTFZOWRmOXo5Y2w3YWlBVFp3SGYrZEVST2pRL3M0YVFZ?=
- =?utf-8?B?QXB2UDl5WURxeHRLbW1Mc01yTDlDMHQxNStIOTdid0hzSFkzVUdKT3Q2NGxr?=
- =?utf-8?B?WHhwRktwOW8zM1poS1VGVGg2aXFtTXUrbVVJZU52VCtxYjJQVmwxQnhSQlZv?=
- =?utf-8?B?eC84aXRWNXhtSDhYMlZkSWZqaXQ1SE5NQmFuUVRWYW5sQldqTUNJTGhka1gv?=
- =?utf-8?B?S2M2bVZMQVFSZlpLRjh6dmZFYUxQL1RhYjhteWU1c1RQcEFoSGwyU2dVcjJ3?=
- =?utf-8?B?V2dtVmM5a01XT2thL1QvS2psSE5OOFpvaFlnMEsvVXVqMW03ZS81UlJyS3hH?=
- =?utf-8?B?SkFyRUVxSnB4K000WldBeE4xUkR2cTV2Qk5GWnZEQXBKM2ppUGNWNTA3eTQz?=
- =?utf-8?B?TlZEcFRBNkhpRzV5ODhXZys3WjYvVlJIVTdXODhSOUVDNzBMTUZDVU83OFk5?=
- =?utf-8?B?aEdxU2F3aVNnREdxNzROekVuRk4wdlVSSXZLQW9ZZVdsQ0FwTEI3WDdKTVpV?=
- =?utf-8?B?cDYxYWlNek9KUjgwendUNGgrdmF0cFd2RGtLaVMrK3c4ZU94UzZXaU9TU3dj?=
- =?utf-8?B?TkNJZm1xTG1KaDlXcjJoaHR5cWM5bTEwaGxDc2dscGhEbWVTeXlvbzcveElX?=
- =?utf-8?B?T2lkOXRMd2FNdXNUcVB3QlFEd2RDSmgxT1JsTDgyQksxMHpramhVMkJyVHVO?=
- =?utf-8?B?Vll6TThXM3dMUU1nMUdjUXhTZkZwVDBwd3dqNjZsZW9tQU05ZVNIcjA4RGpq?=
- =?utf-8?B?ME9aVFp0VGtpS3NXYkMzMXYxZE9PT3Nua3N1SXlRUWZIOFJVMit3WUdBbEtn?=
- =?utf-8?B?QmtFcXVzTzJyd3VXcFJ0ejZaOU9tVEREMFYwS2QrbDFDYlUyS1BqV3VpMXBj?=
- =?utf-8?B?YTlFZU5ReWU1d3VaS0tFV1dnZjRBZnhTd04zZnIzbitmSGg5dFdnZDk2S1cz?=
- =?utf-8?B?YUlPM0U3eVQvZzMyT0w2SVdidiszWFYwYk5vNjF0TC9TOEpoU2p5Vk83WEdo?=
- =?utf-8?B?NlhQVHAreFNtQ0Q0bVJ0aXhQNlNjanlBc1ArZ1hBVzlmeER1dVM2dkRlSGh2?=
- =?utf-8?B?STI2WHZKaGlkOHZiVTUxTW0veDJRR0lNZXZYTkk3SDFIQnAwTEVXZE4zbm9q?=
- =?utf-8?B?TThhNWNWRGx1alpWRThkL3RHaDhYL1RKam1FZU5MNjg1MTUycW9SNlhrR3ZT?=
- =?utf-8?B?Q0Q2U2E4QmJOd1lrNzFRWStBcnQwZThzSmVIWmdLb1pWUVZkSlhNbzViTFhM?=
- =?utf-8?B?UlIxR3VGUUNUeFZBSXJiU3dJOVJWL1hIZjJIMTZ2bEM4TGtFNTdxNnBCMHZW?=
- =?utf-8?B?Zmp0OGlNY0VIcnlZcWpXenNCV1NuOXNQYnBXT05ZdWhCb2I0QUxaRUpKa1hm?=
- =?utf-8?B?WmlTWm9vRUJEaXVOeG1XOWMxZjRMMnNKQUxYQjJCenU4ZVBzZzk4RFdNL2hL?=
- =?utf-8?B?aG9wVDByOGhBUDUveUlaWENja1AyZ2h0U1gydkRHVS81SXhCZU1RRGt4dlZL?=
- =?utf-8?B?UEtXRXpHOWZxOURlSkJvRUFQenloT1Bnd1M2TUtCamdJWks2R29LMjNDcTNZ?=
- =?utf-8?B?UHpXWDA1ZU13U1ZISDJPNDF4U0ZpTGZ5T0V3Wjd3dDRSM2hwdGdtVXBXQmhQ?=
- =?utf-8?B?aHhLWmp1OEhhSVVSV21saFc2ZDJlMGRNWUJrN0pEQmJiK2lVandjbUlJYUNy?=
- =?utf-8?B?cnNNNFY0MnhHeVI4RjBtNFc5blhiOEVta2g5VzBqQTRDVkdCRldyWk1nTzRH?=
- =?utf-8?Q?eq7/anvTjy78yP+X5pZK/6Wmo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34af82c4-a5d0-4910-066b-08dcf26cf7e8
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 07:41:41.2295
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TJ42Uqsg01Jso1iYlAkQ9wT4VjiyArgL3iaXXnBvuM1JoO3gphV30X7RwHyuvD8kHQPFtHaJfErQ5WCkO6KVgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9071
+Content-Transfer-Encoding: 8bit
 
-On 10/22/2024, Rob Herring wrote:
-> On Mon, Oct 21, 2024 at 02:44:40PM +0800, Liu Ying wrote:
->> This schema documents LVDS panels with dual links.  lvds-dual-ports.yaml
->> documents dual-link LVDS display common properties.  Reference the ports
->> property defined in lvds-dual-ports.yaml to save lines.
->>
->> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->> v3:
->> * New patch.  (Dmitry)
->>
->>  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +------------------
->>  1 file changed, 1 insertion(+), 19 deletions(-)
-> 
-> Squash this with patch 8 then it doesn't look like you are duplicating 
-> things.
+While trying to simplify the ufs core driver with the guard() macro [1],
+Bart made note of the abuse of the scsi host lock in the ufs driver.
+Indeed, the host lock is deeply entangled in various flows across the
+driver, as if it was some occasional default synchronization mean.
 
-Will squash this and patch 10 with patch 8.  Thanks.
+Here is the first part of defusing it, remove some of those calls around
+host registers accesses, which needs no protection.
 
-> 
-> Rob
+Doing this in phases seems like a reasonable approach, given the myriad
+use of the host lock.
+
+
+Changes compared to v1:
+ - get rid of redundant locking (Bart)
+ - leave out the HCE register
+
+[1] https://lore.kernel.org/linux-scsi/0b031b8f-c07c-42ef-af93-7336439d3c37@acm.org/
+
+Avri Altman (3):
+  scsi: ufs: core: Remove redundant host_lock calls around UTMRLDBR.
+  scsi: ufs: core: Remove redundant host_lock calls around UTMRLCLR
+  scsi: ufs: core: Remove redundant host_lock calls around UTRLCLR.
+
+ drivers/ufs/core/ufshcd.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
 -- 
-Regards,
-Liu Ying
+2.25.1
 
 
