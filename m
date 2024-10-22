@@ -1,197 +1,93 @@
-Return-Path: <linux-kernel+bounces-376477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AD19AB22B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:31:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A85F9AB22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 647C2283918
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:31:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF9FB24C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72181B533F;
-	Tue, 22 Oct 2024 15:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tp/B7uOv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8D119AD7E;
+	Tue, 22 Oct 2024 15:31:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9AC1A726D;
-	Tue, 22 Oct 2024 15:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC931E481
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611045; cv=none; b=U3eX/ai4C5OoPuarVyHTI0DfPIor+fD3LS5gFjGl4HuEPo5HwtA78c9n6VnMUMMkrsv47KhVqmB8VhwatVSNaeV6Nfx9NA2YTSSKCXJ/hTNecsBGaENz3CABKEZd07H7AfG7/Bv4hKs1wxfOtmQdYlQOXREeoORAbII4GIZiWf8=
+	t=1729611065; cv=none; b=ku9R+15uQEFtx/YCDLQrVpcOMA3iphLijlibG/ScQEnO+2ppg6SH1AXquRysXVDGjItHw66aXwVcMr+FiJwQBQ7SrQOZxBmpyU7Q7fDrgIujIWyNPHxx88JS2ODfcjB04pL1G6oe91MGWwW5mX8eJv/GhS4va5Y1GWsIZE9HJ90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611045; c=relaxed/simple;
-	bh=QaeEqdPFz3BRmov/AvOyAXOEIdoSrRqhJFtqE3JLuAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lyc9rVW4WCU8TMbUnXieifkoP0MAa5dXIwSdrnJxKK8OP8ke0kfiwa8cjbJKsRR0QXBUGWoEArPuPTZOIrtotT7hKvm3QSkFF0FHbs5R2AbsqAjLLPPmblbWjaCH+Swp7RhOhRt8FPcJI0JdXB+WzXTQudUvYC/SJKotnWCvGpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tp/B7uOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865BEC4CEE7;
-	Tue, 22 Oct 2024 15:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729611044;
-	bh=QaeEqdPFz3BRmov/AvOyAXOEIdoSrRqhJFtqE3JLuAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tp/B7uOvvqVfphlIu5iRNu1Iqlkcy0OL/bvfWQsx4L9Ex2c180NZSD9NMHz+PfBjJ
-	 wYWXq5pPpDQfQqy12cmgLElrZBfhTyBbQUFEhknHsyImQGdZRcAPkTI6zFBg0PBunG
-	 A7Non5gcw9RviSwYgu3Dsjp0t/XCrn3447Aona4R4yBmRIAodpM8fEURBOG7RQRYMv
-	 3LDJRpej4HS8B6hLP88B/5QnnotwzBMNjAizpONd97Qzk3OaQlz1qty4wDYYnPi7th
-	 tKPEvDxV6ifNSWKPQ45PuDaodebiLYPmFQ/ty/Z7qen7lFZgU3zF2ZbLGDE00rC3PH
-	 j/kxGPNlnJ8Jw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t3GqV-000000001By-4ABf;
-	Tue, 22 Oct 2024 17:30:56 +0200
-Date: Tue, 22 Oct 2024 17:30:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] soc: qcom: pmic_glink: Handle GLINK intent
- allocation rejections
-Message-ID: <ZxfFL8eVs5lYCPum@hovoldconsulting.com>
-References: <20241022-pmic-glink-ecancelled-v1-0-9e26fc74e0a3@oss.qualcomm.com>
- <20241022-pmic-glink-ecancelled-v1-2-9e26fc74e0a3@oss.qualcomm.com>
+	s=arc-20240116; t=1729611065; c=relaxed/simple;
+	bh=dx6QxTPa/+mQ4n+fH7ym50nfkVSbWreEqPOdi1FIoYM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iQ7eowiVAHbj4A5kj1IvOGsz4QfgP3/5AJBljpP05EoiWUq35livdaU64Rg/N4bwngRtgDle8Ooca8W7h+o1hJMaOtaGCmxBjSMR62a14swvWPQKwh3xaR0hxKVcRl6PNW/QeQuC3ZYYn7D+YH4m63pcRGWh0jEZyD2vxHRqwxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aed4f24a9so73497339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:31:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729611063; x=1730215863;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLrx1E+31Z4OW10+IEI8u+uVs3kTaeUo1vQAtWeI+J4=;
+        b=XhqnHu786UvjB1XV1jelcuDO/IpWfTx5a5vlYLb/gPEJjgmTJvAchRkXajrooFQpOm
+         Qld/cTKtseUhdo9MD0WtxoGpr8a0ep77Gxhvh210+3Zo+sRNvLRTdtlrZ7vaXLrIyhzv
+         9aj6IUI+8AG99kEH88HeCUs/KSb/zMKSCb7dHdq993BhDwSTfh7dxu8/9F2NWBMD28Qe
+         6b5b59opbNJ9/tgjrK6fkF6ZosBcNPy8/CTgmN8EBKzwO2uCbrFsDbIJBQv6Xynbv3d+
+         +j0K6IDzPS+iQA/gQcYYScmJCP4ej+Nw0iw9D/buzQenf4M/IT+8zNfoMx+ayiXPCpj9
+         ArlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2+8cWxgUOWzc46XFxiROfSvN6YApRYuxyfLC5stiid6ci/lK2DISEeFJBI0zaTIpUiQiv+KXQODXEhuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuK1iv0QX8EmbzCGCV1I2a0yh65+ltjWR2MU9UTdfqKLTW/b3q
+	Zr7FNhql9x0EkXtAWVLU1ei36OLRHrQE/XN5DsvAKDn44nNRzQSXKIYmGhBA292Njdu4W+8fbFv
+	jCoIk4vmlSETUh/aGkobElBLxTAE2HDw/UCdo6fmG7zvlr7GxfiWYXqU=
+X-Google-Smtp-Source: AGHT+IFdvdlR6YQIyahOfH75Uqz6F9rwXGlLNt6wjo6UobtDESeiz2U3sOfU7f8neUoYGbvAvpvZ+CegSDI7C76l/r4XCb5cvuup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022-pmic-glink-ecancelled-v1-2-9e26fc74e0a3@oss.qualcomm.com>
+X-Received: by 2002:a05:6e02:b4f:b0:3a3:449b:597b with SMTP id
+ e9e14a558f8ab-3a3f40a7ea9mr128631495ab.18.1729611063108; Tue, 22 Oct 2024
+ 08:31:03 -0700 (PDT)
+Date: Tue, 22 Oct 2024 08:31:03 -0700
+In-Reply-To: <000000000000ae358c06202ca726@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6717c537.050a0220.10f4f4.0146.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_setattr
+From: syzbot <syzbot+d78497256d53041ee229@syzkaller.appspotmail.com>
+To: eadavis@qq.com, elic@nvidia.com, jasowang@redhat.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
+	parav@nvidia.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 22, 2024 at 04:17:12AM +0000, Bjorn Andersson wrote:
-> Some versions of the pmic_glink firmware does not allow dynamic GLINK
-> intent allocations, attempting to send a message before the firmware has
-> allocated its receive buffers and announced these intent allocations
-> will fail. When this happens something like this showns up in the log:
-> 
-> 	[    9.799719] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-> 	[    9.812446] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
-> 	[    9.831796] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+syzbot has bisected this issue to:
 
-I think you should drop the time stamps here, and also add the battery
-notification error to make the patch easier to find when searching for
-these errors:
+commit a3c06ae158dd6fa8336157c31d9234689d068d02
+Author: Parav Pandit <parav@nvidia.com>
+Date:   Tue Jan 5 10:32:03 2021 +0000
 
-	qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+    vdpa_sim_net: Add support for user supported devices
 
-> GLINK has been updated to distinguish between the cases where the remote
-> is going down (-ECANCELLED) and the intent allocation being rejected
-> (-EAGAIN).
-> 
-> Retry the send until intent buffers becomes available, or an actual
-> error occur.
-> 
-> To avoid infinitely waiting for the firmware in the event that this
-> misbehaves and no intents arrive, an arbitrary 10 second timeout is
-> used.
-> 
-> This patch was developed with input from Chris Lew.
-> 
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Closes: https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/#t
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17fc2640580000
+start commit:   d12937763990 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14022640580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10022640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d0dc87980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e19430580000
 
-This indeed seems to fix the -ECANCELED related errors I reported above,
-but the audio probe failure still remains as expected:
+Reported-by: syzbot+d78497256d53041ee229@syzkaller.appspotmail.com
+Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
 
-	PDR: avs/audio get domain list txn wait failed: -110
-	PDR: service lookup for avs/audio failed: -110
-
-I hit it on the third reboot and then again after another 75 reboots
-(and have never seen it with the user space pd-mapper over several
-hundred boots).
-
-Do you guys have any theories as to what is causing the above with the
-in-kernel pd-mapper (beyond the obvious changes in timing)?
-
-> Cc: stable@vger.kernel.org
-
-Can you add a Fixes tag here?
-
-This patch depends on the former, but that is not necessarily obvious
-for someone backporting this (and the previous patch is only going to be
-backported to 6.4).
-
-Perhaps you can use the stable tag dependency annotation or even mark
-the previous patch so that it is backported far enough.
-
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-	
-> ---
->  drivers/soc/qcom/pmic_glink.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-> index 9606222993fd78e80d776ea299cad024a0197e91..221639f3da149da1f967dbc769a97d327ffd6c63 100644
-> --- a/drivers/soc/qcom/pmic_glink.c
-> +++ b/drivers/soc/qcom/pmic_glink.c
-> @@ -13,6 +13,8 @@
->  #include <linux/soc/qcom/pmic_glink.h>
->  #include <linux/spinlock.h>
->  
-> +#define PMIC_GLINK_SEND_TIMEOUT (10*HZ)
-
-nit: spaces around *
-
-Ten seconds seems a little excessive; are there any reasons for not
-picking something shorter like 5 s (also used by USB but that comes from
-spec)?
-
-> +
->  enum {
->  	PMIC_GLINK_CLIENT_BATT = 0,
->  	PMIC_GLINK_CLIENT_ALTMODE,
-> @@ -112,13 +114,23 @@ EXPORT_SYMBOL_GPL(pmic_glink_client_register);
->  int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len)
->  {
->  	struct pmic_glink *pg = client->pg;
-> +	unsigned long start;
-> +	bool timeout_reached = false;
-
-No need to initialise.
-
->  	int ret;
->  
->  	mutex_lock(&pg->state_lock);
-> -	if (!pg->ept)
-> +	if (!pg->ept) {
->  		ret = -ECONNRESET;
-> -	else
-> -		ret = rpmsg_send(pg->ept, data, len);
-> +	} else {
-> +		start = jiffies;
-> +		do {
-> +			timeout_reached = time_after(jiffies, start + PMIC_GLINK_SEND_TIMEOUT);
-> +			ret = rpmsg_send(pg->ept, data, len);
-
-Add a delay here to avoid hammering the remote side with requests in a
-tight loop for 10 s?
-
-> +		} while (ret == -EAGAIN && !timeout_reached);
-> +
-> +		if (ret == -EAGAIN && timeout_reached)
-> +			ret = -ETIMEDOUT;
-> +	}
->  	mutex_unlock(&pg->state_lock);
->  
->  	return ret;
-
-Looks good to me otherwise: 
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
