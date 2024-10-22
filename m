@@ -1,104 +1,233 @@
-Return-Path: <linux-kernel+bounces-376597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A786D9AB3A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5262E9AB3A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5902D1F238CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB641F232E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354B819B5B4;
-	Tue, 22 Oct 2024 16:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4531A264C;
+	Tue, 22 Oct 2024 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I7YqV452"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bg6wJNCa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6D61A3049
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DDD1BBBC5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613686; cv=none; b=lbDk5zwYAANWCB6stSVAVtpCjcyhbxCTOHO+Lrfoi/j4abAwO0jOilWVTyQbjYlbCvWAqHSRpTbmRrjU+ntWctlvbwdcD8vjHVGfQ8esCb438G946Srfz74DX6hdWajIweqNiDvkBsAgjWsmqC2GPsinJ09U3WLG4gsfC9D5XPk=
+	t=1729613707; cv=none; b=FH7yfgieBrhQwqi+U51C1z0MjH9uovpv3xmyYQg3sE7cPi4xB1IgyHHx7MXYivmHFr6dsXBpsWELbvOMY/YCIGEYeCxxuU+d8YbE9+dn9KBWU8JYD0KIU1171etz+jxGt9v4OcX/zXxhHJGR2daPfYLNnK/fyKJyswHFJBJ1klQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613686; c=relaxed/simple;
-	bh=uQyLKf/KjMGIsuCylbyZv2NLqsDYwh8/jixtnFeFZ+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jEtuhSRu14hV3/8o30fJ2fi2sbYWe2J52qaM7UN5a1xsm1S593MhScqLKBQWBna5hQxdpV+jegM6CGbhllwD5HOivr+P5+Mg5X9fmrF4V4121x0lWnNmmaFHmxybeHCFY/af1tpDB0EYZynKQu0+0p8lltBmFb0a+aGZISWGCTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I7YqV452; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c8ac50b79so234855ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729613684; x=1730218484; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQyLKf/KjMGIsuCylbyZv2NLqsDYwh8/jixtnFeFZ+0=;
-        b=I7YqV452NoPx1tk48NK1iezUpnwGQuuQPryJ/EUgtJcf84f4m2voI7Wieiu5pEbSxj
-         PlgWvWl0tsw1jA7V/2RJsCqwDfnzwMhj7kYZleuCRgS1ncFb6kkd3DNjtnBI8aH+BfcP
-         T4lijDP/12uc3RJ/+uTXQzyOjgXHI0/xUoA1+5OlevdTOBSSe5gZkwQ5o6OMERk5vWer
-         Nik1IXCqubLRI4KmV0Dypgt0IdcG4k5PNQUQiC1BpLY+kIIaxEDNGjH+YFZ1JtC62dIk
-         LoIeP+EaFVKuF1mpC+oWrswuw/EJbnHJ+jkxQdo6Dl5VtCZIoe3kdVBgClZQ1UQu1VT0
-         Oj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729613684; x=1730218484;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uQyLKf/KjMGIsuCylbyZv2NLqsDYwh8/jixtnFeFZ+0=;
-        b=AFnvxoCLozFH24y8Q3pnjci+WounC0qex9SuFuuzeI5bCjJEipm5cwBGqLqmjgXDMG
-         2TD0OIEPl4UcfIZYD71x9xgbo/nYInnF1AezIvdqs8Tqx0CXDTe9GoQKIyGzcUnIahVF
-         XOAbDKjAX6xUnh2zlpK/wZpF5laB7P+pIH0+wFabXh6fsIVpBddYm7gprol+On8TeXt0
-         6j8YBVLEmqH9WV92cRvelcIgPna3fQEa4porpXIPPWoEteRwPcNFylPqfrg0ecSRmM8M
-         Gn5+8c9Rs46sdJHrYtYy4N0nADgNbxz4DG/h7kyl9ZRtjTGMuZFYbhyB7ud870DRgE4S
-         uFsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqy3fUGVQwSNMfnqM8+HxUWSvIEuscpqQpos8oraA7Fqr8Z+IEiZOuNaU4grBU+iTf9g0qUnGGL8u7rqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuLrnVRmsIvwyW7NwFki8h84QKV7ClsCHhvD6sUssaFu3QqDQL
-	gojPPCogO9F0FxsM02mQYuxHbcL+WJOTup3lpjzLEzWInWeCYobWuS/tbxWoNl9CgegfAaNJ33W
-	C4qtOHl6M94uJj/aX/yWeIVMXcYg/4broSQg5
-X-Google-Smtp-Source: AGHT+IEk2C5VN5OQSxU2RTl/uiQOLCjAufw/n0qpTfSTknlIOJDwl1tjcDLh9OBuWTOSWITRPJuHGqKMAHTJwO/i8Xg=
-X-Received: by 2002:a17:902:d486:b0:20c:e262:2570 with SMTP id
- d9443c01a7336-20e97fb41fcmr3516165ad.8.1729613684229; Tue, 22 Oct 2024
- 09:14:44 -0700 (PDT)
+	s=arc-20240116; t=1729613707; c=relaxed/simple;
+	bh=5C93Ix0HLmGpLBxBT0CiwU4XpptXz4IaLPa8ArGBDlE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V+qLIgK33PbkS7Unn1cMnGD9hC8kstPpv5ECGSbgRSsYgGFJeduSqjXB8e5DiwdXQLo154My+Fu2dT4b2w/7DXXxdoi7WqipfpyYEyhW2t96kMFk8Q7bYJAKQWtofMTjCh6lWVaJUTghLP6IfOv0EjA4rl1n4bqoFeeXjNgk01Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bg6wJNCa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD93EC4CEC3;
+	Tue, 22 Oct 2024 16:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729613706;
+	bh=5C93Ix0HLmGpLBxBT0CiwU4XpptXz4IaLPa8ArGBDlE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bg6wJNCavjpzrle+OLfs6VjMWtM8KMmz/Z3F8oBUHYHWgZROvaTvyS+ZXyqKW794v
+	 NomG7jFH9vbKBam/stDAynZ1z77Z7AOFlMpC0gNjrTTprIyKFGKPcLzHe0/0bybNIN
+	 QMG8a5xlMoqNe7GajScxquvTSl/EJQyVfVsSoRi2bRQM4LMMM6g3c9j59gaJ0elJFY
+	 mw6QBHKu2f+l7BvOBX4oQPdumU+FxqaBNQQdVfvWlz3ChfYZMWvdvXxjnhE5Vn8q7N
+	 vxpOtffuW0xUGKZpNGOYdw6M799Sw8oFhMit7zCW479ZvPlg9TzMCNPJfPULLmfe+n
+	 Evnyn8pM2adMA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t3HXE-005py4-7s;
+	Tue, 22 Oct 2024 17:15:04 +0100
+Date: Tue, 22 Oct 2024 17:15:03 +0100
+Message-ID: <868qug3yig.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nanyong Sun <sunnanyong@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
+In-Reply-To: <20241021042218.746659-5-yuzhao@google.com>
+References: <20241021042218.746659-1-yuzhao@google.com>
+	<20241021042218.746659-5-yuzhao@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
-From: Jordan Rife <jrife@google.com>
-Date: Tue, 22 Oct 2024 09:14:32 -0700
-Message-ID: <CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, 
-	Michael Jeanson <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, 
-	Joel Fernandes <joel@joelfernandes.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-I assume this patch isn't meant to fix the related issues with freeing
-BPF programs/links with call_rcu?
+On Mon, 21 Oct 2024 05:22:16 +0100,
+Yu Zhao <yuzhao@google.com> wrote:
+> 
+> Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
+> time, and then reliably resume them when the local CPU exits critical
+> sections that preclude the execution of remote CPUs.
+> 
+> A typical example of such critical sections is BBM on kernel PTEs.
+> HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
+> commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
+> 
+>   This is deemed UNPREDICTABLE by the Arm architecture without a
+>   break-before-make sequence (make the PTE invalid, TLBI, write the
+>   new valid PTE). However, such sequence is not possible since the
+>   vmemmap may be concurrently accessed by the kernel.
+> 
+> Supporting BBM on kernel PTEs is one of the approaches that can make
+> HVO theoretically safe on arm64.
 
-On the BPF side I think there needs to be some smarter handling of
-when to use call_rcu or call_rcu_tasks_trace to free links/programs
-based on whether or not the program type can be executed in this
-context. Right now call_rcu_tasks_trace is used if the program is
-sleepable, but that isn't necessarily the case here. Off the top of my
-head this would be BPF_PROG_TYPE_RAW_TRACEPOINT and
-BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE, but may extend to
-BPF_PROG_TYPE_TRACEPOINT? I'll let some of the BPF folks chime in
-here, as I'm not entirely sure.
+Is the safety only theoretical? I would have expected that we'd use an
+approach that is absolutely rock-solid.
 
--Jordan
+> 
+> Note that it is still possible for the paused CPUs to perform
+> speculative translations. Such translations would cause spurious
+> kernel PFs, which should be properly handled by
+> is_spurious_el1_translation_fault().
+
+Speculative translation faults are never reported, that'd be a CPU
+bug. *Spurious* translation faults can be reported if the CPU doesn't
+implement FEAT_ETS2, for example, and that has to do with the ordering
+of memory access wrt page-table walking for the purpose of translations.
+
+> 
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> ---
+>  arch/arm64/include/asm/smp.h |  3 ++
+>  arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++---
+>  2 files changed, 88 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
+> index 2510eec026f7..cffb0cfed961 100644
+> --- a/arch/arm64/include/asm/smp.h
+> +++ b/arch/arm64/include/asm/smp.h
+> @@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
+>  extern void crash_smp_send_stop(void);
+>  extern bool smp_crash_stop_failed(void);
+>  
+> +void pause_remote_cpus(void);
+> +void resume_remote_cpus(void);
+> +
+>  #endif /* ifndef __ASSEMBLY__ */
+>  
+>  #endif /* ifndef __ASM_SMP_H */
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 3b3f6b56e733..68829c6de1b1 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
+>  static int nr_ipi __ro_after_init = NR_IPI;
+>  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+>  
+> -static bool crash_stop;
+> +enum {
+> +	SEND_STOP = BIT(0),
+> +	CRASH_STOP = BIT(1),
+> +};
+> +
+> +static unsigned long stop_in_progress;
+>  
+>  static void ipi_setup(int cpu);
+>  
+> @@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+>  #endif
+>  }
+>  
+> +static DEFINE_SPINLOCK(cpu_pause_lock);
+
+PREEMPT_RT will turn this into a sleeping lock. Is it safe to sleep as
+you are dealing with kernel mappings?
+
+> +static cpumask_t paused_cpus;
+> +static cpumask_t resumed_cpus;
+> +
+> +static void pause_local_cpu(void)
+> +{
+> +	int cpu = smp_processor_id();
+> +
+> +	cpumask_clear_cpu(cpu, &resumed_cpus);
+> +	/*
+> +	 * Paired with pause_remote_cpus() to confirm that this CPU not only
+> +	 * will be paused but also can be reliably resumed.
+> +	 */
+> +	smp_wmb();
+> +	cpumask_set_cpu(cpu, &paused_cpus);
+> +	/* paused_cpus must be set before waiting on resumed_cpus. */
+> +	barrier();
+
+I'm not sure what this is trying to enforce. Yes, the compiler won't
+reorder the set and the test. But your comment seems to indicate that
+also need to make sure the CPU preserves that ordering, and short of a
+DMB, the test below could be reordered.
+
+> +	while (!cpumask_test_cpu(cpu, &resumed_cpus))
+> +		cpu_relax();
+> +	/* A typical example for sleep and wake-up functions. */
+
+I'm not sure this is "typical",...
+
+> +	smp_mb();
+> +	cpumask_clear_cpu(cpu, &paused_cpus);
+> +}
+> +
+> +void pause_remote_cpus(void)
+> +{
+> +	cpumask_t cpus_to_pause;
+> +
+> +	lockdep_assert_cpus_held();
+> +	lockdep_assert_preemption_disabled();
+> +
+> +	cpumask_copy(&cpus_to_pause, cpu_online_mask);
+> +	cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
+
+This bitmap is manipulated outside of your cpu_pause_lock. What
+guarantees you can't have two CPUs stepping on each other here?
+
+> +
+> +	spin_lock(&cpu_pause_lock);
+> +
+> +	WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
+> +
+> +	smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
+> +
+> +	while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
+> +		cpu_relax();
+
+This can be a lot of things to compare, specially that you are
+explicitly mentioning large systems. Why can't this be implemented as
+a counter instead?
+
+Overall, this looks like stop_machine() in disguise. Why can't this
+use the existing infrastructure?
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
