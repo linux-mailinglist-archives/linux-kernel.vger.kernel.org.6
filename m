@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-376182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7766F9AA13B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F47E9AA140
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AA41C2224D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77DECB22D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9551119C54F;
-	Tue, 22 Oct 2024 11:38:35 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D6199FB5;
+	Tue, 22 Oct 2024 11:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RvmdFMmj"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E1F19AD73
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED51719B581
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597115; cv=none; b=goOHiR1vG3YEaerPf722fxq2be3jlFneQu1+ARQTTpZQ2PwUnAWqORWB16d6r9KvCNYHi4lrxVWeQypTfFI4c0pl2BDglqDlvUDZMPTyg3zKOp/5ykvPzaDKiJgrfy+xVW9z8Rg0s4qKqHjV7BtU6zV+O2rhXT38cy3mJmBlPP0=
+	t=1729597178; cv=none; b=N8Z+f/4vg+mThXCloGaMHomSYzDJFMj/51Qcqe/an/JlCt2uS7vv9m4YdTD8lBpZ+JKQgUuJyCewgrzlxyZJWF8AnEeIOsHxFG8M0bkEZtTmgimTCEwCqYmJKovz+3E7UodAgNQIslQpNjV3fUhD9vuxUuEEKW0MTD/cphz/HKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597115; c=relaxed/simple;
-	bh=aLBckF07mkjO60Kkz61QCu2+ek57S2l8PjSQYDAI5ao=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tkRPyknzX2Kl13v/c7mjiuQeDQo+IaT7InGUm3gH75FjT7tcbPhEKo72UHMWGvSToBOW0ab6e3/F24JKBo2KyYi53SCX2LNGvw6gCaX/BETOgRvJujZSZXgc8tdfUPbTOzOg8SFx5cQ5fCoqFS6REDbfnHCRCFEj6L5QPmzEcYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b7129255so53502295ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:38:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729597113; x=1730201913;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1729597178; c=relaxed/simple;
+	bh=Q7UvAeo7wgj55k0tHHcaQIz89W2aiZuE9pPZIebFQSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LDRF0n/BbX6dyl9l31tkkApvlOyt7PxD7w+u7gU8BaEdKTbWpACg4RWxfUUNV/GOpYsU797jDXx9k3dTF4ddTdIRdyUAaXAFUuIpg+3WMtYXE1AxUMXFd1JcCpM53gpOCBQaUedgVnYP56+euZGbwa58c12kg9kvcuIQxiAH1Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RvmdFMmj; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c962c3e97dso6612299a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729597175; x=1730201975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ouSLg3Ywt/0X+H9vWv6sMqAnUnp/8br5o1Ob9ipfFN4=;
-        b=jnUeeGr/VFUlH5Yn57r5jmIesiwNLgNKgQF2Rj2PoO07/knPfMOdZDFEKVS8LzQgxz
-         cpB1p8vyOJtpLi5oC/jjeLMPWIKFOp1No1Wv3UMJZluXQ2j5Z4dZ1tt0zVR8qOYd3H4g
-         YIayTArumxco8/mk09x2cfnmzIF8DA99WLxSXEakre9U0VIL8nVjW5DkmHU4/hF+cTd5
-         vIC0mVNFZPXYbRClsJslBPkRcPTSIbmYt9cyPMPLIvqfYYYMFW1n8XSCQV0GzdskN6eJ
-         hSyv4enutiss/MyCiaOIwJ398qQBqFrC/F9EXe8il4ZeGIxmZRw7aH8oqE7LEZ6WI8Fe
-         /FSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj3o3O9/maiPzU3gew6qycUwO6qwlOfvos3xBw9Ahn+86PKScmH7rBlMGyL/se47uDu2UaX0npOi95rpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCiTdRv4LTBdLXglNxJXkJ9OZlSL0QnuLVN4OBgoiBX5moWMgp
-	MQE5DYkwA+/G2ocPZ8nIvfm7sMkbW1qEMWof7XAs0Wi1JFUVEzhI2VsqIIU3P5gLGlvdfz5Q8/g
-	9jJXBmNNGt30R3ImAqwE1bSywB7t4Zua2DVfrLNd4QgWE1qwB2jCG6+s=
-X-Google-Smtp-Source: AGHT+IE3pkqG3W1GjwJfvFFXB+gff8e7Fh4t9+OSbjt329ZL6nPvFVEzDDUEErjXgMMmJaxUpGZAW97QKS6HSljIljBS85PjRzqc
+        bh=VdmnWgCwPxxjygGThsGOmIi6siTSsGy/bxkMND48qlU=;
+        b=RvmdFMmjjYHWYnajh/TV7Yo4jUiYxdg9WqunYp9YZ4vZ2Boc0uNgAIgqpd9T6u5QFQ
+         zXWwBwFeVnCSBvqlHb1pkT+0tSLTK7pXcFYgVH32Fdoo9J6ZuRopWqBck6NDGw+ktMvZ
+         JACvT0YIwNfSTjMugu/TxrVOanU4BGlLXrw4xIwf245lmulnNGjfjtt4p7LkROZp2a/Y
+         NFC2bS1lAsCgSzUtMHp7rvjrlN13USTmio1K9HpNwR6qn+UtG0d9syUZEb4vI9BCBpEz
+         0oLzM25D2f8fDQqkmnZe3RyPs9Mwm550p/yZ6A6eXsjpoFrgdLN0RveZAiLKVbG9YmOC
+         iS5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729597175; x=1730201975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdmnWgCwPxxjygGThsGOmIi6siTSsGy/bxkMND48qlU=;
+        b=P/YJqy24n2wyzahS+DEw7U/vRw+Ai88O5e8GPwnnm0AfcPJ5oUyQ9mMhmaPhximvwA
+         wgs3LKfXsMAK73AMfVjEPQD//pXGwOZszNwNbMuYARSO3p+TRCtwOjMAfPBhrc6rXcC7
+         bw7B+FOmylD/yRr6oaaXHUqCzvKxgmbIfiKgOSL9W7sSRfufmiWELrQ/Ac+M/0Td58Tj
+         8lP9CxwzM0om2FXJMmU9Kde/uK+3ytzINWnlDXVUE/ozHo9o2mtRtqwNppjYSp/57Hqj
+         yi1fH+DGh/PQNTM5W1Gn7+hqB0IZd4BjeFZ2Lc3R5kim8BuyX9wo5YOHAr4tMhVYU6zI
+         gtHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmpzS+RppQ3jAqtYddR7vON+SAbGIxkVpfCbPIAjNRXTQETRB+7PsXZyPOLlHcq31vbspUYxGENabmTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz56dtN/agfgAsUc1c9CaC+RViMMTJL/edvdtN0coro+xt2zTqT
+	Zp13LY2EXd4cef0n9yc9HanpVhh5285Pmte1S3gDh6GKMSlRIeHY8eE44S61jJ8=
+X-Google-Smtp-Source: AGHT+IFwOWA+ThxyNU6js2FSv7eSZcv26U7aBvfGZRHfZ7plL8dQmDR2VvtmtU0l0YIs/RmLPfk0xA==
+X-Received: by 2002:a05:6402:370c:b0:5ca:e5b:bbdb with SMTP id 4fb4d7f45d1cf-5cb7fcfdf2bmr1649962a12.18.1729597174872;
+        Tue, 22 Oct 2024 04:39:34 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c737c4sm3006495a12.96.2024.10.22.04.39.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 04:39:34 -0700 (PDT)
+Message-ID: <5dd0af61-05c7-4a17-8fbe-31a317824ad6@suse.com>
+Date: Tue, 22 Oct 2024 13:39:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c248:0:b0:3a3:f95f:2dd with SMTP id
- e9e14a558f8ab-3a3f95f0594mr89939355ab.19.1729597112998; Tue, 22 Oct 2024
- 04:38:32 -0700 (PDT)
-Date: Tue, 22 Oct 2024 04:38:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67178eb8.050a0220.10f4f4.011b.GAE@google.com>
-Subject: [syzbot] Monthly cgroups report (Oct 2024)
-From: syzbot <syzbot+list3160ce3179308d795218@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/19] gendwarfksyms: Add a cache for processed DIEs
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241008183823.36676-21-samitolvanen@google.com>
+ <20241008183823.36676-26-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241008183823.36676-26-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello cgroups maintainers/developers,
+On 10/8/24 20:38, Sami Tolvanen wrote:
+> Basic types in DWARF repeat frequently and traversing the DIEs using
+> libdw is relatively slow. Add a simple hashtable based cache for the
+> processed DIEs.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Acked-by: Neal Gompa <neal@gompa.dev>
 
-This is a 31-day syzbot report for the cgroups subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/cgroups
+Looks ok to me, free free to add:
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 38 have been fixed so far.
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 2627    Yes   possible deadlock in console_flush_all (3)
-                  https://syzkaller.appspot.com/bug?extid=18cfb7f63482af8641df
-<2> 998     Yes   possible deadlock in task_rq_lock
-                  https://syzkaller.appspot.com/bug?extid=ca14b36a46a8c541b509
-<3> 35      Yes   possible deadlock in console_lock_spinning_enable (5)
-                  https://syzkaller.appspot.com/bug?extid=622acb507894a48b2ce9
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- Petr
 
