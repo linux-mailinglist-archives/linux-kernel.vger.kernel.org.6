@@ -1,140 +1,92 @@
-Return-Path: <linux-kernel+bounces-375837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33399A9B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:53:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281799A9B8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A81C1F23254
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578A71C2166C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67085154C07;
-	Tue, 22 Oct 2024 07:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9F41547C0;
+	Tue, 22 Oct 2024 07:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WP+vrCJG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49C1127E37;
-	Tue, 22 Oct 2024 07:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Vqpgd8vd"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4625E1547C5;
+	Tue, 22 Oct 2024 07:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583627; cv=none; b=cEUDDPfcw+Dmc6CKAd+iO/JfRpdz3OzHtXRTdpaoSXUkS1lLYC02YxRAW0TV3qo+Wl9CoUKI7RFJ8mK8Q3thrPOH+h78KRB0zk7BSysbjTRI8BoCECtnEVdjCQ27W0DwP912KnGDePyD2rqUDrPJUhYy0fhxP5cdWcCaW/N9TTo=
+	t=1729583642; cv=none; b=V6q2+ifuPKF6YcrFGPVlSei6egkDAMHVlvl7yzvW4kK+Hd1EA2sdO0NhL31B9upDkuvEUzz0SwbHwhRP8BUrjC1YKPGlaEWhtQaQj/5Hggnr3T1YN3pMVA2H9IHg6E0xqNVV2wd31MwIALfb1/HcbTa/tNdAz/S0AKYMyLa2YRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583627; c=relaxed/simple;
-	bh=94yBtoN+NpXDkZbfuTm6IbHirn/x4DZTEvDfAeXAcpA=;
+	s=arc-20240116; t=1729583642; c=relaxed/simple;
+	bh=iu+DhHBd0zq5FKnWsjjiE0NaFOCLjpWujUo6i9xdk/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+CvHS6dSa1oR+AwwSm83XwCy+dpOofL4ui5Ig9A+hyXEnz35X8PQn/cXZn9gTS2LnopUKbZdejEbxmfu/5Fy0+8+3zk57vxtKafS5L3uTNn1lXmfXlV/P7IkRsaJlepJXhhygR+TmkZMSiyPVZPSnaEiwjQA6ObUuOTJ9pC/JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WP+vrCJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 157F3C4CEC3;
-	Tue, 22 Oct 2024 07:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729583627;
-	bh=94yBtoN+NpXDkZbfuTm6IbHirn/x4DZTEvDfAeXAcpA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1ifvc9sPFyGYPbnhkDPaYxW+sf1IdbiTgyMNuJWnLBtGqtBzbYyshjYiRd4xn/nLsSiSp5pQJSSNk7hD2Ty00c6SCYJ/s7Vk9IJuWgDmTVKamSNSWWAP+cGEvKBDlLWST5X/mgkAg9KFocyxvmm0c5NM/yAV2fQFx7GoLRHccI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Vqpgd8vd; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 204A1210DDA8; Tue, 22 Oct 2024 00:53:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 204A1210DDA8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729583635;
+	bh=4L77gztwzz00U5G8OdEJtyQS3PdWXnyH1XMo628KQVU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WP+vrCJGa7gZyLVrVwi+VFRTM0ScCecdKxk+Li7zOUiaDW2pfTG6XrcpVzRGv9STR
-	 T7OeATEZTlF+IPmvX0czoTTOOtsAP2de3OUrShTxlShJMVjoZ/9QRRQTLHnFIazkDM
-	 oI+HVzjH2p4APM0aW14CGQfNl9lvZGyKjDbEKgip52Bss+DcL0a1nOliVeJ+3p5aZ9
-	 Wkdmh1eo8Wr+dfhbRH+zTuDP0aTU0AW2nJ5mDLB+bo2geepiQNAus+kMdvvTPfizSO
-	 pF9vugoJRndcp9osV0GvvkoAEOoeCWBPhf6CKZZg3cRUoEJ+jlKKKDFysKiyQb9vaG
-	 fMUjSgsr37F2g==
-Date: Tue, 22 Oct 2024 09:53:44 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, quic_jesszhan@quicinc.com, mchehab@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
-	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
- converter
-Message-ID: <20241022-wondrous-fractal-lion-aedcd9@houat>
-References: <20241021064446.263619-1-victor.liu@nxp.com>
- <20241021064446.263619-13-victor.liu@nxp.com>
- <20241021-thick-cockle-of-popularity-c5e28c@houat>
- <889594b9-e6cb-4d90-b959-cd0258b2f166@nxp.com>
+	b=Vqpgd8vd5uS0G00d9j3WwB7QLcGe1P5bTAECgwDVugYlkymacxomhquvZKVqVybWH
+	 GRqiiExx8JcshS/Ge0g2LDREq99yDAjPWMw6KcYTtcLPJTZ6PoNErv1RaaVGxhRBzP
+	 S/h0gW1gEanpzWoeKJRw42C9+DEHdkwMsEl0O5p8=
+Date: Tue, 22 Oct 2024 00:53:55 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Olaf Hering <olaf@aepfle.de>
+Cc: Wei Liu <wei.liu@kernel.org>, Ani Sinha <anisinha@redhat.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH v1] tools: hv: change permissions of NetworkManager
+ configuration file
+Message-ID: <20241022075355.GA15089@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20241016143521.3735-1-olaf@aepfle.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ndesq6xmp4pn532m"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <889594b9-e6cb-4d90-b959-cd0258b2f166@nxp.com>
+In-Reply-To: <20241016143521.3735-1-olaf@aepfle.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
---ndesq6xmp4pn532m
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
- converter
-MIME-Version: 1.0
-
-On Tue, Oct 22, 2024 at 03:36:47PM +0800, Liu Ying wrote:
-> Hi Maxime,
->=20
-> On 10/21/2024, Maxime Ripard wrote:
-> > On Mon, Oct 21, 2024 at 02:44:43PM +0800, Liu Ying wrote:
-> >> +static int it6263_bridge_atomic_check(struct drm_bridge *bridge,
-> >> +				      struct drm_bridge_state *bridge_state,
-> >> +				      struct drm_crtc_state *crtc_state,
-> >> +				      struct drm_connector_state *conn_state)
-> >> +{
-> >> +	struct drm_display_mode *mode =3D &crtc_state->adjusted_mode;
-> >> +	int ret;
-> >> +
-> >> +	ret =3D drm_atomic_helper_connector_hdmi_check(conn_state->connector,
-> >> +						     conn_state->state);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	return mode->clock > MAX_PIXEL_CLOCK_KHZ ? -EINVAL : 0;
-> >=20
-> > drm_atomic_helper_connector_hdmi_check will already make that check, so
-> > it's redundant.
->=20
-> MAX_PIXEL_CLOCK_KHZ is 150MHz. With 150MHz pixel clock rate, we'll get
-> 150MHz HDMI character rate for 8bpc and 187.5MHz HDMI character rate
-> for 10bpc, both are lower than MAX_HDMI_TMDS_CHAR_RATE_HZ =3D 225MHz.
-
-I guess? I have no idea how that's relevant though. Where are those
-constraints coming from, and why aren't you checking for them in
-tmds_char_rate_valid?
-
-> So, it looks like pixel clock rate is the bottleneck.
-
-The bottleneck to what?
-
-> Remove drm_atomic_helper_connector_hdmi_check() or keep this as-is?
-
-No, like I said, remove the final check for mode->clock.
-
-Maxime
-
---ndesq6xmp4pn532m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxdaCAAKCRAnX84Zoj2+
-dkMtAX0bABUvvrQvsEVfC/FsHL24JniTnXVp5PfMg4bNoZgQKIMXrttSyJhmufST
-5RbQcPUBfRss1fUSXSj1YNr6FqAGDfJUWa++ed7TSbFOKM1yWDyQJwOyznEzViOj
-kYYL52W9yg==
-=wUZL
------END PGP SIGNATURE-----
-
---ndesq6xmp4pn532m--
+On Wed, Oct 16, 2024 at 04:35:10PM +0200, Olaf Hering wrote:
+> Align permissions of the resulting .nmconnection file, instead of
+> the input file from hv_kvp_daemon. To avoid the tiny time frame
+> where the output file is world-readable, use umask instead of chmod.
+> 
+> Fixes: 42999c90 ("Support for keyfile based connection profile")
+> 
+> Signed-off-by: Olaf Hering <olaf@aepfle.de>
+> ---
+>  tools/hv/hv_set_ifconfig.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/hv/hv_set_ifconfig.sh b/tools/hv/hv_set_ifconfig.sh
+> index 440a91b35823..2f8baed2b8f7 100755
+> --- a/tools/hv/hv_set_ifconfig.sh
+> +++ b/tools/hv/hv_set_ifconfig.sh
+> @@ -81,7 +81,7 @@ echo "ONBOOT=yes" >> $1
+>  
+>  cp $1 /etc/sysconfig/network-scripts/
+>  
+> -chmod 600 $2
+> +umask 0177
+>  interface=$(echo $2 | awk -F - '{ print $2 }')
+>  filename="${2##*/}"
+> 
+Thanks Olaf, the changes look good to me.
+Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com> 
 
