@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-376829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9279AB669
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:06:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCD9AB676
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7FF1F24371
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:06:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE440B233E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CA31CB30A;
-	Tue, 22 Oct 2024 19:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A41CB30D;
+	Tue, 22 Oct 2024 19:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6EXzXHk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnsnYa7s"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252D312F5B3;
-	Tue, 22 Oct 2024 19:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547941C9ECC;
+	Tue, 22 Oct 2024 19:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729624000; cv=none; b=uzEUWcN9D9cUF8uwWW05f4n4+FO0LoMSiI8MGCP9T3g1lWHa1b+mb0KWbRDyRHs4DSaXiM+sLyRwlN/9p1RkBRHc46j+Xd/ccHvQsWDcUSzoXoU3pTnlJ0JtVUIjnCG4/hpvohBoV0fGnxohxaWAfaIQPuOQ1fE1zlOrVsyBDEY=
+	t=1729624191; cv=none; b=rXv/wTZElBUf457NOZ+RwanCc7DwmE4tQxF0ynEympHL08MW/rqGyEBOg1qxaWRaH0BVOTG7i6zL0JBxsXnFvJ18tK2wFeS14awV91CX4X+cKC7BrzKLLRERo5GETbWG0OasQ5R51oV5u3V2vdvW41ai2w41m6lxAsKPaNQ+NKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729624000; c=relaxed/simple;
-	bh=2r8dbf+RtDRpeSNbb/i/tnd/Q2HwhxAktt5rsBh//Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuIBjHfMKLLTUlvgf4VMVKAMM+uGssfUPe2KPaC1pY18MY9V9NTbiQGAxA2/rTToZWv0W6a+Fne9pZnTynjahX5aINZz0zSGm4/AdWIeW/0lGuJi5BeruZos/UwtIMOxpiYI8mDSkd0lsmX0hjLq8YmEriD8EvpQG1k3LSiXBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6EXzXHk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B918C4CEC3;
-	Tue, 22 Oct 2024 19:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729623999;
-	bh=2r8dbf+RtDRpeSNbb/i/tnd/Q2HwhxAktt5rsBh//Kg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6EXzXHkmzJfXvqwR0odji6s7x0VG8I4jxa8KaSCLN1NltJuOyGzquOkk5qDEQNzn
-	 gVWEalspVP4gugAkdN/mnwbrB9QlRTSBfblGbrWR03PmOzHnftGMKHHu8iGm1LifBe
-	 iBlj7JhN2itiXxEIz6K9od8qMN/7xI00/kYdOMSpCi529MfAkIeEDTVrs1YWsYM6pI
-	 MBwdBRdA+7PKDZOMENAZnskJ6m0I7VpvFeUXbgVWWC9/5SqKgi0TCQiRWIiuKPxDok
-	 M3FNpdrGSSJ+XylDUOOyslVupuTaddOfOc1dIKi2kRMgC2vA1ZXUuGVU+wsHFbC7jw
-	 mWJMqZ/qp3JWg==
-Date: Tue, 22 Oct 2024 15:06:38 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
-	broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <Zxf3vp82MfPTWNLx@sashalap>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+	s=arc-20240116; t=1729624191; c=relaxed/simple;
+	bh=9zctTZ6P1xbSfCpd3RZa8VzNmlfswd76EAkAS+SpkxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EHK+XO4rpH5TjD9Q4OBFhAL0fK43yhTZy2/OoYhwhR/6+sI6UvBPrHjIIDo5VwOcnrVLcXfQT2GsyTBL7dysz+rQKU7g5UkM9a4vYH8Yz2BbZ0gObf/91M6JiHNs89P+9atlT3bkMCBaEnXp3q/MQxm4GhbtIkH+R9qnIVBoOgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnsnYa7s; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ce65c8e13so51514795ad.1;
+        Tue, 22 Oct 2024 12:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729624190; x=1730228990; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PiELke4NP4639bcqP6jdKFk2y5EnGjLKhntCyBZQV0=;
+        b=FnsnYa7sOOn26ymCFpF8g3Zc53zblCc62Fv2PobZnldoz/m2su2UzFtavcm41eblb3
+         RSr2aUmw7dvUMMsz14EP4uPb4D08SOdeOGwo6DYbLwMCeRgspSZbaml5AYpSngeYQ2L1
+         UtMV5XBckbw91rbNaXebuUtjEDPjGaqmL1uJTk+1QUkdMjyQLKmdSyzeVJgVMO/0qoh8
+         Fy4cgCydWktbRP+VaGnXvmijN4ODWBvMgo4kLsJ5v7adHvYlC/SF1xxzRV/RfWU21E0P
+         UmVOvLdEoRqO1Uzj3MIXh6OpGBq7ZcHabxbb+uoeZvl0xq1xevNvK4V0N0WTW6ZCrR2G
+         KMhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729624190; x=1730228990;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6PiELke4NP4639bcqP6jdKFk2y5EnGjLKhntCyBZQV0=;
+        b=GudNXrabb1CTuYVjZpSQLS5vyep3Ky96OfDGIgFli/wZPbGwk/7NqGFrPP2alLdSpM
+         XdNx+Q+ih4YfNqpAu4pGNU4UbN6L01JxDsFoVF9cEQO1XY0It7Ed7CMVcgAMiIr75tBT
+         JMbMAR0s5qYs60rnh9yuhuhnRJq/yqyxIhTyWxzSliQXDk6NyW6ufM8r5laVYzJ7elOO
+         wbUE1PiFPb03PotTp3/x8tmFdi60xse9KJJY69DGz4MVp556CWTLLnpnxerEdh2KsMzx
+         p6qmHXMGJGcs99tajRASchBHG+U/UaFPyowENpoNug+UlwUxZbvGNm+IENyUyMzHwYuS
+         QuaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX5xSzaLT+LocVMlBwSN2BEQXAmeCZtLCnmEkThsKISB/cnqmdX5qRmZOLnH/IYopjIOBPCgFiqSo=@vger.kernel.org, AJvYcCXp4/qDy600oOV1Mz60w/szqFgJTcg6KGxyhjh0R2TpjWwNyWN02O58ZQtzpqLNAnFozF+ObhzoSeUuO1b+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqfCm1tUEdh9oz2SXud3osK2LCwD9w8d8usU/dz2RXaaWK2qEN
+	vgd215ByPhLRrTK1LWudeaQ1Uwm1HD5Hn+Gg8aIbfjRiTHqsvy/g
+X-Google-Smtp-Source: AGHT+IHzefAKr3YmXodU0Tw/AMU21AhRkwq33vN9l2SvR4Ry6fh6LPhGDPlRLZOMnwSyAwD+nR8KUw==
+X-Received: by 2002:a17:902:f68a:b0:20c:80d9:9982 with SMTP id d9443c01a7336-20fa9eb9761mr1885675ad.47.1729624189699;
+        Tue, 22 Oct 2024 12:09:49 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:229:10e9:fbeb:f79a:19dc:62a2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6538sm45996275ad.47.2024.10.22.12.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 12:09:48 -0700 (PDT)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: tharunkumar.pasumarthi@microchip.com,
+	kumaravel.thiagarajan@microchip.com
+Cc: UNGLinuxDriver@microchip.com,
+	andi.shyti@kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH] i2c: busses: fix uninit-value in pci1xxxx_i2c_xfer
+Date: Wed, 23 Oct 2024 00:38:45 +0530
+Message-Id: <20241022190845.23536-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
 
-On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
->
->The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
->
->  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
->
->are available in the Git repository at:
->
->  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
+Fix an issue reported by the smatch static analysis tool:
+drivers/i2c/busses/i2c-mchp-pci1xxxx.c:1030 pci1xxxx_i2c_xfer() error:
+uninitialized symbol 'retval'.
 
-Hi Linus,
+The error occurs because retval may be used without being set if the
+transfer loop does not execute (e.g., when num is 0). This could cause
+the function to return an undefined value, leading to unpredictable
+behavior.
 
-There was a sub-thread on the linus-next discussion around improving
-telemetry around -next/lore w.r.t soaking time and mailing list reviews
-(https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
+Initialize retval to 0 before the transfer loop to ensure that the
+function returns a valid value even if no transfers are processed. This
+change also preserves proper error handling within the loop.
 
-I've prototyped a set of scripts based on suggestions in the thread, and
-wanted to see if you'd find it useful. A great way to test it out is with
-a random pull request you'd review anyway :)
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ drivers/i2c/busses/i2c-mchp-pci1xxxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is the below useful in any way? Or do you already do something like this
-locally and I'm just wasting your time?
-
-If it's useful, is bot reply to PRs the best way to share this? Any
-other information that would be useful?
-
-Here it goes:
-
-
-Days in -next:
-----------------------------------------
-  0  | ███████████ (5)
-  1  |
-  2  | █████████████████████████████████████████████████ (21)
-  3  |
-  4  |
-  5  |
-  6  |
-  7  |
-  8  |
-  9  |
-10  |
-11  |
-12  |
-13  |
-14+ |
-
-Commits that didn't spend time in -next:
---------------------
-a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
-e04ee8608914d bcachefs: Mark more errors as AUTOFIX
-f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
-eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
-
-
-Commits that weren't found on lore.kernel.org/all:
---------------------
-e04ee8608914d bcachefs: Mark more errors as AUTOFIX
-f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
-dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
-15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
-d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
-78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
-b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
-4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
-
+diff --git a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
+index 5ef136c3e..4dfa11650 100644
+--- a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
++++ b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
+@@ -994,7 +994,7 @@ static int pci1xxxx_i2c_xfer(struct i2c_adapter *adap,
+ {
+ 	struct pci1xxxx_i2c *i2c = i2c_get_adapdata(adap);
+ 	u8 slaveaddr;
+-	int retval;
++	int retval = 0;
+ 	u32 i;
+ 
+ 	i2c->i2c_xfer_in_progress = true;
 -- 
-Thanks,
-Sasha
+2.34.1
+
 
