@@ -1,121 +1,182 @@
-Return-Path: <linux-kernel+bounces-376832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCD9AB676
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00499AB674
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE440B233E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29DFDB2134F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A41CB30D;
-	Tue, 22 Oct 2024 19:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33CA1C9ED1;
+	Tue, 22 Oct 2024 19:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnsnYa7s"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cT3PdKAC"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547941C9ECC;
-	Tue, 22 Oct 2024 19:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C021CB30A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729624191; cv=none; b=rXv/wTZElBUf457NOZ+RwanCc7DwmE4tQxF0ynEympHL08MW/rqGyEBOg1qxaWRaH0BVOTG7i6zL0JBxsXnFvJ18tK2wFeS14awV91CX4X+cKC7BrzKLLRERo5GETbWG0OasQ5R51oV5u3V2vdvW41ai2w41m6lxAsKPaNQ+NKE=
+	t=1729624175; cv=none; b=ZgAludz/cidwWQuNJjfH6RG69htU5dHSXJ7U3q5mM2mutpOdYHOg+X8CaJXi7eDjy+L/uLY74YsVEWTSgQsl9WLb4ER5j/eq6ZJ8HE11L3niiZa4rO84KUUQdUBMGVHVuB6pTe0JsO5dTGgDDpgfM7SIX0t4Owug/2voEp5FwrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729624191; c=relaxed/simple;
-	bh=9zctTZ6P1xbSfCpd3RZa8VzNmlfswd76EAkAS+SpkxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EHK+XO4rpH5TjD9Q4OBFhAL0fK43yhTZy2/OoYhwhR/6+sI6UvBPrHjIIDo5VwOcnrVLcXfQT2GsyTBL7dysz+rQKU7g5UkM9a4vYH8Yz2BbZ0gObf/91M6JiHNs89P+9atlT3bkMCBaEnXp3q/MQxm4GhbtIkH+R9qnIVBoOgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnsnYa7s; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ce65c8e13so51514795ad.1;
-        Tue, 22 Oct 2024 12:09:50 -0700 (PDT)
+	s=arc-20240116; t=1729624175; c=relaxed/simple;
+	bh=81gvCdvEgpB04Nn2JKObvXqoAtKSBk/mWn/H596JZbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uZ8y2FE2PiB6lwebEgeTGjaTxINjQ5nvGGsY384svFsJnXZROYiHcmyJWQwmF1a9qlHFkf0t4+zVvDeCFALjDcIAMjhLb2X8ap0x1Z2IWQmW8T3AKBrdi/PM1cW0vDUyEdQvs9aW+OG8lcDX2CihTdp5mBx6DEWZKxiGzTvNlpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cT3PdKAC; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so50145e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729624190; x=1730228990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6PiELke4NP4639bcqP6jdKFk2y5EnGjLKhntCyBZQV0=;
-        b=FnsnYa7sOOn26ymCFpF8g3Zc53zblCc62Fv2PobZnldoz/m2su2UzFtavcm41eblb3
-         RSr2aUmw7dvUMMsz14EP4uPb4D08SOdeOGwo6DYbLwMCeRgspSZbaml5AYpSngeYQ2L1
-         UtMV5XBckbw91rbNaXebuUtjEDPjGaqmL1uJTk+1QUkdMjyQLKmdSyzeVJgVMO/0qoh8
-         Fy4cgCydWktbRP+VaGnXvmijN4ODWBvMgo4kLsJ5v7adHvYlC/SF1xxzRV/RfWU21E0P
-         UmVOvLdEoRqO1Uzj3MIXh6OpGBq7ZcHabxbb+uoeZvl0xq1xevNvK4V0N0WTW6ZCrR2G
-         KMhQ==
+        d=google.com; s=20230601; t=1729624171; x=1730228971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aq7vYlKYjVUJ2Hf6UjPLePUAsgsPK2CPSZGZYNK3ODQ=;
+        b=cT3PdKAC9zr7KhODAieNwfi1GsU1GaLjVuEDvtqZRytv1glu3lU4RXsOt2X4qNhR2r
+         nNcIv208OnoUIcxQB8CuGhDUAaBfyv6wT+TNtRhoKVR3CKKS0RljahwhBdSiR/mqDkiV
+         5BwRPsUBFnDjt9gfVfetUjjo5/e+GUlLypFF3DIn1UBTX9p4twDG24peMq9FOFioUKEG
+         2UCrVGRQJPgDNgFFaj1TCbVJhdbZELl3K6at2cvfYQwKUkDCOlAJhANJx2jirXPneKh3
+         lbWJuoelrNVcisv4nodkxXpV+foJPUqa5B5QZb+F5X5O3C7q2UCUCPDo3O9W48fBzVwu
+         uZYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729624190; x=1730228990;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6PiELke4NP4639bcqP6jdKFk2y5EnGjLKhntCyBZQV0=;
-        b=GudNXrabb1CTuYVjZpSQLS5vyep3Ky96OfDGIgFli/wZPbGwk/7NqGFrPP2alLdSpM
-         XdNx+Q+ih4YfNqpAu4pGNU4UbN6L01JxDsFoVF9cEQO1XY0It7Ed7CMVcgAMiIr75tBT
-         JMbMAR0s5qYs60rnh9yuhuhnRJq/yqyxIhTyWxzSliQXDk6NyW6ufM8r5laVYzJ7elOO
-         wbUE1PiFPb03PotTp3/x8tmFdi60xse9KJJY69DGz4MVp556CWTLLnpnxerEdh2KsMzx
-         p6qmHXMGJGcs99tajRASchBHG+U/UaFPyowENpoNug+UlwUxZbvGNm+IENyUyMzHwYuS
-         QuaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVX5xSzaLT+LocVMlBwSN2BEQXAmeCZtLCnmEkThsKISB/cnqmdX5qRmZOLnH/IYopjIOBPCgFiqSo=@vger.kernel.org, AJvYcCXp4/qDy600oOV1Mz60w/szqFgJTcg6KGxyhjh0R2TpjWwNyWN02O58ZQtzpqLNAnFozF+ObhzoSeUuO1b+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqfCm1tUEdh9oz2SXud3osK2LCwD9w8d8usU/dz2RXaaWK2qEN
-	vgd215ByPhLRrTK1LWudeaQ1Uwm1HD5Hn+Gg8aIbfjRiTHqsvy/g
-X-Google-Smtp-Source: AGHT+IHzefAKr3YmXodU0Tw/AMU21AhRkwq33vN9l2SvR4Ry6fh6LPhGDPlRLZOMnwSyAwD+nR8KUw==
-X-Received: by 2002:a17:902:f68a:b0:20c:80d9:9982 with SMTP id d9443c01a7336-20fa9eb9761mr1885675ad.47.1729624189699;
-        Tue, 22 Oct 2024 12:09:49 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:229:10e9:fbeb:f79a:19dc:62a2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6538sm45996275ad.47.2024.10.22.12.09.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 12:09:48 -0700 (PDT)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: tharunkumar.pasumarthi@microchip.com,
-	kumaravel.thiagarajan@microchip.com
-Cc: UNGLinuxDriver@microchip.com,
-	andi.shyti@kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH] i2c: busses: fix uninit-value in pci1xxxx_i2c_xfer
-Date: Wed, 23 Oct 2024 00:38:45 +0530
-Message-Id: <20241022190845.23536-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1729624171; x=1730228971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aq7vYlKYjVUJ2Hf6UjPLePUAsgsPK2CPSZGZYNK3ODQ=;
+        b=vwH4Wbs7THU7pMAs4KsvKLCoqvK/WEJCjSLPETRNz+jaOEfJUd8ifcWDObOxScKJfe
+         UOF5z4khBSJYMTyElJQJvsxQk3kuCB/XGG3m5M8tj4aUafAk2DR0DmHVzBx9Los/peUJ
+         9NFtvrF7w8XOH4cqag/D/rsY5DOE6TGXd/KwTEtqHhWqvE4G0OcWFCoBWRL9Fythiwu3
+         X9jKuikWtx3WY/mRRYtUdSmMiB11t5Np8tT2ItaJof2wjb8iLXiBzG82eISW8VKRID+d
+         xo8pZsnsCkkjV9EybsELZimU02KJ6LL3+5he9k9OeUzwsxG2f8s1prQ0NyXkVhSTu0nQ
+         1hHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXv0U2m7Aw5XCdTlNWeHThEvg6Kzhkb/BFe6ZfbscuwEZPfJDSpG28kmM0EsIodIRWY78vVmOFFNoOPI24=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/6tnqmCP7yBTr4iVXmi6y8Iaxz4UZLfrJdh7o0tihr7rQ0Ug/
+	6zUK5eFZKj0I2aQuUSX2xBs4u6xCPgn+A2a8zYTsKL+u7n4AWAvSPR5oHJ/koqN7bvBmXgma2ly
+	QI9RfdS+vDIVnCRzvbTIm9VwWp4/tyIUd/2Jo
+X-Google-Smtp-Source: AGHT+IHdTaQMVD7gfS71JCtoKNqFlL+ZH6CTrJ3WUvE3tBmxfLe5eVJcaVuq9zPzDtwFl3aO3H7IuCLtAGxl1WBUDSc=
+X-Received: by 2002:a05:600c:3d91:b0:426:7018:2e2f with SMTP id
+ 5b1f17b1804b1-43184628822mr181375e9.5.1729624170899; Tue, 22 Oct 2024
+ 12:09:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
+ <fce49bbbfe41b82161a37b022c8eb1e6c20e1d85.1729440856.git.lorenzo.stoakes@oracle.com>
+ <c37ada68-5bf5-4ca5-9de8-c0838160c443@suse.cz> <393b0932-1c52-4d59-9466-e5e6184a7daf@lucifer.local>
+ <f2448c59-0456-49e8-9676-609629227808@suse.cz>
+In-Reply-To: <f2448c59-0456-49e8-9676-609629227808@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 22 Oct 2024 21:08:53 +0200
+Message-ID: <CAG48ez3WS3EH9DuhE1b+7AX3+1=dVtd1M7y_5Ev4Shp2YxiYWg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] mm: madvise: implement lightweight guard page mechanism
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
+	Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org, 
+	John Hubbard <jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix an issue reported by the smatch static analysis tool:
-drivers/i2c/busses/i2c-mchp-pci1xxxx.c:1030 pci1xxxx_i2c_xfer() error:
-uninitialized symbol 'retval'.
+On Mon, Oct 21, 2024 at 10:46=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+> On 10/21/24 22:27, Lorenzo Stoakes wrote:
+> > On Mon, Oct 21, 2024 at 10:11:29PM +0200, Vlastimil Babka wrote:
+> >> On 10/20/24 18:20, Lorenzo Stoakes wrote:
+> >> > +  while (true) {
+> >> > +          /* Returns < 0 on error, =3D=3D 0 if success, > 0 if zap =
+needed. */
+> >> > +          err =3D walk_page_range_mm(vma->vm_mm, start, end,
+> >> > +                                   &guard_poison_walk_ops, NULL);
+> >> > +          if (err <=3D 0)
+> >> > +                  return err;
+> >> > +
+> >> > +          /*
+> >> > +           * OK some of the range have non-guard pages mapped, zap
+> >> > +           * them. This leaves existing guard pages in place.
+> >> > +           */
+> >> > +          zap_page_range_single(vma, start, end - start, NULL);
+> >>
+> >> ... however the potentially endless loop doesn't seem great. Could a
+> >> malicious program keep refaulting the range (ignoring any segfaults if=
+ it
+> >> loses a race) with one thread while failing to make progress here with
+> >> another thread? Is that ok because it would only punish itself?
+> >
+> > Sigh. Again, I don't think you've read the previous series have you? Or
+> > even the changelog... I added this as Jann asked for it. Originally we'=
+d
+> > -EAGAIN if we got raced. See the discussion over in v1 for details.
+> >
+> > I did it that way specifically to avoid such things, but Jann didn't ap=
+pear
+> > to think it was a problem.
+>
+> If Jann is fine with this then it must be secure enough.
 
-The error occurs because retval may be used without being set if the
-transfer loop does not execute (e.g., when num is 0). This could cause
-the function to return an undefined value, leading to unpredictable
-behavior.
+My thinking there was:
 
-Initialize retval to 0 before the transfer loop to ensure that the
-function returns a valid value even if no transfers are processed. This
-change also preserves proper error handling within the loop.
+We can legitimately race with adjacent faults populating the area
+we're operating on with THP pages; as long as the zapping and
+poison-marker-setting are separate, *someone* will have to do the
+retry. Either we do it in the kernel, or we tell userspace to handle
+it, but having the kernel take care of it is preferable because it
+makes the stable UAPI less messy.
 
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
- drivers/i2c/busses/i2c-mchp-pci1xxxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+One easy way to do it in the kernel would be to return -ERESTARTNOINTR
+after the zap_page_range_single() instead of jumping back up, which in
+terms of locking and signal handling and such would be equivalent to
+looping in userspace (because really that's what -ERESTARTNOINTR does
+- it returns out to userspace and moves the instruction pointer back
+to restart the syscall). Though if we do that immediately, it might
+make MADV_POISON unnecessarily slow, so we should probably retry once
+before doing that. The other easy way is to just loop here.
 
-diff --git a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-index 5ef136c3e..4dfa11650 100644
---- a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-+++ b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-@@ -994,7 +994,7 @@ static int pci1xxxx_i2c_xfer(struct i2c_adapter *adap,
- {
- 	struct pci1xxxx_i2c *i2c = i2c_get_adapdata(adap);
- 	u8 slaveaddr;
--	int retval;
-+	int retval = 0;
- 	u32 i;
- 
- 	i2c->i2c_xfer_in_progress = true;
--- 
-2.34.1
+The cond_resched() and pending fatal signal check mean that (except on
+CONFIG_PREEMPT_NONE) the only differences between the current
+implementation and looping in userspace are that we don't handle
+non-fatal signals in between iterations and that we keep hogging the
+mmap_lock in read mode. We do already have a bunch of codepaths that
+retry on concurrent page table changes, like when zap_pte_range()
+encounters a pte_offset_map_lock() failure; though I guess the
+difference is that the retry on those is just a couple instructions,
+which would be harder to race consistently, while here we redo walks
+across the entire range, which should be fairly easy to race
+repeatedly.
 
+So I guess you have a point that this might be the easiest way to
+stall other tasks that are trying to take mmap_lock for an extended
+amount of time, I did not fully consider that... and then I guess you
+could use that to slow down usercopy fault handling (once the lock
+switches to handoff mode because of a stalled writer?) or slow down
+other processes trying to read /proc/$pid/cmdline?
+
+You can already indefinitely hog the mmap_lock with FUSE, though that
+requires that you can mount a FUSE filesystem (which you wouldn't be
+able in reasonably sandboxed code) and that you can find something
+like a pin_user_pages() call that can't drop the mmap lock in between,
+and there aren't actually that many of those...
+
+So I guess you have a point and the -ERESTARTNOINTR approach would be
+a little bit nicer, as long as it's easy to implement.
 
