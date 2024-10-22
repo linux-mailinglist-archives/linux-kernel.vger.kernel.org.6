@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-376642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A159AB453
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17949AB455
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA21E1C22E88
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63585283E75
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87D0139CE2;
-	Tue, 22 Oct 2024 16:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CC1B5ED1;
+	Tue, 22 Oct 2024 16:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="krQjBik8"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="S6UFHexB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B541A0BE1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F7042AB3;
+	Tue, 22 Oct 2024 16:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615692; cv=none; b=DFqfKFpWZOcHPcxY/pWBu7LZRHz8wISbwWwQq2EZl2oU6xDVWck7aYQKsN+PmzLnyPNVwrUM8thye9HRktEzSvhj1NQ7lfFdaHb3tGDM/fGYuKBlM1pXnnA18IZqLRLvaeK/oYNCPRRJB+a24Fv9NodqsL5AFbaIJoPa+z63dU4=
+	t=1729615775; cv=none; b=bFGdCfJVtlr7u0+zM2NvWZyM+y4XKOIttrieJtptGknxaITqMfAIfCIM6BY0Gz7nIkxItQd3WRxjacLvJPBUeVqXNM0Rw71qiLHhFYJzp9PMGqg3zfjvRza0JQDHpkd8sYzA2vaCEC9RFiuEQHV4wvc0RNstcbaekKl9JNxJkYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615692; c=relaxed/simple;
-	bh=eB2r4a4nMF7jLZ5dNv6AlWAk7IIKZ4EHpTdNsNxxefk=;
+	s=arc-20240116; t=1729615775; c=relaxed/simple;
+	bh=ICvT8RpV1qd+YIsjY+QS1cd6ai3dN7EaS8nQHXhtvYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFib7rax5acRo9A+sTPNkYBsLXReCs+WOwsCbvQl1niAtp26z7pvtvrlB0Fqvn7+AjNf4EZhljQyv+XpNr6D5a5ehWJvaS6jUVctaXgWwRSiaO4bPV14vlgyEi1wk0lWE+xwyhUVjVjwXDc2NwXrXnEwyu/GbOC7eErmoShZu3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=krQjBik8; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c70abba48so48622915ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729615690; x=1730220490; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3JEQ9MM+0bQRBQpufIz+g9Ep0xv8kpXfh0HhFXLCte8=;
-        b=krQjBik8lahTFsygWO7U0XmU5J+sC4djL3BfarQdP07uH3aruRoM/HM7+JrvIsk67D
-         aKJVo3TxFps+l5c7hvIlNLtjxKCLithtRDhUG3zA0+A2MCXyeLesW8yQxuwuJVODtdoq
-         Wj/YyRJX+FAzTYqRsyUCkkbwdpydxdvOi1+Um4G9ojXPcM8XmpHpFcR9lf6Am5kky5kI
-         oJIafh7oAhA81uGRqY+/BMEOeBhcEzqFhwgvBqd+886ck4UFsKQx55Xur2lVtJwpVnOI
-         dNJ4tqyMAL9qZ8PADFwPGqaYhUTemKMpGkVhD8VSAR25AA1j9ABbYoKViUw6Z4rfHvze
-         NgyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729615690; x=1730220490;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3JEQ9MM+0bQRBQpufIz+g9Ep0xv8kpXfh0HhFXLCte8=;
-        b=IOvmc5TZZZG+xIM1kzzBxn8AbCM5HA3L/KimUqVepnA37mszUrAJa+pHvU7T2tVIZr
-         h4iA6TjScb0ly0m0/KE1T57UKsjKEyDrfEXe83oTdspzGDMmZ6blns4bWmf8NbdN8o9+
-         gKDoMP72KLt9WQIKMaQQaZJE2J93OJE1qkPYdXRvhH2UpG2Qs6UWORqMuut+px1fGtDK
-         +8L3mPtvUFe/JVlcFJh1ijC3WfXolDRRfNbcCMN81fda8rjC4G26KubPzTnZLAjcI9Ac
-         2NDs5iAhRQfyA8On/w8RMDXZPfeRfHo3t+4MHb2mx1yXXeTUdqyDgAab0iwq2sA1WKOw
-         XC6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVp01F5Gq4T3tssX27zKRNPnMxtz8L6c51eE1n/SKkxitGikC6WTmt0UZkq2I0qc2VElO4K6mtR1JpYdew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYp785EVWrVZlSabkrq7CNkRjX2T0R9ceb6CL7CrYf4D+8ASuT
-	RysQeT2Qn9NmkX/6mTWwSKfX2cjBKw6yMwg6kl2f86POBKVWnCtThSkD7Om7DQ==
-X-Google-Smtp-Source: AGHT+IFa07tHycQZi4y8Cv96iyWVS9+/qqyom7Z+lob5auNlXr7DiOgX6ejk3Gy2vlhqcjfCd1hWNw==
-X-Received: by 2002:a17:902:eccc:b0:20c:ca83:31c7 with SMTP id d9443c01a7336-20f54395ebdmr472615ad.54.1729615690130;
-        Tue, 22 Oct 2024 09:48:10 -0700 (PDT)
-Received: from thinkpad ([36.255.17.224])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f10dbf9sm44820105ad.308.2024.10.22.09.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 09:48:09 -0700 (PDT)
-Date: Tue, 22 Oct 2024 22:18:01 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: kw@linux.com, bhelgaas@google.com, lpieralisi@kernel.org,
-	frank.li@nxp.com, l.stach@pengutronix.de, robh+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
-	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 3/9] PCI: imx6: Fetch dbi2 and iATU base addesses from
- DT
-Message-ID: <20241022164801.h7eh2gkuiy7pfkmr@thinkpad>
-References: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
- <1728981213-8771-4-git-send-email-hongxing.zhu@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yl2jDwIAsCROSfoEq94Scl1ONj/zdLaKimjaqT8w0zpFutxqN/RPtl26MNZvPy/Uf8LUdHkX6hDcPcVu/cRDKNT8Fo9Om8xcr4JLtEdXdnru9H7sskIbuB2nJCwPAnsUD/9f9PFEH8OvP7nrlDKiQGLhZxXBHCHQhhCpUZlP3Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=S6UFHexB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 55A3840E015F;
+	Tue, 22 Oct 2024 16:49:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kaJDnbAG4aFq; Tue, 22 Oct 2024 16:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729615767; bh=bbYbBXq+isrp7dFKrzxr/HSX1y0vpqPhU2T4/MO12K8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S6UFHexB6bJKTL/O/ArozLgtgbyMgW4T+7DRZyISMhqId69wZeEuA2/6H/K34HxBQ
+	 Pf1I1s4pnMo549YIeWBFqppORIv3AAvYzYi6arhKBNa/KGfjIoKHBkiVrhKTmztJDK
+	 o24UqJ2AGg+lF+E6F+FphJGMZY7XIWDw9I4C+ulrgGNWsy9BQtCBqS9rdnRawfUH3h
+	 0GF1KIHiiEcVGPVS8OprfSpcDnOQgwwqVgHIcZQi1rnAgHtenYSj+PSRCT5vYk9Gx5
+	 oNedEl1ZMv1J4zAbVabzTYtDQGLO9NJN7hP4S2EUPtMbsMPbbuaJ/jr/B5tHnoZh6E
+	 5VUj47jq0BI8ABAIwJbeuR6Fu1nTAVmu58fG81SDdeV+1qYhqiY3V98zTt9xjDVfbK
+	 mZoSFINomfhAYI+U7Q0qokOgnV4vfj5laRMO6T9WxRTRTTOZYlmk7du75TTZFVgOVK
+	 ie4WTfWWpDJKLE5GRA9tse9cF4zbj5X4oKtfQYXNHvY3R/vvsnPmBXqaGuWnzFroXP
+	 l/xevGVg62x8a+bSbuK41UpIqBw05vVgjHFzzfYJvMKJjNWOewzT0u8JffimVv0EhY
+	 mVHO4pIXs7B+eN8PPHU2mj5IwJyjfYDpR9/mN5F2byobB41UsgDm/l1aEGQGMR8mRy
+	 0LNdQSAEqshpu9pruGRLEyd0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4DA1640E0198;
+	Tue, 22 Oct 2024 16:49:19 +0000 (UTC)
+Date: Tue, 22 Oct 2024 18:49:11 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Thompson <davthompson@nvidia.com>
+Cc: Shravan Ramani <shravankr@nvidia.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"rric@kernel.org" <rric@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] EDAC/bluefield: Use Arm SMC for EMI access on
+ BlueField-2
+Message-ID: <20241022164911.GKZxfXh5tmjIJkShzf@fat_crate.local>
+References: <20241021233013.18405-1-davthompson@nvidia.com>
+ <20241022123240.GGZxebaKRONhSThUCC@fat_crate.local>
+ <PH7PR12MB5902E36788A73447C8DA10DCC74C2@PH7PR12MB5902.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,65 +83,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1728981213-8771-4-git-send-email-hongxing.zhu@nxp.com>
+In-Reply-To: <PH7PR12MB5902E36788A73447C8DA10DCC74C2@PH7PR12MB5902.namprd12.prod.outlook.com>
 
-On Tue, Oct 15, 2024 at 04:33:27PM +0800, Richard Zhu wrote:
-> Since dbi2 and atu regs are added for i.MX8M PCIes. Fetch the dbi2 and iATU
-> base addresses from DT directly, and remove the useless codes.
-> 
+On Tue, Oct 22, 2024 at 01:33:01PM +0000, David Thompson wrote:
+> I reviewed the changes you have made to my v3.  Looks good to me.
 
-Again, what will happen to old dts that don't define these regions?
+Thanks.
 
-- Mani
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 20 --------------------
->  1 file changed, 20 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 52a8b2dc828a..2ae6fa4b5d32 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1113,7 +1113,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
->  			   struct platform_device *pdev)
->  {
->  	int ret;
-> -	unsigned int pcie_dbi2_offset;
->  	struct dw_pcie_ep *ep;
->  	struct dw_pcie *pci = imx_pcie->pci;
->  	struct dw_pcie_rp *pp = &pci->pp;
-> @@ -1123,25 +1122,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
->  	ep = &pci->ep;
->  	ep->ops = &pcie_ep_ops;
->  
-> -	switch (imx_pcie->drvdata->variant) {
-> -	case IMX8MQ_EP:
-> -	case IMX8MM_EP:
-> -	case IMX8MP_EP:
-> -		pcie_dbi2_offset = SZ_1M;
-> -		break;
-> -	default:
-> -		pcie_dbi2_offset = SZ_4K;
-> -		break;
-> -	}
-> -
-> -	pci->dbi_base2 = pci->dbi_base + pcie_dbi2_offset;
-> -
-> -	/*
-> -	 * FIXME: Ideally, dbi2 base address should come from DT. But since only IMX95 is defining
-> -	 * "dbi2" in DT, "dbi_base2" is set to NULL here for that platform alone so that the DWC
-> -	 * core code can fetch that from DT. But once all platform DTs were fixed, this and the
-> -	 * above "dbi_base2" setting should be removed.
-> -	 */
->  	if (device_property_match_string(dev, "reg-names", "dbi2") >= 0)
->  		pci->dbi_base2 = NULL;
->  
-> -- 
-> 2.37.1
-> 
+Now queued.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
