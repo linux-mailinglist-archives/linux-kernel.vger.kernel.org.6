@@ -1,76 +1,123 @@
-Return-Path: <linux-kernel+bounces-376982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB129AB85D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0417E9AB85E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D75021C23AA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC0C284AC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54A61CCB4F;
-	Tue, 22 Oct 2024 21:20:13 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF5C1CCED2;
+	Tue, 22 Oct 2024 21:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2aLN3mJf"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099E8130AF6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C6E130AF6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729632013; cv=none; b=bAEyDkF/MDUKZMTvpdejcDOzZTkh1skQ9MpwMsWbqunZfD40wOYH+oJmIoWoMPMv3xFDku1mYqOUWEbPjarz9V9z2G7K/idB5vOGf38R94G23EOp8a+c5LVawMn3Q8KoUAmAZyBZgYy8yyRH7SfMWo2ZOxJAI63s3af5IGk+SMs=
+	t=1729632021; cv=none; b=WJBMl3lk12moHNc4n83/cSMJjYc7SWZWoWjLTYOWbx+wy6GgV/1HYYu1PIHJ5SBTkIPG1qsv35dvpJYaXpiyCxZmHFSvBtXk02gz0qyCBKxgPrOuohK25VVWNuSE36FgFtdtSPg+u/+aQqfyaIBdjAaOF+58JLdczMNp2nQ98tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729632013; c=relaxed/simple;
-	bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=thrqWW6B/DOlRIClrqO7H9FzQ/I/zm8ARMmzURYkyvPlzuXSc59EFr3DhvTBbyRRJzYHEQfM/iEs1LkGgZrcI+5hwfyMEn+mhOrNk6Gr2XxSgjmCtFT+Ld6bkay95Jqc1ehfq7fCQdLxciEvggzNx+ND9BN5X+AL6mPScyg5zuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4d630bac7so677045ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:20:11 -0700 (PDT)
+	s=arc-20240116; t=1729632021; c=relaxed/simple;
+	bh=ZhxVS2REzAmANbrZ9nSRuAbyeGAVAMksIebOeLoogO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lbqxs2gN91zMOOYvSbOpRVfgSPluTsqZANWtQdVAMogMupYq3gLwr00hGi03X6Rm+U0haYZsf6LCjC3aT/Z1Bw0z4+F9AF4W/83oac5kAw6RCmAkhGzg6n/N0KyMLEorBn4kdrY66UmLWA63efK1ZJ41oPfW2JN15+llVN0AvWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2aLN3mJf; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-718065d6364so2876107a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729632018; x=1730236818; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WJnpg9g6r2pW20CfWdE7jCUk/9u5wbr1trHPxKu6nHY=;
+        b=2aLN3mJfMZP6cW9G0tGJpdS8LkrApG+IN6Tjq3Qv97GEIsQB7Unx1zTQRQRrK9YOzL
+         6XAbYP1Q7woKtcYedRC8apdAaFw6t7Rt4gZHD+V9k0NxcumGNhU95nhJ9kEq2w6TDblt
+         ziLOJvzwlSAd76xBZ5qyysnM/o2aa172G9iiWQ+jqu1uN7XzQD32cIng/h45oOR8+X0l
+         KEgYnmF039g2oXPvrz6xO4+I6EB8snF3UgX2aPMZgeb3xycrffnB7kgAU8XR4UAaOQyY
+         E5HTrlsSKzlf6XaS2MMpxyZBmzmT+31U6fzgpdGwHlqOCrxudkWXvIkWn9WKVQA/ZasC
+         010w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729632011; x=1730236811;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1729632018; x=1730236818;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
-        b=CRRc0vxHhhkbvKswli2rnkCJ65/7ogLHJECLsGa2CoHsaHKc32NQ4NVDr1dW18svXt
-         69l8Y/p/NP6UKaY2JGOQ+Z4Uj4NK/Rv/F+rBbvEtuGzBTeiDYVrTqj+Qs1xQscUmWB5g
-         G3hGjB6/ZKSulp14OJ+vUgsVksEFF/8ntd9hp3JF+vpXYqHyOtoZuMgya2CSwAaHWZFx
-         Ros7LrZPN9Y3pR2jh3QiQTrwEK27sppiqCFj3SXT0GKSCVW1epByIC3ztieAEZfn/2Eo
-         xxnA00tmVHZQRfVMNL3tcdWbKjETXWAQVJGWG6YbFqjopSiJ2PchXePkKH8OsB+kECnD
-         sICw==
-X-Gm-Message-State: AOJu0Yynz+bH1kpIaB6s1yZA+eujXUJaQTqkXUUaZksszS3m8dneO1yE
-	Hw+3QV1BZaxjodJpCYxMo1XF7r2iXeTmSPl5pDZOGZ3QevE2lt0bNV730mtc4MEL15wp27Jeriv
-	A7PiucXQ1YVtP82lOTuv6ikUhvRu+1MU9NOmAJiohNmTBoGusSUt2fF8=
-X-Google-Smtp-Source: AGHT+IFqE/b4oVo6kBJmXnFF8LS1CZVjM94RQ0ydBDZj8m7AuvRXQtsyozvwmoAmty/csneZKKN3L4MkJKtNQlzF6quTg7JBlfRy
+        bh=WJnpg9g6r2pW20CfWdE7jCUk/9u5wbr1trHPxKu6nHY=;
+        b=uf6LLLoBqe351Ni6ezDX7yaVhIt19NQu6QZyBLIJIiOf6rGO5i3WCmgGmTNolA1tuP
+         bJaX+eVRMuVBt1DQZlcerw1uSHcYaxGdJkQqj7Rj9dhoNQKlQMJYMwLlx/D4mpEKv/Gf
+         mDqraiybB9vW+F0jPKQK5VBcFQYwasljNP3VnO5PPgKrSJr7/8UhWpUp3N0MJphUdqRp
+         IutGitK4u2V3O+HpQfjbhPPkJ+YE/S/9kCcOgzbZoCoCOxCzofbArHaadA7RcLS4yjE9
+         jhYRGoxT28TRPCBcWQ0YrHvv2pIiW5OkwHLM5UsUfkwZYcjr9dKuVv0j6IS/y9WDwJVO
+         5InA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0JeZBTzLXMApC8DBw4NkXBEnP01rVFI8Zfi1iDLj205K0N/X1HrOnkvsK521UWQtZ59nKdoFiltusb7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHCewN1EI7nEeHQxsfSkjqNzD4vK7KNFvA42xU/bIwsBJXdqqr
+	6Ibq43UK6FO+/TQqe9caluxG/o9rsGGe+tkIUwYe2Dy+/y9AdyKJrG+gJUr7EN0=
+X-Google-Smtp-Source: AGHT+IFsMwsPsTvpCwDmnZIxOfs4K2TEZ8wjRPWKgUsV3+xu7SPPImS6MoMNi6W3AR8/WuPjLaRHCw==
+X-Received: by 2002:a05:6830:91a:b0:718:109c:b733 with SMTP id 46e09a7af769-7184b4494fcmr574446a34.29.1729632018318;
+        Tue, 22 Oct 2024 14:20:18 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ebb7afb9c9sm1491261eaf.46.2024.10.22.14.20.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 14:20:16 -0700 (PDT)
+Message-ID: <aea7f92b-3d12-4ced-b1c8-90bcf1d992d3@baylibre.com>
+Date: Tue, 22 Oct 2024 16:20:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a82:b0:3a0:ae35:f2eb with SMTP id
- e9e14a558f8ab-3a4d59cdc1cmr5627215ab.19.1729632011138; Tue, 22 Oct 2024
- 14:20:11 -0700 (PDT)
-Date: Tue, 22 Oct 2024 14:20:11 -0700
-In-Reply-To: <66fa3eb3.050a0220.6bad9.0030.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6718170b.050a0220.1e4b4d.0079.GAE@google.com>
-Subject: Re: [syzbot] general protection fault in btree_node_iter_and_journal_peek
-From: syzbot <syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] iio: backend: add API for interface get
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, nuno.sa@analog.com,
+ conor+dt@kernel.org, ukleinek@kernel.org, dragos.bogdan@analog.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241018104210.51659-1-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241018104210.51659-1-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 10/18/24 5:42 AM, Antoniu Miclaus wrote:
+> Add backend support for obtaining the interface type used.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
-***
+...
 
-Subject: general protection fault in btree_node_iter_and_journal_peek
-Author: pz010001011111@proton.me
+>  /**
+>   * iio_backend_extend_chan_spec - Extend an IIO channel
+>   * @indio_dev: IIO device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index 8099759d7242..ad9fa0ada9b2 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -63,6 +63,14 @@ enum iio_backend_sample_trigger {
+>  	IIO_BACKEND_SAMPLE_TRIGGER_MAX
+>  };
+>  
+> +enum iio_backend_interface_type {
+> +	IIO_BACKEND_INTERFACE_LVDS,
+> +	IIO_BACKEND_INTERFACE_CMOS,
 
-#syz test
+I think IIO_BACKEND_INTERFACE_LVDS and IIO_BACKEND_INTERFACE_CMOS should
+be removed. They are ambiguous and overlap with the SERIAL_ versions.
+
+> +	IIO_BACKEND_INTERFACE_SERIAL_LVDS,
+> +	IIO_BACKEND_INTERFACE_SERIAL_CMOS,
+> +	IIO_BACKEND_INTERFACE_MAX
+> +};
+> +	 struct iio_chan_spec *chan);
+
 
