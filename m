@@ -1,105 +1,193 @@
-Return-Path: <linux-kernel+bounces-377097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA35D9AB9C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4609AB9C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86AF02817FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E802822B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225491CDFCF;
-	Tue, 22 Oct 2024 22:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44171CDA3B;
+	Tue, 22 Oct 2024 23:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YsaVXTkG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2127D14A08E;
-	Tue, 22 Oct 2024 22:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="zP0hOuJ/"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EF0198846
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637966; cv=none; b=ZtU6KDqIS8Z90ypNkfIIx12ub3AI9/Sa7p0wB2IBPzu4JeUTPKvtbsdhlN8/8CIH01M+1bjRTasbzLcClgvpvrEkyDUzX7rBOO02+/ToGGgh5AcpM1+5HYBihAWEIBt7iOn+BvN5BELqD+OiZynHxGGexpC1d0WcZt6/lmZ39Pg=
+	t=1729638034; cv=none; b=kPj/OWtVYrq8ULJoSvQpdPwS6d4YXhpzMPwe+0mPiQTbLk6R/ITSRE48wO5OmLP3QjdN6LmH5taKl3rleZCNO6DHUXZS8dIaR6UzWfSHEi+iUMALNbnu5WwO6gmjLyjCGJJIUC+FGH4gakAckND6gjS1RLg0HbzkbbSdOw7m2KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637966; c=relaxed/simple;
-	bh=lJYsOq2AkoxPPkO8K6d77gZJysa8w2fWsasRtEt4eyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jAQVirPwkExL/3MzcLyvHsgHH4xENTF3/aPbbJBKsTTcXl7VlzvvhNAmfrniaYjhQwTiKmpneXCpj1Kay/0OQIBKVP3Ly41bKiRqmBPLmgdmZK8/kGYRzECK9j/c56Qg45gAH55WO2br6VkLxB1gR0+cjYry0FaFcC7Q+EbT5wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YsaVXTkG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729637953;
-	bh=cxBBxFS+aLjWtIsw8dOqObxFFW/WvV/mp/WOqiM/Lxo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YsaVXTkGhWiLlPXRZk3JcplqhalcabJSEkB8S0wJ8EH9Y7Vs324EPh5gu45wV0dbq
-	 zm05WOvS+WqkMSu3gn+rt0Kq/I69EsWm/TdOfjRKyRhL4DtUB0hgG4JWyA9OdQ/1TA
-	 0hB6nYEotH8OkkWr9czfePD3tvXClLi/LsoSUOzvWIpGV+nzJD9GMpRm7iQWZvESzH
-	 7i59ymxU3cjhyzYdb6uwOBceDvw3fvwhx+f/nO4+SfW2xPYVxV6LzKExA8tGSSOcFn
-	 HHOVe/3U4ykxuePio35WaJM9E1feG/kncAJJ8Sx+EFqxOzQFKp2fGZjLUNspNoFUbF
-	 zi7kzD6Qio8Qg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XY70K5C4Pz4wb1;
-	Wed, 23 Oct 2024 09:59:13 +1100 (AEDT)
-Date: Wed, 23 Oct 2024 09:59:14 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Bart Van Assche <bvanassche@acm.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the block tree
-Message-ID: <20241023095914.61b9eafa@canb.auug.org.au>
+	s=arc-20240116; t=1729638034; c=relaxed/simple;
+	bh=JYYT6NWVKVJy521RVnpBOsTsaJ9xWTminJzbGkzYAz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvUZU2qYTKJPGHX2cvu9UEaJ2LkjOkfVkbor8IidTmbKz4pX6FlgjQvGvTAA6NG1XxeJo0FvKSNgiOloFawZtmKqp28Nm95+d2RGD11gAUkgjxZjOHTnUZlfIISIt8PvnPGn0vcWuFqAqnqenR6OvQA+YUSWN3/JfHhU8tPdFEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=zP0hOuJ/; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id D9E7C14C1E1;
+	Wed, 23 Oct 2024 01:00:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1729638024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L+PhWiLsE/ON3mjmkRzMiGc9kBu8+BamSMdruYQygqY=;
+	b=zP0hOuJ/+I+kvxnPXTKILVZTmq9uW8IIrcrjnp80IaKnWS5i0IhCUKrro+bqGxoZqsEcwj
+	KBt499xq3KuVUaW78haSqWdXWgAs4BQ2Hz8QHw+MuPUGoxdkfSvGtZ5ItmtAfrVCbkdX84
+	kjroIim/F30dRDmisbgE866fgYzQKxxY9A6oah6jXXAXXu2THwEaIDuoAGWcnHAJb/p5ba
+	Vzo3niNheJlOyIxE5Mp90DGhMRSWbnqX/vkytJrOsYa7tGHoGMV+QHfigYuK6X6ySSEGCB
+	otqfiC7i7PH76WHSgVW1jbaQA3aNwNPXM2GaOc2gpRbnFNLEwxQl10mWibMFtg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1226a4ff;
+	Tue, 22 Oct 2024 23:00:19 +0000 (UTC)
+Date: Wed, 23 Oct 2024 08:00:04 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Will Deacon <will@kernel.org>, ericvh@kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, lucho@ionkov.net,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
+	keirf@google.com, regressions@lists.linux.dev
+Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
+Message-ID: <ZxgudMCSgbDOEjpD@codewreck.org>
+References: <20240923100508.GA32066@willie-the-truck>
+ <20241009153448.GA12532@willie-the-truck>
+ <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+ <Zw-J0DdrCFLYpT5y@codewreck.org>
+ <20241022150149.GA27397@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5X90uYoOB/0jP82UnZqFMB_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022150149.GA27397@willie-the-truck>
 
---Sig_/5X90uYoOB/0jP82UnZqFMB_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Will Deacon wrote on Tue, Oct 22, 2024 at 04:01:49PM +0100:
+> > One note though he did sent a patch that seems related and wasn't sent
+> > for merge:
+> > https://lore.kernel.org/all/CAFkjPTn7JAbmKYASaeBNVpumOncPaReiPbc4Ph6ik3nNf8UTNg@mail.gmail.com/T/#u
+> >
+> > Will, perhaps you can try it? I'm pretty sure the setup to reproduce
+> > this is easy enough that I'll be able to reproduce in less than an hour
+> > (export two tmpfs [sequential inode number fs] wthin the same 9p mount
+> > in qemu without 'multidevs=remap'), but I don't even have that time
+> > right now.
+> > 
+> > (I didn't even read the patch properly and it might not help at all,
+> > sorry in this case)
+> 
+> I think this patch landed upsteam as d05dcfdf5e16 (" fs/9p: mitigate
+> inode collisions") and so I can confirm that it doesn't help with the
+> issue.
 
-Hi all,
+Ugh, yes, sorry I'm blind it's there alright (you even listed it in your
+first post in the list of commits to revert)
 
-In commit
+> > I'm not sure this really needs to get Linus involved - it's breaking a
+> > server that used to work even if qemu has been printing a warning about
+> > these duplicate qid.path for a while, and the server really is the
+> > better place to remap these inodes as we have no idea of the underlying
+> > device id as far as I know...
+> 
+> FWIW, I'm not using QEMU at all. This is with kvmtool which, for better
+> or worse, prints no such diagnostic and used to be reliable enough with
+> whatever magic the kernel had prior to v6.9.
 
-  6fbd7e0472b7 ("blk-mq: Make blk_mq_quiesce_tagset() hold the tag list mut=
-ex less long")
+Yes, that problem isn't specific to qemu, anything that re-exports
+multiple filesystems using underlying inode numbers directly has this
+risk (e.g. even diod/nfs-ganesha tcp mounts ought to reproduce if they
+don't mangle inodes); I agree we need to handle servers throwing junk at
+us.
 
-Fixes tag
+It's easy enough to reproduce with qemu if remapping is disabled as
+expected (I don't hit the VFS warning in d_splice_alias() but the
+behaviour is definitely wrong):
+----
+# host side
+cd /tmp/linux-test
+mkdir m1 m2
+mount -t tmpfs tmpfs m1
+mount -t tmpfs tmpfs m2
+mkdir m1/dir m2/dir
+echo foo > m1/dir/foo
+echo bar > m2/dir/bar
 
-  Fixes: commit 414dd48e882c ("blk-mq: add tagset quiesce interface")
+# guest side
+# started with -virtfs local,path=/tmp/linux-test,mount_tag=tmp,security_model=mapped-file
+mount -t 9p -o trans=virtio,debug=1 tmp /mnt/t
 
-has these problem(s):
+ls /mnt/t/m1/dir
+# foo
+ls /mnt/t/m2/dir
+# bar (works ok if directry isn't open)
 
-  - leading word 'commit' unexpected
+# cd to keep first dir's inode alive
+cd /mnt/t/m1/dir
+ls /mnt/t/m2/dir
+# foo (should be bar)
+----
 
---=20
-Cheers,
-Stephen Rothwell
+This can also be observed with files if mounting with cache=fscache or
+similar (but interestingly even keeping the file open will properly
+disociate both files in default cache=none mode); either way we won't be
+able to properly work with hard links if we assume the server isn't
+reliable; I guess that if someone wants that we'd really need to
+implement some capability negotiation at mount time so the server can
+tell us what is supported and unless that is done assume the server
+cannot reliably assign inodes...
 
---Sig_/5X90uYoOB/0jP82UnZqFMB_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+And if we go that way then we just shouldn't ever look at the inode
+number?... Which seems to pretty much be what the old code was doing in
+the "new" path of v9fs_qid_iget(); the compare function would just
+always say the inodes are different and get a new one...
+The mitigation Eric implemented is similar enough (re-added a 'new'
+parameter, and fail if I_NEW isn't set when new was requested), but it
+looks like v9fs_fid_iget_dotl() isn't called at all when accessing the
+other overlapping directory, so that wasn't effective here as some
+higher level of caching caught the inode first.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYLkIACgkQAVBC80lX
-0GxIRAf/ZiPm3Hbk232qKBAJH67k/faNW41qjKur0QvbgPhPAT81KU05razQb2cw
-6Whh6e1gBf7H+oq3Fth9+szr9GbZQdgNJw550lcpScG/OLTu4XS9EiiuT5OthKMl
-vgZ8flB+xoSRY0Tnc2jtHuOnh878cuYcDWRdKPDWSWp7NEsGuN/lWmIOxwcMkVgi
-LEBlDhoAKyNBIQIMJKj7GUOg96x2Bilq0E78qa+QU4sigY8r1V83t5wSVhgQyaZ7
-fX9bq66exaRxE6Aj7IZOzgck75VWixek78tFmS6FVcqJoJWF7jync/sOwz09Rs2N
-1ln1nGzuzhABy87d2Tmkork6tDf8Fw==
-=r6EF
------END PGP SIGNATURE-----
+I've also confirmed reverting the 4 commits listed by Will do fix both
+behaviors (along with a fscache warning when hitting the duplicate inode
+file, but that's expected):
+        724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
+        11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
+        10211b4a23cf "fs/9p: remove redundant pointer v9ses"
+        d05dcfdf5e16 " fs/9p: mitigate inode collisions"
 
---Sig_/5X90uYoOB/0jP82UnZqFMB_--
+
+> I'm happy to test patches if there's anything available, but otherwise
+> the reverts at least get us back to the old behaviour if nobody has time
+> to come up with something better.
+
+I think that's the sane thing to do, let's first go back to something
+that works and we can try again if/when someone has time - I've
+certainly just spent more time here than I have, and starting over is just
+a matter of reapplying the patches in a local branch so it's not like
+there's anything to lose (afaiu this was intended as code cleanup to
+make the code more maintainable rather than fixing something specific)
+
+
+
+Thorsten, is there a preferred way reverts should be done?
+In this case it'd probably make sense to squash the 4 reverts in a
+single megarevert? At the very least getting anywhere in the middle with
+the uaf isn't something one would want... And they all made it in 6.9
+together so there's no benefit in splitting them for backport either.
+
+Once that's decided I'll prepare something to send Linus in a few days,
+I don't think there's much point in sitting on this either...
+
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
