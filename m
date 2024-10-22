@@ -1,111 +1,185 @@
-Return-Path: <linux-kernel+bounces-375989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30389A9E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2019A9E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9F4B24C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1FA1C23A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830FB19C564;
-	Tue, 22 Oct 2024 09:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58298198A3B;
+	Tue, 22 Oct 2024 09:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUUC9jj0"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y6cUtWkI"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC219C54E;
-	Tue, 22 Oct 2024 09:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD4E17BED2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588581; cv=none; b=OS5dbY4Na0Y1SN3Fa6ko8HH1EGfPLkxtOtUkltm7yW8TsiuuPPT6DKArPuVfQgmumS1GqEohfrLWEFwYrVs+yyo7YZhizg1THDaYS06vLRwrytjNWBa8oRemeu9jKkpkGuOgfGPIBSXmWQY2LTF7o9OTXtC6Y4TnOoEvtqgwGyo=
+	t=1729588546; cv=none; b=Vb2ZToZTnPgpDKyiiwWC5YiJHVay8zCswRMerZ382Kwt2phFP1o/MblEYfiKK3kubALhOMhNTSBKXPI2mrd96JklhDM2fmbsbt1qOVWjQMccBe6FUsXVJoXlQ4MRZZh1Uf5yDd84vrw0+tnoshrv/NRSt6ztsUAt0025Qt7U4oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588581; c=relaxed/simple;
-	bh=f6tcasghV506QA3EP3+wDP8QUMsnpvEhlIKLb9DBfk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gn5M0BHj5mfZa8lNcieSI9Er3uOJGFiDu3Dh8nAr+nPu3VNEG7dLxGAH3L2V3ResTY59cyfABhTDguJLhMxTsGE2rzGrp8kLvFjE6qy4ekfnSEwVOrq64ro5ePkxMmEn3GklK3NWwrMsUHue8I2KRpSh6bA48Lqp1EcgV1P/Hn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUUC9jj0; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso795644366b.3;
-        Tue, 22 Oct 2024 02:16:20 -0700 (PDT)
+	s=arc-20240116; t=1729588546; c=relaxed/simple;
+	bh=Uk8Pa45s/KheSrUEOKOicHeanGteTnbgslk7ul9tBQs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CmKN+m7c0K+abhNtrXySYzHkUgOn6oPN64oD38T7nugFntl76qT4xUf74KixBlz/NpS6HXo0RQyXnQLKC5VUMur2cK34fsRx05alk+sfAb5fnT46Y8JBCOOpD5cEawO+WI8IFLVzfFDVgLKkG1VsOQJVBVDRAL1gu0qt4jhHje0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y6cUtWkI; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so6670261a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729588579; x=1730193379; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f6tcasghV506QA3EP3+wDP8QUMsnpvEhlIKLb9DBfk0=;
-        b=mUUC9jj0a82H5U+TaxHIBEGqT7C91SZm76tDdHIpyO7hxVvOL6FtXOyiD2DqpRKLD6
-         T530+KLxcqUe/GmbLypgBOPB4gxCg0yrzd0oAdsfdF+6w8F9db6vkqbxpyeP5Y3PUFLV
-         UgSE+y29oUI/jnflwbM0a2nRHmvEhQ0RTM6SaGQE2nIfiV2xfoI7g0s/P6yCCz1tJqbt
-         HbG0fneZozEjdgisu/0ZUEcGm56lRhXIbZ5X6RIhkoM8pUtnZ5OB0/UT42XoQuvtkDOu
-         sooAGm0giCxvhStY8xlI930HjHccrxqFEfcbQol75hWLQ+jkRqplqkgFKHHaoYYN8FOr
-         lcCQ==
+        d=suse.com; s=google; t=1729588542; x=1730193342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsPzi2IAagO7nqzLDsgxybyAdjpi8ZWkxbmu+EWhc0o=;
+        b=Y6cUtWkIgaRVKYVYdl2h1UzqB19s2QfcONrnlSfVLZQZImtmS0Yck8MI9MLImZpIA7
+         v2bmHG2UcW8G/u7HTtFtuuGyXeF/V2jNevD9rJH5ftn0DPvYiDc427c/ooUQDsJog2TV
+         xBB75xu/PxyYqYd3PoxXHVZ+6AFDvc/vwQBI3OSiqIzduh3jc+xMKyLA7vlXjjrgBZjO
+         CecWDRBdvdfyzxd0etVZSyBxG7Se0E3EU/j+bCOjrUycAV7bDboxdLZ1wKeHwA2E9Nen
+         E4scyprJZv82bMxmnofMxR/UpuZQ6YNI8Xmc7sIYqzZtv+gppIeRlCHTRo18+1EFHm01
+         s0ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729588579; x=1730193379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f6tcasghV506QA3EP3+wDP8QUMsnpvEhlIKLb9DBfk0=;
-        b=AiYhjanMHQrAG0qatVWVPndpBSJzzrjL/qrlmQqGWar1Tvy2Zh+JbJ4PdlsI6EDCUA
-         C2uPwF7usBSxtDz0iOtNny36woW/tTywZL9KXCFugXEwzlYHiuYQrsxKdr2eUMhK8BIT
-         6mWvUa1gJb0S+QBuUlmkOQd1NNooRPUKe3FG4Vw9rEnaVAsOYi3qmPq6eKm/qCrD90N9
-         OsuUvNYG16SobKwQ2z+hSq2607Hw6aQ+gw2vP5oqCb0i/fv4+I/gWkLK25dtJd6E9ACL
-         EipifEAofneQxn5jSS+KKkF9WYxGzl3DeoScyTj7tp1I9toy2nBJQdbNmpP7m7VeHWNT
-         oCKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPY0cFW5ZeVZDAULDCsnsKOtgMHpa3sj+bMaGa1NjW6sTjA0THs5dKnMDeO21IYN5Y6ZSqZGP7o7/8Ft/d@vger.kernel.org, AJvYcCUiLpURSBQLzX6HyYvhJCZVAuOw4veXZGjMSypdl5DzvFqZZVzwHHX9B7D7uL2R9H7SfKH4XPo4@vger.kernel.org, AJvYcCW8azuZ1yOxa2Eij5uVLTNRk+GEBuTNoiWqfnZZpQsNu63e8wHN/uECdpL2qmbWxQPscEsmhWqik1ieEUd/1vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznW7mcyZ094cFwukwcNoTJHdp7Nftc4ab9KPgi36RzuB3Yptqi
-	6cTtp9AvT8yp46XVmNc4rd+rmZCEFmZ8f7efce6yUpSKZ5nRmmiBNLtiisx1Kj3Ph1rQpiyiN7r
-	ZMJ2Wlu/bcs29K1pUIh6czGPC8bk=
-X-Google-Smtp-Source: AGHT+IEhXe5CPIvbNpaim7lA4Zyy9KDuP3cdxfKH+mUftW9Rv792YEOlvCA2BW1HJfaZHWYsrVkxZi5y7tPw7gAWhnI=
-X-Received: by 2002:a17:906:f594:b0:a86:94e2:2a47 with SMTP id
- a640c23a62f3a-a9a69a79c72mr1650018466b.15.1729588578301; Tue, 22 Oct 2024
- 02:16:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729588542; x=1730193342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IsPzi2IAagO7nqzLDsgxybyAdjpi8ZWkxbmu+EWhc0o=;
+        b=EyIi3OvyN7mO/gZ6+KgxJAliCgec6xgBLpcyN0tSl7LJ3+qYrbaQbU/dAabEWviqFK
+         5tm+l+di1kkdkNn5luXIB/Bl9U1ppRnN2SUwb7FI1IqzfvszmeMCmPumBNKQSMgjTCMC
+         VIXxUrm5CBTIxvpggW3eeMalzMM8yCZjUz/feeHVoArm+cYVofYZXwmaju99DW0QoFr/
+         sGep6Cchx7d+LdVc5KQFP9znB9A0TBadpCX9yXEH4qF8Wfna/2zkQm5fvgaHYZ3bimCp
+         deAhfNEKQG/G93KXuL42J8BbCciVsZ2kezEpXCW80SIsYDElAr1VjpbLfz1H/ox2KhKv
+         H8tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdeVlOZOh3hszeZWdzKyRXQLTBBHfVRZDtRaXBIf3ltKe1QxNs/FaqwLCJV9w9ump//ZtKdK93A9USJew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBwzZzP1tGbUG9ZIFzmdRvwMObq7WNnbhmNVzh+dhgtqoFqzWC
+	MASpfyyVseqmyNo2jAFAskFemCCeUbN0SEZwAkXMiKuxRczU1IcR375HlecQeJY=
+X-Google-Smtp-Source: AGHT+IG0UbTdshGjhe1cBG9B7a7reFtp9fnVda6ehg+mYut3t/cw34W4iDARXx7x4hjoKD2s8wnmcA==
+X-Received: by 2002:a17:906:6a29:b0:a99:e504:40c5 with SMTP id a640c23a62f3a-a9a69bb4776mr1542963966b.39.1729588542016;
+        Tue, 22 Oct 2024 02:15:42 -0700 (PDT)
+Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d8381sm308924466b.45.2024.10.22.02.15.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 02:15:41 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 22 Oct 2024 11:16:02 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <ZxdtUm_uoFvvKtVl@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
+ <flxm3zap4opsjf2s4wfjwdj6idf7p6errgtiru4xgbgkfx4ves@xxiz42cghgvr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021100421.41734-1-brgl@bgdev.pl> <bb705eb7-c61c-4da9-816e-cbb46c0c16e4@kernel.org>
-In-Reply-To: <bb705eb7-c61c-4da9-816e-cbb46c0c16e4@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 Oct 2024 12:15:41 +0300
-Message-ID: <CAHp75Ve1WUKYmv6sfGZ6amujs=C7MnxauLM+C2MeW8vxBV1NfQ@mail.gmail.com>
-Subject: Re: [PATCH] lib: string_helpers: fix potential snprintf() output truncation
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <flxm3zap4opsjf2s4wfjwdj6idf7p6errgtiru4xgbgkfx4ves@xxiz42cghgvr>
 
-On Tue, Oct 22, 2024 at 10:15=E2=80=AFAM Jiri Slaby <jirislaby@kernel.org> =
-wrote:
->
-> On 21. 10. 24, 12:04, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The output of ".%03u" with the unsigned int in range [0, 4294966295] ma=
-y
-> > get truncated if the target buffer is not 12 bytes.
->
-> Perhaps, if you elaborate on how 'remainder' can become > 999?
+Hi Krzysztof,
 
-The problem here that we have a two-way road: on one hand we ought to
-fix the bugs in the kernel, on the other hand the compiler warnings
-(even false positives) better to be fixed as we don't know which
-compiler gets it fixed, but now we have a problem with building with
-`make W=3D1` for the default configurations (it prevents build due to
-compilation errors), so this change is definitely is an improvement.
+On 08:24 Tue 08 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 07, 2024 at 02:39:46PM +0200, Andrea della Porta wrote:
+> > Common YAML schema for devices that exports internal peripherals through
+> > PCI BARs. The BARs are exposed as simple-buses through which the
+> > peripherals can be accessed.
+> > 
+> > This is not intended to be used as a standalone binding, but should be
+> > included by device specific bindings.
+> 
+> It still has to be tested before posting... Mailing list is not a
+> testing service. My and Rob's machines are not a testing service.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Sorry about that, I must have missed that file when rechecking all the schemas
+after rebasing on 6.12-rc1.
+
+> 
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 70 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > new file mode 100644
+> > index 000000000000..9d7a784b866a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common properties for PCI MFD endpoints with peripherals addressable from BARs.
+> 
+> Drop full stop and capitalize it.
+
+Ack.
+
+> 
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta  <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  Define a generic node representing a PCI endpoint which contains several sub-
+> > +  peripherals. The peripherals can be accessed through one or more BARs.
+> > +  This common schema is intended to be referenced from device tree bindings, and
+> > +  does not represent a device tree binding by itself.
+> > +
+> > +properties:
+> > +  "#address-cells":
+> 
+> Use consistent quotes, either ' or ".
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
