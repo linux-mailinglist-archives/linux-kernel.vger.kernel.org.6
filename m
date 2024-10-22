@@ -1,174 +1,181 @@
-Return-Path: <linux-kernel+bounces-375378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C79A953B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD02C9A953C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA2E1C22EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26E11C22A01
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7509782D66;
-	Tue, 22 Oct 2024 01:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nxhCEaAB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05A18063C;
+	Tue, 22 Oct 2024 01:03:32 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C22A927;
-	Tue, 22 Oct 2024 01:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A228379
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729558940; cv=none; b=RxY0oaF407713pJm2HrjflqihXDU2Yj6QuhB0lPefrrrK+dp7NZMTGsTRrV3Jzj/e3vyrWV77n9ANzwaOK2CUXFuTyPpR9xfMU505c0lLAio55of3nMUO+PJSkbmRZvhQ35RybgbkaCRVFfuBPt6q/G90M0SkNuMkl7vRRj7yxQ=
+	t=1729559012; cv=none; b=sMFXve2nojkpW0vi40TweVIFAVxgBEzSmcQmVU57vrjWLF920cr7waXaK8KMr0pEvIrWAREGdfwrizBoJDHf+jqAOuBt3adqk7Wcw87BNdV7pn1TusqW5ZbiJk479/niR7AYe/wT7U9EEWaQmXpOhm/fbno4rUGKQL4/nZMqskk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729558940; c=relaxed/simple;
-	bh=+uPsrAOcChIVguTREmIEfgaYRyyry6uMqgm7mCev93s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pSLdC8ids9PwiV+Ap3hSJKRxnkOIcKD19yqSQHR7/wU/YhgC/SBooRuj1oKFRTqYNOm6Ky6c0MJMq9k40PC2C0RII95Bu4h6yGJKl7uDf1yAcYjtODNJsUBsDVuB2lPPBx5+AdQAr0LTtGJxPDj54AQynjtuQN1GHNE26zw/B0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nxhCEaAB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729558932;
-	bh=GZItvcYPlsFji1zxIwCTQdK4eNnugj/oYP/4HDVcadM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nxhCEaABmJP5emfqXYqoWu7OmBRiPfZkpLDd06HaxY6259rLV9RCouXYiaCMiuSL/
-	 USSbWULhzFwq60XQNENm7rtXOMoIWze8EQFy+3/uIRabbozoXiUEXkGJt71Lv97Ke3
-	 UMV1WsmamA4ysI1W3fhq3rr8hlrhX2GPcjp9XzSct6kUd8AN1MAuLgZVYwtIzJl8HS
-	 0hAAU7g1hsSkvYmL7Lu1U2vFal7cMtlJAJKKNZeHgPDFuDMlGnTI2qh+cVwBrMj153
-	 0gD7JShRwB8PqQCAgjILCrIEzl2Q1E+iaSS8q+SInCgYnsUao8UIqEaCChh0r3WTJb
-	 0ABr3lnQ2+b3w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XXYmg2LSWz4wb7;
-	Tue, 22 Oct 2024 12:02:10 +1100 (AEDT)
-Date: Tue, 22 Oct 2024 12:02:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf
- <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: "Alexis =?UTF-8?B?TG90aG9yw6k=?= (eBPF Foundation)"
- <alexis.lothore@bootlin.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>,
- Simon Sundberg <simon.sundberg@kau.se>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4?=
- =?UTF-8?B?cmdlbnNlbg==?= <toke@redhat.com>
-Subject: linux-next: manual merge of the bpf-next tree with Linus' tree
-Message-ID: <20241022120211.2a5d41ed@canb.auug.org.au>
+	s=arc-20240116; t=1729559012; c=relaxed/simple;
+	bh=EaeHWISn1cOME7j2ZxUWwoUcH4UqC8Ij7hr25rMWswg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FMjN+tuRx9fBs6PAuHSahT2dpw6OyHdl/5Wj2odewzLz/RDObFWGw1qke1Pc8sXcF4/SyJmTXbvGmNjW15guVTLTTP//VcvY3faqSWQXfECSIatUGc7ebBhxJnhgO1ekkmulRBCQMXDnR63WMTdOBhpLwdxB18zWuqFhT+MhElA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso41759455ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:03:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729559010; x=1730163810;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dzxZsfm2IDcVs092UIwNqZotbjszFdKSKjIKGExOKHQ=;
+        b=XlgUMPjPEGLniV/K10AQEhEwYIBDctKlWtyO3jSuoWEI8ChqIX3gIgG1RyNF6ZzP7/
+         ZR1wapzshc+TE9UIS7Fdh7Szn5yjPXQMYDqKhq8hojbNXhKsHvhQqOs7OsfI5JSTIxCu
+         gwW/rtzCSAPAwdzWcU6vmO0N7sWKFsaOk5gni5gLSOqMOXwDS6D3nTfDSxQ0RnMJzHv7
+         TVM3xg9mkYjGx/A31b4aQbzrLg8+oLXRt2ehxGieeYNTmRlRmvVip1rLhEhCaHZDKU5y
+         D+ssLqRdDG8zmgl7ixKJMBnfqnqRRlqrEFrx3taU8qS/Xh5BKVpV7FhjYalM8hWOF/OR
+         1MoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTY6RIHDvvEoZOLJfwh8dmLMBtkRVkaXJPZaiXRit/wvQF4jS/DIwcT2hC5er19d44vB/Gp0k4mudwz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydI5ZwIfPXk/qOrD2NI7hyiUnH6ECjgA/LZ3/caKbFdlFE3Bm9
+	nAhXeYecTi6ZSqNhXgf7gE/IyzRBJ3vKzIcUHLOpLkdCafPFv5D+4c7Eu5ABVf36ARXnSEf63O6
+	disMNO/3IMMEakw+NrWI0fN28QbQ+cjx1xRLhd0U2YQbfIThgKdQblBE=
+X-Google-Smtp-Source: AGHT+IGJaiI+3CeH6B/sc5zINJNVNKuTkHyLjV2ol/JP/x/cS6QMfQEZb2cI4vgewyw3WSJTREG6IkvB1ezhtvebiU3Dz31jXgfK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zSLe_0kB=.oReJxYbu9mSw0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:12c6:b0:3a0:4a91:224f with SMTP id
+ e9e14a558f8ab-3a3f40474d0mr105674435ab.1.1729559010044; Mon, 21 Oct 2024
+ 18:03:30 -0700 (PDT)
+Date: Mon, 21 Oct 2024 18:03:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6716f9e2.050a0220.1e4b4d.0068.GAE@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in extent_writepage_io
+From: syzbot <syzbot+9295d5153c44d86af0aa@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/zSLe_0kB=.oReJxYbu9mSw0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+HEAD commit:    6efbea77b390 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c0c240580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=9295d5153c44d86af0aa
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c18c5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12186f27980000
 
-  tools/testing/selftests/bpf/Makefile
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5dbbf0b1a9a5/disk-6efbea77.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd272a84cc09/vmlinux-6efbea77.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cfcfcf079289/bzImage-6efbea77.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/504c13bf000c/mount_0.gz
 
-between commit:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9295d5153c44d86af0aa@syzkaller.appspotmail.com
 
-  f91b256644ea ("selftests/bpf: Add test for kfunc module order")
+assertion failed: block_start != EXTENT_MAP_HOLE, in fs/btrfs/extent_io.c:1303
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/extent_io.c:1303!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5258 Comm: syz-executor179 Not tainted 6.12.0-rc3-syzkaller-00183-g6efbea77b390 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:submit_one_sector fs/btrfs/extent_io.c:1303 [inline]
+RIP: 0010:extent_writepage_io+0xca2/0xd20 fs/btrfs/extent_io.c:1388
+Code: fe 07 90 0f 0b e8 1e 28 d9 fd 48 c7 c7 80 0d 4d 8c 48 c7 c6 60 1b 4d 8c 48 c7 c2 20 0d 4d 8c b9 17 05 00 00 e8 5f f7 fe 07 90 <0f> 0b e8 f7 27 d9 fd eb 5f e8 f0 27 d9 fd 48 c7 c7 80 0d 4d 8c 48
+RSP: 0018:ffffc90003eb6ec0 EFLAGS: 00010246
+RAX: 000000000000004e RBX: 0000000000001000 RCX: 9c772e8b3e6d6f00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc90003eb7030 R08: ffffffff8174af9c R09: 1ffff920007d6d74
+R10: dffffc0000000000 R11: fffff520007d6d75 R12: fffffffffffffffd
+R13: 0000000000007000 R14: dffffc0000000000 R15: ffffea0001c3a740
+FS:  00007f6de66216c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020948000 CR3: 0000000076e7c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ extent_writepage fs/btrfs/extent_io.c:1460 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2130 [inline]
+ btrfs_writepages+0x11c4/0x2370 fs/btrfs/extent_io.c:2261
+ do_writepages+0x35d/0x870 mm/page-writeback.c:2683
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:398
+ __filemap_fdatawrite_range mm/filemap.c:431 [inline]
+ filemap_fdatawrite_range+0x11a/0x180 mm/filemap.c:449
+ btrfs_fdatawrite_range+0x53/0xe0 fs/btrfs/file.c:3827
+ btrfs_direct_write+0x565/0xa70 fs/btrfs/direct-io.c:961
+ btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
+ do_iter_readv_writev+0x600/0x880
+ vfs_writev+0x376/0xba0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1215
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6de66ad5d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6de6621158 EFLAGS: 00000212 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007f6de673a6e8 RCX: 00007f6de66ad5d9
+RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 00007f6de673a6e0 R08: 0000000000000000 R09: 0000000000000003
+R10: 0000000000007800 R11: 0000000000000212 R12: 00007f6de673a6ec
+R13: 000000000000006e R14: 00007fffacb4cff0 R15: 00007fffacb4d0d8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:submit_one_sector fs/btrfs/extent_io.c:1303 [inline]
+RIP: 0010:extent_writepage_io+0xca2/0xd20 fs/btrfs/extent_io.c:1388
+Code: fe 07 90 0f 0b e8 1e 28 d9 fd 48 c7 c7 80 0d 4d 8c 48 c7 c6 60 1b 4d 8c 48 c7 c2 20 0d 4d 8c b9 17 05 00 00 e8 5f f7 fe 07 90 <0f> 0b e8 f7 27 d9 fd eb 5f e8 f0 27 d9 fd 48 c7 c7 80 0d 4d 8c 48
+RSP: 0018:ffffc90003eb6ec0 EFLAGS: 00010246
+RAX: 000000000000004e RBX: 0000000000001000 RCX: 9c772e8b3e6d6f00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc90003eb7030 R08: ffffffff8174af9c R09: 1ffff920007d6d74
+R10: dffffc0000000000 R11: fffff520007d6d75 R12: fffffffffffffffd
+R13: 0000000000007000 R14: dffffc0000000000 R15: ffffea0001c3a740
+FS:  00007f6de66216c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005646f9cff0b8 CR3: 0000000076e7c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-from Linus' tree and commit:
 
-  c3566ee6c66c ("selftests/bpf: remove test_tcp_check_syncookie")
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-from the bpf-next tree.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---=20
-Cheers,
-Stephen Rothwell
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-diff --cc tools/testing/selftests/bpf/Makefile
-index 75016962f795,6d15355f1e62..000000000000
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@@ -154,11 -153,9 +153,10 @@@ TEST_PROGS_EXTENDED :=3D with_addr.sh=20
- =20
-  # Compile but not part of 'make run_tests'
-  TEST_GEN_PROGS_EXTENDED =3D \
-- 	flow_dissector_load test_flow_dissector test_tcp_check_syncookie_user \
-- 	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
-- 	xskxceiver xdp_redirect_multi xdp_synproxy veristat xdp_hw_metadata \
-- 	xdp_features bpf_test_no_cfi.ko bpf_test_modorder_x.ko \
-- 	bpf_test_modorder_y.ko
-+ 	flow_dissector_load test_flow_dissector	test_lirc_mode2_user xdping \
-+ 	test_cpp runqslower bench bpf_testmod.ko xskxceiver xdp_redirect_multi \
- -	xdp_synproxy veristat xdp_hw_metadata xdp_features bpf_test_no_cfi.ko
-++	xdp_synproxy veristat xdp_hw_metadata xdp_features bpf_test_no_cfi.ko \
-++	bpf_test_modorder_x.ko bpf_test_modorder_y.ko
- =20
-  TEST_GEN_FILES +=3D liburandom_read.so urandom_read sign-file uprobe_multi
- =20
-@@@ -301,22 -302,11 +303,24 @@@ $(OUTPUT)/bpf_testmod.ko: $(VMLINUX_BTF
-  $(OUTPUT)/bpf_test_no_cfi.ko: $(VMLINUX_BTF) $(RESOLVE_BTFIDS) $(wildcard=
- bpf_test_no_cfi/Makefile bpf_test_no_cfi/*.[ch])
-  	$(call msg,MOD,,$@)
-  	$(Q)$(RM) bpf_test_no_cfi/bpf_test_no_cfi.ko # force re-compilation
-- 	$(Q)$(MAKE) $(submake_extras) RESOLVE_BTFIDS=3D$(RESOLVE_BTFIDS) -C bpf_=
-test_no_cfi
-+ 	$(Q)$(MAKE) $(submake_extras) -C bpf_test_no_cfi \
-+ 		RESOLVE_BTFIDS=3D$(RESOLVE_BTFIDS)	 \
-+ 		EXTRA_CFLAGS=3D'' EXTRA_LDFLAGS=3D''
-  	$(Q)cp bpf_test_no_cfi/bpf_test_no_cfi.ko $@
- =20
- +$(OUTPUT)/bpf_test_modorder_x.ko: $(VMLINUX_BTF) $(RESOLVE_BTFIDS) $(wild=
-card bpf_test_modorder_x/Makefile bpf_test_modorder_x/*.[ch])
- +	$(call msg,MOD,,$@)
- +	$(Q)$(RM) bpf_test_modorder_x/bpf_test_modorder_x.ko # force re-compilat=
-ion
- +	$(Q)$(MAKE) $(submake_extras) RESOLVE_BTFIDS=3D$(RESOLVE_BTFIDS) -C bpf_=
-test_modorder_x
- +	$(Q)cp bpf_test_modorder_x/bpf_test_modorder_x.ko $@
- +
- +$(OUTPUT)/bpf_test_modorder_y.ko: $(VMLINUX_BTF) $(RESOLVE_BTFIDS) $(wild=
-card bpf_test_modorder_y/Makefile bpf_test_modorder_y/*.[ch])
- +	$(call msg,MOD,,$@)
- +	$(Q)$(RM) bpf_test_modorder_y/bpf_test_modorder_y.ko # force re-compilat=
-ion
- +	$(Q)$(MAKE) $(submake_extras) RESOLVE_BTFIDS=3D$(RESOLVE_BTFIDS) -C bpf_=
-test_modorder_y
- +	$(Q)cp bpf_test_modorder_y/bpf_test_modorder_y.ko $@
- +
- +
-  DEFAULT_BPFTOOL :=3D $(HOST_SCRATCH_DIR)/sbin/bpftool
-  ifneq ($(CROSS_COMPILE),)
-  CROSS_BPFTOOL :=3D $(SCRATCH_DIR)/sbin/bpftool
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---Sig_/zSLe_0kB=.oReJxYbu9mSw0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcW+ZMACgkQAVBC80lX
-0GzFlQf+OxGNSa17pOr41tHcb3O5LScGrLIKKn0lkzNHEp8x6fOIgzPIgN9VvWoS
-JXe4xtAjJYD8hHco4Dsx4au7uEG+a0Q8GqjJ++IZu0fdWC9b8tcijGk0Ro63U/XA
-w84nY+l8CsNNHtqWvgOsmtpCRM2D0YS18zvREyYILndlsHDbUTw8ck5F8HCa/z9e
-4t3ba7U999V2RyDqYv3DOo0mLZ1fweU7kn1LgE67N6IIGIbaxoHNoUQA5U+3UqFZ
-DUUKtcHbqjtCh3VPrqCvvXUDQkpErgX3nED1NzWVQOESqOInqM4Cd9YnWpWfV0W5
-YQx3+kt5tzUlvgYd7C9csDeHC+wNfQ==
-=Apvx
------END PGP SIGNATURE-----
-
---Sig_/zSLe_0kB=.oReJxYbu9mSw0--
+If you want to undo deduplication, reply with:
+#syz undup
 
