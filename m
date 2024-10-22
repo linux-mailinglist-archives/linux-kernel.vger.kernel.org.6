@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-376665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F009AB49C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4782E9AB4A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF321F24469
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34EE1F2444F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0281BCA07;
-	Tue, 22 Oct 2024 17:01:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0051BBBC3;
+	Tue, 22 Oct 2024 17:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Q9ef2jN9"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E117483;
-	Tue, 22 Oct 2024 17:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CA3256D;
+	Tue, 22 Oct 2024 17:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616490; cv=none; b=KBrFrlkbvYQQ1peRTDNXO3jrcijLWJEL0/8lRI+V93k0lOElJ3zONBqH5s3lPg0NhrSNTqG4qh8eZimppT//ATB8xdZTK05Aw+aXtcB4bkvSMdM4QtncKn/FNmo/nbFWQnvTuO/pkMfdW9SxthwTkJY3OJWPJ4IZ6b2PDkTll8g=
+	t=1729616604; cv=none; b=gCinzwTryx1E/Qbi7DxlDu3CEmQ1lwKb8RVt5StAGUxXSgukIE2jKECr3zk4muJN8tRh4zOXdtXNpEwmq4e08Qdkvu6GFr51DJL13WyYubxCs1IPcUoyr3JE6u3jHksIFvJ8vBAiRfunhDbuDjAs95e0B3viTXO0Kpou12OU9yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616490; c=relaxed/simple;
-	bh=PPNSYZKPWMLanxucQDtSVxv8/bs3/sUN4XUPU8RmAq4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iZWj7lHJs2dVZwgyfnB7WFfrl3Xl1hc0dJ9Wwp1kPjneS4J4qoqrsoRT0wJtp/wzAleRJeOE82LcbusENR1jEvJwtVMAK6Pnc+o3MXxo9B0dkrJ9HxX8CZVeyzYF6Df5+W6WAIRH+P6fjmbpDDtnIXtuXm6cMKYQ2ekAU2rdvBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XXyy56sgYz6LD5g;
-	Wed, 23 Oct 2024 00:56:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1E2DD140B55;
-	Wed, 23 Oct 2024 01:01:25 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Oct
- 2024 19:01:24 +0200
-Date: Tue, 22 Oct 2024 18:01:22 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 21/28] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <20241022180122.00006074@Huawei.com>
-In-Reply-To: <6716a165823b7_8cb1729437@iweiny-mobl.notmuch>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-21-c261ee6eeded@intel.com>
-	<20241010155821.00005079@Huawei.com>
-	<6711842d88fa_2cee2946a@iweiny-mobl.notmuch>
-	<20241018100909.00001ec2@Huawei.com>
-	<6716a165823b7_8cb1729437@iweiny-mobl.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729616604; c=relaxed/simple;
+	bh=48ceQE87rmV3uOiD9dvWI67NHf4mh/d8CQCgLH7LkTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4SpM8ZkWfu2aa0gursKLFbjdzBvHeqzdU6mTHiuVGpNls6ZfXZcF/VOx2z3vNOhE8nX6MvEiqW+hHjms1C1jkEQkVgKbuJ9u9Kgkrr2HU4OS1GJ8qWUlzsGiUVDYodRh4zy5SCa0gw2De4r/ks0CtLGuYrX0DfRDVZckrnANZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Q9ef2jN9; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 923E040E015F;
+	Tue, 22 Oct 2024 17:03:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uXYWye9f5smU; Tue, 22 Oct 2024 17:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729616595; bh=xSDNfr4pRCD8cBUjcFOrM0JXRl9/mMkSbY9Aw6Cavq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q9ef2jN9C9GOH2Gp+juq7uZGPzYCxzljD9813514WE1nO++GfFlax2khDe6bYlyaI
+	 ofZCIFLjRzyrFcljfpSd3leuLNEV8qZPnocS85sSLPiX41rksivZvdfCyESUEZLgY+
+	 cKNR3+J0HRzb6cmLD4k6m/qecd9Taia5hiSMT1M7BYZxzAaKMbVAjJCDWWPvr+i9k2
+	 qRjVWvSv9rpk6VPR8Feez0G6a40l3d1raxo+G5z5SDNiUKbEZvCJvHFPJi3CoDH0Xq
+	 mmUDEApc9M3XpSTJUNVlXsbuwrGbfLcoeRmS7pzVOLa0UPvrFdg9l2CC9dU92gEOHz
+	 OSfroRSZ2INA9hotc1A6SLqEXNuVhxNGlwGFTkQCxDagrKxacQ/OEh1NMGxEaXx6Q/
+	 ZglIA1XG0bVEvxtKCayOPSahFJklobas8RGunn6eQr5Dyi108t1ENvPH2Lq0LHviZn
+	 /QGt6iPuT4A3JshSVLcK8/NYBNjpWWMoUMrMtjnXk78OW2qWAWzBY3KQpZroiepaR+
+	 TaRYtn512ZWCq6Xeve5gyDWNWpZYs4VfCo8X62n1+wyCnse057jzPQ/8K8ltVEBz+B
+	 nuB6EPOq8HeykNz1D93x1H84S00w+nivkkRHddliuNpFXMAiQjjPIf6WvJCERiDkmL
+	 vifkh3OOJHvD54LPEYmQaXRM=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 969B540E0263;
+	Tue, 22 Oct 2024 17:03:09 +0000 (UTC)
+Date: Tue, 22 Oct 2024 19:03:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: tony.luck@intel.com, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH] RAS/AMD/ATL: Add debug prints for DF register reads
+Message-ID: <20241022170303.GLZxfax_-72ZCX1I_q@fat_crate.local>
+References: <20241021152158.2525669-1-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021152158.2525669-1-yazen.ghannam@amd.com>
 
-On Mon, 21 Oct 2024 13:45:57 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Mon, Oct 21, 2024 at 03:21:58PM +0000, Yazen Ghannam wrote:
+> The ATL will fail early if the DF register access fails due to missing
+> PCI IDs in the amd_nb code. There aren't any clear indicators on why the
+> ATL will fail to load in this case.
+> 
+> Add a couple of debug print statements to highlight reasons for failure.
+> 
+> A common scenario is missing support for new hardware. If the ATL fails
+> to load on a system, and there is interest to support it, then dynamic
+> debugging can be enabled to help find the cause for failure. If there is
+> no interest in supporting ATL on a new system, then these failures will
+> be silent.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  drivers/ras/amd/atl/access.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-> Jonathan Cameron wrote:
-> > On Thu, 17 Oct 2024 16:39:57 -0500
-> > Ira Weiny <ira.weiny@intel.com> wrote:
-> >   
-> > > Jonathan Cameron wrote:  
-> > > > On Mon, 07 Oct 2024 18:16:27 -0500
-> > > > ira.weiny@intel.com wrote:
-> > > >     
-> 
-> [snip]
-> 
-> > > > > Simplify extent tracking with the following restrictions.
-> > > > > 
-> > > > > 	1) Flag for removal any extent which overlaps a requested
-> > > > > 	   release range.
-> > > > > 	2) Refuse the offer of extents which overlap already accepted
-> > > > > 	   memory ranges.
-> > > > > 	3) Accept again a range which has already been accepted by the
-> > > > > 	   host.  Eating duplicates serves three purposes.  First, this
-> > > > > 	   simplifies the code if the device should get out of sync with
-> > > > > 	   the host.     
-> > > > 
-> > > > Maybe scream about this a little.  AFAIK that happening is a device
-> > > > bug.    
-> > > 
-> > > Agreed but because of the 2nd purpose this is difficult to scream about because
-> > > this situation can come up in normal operation.  Here is the scenario:
-> > > 
-> > > 1) Device has 2 DCD partitions active, A and B
-> > > 2) Host crashes
-> > > 3) Region X is created on A
-> > > 4) Region Y is created on B
-> > > 5) Region Y scans for extents
-> > > 6) Region X surfaces a new extent while Y is scanning
-> > > 7) Gen number changes due to new extent in X
-> > > 8) Region Y rescans for existing extents and sees duplicates.
-> > > 
-> > > These duplicates need to be ignored without signaling an error.  
-> > Hmm. If we can know that path is the trigger (should be able to
-> > as it's a scan after a gen number change), can we just muffle the
-> > screams on that path? (Halloween is close, the analogies will get
-> > ever worse :)  
-> 
-> Ok yea since this would be a device error we should do something here.  But the
-> code is going to be somewhat convoluted to print an error whenever this
-> happens.
-> 
-> What if we make this a warning and change the rescan debug message to a warning
-> as well?  This would allow enough bread crumbs to determine if a device is
-> failing without a lot of extra code to alter print messages on the fly?
+Applied, thanks.
 
-Sounds ok to me.
+-- 
+Regards/Gruss,
+    Boris.
 
-Jonathan
-
-> 
-> Ira
-> 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
