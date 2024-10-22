@@ -1,106 +1,217 @@
-Return-Path: <linux-kernel+bounces-376367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCB69AB065
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:07:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713429AB06C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B7D1F231C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87CF11C20F5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829C19FA8D;
-	Tue, 22 Oct 2024 14:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750891A0731;
+	Tue, 22 Oct 2024 14:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuNQhZ+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nT065qt4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XB/MFvdM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nT065qt4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XB/MFvdM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C80619D88F;
-	Tue, 22 Oct 2024 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B4519D88F;
+	Tue, 22 Oct 2024 14:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606058; cv=none; b=cTfeUVBhPeWnjo0Ko9duzDA5N0tXyk1HPzLlEylRdGilhP5vBFcHWEa/Rh+Tx+DUiwDmr2vht7Qx2CIpdA9FK9hYn1rAzC4UBWJ87Qj0lTT6R35OfWejbv+GR1XI3/zwfESFEVpH9guJPMjOKXsFhtPYRAMz5VUnDNJkzix0WJc=
+	t=1729606082; cv=none; b=nlgV0+XIGAH9JPCaufdCZFempfuf4cYjMCzveogLhdQ4oseB3BGlZEAm5LmQyHjMoTlYGCIai7yZxvQ3OH9EI8HAH6IWGG5IOU6dcX6m4KxMX77mFaw+U/mzQR20bVS3JmKTqZtf6XzVyNLH+d13D36803JK1xUeHR/YWvS1vk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606058; c=relaxed/simple;
-	bh=nE99iModeW89lNsWiK+9LumvbIMcQgQJxkg/6DSWG1M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UjCJC+4m9DVvLFZ/6aYv9Pst4hcYPOQ+jCnlX8uSUxZMQsx9SCV5qNeu8QH1O4DPfYwcftT9viFoWB4Dddzfv9yLwbQm/aTaWmuV1kdOt2VRQV1fnrtbgqekmtjy0ODuCt7nDXQjydV+yzwJz5QboKYctMcLLQ10lnahDrcHyC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuNQhZ+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F3BC4CEE6;
-	Tue, 22 Oct 2024 14:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729606057;
-	bh=nE99iModeW89lNsWiK+9LumvbIMcQgQJxkg/6DSWG1M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iuNQhZ+0zO+BtdYdxmtPJTvw2kCskxbWnd4qO093Pf2BOOxseHlVIuSprOW2468SJ
-	 VoiukHPrnYoALtql/o+yejCyB5scsHEsCmi1fVI7FQ4ex81MCrNOHe/ZCz5rAgzzrT
-	 3DIGN2F4RbIGOm738Zx9L3kikKVo3haU1qbabRnUVQv7psNoQdD3y2nKKlsMF3+pZc
-	 zY5Ox0dwa1hnf9Te+czDDR3U4FXHWsOXZ+AsxyApHNB4kWGcUi8TfLgYSYuqATTP9c
-	 y8lVQ47Z+/CoCIk2m8L70smVVStoW0OWA1tBXm0uHD+10Jn7RuuHQWXP6MU1q/8xAp
-	 BcljCpL9OfydQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- David Yang <yangxiaohua@everest-semi.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, kernel@collabora.com, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241019-es8328-doc-port-v1-1-25c1d1b5c65c@collabora.com>
-References: <20241019-es8328-doc-port-v1-1-25c1d1b5c65c@collabora.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: everest,es8328: Document audio
- graph port
-Message-Id: <172960605518.41803.10563200262175057259.b4-ty@kernel.org>
-Date: Tue, 22 Oct 2024 15:07:35 +0100
+	s=arc-20240116; t=1729606082; c=relaxed/simple;
+	bh=keN/OaFPBTwJRNnLclouCC/2PmyqicZ/HLWJKZaXkMw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qm0ySYCTCa4bIZl0Az8kmTA6pvuO0QtjQZ02xfGfgqr6tOcG4YlGgFaNj0mMMKODYKAYRVjkqRfJV3bWI3TQho8BYLR718eelOa2Mbqv4mA5WXR+2my+L7CInoUkQVOiGP0olMmqhtBj11qteujBV1PsWihaSiuIZIeKWngAIxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nT065qt4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XB/MFvdM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nT065qt4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XB/MFvdM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 30D9321962;
+	Tue, 22 Oct 2024 14:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729606078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
+	b=nT065qt4F0yaxGQDtCajKU5QrE+p9X22fQ5X+uJrdOXhWH71O0XxqvB04DrSIvks57q6Cu
+	JdoTUOrhC6F3VM2FqxvCZrrLy8dfmsvHOi34IxJPAYkskRCU+DNNNywW6lsBU0E9auNlTB
+	K4vW+XGRe4RK0Vn8gIuK+2eJqjzzmJQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729606078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
+	b=XB/MFvdM6NJqGNpPMiucMvrGVCv1meVqHtwqyxogJgSr9p1OCl+lie6l0tPeIfBtUWHx0K
+	qJIy2sce/WWFCkBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729606078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
+	b=nT065qt4F0yaxGQDtCajKU5QrE+p9X22fQ5X+uJrdOXhWH71O0XxqvB04DrSIvks57q6Cu
+	JdoTUOrhC6F3VM2FqxvCZrrLy8dfmsvHOi34IxJPAYkskRCU+DNNNywW6lsBU0E9auNlTB
+	K4vW+XGRe4RK0Vn8gIuK+2eJqjzzmJQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729606078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
+	b=XB/MFvdM6NJqGNpPMiucMvrGVCv1meVqHtwqyxogJgSr9p1OCl+lie6l0tPeIfBtUWHx0K
+	qJIy2sce/WWFCkBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 783A713894;
+	Tue, 22 Oct 2024 14:07:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vT/NHL2xF2f0awAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 22 Oct 2024 14:07:57 +0000
+Date: Tue, 22 Oct 2024 16:08:58 +0200
+Message-ID: <87v7xk2ps5.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,	Basavaraj Natikar
+ <basavaraj.natikar@amd.com>,	Jiri Kosina <jikos@kernel.org>,	Benjamin
+ Tissoires <bentiss@kernel.org>,	Arnd Bergmann <arnd@arndb.de>,	Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,	Manish Chopra
+ <manishc@marvell.com>,	"David S. Miller" <davem@davemloft.net>,	Eric
+ Dumazet <edumazet@google.com>,	Jakub Kicinski <kuba@kernel.org>,	Paolo
+ Abeni <pabeni@redhat.com>,	Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,	Kalle Valo <kvalo@kernel.org>,
+	Sanjay R Mehta <sanju.mehta@amd.com>,	Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>,	Jon Mason <jdmason@kudzu.us>,	Dave Jiang
+ <dave.jiang@intel.com>,	Allen Hubbe <allenbh@gmail.com>,	Bjorn Helgaas
+ <bhelgaas@google.com>,	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,	Stefano Stabellini
+ <sstabellini@kernel.org>,	Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>,	Jaroslav Kysela <perex@perex.cz>,	Takashi
+ Iwai <tiwai@suse.com>,	Chen Ni <nichen@iscas.ac.cn>,	Mario Limonciello
+ <mario.limonciello@amd.com>,	Ricky Wu <ricky_wu@realtek.com>,	Al Viro
+ <viro@zeniv.linux.org.uk>,	Breno Leitao <leitao@debian.org>,	Kevin Tian
+ <kevin.tian@intel.com>,	Thomas Gleixner <tglx@linutronix.de>,	Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,	Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>,	Mostafa Saleh
+ <smostafa@google.com>,	Jason Gunthorpe <jgg@ziepe.ca>,	Yi Liu
+ <yi.l.liu@intel.com>,	Christian Brauner <brauner@kernel.org>,	Ankit Agrawal
+ <ankita@nvidia.com>,	Eric Auger <eric.auger@redhat.com>,	Reinette Chatre
+ <reinette.chatre@intel.com>,	Ye Bin <yebin10@huawei.com>,	Marek
+ =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,	Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>,	Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,	Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,	Rui Salvaterra <rsalvaterra@gmail.com>,
+	linux-ide@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,	kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org,	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 02/13] ALSA: hda_intel: Use always-managed version of pcim_intx()
+In-Reply-To: <20241015185124.64726-3-pstanner@redhat.com>
+References: <20241015185124.64726-1-pstanner@redhat.com>
+	<20241015185124.64726-3-pstanner@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[yahoo.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_GT_50(0.00)[66];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,omp.ru,amd.com,arndb.de,linuxfoundation.org,yahoo.com,marvell.com,davemloft.net,google.com,redhat.com,quantenna.com,gmail.com,kudzu.us,intel.com,suse.com,epam.com,perex.cz,iscas.ac.cn,realtek.com,zeniv.linux.org.uk,debian.org,linutronix.de,linux.intel.com,ziepe.ca,nvidia.com,huawei.com,invisiblethingslab.com,linux.dev,vger.kernel.org,lists.linux.dev,lists.xenproject.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Sat, 19 Oct 2024 03:43:14 +0300, Cristian Ciocaltea wrote:
-> The ES8328/ES8388 audio codec is currently used in conjunction with
-> audio-graph-card to provide an endpoint for binding with the other side
-> of the audio link.
+On Tue, 15 Oct 2024 20:51:12 +0200,
+Philipp Stanner wrote:
 > 
-> This is achieved via the 'port' property, which is not supported by the
-> binding:
+> pci_intx() is a hybrid function which can sometimes be managed through
+> devres. To remove this hybrid nature from pci_intx(), it is necessary to
+> port users to either an always-managed or a never-managed version.
 > 
-> [...]
+> hda_intel enables its PCI-Device with pcim_enable_device(). Thus, it needs
+> the always-managed version.
+> 
+> Replace pci_intx() with pcim_intx().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+>  sound/pci/hda/hda_intel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+> index b4540c5cd2a6..b44ca7b6e54f 100644
+> --- a/sound/pci/hda/hda_intel.c
+> +++ b/sound/pci/hda/hda_intel.c
+> @@ -786,7 +786,7 @@ static int azx_acquire_irq(struct azx *chip, int do_disconnect)
+>  	}
+>  	bus->irq = chip->pci->irq;
+>  	chip->card->sync_irq = bus->irq;
+> -	pci_intx(chip->pci, !chip->msi);
+> +	pcim_intx(chip->pci, !chip->msi);
+>  	return 0;
+>  }
+>  
 
-Applied to
+Hm, it's OK-ish to do this as it's practically same as what pci_intx()
+currently does.  But, the current code can be a bit inconsistent about
+the original intx value.  pcim_intx() always stores !enable to
+res->orig_intx unconditionally, and it means that the orig_intx value
+gets overridden at each time pcim_intx() gets called.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Meanwhile, HD-audio driver does release and re-acquire the interrupt
+after disabling MSI when something goes wrong, and pci_intx() call
+above is a part of that procedure.  So, it can rewrite the
+res->orig_intx to another value by retry without MSI.  And after the
+driver removal, it'll lead to another state.
 
-Thanks!
+In anyway, as it doesn't change the current behavior, feel free to
+take my ack for now:
 
-[1/1] ASoC: dt-bindings: everest,es8328: Document audio graph port
-      commit: e6d20a9b0f376fda3e3c3709a59cefa6c0021784
+Acked-by: Takashi Iwai <tiwai@suse.de>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+thanks,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Takashi
 
