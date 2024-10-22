@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-375357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7D09A94F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 572849A94F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9EBF281DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFC1281836
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8541F1537B9;
-	Tue, 22 Oct 2024 00:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4AE14883F;
+	Tue, 22 Oct 2024 00:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JtQ53y6q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MnB+tgdG"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E132153BC7
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9D1BDE6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556764; cv=none; b=Yq5LLsc5Vr5XBZHc7t80epUGsoXy03dBsytKSFyJRy3G55aqSefnBsBALILL6Lm+MXbqKnx2AAjGRc6szhQ4hphmJnjT9hM1FueEda84vG9mVoWAPKL9kn8qmIGWBb+twu5tHyklobZL3ftLfNufzHABAko1t6G6PPdV8HqdiTw=
+	t=1729556729; cv=none; b=lFAoS3CdNCd8OmOYoApsFvkRrU0WzKMpSYBptaB+ukLOZH1JOktvuozAw8RB+Ghk3s7GI0iEo3LdaeJ3QSj7BadzmUM0n5zAKZhrOhUHB9ygW0iJ8OU2viEhic6b5IhPuW4buY8x8KFaVQ/YQeRqPFCkxSZO5Atv7TO6f7TPD/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556764; c=relaxed/simple;
-	bh=J5A1HHH1wdAgcXygyy9cFAqqFrJtZl89Cf0UB6VqlTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3aS64ZUXW2X0DnmEEYBEcM7aNLIYymhT1UAHIdRuwanWDm01PM3jsN4trOin7X6pvKW5HTzBtGN2gKr6lUuw0O28fF43GaXKLzn09pzddUtCjBAA29OjJzSz0B+CkZq5k7oLYZUffsC39sME0z64ecQbHFauZJ+HqLpzs/yhV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JtQ53y6q; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729556764; x=1761092764;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J5A1HHH1wdAgcXygyy9cFAqqFrJtZl89Cf0UB6VqlTM=;
-  b=JtQ53y6qHi+JpLCHDU24UPJQvQ+PV5nu1ydVl6O+N0QyemetVzLnJ7DN
-   vnjbZW9Bx84Q/yi03mkinRyjbWki4GfxdTm8CHOfl8M1tFAGMY9bMfDqk
-   RPTMhJEUoa0iL88sQeaiBYZXx1184OzIpPOgsjFgz5hpzBi3Qxal8955o
-   bTmKPm/4KApcRnMWj8VDizP4Xb9XA5tqtcZgKr9QqzKdidyUwRerbdQ7X
-   PMHHWjnEUE+EXj+taOsBhGAyhqIfkDXwVKnKqaYzwLIFyvuKIc8d2YmwU
-   JWIfiCpK9IEVj84Ve+VfyQV+mJqKgl/UzV+z90RLb5F5qYYq2ozE/PXib
-   A==;
-X-CSE-ConnectionGUID: gpoWetZiRn+uAk9rCqa+tA==
-X-CSE-MsgGUID: K8vLFvNhQpmO8d2Mw4FZDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46535680"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46535680"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:26:03 -0700
-X-CSE-ConnectionGUID: GQNY5enJTfOn0akRNtmLbg==
-X-CSE-MsgGUID: hXTttgOsQsuwrNS3GLfDeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="79772055"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 21 Oct 2024 17:25:59 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t32ij-000Soc-1l;
-	Tue, 22 Oct 2024 00:25:57 +0000
-Date: Tue, 22 Oct 2024 08:24:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Yu Zhao <yuzhao@google.com>
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-Message-ID: <202410221026.yJKHaGWA-lkp@intel.com>
-References: <20241021042218.746659-4-yuzhao@google.com>
+	s=arc-20240116; t=1729556729; c=relaxed/simple;
+	bh=Wwk9dyFtDwuEQQqz0hmWJyU/DQRTYfyP+Ipucu+Wmy8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=H5+wpWyRpbTa/plp7GFTWxemKPToMEen2MyRZZaXqxmd9S55rCuV9Rvh3TQd1IPf2qHkrHzoa3d7DOi4s/h/d7ooGB7d8XpWyub7fS9w/sVmueJb7BLyM6dKfwbXTETM/3MjgD2FiXin8xSA8Urk+1IeeTj9AbT3X8MrJd/5uKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MnB+tgdG; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e292dbfd834so7658574276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729556727; x=1730161527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MsmHAIiTKT1PsAHJrcn3wc4lWOtEN6U6cuZlArYcGvA=;
+        b=MnB+tgdGLReNlA4KEjpVCLIj6z8w8awI0i9a3sx6+jZblv+50MQgjAouTqZ2aPZc05
+         Tj8MaMnAzVDds9kIB3by6YraN1PiaDEqXQhfu1knp56VmW2qHZ4pNOt1wvkNHAF1H1vM
+         15Oh12H+8GxJlu/UFODeS16wIlUfyxpnlPoR+NPMHFoTTRePnpuwweVXeIsD7ETmEC+Q
+         m6I2RFDuOz4ve6Akcb4YZbiabtw5ROaEvgX3aQFCf91BH+Cj5vnaN7RIiB/KHsnDjvVA
+         ZHSigZtjSwnwLGUp5kIE5DJqbAN2fjOdNIQI6E6G28BG7CYWXkBnVEtECNQ2AZzAZNU+
+         znmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729556727; x=1730161527;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MsmHAIiTKT1PsAHJrcn3wc4lWOtEN6U6cuZlArYcGvA=;
+        b=tunSq+TYG032DlRhtHHqYN26KZKNOScSlyuDwHO1cammcgwmtKaXQ4NqJodjf9FyUI
+         L9ft3jXWYHOiGYoLLo7QD0emmZdxqa+eC94GV2fqOPMu+IgijFxvB/CHobL8BYO9N3n3
+         dLXrIKS3utaa2tIAeCDFgkmpIaXWDKPucx0WGTTZw4oV5SgrEfOmqeLiQDML2oY6lhWg
+         yRZ5WmTbbvwKdtKgFoimaSwgm/4z6vK/+SxRvElEZfz7/uS/w+krqRmctAcXhBSiEVyA
+         Boa7a8MZv/WiR60qAv9c8ttDBX2COexlpF72M1KdqZPigQpebrzp/2yczB23O2JhN0TR
+         2FYw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dNANwcT5hTPA/o+3lh4lDzf/jbYNKmEGSHM/OAT2T/R925r6ZryqMsunDxuNrJ0rAriJ8w2aq9wmK1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfPs3OkuDlWKS1JyV6NORfvXj5Yy8s1w5lx7eG3z0FI+yePZaH
+	Xx8zEAwy5yqR0TbP5AKhlrNbOnVF2fOxZwhsELbHJJ4Mj3LQa7HoQOJgG0PrVEwlZP4BTgnKpGn
+	tqg==
+X-Google-Smtp-Source: AGHT+IFt751p/7pq+BSWT0h/wj8dy6pof7dpapFjoV1RFsMPc4iJ6WxDdC7RwTVAow0VYtv4igk8p4vJkHM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:aae9:0:b0:e29:1893:f461 with SMTP id
+ 3f1490d57ef6-e2bb0feddc7mr22594276.0.1729556726690; Mon, 21 Oct 2024 17:25:26
+ -0700 (PDT)
+Date: Mon, 21 Oct 2024 17:25:25 -0700
+In-Reply-To: <CABgObfbQW-3vp=mNcR4giUGZ_gxhuRykvKj8gzBDY7pOg6xdBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021042218.746659-4-yuzhao@google.com>
+Mime-Version: 1.0
+References: <20241010182427.1434605-1-seanjc@google.com> <CABgObfbQW-3vp=mNcR4giUGZ_gxhuRykvKj8gzBDY7pOg6xdBQ@mail.gmail.com>
+Message-ID: <Zxbw9XcFCHYR1Ald@google.com>
+Subject: Re: [PATCH v13 00/85] KVM: Stop grabbing references to PFNMAP'd pages
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>, Yan Zhao <yan.y.zhao@intel.com>, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
+	Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yu,
+On Thu, Oct 17, 2024, Paolo Bonzini wrote:
+> On Thu, Oct 10, 2024 at 8:24=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> > v13:
+> >  - Rebased onto v6.12-rc2
+> >  - Collect reviews. [Alex and others]
+> >  - Fix a transient bug in arm64 and RISC-V where KVM would leak a page
+> >    refcount. [Oliver]
+> >  - Fix a dangling comment. [Alex]
+> >  - Drop kvm_lookup_pfn(), as the x86 that "needed" it was stupid and is=
+ (was?)
+> >    eliminated in v6.12.
+> >  - Drop check_user_page_hwpoison(). [Paolo]
+> >  - Drop the arm64 MTE fixes that went into 6.12.
+> >  - Slightly redo the guest_memfd interaction to account for 6.12 change=
+s.
+>=20
+> Here is my own summary of the changes:
 
-kernel test robot noticed the following build warnings:
+Yep, looks right to me.
 
-[auto build test WARNING on 42f7652d3eb527d03665b09edac47f85fb600924]
+> patches removed from v12:
+> 01/02 - already upstream
+> 09 - moved to separate A/D series [1]
+> 34 - not needed due to new patch 36
+> 35 - gone after 620525739521376a65a690df899e1596d56791f8
+>=20
+> patches added or substantially changed in v13:
+> 05/06/07 - new, suggested by Yan Zhao
+> 08 - code was folded from mmu_spte_age into kvm_rmap_age_gfn_range
+> 14 - new, suggested by me in reply to 84/84 (yuck)
+> 15 - new, suggested by me in reply to 84/84
+> 19 - somewhat rewritten for new follow_pfnmap API
+> 27 - smaller changes due to new follow_pfnmap API
+> 36 - rewritten, suggested by me
+> 45 - new, cleanup
+> 46 - much simplified due to new patch 45
+>=20
+> Looks good to me, thanks and congratulations!! Should we merge it in
+> kvm/next asap?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Zhao/mm-hugetlb_vmemmap-batch-update-PTEs/20241021-122330
-base:   42f7652d3eb527d03665b09edac47f85fb600924
-patch link:    https://lore.kernel.org/r/20241021042218.746659-4-yuzhao%40google.com
-patch subject: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20241022/202410221026.yJKHaGWA-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410221026.yJKHaGWA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410221026.yJKHaGWA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/irqchip/irq-gic-v3.c:1401:8: warning: shift count >= width of type [-Wshift-count-overflow]
-           val = BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_SGI_ID_SHIFT);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
-   #define BIT(nr)                 (UL(1) << (nr))
-                                          ^  ~~~~
-   1 warning generated.
-
-
-vim +1401 drivers/irqchip/irq-gic-v3.c
-
-  1396	
-  1397	static void gic_broadcast_sgi(unsigned int irq)
-  1398	{
-  1399		u64 val;
-  1400	
-> 1401		val = BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_SGI_ID_SHIFT);
-  1402	
-  1403		pr_devel("CPU %d: broadcasting SGI %u\n", smp_processor_id(), irq);
-  1404		gic_write_sgi1r(val);
-  1405	}
-  1406	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+That has my vote, though I'm obvious extremely biased :-)
 
