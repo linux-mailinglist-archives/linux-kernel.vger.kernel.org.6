@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-375358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506539A94F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7CF9A94FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30F4B22EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EA81F212FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BB11494D8;
-	Tue, 22 Oct 2024 00:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716B381742;
+	Tue, 22 Oct 2024 00:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="iTUta9D1"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZyfV10VO"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F390956458;
-	Tue, 22 Oct 2024 00:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3282933DF;
+	Tue, 22 Oct 2024 00:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556837; cv=none; b=OIetflVHzbzWjTxv2G4WIBJXpEt1TUuaVE+1OcK4qhAnNGR9OU3SupUGhlgo6ybhmgnf1VGrM6JO4DevVohfm+iNgLFd41jh7YvbZMg8h+D+o6H5iq8TBYs69V8IuZe1PyuqbNWLDnGn3+VJL1RzEHJ7wwUOFmwfkhPMToN+15o=
+	t=1729556994; cv=none; b=F8rZwaGWWzIyCXw56hmEHq+EmbTO7Wgi4ucyOYvcmZAEqGpNkTZRGDRhlh7qLA5crzjhsN4KVYvnJSOFKnMph476lbqv+yUW8MlMya9IKQzjh62cdMN1+o68HJETFy0asR5c5WjZjpSIXWNe3ncpiv8gqitvlm91vhIAIIYVF3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556837; c=relaxed/simple;
-	bh=FUwOYCqb0UIvmCcIp5UgWEV3vFGgqExwTek6OSk1pJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JqmA9GSCK3whDRFA7T83qap8sfUu0TPGK4hzvMhx71hYiKN+eMqWKIAep5FWxHtcgYg6nPT4ysaGng7YlV37y5EFmvCPcKEbU4FX0MrEL80PayoI4BL4n1NptsfjGjDdMUcGt2f7XQsVKZdffP4CkSjipCysmJrMGrWtLdu1md8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=iTUta9D1; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1729556994; c=relaxed/simple;
+	bh=0trWI6aKnWXJRIWmRiUZ02jhbTAEw4gb5S43ZDWA2Yo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ntxQwDF+fojDGiwpvi2Ue13JJv2lrkhOept37165dHkUuzsbOMWXLMKZI4R3HBBWWD5ExkQpiKP1s6+VdLS8h6OqJVqSDUUtdz/TCozffyCB+X0aZZSrdZVn1Hzkn1IQ/rojd63SSp5rz0PFelW7Syo+LY/eWW4KR1QQfKK6l+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZyfV10VO; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=t3cQdB5tT/CTlqWs31rOhZvN0HUT9n1StunejcJjhYk=; b=iTUta9D1KBjd+GaM
-	xo3YiN4/n43NqnMa2j8gxfhxKV6265F536et3G0rtsFKB/dw2HZWC7CV0XozqFU6ElQpP6TqBGkNi
-	u4nqie01Y7XNHX5qsGGSzvSAS7mYqwC6ii0bccWNwAs+yB/TON0D2sV9v0rkGznwyM14nSl8YbhUx
-	wz+7xMsH/BzuNesa09AQudwDYl6V/oDFJRHkwdO4A0U485QWuWIQ2rnMljfeaVHVrdzqzPWLFcZyN
-	q0P0LG8agKkwprLaKfrsWFBx9RNi2Yp8Xx7Vt3gVIKSkH3ieS6xDgxrDghJoNCffEI9fU5qXtW54T
-	0g2Khs3tjQsu72aYYw==;
+	:Subject; bh=l86PKJYHxpCVury3Aip81gz2MyfrzRyWfLwP5FGx1m4=; b=ZyfV10VOpcsErRx3
+	dclNRyJhOtR67Qv2rRG0dLLfh7DfmeOKfPMdT0wzG7Q2VPFc8YMxNl/24qxcp5UbE76MwCdS3nvcc
+	HVh5U1ZgcM+cw+J2whjEe4Bs08NC3DeV9U6iYk9rWdhX81kN+9sbG0iG6eu5Ml1rbeUlqsIMA0lIV
+	ypo+dnF6vsdZTt79HgtPHAxOUtHTAeSyoGMQLV0A2wCkTo6gYPgbLt03EqJPD73RVtOkWJ1Fs2H61
+	F4m63XY6RrrugX2z5yJNLAyskjM1PA+/OhYkCFx4rjFbs4ShYxQK9swCP9QmN9CLNh7MhnRCMcbWE
+	T+j+Ns+vrKjset+x8w==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1t32jn-00CeJr-2r;
-	Tue, 22 Oct 2024 00:27:03 +0000
+	id 1t32mL-00CePD-1l;
+	Tue, 22 Oct 2024 00:29:41 +0000
 From: linux@treblig.org
-To: dwmw2@infradead.org,
-	baolu.lu@linux.intel.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: iommu@lists.linux.dev,
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] iommu/vt-d: Remove unused dmar_msi_read
-Date: Tue, 22 Oct 2024 01:27:02 +0100
-Message-ID: <20241022002702.302728-1-linux@treblig.org>
+Subject: [PATCH] perf: Remove unused del_perf_probe_events
+Date: Tue, 22 Oct 2024 01:29:40 +0100
+Message-ID: <20241022002940.302946-1-linux@treblig.org>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,55 +70,122 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-dmar_msi_read() has been unused since 2022 in
-commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
+del_perf_probe_events() last use was removed by
+commit 3d6dfae88917 ("perf parse-events: Remove BPF event support")
 
 Remove it.
 
-(dmar_msi_write still exists and is used once).
+It was the last user of probe_file__del_events, so remove it as well.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/iommu/intel/dmar.c | 13 -------------
- include/linux/dmar.h       |  1 -
- 2 files changed, 14 deletions(-)
+ tools/perf/util/probe-event.c | 35 -----------------------------------
+ tools/perf/util/probe-event.h |  2 --
+ tools/perf/util/probe-file.c  | 19 -------------------
+ tools/perf/util/probe-file.h  |  1 -
+ 4 files changed, 57 deletions(-)
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index eaf862e8dea1..7881d9e46622 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1895,19 +1895,6 @@ void dmar_msi_write(int irq, struct msi_msg *msg)
- 	raw_spin_unlock_irqrestore(&iommu->register_lock, flag);
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 698a92875374..e8e381bddded 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -3705,41 +3705,6 @@ void cleanup_perf_probe_events(struct perf_probe_event *pevs, int npevs)
+ 	}
  }
  
--void dmar_msi_read(int irq, struct msi_msg *msg)
+-int del_perf_probe_events(struct strfilter *filter)
 -{
--	struct intel_iommu *iommu = irq_get_handler_data(irq);
--	int reg = dmar_msi_reg(iommu, irq);
--	unsigned long flag;
+-	int ret, ret2, ufd = -1, kfd = -1;
+-	char *str = strfilter__string(filter);
 -
--	raw_spin_lock_irqsave(&iommu->register_lock, flag);
--	msg->data = readl(iommu->reg + reg + 4);
--	msg->address_lo = readl(iommu->reg + reg + 8);
--	msg->address_hi = readl(iommu->reg + reg + 12);
--	raw_spin_unlock_irqrestore(&iommu->register_lock, flag);
+-	if (!str)
+-		return -EINVAL;
+-
+-	/* Get current event names */
+-	ret = probe_file__open_both(&kfd, &ufd, PF_FL_RW);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = probe_file__del_events(kfd, filter);
+-	if (ret < 0 && ret != -ENOENT)
+-		goto error;
+-
+-	ret2 = probe_file__del_events(ufd, filter);
+-	if (ret2 < 0 && ret2 != -ENOENT) {
+-		ret = ret2;
+-		goto error;
+-	}
+-	ret = 0;
+-
+-error:
+-	if (kfd >= 0)
+-		close(kfd);
+-	if (ufd >= 0)
+-		close(ufd);
+-out:
+-	free(str);
+-
+-	return ret;
 -}
 -
- static int dmar_fault_do_one(struct intel_iommu *iommu, int type,
- 		u8 fault_reason, u32 pasid, u16 source_id,
- 		unsigned long long addr)
-diff --git a/include/linux/dmar.h b/include/linux/dmar.h
-index 499bb2c63483..692b2b445761 100644
---- a/include/linux/dmar.h
-+++ b/include/linux/dmar.h
-@@ -292,7 +292,6 @@ static inline void dmar_copy_shared_irte(struct irte *dst, struct irte *src)
- struct irq_data;
- extern void dmar_msi_unmask(struct irq_data *data);
- extern void dmar_msi_mask(struct irq_data *data);
--extern void dmar_msi_read(int irq, struct msi_msg *msg);
- extern void dmar_msi_write(int irq, struct msi_msg *msg);
- extern int dmar_set_interrupt(struct intel_iommu *iommu);
- extern irqreturn_t dmar_fault(int irq, void *dev_id);
+ int show_available_funcs(const char *target, struct nsinfo *nsi,
+ 			 struct strfilter *_filter, bool user)
+ {
+diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+index 4850e52f274e..61a5f4ff4e9c 100644
+--- a/tools/perf/util/probe-event.h
++++ b/tools/perf/util/probe-event.h
+@@ -167,8 +167,6 @@ void cleanup_perf_probe_events(struct perf_probe_event *pevs, int npevs);
+ 
+ struct strfilter;
+ 
+-int del_perf_probe_events(struct strfilter *filter);
+-
+ int show_perf_probe_event(const char *group, const char *event,
+ 			  struct perf_probe_event *pev,
+ 			  const char *module, bool use_stdout);
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index 3d50de3217d5..ec8ac242fedb 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -366,25 +366,6 @@ int probe_file__del_strlist(int fd, struct strlist *namelist)
+ 	return ret;
+ }
+ 
+-int probe_file__del_events(int fd, struct strfilter *filter)
+-{
+-	struct strlist *namelist;
+-	int ret;
+-
+-	namelist = strlist__new(NULL, NULL);
+-	if (!namelist)
+-		return -ENOMEM;
+-
+-	ret = probe_file__get_events(fd, filter, namelist);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = probe_file__del_strlist(fd, namelist);
+-out:
+-	strlist__delete(namelist);
+-	return ret;
+-}
+-
+ /* Caller must ensure to remove this entry from list */
+ static void probe_cache_entry__delete(struct probe_cache_entry *entry)
+ {
+diff --git a/tools/perf/util/probe-file.h b/tools/perf/util/probe-file.h
+index 0dba88c0f5f0..c2bb6a5b9dcc 100644
+--- a/tools/perf/util/probe-file.h
++++ b/tools/perf/util/probe-file.h
+@@ -44,7 +44,6 @@ struct strlist *probe_file__get_namelist(int fd);
+ struct strlist *probe_file__get_rawlist(int fd);
+ int probe_file__add_event(int fd, struct probe_trace_event *tev);
+ 
+-int probe_file__del_events(int fd, struct strfilter *filter);
+ int probe_file__get_events(int fd, struct strfilter *filter,
+ 				  struct strlist *plist);
+ int probe_file__del_strlist(int fd, struct strlist *namelist);
 -- 
 2.47.0
 
