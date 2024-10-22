@@ -1,159 +1,100 @@
-Return-Path: <linux-kernel+bounces-377030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A709AB8FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0949AB8FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CF5284A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:44:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22403B2364A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73591CCEFC;
-	Tue, 22 Oct 2024 21:44:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5C51386BF;
-	Tue, 22 Oct 2024 21:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141431CC144;
+	Tue, 22 Oct 2024 21:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="n/wD3nat"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A6015573B;
+	Tue, 22 Oct 2024 21:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729633483; cv=none; b=C+l5+wwvcIgVj30+NqOpp05vfYNCZmlwplil1kMSH2oCWQZYrPaLtIrMFqsMmfd2D7V1BYu8xn1zX5L9fCzM2hydYxWKQSFStn1001sJsQLIql/z1NK5QhjQvxP+FGxSXDwjBnh2J31VFWEd1hEtUlh2HHqmyV/4XMuTBePuXXc=
+	t=1729633634; cv=none; b=K8fjTIz97R7tNPAvLmSB9+EujQNCmyoTJwp9y201a4mapQvL/m/BpFXztL/E2kKe6qWREt9lCjjE0apv9WBGWrJI/QKFi/bpe92xTOF+3Oi1s0aBqJVMSWAX6m7IpTpvElwllhL4I7vlfn9uLoViGjXkhUIX2doBfXPlm75zUgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729633483; c=relaxed/simple;
-	bh=HhRZ2fvE2gijWnwqyS+f/FtEc244e4OY/EDtWOfjlck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPP+EWCeqsMtOFN2LgHdLt2dUDyiMhmo0byQwvod82y0M4mL2UvMBrBdPCdUwh1qSaTdo4uywVPw9P90C7KicW5RIwx8tq9Rv6yajVD26J0OiT3ZFSdP4rLHmg3hcoeeAeYX/q8z3sZIX3DZMprsOyUXEuxntyAEvxF5IBibwuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79C00497;
-	Tue, 22 Oct 2024 14:45:09 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70B8C3F528;
-	Tue, 22 Oct 2024 14:44:38 -0700 (PDT)
-Message-ID: <b51726f2-7a6d-4ef2-8fdc-28e76e4ab5d0@arm.com>
-Date: Tue, 22 Oct 2024 22:45:47 +0100
+	s=arc-20240116; t=1729633634; c=relaxed/simple;
+	bh=54lMYI81ZCLCzLazRDgv84RPFEXJ/NhUokeNeo2HYAE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TA1Xwm2QDoOWYJlLHt0wVMsfZFHencjgeFVA9mu2vglpL/t+oojTjcbDLNENC/SQAZPPpaC17srlCe6mOtzba1RonWff9IP5tF0K5Bf8EF0nxFTQvcCXn+fA+wB7PlU/DXl+u8K03nSE49lWjGmU6EPlAzZYMozkwAe2kE9Ik1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=n/wD3nat; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5F2B342C02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1729633622; bh=HZXHmiW1HxFL/xAxHiulNuglGOrc0zHRLUQBWbfPl8s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=n/wD3nataBy95toyFKvAAoYsDyPnnyCI6KN+1KXEvNrNxIOsj/4b0W8E12iw6UIZ3
+	 KfEJPXYvcKyp2ZmtSpV+67qpPC3xGOFHlczqjGV5dZqmApwz+V9I3DWVb6dR4L+Mky
+	 nsIjUCufm0n2FD+53DMwwguEe3xFR9RySXRXMwkHIBsP2VxjFG/NsE6SYxVH3/NLRm
+	 w8oGSCkQKyg1LoltsygVWW55spcx/qZ5kuMcQKltxgYDajEz0n7YRpHE5P3ebF5pGO
+	 BQ8Dy1gpblgihw1TBgKFh8QxG0RL6fIxDIvm2NZXOg1YJus5ykB6wDO6e5j+qVnX3t
+	 nJdAImGV2++dw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5F2B342C02;
+	Tue, 22 Oct 2024 21:47:02 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: anish kumar <yesanishhere@gmail.com>, ohad@wizery.com,
+ bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, anish kumar <yesanishhere@gmail.com>
+Subject: Re: [PATCH 3/7] Remoteproc: Documentation: add the main index
+In-Reply-To: <20241022213516.1756-4-yesanishhere@gmail.com>
+References: <20241022213516.1756-1-yesanishhere@gmail.com>
+ <20241022213516.1756-4-yesanishhere@gmail.com>
+Date: Tue, 22 Oct 2024 15:47:01 -0600
+Message-ID: <87h693olnu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/11] thermal: core: Introduce thermal_instance_add()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <3618899.iIbC2pHGDl@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3618899.iIbC2pHGDl@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+anish kumar <yesanishhere@gmail.com> writes:
 
-
-On 10/10/24 23:13, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> To reduce the number of redundant result checks in
-> thermal_bind_cdev_to_trip() and make the code in it easier to
-> follow, move some of it to a new function called thermal_instance_add()
-> and make thermal_bind_cdev_to_trip() invoke that function.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Add index file so that readthedocs.io pick this file
+> up and properly build the documentation site.
+>
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
 > ---
-> 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/2641944.Lt9SDvczpP@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   46 ++++++++++++++++++++++++++---------------
->   1 file changed, 30 insertions(+), 16 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -743,6 +743,28 @@ struct thermal_zone_device *thermal_zone
->    *				     binding, and unbinding.
->    */
->   
-> +static int thermal_instance_add(struct thermal_instance *new_instance,
-> +				struct thermal_cooling_device *cdev,
-> +				struct thermal_trip_desc *td)
-> +{
-> +	struct thermal_instance *instance;
-> +
-> +	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
-> +		if (instance->cdev == cdev)
-> +			return -EEXIST;
-> +	}
-> +
-> +	list_add_tail(&new_instance->trip_node, &td->thermal_instances);
-> +
-> +	mutex_lock(&cdev->lock);
-> +
-> +	list_add_tail(&new_instance->cdev_node, &cdev->thermal_instances);
-> +
-> +	mutex_unlock(&cdev->lock);
-> +
-> +	return 0;
-> +}
-> +
->   /**
->    * thermal_bind_cdev_to_trip - bind a cooling device to a thermal zone
->    * @tz:		pointer to struct thermal_zone_device
-> @@ -761,7 +783,7 @@ static int thermal_bind_cdev_to_trip(str
->   				     struct thermal_cooling_device *cdev,
->   				     struct cooling_spec *cool_spec)
->   {
-> -	struct thermal_instance *dev, *instance;
-> +	struct thermal_instance *dev;
->   	bool upper_no_limit;
->   	int result;
->   
-> @@ -823,23 +845,15 @@ static int thermal_bind_cdev_to_trip(str
->   	if (result)
->   		goto remove_trip_file;
->   
-> -	mutex_lock(&cdev->lock);
-> -	list_for_each_entry(instance, &td->thermal_instances, trip_node)
-> -		if (instance->cdev == cdev) {
-> -			result = -EEXIST;
-> -			break;
-> -		}
-> -	if (!result) {
-> -		list_add_tail(&dev->trip_node, &td->thermal_instances);
-> -		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
-> -	}
-> -	mutex_unlock(&cdev->lock);
-> +	result = thermal_instance_add(dev, cdev, td);
-> +	if (result)
-> +		goto remove_weight_file;
->   
-> -	if (!result) {
-> -		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
-> -		return 0;
-> -	}
-> +	thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
-> +
-> +	return 0;
->   
-> +remove_weight_file:
->   	device_remove_file(&tz->device, &dev->weight_attr);
->   remove_trip_file:
->   	device_remove_file(&tz->device, &dev->attr);
-> 
-> 
-> 
+>  Documentation/remoteproc/index.rst | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/remoteproc/index.rst
 
+readthedocs.io is not particularly relevant here; this change is needed
+simply to make the docs build work right.
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Properly, you should have added a version of this file first, since your
+series is not bisectable as organized.  For a docs change, that alone
+does not merit redoing the series, though.  However...
+
+You do need to remove the entry in Documentation/staging/index.rst, or
+you will break the docs build.
+
+Please be sure to do a proper docs build before sending a patch series
+like this.
+
+More to the point, though, why are you creating a new top-level
+directory for this?  That's something I would really like to avoid.  It
+looks like the existing document fits well in the driver-api manual, is
+there a reason why you haven't put it there?
+
+Thanks,
+
+jon
 
