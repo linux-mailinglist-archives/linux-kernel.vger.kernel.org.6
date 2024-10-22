@@ -1,186 +1,105 @@
-Return-Path: <linux-kernel+bounces-377094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6449AB9BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:58:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA35D9AB9C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00892B228F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86AF02817FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85651CEABF;
-	Tue, 22 Oct 2024 22:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225491CDFCF;
+	Tue, 22 Oct 2024 22:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nzIskZBU"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10B51CDA16;
-	Tue, 22 Oct 2024 22:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YsaVXTkG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2127D14A08E;
+	Tue, 22 Oct 2024 22:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637893; cv=none; b=SiFMqYPcixHLZDDMBKZXiJ2k1tY3oCgvn8dkWqKw6uUAkaKIw3MxDB8wCfTzeBB/lSo3eURh45MmL+zNaG9F9ZcyXrC2O3U6UHotplgHrbzGwLn+QkOIu7bWwo/JfQwJFPjUlduP2DN72LvrVNDS1XNc1SkTU9b+N+itjJ+ux6k=
+	t=1729637966; cv=none; b=ZtU6KDqIS8Z90ypNkfIIx12ub3AI9/Sa7p0wB2IBPzu4JeUTPKvtbsdhlN8/8CIH01M+1bjRTasbzLcClgvpvrEkyDUzX7rBOO02+/ToGGgh5AcpM1+5HYBihAWEIBt7iOn+BvN5BELqD+OiZynHxGGexpC1d0WcZt6/lmZ39Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637893; c=relaxed/simple;
-	bh=RjEJk2oa1fZBfOmIg47sxpgtVrqeY9azPMrxyyatXLQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OoYpO0CiX0NuwLVo/IXkKja+4Z9Vk73OTsJn0vye7t31+n49a2zOe0cHL97Uq6peWAkb0jsDGUveoKp6v9b0FlUBvyphtpnHWRdk6Lt3tKhyZZbl5bzrt1RbB9Bs+3TSSVPq46lmUp3ANLXZFLP7yy1edWtJNWdmC+vwRC6e49Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nzIskZBU; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.66.184] (unknown [20.236.11.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EA5A921112FB;
-	Tue, 22 Oct 2024 15:58:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EA5A921112FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1729637891;
-	bh=xYGQ40vmThJnX2ha30vWEW9paOxlmvOgxdDY6ngri1M=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=nzIskZBUa8r0DFv0dKwn4D6E0TxbOsLBT3iYSIOanvrS05amAy4922d272C1o9tmW
-	 uTeNQ7F6IckvHsJHpAHe6Nl4b1LdQw/25+K/y8AI7jHJ7XWx6wxOo2s3VBgkiAGcW4
-	 d8TI4D1Ck6deYTfELPuTAUvzhYMEoACxoNOJQDcQ=
-Message-ID: <24981b4e-8ccb-4312-b738-e4b611739060@linux.microsoft.com>
-Date: Tue, 22 Oct 2024 15:58:11 -0700
+	s=arc-20240116; t=1729637966; c=relaxed/simple;
+	bh=lJYsOq2AkoxPPkO8K6d77gZJysa8w2fWsasRtEt4eyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jAQVirPwkExL/3MzcLyvHsgHH4xENTF3/aPbbJBKsTTcXl7VlzvvhNAmfrniaYjhQwTiKmpneXCpj1Kay/0OQIBKVP3Ly41bKiRqmBPLmgdmZK8/kGYRzECK9j/c56Qg45gAH55WO2br6VkLxB1gR0+cjYry0FaFcC7Q+EbT5wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YsaVXTkG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729637953;
+	bh=cxBBxFS+aLjWtIsw8dOqObxFFW/WvV/mp/WOqiM/Lxo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YsaVXTkGhWiLlPXRZk3JcplqhalcabJSEkB8S0wJ8EH9Y7Vs324EPh5gu45wV0dbq
+	 zm05WOvS+WqkMSu3gn+rt0Kq/I69EsWm/TdOfjRKyRhL4DtUB0hgG4JWyA9OdQ/1TA
+	 0hB6nYEotH8OkkWr9czfePD3tvXClLi/LsoSUOzvWIpGV+nzJD9GMpRm7iQWZvESzH
+	 7i59ymxU3cjhyzYdb6uwOBceDvw3fvwhx+f/nO4+SfW2xPYVxV6LzKExA8tGSSOcFn
+	 HHOVe/3U4ykxuePio35WaJM9E1feG/kncAJJ8Sx+EFqxOzQFKp2fGZjLUNspNoFUbF
+	 zi7kzD6Qio8Qg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XY70K5C4Pz4wb1;
+	Wed, 23 Oct 2024 09:59:13 +1100 (AEDT)
+Date: Wed, 23 Oct 2024 09:59:14 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Bart Van Assche <bvanassche@acm.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the block tree
+Message-ID: <20241023095914.61b9eafa@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Naman Jain <namjain@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH 2/2] drivers: hv: Convert open-coded timeouts to
- secs_to_jiffies()
-To: lkp@intel.com, Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:BLUETOOTH SUBSYSTEM" <linux-bluetooth@vger.kernel.org>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Linux-HyperV <linux-hyperv@vger.kernel.org>
-References: <20241022185353.2080021-1-eahariha@linux.microsoft.com>
- <20241022185353.2080021-2-eahariha@linux.microsoft.com>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <20241022185353.2080021-2-eahariha@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/5X90uYoOB/0jP82UnZqFMB_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 10/22/2024 11:53 AM, Easwar Hariharan wrote:
-> We have several places where timeouts are open-coded as N (seconds) * HZ,
-> but best practice is to use the utility functions from jiffies.h. Convert
-> the timeouts to be compliant. This doesn't fix any bugs, it's a simple code
-> improvement.
-> 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> ---
->  drivers/hv/hv_balloon.c  | 8 ++++----
->  drivers/hv/hv_kvp.c      | 4 ++--
->  drivers/hv/hv_snapshot.c | 3 ++-
->  drivers/hv/vmbus_drv.c   | 2 +-
->  4 files changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-> index c38dcdfcb914..79a72e68f427 100644
-> --- a/drivers/hv/hv_balloon.c
-> +++ b/drivers/hv/hv_balloon.c
-> @@ -756,7 +756,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
->  		 * adding succeeded, it is ok to proceed even if the memory was
->  		 * not onlined in time.
->  		 */
-> -		wait_for_completion_timeout(&dm_device.ol_waitevent, 5 * HZ);
-> +		wait_for_completion_timeout(&dm_device.ol_waitevent, secs_to_jiffies(5));
->  		post_status(&dm_device);
->  	}
->  }
-> @@ -1373,7 +1373,7 @@ static int dm_thread_func(void *dm_dev)
->  	struct hv_dynmem_device *dm = dm_dev;
->  
->  	while (!kthread_should_stop()) {
-> -		wait_for_completion_interruptible_timeout(&dm_device.config_event, 1 * HZ);
-> +		wait_for_completion_interruptible_timeout(&dm_device.config_event, secs_to_jiffies(1));
->  		/*
->  		 * The host expects us to post information on the memory
->  		 * pressure every second.
-> @@ -1748,7 +1748,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
->  	if (ret)
->  		goto out;
->  
-> -	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-> +	t = wait_for_completion_timeout(&dm_device.host_event, secs_to_jiffies(5));
->  	if (t == 0) {
->  		ret = -ETIMEDOUT;
->  		goto out;
-> @@ -1806,7 +1806,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
->  	if (ret)
->  		goto out;
->  
-> -	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-> +	t = wait_for_completion_timeout(&dm_device.host_event, secs_to_jiffies(5));
->  	if (t == 0) {
->  		ret = -ETIMEDOUT;
->  		goto out;
-> diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-> index d35b60c06114..29e01247a087 100644
-> --- a/drivers/hv/hv_kvp.c
-> +++ b/drivers/hv/hv_kvp.c
-> @@ -655,7 +655,7 @@ void hv_kvp_onchannelcallback(void *context)
->  		if (host_negotiatied == NEGO_NOT_STARTED) {
->  			host_negotiatied = NEGO_IN_PROGRESS;
->  			schedule_delayed_work(&kvp_host_handshake_work,
-> -				      HV_UTIL_NEGO_TIMEOUT * HZ);
-> +						secs_to_jiffies(HV_UTIL_NEGO_TIMEOUT));
->  		}
->  		return;
->  	}
-> @@ -724,7 +724,7 @@ void hv_kvp_onchannelcallback(void *context)
->  		 */
->  		schedule_work(&kvp_sendkey_work);
->  		schedule_delayed_work(&kvp_timeout_work,
-> -					HV_UTIL_TIMEOUT * HZ);
-> +				      secs_to_jiffies(HV_UTIL_TIMEOUT));
->  
->  		return;
->  
-> diff --git a/drivers/hv/hv_snapshot.c b/drivers/hv/hv_snapshot.c
-> index 0d2184be1691..86d87486ed40 100644
-> --- a/drivers/hv/hv_snapshot.c
-> +++ b/drivers/hv/hv_snapshot.c
-> @@ -193,7 +193,8 @@ static void vss_send_op(void)
->  	vss_transaction.state = HVUTIL_USERSPACE_REQ;
->  
->  	schedule_delayed_work(&vss_timeout_work, op == VSS_OP_FREEZE ?
-> -			VSS_FREEZE_TIMEOUT * HZ : HV_UTIL_TIMEOUT * HZ);
-> +				secs_to_jiffies(VSS_FREEZE_TIMEOUT) :
-> +				secs_to_jiffies(HV_UTIL_TIMEOUT));
->  
->  	rc = hvutil_transport_send(hvt, vss_msg, sizeof(*vss_msg), NULL);
->  	if (rc) {
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 9b15f7daf505..7db30881e83a 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -2507,7 +2507,7 @@ static int vmbus_bus_resume(struct device *dev)
->  	vmbus_request_offers();
->  
->  	if (wait_for_completion_timeout(
-> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
-> +		&vmbus_connection.ready_for_resume_event, secs_to_jiffies(10)) == 0)
->  		pr_err("Some vmbus device is missing after suspending?\n");
->  
->  	/* Reset the event for the next suspend. */
+--Sig_/5X90uYoOB/0jP82UnZqFMB_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, I should have combined distribution lists for the two patches, so
-everyone received both patches. Combining the lists with this email.
+Hi all,
 
-Here's the lore link for the series:
-https://lore.kernel.org/all/20241022185353.2080021-1-eahariha@linux.microsoft.com/
+In commit
 
-Thanks,
-Easwar
+  6fbd7e0472b7 ("blk-mq: Make blk_mq_quiesce_tagset() hold the tag list mut=
+ex less long")
+
+Fixes tag
+
+  Fixes: commit 414dd48e882c ("blk-mq: add tagset quiesce interface")
+
+has these problem(s):
+
+  - leading word 'commit' unexpected
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5X90uYoOB/0jP82UnZqFMB_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYLkIACgkQAVBC80lX
+0GxIRAf/ZiPm3Hbk232qKBAJH67k/faNW41qjKur0QvbgPhPAT81KU05razQb2cw
+6Whh6e1gBf7H+oq3Fth9+szr9GbZQdgNJw550lcpScG/OLTu4XS9EiiuT5OthKMl
+vgZ8flB+xoSRY0Tnc2jtHuOnh878cuYcDWRdKPDWSWp7NEsGuN/lWmIOxwcMkVgi
+LEBlDhoAKyNBIQIMJKj7GUOg96x2Bilq0E78qa+QU4sigY8r1V83t5wSVhgQyaZ7
+fX9bq66exaRxE6Aj7IZOzgck75VWixek78tFmS6FVcqJoJWF7jync/sOwz09Rs2N
+1ln1nGzuzhABy87d2Tmkork6tDf8Fw==
+=r6EF
+-----END PGP SIGNATURE-----
+
+--Sig_/5X90uYoOB/0jP82UnZqFMB_--
 
