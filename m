@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-376827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8247C9AB665
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9279AB669
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0EEA1C230C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7FF1F24371
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC5A1C9ECC;
-	Tue, 22 Oct 2024 19:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CA31CB30A;
+	Tue, 22 Oct 2024 19:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PujlgmID"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6EXzXHk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2FB12F5B3;
-	Tue, 22 Oct 2024 19:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252D312F5B3;
+	Tue, 22 Oct 2024 19:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729623935; cv=none; b=nawlyLTjv7G4zGF7lKE9AMVDTFVAtQ1xjbUsCQ1nTh5UEB5zBDDnFZL+JNbFg2rtH1+dxBxDcWWELRkyPTEDQLknrvqlFkznrzNYnoQ74YTrPooejWXfUpVnCMpfsYyQgZ9EGmk9NK69Er+b+7WEUv1TyyawHqB8vfBZLkmSpLo=
+	t=1729624000; cv=none; b=uzEUWcN9D9cUF8uwWW05f4n4+FO0LoMSiI8MGCP9T3g1lWHa1b+mb0KWbRDyRHs4DSaXiM+sLyRwlN/9p1RkBRHc46j+Xd/ccHvQsWDcUSzoXoU3pTnlJ0JtVUIjnCG4/hpvohBoV0fGnxohxaWAfaIQPuOQ1fE1zlOrVsyBDEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729623935; c=relaxed/simple;
-	bh=Qm1SvuTouZbA1KB/4nlKtjP9hezckri+4YLCg3jq9os=;
-	h=From:Message-ID:Subject:To:Cc:Date:Content-Type:MIME-Version; b=s6h/BMn1XpANPuaIe/pmgLe9l06v/+oIeKTRVpmu5cJ14P+QQvHHI+wlYgwKldMckra6e7YMR62viZ68EAd2XW9ll0F7gQ+jtuRwPw8fGHpcqm0cJumaaBsozqgAjO16+fFKLUiYRCe6fAwxoHS+8Wsz0lfZY7ZGo1SGcPzTRRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PujlgmID; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cb6704ff6bso3836718a12.3;
-        Tue, 22 Oct 2024 12:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729623932; x=1730228732; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhqvAiUNzRvD/II9xf+29SDbuvoVtnnw6tqLR/pkTds=;
-        b=PujlgmID+qNlejnmDipGTdFWPPdbEvUIGj5EkgaRoGz/Xcl/0rXuHVeYZBgaY9n6mU
-         YA/NZHUiIRMfjNyRNXDLrBJQCiUMt/UMKpaK/aDWl14/DMMEWoFXUPRibLRSl/g33Ik0
-         b3mj2CoOLZUI8UAc7iYivhkelSvvukddrSZLwz0hlbkBu+/H/GdYlh66y0fTIJmx5Y3i
-         V6b/UnABnqX83XzCmgDc60diAMTn+jL91DiaM6ogorw5H576fv5EnVPnsWzko1RHFghM
-         7hPWtRc293QjfMZgcg/ugYkQfIY38gVWDUhMMR1DiESXHf4dkJeXTXafRO1XccJkaPLh
-         jE0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729623932; x=1730228732;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZhqvAiUNzRvD/II9xf+29SDbuvoVtnnw6tqLR/pkTds=;
-        b=Wqk8pOVGvQ9knNTDCUl3drP0kfZZdssy1trq+0b27KJWzOeYov1W9WklGje5fbJuab
-         Mmyu0W1n5rA3uZc1AGauFR3lR3cuTSypNVEryFf1wMW6/mJdcUpYU+krIUyjuDBlTsnI
-         I5WoMlUaeX+Ntadn2JsURHU34GOcoZRQHA/4MWLke+TeeNhAzokv9EGPmXf12UYIYRdV
-         Bu0chh/cxRZawcj4m6jOi29ddqaTuSZEDY5tH/TaEEUiGm8Fj0opxYPifbjaYsKeyQZv
-         NWmX6jOlPSXCcSDJxpzfIo6+MxNHb2TzgAjme74PTAkX5SBA3n8RRsN9CD8ThhA2wWhl
-         POjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUElgqXm6O/McHCyZmZI6dpHSdxprV6dioWMxht8Qg+iXIEVdVoyW0tst5I/BI0j7ETV0cq7nh944hdq7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGMmHXTEntURqzDvkfYOFFZnsdqXjSyzvK+MhiRksOQAJLNw9R
-	xZuamV/dOt8bXM5ZT1RKMLvomkZ5IeEu7UM5W1mPC6DsBZwPcDSoqkW2u6wGV6M=
-X-Google-Smtp-Source: AGHT+IH0pP0hFsoTKZFqbEN8x96yfyEgQthSaETYnYFhe1pd0unWakC2Bw22cpPgheXkL3NQBzq96w==
-X-Received: by 2002:a05:6402:35ce:b0:5c3:cc7d:c29d with SMTP id 4fb4d7f45d1cf-5cb8ae6dd6fmr193292a12.6.1729623932329;
-        Tue, 22 Oct 2024 12:05:32 -0700 (PDT)
-Received: from [10.0.2.15] (23-152-178-143.ftth.glasoperator.nl. [143.178.152.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a654fesm3458886a12.36.2024.10.22.12.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 12:05:32 -0700 (PDT)
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-X-Google-Original-From: Liam Zuiderhoek <Zuiderhoekl@gmail.com>
-Message-ID: <3e28ba0a5733593d28f34515e13a9e61d1ffd01d.camel@gmail.com>
-Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 Oct 2024 21:05:30 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1729624000; c=relaxed/simple;
+	bh=2r8dbf+RtDRpeSNbb/i/tnd/Q2HwhxAktt5rsBh//Kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GuIBjHfMKLLTUlvgf4VMVKAMM+uGssfUPe2KPaC1pY18MY9V9NTbiQGAxA2/rTToZWv0W6a+Fne9pZnTynjahX5aINZz0zSGm4/AdWIeW/0lGuJi5BeruZos/UwtIMOxpiYI8mDSkd0lsmX0hjLq8YmEriD8EvpQG1k3LSiXBFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6EXzXHk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B918C4CEC3;
+	Tue, 22 Oct 2024 19:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729623999;
+	bh=2r8dbf+RtDRpeSNbb/i/tnd/Q2HwhxAktt5rsBh//Kg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R6EXzXHkmzJfXvqwR0odji6s7x0VG8I4jxa8KaSCLN1NltJuOyGzquOkk5qDEQNzn
+	 gVWEalspVP4gugAkdN/mnwbrB9QlRTSBfblGbrWR03PmOzHnftGMKHHu8iGm1LifBe
+	 iBlj7JhN2itiXxEIz6K9od8qMN/7xI00/kYdOMSpCi529MfAkIeEDTVrs1YWsYM6pI
+	 MBwdBRdA+7PKDZOMENAZnskJ6m0I7VpvFeUXbgVWWC9/5SqKgi0TCQiRWIiuKPxDok
+	 M3FNpdrGSSJ+XylDUOOyslVupuTaddOfOc1dIKi2kRMgC2vA1ZXUuGVU+wsHFbC7jw
+	 mWJMqZ/qp3JWg==
+Date: Tue, 22 Oct 2024 15:06:38 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
+	broonie@kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <Zxf3vp82MfPTWNLx@sashalap>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
 
-From 214adebf7cf37be941f208124fac9ea6bec0f1d2 Mon Sep 17 00:00:00 2001
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-Date: Tue, 22 Oct 2024 20:46:59 +0200
-Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
+On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
+>
+>The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
+>
+>  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
+>
+>are available in the Git repository at:
+>
+>  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
 
-Fixing a coding style issue.
+Hi Linus,
 
-Signed-off-by: Liam Zuiderhoek <zuiderhoekl@gmail.com>
----
- drivers/i2c/i2c-core-smbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There was a sub-thread on the linus-next discussion around improving
+telemetry around -next/lore w.r.t soaking time and mailing list reviews
+(https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-
-smbus.c
-index e3b96fc53b5c..6829def15933 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -122,7 +122,7 @@ EXPORT_SYMBOL(i2c_smbus_read_byte);
- s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value)
- {
- 	return i2c_smbus_xfer(client->adapter, client->addr, client-
->flags,
--	                      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE,
-NULL);
-+				I2C_SMBUS_WRITE, value,
-I2C_SMBUS_BYTE, NULL);
- }
- EXPORT_SYMBOL(i2c_smbus_write_byte);
-=20
---=20
-2.43.0
+I've prototyped a set of scripts based on suggestions in the thread, and
+wanted to see if you'd find it useful. A great way to test it out is with
+a random pull request you'd review anyway :)
+
+Is the below useful in any way? Or do you already do something like this
+locally and I'm just wasting your time?
+
+If it's useful, is bot reply to PRs the best way to share this? Any
+other information that would be useful?
+
+Here it goes:
 
 
+Days in -next:
+----------------------------------------
+  0  | ███████████ (5)
+  1  |
+  2  | █████████████████████████████████████████████████ (21)
+  3  |
+  4  |
+  5  |
+  6  |
+  7  |
+  8  |
+  9  |
+10  |
+11  |
+12  |
+13  |
+14+ |
+
+Commits that didn't spend time in -next:
+--------------------
+a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
+e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
+eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
+
+
+Commits that weren't found on lore.kernel.org/all:
+--------------------
+e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
+dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
+15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
+d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
+78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
+b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
+4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
+
+-- 
+Thanks,
+Sasha
 
