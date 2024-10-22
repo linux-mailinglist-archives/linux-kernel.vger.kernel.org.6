@@ -1,161 +1,200 @@
-Return-Path: <linux-kernel+bounces-375550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78709A9734
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7412C9A9735
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1491A1C22C98
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D591F23195
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62EA13A416;
-	Tue, 22 Oct 2024 03:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633A13BC1E;
+	Tue, 22 Oct 2024 03:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ipcqEc6V"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJSFWDMG"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3613A87C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35EA13A87C;
+	Tue, 22 Oct 2024 03:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729568484; cv=none; b=RXVgrSg4KplEHLuUk08rjKCsrR8fGGIJ53SLXp/tZkWZ51RvyI0gSIUkJBp6pt8moojoRx+Efs1ijbs6V5D8tXK5DNBrOsDEEgqnG21cWJRI7Wbv9vdslOhkqsyEJT6kQa8tuP+gqge4BSXgZusxe2MRjTw1W/9mrIoElyeJYag=
+	t=1729568491; cv=none; b=OGJqF997fBPxihftUWjlydmiolJYrkixkB4QqmJFnBJKEPjrh85I8mzOx4Yzr/EIjIS9gMe5Yv9gOFZNmdYiV3xTUXd4dN/HwYPYqCrnoJS/mKOgAOKa27n2lrAEnf2Q6IjGUWLbDEqg/uedtxw0/FjSWrb4iAGd3rBARzp4PVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729568484; c=relaxed/simple;
-	bh=maImKSs5V0zrt3tR8/oK0L6o2lpOfcXOPtCYebmGRB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LEKmUjFlAXabytyOeOmo+pWXRWY//q/3EJDhUxdTgXZFOsuuQt7Pdq67hFoV7QfgMQfHvd/YAaqkT8vgYIQMiUTWrCIjXOlC2CBQtaltqZ3RQoI8b/NsyEXvkKj7u5wC24sSFV+oH6nHnaxIPvsVY+Zubl8jzUwU1I1EkkuW6ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ipcqEc6V; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729568471; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PObwzHJJIeFT+P4LK3JrB627zhyrly0VUYXDLNen+YQ=;
-	b=ipcqEc6VJ5C8SPJdJu6KbIjTPxNFCQXcKogyH8oyNegwtq8+vX8qJnXO48sreyZkFqlgOnvVHLUVLWsp986rBEZyUCgXNc7Q7UK0TREWTyPOdWmi9Vhlvv+tud7FgltHcVIOAnCcRah5Z31QWbq0DqEflbY4U1WFVpE0sYGB8H8=
-Received: from 30.74.144.133(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHgJnN7_1729568469 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 22 Oct 2024 11:41:09 +0800
-Message-ID: <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
-Date: Tue, 22 Oct 2024 11:41:08 +0800
+	s=arc-20240116; t=1729568491; c=relaxed/simple;
+	bh=AFm/0k6SR+qNRolJ/kQ6NdQaMVt7ACcmwee2QkEQsMI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=riH0lbNKA56Z6afYqJRZjkeBAC5fz0VVDYkUF19XKTdOiADI1HA3uY7jWczB4zlVKM0Eugc4K82HLQIObKh9lQoqOLYW3+CnXyftAadq+ILH1j0ZOQNkguVeSz5E5xD5BzBlFpO355+Hle1nGsYgoEogb7AsG5lB4P0XI2t1KrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJSFWDMG; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e5ffbc6acbso2377266b6e.3;
+        Mon, 21 Oct 2024 20:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729568489; x=1730173289; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4yleVfKutHKagA6aWnH6dyM+M+TzSDMyDZKSTomw3IE=;
+        b=EJSFWDMGFzdIME2zXM1DyWGxzyyiRj7RPJqOJicH8bULgKMFWMKhft9RRjBwAt/S+g
+         zB8OqEMJ1QNjhS/bmLFk3503JlDaUYdzlMtJtaj7rtuccFZJQAA2SNto1kLu5I1HubuS
+         bSc5JynqKcAYuOHO0ywJFDvIi5WdDZ7YkWmyncgqeIyd0IYlIRL3WOgsOh5DJsmVPt77
+         oZ6BT3fUMGt4ExZ3GnXTFXeDI2NXiMQwPP1ad3IQ/MpUJQAcJfVPsjln6nhw4/yBDmHw
+         0bMYIMWA6AFzlwn0HdpmDziCEcj1dmlorQQ+RkMXyTr0ZVMG1ahxmTKGeuML+Kp0CAyk
+         wPpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729568489; x=1730173289;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4yleVfKutHKagA6aWnH6dyM+M+TzSDMyDZKSTomw3IE=;
+        b=c3XC5sdrcA967S+45YryKRmgBsqYcywPRltR7X8hpCDSzD+LyHTLaPr1+K8KO+cMD/
+         0VgLwYfyb2ZqZgw+wXCdCQoCYuv4E59XTPfj5gr2CrUmFjwS1in34oQfjNZfmeOIWPm6
+         Zf+VSLzj2oaUAHadJwpoHrmiVGtjZ5AV4bT4G7Qv4SX9Df0IsAkOzQHrJxV4USuCSxch
+         Rf2HfMR/SU6eSNZtNPXfmzGH1mChxAB8R/dYEsmePKD09Zxp84F5edxs8/OsfN903J8e
+         sPWFZD+nf40xCGnS52o4UBZj2gF9+pt/1XPVASow+GvMUqy1x6UoVpJ/0vFber0OPq7c
+         ZH+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJL3jMFphCIgpxPpx1pim7rfY0vMCoj86UEGnGO3vRRgD6U7pq3lAvUn5kyZXA+4Ca0bzy@vger.kernel.org, AJvYcCUzMZ5QNLh70onevQS0s+B1B1iFEVaGy19sM8D4NlR8vDy/0UQ3mIxxsL2t3/Tz/Mk+0UmCLWBcVfJHXfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTbOKVm7+d4sn2U8O09blnMohFiRHfqkCXwGxgLBx5ZtkEA9Ct
+	MUJx53arAwltCHcmHV9ll4clbdTYgfsLSG4OQQyKog2IJIOP87EY
+X-Google-Smtp-Source: AGHT+IHovOhJbMXYl7W2s+e71+jwqToNAkLnYyXo6XB8W8EP5xYiJsX//NlpX08oHNVfHGUhLPEULQ==
+X-Received: by 2002:a05:6808:158e:b0:3e6:153:bb6 with SMTP id 5614622812f47-3e602c87e3fmr12147251b6e.12.1729568488976;
+        Mon, 21 Oct 2024 20:41:28 -0700 (PDT)
+Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafbba8sm3901195a12.18.2024.10.21.20.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 20:41:28 -0700 (PDT)
+From: Zqiang <qiang.zhang1211@gmail.com>
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	boqun.feng@gmail.com
+Cc: qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
+Date: Tue, 22 Oct 2024 11:41:17 +0800
+Message-Id: <20241022034117.2294-1-qiang.zhang1211@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-To: Daniel Gomez <da.gomez@samsung.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <Zw_IT136rxW_KuhU@casper.infradead.org>
- <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
- <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
- <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
- <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
- <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
- <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+Currently, running rcutorture test with torture_type=rcu fwd_progress=8
+n_barrier_cbs=8 nocbs_nthreads=8 nocbs_toggle=100 onoff_interval=60
+test_boost=2, will trigger the following warning:
 
+WARNING: CPU: 19 PID: 100 at kernel/rcu/tree_nocb.h:1061 rcu_nocb_rdp_deoffload+0x292/0x2a0
+RIP: 0010:rcu_nocb_rdp_deoffload+0x292/0x2a0
+[18839.537322] Call Trace:
+[18839.538006]  <TASK>
+[18839.538596]  ? __warn+0x7e/0x120
+[18839.539491]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
+[18839.540757]  ? report_bug+0x18e/0x1a0
+[18839.541805]  ? handle_bug+0x3d/0x70
+[18839.542837]  ? exc_invalid_op+0x18/0x70
+[18839.543959]  ? asm_exc_invalid_op+0x1a/0x20
+[18839.545165]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
+[18839.546547]  rcu_nocb_cpu_deoffload+0x70/0xa0
+[18839.547814]  rcu_nocb_toggle+0x136/0x1c0
+[18839.548960]  ? __pfx_rcu_nocb_toggle+0x10/0x10
+[18839.550073]  kthread+0xd1/0x100
+[18839.550958]  ? __pfx_kthread+0x10/0x10
+[18839.552008]  ret_from_fork+0x2f/0x50
+[18839.553002]  ? __pfx_kthread+0x10/0x10
+[18839.553968]  ret_from_fork_asm+0x1a/0x30
+[18839.555038]  </TASK>
 
-On 2024/10/21 21:34, Daniel Gomez wrote:
-> On Mon Oct 21, 2024 at 10:54 AM CEST, Kirill A. Shutemov wrote:
->> On Mon, Oct 21, 2024 at 02:24:18PM +0800, Baolin Wang wrote:
->>>
->>>
->>> On 2024/10/17 19:26, Kirill A. Shutemov wrote:
->>>> On Thu, Oct 17, 2024 at 05:34:15PM +0800, Baolin Wang wrote:
->>>>> + Kirill
->>>>>
->>>>> On 2024/10/16 22:06, Matthew Wilcox wrote:
->>>>>> On Thu, Oct 10, 2024 at 05:58:10PM +0800, Baolin Wang wrote:
->>>>>>> Considering that tmpfs already has the 'huge=' option to control the THP
->>>>>>> allocation, it is necessary to maintain compatibility with the 'huge='
->>>>>>> option, as well as considering the 'deny' and 'force' option controlled
->>>>>>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
->>>>>>
->>>>>> No, it's not.  No other filesystem honours these settings.  tmpfs would
->>>>>> not have had these settings if it were written today.  It should simply
->>>>>> ignore them, the way that NFS ignores the "intr" mount option now that
->>>>>> we have a better solution to the original problem.
->>>>>>
->>>>>> To reiterate my position:
->>>>>>
->>>>>>     - When using tmpfs as a filesystem, it should behave like other
->>>>>>       filesystems.
->>>>>>     - When using tmpfs to implement MAP_ANONYMOUS | MAP_SHARED, it should
->>>>>>       behave like anonymous memory.
->>>>>
->>>>> I do agree with your point to some extent, but the ‘huge=’ option has
->>>>> existed for nearly 8 years, and the huge orders based on write size may not
->>>>> achieve the performance of PMD-sized THP in some scenarios, such as when the
->>>>> write length is consistently 4K. So, I am still concerned that ignoring the
->>>>> 'huge' option could lead to compatibility issues.
->>>>
->>>> Yeah, I don't think we are there yet to ignore the mount option.
->>>
->>> OK.
->>>
->>>> Maybe we need to get a new generic interface to request the semantics
->>>> tmpfs has with huge= on per-inode level on any fs. Like a set of FADV_*
->>>> handles to make kernel allocate PMD-size folio on any allocation or on
->>>> allocations within i_size. I think this behaviour is useful beyond tmpfs.
->>>>
->>>> Then huge= implementation for tmpfs can be re-defined to set these
->>>> per-inode FADV_ flags by default. This way we can keep tmpfs compatible
->>>> with current deployments and less special comparing to rest of
->>>> filesystems on kernel side.
->>>
->>> I did a quick search, and I didn't find any other fs that require PMD-sized
->>> huge pages, so I am not sure if FADV_* is useful for filesystems other than
->>> tmpfs. Please correct me if I missed something.
->>
->> What do you mean by "require"? THPs are always opportunistic.
->>
->> IIUC, we don't have a way to hint kernel to use huge pages for a file on
->> read from backing storage. Readahead is not always the right way.
->>
->>>> If huge= is not set, tmpfs would behave the same way as the rest of
->>>> filesystems.
->>>
->>> So if 'huge=' is not set, tmpfs write()/fallocate() can still allocate large
->>> folios based on the write size? If yes, that means it will change the
->>> default huge behavior for tmpfs. Because previously having 'huge=' is not
->>> set means the huge option is 'SHMEM_HUGE_NEVER', which is similar to what I
->>> mentioned:
->>> "Another possible choice is to make the huge pages allocation based on write
->>> size as the *default* behavior for tmpfs, ..."
->>
->> I am more worried about breaking existing users of huge pages. So changing
->> behaviour of users who don't specify huge is okay to me.
-> 
-> I think moving tmpfs to allocate large folios opportunistically by
-> default (as it was proposed initially) doesn't necessary conflict with
-> the default behaviour (huge=never). We just need to clarify that in
-> the documentation.
-> 
-> However, and IIRC, one of the requests from Hugh was to have a way to
-> disable large folios which is something other FS do not have control
-> of as of today. Ryan sent a proposal to actually control that globally
-> but I think it didn't move forward. So, what are we missing to go back
-> to implement large folios in tmpfs in the default case, as any other fs
-> leveraging large folios?
+CPU0                               CPU2                          CPU3
+//rcu_nocb_toggle             //nocb_cb_wait                   //rcutorture
 
-IMHO, as I discussed with Kirill, we still need maintain compatibility 
-with the 'huge=' mount option. This means that if 'huge=never' is set 
-for tmpfs, huge page allocation will still be prohibited (which can 
-address Hugh's request?). However, if 'huge=' is not set, we can 
-allocate large folios based on the write size.
+// deoffload CPU1             // process CPU1's rdp
+rcu_barrier()
+    rcu_segcblist_entrain()
+        rcu_segcblist_add_len(1);
+        // len == 2
+        // enqueue barrier
+        // callback to CPU1's
+        // rdp->cblist
+                             rcu_do_batch()
+                                 // invoke CPU1's rdp->cblist
+                                 // callback
+                                 rcu_barrier_callback()
+                                                             rcu_barrier()
+                                                               mutex_lock(&rcu_state.barrier_mutex);
+                                                               // still see len == 2
+                                                               // enqueue barrier callback
+                                                               // to CPU1's rdp->cblist
+                                                               rcu_segcblist_entrain()
+                                                                   rcu_segcblist_add_len(1);
+                                                                   // len == 3
+                                 // decrement len
+                                 rcu_segcblist_add_len(-2);
+                             kthread_parkme()
+
+// CPU1's rdp->cblist len == 1
+// Warn because there is
+// still a pending barrier
+// trigger warning
+WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
+cpus_read_unlock();
+
+                                                                // wait CPU1 comes online
+                                                                // invoke barrier callback on
+                                                                // CPU1 rdp's->cblist
+                                                                wait_for_completion(&rcu_state.barrier_completion);
+// deoffload CPU4
+cpus_read_lock()
+  rcu_barrier()
+    mutex_lock(&rcu_state.barrier_mutex);
+    // block on barrier_mutex
+    // wait rcu_barrier() on
+    // CPU3 to unlock barrier_mutex
+    // but CPU3 unlock barrier_mutex
+    // need to wait CPU1 comes online
+    // when CPU1 going online will block on cpus_write_lock
+
+The above scenario will not only trigger WARN_ON_ONCE(), but also
+trigger deadlock, this commit therefore check rdp->nocb_cb_sleep
+flags before invoke kthread_parkme(), and the kthread_parkme() is
+not invoke until there are no pending callbacks and set 
+rdp->nocb_cb_sleep is true.
+
+Fixes: 1fcb932c8b5c ("rcu/nocb: Simplify (de-)offloading state machine")
+Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+---
+ kernel/rcu/tree_nocb.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+index 8648233e1717..44c7cbe1db8e 100644
+--- a/kernel/rcu/tree_nocb.h
++++ b/kernel/rcu/tree_nocb.h
+@@ -908,7 +908,18 @@ static void nocb_cb_wait(struct rcu_data *rdp)
+ 	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+ 					    nocb_cb_wait_cond(rdp));
+ 	if (kthread_should_park()) {
+-		kthread_parkme();
++		/*
++		 * kthread_park() must be preceded by an rcu_barrier().
++		 * But yet another rcu_barrier() might have sneaked in between
++		 * the barrier callback execution and the callbacks counter
++		 * decrement.
++		 */
++		if (rdp->nocb_cb_sleep) {
++			rcu_nocb_lock_irqsave(rdp, flags);
++			WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
++			rcu_nocb_unlock_irqrestore(rdp, flags);
++			kthread_parkme();
++		}
+ 	} else if (READ_ONCE(rdp->nocb_cb_sleep)) {
+ 		WARN_ON(signal_pending(current));
+ 		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
+-- 
+2.17.1
+
 
