@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-376632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DC09AB439
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:39:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072ED9AB43B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC771C20BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:39:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01511F24F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9266136345;
-	Tue, 22 Oct 2024 16:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6697136345;
+	Tue, 22 Oct 2024 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cATx8RbE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dc9i7BsK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB021BC06C;
-	Tue, 22 Oct 2024 16:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B0D1BC067;
+	Tue, 22 Oct 2024 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615146; cv=none; b=AovoGxjPfGVkVL+33SKMUViztHUI4apvd4/dt8sljm/1WVJS09VBWKyNnrsnns6UmINgP8Rb9GXpkODUFXXxy2+XyHNYip9OYq6ILysZ8OdHGLKGH6NLGRdWQkaY5lPX7JadpNCRYd0U5JKW4ZGBYXX1Qe6S3OC0xCPiilB/F/s=
+	t=1729615161; cv=none; b=QRdRTBlPF3ldohpy0LtbqzpkjwPTgTXTICna8XZvdzuM0t/D8NYihPCEhm3ZwLM835koQv4qU2QtdZtaj6LFDhnaWrmvkIzJrCgPW8jV6Zr2TjI/OeuO8ls8AgVobaPk703Wokrww2tQpi39swdTyaS9Q899HtJ/29Qe+edpusI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615146; c=relaxed/simple;
-	bh=1W0o1boI38T6xH20Op/FwrC5u2sfzoI2AuC5Ia4sSK0=;
+	s=arc-20240116; t=1729615161; c=relaxed/simple;
+	bh=Bg16sVs+saKq7TsP84v0KZu00YD98S7+gFpODRt+Z6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dntylIyw147rJS2TNn9Km7ic9TcFmoth4EZ2xwWE/gWasP52iKX9Tz4u6unykPc7Y3mU5VwagHiB4Ra09oDMVwEa/K84dLyUC7LNM/4hZ9BbLONXcySkRiuqo73bXd/J11cRH4dhVOzvy/MylDXLZzyW9SOBewmHExUxSKb7uKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cATx8RbE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B0D2C4CEC3;
-	Tue, 22 Oct 2024 16:39:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSsfLu43EWzVxGXxlQsEXMAzXl6bK5X43H7c4bSqeudR6ufn0fHQgf7dpYkkv1vjFlJBaWeybR7sr786ugTC/qTawJnZ+fniQ0rr0xTxo/YRtH5SOr5SvW5KI9MfJjjv980DKTL4at+2Ur2PYQspnGbuM6bt8c2/oV3P2BXWdCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dc9i7BsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E44DC4CEC3;
+	Tue, 22 Oct 2024 16:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729615146;
-	bh=1W0o1boI38T6xH20Op/FwrC5u2sfzoI2AuC5Ia4sSK0=;
+	s=k20201202; t=1729615161;
+	bh=Bg16sVs+saKq7TsP84v0KZu00YD98S7+gFpODRt+Z6c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cATx8RbExfoeUThHzOi8DWG9VU3cqeulVOccx97L/ZFIcGxkEuHYALMnIOoa/vm0q
-	 mZ3FcDB0CvoY50wm3SFeMa6apnFxsGcxGenmnGlTcupXzJZIQJ0pgUCppW/v0y8jQ9
-	 MppPjcGoY+Wu6wgOd4sCx0BoY69uKJIhlI8Yf1J0gJzs7rbbc6TlslGQ+gG6ZcMUHr
-	 Vkrqb9fsZZj44S0gqt1AiBX5u7GjqYDnhpSrjm/gPJGgxwNscjvFnfRg8ucyAhzxDS
-	 e1XngucmtmPeWx27GKXzq90TqO4Yf5Eyg4eP9NS+y17fD/6dnsQjjCMPSaMZFPX2K1
-	 jHQ6SClS4nypA==
-Date: Tue, 22 Oct 2024 17:39:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: qcom: Add SM8750 LPASS macro codecs
-Message-ID: <20241022-duly-geometry-4b99f14926e9@spud>
-References: <20241022064155.22800-1-krzysztof.kozlowski@linaro.org>
+	b=Dc9i7BsK/ryhwWNhwk59NHgbw7OF4Tp8xi2W7/JfKXNtn5m78fPiGGcLu3/fhqggj
+	 uYoZ5l+sMykMrGh6Np8LT7euLwMkZKh7ofnuPWRxd014mIJS6JuCj77T2/IH25qDFf
+	 94dvbI/r+d2wIJBnnXvicqQgebGxBzilbkTGj5VjHJwbxaSAY+DsoBnRemr7Fx9X3j
+	 McVVhDeYjt0qHh8sdbBG8Tx6pqo1KSN/h3tyuxmB5LiLqOHdGMxFH1Er95sCY/zqaF
+	 QtRo94Vn9HwxzLMLPRn8mKeVhvTgihrrS4AIfCQSuY204EwRFgxCOEON+xPOoH68oD
+	 FQnNd83FbVikQ==
+Date: Tue, 22 Oct 2024 17:39:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Dhruva Gole <d-gole@ti.com>, Yoshitaka Ikeda <ikeda@nskint.co.jp>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@pengutronix.de,
+	Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Subject: Re: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts
+ for Micron MT25QL01 flash
+Message-ID: <1127989f-3175-49c0-9611-e30194b04018@sirena.org.uk>
+References: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
+ <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="am31B1u8bFQKB1sg"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d9hsVPxY3QJhX2wh"
 Content-Disposition: inline
-In-Reply-To: <20241022064155.22800-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
+X-Cookie: Surprise due today.  Also the rent.
 
 
---am31B1u8bFQKB1sg
+--d9hsVPxY3QJhX2wh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 08:41:55AM +0200, Krzysztof Kozlowski wrote:
-> Document compatibles for Qualcomm SM8750 SoC macro digital codecs (RX,
-> TX, VA and WSA), compatible with previous generation (SM8550 and
-> SM8650).
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, Oct 21, 2024 at 11:58:07AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> The culprit afaics was merged for v6.3-rc1. Makes me wonder: would
+> reverting this now even an option to fix this in mainline, or would this
+> just lead to a regression for someone else?
 
---am31B1u8bFQKB1sg
+Given the description of the original commit I'd expect so.  My guess
+would be that this is either tuning of the lengths involved or a quirk
+that's needed to disable STIG on some devices.
+
+--d9hsVPxY3QJhX2wh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfVJQAKCRB4tDGHoIJi
-0jSZAP0QJ7geSOzEjOmNnbmf4W+1+y8wS1WyDR7QvS+ZDVpeLwD+Ip57APW2rAPD
-pEWhF/+MYwNQicuWXM4RVDGzdCN8ew0=
-=vYih
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcX1TIACgkQJNaLcl1U
+h9CsXgf/bBXt4IFeAskPVOcT61kB5L+hdPjs32QQw3/Kw7c0PG0Rt+MplzQm6H8r
+cV6YYhk0qlRmIOmwC8Z24KkTgxO/gPjZvf3pVTWQrUauvWhgQQcjmi119pps4BdT
+prqj1mWkcfmPy5dizf7zPFlwyJk9nhUhsjUDVcZesH+iMQmBTDPsfhJv9/PacDgM
+g+J+lat0vUs5AV+J8muKhs4h++ReEbcWETy0CXeTfOv8OsaaG0tdG4AZ5Vt5ie6+
+jsvb5wZl51sMvr5+LwmqxcULh3jso6XrN2r9369JcCbwT0XgYDFRENEs/4eFWe7e
+v2OQYkmJ3dFo8xgd0lyTv2sCOza0vg==
+=Wvbg
 -----END PGP SIGNATURE-----
 
---am31B1u8bFQKB1sg--
+--d9hsVPxY3QJhX2wh--
 
