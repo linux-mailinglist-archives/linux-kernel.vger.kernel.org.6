@@ -1,94 +1,128 @@
-Return-Path: <linux-kernel+bounces-376064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAA99A9F73
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E709A9F7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180E61C2238A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A8E1F24EE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C3D1C27;
-	Tue, 22 Oct 2024 10:00:22 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD9F18E76B;
-	Tue, 22 Oct 2024 10:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7774E199236;
+	Tue, 22 Oct 2024 10:01:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA3D196C7B;
+	Tue, 22 Oct 2024 10:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591222; cv=none; b=PccJJ0aVP4CJXQWZo56qTshBSGs4eAkBnWPg1marqr6MAG0ZXHovcDHxtZyiPYmvTdIoAcqjdxSQ1PBaatA6/ocrFKvHqnrpMP5aI88htg9vwh8RZm6JcGUvk5MBPDNLmxCH5i98WAYLJ6MfJBnuWhiVQByN/uqAq5QfxW6hE6M=
+	t=1729591318; cv=none; b=nvi+lO9BK4K3Z2HyK6OIdEPoCmg06Nhjk7dwsgjEDFluupRpU6INaTfi3EYh5S34CNMhZL9BEwkYbL7vET9uLMagNcSEeyFIjxXOSUyj5e+5EOUrDcllAHxjZ1ODk+sE9PmPd0FjIPKSIjG0c8wAzcykimUwU6HRNgdoWMD9kVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591222; c=relaxed/simple;
-	bh=m0jciRWov6/Pb0WczR1f3Lnq/y1Tdtrih+STLR9VlJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1/8SlSwQyH56kmPoQ4Td7aXURgcOPq34MpPIHei+DBmx6NZ5r6vFYU2s6aRtFp+sWeQAp0qr1MZHmpHrBUuaONLzmDh+8U+OeH+HxmvC2CTb0ePrqafwwoa0F38txhoqdWRuK+uO+Ce7sFxCtCe3qT0eyH/j7jRMMH4ZcezsPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E9E6C1C006B; Tue, 22 Oct 2024 12:00:18 +0200 (CEST)
-Date: Tue, 22 Oct 2024 12:00:18 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/91] 6.1.114-rc1 review
-Message-ID: <Zxd3skksiPPTYZMV@duo.ucw.cz>
-References: <20241021102249.791942892@linuxfoundation.org>
+	s=arc-20240116; t=1729591318; c=relaxed/simple;
+	bh=aMHdY6O6EDnpUnBTDu6QR/VsigEjeyLZRSt0+vfKLKs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=A8QN8QChgtTuy4whUCHNKIWGg7yZDEj12UFymN9b2HKv5hlQNWFh6lbGeas6ImMctkM483sDNeLSjJ8Pc0uF6hRgbN9fcFvMdYDmeIiU3cVumdCtqBy564AY5ht9R1/GTMgf/Bzt7lwhDxDUu++NhwIgZYXFWUIOL58PNxKAUVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxeeEReBdn+t4EAA--.11279S3;
+	Tue, 22 Oct 2024 18:01:53 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBx_uAPeBdnmlkHAA--.43333S3;
+	Tue, 22 Oct 2024 18:01:52 +0800 (CST)
+Subject: Re: [PATCH v8 3/3] irqchip/loongson-eiointc: Add extioi virt
+ extension support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ x86@kernel.org, Song Gao <gaosong@loongson.cn>
+References: <20240830093229.4088354-1-maobibo@loongson.cn>
+ <20240830093229.4088354-4-maobibo@loongson.cn>
+ <CAAhV-H4W4LwL3U2HT+-r+6nH5ZSBBbPYL2wdZJqQF7WNkhOgMw@mail.gmail.com>
+ <878qv6y631.ffs@tglx> <2fb27579-5a4d-8bcc-db08-8942960dc07e@loongson.cn>
+ <CAAhV-H52kC_-ehzxmT5ye+XVNm5Lm=psSfAv6xqnQpkOHTMFdA@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <10de3f46-3f68-d2e6-4b18-fd098b6fec9d@loongson.cn>
+Date: Tue, 22 Oct 2024 18:01:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pujFqurOXd2c9nDO"
-Content-Disposition: inline
-In-Reply-To: <20241021102249.791942892@linuxfoundation.org>
+In-Reply-To: <CAAhV-H52kC_-ehzxmT5ye+XVNm5Lm=psSfAv6xqnQpkOHTMFdA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBx_uAPeBdnmlkHAA--.43333S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zw4ftry8CFWUJw1UGryrKrX_yoW8GrWxpa
+	ySkFn8tF4kJrWayan7t3Z5XF4YvrnxJFsFg3Z5Jr18A3sIvF1Fqr4xJFWUCFZ3W34rGa4j
+	vry0ga47XFyUWrXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
+	14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
+	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
+	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
+	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
+	vfC2KfnxnUUI43ZEXa7IU8yrW7UUUUU==
 
 
---pujFqurOXd2c9nDO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Got it, thanks.
 
-Hi!
+Regards
+Bibo Mao
 
-> This is the start of the stable review cycle for the 6.1.114 release.
-> There are 91 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2024/10/22 下午5:45, Huacai Chen wrote:
+> On Tue, Oct 22, 2024 at 5:17 PM maobibo <maobibo@loongson.cn> wrote:
+>>
+>> Hi Huacai/Thomas,
+>>
+>> Sorry for the ping message :(
+>>
+>> Can this patch be applied int next RC version?
+> Queued for the next release.
+> 
+> Huacai
+> 
+>>
+>> Regards
+>> Bibo Mao
+>>
+>> On 2024/10/2 下午9:42, Thomas Gleixner wrote:
+>>> On Wed, Sep 11 2024 at 17:11, Huacai Chen wrote:
+>>>> Hi, Thomas,
+>>>>
+>>>> On Fri, Aug 30, 2024 at 5:32 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>>
+>>>>> Interrupts can be routed to maximal four virtual CPUs with one HW
+>>>>> EIOINTC interrupt controller model, since interrupt routing is encoded with
+>>>>> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
+>>>>> extension support so that interrupts can be routed to 256 vCPUs on
+>>>>> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
+>>>>> node type is removed, so there are 8 bits for cpu selection, at most 256
+>>>>> vCPUs are supported for interrupt routing.
+>>>> This patch is OK for me now, but seems it depends on the first two,
+>>>> and the first two will get upstream via loongarch-kvm tree. So is that
+>>>> possible to also apply this one to loongarch-kvm with your Acked-by?
+>>>
+>>> Go ahead.
+>>>
+>>> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+>>>
+>>
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---pujFqurOXd2c9nDO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZxd3sgAKCRAw5/Bqldv6
-8n5oAKCeLZWZSYnwkLPsGvu+M43IMRHeaQCePcyyp4blxEr1GePNTb9nxQ7bUTA=
-=z2vA
------END PGP SIGNATURE-----
-
---pujFqurOXd2c9nDO--
 
