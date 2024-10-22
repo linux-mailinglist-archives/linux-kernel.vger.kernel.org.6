@@ -1,229 +1,214 @@
-Return-Path: <linux-kernel+bounces-376552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339ED9AB32F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:02:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EA39AB34E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19332851DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A841A1C229FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A11A1A2C04;
-	Tue, 22 Oct 2024 16:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD841BD00C;
+	Tue, 22 Oct 2024 16:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Zl++sZGc"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YShDMB9U"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010022.outbound.protection.outlook.com [52.101.69.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082C11BDAA1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612801; cv=none; b=t+liBLjGdzsMcGQEo0L10nFfqna5+bIw92abfoedlkMVaF16rYJfQ8I7hYDXgmO0l70toFfwohPZqUVrPZDMG1Cov48Gn2jXDlFhREewMWdhJem33G4It8bCP9qRygVkEEdqUy8ju1/ZXNHJXR9rYY7a4HqymOUmUGXxrEKdB8Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612801; c=relaxed/simple;
-	bh=Y/LX8W9dqrr6ALxZ8wGr5EDNPV1IjW1SCOSfcQnQQtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ilj/UbUtqtEk+AHtYca3huvhdLZ6X6JPqA3fjpqOtUBPuW5t071f+cSl68yDywedTD1C+NqzrvOLHycj/HNU9sY2d5xzyN6K6CypJUH+X3Xgk+2RB3rfHo90PiW86axOvLM9mq4Qm18rSLxEv94kXt2i+F2Fp4QjohUrf4IZzRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Zl++sZGc; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4a47c20b162so1557978137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1729612798; x=1730217598; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJnNbaojXN4c6BbsBJATwMXWi0Si+n6hGv93cDOPn88=;
-        b=Zl++sZGc5TMYLcfzlIxpz5ouqF9usNMwCNTLVbm3Zt0hjeaLe5V2QbIkUndMQW3Yy6
-         2tPQGzOKvwZ2M9jKYHa5dSLQsMg/VUuNbwacWArUC8CD6AbR8N7kiY9MZtTXTDl8Gfgb
-         ZQlLooFyWWSPqCxO05DvFizqeEMCZBBB47xIN+r2QraOaCB6CZxm7X4HU3mMAtXcd4CN
-         /VT9tOEwnpPbz56m0rOW0t3mY4ZcDH7FzrIG4TvxoQeyC2J+DVP6p9OFH7l2D7F0s6bZ
-         T7iwQvRBr8xPg6bWPxJ0WOBZPxj0TsWPZypMEActggkK08uUOB6lhZrtYBD7sNIh7eLl
-         VUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729612798; x=1730217598;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RJnNbaojXN4c6BbsBJATwMXWi0Si+n6hGv93cDOPn88=;
-        b=phuHrStVlc/LE+379Dg2YaQeiUAIHQoeeiWFPlkkuwdujjmxE89iJVR8roGuioXYDI
-         mCYw3VkXSER/QKRax5dF4Qdi2zIuvpDczaKxRTq8XM0sCNj6GUOCGJmGDTItEj8UwWbY
-         9OylRKGP7eILrEeCQktThydRO5VZJQ+imX0aGweuLT0I2XeQ8Ae0dTXWUMCb5luoFwj4
-         //88V3zuCtiIfx+Rrhu6T9PiHmOOg3PwwlMQcpBMP52K6uZNTLYfKuDq4v/RcAiPSRmk
-         skDWs26Zuvdf9Z2GfRClWUK7sqslj5NhoP65dw/IgOUByzsXAclu+QcuVa8rIeWgzUQX
-         o2aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXm24/0XlYbfQ23h135Y2oTFhpga8EnCnNx5fnDoq+PvcSi84WpmQ+ZAz1p9n+ivzoPx/BMjzpEv3LiAP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyuou+4NsHzafFKwdvbrMCjUWdoyI/jPXj9yAFcyJI+bayzPK8
-	ywg7rAtj0ejAeHqQnLzZWqEVwQy6zOWMf/3MfJ7D92oQpJBzBgLRtOspiot++A==
-X-Google-Smtp-Source: AGHT+IHz/1R5EH1N0X+mlRH1neLqyF7ZpErCrujYzG9Gm9PrcwwIZC6JljjI4sApXWeBIzcjrW5OWQ==
-X-Received: by 2002:a05:6102:3710:b0:4a4:6ec4:7d31 with SMTP id ada2fe7eead31-4a5d6bb234cmr13851852137.20.1729612797824;
-        Tue, 22 Oct 2024 08:59:57 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::35fc])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c7248fsm30729551cf.36.2024.10.22.08.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 08:59:57 -0700 (PDT)
-Date: Tue, 22 Oct 2024 11:59:54 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: huanglei814 <huanglei814@163.com>
-Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	huanglei <huanglei@kylinos.cn>
-Subject: Re: [PATCH v3] usb: core: adds support for PM control of specific
- USB dev skip suspend.
-Message-ID: <bcd902e0-3744-47f6-9d19-3d712ba3fece@rowland.harvard.edu>
-References: <20241022090905.9806-1-huanglei814@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F1E1B5337;
+	Tue, 22 Oct 2024 16:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729612915; cv=fail; b=C8TeBQaRrK2/dVf+AT9XKWOSC+SNvykw8WOxXeuC07/HRcUHee/0PcA+sNzIj6uVXyhQr1co3fZMP48kWOgQ95diyX/tMvuvkz5LQ2dbMEo859cAE80VQCyETwVmdBj2rP4TJ+hMfb9KHQYseYb0LqsnDbUEpW/JOy974gkS100=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729612915; c=relaxed/simple;
+	bh=iDG++B391EjlZhhb17gw2/NsXyyKFAaZmgJmRWdAPhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GnuBYg603LZlefMB3WG+ffRqqX6Vk7fIGSFTz0gMgj9uVvy8alE+JzLttC4NrtbsjJP98Y2QLmQPBh0vz/SBveXOMK3+Hu6y7rttuewlKyE1KwbWexn8hNcZdh2pyDim1JOlUnQjDzbW6T+s49ZAa1BJcrVyZzuoiHjpF7to4VM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YShDMB9U reason="signature verification failed"; arc=fail smtp.client-ip=52.101.69.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cFIWCqFxaulvam9YJDzJavdZTzSPifgEFtwrtD4xFbwQX7inSBHYk8urmCVkRbhnF7ASSuPqhs84yuBPPwiUCPzlWRyv6EkBHxwaPA9SS5wO0x8vqonlfaB4LEhSfsSJu2w8BKNriL3IsVk70uhPIKMbeECoC2qktk0KUhj4r3VphzTs5I4rD1Vzr69VUHIl6GVgWPyvg1aYuND2TSXZWC6i+ARxWhRqvhCp/+dfzIJ0v2YpRr2l3gj6VaSho7IcL93pmkPmt8phmof+yfOFwpQ+SYPwt3YFlXEqJGO1CpzJfyxS5gkt/z1SEGMM+43D6Jq10dcpKAmb9LhXQqpwxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m42Vk7PiEQj0Cn1GBcu9AsU6c9rpcvqhftjTPQC8gic=;
+ b=AmBM9RSJqo8kwSxPOZAWEO2JuNdGpHqUZT69gVh71kMMa19HWgtneK6T6wHjlZUy6By5tlc8k64IwhBVCiC1JBTJpbxYB6GNninZo+QHn1S8DSSJWrFFdw0EsPmrwYX39r1xYF2aQM00XZ33nsQdT8Y6qZTxXvlcb7boj/3yJs7/8q+ufPitvJ4EXKaVIBhZax+szzwmF3nLCCyufLNLuvRIrcN5jV4yfbDX8TJFRZ7Ymb66iu6ETD1SyZCyaGtu055LGgY96ePesmDcFxD/kDC0Bcd4z78t6QWh3Qls3U2LYDDLtavy/e4O3f7rPgPWK3GnB3YErzYJa6jGrTwcoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m42Vk7PiEQj0Cn1GBcu9AsU6c9rpcvqhftjTPQC8gic=;
+ b=YShDMB9U1zpMYhhlx3ApsqUSls6SOq8EKwYu/zUyQznDTYWh6r7NjoCLOtQVum6T12J/VZUxpjtEBpVz1WxANSytr+ZOoC+8gEexKfUY3FOKBYTIqmPIRXYrLnX8Dno+lszXdPBJ1EceOj5GF8S+9+N5vVvCKWQAATfO+SuDw+MYIckIhwm1DQqg3b+dryXyEss3mkmoX/TgfwmF8dMkf+lTKdhe2dK2kLmORwigqvuIfPSjWtVlyCO4eobpcxqz0ixtvK/BEyQmWeucXAdr4csCc0trQ2rqxwYw3VogvjepnVokzYBshkkDC1S1A7llt6NsmmuuDVXh0j7UqaDJvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PR3PR04MB7417.eurprd04.prod.outlook.com (2603:10a6:102:8e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 16:01:49 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
+ 16:01:49 +0000
+Date: Tue, 22 Oct 2024 12:01:42 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	pratikmanvar09@gmail.com, francesco@dolcini.it
+Subject: Re: [PATCH v3 2/3] pwm: imx27: Use clk_bulk_*() API to simplify
+ clock handling
+Message-ID: <ZxfMZobFdBA7ffhU@lizhi-Precision-Tower-5810>
+References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
+ <20240910-pwm-v3-2-fbb047896618@nxp.com>
+ <7kplk52i7e2nha5ym4loza5oc3lwghifjfk3aut24w3hjagfk3@zusb2naeaevw>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7kplk52i7e2nha5ym4loza5oc3lwghifjfk3aut24w3hjagfk3@zusb2naeaevw>
+X-ClientProxiedBy: SN6PR05CA0019.namprd05.prod.outlook.com
+ (2603:10b6:805:de::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022090905.9806-1-huanglei814@163.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7417:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ad8fa24-fdae-4057-44e6-08dcf2b2d626
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?DnsGjtgjAjnZVn9D5Q2hRgM+ATZKNuih/FB7oqPdd22Z4/T11lBTcc4z7b?=
+ =?iso-8859-1?Q?Of9Ix7UUolB4+LVwHhiin/ss8Bo7Iou7HOYd+D4/O7z3OJISXajUgPsbGB?=
+ =?iso-8859-1?Q?bEKZnVnJZSuMBa9uo0wwGed40Kp2jQth9cmjorIFV8Wsko/3/hASMU3CoQ?=
+ =?iso-8859-1?Q?ogjBKVfabIyVx08M1XFnbIjzs1U5x/kI2GsfKHGJAtmtJItnjth7pHbvHr?=
+ =?iso-8859-1?Q?CB8A9k4wFZ493uAfG3N+OxkyBl0p11CG4Fvt4AQrIIgdtiPLRM1h3RkJS6?=
+ =?iso-8859-1?Q?lxZ614KZQAGfJUXKodBnHfHQt9rfGVg9i15l1Pa2sHqG20aVb2GiDiVsnT?=
+ =?iso-8859-1?Q?HwRkSV3D9rDlP/8i3ieGg8ouLzLe0ThV9QQhdZW3BYXYmFJYYIGsgTsefc?=
+ =?iso-8859-1?Q?n/4Oz5y1Ly5xXJbDjc792gwaAEennViiFIHBJ2vpnT8C/aFvnJjL/9DiVK?=
+ =?iso-8859-1?Q?y6jWcCriZECjFhJOH80Q8KLFlsSOdnMnNANzpPfzm+JnTOYLiOlu6+twjt?=
+ =?iso-8859-1?Q?40PoVuFSc3/YJO5e7tuE56vSNtkhJ/qzCok2r+ZEUFNm2A7W1J3SlV07W0?=
+ =?iso-8859-1?Q?scT7OcCC1gffZqWxgnkHwQwk9TuSV57QTPe90KeUL5GZaETpPHzC1eDWa1?=
+ =?iso-8859-1?Q?/94Ze8qy6HFGirNyBoghDyXU3FLOOj/7DzMqo4dJXcwWdVOH+r6QIUEwGl?=
+ =?iso-8859-1?Q?U8eSSh6SS4LgndqofNIUhfTbE4U21UQOu2WvqsH0M+hkf8Bh/wARsrQqeq?=
+ =?iso-8859-1?Q?oOxBtuKKt+vWJ6i+fqo2VywM34MG0OkIOuJSS1Tboc8zk+iDhl/YUaha7W?=
+ =?iso-8859-1?Q?1OdfRYzMvOBKt4wpk4t3GShV3/3YWCXnhe9RHZt0KxdlxySveGu7GFskq3?=
+ =?iso-8859-1?Q?OzfFWEaK3nUfBgzl+hH+sm5gLMhuSb6+w4xgDOS3y4+uBvAMxnKiLBGe0m?=
+ =?iso-8859-1?Q?CYsGPcYT7W+PO2/X6qviM/vHHNgnPFVwtcyl+AaPlyic2H8lZy+cvbHpfx?=
+ =?iso-8859-1?Q?PN13Fq4KiaPAOwLQKmMoifkwIVjcWqtJXCcWzHQB3HbOeW0nQNtm1uFmfN?=
+ =?iso-8859-1?Q?VH0opqZTbu4bQRx+CoQJyhRn2fxXa/T54DTBvkrzTx20RfzyljyVWFgWbn?=
+ =?iso-8859-1?Q?8khDGbAmUuWpVTj3+vo7NDjKjIneeJKZMUsdx8SXYUJmHqEL+en9rbpsjb?=
+ =?iso-8859-1?Q?//n5+WM27M3e+8UXgh9eeQTZjWdSske8yEppG0UfJ67IYjhVBpISU1AifW?=
+ =?iso-8859-1?Q?yS/XaxgGPmVhWab4gsDxgN+97FhyzpssijjuKeSY9sbMHMibjScQ2ZAXjk?=
+ =?iso-8859-1?Q?C3hxMgPqmB8LGUbcQusruFfK7HpyKCniqKXwNOFeVNz71rqWkSO5nlJh2A?=
+ =?iso-8859-1?Q?BVdRIhQ+h6Yh17z5FwuFbmFCzn8n669s5V2gjpFWQAiyyDqioVaUoL62Z7?=
+ =?iso-8859-1?Q?jjE5xHtuvf99VNeU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?o36YfO1nLR+Q2+Wqgvz+bRQQ5Um+jMU66rYaWLQ80sRZrMAovEyR5231ce?=
+ =?iso-8859-1?Q?4Kq7mEbSOX61R0zriJUH/KBMGDSLrDELdHcPcd+FBfD5vLTIWJu2tDLo+F?=
+ =?iso-8859-1?Q?sc4lG6rm/pMThbDsO4FQE3SXV669DGI3GNYG6oQB1so7F2bChAqagF/5kj?=
+ =?iso-8859-1?Q?OO01AoRD5yslkJ4l+uk54RO/hSMFeH7orIdo+gt+U2spKRqcyNSkiZbHcb?=
+ =?iso-8859-1?Q?FDQoKhk93xvCR8SgloMBdR3a+HPecWE1VRmNbG/t7LGi6jinOjUm/ZL8Z2?=
+ =?iso-8859-1?Q?OIDoHfLOQWeRW3C06ekn3Q0qKDBEMllH/z/izd9p8C4PzXevydSpHus3cq?=
+ =?iso-8859-1?Q?8v/j6ckFMZSDRN4TEpL1oh1PwvUJRPN7BOs3E9tyDjDJSVBzy092tPcGWx?=
+ =?iso-8859-1?Q?d1IA+nHGzcOSVD4J9qhGyK70sBtluGlN0+/8j5shO5+dDvDQb44raTM6L6?=
+ =?iso-8859-1?Q?OZbhdqLKdFoXOgZrJBSrtpDSFXAEwNL7n7TOlyOT8DKyjxaNM9v7wga+w2?=
+ =?iso-8859-1?Q?uZcm3En0dGJd1M57osoZOeROhwR/fElomlw4DRXsjvnU3qmdByzC44XbnM?=
+ =?iso-8859-1?Q?qXv8fpGEhy315SYrX/sEbCvOv+6Kbq0g/DN0wgoeL0+9aMk81XuM6tLcxg?=
+ =?iso-8859-1?Q?Ti4rsB7cmw6eCUda6seZn+zkffianQVntY9LeT0bz0mAAwPSlFVQRIonVD?=
+ =?iso-8859-1?Q?zG5nH9ltMCm3ayca03ztr1wWl7eyumPC5HddQc3dvWwb2LKir8Fk7VWv3G?=
+ =?iso-8859-1?Q?a/2salyPVGVnOW1nSxhT3rvQTt90aUIGJP/mN3WMo2dXDP39vSjnsbh7cS?=
+ =?iso-8859-1?Q?zopR6sYXloEMhlnTZFHFBWgs7WBuj4SO8BS14YlEQ+g0iKDNj1M7pcRUWz?=
+ =?iso-8859-1?Q?7ltxgDG2V5/ETNk1vv3AjMsSFaAdTvssl5vtzD0GdEBaNvncg2PNG4IBy1?=
+ =?iso-8859-1?Q?U0UYkGbr1l6isfwZKHOO+3vuHG8/myXhhF5aJWF9khMwRX5sQNq8Ksuph0?=
+ =?iso-8859-1?Q?4jtrvUO5iIYy6/qDZpDXo6jArT1dqrafip3U7ikb3cc+OHpDLM3pjVJtCx?=
+ =?iso-8859-1?Q?eXkMAcRF59VrGnwKtHOJZgAp3O61uHxPaVmwK7Bn0keaEJk/1cgHDtzafG?=
+ =?iso-8859-1?Q?Q1kg3LWqxTXU0WdhqB50/sJcrLBBW6Du1uwW6Ow1BM+rVvO5oH4fw+vpfN?=
+ =?iso-8859-1?Q?ksHS1I6FVRWltJPDDb3eO95B2ZCkdkzgOSc1st39/p/Sxv+Ng57nPDDAbs?=
+ =?iso-8859-1?Q?n+F04i1A8YNOcSd1Hvd+BWNQD79tFP6dmjsaUwSZmbIFD7Y1Pf+hEfcIkW?=
+ =?iso-8859-1?Q?iSR+FFi/OqhufpbNyJmm69Y6SdiHwvWACyOvzEOmojc/2theygiDxq9dxl?=
+ =?iso-8859-1?Q?bjQ5CfBJACH6O2wvUw+WLw2C0URg/jSvW0zs0e54ha1k6okcsADD/+c4gg?=
+ =?iso-8859-1?Q?M0hBg1jBOKmxYmkVE0xO9t9xh9Ig2yrv3RVR0vf/KeviSiK7Z0vfW418tl?=
+ =?iso-8859-1?Q?vFTsiEPrIZTwBhJ5wBTQYe0E7wFGqG+UCU5zM75iFRcoja16YQzvGfBxji?=
+ =?iso-8859-1?Q?FpaM/M9dl+kKk/LRAb8el/b97CiHYoBaMaZlAu3NVQOPDqQN666wH+zG4h?=
+ =?iso-8859-1?Q?g2Gq9Ovx4ljD69vD6mwi8oRvv5ee87Ezpn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad8fa24-fdae-4057-44e6-08dcf2b2d626
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 16:01:49.1895
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nWrugPw4BFNXPTSFtRT3Pws5NW1fZnojgpGMjdjINDL4Mr1wPtYE57+cTyMaHpxrlO4sWHwDZWwV24EW3eVDEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7417
 
-On Tue, Oct 22, 2024 at 05:09:05PM +0800, huanglei814 wrote:
-> From: huanglei <huanglei@kylinos.cn>
-> 
-> All USB devices are brought into suspend power state after system suspend.
-> It is desirable for some specific manufacturers buses to keep their devices
-> in normal state even after system suspend.
+On Tue, Oct 22, 2024 at 08:53:40AM +0200, Uwe Kleine-König wrote:
+> Hello,
+>
+> On Tue, Sep 10, 2024 at 03:07:19PM -0400, Frank Li wrote:
+> > @@ -229,7 +209,7 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> >  	int ret;
+> >  	u32 cr;
+> >
+> > -	clkrate = clk_get_rate(imx->clk_per);
+> > +	clkrate = clk_get_rate(imx->clks[PWM_IMX27_PER].clk);
+> >  	c = clkrate * state->period;
+>
+> Unrelated to this patch: clk_get_rate() should only be called on enabled
+> clocks. Given that further down in that function (see next hunk)
+> pwm_imx27_clk_prepare_enable() (or clk_bulk_prepare_enable()
+> respectively) is called, that clk might be off?!
+>
+> >  	do_div(c, NSEC_PER_SEC);
+> > @@ -259,7 +239,7 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> >  	if (pwm->state.enabled) {
+> >  		pwm_imx27_wait_fifo_slot(chip, pwm);
+> >  	} else {
+> > -		ret = pwm_imx27_clk_prepare_enable(imx);
+> > +		ret = clk_bulk_prepare_enable(imx->clks_cnt, imx->clks);
+> >  		if (ret)
+> >  			return ret;
+> >
+>
+> I applied just this patch to
+> https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
+> . The others are still under discussion, right?
 
-Why is it desirable for devices on these buses to remain at full power 
-during system suspend?
+Yes, thanks. I think 32k is not necessary and need more research.
 
-What about wakeup requests?  If the device isn't suspended, it won't be 
-able to send a wakeup request if it needs to tell the system to return 
-to full power.
+>
+> I see you signed your patch (which is fine!), but I couldn't find your
+> key, neither on hkps://keys.openpgp.org/ nor on
 
-What about runtime suspend?  Are the devices on these buses supposed to 
-remain at full power all the time, or only during system suspend?
+Thanks. Fixed.
 
-> v2: Change to bool type for skip_suspend.
-> v3: Rebase and update commit message.
-> 
-> Signed-off-by: huanglei <huanglei@kylinos.cn>
-> ---
->  drivers/usb/core/Kconfig     | 11 +++++++++++
->  drivers/usb/core/driver.c    | 14 ++++++++++++++
->  drivers/usb/host/xhci-plat.c |  7 +++++++
->  include/linux/usb.h          |  9 +++++++++
->  4 files changed, 41 insertions(+)
-> 
-> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
-> index 58e3ca7e4793..69778aa7b913 100644
-> --- a/drivers/usb/core/Kconfig
-> +++ b/drivers/usb/core/Kconfig
-> @@ -143,3 +143,14 @@ config USB_DEFAULT_AUTHORIZATION_MODE
->  	  ACPI selecting value 2 is analogous to selecting value 0.
->  
->  	  If unsure, keep the default value.
-> +
-> +config USB_SKIP_SUSPEND
-> +	bool "Vendor USB support skip suspend"
-> +	depends on USB
-> +	help
-> +	  Select this the associate USB devices will skip suspend when pm control.
-> +
-> +	  This option adds support skip suspend for PM control of USB devices
-> +	  in specific manufacturers platforms.
-> +
-> +	  If unsure, keep the default value.
+> hkps://keyserver.ubuntu.com nor in the kernel keyring. At least the
+> first two should be easy to fix.
+>
+> Best regards
+> Uwe
 
-Why does this need to be a Kconfig option?  Why can't it be enabled 
-all the time?
 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 0c3f12daac79..05fe921f8297 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1583,6 +1583,15 @@ int usb_suspend(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int r;
->  
-> +#ifdef CONFIG_USB_SKIP_SUSPEND
-> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_SUSPEND)) {
-> +		if (udev->state != USB_STATE_SUSPENDED)
-> +			dev_err(dev, "abort suspend\n");
-
-You should not use dev_err() because this isn't an error.  It is the 
-expected behavior.
-
-Why do you test for PM_EVENT_SUSPEND?  Don't you want the device to 
-remain at full power during other sorts of PM events also?
-
-Why do you test udev->state?  Don't you already know that udev is not 
-going to be in the SUSPENDED state?
-
-> +
-> +		return 0;
-> +	}
-> +#endif
-> +
->  	unbind_no_pm_drivers_interfaces(udev);
->  
->  	/* From now on we are sure all drivers support suspend/resume
-> @@ -1619,6 +1628,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int			status;
->  
-> +#ifdef CONFIG_USB_SKIP_SUSPEND
-> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_RESUME))
-> +		return 0;
-> +#endif
-> +
->  	/* For all calls, take the device back to full power and
->  	 * tell the PM core in case it was autosuspended previously.
->  	 * Unbind the interfaces that will need rebinding later,
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index ecaa75718e59..8cbc666ab5c6 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -265,6 +265,13 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
->  		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
->  			xhci->quirks |= XHCI_SKIP_PHY_INIT;
->  
-> +#ifdef CONFIG_USB_SKIP_SUSPEND
-> +		if (device_property_read_bool(tmpdev, "usb-skip-suspend")) {
-> +			hcd_to_bus(hcd)->skip_suspend = true;
-> +			hcd_to_bus(xhci->shared_hcd)->skip_suspend = true;
-> +		}
-> +#endif
-
-"usb-skip-suspend" is an odd name for this.  "usb-never-suspend" 
-would be better, in my opinion.
-
-> +
->  		device_property_read_u32(tmpdev, "imod-interval-ns",
->  					 &xhci->imod_interval);
->  	}
-> diff --git a/include/linux/usb.h b/include/linux/usb.h
-> index 672d8fc2abdb..3074c89ed921 100644
-> --- a/include/linux/usb.h
-> +++ b/include/linux/usb.h
-> @@ -487,6 +487,15 @@ struct usb_bus {
->  	struct mon_bus *mon_bus;	/* non-null when associated */
->  	int monitored;			/* non-zero when monitored */
->  #endif
-> +
-> +#ifdef CONFIG_USB_SKIP_SUSPEND
-> +	bool skip_suspend;		/* All USB devices are brought into suspend
-> +					 * power state after system suspend. It is
-> +					 * desirable for some specific manufacturers
-> +					 * buses to keep their devices in normal
-> +					 * state even after system suspend.
-> +					 */
-> +#endif
->  };
-
-This patch will prevent the USB devices on the bus from being suspended.  
-But what about the host controller?  Don't you need to prevent it from 
-suspending?  After all, a USB-2 device will go into low-power suspend 
-mode whenever the host controller stops sending packets -- even if it's 
-connected to a USB-3 host controller.
-
-Alan Stern
 
