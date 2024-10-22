@@ -1,191 +1,152 @@
-Return-Path: <linux-kernel+bounces-376948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF9B9AB7FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:49:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7FD9AB7FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CF9283CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D0ABB23A05
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23441CCB27;
-	Tue, 22 Oct 2024 20:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105CB1CC8BF;
+	Tue, 22 Oct 2024 20:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJEoon9Z"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/pl3X5m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B215E126C05;
-	Tue, 22 Oct 2024 20:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657861CC156;
+	Tue, 22 Oct 2024 20:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729630154; cv=none; b=mo2IeuAlQo6oNDhTHQEGUP+U/6sohTNlUkxHthP7vdYg/6oNCEDbkjNzVBMAAcGXKA9sI+cvLGoENpdANVcJgcFSfNiVGOvw6q/K4Cjin6GkZL3qLh8SdPf9Pxak2C6LSur7BKzIgsyeXrSo3Um4dn2n0+Fr44ozyrIxPbmmRjY=
+	t=1729630174; cv=none; b=Njp873TPwqvOYvA41u573vkHURemTI1kF6QecGZdCJMFGdxTlfkZ2f0ZfIn5qLHeNfg63SSrqcuBpxdmP9bclx3m4JS/0U/3ie/RS6DCA3epkcpH3LkvqOCpJquNbq/g0imP6WUBWIM21uVoR/5i1f2eMuhhF4Bo5bWJ0MHjeug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729630154; c=relaxed/simple;
-	bh=dittf4YLWlk6FyJunLkXtq1goowtssRJG7mp7ZtbN6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3eGnkmV88nYfefa1BSPtwMxVypF84pLFo7oLx29/sHk2xuETCRCHgkevL+842eCZLkwT5B6Ee34qzY4S4clDztyzHlni645lklIc5tVjvlnpLppwqg7OchVK/JI8wZAcXDPp37QlKL1zHaVL8S0hm3AWpqQbchgzBifRDVU08E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJEoon9Z; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e52582cf8so4294446b3a.2;
-        Tue, 22 Oct 2024 13:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729630152; x=1730234952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ffGPoSlqwPV+RaSbIJ/P8DdxGIkGwkezqZ29HBWiZ4=;
-        b=DJEoon9ZpSTp4i3ynI1Ye1Rj2pV98B4iNYXJIOP9/4xB4btedc5uNFLOTc/wkQ87Z9
-         GjxpJgf3OXMe0D0wdm03yJ+Yxov2GOHtKqL8dKUS32J/66TCtSo5+Xrs6TWFq2iV3vqq
-         UMwxawws0FSeD8ZY817YaZ23rI299GIZM4jth/yBltdjPits5VBz9CYNMPg7YPvHOlvl
-         kiFwc30xbUMFah7T2bumaUcfezhjQCX3bKVNo8dPtuIXdqZ5vLTLlkTHBywaVvStQYKw
-         ccyNvhzWWu4yIjEAyOqHTIyPI2OjcBHPS8SVK3XtosMaI/k25FqMWChWGpcZz9pFYxq+
-         g7xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729630152; x=1730234952;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ffGPoSlqwPV+RaSbIJ/P8DdxGIkGwkezqZ29HBWiZ4=;
-        b=F9Bf5aodNsqxLv61Rz0+oxEBqFxEPqPsrcTqHo3VX7JDCA7crN6OUopWNbX2gCeYi2
-         NPJMbVSnolauWJqthpoZoYEL9yLJitVszH+5fUsf4kc7uTNTMc40zq5uFEPX+30eUxbY
-         wWZeGpDsr9bpPBEUsi5stHQnnE4k1wdMVjS+nysx5doOlm9OCqzC3SGdrsdAHxZnbSf9
-         6HvkM+g0omfK9ciLpY9QhS2TTkWvwN86feuwtLUnvTUrQtBLIZReMJOIwUIz1CtCYHk4
-         XyNyR7XH+e4uM0SoliwfnSdABovDlFveo4mweH3B0lqS8b9lSepA3ze58G5G7UHTdlZk
-         08Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5tkbOvDmbbo0dIcN0PzjSuWnvKLOOSFV4xPnjBEHpMXGtblCkzCnSUPJpYl0CBL3wo6BEymrTT2+kmJ9@vger.kernel.org, AJvYcCUzH8lXGJuaRgcVimUbyl/rQAhCM5o9s0zBuVaL5ppj1Ho4u8vo3o2YxtkdNgDKdjpVios=@vger.kernel.org, AJvYcCW9Ri2Pz2+NVOq2oO4R/yzGI9LmAFFlEtDcWO98mHq+DZv0Auvha35IKKqG/mdE+CFaHhiwKNm1nC7U47xA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGsC3jBgaUpwo71X+8ifrOdX0dNs780P3Np58wxA2rnudZ4V73
-	o/QD5cerztv+OYMXyrljhQi7BVEuw5bWCscrLP+wXiHop8Rlu9mHydQHMqk2
-X-Google-Smtp-Source: AGHT+IEt6paVVR5iJbEJAuGo6CnfteGATce4ywHLHC1CFvA/2HmuoSJo5fx+ZhAfak0QRGBMpqNw9A==
-X-Received: by 2002:a05:6a00:4610:b0:71e:ed6:1cab with SMTP id d2e1a72fcca58-72030cf05d3mr654027b3a.26.1729630151673;
-        Tue, 22 Oct 2024 13:49:11 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312e2bsm5133906b3a.42.2024.10.22.13.49.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:49:11 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	linux-hyperv@vger.kernel.org (open list:Hyper-V/Azure CORE AND DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
-Subject: [PATCH] net: mana: use ethtool string helpers
-Date: Tue, 22 Oct 2024 13:49:08 -0700
-Message-ID: <20241022204908.511021-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729630174; c=relaxed/simple;
+	bh=4VGjKCLzilV7dqELrN8bWqYOVQXNIfEmFdVw0bFlQf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/mDXjk+TA4BUqZdmUU0h7mWiuOlIa3lL+h5PzSVHOwWtKgEYMcjxpaHofPXgtXMqME6ovUorpe7iUFSfuXE/OL0bqFjL2o2UZEoy04f2aaI3w21YHX0nWdvy598h9lirf/7POcAqY3r81f45bXLZ6zP+aRJgHAIrjfaqxAecM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/pl3X5m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB7BDC4CEC3;
+	Tue, 22 Oct 2024 20:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729630173;
+	bh=4VGjKCLzilV7dqELrN8bWqYOVQXNIfEmFdVw0bFlQf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m/pl3X5mBfGW5pzZMysfAYWOQCfGZXNSSdwmU9RFNdmu7QSFH1wtccw6/Ztlus+0M
+	 HL8DM5rNccJcKSQpWzoF6UZCmx2BQ++RNp7bYQxMgnYANecw2TjukJsERLU5LUfuHg
+	 UR4vPLbCxaCPC2nyjBApS2OwVN58DvVeia/yA8gvwBzXavBiaN4ZIRi2D8QzxaiTK8
+	 PYhHBlJF/f0alxIw91pL/xgdG9DFcT1nReKhz43wBROjmG8VSKUoFtse4Ph6dKpl7h
+	 pBg6www/SA0wnpfkqyVmn8Vy++cReK7qxnzVg6gB6Qbn8WujFSuwPo03YX5SVApkIG
+	 0J/P207J8AXZw==
+Date: Tue, 22 Oct 2024 13:49:31 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
+	broonie@kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <20241022204931.GL21836@frogsfrogsfrogs>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+ <Zxf3vp82MfPTWNLx@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zxf3vp82MfPTWNLx@sashalap>
 
-The latter is the preferred way to copy ethtool strings.
+On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
+> On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
+> > 
+> > The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
+> > 
+> >  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
+> > 
+> > are available in the Git repository at:
+> > 
+> >  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
+> 
+> Hi Linus,
+> 
+> There was a sub-thread on the linus-next discussion around improving
+> telemetry around -next/lore w.r.t soaking time and mailing list reviews
+> (https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
+> 
+> I've prototyped a set of scripts based on suggestions in the thread, and
+> wanted to see if you'd find it useful. A great way to test it out is with
+> a random pull request you'd review anyway :)
+> 
+> Is the below useful in any way? Or do you already do something like this
+> locally and I'm just wasting your time?
+> 
+> If it's useful, is bot reply to PRs the best way to share this? Any
+> other information that would be useful?
 
-Avoids manually incrementing the data pointer.
+As a maintainer I probably would've found this to be annoying, but with
+all my other outside observer / participant hats on, I think it's very
+good to have a bot to expose maintainers not following the process.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../ethernet/microsoft/mana/mana_ethtool.c    | 55 ++++++-------------
- 1 file changed, 18 insertions(+), 37 deletions(-)
+> Here it goes:
+> 
+> 
+> Days in -next:
+> ----------------------------------------
+>  0  | ███████████ (5)
+>  1  |
+>  2  | █████████████████████████████████████████████████ (21)
+>  3  |
+>  4  |
+>  5  |
+>  6  |
+>  7  |
+>  8  |
+>  9  |
+> 10  |
+> 11  |
+> 12  |
+> 13  |
+> 14+ |
+> 
+> Commits that didn't spend time in -next:
+> --------------------
+> a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
+> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+> 3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
+> eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
+> 
+> 
+> Commits that weren't found on lore.kernel.org/all:
+> --------------------
+> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
+> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
+> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
+> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
+> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
+> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
+> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-index 349f11bf8e64..c419626073f5 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-@@ -91,53 +91,34 @@ static void mana_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
- {
- 	struct mana_port_context *apc = netdev_priv(ndev);
- 	unsigned int num_queues = apc->num_queues;
--	u8 *p = data;
- 	int i;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(mana_eth_stats); i++) {
--		memcpy(p, mana_eth_stats[i].name, ETH_GSTRING_LEN);
--		p += ETH_GSTRING_LEN;
--	}
-+	for (i = 0; i < ARRAY_SIZE(mana_eth_stats); i++)
-+		ethtool_puts(&data, mana_eth_stats[i].name);
- 
- 	for (i = 0; i < num_queues; i++) {
--		sprintf(p, "rx_%d_packets", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "rx_%d_bytes", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "rx_%d_xdp_drop", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "rx_%d_xdp_tx", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "rx_%d_xdp_redirect", i);
--		p += ETH_GSTRING_LEN;
-+		ethtool_sprintf(&data, "rx_%d_packets", i);
-+		ethtool_sprintf(&data, "rx_%d_bytes", i);
-+		ethtool_sprintf(&data, "rx_%d_xdp_drop", i);
-+		ethtool_sprintf(&data, "rx_%d_xdp_tx", i);
-+		ethtool_sprintf(&data, "rx_%d_xdp_redirect", i);
- 	}
- 
- 	for (i = 0; i < num_queues; i++) {
--		sprintf(p, "tx_%d_packets", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_bytes", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_xdp_xmit", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_tso_packets", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_tso_bytes", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_tso_inner_packets", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_tso_inner_bytes", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_long_pkt_fmt", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_short_pkt_fmt", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_csum_partial", i);
--		p += ETH_GSTRING_LEN;
--		sprintf(p, "tx_%d_mana_map_err", i);
--		p += ETH_GSTRING_LEN;
-+		ethtool_sprintf(&data, "tx_%d_packets", i);
-+		ethtool_sprintf(&data, "tx_%d_bytes", i);
-+		ethtool_sprintf(&data, "tx_%d_xdp_xmit", i);
-+		ethtool_sprintf(&data, "tx_%d_tso_packets", i);
-+		ethtool_sprintf(&data, "tx_%d_tso_bytes", i);
-+		ethtool_sprintf(&data, "tx_%d_tso_inner_packets", i);
-+		ethtool_sprintf(&data, "tx_%d_tso_inner_bytes", i);
-+		ethtool_sprintf(&data, "tx_%d_long_pkt_fmt", i);
-+		ethtool_sprintf(&data, "tx_%d_short_pkt_fmt", i);
-+		ethtool_sprintf(&data, "tx_%d_csum_partial", i);
-+		ethtool_sprintf(&data, "tx_%d_mana_map_err", i);
- 	}
- }
- 
--- 
-2.47.0
+Especially since there were already two whole roarings about this!
+This was a very good demonstration!
 
+PS: Would you be willing to share the part that searches lore?  There's
+a few other git.kernel.org repos that might be interesting.
+
+--D
+
+> 
+> -- 
+> Thanks,
+> Sasha
+> 
 
