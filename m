@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-375712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803639A99DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:33:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5AF9A99D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0291C21B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2101F22C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B73142E9F;
-	Tue, 22 Oct 2024 06:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D27145B07;
+	Tue, 22 Oct 2024 06:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vCMj/rhr"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1r2s5bA"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C333CA6B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D1C126C02;
+	Tue, 22 Oct 2024 06:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729578790; cv=none; b=rwVDHaN44qeH7WCglFITNuzej7lH62sqZP1AvegSRviaqTmhsXfsEnEVKTylU536T4vqa9u34wqbrd5tHYkpib2xNGXXBQlfOTm+lbWRCjiL0CNouvUHIHk/gPtEMU7Lfcn/dR88vox3+fIQpQG7urH/hp+HQ+OP9btOTsgMUSs=
+	t=1729578729; cv=none; b=VnQ+pZ2GsXtr58OKt/TguwAV1YiHfrBRuKx1iXo8FasuEOj4nWuwc7kEVtVghbhIDBfXiB+PTrHqDVAacXkosXi/mzoHKHcQySXZ90ILMgOLyrn90kjSiewxPmxoroBp+DLPbva+XOMryj3ujdsf+eFzOv+m4vk3Bl7MRZI+3Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729578790; c=relaxed/simple;
-	bh=AC9tJ2nFp4SGtHALUPMcfQs4hHc9AElyN2mcfup589s=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=eUUw/snJau2Que3hjuQBiL460Q2nzgf+3wOSnqomIMmplQqbrxU/rS8inUCFDqSNpmPHHkPODHKXuqSLY2JZiNScJHLbbPKbc3kXLD7K0xbR12QCX7o38/ot5mRuO+W8BuI8DyRwLJ3PS0JW8/HOlMxeTe+guZEEElnpXD9qhU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vCMj/rhr; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729578784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4qjMWGm/U9BUvuXs53nUhhk2P2eOgQ21koz66cHzG/s=;
-	b=vCMj/rhr23QaMD9ASuemrIZwhoCSmAQhISszho0zMtBFf4pfkF1XU0kUOAkiaPzhtwiy6B
-	HyK5uv2Q3pC1+jLqLAEkJSd3zuIBQCsd/rUz3/8UW7YWYHZWYiiS+LpDGHpocXx1mrKEki
-	bya4qu9ophNtY94WXF9c2Wee2E0mozQ=
+	s=arc-20240116; t=1729578729; c=relaxed/simple;
+	bh=fRv3QAZ5GTT1Ytn6SNlfvUscWQW7sf1SPvVZnk5xV1w=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=oA4M3njBxL1AnzVwvVhQqRjkZcjA9VILn7EvH4e31h9yq+yuz1Al81sc43ZjVR/F/++YJ7c30hI71zoYgwia1eDcQVXeLoVuVYtKVUegWTn3NvMzuwAlBUos4puupS3vYuZWX/TXjmTc0rMPaKTWYUMPcWV5HuqkZLYx7my5B0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1r2s5bA; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso4385524a91.1;
+        Mon, 21 Oct 2024 23:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729578727; x=1730183527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0ZVg94ADVSlaDxa+1PXOL3bzB11GUZscW4ia7W/tYk=;
+        b=R1r2s5bA02z11dBb3XB/QVXOgONzJjPWuk3oEWtyy7rcUh4ckdAERlvrRti/RGaCUo
+         UnUwNc33tsBXSY8e3g5nYjGFYoT7G4Phgmvj+U/8a1JmbJsdgzeU85yontapHHmAR3Eb
+         pLqVT4zNKAfgTm2hyRkiHIA4MyFLQHDyKWBR9dxdZtxV9vdNadgI/iZa95ubGXpL+0Zo
+         ApziIhH66iy/Vmr8ZhDkYG6k2gv60snJC/vQKIlusPypkU9sfe16zujufluEVj2+k91Q
+         QT7ELLvhZnd+ig5VXRoPh+uZR8hBG9gAYtK6KL7mumrXm1iIHJZivV/+eLDm0aeXSiBk
+         bP8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729578727; x=1730183527;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0ZVg94ADVSlaDxa+1PXOL3bzB11GUZscW4ia7W/tYk=;
+        b=EsBm9glCneEs4/p25+NQLVmZoY7bsq7r1iOE3W2Lf+rjp4dnVVdJ+w6+8cOCwesHeL
+         xKlxM05y7hW+yPmqAezcCysWt+3sqg9tW+z5AvUJjRmR5CJtjF5SlyDDjj5mfa/NNnrm
+         2rNYrJ85Sw3jFsmG+8RV7GKE2e3C2swEr3WpmLg5WyhPiHxaPX6rkIxrabTcfdFJot4h
+         8/WEHx6ewhuYs0inIG9D0FGi/IBoyA1iTCj1Km4BJFc2/MTo3/eL1sC9F6M0WpI1ucdq
+         n0F9VM39oyIdk/uR0i4J9mG1ZZ2uhur4sTRLUK8FD7Gjrg2CBhPuKhoiAtcuStfnC+6b
+         0DLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV05w5WkU2QudI+MoxdjOb6A0JsFRWXqAduUF2V2QOCtOcttq/26c4x8++Y7qlH+n0ijkc3Dc1dBclg1fw=@vger.kernel.org, AJvYcCXOF5P18FYF/Hiu6OGrguGmrKh9oIEGRdclEta0gTUP2fpNfzb4WAcG2KqoiHh3Z8XjMt7j4qutpHRE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys3GGpxNb9z6VdxQQiga8nGf3XrUQK0wErhCg+WTHRWtJv0NSB
+	cYzNUOe9Oe48ZGEl4nw9C98SPhbfOLRC4ukUSX9wk0jvWrFt0m3n5zv8fKfc
+X-Google-Smtp-Source: AGHT+IFXgTBiFgFsXxOg631XJW9inf5ov3uskzvCNIx2xVHr9SuSJamqxyvMEirBwTsGX8DTDMZajQ==
+X-Received: by 2002:a17:90b:f0c:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-2e5db94f135mr3456580a91.5.1729578726704;
+        Mon, 21 Oct 2024 23:32:06 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad355bebsm5227508a91.7.2024.10.21.23.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 23:32:06 -0700 (PDT)
+From: mjchen <mjchen0829@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mjchen0829@gmail.com,
+	mjchen@nuvoton.com,
+	peng.fan@nxp.com,
+	sudeep.holla@arm.com,
+	arnd@arndb.de,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	dmitry.torokhov@gmail.com
+Subject: [PATCH 0/2] Add support for nuvoton ma35d1 keypad controller
+Date: Tue, 22 Oct 2024 06:31:56 +0000
+Message-Id: <20241022063158.5910-1-mjchen0829@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] block: remove redundant explicit memory barrier from
- rq_qos waiter and waker
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <ab3720ec-b12b-4c0a-8e56-930753c709fd@kernel.dk>
-Date: Tue, 22 Oct 2024 14:31:53 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- josef@toxicpanda.com,
- oleg@redhat.com,
- linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Omar Sandoval <osandov@osandov.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <7C429559-E91C-4732-901B-0D49C2D083F7@linux.dev>
-References: <20241021085251.73353-1-songmuchun@bytedance.com>
- <ab3720ec-b12b-4c0a-8e56-930753c709fd@kernel.dk>
-To: Jens Axboe <axboe@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+From: mjchen <mjchen@nuvoton.com>
 
+This patch series adds keypad driver for the nuvoton ma35 ARMv8 SoC.
+It includes DT binding documentation and the ma35d1 keypad driver.
 
-> On Oct 21, 2024, at 21:45, Jens Axboe <axboe@kernel.dk> wrote:
-> 
-> On 10/21/24 2:52 AM, Muchun Song wrote:
->> The memory barriers in list_del_init_careful() and list_empty_careful()
->> in pairs already handle the proper ordering between data.got_token
->> and data.wq.entry. So remove the redundant explicit barriers. And also
->> change a "break" statement to "return" to avoid redundant calling of
->> finish_wait().
-> 
-> Not sure why you didn't CC Omar on this one, as he literally just last
-> week fixed an issue related to this.
+mjchen (2):
+  dt-bindings: input: Add Nuvoton MA35D1 keypad
+  input: keypad: add new keypad driver for MA35D1
 
-Hi Jens,
+ .../bindings/input/nvt,ma35d1-keypad.yaml     |  88 +++++
+ drivers/input/keyboard/Kconfig                |  10 +
+ drivers/input/keyboard/Makefile               |   1 +
+ drivers/input/keyboard/ma35d1_keypad.c        | 312 ++++++++++++++++++
+ 4 files changed, 411 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
+ create mode 100644 drivers/input/keyboard/ma35d1_keypad.c
 
-Yes. I only CC the author of patch of adding the barriers, I thought
-they should be more confident about this. Thanks for your reminder.
-I saw Omar's great fix. And thanks for you help me CC Omar. I think
-he'll be also suitable for commenting on this patch.
+-- 
+2.17.1
 
-Muchun,
-Thanks.
 
