@@ -1,88 +1,74 @@
-Return-Path: <linux-kernel+bounces-375742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DEBA9A9A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:50:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0915C9A9A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E061F22192
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37DA41C2151F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D6314658B;
-	Tue, 22 Oct 2024 06:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8BF146590;
+	Tue, 22 Oct 2024 06:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jVu2CFeb"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADC1C8FE;
-	Tue, 22 Oct 2024 06:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="05OMEdwV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E695DECF;
+	Tue, 22 Oct 2024 06:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579805; cv=none; b=ADO6GjRJc+msX6iP+XGDM+sI+ok629Q4m0gUKCQCTfpcf6MJlIVHGnSOCGsmgBk4zKEqwxyg8e/fL9dUpUflVjJzdyqDSeikKj6nSOt5Gi2cMM0M+zQk/2A/NoM2f8kKCPfqXCVIGfZj2lAoAceaduQa7hJJeYYC7Qyp8artfFk=
+	t=1729579903; cv=none; b=WtYejk5L3vZYMi1/1D+kmKttxfXYyK8fUoq6a6lKEBF8rpmhWXIA9ob3QloOCJ7JZUZkPOvB/58fA257BxGg2/qOdc9v5O5cIPBZNH1px+zBQuGpTtF2yTBjRKfpZD3dSHl+hOyVGgsr7VIRy0LOf6SzVISzNdHLgVx9AE+INYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579805; c=relaxed/simple;
-	bh=gAgxmfdP2jyUpNQG51UsfINhavCuMPmSuDngPIlM+gw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UPkVEdJC+i10bISmerS2JggG04QHDwwtiO1iOT7aiWrGZw2jSbwcpaiQPmweqFKuIPk27XcDKx2QG2gZ15UgMdoEsVRkeHbofzMxuf5zVtkMyH/dmBZiqYaHwHSbcxffvrhXhY1bCDSrsj3CIHAIIbf+WdGhgBSNddHGsblQHZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jVu2CFeb; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=t9HfF
-	lGMV6vlGQ1vROC5AV/hdJqyGhuWNLp4zGqDEtY=; b=jVu2CFebWN+DE5i3o7GQS
-	CXXfaj31+L9n9FHtQUZ6SuFl5BvlBVSw1jgXoZmL7d20PtVOzgh92simUpv9JBGt
-	CAgEP+Ar+6MHJ/0IWn8sPKPWKrPiJ7jviGsut55yz0HgwdskVS/ls8k27OHVeLdB
-	Zbo0DLgiSVMqfAF1fwv6ec=
-Received: from thinkpadx13gen2i.. (unknown [111.48.58.12])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgBHhy4CSxdnVG+dAw--.41336S2;
-	Tue, 22 Oct 2024 14:49:39 +0800 (CST)
-From: Zongmin Zhou <min_halo@163.com>
-To: valentina.manea.m@gmail.com,
-	shuah@kernel.org,
-	i@zenithal.me
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zongmin Zhou <zhouzongmin@kylinos.cn>
-Subject: [PATCH] usbip: tools: update return status when failed
-Date: Tue, 22 Oct 2024 14:48:56 +0800
-Message-Id: <20241022064856.4098350-1-min_halo@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729579903; c=relaxed/simple;
+	bh=Dwf3CQUzGRO1dwDLDjJ5gQfp+jycSPUft3XJMwWGqPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=js1c4/iAG8KxAjB4+Yap0tQxbYHnaYOyHEiyywnZJDGQ4inAA+IuwkX/URlQMH3xwNz26MR8p4ppTE7CQAqtfWql+dBhH1kcdIF5CbCiujBOdiGYIf4rbGPvetNxeECyxP2w04d09jwCHJQVXOLpSnA8e4E6NoOsxz1NMI+6CFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=05OMEdwV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Pa1LRF+kWOr7ZeE24+JLhWiWsCv0iLxb5TlrnHIMQbA=; b=05OMEdwVFXcRxWw8A1yXovRkbU
+	71XgM6GdKc3RwXRzW74OCDTDI6+c23SsQOLwrEa4rsLtFAZXKC89bLaeE9ER6PbDPrVLfrCK9QACh
+	LBZpF4AFjaU+Xm70hX9LNd3LQphg1EvneN9NWELz8uUOGXVMsqhS2ur/HaS0atrSGDwo70xbRD9dB
+	0Dzg5rxK1puplM7t4K1/qUGu2Sw9N6YD+2/uayoB0BBowNwMxrESujgkn50AMo6tGyNqOFRxh0D7g
+	k5GdqWO1rEhx38wWOIv7GmNLKFtd97+6D8F2WH2TozDs6Fci30fz1JS17okGEs+xMdyZtgmfqCpXu
+	GxM7NB6A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t38k0-00000009snl-4Bpk;
+	Tue, 22 Oct 2024 06:51:41 +0000
+Date: Mon, 21 Oct 2024 23:51:40 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
+ srcu_read_lock()
+Message-ID: <ZxdLfLWWrAEfRiXV@infradead.org>
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgBHhy4CSxdnVG+dAw--.41336S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtry3XFy7ur4xur1DuFy8Zrb_yoWxCrc_C3
-	y5Wr4kWrWYka45KF1DGFy8Cryrt3Z8WrZ8Ja1UKr1fG3Wqywn5JFyDA397CF18ur1qqFnx
-	twn0qwn8uan5ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8x-BtUUUUU==
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbixxqAq2cXQVKpZwABsa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+On Mon, Oct 21, 2024 at 03:13:05PM -0700, Paul E. McKenney wrote:
+> For almost 20 years, the int return value from srcu_read_lock() has
+> been always either zero or one.  This commit therefore documents the
+> fact that it will be non-negative.
 
-Have to set "ret" before return when found a invalid port.
-
-Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
----
- tools/usb/usbip/src/usbip_detach.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
-index b29101986b5a..6b78d4a81e95 100644
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -68,6 +68,7 @@ static int detach_port(char *port)
- 	}
- 
- 	if (!found) {
-+		ret = -1;
- 		err("Invalid port %s > maxports %d",
- 			port, vhci_driver->nports);
- 		goto call_driver_close;
--- 
-2.34.1
+If it is always zero or one, wouldn't bool the better return value
+type?
 
 
