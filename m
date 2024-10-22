@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-376405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D349AB0ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0B99AB0F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6631F2410B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF3F1C2245F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE6219E97F;
-	Tue, 22 Oct 2024 14:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3C1A0B05;
+	Tue, 22 Oct 2024 14:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EdQpBc19"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpDYl4TQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D597A19DF75
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA91E505;
+	Tue, 22 Oct 2024 14:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729607655; cv=none; b=uOjL19duaGqMeEQ//lWJJeTtVQhOooGbGlueaq5yMJvixhBlSg+wrd+NLdbVn4YQ7aqZxNGiYvmc99CMBeRCLih1XwpMv+ziX38N3hJI/EjXyAqrows2DqLn26btzbO+01CeYOKh0t2puSkhUSkTo+6UkgvoYz/l5oi6RmbkPEU=
+	t=1729607767; cv=none; b=fCPZJqBD4HIB2UlJu36LnMcZP9VTHcW32fLUAFUoMaI8Jw2XBYXnJBMkXEuYI68quoghs45QAHYwOBLvkNpODHGFwUnbU0qUFwB4uvqlhbJCD9eZIiIQsLw7pd+UwKrpXP5oY4Hjj6Mo8wM9G3HSTVEq4ic5QbIvo2oBK04ofoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729607655; c=relaxed/simple;
-	bh=yIhbm/YDdUnq8Q7RsfO9NPQQUTaApFDK+ECy7QckynM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTDOchtLec9AYwr9Lh5i2FJ/BUM4H4wTU0ca+ejq7EiAG6znDcWs1JescXOeep/lRWTpcQFgbp68ByxeaGx8A3hm+oLGt9jyZXfrxEfLOdC1d/9tEzNMu3VKJOmUD5+R0+/PJ10j9IRNbILijUf3Hlq/ldo+zTFZi2xxi9jY/kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EdQpBc19; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A9DD240E0284;
-	Tue, 22 Oct 2024 14:34:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gonby0v5Fga2; Tue, 22 Oct 2024 14:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729607645; bh=NRd/tgfwMRQSiXfwVIVoUwc97JvH2R8kAYW/8qtrVgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EdQpBc19qFegbO9WuyO+O3Ip7xtILrgBRGhYA4qDLiBn0eYHT3LEJE0lX1gLo5RW3
-	 hWuVzKA9nr/8bRvTHgs+ViMoJgpNZRrr4sC2uf6aKCzMgUfvWVcn8cC1mxJVEJ8eDi
-	 luC04K9M2wdvEter9zS4dY+pCOn8YS3uiZ/oGXHyPaLFcf+u5rbQpUPtAb+4iVV6qR
-	 c098z7giu+FMLy5TuXBjgpPomQFzNGqk2zY59in/mT2DUYE2ofXoQ1X3iXr9VtmIoU
-	 2eglkm5NF9pyC5qfvOENoXCsNnEa+cCU2kDq00u24HosVPyFsuOdvHXn8hdrz6Vi43
-	 knTnFZjlNS+HEqF15GZextzfDjq0qym//B5lSkHZID7ex79uy13ZaOtNH1htb7RRGI
-	 6ZX9MbakzPT3y/Qc5V8o0cpC67i1g+lHgl8WwW1a4tdswqVQstEjnp11VBwlUilO6K
-	 XSBIFKQPaW8Oji9rY++Fz2oeu/zheU8k5z9QxNSDWMg90VJ/kRE7NlyutLeB7pG2Ab
-	 gEIu1hibmtwHsZOKMe7q7EClmktg533GjhrYI8CsaZssqaM0j7KB90gUblApTOMwp8
-	 468P8bcGD56HNG3NZrt0Z7nZIBRkQst1rn7e08fowYR9cReW4+tcg+kmY0mAaLUPvs
-	 u3OSdvS4qR/xB9iqFrw2wwkE=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 819E740E0184;
-	Tue, 22 Oct 2024 14:34:00 +0000 (UTC)
-Date: Tue, 22 Oct 2024 16:33:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: [PATCH 2/2] x86/microcode/AMD: Split load_microcode_amd()
-Message-ID: <20241022143355.GIZxe30_6eAbLXByOt@fat_crate.local>
-References: <436b4fc7-6369-40d9-8e88-556cbf5a5687@kernel.dk>
- <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
- <b2fd70bb-9414-49e0-bdb8-5c538f247dea@kernel.dk>
- <20241020121819.GAZxT1CyR_5vLLZ5e6@fat_crate.local>
- <df217737-6e2c-41fe-b558-3e2ab6dc0d9e@kernel.dk>
- <20241021073140.GAZxYDXCk02lSrG3-T@fat_crate.local>
- <daa98312-cc66-4c2f-8e64-01358ee99305@kernel.dk>
- <20241022120531.GDZxeVC0WeUPhInkYh@fat_crate.local>
- <20241022120836.GFZxeVxGQ6vWIScFWo@fat_crate.local>
- <eb6d8837-84cc-4b0b-8025-c846e24e8240@kernel.dk>
+	s=arc-20240116; t=1729607767; c=relaxed/simple;
+	bh=2EnMCZX5TCtSv+nMxhGWdPQUTQJB2A854cxPv6kK1bU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fpZCcfSpKF2WqJVD4sbkvLi6y6Qa+q+9kp/rl0e+xbB+nK7hbZff5CWgC1TEbYq+nAKHzPvSNvSyQ6zMmr6Sm0aPINBlMbok1pxVw02R8k7HHAMZNaWcJ6SiyWlJY0RUDQeUGuFgb+QhwrG+ftzy9ERlPyfYVGUSB7Q4lygvnuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpDYl4TQ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729607765; x=1761143765;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2EnMCZX5TCtSv+nMxhGWdPQUTQJB2A854cxPv6kK1bU=;
+  b=kpDYl4TQohZx/jiIG1ipx0hM0hayV2Y2XTmy2doo7PpsF28kB5UZs7em
+   Bezgn6EWZkLL4V6695c4IuKxQUf+HDHC2y/VXQ0nlY1AjCdW6dPjnpNQ5
+   EExrQ6+CzxRBfCLuP68Ccn/IbbZvSEBifbrHfpWaE/2VkWoXGIkBQxFht
+   j+6Y0C/30c9tgJ5QfKM0y2FbNAU5ivA7rujyqsZiX4SRHJdHqMTxDBcVI
+   ulWlhEXjnWiLHkP30fGYbaHriyR8NoOMLkAL+WKcLO6ESbMZyAEeXq7So
+   +9cIZ+stypzgv84PzTIpLtWtWS5NS4KlLwPGRB7cl93zsm0gC0v3cafAF
+   w==;
+X-CSE-ConnectionGUID: IY+sbwrAT3K+Fcotmctpdg==
+X-CSE-MsgGUID: Q8uT+8fkQMKkAJngmOaOXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="54553669"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="54553669"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 07:36:04 -0700
+X-CSE-ConnectionGUID: x3qqdpniSHOBUFHrLDeOjg==
+X-CSE-MsgGUID: WXyoIEQHTyyhbjzQMzQNzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="84708599"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 22 Oct 2024 07:36:03 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 84D6C1BD; Tue, 22 Oct 2024 17:36:01 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] iio: adc: Remove "default n" entries
+Date: Tue, 22 Oct 2024 17:36:00 +0300
+Message-ID: <20241022143600.3314241-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <eb6d8837-84cc-4b0b-8025-c846e24e8240@kernel.dk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 07:15:07AM -0600, Jens Axboe wrote:
-> Tested 1+2 together only, but for those two:
-> 
-> Tested-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Thanks Boris!
+Linus already once did that for PDx86, don't repeat our mistakes.
+TL;DR: 'n' *is* the default 'default'.
 
-Thanks too, Jens, for the serious testing effort - very much appreciated!
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/iio/adc/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Lemme queue them.
-
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a21ed997a8c1..d8abe28eec89 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1619,7 +1619,6 @@ config TWL4030_MADC
+ config TWL6030_GPADC
+ 	tristate "TWL6030 GPADC (General Purpose A/D Converter) Support"
+ 	depends on TWL4030_CORE
+-	default n
+ 	help
+ 	  Say yes here if you want support for the TWL6030/TWL6032 General
+ 	  Purpose A/D Converter. This will add support for battery type
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0.rc1.1336.g36b5255a03ac
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
