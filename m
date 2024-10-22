@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-377095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADA29AB9BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A03B9AB9BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2991C22BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:58:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C9A1C22C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D51A1CDFC7;
-	Tue, 22 Oct 2024 22:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE1F1CDFD6;
+	Tue, 22 Oct 2024 22:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XANmPJLB"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C9F1CEE97
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="src16h4f"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AEE1CDFBF;
+	Tue, 22 Oct 2024 22:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637898; cv=none; b=U9a6GbGPbInHcRa/i2DIePM4L34BuKTqcc2+8TtBU9iVKJ9kW+u+GFJJEeRe2bi1BgGnIiS6ErljXnANmT1F/0oX64LH966Rgrd+MtN9N8N8byULR0ZPTBofnjC0HlEA8z9FNj5ch8J+6o3qrW2NSvXv/23b0iYDqktIFm3f8Ko=
+	t=1729637892; cv=none; b=O90BZpDKkKheLmniRZz+iN/rp1ArzFWuih7Vf/pCG2xJ30q23MvtGBJ6SqFiW/eLt5lk9XBLgp7LLuh8Ghr3tJ7rpFP9OHhf1Wa+QuCkm48kjZkVS8cp+zWn5a8pSa5fleh9O2JLEQzigusNdbeKBIq+d28QwL1pcg6Bt8xYOY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637898; c=relaxed/simple;
-	bh=LppYdUsMIER80LrBQvaZektPYyEGIeG/zNXB8jqSRZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncTUfKiMsR9wj1MtHw9CQNCsvDL6YuFB6Xr3V6j/jF7LYCbSQx18ymfV+zXgJ9FDIFeCVqPhVsnC1N7eCOAloJvZMIMjdidNLGTpEdyZYLfuaO0Dj4O8kvq7EHYUnPLpP4H0nHQ4tXspbt8rKFvtu0zAW3qCiT+Q10NmAiOxlM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XANmPJLB; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 18:58:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729637894;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2D9SnjSf1zOnS6WF2Ttzy/TgN5LLfpg5eh2hw1wYNIE=;
-	b=XANmPJLBEPn4hEezpWvRgQBQg+/w0HaOqzQKCVPDtB+Zk8OIYKspVk3MYyFMFWvAHGmr7F
-	XInKAWc6yYFJ53FLi9pH9bBFHHejP0hpPRkMQq2kurIZCwGyMJjeWnRS1qkhujqNtRxj+P
-	5kcozFx299bvXG7k2WJTrFIDFUGJkrk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org, broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <dctt3tf65qsvwyr5exvee7bkmwh6aejqcd4t7uwfzvjiowqtzk@fncmtmgdbg5b>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap>
- <20241022204931.GL21836@frogsfrogsfrogs>
+	s=arc-20240116; t=1729637892; c=relaxed/simple;
+	bh=AOaeQ/JIrGG6hVU/F59SW5zbpMK6YqCThcfIwLGdMu4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OGpZykFtqDiSSBoBxtDGtlgkWqsNvXrvxeGtwKX+2gplmaKIlCkzRKr3C4fgArTBICUOjlcClpTkqlOpfRIUEAnFYNqayBFXf9nwSqzjD+MGAfPAJtHfdPf7XUE46RftOfSs2YNZ08szpyUu7UM582pROpWLSYJIimBiuEpI1wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=src16h4f; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.66.184] (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2A8FD21112EF;
+	Tue, 22 Oct 2024 15:58:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A8FD21112EF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729637890;
+	bh=2QQm/IH+Y8dbs5DxBwqLr/A9c7L7ikg8eZ/If3zOwmI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=src16h4fKcPufvHf+a4/l9zZ598jjOFJ+msduFTYVgo4IXECIVmFkRq1J6yOBqitr
+	 hPkTw/IEMSIeAARlAq2FdLc1xCrvW61+Cuz/aGfzkFzDNamus0jqijwp6NycfalL8z
+	 0ltBw+9TKmhBgiDbUJBGih/Gna5t8d3/QDnJMYYQ=
+Message-ID: <112aed61-2c4d-450e-9a44-cba33e2a017f@linux.microsoft.com>
+Date: Tue, 22 Oct 2024 15:58:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022204931.GL21836@frogsfrogsfrogs>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Naman Jain <namjain@linux.microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH 1/2] jiffies: Define secs_to_jiffies()
+To: lkp@intel.com, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:BLUETOOTH SUBSYSTEM" <linux-bluetooth@vger.kernel.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Linux-HyperV <linux-hyperv@vger.kernel.org>
+References: <20241022185353.2080021-1-eahariha@linux.microsoft.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20241022185353.2080021-1-eahariha@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
-> On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
-> > On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
-> > > 
-> > > The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
-> > > 
-> > >  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
-> > 
-> > Hi Linus,
-> > 
-> > There was a sub-thread on the linus-next discussion around improving
-> > telemetry around -next/lore w.r.t soaking time and mailing list reviews
-> > (https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
-> > 
-> > I've prototyped a set of scripts based on suggestions in the thread, and
-> > wanted to see if you'd find it useful. A great way to test it out is with
-> > a random pull request you'd review anyway :)
-> > 
-> > Is the below useful in any way? Or do you already do something like this
-> > locally and I'm just wasting your time?
-> > 
-> > If it's useful, is bot reply to PRs the best way to share this? Any
-> > other information that would be useful?
+On 10/22/2024 11:53 AM, Easwar Hariharan wrote:
+> There are ~500 usages of msecs_to_jiffies() that either use a multiplier
+> value of 1000 or equivalently MSEC_PER_SEC. Define secs_to_jiffies() to
+> allow such code to be less clunky.
 > 
-> As a maintainer I probably would've found this to be annoying, but with
-> all my other outside observer / participant hats on, I think it's very
-> good to have a bot to expose maintainers not following the process.
+> Suggested-by: Michael Kelley <mhklinux@outlook.com>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>  include/linux/jiffies.h   | 2 ++
+>  net/bluetooth/hci_event.c | 2 --
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+> index 1220f0fbe5bf..50dba516fd2f 100644
+> --- a/include/linux/jiffies.h
+> +++ b/include/linux/jiffies.h
+> @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
+>  	}
+>  }
+>  
+> +#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * MSEC_PER_SEC)
+> +
+>  extern unsigned long __usecs_to_jiffies(const unsigned int u);
+>  #if !(USEC_PER_SEC % HZ)
+>  static inline unsigned long _usecs_to_jiffies(const unsigned int u)
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 0bbad90ddd6f..7b35c58bbbeb 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -42,8 +42,6 @@
+>  #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
+>  		 "\x00\x00\x00\x00\x00\x00\x00\x00"
+>  
+> -#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
+> -
+>  /* Handle HCI Event packets */
+>  
+>  static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
 
-That's the interesting about face...
+Sorry, I should have combined distribution lists for the two patches, so
+everyone received both patches. Combining the lists with this email.
 
-Personally, I'm curious what people are trying to achieve here.
+Here's the lore link for the series:
+https://lore.kernel.org/all/20241022185353.2080021-1-eahariha@linux.microsoft.com/
+
+Thanks,
+Easwar
 
