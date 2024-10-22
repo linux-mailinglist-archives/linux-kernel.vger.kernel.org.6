@@ -1,185 +1,110 @@
-Return-Path: <linux-kernel+bounces-375470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FAE9A9658
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C31EF9A965A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EE92834D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A814282E2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C7A13CA95;
-	Tue, 22 Oct 2024 02:42:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B8113D251;
+	Tue, 22 Oct 2024 02:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="EpboXSxj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09E212CDBF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D5433DF
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729564949; cv=none; b=PLVvaBO5w99Hj2lKIOmB1JlHbCWL5XkwMZ7u36WivKdnv+ABAOQ3MKKH5knYabpRRvBTKBiwsqvPBslD9f/IF2BPFUORvc4gaXmfWf9N4BmAu3Gc2dKjxCQuwbk2GsplHpUXF+Fz3YnsdAp3hCDOPQ+BlHVpu4n9auBrGIOeT4o=
+	t=1729564957; cv=none; b=oAuxIDCOybiNbVqK2RnUW9y5JyQefgxJ8OlAvz1zNFZtHsVTMffviYrKRIBBDZbg2TqPnBChcdjy4UzY54IRyOjpL/NtCJCs3g41dkZmK+6+EM5HDgOfvCCshPp/cW0NqhpCkxMYVdZFh9K9ena0fK0gIn2QZv+YPteg4+5bxng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729564949; c=relaxed/simple;
-	bh=GSnURtL9XpSGABnp+TGwu1/YZwS6fHMiIw38oKyv8UI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GVdrM8MwyMTJVrnSj+JjjmcHnlPWd9l14E6k9StOK7piJZJ6fNdpOPyxnRYUJEFm/jpH/jibcZ3iV9pLK3olGTDOG2dDi7iKHd5fPKjiqTwBXPizirxyz6yxCTcFdYgKTVG7Upcmm1sIwow5RldUrwND5TOVNOZ/i4BG+eDJ+ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3fa97f09cso26359875ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:42:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729564947; x=1730169747;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=waJbPxJBywkfTruSFQ4D4lhYRkssTn1n7ZY+z77pU4c=;
-        b=o0d6bGRlgnnE2qth78gzyRqSJTYSRk9YHg03zv0nOEqhf5MFxaxjsjtaBuNg2WAjLi
-         TQZBUuwT/1XU1I5YkVwSCQK3tNORgO36RZnvTQdLfZGIdkBbTixfI3RBk0DrtWMLgmoR
-         EFKJkyydQrTwEGbLBvKzj0R9i9jhueZGajBQuPO5PfD71NtclCymBQzHUkhbtBe1nWhX
-         oxKEcUttS4wczetZOAmCwDhOklrO9wekOEdy0CUG/K1O1NWcIkvb2xF+NCB7uREfCVmC
-         MR1BsFj6Vwtuc5tsnyVy7adfUQ6KzLOa1mGkrHvx/Xn9QF28mI1x+V2JQujDTmVWD/9O
-         f9vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQVDbRLtn+5x4DoPYKcVsXb9KQT7uyuTR9qbj7PH9zxAlBCQFb06Uo56IO0OlzZk3a4FB+mv3cuWCKkjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz92hq/Zf5lHKRshqhKDOiFpXGBPR0h3zHak4BlnqBKSF2kLT6m
-	rrluqmL8+mx6AlCCPtOKYT8dtgaUHUCx1y0GlHAKI5IEVygpnGN9K0EHAOwP2IaLOm4bwDioNFl
-	4Lgd8diuEY8k1fNpcYwbkOfLxRQuZIYvvw3bbl5uYbCg43vhf+cXE1lU=
-X-Google-Smtp-Source: AGHT+IHUsmKgKsRKD/HreZf7gBvUki8d0ysnrXI4hE1UaKWcuwWxn2DxXUhFoDfRzymm4oK8O1lHOEWJYDBvT66uyhtrZcyJfGbw
+	s=arc-20240116; t=1729564957; c=relaxed/simple;
+	bh=XnvXwd0uQZhskaA6WbS6kVvF6VIeP6CMeQ0ec+4CoKY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OOA+uuzrQU6l21oYjQFYAZ9K9xp5HwdgfLFMZZGlcyGsLieljDy6aPiKQzuNB7g+WmX3m9rheh0EnwYKaJPp13XOiVMYQSCsWg+L5dN8jlgvR+f8FKUhNRqXtPPAkXvct//T1oFNMEYYv1YE90wkNCySqFtvlgOxRtg1EYFcAtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=EpboXSxj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1729564950;
+	bh=iA44515hIjaaXQQmGhGyu/wNw6RcsnRKM1ujfj6qVyY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EpboXSxjqS/PjqizIjw89fM7FbMw9k9eMRGAda8Dh3h5WJaC00qYYH+Sc9xGOj3Xb
+	 OQVnzGz4pC46jGjNSCSjcSb1noaXHArrpPBGc5EoWSgDuwKucdLVYx6okeea3ZHJdb
+	 dEhuDDom6MUz0h5Nrl29ByZLKvCxTafcJJO12TA3b0tDbqCCB/ZuPyCHMsxI8UiQyY
+	 47PqCzXPzDiZeovFYOaYrykASRq7TUntUEPiGvS4BEA/4wi8hU86K8ogLi9qgFyEOZ
+	 n3pZhmUwVueq9AwQdfJ/YY9T4NhEqlR9PNjZBtPkJFH0E9VS0kfs3dI9VJy0tJyLZ/
+	 fPMIE/uRz0srg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XXc0P57pKz4wnr;
+	Tue, 22 Oct 2024 13:42:29 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org
+Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org, Marco Elver
+ <elver@google.com>, Alexander Potapenko <glider@google.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Hari Bathini <hbathini@linux.ibm.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom
+ <donettom@linux.vnet.ibm.com>, Pavithra Prakash
+ <pavrampu@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, Disha Goel
+ <disgoel@linux.ibm.com>
+Subject: Re: [PATCH v3 01/12] powerpc: mm/fault: Fix kfence page fault
+ reporting
+In-Reply-To: <a411788081d50e3b136c6270471e35aba3dfafa3.1729271995.git.ritesh.list@gmail.com>
+References: <cover.1729271995.git.ritesh.list@gmail.com>
+ <a411788081d50e3b136c6270471e35aba3dfafa3.1729271995.git.ritesh.list@gmail.com>
+Date: Tue, 22 Oct 2024 13:42:29 +1100
+Message-ID: <87plnsoo2y.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c6:b0:3a0:8c5f:90c0 with SMTP id
- e9e14a558f8ab-3a3f4054723mr130029565ab.10.1729564947193; Mon, 21 Oct 2024
- 19:42:27 -0700 (PDT)
-Date: Mon, 21 Oct 2024 19:42:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67171113.050a0220.1e4b4d.006c.GAE@google.com>
-Subject: [syzbot] [fuse?] INFO: task hung in __fuse_simple_request
-From: syzbot <syzbot+0dbb0d6fda088e78a4d8@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+Hi Ritesh,
 
-syzbot found the following issue on:
+"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+> copy_from_kernel_nofault() can be called when doing read of /proc/kcore.
+> /proc/kcore can have some unmapped kfence objects which when read via
+> copy_from_kernel_nofault() can cause page faults. Since *_nofault()
+> functions define their own fixup table for handling fault, use that
+> instead of asking kfence to handle such faults.
+>
+> Hence we search the exception tables for the nip which generated the
+> fault. If there is an entry then we let the fixup table handler handle the
+> page fault by returning an error from within ___do_page_fault().
+>
+> This can be easily triggered if someone tries to do dd from /proc/kcore.
+> dd if=/proc/kcore of=/dev/null bs=1M
+>
+> <some example false negatives>
+> ===============================
+> BUG: KFENCE: invalid read in copy_from_kernel_nofault+0xb0/0x1c8
+> Invalid read at 0x000000004f749d2e:
+>  copy_from_kernel_nofault+0xb0/0x1c8
+>  0xc0000000057f7950
+>  read_kcore_iter+0x41c/0x9ac
+>  proc_reg_read_iter+0xe4/0x16c
+>  vfs_read+0x2e4/0x3b0
+>  ksys_read+0x88/0x154
+>  system_call_exception+0x124/0x340
+>  system_call_common+0x160/0x2c4
 
-HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f6ca40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16e543edc81a3008
-dashboard link: https://syzkaller.appspot.com/bug?extid=0dbb0d6fda088e78a4d8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1478a0a7980000
+I haven't been able to reproduce this. Can you give some more details on
+the exact machine/kernel-config/setup where you saw this?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-715ca9dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba436e2363b6/vmlinux-715ca9dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ac78a7a1a30/bzImage-715ca9dd.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0dbb0d6fda088e78a4d8@syzkaller.appspotmail.com
-
-INFO: task syz.1.16:5435 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.16        state:D stack:26736 pid:5435  tgid:5429  ppid:5222   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6774
- request_wait_answer fs/fuse/dev.c:464 [inline]
- __fuse_request_send fs/fuse/dev.c:478 [inline]
- __fuse_simple_request+0xe17/0x1840 fs/fuse/dev.c:572
- fuse_simple_request fs/fuse/fuse_i.h:1156 [inline]
- fuse_send_open fs/fuse/file.c:51 [inline]
- fuse_file_open+0x599/0xb40 fs/fuse/file.c:146
- fuse_do_open fs/fuse/file.c:175 [inline]
- fuse_open+0x341/0x720 fs/fuse/file.c:264
- do_dentry_open+0x978/0x1460 fs/open.c:958
- vfs_open+0x3e/0x330 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff76397dff9
-RSP: 002b:00007ff764752038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007ff763b36058 RCX: 00007ff76397dff9
-RDX: 0000000000101001 RSI: 0000000020000180 RDI: ffffffffffffff9c
-RBP: 00007ff7639f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007ff763b36058 R15: 00007ffe4de011e8
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/25:
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-1 lock held by klogd/4585:
- #0: ffff88801fc3ea98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:593
-2 locks held by getty/4894:
- #0: ffff88801e1690a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz-execprog/5119:
-1 lock held by syz-executor/5120:
-1 lock held by dhcpcd-run-hook/5428:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+cheers
 
