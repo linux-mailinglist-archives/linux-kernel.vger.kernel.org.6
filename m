@@ -1,91 +1,94 @@
-Return-Path: <linux-kernel+bounces-375701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C625F9A99A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:16:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2363A9A99B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D928B281849
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9D681F22B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A5413A416;
-	Tue, 22 Oct 2024 06:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOKyS/hA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A213D244;
+	Tue, 22 Oct 2024 06:18:11 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AB3433B0;
-	Tue, 22 Oct 2024 06:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCD71E495;
+	Tue, 22 Oct 2024 06:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729577810; cv=none; b=uKZv4DXp1Nz4RWkSjlkTg8yBbRJ2WQ+KX/8gZ+6XIlMgxZfXtOQ7sBFmxAqFvIBKoOy7qmf0BGtAW/bmhFXzkwxx1R/VutTNzmnac8yku2RG7bfUalwSv/kETjgVYZp0isuTyVhipdkk8EFBEkTQYdeDSZx9Azmts426ZiUQYTE=
+	t=1729577891; cv=none; b=uTWgbM6MriHNW94I+tYcF0rOquLv0Kv4E0mBAaiiLo6r/zLzUmrsn78IniS6mJxMc0iKPhEuqq5J9pnc/lJjE3BxmCmubIKi3Vc26j8/aZARe1dpH7fYQUoZBptUHaX8dmSO8MeK/g4gmJF6KrxLY68Y4f/LOwTPxmBftBUkm8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729577810; c=relaxed/simple;
-	bh=dsiYHfMENw54Rwxddnc6oq2Qf3UAW+DE+wpic+MnsGI=;
+	s=arc-20240116; t=1729577891; c=relaxed/simple;
+	bh=jnNdPRp+iOBTESphayrxI0LVZxX6Hz9FgwN3dhnFQ/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEc2LLVeM5ZEkKSyO1yKU5Im7zCrMzEpBfl4kLYFy2g5Wsplxvj1OwJL3/rGFwf4pW70XSWs5lIVUGBE1yNxt462u1Us7VUjLXSXpIx6tCmEt+DovEAhFI+cOl13nI0qTNAl278PtTvrrEd+6GkFG1+Rn+do8TaJBxOU5ebnioQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOKyS/hA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006DCC4CEC3;
-	Tue, 22 Oct 2024 06:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729577809;
-	bh=dsiYHfMENw54Rwxddnc6oq2Qf3UAW+DE+wpic+MnsGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tOKyS/hAG+QH3+pNntd7RV6hRZMfJYatkZDr5iXfIv1IijPTed0k0j41/2e3qEh9D
-	 wSwTj48nYXxDI8jKiZQHtyLc0i3MBbOvaIIhGKHgXzEUQ8viaNAa0DDgXSLFnlx419
-	 pMD7tkHDTr/uSR1crFGMVqSDIEkhMYPngtz4k4JNOMnXqDe3YzNMhDCh3DsNdVcegW
-	 K5K3xi/utAiazNXKBnKeuS+Vr2T8n5j2Xp/XhMFZDAjZFmgL2ix288uitgs0ueprjo
-	 mllBEdfOO+3hgpjHhzkY96jq7WubZjex82sVRxB2t5aDzF1Rf0+k2yrrnZaw7SqtNi
-	 zwlkpNAbxBMNw==
-Date: Tue, 22 Oct 2024 08:16:46 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	"Satya Durga Srinivasu Prabhala --cc=linux-arm-msm @ vger . kernel . org" <quic_satyap@quicinc.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtpL6/Kx4Z5qEOIrtWMx8jLOTvnZHexbw1Kziy784KF6sK61abp6xIcHzO9FUgDXJqRwejNRlXS2+8Es6FvNnwIp3P3i91OE+343rjQNk/gDCY5CK4GrhDrtR4GqStUD8Pa1GJv35OePV8ier4p+9Cx4SkLPx7CmOiGBXb6Xm5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2892F227AA8; Tue, 22 Oct 2024 08:18:06 +0200 (CEST)
+Date: Tue, 22 Oct 2024 08:18:05 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings
- for SM8750
-Message-ID: <l7bs5xhoddlwggdd2ufc5lc2d33zkm2ewguwnd4t3gste2gjak@4qmcvkututzm>
-References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
- <20241021230359.2632414-2-quic_molvera@quicinc.com>
+Subject: Re: [PATCH] block: model freeze & enter queue as rwsem for
+ supporting lockdep
+Message-ID: <20241022061805.GA10573@lst.de>
+References: <20241018013542.3013963-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021230359.2632414-2-quic_molvera@quicinc.com>
+In-Reply-To: <20241018013542.3013963-1-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Oct 21, 2024 at 04:03:53PM -0700, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
+On Fri, Oct 18, 2024 at 09:35:42AM +0800, Ming Lei wrote:
+> Recently we got several deadlock report[1][2][3] caused by blk_mq_freeze_queue
+> and blk_enter_queue().
 > 
-> Add bindings and update documentation for clock rpmh driver on SM8750
-> SoCs.
+> Turns out the two are just like one rwsem, so model them as rwsem for
+> supporting lockdep:
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
+> 1) model blk_mq_freeze_queue() as down_write_trylock()
+> - it is exclusive lock, so dependency with blk_enter_queue() is covered
+> - it is trylock because blk_mq_freeze_queue() are allowed to run concurrently
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+Is this using the right terminology?  down_write and other locking
+primitives obviously can run concurrently, the whole point is to
+synchronize the code run inside the criticial section.
 
-This applies to all your patches.
+I think what you mean here is blk_mq_freeze_queue can be called more
+than once due to a global recursion counter.
 
-There is already CXO clock, so why pad is needed? All of these clocks
-come via some pad, right? Commit msg could explain here this. Otherwise
-it just duplicates the diff.
+Not sure modelling it as a trylock is the right approach here,
+I've added the lockdep maintainers if they have an idea.
 
-Best regards,
-Krzysztof
+> 
+> 2) model blk_enter_queue() as down_read()
+> - it is shared lock, so concurrent blk_enter_queue() are allowed
+> - it is read lock, so dependency with blk_mq_freeze_queue() is modeled
+> - blk_queue_exit() is often called from other contexts(such as irq), and
+> it can't be annotated as rwsem_release(), so simply do it in
+> blk_enter_queue(), this way still covered cases as many as possible
+> 
+> NVMe is the only subsystem which may call blk_mq_freeze_queue() and
+> blk_mq_unfreeze_queue() from different context, so it is the only
+> exception for the modeling. Add one tagset flag to exclude it from
+> the lockdep support.
+
+rwsems have a non_owner variant for these kinds of uses cases,
+we should do the same for blk_mq_freeze_queue to annoate the callsite
+instead of a global flag.
 
 
