@@ -1,151 +1,166 @@
-Return-Path: <linux-kernel+bounces-377070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032709AB97D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927179AB98B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCAB1F23491
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB62C1C22518
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FBF1CDA11;
-	Tue, 22 Oct 2024 22:31:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF86D18DF6B;
-	Tue, 22 Oct 2024 22:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C551CDA25;
+	Tue, 22 Oct 2024 22:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgEcW7FC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66BC18DF6B;
+	Tue, 22 Oct 2024 22:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636260; cv=none; b=HRRcO2FyPV3JC1OH1YSMktKOXYU2PE6vUS0ElA29FOwhsRI1OWlrJHID7J1pXF45rPgBP4PX4YtNqwyXIUva4OyXler5TPUbxvvhgaxXVdkWWmshumYp1fUu80csw6dSJb3jaEfdVOpFOJ2y4nTKQVV03KRyuLMGBcVhbWPNmgg=
+	t=1729636383; cv=none; b=fsJY4M52W4R3r/EtciaGRHssilVJCS3Ohiwza63zZ8Nx/kQ4Vq28vN0CpPIf65jMv6At2vUC6Mjn/ARph1AkHoISs7nIBm2pg0Tm/JTtDZq2VsMw4iHdulGI7sJXDcjSnVSBNjOsEHpiKO4/9XRmPzKBqPEWNNJ5xVoJos4gIkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636260; c=relaxed/simple;
-	bh=tGktF6vSZoG/5Nm3AOwDxotBmxHl3UEOtQYzSdmFcUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GdHB2dwRNd0F9KigZ8kdFAserwZn1g9XfW0j2HUEkMi2qPb17Ed3R/+YESYwpIeL2+7BeFmgKQTihkfofuXNZctbsAh5YdKu1FsErYf3qn3T5pG/OWNoMZfWqjwVqWZPddSRapWITB381slto8/RP1dxUJPDClDfbjmnjnM8TlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED9CE497;
-	Tue, 22 Oct 2024 15:31:26 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CEA83F528;
-	Tue, 22 Oct 2024 15:30:55 -0700 (PDT)
-Message-ID: <a67fe4fe-d4a8-4659-802f-8c7da4aa555b@arm.com>
-Date: Tue, 22 Oct 2024 23:32:05 +0100
+	s=arc-20240116; t=1729636383; c=relaxed/simple;
+	bh=nwHwS13CHRAlNM6XMu3I9UZM5dggMy94PVrhXxHEbvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgdXc864P+nfxI4+htDwZvOA0WCASbehbwoGSGErmdVhB5BPN3XhqnHgmoSySHHPU4XwJb/H0NkLlMsXrYP2/SjP9xTH4uxb+PwmI0U9cLLZ4rKKPOjYhj9D/An0p2/UGXXixUrNAKBC9iAwv78KoW1TStKFNaONwOavNm5Qvmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgEcW7FC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B699C4CEC3;
+	Tue, 22 Oct 2024 22:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729636383;
+	bh=nwHwS13CHRAlNM6XMu3I9UZM5dggMy94PVrhXxHEbvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MgEcW7FC1wlRraWBLbRk0VS7khqmUxckRyL4IjHWkZl0VqT6hsYIF8xdz/nfGkV+5
+	 ghCG+xRIUusTxiXQgZaOt0IuXRK29keRVbHasi1uVuZdfADlBKTHawMJSGXpoZhImW
+	 9128od5vVsrlUv/K4hA5Qr6z3tAqVMry3W7K5B5OICN85wsQRw0fVhG3HzPn/B8Tls
+	 KhvWsyMYg8Qlr9UZMaYaY21y1Xx/NDNQvVzAHWdZe9r2jwP22YHK4nYJXpaIk1H352
+	 rSOdZDfXIv4kPcSp+KRBoaXrKm22zQWBv4wpAr8rb63uqe7k1qjjtEuevo6TH7WzKT
+	 GPk7NICFGWhIg==
+Date: Tue, 22 Oct 2024 17:33:00 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 8/8] arm64: dts: qcom: Add support for multimedia
+ clock controllers
+Message-ID: <m26rnkivudsbvhb3ocofizwpoq3erndnt6jdhrwa6kurxjkr3d@mrocbpeniuqk>
+References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
+ <20241011-sa8775p-mm-v4-resend-patches-v5-8-4a9f17dc683a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/11] thermal: core: Separate thermal zone governor
- initialization
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <4408795.ejJDZkT8p0@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <4408795.ejJDZkT8p0@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011-sa8775p-mm-v4-resend-patches-v5-8-4a9f17dc683a@quicinc.com>
 
+On Fri, Oct 11, 2024 at 12:28:38AM GMT, Taniya Das wrote:
+> Add support for video, camera, display0 and display1 clock
+> controllers on SA8775P platform.
+> 
 
+Patch subject doesn't match expectations and for some reason commit
+message is wrapped at 60 characters. Please fix.
 
-On 10/10/24 23:20, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> In preparation for a subsequent change that will switch over the thermal
-> core to using a mutex guard for managing thermal_governor_lock, move
-> the code running in thermal_zone_device_register_with_trips() under that
-> lock into a separate function called thermal_zone_init_governor().
-> 
-> While at it, drop a useless comment.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Also please mention why dispcc1 is disabled (I'm not questioning the
+fact that it is, I just want you to document your decision)
+
+Regards,
+Bjorn
+
+> Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 57 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
 > 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/2495577.jE0xQCEvom@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   36 +++++++++++++++++++++---------------
->   1 file changed, 21 insertions(+), 15 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1343,6 +1343,25 @@ int thermal_zone_get_crit_temp(struct th
->   }
->   EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
->   
-> +static int thermal_zone_init_governor(struct thermal_zone_device *tz)
-> +{
-> +	struct thermal_governor *governor;
-> +	int ret;
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index e8dbc8d820a64f45c62edebca7ce4583a5c716e0..e56a725128e5ec228133a1b008ac2114a4682bef 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -3254,6 +3254,47 @@ llcc: system-cache-controller@9200000 {
+>  			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		videocc: clock-controller@abf0000 {
+> +			compatible = "qcom,sa8775p-videocc";
+> +			reg = <0x0 0x0abf0000 0x0 0x10000>;
+> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+> +				 <&sleep_clk>;
+> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
 > +
-> +	mutex_lock(&thermal_governor_lock);
+> +		camcc: clock-controller@ade0000 {
+> +			compatible = "qcom,sa8775p-camcc";
+> +			reg = <0x0 0x0ade0000 0x0 0x20000>;
+> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+> +				 <&sleep_clk>;
+> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
 > +
-> +	if (tz->tzp)
-> +		governor = __find_governor(tz->tzp->governor_name);
-> +	else
-> +		governor = def_governor;
+> +		dispcc0: clock-controller@af00000 {
+> +			compatible = "qcom,sa8775p-dispcc0";
+> +			reg = <0x0 0x0af00000 0x0 0x20000>;
+> +			clocks = <&gcc GCC_DISP_AHB_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+> +				 <&sleep_clk>,
+> +				 <0>, <0>, <0>, <0>,
+> +				 <0>, <0>, <0>, <0>;
+> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
 > +
-> +	ret = thermal_set_governor(tz, governor);
+>  		pdc: interrupt-controller@b220000 {
+>  			compatible = "qcom,sa8775p-pdc", "qcom,pdc";
+>  			reg = <0x0 0x0b220000 0x0 0x30000>,
+> @@ -3876,6 +3917,22 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
+>  			};
+>  		};
+>  
+> +		dispcc1: clock-controller@22100000 {
+> +			compatible = "qcom,sa8775p-dispcc1";
+> +			reg = <0x0 0x22100000 0x0 0x20000>;
+> +			clocks = <&gcc GCC_DISP_AHB_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+> +				 <&sleep_clk>,
+> +				 <0>, <0>, <0>, <0>,
+> +				 <0>, <0>, <0>, <0>;
+> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +			status = "disabled";
+> +		};
 > +
-> +	mutex_unlock(&thermal_governor_lock);
-> +
-> +	return ret;
-> +}
-> +
->   static void thermal_zone_init_complete(struct thermal_zone_device *tz)
->   {
->   	struct thermal_cooling_device *cdev;
-> @@ -1407,7 +1426,6 @@ thermal_zone_device_register_with_trips(
->   	struct thermal_trip_desc *td;
->   	int id;
->   	int result;
-> -	struct thermal_governor *governor;
->   
->   	if (!type || strlen(type) == 0) {
->   		pr_err("No thermal zone type defined\n");
-> @@ -1505,21 +1523,9 @@ thermal_zone_device_register_with_trips(
->   	if (result)
->   		goto release_device;
->   
-> -	/* Update 'this' zone's governor information */
-> -	mutex_lock(&thermal_governor_lock);
-> -
-> -	if (tz->tzp)
-> -		governor = __find_governor(tz->tzp->governor_name);
-> -	else
-> -		governor = def_governor;
-> -
-> -	result = thermal_set_governor(tz, governor);
-> -	if (result) {
-> -		mutex_unlock(&thermal_governor_lock);
-> +	result = thermal_zone_init_governor(tz);
-> +	if (result)
->   		goto unregister;
-> -	}
-> -
-> -	mutex_unlock(&thermal_governor_lock);
->   
->   	if (!tz->tzp || !tz->tzp->no_hwmon) {
->   		result = thermal_add_hwmon_sysfs(tz);
+>  		ethernet1: ethernet@23000000 {
+>  			compatible = "qcom,sa8775p-ethqos";
+>  			reg = <0x0 0x23000000 0x0 0x10000>,
 > 
+> -- 
+> 2.45.2
 > 
-> 
-
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
