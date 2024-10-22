@@ -1,131 +1,182 @@
-Return-Path: <linux-kernel+bounces-375533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A54F9A971A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:30:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9B09A971C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E2C1C21786
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07264286601
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB813D8B5;
-	Tue, 22 Oct 2024 03:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C943212E1CA;
+	Tue, 22 Oct 2024 03:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5Njv7Ii"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBL19Mv2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0582513A86A;
-	Tue, 22 Oct 2024 03:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693E40BF2;
+	Tue, 22 Oct 2024 03:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567745; cv=none; b=R+2eRtZnrn4lGZd6QYweHNSu2GsswGBgjlf0j30EoTUPCEZPsilbvlj66B2FtAf4by7/QwQkc2aEMQWin5JtsOwwPysDAquN44EoikIfKk20Xa/RUaEBaFt66z+w2C3lbBiD+Ojokk0dxZzuJrszeXsvBrN483y73s4k7CoYaYk=
+	t=1729567845; cv=none; b=SuXJxmB9RphYxu+Y7ZbBC+y2y+T7jYUo9qcHsKKeeWcBr6McFNELqgmt/DfHEtYd+s7vbnX5V2bwLnv85rE4973rX1NJdR2/Oj4g8cTRNYs70r2zmE3SYITYFpFSBlzoxus0L9LnHkQFLBy6+EY+pSIsGhLJvw8505C+YrRsabE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567745; c=relaxed/simple;
-	bh=+EgaXF/VyRaCocT7c4QBaSaXuDPO+CiNlt6NTkbIoxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R2Y8yn7PGthLbrcNPmbs8oxrkX95xh4cAyiXLkffJj5X+L3bbbQgSEywjdKJqjK0RJa7i6rjWLeXYJMR/d8xvLtCS5kS2kGZ4VTgTK1nyeREBwie6OLg3hRcnXk5DdYcLJ0+ilmNqsP+CR0yspLnGsW5IecjiZmNcFD04Ydup7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5Njv7Ii; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so4717049276.0;
-        Mon, 21 Oct 2024 20:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729567743; x=1730172543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8+of3sn6my3fTdyQClh+kg+3L6lJjqrKeiMmZ8o2XgE=;
-        b=l5Njv7IigfizQOTihrcWw6dI25N5frWONbUdQZJcboxN0TjqUnAG9x9ldZJWbzemoM
-         zK7eQl5xmyrbK+n6750rKWfpBuwKFqG2lUDjPUBtQKjsajThZ3gNCehujusl/FIG9mLF
-         DNHCmJ0066ejQyHdL/5nbEo4d8CxK1s8nC4vNAFhryfMcyuDnmy0oU63+2mK8fNvD9o4
-         U8NnpbLjQmhZEp3FgQ3wDDp5GhFF7XtzzTLr2bxysqFSiXPkoq2qVDF/QobuCKVDIutH
-         qQCn73sBZQPbCMrZj5U4Y+0Qfk4p3UX6Fcw+w05caso91/d8tb2Bz7MY7GFdDSO9M056
-         4XMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729567743; x=1730172543;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+of3sn6my3fTdyQClh+kg+3L6lJjqrKeiMmZ8o2XgE=;
-        b=TRzcQugTVeKuxknTqzLiF6Cjm1DTQVhEkix/Xv00ds1RuRLp9LpSRB9okInvHpLdRC
-         dC9J/IW8HY/R/SALbUR7IxQleMTaKDHI74p8QS2hWRhTzzpkC8JojpA1iOc+kfvuDtz0
-         UniSgVHmLo2k6Ladnm9AWOWFrYukE7N/VUBx9Ogcj5cNT3Jv5uymUfb3yg7TQvkmHFMH
-         KEIMdb6TauuyYf6T019pgS7DOgebLWT2bg1f6XCJqNjJOw+XtgGJaxpEouFMb0wYXLTd
-         Z3hWU5ffjGloe0gX/12Ebi1L2S3NuYg9aSDzfoS7MrkYlQoxMGLCy3iiRvrNoIQGGB3f
-         YAag==
-X-Forwarded-Encrypted: i=1; AJvYcCVqZv7A0i41mTxoLGMdGx1hk2m+li0Wo8C6SJUJ3J7sB/n+a8wkMNAyO42oR4NW2xHxClA9T6RNhqU=@vger.kernel.org, AJvYcCXQtXyEg12i5o4G8UfvxC4qHHLZy/VBWQA5Kh4EXnLd6/TAR1ellnScvdUkBm2J+VDDiEuFUq3rsTAKGefP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEHeEgwPHgKmvS95wbLU1Y5ANBidlpdeF3A/MQ5nuuiIELXFEY
-	10NNMvc6MwpPueISqxfPpcRF6UhTYdcbCYpugraXS1vkfJDrZSun
-X-Google-Smtp-Source: AGHT+IEkFnW0xFEimjKvu3s+rbX3lF8V3Fc79mdDgyh2EDBVu5WJhRepTDGzvIugNEFmOl+gxhtBBw==
-X-Received: by 2002:a05:690c:a:b0:6e2:313a:a01e with SMTP id 00721157ae682-6e5bfc3f30dmr126243927b3.32.1729567742959;
-        Mon, 21 Oct 2024 20:29:02 -0700 (PDT)
-Received: from [192.168.2.226] ([107.175.133.150])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5d6f904sm9372707b3.135.2024.10.21.20.28.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 20:29:01 -0700 (PDT)
-Message-ID: <4cf5f422-d287-4f53-9af2-82bd7fe3b264@gmail.com>
-Date: Tue, 22 Oct 2024 11:28:55 +0800
+	s=arc-20240116; t=1729567845; c=relaxed/simple;
+	bh=vm043k6TgMA5PAnsJl3nt1ttFqSEZ5nEWOaT/UX0d+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GJOUH1xXP3PrTWk/Qml1Fm73enLXpeiVfwC12GNur6+QOB6iCV8QzqAC3E0QZHnUltGI7vkix/cOMGleMV3i1uChsoqhMqUylEwQib6RqDirJisyaRPw7CArJzHoZXfoEr6InOpW7OBMs99CSWJFWmHceFcxp3jUlZxnib4HB8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBL19Mv2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C6DC4CEEC;
+	Tue, 22 Oct 2024 03:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729567843;
+	bh=vm043k6TgMA5PAnsJl3nt1ttFqSEZ5nEWOaT/UX0d+o=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=mBL19Mv2pBpL8rIZjVObq9GETsoLUTL91QatXbHpzVohKWd/oMQlLz2BwIQvTzkmf
+	 iq/Hr3WpXTvGPDFTxnb1z8wcX4EmUG9Bmo6jE1ntVB/Oiyx1uXuGHopvV6PKB/rNjq
+	 3BfS7v+TayTJMtouflfWdD3g78ZydMQ63EkZlrJEC7LPj2OniSi4mgTtYyGH53tIP+
+	 ZUFgrjTQvJ48M+n7AKx/VHEQok0gGrGa9XorCOwmggKmcUZjvW+vYGbeEpi4uOnyet
+	 LqfSMApjJICVIwAQnAp1FGBhG1uInn2opxQq4vaXwh9sXqYNEFen/RGRmpk4nM6AzK
+	 nZyRsAGYjlZ9g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3136BCE0F85; Mon, 21 Oct 2024 20:30:43 -0700 (PDT)
+Date: Mon, 21 Oct 2024 20:30:43 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
+ srcu_read_lock()
+Message-ID: <22a02204-8d14-41ae-af40-dfea79dec09d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+ <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
+ <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
+ <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] docs/zh_CN: update the translation of mm/hmm.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, alexs@kernel.org,
- corbet@lwn.net, Yanteng Si <siyanteng@loongson.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1729327831.git.dzm91@hust.edu.cn>
- <82259a2656549c90591dc3873f3d2e8a4fb41233.1729327831.git.dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <82259a2656549c90591dc3873f3d2e8a4fb41233.1729327831.git.dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
 
-Reviewed-by: Alex Shi <alexs@kernel.org>
+On Mon, Oct 21, 2024 at 07:01:02PM -0700, Andrii Nakryiko wrote:
+> On Mon, Oct 21, 2024 at 5:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
+> > > On Mon, Oct 21, 2024 at 3:13 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > For almost 20 years, the int return value from srcu_read_lock() has
+> > > > been always either zero or one.  This commit therefore documents the
+> > > > fact that it will be non-negative.
+> > > >
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Andrii Nakryiko <andrii@kernel.org
+> > > >
+> > > > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > > > index bab1dae3f69e6..512a8c54ba5ba 100644
+> > > > --- a/include/linux/srcu.h
+> > > > +++ b/include/linux/srcu.h
+> > > > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+> > > >   * a mutex that is held elsewhere while calling synchronize_srcu() or
+> > > >   * synchronize_srcu_expedited().
+> > > >   *
+> > > > - * The return value from srcu_read_lock() must be passed unaltered
+> > > > - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+> > > > - * the matching srcu_read_unlock() must occur in the same context, for
+> > > > - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+> > > > - * if the matching srcu_read_lock() was invoked in process context.  Or,
+> > > > - * for that matter to invoke srcu_read_unlock() from one task and the
+> > > > - * matching srcu_read_lock() from another.
+> > > > + * The return value from srcu_read_lock() is guaranteed to be
+> > > > + * non-negative.  This value must be passed unaltered to the matching
+> > > > + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
+> > > > + * srcu_read_unlock() must occur in the same context, for example, it is
+> > > > + * illegal to invoke srcu_read_unlock() in an irq handler if the matching
+> > > > + * srcu_read_lock() was invoked in process context.  Or, for that matter to
+> > > > + * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
+> > > > + * from another.
+> > >
+> > > For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
+> > > Presumably the same non-negative index will be returned/consumed there
+> > > as well, right? Can we add a blurb to that effect for them as well?
+> >
+> > Does the change shown below cover it?
+> 
+> Yep, looks good, thank you! You might want to fix
+> s/srcu_read_unlock/__srcu_read_unlock/, while at it, but that's
+> orthogonal.
 
-On 10/19/24 16:54, Dongliang Mu wrote:
-> Update to commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in
-> heterogeneous memory management page")
-> 
-> scripts/checktransupdate.py reports:
-> 
-> Documentation/translations/zh_CN/mm/hmm.rst
-> commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in heterogeneous
-> memory management page")
-> commit 090a7f1009b8 ("docs/mm: remove references to hmm_mirror ops and
-> clean typos")
-> commit d56b699d76d1 ("Documentation: Fix typos")
-> 3 commits needs resolving in total
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  Documentation/translations/zh_CN/mm/hmm.rst | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/translations/zh_CN/mm/hmm.rst b/Documentation/translations/zh_CN/mm/hmm.rst
-> index babbbe756c0f..0669f947d0bc 100644
-> --- a/Documentation/translations/zh_CN/mm/hmm.rst
-> +++ b/Documentation/translations/zh_CN/mm/hmm.rst
-> @@ -129,13 +129,7 @@ struct page可以与现有的 mm 机制进行最简单、最干净的集成。
->    int hmm_range_fault(struct hmm_range *range);
->  
->  如果请求写访问，它将在丢失或只读条目上触发缺页异常（见下文）。缺页异常使用通用的 mm 缺
-> -页异常代码路径，就像 CPU 缺页异常一样。
-> -
-> -这两个函数都将 CPU 页表条目复制到它们的 pfns 数组参数中。该数组中的每个条目对应于虚拟
-> -范围中的一个地址。HMM 提供了一组标志来帮助驱动程序识别特殊的 CPU 页表项。
-> -
-> -在 sync_cpu_device_pagetables() 回调中锁定是驱动程序必须尊重的最重要的方面，以保
-> -持事物正确同步。使用模式是::
-> +页异常代码路径，就像 CPU 缺页异常一样。使用模式是::
->  
->   int driver_populate_range(...)
->   {
+As long as we are in the area...  Please see below for the update.
+
+Thoughts?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 4433b7d3785d8d2a700f5ed5ca234c64bc63180e
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Mon Oct 21 15:09:39 2024 -0700
+
+    srcu: Guarantee non-negative return value from srcu_read_lock()
+    
+    For almost 20 years, the int return value from srcu_read_lock() has
+    been always either zero or one.  This commit therefore documents the
+    fact that it will be non-negative, and does the same for the underlying
+    __srcu_read_lock().
+    
+    [ paulmck: Apply Andrii Nakryiko feedback. ]
+    
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index bab1dae3f69e6..512a8c54ba5ba 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+  * a mutex that is held elsewhere while calling synchronize_srcu() or
+  * synchronize_srcu_expedited().
+  *
+- * The return value from srcu_read_lock() must be passed unaltered
+- * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+- * the matching srcu_read_unlock() must occur in the same context, for
+- * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+- * if the matching srcu_read_lock() was invoked in process context.  Or,
+- * for that matter to invoke srcu_read_unlock() from one task and the
+- * matching srcu_read_lock() from another.
++ * The return value from srcu_read_lock() is guaranteed to be
++ * non-negative.  This value must be passed unaltered to the matching
++ * srcu_read_unlock().  Note that srcu_read_lock() and the matching
++ * srcu_read_unlock() must occur in the same context, for example, it is
++ * illegal to invoke srcu_read_unlock() in an irq handler if the matching
++ * srcu_read_lock() was invoked in process context.  Or, for that matter to
++ * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
++ * from another.
+  */
+ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
+ {
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 07147efcb64d3..ae17c214e0de5 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
+ /*
+  * Counts the new reader in the appropriate per-CPU element of the
+  * srcu_struct.
+- * Returns an index that must be passed to the matching srcu_read_unlock().
++ * Returns a guaranteed non-negative index that must be passed to the
++ * matching __srcu_read_unlock().
+  */
+ int __srcu_read_lock(struct srcu_struct *ssp)
+ {
 
