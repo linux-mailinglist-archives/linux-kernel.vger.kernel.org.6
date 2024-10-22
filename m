@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-375362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7099A9500
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:33:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC0F9A9504
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A858B229D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180F4284FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E781649652;
-	Tue, 22 Oct 2024 00:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A1E17557;
+	Tue, 22 Oct 2024 00:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdEZDvW9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMptoSda"
 Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BD84A35;
-	Tue, 22 Oct 2024 00:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5043481E;
+	Tue, 22 Oct 2024 00:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729557160; cv=none; b=R629rCbvsVrdOBBzDy6o31CBZT/70W9JjvZGPBEEXmMUKE+lvwquYLHgBKb5q6OC9M1ZfwmvnvIZq+E2YxJ9kBaYWf67ua6mtrw9/9JZ8c8Th6OmN7x1PCB1Spo2fNaCj9s1FU+Dej8fQyZtwFfePUcv/M4LtZxL+sw7j60joDo=
+	t=1729557412; cv=none; b=B3jLfz8seMUYaiklkMPvjf2AwxtWBNa5Zr6+ZtkqHI7TApDFwKFVQHhfN0FBrx0yCiTVgwsMWcm6R+liJdvpcuKqWm45pu0Eq5vzIVOqFtGC2fus8WYx5XMHmxJjFM6ZgvNgGoRyWxtb7g9W1kwXW7AKWz0th4rJXROV2T3RoZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729557160; c=relaxed/simple;
-	bh=Ubo42J5xKuWevhXM6XuKUJW1NcslPFK+IsNwa6C5B4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJRFCEVUIDTOZRMKh1pu0wg3xlwmXqgJoLkSwc/8P4uCUBs2zs56c2aT+h3zQZpDFQdM9wAQL4rFKkTaz9bnHYvuXpRQS5rvxm9+MjbmIbaRjXseCPo/7bTKU9tOC52qsa8EacHOBva3APCO20OiNvPhejHVThFdTNXP8dCjY04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdEZDvW9; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1729557412; c=relaxed/simple;
+	bh=DlvmIS0GFdouOvMkd9kxRO+6vjh3grF2nviYudtDdmc=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=VNcDtahXZZU16CaLYXM4W7BPjuSS6WujgUI2mmVa1bhkdMDLw2m4TxkLMGgNGTar4DcCkiZDIPcfbYeoBgLS5g0ro66WzWDOAynQnYYTU/0x/0aaGvVVVpkTockILSpmDta4G8KAYl3xgAcLcU4QeRReTzmr5f1Eey38Q+i56cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMptoSda; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e579abb99so3614845b3a.2;
-        Mon, 21 Oct 2024 17:32:38 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3509793b3a.2;
+        Mon, 21 Oct 2024 17:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729557158; x=1730161958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WE4OCeGrEarxaIJLsEWYczNlBhDxq64y4K7wEYrbCx8=;
-        b=mdEZDvW9nTyN1dw+JYjF4rK7DBcVEl1v/HVuUX2cswl1EjvxSXsCJt/fV5+Fi6BW1N
-         bifZP9n/bKaj+bZNIrY09ai5/IykPQ+I8mtD3rVRr7uc5J8yni5GQMMnfc1BHEbXoYWJ
-         VHkA/arunQHrV6lhS0n7upPJhcl7/joRPQ7tqZ2PhbrFZWv/VJ4B3TJWzdu1wEGkO9rN
-         gOMc2GdIpLTh4YwUZON5ByqEdwd+6bFs/2g7g1dFz4EKQpAKgaCUrxl1qAGS8h0cinV4
-         BQ34/iJp8u/H6tFqb4VDG0ghy7g18fArpC0JBy+UvGJSB9fgLOaZd3/5RlLGXrLoc50I
-         YKUw==
+        d=gmail.com; s=20230601; t=1729557409; x=1730162209; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qzofkblKFhri+Rfh3J4/u0RRkjnhDLEA166Xs/RLWQs=;
+        b=lMptoSdaovfgq0FUJo5QWHNS+94P19f8W+/1mlX52FM+P6AHwVWHRTjsWNyLTpfsOr
+         HLTpZxuUSs0sSntJRTfP4qnUDVmC8cNfq3BzKC9sjC9ILDyyqSAjSFqjYvhYgyMb08cB
+         KmsePPhBxhn1igXdiKaKEOKh59bngozX400uywnylJBL+1sDt6l9RsnreniZ71FhLkO6
+         UyaSb8TbfIVfEmW0siUZeqZzTRiJtEmH8M3qm+OaGJwtvkB6d6u4uv/D5FXQID2hQBE7
+         AOIPEWv6gULFTDAJ/T6Hv366eRKty994Z+jCQ07/zfVQxZRfrW7ey7HPAD83hE5cHrQf
+         wi4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729557158; x=1730161958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WE4OCeGrEarxaIJLsEWYczNlBhDxq64y4K7wEYrbCx8=;
-        b=gHG0Kab/fJNzIYRBScj2ULUZIPouRyLWYm6xpzwr3ESSpK4/TE6lYrWQZoS8pmGvfA
-         001G/FoFTGWn6sN29p5tCpAmftBvv9c6KmYENeN11BLOUCHfb16X9FE8mWkOTr3OQMhy
-         /NeldPxE7w4uSjSj44fdafFghG/Dhi2M7nsQxpQYvXQ36qCV1tDeRHgW/w44sBuiYjTk
-         5IK7SWVUMpBnQiA3lAvAkOibetiBAmOZM1pr8uKBHQ7/QkmL/kDHpzOapPnVMtkCz7St
-         zHpPppWb22FOQ7TmO/w9IPn0IlsYTYG5rOCom4k1ANTcldqjaSoy6vT44uk3uthvWxkB
-         Lj7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVU4TRt8YJFYg/WzoOhcRDCvHYERu1nWMus3AoFp7aJNqIsjrInxk6Qyg+RXRMco2dT/NXldkzb0o7qesl7@vger.kernel.org, AJvYcCVc3pQDDOd/zH500nM2/mX2JFztMTwKs2UY7HJ18M4BgpeK+mVkM/xH1+oGNGuc9V/YvsTi6RqbP20h@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrEqd0x++i12AlYXEA+0EvS5yyy2jfbhb7rYh2KMI1o0w4j0U+
-	CAnh3wsl48xYGMdFoGshz5QacdP0bDCaP11f8A5EnTle5aRc3HCveaXVMw==
-X-Google-Smtp-Source: AGHT+IGRvtwT49FWz7kNEaS3v8Wbc/KWtCjRiHMEU5H4U/gU9VJLLNUgtlNoDFiUyPMBYSalal22xQ==
-X-Received: by 2002:a05:6a00:3d15:b0:71e:76ac:4fc4 with SMTP id d2e1a72fcca58-71ea332ab76mr19694997b3a.21.1729557158051;
-        Mon, 21 Oct 2024 17:32:38 -0700 (PDT)
-Received: from localhost ([121.250.214.124])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab58aadsm3747124a12.53.2024.10.21.17.32.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 17:32:37 -0700 (PDT)
-Date: Tue, 22 Oct 2024 08:32:19 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, Chao Wei <chao.wei@sophgo.com>, Conor Dooley <conor@kernel.org>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 0/2] Add board support for Sipeed LicheeRV Nano
-Message-ID: <luq5c3nkj6mcnmfah5gethcud5iikaayyt4e4tiw7fh7e67zou@bkuzbt7kiztp>
-References: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
+        d=1e100.net; s=20230601; t=1729557409; x=1730162209;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qzofkblKFhri+Rfh3J4/u0RRkjnhDLEA166Xs/RLWQs=;
+        b=Boe8YMHDGQkj59aFI7/pCt/778Xm3ukd8V4mZbCWhp+FJjRBLcuQhydcAC8tsLcizy
+         xy7NWH83QzuFkejPhEidAMkLqL4hsPYgiM6BqQtLOYmfYgGQV5TUVzrdIkMOM72a9fdw
+         KSvqQS4sEAgKfw+jaEa5omaOkpOVd7mNMaGMhDzO4zlh3BPNSGuYzOYBLkWmBY7gblHU
+         My91w0TGMwDAvcNbIIP3ytTFkZqCsNlBHKMT3uGpkUvpqQLWAqrkY9j54THBr8QaXrhu
+         /QbENVne79bQLO7AI5e9fGMPsbq9rnBD+pyFhEeT/7OYjiTY5AIKuYkzdU6C3F1OaAtc
+         ozjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFmJJlTNsbgkZxyhEnCNR3OY3DquB5IZvAkSZIYWazO+xX9wYi1F8RFf0+mV1m6TrzLdI1Gx9WmGtFUgE=@vger.kernel.org, AJvYcCWwXwy5KqgwKEFf4LUfzSaYEdx0YXzOJDd2Ky8QfSEO9bOTktfPhWZjD3qGFlsdjLOzk1Kv7RcuZMlVriYpBqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv6LQqAf8vTOL2Af3RSKVgxVUcCYSBgGDSxMZs9PH0u71r2Ufs
+	wOHkJzBr2yfHFmWhX00qKa6ONs7loektnFdwGxgpUQtT9kcorJfzU/l76bTq
+X-Google-Smtp-Source: AGHT+IF/nPjV5QSpmN+q0ML59khpHR/EVtZLnhERjhjNxgAmBM6yhRzL6e0Ly5IY3QtYiktXk+H27A==
+X-Received: by 2002:a05:6a00:1a94:b0:71d:f821:1981 with SMTP id d2e1a72fcca58-71ea3126119mr16470056b3a.4.1729557409053;
+        Mon, 21 Oct 2024 17:36:49 -0700 (PDT)
+Received: from smtpclient.apple ([2001:e60:a409:cb40:2dbb:16ed:d48d:b2b3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d76besm3520638b3a.121.2024.10.21.17.36.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 17:36:48 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Jeongjun Park <aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
+Date: Tue, 22 Oct 2024 09:36:37 +0900
+Message-Id: <1D787F7E-08E2-4F21-B7D3-68A9F345E79E@gmail.com>
+References: <172631439319.3042536.1475962432679276880.kvalo@kernel.org>
+Cc: toke@toke.dk, Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
+ vasanth@atheros.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <172631439319.3042536.1475962432679276880.kvalo@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>
+X-Mailer: iPhone Mail (21G93)
 
-On Thu, Oct 10, 2024 at 05:07:05PM +0200, Thomas Bonnefille wrote:
-> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
-> minimal device tree files for this board to make it boot to a basic
-> shell.
-> 
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
-> Changes in v5:
-> - Add support for pinctrl
-> - Remove nodes for i2c0 and uart1
-> - Drop dt-bindings patch that are already applied
-> - Link to v4: https://lore.kernel.org/r/20240711-sg2002-v4-0-d97ec2367095@bootlin.com
-> 
-> Changes in v4:
-> - Add correct bindings configuration for SG2002 sdhci
-> - Drop commit "dt-bindings: timer: Add SOPHGO SG2002 clint" because it
->   has already been merged in Daniel Lezcano git tree.
-> - Link to v3: https://lore.kernel.org/r/20240709-sg2002-v3-0-af779c3d139d@bootlin.com
-> 
-> Changes in v3:
-> - Remove /dts-v1/ directive from sg2002.dtsi file
-> - Add disable-wp property to sdhci node to avoid having a write
->   protected SD card
-> - Drop changes in cv18xx.dtsi and cv1800b.dtsi
-> - Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
-> - Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
-> 
-> Changes in v2:
-> - Add SDHCI support
-> - Change device tree name to match the Makefile
-> - Add oscillator frequency
-> - Add aliases to other UARTs
-> - Add aliases to GPIOs
-> - Move compatible for SDHCI from common DT to specific DT 
-> - Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
-> 
-> ---
-> Thomas Bonnefille (2):
->       riscv: dts: sophgo: Add initial SG2002 SoC device tree
->       riscv: dts: sophgo: Add LicheeRV Nano board device tree
-> 
->  arch/riscv/boot/dts/sophgo/Makefile                |  1 +
->  .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 95 ++++++++++++++++++++++
->  arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 42 ++++++++++
->  3 files changed, 138 insertions(+)
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20240515-sg2002-93dce1d263be
-> 
-> Best regards,
-> -- 
-> Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> 
 
-LGTM.
 
-Reviewed-by: Inochi Amaoto <inochiama@gmail.com>
+> Kalle Valo <kvalo@kernel.org> wrote:
+>=20
+> =EF=BB=BFJeongjun Park <aha310510@gmail.com> wrote:
+>=20
+>> I found the following bug in my fuzzer:
+>>=20
+>>  UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_h=
+st.c:26:51
+>>  index 255 is out of range for type 'htc_endpoint [22]'
+>>  CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
+>>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/=
+01/2014
+>>  Workqueue: events request_firmware_work_func
+>>  Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x180/0x1b0
+>>   __ubsan_handle_out_of_bounds+0xd4/0x130
+>>   htc_issue_send.constprop.0+0x20c/0x230
+>>   ? _raw_spin_unlock_irqrestore+0x3c/0x70
+>>   ath9k_wmi_cmd+0x41d/0x610
+>>   ? mark_held_locks+0x9f/0xe0
+>>   ...
+>>=20
+>> Since this bug has been confirmed to be caused by insufficient verificati=
+on
+>> of conn_rsp_epid, I think it would be appropriate to add a range check fo=
+r
+>> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.=
+
+>>=20
+>> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
+>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+>> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+>=20
+> Patch applied to ath-next branch of ath.git, thanks.
+>=20
+
+I think this patch should be applied to the next rc version immediately
+to fix the oob vulnerability as soon as possible, and also to the=20
+stable version.
+
+Regards,
+
+Jeongjun Park
+
+> 8619593634cb wifi: ath9k: add range check for conn_rsp_epid in htc_connect=
+_service()
+>=20
+> --
+> https://patchwork.kernel.org/project/linux-wireless/patch/20240909103855.6=
+8006-1-aha310510@gmail.com/
+>=20
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpat=
+ches
+> https://docs.kernel.org/process/submitting-patches.html
+>=20
 
