@@ -1,183 +1,198 @@
-Return-Path: <linux-kernel+bounces-375653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392909A98C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68FA9A98C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE422826AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:42:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F741C20DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14BF146580;
-	Tue, 22 Oct 2024 05:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25D1E529;
+	Tue, 22 Oct 2024 05:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHjsGY0M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GxriNLJ1"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1BD139566;
-	Tue, 22 Oct 2024 05:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B715131E38
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575681; cv=none; b=N8nxcdlzbDBRHlXPUlwe4MyaTdDxrbgZfi8hJuLR0RR/apeHylWqsshPtFnXijB7ijV2Hmg9cxLvzPcN2PUKkm0KMrKgBEhUDNUlI7lLjBA9PL/pPvwY/BEGUBOk8TBbPf+m1EP7fqOCEBILcZMrBjDVKavRWTshRDjKErVgPDA=
+	t=1729575718; cv=none; b=EBa8mgdRbc2tK/IRsYySPyUCqrx6wQGMiyASJbZlJTUuSSs59wjvlYdZnEWvgxQcWbypuDm9jNtUJckrGELJszzG8l+pbDaQisnZ+u9NJfXtIerqa+n41wTtQpu9HIAAdshkokdLwtaOLh8faF5sIr936XIMrTfrVaoVdFxL+YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575681; c=relaxed/simple;
-	bh=CElZF6oRP9IlY0RwgVPhOFqNpURPY/hGMZANUgAw6DM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdrcsNwxsHCufqe35DQa1OFy4i6M9lIUJAgkAY4m07uXy+gFT6XcTmRar85wLoeUAls97OhMUU611jC+UW220dT9rIXEMoUYs6EAzfUQF8ggfj7C68vZkR/3gpTmG3Lvl9F1I8/c0JsDJxfNl8inathGNc/vCA6JFH6Hjuxo/3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHjsGY0M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3B2C4CEE8;
-	Tue, 22 Oct 2024 05:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729575680;
-	bh=CElZF6oRP9IlY0RwgVPhOFqNpURPY/hGMZANUgAw6DM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHjsGY0MgVHqzlwdXQL9IqStYsWNzCgMfOFlvyCrbvYDJUrcEkbQ5OCFnELDccBlP
-	 gqeMgrg8j9htSKHm5P7D4SRk2hMg+AWlR6PG5VXLh6X+vRzbPLrGCnbPxQ/OhM2wEk
-	 KXeEa1xYZGwnoNCVKUemnd/ajQjzY5ET/K0CQEphTirSTiuWUBVSZgd7tweUX4Qlp7
-	 iAfaLd/UVjFAAQXx+xkEKgtRz0/2/1aIqZ5P4sMzoCYP/zhmoOIl9Cdg6/y3wXqd/K
-	 Q1KQ1k9RHRJERfjtVO5b2rGeQB7RFJY1SzQesWiqVVmmb10d/V7rEiPbXHgtgX+7T2
-	 7eKK+glETqHjw==
-Date: Mon, 21 Oct 2024 22:41:18 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf check: Add sanitizer feature and use to avoid
- test failure
-Message-ID: <Zxc6_jZdDcWgtEom@google.com>
-References: <20241018055627.1005723-1-irogers@google.com>
+	s=arc-20240116; t=1729575718; c=relaxed/simple;
+	bh=HelJ7BuO5xeh+l1EGp4CUoROuW0RBAc9rXL7w+jlmho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cawRm9OHAUFQobMsjBclp45a1CqrUiiT65QXqNdQKr2LE82sUgSLjx+ppn2vQmxdYtH70tmnTTGFT+Fjh3XYV9a03omqSQtobG5Ic+iZcyzc3n/mFo83eVSVM7TYbeaJVgQI+pSetyvhDmjLsutBAHksRJpv+3uA6DSHNPhZYPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GxriNLJ1; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M2HFwM009345;
+	Tue, 22 Oct 2024 05:41:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Jr7j4l
+	WcAKT1zuz94zoLVIb8tWfpTVgo2z8674/TKoU=; b=GxriNLJ1tRmEfxN0FaQhgt
+	ywJAHPMFKZ9U6ggfVMBBoz7OK/tBoHjaGurbWa0cn7WmcQ+y/E9YHtLHsQiMkmWQ
+	b+BGtQmpZKi7Nn8LX0ckbp6y4BxOIndA2Ol8TscNky0YuRLYnpptqaPeoKqxib4l
+	bNDHcYXAWhpXMwWfP/4oV33odd2UAvf1CwQ+iT00ASFX/5uzO+R9k0IKPwRraZkb
+	kKz8qAcW5LN3f9epngu08PyKLTB/6vRHKbc+hFa/WN+M+D1hd+XwT4BXTZ+snQWq
+	q1meGO9U8rDpHD23vkOtmw/UdENhkalj7oJE2c8TtomwrECJT2J7pu9ouxDL95tg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hmd0pw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 05:41:27 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49M5fQgd013969;
+	Tue, 22 Oct 2024 05:41:26 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5hmd0pu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 05:41:26 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49M4xW06009296;
+	Tue, 22 Oct 2024 05:41:25 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42cr3mst7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 05:41:25 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49M5fNUZ54264224
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Oct 2024 05:41:23 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A8D02004B;
+	Tue, 22 Oct 2024 05:41:23 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E52B220040;
+	Tue, 22 Oct 2024 05:41:19 +0000 (GMT)
+Received: from [9.124.208.49] (unknown [9.124.208.49])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 22 Oct 2024 05:41:19 +0000 (GMT)
+Message-ID: <19a072e1-cfd8-43e1-9e8e-aa1950b20533@linux.ibm.com>
+Date: Tue, 22 Oct 2024 11:11:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241018055627.1005723-1-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] sched: warn for high latency with
+ TIF_NEED_RESCHED_LAZY
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
+        efault@gmx.de
+References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
+ <20241009165411.3426937-2-ankur.a.arora@oracle.com>
+ <c8dd612a-1851-471f-b5c5-f4201593e7b0@linux.ibm.com>
+ <87iktli7o6.fsf@oracle.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <87iktli7o6.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: usf6-aVYRlsWImRD6O-ARk41k-Uy-5y1
+X-Proofpoint-GUID: iEgEjaitKUNbnWhJGrjzIRJDkU4aAHXV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220035
 
-On Thu, Oct 17, 2024 at 10:56:27PM -0700, Ian Rogers wrote:
-> Sanitizer builds can break expectations for test disassembly,
-> particularly in the annotate test. Add features for the different
-> sanitizer options seen in the source tree. Use the added sanitizer
-> feature to skip the annotate test when sanitizers are in use.
 
-Can you please split the perf check changes from the test change?
-It's good to add an example output (of perf version --build-options)
-with new sanitizer features.
 
-Also it might be helpful if you share how the test fails.  I don't
-think the disasm format is changed.  Then it probably missed to find
-the target symbol in the first 250 lines for some reason.
-
-Thanks,
-Namhyung
-
+On 10/22/24 00:51, Ankur Arora wrote:
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> v2 build fix.
-> ---
->  tools/perf/builtin-check.c         | 49 ++++++++++++++++++++++++++++++
->  tools/perf/tests/shell/annotate.sh |  6 ++++
->  2 files changed, 55 insertions(+)
+> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
 > 
-> diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
-> index 0b76b6e42b78..c44444008d64 100644
-> --- a/tools/perf/builtin-check.c
-> +++ b/tools/perf/builtin-check.c
-> @@ -9,6 +9,49 @@
->  #include <string.h>
->  #include <subcmd/parse-options.h>
->  
-> +#if defined(__has_feature)
-> +#define HAS_COMPILER_FEATURE(feature) __has_feature(feature)
-> +#else
-> +#define HAS_COMPILER_FEATURE(feature) 0
-> +#endif
-> +
-> +#if defined(__SANITIZE_ADDRESS__) || defined(ADDRESS_SANITIZER) || \
-> +	HAS_COMPILER_FEATURE(address_sanitizer)
-> +#define HAVE_SANITIZER_ADDRESS 1
-> +#define HAVE_SANITIZER_LEAK 1
-> +#elif defined(LEAK_SANITIZER) || HAS_COMPILER_FEATURE(leak_sanitizer)
-> +#define HAVE_SANITIZER_ADDRESS 0
-> +#define HAVE_SANITIZER_LEAK 1
-> +#else
-> +#define HAVE_SANITIZER_ADDRESS 0
-> +#define HAVE_SANITIZER_LEAK 0
-> +#endif
-> +
-> +#if defined(MEMORY_SANITIZER) || HAS_COMPILER_FEATURE(memory_sanitizer)
-> +#define HAVE_SANITIZER_MEMORY 1
-> +#else
-> +#define HAVE_SANITIZER_MEMORY 0
-> +#endif
-> +
-> +#if defined(THREAD_SANITIZER) || HAS_COMPILER_FEATURE(thread_sanitizer)
-> +#define HAVE_SANITIZER_THREAD 1
-> +#else
-> +#define HAVE_SANITIZER_THREAD 0
-> +#endif
-> +
-> +#if defined(UNDEFINED_SANITIZER) || HAS_COMPILER_FEATURE(undefined_sanitizer)
-> +#define HAVE_SANITIZER_UNDEFINED 1
-> +#else
-> +#define HAVE_SANITIZER_UNDEFINED 0
-> +#endif
-> +
-> +#if HAVE_SANITIZER_ADDRESS || HAVE_SANITIZER_LEAK || HAVE_SANITIZER_MEMORY || \
-> +	HAVE_SANITIZER_THREAD || HAVE_SANITIZER_UNDEFINED
-> +#define HAVE_SANITIZER 1
-> +#else
-> +#define HAVE_SANITIZER 0
-> +#endif
-> +
->  static const char * const check_subcommands[] = { "feature", NULL };
->  static struct option check_options[] = {
->  	OPT_BOOLEAN('q', "quiet", &quiet, "do not show any warnings or messages"),
-> @@ -47,6 +90,12 @@ struct feature_status supported_features[] = {
->  	FEATURE_STATUS("libunwind", HAVE_LIBUNWIND_SUPPORT),
->  	FEATURE_STATUS("lzma", HAVE_LZMA_SUPPORT),
->  	FEATURE_STATUS("numa_num_possible_cpus", HAVE_LIBNUMA_SUPPORT),
-> +	FEATURE_STATUS("sanitizer", HAVE_SANITIZER),
-> +	FEATURE_STATUS("sanitizer_address", HAVE_SANITIZER_ADDRESS),
-> +	FEATURE_STATUS("sanitizer_leak", HAVE_SANITIZER_LEAK),
-> +	FEATURE_STATUS("sanitizer_memory", HAVE_SANITIZER_MEMORY),
-> +	FEATURE_STATUS("sanitizer_thread", HAVE_SANITIZER_THREAD),
-> +	FEATURE_STATUS("sanitizer_undefined", HAVE_SANITIZER_UNDEFINED),
->  	FEATURE_STATUS("syscall_table", HAVE_SYSCALL_TABLE_SUPPORT),
->  	FEATURE_STATUS("zlib", HAVE_ZLIB_SUPPORT),
->  	FEATURE_STATUS("zstd", HAVE_ZSTD_SUPPORT),
-> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
-> index 1590a37363de..199f547e656d 100755
-> --- a/tools/perf/tests/shell/annotate.sh
-> +++ b/tools/perf/tests/shell/annotate.sh
-> @@ -4,6 +4,12 @@
->  
->  set -e
->  
-> +if perf check feature -q sanitizer
-> +then
-> +  echo "Skip test with sanitizers due to differing assembly code"
-> +  exit 2
-> +fi
-> +
->  shelldir=$(dirname "$0")
->  
->  # shellcheck source=lib/perf_has_symbol.sh
-> -- 
-> 2.47.0.105.g07ac214952-goog
+>> On 10/9/24 22:24, Ankur Arora wrote:
+>>> resched_latency_warn() now also warns if TIF_NEED_RESCHED_LAZY is set
+>>> without rescheduling for more than the latency_warn_ms period.
+>>>
+>>
+>> I am bit confused here. Why do we need to warn if LAZY is set for a long time?
+>>
+>> If lazy set, the subsequent tick, it would be set to upgraded to NEED_RESCHED.
+>>
+>> Since the value of latency_warn_ms=100ms, that means even on system with HZ=100,
+>> that means 10 ticks before that warning would be printed no?
 > 
+> That's a fair point. However, the assumption there is that there are no
+> bugs in upgrade on tick or that there's no situation in which the tick
+> is off for a prolonged period.
+> 
+
+ok.
+
+But if tick is off, then ticks_without_resched isn't incremented either. 
+IIUC, this check is for situation when NR is set and tick is on.
+
+> Ankur
+> 
+>> IIUC, the changelog c006fac556e40 ("sched: Warn on long periods of pending
+>> need_resched") has the concern of need_resched set but if it is non-preemptible
+>> kernel it would spend a lot of time in kernel mode. In that case print a
+>> warning.
+>>
+>> If someone enables Lazy, that means it is preemptible and probably this whole
+>> notion of resched_latency_warn doesn't apply to lazy. Please correct me if i am
+>> not understanding this correctly.
+>>
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Peter Ziljstra <peterz@infradead.org>
+>>> Cc: Juri Lelli <juri.lelli@redhat.com>
+>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>>> ---
+>>>    kernel/sched/core.c  | 2 +-
+>>>    kernel/sched/debug.c | 7 +++++--
+>>>    2 files changed, 6 insertions(+), 3 deletions(-)
+>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>>> index 694bfcf153cb..1229766b704e 100644
+>>> --- a/kernel/sched/core.c
+>>> +++ b/kernel/sched/core.c
+>>> @@ -5571,7 +5571,7 @@ static u64 cpu_resched_latency(struct rq *rq)
+>>>    	if (sysctl_resched_latency_warn_once && warned_once)
+>>>    		return 0;
+>>>    -	if (!need_resched() || !latency_warn_ms)
+>>> +	if ((!need_resched() && !tif_need_resched_lazy()) || !latency_warn_ms)
+>>>    		return 0;
+>>>      	if (system_state == SYSTEM_BOOTING)
+>>> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+>>> index 9abcc6ead11b..f0d551ba64bb 100644
+>>> --- a/kernel/sched/debug.c
+>>> +++ b/kernel/sched/debug.c
+>>> @@ -1293,9 +1293,12 @@ void proc_sched_set_task(struct task_struct *p)
+>>>    void resched_latency_warn(int cpu, u64 latency)
+>>>    {
+>>>    	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+>>> +	char *nr;
+>>> +
+>>> +	nr = tif_need_resched() ? "need_resched" : "need_resched_lazy";
+>>>      	WARN(__ratelimit(&latency_check_ratelimit),
+>>> -	     "sched: CPU %d need_resched set for > %llu ns (%d ticks) "
+>>> +	     "sched: CPU %d %s set for > %llu ns (%d ticks) "
+>>>    	     "without schedule\n",
+>>> -	     cpu, latency, cpu_rq(cpu)->ticks_without_resched);
+>>> +	     cpu, nr, latency, cpu_rq(cpu)->ticks_without_resched);
+>>>    }
+> 
+> 
+> --
+> ankur
+
 
