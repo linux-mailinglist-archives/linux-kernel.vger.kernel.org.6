@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-375480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF59A9681
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C66D9A9688
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FBE1F22FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C181F232FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2916C13A256;
-	Tue, 22 Oct 2024 03:05:16 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E23413E88C;
+	Tue, 22 Oct 2024 03:06:42 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5370F322A;
-	Tue, 22 Oct 2024 03:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3F213790B;
+	Tue, 22 Oct 2024 03:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729566315; cv=none; b=dVE5covuirRvAMOk8lAQTk33pMmfSWwQ1riM6bmnN4lzVVUEl4URymgHwvxk0TUbBBrLSwpCT4S1eEZH6lTpVw1frDCkkwYBC3MTrCqaNgFNxQaC/C7yWhH4L+uzTux+Jnp8SSwyFWxn6tpht5PXqNqsy1feGPhrGgRzWE6i9EM=
+	t=1729566402; cv=none; b=IvgU16Y1gF3ciCCGHmSfGJja6a+s2CbsqFDU8cen+oHs3FJtV2eXatqpFpTnbM4DlvFfjnUcWnLM4pbflpO3uBmWeBKjg7uOFMgkfSCngqVF8qKL10U2gjv5NVRKku8TY2O8v5cwXGG0d6lZiCYrTH1f27WDjJTUFY9oTertjBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729566315; c=relaxed/simple;
-	bh=m4+eS4V6+vhd8CWUw5Qgl7HndtPj4Htf8LeQ7P4YESw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BcSTXjZdzxoOQrxZ6TgA11IOeN5u0UZXg71V+4/l1Ui4fHyyPeiHw5K8R6FLpqHi1Qp7V6BqEjYkN04NdS2X3tp7ZJdgTezPhddKAV5mKloQNmMGMfHewftWdjMJde8ZdidXxw4c4wFRC/MpCpKmq0q9HoRvODlexxV/6NkJlDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6f9fbc04902211efa216b1d71e6e1362-20241022
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:95921cc9-9604-4c6e-83cd-0d37612cbdf2,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:0dbe1b5675f64aca33671ce0cd2c9136,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 6f9fbc04902211efa216b1d71e6e1362-20241022
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zenghongling@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 694247558; Tue, 22 Oct 2024 11:05:04 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 99233B803CA1;
-	Tue, 22 Oct 2024 11:05:04 +0800 (CST)
-X-ns-mid: postfix-67171660-471993715
-Received: from localhost.localdomain (unknown [172.25.120.36])
-	by node2.com.cn (NSMail) with ESMTPA id E6C82B803CA1;
-	Tue, 22 Oct 2024 03:05:03 +0000 (UTC)
-From: Hongling Zeng <zenghongling@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: stuart.w.hayes@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	zhongling0719@126.com,
-	Hongling Zeng <zenghongling@kylinos.cn>
-Subject: [PATCH v2] platform/x86: dell-dcdbase: Replace snprintf in show  functions with sysfs_emit
-Date: Tue, 22 Oct 2024 11:05:00 +0800
-Message-Id: <20241022030500.9986-1-zenghongling@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729566402; c=relaxed/simple;
+	bh=5E/F8SMwlkbqTn9yh91xv8MrZrkAwbncTzde9BPHtbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qhOw7gVSAaEkV2mhEOCAvArB29UDlwH8ye9Hda+5xRcfGwwOJgo966zFg1ujvOnYYDFVdQrlZp2mUD2fMMdQqC4R+UoOyq+CvmGom9DKGRYJSjCLsI++bLIOYwzuQ6aCMO7vzVfb7a6YnWKzH6DuPuIkNSH5eNjd9Uyx7g8ZJcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXcSc0d3wzfdX0;
+	Tue, 22 Oct 2024 11:03:28 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id C996B1800DE;
+	Tue, 22 Oct 2024 11:05:57 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 11:05:57 +0800
+Message-ID: <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
+Date: Tue, 22 Oct 2024 11:05:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+To: Alan Huang <mmpgouride@gmail.com>
+CC: Jeongjun Park <aha310510@gmail.com>, Kent Overstreet
+	<kent.overstreet@linux.dev>, <linux-bcachefs@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>,
+	<syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
+References: <20241021154356.38221-1-aha310510@gmail.com>
+ <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
+ <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-show() must not use snprintf() when formatting the value to be
-returned to user space.
 
-Signed-off-by: Hongling Zeng <zenghongling@kylinos.cn>
----
- drivers/platform/x86/dell/dcdbas.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/x86/dell/dcdbas.c b/drivers/platform/x86/de=
-ll/dcdbas.c
-index a60e350..c2fef23 100644
---- a/drivers/platform/x86/dell/dcdbas.c
-+++ b/drivers/platform/x86/dell/dcdbas.c
-@@ -31,6 +31,7 @@
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/mutex.h>
-+#include <linux/sysfs.h>
-=20
- #include "dcdbas.h"
-=20
-@@ -132,14 +133,14 @@ static ssize_t smi_data_buf_phys_addr_show(struct d=
-evice *dev,
- 					   struct device_attribute *attr,
- 					   char *buf)
- {
--	return sprintf(buf, "%x\n", (u32)smi_buf.dma);
-+	return sysfs_emit(buf, "%x\n", (u32)smi_buf.dma);
- }
-=20
- static ssize_t smi_data_buf_size_show(struct device *dev,
- 				      struct device_attribute *attr,
- 				      char *buf)
- {
--	return sprintf(buf, "%lu\n", smi_buf.size);
-+	return sysfs_emit(buf, "%lu\n", smi_buf.size);
- }
-=20
- static ssize_t smi_data_buf_size_store(struct device *dev,
-@@ -200,7 +201,7 @@ static ssize_t host_control_action_show(struct device=
- *dev,
- 					struct device_attribute *attr,
- 					char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_action);
-+	return sysfs_emit(buf, "%u\n", host_control_action);
- }
-=20
- static ssize_t host_control_action_store(struct device *dev,
-@@ -224,7 +225,7 @@ static ssize_t host_control_smi_type_show(struct devi=
-ce *dev,
- 					  struct device_attribute *attr,
- 					  char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_smi_type);
-+	return sysfs_emit(buf, "%u\n", host_control_smi_type);
- }
-=20
- static ssize_t host_control_smi_type_store(struct device *dev,
-@@ -239,7 +240,7 @@ static ssize_t host_control_on_shutdown_show(struct d=
-evice *dev,
- 					     struct device_attribute *attr,
- 					     char *buf)
- {
--	return sprintf(buf, "%u\n", host_control_on_shutdown);
-+	return sysfs_emit(buf, "%u\n", host_control_on_shutdown);
- }
-=20
- static ssize_t host_control_on_shutdown_store(struct device *dev,
---=20
-2.1.0
+On 2024/10/22 10:38, Alan Huang wrote:
+> On Oct 22, 2024, at 10:26, Hongbo Li <lihongbo22@huawei.com> wrote:
+>>
+>>
+>>
+>> On 2024/10/21 23:43, Jeongjun Park wrote:
+>>> The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
+>>> To fix this, we need to add validation on a.data_type in
+>>> alloc_lru_idx_fragmentation().
+>>> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+>>> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
+>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>>> ---
+>>>   fs/bcachefs/alloc_background.h | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>> diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
+>>> index f8e87c6721b1..163a67b97a40 100644
+>>> --- a/fs/bcachefs/alloc_background.h
+>>> +++ b/fs/bcachefs/alloc_background.h
+>>> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
+>>>   static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
+>>>          struct bch_dev *ca)
+>>>   {
+>>> + if (a.data_type >= BCH_DATA_NR)
+>>> + return 0;
+>>> +
+>>
+>> oh, I found I have done the same thing in [1]("Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But
+> 
+> Your patch there is still triggering the issue.
+Yeah, it just notify the issue and not prevent the issue. So I found it 
+should add a.data_type condition indeed. :)
+> 
+>> in my humble opinion, the validation changes also should be added. And in addition, move the condition about a.data_type into
+> 
+> There is already the validation:
+> 
+> bkey_fsck_err_on(alloc_data_type(a, a.data_type) != a.data_type
 
+This is actually not enough. This only do some transition check. For 
+example, if a.data_type break when bch2_bucket_sectors_dirty (the data 
+corruption can lead to various situations occurring) is true, the helper 
+does noting.
+
+Thanks,
+Hongbo
+
+> 
+> And the unknown data type is already printed in bch2_prt_data_type, additional validation doesn’t help much.
+> 
+>> data_type_movable will be better. Just my personal opinion.:)
+> 
+> In my personal opinion, I don’t think so :)
+> 
+>>
+>> [1] https://www.spinics.net/lists/kernel/msg5412619.html
+>>
+>> Thanks,
+>> Hongbo
+>>
+>>>    if (!data_type_movable(a.data_type) ||
+>>>        !bch2_bucket_sectors_fragmented(ca, a))
+>>>    return 0;
+>>> --
+> 
+> 
 
