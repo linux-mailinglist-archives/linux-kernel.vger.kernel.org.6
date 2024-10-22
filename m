@@ -1,222 +1,295 @@
-Return-Path: <linux-kernel+bounces-376778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B32F9AB5BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:08:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B421D9AB5C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54738B22CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329281F23C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC19C1C9DC6;
-	Tue, 22 Oct 2024 18:07:40 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821971C9EB0;
+	Tue, 22 Oct 2024 18:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XKCnXBZt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF11C9B7B;
-	Tue, 22 Oct 2024 18:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931E81C9DFA;
+	Tue, 22 Oct 2024 18:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729620460; cv=none; b=ldzaW7zvf95tc7GaAlf33qZvfw0uvyFAxjuUqUzFBwIyjMZU14wR3vuOGrIR+uOnsS9jo6dMfxhpbJdUneft516SPZSghsNk6Q9YXI7AMA84o+9EiXk9MQg+03yRGbGDW9E4G5IJT/4TnPwFPVHKDg87lvQVa2mnyeywiV3PLe8=
+	t=1729620604; cv=none; b=PH/UfDnJKLwk4wNHHsI2w7YUO1XwM9QXLzCqpbvHZ5HbiPe6JpBbv/dUqqxNSnp3OQCd1eHq2EQWslmgfDI5HnRkcrz/qWeBG6vD0evkopHkzVhcWR/TUz8SiaRBiNNNrtUYShrsU+6kUGGi2M6gULv4Q7dHe9QPeNnu1kOa9oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729620460; c=relaxed/simple;
-	bh=FQAoNqTo3L1gXzNU5EFWOaOOpkEb+ePuzkKcpnzkHPQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gjHCAXVVjbV5D1H6PW4KBu6fOHx9zzONEe/e8U2Bp2Wg072fgBL3Bh5gBkIEuUdCzBywBByFCVlDGSrAeFR543QmjGyzybOaa3ewxuh0dI8l4smFyB2CbSB/VfQXBk4YpI6vM+NaujWIDT7+35EwK7nM7byfnYvQFuljqS0igiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XY0TR2kJlz6K6lT;
-	Wed, 23 Oct 2024 02:05:31 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 07165140A9C;
-	Wed, 23 Oct 2024 02:07:32 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 20:07:31 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 22 Oct 2024 20:07:31 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [PATCH v2 2/6] cxl/events: Add Component Identifier formatting
- for CXL spec rev 3.1
-Thread-Topic: [PATCH v2 2/6] cxl/events: Add Component Identifier formatting
- for CXL spec rev 3.1
-Thread-Index: AQHbJHFsQjangr5km064qFvNrZTcGrKS3NCAgAAs9XA=
-Date: Tue, 22 Oct 2024 18:07:31 +0000
-Message-ID: <26859655a08c4e6692abd38f2367f2b8@huawei.com>
-References: <20241022105849.1272-1-shiju.jose@huawei.com>
-	<20241022105849.1272-3-shiju.jose@huawei.com>
- <20241022175827.000033ef@Huawei.com>
-In-Reply-To: <20241022175827.000033ef@Huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729620604; c=relaxed/simple;
+	bh=Nq8Jdmiwq7WCGmATlFb2otP/fjTsQuLclZaTiLGwKYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SC1L+B01LYYB92I1BE9khhGUaMK3OYPDUWmtl2Zkuoiy7eDtKviFKRJHpG3NQAKPkvBXoChgDVtr1zrHREh4YD2auX1lzWpmo2nkc5KcrwyzbKSbLqdtJK3c02IQKbXNQwlLEaSqNSglI56o9s6g47PRsg+hNDnBHw6DfC8yRY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XKCnXBZt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729620601; x=1761156601;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Nq8Jdmiwq7WCGmATlFb2otP/fjTsQuLclZaTiLGwKYY=;
+  b=XKCnXBZtpLTHZT8jq+00LbbLAWqqk2rI9fJycfUj1G+ez+6Wsb9Uhgkr
+   yWH17FvdI8cYE8556sjVdk67z3JOp74LPin2beUgfF1+hyuikIiP8NNQO
+   ovkr4uGZTsyP2LPsAOwQZipnSiyWMzy7nABCOFzhOUwVUP8Rl5oSJvRSa
+   qbLUxTMTd3Riz3ybGJtTN0otvKkSE7EkUljc1GdIaN3J4RUAOVGz52PO/
+   kcJPOL5kLyI1QlHjnDkZ/JKsTHXKGnWz8N0NMbUXiNIr7tIhAJOSXKa7f
+   xTdk4O0fSjRALpR8TO5W8mnx1gdAbV3hhVB+ZbQSAuTf4jGeM+Hmi9qyK
+   w==;
+X-CSE-ConnectionGUID: Udw4PVERQVygKmYsM6hPFg==
+X-CSE-MsgGUID: wcAYjCzlS+SVS10yQyNl4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32869503"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="32869503"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 11:10:01 -0700
+X-CSE-ConnectionGUID: GwlngA8XStyXbJqz5y0+2w==
+X-CSE-MsgGUID: Ol9EXL3fTwC9YvdVrBc0Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="80363724"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2024 11:09:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3JKJ-000TvD-1K;
+	Tue, 22 Oct 2024 18:09:51 +0000
+Date: Wed, 23 Oct 2024 02:09:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Eric Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>,
+	Helge Deller <deller@gmx.de>, Jakub Kicinski <kuba@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next 2/5] bpf: bpf_csum_diff: optimize and homogenize
+ for all archs
+Message-ID: <202410230122.BYZLEUHz-lkp@intel.com>
+References: <20241021122112.101513-3-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021122112.101513-3-puranjay@kernel.org>
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 22 October 2024 17:58
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: dave.jiang@intel.com; dan.j.williams@intel.com; alison.schofield@intel=
-.com;
->vishal.l.verma@intel.com; ira.weiny@intel.com; dave@stgolabs.net; linux-
->cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-><linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-><prime.zeng@hisilicon.com>
->Subject: Re: [PATCH v2 2/6] cxl/events: Add Component Identifier formattin=
-g for
->CXL spec rev 3.1
->
->On Tue, 22 Oct 2024 11:58:45 +0100
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> Add Component Identifier formatting for CXL spec rev 3.1, Section
->> 8.2.9.2.1, Table 8-44.
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->> ---
->>  drivers/cxl/core/trace.h | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h index
->> 7305974e2301..81908072c6f3 100644
->> --- a/drivers/cxl/core/trace.h
->> +++ b/drivers/cxl/core/trace.h
->> @@ -268,6 +268,26 @@ TRACE_EVENT(cxl_generic_event,
->>  	{ CXL_DPA_NOT_REPAIRABLE,		"NOT_REPAIRABLE"	}  \
->>  )
->>
->> +/*
->> + * Component ID Format
->> + * CXL 3.1 section 8.2.9.2.1; Table 8-44  */
->> +#define CXL_PLDM_COMPONENT_ID_ENTITY_VALID	BIT(0)
->> +#define CXL_PLDM_COMPONENT_ID_RES_VALID		BIT(1)
->> +
->> +#define comp_id_pldm_flags(flags)  __print_flags(flags, " | ",
->	\
->> +	{ CXL_PLDM_COMPONENT_ID_ENTITY_VALID,   "PLDM_Entity_ID[5:0] "
->},	\
->> +	{ CXL_PLDM_COMPONENT_ID_RES_VALID,      "Resource_ID[9:6] " }
->		\
->> +)
->> +
->> +#define cxl_print_component_id(flags, valid_comp_id, valid_id_format,
->comp_id)			\
->> +	(flags & valid_comp_id && flags & valid_id_format) ?
->			\
->> +	(comp_id[0] & (CXL_PLDM_COMPONENT_ID_ENTITY_VALID |
->CXL_PLDM_COMPONENT_ID_RES_VALID)) ?	\
->> +	__print_hex(&comp_id[1], 10) : (comp_id[0] &
->CXL_PLDM_COMPONENT_ID_ENTITY_VALID) ?	\
->> +	__print_hex(&comp_id[1], 6) : (comp_id[0] &
->CXL_PLDM_COMPONENT_ID_RES_VALID) ?		\
->> +	__print_hex(&comp_id[7], 4) : __print_hex(comp_id,
->CXL_EVENT_GEN_MED_COMP_ID_SIZE) :	\
->
->> +	__print_hex(comp_id, CXL_EVENT_GEN_MED_COMP_ID_SIZE)
->> +
->Hi Shiju,
->
->This is hard to read and I've lost track of what the aim is.
->Side note that it is probably good to state that in the patch description
->+ give some examples of what this print looks like in the various cases.
->If we are going to print the whole thing in the case where we have no vali=
-d bits
->set in byte[1], maybe we just print the whole thing in all cases and just =
-add the
->info on whether it is formatted and what those valid bits are in byte[1]?
->
->I was never keen on printing the invalid fields in the first place but thi=
-s code
->adopted the convention of validity bits and print what is there where vali=
-d or
->not. So maybe the things we should print are:
->Taking GMER as an example.
+Hi Puranjay,
 
-Hi Jonathan,
+kernel test robot noticed the following build warnings:
 
->
->Add the component id valid format to show_valid_flags() Then always print =
-the
->flags for comp_id_pldm_flags() above whether or not they are valid. Finall=
-y print
->the two broken out fields Enity ID and Resource ID.
-Will add component id valid format to show_valid_flags().
->
->Whether we also just print the raw versions is another question we need to
->figure out - in the formatted case it is duplication, but if not it includ=
-es more
->bytes.
-Can do.
+[auto build test WARNING on bpf-next/master]
 
-For the following component ID with PLDM entity and resource Id are valid
-0x03 0x07 0xc5 0x08 0x9a 0x1a 0x0b 0xfc 0x0d 0x0e 0x2f 0x00 0x00 0x00  0x00=
-  0x00
+url:    https://github.com/intel-lab-lkp/linux/commits/Puranjay-Mohan/net-checksum-move-from32to16-to-generic-header/20241021-202707
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20241021122112.101513-3-puranjay%40kernel.org
+patch subject: [PATCH bpf-next 2/5] bpf: bpf_csum_diff: optimize and homogenize for all archs
+config: x86_64-randconfig-122-20241022 (https://download.01.org/0day-ci/archive/20241023/202410230122.BYZLEUHz-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241023/202410230122.BYZLEUHz-lkp@intel.com/reproduce)
 
-For example GMER trace printed as,=20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410230122.BYZLEUHz-lkp@intel.com/
 
-"comp_id=3DPLDM_Entity_ID[5:0]  | Resource_ID[9:6] 07 c5 08 9a 1a 0b fc 0d =
-0e 2f validity_flags=3D'CHANNEL|RANK|DEVICE|COMPONENT|0x10'"
+sparse warnings: (new ones prefixed by >>)
+   net/core/filter.c:1423:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct sock_filter const *filter @@     got struct sock_filter [noderef] __user *filter @@
+   net/core/filter.c:1423:39: sparse:     expected struct sock_filter const *filter
+   net/core/filter.c:1423:39: sparse:     got struct sock_filter [noderef] __user *filter
+   net/core/filter.c:1501:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct sock_filter const *filter @@     got struct sock_filter [noderef] __user *filter @@
+   net/core/filter.c:1501:39: sparse:     expected struct sock_filter const *filter
+   net/core/filter.c:1501:39: sparse:     got struct sock_filter [noderef] __user *filter
+   net/core/filter.c:2321:45: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 [usertype] daddr @@     got unsigned int [usertype] ipv4_nh @@
+   net/core/filter.c:2321:45: sparse:     expected restricted __be32 [usertype] daddr
+   net/core/filter.c:2321:45: sparse:     got unsigned int [usertype] ipv4_nh
+   net/core/filter.c:10993:31: sparse: sparse: symbol 'sk_filter_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11000:27: sparse: sparse: symbol 'sk_filter_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11004:31: sparse: sparse: symbol 'tc_cls_act_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11013:27: sparse: sparse: symbol 'tc_cls_act_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11017:31: sparse: sparse: symbol 'xdp_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11029:31: sparse: sparse: symbol 'cg_skb_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11035:27: sparse: sparse: symbol 'cg_skb_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11039:31: sparse: sparse: symbol 'lwt_in_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11045:27: sparse: sparse: symbol 'lwt_in_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11049:31: sparse: sparse: symbol 'lwt_out_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11055:27: sparse: sparse: symbol 'lwt_out_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11059:31: sparse: sparse: symbol 'lwt_xmit_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11066:27: sparse: sparse: symbol 'lwt_xmit_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11070:31: sparse: sparse: symbol 'lwt_seg6local_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11076:27: sparse: sparse: symbol 'lwt_seg6local_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11079:31: sparse: sparse: symbol 'cg_sock_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11085:27: sparse: sparse: symbol 'cg_sock_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11088:31: sparse: sparse: symbol 'cg_sock_addr_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11094:27: sparse: sparse: symbol 'cg_sock_addr_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11097:31: sparse: sparse: symbol 'sock_ops_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11103:27: sparse: sparse: symbol 'sock_ops_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11106:31: sparse: sparse: symbol 'sk_skb_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11113:27: sparse: sparse: symbol 'sk_skb_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11116:31: sparse: sparse: symbol 'sk_msg_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11123:27: sparse: sparse: symbol 'sk_msg_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11126:31: sparse: sparse: symbol 'flow_dissector_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11132:27: sparse: sparse: symbol 'flow_dissector_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11460:31: sparse: sparse: symbol 'sk_reuseport_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11466:27: sparse: sparse: symbol 'sk_reuseport_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11668:27: sparse: sparse: symbol 'sk_lookup_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11672:31: sparse: sparse: symbol 'sk_lookup_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:1931:43: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] diff @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1931:43: sparse:     expected restricted __wsum [usertype] diff
+   net/core/filter.c:1931:43: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1934:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be16 [usertype] old @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1934:36: sparse:     expected restricted __be16 [usertype] old
+   net/core/filter.c:1934:36: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1934:42: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be16 [usertype] new @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1934:42: sparse:     expected restricted __be16 [usertype] new
+   net/core/filter.c:1934:42: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1937:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1937:36: sparse:     expected restricted __be32 [usertype] from
+   net/core/filter.c:1937:36: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1937:42: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be32 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1937:42: sparse:     expected restricted __be32 [usertype] to
+   net/core/filter.c:1937:42: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1982:59: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __wsum [usertype] diff @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1982:59: sparse:     expected restricted __wsum [usertype] diff
+   net/core/filter.c:1982:59: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1985:52: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be16 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1985:52: sparse:     expected restricted __be16 [usertype] from
+   net/core/filter.c:1985:52: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1985:58: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted __be16 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1985:58: sparse:     expected restricted __be16 [usertype] to
+   net/core/filter.c:1985:58: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1988:52: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be32 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1988:52: sparse:     expected restricted __be32 [usertype] from
+   net/core/filter.c:1988:52: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1988:58: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted __be32 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1988:58: sparse:     expected restricted __be32 [usertype] to
+   net/core/filter.c:1988:58: sparse:     got unsigned long long [usertype] to
+>> net/core/filter.c:2023:39: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __sum16 @@
+   net/core/filter.c:2023:39: sparse:     expected unsigned long long
+   net/core/filter.c:2023:39: sparse:     got restricted __sum16
+   net/core/filter.c:2026:39: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __sum16 @@
+   net/core/filter.c:2026:39: sparse:     expected unsigned long long
+   net/core/filter.c:2026:39: sparse:     got restricted __sum16
+   net/core/filter.c:2029:39: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __sum16 @@
+   net/core/filter.c:2029:39: sparse:     expected unsigned long long
+   net/core/filter.c:2029:39: sparse:     got restricted __sum16
+>> net/core/filter.c:2031:16: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __wsum [usertype] seed @@
+   net/core/filter.c:2031:16: sparse:     expected unsigned long long
+   net/core/filter.c:2031:16: sparse:     got restricted __wsum [usertype] seed
+   net/core/filter.c:2053:35: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __wsum [usertype] csum @@
+   net/core/filter.c:2053:35: sparse:     expected unsigned long long
+   net/core/filter.c:2053:35: sparse:     got restricted __wsum [usertype] csum
 
-cxl_general_media: memdev=3Dmem0 host=3D0000:0f:00.0 serial=3D3 log=3DFatal=
- : time=3D246865829224 uuid=3Dfbcd0a77-c260-417f-85a9-088b1621eba6 len=3D12=
-8 flags=3D'0x1' handle=3D1 related_handle=3D0 maint_op_class=3D0 maint_op_s=
-ub_class=3D0 : dpa=3D7c0 dpa_flags=3D'' descriptor=3D'UNCORRECTABLE_EVENT|T=
-HRESHOLD_EVENT|POISON_LIST_OVERFLOW' type=3D'TE State Violation' sub_type=
-=3D'Media Link Command Training Error' transaction_type=3D'0xc0' channel=3D=
-3 rank=3D33 device=3D5 comp_id=3DPLDM_Entity_ID[5:0]  | Resource_ID[9:6] 07=
- c5 08 9a 1a 0b fc 0d 0e 2f validity_flags=3D'CHANNEL|RANK|DEVICE|COMPONENT=
-|0x10' hpa=3Dffffffffffffffff cme_threshold_ev_flags=3D'Corrected Memory Er=
-rors in Multiple Media Components|Exceeded Programmable Threshold' cme_coun=
-t=3D78 region=3D region_uuid=3D00000000-0000-0000-0000-000000000000
+vim +2023 net/core/filter.c
 
-Presently print comp_id_pldm_flags with [bitN: bitM] and then corresponding=
- PLDM entity and/or resource ID based on the flags checking in the cxl_prin=
-t_component_id().
-=20
-Other cases,
-"comp_id=3DPLDM_Entity_ID[5:0]  07 c5 08 9a 1a 0b validity_flags=3D'CHANNEL=
-|RANK|DEVICE|COMPONENT|0x10'"=20
-"comp_id=3D Resource_ID[9:6] fc 0d 0e 2f validity_flags=3D'CHANNEL|RANK|DEV=
-ICE|COMPONENT|0x10'"
+  1956	
+  1957	BPF_CALL_5(bpf_l4_csum_replace, struct sk_buff *, skb, u32, offset,
+  1958		   u64, from, u64, to, u64, flags)
+  1959	{
+  1960		bool is_pseudo = flags & BPF_F_PSEUDO_HDR;
+  1961		bool is_mmzero = flags & BPF_F_MARK_MANGLED_0;
+  1962		bool do_mforce = flags & BPF_F_MARK_ENFORCE;
+  1963		__sum16 *ptr;
+  1964	
+  1965		if (unlikely(flags & ~(BPF_F_MARK_MANGLED_0 | BPF_F_MARK_ENFORCE |
+  1966				       BPF_F_PSEUDO_HDR | BPF_F_HDR_FIELD_MASK)))
+  1967			return -EINVAL;
+  1968		if (unlikely(offset > 0xffff || offset & 1))
+  1969			return -EFAULT;
+  1970		if (unlikely(bpf_try_make_writable(skb, offset + sizeof(*ptr))))
+  1971			return -EFAULT;
+  1972	
+  1973		ptr = (__sum16 *)(skb->data + offset);
+  1974		if (is_mmzero && !do_mforce && !*ptr)
+  1975			return 0;
+  1976	
+  1977		switch (flags & BPF_F_HDR_FIELD_MASK) {
+  1978		case 0:
+  1979			if (unlikely(from != 0))
+  1980				return -EINVAL;
+  1981	
+  1982			inet_proto_csum_replace_by_diff(ptr, skb, to, is_pseudo);
+  1983			break;
+  1984		case 2:
+> 1985			inet_proto_csum_replace2(ptr, skb, from, to, is_pseudo);
+  1986			break;
+  1987		case 4:
+  1988			inet_proto_csum_replace4(ptr, skb, from, to, is_pseudo);
+  1989			break;
+  1990		default:
+  1991			return -EINVAL;
+  1992		}
+  1993	
+  1994		if (is_mmzero && !*ptr)
+  1995			*ptr = CSUM_MANGLED_0;
+  1996		return 0;
+  1997	}
+  1998	
+  1999	static const struct bpf_func_proto bpf_l4_csum_replace_proto = {
+  2000		.func		= bpf_l4_csum_replace,
+  2001		.gpl_only	= false,
+  2002		.ret_type	= RET_INTEGER,
+  2003		.arg1_type	= ARG_PTR_TO_CTX,
+  2004		.arg2_type	= ARG_ANYTHING,
+  2005		.arg3_type	= ARG_ANYTHING,
+  2006		.arg4_type	= ARG_ANYTHING,
+  2007		.arg5_type	= ARG_ANYTHING,
+  2008	};
+  2009	
+  2010	BPF_CALL_5(bpf_csum_diff, __be32 *, from, u32, from_size,
+  2011		   __be32 *, to, u32, to_size, __wsum, seed)
+  2012	{
+  2013		/* This is quite flexible, some examples:
+  2014		 *
+  2015		 * from_size == 0, to_size > 0,  seed := csum --> pushing data
+  2016		 * from_size > 0,  to_size == 0, seed := csum --> pulling data
+  2017		 * from_size > 0,  to_size > 0,  seed := 0    --> diffing data
+  2018		 *
+  2019		 * Even for diffing, from_size and to_size don't need to be equal.
+  2020		 */
+  2021	
+  2022		if (from_size && to_size)
+> 2023			return csum_from32to16(csum_sub(csum_partial(to, to_size, seed),
+  2024							csum_partial(from, from_size, 0)));
+  2025		if (to_size)
+  2026			return csum_from32to16(csum_partial(to, to_size, seed));
+  2027	
+  2028		if (from_size)
+  2029			return csum_from32to16(~csum_partial(from, from_size, ~seed));
+  2030	
+> 2031		return seed;
+  2032	}
+  2033	
 
-If need to modify, can print as you suggested, =20
-... validity_flags, raw comp_id, comp_id_pldm_flags, Enity ID, Resource ID =
-...
->
->Jonathan
->
-Thanks,
-Shiju
-
->
->
->>  /*
->>   * General Media Event Record - GMER
->>   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
