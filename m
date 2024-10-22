@@ -1,109 +1,92 @@
-Return-Path: <linux-kernel+bounces-376106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F09AA01C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:31:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA639AA028
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C282876F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43555B22808
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4921993AF;
-	Tue, 22 Oct 2024 10:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZugQ+dNW"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1635218E02D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1C419AA46;
+	Tue, 22 Oct 2024 10:37:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E5B6F066
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729593061; cv=none; b=LOD6HvJBoWT4OrjntWkLqdXSp4PwzgTQ9BgB9Lg+/CUWRu/6porgUgRpxFZSpJAuFx8XY6UmcFts2BMQNaXoKJeauQ0FmvYbDOly1rDbiUFMtNpo9jgDP9Yu0sMiggeV68LKSjlOJIthsTTCyAwbxDE8cFMNlLuj/tP4uTFB8I4=
+	t=1729593469; cv=none; b=fimtVP965a+1AxMaugs3zLjSBnBsLHiuLMd6rB4ngkYXqIvbxmymn3rzxQYlqSnulasKt2q1qcpaMU76Hx/5m//YBZ1EQgNNdh0coe+obC8XW+VqXcpW9Sv/JNU92Vk38hwwv4IpvTUvcFZFPpruix3sXumU64N/L0/nCOZxuhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729593061; c=relaxed/simple;
-	bh=ckwdXkesd1lkAUGXB2NkOvoDnLV225VqIN/edVwVwvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZDjm2PtPDaTPgj7Gz7UfS7zcKvKzKNj+BKuUWwLwgjr4GSOn01NfFnI2I5PiIF900xSKci+iB0/YXw+NFV0kO/v6fGE0gwA1wzpGM28CgI0Xhx/TnsxJqGauX14wZntJmRjxPNjRdvQ7OQj67xbnCh3RMREC0eTYaZTDQz+RxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZugQ+dNW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729593058;
-	bh=ckwdXkesd1lkAUGXB2NkOvoDnLV225VqIN/edVwVwvc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZugQ+dNW06+dJxsk1cWVB+lYF0mpPSqkQYI/H3V6ossWlAgrWOLWyA7p1B8q27PrB
-	 l8twj9/sEBjLFl18AyixCNfEeif9uS6QGxJryyxGUL2ERta8Q/6JNYh1P4VOOnL/HT
-	 OD8VsV2vB2lVJ+GvQtvk3T/3m/CO1B/C+lKCjyYcaCFJHg9SXZyvPSLRV/T1zu0iYK
-	 wZD6FUFQZ6Cma4BpUAnRnoSOv0p9g7yZcy6hjeTw8ow3jZ4G8UeCQZTAp7PquALZdQ
-	 Fm+qFuO8iCbEz1QfJCb3hPBvdc4kUxCi5Ci8oxEDNBTZ4t6qN4X8groTTTNdpt3/wN
-	 JldAru3d8U/Jg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CBB9D17E1522;
-	Tue, 22 Oct 2024 12:30:57 +0200 (CEST)
-Date: Tue, 22 Oct 2024 12:30:52 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- faith.ekstrand@collabora.com
-Subject: Re: [PATCH] drm/syncobj: ensure progress for syncobj queries
-Message-ID: <20241022123052.3e0f3f17@collabora.com>
-In-Reply-To: <20241017162054.2701638-1-olvaffe@gmail.com>
-References: <20241017162054.2701638-1-olvaffe@gmail.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729593469; c=relaxed/simple;
+	bh=5luiPj52XH5zPR3cfTYWytGhwKxtEsVCaMWr1xu2igA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T89yNAkjU35ZvUHtF9OOABIn2sKwVWp6T0oAkS10Jl4642UtkKvaN44fY34j6lY3yK/OG8+huREQcyDjqwqcS6RCw8QLLeRul8lpwCfJLY7lF11zL1o9e6G2Bi4euVkarTsFCQSpcbt25RPWXoZFBef3/Wg+hho9onm0MDEQXFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C293497;
+	Tue, 22 Oct 2024 03:38:16 -0700 (PDT)
+Received: from [10.57.65.71] (unknown [10.57.65.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9405E3F71E;
+	Tue, 22 Oct 2024 03:37:45 -0700 (PDT)
+Message-ID: <8e34dbe6-ed7c-48bb-8029-db4c35a17ad0@arm.com>
+Date: Tue, 22 Oct 2024 11:37:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: NOMMU: Fix exc_ret for stack frame type
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241013132520.2848-1-jszhang@kernel.org>
+ <87ba9595-6229-4a79-aa65-d76567ef708e@arm.com> <Zw2xC39-YkNlL6qT@xhacker>
+Content-Language: en-GB
+From: Vladimir Murzin <vladimir.murzin@arm.com>
+In-Reply-To: <Zw2xC39-YkNlL6qT@xhacker>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 17 Oct 2024 09:20:53 -0700
-Chia-I Wu <olvaffe@gmail.com> wrote:
-
-> Userspace might poll a syncobj with the query ioctl.  Call
-> dma_fence_enable_sw_signaling to ensure dma_fence_is_signaled returns
-> true in finite time.
+On 10/15/24 01:02, Jisheng Zhang wrote:
+> On Mon, Oct 14, 2024 at 10:54:00AM +0100, Vladimir Murzin wrote:
+>> On 10/13/24 14:25, Jisheng Zhang wrote:
+>>> commit 72cd4064fcca ("ARM: 8830/1: NOMMU: Toggle only bits in
+>>> EXC_RETURN we are really care of") only sets BIT[3] for Thread mode
+>>> and BIT[2] for PSP, it leaves BIT[4] untouched. But there's such a
+>>> case: the pre-linux env makes use of FPU then the BIT[4] in 'lr' is
+>>> cleared, this brings an umatch issue since the NOMMU kernel doesn't
+>> Can pre-linux env disable FPU before passing control to kernel (which
+>> is, as correctly pointed, doesn't know how to use FPU)?
+> IIRC, I did a experiment like this by clearing the SCB CPACR related
+> bits, but the stack frame type is still not correct. I searched in the
+> armv8m arm or cortex-mN's TRM I didn't find the relation between the
+> returned "lr" and the pre FPU usage.
 > 
-> ---
+> What's more, IMHO, kernel needs to use the correct exc_ret no matter
+> the pre-linux env does, I.E if kernel/userspace supports FPU, then
+> clear BIT[4]; if no, set BIT[4].
 > 
-> panvk hits this issue when timeline semaphore is enabled.  It uses the
-> transfer ioctl to propagate fences.  dma_fence_unwrap_merge converts the
-> dma_fence_chain to a dma_fence_array.  dma_fence_array_signaled never
-> return true unless signaling is enabled.
-
-Looks like a bugfix to me. Should we add Fixes+Cc-stable tags so it
-gets backported to stable branches.
-
-> ---
->  drivers/gpu/drm/drm_syncobj.c | 3 +++
->  1 file changed, 3 insertions(+)
+> PS: this is a regression: before the commit, the have-used-fpu pre-linux
+> env + linux nommu combination works; after the commit, it fails to
+> execute the init due to wrong stack frame type.
 > 
-> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-> index 4fcfc0b9b386c..58c5593c897a2 100644
-> --- a/drivers/gpu/drm/drm_syncobj.c
-> +++ b/drivers/gpu/drm/drm_syncobj.c
-> @@ -1689,6 +1689,9 @@ int drm_syncobj_query_ioctl(struct drm_device *dev, void *data,
->  			    DRM_SYNCOBJ_QUERY_FLAGS_LAST_SUBMITTED) {
->  				point = fence->seqno;
->  			} else {
-> +				/* ensure forward progress */
-> +				dma_fence_enable_sw_signaling(fence);
-> +
->  				dma_fence_chain_for_each(iter, fence) {
->  					if (iter->context != fence->context) {
->  						dma_fence_put(iter);
+> Thanks
+> 
 
+Fair enough.
+
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+
+Please, upload the patch in RMK's patch system [1]
+
+[1] https://www.arm.linux.org.uk/developer/patches/
+
+
+Vladimir
 
