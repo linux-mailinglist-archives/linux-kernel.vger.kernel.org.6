@@ -1,69 +1,114 @@
-Return-Path: <linux-kernel+bounces-376181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9199AA138
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:37:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A361E9AA13D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B5C1F247EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72EE1C222DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4DF19B5B4;
-	Tue, 22 Oct 2024 11:37:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4484D19C54C;
+	Tue, 22 Oct 2024 11:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBaBTpjP"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5513D516;
-	Tue, 22 Oct 2024 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD3119AD73;
+	Tue, 22 Oct 2024 11:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597029; cv=none; b=X8ZNpAt+hJEkkZItP9lxDBzG+V4umQCPYOtWu0JoGjYzEqPy6VvKhvXyAaIt1LaPxXP8W8aemvI9BD1F6HCVNvG5x6V/8aPyBi6Ueg2AbWSQl6B7+oz68OMeVt1pli4e18C7Vd3ajBR7pmLGrQHEMpQl8aeUTIYshH03SlNKVdU=
+	t=1729597145; cv=none; b=RO/RzML06nqy5TbhsAgTZ4bzMQguASqKW/E8FmznypGfTnvF3ccPSuZ6flXtl2K1fEqGcSsZ1MNSdziv1WB3w8raxrB+Rj9UWWlBv5I+asqb5vJsDE2PaooHRW7NPBro5LTJbnsy6hviR+0TVYA3FTKC7wbeLQFyMrLVtHvrfmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597029; c=relaxed/simple;
-	bh=AtZ/+dMaS/nQkAbuUhC70d+sLdjqItoaSsbPIpHiquQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zdr0uHCpt8aRmzbkUeUgrb3whcWp38LXG4ypwnHCogqCt0w9dFWF6lC5wJ5cRqHYxp0uy4UEWR6DCdDn3K1iCR6x56ygoTRvT/NhOLJxmxaT3z4NYBTi+2fPHqN/aocKgJolqq6tHpS4uVEFKmZBOOmkoAUs+I4hLCIArtBSfBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26A7C4CEC3;
-	Tue, 22 Oct 2024 11:37:07 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/arm64: Fail the overall fp-stress test if any test fails
-Date: Tue, 22 Oct 2024 12:37:05 +0100
-Message-Id: <172959701881.951357.12349097859376316498.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241017-arm64-fp-stress-exit-code-v1-1-f528e53a2321@kernel.org>
-References: <20241017-arm64-fp-stress-exit-code-v1-1-f528e53a2321@kernel.org>
+	s=arc-20240116; t=1729597145; c=relaxed/simple;
+	bh=xsLOdvTIt+hKikDGyYUAdrz3/I92fSsEZ5rZ8b7IO1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l+uPVBVTsWdUSxnquawf7DN+kVi7PVjr3EV3exrTNKHoaIDIF4g6GDkRYBEdfJINOmKQYSG4ZOMokU7++BvmWWNbwUjDxQpETIgy92lZ24sSBa9aM8rb/42Fjc2Gc6wOJFBgPHk3GwLr/UBxmWBF3J8H42xQYf03BRCBeZUQerg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBaBTpjP; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a0c160b94so4024341e87.2;
+        Tue, 22 Oct 2024 04:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729597142; x=1730201942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G6fP1oVfvbBEWYTyzY/rcgPKAc7qrRN1SO5D1jI8RPY=;
+        b=EBaBTpjPvOq7z3f+RNXUMw8+elYQ35bhVhPR7FNr2SrBg8TXBkgzhJ9urHO6kV51k4
+         6rg/PiOekpvcfbNeEJ0o/wO/28nk5NtyqZ2MhPdirCKWgiXelM6V7uFEKquZyGancIEc
+         vU5Pm8ud48kyAoEaHkdoQ+zpFbyhZEeC7I96eSFi/GKYDwdTUAzouMaamENsg6o6Ca+K
+         73QHYfieY4T1uUUwAavHgaYUTWAJ4jwYQgR6pEnWeT41vEHuK9j4VWxw9+IhN/qptyE6
+         4o9A/Ul0537dtV/agWANBcZbhlcakPwDDPJKheWWoVDkkJPLgk2NiQ/fLPe3lY/fs0jS
+         P+qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729597142; x=1730201942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G6fP1oVfvbBEWYTyzY/rcgPKAc7qrRN1SO5D1jI8RPY=;
+        b=hVxsditpo5k2OTQl7bVBEW+Zv3DtA0dFVLyeMg7QXQDY0do66lOGUNQuQMWS2jIKIS
+         Bk3QnnQw2KoiTdMYcFIcP4B4ZkXDleZf8UADqWf/opPGN+Def467iI5vC6X/zSpKjDlw
+         zWqTxJyJ4IWKNpAzZT+8tlkJHc9yUQkaFNuPzULmgtTJtNGuOE9Xohk6gfMOwvLLFZyX
+         4aXTqU5+3r/Xp9McSU8X1j4FVx9DYzX++0OVN2Np4CUKCiwq12MUESnZMWrC99dlPXQi
+         SiAryjKIrLqT2I+DkVQgu1qWwTJDlmgUWrCHfNKnmW5mJKBi0a+xyKQRX3NTpzqtbKBZ
+         wScg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUkflXXnhSY9mHtTQFkOBd8J1vI71v8xc0+nsV1ZEGuNCr0k7eMhVQQtU0tLvhhFA6BNF+kQ69v4O8bkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIMUhcgyFYU6J/7VEf53qUYSVAk41zO77cj0As5WbH16hD3cnT
+	v9KIgW+Qfln5chWYABoHQtuaieubrC0HuotTmrBcej265sfn6TWin4gAoludsQ0=
+X-Google-Smtp-Source: AGHT+IEk2MXOmTku98IlZ0eH4/uCPAgeWFROOJZVqG6Jf5Mh3NEdqJ5RcvoNeqHSOu0JbKwfHKFhrQ==
+X-Received: by 2002:a05:6512:6d1:b0:539:a2f5:2f1d with SMTP id 2adb3069b0e04-53a154afc13mr7199216e87.61.1729597141842;
+        Tue, 22 Oct 2024 04:39:01 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:850c:5867:abe5:b8c9])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb675eb1bdsm2991006a12.10.2024.10.22.04.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 04:39:01 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gianfranco Trad <gianf.trad@gmail.com>
+Subject: [PATCH] HID: core: fix inconsistent indenting hid_add_device
+Date: Tue, 22 Oct 2024 13:38:30 +0200
+Message-ID: <20241022113829.1423194-2-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Oct 2024 18:43:31 +0100, Mark Brown wrote:
-> Currently fp-stress does not report a top level test result if it runs to
-> completion, it always exits with a return code 0. Use the ksft_finished()
-> helper to ensure that the exit code for the top level program reports a
-> failure if any of the individual tests has failed.
-> 
-> 
+Smatch reports an inconsistent indenting in hid_add_device() [1]. Fix it.
 
-Applied to arm64 (for-next/kselftest), thanks!
+[1] hid/hid-core.c:2847 hid_add_device() warn: inconsistent indenting
 
-[1/1] kselftest/arm64: Fail the overall fp-stress test if any test fails
-      https://git.kernel.org/arm64/c/7a08cb9b4bb9
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
+ drivers/hid/hid-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 612ee6ddfc8d..8f08ca1ba92d 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2844,10 +2844,10 @@ int hid_add_device(struct hid_device *hdev)
+ 	/*
+ 	 * Check for the mandatory transport channel.
+ 	 */
+-	 if (!hdev->ll_driver->raw_request) {
++	if (!hdev->ll_driver->raw_request) {
+ 		hid_err(hdev, "transport driver missing .raw_request()\n");
+ 		return -EINVAL;
+-	 }
++	}
+ 
+ 	/*
+ 	 * Read the device report descriptor once and use as template
 -- 
-Catalin
+2.43.0
 
 
