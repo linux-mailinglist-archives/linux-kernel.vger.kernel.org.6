@@ -1,175 +1,129 @@
-Return-Path: <linux-kernel+bounces-375960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B209A9DCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:03:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655089A9DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABC7283EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D868BB23933
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6F019343F;
-	Tue, 22 Oct 2024 09:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC4F194C96;
+	Tue, 22 Oct 2024 09:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iUTyeyi3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lJEaoDG5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kNwMrspN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7pQY8885"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RrPFZbvg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C203F13A87E;
-	Tue, 22 Oct 2024 09:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2758C22083;
+	Tue, 22 Oct 2024 09:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587815; cv=none; b=RFqUYm77QTSg6WuwCMFECkAakWfrkyMgx72hYYpY0Nv1VHTmMY7OqNaNlM0BN5eDGKFjvLy2N7CC4iBpFvpRh0qYwnoc/AnQpbxC1YUHUBlP2NyIqQor/siu1S8HS8FUGEsTexK9iNWi/t7Rm7niW1jTXc5CnfNvTcIEgOaGQ8M=
+	t=1729587905; cv=none; b=iJ3O7xQIoal+7wde7fwN8vO5i/n0Hf+4FQwX/ElL04iXYms5IjGu9CR87hnnKBc82DzelrPxsU29N/E1jkZrutER/RLjj/8lFxvZ7Bw3hxVNoEMBvmZltsG50uLx7m05uRpb3aIiJzUHgIITexgv2dj7L+1vEEyQA1Em2BKXlsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587815; c=relaxed/simple;
-	bh=ioAaxHr2C6kF7QpbXs+mfIXLIHx/vXb70/KqhMgNqNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrfsFHCFkzbF3fv1HldeRgvCwcqp7AKX1rbaATHiZV/ElFoBfuHn26EypESBbK1701t2hs4186pJl66YLWsiAJcZKOEnoi1pveozeud9U/L5jZx33lVVghbl+Og+oUakdN1EFLd7Gaqwjvo5Hat0cXEdyU4fM3Mdin8sP7bTShI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iUTyeyi3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lJEaoDG5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kNwMrspN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7pQY8885; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1729587905; c=relaxed/simple;
+	bh=5iu6JqvvAtNgyBgmiOLgxENxQr9OSKzp8LjyujT2ZTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mB+r3oUfyo3ZXBKXlBFqlV/lXFXH3CmlNds9lwvMszZApB9ZCN3pcjLVumN9tyUsr/tFXxL4uCswQL/fj0Fa2zUd4yaInfzJNI6xg0iUcn7aiass1Lbacd/48ILHGu4p59RKsXuPUeji2nrmzyfrw7fDb3gPGG3f0x9uapDp+1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RrPFZbvg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729587901;
+	bh=5iu6JqvvAtNgyBgmiOLgxENxQr9OSKzp8LjyujT2ZTM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RrPFZbvgm/IfWOJmUOAv8ZJB4bNUTP+Tfu7cUrikht4HUak/YTmWQ/P09iheSjDQQ
+	 lPyiywZQZCdzbBHILAEWKTyYuLsN1AJcb3fWTN6b9KzZaXYTnSZB83mMGCY/ximD3N
+	 oaxSRnNdrZAqQGJoA3Fah5xgEUlafcxPzQc2QDRVTQc4O3JGA9Qsh6x5ZiZ27jadkh
+	 lF9t+MmbLjO15+ONNL7ZRlLF2nU2KSik8NfZl7pZzAYScTGdmbN15z40r7xMzyXv8G
+	 gkzpwGu6Dbb2bN+OysdBltqDNn3DyPzY98+uVvJ9tLr1ezFo3cV6TVsTpLTY5LMu6v
+	 dabizLxHPp6BQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C7B21EA9;
-	Tue, 22 Oct 2024 09:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729587812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ge4czd1YagvBRBTmt8lWVR11qX/pmlisX8kozJtR0aI=;
-	b=iUTyeyi3SVngXA1CvL1NDanzlS1Oc8rqh3Fgk6Ba9WPRnw9YeqDfC1nE32SzMyjSWDwJug
-	dhlKJOV95UdoIRn06cbZQu2vO8G84QAXXhQnDqwk7LI5ieSc7CBUaIoDMf7dL2K+1JuFP9
-	fnUqqrcpyC4jscAOPTGX11n9cPpr78Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729587812;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ge4czd1YagvBRBTmt8lWVR11qX/pmlisX8kozJtR0aI=;
-	b=lJEaoDG5uXB3GComykDOaC7w0piat9gMBVyKHCDXHiAdR1iHxuboWlBjqtS4Si1ZAza9OQ
-	/JzYuoUY2QPs/IBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kNwMrspN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7pQY8885
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729587811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ge4czd1YagvBRBTmt8lWVR11qX/pmlisX8kozJtR0aI=;
-	b=kNwMrspN3VhSKFLfTUJtUU85LnAqmCWinaq854ahje1yTaVOefznClzlNakYxNhv13LuyW
-	/6MR34wzygSjUlP9PeVGyYpMPwohZQlETP4sUgkNYlSkF8JYNZYtrdBpNfCy9id0OrRIV/
-	xR3/w0WMIh2+ihWY8rpp3WpaeOY6diM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729587811;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ge4czd1YagvBRBTmt8lWVR11qX/pmlisX8kozJtR0aI=;
-	b=7pQY8885WVrpMLkVgshxnJ5+h6e+v4DoxfYA8fOfNeIxORAf3c4hGenMsjFmimpuIJPP9Q
-	Uddikc88kWX94OCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5E6513AC9;
-	Tue, 22 Oct 2024 09:03:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1lhLMGNqF2fDBwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 22 Oct 2024 09:03:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8C6D7A086F; Tue, 22 Oct 2024 11:03:27 +0200 (CEST)
-Date: Tue, 22 Oct 2024 11:03:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+0dd5b81275fa083055d7@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, brauner@kernel.org,
-	clang-built-linux@googlegroups.com, harshadshirwadkar@gmail.com,
-	jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nathan@kernel.org,
-	ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] INFO: task hung in ext4_stop_mmpd
-Message-ID: <20241022090327.qhemczcaheaympct@quack3>
-References: <000000000000690606061ce1fe7e@google.com>
- <6716e5a0.050a0220.10f4f4.00d2.GAE@google.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 53F3417E124E;
+	Tue, 22 Oct 2024 11:05:00 +0200 (CEST)
+Message-ID: <3a550c82-7099-4544-bdff-e1ea411b1636@collabora.com>
+Date: Tue, 22 Oct 2024 11:04:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6716e5a0.050a0220.10f4f4.00d2.GAE@google.com>
-X-Rspamd-Queue-Id: D2C7B21EA9
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[dilger.ca,kernel.org,googlegroups.com,gmail.com,suse.cz,vger.kernel.org,google.com,mit.edu];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[0dd5b81275fa083055d7];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -1.51
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: clock: mediatek: Add bindings for MT6735
+ syscon clock and reset controllers
+To: Yassine Oudjana <yassine.oudjana@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20241021121618.151079-1-y.oudjana@protonmail.com>
+ <20241021121618.151079-2-y.oudjana@protonmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241021121618.151079-2-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 21-10-24 16:37:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+Il 21/10/24 14:16, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> commit d3476f3dad4ad68ae5f6b008ea6591d1520da5d8
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Mon Aug 5 20:12:41 2024 +0000
+> Add device tree bindings for syscon clock and reset controllers (IMGSYS,
+> MFGCFG, VDECSYS and VENCSYS).
 > 
->     ext4: don't set SB_RDONLY after filesystem errors
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>   .../bindings/clock/mediatek,syscon.yaml           |  4 ++++
+>   MAINTAINERS                                       |  6 ++++++
+>   .../dt-bindings/clock/mediatek,mt6735-imgsys.h    | 15 +++++++++++++++
+>   .../dt-bindings/clock/mediatek,mt6735-mfgcfg.h    |  8 ++++++++
+>   .../dt-bindings/clock/mediatek,mt6735-vdecsys.h   |  9 +++++++++
+>   .../dt-bindings/clock/mediatek,mt6735-vencsys.h   | 11 +++++++++++
+>   .../dt-bindings/reset/mediatek,mt6735-mfgcfg.h    |  9 +++++++++
+>   .../dt-bindings/reset/mediatek,mt6735-vdecsys.h   | 10 ++++++++++
+>   8 files changed, 72 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10d04640580000
-> start commit:   4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0dd5b81275fa083055d7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fbd177980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108ea607980000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
 
-Looks plausible:
+..snip..
 
-#syz fix: ext4: don't set SB_RDONLY after filesystem errors
+> diff --git a/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h b/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+> new file mode 100644
+> index 0000000000000..90ad73af50a3f
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_RESET_MT6735_VDECSYS_H
+> +#define _DT_BINDINGS_RESET_MT6735_VDECSYS_H
+> +
+> +#define MT6735_VDEC_RST0_VDEC			0
+> +
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Since you anyway have to send a new version, please remove this extra and
+unneeded blank line for v2.
+
+Anyway...
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
