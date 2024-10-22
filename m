@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-376705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAF59AB511
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468E49AB513
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C791F22CCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0830328474D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1EB1BD01D;
-	Tue, 22 Oct 2024 17:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059111BD50D;
+	Tue, 22 Oct 2024 17:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2/7si74k"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGjoowiw"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CF21BDA9F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0426B1A726D;
+	Tue, 22 Oct 2024 17:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729618141; cv=none; b=SLbE0KRdszlYwIqcoB39tiV1aQCcwqEp6piiUqJYB5/CmyjMOPlSob0L2KquDg+w78Lc2f26PQHbJnAw/5fJwwPx9BJscidsLoU950+FCtbb+tsp9CzHxo+Kfon3srqVqncjuuUXkU4ulLT/nIhXptGh7Hu3W3zD8QnW1lRDTEs=
+	t=1729618168; cv=none; b=UwjpXPyrkWjZjDbg3/Qg1Qlz1F/gIMWk/lsV3CNpT+93Yjt7viAwfLRACJ7VcQdpwavPcgxFhQWpILYt9hEoTCqeuY6QWaA7Artmp408WEpcXqZFFKhNUU2RETHu5osdHGAqEVUNZbm2FZqWcEbwLL78iCIROQqSHVbhQI0dcx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729618141; c=relaxed/simple;
-	bh=VV6QKVF0gjjf8hHfaPPcTEmbDgUc5yY0WnBeyT5UWGA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kSQ1EU+lLjy7DXHwDXFKjrPyRzRB8CYEBnZzp1UJTkRrmQQnZZqMQxV+6grUgb6+P7nBzRhl4bGR8lT6Vn3stvWyVn6K0RhuYqyN+ToNND9xkcgvQazVA+/hkp4U9YX2HvPb9lwBhzCiMNyjZMdznxnysfbj5mQy0vHuLIj0+1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2/7si74k; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e390b164c7so97391147b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:28:59 -0700 (PDT)
+	s=arc-20240116; t=1729618168; c=relaxed/simple;
+	bh=m0Nwo0+i3YnOzZq93vl1VFUzbNQLAnEr6HkebnHRbpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k8f8X7YBoSoO16OV3KSfPbufAc2HL8vfIwUey3mDuo6dH3odMk1GU9Yfn1ebbuQ9Frf4W7P80ifYkHdz10QX3eeEEG83Q7n89aneP+wcgqNxVEguBUA9tVprQIAk6AQ3v9OUWKDEYimkpAeYy88R9WzQlQJotrxqYuITvVTcXV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGjoowiw; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso4188870b3a.2;
+        Tue, 22 Oct 2024 10:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729618139; x=1730222939; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=88wx3+4q+1K9X5I+DhSnOFWj6qOcMcVFHAzwKhzigV8=;
-        b=2/7si74kIY3740fNvV1DbkcLvqWlTXXGImhs8uAAX8zZl13EuTBmCLXhB4nws4jzN5
-         nquV1R/OAK6lDOqbupq4sJ1vWvSuSol1Na4eCZM4426bIfz0La7t4Uly7R83HB5eC2w2
-         teLGrS283bw5ru37dc0xbQb4DDberkEHjV1unv6RkiCdUM4aC4y8xOHUZp1eMOjxSvo1
-         HBqdAD995dwWqpAUBZwWyI0M6mBfKL4NFVZ0CMkkA1GRVXVF2n51Pjrd5N2LnPloVCRw
-         60G4gI30k7dxWKJuJSeGQckCieZs0spDM9ymjqFuWb2C/wKC/6rlOyLbr5ti3gaChyBl
-         w9Sw==
+        d=gmail.com; s=20230601; t=1729618166; x=1730222966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4qDFTq1IwR3EAOCiFBH20Hns15lhdahsLn6F0YbvNyY=;
+        b=YGjoowiwRpOeSTh0tXqs2g/pQq+I3xIgynjHX6II1zs4/dDEXpbahRxl6yqec22YK9
+         4Dj+Slgzj144rWEKHSSC2ozwzLdnDcgXRCzKBMmjvlvaPWGqfFxDHxX4ehuTIO/1JIYr
+         DZ2gSgmVkG0+vMTiEPFPfSg6OUYwaN1tqyb6Nb4MXenOKpj7jiI4qZfhfXT9jpozN6NF
+         5C+3sglz6JMWODZoN/l0rHONYn+pPHSkXFYT6hBKu5PPTcWIOOmlPajy+lDz/M/vjSJE
+         RM8cVju0F2BsCjM7vcE/5f7dPgBpaZTcqMagsOMXnjJgHPuiDPDZqHtix79TCZgX8QMQ
+         kaOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729618139; x=1730222939;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=88wx3+4q+1K9X5I+DhSnOFWj6qOcMcVFHAzwKhzigV8=;
-        b=cZfcdayXtL3+O3LmPSnl+84MT3pq1oQGxaV5ay0C9QA66FD0Hju1rWwvB0+TRY8tub
-         VjthjL5+xzfirofJmn5ksb+E9sG/WeOO8LUf1vz4TLHnItajQOXl7a1idlo8vDdfCDUM
-         Uc3T1LRc2NItF9FQHBWLzdKTRYTYjnxPYs3bzLBXkwKmcN+4eoMC1cSE8kHlwo1Y804d
-         a8cvL6bJPP8SttQAcx3Ip6hcUzrEH0GJMAZOx/gs4WsqlDzCo/J9jT9gflTsTf9Jr71Y
-         r0XwTbZr7qHH/Wapa3gXmAg9EEreinTBYNNWKdl7Xoal6CPdA5VXXRxXrLq8/JNMXqn3
-         GWpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCZzD+5J7uKGy4mffe3fHEGmScdWp/EI4t4gs3BZGZcvC7/hQw/SdZ1LuRCs97tGWLvbUj9v05niy6YnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL5VS27FCj959iPEIdh0xBAUwVn8rXn5ufZx6HXEyDcHKMAdJx
-	MEU5dWVCe4+ThsgOKOg/Pomoly4cWVwq8VAeefyl7KA7WYJFxt6XfKDsNc+Jiyj1I5uBAlI7Ju8
-	uOA==
-X-Google-Smtp-Source: AGHT+IFdc0ZQv7mh7e81tsPtMekWG2+yIBem7weGPBwgYcNYPCIjb5/j3ncVZ+x2Nweve08TuyHo7YHd8LQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:23c6:b0:6de:19f:34d7 with SMTP id
- 00721157ae682-6e5bfbd6b2cmr1234057b3.2.1729618138968; Tue, 22 Oct 2024
- 10:28:58 -0700 (PDT)
-Date: Tue, 22 Oct 2024 10:28:57 -0700
-In-Reply-To: <148feb5b-cdd8-4065-8570-d0304383cc62@stanley.mountain>
+        d=1e100.net; s=20230601; t=1729618166; x=1730222966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4qDFTq1IwR3EAOCiFBH20Hns15lhdahsLn6F0YbvNyY=;
+        b=eLwURGLlAv3/pbyf4iuCv78PuSEKFe/xsOtEj4lFLw8+tL4JX7xIuLUZMCWk8bMSuZ
+         c5af6RVoluSEF5jPi3kWXWLfP9MXAc9KSECC2eWOd34P7QaFq2k8OcMnKoScFS04XU1h
+         PfGiLKPlj/9QI293XiGuJsHi5rSO9fW60uQde9XXu63WCt6WpXi9DgfbVjYaFZ/GC8DF
+         Gv3UcTFczjqlqQENyV9iwz9sq+hh1rL5ACF0DR6S0TJ9MGQNk3Y9yY74V5cKF17YxpQd
+         V7GWjtgMHmk9OeAD7cDMliISM2uLeOz/3pXi9u/Im+lVzAOYCPMCR4xcZcBYbBek2nTv
+         8Vlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrbSSJVYDp4Phgf2ex0nOuxF7B5nsgGNOEgCbxb8UHILSEy1z60yCGpnzsGJlf+Jl2Qxt6UT1VsGdVKrE=@vger.kernel.org, AJvYcCWZClFzmdowN378mLDBFtBhA8ZpVC/6s/YJkD0N70utgpK3oeqP16hE317uU6Gt4NPlLtwS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIBeNagVxuYi4T/fq2fffJB/e4BS34hyaulv3vodeVuME+O80t
+	9KgYz9ov77qJfYhZMZIlFmGfD8x3bxhs7BLVrjCnhcNmvXjVkeVFJv5HubqDI0Qtt59jY0oduvm
+	T8DyVSEX3B0UWDLGzJ6b2QCB/ibU=
+X-Google-Smtp-Source: AGHT+IGk5ApWtGrmJSdKF8uzT8Dslo6RcY1GOrRqFYXBm4Tunrey1WFYDqEF5/P0ItYRwDCarpd7vi0nbJgYjJnE+kY=
+X-Received: by 2002:a05:6a00:10d2:b0:71e:587d:f268 with SMTP id
+ d2e1a72fcca58-72030a070d7mr17997b3a.4.1729618166122; Tue, 22 Oct 2024
+ 10:29:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <148feb5b-cdd8-4065-8570-d0304383cc62@stanley.mountain>
-Message-ID: <Zxfg2bTkTgObpexL@google.com>
-Subject: Re: arch/x86/kvm/svm/sev.c:454 __sev_guest_init() warn: missing error
- code 'ret'
-From: Sean Christopherson <seanjc@google.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Brijesh Singh <brijesh.singh@amd.com>, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Alexey Kardashevskiy <aik@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Liam Merwick <liam.merwick@oracle.com>, 
-	Michael Roth <michael.roth@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+ <ZxdLfLWWrAEfRiXV@infradead.org> <20241022070635.GY16066@noisy.programming.kicks-ass.net>
+ <ZxdPN6wT1LMyLaNL@infradead.org> <20241022071018.GA16066@noisy.programming.kicks-ass.net>
+ <ZxdQiLhn16FtkOys@infradead.org> <8b2552d8-0453-476a-8606-e8b761934783@paulmck-laptop>
+In-Reply-To: <8b2552d8-0453-476a-8606-e8b761934783@paulmck-laptop>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 22 Oct 2024 10:29:13 -0700
+Message-ID: <CAEf4BzbyctiXq8L5MQmCtVqGSN8uawUmNXJMm-X8jDcp8QQ86g@mail.gmail.com>
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
+To: paulmck@kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org, 
+	andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   3d5ad2d4eca337e80f38df77de89614aa5aaceb9
-> commit: 88caf544c9305313e1c48ac1a437faa5df8fff06 KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event
-> config: x86_64-randconfig-161-20241016 (https://download.01.org/0day-ci/archive/20241019/202410192220.MeTyHPxI-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410192220.MeTyHPxI-lkp@intel.com/
-> 
-> New smatch warnings:
-> arch/x86/kvm/svm/sev.c:454 __sev_guest_init() warn: missing error code 'ret'
-> 
-> 88caf544c93053 Brijesh Singh         2024-07-01  452  	/* This needs to happen after SEV/SNP firmware initialization. */
-> 88caf544c93053 Brijesh Singh         2024-07-01  453  	if (vm_type == KVM_X86_SNP_VM && snp_guest_req_init(kvm))
-> 88caf544c93053 Brijesh Singh         2024-07-01 @454  		goto e_free;
-> 
-> Hard to tell if this is an error path or not.
+On Tue, Oct 22, 2024 at 7:26=E2=80=AFAM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> On Tue, Oct 22, 2024 at 12:13:12AM -0700, Christoph Hellwig wrote:
+> > On Tue, Oct 22, 2024 at 09:10:18AM +0200, Peter Zijlstra wrote:
+> > > Ah, well, the thing that got us here is that we (Andrii and me) wante=
+d
+> > > to use -1 as an 'invalid' value to indicate SRCU is not currently in
+> > > use.
+> > >
+> > > So it all being int is really rather convenient :-)
+> >
+> > Then please document that use.  Maybe even with a symolic name for
+> > -1 that clearly describes these uses.
+>
+> Would this work?
+>
+> #define SRCU_INVALID_INDEX -1
+>
 
-It's an error path.  Luckily, the fallout is only that userspace will be confused,
-e.g. KVM doesn't continue configuring state thinking that pervious steps succeeded.
+But why? It's a nice property to have an int-returning API where valid
+values are only >=3D 0, so callers are free to use the entire negative
+range (not just -1) for whatever they need to store in case there is
+no srcu_idx value.
 
-I'll send a patch.
+Why are we complicating something that's simple and straightforward?
+It's similar with any fd- and id- returning API.
 
-Thanks!
+Marking it as u16 would be fine, but unusual (and probably suboptimal
+due to common u16 to int conversion).
+
+Marking it as unsigned int would be bad, because it implies that all
+32 bits can be used for valid value, making it impossible to use <0
+for something else.
+
+Just documenting that valid int values are always >=3D is good and
+convenient, why not sticking to just that?
+
+> Whatever the name, maybe Peter and Andrii define this under #ifndef
+> right now, and we get it into include/linux/srcu.h over time.
+>
+> Or is there a better way?  Or name, for that matter.
+>
+>                                                         Thanx, Paul
 
