@@ -1,82 +1,132 @@
-Return-Path: <linux-kernel+bounces-375773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01D89A9A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BC09A9AAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C709B23210
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08625282FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEFB1487E9;
-	Tue, 22 Oct 2024 07:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590D21531D2;
+	Tue, 22 Oct 2024 07:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DRFpXdoE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CnZLv6wR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F9D13AD0;
-	Tue, 22 Oct 2024 07:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEE1148FEB;
+	Tue, 22 Oct 2024 07:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581194; cv=none; b=kDeUmjDHi3wwzWalTrSddbeXnGt664CaA/6HJx0UOWIcnf6eUbbONNtttWPIqRiE7LlZike6lUfabFmvePjeN/gDhzHT/2r5QShXrIzUrHmXvL+xs+QI+a6RAe2bQFw+hjn3bnmhRqpcnZJ8Hth7fbtCu2lNN2IVXP/qpD1xxfk=
+	t=1729581262; cv=none; b=FHQSoBDAhCVzZeqg4bUi5mknByuuRPT0np2mlchIqBiNyVJLmbKmUzAcxdBkejUPmjh0DGRZwF4c+LOgWSP0xe5ErmziRxR/wsW2koK4FPiQPMQCLqSvD6KTyaKFsikrZhrnkquLC84insSeXpBSbebOPThKLvtihkhnICDVxGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581194; c=relaxed/simple;
-	bh=6xptQLYqN4yU1anUHt6MFPSBKHN6i27l1HSyRbo9iAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b2u3TTJGuFve8iL1lNTOxjboPIf0OV/AP7H9s8bhOXaZafoGoj30e9kYx4DZPZP+XsoPEYBZAC6TmxiaVlEHzI/UluN484+IGbfo/BuickuEoKS3fAgloRWfxMNKp3n51q42VBgUb02xEEB8xs14gSHxA3KZPHev57aLaoTJegI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DRFpXdoE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oC4rtjVBCOVV9130aa4PzjxDIh3/mqXk0GlZnkk3v8Q=; b=DRFpXdoEPPPAnmhpCHV6G9R5iE
-	WdCYA4FgOg6YF0Whfwq0YeeKW5UNscMMkhMRuL+EgMkHLIvYYbhKli502MjLzYgt2mbeMEeoYkkQc
-	6noW/Ia5kF7jdZtj92V6Bxco+mmT6ivJhWf1HKo00FBjlCHNKGPfH0kxkJtDRcTK07bifMIDuqlvP
-	Pq/QscU86h5yqGjRxHl++RBE04U8y7FXUT2FD1GznT6Fgn7a2G/pQbrK8HKnY8KnVeLdaQT7omc4p
-	HyUYMsvkJpiJEEx78BhWg2sjh50xn3RTX4Oak/LwS5lRx99ZN+EXCQ0Rx4SAGY9offp+ADa7S8fAL
-	IRDm+X/w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t394q-00000009vz2-1TA5;
-	Tue, 22 Oct 2024 07:13:12 +0000
-Date: Tue, 22 Oct 2024 00:13:12 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, andrii@kernel.org
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
- srcu_read_lock()
-Message-ID: <ZxdQiLhn16FtkOys@infradead.org>
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <ZxdLfLWWrAEfRiXV@infradead.org>
- <20241022070635.GY16066@noisy.programming.kicks-ass.net>
- <ZxdPN6wT1LMyLaNL@infradead.org>
- <20241022071018.GA16066@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729581262; c=relaxed/simple;
+	bh=/Rgpo9I553gF5Dq4wZ7FZfxuASIDdLW/V8cSYDAMXD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lzwBuB/2c3IyjxIRkkzGLWydK+A4QPU67XrRoYXnORLbIL+3P0zXFUZWbaP6SIPZZr2clDyHhgH9BOelIqZ4002Tb8jGD9Eb+RnlUK8OK8Y/LW8p4BH4zOIDjwQd1cHwnKtVkwAkTUYp1b2iulE6qwMq27vdDjdvqkWlatGvFpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CnZLv6wR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M6uVqZ019049;
+	Tue, 22 Oct 2024 07:14:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2OQf0si/CIXxYVkyVvj9sbbdpTRNuvie33M0zB2wTuk=; b=CnZLv6wRZlLSPWbP
+	azI4Ryr3rzSb5MJECbNKX3AtFZErqfropwue0i0kbznUMcqc4RT4FFg04Sw9v6v3
+	LOMMtWAvioq48XZDgw2MzpztdpZ5uNUCEAOSzUjsd9HFUkE8jGzdBzENwnGvV7R9
+	48RvAqBCEQBbWmH+kwR2BWe9IO9nftszC1DbWWowSI10MTAZwM7yQGt57kLIqGtJ
+	RjLNOhJqcK3u41ezFei+w0zFCV8Gje/5Hxj3YDgU2rn3voqMtd40r8+xHaTmZqO7
+	ktiYhyw7371VoV0WvlMz2rss/bqyvSNRaKXvHMpcev/VQ3u8CjswqbaTwPgaOlt1
+	8AfGIw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42e77pg2ge-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 07:14:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7EFWn024228
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 07:14:15 GMT
+Received: from [10.151.40.160] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 00:14:12 -0700
+Message-ID: <09be6843-52c0-4d84-bcba-e6cbd0cb51a9@quicinc.com>
+Date: Tue, 22 Oct 2024 12:43:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022071018.GA16066@noisy.programming.kicks-ass.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/22] wifi: ath12k: convert tasklet to BH workqueue
+ for CE interrupts
+To: Kalle Valo <kvalo@kernel.org>
+CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-17-quic_rajkbhag@quicinc.com>
+ <877ca1q0yq.fsf@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <877ca1q0yq.fsf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ds6dUeqqETgxjzzffRHEvUQO7UndozCn
+X-Proofpoint-ORIG-GUID: ds6dUeqqETgxjzzffRHEvUQO7UndozCn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=967 spamscore=0 malwarescore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220045
 
-On Tue, Oct 22, 2024 at 09:10:18AM +0200, Peter Zijlstra wrote:
-> Ah, well, the thing that got us here is that we (Andrii and me) wanted
-> to use -1 as an 'invalid' value to indicate SRCU is not currently in
-> use.
+On 10/21/2024 2:36 PM, Kalle Valo wrote:
+> Raj Kumar Bhagat <quic_rajkbhag@quicinc.com> writes:
 > 
-> So it all being int is really rather convenient :-)
+>> Currently in Ath12k, tasklet is used to handle the BH context of CE
+>> interrupts. However the tasklet is marked deprecated and has some
+>> design flaws. To replace tasklets, BH workqueue support has been
+>> added. BH workqueue behaves similarly to regular workqueues except
+>> that the queued work items are executed in the BH context.
+>>
+>> Hence, convert the tasklet to BH workqueue for handling CE interrupts
+>> in the BH context.
+>>
+>> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+>> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
+>>
+>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+> 
+> 22 patches is a lot and I'm not going to look at this in detail, please
+> reduce your patchset size. 10-12 patches is recommended. For example,
+> this could be easily submitted separately.
+> 
 
-Then please document that use.  Maybe even with a symolic name for
--1 that clearly describes these uses.
+Sure Kalle,
 
+We are working on other review comments in this series, in the next version
+we will reduce the number of patches.
+
+This patch we will be sending separately as v3.
 
