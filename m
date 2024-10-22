@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-376701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650369AB506
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30189AB509
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C42D1F2328A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF991C2293D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AF11BFDE9;
-	Tue, 22 Oct 2024 17:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F37F1BD4EB;
+	Tue, 22 Oct 2024 17:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeQzAJXG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dX5ps/dz"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27EA1BDAA9;
-	Tue, 22 Oct 2024 17:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6CB6EB7C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617906; cv=none; b=feRkxZOZlZhJhcXe4rgUxaSxXpD5Kr5aU5QhwMBXdNy1vWF5z7HpzoqIRWh3SyCRhAbSos8oP+qYDcWlZ/BMdJdvxRpB1nmRkV8mN9C4PQhmemqhSZmlYLRpm5eJLT94Mipof4m8vrN/im0CBSNJAyAu9NS8MPy8k3rymHLQd7I=
+	t=1729617972; cv=none; b=Is8YtUgohmpUOvHLDgov0LfzpQ44Hn+oN7G65fEeno/VDfWDWGAKUMd2w04S9Qw9iG3Y9iO/WpsI6TZW97kIbsvikGlZmzCFgJ8Q3SVa/5HGVgn7c3IxIArgEWmdR+OHeGvQ/Y4eCUmLV6TTfEHqb5sqwezbwTL9B2h1ugxGOdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617906; c=relaxed/simple;
-	bh=J2g2Yu6XyCY4XxVZm/Amweebvid8FNKBJjTzHEntF58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcJRTUPP8lWLdL52xpwOaLhk9xtfU85TRguDxOdwQaZVSGZ7o4HYj4FtegMxUASgTZcA7PMswKki6VulX3nHSh3gjQgFX1HpaRwWqCHgCdDfza/XqWZ2fW93yifa5H9bxyt+CMF9+TYyuHh8MFFLYAPDFlXBuKUXC/TgsV7IeCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeQzAJXG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE3DC4CEC7;
-	Tue, 22 Oct 2024 17:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729617906;
-	bh=J2g2Yu6XyCY4XxVZm/Amweebvid8FNKBJjTzHEntF58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JeQzAJXGWXioB0cHPEFbrENDMSeYJUT03aeULihkKQElFB6xnYz1EOYWyKa6WrQpk
-	 WNcCZKfWABw93ZSg7IRsJpU/cxYxfyA+Am4Lt+EDh7vTPeW9TQa7uMiLYwJg9uVP3A
-	 2D2RsgFnaxZYsmTRxWgxNtJrltZx+CcTzkqtw+pt+oWPKdeFCrSQ7jrZmT4BkSupLw
-	 zgZ3pXZ2yoth+v6ThAGGnx8SSKEXF1ml2kgN7enbFdh/hEt1nTQzT80Db9/xa60aOR
-	 PAasYmEBq13zODGSBBg3njNkaCJt1uECwCLgzCl7ulobqiqR/jLlMP3ZNkwHSyVO9Q
-	 NZ3EDGtCdhAqA==
-Date: Tue, 22 Oct 2024 18:25:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <20241022-washday-glass-3db9f6a2cd27@spud>
-References: <20241021072606.585878-1-inochiama@gmail.com>
- <20241021072606.585878-2-inochiama@gmail.com>
- <20241021-outlying-washday-8f171dedc703@spud>
- <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
- <20241021-rosy-drove-1ae3c8985405@spud>
- <2zawe64brm3sfuslh443352wfupgnhb4xw7jragkzxu6kgg6t7@b4qiya3jdij4>
+	s=arc-20240116; t=1729617972; c=relaxed/simple;
+	bh=9Knb/M3SnCAOtHlDeydxy5DvbPANLmS4mNOH1GUjDNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VOZ3sRsVgypDb1wRkEOKoptTfEYWk3w2gXWAHFXJvv0r4NdnXXkWYrLzCgJA7u0FFk5LsHqpaZGQkGtvBr8HTc/HYA88RQi9no9+fTUVGJoGMxgtp50cuV5pkVdjZ/NiO4pOQ0gsF0lzK8Z/rZO4ez54jphDV7ikIsBIDR2Ju/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dX5ps/dz; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <36128d71-a600-4c33-97f6-e694e493b3ee@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729617968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NwKPfXU/T50nQaARoPN0RhbbMTvY/JMH3FKeKZmALbM=;
+	b=dX5ps/dziD7FZkL1sY7WLDg16LyO3sOEAD+ULmaWNkp2+CyaGUBjErR+pD9yto10olZbDO
+	y8GVUxWQD09OgTa+7Mq/zuyuyxin4T5U5V9wBvYX/nGEcMNdmYhLKTHILbdEQu1j+tjrU6
+	KWhKiIUJCYmqqzIrFmvOW/ZavIJ1jzw=
+Date: Tue, 22 Oct 2024 22:55:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IG32fQA576T6oNHT"
-Content-Disposition: inline
-In-Reply-To: <2zawe64brm3sfuslh443352wfupgnhb4xw7jragkzxu6kgg6t7@b4qiya3jdij4>
+Subject: Re: [PATCH v5 07/13] drm/bridge: cdns-dsi: Wait for Clk and Data
+ Lanes to be ready
+To: Devarsh Thakkar <devarsht@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>
+References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+ <20241019195411.266860-8-aradhya.bhatia@linux.dev>
+ <c0784c5e-fc71-64c5-e09f-63e1abd1b61d@ti.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <c0784c5e-fc71-64c5-e09f-63e1abd1b61d@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---IG32fQA576T6oNHT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 08:23:30PM +0800, Inochi Amaoto wrote:
-> On Mon, Oct 21, 2024 at 01:21:58PM +0100, Conor Dooley wrote:
-> > On Mon, Oct 21, 2024 at 08:18:58PM +0800, Inochi Amaoto wrote:
-> > > On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
-> > > > On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
-> > > > > The UART of SG2044 is modified version of the standard Synopsys
-> > > > > DesignWare UART. The UART on SG2044 relys on the internal divisor
-> > > > > and can not set right clock rate for the common bitrates.
-> > > > >=20
-> > > > > Add compatibles string for the Sophgo SG2044 uarts.
-> > > > >=20
-> > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | =
-4 ++++
-> > > > >  1 file changed, 4 insertions(+)
-> > > > >=20
-> > > > > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb=
--uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > > index 4cdb0dcaccf3..6963f89a1848 100644
-> > > > > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.y=
-aml
-> > > > > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.y=
-aml
-> > > > > @@ -58,6 +58,10 @@ properties:
-> > > > >                - brcm,bcm11351-dw-apb-uart
-> > > > >                - brcm,bcm21664-dw-apb-uart
-> > > > >            - const: snps,dw-apb-uart
-> > > > > +      - items:
-> > > > > +          - enum:
-> > > > > +              - sophgo,sg2044-uart
-> > > > > +          - const: snps,dw-apb-uart
-> > > >=20
-> > > > Why does each vendor have an items entry of its own? Seems like nee=
-dless
-> > > > clutter of the file IMO, except for the renesas bit.
-> > >=20
-> > > I just follow others when writing this binding. I think it may need
-> > > another patch to fix this problem, right?
-> >=20
-> > Yeah. But I'd hold off to see if someone gives a rationale for it being
-> > done this way before sending that. I've not deleted this thread, and
-> > will send an ack if someone justifies why the binding is written like
-> > this.
+On 22/10/24 11:55, Devarsh Thakkar wrote:
+> Hi Aradhya,
+> 
+> Thanks for the patch.
+> 
+> On 20/10/24 01:24, Aradhya Bhatia wrote:
+>> From: Aradhya Bhatia <a-bhatia1@ti.com>
+> 
+> [...]
+> 
+>> +	/*
+>> +	 * Now that the DSI Link and DSI Phy are initialized,
+>> +	 * wait for the CLK and Data Lanes to be ready.
+>> +	 */
+>> +	tmp = CLK_LANE_RDY;
+>> +	for (int i = 0; i < nlanes; i++)
+>> +		tmp |= DATA_LANE_RDY(i);
+>> +
+>> +	if (readl_poll_timeout(dsi->regs + MCTL_MAIN_STS, status,
+>> +			       status & tmp, 100, 500000))
+> 
+> The above would mark the condition as true even if one data lane gets ready. I
+> think we need to poll until all data lanes are marked as ready. Also good to
+> give a warning in case we time out.
+> 
+> IMHO below should fix this:
+>         WARN_ON_ONCE(readl_poll_timeout(dsi->regs + MCTL_MAIN_STS, status,
+>                                        (tmp == (status & tmp)), 100, 0));
+> 
 
-Well, Rob doesn't think they should be separate so please add that
-additional patch in your next version.
+That's how the condition should be, yes! Thanks for the catch!
 
-Thanks,
-Conor.
+I would still prefer to keep dev_err instead of WARN_ON_ONCE, because
+the latter stack-dumps during boot once, and then can never be seen
+again during multiple modesets. The noise in the dmesg is not worth
+the issue either.
 
---IG32fQA576T6oNHT
-Content-Type: application/pgp-signature; name="signature.asc"
+With dev_err, it can show a clear print once every time it times out.
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards
+Aradhya
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxff7AAKCRB4tDGHoIJi
-0tUyAP4uTBvEkU56jMMlkmGFlti+ugxYK6+lqTVuXMm0srEjLwEA20y1lnrqE8Vh
-eeC6n/MJPkUuZNkNk3KAqX3EZkGfQQg=
-=blFm
------END PGP SIGNATURE-----
-
---IG32fQA576T6oNHT--
 
