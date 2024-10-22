@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-376895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5624F9AB729
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3069F9AB72B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D483AB239F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67122849B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F991CB50C;
-	Tue, 22 Oct 2024 19:51:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F67314A08E;
+	Tue, 22 Oct 2024 19:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDUG5Y5t"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7200081AB6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ECF17C98;
+	Tue, 22 Oct 2024 19:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729626664; cv=none; b=mNmAwjWcFxPygLigwRmhRMaaYz1VotnHl2gd5iWHkRQQjSId5qcGMEqdxfknDDEJJHRjPsk0nf7bIm0sgEGMUI2wPpDk4f9FVHPFSq0Uv/Y91OHd5rEtI1F6n6v7koXUoRKP5OsfFgNURddmMCj+8iQRDNGAuOscHKrml7f0kF8=
+	t=1729626680; cv=none; b=j+jixG7lEi1TFRORpkpGIMQaHmaOWPRQ3jkMqhfbWJJn+V5n5fHbXofBew9g47U25h4EadqawNcEMWfRzHoOwRIrFiP43lPgeqn2SJsjhQNqZJ7jMCrVutsfiOnoaIXoGWw98X8FFhLRzz+qCYSzahKrNrDcvgZhUA6eDgd4Bio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729626664; c=relaxed/simple;
-	bh=sjKBGkepQUjrvlU2kiQ+Mr0w7TsVxlpRxeeYzwbHG28=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Bn9+5PlcsByiIYIPBv7IONKNE8smmq0Dg/kLCWWOkBZbsfnEbB3ENUGMmc3GrL6tijPLDe54aOqepZ2p9YNe3dvy9dmFvhZn+DYLLlwrKfEVpRcHQBSVi4vcvudX6BDr/++Wa3tZgzwx6ftqHxtLFLS8HwQ966N9QmwF2PSvBRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso54123675ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:51:03 -0700 (PDT)
+	s=arc-20240116; t=1729626680; c=relaxed/simple;
+	bh=J61HcGAiaHQ5PwTY0umit5XCMScRBNaBwE0VCLn+GJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R1EAAn9aXk7aikbmF8vkWIyu/mSk/BSi2GNvEHjP/+Ll58UWNH5HPa3P5mZ0xXLi3MFb8pwslzirY2hFdDtRM+uZwS5lqOuPVg/PbI002bS+LxvYGrnM+EAx8HEos1F3RDiwiM/4Zjmz42PWEfiykYg7JzinGoMWeBiHJmyK5rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDUG5Y5t; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso60547415e9.0;
+        Tue, 22 Oct 2024 12:51:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729626677; x=1730231477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J61HcGAiaHQ5PwTY0umit5XCMScRBNaBwE0VCLn+GJg=;
+        b=nDUG5Y5t5c9F1ck3lC4hp6wna0nS2tUFE6gc+E4lmtyix8XZrEkVMb1+o/t814R7QT
+         BpEVCJA+qcv6tP8/t05Lyi5+wUKr4nbXXw507yOsAef7+p2paqWU2jtK9/0C3wVjRamn
+         f/OjP5g6cRSb4ZDZXXM69fYpC5hGX4fvaIRmdJcM4K8Azic2J1a1VfK2Jq/jKMGfAzYi
+         FbI6AT/2LLcs2wiFHPZxovuDXmD8hZHOKmVwoxBVioDNkOMGPBb4gtmA6oWXvupjqaV4
+         QsdyL7S5GimrvdNz3RXreHAFq70gebt4tFJHxOJc4lsGMw9LrjOIsW1ryJcxM06maNE4
+         6XbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729626662; x=1730231462;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mphveMtRTgg7DkCZcVw8eEGpbXeUtfITv+Yo0YL4T2g=;
-        b=oFwHG5/9LyqPaM0NW3U4Wy9sg1smjhde44hZ4RD7Xk+YIZgpuuoARbKD4RFePtozyi
-         6nuhVR+haUxTFhoX6xr9NAZkjCJ+aF12h12jLGHUF13Y0Cau+8HvJhx8wBddLDwCz+mh
-         gtz74yj/GjOkejDsOWQLbYjmvWGmfWOWfNANv5+nSM9OV+6/Cr5kjHN4hBbOobPgqY1v
-         NMthlrDvQmJGhM0lZzK2RY5/BjBP3cKau91FH8LA485Y9Sm/86nSg2+ueMFoTWCs3sob
-         fdfIVkwDS2w0tnDj9RCK31c4cS7kqQSk+M68U/9ShAh9ntng5HQ182dCI4/SHm4G0Axp
-         3FMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxR6bfshQS0ssNqtx67N3KVxw64CEeLaSbUTBFRlttgJR2kPi+xoLLqLPViJC8aQgZGnUdntO1F7+13hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+3QjulGObF+/TUBvMLwqqUrQpbxjxEWrqcUJoae5/pIp3MFyz
-	/wdNs9WTVj6m5o5ihw5RO4IGIqGkqNsp0nw9dtEmvqVCqq6vcEs8Kne4A8SGK8cjjv6uO18OWew
-	qi/HYwDzRDqHKfaq1surMmMrJXy0YvMdvMNnJWdgH4ea2A4mdplTXp4w=
-X-Google-Smtp-Source: AGHT+IEufu1zyaQDXbANIArKoVeb3LwjEWPRlP4EywrHHI6H0O3hBBzbROtbYsrqtHwf4aiB7PRgzCn5DjSCayLfUks1ABPDhrph
+        d=1e100.net; s=20230601; t=1729626677; x=1730231477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J61HcGAiaHQ5PwTY0umit5XCMScRBNaBwE0VCLn+GJg=;
+        b=wfbr6xCD7YQlDKRYVW8Qx+QXH585GjW1eV1Sua4dhKdKA3wK2NFj9+8EkGulVQC1fw
+         oHXemAfarxf2+dQBCE9r0IJDsNYBh2iRrJrcdoStN6CGoRu5+G15KIi06qB+ecafKVND
+         kB+Nhv5f/U/dA66H+a5Z/zRjjueN9f1k4NfYnCy35OLSd1aHJdY6ZfuFZu0J0LKWRJTU
+         AQZbhn8PJ2RQYBf2CuqMviIJTzZAKgUSmpC41ITdDo8dl/ryMH4J0B5M/h+mkzDbV7V/
+         HmEoEjSx0FXMNlbiwB/mlvARZTeqTPo+OW6BEftaiarS6Y/hktLx0B4ZHnHmsaQ2Eufu
+         FG9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Q8Sr1ysXzgxbpQtj8F6HhyMcsmV/A3vE3G+cEw4KfqfFgna0hKIozOvGSItkucLcaFo=@vger.kernel.org, AJvYcCXtIVw4cjtYO2A8Md2AZc0KGd91ObBnhaM5/YXDGkATXuHbX9J6ljW6Depqzyt5KWoDnZK9qZXvacEukaTH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3KwLjS99AxQkoNVa5QOZIymX3zsAiuy3NfK66gXviwRkxTCKi
+	cTk6pIcDk7oeu+csrlbpjIbJQaXliVcHkcWXfF92KNewb86Lfi+4ixCScPCvOJRYPBGM3Gzbmz+
+	8SmbF2zkKl1x8zrlaDcd6au5yhnw=
+X-Google-Smtp-Source: AGHT+IFm3FrEhSQLGGEHA1D0sY+49Rq3M/57uz82t+3PomkQl+NJ8UENwv/Sxzv4Yu8RtcR11DLGX1x6K8Ibi9Ze7Fk=
+X-Received: by 2002:a05:600c:3489:b0:42c:af2a:dcf4 with SMTP id
+ 5b1f17b1804b1-43184198c60mr2097905e9.27.1729626677093; Tue, 22 Oct 2024
+ 12:51:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cb:b0:3a3:9471:8967 with SMTP id
- e9e14a558f8ab-3a4d596027dmr2974095ab.11.1729626662566; Tue, 22 Oct 2024
- 12:51:02 -0700 (PDT)
-Date: Tue, 22 Oct 2024 12:51:02 -0700
-In-Reply-To: <CABBYNZJYtnHH1MjnNFdzfvu6jFOypL6iHjQ1Ujh8aYaycZzjFQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67180226.050a0220.1e4b4d.0078.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
+References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
+In-Reply-To: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 22 Oct 2024 12:51:05 -0700
+Message-ID: <CAADnVQ+Ow2E8qghEZw6x63VS4gM5rDtbM9R-ob00Rha2yBvfgA@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
+To: Byeonguk Jeong <jungbu2855@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Oct 21, 2024 at 6:49=E2=80=AFPM Byeonguk Jeong <jungbu2855@gmail.co=
+m> wrote:
+>
+> trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
+> while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
+> full paths from the root to leaves. For example, consider a trie with
+> max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
+> 0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
+> .prefixlen =3D 8 make 9 nodes be written on the node stack with size 8.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hmm. It sounds possible, but pls demonstrate it with a selftest.
+With the amount of fuzzing I'm surprised it was not discovered earlier.
 
-Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
-Tested-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a34a5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=346c6d758171538d
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=101c0c30580000
-
-Note: testing is done by a robot and is best-effort only.
+pw-bot: cr
 
