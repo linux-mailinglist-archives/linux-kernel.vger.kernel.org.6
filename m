@@ -1,113 +1,232 @@
-Return-Path: <linux-kernel+bounces-376348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F479AB018
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:51:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A259AB019
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5357BB21F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6945028399A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9748D19F424;
-	Tue, 22 Oct 2024 13:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7762519F110;
+	Tue, 22 Oct 2024 13:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xooZKAgd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHsxKtoB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C5B14F123;
-	Tue, 22 Oct 2024 13:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C273319D06E;
+	Tue, 22 Oct 2024 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729605091; cv=none; b=m+tpTHoukWu6h0Fvvn1tWolSfPLXqAY++8pWHmLRlEq8UYTuj7pqy14ZCbFjuFE3xT22vXCeD6s5kUT0XNQL0/Ce0MnkS8VQabMuM5coRqGuGwFbbzkKQSR0AHyOYN8F8dz3nRMZgkiA+qGLDFZTtDpjJ0smPUV9G3t8XUI4Prs=
+	t=1729605107; cv=none; b=TAE+cnsiCNoTW2A4+8sQhwycFjuaXPNLv6Fg1ST+oFhxltboCP7J1YKmDRmYcmqfjB62sTXQ32/2H6OtPZA15iARbk1Y5/3ToN1rd+9AV0XnvWslnPOyCEH9qHKgGsZ05BB3cMljqiJkMY8eJdfXIUKzYU9hflXICObNn8dkWQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729605091; c=relaxed/simple;
-	bh=4YCUU/tRZ2uzBTwVjxElzWy8H8WB2+ci5aZn1lr2UfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMblGEsP2XEsfrinlnY/ld7pZJ/bHEuhEMR3R8agsZdiwrxF96Fou1mBnlrzhE/USYyM/KSIl9cXK74AzMgXM8FHg0Gyu2LX8qMN/eY2Q9nIzSUQzyMenXVFOHlhEZzluEv/UtqG6lau9wUULkVeKIAI90gLHumsoaXpkJG25cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xooZKAgd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=EvgeLiQ1i9RqfW0Xm0MuToc51LBco8luwq4fL+Inhzc=; b=xooZKAgd7OkHixgbYVMEcGcidL
-	a+SWF6BNyNSjY6eJy8yQGbXPowzJ4G1vD/u8Lrbngi4UPc8IU6Mww6P7m85HQiZWAIQW97HQ2s5BI
-	tQxjhR9NLctB2XtWz3xWo3JoopalvpzvS+1/PA3XzVs0c4WbTQ4IISKXeVRRcle51beQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t3FHw-00Aqeu-KD; Tue, 22 Oct 2024 15:51:08 +0200
-Date: Tue, 22 Oct 2024 15:51:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Message-ID: <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
- <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
- <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
- <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
- <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
+	s=arc-20240116; t=1729605107; c=relaxed/simple;
+	bh=0dYhrO3cdLqDyeSrNGp649WKMlUusxaP/x5CsNscNOo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=B7n5iKDznDTE17jJ4jlmMD/R5Seytvil+cf4pMFR6CKC9z+9M4xOPytbwSXyFxD8wUYd2NKYOTOeWTCFxTrCAjrxka03S0DWWOeoABvsg4fVtsocF1Bx8ul9MhfIBD53qhXAzN0pEY2FDFsof3RBTmH8WhHkdj50UxgXuJ96oQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHsxKtoB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE006C4CEC3;
+	Tue, 22 Oct 2024 13:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729605107;
+	bh=0dYhrO3cdLqDyeSrNGp649WKMlUusxaP/x5CsNscNOo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CHsxKtoBldbVxpAuloSM9i1rR9V0j9Gnv8YXifRV3dgRbQ5W3myECujSBCQrP8ZWo
+	 uFNNH96MSPEysvvvDifhJYmkuMdlRtvQkOi1XmmwGz/mjG6IE7y1xuFhMhOZWC4tis
+	 w0Jlyl6c7OcmQctVrev7GDE4sRziA34GV6yJd4mJFGIXTk0Ztgs4PSDdivTCko/bDL
+	 UkGDi4RO23+eO93vemj7NfG7zH7XTFIiVIbUBUmANceJa2fUSYkXyDvqJStW5vTwbI
+	 t1xwxbwcK4+sFTBZ2AbUSxGcZmZmAiq0u4SazBf5tcupf2n5GixZ76NZImTqszVsSX
+	 bk+x8Wojf7V+g==
+Date: Tue, 22 Oct 2024 22:51:43 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Tatsuya S <tatsuya.s2862@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] tracing: Fix function name for trampoline
+Message-Id: <20241022225143.6fb54c2c0900f523326d403f@kernel.org>
+In-Reply-To: <20241021071454.34610-2-tatsuya.s2862@gmail.com>
+References: <20241021071454.34610-2-tatsuya.s2862@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 06:21:49PM +0800, Inochi Amaoto wrote:
-> On Mon, Oct 21, 2024 at 03:27:18PM +0200, Andrew Lunn wrote:
-> > > It is related to the RGMII delay. On sg2044, when the phy 
-> > > sets rx-delay, the interal mac is not set the same delay, 
-> > > so this is needed to be set.
-> > 
-> > This is the wrong way to do it. Please look at how phy-mode should be
-> > used, the four different "rgmii" values. Nearly everybody gets this
-> > wrong, so there are plenty of emails from me in the netdev list about
-> > how it should be done.
-> > 
+On Mon, 21 Oct 2024 07:14:53 +0000
+Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+
+> The issue that unrelated function name is shown on stack trace like
+> following even though it should be trampoline code address is caused by
+> the creation of trampoline code in the area where .init.text section
+> of module was freed after module is loaded.
 > 
-> The phy-mode is alreay set to the "rgmii-id" and a rx delay is already
-> set (a default tx delay is set by the phy driver). In the scenario 
-> the extra bit is used to fix 2ns difference between the sampling clock
-> and data. It is more like an extra setting and the kernel can not handle
-> it by only setting the phy-mode.
+> bash-1344    [002] .....    43.644608: <stack trace>
+> => (MODULE INIT FUNCTION)
+> => vfs_write
+> => ksys_write
+> => do_syscall_64
+> => entry_SYSCALL_64_after_hwframe
+> 
+> To resolve this, when function address of stack trace entry is in
+> trampoline, output without looking up symbol name.
+> 
 
-This sounds wrong.
+This looks good to me.
 
-So in DT you have rgmii-id? You say the PHY is doing TX delay. So you
-pass PHY_INTERFACE_MODE_RGMII_TXID to the PHY? It is not clear from
-this patch, i don't see any code mentioning
-PHY_INTERFACE_MODE_RGMII_TXID. Could you point me at that code.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-	Andrew
+Thank you,
+
+> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+> ---
+> V3 -> V4: Change header file to define FTRACE_TRAMPOLINE_MARKER.
+> 	  Rename category name of commit message.
+> V2 -> V3: Instead of saving the trampoline address, marker was introduced.
+> V1 -> V2: Instead of checking trampoline when displaying "trace" results,
+> 	  it stores trampoline when generating the stacktrace entry.
+> 
+>  kernel/trace/trace.c        | 33 +++++++++++++++++++++++++--------
+>  kernel/trace/trace.h        |  7 +++++++
+>  kernel/trace/trace_output.c |  4 ++++
+>  3 files changed, 36 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index a8f52b6527ca..3d86937da610 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
+>  #endif
+>  
+>  #ifdef CONFIG_STACKTRACE
+> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static void __ftrace_trace_stack(struct trace_array *tr,
+> +				 struct trace_buffer *buffer,
+>  				 unsigned int trace_ctx,
+>  				 int skip, struct pt_regs *regs);
+>  static inline void ftrace_trace_stack(struct trace_array *tr,
+> @@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>  				      int skip, struct pt_regs *regs);
+>  
+>  #else
+> -static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static inline void __ftrace_trace_stack(struct trace_array *tr,
+> +					struct trace_buffer *buffer,
+>  					unsigned int trace_ctx,
+>  					int skip, struct pt_regs *regs)
+>  {
+> @@ -2928,7 +2930,8 @@ struct ftrace_stacks {
+>  static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+>  static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+>  
+> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static void __ftrace_trace_stack(struct trace_array *tr,
+> +				 struct trace_buffer *buffer,
+>  				 unsigned int trace_ctx,
+>  				 int skip, struct pt_regs *regs)
+>  {
+> @@ -2975,6 +2978,20 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>  		nr_entries = stack_trace_save(fstack->calls, size, skip);
+>  	}
+>  
+> +#ifdef CONFIG_DYNAMIC_FTRACE
+> +	/* Mark entry of stack trace as trampoline code */
+> +	if (tr->ops && tr->ops->trampoline) {
+> +		unsigned long tramp_start = tr->ops->trampoline;
+> +		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
+> +		unsigned long *calls = fstack->calls;
+> +
+> +		for (int i = 0; i < nr_entries; i++) {
+> +			if (calls[i] >= tramp_start && calls[i] < tramp_end)
+> +				calls[i] = FTRACE_TRAMPOLINE_MARKER;
+> +		}
+> +	}
+> +#endif
+> +
+>  	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+>  				    struct_size(entry, caller, nr_entries),
+>  				    trace_ctx);
+> @@ -3005,7 +3022,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>  	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+>  		return;
+>  
+> -	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
+> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+>  }
+>  
+>  void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+> @@ -3014,7 +3031,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>  	struct trace_buffer *buffer = tr->array_buffer.buffer;
+>  
+>  	if (rcu_is_watching()) {
+> -		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+> +		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>  		return;
+>  	}
+>  
+> @@ -3031,7 +3048,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>  		return;
+>  
+>  	ct_irq_enter_irqson();
+> -	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>  	ct_irq_exit_irqson();
+>  }
+>  
+> @@ -3048,8 +3065,8 @@ void trace_dump_stack(int skip)
+>  	/* Skip 1 to skip this function. */
+>  	skip++;
+>  #endif
+> -	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+> -			     tracing_gen_ctx(), skip, NULL);
+> +	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
+> +				tracing_gen_ctx(), skip, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(trace_dump_stack);
+>  
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index c866991b9c78..30d6675c78cf 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -2176,4 +2176,11 @@ static inline int rv_init_interface(void)
+>  }
+>  #endif
+>  
+> +/*
+> + * This is used only to distinguish
+> + * function address from trampoline code.
+> + * So this value has no meaning.
+> + */
+> +#define FTRACE_TRAMPOLINE_MARKER  ((unsigned long) INT_MAX)
+> +
+>  #endif /* _LINUX_KERNEL_TRACE_H */
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 868f2f912f28..c14573e5a903 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -1246,6 +1246,10 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+>  			break;
+>  
+>  		trace_seq_puts(s, " => ");
+> +		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
+> +			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+> +			continue;
+> +		}
+>  		seq_print_ip_sym(s, (*p) + delta, flags);
+>  		trace_seq_putc(s, '\n');
+>  	}
+> -- 
+> 2.47.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
