@@ -1,217 +1,160 @@
-Return-Path: <linux-kernel+bounces-376368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713429AB06C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:08:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0C29AB070
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87CF11C20F5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26BADB21B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750891A0731;
-	Tue, 22 Oct 2024 14:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980EB19F423;
+	Tue, 22 Oct 2024 14:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nT065qt4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XB/MFvdM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nT065qt4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XB/MFvdM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mWklX2JK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RHX/qFf+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B4519D88F;
-	Tue, 22 Oct 2024 14:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001AF19F110
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606082; cv=none; b=nlgV0+XIGAH9JPCaufdCZFempfuf4cYjMCzveogLhdQ4oseB3BGlZEAm5LmQyHjMoTlYGCIai7yZxvQ3OH9EI8HAH6IWGG5IOU6dcX6m4KxMX77mFaw+U/mzQR20bVS3JmKTqZtf6XzVyNLH+d13D36803JK1xUeHR/YWvS1vk4=
+	t=1729606182; cv=none; b=AVwNjyBB8dO/QbP44iELuIyw22oXmyX95PDSO1/HB2Y4V54GtZtLOo86oijoQWCzXntsrbLxm4rzcka/1qO8L+5LSZSgthY0QS812snb65pAbHU3C+PV3fTJSZzA7UYxtKsre3V9uVXME/Hsz3fViPmy3O8IRD2YV6eyggR7EIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606082; c=relaxed/simple;
-	bh=keN/OaFPBTwJRNnLclouCC/2PmyqicZ/HLWJKZaXkMw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qm0ySYCTCa4bIZl0Az8kmTA6pvuO0QtjQZ02xfGfgqr6tOcG4YlGgFaNj0mMMKODYKAYRVjkqRfJV3bWI3TQho8BYLR718eelOa2Mbqv4mA5WXR+2my+L7CInoUkQVOiGP0olMmqhtBj11qteujBV1PsWihaSiuIZIeKWngAIxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nT065qt4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XB/MFvdM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nT065qt4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XB/MFvdM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 30D9321962;
-	Tue, 22 Oct 2024 14:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729606078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1729606182; c=relaxed/simple;
+	bh=KePtIfKvz7t5CZSOBjyvIQxNGXZeKIYCh7cY8nEbcUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9vZWa4xiwrSwMD3LEmlwltFUwxG/mkPxBxvDpsdxyadQcYtR+I+8GFCWukhRyP4XssHfqrg0dXFV1EzCAzP3RsPUP7VeVe9t45DK6eNYnl/0sQ2U1UDC9iw+exdzY0mup121J2KNdMlhDjkztKWazPweZEjnm9YABq6q34sviY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mWklX2JK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RHX/qFf+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Oct 2024 16:09:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729606176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
-	b=nT065qt4F0yaxGQDtCajKU5QrE+p9X22fQ5X+uJrdOXhWH71O0XxqvB04DrSIvks57q6Cu
-	JdoTUOrhC6F3VM2FqxvCZrrLy8dfmsvHOi34IxJPAYkskRCU+DNNNywW6lsBU0E9auNlTB
-	K4vW+XGRe4RK0Vn8gIuK+2eJqjzzmJQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729606078;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=bjASl/u1BgwU2fmiInGolhgL0iePlqLpC0D1haqbAsw=;
+	b=mWklX2JKCBvCdxhnY36hcmGS8ElztkGx7sfl0NR82aIes2D2v2obsDZSZBHfmpzpDmhGjC
+	JLCjNJARpEXc7jD3BVRBW/FP2x1/4zPGmkB2GeVxkVHGbAzU0AARoUNZGJv5nxd4z30yEA
+	0uF6ShU7ZtVdHNrHSwhUsyDE3ZP9nZN+hXsOahwO8UQ/TaNUKaJpkFlMbY73053tXSh02O
+	PAmLeFfesTL6amFvz1RP1Pl7p9aQUUDx6uzYQl/sVrbO8pXOPoVwwAMk/n57/TQ0J8KkVT
+	Db8YSfhYjDsNsuiJuna4+ytv8R3gL5OdqZoH2Hr7TZMXCqrxuowTxOq6kxs3MA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729606176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
-	b=XB/MFvdM6NJqGNpPMiucMvrGVCv1meVqHtwqyxogJgSr9p1OCl+lie6l0tPeIfBtUWHx0K
-	qJIy2sce/WWFCkBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729606078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
-	b=nT065qt4F0yaxGQDtCajKU5QrE+p9X22fQ5X+uJrdOXhWH71O0XxqvB04DrSIvks57q6Cu
-	JdoTUOrhC6F3VM2FqxvCZrrLy8dfmsvHOi34IxJPAYkskRCU+DNNNywW6lsBU0E9auNlTB
-	K4vW+XGRe4RK0Vn8gIuK+2eJqjzzmJQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729606078;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I5YtkOoPrVW2kCBxPLqPAf7UD1c7Fz8OlNH1U+IqDi8=;
-	b=XB/MFvdM6NJqGNpPMiucMvrGVCv1meVqHtwqyxogJgSr9p1OCl+lie6l0tPeIfBtUWHx0K
-	qJIy2sce/WWFCkBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 783A713894;
-	Tue, 22 Oct 2024 14:07:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vT/NHL2xF2f0awAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 22 Oct 2024 14:07:57 +0000
-Date: Tue, 22 Oct 2024 16:08:58 +0200
-Message-ID: <87v7xk2ps5.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,	Basavaraj Natikar
- <basavaraj.natikar@amd.com>,	Jiri Kosina <jikos@kernel.org>,	Benjamin
- Tissoires <bentiss@kernel.org>,	Arnd Bergmann <arnd@arndb.de>,	Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,	Alex Dubov <oakad@yahoo.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,	Manish Chopra
- <manishc@marvell.com>,	"David S. Miller" <davem@davemloft.net>,	Eric
- Dumazet <edumazet@google.com>,	Jakub Kicinski <kuba@kernel.org>,	Paolo
- Abeni <pabeni@redhat.com>,	Rasesh Mody <rmody@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,	Kalle Valo <kvalo@kernel.org>,
-	Sanjay R Mehta <sanju.mehta@amd.com>,	Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>,	Jon Mason <jdmason@kudzu.us>,	Dave Jiang
- <dave.jiang@intel.com>,	Allen Hubbe <allenbh@gmail.com>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Alex Williamson <alex.williamson@redhat.com>,
-	Juergen Gross <jgross@suse.com>,	Stefano Stabellini
- <sstabellini@kernel.org>,	Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>,	Jaroslav Kysela <perex@perex.cz>,	Takashi
- Iwai <tiwai@suse.com>,	Chen Ni <nichen@iscas.ac.cn>,	Mario Limonciello
- <mario.limonciello@amd.com>,	Ricky Wu <ricky_wu@realtek.com>,	Al Viro
- <viro@zeniv.linux.org.uk>,	Breno Leitao <leitao@debian.org>,	Kevin Tian
- <kevin.tian@intel.com>,	Thomas Gleixner <tglx@linutronix.de>,	Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,	Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>,	Mostafa Saleh
- <smostafa@google.com>,	Jason Gunthorpe <jgg@ziepe.ca>,	Yi Liu
- <yi.l.liu@intel.com>,	Christian Brauner <brauner@kernel.org>,	Ankit Agrawal
- <ankita@nvidia.com>,	Eric Auger <eric.auger@redhat.com>,	Reinette Chatre
- <reinette.chatre@intel.com>,	Ye Bin <yebin10@huawei.com>,	Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,	Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>,	Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,	Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,	Rui Salvaterra <rsalvaterra@gmail.com>,
-	linux-ide@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,	ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org,	kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 02/13] ALSA: hda_intel: Use always-managed version of pcim_intx()
-In-Reply-To: <20241015185124.64726-3-pstanner@redhat.com>
-References: <20241015185124.64726-1-pstanner@redhat.com>
-	<20241015185124.64726-3-pstanner@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=bjASl/u1BgwU2fmiInGolhgL0iePlqLpC0D1haqbAsw=;
+	b=RHX/qFf+u4qIOZu/H0KKQCs1g/iB/rhFlXpOAngAFhHo9aMY4kcrVkA0N3fzD0koSks0uV
+	65nIgqB2fpa/dSCA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ankur Arora <ankur.a.arora@oracle.com>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
+	efault@gmx.de
+Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
+Message-ID: <20241022140933.XfxSIpDu@linutronix.de>
+References: <20241011081847.r2x73XIr@linutronix.de>
+ <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
+ <20241011144341.mQKXkGkm@linutronix.de>
+ <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
+ <20241015112224.KdvzKo80@linutronix.de>
+ <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
+ <20241017070710.U9bTJFMS@linutronix.de>
+ <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
+ <20241021112755.m7dWNbc0@linutronix.de>
+ <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[yahoo.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_GT_50(0.00)[66];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,omp.ru,amd.com,arndb.de,linuxfoundation.org,yahoo.com,marvell.com,davemloft.net,google.com,redhat.com,quantenna.com,gmail.com,kudzu.us,intel.com,suse.com,epam.com,perex.cz,iscas.ac.cn,realtek.com,zeniv.linux.org.uk,debian.org,linutronix.de,linux.intel.com,ziepe.ca,nvidia.com,huawei.com,invisiblethingslab.com,linux.dev,vger.kernel.org,lists.linux.dev,lists.xenproject.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
 
-On Tue, 15 Oct 2024 20:51:12 +0200,
-Philipp Stanner wrote:
+On 2024-10-21 09:48:03 [-0700], Paul E. McKenney wrote:
+> > We have now NONE, VOLUNTARY, PREEMPT, PREEMPT_RT (as in choose one).
+> > 
+> > This series changes it to NONE, VOLUNTARY, PREEMPT, LAZY, LAZIEST.
+> > Ignore LAZIEST. PREEMPT_RT is a on/ off bool.
 > 
-> pci_intx() is a hybrid function which can sometimes be managed through
-> devres. To remove this hybrid nature from pci_intx(), it is necessary to
-> port users to either an always-managed or a never-managed version.
+> In terms of preemptibility, isn't the order from least to most preemptible
+> NONE, VOLUNTARY, LAZIEST, LAZY, PREEMPT, and PREEMPT_RT?  After all,
+> PREEMPT will preempt more aggressively than will LAZY which in turn
+> preempts more aggressively than LAZIEST.
 > 
-> hda_intel enables its PCI-Device with pcim_enable_device(). Thus, it needs
-> the always-managed version.
+> And I finally do see the later patch in Peter's series that removes
+> PREEMPT_RT from the choice.  Plus I need to look more at LAZIEST in
+> order to work out whether Peter's suckage is our robustness.  ;-)
+
+For LAZIEST PeterZ added "do we want this?". I haven't tested this but
+since there is no forced preemption at all, it should be what is NONE
+without cond_resched() & friends. So I don't know if it stays, I don't
+think so.
+
+> > Based on my understanding so far, you have nothing to worry about.
+> > 
+> > With NONE + VOLUNTARY removed in favor of LAZY or without the removal
+> > (yet)  you ask yourself what happens to those using NONE, go to LAZY and
+> > want to stay with !PREEMPT_RCU, right?
+> > With LAZY and !PREEMPT_DYNAMIC there is still PREEMPT_RCU as of now.
+> > And you say people using !PREEMPT_DYNAMIC + LAZY are the old NONE/
+> > VOLUNTARY users and want !PREEMPT_RCU.
 > 
-> Replace pci_intx() with pcim_intx().
+> Yes.
 > 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  sound/pci/hda/hda_intel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > This could be true but it could also attract people from PREEMPT which
+> > expect additional performance gain due to LAZY and the same "preemption"
+> > level. Additionally if PREEMPT gets removed because LAZY turns out to be
+> > superior then PREEMPT_DYNAMIC makes probably no sense since there is
+> > nothing to switch from/ to.
 > 
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index b4540c5cd2a6..b44ca7b6e54f 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -786,7 +786,7 @@ static int azx_acquire_irq(struct azx *chip, int do_disconnect)
->  	}
->  	bus->irq = chip->pci->irq;
->  	chip->card->sync_irq = bus->irq;
-> -	pci_intx(chip->pci, !chip->msi);
-> +	pcim_intx(chip->pci, !chip->msi);
->  	return 0;
->  }
->  
+> We definitely have users that would migrate from NONE to LAZY.  Shouldn't
+> their needs outweigh the possible future users that might (or might not)
+> find that (1) LAZY might be preferable to PREEMPT for some users and
+> (2) That those users would prefer that RCU be preemptible?
 
-Hm, it's OK-ish to do this as it's practically same as what pci_intx()
-currently does.  But, the current code can be a bit inconsistent about
-the original intx value.  pcim_intx() always stores !enable to
-res->orig_intx unconditionally, and it means that the orig_intx value
-gets overridden at each time pcim_intx() gets called.
+Yes. I have no idea which of those two (PREEMPT_RCU vs !PREEMPT_RCU) is
+to be preferred. Therefore I'm suggesting to make configurable here.
 
-Meanwhile, HD-audio driver does release and re-acquire the interrupt
-after disabling MSI when something goes wrong, and pci_intx() call
-above is a part of that procedure.  So, it can rewrite the
-res->orig_intx to another value by retry without MSI.  And after the
-driver removal, it'll lead to another state.
+If you have a benchmark for memory consumption or anything else of
+interest, I could throw it a box or two to get some numbers. I've been
+looking at free memory at boot and this was almost the same (+- noise).
 
-In anyway, as it doesn't change the current behavior, feel free to
-take my ack for now:
+> > Therefore I would suggest to make PREEMPT_RCU 
+> > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
+> > - selected for LAZY && PREEMPT_DYNAMIC
+> > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
+> >   !PREEMPT_DYNAMIC)
+> > 
+> > Does this make sense to you?
+> 
+> Not really.  At the very least, default no.
+> 
+> Unless LAZIEST makes the most sense for us (which will take time to
+> figure out), in which case make PREMPT_RCU:
+> 
+> - hard-defined =n for LAZIEST.
+> - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
+> - selected for LAZY && PREEMPT_DYNAMIC
+> - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
+>   !PREEMPT_DYNAMIC)
+> 
+> Or am I still missing some aspect of this series?
 
-Acked-by: Takashi Iwai <tiwai@suse.de>
+no, that is perfect.
 
+> 							Thanx, Paul
 
-thanks,
-
-Takashi
+Sebastian
 
