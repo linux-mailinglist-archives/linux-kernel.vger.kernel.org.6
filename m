@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-376748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FFB9AB573
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:49:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168FB9AB576
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBDB1C22EA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:49:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99760B22BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5535D1C32E2;
-	Tue, 22 Oct 2024 17:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D31C3F3E;
+	Tue, 22 Oct 2024 17:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3TdQYhh"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPnNWxOL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5047D1C2DA9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387FB1C2DCC;
+	Tue, 22 Oct 2024 17:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619330; cv=none; b=U9SGwZyifrg8Hq3928ZjcC3MG30vayrPM85BdHsckHxgWvOsN3/ZP5UTRS3e+bEgRELbPKUjgBtAhUKxRNI0XViFCqJo17zG0wPc/ea2/NAWSAeOODNSKQ/80cIXII52f9xEiKVKfUVYkfYSen6WuyUoS4E5SwL4kn9tPfcvO1o=
+	t=1729619421; cv=none; b=Z/rPj6V/UygBJeoOJCa9zPxc19XVlI3UAUKRtt5+Fj+B2yUBxKRYE7hwQOYLE01EA/u75BjiTGrUJrGCVtFE/pKqMBTGLGWvrLrn0SDb7M54TZmi9kixuvEftnwWc2XFRkCmhnXyVviWSgYN3DT3MqWU07PmmHEOjoXoi5PYnEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619330; c=relaxed/simple;
-	bh=q0teOZsrdito5XX3VJlBtqEWeBOdDyb6RO0HXi1/UeE=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=QvLMky7D6oxw2+2x17J04DusiR9MqAo1t1U5m88KMkXxh7Uj4rNYCskImmNSw38F9ulE1iS2wvDL5GVQYOz+OYMdlNke9/zbG6iKOQOp6JbFzFAFtj+mGspKUu9OArAQFSAIuwkrnwk5qGRINV7nP+Y8bqLFe/JW53GshVaFO6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e3TdQYhh; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e38fabff35so109694187b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729619328; x=1730224128; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M9n8NzOU9KMox6wY1PORoT9jCMHpWvqad4YBz0eGPMI=;
-        b=e3TdQYhhzgx1yhYOQvwUwwN+6Q5QRdKUYHUEm3W6+zI8YTUutUA759s6QlN4jgxtih
-         LrtXkBnP69zZZhpr8F/ge6/Bs+QKbNT1JS/nlIpe+FGwn2uidzmZ+jUcHKWpo3AjA1jp
-         PArKmtiMBO6CGWlqU6wphqfM4KKUShXwVykNeHiIuz0wNshGr06JuePwlNigYhsHFtUz
-         obikBWHVJRrkvPGVZhfNwCJaw8Xhu/SoLl63wSTGaggZtHI6Zmao76YRlahPMvG8ddkO
-         216mHJKvsMsVrsjURr1CG4LK7o5oFv3ikKkUDCQs867kQGzk9RHFqv5ZbUgVcHZhatsO
-         SY9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729619328; x=1730224128;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9n8NzOU9KMox6wY1PORoT9jCMHpWvqad4YBz0eGPMI=;
-        b=TXz0YXv2AiJErGIbM2rTpwmChVtGI2LJVP+uXnC8oYDEqzHXNhNB14ptM4dBn86Deu
-         fzITXspJuYps/6vLQQ4Ii299LBF+64WL7WPJid9dpl51EAAeX5pY1rAO2qsI6jhubA4/
-         BOFd1GpTwzFaFDqL1iBXtblnhhzwed3wh7vn5cA+IcA8RGCMPY75a7XabraP08eOz7fV
-         FZ/DQTRua+3iFc0GzUoHGtMa8jO6R+X9OsJDopowWTd7VjRNrcKSac9XBPFNDejQWq3X
-         Qcog/lMnn3ARDUkmsChSwFk2IyhJgwPphKvh7tIY7pvew3yOAwh/ciqUXKazwaJEb+Zd
-         3SGA==
-X-Forwarded-Encrypted: i=1; AJvYcCViP81QVEg8OpxcKmzAtLrv08sSe7OcSrEnS1pCpmbXmTkpvjVgYhJ9ehsCuQzAKoW3lCZmsAN+Ix7YpUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZfZCg9Wokved0NyY6NbTLugd43g2RALp4dDxJY6QGwFkFLQ0i
-	7kZ8pFSyLEw4K2CYw5662PBpjP9m/1gU6swhtU+lgZo0XlHH94dtO1OE/UJmJ9PK2Y/KoIvaxNf
-	XzYjeFw==
-X-Google-Smtp-Source: AGHT+IHohwIVluFWB9W6VjZ+fIxCmDIBSDj2BjMKx75Bhz0Q/apI/loG+/7cFXe/HkFwRxRM3d+qRquwBx31
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:57ba:88e0:aaf6:282])
- (user=irogers job=sendgmr) by 2002:a05:690c:6902:b0:6db:c6eb:bae9 with SMTP
- id 00721157ae682-6e5bfb868e1mr4162867b3.2.1729619328276; Tue, 22 Oct 2024
- 10:48:48 -0700 (PDT)
-Date: Tue, 22 Oct 2024 10:48:38 -0700
-In-Reply-To: <20241022174838.449862-1-irogers@google.com>
-Message-Id: <20241022174838.449862-2-irogers@google.com>
+	s=arc-20240116; t=1729619421; c=relaxed/simple;
+	bh=G+M/C1JGj4HUMyATMntPBe0/cN0QPJXlysf5bNo5dtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+KlH2KBqACF3QwCNOYciKYfwibwzfhRdWy/2kaqbMiYYc13MdlU/SOq5B7qjInHLvEb+D/TfNymrV99qQTghas7lpulcXpZzrB3RE/BwVVwyb9vD/P6wK2AtQrSBKUVVtX+fgVIsPZ02MjW1iRZ1I11cQLZAMu+nJFMgUnkSEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPnNWxOL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DEFC4CEC3;
+	Tue, 22 Oct 2024 17:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729619421;
+	bh=G+M/C1JGj4HUMyATMntPBe0/cN0QPJXlysf5bNo5dtA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aPnNWxOLX/2EAdhnjyuRKA8Nlsexqz1WmC/7jqh3O2Y/BclABN7gji3LdeMw1mZvr
+	 p1oWXKpRZQt/1MJPul0JJdklevQ3499S+wL3QahdzkXn9C7HptYifJeMwPWkxu/M/X
+	 CF5WIfNUJdb2YnKmi22VDhdjfUFDRRPaP215rEqfLiQ2a77fZuzIC0ZOxwZ/bMvW9/
+	 lJG966Anm0SlqegQ8xOrEnwaLn1jmIsdwsxejU3JWXi7FcPNBLg3GHfOQ/AWtHZH5P
+	 u4UDWWhC8pIyoGLEJjnE6LBQnI/q+uIvsJxJgfgYpIf8JoJNsHAa0AQ8JaHfinep/J
+	 ARw+kNEtYQmbg==
+Date: Tue, 22 Oct 2024 10:50:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add open coded version of kmem_cache
+ iterator
+Message-ID: <Zxfl2kaFGA5GDOqo@google.com>
+References: <20241017080604.541872-1-namhyung@kernel.org>
+ <CAEf4BzYB-KbDh+h3YXEGeWXcvaVchjf-2m2-nSQoWPE67zY68Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241022174838.449862-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v3 2/2] perf test: Skip annotate test for sanitizer builds
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYB-KbDh+h3YXEGeWXcvaVchjf-2m2-nSQoWPE67zY68Q@mail.gmail.com>
 
-Symbols vary and the test breaks.
+Hello,
 
-Closes: https://lore.kernel.org/lkml/CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com/
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/annotate.sh | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Mon, Oct 21, 2024 at 04:32:10PM -0700, Andrii Nakryiko wrote:
+> On Thu, Oct 17, 2024 at 1:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Add a new open coded iterator for kmem_cache which can be called from a
+> > BPF program like below.  It doesn't take any argument and traverses all
+> > kmem_cache entries.
+> >
+> >   struct kmem_cache *pos;
+> >
+> >   bpf_for_each(kmem_cache, pos) {
+> >       ...
+> >   }
+> >
+> > As it needs to grab slab_mutex, it should be called from sleepable BPF
+> > programs only.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  kernel/bpf/helpers.c         |  3 ++
+> >  kernel/bpf/kmem_cache_iter.c | 87 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 90 insertions(+)
+> >
+> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> > index 073e6f04f4d765ff..d1dfa4f335577914 100644
+> > --- a/kernel/bpf/helpers.c
+> > +++ b/kernel/bpf/helpers.c
+> > @@ -3111,6 +3111,9 @@ BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+> >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+> >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+> >  BTF_ID_FLAGS(func, bpf_get_kmem_cache)
+> > +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_new, KF_ITER_NEW | KF_SLEEPABLE)
+> > +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
+> > +BTF_ID_FLAGS(func, bpf_iter_kmem_cache_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+> 
+> I'm curious. Having bpf_iter_kmem_cache_{new,next,destroy} functions,
+> can we rewrite kmem_cache_iter_seq_next in terms of these ones, so
+> that we have less duplication of iteration logic? Or there will be
+> some locking concerns preventing this? (I haven't looked into the
+> actual logic much, sorry, lazy question)
 
-diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
-index 1590a37363de..199f547e656d 100755
---- a/tools/perf/tests/shell/annotate.sh
-+++ b/tools/perf/tests/shell/annotate.sh
-@@ -4,6 +4,12 @@
- 
- set -e
- 
-+if perf check feature -q sanitizer
-+then
-+  echo "Skip test with sanitizers due to differing assembly code"
-+  exit 2
-+fi
-+
- shelldir=$(dirname "$0")
- 
- # shellcheck source=lib/perf_has_symbol.sh
--- 
-2.47.0.163.g1226f6d8fa-goog
+It should be fine with locking, I think there's a subtle difference
+between seq interface and the open coded iterator.  But I'll think about
+how to reduce the duplication.
+
+Thanks for your review!
+Namhyung
 
 
