@@ -1,302 +1,152 @@
-Return-Path: <linux-kernel+bounces-376341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3509B9AAE8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:47:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BF99AAFFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563E01C2240A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89922841FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5319F116;
-	Tue, 22 Oct 2024 13:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C627E19F41C;
+	Tue, 22 Oct 2024 13:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAgOcPfJ"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBo1rsad";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpN1ehLU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBo1rsad";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpN1ehLU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6868619E96A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA319D8AD;
+	Tue, 22 Oct 2024 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729604860; cv=none; b=osST1tY92IL3tC3gJqD1tDfXaPOvzrB6wEoO1ERnP0g1KMBp9Kqx5GlUFvEn1PkFXZat6U9rouF5ffrjm1RhuBRSUP6h1X7SdwxbSTfTXqcOgP1DINcv76OxXN5U9Fpd9pd7smDsetz2FllFkw404opOFhNsdWYOpZpMIXf9584=
+	t=1729604907; cv=none; b=glTmkbu4e4R4XUVY+1ldUpeypYS4n0MMH47XpULG3C2ReerZRWULJ1YIQn2BSgvzWZMtFtRhw7Osai1xPaAHAvAcg4n35jMX7ZnT1/pcod6KBPhsfQVhojwBJ0mox0NcF5hAethWad3WurChj1OBP51Y6q2eNaRarNvQkVYbsHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729604860; c=relaxed/simple;
-	bh=NW6X1KgAEwkWwuoMcNCBxlfIFw1BZ+v6/Dg37czJJS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kLAUCPZoT68UX+PFaTLkMjHGCnyDb4lbQMj6fWJleTfY2AQvhb7u9eya5pcMD/ttrcDjEXCdOcpQeGecR7BIfnIEwpoc+kZDZpj+TF01Gm6c+e7rb1sdYHW0CkP8XM+2wyxXJLj2k0xXrvukIbK1EH6crHYVwC8du1qTYm0hvso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAgOcPfJ; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e29047bec8fso5124397276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729604857; x=1730209657; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2VDJdcsPo1rknoaxJbITWrtiiYpwrip82kNdr/uTJTo=;
-        b=FAgOcPfJFsrIU9MbZe51gPnKGgZ/REl8KQoya1ptsiu98v69m+6340RmwcV8ArY1qz
-         aS197HT3AUmcsb/uEL1zoJH8nddy1DKyt+cAB4LBAd7pSP0Anr6IQ21D08TCgug6hbuU
-         y76yh3JB+0NWjpEOQooMYh1Y9sXV5jlnlC6M+wu+tjwzb0uw/PUm10SzippPGjZLLDOt
-         5zqFJpinUMJxLSQN4KHvIVzS8BxsBxZxzsrhSjRjtiz+TkZ1jDA4q2/U8ixn1SztqvNa
-         lpH4JZ9vlSkkS11XkYXCsgikhkHUO2yK9vcgpkXblm0rjWMjQF75ThicalERmziG0VWZ
-         6Mcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729604857; x=1730209657;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2VDJdcsPo1rknoaxJbITWrtiiYpwrip82kNdr/uTJTo=;
-        b=Q1LgVvnyrjYHKk8r1i3r3Bl3OBXQ4P3XBQkCpjSEA3ouI1K7/rt6vp70Z42mWTe4U5
-         oegU/cFX6szJBWduHIo90fRpOSd5+aDEt1bPjJb7R8+//WF7ni+giDTsEAmi+XVFOmMn
-         gkfL3llhEU4k1OhXduA7qtCW3PQkCwF/8qnRXUJdg8Wfd8wTJt7pK184BPtTOjxBTPQc
-         b7MnaifvIJV2ZEV3ETeJWDAYighFRMJ7oFkTtFkUqrIDUpCXLSbGqawz0WMuO8JuxfJa
-         hlDTbFtkVAXNfYhWng5QjNxt2+9qfKkuGKxyID4gYu2kvkmYXRBaMmaLAQyJKwBpoOl7
-         EDqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5fw1Iv76a3RzvAMfSRV1v3vcOY7KuoYMVIR03TmYRJPOmyZTBtoPGqkIhJ2IaY94Rq9EzwsYqYX6hzh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMVt+0pPEJpQtlGcXaan41lwyl5UaRAnuKZRN3GPQfYmY7Fg4T
-	Qo+OsdtHo0itZrz49DcaSZaDLwgQ8hkGeIFSteCHWMBs+qgvNaMcNBAdjEiE5d7koAWZKeaPJYh
-	ceznZzheGz8dpXa2/TUnNjUZnhgH7cN5YtOQjBA==
-X-Google-Smtp-Source: AGHT+IFEGzCehqhHrE96BokN6D5KEiwIgmb1dMkGmj2/r3pX5GHg8telpnC2cM3FNqew3gkL/pGsvsFYhSmexAiNsDk=
-X-Received: by 2002:a05:690c:4442:b0:6db:d02f:b2c4 with SMTP id
- 00721157ae682-6e7d456b19bmr28659157b3.7.1729604857324; Tue, 22 Oct 2024
- 06:47:37 -0700 (PDT)
+	s=arc-20240116; t=1729604907; c=relaxed/simple;
+	bh=u+no5sVh5kwppL0jkXYcySLBkTUixR1af2Xw/XyL3mU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1Xe4r2PbLELHQh/jsSiLPF2NkXnpov8jpsRcgvQCviepuJvh7T7/Ivx7akXETYXXcWZi4xllVd2mSrHviPd+Eazjvcu1A209RouCgTZE4LE0RNPG9seBsUuZk2uAcz32SeDg4X0cTrBjnlIUqTrcczoKgFGuPAhMazqmBLH6SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBo1rsad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpN1ehLU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBo1rsad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpN1ehLU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 647951F844;
+	Tue, 22 Oct 2024 13:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729604903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
+	b=VBo1rsadl5i4SX+VMrzAFDx5f9FCuLj7grIvFKW5ud97LDBlw9A3P0/+MW9UIR2krFW9Cv
+	FoHQTjcDDA/q5myuEUxP+qUidBPB9dLmpn+IixL7CG8xp4P4jECkCeEWvfkupEgphb9DCs
+	Z/vtD/NRqwA1gTxMVV3XT+TxVXZRGz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729604903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
+	b=LpN1ehLUCxC9hQGGMX4yHWX745UW9P1cvGFmrwUxoSbchT56NevyFdIjOPsHoDs4uaIU7R
+	YvfOYyp/BROYMeDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729604903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
+	b=VBo1rsadl5i4SX+VMrzAFDx5f9FCuLj7grIvFKW5ud97LDBlw9A3P0/+MW9UIR2krFW9Cv
+	FoHQTjcDDA/q5myuEUxP+qUidBPB9dLmpn+IixL7CG8xp4P4jECkCeEWvfkupEgphb9DCs
+	Z/vtD/NRqwA1gTxMVV3XT+TxVXZRGz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729604903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
+	b=LpN1ehLUCxC9hQGGMX4yHWX745UW9P1cvGFmrwUxoSbchT56NevyFdIjOPsHoDs4uaIU7R
+	YvfOYyp/BROYMeDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4176113AC9;
+	Tue, 22 Oct 2024 13:48:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id i16BDyetF2caZQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 22 Oct 2024 13:48:23 +0000
+Date: Tue, 22 Oct 2024 15:48:22 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: clm@fb.com, josef@toxicpanda.com, Johannes.Thumshirn@wdc.com,
+	dsterba@suse.com, mpdesouza@suse.com, gniebler@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs: Fix passing 0 to ERR_PTR in
+ btrfs_search_dir_index_item()
+Message-ID: <20241022134821.GC31418@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20241022095208.1369473-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010105107.30118-1-quic_janathot@quicinc.com>
- <jywgmxfhzwvoknpar7hr4ekfnajauzgk5q3bewgpdv2ghpemtw@4vvhit4jb3tm> <bc72b450-4cd8-4cd4-b160-36fb6031d035@quicinc.com>
-In-Reply-To: <bc72b450-4cd8-4cd4-b160-36fb6031d035@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 22 Oct 2024 16:47:25 +0300
-Message-ID: <CAA8EJpq=3iK9S99j_ez7F-G1X+e9PdEyn6vGZmxKjEpnEs_W4g@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
-To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	quic_mohamull@quicinc.com, quic_hbandi@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022095208.1369473-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.99 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.19)[-0.960];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,suse.cz:mid,huawei.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -3.99
+X-Spam-Flag: NO
 
-On Tue, 22 Oct 2024 at 13:06, Janaki Ramaiah Thota
-<quic_janathot@quicinc.com> wrote:
->
->
->
-> On 10/10/2024 6:09 PM, Dmitry Baryshkov wrote:
-> > On Thu, Oct 10, 2024 at 04:21:07PM GMT, Janaki Ramaiah Thota wrote:
-> >> Add Bluetooth and UART7 support for qcs6490-rb3gen2.
-> >>
-> >> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 122 ++++++++++++++++++-
-> >>   1 file changed, 121 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> index 0d45662b8028..c0bc44be7dd4 100644
-> >> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> @@ -1,6 +1,6 @@
-> >>   // SPDX-License-Identifier: BSD-3-Clause
-> >>   /*
-> >> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>    */
-> >>
-> >>   /dts-v1/;
-> >> @@ -32,6 +32,8 @@
-> >>
-> >>      aliases {
-> >>              serial0 = &uart5;
-> >> +            bluetooth0 = &bluetooth;
-> >> +            serial1 = &uart7;
-> >>      };
-> >>
-> >>      chosen {
-> >> @@ -688,6 +690,39 @@
-> >>      status = "okay";
-> >>   };
-> >>
-> >
-> > Please review the file carefully and find the right spot for these
-> > parts.
-> >
->
-> Thanks for the review, corrected in [PATCH v3].
->
-> >> +&qup_uart7_cts {
-> >> +    /*
-> >> +     * Configure a bias-bus-hold on CTS to lower power
-> >> +     * usage when Bluetooth is turned off. Bus hold will
-> >> +     * maintain a low power state regardless of whether
-> >> +     * the Bluetooth module drives the pin in either
-> >> +     * direction or leaves the pin fully unpowered.
-> >> +     */
-> >> +    bias-bus-hold;
-> >> +};
-> >> +
-> >> +&qup_uart7_rts {
-> >> +    /* We'll drive RTS, so no pull */
-> >> +    drive-strength = <2>;
-> >> +    bias-disable;
-> >> +};
-> >> +
-> >> +&qup_uart7_rx {
-> >> +    /*
-> >> +     * Configure a pull-up on RX. This is needed to avoid
-> >> +     * garbage data when the TX pin of the Bluetooth module is
-> >> +     * in tri-state (module powered off or not driving the
-> >> +     * signal yet).
-> >> +     */
-> >> +    bias-pull-up;
-> >> +};
-> >> +
-> >> +&qup_uart7_tx {
-> >> +    /* We'll drive TX, so no pull */
-> >> +    drive-strength = <2>;
-> >> +    bias-disable;
-> >> +};
-> >> +
-> >>   &qupv3_id_0 {
-> >>      status = "okay";
-> >>   };
-> >> @@ -719,12 +754,97 @@
-> >>   &tlmm {
-> >>      gpio-reserved-ranges = <32 2>, /* ADSP */
-> >>                             <48 4>; /* NFC */
-> >> +    bt_en: bt-en-state {
-> >> +            pins = "gpio85";
-> >> +            function = "gpio";
-> >> +            output-low;
-> >> +            bias-disable;
-> >> +    };
-> >> +
-> >> +    qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
-> >> +            pins = "gpio28";
-> >> +            function = "gpio";
-> >> +            /*
-> >> +             * Configure a bias-bus-hold on CTS to lower power
-> >> +             * usage when Bluetooth is turned off. Bus hold will
-> >> +             * maintain a low power state regardless of whether
-> >> +             * the Bluetooth module drives the pin in either
-> >> +             * direction or leaves the pin fully unpowered.
-> >> +             */
-> >> +            bias-bus-hold;
-> >> +    };
-> >> +
-> >> +    qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
-> >> +            pins = "gpio29";
-> >> +            function = "gpio";
-> >> +            /*
-> >> +             * Configure pull-down on RTS. As RTS is active low
-> >> +             * signal, pull it low to indicate the BT SoC that it
-> >> +             * can wakeup the system anytime from suspend state by
-> >> +             * pulling RX low (by sending wakeup bytes).
-> >> +             */
-> >> +            bias-pull-down;
-> >> +    };
-> >> +
-> >> +    qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
-> >> +            pins = "gpio31";
-> >> +            function = "gpio";
-> >> +            /*
-> >> +             * Configure a pull-up on RX. This is needed to avoid
-> >> +             * garbage data when the TX pin of the Bluetooth module
-> >> +             * is floating which may cause spurious wakeups.
-> >> +             */
-> >> +            bias-pull-up;
-> >> +    };
-> >> +
-> >> +    qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
-> >> +            pins = "gpio30";
-> >> +            function = "gpio";
-> >> +            /*
-> >> +             * Configure pull-up on TX when it isn't actively driven
-> >> +             * to prevent BT SoC from receiving garbage during sleep.
-> >> +             */
-> >> +            bias-pull-up;
-> >> +    };
-> >> +
-> >> +    sw_ctrl: sw-ctrl-state {
-> >> +            pins = "gpio86";
-> >> +            function = "gpio";
-> >> +            bias-pull-down;
-> >> +    };
-> >>   };
-> >>
-> >>   &uart5 {
-> >>      status = "okay";
-> >>   };
-> >>
-> >> +&uart7 {
-> >> +    status = "okay";
-> >> +    /delete-property/interrupts;
-> >> +    interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-> >> +                            <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-> >
-> > Why? Is it a UART interrupt? Or a BT-related interrupt?
-> >
->
-> it is HS UART interrupt for BT.
+On Tue, Oct 22, 2024 at 05:52:08PM +0800, Yue Haibing wrote:
+> ret may be zero in btrfs_search_dir_index_item() and should not passed
+> to ERR_PTR(). Now btrfs_unlink_subvol() is the only caller to this,
+> reconstructed it to check ERR_PTR(-ENOENT) while ret >= 0, this fix
+> smatch warnings:
+> 
+> fs/btrfs/dir-item.c:353
+>  btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
+> 
+> Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+> v2: return ERR_PTR(-ENOENT) while ret >= 0
 
-I don't see it being handled by the UART driver. It if is a BT
-interrupt, it should go to the BT node.
+Reviewed-by: David Sterba <dsterba@suse.com>
 
->
-> >> +    pinctrl-names = "default", "sleep";
-> >> +    pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
-> >> +                    <&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
-> >> +
-> >> +    bluetooth: bluetooth {
-> >> +            compatible = "qcom,wcn6750-bt";
-> >
-> > Please use pwrseq and define the PMU unit.
-> >
->
-> we are in process of migrating to pwrseq, mean while can we merge this
-> change ?
-
-No, why? Please implement the recommended way to handle the hardware, pwrseq.
-
->
-> >> +            pinctrl-names = "default";
-> >> +            pinctrl-0 = <&bt_en>, <&sw_ctrl>;
-> >> +            enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
-> >> +            swctrl-gpios = <&tlmm 86 GPIO_ACTIVE_HIGH>;
-> >> +            vddaon-supply = <&vreg_s7b_0p972>;
-> >> +            vddbtcxmx-supply = <&vreg_s7b_0p972>;
-> >> +            vddrfacmn-supply = <&vreg_s7b_0p972>;
-> >> +            vddrfa0p8-supply = <&vreg_s7b_0p972>;
-> >> +            vddrfa1p7-supply = <&vreg_s1b_1p872>;
-> >> +            vddrfa1p2-supply = <&vreg_s8b_1p272>;
-> >> +            vddrfa2p2-supply = <&vreg_s1c_2p19>;
-> >> +            vddasd-supply = <&vreg_l11c_2p8>;
-> >> +            max-speed = <3200000>;
-> >> +    };
-> >> +};
-> >> +
-> >>   &usb_1 {
-> >>      status = "okay";
-> >>   };
-> >> --
-> >> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> >> a Linux Foundation Collaborative Project
-> >>
-> >
->
-> --
-> Thanks
-> Janakiram
->
-
-
--- 
-With best wishes
-Dmitry
+Added to for-next, thanks.
 
