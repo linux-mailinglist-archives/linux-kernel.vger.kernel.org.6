@@ -1,197 +1,183 @@
-Return-Path: <linux-kernel+bounces-375652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22FA9A98A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:39:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392909A98C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E0C283829
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE422826AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8413AA4C;
-	Tue, 22 Oct 2024 05:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14BF146580;
+	Tue, 22 Oct 2024 05:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5oZkv8A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHjsGY0M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EAB3D994;
-	Tue, 22 Oct 2024 05:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1BD139566;
+	Tue, 22 Oct 2024 05:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575534; cv=none; b=rLgNpRBbPa6SwE44/cnP4WutpTHq0IWu8JSpEYSzYNHZhZvLWgvnEX9cEq8npDo3Hou29U/eIlVEk2KMu2rapTOqKV2jqD3eDWGQT5YIRCtzXORDxfuiggUwJboidRhryAzmc99aa/I5qm/6KxpPnR8KYa58pG4hXWnKG1C+eCE=
+	t=1729575681; cv=none; b=N8nxcdlzbDBRHlXPUlwe4MyaTdDxrbgZfi8hJuLR0RR/apeHylWqsshPtFnXijB7ijV2Hmg9cxLvzPcN2PUKkm0KMrKgBEhUDNUlI7lLjBA9PL/pPvwY/BEGUBOk8TBbPf+m1EP7fqOCEBILcZMrBjDVKavRWTshRDjKErVgPDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575534; c=relaxed/simple;
-	bh=GwTFeNoIIXjKi/aSaoQJJGcSm97Xf5Ku6yRmwVLP3O4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XjEOoEGg7a74T4sBaW2zWcBd3Fn+KfXjIMDfg0PCisM2ayHZ4GsH1AuH0xuSWiCRsqUXAPJR1OHR6evsePPT4gEgafo3osaU/tidgod0OfxeA+6ND85JtQ6Vg65ESChVrkuyP2sOPeKvLgXOrOuCtMKeCOShBZts55UoQ374Txk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5oZkv8A; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729575533; x=1761111533;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GwTFeNoIIXjKi/aSaoQJJGcSm97Xf5Ku6yRmwVLP3O4=;
-  b=e5oZkv8Aukujk8aN2AgdYG39lyK6gEd4HN923x4zO7NGUaiWbOZskFDT
-   5IEh+I8vI4vu4UhZq6ENZ0Zp7Aqo1aqCBefPs55LEtdM/zuxsrjsJKFMJ
-   yJe2FLJnmRvDm8NgOgqyo5iczB6yaSO/gl5SIkD6YiVFOfJL5Adb/+TC1
-   9N6CHiyMhTKF10SDWgLJv9fAB8IC50Kqo+XiMvhk+fYdYx+3/uhnChpaY
-   br2syduXcF7YhUuGElcdHAp/mX2+F46WYKB4cvvqx+6ynS9lna9rB1zlt
-   VDx4UxABvKCwzE2/052yv48oQ4ZXxnWksyNwE0r1rwH0qUfQMbcX6eJ/F
-   g==;
-X-CSE-ConnectionGUID: Yy7y1z3VRQeEupmlQSThlA==
-X-CSE-MsgGUID: KiK25AZnQTyllJ2Dzto5Gw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="33015503"
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="33015503"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 22:38:52 -0700
-X-CSE-ConnectionGUID: Az2Rjbx7TMykrTgOQjxVxg==
-X-CSE-MsgGUID: u7bsE4q1S5GTrbYWt4vuzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="84557733"
-Received: from yhuang6-mobl2.sh.intel.com ([10.238.3.32])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 22:38:48 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Baoquan He <bhe@redhat.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Subject: [PATCH] resource: Avoid unnecessary resource tree walking in __region_intersects()
-Date: Tue, 22 Oct 2024 13:38:35 +0800
-Message-Id: <20241022053835.217703-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729575681; c=relaxed/simple;
+	bh=CElZF6oRP9IlY0RwgVPhOFqNpURPY/hGMZANUgAw6DM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdrcsNwxsHCufqe35DQa1OFy4i6M9lIUJAgkAY4m07uXy+gFT6XcTmRar85wLoeUAls97OhMUU611jC+UW220dT9rIXEMoUYs6EAzfUQF8ggfj7C68vZkR/3gpTmG3Lvl9F1I8/c0JsDJxfNl8inathGNc/vCA6JFH6Hjuxo/3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHjsGY0M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3B2C4CEE8;
+	Tue, 22 Oct 2024 05:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729575680;
+	bh=CElZF6oRP9IlY0RwgVPhOFqNpURPY/hGMZANUgAw6DM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bHjsGY0MgVHqzlwdXQL9IqStYsWNzCgMfOFlvyCrbvYDJUrcEkbQ5OCFnELDccBlP
+	 gqeMgrg8j9htSKHm5P7D4SRk2hMg+AWlR6PG5VXLh6X+vRzbPLrGCnbPxQ/OhM2wEk
+	 KXeEa1xYZGwnoNCVKUemnd/ajQjzY5ET/K0CQEphTirSTiuWUBVSZgd7tweUX4Qlp7
+	 iAfaLd/UVjFAAQXx+xkEKgtRz0/2/1aIqZ5P4sMzoCYP/zhmoOIl9Cdg6/y3wXqd/K
+	 Q1KQ1k9RHRJERfjtVO5b2rGeQB7RFJY1SzQesWiqVVmmb10d/V7rEiPbXHgtgX+7T2
+	 7eKK+glETqHjw==
+Date: Mon, 21 Oct 2024 22:41:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf check: Add sanitizer feature and use to avoid
+ test failure
+Message-ID: <Zxc6_jZdDcWgtEom@google.com>
+References: <20241018055627.1005723-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018055627.1005723-1-irogers@google.com>
 
-Currently, if __region_intersects() finds any overlapped but unmatched
-resource, it walks the descendant resource tree to check for
-overlapped and matched descendant resources.  This is achieved using
-for_each_resource(), which iterates not only the descendant tree, but
-also subsequent sibling trees in certain scenarios.  While this
-doesn't introduce bugs, it makes code hard to be understood and
-potentially inefficient.
+On Thu, Oct 17, 2024 at 10:56:27PM -0700, Ian Rogers wrote:
+> Sanitizer builds can break expectations for test disassembly,
+> particularly in the annotate test. Add features for the different
+> sanitizer options seen in the source tree. Use the added sanitizer
+> feature to skip the annotate test when sanitizers are in use.
 
-So, the patch renames next_resource() to __next_resource(), and makes
-it possible to only traverse the subtree under the specified resource.
-Test shows that this avoids unnecessary resource tree walking in
-__region_intersects().
+Can you please split the perf check changes from the test change?
+It's good to add an example output (of perf version --build-options)
+with new sanitizer features.
 
-For the example resource tree as follows,
+Also it might be helpful if you share how the test fails.  I don't
+think the disasm format is changed.  Then it probably missed to find
+the target symbol in the first 250 lines for some reason.
 
-  X
-  |
-  A----D----E
-  |
-  B--C
+Thanks,
+Namhyung
 
-if 'A' is the overlapped but unmatched resource, original kernel
-iterates 'B', 'C', 'D', 'E' when it walks the descendant tree.  While
-the patched kernel iterates only 'B', 'C'.
-
-It appears even better to revise for_each_resource() to traverse the
-resource subtree under "_root" only.  But that will cause "_root" to
-be evaluated twice, which I don't find a good way to eliminate.
-
-Thanks David Hildenbrand for providing a good resource tree example.
-
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>
----
-
-Changes:
-
-RFC->v1:
-
-- Revised patch description and comments, Thanks David and Andy!
-
-- Link to RFC: https://lore.kernel.org/linux-mm/20241010065558.1347018-1-ying.huang@intel.com/
-
----
- kernel/resource.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/resource.c b/kernel/resource.c
-index b730bd28b422..bd217d57fb09 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -50,15 +50,34 @@ EXPORT_SYMBOL(iomem_resource);
- 
- static DEFINE_RWLOCK(resource_lock);
- 
--static struct resource *next_resource(struct resource *p, bool skip_children)
-+/*
-+ * Return the next node of @p in pre-order tree traversal.  If
-+ * @skip_children is true, skip the descendant nodes of @p in
-+ * traversal.  If @p is a descendant of @subtree_root, only traverse
-+ * the subtree under @subtree_root.
-+ */
-+static struct resource *__next_resource(struct resource *p, bool skip_children,
-+					struct resource *subtree_root)
- {
- 	if (!skip_children && p->child)
- 		return p->child;
--	while (!p->sibling && p->parent)
-+	while (!p->sibling && p->parent) {
- 		p = p->parent;
-+		if (p == subtree_root)
-+			return NULL;
-+	}
- 	return p->sibling;
- }
- 
-+static struct resource *next_resource(struct resource *p, bool skip_children)
-+{
-+	return __next_resource(p, skip_children, NULL);
-+}
-+
-+/*
-+ * Traverse the whole resource tree with @_root as root in pre-order.
-+ * NOTE: @_root should be the topmost node, that is, @_root->parent == NULL.
-+ */
- #define for_each_resource(_root, _p, _skip_children) \
- 	for ((_p) = (_root)->child; (_p); (_p) = next_resource(_p, _skip_children))
- 
-@@ -572,7 +591,8 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
- 		covered = false;
- 		ostart = max(res.start, p->start);
- 		oend = min(res.end, p->end);
--		for_each_resource(p, dp, false) {
-+		/* Traverse the subtree under 'p'. */
-+		for (dp = p->child; dp; dp = __next_resource(dp, false, p)) {
- 			if (!resource_overlaps(dp, &res))
- 				continue;
- 			is_type = (dp->flags & flags) == flags &&
--- 
-2.39.2
-
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v2 build fix.
+> ---
+>  tools/perf/builtin-check.c         | 49 ++++++++++++++++++++++++++++++
+>  tools/perf/tests/shell/annotate.sh |  6 ++++
+>  2 files changed, 55 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+> index 0b76b6e42b78..c44444008d64 100644
+> --- a/tools/perf/builtin-check.c
+> +++ b/tools/perf/builtin-check.c
+> @@ -9,6 +9,49 @@
+>  #include <string.h>
+>  #include <subcmd/parse-options.h>
+>  
+> +#if defined(__has_feature)
+> +#define HAS_COMPILER_FEATURE(feature) __has_feature(feature)
+> +#else
+> +#define HAS_COMPILER_FEATURE(feature) 0
+> +#endif
+> +
+> +#if defined(__SANITIZE_ADDRESS__) || defined(ADDRESS_SANITIZER) || \
+> +	HAS_COMPILER_FEATURE(address_sanitizer)
+> +#define HAVE_SANITIZER_ADDRESS 1
+> +#define HAVE_SANITIZER_LEAK 1
+> +#elif defined(LEAK_SANITIZER) || HAS_COMPILER_FEATURE(leak_sanitizer)
+> +#define HAVE_SANITIZER_ADDRESS 0
+> +#define HAVE_SANITIZER_LEAK 1
+> +#else
+> +#define HAVE_SANITIZER_ADDRESS 0
+> +#define HAVE_SANITIZER_LEAK 0
+> +#endif
+> +
+> +#if defined(MEMORY_SANITIZER) || HAS_COMPILER_FEATURE(memory_sanitizer)
+> +#define HAVE_SANITIZER_MEMORY 1
+> +#else
+> +#define HAVE_SANITIZER_MEMORY 0
+> +#endif
+> +
+> +#if defined(THREAD_SANITIZER) || HAS_COMPILER_FEATURE(thread_sanitizer)
+> +#define HAVE_SANITIZER_THREAD 1
+> +#else
+> +#define HAVE_SANITIZER_THREAD 0
+> +#endif
+> +
+> +#if defined(UNDEFINED_SANITIZER) || HAS_COMPILER_FEATURE(undefined_sanitizer)
+> +#define HAVE_SANITIZER_UNDEFINED 1
+> +#else
+> +#define HAVE_SANITIZER_UNDEFINED 0
+> +#endif
+> +
+> +#if HAVE_SANITIZER_ADDRESS || HAVE_SANITIZER_LEAK || HAVE_SANITIZER_MEMORY || \
+> +	HAVE_SANITIZER_THREAD || HAVE_SANITIZER_UNDEFINED
+> +#define HAVE_SANITIZER 1
+> +#else
+> +#define HAVE_SANITIZER 0
+> +#endif
+> +
+>  static const char * const check_subcommands[] = { "feature", NULL };
+>  static struct option check_options[] = {
+>  	OPT_BOOLEAN('q', "quiet", &quiet, "do not show any warnings or messages"),
+> @@ -47,6 +90,12 @@ struct feature_status supported_features[] = {
+>  	FEATURE_STATUS("libunwind", HAVE_LIBUNWIND_SUPPORT),
+>  	FEATURE_STATUS("lzma", HAVE_LZMA_SUPPORT),
+>  	FEATURE_STATUS("numa_num_possible_cpus", HAVE_LIBNUMA_SUPPORT),
+> +	FEATURE_STATUS("sanitizer", HAVE_SANITIZER),
+> +	FEATURE_STATUS("sanitizer_address", HAVE_SANITIZER_ADDRESS),
+> +	FEATURE_STATUS("sanitizer_leak", HAVE_SANITIZER_LEAK),
+> +	FEATURE_STATUS("sanitizer_memory", HAVE_SANITIZER_MEMORY),
+> +	FEATURE_STATUS("sanitizer_thread", HAVE_SANITIZER_THREAD),
+> +	FEATURE_STATUS("sanitizer_undefined", HAVE_SANITIZER_UNDEFINED),
+>  	FEATURE_STATUS("syscall_table", HAVE_SYSCALL_TABLE_SUPPORT),
+>  	FEATURE_STATUS("zlib", HAVE_ZLIB_SUPPORT),
+>  	FEATURE_STATUS("zstd", HAVE_ZSTD_SUPPORT),
+> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+> index 1590a37363de..199f547e656d 100755
+> --- a/tools/perf/tests/shell/annotate.sh
+> +++ b/tools/perf/tests/shell/annotate.sh
+> @@ -4,6 +4,12 @@
+>  
+>  set -e
+>  
+> +if perf check feature -q sanitizer
+> +then
+> +  echo "Skip test with sanitizers due to differing assembly code"
+> +  exit 2
+> +fi
+> +
+>  shelldir=$(dirname "$0")
+>  
+>  # shellcheck source=lib/perf_has_symbol.sh
+> -- 
+> 2.47.0.105.g07ac214952-goog
+> 
 
