@@ -1,137 +1,96 @@
-Return-Path: <linux-kernel+bounces-376176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF13E9AA12C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:31:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE539AA12F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C46283427
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13137B224AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B219ADB0;
-	Tue, 22 Oct 2024 11:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4EE19B3E2;
+	Tue, 22 Oct 2024 11:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K+Miy2N8"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gRV6WAyl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8887513D516;
-	Tue, 22 Oct 2024 11:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D075C199FDE;
+	Tue, 22 Oct 2024 11:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729596698; cv=none; b=JBK3cdCCzqk9f23Lv5U7XYmregvm298I4DUFXrBqEGFV95oBGIpukwopsWqhG8stRpvHPhMz9Howm6D+yPj8X3ValiS3C35P5u2Xfrvi2FGX/TmE/s4ncAIJNl/fBJG+2g6uXisW19IXkzrVf0/wc+n8VnlBSBA1yr50W+rSjLM=
+	t=1729596717; cv=none; b=d8rBhadUCnfkQ5pJToNCfYpGSXWZbiTxlFb3LQsKXMu52Y+jqmOA4yO1hvvCtqZENvLBkEQLZTejDO6ReVTXU0IH88f6fOOvD4E3J173KU0B0ITpXv7FR/DjXAYmJxPS5mPK3cULNoHGMaXDcXMqvBNDLPbPGLD/bWfSeCVYX4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729596698; c=relaxed/simple;
-	bh=K0ZAIC0ih1OgAYGkxb/Y7IwopoPqXD+tHGWSN4/6UDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCw44adRY8C1NsPDziFQT2Dedb0GE5ROwIYPgd5TODvHN/pMNLJETnA1LNQpGmIeJcGiFDsPeEErBReKBNdRpuPGOwO3w/R3/z2qojJNmx2XaAS0XN3Cs+2tqCoXh6o3wbqKr/W/AdUJ8lm1PEFEC5KDcGySV65cpsBnfJtoTKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K+Miy2N8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=45VhlSmrcqHM0fJmLndR/+hMewp2TUptqFBD/F7XlaY=; b=K+Miy2N87uFDpEv6MRafnX6rlO
-	/+ijhGjh2TF5iRGIAGPTmcdyy7bt8miAd6I15KttI8Ec4Jv/z8duNmDoImt4VicB5Rx6SH1+jFITP
-	vN2vei599XxcZi3g+d8D9JpLGzsirkMlE2GZZCjQ8eX561DTZ65ovA7W/R14Zix+EaOQlaw22/T/g
-	R0el4fAEMQPB0LqlLbKli6+R+hOHc5lYqpnGz2ju/u4VYu6UwsZBbIhU3+T2CkovA1rqwPiyHyZEi
-	IvhBelCyZBMtJwCtMf+izNYQDiSHrvQWb8G0sUmMtynguCAqCa9fbnrnNo6oaXGPIopc2r2psS9ml
-	nm2H/0ZQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3D6p-00000001ZcL-19AU;
-	Tue, 22 Oct 2024 11:31:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7CF8B30073F; Tue, 22 Oct 2024 13:31:31 +0200 (CEST)
-Date: Tue, 22 Oct 2024 13:31:31 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexander Potapenko <glider@google.com>
-Cc: syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>,
-	audit@vger.kernel.org, eparis@redhat.com,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
-Message-ID: <20241022113131.GD16066@noisy.programming.kicks-ass.net>
-References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com>
- <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
+	s=arc-20240116; t=1729596717; c=relaxed/simple;
+	bh=Wiu8jpqlvHopEX0zCMI49sswBg5XfxfY0ixLSvxZcho=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=kVpIPEOB4zii6mL4Fz+ukyC7VBTgFfzbn2gFonsgrNtFteGezLIT4fDi/aqwnRjje55kSIrkIYflWEBkhm9s8+cL9aLiqk9YbdjHToKxmWyA0kEntcldcfetuhMFBz3cDxs90gEbk8pJmoGenRMUQuaZgsZowu59XjCxu8kPW8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gRV6WAyl; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729596716; x=1761132716;
+  h=message-id:date:mime-version:to:cc:from:subject:
+   content-transfer-encoding;
+  bh=Wiu8jpqlvHopEX0zCMI49sswBg5XfxfY0ixLSvxZcho=;
+  b=gRV6WAyl8sNPYhHEGRbWTG/9E1ZCQ340rUpahuaW5GfoowmWXH9cb8O2
+   +N1QY4tGSUJNpEuJSdhWUjyqEqXL+4dFM6PgDBEblgniySBnzCc93h0gx
+   joiL06m3a6ZdHMfOpBtJnysIpAputxs4t2+SOcYC0guH3nw7SB8EKzw1o
+   /rJ+l3nMzYNcMFJU8e6MUJrtJ17uNi64o+LVVQPaDTP7NgRQbxbtJbMqT
+   6f4Gc7rOEQzSklqaLQ8n2n/0DunGonnAfLJc3KN5mJBOnFjORedsY+3z/
+   UGO2QKdUyhQ1v+MLx5NNHho3UvlC7TraTv50VLe6dV5OjT7AXrEjgxE6T
+   A==;
+X-CSE-ConnectionGUID: FSzmmSBBQzqGJhve+2XkkA==
+X-CSE-MsgGUID: a41vnFv1QImCBlrqzl9/gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="16754526"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="16754526"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 04:31:55 -0700
+X-CSE-ConnectionGUID: q8dbIADNQwSPzZjZVEEqjA==
+X-CSE-MsgGUID: fckb5dgSSF+8yqQEP1YdSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="79756833"
+Received: from yungchua-mobl2.ccr.corp.intel.com (HELO [10.247.108.13]) ([10.247.108.13])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 04:31:53 -0700
+Message-ID: <448a5371-75d5-4016-9e6d-d54252c792b4@linux.intel.com>
+Date: Tue, 22 Oct 2024 19:31:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ mstrozek@opensource.cirrus.com, gregkh@linuxfoundation.org,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, bard.liao@intel.com
+From: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
+Subject: Request to backport "ASoC: Intel: mtl-match: Add cs42l43_l0
+ cs35l56_l23 for MTL"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 10:06:23AM +0200, Alexander Potapenko wrote:
-> On Fri, Sep 27, 2024 at 4:57 PM syzbot
-> <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15f07a80580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=86254f9e0a8f2c98
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0ec1e96c2cdf5c0e512a
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/1be80941df60/disk-075dbe9f.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/494a9ac89c09/vmlinux-075dbe9f.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/919788d8c731/bzImage-075dbe9f.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com
-> >
-> > audit: type=1400 audit(6022412112.141:243086): avc:  denied  { read } for  pid=2950 comm="syslogd" name="log" dev="sda1" ino=1915 scontext=system_u:system_r:syslogd_t tcontext=system_u:object_r:var_t tclass=lnk_file permissive=0
-> > audit: type=1400 audit(6022412112.181:243087): avc:  denied  { read } for  pid=2950 comm="syslogd" name="log" dev="sda1" ino=1915 scontext=system_u:system_r:syslogd_t tcontext=system_u:object_r:var_t tclass=lnk_file permissive=0
-> > ==================================================================
-> > BUG: KCSAN: assert: race in __block_task kernel/sched/sched.h:2770 [inline]
-> > BUG: KCSAN: assert: race in dequeue_entities+0x6df/0x760 kernel/sched/fair.c:7177
-> >
-> > race at unknown origin, with assert no writes to 0xffff888101764268 of 4 bytes by task 29 on cpu 1:
-> >  __block_task kernel/sched/sched.h:2770 [inline]
-> >  dequeue_entities+0x6df/0x760 kernel/sched/fair.c:7177
-> >  pick_next_entity kernel/sched/fair.c:5627 [inline]
-> >  pick_task_fair kernel/sched/fair.c:8856 [inline]
-> >  pick_next_task_fair+0x7d/0x410 kernel/sched/fair.c:8876
-> >  __pick_next_task kernel/sched/core.c:5955 [inline]
-> >  pick_next_task kernel/sched/core.c:6477 [inline]
-> >  __schedule+0x284/0x940 kernel/sched/core.c:6629
-> >  __schedule_loop kernel/sched/core.c:6752 [inline]
-> >  schedule+0x55/0xc0 kernel/sched/core.c:6767
-> >  kauditd_thread+0x56b/0x650 kernel/audit.c:911
-> >  kthread+0x1d1/0x210 kernel/kthread.c:389
-> >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >
-> > value changed: 0x00000000 -> 0x00000001
-> >
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 1 UID: 0 PID: 29 Comm: kauditd Not tainted 6.11.0-syzkaller-11558-g075dbe9f6e3c #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> > ==================================================================
-> 
-> +PeterZ, who added the KCSAN assertion.
+Hi,
 
-Well, PaulMck did in d6111cf45c57 ("sched: Use WRITE_ONCE() for
-p->on_rq"), I just moved it around in e8901061ca0c ("sched: Split
-DEQUEUE_SLEEP from deactivate_task()").
+commit 84b22af29ff6 ("ASoC: Intel: mtl-match: Add cs42l43_l0 cs35l56_l23
+for MTL") upstream.
 
-I'm not at all sure I have any inkling as to what the annotation does
-nor what KCSAN is trying to tell us above.
+The commit added cs42l43 on SoundWire link 0 and cs35l56 on SoundWire
+link 2 and 3 configuration support on Intel Meteor Lake support. Audio
+will not work without this commit if the laptop use the given audio
+configuration.
 
-Can someone please translate?
+I wish this commit can be applied to kernel 6.8.
 
+It can be applied and built cleanly on it.
 
+Thanks,
+Bard
 
