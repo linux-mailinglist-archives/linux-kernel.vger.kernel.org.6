@@ -1,135 +1,87 @@
-Return-Path: <linux-kernel+bounces-375482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C66D9A9688
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9F99A9687
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C181F232FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A191C21992
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E23413E88C;
-	Tue, 22 Oct 2024 03:06:42 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7964613C9A6;
+	Tue, 22 Oct 2024 03:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NggfWXyY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3F213790B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E894322A;
 	Tue, 22 Oct 2024 03:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729566402; cv=none; b=IvgU16Y1gF3ciCCGHmSfGJja6a+s2CbsqFDU8cen+oHs3FJtV2eXatqpFpTnbM4DlvFfjnUcWnLM4pbflpO3uBmWeBKjg7uOFMgkfSCngqVF8qKL10U2gjv5NVRKku8TY2O8v5cwXGG0d6lZiCYrTH1f27WDjJTUFY9oTertjBg=
+	t=1729566398; cv=none; b=pnEAO/JtMTvCY235zK8oBFdWhqU1GxlUlRA2sEeknhWxmWGx493TwY8ValoCyXukaO0IUtgy2abkdqNXy5A6CKT/oi2yKiOD+fXbg96sMNsPjbhT7VMoUQKt/OPdFmRvapTHt9VIrdgg7JRj0bdMRGhfr5zpJg1zd/HczJ5wlTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729566402; c=relaxed/simple;
-	bh=5E/F8SMwlkbqTn9yh91xv8MrZrkAwbncTzde9BPHtbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qhOw7gVSAaEkV2mhEOCAvArB29UDlwH8ye9Hda+5xRcfGwwOJgo966zFg1ujvOnYYDFVdQrlZp2mUD2fMMdQqC4R+UoOyq+CvmGom9DKGRYJSjCLsI++bLIOYwzuQ6aCMO7vzVfb7a6YnWKzH6DuPuIkNSH5eNjd9Uyx7g8ZJcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXcSc0d3wzfdX0;
-	Tue, 22 Oct 2024 11:03:28 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id C996B1800DE;
-	Tue, 22 Oct 2024 11:05:57 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 11:05:57 +0800
-Message-ID: <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
-Date: Tue, 22 Oct 2024 11:05:55 +0800
+	s=arc-20240116; t=1729566398; c=relaxed/simple;
+	bh=Pdj6kXiEu2uGZ0LuXnPEeFujTzUCsth+MkAeAwOml2M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dGVFxIfAO5+JghjPTTH2s/le+AW9NsepW3IGQWeGPxPXnwy1NXUw4/h8QRFMPZqrCh7yzUKKankhPydy5o9uQc5UaDoT5OfMgjo/fBsCFIiPtCLWIA6rKbwXPfsPuWoMzFmH9jy9JvdqdLEGeFUpnd+gOr870PouJzwjooYBa+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NggfWXyY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BF2C4CEC3;
+	Tue, 22 Oct 2024 03:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1729566398;
+	bh=Pdj6kXiEu2uGZ0LuXnPEeFujTzUCsth+MkAeAwOml2M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NggfWXyYP0PLz8NPZXXLKvtCHBOCCUHJXIA791VBnfM5S43KFnylELeAOIU7G2AuL
+	 BEW8cUiNFq6PaoOmq/MK+SmL8Qu69m2puY1HIXO2lKmM5M5fYArC67wGmpVdUKHTie
+	 y13EZL8CT913+ZhvQL8OUOUJTE+rrtGvnIzZ+0Hc=
+Date: Mon, 21 Oct 2024 20:06:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Roberto Sassu
+ <roberto.sassu@huaweicloud.com>, Liam.Howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ ebpqwerty472123@gmail.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+ syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+Message-Id: <20241021200636.308f155a72f8a4d1e26f82b8@linux-foundation.org>
+In-Reply-To: <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+	<CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-To: Alan Huang <mmpgouride@gmail.com>
-CC: Jeongjun Park <aha310510@gmail.com>, Kent Overstreet
-	<kent.overstreet@linux.dev>, <linux-bcachefs@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>,
-	<syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
-References: <20241021154356.38221-1-aha310510@gmail.com>
- <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
- <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sat, 19 Oct 2024 11:34:08 -0400 Paul Moore <paul@paul-moore.com> wrote:
 
+> >  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+> >  1 file changed, 52 insertions(+), 17 deletions(-)
+> 
+> Thanks for working on this Roberto, Kirill, and everyone else who had
+> a hand in reviewing and testing.
+> 
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> 
+> Andrew, I see you're pulling this into the MM/hotfixes-unstable
+> branch, do you also plan to send this up to Linus soon/next-week?  If
+> so, great, if not let me know and I can send it up via the LSM tree.
 
-On 2024/10/22 10:38, Alan Huang wrote:
-> On Oct 22, 2024, at 10:26, Hongbo Li <lihongbo22@huawei.com> wrote:
->>
->>
->>
->> On 2024/10/21 23:43, Jeongjun Park wrote:
->>> The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
->>> To fix this, we need to add validation on a.data_type in
->>> alloc_lru_idx_fragmentation().
->>> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
->>> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
->>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>> ---
->>>   fs/bcachefs/alloc_background.h | 3 +++
->>>   1 file changed, 3 insertions(+)
->>> diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
->>> index f8e87c6721b1..163a67b97a40 100644
->>> --- a/fs/bcachefs/alloc_background.h
->>> +++ b/fs/bcachefs/alloc_background.h
->>> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
->>>   static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
->>>          struct bch_dev *ca)
->>>   {
->>> + if (a.data_type >= BCH_DATA_NR)
->>> + return 0;
->>> +
->>
->> oh, I found I have done the same thing in [1]("Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But
-> 
-> Your patch there is still triggering the issue.
-Yeah, it just notify the issue and not prevent the issue. So I found it 
-should add a.data_type condition indeed. :)
-> 
->> in my humble opinion, the validation changes also should be added. And in addition, move the condition about a.data_type into
-> 
-> There is already the validation:
-> 
-> bkey_fsck_err_on(alloc_data_type(a, a.data_type) != a.data_type
+In the normal course of things I'd send it upstream next week, but I
+can include it in this week's batch if we know that -next testing is
+hurting from it?
 
-This is actually not enough. This only do some transition check. For 
-example, if a.data_type break when bch2_bucket_sectors_dirty (the data 
-corruption can lead to various situations occurring) is true, the helper 
-does noting.
-
-Thanks,
-Hongbo
-
-> 
-> And the unknown data type is already printed in bch2_prt_data_type, additional validation doesn’t help much.
-> 
->> data_type_movable will be better. Just my personal opinion.:)
-> 
-> In my personal opinion, I don’t think so :)
-> 
->>
->> [1] https://www.spinics.net/lists/kernel/msg5412619.html
->>
->> Thanks,
->> Hongbo
->>
->>>    if (!data_type_movable(a.data_type) ||
->>>        !bch2_bucket_sectors_fragmented(ca, a))
->>>    return 0;
->>> --
-> 
-> 
 
