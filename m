@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-375778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BC09A9AAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1049A9AA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08625282FBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA60F1F24A1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590D21531D2;
-	Tue, 22 Oct 2024 07:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038281494A6;
+	Tue, 22 Oct 2024 07:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CnZLv6wR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xsBfgaHr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEE1148FEB;
-	Tue, 22 Oct 2024 07:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8BD1487D1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581262; cv=none; b=FHQSoBDAhCVzZeqg4bUi5mknByuuRPT0np2mlchIqBiNyVJLmbKmUzAcxdBkejUPmjh0DGRZwF4c+LOgWSP0xe5ErmziRxR/wsW2koK4FPiQPMQCLqSvD6KTyaKFsikrZhrnkquLC84insSeXpBSbebOPThKLvtihkhnICDVxGQ=
+	t=1729581238; cv=none; b=nA06zt90BEtOWJw4qMgCbjcNSZBio3ojcxU48QBuYq4rEb1UwPrndfXvXXDYW1UPF3NY34ndXYZj10aHC+eh0F9Jd0TLQNShiWQEtFgr9zNzLg87RZeCBTg6FbqoyPlNn79r096RvjoIWm7hN0NqYcIJjTch4coGl4mdweHBtyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581262; c=relaxed/simple;
-	bh=/Rgpo9I553gF5Dq4wZ7FZfxuASIDdLW/V8cSYDAMXD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lzwBuB/2c3IyjxIRkkzGLWydK+A4QPU67XrRoYXnORLbIL+3P0zXFUZWbaP6SIPZZr2clDyHhgH9BOelIqZ4002Tb8jGD9Eb+RnlUK8OK8Y/LW8p4BH4zOIDjwQd1cHwnKtVkwAkTUYp1b2iulE6qwMq27vdDjdvqkWlatGvFpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CnZLv6wR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M6uVqZ019049;
-	Tue, 22 Oct 2024 07:14:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2OQf0si/CIXxYVkyVvj9sbbdpTRNuvie33M0zB2wTuk=; b=CnZLv6wRZlLSPWbP
-	azI4Ryr3rzSb5MJECbNKX3AtFZErqfropwue0i0kbznUMcqc4RT4FFg04Sw9v6v3
-	LOMMtWAvioq48XZDgw2MzpztdpZ5uNUCEAOSzUjsd9HFUkE8jGzdBzENwnGvV7R9
-	48RvAqBCEQBbWmH+kwR2BWe9IO9nftszC1DbWWowSI10MTAZwM7yQGt57kLIqGtJ
-	RjLNOhJqcK3u41ezFei+w0zFCV8Gje/5Hxj3YDgU2rn3voqMtd40r8+xHaTmZqO7
-	ktiYhyw7371VoV0WvlMz2rss/bqyvSNRaKXvHMpcev/VQ3u8CjswqbaTwPgaOlt1
-	8AfGIw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42e77pg2ge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:14:16 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7EFWn024228
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:14:15 GMT
-Received: from [10.151.40.160] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 00:14:12 -0700
-Message-ID: <09be6843-52c0-4d84-bcba-e6cbd0cb51a9@quicinc.com>
-Date: Tue, 22 Oct 2024 12:43:36 +0530
+	s=arc-20240116; t=1729581238; c=relaxed/simple;
+	bh=M68uSLnvJSaWRdyBgND1P3SC445qvbbnOOZ+7soi7SQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ShYNDAsIQhjQ9W84y+hvcWqkYtgE39DYGQQL+HTa2b0Xn6xYbyIztdrLVNp3Xs2j91Wiqk7FBWCIFzpz/qRzzANcnERwAFGYfqcoN+bh/uMW2P0EUTCqOzQg9chds3sSyW7RrI8Ue08ytbH/ThUUtNw7dUUcBi/a9r/JDtnVk9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xsBfgaHr; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d461162b8so3526248f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:13:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729581235; x=1730186035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uu7/6biP0r///L+Czeg5+6U/oTA7jDzuwpELtMKnMrs=;
+        b=xsBfgaHroHXg70Zj+Sn+drSXOqltVcIqDMr1YvBT7ovcJEXjsp856nMU3CvMqJVRTp
+         ZxTnAcKPAET32708QJmN6CDBeZnxdZHJBCzmN2PVMm4mUrwBLrtBSnLLJ+xXKlo7CZUF
+         L5TawfIAog03yC9QYG5TYjnFlKANiIfBJOFH/+VUt6c2NbRhP8OT3/uaupU8UJss9Ikl
+         qCcPX58WUtOru5NMlkh+rF/vSdK9qB5sXvk/iT2R/Ij+PdCVvLbjxxshemRNF5ZIMecG
+         nmtOsIoiripfpmZ+HYlFCs8bZjXgzQ2am6vT0wWIuEdBxPwLqKEIW5A0/P53YE853ual
+         0rmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729581235; x=1730186035;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uu7/6biP0r///L+Czeg5+6U/oTA7jDzuwpELtMKnMrs=;
+        b=w1QBSkApXXccz2nIuJ04iS+g1D84GMkG8PLwbEaytrTNd2gixyWT7pG7txv8luUdhy
+         1AwdmP+0h2QYCAnIJFqhbcFXYXYH7kwEh+DMGSzXNNBEelKwxoif/aGdEA6cB8HVqL7u
+         58ran9B0/FBarhobXlLhAu3e7wUkNeRHgP851BqCyhoplTPe2MSjURUN5hmWxeHtgW+i
+         DPuxXZ7L329lIyWEWpD+lhzIoOVJdBA3HVx0j3JIpjKx7ShTE9e4TpxEtrSqQG08LxB2
+         4R3oXgeebwR7631KPuSky3qB8Q3SoRS+bEJTrsFEh5eEqEqCe2qJs2rGKIuZNSLnBO2Y
+         eJbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVULHlFR+vsZFVSyEozc6AiRKNM9zm3Ufwq+c9hwq0l+YGQVWLl9VuIzGAwTJoAH0+0htAlyJh+upwRd8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7y70nCUwRMQjbkPtdOlJcqS2J8cMQq72lxlKkkNEiKLoz7syy
+	y39uwS97UUUPTWrJMV0HhP0ROhB+o7p07wKrGxA2nqxTroJoAK88DM3dqWPLgRg=
+X-Google-Smtp-Source: AGHT+IEsABVAJqJe/8IcrnXKLJC1wZG/HV5NwbiM9/5GqjkeVIBM90CoxKU2R4T3WOtPIV0inuCfvg==
+X-Received: by 2002:a5d:5e10:0:b0:37e:d2b7:acd5 with SMTP id ffacd0b85a97d-37ed2b7afc9mr7498252f8f.8.1729581234903;
+        Tue, 22 Oct 2024 00:13:54 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9c8b:c7e5:66f5:b8f1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4ae36sm5955801f8f.43.2024.10.22.00.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 00:13:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add a keyword entry for the GPIO subsystem
+Date: Tue, 22 Oct 2024 09:13:51 +0200
+Message-ID: <172958121345.18422.7642446863562220364.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241017071835.19069-1-brgl@bgdev.pl>
+References: <20241017071835.19069-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/22] wifi: ath12k: convert tasklet to BH workqueue
- for CE interrupts
-To: Kalle Valo <kvalo@kernel.org>
-CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-17-quic_rajkbhag@quicinc.com>
- <877ca1q0yq.fsf@kernel.org>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <877ca1q0yq.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ds6dUeqqETgxjzzffRHEvUQO7UndozCn
-X-Proofpoint-ORIG-GUID: ds6dUeqqETgxjzzffRHEvUQO7UndozCn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=967 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220045
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/21/2024 2:36 PM, Kalle Valo wrote:
-> Raj Kumar Bhagat <quic_rajkbhag@quicinc.com> writes:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Thu, 17 Oct 2024 09:18:35 +0200, Bartosz Golaszewski wrote:
+> Every now and then - despite being clearly documented as deprecated -
+> the legacy GPIO API is being used in some new drivers in the kernel. Add
+> a keyword pattern matching the unwanted functions so that I get Cc'ed
+> anytime they're being used and get the chance to object.
 > 
->> Currently in Ath12k, tasklet is used to handle the BH context of CE
->> interrupts. However the tasklet is marked deprecated and has some
->> design flaws. To replace tasklets, BH workqueue support has been
->> added. BH workqueue behaves similarly to regular workqueues except
->> that the queued work items are executed in the BH context.
->>
->> Hence, convert the tasklet to BH workqueue for handling CE interrupts
->> in the BH context.
->>
->> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
->> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
->>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-> 
-> 22 patches is a lot and I'm not going to look at this in detail, please
-> reduce your patchset size. 10-12 patches is recommended. For example,
-> this could be easily submitted separately.
 > 
 
-Sure Kalle,
+Applied, thanks!
 
-We are working on other review comments in this series, in the next version
-we will reduce the number of patches.
+[1/1] MAINTAINERS: add a keyword entry for the GPIO subsystem
+      commit: 7e336a6c15ec7675adc1b376ca176ab013642098
 
-This patch we will be sending separately as v3.
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
