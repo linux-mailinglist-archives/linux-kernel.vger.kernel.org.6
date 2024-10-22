@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-375443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016BB9A95FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:09:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53949A9604
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B072835A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E5F28351D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E66612D75C;
-	Tue, 22 Oct 2024 02:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015D412D773;
+	Tue, 22 Oct 2024 02:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rl3LyQ5b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gArLKNrC"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731071E51D;
-	Tue, 22 Oct 2024 02:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA9E85C47;
+	Tue, 22 Oct 2024 02:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729562937; cv=none; b=kKDA4YScGyfM9sbc7b85T7jU0VAoqFxrtwa99LTzurc8xcMBzKQ3g2qb9u/3tDtVBAfkLXeADRu9eItH+gg+cgA0XKCi+PyJrlpJ3scTJGzhs/Sp/2GwqDAEFx3KTKPi7U6ssb6xihaFpyFcBQzWJGgcC6nOznUMLPsodWsevFI=
+	t=1729563078; cv=none; b=GawLVADn0PWjzZcQLf+mlGu4+RsT2fLhNsSL+wLHI3Cy94FnT6l5uF/rBEHr5KDDZZtH1k5a2n+ZDm4R8csiqUBHsi0qvF/s+uKPsINef54kWVTC38kfNf/h4WmmsQ37HfPkxYBP3n2Op1iog7vEmk+/25SGfe9y3BP5vEFC0wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729562937; c=relaxed/simple;
-	bh=LMXviNltoqXWdqO4iCQaz4PnXyhh7PoIjqWaqIsjCMg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=suyct4MNErfWvEzpb/Mh/s+ZqkVXzUac8OdUf4HiFOzIbWHDXntrTcKsLccLID4c51cTrhxt0WgfCA89PVnb5wudSXUvHConCmv2YlGGws3+EdZw24X2CRMh/Lap7jbCFBvkDvAiftVKvDeZ1Rtovto6ExaYFRdp03iC81qEEEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rl3LyQ5b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A7E7C4CEC3;
-	Tue, 22 Oct 2024 02:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729562937;
-	bh=LMXviNltoqXWdqO4iCQaz4PnXyhh7PoIjqWaqIsjCMg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Rl3LyQ5bkrq4S0Nq1aPQyYD9TFNJCZNs/1Fvifz2NiTxQCPqJE5bQPdkhRPNnNHkz
-	 D0e8UWAToalkq7N5iKsj8Nf/ffKxqKoXFQNqTriAqS0/L59s74SXVJfUBwn62r7yil
-	 LclvE6TQ4DCIr2PYfj/QOryhzg53vJCYKwXUiET9vlN7bvc43mviWEU8pnHnroIVa7
-	 ojrP/FmILf8fkkNhSB3PfCUDRmZp4ejPfwQ72f1z/bp6PNIlPXU1CAGI1jntXRF13J
-	 m/XIVPRL00W+lhKtY6ifd+7eoXDBjABZBge8EG3sYlQ+RqwmHWgiUCU+piKwIdqaup
-	 FzjNmLiFGTpMw==
-Message-ID: <260b8dbd-a2e6-4600-b7bf-4fb1b510476b@kernel.org>
-Date: Tue, 22 Oct 2024 10:08:52 +0800
+	s=arc-20240116; t=1729563078; c=relaxed/simple;
+	bh=Xqg//kUTNhwqrus8m/mjkou05l1A6fc8nBiqeLVMsEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhXx0L27sgDb7EfAo9SAkUuUUydDlO/WTuYSPP3JD6UEbgUUoam6Kpe0VJu04QXmi8SuIv91pAlBrRT+nQnpxQXM7ofWNz/Hq3d0BE1naMHc+9UcWs4WxF4/BbvlCyPj38sKrY4Uixu5I+7Q4QBCIY4N5u2Q2e76uTACinnJmE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gArLKNrC; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Oct 2024 02:11:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729563072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33cM6FKw0K/vjsCwdtJ9HyCY2bf6tJBVkKFfDfvbkfE=;
+	b=gArLKNrC0peponoFd/AB6hdq3NsUyCWm8XfgN5deXJeCl36mCchZXTFvevtmIzr2is3Ave
+	y3AZax/TI0TD09FzLEh0ZdU75cT3MfiYzp76FNwhMa3WTzRzsn4lTf+7Xwj6AOjfK/R+n+
+	jSzORoOk32bGGA53vv+AhLGnaqMAwQk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+Message-ID: <ZxcJtN-k6U6LfwqG@google.com>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+ <pdu7tddikqiyhd6srgnsrxbsssmwk6u7k35coxhaspcnz57jul@uhm45xe7josy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix to convert log type to segment data type
- correctly
-To: kernel test robot <lkp@intel.com>, jaegeuk@kernel.org
-References: <20241018092200.2792472-1-chao@kernel.org>
- <202410200521.Mc4H4BHm-lkp@intel.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <202410200521.Mc4H4BHm-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pdu7tddikqiyhd6srgnsrxbsssmwk6u7k35coxhaspcnz57jul@uhm45xe7josy>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-Thanks for the report, I rebased this patch on top of
-https://lore.kernel.org/linux-f2fs-devel/20241017012932.1570038-1-chao@kernel.org,
-so there will be dependency in between these two patch.
-
-Thanks,
-
-On 2024/10/20 5:57, kernel test robot wrote:
-> Hi Chao,
+On Mon, Oct 21, 2024 at 10:57:35AM -0700, Shakeel Butt wrote:
+> On Mon, Oct 21, 2024 at 05:34:55PM GMT, Roman Gushchin wrote:
+> > Syzbot reported a bad page state problem caused by a page
+> > being freed using free_page() still having a mlocked flag at
+> > free_pages_prepare() stage:
+> > 
+> >   BUG: Bad page state in process syz.0.15  pfn:1137bb
+> >   page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
+> >   flags: 0x400000000080000(mlocked|node=0|zone=1)
+> >   raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
+> >   raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
+> >   page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+> >   page_owner tracks the page as allocated
+> >   page last allocated via order 0, migratetype Unmovable, gfp_mask
+> >   0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
+> >   3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
+> >    set_page_owner include/linux/page_owner.h:32 [inline]
+> >    post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+> >    prep_new_page mm/page_alloc.c:1545 [inline]
+> >    get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
+> >    __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
+> >    alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
+> >    kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+> >    kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+> >    kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
+> >    kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
+> >    vfs_ioctl fs/ioctl.c:51 [inline]
+> >    __do_sys_ioctl fs/ioctl.c:907 [inline]
+> >    __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+> >    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >    do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
+> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> >   page last free pid 951 tgid 951 stack trace:
+> >    reset_page_owner include/linux/page_owner.h:25 [inline]
+> >    free_pages_prepare mm/page_alloc.c:1108 [inline]
+> >    free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
+> >    vfree+0x181/0x2e0 mm/vmalloc.c:3361
+> >    delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
+> >    process_one_work kernel/workqueue.c:3229 [inline]
+> >    process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
+> >    worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
+> >    kthread+0x2df/0x370 kernel/kthread.c:389
+> >    ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> >    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > 
+> > A reproducer is available here:
+> > https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
+> > 
+> > The problem was originally introduced by
+> > commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
+> > clearance"): it was handling focused on handling pagecache
+> > and anonymous memory and wasn't suitable for lower level
+> > get_page()/free_page() API's used for example by KVM, as with
+> > this reproducer.
+> > 
+> > Fix it by moving the mlocked flag clearance down to
+> > free_page_prepare().
+> > 
+> > The bug itself if fairly old and harmless (aside from generating these
+> > warnings).
+> > 
+> > Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
 > 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on jaegeuk-f2fs/dev-test]
-> [also build test ERROR on jaegeuk-f2fs/dev linus/master v6.12-rc3 next-20241018]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Chao-Yu/f2fs-fix-to-convert-log-type-to-segment-data-type-correctly/20241018-172401
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-> patch link:    https://lore.kernel.org/r/20241018092200.2792472-1-chao%40kernel.org
-> patch subject: [PATCH] f2fs: fix to convert log type to segment data type correctly
-> config: i386-buildonly-randconfig-002-20241019 (https://download.01.org/0day-ci/archive/20241020/202410200521.Mc4H4BHm-lkp@intel.com/config)
-> compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410200521.Mc4H4BHm-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410200521.Mc4H4BHm-lkp@intel.com/
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->>> fs/f2fs/segment.c:3818:38: warning: declaration of 'enum log_type' will not be visible outside of this function [-Wvisibility]
->      3818 | static int log_type_to_seg_type(enum log_type type)
->           |                                      ^
->>> fs/f2fs/segment.c:3818:47: error: variable has incomplete type 'enum log_type'
->      3818 | static int log_type_to_seg_type(enum log_type type)
->           |                                               ^
->     fs/f2fs/segment.c:3818:38: note: forward declaration of 'enum log_type'
->      3818 | static int log_type_to_seg_type(enum log_type type)
->           |                                      ^
->     fs/f2fs/segment.c:3843:16: error: variable has incomplete type 'enum log_type'
->      3843 |         enum log_type type = __get_segment_type(fio);
->           |                       ^
->     fs/f2fs/segment.c:3843:7: note: forward declaration of 'enum log_type'
->      3843 |         enum log_type type = __get_segment_type(fio);
->           |              ^
->>> fs/f2fs/segment.c:4828:44: error: argument type 'enum log_type' is incomplete
->      4828 |                 array[i].seg_type = log_type_to_seg_type(i);
->           |                                                          ^
->     fs/f2fs/segment.c:3818:38: note: forward declaration of 'enum log_type'
->      3818 | static int log_type_to_seg_type(enum log_type type)
->           |                                      ^
->     1 warning and 3 errors generated.
-> 
-> 
-> vim +3818 fs/f2fs/segment.c
-> 
->    3817	
->> 3818	static int log_type_to_seg_type(enum log_type type)
->    3819	{
->    3820		int seg_type = CURSEG_COLD_DATA;
->    3821	
->    3822		switch (type) {
->    3823		case CURSEG_HOT_DATA:
->    3824		case CURSEG_WARM_DATA:
->    3825		case CURSEG_COLD_DATA:
->    3826		case CURSEG_HOT_NODE:
->    3827		case CURSEG_WARM_NODE:
->    3828		case CURSEG_COLD_NODE:
->    3829			seg_type = (int)type;
->    3830			break;
->    3831		case CURSEG_COLD_DATA_PINNED:
->    3832		case CURSEG_ALL_DATA_ATGC:
->    3833			seg_type = CURSEG_COLD_DATA;
->    3834			break;
->    3835		default:
->    3836			break;
->    3837		}
->    3838		return seg_type;
->    3839	}
->    3840	
+> Can you open the access to the syzbot report?
 > 
 
+Unfortunately I can't, but I asked the syzkaller team to run the reproducer
+against upsteam again and generate a publicly available report.
 
