@@ -1,187 +1,77 @@
-Return-Path: <linux-kernel+bounces-375744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5E89A9A44
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:53:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370AB9A9A4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85D9B2135B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F5F1F22766
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BBF146A9F;
-	Tue, 22 Oct 2024 06:53:24 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FB1C8FE;
-	Tue, 22 Oct 2024 06:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42498146A9F;
+	Tue, 22 Oct 2024 06:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="IYmD2TNR"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AA6770E4;
+	Tue, 22 Oct 2024 06:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729580004; cv=none; b=lJC0c+sA/hGfn2gsDbWkz1MRcpfw3lfG6CukeSoxEAG09QpiGmSMRhZjifWYRbNMxMoBg7jIXQEsZsSFQEkw82UQT7StO5IwIcYHAtLalpUYgpRitdo8n0LXKAsg+s0JIs+q0/+pSYZsiQWrlCJCvhcTyThvlJhxSCyRM/DZFF4=
+	t=1729580112; cv=none; b=X/++wdILwJ8tUwWte03p2L8yR7ZQuViXw6pHOdhpeQPw3gRXUa5qV2mPlBsxY7VzPvhJ9ZEOwxtcszGfCPoVcHtMdYceQ1QmVakubXjTUYhvAzowIdkcn4vqAec1XJ6lHq6J8qNexqZahLO97B1eNZGYCy0CoI4fEViKvoLUKsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729580004; c=relaxed/simple;
-	bh=JbyQaJQwFDvjHRavjVioBV612kkFzFCJwAMBOWr+Ujg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sy7t5Wb+jKdvAY+j7GRqLAzsV9lOU5B+N1WZzUcj2OruA0GW2+8o0s3FyIYE948jGqaA/pCnOV8rnO5tTzuL35BWHmWkfWWH9Pgymxdc1dgD6payI9E2kOJyUT/TC/1si3pC0dJmCgY36tHXZyue6B5m6Y+J4Z+yTq5R3z7AQ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XXjSn2L8bz1HLPl;
-	Tue, 22 Oct 2024 14:48:57 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 04EBB180042;
-	Tue, 22 Oct 2024 14:53:17 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Oct 2024 14:53:16 +0800
-Message-ID: <4cefb5b1-648b-58f6-abd7-d3cabfe507ec@huawei.com>
-Date: Tue, 22 Oct 2024 14:53:16 +0800
+	s=arc-20240116; t=1729580112; c=relaxed/simple;
+	bh=ZjJ0Wt+Xa8mdkho0L0ET8P20sj6XnC50OAY4+l6RbdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qn8vVcQ9BAbPKoPt8tYlMLusOcR62El5YOAZbrgF+aO5K+K3xy+iKH3aq5f/HdXCexRVSA1nZ6RJ3Hqm5t4dTZC6VDRKCgUwGONy9yuRFFclGATYM9Hmws4uscjqvOKQiqbTOLxFDHiwDcwFY5CQJB6XVJw77u+8Fw17DjuUY2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=IYmD2TNR; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/vhDuQYV5YlG5L+yjAZnN1ic7CiXa7VdGmu2Q0f6FIw=;
+	b=IYmD2TNR1wsqfGawVh70PfnIw+hNoJoHeYNvmz9yWqu5fFv5LmT2IpLLFz4ZP/
+	GQjy8n3MgJJpKMe8EVeGahTH0FhMEwTP1aRi3fp6Rt3Rg/hJhyPj95sC7mVdnm7g
+	XmVCCn/cMx+6VVR84Nst+UeQFAa4d77qKCM5OgSuUKhfo=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAnpczwSxdnar+XAA--.5492S3;
+	Tue, 22 Oct 2024 14:53:38 +0800 (CST)
+Date: Tue, 22 Oct 2024 14:53:36 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3] arm64: dts: imx8m*-venice-gw75xx: add Accelerometer
+ device
+Message-ID: <ZxdL8PxrmT3X+aTV@dragon>
+References: <20241018173608.810073-1-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH] btrfs: Fix passing 0 to ERR_PTR in
- btrfs_search_dir_index_item()
-Content-Language: en-US
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, "clm@fb.com"
-	<clm@fb.com>, "josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"dsterba@suse.com" <dsterba@suse.com>, "mpdesouza@suse.com"
-	<mpdesouza@suse.com>, "gniebler@suse.com" <gniebler@suse.com>
-CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241019092357.212439-1-yuehaibing@huawei.com>
- <7daf798c-64e1-4d22-9840-8954db354c9a@wdc.com>
- <01b2539f-6560-baa2-d968-5675f0ff2815@huawei.com>
- <89f8474b-c7da-470f-b145-a73088ee381c@wdc.com>
-From: Yue Haibing <yuehaibing@huawei.com>
-In-Reply-To: <89f8474b-c7da-470f-b145-a73088ee381c@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018173608.810073-1-tharvey@gateworks.com>
+X-CM-TRANSID:Mc8vCgAnpczwSxdnar+XAA--.5492S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsPfHUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQqAZWcXFF+d1QABsU
 
-On 2024/10/22 14:37, Johannes Thumshirn wrote:
-> On 22.10.24 05:22, Yue Haibing wrote:
->> On 2024/10/21 16:25, Johannes Thumshirn wrote:
->>> On 19.10.24 11:07, Yue Haibing wrote:
->>>> Return NULL instead of passing to ERR_PTR while ret is zero, this fix
->>>> smatch warnings:
->>>>
->>>> fs/btrfs/dir-item.c:353
->>>>    btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
->>>>
->>>> Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
->>>> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
->>>> ---
->>>>    fs/btrfs/dir-item.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
->>>> index 001c0c2f872c..cdb30ec7366a 100644
->>>> --- a/fs/btrfs/dir-item.c
->>>> +++ b/fs/btrfs/dir-item.c
->>>> @@ -350,7 +350,7 @@ btrfs_search_dir_index_item(struct btrfs_root *root, struct btrfs_path *path,
->>>>    	if (ret > 0)
->>>>    		ret = 0;
->>>>    
->>>> -	return ERR_PTR(ret);
->>>> +	return ret ? ERR_PTR(ret) : NULL;
->>>>    }
->>>>    
->>>>    struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle *trans,
->>>
->>> The only caller to this is in btrfs_unlink_subvol(), which does the
->>> following:
->>>
->>>
->>>                    di = btrfs_search_dir_index_item(root, path, dir_ino,
->>> 						  &fname.disk_name);
->>>                    if (IS_ERR_OR_NULL(di)) {
->>>                            if (!di)
->>>                                    ret = -ENOENT;
->>>                            else
->>>                                    ret = PTR_ERR(di);
->>>                            btrfs_abort_transaction(trans, ret);
->>>                            goto out;
->>>                    }
->>>
->>> to do:
->>>
->>> diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
->>> index d3093eba54a5..e755228d909a 100644
->>> --- a/fs/btrfs/dir-item.c
->>> +++ b/fs/btrfs/dir-item.c
->>> @@ -345,10 +345,7 @@ btrfs_search_dir_index_item(struct btrfs_root
->>> *root, struct btrfs_path *path,
->>>                           return di;
->>>           }
->>>           /* Adjust return code if the key was not found in the next leaf. */
->>
->>
->> ret is output variable of btrfs_for_each_slot, that return value can be 0, if a
->> valid slot was found, 1 if there were no more leaves, and < 0 if there was an
->> error.
->>
+On Fri, Oct 18, 2024 at 10:36:08AM -0700, Tim Harvey wrote:
+> The GW75xx has a LIS2DE12TR 3-axis accelerometer on the I2C bus with an
+> interrupt pin. Add it to the device-tree.
 > 
-> Yes.
-> 
->>> -       if (ret > 0)
->>> -               ret = 0;
->>> -
->>> -       return ERR_PTR(ret);
->>> +       return ERR_PTR(-ENOENT);
->>
->> This overwrite other ret code, which expecting return to upstream caller
-> 
-> Right for ret < 0, but for ret >= 0 we set it to 0 and then do return 
-> (void*)0 a.k.a. return NULL.
-> 
->>
->>>    }
->>>
->>>    struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle
->>> *trans,
->>> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
->>> index 35f89d14c110..00602634db3a 100644
->>> --- a/fs/btrfs/inode.c
->>> +++ b/fs/btrfs/inode.c
->>> @@ -4337,11 +4337,8 @@ static int btrfs_unlink_subvol(struct
->>> btrfs_trans_handle *trans,
->>>            */
->>>           if (btrfs_ino(inode) == BTRFS_EMPTY_SUBVOL_DIR_OBJECTID) {
->>>                   di = btrfs_search_dir_index_item(root, path, dir_ino,
->>> &fname.disk_name);
->>> -               if (IS_ERR_OR_NULL(di)) {
->>> -                       if (!di)
->>> -                               ret = -ENOENT;
-> 
-> 
-> and then set it to ENOENT if it is NULL. So it should be
-> 
-> if (ret >= 0)
-> 	ret = -ENOENT;
-> return ERR_PTR(-ENOENT);
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 
-Here should be
-return ERR_PTR(ret);
+Applied, thanks!
 
-Will rework and send v2, thanks!
-> 
-> and in the caller
-> 
-> if (IS_ERR(di)) {
-> 	ret = PTR_ERR(di);
-> 	btrfs_abort_transaction(...);
-> 	break;
-> }
-> 
-> 
 
