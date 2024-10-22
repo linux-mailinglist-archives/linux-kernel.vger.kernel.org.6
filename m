@@ -1,134 +1,155 @@
-Return-Path: <linux-kernel+bounces-376265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D589AA26A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B70259AA268
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDF91F22606
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF2D1F2343A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB1119DF98;
-	Tue, 22 Oct 2024 12:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E810319D89D;
+	Tue, 22 Oct 2024 12:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tSu5DL4S"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CZYms94K"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1697619DF48
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6027B17BB3F;
+	Tue, 22 Oct 2024 12:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601196; cv=none; b=paYFSBf7DrRaGAIKF2P7AJAd92Im+8fpca61Gccp/a5sdGbjTOGmCdLdT/vvfC24SOXMBDJsRnptWwHvg5aHFhylVb8AXKj6CQxunyopZTmo1eJCwE3le5xyaZ3LZjdhC6x9iDaZlVWtfXmzgC5YwxH3KixnWu26CdJwJ2Vkbqc=
+	t=1729601193; cv=none; b=B7W61opG5zBSiihO41ZURGl1TXvo7ypmFRivA3X34ligHup02BV00hnmcJMXxVckwRzY57boY6N+AB9awpYgVQhPFN5J2ARd3lodI0urtUo5oSgwuw+iLWwx/tKQ9J6n0VwALlGfee3kypro/9BszEtry8Nuqj4/XG1S2Ln6uQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601196; c=relaxed/simple;
-	bh=Vx2h3v1y9ITGYk/4YqnyyI5UsVK+4L4HjGCwI5LwPHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kLmmw0cIi481cb9yokUTNwRzJ1lXvJdSDRJZussQN+VywXJROEI0JyjgWBQsdTbN0JWcoEtnxqXLu4N0qzOg70Lg/UeFIAPmHJ0zJU/DSf5zWBNIHT/ob9TwnC+CtBcDDaEHUaNkwi9BY3E6Wq4JBxiR8Xgr5XT4yqwONQX9TCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tSu5DL4S; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5042561f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729601193; x=1730205993; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hWt1QgZ+k4yosJJFZ2Lxkp6vi2dnYByQlfBoj3HTnos=;
-        b=tSu5DL4Sgi1wuZnTAchlavyWjcSuIdk4FcneJ/j7h4kOGNpCsEV+5rttVTtHR6stH6
-         2ZMYvZ4KKnTjAVxCeooBJZqFjUTb/ffO9PDMI+vfEMF91RQCh0tSRqY2917s0OHyIT3q
-         f//i28yJEGMyBlUh1ShQFPHVJYzUnp0TBmnmyTsSfSDzDwFW1qJwneJCagllbpkNr0xl
-         ZeCqpDKrXn7g5PvRCkBDRZr2xxsjxeWom063Ym8EbllT7UthVtb2JrK0qTPuRIMTbE/q
-         w+ecVxMs418SQZ6gQdZsmI4bq3edRKxnaC+7kVs96dnfplgG6R0QIL9EQanMkOzXyH1u
-         Ekdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729601193; x=1730205993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hWt1QgZ+k4yosJJFZ2Lxkp6vi2dnYByQlfBoj3HTnos=;
-        b=o1TR8Kdvd2ko29enXYTZbADB7eg4hGsodD5xmXVUfNfDyJX4rmRKIzZ5JVeiTUTkrx
-         +zPHUNiR6iIs3DjP2nBj+ujszH8edOtShvnkFT8rdkFt4lcN8MWUzk03xbOtT0BEUhXS
-         tf01+aT2uTJfsPHoSCdokjbwKbM0fPzv+DLo1PXyqz2OblD3UB9YKbOLe67ZkW6Tn3vy
-         ChIKnaXJ6IaWPTbGktcBMqI8ez08uB6sfeoYDZVFfkDJCXVF96+insBGdbwuRHu/Z7pc
-         naKGJ7Qvls5cleljJN6bvh3csnsBAWkxW6D3YFGEwcXSHqoUj/TGrEO5HzLFf4Mj+TCQ
-         X19w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLPeSsV5GyKHgSeDeVTaPa5vU7H/caiHdp+2Pp3vmvi6woniHlaqdA3k6KxAUMbuA0gN3YHaiuZcpkK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxcJEVvlp35AY02AzRadpiJipGpt0U76YybAsxVMUx9LvVvzeC
-	ORDEi9sTJSBrdr5hWQpyfpO9M1MyOQ4Fc3hdNCKiDqkTUXqA31Irt3E9L13fjspyyTsGrNfPSBA
-	Py+bootLQkhczGoJDaTNPNkEMsLMTHOuTASTI
-X-Google-Smtp-Source: AGHT+IHHrb1ZvDYKv4j0/c2a3JEmXpHadHXvk776QJ9rlhtlmkBkz9Vi+wH6TGQLWMsWaJaZ1alAT7TfAiJDX888U4w=
-X-Received: by 2002:adf:f9d0:0:b0:37c:cfa4:d998 with SMTP id
- ffacd0b85a97d-37eb4768898mr12672840f8f.49.1729601193295; Tue, 22 Oct 2024
- 05:46:33 -0700 (PDT)
+	s=arc-20240116; t=1729601193; c=relaxed/simple;
+	bh=LpFd92aF5ztU1uSojFRtPX+WnRyuXfcyz49zc5zGDaE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S8ictqRmlCnCjcx7EtIhANL9m1Cv+vhepVaTTq3Ouc4fWgCbiCF6MwXtN2bWrIZuHtxNWGPMdH/i2rpRHs2Q7A3uJ5eQuLQY9XQzsSRdxaORmZOJZR7RX0GvdtJgADhE34a+EOvWhoWwokwrykXTH1qN3Hz+hkrpLkNuLAd97EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CZYms94K; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729601189;
+	bh=LpFd92aF5ztU1uSojFRtPX+WnRyuXfcyz49zc5zGDaE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=CZYms94Ko90sb+opvE6Cr0HHDHwV6NV7EW3T4GlohAkSAmCF/amd2n7DtB8BiH1jV
+	 IkiM+VwVFQzk5Y5t5M0roOE+vdIiKuBOZ04/lCHE4/RQwqQhFreFTlmWu5ZBnYdEmA
+	 OpIfSutlrz+trhx5hPbG1+aoDJ1sVP2dLmj/dibKf1XPATAfnlHBHwqUhdtgf5BXuD
+	 fBpbKfVVmWruQG2M2b2LITufnnl7MZqTXCy2hJHsu9ThxW07c9XmsAaxdN4DnPPUam
+	 mnK6FS+iWj4hbOD4BtpAorwR7Yw2SJ5SRJhemtmqXfFQtS2MGL/0aKMuq347HhYv9H
+	 M108qH0Ubqlyw==
+Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E27FD17E3607;
+	Tue, 22 Oct 2024 14:46:27 +0200 (CEST)
+Message-ID: <26e78427fdd3699e237a20d803c02202c868c2ff.camel@collabora.com>
+Subject: Re: [PATCH] media: verisilicon: av1: Store chroma and mv offsets
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de, mchehab@kernel.org, 
+	heiko@sntech.de
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@collabora.com
+Date: Tue, 22 Oct 2024 08:46:26 -0400
+In-Reply-To: <01020192afc4f87b-fd9b4515-9e30-41e7-8cf9-029cf5c0c7b6-000000@eu-west-1.amazonses.com>
+References: 
+	<01020192afc4f87b-fd9b4515-9e30-41e7-8cf9-029cf5c0c7b6-000000@eu-west-1.amazonses.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-static-mutex-v5-1-8d118a6a99b7@google.com> <ZxZxzjEaSZ8e_6mn@boqun-archlinux>
-In-Reply-To: <ZxZxzjEaSZ8e_6mn@boqun-archlinux>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 22 Oct 2024 14:46:19 +0200
-Message-ID: <CAH5fLgg=Hb5NDaQQJW4SVh+hCj51bp+BzCMQs=Pg_L+_MMiZgA@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: add global lock support
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 5:23=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Mon, Oct 21, 2024 at 01:17:23PM +0000, Alice Ryhl wrote:
-> [...]
-> > +///
-> > +/// A global mutex used to protect all instances of a given struct.
-> > +///
-> > +/// ```
-> > +/// # mod ex {
-> > +/// # use kernel::prelude::*;
-> > +/// kernel::sync::global_lock! {
-> > +///     // SAFETY: Initialized in module initializer before first use.
-> > +///     unsafe(uninit) static MY_MUTEX: Mutex<(), Guard =3D MyGuard, L=
-ockedBy =3D LockedByMyMutex> =3D ();
->
-> Thanks! This looks much better now ;-)
->
-> But I still want to get rid of "LockedBy=3D", so I've tried and seems it
-> works, please see the below diff on top of your patch, I think it's
-> better because:
->
-> * Users don't to pick up the names for the locked_by type ;-)
-> * It moves a significant amount of code out of macros.
-> * By having:
->
->     struct MyStruct {
->         my_counter: GlobalLockedBy<MyGuard, u32>,
->     }
->
->   , it's much clear for users to see which guard is used to protected
->   `my_counter`.
->
-> I prefer this way. Any concern about doing this?
+Hi,
 
-I think I came up with an even better way of doing it. The macro can
-generate a dummy token type for the global lock, and then we can have
-three types: GlobalLock<T>, GlobalGuard<T>, GlobalLockedBy<T> that are
-all generic over the token type. The token type is an empty enum with
-no contents, but implements an unsafe trait saying that there's only
-one static using it.
+Le lundi 21 octobre 2024 à 15:49 +0000, Benjamin Gaignard a écrit :
+> Store chroma and motion vectors offsets for each frame so
+> they can be used later when resolution change.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 
-This way we also do not need the helper module, as we no longer need
-to generate a struct with private fields.
+This is nicer then recalculating it from width/height of the ref frame like we
+do in RK VP9 driver. I think this patch could have a Fixes tag. As we discuss, I
+believe AOM test suite does not cover this case ? and thus the fluster score is
+unchanged ?
 
-Alice
+I still think this patch is correct, so:
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> ---
+>  drivers/media/platform/verisilicon/hantro.h              | 7 +++++++
+>  .../platform/verisilicon/rockchip_vpu981_hw_av1_dec.c    | 9 +++++----
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/verisilicon/hantro.h b/drivers/media/platform/verisilicon/hantro.h
+> index 811260dc3c77..6d36371c1d13 100644
+> --- a/drivers/media/platform/verisilicon/hantro.h
+> +++ b/drivers/media/platform/verisilicon/hantro.h
+> @@ -332,12 +332,19 @@ struct hantro_vp9_decoded_buffer_info {
+>  	u32 bit_depth : 4;
+>  };
+>  
+> +struct hantro_av1_decoded_buffer_info {
+> +	/* Info needed when the decoded frame serves as a reference frame. */
+> +	size_t chroma_offset;
+> +	size_t mv_offset;
+> +};
+> +
+>  struct hantro_decoded_buffer {
+>  	/* Must be the first field in this struct. */
+>  	struct v4l2_m2m_buffer base;
+>  
+>  	union {
+>  		struct hantro_vp9_decoded_buffer_info vp9;
+> +		struct hantro_av1_decoded_buffer_info av1;
+>  	};
+>  };
+>  
+> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+> index e54f5fac325b..69b5d9e12926 100644
+> --- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+> +++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+> @@ -686,8 +686,6 @@ rockchip_vpu981_av1_dec_set_ref(struct hantro_ctx *ctx, int ref, int idx,
+>  	struct hantro_dev *vpu = ctx->dev;
+>  	struct hantro_decoded_buffer *dst;
+>  	dma_addr_t luma_addr, chroma_addr, mv_addr = 0;
+> -	size_t cr_offset = rockchip_vpu981_av1_dec_luma_size(ctx);
+> -	size_t mv_offset = rockchip_vpu981_av1_dec_chroma_size(ctx);
+>  	int cur_width = frame->frame_width_minus_1 + 1;
+>  	int cur_height = frame->frame_height_minus_1 + 1;
+>  	int scale_width =
+> @@ -744,8 +742,8 @@ rockchip_vpu981_av1_dec_set_ref(struct hantro_ctx *ctx, int ref, int idx,
+>  
+>  	dst = vb2_to_hantro_decoded_buf(&av1_dec->frame_refs[idx].vb2_ref->vb2_buf);
+>  	luma_addr = hantro_get_dec_buf_addr(ctx, &dst->base.vb.vb2_buf);
+> -	chroma_addr = luma_addr + cr_offset;
+> -	mv_addr = luma_addr + mv_offset;
+> +	chroma_addr = luma_addr + dst->av1.chroma_offset;
+> +	mv_addr = luma_addr + dst->av1.mv_offset;
+>  
+>  	hantro_write_addr(vpu, AV1_REFERENCE_Y(ref), luma_addr);
+>  	hantro_write_addr(vpu, AV1_REFERENCE_CB(ref), chroma_addr);
+> @@ -2089,6 +2087,9 @@ rockchip_vpu981_av1_dec_set_output_buffer(struct hantro_ctx *ctx)
+>  	chroma_addr = luma_addr + cr_offset;
+>  	mv_addr = luma_addr + mv_offset;
+>  
+> +	dst->av1.chroma_offset = cr_offset;
+> +	dst->av1.mv_offset = mv_offset;
+> +
+>  	hantro_write_addr(vpu, AV1_TILE_OUT_LU, luma_addr);
+>  	hantro_write_addr(vpu, AV1_TILE_OUT_CH, chroma_addr);
+>  	hantro_write_addr(vpu, AV1_TILE_OUT_MV, mv_addr);
+
 
