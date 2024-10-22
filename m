@@ -1,271 +1,201 @@
-Return-Path: <linux-kernel+bounces-376979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA1A9AB853
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:16:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03299AB856
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E571F21B58
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654252849C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFC41CC164;
-	Tue, 22 Oct 2024 21:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076AD1CCEC7;
+	Tue, 22 Oct 2024 21:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V1AENrhU"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="wuEssT1o"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4978A149005
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCB149005
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631806; cv=none; b=U2S0tLU3KLKOh2bERJpqAeMF1MpMYv4UJa2xXg+pzlCANRf/lE+KKrExs5K24SS5bse12TGID89o1cm5lV2eA56q/WQDAl2j4oxLtY2xxEBQxiXSgW4FUe4EtWww7DiV84Uuru2ECI8xwV/9lzL6mbKczViAdHeeI9plqtW3VCU=
+	t=1729631839; cv=none; b=Txc2chF1vQMhEMqNQnIkU7vktsgqXa8MQqB9X8ksg4KFTGBoDDjY4Aa/m5eyVUPzGbMfTUULR1B1UkThmMqsDSv4GV5r66N1KR4lzlva45ueuGJjQHVf10cDsQ5di2b/tr0k10G3kif0o35B34vUJ3esfSFx6zboY+rVChHCCVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631806; c=relaxed/simple;
-	bh=c6n0gWbvqw7oAddRF2Ek6T7PRom7ya1+ouXjjqO0yRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=brOIfLtVDepSdFMJHyUWLOwVuVzpR67q5NxVNWO6AZoGlRsSzgk5jXCRFEhwoemgTQeIGSXNWFVmjAHiVv8f8tzoqWaw1jx1zleEg0GBWjiiVBX5JeiSiuI/nsy/UCd5QwdW+tEgKD4SV66EvBP8Gq6PYdQDQojAO5ZR0jsrhtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V1AENrhU; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2bb1efe78so176492a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:16:45 -0700 (PDT)
+	s=arc-20240116; t=1729631839; c=relaxed/simple;
+	bh=QmmkDDCXAG8vH2LuvuGGchAcSn4cqJqkERl20uX75rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FS40wmu48eRXyzOQfv7DeHVxM2uFdvfQwhq7Vr4fOLzLtk+EPnYYft1h1MEDfp1F0MTuopayMW3MpiLSmEY6NSDM4SZYzyKMyzxcn38ZOuP3tjCVre1B5vDl95jb72kNAB4Vo2FZS+uAztaFOOyc1stvxoNGdBfhxKcs3SkXR4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=wuEssT1o; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20ca388d242so43600825ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:17:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729631804; x=1730236604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V2yWqm8AWRnPf2GnNAOnZK8arNwZlIGQowX3/ant1gA=;
-        b=V1AENrhUH5D6oem3ATiohlmAoLHC9Xp5HzKYhOvUKUICeMz5dinACfrY6TZtaiojPH
-         ISCTnb2x3oApvq1e8sDLfowIDU5uayoGPVcntHL4VbfazcYrsdQaTWK1BQDj0d4cRz2O
-         BMYKsmYvOkwdTOWibHnCetvaTye1BW1oYLEmaDxr7eE6e15QvPKiCUjEtjO3CSV22DEY
-         4FH4T3gwYaiclN8ueEcKAd7PQRSc/mztS8jgjt0dX+JKoqebdTynvCorBvNaxLFliO/n
-         p4nlWORbTdN1WGBrf80rlzOmWAa4ETFpSCj74rYNNS+tJgVxtVGLB5RU5SznNmM0WfG1
-         sUpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729631804; x=1730236604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1729631837; x=1730236637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V2yWqm8AWRnPf2GnNAOnZK8arNwZlIGQowX3/ant1gA=;
-        b=UR9Pxv92WdnBOyrPgiWH3r8u5t3gJeGbvDV99iRf+V3j0QU5vXkQm5yPGV6N1EO028
-         uTwpWYhgMCAewSfgKL1IGm6/lORVV7uWHuzz/hQJClYUnkB6O9VHoU+w0sj4WeCj9KmB
-         DFdWNhBLUl1kpU19E/fVAYwvaDwOIwuMEAKb2t/erEpBAsnpOT42VoLdHahcC256pSPT
-         04LT/lfF46/SCzgOgZxaaOvbwAud7CR0d4GJXs98H8QP0IQgu2w3NvS2P6XWA0raWTyA
-         2LHcCHvVNi0CTWMKsYIvl6V+kxZfA0sOIA6pC7Kjea66FmAvg1Oviy6Hh1N6yYMK9qLP
-         o7eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwSlDXLwx4gmA5fXkA2nXt5cMaTVcifs+KIk1KelEPfcv14NDIRCGFCgDAd6EsdEyzfwHC23gt88Th5Lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK1xYFlrJy5rZIR94pJCXJlwv9/STbtPC7bx3OJLU/m1tqquqq
-	2jVfCrrSXbMKKwQu8tYDDRJ2w1Qof9lYuxO/Uma2Xl9+d6P8T+dIR6cYgzuCV6Ro3zVCOzF+6aW
-	7xImm9pwaOKS3z0iQ/WySz+wm0dkoLNLrtzClG+D4/q2TkDF3Rw==
-X-Google-Smtp-Source: AGHT+IH6IlqYAW005LeUD186a2cIqciZIMo7JqQ6nFckAGmNU4SoG3dW3HRcZe2XPh7GaowHYN67S0kpXaedR0hpYJ8=
-X-Received: by 2002:a17:90b:4b0d:b0:2e2:878a:fc6 with SMTP id
- 98e67ed59e1d1-2e5dbaeb69dmr7000590a91.18.1729631804210; Tue, 22 Oct 2024
- 14:16:44 -0700 (PDT)
+        bh=XYr64/ZMrEvmz5LKiZ/kP4LINn+F8DeQPo0l+Qm0N4U=;
+        b=wuEssT1oqrfJzkLVB/E8Q+Zgun1NIPx26TFjcP8bBIo1Vy9TwOtDWAIEUiOHV1cAXy
+         yaXoxwRdiEvW1pFGflelRpWE7wolkumI4Ibn5uGgeJM/l3aGLWRSx2da3cJhlGG6Stg5
+         o2bTDwyKhiix+ZZfxqLPp8yunyHt6Whzcofk8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729631837; x=1730236637;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XYr64/ZMrEvmz5LKiZ/kP4LINn+F8DeQPo0l+Qm0N4U=;
+        b=s2doqwMp/bwoYa0JthcWtlgwDCCqveOp9hvISopoaBZDpj6o2u7g1G7DlJCCKHLI3e
+         Gl8swCyD/ao3eyNnwe845ok6Vv0mV/4UMUPydkj3R8m3sA4fvye7Obojlm8EwZikzuPU
+         XBYME0/Ew/bQhIYbxQ2zuqcvLDcZfbSDrBGol277FOqoRaIsmez1YyAeClCkKZi3S15o
+         DHGwwNzh6iGXNogLLqbUM9cvFU4FOF4znNchWgVdZ8PD0LfhJ1M3Oqo4e7ZgkTXjDZww
+         8S7HqFZSYVh+zX1q88rH2dJ4CLh+c9074eF1Lv9oG3jN93ryUWoigd1wZm1qFtiPmwY9
+         eavQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOoWFY7UUtPckCxhW7o5OM0fvwgPT7BOq7oaVde9AdSKrd6H/GPN4onde5XmLeN9nOwO9ETyB5MZOLnUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNlN3ptNL3Cxu+/647a2keHwnAah0TWn0g9ySDMRVLumvvTv+7
+	ypoq+gO/3oGve0ZitVNLERvAJuTHw3U+bEz+1Pqz1Gga/qLaBCI/1h9xjfyAzj0=
+X-Google-Smtp-Source: AGHT+IGi6HnkolQs9gyiaf/yt0J5Hxo52WSssx+MmkAvaoJ2SCUXBOL2PutgPzSeR1QzfzbnP4nzWQ==
+X-Received: by 2002:a17:902:e5c4:b0:20c:637e:b28 with SMTP id d9443c01a7336-20fa9e9f461mr5423065ad.39.1729631837337;
+        Tue, 22 Oct 2024 14:17:17 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f363esm46806005ad.269.2024.10.22.14.17.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 14:17:16 -0700 (PDT)
+Date: Tue, 22 Oct 2024 14:17:14 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org, dmantipov@yandex.ru,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [Intel-wired-lan] [RFC iwl-net] e1000: Hold RTNL when e1000_down
+ can be called
+Message-ID: <ZxgWWgJKx4h0Thfe@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jacob Keller <jacob.e.keller@intel.com>, netdev@vger.kernel.org,
+	dmantipov@yandex.ru, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241022172153.217890-1-jdamato@fastly.com>
+ <ZxgEb0N0cJt1BRte@LQ3V64L9R2>
+ <ZxgVRX7Ne-lTjwiJ@LQ3V64L9R2>
+ <270a914d-3b50-4eee-b564-1b8cff82facc@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172920085854.4578.9203147717033046574.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-In-Reply-To: <172920085854.4578.9203147717033046574.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-From: Rae Moar <rmoar@google.com>
-Date: Tue, 22 Oct 2024 17:16:31 -0400
-Message-ID: <CA+GJov4Kfo5EwjXRe8vufhMetsYzHG7bJS6VERaE8+1rNL69Vg@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Introduce autorun option
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <270a914d-3b50-4eee-b564-1b8cff82facc@intel.com>
 
-On Thu, Oct 17, 2024 at 5:34=E2=80=AFPM Stanislav Kinsburskii
-<skinsburskii@linux.microsoft.com> wrote:
->
-> The new option controls tests run on boot or module load. With the new
-> debugfs "run" dentry allowing to run tests on demand, an ability to disab=
-le
-> automatic tests run becomes a useful option in case of intrusive tests.
->
-> The option is set to true by default to preserve the existent behavior. I=
-t
-> can be overridden by either the corresponding module option or by the
-> corresponding config build option.
->
-> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+On Tue, Oct 22, 2024 at 02:15:27PM -0700, Jacob Keller wrote:
+> 
+> 
+> On 10/22/2024 2:12 PM, Joe Damato wrote:
+> > On Tue, Oct 22, 2024 at 01:00:47PM -0700, Joe Damato wrote:
+> >> On Tue, Oct 22, 2024 at 05:21:53PM +0000, Joe Damato wrote:
+> >>> e1000_down calls netif_queue_set_napi, which assumes that RTNL is held.
+> >>>
+> >>> There are a few paths for e1000_down to be called in e1000 where RTNL is
+> >>> not currently being held:
+> >>>   - e1000_shutdown (pci shutdown)
+> >>>   - e1000_suspend (power management)
+> >>>   - e1000_reinit_locked (via e1000_reset_task delayed work)
+> >>>
+> >>> Hold RTNL in two places to fix this issue:
+> >>>   - e1000_reset_task
+> >>>   - __e1000_shutdown (which is called from both e1000_shutdown and
+> >>>     e1000_suspend).
+> >>
+> >> It looks like there's one other spot I missed:
+> >>
+> >> e1000_io_error_detected (pci error handler) which should also hold
+> >> rtnl_lock:
+> >>
+> >> +       if (netif_running(netdev)) {
+> >> +               rtnl_lock();
+> >>                 e1000_down(adapter);
+> >> +               rtnl_unlock();
+> >> +       }
+> >>
+> >> I can send that update in the v2, but I'll wait to see if Intel has suggestions
+> >> on the below.
+> >>  
+> >>> The other paths which call e1000_down seemingly hold RTNL and are OK:
+> >>>   - e1000_close (ndo_stop)
+> >>>   - e1000_change_mtu (ndo_change_mtu)
+> >>>
+> >>> I'm submitting this is as an RFC because:
+> >>>   - the e1000_reinit_locked issue appears very similar to commit
+> >>>     21f857f0321d ("e1000e: add rtnl_lock() to e1000_reset_task"), which
+> >>>     fixes a similar issue in e1000e
+> >>>
+> >>> however
+> >>>
+> >>>   - adding rtnl to e1000_reinit_locked seemingly conflicts with an
+> >>>     earlier e1000 commit b2f963bfaeba ("e1000: fix lockdep warning in
+> >>>     e1000_reset_task").
+> >>>
+> >>> Hopefully Intel can weigh in and shed some light on the correct way to
+> >>> go.
+> > 
+> > Regarding the above locations where rtnl_lock may need to be held,
+> > comparing to other intel drivers:
+> > 
+> >   - e1000_reset_task: it appears that igc, igb, and e100e all hold
+> >     rtnl_lock in their reset_task functions, so I think adding an
+> >     rtnl_lock / rtnl_unlock to e1000_reset_task should be OK,
+> >     despite the existence of commit b2f963bfaeba ("e1000: fix
+> >     lockdep warning in e1000_reset_task").
+> > 
+> >   - e1000_io_error_detected:
+> >       - e1000e temporarily obtains and drops rtnl in
+> >         e1000e_pm_freeze
+> >       - ixgbe holds rtnl in the same path (toward the bottom of
+> >         ixgbe_io_error_detected)
+> >       - igb does NOT hold rtnl in this path (as far as I can tell)
+> >       - it was suggested in another thread to hold rtnl in this path
+> >         for igc [1].
+> >        
+> >      Given that it will be added to igc and is held in this same
+> >      path in e1000e and ixgbe, I think it is safe to add it for
+> >      e1000, as well.
+> > 
+> >  - e1000_shutdown: 
+> >    - igb holds rtnl in the same path,
+> >    - e1000e temporarily holds it in this path (via
+> >      e1000e_pm_freeze)
+> >    - ixgbe holds rtnl in the same path
+> > 
+> > So based on the recommendation for igc [1], and the precedent set in
+> > the other Intel drivers in most cases (except igb and the io_error
+> > path), I think adding rtnl to all 3 locations described above is
+> > correct.
+> > 
+> > Please let me know if you all agree. Thanks for reviewing this.
+> > 
+> > 
+> [1]:
+> https://lore.kernel.org/netdev/40242f59-139a-4b45-8949-1210039f881b@intel.com/
+> 
+> I agree with this assessment.
 
-Hello!
-
-This patch looks good to me! The functionality seems to be working
-well. I do have one comment below.
-
-Thanks!
--Rae
-
-> ---
->  include/kunit/test.h |    4 +++-
->  lib/kunit/Kconfig    |   12 ++++++++++++
->  lib/kunit/debugfs.c  |    2 +-
->  lib/kunit/executor.c |   18 +++++++++++++++++-
->  lib/kunit/test.c     |    6 ++++--
->  5 files changed, 37 insertions(+), 5 deletions(-)
->
-> diff --git a/include/kunit/test.h b/include/kunit/test.h
-> index 34b71e42fb10..58dbab60f853 100644
-> --- a/include/kunit/test.h
-> +++ b/include/kunit/test.h
-> @@ -312,6 +312,7 @@ static inline void kunit_set_failure(struct kunit *te=
-st)
->  }
->
->  bool kunit_enabled(void);
-> +bool kunit_autorun(void);
->  const char *kunit_action(void);
->  const char *kunit_filter_glob(void);
->  char *kunit_filter(void);
-> @@ -334,7 +335,8 @@ kunit_filter_suites(const struct kunit_suite_set *sui=
-te_set,
->                     int *err);
->  void kunit_free_suite_set(struct kunit_suite_set suite_set);
->
-> -int __kunit_test_suites_init(struct kunit_suite * const * const suites, =
-int num_suites);
-> +int __kunit_test_suites_init(struct kunit_suite * const * const suites, =
-int num_suites,
-> +                            bool run_tests);
->
->  void __kunit_test_suites_exit(struct kunit_suite **suites, int num_suite=
-s);
->
-> diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-> index 34d7242d526d..a97897edd964 100644
-> --- a/lib/kunit/Kconfig
-> +++ b/lib/kunit/Kconfig
-> @@ -81,4 +81,16 @@ config KUNIT_DEFAULT_ENABLED
->           In most cases this should be left as Y. Only if additional opt-=
-in
->           behavior is needed should this be set to N.
->
-> +config KUNIT_AUTORUN_ENABLED
-> +       bool "Default value of kunit.autorun"
-> +       default y
-> +       help
-> +         Sets the default value of kunit.autorun. If set to N then KUnit
-> +         tests will not run after initialization unless kunit.autorun=3D=
-1 is
-> +         passed to the kernel command line. The test can still be run ma=
-nually
-> +         via debugfs interface.
-> +
-> +         In most cases this should be left as Y. Only if additional opt-=
-in
-> +         behavior is needed should this be set to N.
-> +
->  endif # KUNIT
-> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-> index d548750a325a..9df064f40d98 100644
-> --- a/lib/kunit/debugfs.c
-> +++ b/lib/kunit/debugfs.c
-> @@ -145,7 +145,7 @@ static ssize_t debugfs_run(struct file *file,
->         struct inode *f_inode =3D file->f_inode;
->         struct kunit_suite *suite =3D (struct kunit_suite *) f_inode->i_p=
-rivate;
->
-> -       __kunit_test_suites_init(&suite, 1);
-> +       __kunit_test_suites_init(&suite, 1, true);
->
->         return count;
->  }
-> diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
-> index 34b7b6833df3..340723571b0f 100644
-> --- a/lib/kunit/executor.c
-> +++ b/lib/kunit/executor.c
-> @@ -29,6 +29,22 @@ const char *kunit_action(void)
->         return action_param;
->  }
->
-> +/*
-> + * Run KUnit tests after initialization
-> + */
-> +#ifdef CONFIG_KUNIT_AUTORUN_ENABLED
-> +static bool autorun_param =3D true;
-> +#else
-> +static bool autorun_param;
-> +#endif
-> +module_param_named(autorun, autorun_param, bool, 0);
-> +MODULE_PARM_DESC(autorun, "Run KUnit tests after initialization");
-> +
-> +bool kunit_autorun(void)
-> +{
-> +       return autorun_param;
-> +}
-> +
->  static char *filter_glob_param;
->  static char *filter_param;
->  static char *filter_action_param;
-> @@ -266,7 +282,7 @@ void kunit_exec_run_tests(struct kunit_suite_set *sui=
-te_set, bool builtin)
->                 pr_info("1..%zu\n", num_suites);
-
-When using this feature, I still see some KTAP output that are printed
-from this function (kunit_exec_run_tests). I think it would be great
-if we could remove this output as to not clutter the kernel log.
-
-At first, I was confused as to why we needed to call this function and
-initialize the tests but I realized the debugfs suites need to be
-created.
-
-So instead, could we check for kunit_autorun() here instead as a
-condition before printing the output?
-
->         }
->
-> -       __kunit_test_suites_init(suite_set->start, num_suites);
-> +       __kunit_test_suites_init(suite_set->start, num_suites, kunit_auto=
-run());
->  }
->
->  void kunit_exec_list_tests(struct kunit_suite_set *suite_set, bool inclu=
-de_attr)
-> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-> index 089c832e3cdb..146d1b48a096 100644
-> --- a/lib/kunit/test.c
-> +++ b/lib/kunit/test.c
-> @@ -708,7 +708,8 @@ bool kunit_enabled(void)
->         return enable_param;
->  }
->
-> -int __kunit_test_suites_init(struct kunit_suite * const * const suites, =
-int num_suites)
-> +int __kunit_test_suites_init(struct kunit_suite * const * const suites, =
-int num_suites,
-> +                            bool run_tests)
->  {
->         unsigned int i;
->
-> @@ -731,7 +732,8 @@ int __kunit_test_suites_init(struct kunit_suite * con=
-st * const suites, int num_
->
->         for (i =3D 0; i < num_suites; i++) {
->                 kunit_init_suite(suites[i]);
-> -               kunit_run_tests(suites[i]);
-> +               if (run_tests)
-> +                       kunit_run_tests(suites[i]);
->         }
->
->         static_branch_dec(&kunit_running);
->
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/kunit-dev/172920085854.4578.9203147717033046574.stgit%40skinsburskii-clou=
-d-desktop.internal.cloudapp.net.
+Thanks for taking a look. I will send an official iwl-net PATCH with
+these changes once the 24 hour timer has expired.
 
