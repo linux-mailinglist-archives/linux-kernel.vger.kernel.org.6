@@ -1,104 +1,262 @@
-Return-Path: <linux-kernel+bounces-376304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72C09AA2E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D924F9AA2E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FF25B2341F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584C61F22726
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6404D19DFA7;
-	Tue, 22 Oct 2024 13:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBvi+bP9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0959019DF9E;
+	Tue, 22 Oct 2024 13:19:46 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F219DF5F;
-	Tue, 22 Oct 2024 13:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2519DF5F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729603152; cv=none; b=uFoCxQhUg5U62astLMmkkJNzgiUJOWUR7vSaKFp06IcD2DzGKJlsyyp27r1rbSjUfyRBhuZq3X93kW+/LrY+lr5pYwHpGytpudv3niiVLa4SKKRL0E6aK9pUgmJzLzDShBzTO/qQt2KS7FLyXHmdr1rcnoOJCmbf5s5bBwWCteA=
+	t=1729603185; cv=none; b=ZjAR0tthlyuvP6Pup63LhgP3lq/RCIDMqLTmhWihKAA5qOo+On4cKkvbE5/4r2WkWhddMbPsxso9JoAyw6HJcTO5VBFH/H44HpbrtlO8k+v71OfIkL7UANQppG9ujZ2QKrQphWzAuaCIZzXqKSHnvfGqziuGwZb2oADIGPezqew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729603152; c=relaxed/simple;
-	bh=7ESKou5zq9IymgraonECnbSiIZTp74/vzkwxutW5rZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ad5pe1gCzfimf0aify93Av3795UchSZ/F53btNQvfr5Epv9g0L2Y/yxqmo6cptchiCyyU9e0yDx6EkdYDgjnGzHb5GFOUDiaA/BIKtF0wEs6g8qtmJ1LmYCmhnA84Yfu9dQaJKO0et/ve+LlyUEjgQbwB3ZQBp6WH0RzJSY5qvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBvi+bP9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27420C4CEC3;
-	Tue, 22 Oct 2024 13:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729603152;
-	bh=7ESKou5zq9IymgraonECnbSiIZTp74/vzkwxutW5rZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NBvi+bP9EkC87XImGyMUF2UsV4sfqV1aqgOIrAVZYSr78doeF+HXqqZraYKRhLI5H
-	 5O9szzhiKPLvRM/lriLYEbQGC3T+xx+VrFooqKvsPVWH7dOXFtb9oL9wESWXbAdC0n
-	 OW2tStH4uO8vBDKHBt5r2qR918N8j18Nm1AmKGBpm8wnR21ymA/vSdteMH2gB7Mft6
-	 rIHPym3R8KouaHUF69SNknDd/2s1MCjVoRqEqWUz6z7FSiHsALU9x0JsCeU6RutqEQ
-	 bPq4mbGcuJSpajFEoNxE16rDigvI2ISE3x8+GukhJwSojk3WO/vigdG02Z5gQd7hdP
-	 AJwFuTWyywOlA==
-Date: Tue, 22 Oct 2024 14:19:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ca2ca07c-33c9-4d67-80b3-f8c506938ba5@sirena.org.uk>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <6dbbc85e-5a87-4605-8db6-92b191878d97@sirena.org.uk>
- <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
+	s=arc-20240116; t=1729603185; c=relaxed/simple;
+	bh=jr3eYlepC/Pes/1AfQJbfbjR0BX88PLItLRx5Z8fEOg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KrJcPfLQBRMgcma+kZ/+L8SkpJz/OS3AIhjP+bpzAiuE0d1OZT+J60FMiB5jyfqLVgH/DkVBNfIdF7O1rk4PRAwcHvIbkNRIftG9RJ2tRcDmeZ8NR8w7rWno8Sv/OvMMfHCAdN2CsiI1zdUlddS4zUjiBPjnGIbuwrXaLzCVwvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so50259465ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:19:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729603183; x=1730207983;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=21Stx3y9XlPMtEInUKq5l0Cb7mYtjf+MQaH/tk384o8=;
+        b=Fe3rqp7Q7mQtn+0DWETkQgl0YDhcRmnLKVIif51ifEFS+NdIt0ZPT1u73TImfI8719
+         Gq/6NNMBwP4cqTHqfWBbdMqVfUaCTLWNd5oPcKcle3DNVvg9R8Fc/BYNG8Opk3WEvFgE
+         gR++076nUORVsV4rrOdWblFBPbQDCG6lLh2CDeV2L1hhGqqQzr406U4Xr9g3fc9emM2x
+         UeiSz1Yb8JrFJJrZ5CXvgmi3yTEivcIBL0bewEHrPNKmFOgun8cdwZXBsfa/fjFU0tq6
+         JGPw1Ac9/vdzKT6Hrd4FX3g4r5UmlcJZ4j+fAzFzX4eeC6nn9ctrtre8DengQLor9Ynz
+         22GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0DHT+kmM73V3KMx55Z+yL527amqt/1SPg2cG9cxpReXycOyc3wjxnKCJcLBFGQnsWQLzONVyuBkxlCGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgr9s0SIPgAmyjOxp7M3OWLC8A3Ggcs4gzbR626Wr9dE5hxKDV
+	E6qrZcHGKtFcxbhHh2wdM98r2UpIf/hw2eVURRxh0g31ZeKSwpEgHzat6UYYJzE3I8ETD1vAsFm
+	ZmKbclGKy369tqSBtg7u7kAryYxyRJRdWoia2woe6xNfivKb940ZnqWA=
+X-Google-Smtp-Source: AGHT+IEXnAMtJB8k2+7SxGiopBQQ0evOp4myMxFtrHgZA8QEz2z+1tc2ugqjpkn8cuCPk0EurX2U1128DwRHrvo48Rik05TMUkPM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F3L4+Uj0eovB8ftm"
-Content-Disposition: inline
-In-Reply-To: <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
-X-Cookie: Surprise due today.  Also the rent.
+X-Received: by 2002:a05:6e02:1564:b0:3a1:a3bd:adcc with SMTP id
+ e9e14a558f8ab-3a3f405d07emr132573605ab.6.1729603182836; Tue, 22 Oct 2024
+ 06:19:42 -0700 (PDT)
+Date: Tue, 22 Oct 2024 06:19:42 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6717a66e.050a0220.10f4f4.0127.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in __closure_sync_timeout
+From: syzbot <syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10e58a5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=43d0c6eb00a26a41ec60
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12265430580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1105c640580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d116f71ad0eb/disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdd6f545b105/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0d26b05e3d7c/bzImage-c2ee9f59.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a2d3caf3a599/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com
+
+INFO: task kworker/0:2:937 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:2     state:D stack:17008 pid:937   tgid:937   ppid:2      flags:0x00004000
+Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work (bcachefs-delete-dead-snapshots/)
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
+ bch2_btree_update_start+0x11a2/0x14e0 fs/bcachefs/btree_update_interior.c:1274
+ bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+ bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
+ __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_delete_dead_snapshots+0x19b6/0x5ae0 fs/bcachefs/snapshot.c:1643
+ bch2_delete_dead_snapshots_work+0x34/0x40 fs/bcachefs/snapshot.c:1718
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task bch-reclaim/loo:5264 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:bch-reclaim/loo state:D stack:21976 pid:5264  tgid:5264  ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
+ bch2_btree_update_start+0x11a2/0x14e0 fs/bcachefs/btree_update_interior.c:1274
+ bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+ bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
+ __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_btree_write_buffer_flush_locked+0x4f03/0x59f0 fs/bcachefs/btree_write_buffer.c:429
+ btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
+ bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
+ journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
+ __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
+ bch2_journal_reclaim_thread+0x174/0x560 fs/bcachefs/journal_reclaim.c:740
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task bch-copygc/loop:5265 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:bch-copygc/loop state:D stack:18968 pid:5265  tgid:5265  ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
+ __bch2_write+0x56ad/0x5e30 fs/bcachefs/io_write.c:1504
+ bch2_write+0x9b5/0x1760 fs/bcachefs/io_write.c:1634
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_data_update_read_done+0x22e/0x330 fs/bcachefs/data_update.c:424
+ move_write fs/bcachefs/move.c:133 [inline]
+ bch2_moving_ctxt_do_pending_writes+0x44c/0x8d0 fs/bcachefs/move.c:164
+ bch2_move_ratelimit+0x76c/0xeb0 fs/bcachefs/move.c:492
+ bch2_evacuate_bucket+0x2738/0x36a0 fs/bcachefs/move.c:702
+ bch2_copygc+0x42db/0x4ca0 fs/bcachefs/movinggc.c:240
+ bch2_copygc_thread+0x737/0xc20 fs/bcachefs/movinggc.c:381
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+4 locks held by kworker/0:2/937:
+ #0: ffff88814479b548 ((wq_completion)bcachefs_write_ref){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88814479b548 ((wq_completion)bcachefs_write_ref){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc900038ffd00 ((work_completion)(&c->snapshot_delete_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc900038ffd00 ((work_completion)(&c->snapshot_delete_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
+ #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
+ #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x97/0x1a0 fs/bcachefs/btree_iter.c:3040
+ #3: ffff888077fa66d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
+2 locks held by getty/4982:
+ #0: ffff8880329220a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+4 locks held by bch-reclaim/loo/5264:
+ #0: ffff888077fcb0a8 (&j->reclaim_lock){+.+.}-{3:3}, at: bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:739
+ #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
+ #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
+ #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3215
+ #2: ffff888077f84740 (&wb->flushing.lock){+.+.}-{3:3}, at: btree_write_buffer_flush_seq+0x1a39/0x1bc0 fs/bcachefs/btree_write_buffer.c:509
+ #3: ffff888077fa66d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 5710 Comm: syz-executor101 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0033:0x7f4adf789ccb
+Code: cd 48 01 c1 49 39 4f 08 72 4c 8d 4d ff 85 ed 74 33 66 0f 1f 44 00 00 48 39 f0 72 1b 4d 8b 07 49 89 c1 49 29 f1 47 0f b6 0c 08 <45> 84 c9 74 08 45 88 0c 00 49 8b 47 10 48 83 c0 01 49 89 47 10 83
+RSP: 002b:00007ffde888de70 EFLAGS: 00000206
+RAX: 000000000050ec64 RBX: 00007ffde888df10 RCX: 00000000000000bd
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00007ffde888dfb0
+RBP: 0000000000000102 R08: 00007f4ad7200000 R09: 0000000000000000
+R10: 0000000000000000 R11: 00007ffde888df20 R12: 0000000000000001
+R13: 00007f4adf80cc00 R14: 0000000000000000 R15: 00007ffde888dfb0
+FS:  0000555591fa7380 GS:  0000000000000000
 
 
---F3L4+Uj0eovB8ftm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Tue, Oct 22, 2024 at 11:10:36AM +0200, Thorsten Leemhuis wrote:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> I wonder if part of this is a "don't know how to do that" aka "lack of
-> documentation" problem. I've recently seen some good guide or mailing
-> list post how to bisect -next somewhere, but I think it wasn't in our
-> Documentation/ directory. I need to search where that was (Mark, I might
-> misremember, but wasn't it you who posted it somewhere?) and could work
-> towards upstreaming that or some other guide. And don't worry, due to
-> the different target audience it would be much shorter text than other
-> documents I contributed. ;-)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I don't recall anything specific, though it's plausible I said something
-in a thread that was basically just the bit about bisecting between
-mainline<->pending-fixes<->-next rather than between -next versions.
-You're right that we should have that in the documentation somewhere,
-I'll look at sending a patch.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
---F3L4+Uj0eovB8ftm
-Content-Type: application/pgp-signature; name="signature.asc"
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
------BEGIN PGP SIGNATURE-----
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcXpksACgkQJNaLcl1U
-h9BXAwf9HpeGav88rfe17V/DacJDvBA8PGtwWWcRTxpMwA4bNgZO8PlnS/yo87NU
-jE0WVtixjtG8AvCTCL5I8ibuHuV61EnDgR2I5McK9KvoJvHqlDpmFfB21RGl3aBr
-d63ey4Pn+JKp7MKGRxN6vhtY1QfrYYk5AzgRVPaYQBIdVGUx90WzmcpYXlRgPO4z
-I/+Dw6kOYRp2G1kKnBllxwAO44WJFmfcsnm21O/qU3Jag0WhInqzO703kl1Tmfn2
-9Q4WWt9BcHIWUGcsvS+o7UsI8pT8LwEZv8zxCvix/bLfsvDJKmwbS7lgqbD++4Tf
-SeL2Yqxr2gQexQdn2NLNYTAoUyei2A==
-=Gf0L
------END PGP SIGNATURE-----
-
---F3L4+Uj0eovB8ftm--
+If you want to undo deduplication, reply with:
+#syz undup
 
