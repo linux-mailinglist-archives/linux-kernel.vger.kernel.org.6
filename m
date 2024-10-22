@@ -1,156 +1,159 @@
-Return-Path: <linux-kernel+bounces-376053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0130E9A9F47
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:55:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C55DF9A9F4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221D41C251C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:55:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F69B233DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF64B199939;
-	Tue, 22 Oct 2024 09:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB3519925A;
+	Tue, 22 Oct 2024 09:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oQamoZmR"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA418E02D;
-	Tue, 22 Oct 2024 09:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcK3w6DK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0643198E7F;
+	Tue, 22 Oct 2024 09:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590907; cv=none; b=l7C0GjGXkq0rvGeygKpjr7ezj5c1T5DZJlbeTbFwP0EcYY8ws52Kbn/uiuOHyBqRALATQYmyT4Mvda4lMvCxtHRR7PQEQYn7xZ7DPyYE15Bj52J8e0NEecMOq/Qw0NbSOqRutwoeAYL8OCfjJkge0SqOBqmho4ZOIkCQmSauF8U=
+	t=1729590976; cv=none; b=kFEbyVD/TeME8ZpHpwVCkgzA9U00xsZnWguOxUxrAfnM/M1z8BxHPekIvq4zVAQt9e/lEw2PhPStLtPURauXy+nmqIVfEUYsmOwqwT6wMbAMxMcaQWGS03x+8XTJmubVNCd6u8JYUdG4zakeNBpHsWmFqpPQqDYMPuRJGVDmk/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590907; c=relaxed/simple;
-	bh=k6Ltj/TLoYtlREJU8ZXVq//qMh3/N8PH+6mw7p68uxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kccctPZrVGLJ9AaRNd9YaJMwhpnNV9TXvzZcsU2pqBs6T+LVenQWTGk9iabL5rNc59nfoTRO2dBVU93oys4OLgz9nhRvFqg9qFkR9LET2/JCSVAysw0wVvkmEx07akGx5JakTwun8RzP81ztaS7n2BngPoVAM1kLb1ssP6w99e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oQamoZmR; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.102] (unknown [49.205.243.117])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BB9BF210D8B7;
-	Tue, 22 Oct 2024 02:55:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BB9BF210D8B7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1729590905;
-	bh=cvkqsbyzhSjxciGOzPHF06gYHKGhIViMYEFthbEOjsk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oQamoZmR3fug4KPcuC/vFNlA2mc66Ajq9qS5xXUgv2y2mthQku10nvs8ljfVM681D
-	 i1S4kFVm0xQDWJyZpyWNoVNn1MDJbhHiuHN6ObEZ1n06Yv/39N1QSH2sGBryP68NOf
-	 d3idDF1uUrA7KG2yAOthGm8v2L1EuqhaOClKxd50=
-Message-ID: <91756da8-f2c3-482a-95ee-6208e1205502@linux.microsoft.com>
-Date: Tue, 22 Oct 2024 15:25:00 +0530
+	s=arc-20240116; t=1729590976; c=relaxed/simple;
+	bh=89GaZV9clZoGjAP19EbcBNmPKkvbswUHxHd7i+4mvzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QDScZEaHGH4Zc2yaYUcyM4EgkvFbnG4A2dsJ8LZAJdA7PcGzj9p0FNpZvIDVDQnmGFobfmsgnZKcjMcFWp7Nsn7w50w2mHA7D8GpWOvnQfFtZCy+iKIIVR7v7pTsHN7CqUx4WcLH7csUlgeT6kZYDs1aj80oxyXYNs9xwmNMVdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gcK3w6DK; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729590975; x=1761126975;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=89GaZV9clZoGjAP19EbcBNmPKkvbswUHxHd7i+4mvzU=;
+  b=gcK3w6DKVh2uX1tdBdQUNPrpHpI6smKHt7F875ngUEc05YnV7xXFDo0f
+   puLFQYmXpBiLRGPInz2RsKggTmsOCWAouwYnedFz8CarbKX57BuvA2lLf
+   tPlg0TEabyQFT75ofgulXW5uFX0P1vfNRcek1197OpbFuzInlBJRmhHt0
+   33TMlbJyDuArMBPMWoRKzbnjrgqvvvDilhMXI2O/oVlXJAt+OqnOvqHvY
+   cPozCjg510El1AQCE5iqTwduN46fR2PDlthGVj9hFLCS2qibUxYkgDugc
+   8yT6fNPe2PDXY/Ahx5UxH2NN08p1FRLFJGK0j3uOgbgGylCU8B+kxm3a1
+   w==;
+X-CSE-ConnectionGUID: 24GNP3tiT2KxjF4w1N7ecQ==
+X-CSE-MsgGUID: 66wdN83jRGqc7j92RQ/z1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="28547263"
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="28547263"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 02:56:14 -0700
+X-CSE-ConnectionGUID: Wj6era+pQbqPvDugTD3kPQ==
+X-CSE-MsgGUID: sfQcr42dRsi/gQ93oB22Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="80627770"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 02:56:11 -0700
+Date: Tue, 22 Oct 2024 17:55:17 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Igor Pylypiv <ipylypiv@google.com>,
+	Niklas Cassel <niklas.cassel@wdc.com>, linux-ide@vger.kernel.org,
+	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ata: libata: Clear DID_TIME_OUT for ATA PT commands
+ with sense data
+Message-ID: <Zxd2hZWt1zm4eW2q@ly-workstation>
+References: <20240909154237.3656000-2-cassel@kernel.org>
+ <ZxYz871I3Blsi30F@ly-workstation>
+ <ZxZD-doogmnZGfRI@ryzen.lan>
+ <ZxZxLK7eSQ_bwkLe@ryzen.lan>
+ <Zxc7qLHYr60FJrD4@ly-workstation>
+ <ZxdmxPAgNh9TNCU+@x1-carbon.wireless.wdc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Drivers: hv: vmbus: Wait for offers during boot
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Starks <jostarks@microsoft.com>,
- jacob.pan@linux.microsoft.com,
- Easwar Hariharan <eahariha@linux.microsoft.com>
-References: <20241018115811.5530-1-namjain@linux.microsoft.com>
- <20241018115811.5530-2-namjain@linux.microsoft.com>
- <20241021045724.GB25279@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <20241021045724.GB25279@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxdmxPAgNh9TNCU+@x1-carbon.wireless.wdc>
 
+On Tue, Oct 22, 2024 at 10:48:04AM +0200, Niklas Cassel wrote:
+> On Tue, Oct 22, 2024 at 01:44:08PM +0800, Lai, Yi wrote:
+> > On Mon, Oct 21, 2024 at 05:20:12PM +0200, Niklas Cassel wrote:
+> > > On Mon, Oct 21, 2024 at 02:07:21PM +0200, Niklas Cassel wrote:
+> > > > Hello Yi Lai,
+> > > > 
+> > > > On Mon, Oct 21, 2024 at 06:58:59PM +0800, Lai, Yi wrote:
+> > > > > Hi Niklas Cassel,
+> > > > > 
+> > > > > Greetings!
+> > > > > 
+> > > > > I used Syzkaller and found that there is INFO: task hung in blk_mq_get_tag in v6.12-rc3
+> > > > > 
+> > > > > After bisection and the first bad commit is:
+> > > > > "
+> > > > > e5dd410acb34 ata: libata: Clear DID_TIME_OUT for ATA PT commands with sense data
+> > > > > "
+> > > > 
+> > > > It might be that your bisection results are accurate.
+> > > > 
+> > > > However, after looking at the stacktraces, I find it way more likely that
+> > > > bisection has landed on the wrong commit.
+> > > > 
+> > > > See this series that was just queued (for 6.13) a few days ago that solves a
+> > > > similar starvation:
+> > > > https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
+> > > > 
+> > > > You could perhaps run with v6.14-rc4 (which should be able to trigger the bug)
+> > > > and then try v6.14-rc4 + that series applied, to see if you can still trigger
+> > > > the bug?
+> > >
 
+I tried kernel linux-block
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+branch for-6.13/block commit c97f91b1807a7966077b69b24f28c2dbcde664e9.
 
-On 10/21/2024 10:27 AM, Saurabh Singh Sengar wrote:
-> On Fri, Oct 18, 2024 at 04:58:10AM -0700, Naman Jain wrote:
->> Channels offers are requested during vmbus initialization and resume
+Issue can still be reproduced.
+
+> > > Another patch that might be relevant:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e972b08b91ef48488bae9789f03cfedb148667fb
+> > > 
+> > > Which fixes a use after delete in rq_qos_wake_function().
+> > > (We can see that the stack trace has rq_qos_wake_function() before
+> > > getting stuck forever in rq_qos_wait())
+> > > 
+> > > Who knows what could go wrong when accessing a deleted entry, in the
+> > > report there was a crash, but I could image other surprises :)
+> > > The fix was first included in v6.12-rc4.
+> > > 
+> > >
+> > Hi Niklas,
+> > 
+> > Thanks for the info. I have tried using v6.12-rc4 kernel to reproduce
+> > the issue. Using the same repro binary, the issue still exists.
 > 
-> Nit: s/vmbus/VMBus
-
-Thanks for reviewing Saurabh.
-
-Noted this for next patch. Thanks
-
+> Thanks a lot for your help with testing!
 > 
->> from hibernation. Add support to wait for all channel offers to be
->> delivered and processed before returning from vmbus_request_offers.
->> This is to support user mode (VTL0) in OpenHCL (A Linux based
->> paravisor for Confidential VMs) to ensure that all channel offers
->> are present when init begins in VTL0, and it knows which channels
->> the host has offered and which it has not.
+> The first series that I pointed to, which looks most likely to be related:
+> https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
 > 
-> Usermode isn't necessarily of VTL0, and this issue was actually identified
-> at a higher VTL in OpenHCL. However, this change isn't specific to OpenHCL,
-> but is intended for general use. I would prefer if the commit message were
-> either more generic or precisely aligned with the specific issue it's
-> addressing.
+> Is only merged in:
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
 > 
-
-I'll make it generic.
-
->>
->> This is in analogy to a PCI bus not returning from probe until it has
->> scanned all devices on the bus.
->>
->> Without this, user mode can race with vmbus initialization and miss
->> channel offers. User mode has no way to work around this other than
->> sleeping for a while, since there is no way to know when vmbus has
->> finished processing offers.
->>
->> With this added functionality, remove earlier logic which keeps track
->> of count of offered channels post resume from hibernation. Once all
->> offers delivered message is received, no further offers are going to
->> be received. Consequently, logic to prevent suspend from happening
->> after previous resume had missing offers, is also removed.
->>
->> Co-developed-by: John Starks <jostarks@microsoft.com>
->> Signed-off-by: John Starks <jostarks@microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>   drivers/hv/channel_mgmt.c | 38 +++++++++++++++++++++++---------------
->>   drivers/hv/connection.c   |  4 ++--
->>   drivers/hv/hyperv_vmbus.h | 14 +++-----------
-
-<..>
-
->>   	}
->>   
->> +	/* Wait for the host to send all offers. */
->> +	while (wait_for_completion_timeout(
->> +		&vmbus_connection.all_offers_delivered_event, msecs_to_jiffies(10 * 1000)) == 0) {
+> It is not included in v6.12-rc4.
 > 
-> Nit: Can simply put 10000 instead of 10*1000
-
-Noted.
-
+> Would it please be possible for you to test with Jens's for-6.13/block branch?
 > 
->> +		pr_warn("timed out waiting for all offers to be delivered...\n");
 > 
-> I know we are moving from async to sync, so earlier we never checked this.
-> But what if some channel timed out do we want to handle this case ? Or put
-> a comment why this is OK.
-> 
-> We could set error from here as well, but I see vmbus_request_offers return value
-> is never checked.
-
-It seems to be a best effort way to get all the offers. If its not
-received in time, I think we can print a warning and continue. I can add
-that to a comment.
-
-> 
->> +	}
->> +
->> +	/*
->> +	 * Flush handling of offer messages (which may initiate work on
->> +	 * other work queues).
->> +	 */
-
-Regards,
-Naman
+> Kind regards,
+> Niklas
 
