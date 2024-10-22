@@ -1,160 +1,211 @@
-Return-Path: <linux-kernel+bounces-377083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2199AB9A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF939AB999
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3371C1C23B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092DC1F23D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06871CF29D;
-	Tue, 22 Oct 2024 22:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1D71CDFAE;
+	Tue, 22 Oct 2024 22:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzJQyGET"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lJmQVHIK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9683D1CEE88;
-	Tue, 22 Oct 2024 22:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71C71CCEFA;
+	Tue, 22 Oct 2024 22:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637358; cv=none; b=F9oYLdx/vTbYeMfP4S1QrtrkXnBY8kucjzy2YRsqnTclRFULk/7jwb5bq1AMjTd5EQ3Wm19yRkQKphZKCZrhM9Nm5QHPOEA4o1apceRdSSTmWt0JWgz2ZhwqMmY6zzoPc0vNIEM9vZ7ePZXe10S4xWjT3Ysk4kG5nHrJx8nZUBg=
+	t=1729637094; cv=none; b=bLkfzkV4E21cHo3jCmEAMFaiiSrcwL08vkqx0IcCOHXAKjhAQuLPhMExZ27TWYiVymBwPp2ArQKFJYPA+M1Ucu5mMCCRuEeMc08u6VTTTWtlfWFK3KjStNvL53cUjw3pC2ArqOe2O27bhxB2dduWUUcuZt/rnYRqJv1F7fqBHME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637358; c=relaxed/simple;
-	bh=2blEUrbPphbcXN+vYkgtsyrUfkBWuzuL5fzuvWXdX+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZHguCF1sRgF5d/bAGMo6nW7pn9xaciYZmvY+Ys5yO2KXtXZyg2Eq969NxU0lEl3S7SCITiyGOCX++YwBfYcEv//JteKxsxwWEisMv3P63sO4nDv0jzxU0f9fZG8kOJJ1nzoHKo1FaWYbqYkqove2tt4k6MWjCcKWt7gFn6gOWE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzJQyGET; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f6e1f756so7185832e87.0;
-        Tue, 22 Oct 2024 15:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729637355; x=1730242155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UM4dLe8e61s60Agsxix4PCXEpP+oYP3bpG6M39q2Oxo=;
-        b=FzJQyGETZyUJK2ISYuQ0eAdN51t9eBYK5ORWC8sExSAoRfQPUanj1LgHeYvGU9LI3I
-         g6q69VQDR2QdX+mprg+wpW9V6sHDgR68TpyZXcBKyMLdxXoet4MZwohIByy4GMO256ae
-         ir8kLg/QwXUlSNe83kNBqMQgYqEGWuaOg2Rvzh99paDm2rJ+Rs3pU7uvpLFDoyxupksT
-         De+hCbuigcukv9h+LPwTzJDmaHgShhKloqxSQbY5wZY4xyWmdycsRrrI9QfWsIJRR5BN
-         wRHAKZ3E6X3uVe/IB4wHCHn6SrLGHc7K+VZ9j//JbBlA5ncCDCPVzfWT5oYjdd1X+Ytb
-         hlpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729637355; x=1730242155;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UM4dLe8e61s60Agsxix4PCXEpP+oYP3bpG6M39q2Oxo=;
-        b=mI+M8bIGozsKDdD69EJQBk6juZqiRjTAjJiauoT0ptde6Gheii39WpOOb2EXWyEgee
-         qzl+n2WK0au0Z4oOCTkZeeKt01NZWZRtdBhnFLh2AQ5IDHWMk336P7GUA/MN0Y93hz6v
-         2CG6E6je3Egcn6m8H28lu5hnM8eA0kC2PMO+IFCnTf+G8Gl/lAjzcLp5fYtg2xXuc9j6
-         wvREnEu4W4BXrhWp9Vu9TLnR3qjcqm5q1TRZqtn7P/pQPaQ9WCTD4jFUBM8b0/gkbMDw
-         36EbOCxqrvLcvKMWQIc7wOCS6iHsfjTpLwgxzCW3+mVj8a8rfyqD1Wz1IhjIw+acbX7P
-         h1AA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtvRoiZrYd7yuXW0HKgkdNXb5vx5m5bseSpk4XzimytkQu1vm4Ir+fY8LMrTJzNZiuvU2cZwyKWJ4Msbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrlO72FWcM3D37rlOVKHBvOVPrPQBEjvRimeZPsvlF5al5iJaP
-	TEvr1jsbMmtTVHc7+RYpC8Sz7plmcP01PUTjb+GYwcZaimX+72JxpqaX/w==
-X-Google-Smtp-Source: AGHT+IHLvuf8jY8BmE3cg+RBqUo4+MvwviQpV5zot9y6cTI657ULmwLOcz+ypQk3AGCu9vZPjhQcTg==
-X-Received: by 2002:a05:6512:334e:b0:539:f754:ae15 with SMTP id 2adb3069b0e04-53b1a34e1f5mr135931e87.41.1729637354632;
-        Tue, 22 Oct 2024 15:49:14 -0700 (PDT)
-Received: from abj-NUC9VXQNX.. (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a223e595csm894881e87.14.2024.10.22.15.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 15:49:14 -0700 (PDT)
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-To: rust-for-linux@vger.kernel.org,
-	aliceryhl@google.com
-Cc: dakr@redhat.com,
-	linux-kernel@vger.kernel.org,
-	airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com,
-	boqun.feng@gmail.com,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH v2 3/5] rust: page: Extend support to vmalloc_to_page
-Date: Wed, 23 Oct 2024 01:44:47 +0300
-Message-ID: <20241022224832.1505432-4-abdiel.janulgue@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+	s=arc-20240116; t=1729637094; c=relaxed/simple;
+	bh=40AJEEku2/+aledTHQy8tBcThqJuXsMNlt4ia9XyEKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcQmR0ibYyUxLCFweCKtEWvsFbuSartg0Ua5h28EWZOee4YJ8miQSEeoBKyelQuynEFSb7jC+D3AurpjbzFCgt9yEyKUXUF84JzDeNUHZbr7IZAHNu5ZDN13g5ZyoaiEM99aKOFRbD1l/QZEIdfsGkayaPc3DjPS9x9AcJ+nCB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lJmQVHIK; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729637092; x=1761173092;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=40AJEEku2/+aledTHQy8tBcThqJuXsMNlt4ia9XyEKo=;
+  b=lJmQVHIKoGQ1GlcGR6Cy2P/5lYd7cKNAiQjitCjRYeVnW+YRWLD/Tj1j
+   QPeGtxCq0740vBsYni2KCT8lel2UL2gpi0vnq5Ah2KLprOPyZAWGsaNZ2
+   hD0QKrcPlGXhC3d/wqsdCHQIXH/rkFUD5NL2eCFS/NoKUkii15ETisGrJ
+   j/Zc2do1o6X9DrvbL1wz0Lcd5VppkJcup/YRjpyj64/Qawm9v7qCHapjP
+   wQzK9UfQogKN+/GPPnRDWF50/ka9D0dM0iwFjr0C/zsuLFZM4AEaLCchm
+   qYGwcZJulTezN2OeNgtOxBU0ap0Wmdpz2tIeRGBNwqkUj90UkmA4mpxYB
+   g==;
+X-CSE-ConnectionGUID: sn07C0/yREyOAk+eBh2vkw==
+X-CSE-MsgGUID: bG+M5C7PRyKPtq8QHIocpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40322732"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40322732"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 15:44:51 -0700
+X-CSE-ConnectionGUID: QzqXchzhQCq6Z41KSkJ8Sw==
+X-CSE-MsgGUID: e0GRUKgeR1OjLNfDzfV7JQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="84604092"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 15:44:48 -0700
+Date: Tue, 22 Oct 2024 15:44:47 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, bp@alien8.de,
+	robert.moore@intel.com, dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com,
+	Avadhut.Naik@amd.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
+	ira.weiny@intel.com, dave.jiang@intel.com,
+	sthanneeru.opensrc@micron.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH 8/8] ACPI: APEI: EINJ: Update the documentation for
+ EINJv2 support
+Message-ID: <Zxgq33pNuWBvadet@agluck-desk3.sc.intel.com>
+References: <20241022213429.1561784-1-zaidal@os.amperecomputing.com>
+ <20241022213429.1561784-9-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022213429.1561784-9-zaidal@os.amperecomputing.com>
 
-Extend Page to support pages that are not allocated by the constructor, for
-example, those returned by vmalloc_to_page(). Since we don't own those pages
-we shouldn't Drop them either. Hence we take advantage of the switch to Opaque
-so we can cast to a Page pointer from a struct page pointer and be able to
-retrieve the reference on an existing struct page mapping. In this case
-no destructor will be called since we are not instantiating a new Page instance.
+On Tue, Oct 22, 2024 at 02:34:29PM -0700, Zaid Alali wrote:
+> Add documentation for the updated ACPI specs for EINJv2(1)(2)
+> 
+> (1)https://bugzilla.tianocore.org/show_bug.cgi?id=4615
+> (2)https://bugzilla.tianocore.org/attachment.cgi?id=1446
+> 
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+> ---
+>  .../firmware-guide/acpi/apei/einj.rst         | 46 ++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
+> index c52b9da08fa9..3ad092111035 100644
+> --- a/Documentation/firmware-guide/acpi/apei/einj.rst
+> +++ b/Documentation/firmware-guide/acpi/apei/einj.rst
+> @@ -61,6 +61,14 @@ The following files belong to it:
+>    0x00000800        Platform Uncorrectable fatal
+>    ================  ===================================
+>  
+> +  ================  ===================================
+> +  Error Type Value      Error Description
+> +  ================  ===================================
 
-Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
----
- rust/kernel/page.rs | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+This shows up in the html output as a separate table with the
+same headers. Why not concatenate this to the existing table?
 
-diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-index a8288c15b860..465928986f4b 100644
---- a/rust/kernel/page.rs
-+++ b/rust/kernel/page.rs
-@@ -31,11 +31,12 @@ pub const fn page_align(addr: usize) -> usize {
-     (addr + (PAGE_SIZE - 1)) & PAGE_MASK
- }
- 
--/// A pointer to a page that owns the page allocation.
-+/// A pointer to a page that may own the page allocation.
- ///
- /// # Invariants
- ///
--/// The pointer is valid, and has ownership over the page.
-+/// The pointer is valid, and has ownership over the page if the page is allocated by this
-+/// abstraction.
- #[repr(transparent)]
- pub struct Page {
-     page: Opaque<bindings::page>,
-@@ -88,6 +89,33 @@ pub fn alloc_page(flags: Flags) -> Result<Owned<Self>, AllocError> {
-         Ok(unsafe { Owned::to_owned(ptr) })
-     }
- 
-+    /// This is just a wrapper to vmalloc_to_page which returns an existing page mapping, hence
-+    /// we don't take ownership of the page. Returns an error if the pointer is null or if it
-+    /// is not returned by vmalloc().
-+    pub fn vmalloc_to_page<'a>(
-+        cpu_addr: *const core::ffi::c_void
-+    ) -> Result<&'a Self, AllocError>
-+    {
-+        if cpu_addr.is_null() {
-+            return Err(AllocError);
-+        }
-+        // SAFETY: We've checked that the pointer is not null, so it is safe to call this method.
-+        if unsafe { !bindings::is_vmalloc_addr(cpu_addr) } {
-+            return Err(AllocError);
-+        }
-+        // SAFETY: We've initially ensured the pointer argument to this function is not null and
-+        // checked for the requirement the the buffer passed to it should be allocated by vmalloc,
-+        // so it is safe to call this method.
-+        let page = unsafe { bindings::vmalloc_to_page(cpu_addr) };
-+        if page.is_null() {
-+            return Err(AllocError);
-+        }
-+        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::page`.
-+        // SAFETY: We just successfully allocated a page, therefore dereferencing
-+        // the page pointer is valid.
-+        Ok(unsafe { &*page.cast() })
-+    }
-+
-     /// Returns a raw pointer to the page.
-     pub fn as_ptr(&self) -> *mut bindings::page {
-         self.page.get()
--- 
-2.43.0
+The example of EINJv2 shows these extra lines just appearing
+right after the v1 lines.
 
+> +  0x00000001        EINJV2 Processor Error
+> +  0x00000002        EINJV2 Memory Error
+> +  0x00000004        EINJV2 PCI Express Error
+> +  ================  ===================================
+> +
+>    The format of the file contents are as above, except present are only
+>    the available error types.
+>  
+> @@ -85,9 +93,11 @@ The following files belong to it:
+>      Bit 0
+>        Processor APIC field valid (see param3 below).
+>      Bit 1
+> -      Memory address and mask valid (param1 and param2).
+> +      Memory address and range valid (param1 and param2).
+>      Bit 2
+>        PCIe (seg,bus,dev,fn) valid (see param4 below).
+> +    Bit 3
+> +      EINJv2 extension structure is valid
+>  
+>    If set to zero, legacy behavior is mimicked where the type of
+>    injection specifies just one bit set, and param1 is multiplexed.
+> @@ -110,6 +120,7 @@ The following files belong to it:
+>    Used when the 0x1 bit is set in "flags" to specify the APIC id
+>  
+>  - param4
+> +
+>    Used when the 0x4 bit is set in "flags" to specify target PCIe device
+>  
+>  - notrigger
+> @@ -122,6 +133,18 @@ The following files belong to it:
+>    this actually works depends on what operations the BIOS actually
+>    includes in the trigger phase.
+>  
+> +- einjv2_component_count
+> +
+> +  The value from this file is used to set the "Component Array Count"
+> +  field of EINJv2 Extension Structure.
+> +
+> +- einjv2_component_array
+> +
+> +  The contents of this file are used to set the "Component Array" field
+> +  of the EINJv2 Extension Structure. The expected format is hex values
+> +  for component id and syndrome separated by space, and multiple
+> +  components are separated by new line.
+> +
+>  CXL error types are supported from ACPI 6.5 onwards (given a CXL port
+>  is present). The EINJ user interface for CXL error types is at
+>  <debugfs mount point>/cxl. The following files belong to it:
+> @@ -139,7 +162,6 @@ is present). The EINJ user interface for CXL error types is at
+>    under <debugfs mount point>/apei/einj, while CXL 1.1/1.0 port injections
+>    must use this file.
+>  
+> -
+>  BIOS versions based on the ACPI 4.0 specification have limited options
+>  in controlling where the errors are injected. Your BIOS may support an
+>  extension (enabled with the param_extension=1 module parameter, or boot
+> @@ -194,6 +216,26 @@ An error injection example::
+>    # echo 0x8 > error_type			# Choose correctable memory error
+>    # echo 1 > error_inject			# Inject now
+>  
+> +An EINJv2 error injection example::
+> +
+> +  # cd /sys/kernel/debug/apei/einj
+> +  # cat available_error_type			# See which errors can be injected
+> +  0x00000002	Processor Uncorrectable non-fatal
+> +  0x00000008	Memory Correctable
+> +  0x00000010	Memory Uncorrectable non-fatal
+> +  0x00000001	EINJV2 Processor Error
+> +  0x00000002	EINJV2 Memory Error
+
+This seems confusing to me. Is 0x00000002 the code for a V1 processor
+uncorrectable, or a V2 memory error? It seems that the "error_type" file
+is interpreted differently depending on what is written to the "flags"
+file.
+
+> +
+> +  # echo 0x12345000 > param1			# Set memory address for injection
+> +  # echo 0xfffffffffffff000 > param2		# Range - anywhere in this page
+> +  # comp_arr="0x1 0x2				# Fill in the component array
+> +    >0x1 0x4
+> +    >0x2 0x4"
+
+Default $PS2 prompt in bash doesn't have leading spaces before the ">".
+So this example looks unnatural to me.
+
+> +  # echo "$comp_arr" > einjv2_component_array
+> +  # echo 0x2 > error_type			# Choose EINJv2 memory error
+> +  # echo 0xa > flags				# set flags to indicate EINJv2
+> +  # echo 1 > error_inject			# Inject now
+> +
+>  You should see something like this in dmesg::
+>  
+>    [22715.830801] EDAC sbridge MC3: HANDLING MCE MEMORY ERROR
+> -- 
+> 2.34.1
+
+-Tony
 
