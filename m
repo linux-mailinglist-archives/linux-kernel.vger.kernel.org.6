@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-376697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DF29AB4FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6AB9AB4F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A957B2840CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 649AE1C21138
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C41BF818;
-	Tue, 22 Oct 2024 17:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7371BCA1B;
+	Tue, 22 Oct 2024 17:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZHyB8fjt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yapxj3z7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E5F1BDA99
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351B66EB7C;
+	Tue, 22 Oct 2024 17:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617856; cv=none; b=I4W62MTkefRfgeGpu8bPUijXpR3tamnm9gUnyWbTuQAj2fvFyXjCEgPAvJfREcEu61jBRkzQ0AoOGVGhEysgIdW3HLMQuuNFf1yMLidL+iCe8IYLyZRk21ykoeBrJ4pi0hA04Hpcob0xYNUetdFLnKhHc+KmZlGZOElwjGdAf0c=
+	t=1729617812; cv=none; b=ad2uFYkXe7j3ObuhGyDrFOZjEXi5nTuRixorxwpXSkKeNhnpTCVXdxRtDNOgY+NtYdmyg7pZBA5eNijVpFaiKx8zE95991oTjqbrO06kiTBMgO81DZbCORtujNGKA0Svkx+f4PiBgcWK4/27R8KKXkylgcPK0mAQMWSbYjAWbG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617856; c=relaxed/simple;
-	bh=7A+wqXFqVEEFcs32UD2pyejQfKgGBcn0hHv+lq3Wn84=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rk09WMPHMRtmYYe0ZZaDPz8wmzvkQhZ4/ZaafUyYKoiFJeliujEFeHBNjWMBg2XeSexheyUiAv1XN4kxaft3SyPvoXIVGOwuiVDp6tF1+6j0tW0VpXy08Khttx9hf1sQyB2HBBk1XWsZhynGI35kkV+YxjvIp2xfK70eHRQyDFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZHyB8fjt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729617853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Wj5eXI3hv/U03ptO++QyvhlUUq9Z9g1YTNX9l3We/8=;
-	b=ZHyB8fjtCouhG3rleoQW/Vezi7ztQ1kgqVPJ1GRz0wW9gXWVGQEwI02S/wiV7r9wR8VJDg
-	GPeaNsRmXspPjZJ20y4vvvUwH8Q7h5kx2VcsqMEHBjbEAjIP5hhxs2hDQimUDm0yrqH+wj
-	M9+gWX7zRJ7oDN5BySzbfOSury8EHrY=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-zaLiM4tDNzulnG4h4IHkoA-1; Tue,
- 22 Oct 2024 13:24:10 -0400
-X-MC-Unique: zaLiM4tDNzulnG4h4IHkoA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9E381955EAB;
-	Tue, 22 Oct 2024 17:24:07 +0000 (UTC)
-Received: from f39.redhat.com (unknown [10.39.192.92])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A53EE1955F30;
-	Tue, 22 Oct 2024 17:24:00 +0000 (UTC)
-From: Eder Zulian <ezulian@redhat.com>
-To: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	acme@redhat.com,
-	vmalik@redhat.com,
-	williams@redhat.com
-Subject: [PATCH v2 3/3] libsubcmd: Silence compiler warning
-Date: Tue, 22 Oct 2024 19:23:29 +0200
-Message-ID: <20241022172329.3871958-4-ezulian@redhat.com>
-In-Reply-To: <20241022172329.3871958-1-ezulian@redhat.com>
-References: <20241022172329.3871958-1-ezulian@redhat.com>
+	s=arc-20240116; t=1729617812; c=relaxed/simple;
+	bh=rCnBaxudAE0hJKimJTU73aeC8dWGsSksIH+CQi6HRyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R040xTw08yNA2jA2RQH/EGC+q1gCFybp1SMIb+i6SF1sajmX12AwO+TVOhMVp2Y9Cp4WUgR9P0e62fvxIVaIJgg11fijYicx2Hd2G81eqEmgJZES2VEpHcVgCSrRtLZgGpFXREedJD+oxBo7jKh0u5Gi/yZOdVaaT7P7nkO4yfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yapxj3z7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04350C4CEC3;
+	Tue, 22 Oct 2024 17:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729617812;
+	bh=rCnBaxudAE0hJKimJTU73aeC8dWGsSksIH+CQi6HRyc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Yapxj3z7YU9J3L+oMoXLfarPIAQZv44FDgZER9IC3hX8OANT1i2LN25DVubPhHn3F
+	 xH3r2B2YAk2+YsNx5zvwENkpnPHSOMTuVJnAigpO7XHJU060QPR8bK3ywMIvqX4RkB
+	 keBy4aF0xpC1PxQ5n/Cp8kFKbQi8LPm/RYSbWLrL2qd9OSLgIke8+ubb/vtzaMCJYM
+	 XcMYRWUHCFjTsoipsziVfB6XWiuZQ3TvWzJFA5mSjQtf9hBlC6oeofPT/ETd4mZd5F
+	 nc1r/WajVulXEzABX0Eti2uZIzfJGzJ37C2YNCzTJyItIiEMQhGLJ0FrQhMbNoFLox
+	 aDs0ydJlnFwBA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9FB92CE0A48; Tue, 22 Oct 2024 10:23:31 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:23:31 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] rcu/nocb: Fix rcuog wake-up from offline softirq
+Message-ID: <126f384f-bef4-468b-9082-0e3d47bdfd06@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241010163609.51273-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010163609.51273-1-frederic@kernel.org>
 
-Initialize the pointer 'o' in options__order to NULL to prevent a
-compiler warning/error which is observed when compiling with the '-Og'
-option, but is not emitted by the compiler with the current default
-compilation options.
+On Thu, Oct 10, 2024 at 06:36:09PM +0200, Frederic Weisbecker wrote:
+> After a CPU has set itself offline and before it eventually calls
+> rcutree_report_cpu_dead(), there are still opportunities for callbacks
+> to be enqueued, for example from a softirq. When that happens on NOCB,
+> the rcuog wake-up is deferred through an IPI to an online CPU in order
+> not to call into the scheduler and risk arming the RT-bandwidth after
+> hrtimers have been migrated out and disabled.
+> 
+> But performing a synchronized IPI from a softirq is buggy as reported in
+> the following scenario:
+> 
+>         WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
+>         Modules linked in: rcutorture torture
+>         CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
+>         Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
+>         RIP: 0010:smp_call_function_single
+>         <IRQ>
+>         swake_up_one_online
+>         __call_rcu_nocb_wake
+>         __call_rcu_common
+>         ? rcu_torture_one_read
+>         call_timer_fn
+>         __run_timers
+>         run_timer_softirq
+>         handle_softirqs
+>         irq_exit_rcu
+>         ? tick_handle_periodic
+>         sysvec_apic_timer_interrupt
+>         </IRQ>
+> 
+> Fix this with forcing deferred rcuog wake up through the NOCB timer when
+> the CPU is offline. The actual wake up will happen from
+> rcutree_report_cpu_dead().
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202409231644.4c55582d-lkp@intel.com
+> Fixes: 9139f93209d1 ("rcu/nocb: Fix RT throttling hrtimer armed from offline CPU")
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-For example, when compiling libsubcmd with
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
- $ make "EXTRA_CFLAGS=-Og" -C tools/lib/subcmd/ clean all
-
-Clang version 17.0.6 and GCC 13.3.1 fail to compile parse-options.c due
-to following error:
-
-  parse-options.c: In function ‘options__order’:
-  parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-    832 |         memcpy(&ordered[nr_opts], o, sizeof(*o));
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  parse-options.c:810:30: note: ‘o’ was declared here
-    810 |         const struct option *o, *p = opts;
-        |                              ^
-  cc1: all warnings being treated as errors
-
-Signed-off-by: Eder Zulian <ezulian@redhat.com>
----
- tools/lib/subcmd/parse-options.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
-index eb896d30545b..555d617c1f50 100644
---- a/tools/lib/subcmd/parse-options.c
-+++ b/tools/lib/subcmd/parse-options.c
-@@ -807,7 +807,7 @@ static int option__cmp(const void *va, const void *vb)
- static struct option *options__order(const struct option *opts)
- {
- 	int nr_opts = 0, nr_group = 0, nr_parent = 0, len;
--	const struct option *o, *p = opts;
-+	const struct option *o = NULL, *p = opts;
- 	struct option *opt, *ordered = NULL, *group;
- 
- 	/* flatten the options that have parents */
--- 
-2.46.2
-
+> ---
+>  kernel/rcu/tree_nocb.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 97b99cd06923..16865475120b 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+> @@ -554,13 +554,19 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
+>  			rcu_nocb_unlock(rdp);
+>  			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_LAZY,
+>  					   TPS("WakeLazy"));
+> -		} else if (!irqs_disabled_flags(flags)) {
+> +		} else if (!irqs_disabled_flags(flags) && cpu_online(rdp->cpu)) {
+>  			/* ... if queue was empty ... */
+>  			rcu_nocb_unlock(rdp);
+>  			wake_nocb_gp(rdp, false);
+>  			trace_rcu_nocb_wake(rcu_state.name, rdp->cpu,
+>  					    TPS("WakeEmpty"));
+>  		} else {
+> +			/*
+> +			 * Don't do the wake-up upfront on fragile paths.
+> +			 * Also offline CPUs can't call swake_up_one_online() from
+> +			 * (soft-)IRQs. Rely on the final deferred wake-up from
+> +			 * rcutree_report_cpu_dead()
+> +			 */
+>  			rcu_nocb_unlock(rdp);
+>  			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE,
+>  					   TPS("WakeEmptyIsDeferred"));
+> -- 
+> 2.46.0
+> 
 
