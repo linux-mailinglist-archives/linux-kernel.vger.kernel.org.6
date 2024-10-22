@@ -1,200 +1,112 @@
-Return-Path: <linux-kernel+bounces-375880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953489A9C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817659A9C40
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55199283B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E891C21976
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6FA183CC3;
-	Tue, 22 Oct 2024 08:20:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB8C15B11D;
+	Tue, 22 Oct 2024 08:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Nrph9NcI"
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03CB13BAC6;
-	Tue, 22 Oct 2024 08:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BD815539D;
+	Tue, 22 Oct 2024 08:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585207; cv=none; b=Up78S8KLwa5Qb3fOhJvBNxdLDOgy2BzR27Ic9wdmvke+690z4F/ez15anmh9TjZxp8mw5yC1epG/lKxdvFC0esotB+tiUm+Pc4FXYQ9R51US2jFjK0EUtPrev/m5rsiiftZcpyQvxFT78mLl9AApUqn6qsy3vphYYDs5o3YT+EQ=
+	t=1729585260; cv=none; b=YHwmx71p1XzJ8Fn10laqVIyqC9P1MuO+EJwcBhlDjyrA3yyo00JmRc5spwFEJdB/sZniI/SDLPJeiDwdv7rW6mL9QiibPl8EoWnRtRdZOTBWtL/GPmqlS9uFeLXH5nXbXxX5cpfib1XhMp/3l7lxjtT3+R7TKwu1jTRSM3l1Ye0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585207; c=relaxed/simple;
-	bh=IY2vJ4lBZFQ9T1PaAjWN5lFuG7xVDM/dvhYtDtFIOno=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aHlMg9mml1AVO1OEmM/eWmO8sZxoKenL7m0JzgnmpKhvyOH+/xJzUKBELTIcdsjRWGdP2XUGOJn0Pvvm3dPS6EUmAFysaTvnKaR2z88OsgcCQkAbJT6gvxFjumPeI3UsPw6CjQNFIyVlXIQRYfUqoX3iGJF8eRwsnVcbIY6ls3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C13C4CEC3;
-	Tue, 22 Oct 2024 08:20:04 +0000 (UTC)
-Date: Tue, 22 Oct 2024 04:20:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jordan Rife <jrife@google.com>, mathieu.desnoyers@efficios.com
-Cc: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- martin.lau@linux.dev, mattbobrowski@google.com, mhiramat@kernel.org,
- sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
- yonghong.song@linux.dev
-Subject: Re: [syzbot] [trace?] [bpf?] KASAN: slab-use-after-free Read in
- bpf_trace_run2 (2)
-Message-ID: <20241022042001.09055543@rorschach.local.home>
-In-Reply-To: <20241021182347.77750-1-jrife@google.com>
-References: <67121037.050a0220.10f4f4.000f.GAE@google.com>
-	<20241021182347.77750-1-jrife@google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729585260; c=relaxed/simple;
+	bh=wFNU9gc6itmoel8kOvr/Q8E310AzuMPvxuprLzxxog4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pco44Ei6TX9ni8NceFjcIq0V6q9D4uuB0rybSDzSUB5+FgX1jhR8I5qETN5xKKI5pNREVqXPU4GFiwAq5pIhSaEXPReyZi7mKyULSVgHr+UJ/QDsStrrvmER/Jxc6T4jrRF6B7NKeQN5BkG/9whCtt6ipmEyzK19Srze0QdFQdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Nrph9NcI; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 3A8MthiEoQI3S3A8MtBiL2; Tue, 22 Oct 2024 10:20:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729585255;
+	bh=+UHtMM+mktPErr3gqyJcQJ6mFPLimyEdmUfJrpTeVyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Nrph9NcIG7spGvHLD+l/n6pm8ap6yFyF/ChPQczqkyoY8p+tV3lzFb4RYIrNjT2vz
+	 D3IdawWXWyiOQ05zisvxSK0RCH0GxZSIYgOXJSrH2TrClyK/7pTk2ae+cE29RGcTDZ
+	 UHhtvhE27jSK3eagtPSsXwpZoOspMc3BysHfh3Gwpl9l2eJITRrN3DxVmKXr3oGaBP
+	 EQgfc1ZXS8GxrpbEDKRQDQcwsZpQghFoD7mSavkS+y3IMK/O92NyKI4nsrkN0yntYw
+	 bmWuhYluIOQMoaAu53eJ5Ucb4QK9qun+yzpA+2SVSdKy3Pgm5TSmCebXM2UPjG616O
+	 FHWTy0okuaQMw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 22 Oct 2024 10:20:55 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <308caed5-5d58-4e6c-8bc8-82c34452bd72@wanadoo.fr>
+Date: Tue, 22 Oct 2024 10:20:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (it87) Add support for IT8625E
+To: Ai Chao <aichao@kylinos.cn>, jdelvare@suse.com, linux@roeck-us.net,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Newsgroups: gmane.linux.kernel.hwmon,gmane.linux.kernel
+References: <20241022081453.75253-1-aichao@kylinos.cn>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241022081453.75253-1-aichao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Le 22/10/2024 à 10:14, Ai Chao a écrit :
+> Add support for IT8625E on Centerm P410.
+> 
+> Signed-off-by: Ai Chao <aichao@kylinos.cn>
+> ---
+>   drivers/hwmon/it87.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/hwmon/it87.c b/drivers/hwmon/it87.c
+> index e233aafa8856..fac7b10d51bc 100644
+> --- a/drivers/hwmon/it87.c
+> +++ b/drivers/hwmon/it87.c
+> @@ -15,6 +15,7 @@
+>    *            IT8620E  Super I/O chip w/LPC interface
+>    *            IT8622E  Super I/O chip w/LPC interface
+>    *            IT8623E  Super I/O chip w/LPC interface
+> + *            IT8625E  Super I/O chip w/LPC interface
+>    *            IT8628E  Super I/O chip w/LPC interface
+>    *            IT8705F  Super I/O chip w/LPC interface
+>    *            IT8712F  Super I/O chip w/LPC interface
+> @@ -163,6 +164,7 @@ static inline void superio_exit(int ioreg, bool noexit)
+>   #define IT8623E_DEVID 0x8623
+>   #define IT8628E_DEVID 0x8628
+>   #define IT87952E_DEVID 0x8695
+> +#define IT8625E_DEVID 0x8625
 
-Mathieu, can you look at this?
+Maybe also keep things ordered here and add the #define after IT8623E_DEVID?
 
-[ more below ]
+CJ
 
-On Mon, 21 Oct 2024 18:23:47 +0000
-Jordan Rife <jrife@google.com> wrote:
-
-> I performed a bisection and this issue starts with commit a363d27cdbc2
-> ("tracing: Allow system call tracepoints to handle page faults") which
-> introduces this change.
-> 
-> > + *
-> > + * With @syscall=0, the tracepoint callback array dereference is
-> > + * protected by disabling preemption.
-> > + * With @syscall=1, the tracepoint callback array dereference is
-> > + * protected by Tasks Trace RCU, which allows probes to handle page
-> > + * faults.
-> >   */
-> >  #define __DO_TRACE(name, args, cond, syscall)				\
-> >  	do {								\
-> > @@ -204,11 +212,17 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> >  		if (!(cond))						\
-> >  			return;						\
-> >  									\
-> > -		preempt_disable_notrace();				\
-> > +		if (syscall)						\
-> > +			rcu_read_lock_trace();				\
-> > +		else							\
-> > +			preempt_disable_notrace();			\
-> >  									\
-> >  		__DO_TRACE_CALL(name, TP_ARGS(args));			\
-> >  									\
-> > -		preempt_enable_notrace();				\
-> > +		if (syscall)						\
-> > +			rcu_read_unlock_trace();			\
-> > +		else							\
-> > +			preempt_enable_notrace();			\
-> >  	} while (0)  
-> 
-> Link: https://lore.kernel.org/bpf/20241009010718.2050182-6-mathieu.desnoyers@efficios.com/
-> 
-> I reproduced the bug locally by running syz-execprog inside a QEMU VM.
-> 
-> > ./syz-execprog -repeat=0 -procs=5 ./repro.syz.txt  
-> 
-> I /think/ what is happening is that with this change preemption may now
-> occur leading to a scenario where the RCU grace period is insufficient
-> in a few places where call_rcu() is used. In other words, there are a
-> few scenarios where call_rcu_tasks_trace() should be used instead to
-> prevent a use-after-free bug when a preempted tracepoint call tries to
-> access a program, link, etc. that was freed. It seems the syzkaller
-> program induces page faults while attaching raw tracepoints to
-> sys_enter making preemption more likely to occur.
-> 
-> kernel/tracepoint.c
-> ===================
-> > ...
-> > static inline void release_probes(struct tracepoint_func *old)
-> > {
-> > 	...
-> > 	call_rcu(&tp_probes->rcu, rcu_free_old_probes); <-- Here
-
-Have you tried just changing this one to call_rcu_tasks_trace()?
-
--- Steve
-
-> > 	...
-> > }
-> > ...  
-> 
-> kernel/bpf/syscall.c
-> ====================
-> > static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
-> > {
-> > 	bpf_prog_kallsyms_del_all(prog);
-> > 	btf_put(prog->aux->btf);
-> > 	module_put(prog->aux->mod);
-> > 	kvfree(prog->aux->jited_linfo);
-> > 	kvfree(prog->aux->linfo);
-> > 	kfree(prog->aux->kfunc_tab);
-> > 	if (prog->aux->attach_btf)
-> > 		btf_put(prog->aux->attach_btf);
-> > 
-> > 	if (deferred) {
-> > 		if (prog->sleepable) <------ HERE: New condition needed?
-> > 			call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_rcu);
-> > 		else
-> > 			call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
-> > 	} else {
-> > 		__bpf_prog_put_rcu(&prog->aux->rcu);
-> > 	}
-> > }
-> > 
-> > static void bpf_link_free(struct bpf_link *link)
-> > {
-> > 	const struct bpf_link_ops *ops = link->ops;
-> > 	bool sleepable = false;
-> > 
-> > 	bpf_link_free_id(link->id);
-> > 	if (link->prog) {
-> > 		sleepable = link->prog->sleepable;
-> > 		/* detach BPF program, clean up used resources */
-> > 		ops->release(link);
-> > 		bpf_prog_put(link->prog);
-> > 	}
-> > 	if (ops->dealloc_deferred) {
-> > 		/* schedule BPF link deallocation; if underlying BPF program
-> > 		 * is sleepable, we need to first wait for RCU tasks trace
-> > 		 * sync, then go through "classic" RCU grace period
-> > 		 */
-> > 		if (prog->sleepable) <------ HERE: New condition needed?
-> > 			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
-> > 		else
-> > 			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
-> > 	} else if (ops->dealloc)
-> > 		ops->dealloc(link);
-> > }  
-> 
-> After patching things locally to ensure that call_rcu_tasks_trace() is
-> always used in these three places I was unable to induce a KASAN bug
-> to occur whereas before it happened pretty much every time I ran 
-> ./sys-execprog within a minute or so.
-> 
-> I'm a bit unsure about the actual conditions under which
-> call_rcu_tasks_trace() should be used here though. Should there perhaps
-> be another condition such as `preemptable` which is used to determine
-> if call_rcu_tasks_trace() or call_rcu() should be used to free
-> links/programs? Is there any harm in just using call_rcu_tasks_trace()
-> every time in combination with rcu_trace_implies_rcu_gp() like it is
-> in bpf_link_defer_dealloc_mult_rcu_gp()?
-> 
-> > static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)?
-> > {
-> > 	if (rcu_trace_implies_rcu_gp())
-> > 		bpf_link_defer_dealloc_rcu_gp(rcu);
-> > 	else
-> > 		call_rcu(rcu, bpf_link_defer_dealloc_rcu_gp);
-> > }  
-> 
-> - Jordan
+>   
+>   /* Logical device 4 (Environmental Monitor) registers */
+>   #define IT87_ACT_REG	0x30
+> @@ -2782,6 +2784,7 @@ static int __init it87_find(int sioaddr, unsigned short *address,
+>   	case IT8622E_DEVID:
+>   		sio_data->type = it8622;
+>   		break;
+> +	case IT8625E_DEVID:
+>   	case IT8628E_DEVID:
+>   		sio_data->type = it8628;
+>   		break;
 
 
