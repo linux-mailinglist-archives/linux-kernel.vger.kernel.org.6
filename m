@@ -1,157 +1,133 @@
-Return-Path: <linux-kernel+bounces-375418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F240F9A95AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83D59A95B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF691C22210
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A451F22A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A6B139CE2;
-	Tue, 22 Oct 2024 01:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ky+N3LX9"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95777126C04;
+	Tue, 22 Oct 2024 01:50:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E7C13957B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A512917993
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729561691; cv=none; b=bMsKhug1xLQLduqgU6uoV8Ktt5eLtYnmyPnaF3M8DLPFJvB+GrKtR/fh2FabNpNpTSKpuGt+u0XH4vUTTsOliMsJoqtNnmFAsvMAiiLRPzU4zm0VcKkXapvh7eDg97LBwwU4YVjnTWieCOj3ZXGYJaePPP+6GQBf4PS8qFg2bjs=
+	t=1729561806; cv=none; b=fMvLEnxS8NEvlLRDbCo7WSn/YYamjZmtf6g/YkEIpAR7NMItYBTKjp1sO/AcZ7ynVI874XO24f1AmMwHS8GYXe1g2K9jKhx5Aa7jdTc6Vxa2Dr6swYB3xDzkFl7pHUXkF+TbJZUoN8eVly1sbTT5QcvgsuZ3larP1epLQI0bCPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729561691; c=relaxed/simple;
-	bh=J2ule95uDA2lxZeFteLQ1CcacbCf1RwSzS2Cn3CQpuM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=p9iIwPD3wOWBSc7gUihvP+7qKGOOS1XmgGt0aJ0gkefnxdeYVwvdUsn8LJ8ZsThvWSth2B2S1guv1qFeB0JKlYWoQMI7XUxBAg5CT4s+qBnA/AS6j/TvkFDfWwECzmyBnj3cIMb0dXu7gitZTCO2c0n8gXwJ75lprLL+mfiI9Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ky+N3LX9; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1729561806; c=relaxed/simple;
+	bh=UTnuywt4nyP3mmg7CHAIDAQsx3aYs2JWUdkTAAFncmY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VcA1HWnXVjA2woHZrQJIS/YahP2Mkd0tVhgTNXCLoggaL5TvzbThkcPQv59V73AnocF2eXv+/Qns1H+AKhTpwqn+ERSvO6acHWvBBhpoi3GM/u2hjEcMA7lfmEBWPwhQ2pwoI/MJgJixUFLdKJ/QwSvc/8vsdgUc+FbriD0Srek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so49897755ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:50:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729561804; x=1730166604;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HgmwNQfqsKcOMKindI3W18Ec0Q2U/e0fdYSbLLcH+oU=;
+        b=hzjP6AwyMAOTukWu953CG/eDnaV9LRgyjKQLBUstca4mS44tGBwLX3diZNFmZ7gLPf
+         EVmEXd2AC69M7hnqUp5/Sza7tDx0wdwPkY9KHb6Xdiss8NUFxCmnNInSa6wn6tE2APXw
+         ibgau395W+1584tEi1IDCKm3GtjA88BEZqeOGmtd9h+zgTyxxoiTXJPeI0ELIL9WD0F6
+         bg9v9QkxiywPVRAoWZKEkf8IZQ+CWw9ZarZfxNQQ6qz7+27mjfl6+of0AWfUuGecvsqN
+         Me3sCJj9le7IkFe5ruVBtcu08T1cZmW2F87D2RoFCc6YWKnNGZq2N7xG91k8qkRU9uA5
+         ZYyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2VRTZ/NEzzvi51gy2ECYmugJQLyrQpISOPHx1UfqSnK5TuXWpgw0V4seaAcSxRkqhf/sdJrLlCjjriDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySLHWi33YLkNNqnU2eV3vKETAcmnhj8SWC14jnFaDeGY5yb9gy
+	azhivRmdA4X10CviDuK1Gg7ntf69s7xr82xjO8HNJp9ADrcz3VfpCZcDms27yaxBOuhkTc3AKZj
+	j4DFmiPinNQnISgSS2SrMdOYoOuapevLKwD3qLz2bs2y7Ashk03+fsdU=
+X-Google-Smtp-Source: AGHT+IH1TBHWorIXr39NQH15YpMPv5VQb4pLKvKU5mnRA9ySO1FT9KwwGJBjmdokDkgNKI50msKUPwBSbumlb3viLzLFhHihbUn0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729561687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4eiZ6r3xpWFSBdkJCU0cQjDHtryYalZj0OvrUsR7hSE=;
-	b=ky+N3LX9IeLVQ+qmbPb47voiVKu56MJtKGKIfPPdF5UU3pn3SxeUqT0q5R2MtdA4/g9X71
-	I3tZEH7GHsxSEWC3oCUo4stbNQkO83kbxzxyTaemLv2QrCLAE7VA8He0rF0O0gk3cD48cC
-	0Si8daj92f412lgLUCMQf5vb+R7/89g=
-Date: Tue, 22 Oct 2024 01:48:03 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yajun Deng" <yajun.deng@linux.dev>
-Message-ID: <4275a6d14b8e209331251fa7a3a1f3094ee60915@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v3 net-next] net: vlan: Use vlan_prio instead of vlan_qos
- in mapping
-To: "Guillaume Nault" <gnault@redhat.com>, "Ido Schimmel" <idosch@idosch.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <ZxaA/6zaqgbrcHX/@debian>
-References: <20241018141233.2568-1-yajun.deng@linux.dev>
- <ZxT3oVQ27erIoTVz@shredder.mtl.com> <ZxaA/6zaqgbrcHX/@debian>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:198b:b0:3a3:4221:b0d3 with SMTP id
+ e9e14a558f8ab-3a4cd2f8be0mr11246615ab.0.1729561803849; Mon, 21 Oct 2024
+ 18:50:03 -0700 (PDT)
+Date: Mon, 21 Oct 2024 18:50:03 -0700
+In-Reply-To: <d72c960b-b524-4c8a-9809-7885aaf6a904@huawei.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671704cb.050a0220.1e4b4d.006b.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text
+From: syzbot <syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, lihongbo22@huawei.com, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-October 22, 2024 at 12:27 AM, "Guillaume Nault" <gnault@redhat.com> wrote=
-:
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: shift-out-of-bounds in bch2_alloc_to_text
+
+bcachefs (loop0): fatal error - emergency read only
+bcachefs (loop0): insufficient writeable journal devices available: have 0, need 1
+rw journal devs: loop0
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/alloc_background.h:165:13
+shift exponent 129 is too large for 32-bit type 'unsigned int'
+CPU: 0 UID: 0 PID: 5607 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ data_type_movable fs/bcachefs/alloc_background.h:165 [inline]
+ alloc_lru_idx_fragmentation fs/bcachefs/alloc_background.h:171 [inline]
+ bch2_alloc_to_text+0xc79/0xce0 fs/bcachefs/alloc_background.c:373
+ __bch2_bkey_fsck_err+0x1c8/0x280 fs/bcachefs/error.c:454
+ bch2_alloc_v4_validate+0x97b/0xf30 fs/bcachefs/alloc_background.c:259
+ bch2_btree_node_read_done+0x3e7e/0x5e90 fs/bcachefs/btree_io.c:1223
+ btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1327
+ bch2_btree_node_read+0x2433/0x2a10
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1753 [inline]
+ bch2_btree_root_read+0x617/0x7a0 fs/bcachefs/btree_io.c:1775
+ read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:524
+ bch2_fs_recovery+0x2585/0x39c0 fs/bcachefs/recovery.c:854
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fca2ff7f79a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fca30df3e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fca30df3ef0 RCX: 00007fca2ff7f79a
+RDX: 00000000200058c0 RSI: 0000000020000100 RDI: 00007fca30df3eb0
+RBP: 00000000200058c0 R08: 00007fca30df3ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000100
+R13: 00007fca30df3eb0 R14: 00000000000058cc R15: 0000000020005940
+ </TASK>
+---[ end trace ]---
 
 
+Tested on:
 
->=20
->=20On Sun, Oct 20, 2024 at 03:29:21PM +0300, Ido Schimmel wrote:
->=20
->=20>=20
->=20> On Fri, Oct 18, 2024 at 10:12:33PM +0800, Yajun Deng wrote:
-> >=20
->=20>  The vlan_qos member is used to save the vlan qos, but we only save=
- the
-> >=20
->=20>  priority. Also, we will get the priority in vlan netlink and proc.
-> >=20
->=20>  We can just save the vlan priority using vlan_prio, so we can use =
-vlan_prio
-> >=20
->=20>  to get the priority directly.
-> >=20
->=20>=20=20
->=20>=20
->=20>  For flexibility, we introduced vlan_dev_get_egress_priority() help=
-er
-> >=20
->=20>  function. After this patch, we will call vlan_dev_get_egress_prior=
-ity()
-> >=20
->=20>  instead of vlan_dev_get_egress_qos_mask() in irdma.ko and rdma_cm.=
-ko.
-> >=20
->=20>  Because we don't need the shift and mask operations anymore.
-> >=20
->=20>=20=20
->=20>=20
->=20>  There is no functional changes.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Not sure I understand the motivation.
-> >=20
->=20>=20=20
->=20>=20
->=20>  IIUC, currently, struct vlan_priority_tci_mapping::vlan_qos is shi=
-fted
-> >=20
->=20>  and masked in the control path (vlan_dev_set_egress_priority) so t=
-hat
-> >=20
->=20>  these calculations would not need to be performed in the data path=
- where
-> >=20
->=20>  the VLAN header is constructed (vlan_dev_hard_header /
-> >=20
->=20>  vlan_dev_hard_start_xmit).
-> >=20
->=20>=20=20
->=20>=20
->=20>  This patch seems to move these calculations to the data path so th=
-at
-> >=20
->=20>  they would not need to be performed in the control path when dumpi=
-ng the
-> >=20
->=20>  priority mapping via netlink / proc.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Why is it a good trade-off?
-> >=20
->=20
-> I agree with Ido. The commit description doesn't explain why these
->=20
->=20changes are made and I also can't see how this patch can improve
->=20
->=20performances.
->=20
->=20If it's about code readability, why not just add a helper that gets a
->=20
->=20struct vlan_priority_tci_mapping pointer as input and returns a __u8
->=20
->=20corresponding to the priority? This way, the /proc and netlink handle=
-rs
->=20
->=20(and other potential users) wouldn't have to do the bit shifting and
->=20
->=20masking manually.
->
+commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=139890a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f45fa9805c40db3f108
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15735c87980000
 
-Okay, that's a better way.
 
