@@ -1,235 +1,113 @@
-Return-Path: <linux-kernel+bounces-375990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6839A9E3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:18:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5215C9A9E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650D21C24BA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1870B24FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87E51990AE;
-	Tue, 22 Oct 2024 09:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f8rmdQwy"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3766519882B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6774198A3B;
+	Tue, 22 Oct 2024 09:17:34 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DF1198A22;
+	Tue, 22 Oct 2024 09:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588586; cv=none; b=I+2HLWK8xdFTK8W0uutADeJxt0ws/iC50xFiL8lvAgBmUFgeA7/iQiLAjqqszOGu2AAR+rxM8HBifTrohJKiebKylD0RAf9OIwPB2g72w6+vGQYBSK/6fKpm2HP9KgBa9iIYrys1pkswKcsuXjctFSpHiGUYdo9ZoDrJ/PLUV28=
+	t=1729588654; cv=none; b=jvePJ7rEHM7oZiQPs/lUx1IgbxhdiLCgY0v+evxi/G/kAHGaHuw2V/Ert46Oa95s5rMUC+E1bbPVfHDblR/qUtNcFclEhGnx+zlITTUye6bk4/FfSSa1bb6/hewvN25fXUrFMmugDiSjjEhilUm3ZsK4d5VN0PLuWFjmg+6wbE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588586; c=relaxed/simple;
-	bh=T/vXZLFdInElzPYMtvAAk+jioBTOmIcG99+n+rK4X2g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDEzuB+RC9PH9BhKsg/XDtq0CTMyf6FxqG19lUG/b4Cv6W/DIHQ3DRYLQ7dwOKNW0jqIJLpatuwp5CyfRIRijidkI1clGLeqewtyPvrM/H/vW4hxoPkInYCEQAvwH562HpDpoynfcQE6kvW3W/MHsRduDpd9F6N6CvCBNwLXtKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f8rmdQwy; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a99f629a7aaso976158466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729588583; x=1730193383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrWLxWniYgldXhi6j2i53PBD8nYeIsOcEfEhSVeXIlY=;
-        b=f8rmdQwyZKJ6a/i0m5bXnr7gsb6mTP5D5PD1N7KEbcO7+JVDyWOaoxRmywcxmSCaIG
-         xrRHOhdnyktK7KKvZPdXC0LlaJERYc6rDtyI4zi9NT+lkc/aRUl65P2v0jFmHZyIuIiY
-         hTVAkP7QtSkPYwjvkQSsApcSQBN38Fd5ftu+KL7UgbWawKyISjlvLLXE5Mvj7zlx3fmB
-         v12pjtCLioP1cXHcMYNxhthb15FDhMxLomA8rQO2vcpMJjSPJI2Y5Ud46QuEDZCjEnCJ
-         cp0NQkru0GRM+RNTF1A7UMigG1nku0H1rsh74ckHE/vIlWpZcctksfXHkMFpb2CwHSyk
-         a0+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729588583; x=1730193383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrWLxWniYgldXhi6j2i53PBD8nYeIsOcEfEhSVeXIlY=;
-        b=r7bCFmftytj05VvY6uw8+/KJqCzYeMMfbVNkD7zY7LjF3LF9AxYkf/24eRhksrgsjf
-         VafPGLqdk3JRR3rMANpz5iAnnt7X29zAimRGM8qaUDYCqv+QG9Pf41rHaL1VO5vz4oXM
-         da3JHuL7tHgah7iI+Vji0Hrk6v8M5NZ3WsbJClm6alzUwekP2Se1aQQkr6EUByCBvkgN
-         /H/kSdo1w4iArdklhlfglJFhtV3TvRrm69LDrZ10AtGEVQEHI0ND47iy3CvWQjzXq4qd
-         +gcDf4Qb1oL+dBpFbRasnB2g2DFJT/qEM1fonjdGUMog6lqtJghnymKqNOT0iS4WnpXg
-         BWLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxkrZQkosI3kmaOk4TCYSDb/cSofA0ixlNgMvrEp0F6666Q4KpVYB+Es+U6fw+FBojY/5Kc2GyjYd+RbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8/rHNn5oJwhgQF2GNc9mgCFm5pfzpBdVabyd+xQNI+5/v3Kim
-	TEzP60xzrOcizppZTnsziAXyUKzNkvKaT7M1p8rcygLO7JDhurL7ajonmNa0G04=
-X-Google-Smtp-Source: AGHT+IFXrGNxzwEi2WdXZWLEN+8q3E4ZOF9oX6riQZD0+XCFFpDLA7nAJ7U22UKPiXN7xeCk1T+VUw==
-X-Received: by 2002:a17:906:f585:b0:a9a:85b5:2aca with SMTP id a640c23a62f3a-a9aaa4f4e7fmr269581166b.7.1729588582529;
-        Tue, 22 Oct 2024 02:16:22 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b51asm2946644a12.6.2024.10.22.02.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:16:22 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 22 Oct 2024 11:16:43 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for devices
- accessible through PCI BARs
-Message-ID: <Zxdte5VGeVHEwQV-@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
- <20241010024746.GA978628-robh@kernel.org>
+	s=arc-20240116; t=1729588654; c=relaxed/simple;
+	bh=I5x5SOgGenw7y3wO+bIhVmyuJ+cBlx09KBodnZdxbfA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XNGEeedNY7u+8EeqceM6+EtdGV+x89fQLuJaS+tqzaA4Q2pzmtVChfvCnAx2fjCgTDRa1mLDFc2sd9I+1draBVLh+hMShDKOht7QE09UUTk0y5AhNbfdeKXrJBRJ9SQkDu/Y3FH91ubxCEdbLozPJKRpT8TGbefdXeJ7E02LWUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxaeGpbRdn78UEAA--.11221S3;
+	Tue, 22 Oct 2024 17:17:29 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxveClbRdndjcHAA--.42581S3;
+	Tue, 22 Oct 2024 17:17:28 +0800 (CST)
+Subject: Re: [PATCH v8 3/3] irqchip/loongson-eiointc: Add extioi virt
+ extension support
+To: Thomas Gleixner <tglx@linutronix.de>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ x86@kernel.org, Song Gao <gaosong@loongson.cn>
+References: <20240830093229.4088354-1-maobibo@loongson.cn>
+ <20240830093229.4088354-4-maobibo@loongson.cn>
+ <CAAhV-H4W4LwL3U2HT+-r+6nH5ZSBBbPYL2wdZJqQF7WNkhOgMw@mail.gmail.com>
+ <878qv6y631.ffs@tglx>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <2fb27579-5a4d-8bcc-db08-8942960dc07e@loongson.cn>
+Date: Tue, 22 Oct 2024 17:17:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010024746.GA978628-robh@kernel.org>
+In-Reply-To: <878qv6y631.ffs@tglx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxveClbRdndjcHAA--.42581S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7GFy5ZrW5Jw47KFykGF4rJFc_yoWkJwcE9F
+	Z7A34Uuw4UXry2ka12yrWakr9xGa4UC3Wvv3yUGr4Iqa43ZrZ8CF4Uur1xWay0qrW0gFn3
+	JwsYvr1avw1ruosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
+	6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jza0PUUU
+	UU=
 
-Hi Rob,
+Hi Huacai/Thomas,
 
-On 21:47 Wed 09 Oct     , Rob Herring wrote:
-> On Mon, Oct 07, 2024 at 02:39:46PM +0200, Andrea della Porta wrote:
-> > Common YAML schema for devices that exports internal peripherals through
-> > PCI BARs. The BARs are exposed as simple-buses through which the
-> > peripherals can be accessed.
-> > 
-> > This is not intended to be used as a standalone binding, but should be
-> > included by device specific bindings.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 70 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > new file mode 100644
-> > index 000000000000..9d7a784b866a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > @@ -0,0 +1,69 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Common properties for PCI MFD endpoints with peripherals addressable from BARs.
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta  <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  Define a generic node representing a PCI endpoint which contains several sub-
-> > +  peripherals. The peripherals can be accessed through one or more BARs.
-> > +  This common schema is intended to be referenced from device tree bindings, and
-> > +  does not represent a device tree binding by itself.
-> > +
-> > +properties:
-> > +  "#address-cells":
-> > +    const: 3
-> > +
-> > +  "#size-cells":
-> > +    const: 2
-> > +
-> > +  ranges:
-> > +    minItems: 1
-> > +    maxItems: 6
-> > +    items:
-> > +      maxItems: 8
-> > +      additionalItems: true
-> > +      items:
-> > +        - maximum: 5  # The BAR number
-> > +        - const: 0
-> > +        - const: 0
-> > +
-> > +patternProperties:
-> > +  "^pci-ep-bus@[0-5]$":
-> > +    $ref: '#/$defs/pci-ep-bus'
-> 
-> This should just be:
-> 
-> additionalProperties: true
-> 
-> properties:
->   compatible:
->     const: simple-bus
-> 
-> required:
->   - compatible
-> 
-> Then the compatible will cause simple-bus.yaml to be applied to this 
-> node.
->
+Sorry for the ping message :(
 
-Ack.
- 
-> > +    description:
-> > +      One node for each BAR used by peripherals contained in the PCI endpoint.
-> > +      Each node represent a bus on which peripherals are connected.
-> > +      This allows for some segmentation, e.g. one peripheral is accessible
-> > +      through BAR0 and another through BAR1, and you don't want the two
-> > +      peripherals to be able to act on the other BAR. Alternatively, when
-> > +      different peripherals need to share BARs, you can define only one node
-> > +      and use 'ranges' property to map all the used BARs.
-> > +
-> > +required:
-> > +  - ranges
-> > +  - '#address-cells'
-> > +  - '#size-cells'
-> > +
-> > +$defs:
-> > +  pci-ep-bus:
-> > +    type: object
-> > +    additionalProperties: true
-> > +    properties:
-> > +      compatible:
-> > +        const: simple-bus
-> > +      dma-ranges: true
-> > +      ranges: true
-> > +      "#address-cells": true
-> > +      "#size-cells": true
-> > +    required:
-> > +      - compatible
-> > +      - ranges
-> > +      - '#address-cells'
-> > +      - '#size-cells'
-> 
-> All this should be covered by simple-bus.yaml.
+Can this patch be applied int next RC version?
 
-Ack.
+Regards
+Bibo Mao
 
-Many thanks,
-Andrea
+On 2024/10/2 下午9:42, Thomas Gleixner wrote:
+> On Wed, Sep 11 2024 at 17:11, Huacai Chen wrote:
+>> Hi, Thomas,
+>>
+>> On Fri, Aug 30, 2024 at 5:32 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>
+>>> Interrupts can be routed to maximal four virtual CPUs with one HW
+>>> EIOINTC interrupt controller model, since interrupt routing is encoded with
+>>> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
+>>> extension support so that interrupts can be routed to 256 vCPUs on
+>>> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
+>>> node type is removed, so there are 8 bits for cpu selection, at most 256
+>>> vCPUs are supported for interrupt routing.
+>> This patch is OK for me now, but seems it depends on the first two,
+>> and the first two will get upstream via loongarch-kvm tree. So is that
+>> possible to also apply this one to loongarch-kvm with your Acked-by?
 > 
-> Rob
+> Go ahead.
+> 
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+
 
