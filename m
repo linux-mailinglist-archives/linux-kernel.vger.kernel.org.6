@@ -1,152 +1,439 @@
-Return-Path: <linux-kernel+bounces-376342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BF99AAFFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:48:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7909AB005
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89922841FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC451F23A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C627E19F41C;
-	Tue, 22 Oct 2024 13:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729F619F41C;
+	Tue, 22 Oct 2024 13:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBo1rsad";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpN1ehLU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBo1rsad";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpN1ehLU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rjiPU140"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA319D8AD;
-	Tue, 22 Oct 2024 13:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DF919DFA2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729604907; cv=none; b=glTmkbu4e4R4XUVY+1ldUpeypYS4n0MMH47XpULG3C2ReerZRWULJ1YIQn2BSgvzWZMtFtRhw7Osai1xPaAHAvAcg4n35jMX7ZnT1/pcod6KBPhsfQVhojwBJ0mox0NcF5hAethWad3WurChj1OBP51Y6q2eNaRarNvQkVYbsHY=
+	t=1729604971; cv=none; b=dgFUF8V5tfPmFBiZWZ4BlMBCjUiCdQKMIwCKzXIdMhGHpTtW3mko19W1pluyChFQXKS2nqCnT0h+mB3AWv/FERYvM/8egjl78S+wFuyYStN0iZYKU6yFA/XyHCzidzgddksTyaYCNUSwaAmF2lSs81BN9iruiRG9eQy9F7gS9ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729604907; c=relaxed/simple;
-	bh=u+no5sVh5kwppL0jkXYcySLBkTUixR1af2Xw/XyL3mU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1Xe4r2PbLELHQh/jsSiLPF2NkXnpov8jpsRcgvQCviepuJvh7T7/Ivx7akXETYXXcWZi4xllVd2mSrHviPd+Eazjvcu1A209RouCgTZE4LE0RNPG9seBsUuZk2uAcz32SeDg4X0cTrBjnlIUqTrcczoKgFGuPAhMazqmBLH6SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBo1rsad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpN1ehLU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBo1rsad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpN1ehLU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 647951F844;
-	Tue, 22 Oct 2024 13:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729604903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
-	b=VBo1rsadl5i4SX+VMrzAFDx5f9FCuLj7grIvFKW5ud97LDBlw9A3P0/+MW9UIR2krFW9Cv
-	FoHQTjcDDA/q5myuEUxP+qUidBPB9dLmpn+IixL7CG8xp4P4jECkCeEWvfkupEgphb9DCs
-	Z/vtD/NRqwA1gTxMVV3XT+TxVXZRGz4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729604903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
-	b=LpN1ehLUCxC9hQGGMX4yHWX745UW9P1cvGFmrwUxoSbchT56NevyFdIjOPsHoDs4uaIU7R
-	YvfOYyp/BROYMeDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729604903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
-	b=VBo1rsadl5i4SX+VMrzAFDx5f9FCuLj7grIvFKW5ud97LDBlw9A3P0/+MW9UIR2krFW9Cv
-	FoHQTjcDDA/q5myuEUxP+qUidBPB9dLmpn+IixL7CG8xp4P4jECkCeEWvfkupEgphb9DCs
-	Z/vtD/NRqwA1gTxMVV3XT+TxVXZRGz4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729604903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9IDTfTcN6BmY6N1zSS/KyRFKhsf/VPYqKCc9v2BDdU=;
-	b=LpN1ehLUCxC9hQGGMX4yHWX745UW9P1cvGFmrwUxoSbchT56NevyFdIjOPsHoDs4uaIU7R
-	YvfOYyp/BROYMeDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4176113AC9;
-	Tue, 22 Oct 2024 13:48:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id i16BDyetF2caZQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 22 Oct 2024 13:48:23 +0000
-Date: Tue, 22 Oct 2024 15:48:22 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: clm@fb.com, josef@toxicpanda.com, Johannes.Thumshirn@wdc.com,
-	dsterba@suse.com, mpdesouza@suse.com, gniebler@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: Fix passing 0 to ERR_PTR in
- btrfs_search_dir_index_item()
-Message-ID: <20241022134821.GC31418@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20241022095208.1369473-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1729604971; c=relaxed/simple;
+	bh=rXp1JN8sHiHjexUD1EWjTd5xOqOcGM6TZc/c/LDgQCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FelTghW+Av38GNk+T0weltD39KYEEzQZGslns6FvKBt2etbeRBQxmNOZ37irBzP7otFshClIZbviV43+SanVzOklMP4cFk0fX//qPqEVgxePosimkvIPOGMAmbCNta4jEEffpljlH2j9Puc5Lp26aSUz0nXJRGW5xBzT31yZZYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rjiPU140; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so5290422276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729604968; x=1730209768; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPMWABfKMwqxFTz9FHojirf6MTCFH8/NXsyive4Igq4=;
+        b=rjiPU1400+MQzAxoNT0rUw2tMvmCkphw2WeIO1gR+CO4jv2y97+OfIhVyLoZkHYche
+         WhHRpO/yorFLaaXQjiCBj2ZkidDK9r1Zy+UbEgVOrzwAECIgWxJZ/Ndmq+VyjuLqTZgb
+         60z7DxbQgk4hwSFPZKpZtAS87r8s8sK0t0O1CE2tRVSLr1LwR1PFRtSkBGSF+umo4oEB
+         dZvLZi+PjpuxrbkDxOXJ6mU6uToLAo3y/7o1i/PPTFL63W2uT4d8U8OhXY3ktGmv4dsF
+         VqYRf+xu7ba5q2YqZkfneVTwSXq3o/SVJmy9JXa1vBkdVUE7PCZ1DrSC69Rw6bV8U0RJ
+         ls7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729604968; x=1730209768;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lPMWABfKMwqxFTz9FHojirf6MTCFH8/NXsyive4Igq4=;
+        b=wX5Tg7Kj+xJDcxV2zaZ4yZwUzYruQuFAQtoHOeK75/xS4my/4tUNZWgxvmW5h5aXf7
+         xmXcKphpUHs/SWXMoyLQqJES5jEmvudr5JlN6jwZjarCIJGvfYM25vDoqOBQvtMtcDUN
+         IQRKa0qj9bDoQ/ErbnZbD+ep+qihkST0zRQOF6+ujwYoHSib47m84kIIOViJc4mzPzoa
+         vGmBOSZ/x/82G+LHtu//3bqkw4iMwOhtzZhMKnGlFjVWz8RUgcIiuVoWBCMLP+dw9fIQ
+         0q102KcuT6JaWjCc4/JimG9TMeHxAWqfwHmjCYb8JrFRjeASACcQgPU09kWpaLYRjCbI
+         r/lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+CGnSTPIwqXC37xFRNcWUdF1r3kEVRqz03o7Syv6eDvTTvNxkPA4PcjqeOcQ4Ns/pS0djjbOVp+dbNtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH+zQdZEM5R40Kc6psQIil8dZuBp5+YXkUVEhzzGz8QuCRj6UH
+	BWA0O6HLpH8cO52RIzhD91dLJj3hAdAY+lMWUs8YkTVh4RaBsWc6HKOj4cNS/VkgaWNq5DB+bB5
+	WmogIQvlKMmkhtBHe3hXg8Vaeq23VFW+1tjgLug==
+X-Google-Smtp-Source: AGHT+IH8AJZe9CNBMK163sA3qBNj/VMWDJsw3ri8QqBOcJP/ird9g+2hOU2EyHrCoKBZfqpgD4sTnerVT0UMKoaOj0o=
+X-Received: by 2002:a05:690c:4905:b0:6e2:aceb:fb47 with SMTP id
+ 00721157ae682-6e5bf72c5f0mr153974527b3.2.1729604968546; Tue, 22 Oct 2024
+ 06:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022095208.1369473-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.99 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.19)[-0.960];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,suse.cz:mid,huawei.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -3.99
-X-Spam-Flag: NO
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-5-shiyongbang@huawei.com> <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+ <ede06bc0-0719-4a6f-b67a-d7b576ca4df9@huawei.com>
+In-Reply-To: <ede06bc0-0719-4a6f-b67a-d7b576ca4df9@huawei.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 22 Oct 2024 16:49:17 +0300
+Message-ID: <CAA8EJpq5MED1gScw=L-7fvO1MPOFgc+P_0K+GimtXdMTJu67RQ@mail.gmail.com>
+Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
+	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
+	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 22, 2024 at 05:52:08PM +0800, Yue Haibing wrote:
-> ret may be zero in btrfs_search_dir_index_item() and should not passed
-> to ERR_PTR(). Now btrfs_unlink_subvol() is the only caller to this,
-> reconstructed it to check ERR_PTR(-ENOENT) while ret >= 0, this fix
-> smatch warnings:
-> 
-> fs/btrfs/dir-item.c:353
->  btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
-> 
-> Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
-> v2: return ERR_PTR(-ENOENT) while ret >= 0
+On Tue, 22 Oct 2024 at 15:24, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>
+>
+> > On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
+> >> From: baihan li <libaihan@huawei.com>
+> >>
+> >> To support DP interface displaying in hibmc driver. Add
+> >> a encoder and connector for DP modual.
+> >>
+> >> Signed-off-by: baihan li <libaihan@huawei.com>
+> >> ---
+> >>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
+> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
+> >>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
+> >>   4 files changed, 217 insertions(+), 2 deletions(-)
+> >>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> >>
+> >> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> >> index 693036dfab52..8cf74e0d4785 100644
+> >> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> >> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> >> @@ -1,5 +1,5 @@
+> >>   # SPDX-License-Identifier: GPL-2.0-only
+> >>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+> >> -           dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
+> >> +           dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o hibmc_drm_dp.o
+> >>
+> >>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+> >> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> >> new file mode 100644
+> >> index 000000000000..7a50f1d81aac
+> >> --- /dev/null
+> >> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> >> @@ -0,0 +1,195 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >> +
+> >> +#include <linux/io.h>
+> >> +
+> >> +#include <drm/drm_probe_helper.h>
+> >> +#include <drm/drm_simple_kms_helper.h>
+> >> +#include <drm/drm_atomic_helper.h>
+> >> +#include <drm/drm_drv.h>
+> >> +#include <drm/drm_edid.h>
+> >> +
+> >> +#include "hibmc_drm_drv.h"
+> >> +#include "dp/dp_kapi.h"
+> >> +
+> >> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+> >> +{
+> >> +    int count;
+> >> +
+> >> +    count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+> >> +                                 connector->dev->mode_config.max_height);
+> >> +    drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
+> > What? Please parse EDID instead.
+> >
+> >> +
+> >> +    return count;
+> >> +}
+> >> +
+> >> +static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+> >> +    .get_modes = hibmc_dp_connector_get_modes,
+> >> +};
+> >> +
+> >> +static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
+> >> +    .reset = drm_atomic_helper_connector_reset,
+> >> +    .fill_modes = drm_helper_probe_single_connector_modes,
+> >> +    .destroy = drm_connector_cleanup,
+> >> +    .atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> >> +    .atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> >> +};
+> >> +
+> >> +static void dp_mode_cfg(struct drm_device *dev, struct dp_mode *dp_mode,
+> >> +                    struct drm_display_mode *mode)
+> >> +{
+> >> +    dp_mode->field_rate = drm_mode_vrefresh(mode);
+> >> +    dp_mode->pixel_clock = mode->clock / 1000; /* 1000: khz to hz */
+> >> +
+> >> +    dp_mode->h_total = mode->htotal;
+> >> +    dp_mode->h_active = mode->hdisplay;
+> >> +    dp_mode->h_blank = mode->htotal - mode->hdisplay;
+> >> +    dp_mode->h_front = mode->hsync_start - mode->hdisplay;
+> >> +    dp_mode->h_sync = mode->hsync_end - mode->hsync_start;
+> >> +    dp_mode->h_back = mode->htotal - mode->hsync_end;
+> >> +
+> >> +    dp_mode->v_total = mode->vtotal;
+> >> +    dp_mode->v_active = mode->vdisplay;
+> >> +    dp_mode->v_blank = mode->vtotal - mode->vdisplay;
+> >> +    dp_mode->v_front = mode->vsync_start - mode->vdisplay;
+> >> +    dp_mode->v_sync = mode->vsync_end - mode->vsync_start;
+> >> +    dp_mode->v_back = mode->vtotal - mode->vsync_end;
+> > No need to copy the bits around. Please use drm_display_mode directly.
+> >
+> >> +
+> >> +    if (mode->flags & DRM_MODE_FLAG_PHSYNC) {
+> >> +            drm_info(dev, "horizontal sync polarity: positive\n");
+> >> +            dp_mode->h_pol = 1;
+> >> +    } else if (mode->flags & DRM_MODE_FLAG_NHSYNC) {
+> >> +            drm_info(dev, "horizontal sync polarity: negative\n");
+> >> +            dp_mode->h_pol = 0;
+> >> +    } else {
+> >> +            drm_err(dev, "horizontal sync polarity: unknown or not set\n");
+> >> +    }
+> >> +
+> >> +    if (mode->flags & DRM_MODE_FLAG_PVSYNC) {
+> >> +            drm_info(dev, "vertical sync polarity: positive\n");
+> >> +            dp_mode->v_pol = 1;
+> >> +    } else if (mode->flags & DRM_MODE_FLAG_NVSYNC) {
+> >> +            drm_info(dev, "vertical sync polarity: negative\n");
+> > No spamming, use DRM debugging macros.
+> >
+> >> +            dp_mode->v_pol = 0;
+> >> +    } else {
+> >> +            drm_err(dev, "vertical sync polarity: unknown or not set\n");
+> >> +    }
+> >> +}
+> >> +
+> >> +static int dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
+> >> +{
+> >> +    struct dp_mode dp_mode = {0};
+> >> +    int ret;
+> >> +
+> >> +    hibmc_dp_display_en(dp, false);
+> >> +
+> >> +    dp_mode_cfg(dp->drm_dev, &dp_mode, mode);
+> >> +    ret = hibmc_dp_mode_set(dp, &dp_mode);
+> >> +    if (ret)
+> >> +            drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
+> >> +
+> >> +    return ret;
+> >> +}
+> >> +
+> >> +static void dp_enable(struct hibmc_dp *dp)
+> >> +{
+> >> +    hibmc_dp_display_en(dp, true);
+> >> +}
+> >> +
+> >> +static void dp_disable(struct hibmc_dp *dp)
+> >> +{
+> >> +    hibmc_dp_display_en(dp, false);
+> >> +}
+> >> +
+> >> +static int hibmc_dp_hw_init(struct hibmc_drm_private *priv)
+> >> +{
+> >> +    int ret;
+> >> +
+> >> +    ret = hibmc_dp_kapi_init(&priv->dp);
+> >> +    if (ret)
+> >> +            return ret;
+> >> +
+> >> +    hibmc_dp_display_en(&priv->dp, false);
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static void hibmc_dp_hw_uninit(struct hibmc_drm_private *priv)
+> >> +{
+> >> +    hibmc_dp_kapi_uninit(&priv->dp);
+> >> +}
+> > Inline all these one-line wrappers, they serve no purpose.
+>
+> Hi Dmitry,
+>
+> Yes, it make sense to be inline. But it is generally better to let the compiler decide when to inline a function.
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Please excuse me for not being explicit or clear enough. Drop the
+one-line wrappers and just call the necessary functions directly.
+There is no need to have such wrappers.
 
-Added to for-next, thanks.
+>
+> Thanks,
+> Baihan
+>
+>
+> >> +
+> >> +static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
+> >> +                                struct drm_atomic_state *state)
+> >> +{
+> >> +    struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+> >> +    struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
+> >> +
+> >> +    if (dp_prepare(dp, mode))
+> >> +            return;
+> >> +
+> >> +    dp_enable(dp);
+> >> +}
+> >> +
+> >> +static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
+> >> +                                 struct drm_atomic_state *state)
+> >> +{
+> >> +    struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+> >> +
+> >> +    dp_disable(dp);
+> >> +}
+> >> +
+> >> +static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+> >> +    .atomic_enable = hibmc_dp_encoder_enable,
+> >> +    .atomic_disable = hibmc_dp_encoder_disable,
+> >> +};
+> >> +
+> >> +void hibmc_dp_uninit(struct hibmc_drm_private *priv)
+> >> +{
+> >> +    hibmc_dp_hw_uninit(priv);
+> >> +}
+> >> +
+> >> +int hibmc_dp_init(struct hibmc_drm_private *priv)
+> >> +{
+> >> +    struct drm_device *dev = &priv->dev;
+> >> +    struct drm_crtc *crtc = &priv->crtc;
+> >> +    struct hibmc_dp *dp = &priv->dp;
+> >> +    struct drm_connector *connector = &dp->connector;
+> >> +    struct drm_encoder *encoder = &dp->encoder;
+> >> +    int ret;
+> >> +
+> >> +    dp->mmio = priv->mmio;
+> >> +    dp->drm_dev = dev;
+> >> +
+> >> +    ret = hibmc_dp_hw_init(priv);
+> >> +    if (ret) {
+> >> +            drm_err(dev, "dp hw init failed: %d\n", ret);
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    encoder->possible_crtcs = drm_crtc_mask(crtc);
+> >> +    ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
+> > I think drm_simple_foo interfaces are being deprecated. Please copy
+> > required code into the driver instead.
+> >
+> >> +    if (ret) {
+> >> +            drm_err(dev, "init dp encoder failed: %d\n", ret);
+> >> +            goto err_init;
+> >> +    }
+> >> +
+> >> +    drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
+> >> +
+> >> +    ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
+> >> +                             DRM_MODE_CONNECTOR_DisplayPort);
+> >> +    if (ret) {
+> >> +            drm_err(dev, "init dp connector failed: %d\n", ret);
+> >> +            goto err_init;
+> >> +    }
+> >> +
+> >> +    drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
+> >> +
+> >> +    drm_connector_attach_encoder(connector, encoder);
+> >> +
+> >> +    return 0;
+> >> +
+> >> +err_init:
+> >> +    hibmc_dp_hw_uninit(priv);
+> >> +
+> >> +    return ret;
+> >> +}
+> >> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> >> index 9f9b19ea0587..c90a8db021b0 100644
+> >> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> >> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> >> @@ -93,6 +93,10 @@ static const struct drm_mode_config_funcs hibmc_mode_funcs = {
+> >>
+> >>   static int hibmc_kms_init(struct hibmc_drm_private *priv)
+> >>   {
+> >> +#define DP_HOST_SERDES_CTRL         0x1f001c
+> >> +#define DP_HOST_SERDES_CTRL_VAL             0x8A00
+> >> +#define DP_HOST_SERDES_CTRL_MASK    0x7FFFE
+> >> +
+> > #defines outside of the function body.
+> >
+> >>      struct drm_device *dev = &priv->dev;
+> >>      int ret;
+> >>
+> >> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+> >>              return ret;
+> >>      }
+> >>
+> >> +    /* if DP existed, init DP */
+> >> +    if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
+> >> +         DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
+> >> +            ret = hibmc_dp_init(priv);
+> >> +            if (ret)
+> >> +                    drm_err(dev, "failed to init dp: %d\n", ret);
+> >> +    }
+> >> +
+> >>      ret = hibmc_vdac_init(priv);
+> >>      if (ret) {
+> >>              drm_err(dev, "failed to init vdac: %d\n", ret);
+> >> -            return ret;
+> > Why?
+> >
+> >>      }
+> >>
+> >>      return 0;
+> >> @@ -239,6 +250,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+> >>
+> >>   static int hibmc_unload(struct drm_device *dev)
+> >>   {
+> >> +    struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+> >>      struct pci_dev *pdev = to_pci_dev(dev->dev);
+> >>
+> >>      drm_atomic_helper_shutdown(dev);
+> >> @@ -247,6 +259,9 @@ static int hibmc_unload(struct drm_device *dev)
+> >>
+> >>      pci_disable_msi(to_pci_dev(dev->dev));
+> >>
+> >> +    if (priv->dp.encoder.possible_crtcs)
+> >> +            hibmc_dp_uninit(priv);
+> >> +
+> >>      return 0;
+> >>   }
+> >>
+> >> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> >> index 6b566f3aeecb..aa79903fe022 100644
+> >> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> >> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> >> @@ -19,6 +19,7 @@
+> >>   #include <linux/i2c.h>
+> >>
+> >>   #include <drm/drm_framebuffer.h>
+> >> +#include "dp/dp_kapi.h"
+> >>
+> >>   struct hibmc_connector {
+> >>      struct drm_connector base;
+> >> @@ -37,6 +38,7 @@ struct hibmc_drm_private {
+> >>      struct drm_crtc crtc;
+> >>      struct drm_encoder encoder;
+> >>      struct hibmc_connector connector;
+> > It seems this needs to be refactored too, to separate VGA connector /
+> > encoder / CRTC to a child struct.
+> >
+> >> +    struct hibmc_dp dp;
+> >>   };
+> >>
+> >>   static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
+> >> @@ -59,4 +61,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv);
+> >>
+> >>   int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
+> >>
+> >> +int hibmc_dp_init(struct hibmc_drm_private *priv);
+> >> +void hibmc_dp_uninit(struct hibmc_drm_private *priv);
+> >> +
+> >>   #endif
+> >> --
+> >> 2.33.0
+> >>
+
+
+
+-- 
+With best wishes
+Dmitry
 
