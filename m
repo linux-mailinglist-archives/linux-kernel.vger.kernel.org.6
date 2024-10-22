@@ -1,85 +1,185 @@
-Return-Path: <linux-kernel+bounces-376612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22F69AB3E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEA89AB3E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3181284626
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A741C220DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8B81BBBD7;
-	Tue, 22 Oct 2024 16:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C271BBBD6;
+	Tue, 22 Oct 2024 16:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8eYlxpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Sm/BRd7m"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02891BB6BE;
-	Tue, 22 Oct 2024 16:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3731BB6BC
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729614323; cv=none; b=TI0zG4rR6Hsd+Wn77RhaKIQ3V9JlC08FVhdvFWfumXvFm/2pvJAybfIk8Dj4H1Ky87iesfR1yC4Q+4tkGpTFpEBbrKNvJ3PB5/jNUQdABVmcBld2IK2CAyenW4Lfe8jF64ogZmwgiVb+vFsVORzq5SNT+vbGfwrShIchIhmRdnA=
+	t=1729614349; cv=none; b=R5wVMvZYgy7XfXmDKkM2w/Q1GzDJRcd6T19klwdbcKFDNGepegwQR2GpLc3yF4glo7f82pdmnilM6pqz78yQ0kbuI9WOO57A+aUJQDvOdu1hwlivyRGt4lfx9smjiomaYlvDGNsDJcdoy8u8uw152zdOEaG2JFqHSGYbbcdAfe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729614323; c=relaxed/simple;
-	bh=hg1K/hUnb1N4PHZXAe7Z3VEVyWsDIXMOdk9gxdCDWc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVvyboztaj0VaXhXh0r2NxUwHKhEL1DqdzxlNvZVe+OzN2IEy6aDke44cAA/HrNL55mbD76ZU6jkXQpCXd3yBx+S9lVzb0mZ6qSV6iYg0/YJVGIb3GDzEfiBOk7Ep5CiDDbQX8bLQ8Cc8oqK1MzfveNzF5ByS6rugs4b+ZzOBSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8eYlxpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312F3C4CEE3;
-	Tue, 22 Oct 2024 16:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729614323;
-	bh=hg1K/hUnb1N4PHZXAe7Z3VEVyWsDIXMOdk9gxdCDWc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t8eYlxpyWBvZgyslB4xQH0OhdfkTTCNRT14J726K3zdGQkh4NpQV7yj4h4Y6pdHvU
-	 ZoO8zFj95KH3L6+WAMT4nVwiKoeerYUcwle+u/ZroEsY6Mgq/N2FNR5VecEIzVneRg
-	 00URIGo7dAAo6xpcV5gwSnB5yKGLWFTm/9pqGkZGlceBQRsuyaeE9rWm7eXCc1Bd88
-	 dhtAbUJWhkAAN6acIXJpWmLXXKMImk1tJT7r8leZ9rixFo11xcuqivjv4byulkoUyQ
-	 EVz9oEQ121R309ETHkGl4UUnUPMPXNEnj7JY0tgMcPIw3B/KJAmv8Jl1a+lUH98fLS
-	 9US/M5DwBPKFw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t3HhN-000000005Yf-30XV;
-	Tue, 22 Oct 2024 18:25:33 +0200
-Date: Tue, 22 Oct 2024 18:25:33 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
-Message-ID: <ZxfR_XM9U-HSXTz_@hovoldconsulting.com>
-References: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+	s=arc-20240116; t=1729614349; c=relaxed/simple;
+	bh=x/EpTFWcpafdx4yQZpuOCX0QNjRr/XNDp+88mspQTb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PVYwAYIG11st9jZlFpZJslg6pX4oC9Uml3odJaq6E+x3Phv3xG5CA+0PDRBAesU4fPjiaOindlF2h1Yzl/fwOxWVuOt89B30TXTg66SNh1xLijWPwglN1VG/vm+6BtRxv9zYhoiZVpdn/pAq15SKUZGhaCASOxq7USPJWx+4rrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Sm/BRd7m; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so5651914276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729614346; x=1730219146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/FcFULehhwAxlgpbjAQH5GvQbdOX1Yt9+//ukehIaF4=;
+        b=Sm/BRd7mkh6HX69sr8olD+37sceM+80v6PrS5EcixOUU4a2KrTmJLi8DNJWSaQbDrz
+         s/qt43XcXrFCV1qws3+Me8WMWnv38bMJDU5osONzZSMte+FicqIxbDlgZuj8wG8P+ow9
+         b7I3Gjg9B5548gxue+hXFQ1TE1hNJ0f3YlSKG1A/K0InLhxyJ47C3oMertlGIipoiHK0
+         FB5Yqk/upwwqdyQIbYwLr/UzzzJ9f47VMYFd8PRHjqkVxzNg1/PbbILBtXNcdht7xLsO
+         RX3l04zioRt8zZa4MhTRybqfw6l92WMtcvRGBFSYb3jHfTQETBw//8qDBeqv2hv6M7bZ
+         c3UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729614346; x=1730219146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/FcFULehhwAxlgpbjAQH5GvQbdOX1Yt9+//ukehIaF4=;
+        b=sU2xoRAwDUbE9MKzEdOsv9Tw9qAD2um1DgaIY10JRkKr9X4jobGvyV6nlvQHet5it9
+         LDGaAuxEle9DapnStmuxir06HjRnZkr4fqUrENjzkmGJSzl1v+e0uoct0XiwsGXuSSh2
+         GJnxfPHyFNME8u136qY3OZP8CdkjV8HqMhTeT4GuyeC+vkLxkT+VtgmEQ/xBnqV/6X9c
+         4wvOIUn3bocThM1HsM/IvmNWEcoTNVXFW5AbKzsRgasInObptyg7d4Mcq/cAQ75nch2Y
+         IzPwKzWD4ZW9tX9eDEWzNSl1PpA5TuCPiCpt3sZvt9PlKfoY+MD3EnKIfcIA3z9SRxvV
+         cVgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxf9E9v0IDvoyAeiN3fuWWlThNn0JBX6gqr7GcG6CSESu+lKfStmrApnoD27GoiX+V0hVuKbbYrAI/PYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1P0X3IS4zhigfrclBBjG5iT+abmqiSuk+vFPFjmqyQJnebB3M
+	20oVVPAvmWquHNg3btuz73ioM0+fNBmvhu5w4RlTFagkCjENCj1/jqxU7RUOVENlL9UFHbD395T
+	TxV3HNTbBrzxZJ2rXgxezvfmbJoNu5FOEE4mz
+X-Google-Smtp-Source: AGHT+IHmXg9dtHAkm/7oEMwvTrSAmrcx0Tkk5Vpql4w7fIuSXGrdcLHvVQoR+ZoH/iPhezQ76TFTXoN23QB1mIW32CM=
+X-Received: by 2002:a05:6902:2603:b0:e29:2ab7:6c03 with SMTP id
+ 3f1490d57ef6-e2e271bb480mr2927136276.33.1729614346507; Tue, 22 Oct 2024
+ 09:25:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+References: <20241014151450.73674-2-casey@schaufler-ca.com>
+ <dad74779768e7c00d2a3c9bf8c60045d@paul-moore.com> <bab1de2e-0205-40dd-af3e-5956ff349948@schaufler-ca.com>
+In-Reply-To: <bab1de2e-0205-40dd-af3e-5956ff349948@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 22 Oct 2024 12:25:35 -0400
+Message-ID: <CAHC9VhQ0mBKz-y33+xV-de+hjA-wMbcv9+VmBXWiPjk5Ygz2eQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] LSM: Ensure the correct LSM context releaser
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, netdev@vger.kernel.org, 
+	audit@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 04:07:23PM +0200, Konrad Dybcio wrote:
-> The 32-bit BAR spaces are reaching outside their assigned register
-> regions. Shrink them to match their actual sizes.
-> While at it, unify the style.
-> 
-> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Mon, Oct 21, 2024 at 7:58=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 10/21/2024 4:39 PM, Paul Moore wrote:
+> > On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Add a new lsm_context data structure to hold all the information about=
+ a
+> >> "security context", including the string, its size and which LSM alloc=
+ated
+> >> the string. The allocation information is necessary because LSMs have
+> >> different policies regarding the lifecycle of these strings. SELinux
+> >> allocates and destroys them on each use, whereas Smack provides a poin=
+ter
+> >> to an entry in a list that never goes away.
+> >>
+> >> Update security_release_secctx() to use the lsm_context instead of a
+> >> (char *, len) pair. Change its callers to do likewise.  The LSMs
+> >> supporting this hook have had comments added to remind the developer
+> >> that there is more work to be done.
+> >>
+> >> The BPF security module provides all LSM hooks. While there has yet to
+> >> be a known instance of a BPF configuration that uses security contexts=
+,
+> >> the possibility is real. In the existing implementation there is
+> >> potential for multiple frees in that case.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> Cc: linux-integrity@vger.kernel.org
+> >> Cc: netdev@vger.kernel.org
+> >> Cc: audit@vger.kernel.org
+> >> Cc: netfilter-devel@vger.kernel.org
+> >> To: Pablo Neira Ayuso <pablo@netfilter.org>
+> >> Cc: linux-nfs@vger.kernel.org
+> >> Cc: Todd Kjos <tkjos@google.com>
+> >> Reviewed-by: Serge Hallyn <sergeh@kernel.org>
+> >> ---
+> >>  drivers/android/binder.c                | 24 ++++++-------
+> >>  fs/ceph/xattr.c                         |  6 +++-
+> >>  fs/nfs/nfs4proc.c                       |  8 +++--
+> >>  fs/nfsd/nfs4xdr.c                       |  8 +++--
+> >>  include/linux/lsm_hook_defs.h           |  2 +-
+> >>  include/linux/security.h                | 35 +++++++++++++++++--
+> >>  include/net/scm.h                       | 11 +++---
+> >>  kernel/audit.c                          | 30 ++++++++---------
+> >>  kernel/auditsc.c                        | 23 +++++++------
+> >>  net/ipv4/ip_sockglue.c                  | 10 +++---
+> >>  net/netfilter/nf_conntrack_netlink.c    | 10 +++---
+> >>  net/netfilter/nf_conntrack_standalone.c |  9 +++--
+> >>  net/netfilter/nfnetlink_queue.c         | 13 ++++---
+> >>  net/netlabel/netlabel_unlabeled.c       | 45 +++++++++++-------------=
+-
+> >>  net/netlabel/netlabel_user.c            | 11 +++---
+> >>  security/apparmor/include/secid.h       |  2 +-
+> >>  security/apparmor/secid.c               | 11 ++++--
+> >>  security/security.c                     |  8 ++---
+> >>  security/selinux/hooks.c                | 11 ++++--
+> >>  19 files changed, 167 insertions(+), 110 deletions(-)
+> > ..
+> >
+> >> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel=
+_unlabeled.c
+> >> index 1bc2d0890a9f..8303bbcfc543 100644
+> >> --- a/net/netlabel/netlabel_unlabeled.c
+> >> +++ b/net/netlabel/netlabel_unlabeled.c
+> >> @@ -1127,14 +1122,14 @@ static int netlbl_unlabel_staticlist_gen(u32 c=
+md,
+> >>              secid =3D addr6->secid;
+> >>      }
+> >>
+> >> -    ret_val =3D security_secid_to_secctx(secid, &secctx, &secctx_len)=
+;
+> >> +    ret_val =3D security_secid_to_secctx(secid, &ctx.context, &ctx.le=
+n);
+> >>      if (ret_val !=3D 0)
+> >>              goto list_cb_failure;
+> >>      ret_val =3D nla_put(cb_arg->skb,
+> >>                        NLBL_UNLABEL_A_SECCTX,
+> >> -                      secctx_len,
+> >> -                      secctx);
+> >> -    security_release_secctx(secctx, secctx_len);
+> >> +                      ctx.len,
+> >> +                      ctx.context);
+> > Nitpicky alignment issue; please keep the arguments aligned as they
+> > are currently.
+>
+> Not a problem, although it looks like it's correct to me. I'll check to m=
+ake sure.
 
-This one seems to have fallen through the cracks.
+Thanks.  It's likely just an oddity due to tabs rendering a bit odd in
+the diff, I usually check that but maybe I didn't/forgot here.  Not a
+major problem either way, I only mentioned it because I was commenting
+on other patches in the series.
 
-Bjorn, can you pick it up or do you want Konrad to resend?
-
-Johan
+--=20
+paul-moore.com
 
