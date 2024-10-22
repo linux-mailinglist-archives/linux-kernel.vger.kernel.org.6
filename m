@@ -1,73 +1,66 @@
-Return-Path: <linux-kernel+bounces-376667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4782E9AB4A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:03:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E305F9AB4A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34EE1F2444F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:03:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F81F241C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0051BBBC3;
-	Tue, 22 Oct 2024 17:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ECA1BC9EB;
+	Tue, 22 Oct 2024 17:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Q9ef2jN9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyS4WoSL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CA3256D;
-	Tue, 22 Oct 2024 17:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFEC256D;
+	Tue, 22 Oct 2024 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616604; cv=none; b=gCinzwTryx1E/Qbi7DxlDu3CEmQ1lwKb8RVt5StAGUxXSgukIE2jKECr3zk4muJN8tRh4zOXdtXNpEwmq4e08Qdkvu6GFr51DJL13WyYubxCs1IPcUoyr3JE6u3jHksIFvJ8vBAiRfunhDbuDjAs95e0B3viTXO0Kpou12OU9yI=
+	t=1729616695; cv=none; b=cS6RrJn1Um4MxnKoXAY7XehQtDKOPsHn5k0VnfyiRemi/mOsfiCzKdAp45ydQRGKoU9t1/x4jOWGG38Ubd/w7jdPB9TLhPfpp8ZEBLrs4E0Un+CspcBia0CUvprUXDhXuS6ygW3eL0vMV6leksdTgKZvbAIEbOe3FAfhcsCLhlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616604; c=relaxed/simple;
-	bh=48ceQE87rmV3uOiD9dvWI67NHf4mh/d8CQCgLH7LkTc=;
+	s=arc-20240116; t=1729616695; c=relaxed/simple;
+	bh=dnzywOLb2D/osssfwAX6Xm+weLGD8+cwQbYfop+7Tc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4SpM8ZkWfu2aa0gursKLFbjdzBvHeqzdU6mTHiuVGpNls6ZfXZcF/VOx2z3vNOhE8nX6MvEiqW+hHjms1C1jkEQkVgKbuJ9u9Kgkrr2HU4OS1GJ8qWUlzsGiUVDYodRh4zy5SCa0gw2De4r/ks0CtLGuYrX0DfRDVZckrnANZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Q9ef2jN9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 923E040E015F;
-	Tue, 22 Oct 2024 17:03:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uXYWye9f5smU; Tue, 22 Oct 2024 17:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729616595; bh=xSDNfr4pRCD8cBUjcFOrM0JXRl9/mMkSbY9Aw6Cavq4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBCASb93/thtld9/U6Ov5YHtjsrLEiLg5y7GOPsKSFHFtGwVw9fuODzdFWxosvDZVa13ZDiF6VcOlotRGX+C9AtYcLtgwW5C4yRht5Z92260BbGViDcoOB5VsOlqw0jiFOOAO9U9HT58BFnaQprzAJeomgGTMOzKSW6cqF2lLUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyS4WoSL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC0C4CEC7;
+	Tue, 22 Oct 2024 17:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729616694;
+	bh=dnzywOLb2D/osssfwAX6Xm+weLGD8+cwQbYfop+7Tc8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q9ef2jN9C9GOH2Gp+juq7uZGPzYCxzljD9813514WE1nO++GfFlax2khDe6bYlyaI
-	 ofZCIFLjRzyrFcljfpSd3leuLNEV8qZPnocS85sSLPiX41rksivZvdfCyESUEZLgY+
-	 cKNR3+J0HRzb6cmLD4k6m/qecd9Taia5hiSMT1M7BYZxzAaKMbVAjJCDWWPvr+i9k2
-	 qRjVWvSv9rpk6VPR8Feez0G6a40l3d1raxo+G5z5SDNiUKbEZvCJvHFPJi3CoDH0Xq
-	 mmUDEApc9M3XpSTJUNVlXsbuwrGbfLcoeRmS7pzVOLa0UPvrFdg9l2CC9dU92gEOHz
-	 OSfroRSZ2INA9hotc1A6SLqEXNuVhxNGlwGFTkQCxDagrKxacQ/OEh1NMGxEaXx6Q/
-	 ZglIA1XG0bVEvxtKCayOPSahFJklobas8RGunn6eQr5Dyi108t1ENvPH2Lq0LHviZn
-	 /QGt6iPuT4A3JshSVLcK8/NYBNjpWWMoUMrMtjnXk78OW2qWAWzBY3KQpZroiepaR+
-	 TaRYtn512ZWCq6Xeve5gyDWNWpZYs4VfCo8X62n1+wyCnse057jzPQ/8K8ltVEBz+B
-	 nuB6EPOq8HeykNz1D93x1H84S00w+nivkkRHddliuNpFXMAiQjjPIf6WvJCERiDkmL
-	 vifkh3OOJHvD54LPEYmQaXRM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 969B540E0263;
-	Tue, 22 Oct 2024 17:03:09 +0000 (UTC)
-Date: Tue, 22 Oct 2024 19:03:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: tony.luck@intel.com, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH] RAS/AMD/ATL: Add debug prints for DF register reads
-Message-ID: <20241022170303.GLZxfax_-72ZCX1I_q@fat_crate.local>
-References: <20241021152158.2525669-1-yazen.ghannam@amd.com>
+	b=HyS4WoSLGRXfsWgv53aWFoSFVcEkEEFzsWeiWw9jSxxLoYzCzGDIQXtNxOlhdL3mt
+	 rbq9pW5zHq7gaF353s2YeEC14WE0VIlGV/EW+n971qQ3RDVwTxx58iJMIcnhtQzoss
+	 aEoEAA5W43IGNeLYcPI+vBCcAOhzCXQ3BVWx7dvxDFgPj7ouygSvr7dzcG3QK29nMN
+	 /kB0owkzDz1kJMi+W53V2OQWEsUJBxfS4NS8XSYodskCnNMNgq1MHLk3nzjOvlnZ/K
+	 Tokl9Lf+onURwDmL4zDCaTReOJYMruz3nk+znaUbv03rGlcsNXb8nmwWc4U6e1O9bd
+	 zHF2v2rsdNX9g==
+Date: Tue, 22 Oct 2024 10:04:52 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
+	Andrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, james.clark@linaro.org,
+	alan.maguire@oracle.com
+Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
+ in clang 12
+Message-ID: <ZxfbNJ6nKXzoEYVn@google.com>
+References: <20241011021403.4089793-1-howardchu95@gmail.com>
+ <Zw61TUe1V97dKWer@google.com>
+ <Zw7D9HXBanPLUO4G@x1>
+ <Zw7JgJc0LOwSpuvx@x1>
+ <Zw7SkmEaz730uVbL@x1>
+ <Zw8fqyCZNqSABMkM@google.com>
+ <Zw_MFwkejeWC2qbv@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,31 +69,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241021152158.2525669-1-yazen.ghannam@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zw_MFwkejeWC2qbv@x1>
 
-On Mon, Oct 21, 2024 at 03:21:58PM +0000, Yazen Ghannam wrote:
-> The ATL will fail early if the DF register access fails due to missing
-> PCI IDs in the amd_nb code. There aren't any clear indicators on why the
-> ATL will fail to load in this case.
+Hi Arnaldo,
+
+On Wed, Oct 16, 2024 at 11:22:15AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Oct 15, 2024 at 07:06:35PM -0700, Namhyung Kim wrote:
+> > Hi Arnaldo,
+> > 
+> > On Tue, Oct 15, 2024 at 05:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Tue, Oct 15, 2024 at 04:58:56PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > So I'm trying adding extra bounds checking, marking the index as
+> > > > volatile, adding compiler barriers, etc, all the fun with the verifier,
+> > > > but got distracted with other stuff, coming back to this now.
+> > >  
+> > > > Ok, the following seems to do the trick:
+> > >  
+> > > > [acme@dell-per740-01 perf-tools]$ git diff
+> > > > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > index 3b30aa74a3ae..ef87a04ff8d0 100644
+> > > > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > @@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> > > >                                 augmented = true;
+> > > >                 } else if (size < 0 && size >= -6) { /* buffer */
+> > > >                         index = -(size + 1);
+> > > > +                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
+> > > >                         aug_size = args->args[index];
+> > > >  
+> > > >                         if (aug_size > TRACE_AUG_MAX_BUF)
+> > > > 
+> > > > I'll now test it without Howard's patch to see if it fixes the RHEL8 +
+> > > > clang 17 case.
+> > > 
+> > > It works with this one-liner + the simplified patch from Howard and also
+> > > on this other system (RHEL9), as well as with Fedora 40, it would be
+> > > nice if someone could test with clang 16 and report back the version of
+> > > the kernel tested as well as the distro name/release, that way I can try
+> > > to get my hands on such as system and test there as well.
+> > > 
+> > > Its all at:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tmp.perf-tools
+> > > 
+> > > This is the current set of patches that when further tested will go to
+> > > Linus for v6.12:
+> > > 
+> > > ⬢[acme@toolbox perf-tools]$ git log --oneline torvalds/master..
+> > > ff14baa7a290bf42 (HEAD -> perf-tools, x1/perf-tools, perf-tools/tmp.perf-tools) perf trace augmented_raw_syscalls: Add more checks to pass the verifier
+> > > 46180bec048aad85 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
+> > > 45d1aadac64869a2 perf build: Change the clang check back to 12.0.1
+> > 
+> > Wouldn't it be better to have this change after fixing the verifier
+> > issues in the later commits?
 > 
-> Add a couple of debug print statements to highlight reasons for failure.
+> I'm still testing it, this is a one-liner, so I think that the order in
+> which the patches are applied isn't important. Also Howard's patch (the
+> simplified one) doesn't clash with it.
+
+I'm afraid if it'd break git bisect by allowing old clang versions
+before the fix.
+
+Thanks,
+Namhyung
+
+>  
+> > > 4e21679eb81b5f0d perf trace: The return from 'write' isn't a pid
+> > > 2d2314d4b09b5ed9 tools headers UAPI: Sync linux/const.h with the kernel headers
+> > > ⬢[acme@toolbox perf-tools]$
+> > 
+> > I guess you also need the syscalltbl fix from Jiri Slaby.
+> > 
+> > https://lore.kernel.org/linux-perf-users/3a592835-a14f-40be-8961-c0cee7720a94@kernel.org/
 > 
-> A common scenario is missing support for new hardware. If the ATL fails
-> to load on a system, and there is interest to support it, then dynamic
-> debugging can be enabled to help find the cause for failure. If there is
-> no interest in supporting ATL on a new system, then these failures will
-> be silent.
+> Right, he provided a report about the patch I sent solving the case, I
+> have to check if he replied to my question about perf trace actually
+> _working_ on a 32-bit arch system.
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  drivers/ras/amd/atl/access.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> I also want to test it, I'm trying to get hold of such a system.
+> 
+> - Arnaldo
 
