@@ -1,167 +1,199 @@
-Return-Path: <linux-kernel+bounces-375313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D649A9499
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:16:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499629A949F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A581283C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82E71F23753
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD27156CF;
-	Tue, 22 Oct 2024 00:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDDF1EEE0;
+	Tue, 22 Oct 2024 00:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V6OjES8Z"
-Received: from sonic310-23.consmr.mail.bf2.yahoo.com (sonic310-23.consmr.mail.bf2.yahoo.com [74.6.135.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H9x6GQ5T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC564A18
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F09323D;
+	Tue, 22 Oct 2024 00:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556174; cv=none; b=d280dQXq7CSGvCJajf+CtqdkNsY28bkUleJEOWXnMm4vtSDm0JoE36z9/WZ4lHmowuk1wHNhA8va1hGMbcKQHlHPvKmaUEvhOIAv8YXjfsHyiFL77n6tN/OcGIn/vJEJakaiBXHuQbea8nRkX9fWoEDx8WYTusVpsQzJzFemehk=
+	t=1729556258; cv=none; b=drYxmgLWhiAzjt8ISboZJBDES0Z0nw9y6+EZJDg1W3IKxRpdPLW780GnkQKeieOfFztM/UBIuD2tNpCCgFNZ9rI7qkzT7GWgfoIgEJQC/MANQG9hNvE/gZU+onZ0x1pj3AJgeT+bm63NWeVfDyizjxgzn25y8choM6xmSb0SNM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556174; c=relaxed/simple;
-	bh=PBvO+JmDcUXPLakhUBN7WxelfxPE9dinaqB6xdOpU60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IovItxOH6SQrnsL2cdv9zihAu/Ybwn8mhR4YCS+qofkSdRCU1Gq1vcrIQP7PNbn/Kg83r/WZyKeFB0cViP2GfKiStyxI7PVM4PHEFbjBRTkg/dj9aJdHwhsAkvVshq+ba35Ywmp/6o6eRaFl0ITaaPwzqZCrv6ao2LlYpW2AkEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=V6OjES8Z; arc=none smtp.client-ip=74.6.135.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729556171; bh=uKAdnfZ8DHGLvEgYRuEDP9dXyb6uc8wXDnOoyjaz+OM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=V6OjES8ZBNE/9ylrW8rUgOPDYllf464yiWTr0AQ73F/KOf0DmLAWIDFjYPlM06eQ5cyMrI7x9oG8sbPVVy00RWW6AXHq71M/pIppfB6zdNAmp7ARx3eHfcv2MqH3ooECFX0KyNA6KfZJJPCI2OFJb1tUQizOQUgLiR2zVQJKnEcW2c/9JKI6JIkSSJw3y7a8p9KcB6ZLYTbd8Qj3pRCjE8b5CHScfQvI5rjnpf2OWrNBEpjQ4w5gx+1B9LMjZcLnBpFCGTst3vBSOKbVKRnKbzk5oTpnipAAG8ztSkYBMzfZDByp0YBAjYEcUsKbMOyVF1LKFhIJUjBP4ARESIMiVw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729556171; bh=Vib/Mj87VeZQQXroTxxdrbopVRYt4e/pj8Dd7oML1jw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bPt5cXy52+wqeyZp2EitQAIjEGRZT7X/5Qjuv13rYRMOU6bAoqJYIo+5BbrZJ8oDMoI+CP7fv93+Jicg6JJQGRkmooWuF5z8pCi79qeJmutlm/4/aZzLs+RN4pS7FckwUqnX8uerb082YofKFGaE+e5tcB2I/xBrYA/XKV1/58Ptx1V+RFe6c8d/tJxsfZdqsyb3wE+jNNCmuCetpX3d0z5dDOEq8licwEw2n13kyrFsK338iwOTvXQJvGun42eIqdp5ZnSAjIuVrDdYIDItlmgC8dV5bIyvyNMnVOrPVS9knDZZUCuoqyqZaGHngqSfxqdU4OFtxE9nnd1w5eEdzg==
-X-YMail-OSG: 7JVnBMcVM1nUp6p6J5_sNh2r48TJEL5JprpnqW2z3f_7NhyC9s_DCLkp8QVEMG8
- byZGgFdSkJ1Ac.A4d6ICWVHLkhfAoZjXtfJzM0FGYg6Y17mOZqtQay_A6yAo_SDOiJ.DBakRTNKG
- bqqSPr_Fll8.HRjXEU7xLYGc8AWY1Y2LPrU7zE4.rXXugM4DjwaIONE4_92drKdU5gSktDXJxiPx
- tyORtYIXL0smebo70JS7OukXzPAtciJeXPw8GKcJKGDubW1bLu6K06qxmQnwmWXYftBa3f3E_4T8
- 1nuEK1pKeLNvfomrDWM4di_a8I1HaIfDx7Z.3U9YySi2dSgTLDO7VJ4eKeZdMGj4kBdNmFHxVzQN
- z7db03NhYqoysJOE7kYOz_IdMLuz.R1wX5cjj54cZX.8P7G_FYMr7EcsW8pghrhxL54XE4b7hVn9
- 8r7h3NaS8PyB3qJmUy.duBj13KHSjHnD3niS5HSrmtFL6UFFL5CMvgneWiQhSnUptJZCsK.NALm3
- jQIwPOg7jVh0J4G13em6XXKF3bzJzza8MHCQzzix7zwNNpgSFv_IyNC5aKJDUqDk9Jm4Sb.3KofN
- pU.UOGsTO6xJJeyEEFQ38Sy2E9Uv9ZoFEuKBRUbeQ0JjCbO_gMkmqJC44.zDjX_fQpfEMu0N0Tux
- zNLwtVQjxGnDfoRg0AIoggE2602EXAB86YkI9eFdKe_txrPUClBsz6O0QbO5GkcGy2CFR70ySkm7
- TNqVHros4pFNCD3zwKthD1Y62JRQBp9_kiOGP792KEu34_JJ6.7G1.FvLFdesCikuzvOyy2ZZ5X6
- jJEoAaIFtddua7pmzKREUJiLpoh1XPlx9v33obbdt3Ot_I4Kq4DzS_HsBOIc6mQP.XYvR8CSIpJ.
- 2VaJG4Go8pi_dJ9kHB2FhrpVPMLjY3Qa89p7v2hkXeTbnTrywKr5N1wkEtZlukQJHdFv..mEG7ji
- aYjdc0E._D4FUsTq5d9xamyx_lemy2e4W6MeK3zsjipEZRjPO3Ee7zsy9LXUry8FdT.MD.87NGKP
- ahgfoAsKDwJxDPv3H1GOdPnYUd8c9i9DwKcvRZyQnx8GDMKJfMKtcC41ZZrFIdORHgbGXAQ2K696
- TqwCqRZlvIjvDl4m_g.M0bHFMNGUqNMBeAFWutwmgMDSBnHf8paJCnYmHVP2PpDVkbPlyFlQyrSn
- pt4P_Ot6mol9QjdwwjnOYQKB.ARqx9o2_sGP0LeNQXfeoz1HNF4nKaGPtxFiRaR0iIsWO_.T2m5n
- JVgy3J2uwdjwxF6qFQSjacYwoY9n64QfzH6ka92ntWqmdhaMkDlQtSSr.RAc0bMo7TBL2ipXzV1X
- cO92SYzozaXQSQ0c0iKiUFZLG1tHpP.0bcXfpvTsBkGhGquydQpDkZFyuSZl04vbjCvJx6pvrj9Y
- wBGkD18IG9fhxj1bEaMxIoki0SGwaIjTnQimrXAvQ9PPi_96tSUmKpbjsfVH7PCux.M0HND4IwsK
- sJqxmEfnuWU0dkCihFRfUOyXgyrMh1b2_8D69Vd3Q3GVrc7VdZ.5fOZinoOl3J_puaM6dw1mfCxk
- ZRlTAjQUeoxIWF71ekPN3vOiXgURef1x3BGMKlqyyjpKLcHwl7r97t5ynab1H.7T89JCpKiw2mRn
- 4zfk18ksEv3lShx1G_pXVoR9m.So8_JfVc7l5BieIUjJVGAQU7IFPfLt_FSJrPvVTJuUsqeXc9Uw
- JjMv6LrVXsxglIQ1vAVOR4mRrA56nvGTOmAuM8W6I6fnISTs_8GVzBUlDLMxWVmLnlvStbToylIo
- RLaQzSZiDF9xXIW2J_uFpx8F3VK.307.fWFpwPpoCEoJqgT4W18nctCz20ZtRLjbyc10yCGkJ.7u
- aozQRNggyhCDx3e8BUets.0Pfkz98itJxzib_U.rHxRKp1Nt0oyebvXFWgpX7ucBsn74A9v6_rg4
- L2Cu4BUgzZ_C9QBqXbXX74ErRwIT3TsNoDi5OFJ3CxOvQhCGJCVvwqgNSZu2URb_UxFUg.A2DjXC
- pA_9SwAxq58PWlnop2o0Eo8aXie74y5wqDIeLaIM5eQRqJ6axMOhiXX5BuLYArHXh4I4b78PRkl7
- Mr12G5B8MEXO.WycncYxxthzIQ8Mo641z2VLaxNYv90wuOoRWe2iWuntQpSyVWT5KJv2QlZGFu5F
- UPKsG31wcFw9BhYsmUldvL8dtKA2._8XbxfkEBEAd0uKQgA3AXa7A2j1ovUm6BPS8H_O7pImObyl
- nCy3rWosLRqamUkTJwlgwLmYkJ32D4jQW1hXkMhL4E8Ethm28cQM_N_FKYoMPWtrecrWEac8nZHl
- KTiR4QG1XbsfhPM.VcKJ64Xu1AzSuuA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: fe59fcbb-91bc-4fad-b327-28214724d246
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 00:16:11 +0000
-Received: by hermes--production-gq1-5dd4b47f46-5kxd4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9ab5b1500e56173fe5efd6e5094bcf97;
-          Tue, 22 Oct 2024 00:06:01 +0000 (UTC)
-Message-ID: <617a2679-404c-4127-8dfd-4f3895e2372f@schaufler-ca.com>
-Date: Mon, 21 Oct 2024 17:05:59 -0700
+	s=arc-20240116; t=1729556258; c=relaxed/simple;
+	bh=8foRClbi0ov1PrOIWtTzAzLs+dOjfgrS1ihOVOBOuKM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QFSYl9XpwUhA7PMqu30tpX802c3ab2zoIK3iuAeoM+c94YebWppKvBckdkjrLFRTatXzt1OMnVyEpDNTUXMomKs6aK9jBV4n7bmtWn2RMIKRTUMx3h8Gp+DsfKxk0UoKYqkvVa0C+iMyOg7DPEaiKzNRvQumnLiQq5QnTZyU3fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H9x6GQ5T; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729556257; x=1761092257;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8foRClbi0ov1PrOIWtTzAzLs+dOjfgrS1ihOVOBOuKM=;
+  b=H9x6GQ5TKyypsNGi40PAlUvHuY9isUDPpcjR1YUfS89BtOftPaGO1AqD
+   kaBxfWEQztzA6YfqzpFqFL/QIiYlSodf0Rvj5Z3sFxvEP+ljnZJqUC+zq
+   Gt64srxithH8I2H2I/BrdfMkQ1FnpMBlaucnf2s1Lg33Nn17/O68R6ECv
+   gu2lSgdgEHi7L95TdgSKDHg0rXvDX5aSmSonHnb/hLiGraKoby9xVfSGf
+   ywgZ1vqb2T9YDQBqkeiOSsLRIqeVfyaUB4Tep36BWaHVmyIxqzYux6nWF
+   kTacFlL/DXcahN8FdM64UllskuVGWCstDwhvQEbhWZxyejX6xS+iKRj18
+   w==;
+X-CSE-ConnectionGUID: Bs0WXJWdRAmO9ebABBMffQ==
+X-CSE-MsgGUID: cszAtTfxQGiTv56ktLxEmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="40454332"
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="40454332"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:36 -0700
+X-CSE-ConnectionGUID: TFyYhElHSGKAmhjR7QALnw==
+X-CSE-MsgGUID: n0VVFdrdRYWs1zDR7t2CCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="110514238"
+Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:31 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: rui.zhang@intel.com,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jmattson@google.com
+Subject: [PATCH] x86/acpi: Fix LAPIC/x2APIC parsing order
+Date: Tue, 22 Oct 2024 08:17:12 +0800
+Message-Id: <20241022001712.9218-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] LSM: secctx provider check on release
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20241014151450.73674-6-casey@schaufler-ca.com>
- <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 10/21/2024 4:39 PM, Paul Moore wrote:
-> On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Verify that the LSM releasing the secctx is the LSM that
->> allocated it. This was not necessary when only one LSM could
->> create a secctx, but once there can be more than one it is.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  security/apparmor/secid.c | 10 ++--------
->>  security/selinux/hooks.c  | 10 ++--------
->>  2 files changed, 4 insertions(+), 16 deletions(-)
->>
->> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
->> index 5d92fc3ab8b4..974f802cbe5a 100644
->> --- a/security/apparmor/secid.c
->> +++ b/security/apparmor/secid.c
->> @@ -122,14 +122,8 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
->>  
->>  void apparmor_release_secctx(struct lsm_context *cp)
->>  {
->> -	/*
->> -	 * stacking scaffolding:
->> -	 * When it is possible for more than one LSM to provide a
->> -	 * release hook, do this check:
->> -	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
->> -	 */
->> -
->> -	kfree(cp->context);
->> +	if (cp->id == LSM_ID_APPARMOR)
->> +		kfree(cp->context);
-> Should we set cp->context to NULL too?  One could argue that it's an
-> unecessary assignment, given the cp->id checks, and they wouldn't be
-> wrong, but considering the potential for a BPF LSM to do things with
-> a lsm_context, I wonder if resetting the pointer to NULL is the
-> smart thing to do.
+On some systems, the same CPU (with the same APIC ID) is assigned a
+different logical CPU id after commit ec9aedb2aa1a ("x86/acpi: Ignore
+invalid x2APIC entries").
 
-Wouldn't hurt. I'll go ahead and add that. If a BPF LSM does anything
-with a lsm_context we're likely to hear about the many issues quite
-quickly.
+This means that Linux enumerates the CPUs in a different order, which
+violates ACPI specification[1] that states:
 
->
-> This obviously applies to the SELinux code (below) too.
->
->>  }
->>  
->>  /**
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 79776a5e651d..b9286c2c5efe 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -6640,14 +6640,8 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
->>  
->>  static void selinux_release_secctx(struct lsm_context *cp)
->>  {
->> -	/*
->> -	 * stacking scaffolding:
->> -	 * When it is possible for more than one LSM to provide a
->> -	 * release hook, do this check:
->> -	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
->> -	 */
->> -
->> -	kfree(cp->context);
->> +	if (cp->id == LSM_ID_SELINUX)
->> +		kfree(cp->context);
->>  }
->>  
->>  static void selinux_inode_invalidate_secctx(struct inode *inode)
-> --
-> paul-moore.com
->
+  "OSPM should initialize processors in the order that they appear in
+   the MADT"
+
+The problematic commit parses all LAPIC entries before any x2APIC
+entries, aiming to ignore x2APIC entries with APIC ID < 255 when valid
+LAPIC entries exist. However, it disrupts the CPU enumeration order on
+systems where x2APIC entries precede LAPIC entries in the MADT.
+
+Fix the problem by separately checking LAPIC entries before parsing any
+LAPIC or x2APIC entries.
+
+1. https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html#madt-processor-local-apic-sapic-structure-entry-order
+
+Cc: stable@vger.kernel.org
+Reported-by: Jim Mattson <jmattson@google.com>
+Closes: https://lore.kernel.org/all/20241010213136.668672-1-jmattson@google.com/
+Fixes: ec9aedb2aa1a ("x86/acpi: Ignore invalid x2APIC entries")
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Tested-by: Jim Mattson <jmattson@google.com>
+---
+ arch/x86/kernel/acpi/boot.c | 50 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 4efecac49863..c70b86f1f295 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -226,6 +226,28 @@ acpi_parse_x2apic(union acpi_subtable_headers *header, const unsigned long end)
+ 	return 0;
+ }
+ 
++static int __init
++acpi_check_lapic(union acpi_subtable_headers *header, const unsigned long end)
++{
++	struct acpi_madt_local_apic *processor = NULL;
++
++	processor = (struct acpi_madt_local_apic *)header;
++
++	if (BAD_MADT_ENTRY(processor, end))
++		return -EINVAL;
++
++	/* Ignore invalid ID */
++	if (processor->id == 0xff)
++		return 0;
++
++	/* Ignore processors that can not be onlined */
++	if (!acpi_is_processor_usable(processor->lapic_flags))
++		return 0;
++
++	has_lapic_cpus = true;
++	return 0;
++}
++
+ static int __init
+ acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned long end)
+ {
+@@ -257,7 +279,6 @@ acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned long end)
+ 			       processor->processor_id, /* ACPI ID */
+ 			       processor->lapic_flags & ACPI_MADT_ENABLED);
+ 
+-	has_lapic_cpus = true;
+ 	return 0;
+ }
+ 
+@@ -1029,6 +1050,8 @@ static int __init early_acpi_parse_madt_lapic_addr_ovr(void)
+ static int __init acpi_parse_madt_lapic_entries(void)
+ {
+ 	int count, x2count = 0;
++	struct acpi_subtable_proc madt_proc[2];
++	int ret;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_APIC))
+ 		return -ENODEV;
+@@ -1037,10 +1060,27 @@ static int __init acpi_parse_madt_lapic_entries(void)
+ 				      acpi_parse_sapic, MAX_LOCAL_APIC);
+ 
+ 	if (!count) {
+-		count = acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC,
+-					acpi_parse_lapic, MAX_LOCAL_APIC);
+-		x2count = acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_X2APIC,
+-					acpi_parse_x2apic, MAX_LOCAL_APIC);
++		/* Check if there are valid LAPIC entries */
++		acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC, acpi_check_lapic, MAX_LOCAL_APIC);
++
++		/*
++		 * Enumerate the APIC IDs in the order that they appear in the
++		 * MADT, no matter LAPIC entry or x2APIC entry is used.
++		 */
++		memset(madt_proc, 0, sizeof(madt_proc));
++		madt_proc[0].id = ACPI_MADT_TYPE_LOCAL_APIC;
++		madt_proc[0].handler = acpi_parse_lapic;
++		madt_proc[1].id = ACPI_MADT_TYPE_LOCAL_X2APIC;
++		madt_proc[1].handler = acpi_parse_x2apic;
++		ret = acpi_table_parse_entries_array(ACPI_SIG_MADT,
++				sizeof(struct acpi_table_madt),
++				madt_proc, ARRAY_SIZE(madt_proc), MAX_LOCAL_APIC);
++		if (ret < 0) {
++			pr_err("Error parsing LAPIC/X2APIC entries\n");
++			return ret;
++		}
++		count = madt_proc[0].count;
++		x2count = madt_proc[1].count;
+ 	}
+ 	if (!count && !x2count) {
+ 		pr_err("No LAPIC entries present\n");
+-- 
+2.34.1
+
 
