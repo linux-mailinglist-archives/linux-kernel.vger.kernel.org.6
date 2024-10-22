@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-375461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B899A9638
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9719A963C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E401F22779
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552651C229C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5EC139CE2;
-	Tue, 22 Oct 2024 02:26:27 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C513A863;
+	Tue, 22 Oct 2024 02:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDhx3o6t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E487E59A;
-	Tue, 22 Oct 2024 02:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC357E59A;
+	Tue, 22 Oct 2024 02:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729563987; cv=none; b=MHo5wabNPKxcpMFuHRioPztvfheif7+JBqEbBzla4VhHOz6leRbGHrYnwyz/XgFVNTz+y7Crh5aOxRCBNL1MGqD7E9kz+AiWIp9s+oQ6cJNwO+nn2JGtfTolWwpsUwx5wDm6677E7edcK+mKhUEeW142AOTkuCUl1sqL+UC2T4o=
+	t=1729564120; cv=none; b=lsp6WgFzFR0l21n13hFdli4///Pq3TQJO+zXgm70wA9R/JGEvkW9gid5DV+0OyoLkhVcDXHqnNlMUSRdeBDaaxWucljXmnq2n8kZMDqwue/gUFFG/OUvZ3GgrBphMqjv810a2DvRJHy4nWfYWisixvG9XG+3cSH6WlLqBoAX2ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729563987; c=relaxed/simple;
-	bh=0hlYTnNTnCF4BX/BH09e+Ij5K2036mUnfhKmC6OSMQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OUjrMs6CptQPgXYf9VX/0TZsliXQ2/9d88XfoyCmo47ZO3f49po+9R/7geuTLGW3x3u0MP4o+0gU0W9jxATJFDzT5j8BJv05z6CtLklpveXsN1w2/SRkqaKUjh4Dqtp+/3wnQtvK91P//NZqAY2tmbxzdaDKI0WXUpRP0rkhP/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XXbcp2T59z20qjm;
-	Tue, 22 Oct 2024 10:25:30 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0BD8140360;
-	Tue, 22 Oct 2024 10:26:20 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 10:26:20 +0800
-Message-ID: <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
-Date: Tue, 22 Oct 2024 10:26:18 +0800
+	s=arc-20240116; t=1729564120; c=relaxed/simple;
+	bh=iEVflV2wjj9RZWicdMKZ+yzF/35ywBCnw8lgo8VyfoU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MVXr7Bf60J64bqDez0kR1wfx6aBMHA8jYBLlG8Q6gq9yv1CiLM93WzXE+39Fy6BCdUMdGUPXqFqWMG1lyp09xXe4UkpADEQ+9ZZaszv5NKlI7jZs/qlptKoOr01mTlGQFAnMkXNlhCRi9ZjKVM3M8mzsejQrmUVgwVEmSN3CDWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDhx3o6t; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729564118; x=1761100118;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iEVflV2wjj9RZWicdMKZ+yzF/35ywBCnw8lgo8VyfoU=;
+  b=BDhx3o6tNg+HuP8wLbPwCwmq9HJH/ookgI9b9iidfw0HfQrzKlIZpfh0
+   dgYUiKxy/F9lWBNxfSBX26GMpODlqOjjryyx4o56JMyq+Fm1g8foiLQgd
+   BXz8SnPW2m2Led3DhqWiyliFv4A8C3muOfXE4T1OPPRkgJSAKm6OBvAWW
+   ynSP5zbN4ZxWLY0mJh3XVsXDQeldDbGeLIfPNT+86lbvI1Pa2SIWcNu/Z
+   5X6YODS5dpABuvAslx5Tg528h1fQ2vDoDIhy0D8+5wlS4cSSbJsl/Yg/u
+   z6S99vbSANI+LKQLs1Btwj8mEL/ECCvoUEMtJSNn/ozUIODma6mVnPcU6
+   Q==;
+X-CSE-ConnectionGUID: OFu6AEzqRzmlf8VSnv/cUQ==
+X-CSE-MsgGUID: 93ir9znMQPatp3v/lcWDMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28954295"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28954295"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 19:28:38 -0700
+X-CSE-ConnectionGUID: V/GHqH7dS5aJ9QT0c3vq+w==
+X-CSE-MsgGUID: 1rV8F+TdROq4Rkx6rM0JtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="79288212"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 19:28:33 -0700
+Message-ID: <b2c75705-2998-4e51-90f4-00b8bab785f5@linux.intel.com>
+Date: Tue, 22 Oct 2024 10:28:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,60 +66,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+Cc: baolu.lu@linux.intel.com, joro@8bytes.org, suravee.suthikulpanit@amd.com,
+ robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+ mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+ smostafa@google.com, yi.l.liu@intel.com, aik@amd.com,
+ zhangfei.gao@linaro.org, patches@lists.linux.dev
+Subject: Re: [PATCH v4 02/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
+ related struct
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ will@kernel.org
+References: <cover.1729553811.git.nicolinc@nvidia.com>
+ <74fec8c38a7d568bd88beba9082b4a5a4bc2046f.1729553811.git.nicolinc@nvidia.com>
 Content-Language: en-US
-To: Jeongjun Park <aha310510@gmail.com>, <kent.overstreet@linux.dev>,
-	<mmpgouride@gmail.com>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
-References: <20241021154356.38221-1-aha310510@gmail.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20241021154356.38221-1-aha310510@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <74fec8c38a7d568bd88beba9082b4a5a4bc2046f.1729553811.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500022.china.huawei.com (7.185.36.66)
 
+On 2024/10/22 8:19, Nicolin Chen wrote:
+> + * @viommu_alloc: Allocate an iommufd_viommu on a physical IOMMU instance behind
+> + *                the @dev, as the set of virtualization resources shared/passed
+> + *                to user space IOMMU instance. And associate it with a nesting
+> + *                @parent_domain. The @viommu_type must be defined in the header
+> + *                include/uapi/linux/iommufd.h
+> + *                It is suggested to call iommufd_viommu_alloc() helper for
+> + *                a bundled allocation of the core and the driver structures,
+> + *                using the given @ictx pointer.
+>    * @pgsize_bitmap: bitmap of all possible supported page sizes
+>    * @owner: Driver module providing these ops
+>    * @identity_domain: An always available, always attachable identity
+> @@ -591,6 +601,10 @@ struct iommu_ops {
+>   	void (*remove_dev_pasid)(struct device *dev, ioasid_t pasid,
+>   				 struct iommu_domain *domain);
+>   
+> +	struct iommufd_viommu *(*viommu_alloc)(
+> +		struct device *dev, struct iommu_domain *parent_domain,
+> +		struct iommufd_ctx *ictx, unsigned int viommu_type);
 
-
-On 2024/10/21 23:43, Jeongjun Park wrote:
-> The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
-> To fix this, we need to add validation on a.data_type in
-> alloc_lru_idx_fragmentation().
-> 
-> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->   fs/bcachefs/alloc_background.h | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
-> index f8e87c6721b1..163a67b97a40 100644
-> --- a/fs/bcachefs/alloc_background.h
-> +++ b/fs/bcachefs/alloc_background.h
-> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
->   static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
->   					      struct bch_dev *ca)
->   {
-> +	if (a.data_type >= BCH_DATA_NR)
-> +		return 0;
-> +
-
-oh, I found I have done the same thing in [1]("Re: [syzbot] [bcachefs?] 
-UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But in my humble 
-opinion, the validation changes also should be added. And in addition, 
-move the condition about a.data_type into data_type_movable will be 
-better. Just my personal opinion.:)
-
-[1] https://www.spinics.net/lists/kernel/msg5412619.html
+Is the vIOMMU object limited to a parent domain?
 
 Thanks,
-Hongbo
-
->   	if (!data_type_movable(a.data_type) ||
->   	    !bch2_bucket_sectors_fragmented(ca, a))
->   		return 0;
-> --
-> 
+baolu
 
