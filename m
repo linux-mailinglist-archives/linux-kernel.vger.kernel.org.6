@@ -1,262 +1,194 @@
-Return-Path: <linux-kernel+bounces-376305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D924F9AA2E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:19:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEDE9AA2EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584C61F22726
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A139EB2280E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0959019DF9E;
-	Tue, 22 Oct 2024 13:19:46 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B3F19DF99;
+	Tue, 22 Oct 2024 13:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FhMlQxln"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2519DF5F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B11C27
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729603185; cv=none; b=ZjAR0tthlyuvP6Pup63LhgP3lq/RCIDMqLTmhWihKAA5qOo+On4cKkvbE5/4r2WkWhddMbPsxso9JoAyw6HJcTO5VBFH/H44HpbrtlO8k+v71OfIkL7UANQppG9ujZ2QKrQphWzAuaCIZzXqKSHnvfGqziuGwZb2oADIGPezqew=
+	t=1729603284; cv=none; b=iuJlOZiO2bCFhEdYdSh80jz/97/9gv5jo97wZR2skKCC52lGrM3pmALOfkuVRdXuC1OS6I/hFOli3QeRJm9IiGC78lH6kZ9o92v0MU2NPGu3X5hjnvPJZdha9CFxbkY5KFzE/FZ20WCf9yebmRrnkkoXcpwTLTSSvAfO1HexvXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729603185; c=relaxed/simple;
-	bh=jr3eYlepC/Pes/1AfQJbfbjR0BX88PLItLRx5Z8fEOg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KrJcPfLQBRMgcma+kZ/+L8SkpJz/OS3AIhjP+bpzAiuE0d1OZT+J60FMiB5jyfqLVgH/DkVBNfIdF7O1rk4PRAwcHvIbkNRIftG9RJ2tRcDmeZ8NR8w7rWno8Sv/OvMMfHCAdN2CsiI1zdUlddS4zUjiBPjnGIbuwrXaLzCVwvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so50259465ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:19:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729603183; x=1730207983;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=21Stx3y9XlPMtEInUKq5l0Cb7mYtjf+MQaH/tk384o8=;
-        b=Fe3rqp7Q7mQtn+0DWETkQgl0YDhcRmnLKVIif51ifEFS+NdIt0ZPT1u73TImfI8719
-         Gq/6NNMBwP4cqTHqfWBbdMqVfUaCTLWNd5oPcKcle3DNVvg9R8Fc/BYNG8Opk3WEvFgE
-         gR++076nUORVsV4rrOdWblFBPbQDCG6lLh2CDeV2L1hhGqqQzr406U4Xr9g3fc9emM2x
-         UeiSz1Yb8JrFJJrZ5CXvgmi3yTEivcIBL0bewEHrPNKmFOgun8cdwZXBsfa/fjFU0tq6
-         JGPw1Ac9/vdzKT6Hrd4FX3g4r5UmlcJZ4j+fAzFzX4eeC6nn9ctrtre8DengQLor9Ynz
-         22GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0DHT+kmM73V3KMx55Z+yL527amqt/1SPg2cG9cxpReXycOyc3wjxnKCJcLBFGQnsWQLzONVyuBkxlCGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgr9s0SIPgAmyjOxp7M3OWLC8A3Ggcs4gzbR626Wr9dE5hxKDV
-	E6qrZcHGKtFcxbhHh2wdM98r2UpIf/hw2eVURRxh0g31ZeKSwpEgHzat6UYYJzE3I8ETD1vAsFm
-	ZmKbclGKy369tqSBtg7u7kAryYxyRJRdWoia2woe6xNfivKb940ZnqWA=
-X-Google-Smtp-Source: AGHT+IEXnAMtJB8k2+7SxGiopBQQ0evOp4myMxFtrHgZA8QEz2z+1tc2ugqjpkn8cuCPk0EurX2U1128DwRHrvo48Rik05TMUkPM
+	s=arc-20240116; t=1729603284; c=relaxed/simple;
+	bh=ystE7XvCDr5nP3P92mePG0w996TUqGPmg0Xj4sfkCME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkDUkV0MTJh9Xl5x4ucjMwekbgtDDLwzFmvDp0cztRtugxFilM8mKLGrMwEC3ffm3hHBQ5910HmDc2Fn9cczDWwxPvg4b/hTMd1O9QbPGGzRgAjR0avY4VJbOlUZh5TZWgORMzyaIdK7nEaB3m0fLWKFBP3cTEkMq7abm6X96f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FhMlQxln; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E756540E01A5;
+	Tue, 22 Oct 2024 13:21:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iDRJxERt-Cka; Tue, 22 Oct 2024 13:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729603274; bh=kXFX/HNtWsHwMvtY26MKEC4FQQNuuTolu8A7vDJViI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FhMlQxlnr8Jw5MVT3cm4lzfGQOJGOtJ5LorhiJ6HPoBO4BGBN0FfcQjUyu3JxQmle
+	 KU/z4kfXN/C6t8MhePJMmcdMnim2R3E7rsxeK8vmVMv734/olvLC0qoSpMrKhqnNq3
+	 zfKB+zVoYNHO55YRQxvhdyXunjlpDmFL+ZFDuF/I3ZHbdxIeDB7RYeWpUyyws6v5gV
+	 glQrcIlu8rNJNlDUwjnnLOmVmO4WuTeNnnZpxGImh2abyeYiyjtnUTPhzJcdBqVQq6
+	 gzAxhDGbQpr+TYgY2xwA4y5DnbKNs6N9ZE575dd3g3HAKJ7oPvg/aj2QtYlJxK+AT+
+	 fXxlZx6leUVGHGjdZeSInFE/gYzKcwqIOVD2K9XUdWjGz+1WUjfyIUpONIH3rH/TlJ
+	 4PxENTeXeS6ZzSLIku8J3UvDG2aDU8tPktbNXHGJFqAs0IJrq4ec/6KPqF68FIu+PC
+	 G4ZSRczaKT+rjICbLdShgphVCWXhBIumCtQbsyFtCtQzzjCDMcTzv9H8rpfUxCZbCQ
+	 MUOhkI+z31aKLge/xb/pMCRG/WIjmDxw2XwHbNk6wJx9Osrick0BC88wmEG9rne1Z8
+	 b0ObxSOl2+bnBAasNLlWI92I8o29LcGrewNMc/8SpWB+bFQ+RzEosyOR5Mfs33sn9N
+	 OWX5BQg3wDLD4XlrjguFwsrQ=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DB1BF40E0198;
+	Tue, 22 Oct 2024 13:20:55 +0000 (UTC)
+Date: Tue, 22 Oct 2024 15:20:50 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] x86/cacheinfo: Delete global num_cache_leaves
+Message-ID: <20241022132050.GHZxemsmJSLg8Q_7U7@fat_crate.local>
+References: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
+ <20240913083155.9783-3-ricardo.neri-calderon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1564:b0:3a1:a3bd:adcc with SMTP id
- e9e14a558f8ab-3a3f405d07emr132573605ab.6.1729603182836; Tue, 22 Oct 2024
- 06:19:42 -0700 (PDT)
-Date: Tue, 22 Oct 2024 06:19:42 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6717a66e.050a0220.10f4f4.0127.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in __closure_sync_timeout
-From: syzbot <syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240913083155.9783-3-ricardo.neri-calderon@linux.intel.com>
 
-Hello,
+On Fri, Sep 13, 2024 at 01:31:54AM -0700, Ricardo Neri wrote:
+> diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+> index 392d09c936d6..182cacd772b8 100644
+> --- a/arch/x86/kernel/cpu/cacheinfo.c
+> +++ b/arch/x86/kernel/cpu/cacheinfo.c
+> @@ -178,7 +178,16 @@ struct _cpuid4_info_regs {
+>  	struct amd_northbridge *nb;
+>  };
+>  
+> -static unsigned short num_cache_leaves;
+> +static inline unsigned int get_num_cache_leaves(unsigned int cpu)
+> +{
+> +	return get_cpu_cacheinfo(cpu)->num_leaves;
+> +}
 
-syzbot found the following issue on:
+There already is
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10e58a5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
-dashboard link: https://syzkaller.appspot.com/bug?extid=43d0c6eb00a26a41ec60
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12265430580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1105c640580000
+#define cache_leaves(cpu)       (ci_cacheinfo(cpu)->num_leaves)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d116f71ad0eb/disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bdd6f545b105/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0d26b05e3d7c/bzImage-c2ee9f59.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a2d3caf3a599/mount_0.gz
+And there's also get_cpu_cacheinfo().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com
+And now you're adding more silly wrappers. Yuck.
 
-INFO: task kworker/0:2:937 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:2     state:D stack:17008 pid:937   tgid:937   ppid:2      flags:0x00004000
-Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work (bcachefs-delete-dead-snapshots/)
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
- __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
- closure_sync_timeout include/linux/closure.h:206 [inline]
- __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
- bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
- bch2_btree_update_start+0x11a2/0x14e0 fs/bcachefs/btree_update_interior.c:1274
- bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
- bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
- __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- bch2_delete_dead_snapshots+0x19b6/0x5ae0 fs/bcachefs/snapshot.c:1643
- bch2_delete_dead_snapshots_work+0x34/0x40 fs/bcachefs/snapshot.c:1718
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task bch-reclaim/loo:5264 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:bch-reclaim/loo state:D stack:21976 pid:5264  tgid:5264  ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
- __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
- closure_sync_timeout include/linux/closure.h:206 [inline]
- __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
- bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
- bch2_btree_update_start+0x11a2/0x14e0 fs/bcachefs/btree_update_interior.c:1274
- bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
- bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
- __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- bch2_btree_write_buffer_flush_locked+0x4f03/0x59f0 fs/bcachefs/btree_write_buffer.c:429
- btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
- bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
- journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x174/0x560 fs/bcachefs/journal_reclaim.c:740
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task bch-copygc/loop:5265 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:bch-copygc/loop state:D stack:18968 pid:5265  tgid:5265  ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
- __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
- closure_sync_timeout include/linux/closure.h:206 [inline]
- __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1799
- bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:239 [inline]
- __bch2_write+0x56ad/0x5e30 fs/bcachefs/io_write.c:1504
- bch2_write+0x9b5/0x1760 fs/bcachefs/io_write.c:1634
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_data_update_read_done+0x22e/0x330 fs/bcachefs/data_update.c:424
- move_write fs/bcachefs/move.c:133 [inline]
- bch2_moving_ctxt_do_pending_writes+0x44c/0x8d0 fs/bcachefs/move.c:164
- bch2_move_ratelimit+0x76c/0xeb0 fs/bcachefs/move.c:492
- bch2_evacuate_bucket+0x2738/0x36a0 fs/bcachefs/move.c:702
- bch2_copygc+0x42db/0x4ca0 fs/bcachefs/movinggc.c:240
- bch2_copygc_thread+0x737/0xc20 fs/bcachefs/movinggc.c:381
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Can we pls use *one* of those things and work with it everywhere?
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-4 locks held by kworker/0:2/937:
- #0: ffff88814479b548 ((wq_completion)bcachefs_write_ref){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88814479b548 ((wq_completion)bcachefs_write_ref){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900038ffd00 ((work_completion)(&c->snapshot_delete_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900038ffd00 ((work_completion)(&c->snapshot_delete_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #2: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x97/0x1a0 fs/bcachefs/btree_iter.c:3040
- #3: ffff888077fa66d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
-2 locks held by getty/4982:
- #0: ffff8880329220a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-4 locks held by bch-reclaim/loo/5264:
- #0: ffff888077fcb0a8 (&j->reclaim_lock){+.+.}-{3:3}, at: bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:739
- #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #1: ffff888077f84398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3215
- #2: ffff888077f84740 (&wb->flushing.lock){+.+.}-{3:3}, at: btree_write_buffer_flush_seq+0x1a39/0x1bc0 fs/bcachefs/btree_write_buffer.c:509
- #3: ffff888077fa66d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
+> @@ -742,19 +753,19 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+>  	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
+>  
+>  	if (c->cpuid_level > 3) {
+> -		static int is_initialized;
+> -
+> -		if (is_initialized == 0) {
+> -			/* Init num_cache_leaves from boot CPU */
+> -			num_cache_leaves = find_num_cache_leaves(c);
+> -			is_initialized++;
+> -		}
+> +		/*
+> +		 * There should be at least one leaf. A non-zero value means
+> +		 * that the number of leaves has been initialized.
+> +		 */
+> +		if (!get_num_cache_leaves(c->cpu_index))
+> +			set_num_cache_leaves(c->cpu_index,
+> +					     find_num_cache_leaves(c));
 
-=============================================
+Ugly linebreak.
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5710 Comm: syz-executor101 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0033:0x7f4adf789ccb
-Code: cd 48 01 c1 49 39 4f 08 72 4c 8d 4d ff 85 ed 74 33 66 0f 1f 44 00 00 48 39 f0 72 1b 4d 8b 07 49 89 c1 49 29 f1 47 0f b6 0c 08 <45> 84 c9 74 08 45 88 0c 00 49 8b 47 10 48 83 c0 01 49 89 47 10 83
-RSP: 002b:00007ffde888de70 EFLAGS: 00000206
-RAX: 000000000050ec64 RBX: 00007ffde888df10 RCX: 00000000000000bd
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00007ffde888dfb0
-RBP: 0000000000000102 R08: 00007f4ad7200000 R09: 0000000000000000
-R10: 0000000000000000 R11: 00007ffde888df20 R12: 0000000000000001
-R13: 00007f4adf80cc00 R14: 0000000000000000 R15: 00007ffde888dfb0
-FS:  0000555591fa7380 GS:  0000000000000000
+>  
+>  		/*
+>  		 * Whenever possible use cpuid(4), deterministic cache
+>  		 * parameters cpuid leaf to find the cache details
+>  		 */
+> -		for (i = 0; i < num_cache_leaves; i++) {
+> +		for (i = 0; i < get_num_cache_leaves(c->cpu_index); i++) {
+>  			struct _cpuid4_info_regs this_leaf = {};
+>  			int retval;
+>  
+> @@ -790,14 +801,14 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+>  	 * Don't use cpuid2 if cpuid4 is supported. For P4, we use cpuid2 for
+>  	 * trace cache
+>  	 */
+> -	if ((num_cache_leaves == 0 || c->x86 == 15) && c->cpuid_level > 1) {
+> +	if ((!get_num_cache_leaves(c->cpu_index) || c->x86 == 15) && c->cpuid_level > 1) {
+>  		/* supports eax=2  call */
+>  		int j, n;
+>  		unsigned int regs[4];
+>  		unsigned char *dp = (unsigned char *)regs;
+>  		int only_trace = 0;
+>  
+> -		if (num_cache_leaves != 0 && c->x86 == 15)
+> +		if (get_num_cache_leaves(c->cpu_index) && c->x86 == 15)
+>  			only_trace = 1;
+>  
+>  		/* Number of times to iterate */
+> @@ -993,12 +1004,9 @@ int init_cache_level(unsigned int cpu)
+>  {
+>  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+>  
+> -	if (!num_cache_leaves)
+> -		return -ENOENT;
 
+Why not
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+	if (!cache_leaves(cpu))
+		return -ENOENT;
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>  	if (!this_cpu_ci)
+>  		return -EINVAL;
+>  	this_cpu_ci->num_levels = 3;
+> -	this_cpu_ci->num_leaves = num_cache_leaves;
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+Regards/Gruss,
+    Boris.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+https://people.kernel.org/tglx/notes-about-netiquette
 
