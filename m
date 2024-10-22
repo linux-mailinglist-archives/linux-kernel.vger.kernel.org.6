@@ -1,199 +1,264 @@
-Return-Path: <linux-kernel+bounces-376445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40F39AB1AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:07:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086909AB1B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B391F24671
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D09A1F24248
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0761A2651;
-	Tue, 22 Oct 2024 15:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BEC1A2C0E;
+	Tue, 22 Oct 2024 15:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCqltAEj"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+vBb1v5"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7022193409;
-	Tue, 22 Oct 2024 15:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BDC1A257A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729609650; cv=none; b=rQ7sykUT4BOnLr/+ucQaQyrlRupx5+7h6dArWbXNkrjzNS1LbNMRYk8lmrOfDRyJXnCClAqZB9KwUzU2W8dJ7aMUCpG+0hwmDURgFiRHnidUzllNyI/jQojGc3I66kXi2FHmkf21Qwo4gMS2q5Fr/dvoIiz4kBqnVlYAAbmr23E=
+	t=1729609735; cv=none; b=PUV64SCAuMgKD4YOFYChgzkEuu6yX2JX+4lRtYiYF9qgighLttVY6Mtfx+jLlZ0EBmJ0gShNIuzurXz4iraxykMooRNtjpVBtoOA4A91xJmzTz8BpdmAws8Qm/TCXdw4BtSUWyIgGDcKFyVvfQMUg/BOyxaRdbF12/bS6LFkWII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729609650; c=relaxed/simple;
-	bh=9kncNoCYnoZkS9pve++ljroQDhSRbJF/pxJtccQpvOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b0EtHGZwYEbM2jcNuCHjVsnEcgO6UqvHB1sHTlp1TkDMaTw7/bPT0hiIjUuAWQeasaybYP8CKZW7NuTNUEMap1qwMKLMJu5jmm1AXuBfXhk56pNos2eXzix7q6vU4HIEfDwr8M6yKV8UAIjYVCnNJJqCPRsZ5X91M0HbuwMDpVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCqltAEj; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7181b86a749so1696198a34.3;
-        Tue, 22 Oct 2024 08:07:28 -0700 (PDT)
+	s=arc-20240116; t=1729609735; c=relaxed/simple;
+	bh=F5GtqapFxHdcdH8bjmB/xNAObkdxC408A3YWRggND3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=haxZ0zDjJQaX6FdwoNIv8rEAx3JbDydpmgF3djkg35IZVJNacXHan2EtDC5vkJlgi3aJ89UYa3w5SzfuDACzYFjqqKOdAg1/RWdCDTcwPzV/QzrdlFQTcnx+Pyw4qVokwoTheM3wevJ12CrTiFz1sVFMYyf9+9lBkWhWKawK9Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j+vBb1v5; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so4295334a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729609648; x=1730214448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1vXDpIcbmYR82/ZYPEZaowKd47+J3jKlxJBdjk/u5Rs=;
-        b=aCqltAEjE8e3+qhoX5C8hltotk611Rq5lTnb4hYTOUPOCUJij8mmBshdXZROeVnQRi
-         vVhrQh1U1S8ELI8zpf++fy/Np5lUfrcaCzvzWNjaU/Ch3ITD9hC59iOuoNxDvI8yO0yC
-         NWrInm4CTz5thXReM4tNjwKjFynR1vUqVWEt+jqqI95HTqEXIepAfLM4A52XcsOQq4/6
-         R+aUua04Nf8vvEdN08s19wI9MjSkvADTKYu5HW6yZi0T803hXfaIy7We3iBw74CU58W6
-         cXKFneAA4VdYw6pn6mD3fTwcV25s4+JGGJClPVeBDhxYFo762FQG78/dnKT6CvIpPgGr
-         W8eA==
+        d=linaro.org; s=google; t=1729609733; x=1730214533; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mku5pRY4j9r+Rq73n7YKu1xqjHAkR8dsAeaFYNdRYFE=;
+        b=j+vBb1v59UOu29s7+ICnhccq2yH8HES27zSs6YXb9s3iCP6N4LK8ouh0NStsRQNBB0
+         jHxG1UQ2kW7NJbM1VV+rEM9llAg46rGVWERNmjY0S8jfItcylZsfqXIlJzF0TKpS+9EI
+         lvJrgg/JyG2lbMGGUSXN+JGej02w3uHJCJqTPsvR7oFE0P2MCJhtL06N48AnBKTySbzm
+         TNZxJj/y9YCUejqL1oddcHfebF+iEtfVcCzxc87jIYJZ0u60S5KlD4rR5HXRFOffneYB
+         tNUIBEtFxD/w+MVasKEYDle9v73zByNG1AvHnxin8TkyziuiFzeQ/QZkPgxsyJ8iB20g
+         VQNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729609648; x=1730214448;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1vXDpIcbmYR82/ZYPEZaowKd47+J3jKlxJBdjk/u5Rs=;
-        b=mui52oVWDQP1JiZtnH8JDR/b+dfzHRtAKIswTkdkY9RBnQ00PdUX2+8DsWnN78uCjY
-         JAKXX4vjmHJOjhlEMK6/8NbgLZoaiMfmb03rtlEOPFlljePpUVzFM+MUp3Q9rjjWdKt9
-         hPr+/Tjz6dBJvo+pqN9oyTUJOPqXarYUgvXfauBO9DJkj9S/zpjMjNjCz62MzzXZvT9v
-         0XTpWQF5kwi1KVb3mEoX6igU/5FMLxzAbCHQq+V0nQ1qRwc8JAMjL2nR6qzrpie5rN6o
-         LQWAnabdnQ491kgSY6q0RREI27C+55XoGSXCHcfY5qlYh4QL/akHSpU0MKK6INeqNNUP
-         n5Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlqYV1dq5PjIq1e2KKKFEfKLjisefgvWaFd7js00TraLZlOmEhUfrMOgLD21HkwefjcZM1jBi/@vger.kernel.org, AJvYcCVROH+e3Euqnc+L3Dpe+TMOoVm+9r0YimJ6NiFSkPFy0NnFvmFdThBemOd6IXXD2l/kuW563Njc9s4MtRYQ@vger.kernel.org, AJvYcCVj5bqw+M4e4CC+xWERneouB9FjFE69aex6qcgHr8bIhOtvQ9l3RrDXh27Q4IOswcKG2MeDpOJSbWK4M0JR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxleKXPRCtODZDj26KvCblrpFlKC2Dl+aU/lFFft5WwOzrV/QS4
-	zCAbJFHqqwk445KnlwaFUCX/UZ7UJDWriLKUyPuZw6jE+cMDgzPwp+Xby3MX
-X-Google-Smtp-Source: AGHT+IGY644/swDDzE7wgLAigf2fcU39yfuvfVlwvsuHZ8BCg9yHMVVKwEoVj2dTjNFoKNEkMikAxg==
-X-Received: by 2002:a05:6808:654b:b0:3e6:14a6:4282 with SMTP id 5614622812f47-3e614a64545mr6109191b6e.2.1729609647846;
-        Tue, 22 Oct 2024 08:07:27 -0700 (PDT)
-Received: from [192.168.1.22] (syn-070-114-247-242.res.spectrum.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3e61035fe39sm1312453b6e.56.2024.10.22.08.07.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 08:07:27 -0700 (PDT)
-Message-ID: <cbe1fd40-2d9f-4396-84a0-741db2c5c586@gmail.com>
-Date: Tue, 22 Oct 2024 10:07:25 -0500
+        d=1e100.net; s=20230601; t=1729609733; x=1730214533;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mku5pRY4j9r+Rq73n7YKu1xqjHAkR8dsAeaFYNdRYFE=;
+        b=OoA8uDnHsK4qYUdYc84RfdEikTlaQKPV6ehg0NIx3TavVCZ97HYkNNNEInDo3XPhN3
+         XABO/OH4vqsFYEoCvjSz44vN/YwOnQqA4AySgZAcf17NJ3x8HKbYntIHjg+zK6rgwLUk
+         p+uQtr+o/09poZehhMs5C0G+2m9VJRbwfr5Q3Kv68xREdXKxpFyVvBIH9KVHCYTuCqYc
+         f0DPttRdfC6NLP2PVlrAiz4wOHLZLJK94HfxfdtMO7bN5gan5V0YW53Il3DcJOi8/hMR
+         ABr1pZ1djg+WSTuJfEYh35r1rgQPrg7p5/3wOVR10TQOezrvJmlgM93n8W/hR8Jo86Pc
+         DHQQ==
+X-Gm-Message-State: AOJu0YzqcLx+o4TvpGxeH1F2Kfy/DNCZp4qGnvlTWeO3rWLiowFP2LVd
+	Y2pZ7xrlxweGvrkddAtkSZ3Z17fN8GPA4EgDseTboamuaRWj/iHHFdcRnomJeRgHzAMtJEe5pYF
+	JKRNiab59YgBzdz+7K6YMyRzVelFO8MbNOWbEyw==
+X-Google-Smtp-Source: AGHT+IHBk1gz/7unXkcbRX0ispDcGOzxo95Sj1fIjT8QBjez3JdOabO8EbkxzpmQu0/sTgvS1wDEd8rggALFAfPV2yM=
+X-Received: by 2002:a05:6a20:cd91:b0:1d9:1cea:2e3d with SMTP id
+ adf61e73a8af0-1d96df145fdmr2888640637.40.1729609732623; Tue, 22 Oct 2024
+ 08:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 04/10] net: qrtr: Report sender endpoint in aux
- data
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: agross@kernel.org, almasrymina@google.com, asml.silence@gmail.com,
- axboe@kernel.dk, davem@davemloft.net, edumazet@google.com, krisman@suse.de,
- kuba@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org,
- marcel@holtmann.org, netdev@vger.kernel.org, pabeni@redhat.com
-References: <20241018181842.1368394-5-denkenz@gmail.com>
- <20241019002232.43313-1-kuniyu@amazon.com>
-Content-Language: en-US
-From: Denis Kenzior <denkenz@gmail.com>
-In-Reply-To: <20241019002232.43313-1-kuniyu@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241011123222.1282936-1-pierre.gondois@arm.com>
+ <20241011123222.1282936-2-pierre.gondois@arm.com> <CAKfTPtBo7Kny0r15ik07pMLCjETw7UQo=ypbXww22fMLHzQkgA@mail.gmail.com>
+ <7dcb39bb-7647-4d54-a28f-4bebdf40b8e9@arm.com>
+In-Reply-To: <7dcb39bb-7647-4d54-a28f-4bebdf40b8e9@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 22 Oct 2024 17:08:40 +0200
+Message-ID: <CAKfTPtBw6MLuJoEF09airBXOFTEciM5Bd-inu5q1aNkVn+HTng@mail.gmail.com>
+Subject: Re: [PATCH 1/1] sched/fair: Update blocked averages on tick
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org, Hongyan Xia <hongyan.xia2@arm.com>, 
+	Chritian Loehle <christian.loehle@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/18/24 7:22 PM, Kuniyuki Iwashima wrote:
-> From: Denis Kenzior <denkenz@gmail.com>
-> Date: Fri, 18 Oct 2024 13:18:22 -0500
->> @@ -1234,6 +1247,78 @@ static int qrtr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
->>   	return rc;
->>   }
->>   
->> +static int qrtr_setsockopt(struct socket *sock, int level, int optname,
->> +			   sockptr_t optval, unsigned int optlen)
->> +{
->> +	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
->> +	struct sock *sk = sock->sk;
->> +	unsigned int val = 0;
->> +	int rc = 0;
->> +
->> +	if (level != SOL_QRTR)
->> +		return -ENOPROTOOPT;
->> +
->> +	if (optlen >= sizeof(val) &&
->> +	    copy_from_sockptr(&val, optval, sizeof(val)))
->> +		return -EFAULT;
->> +
->> +	lock_sock(sk);
-> 
-> This seems unnecessary to me.
-> 
-> sk_setsockopt(), do_ip_setsockopt(), and do_ipv6_setsockopt() do not
-> hold lock_sock() for assign_bit().
+On Mon, 21 Oct 2024 at 11:47, Pierre Gondois <pierre.gondois@arm.com> wrote:
+>
+> Hello Vincent,
+>
+> On 10/15/24 14:44, Vincent Guittot wrote:
+> > On Fri, 11 Oct 2024 at 14:32, Pierre Gondois <pierre.gondois@arm.com> wrote:
+> >>
+> >> The Energy Aware Scheduler (EAS) relies on CPU/tasks utilization
+> >> signals. On an idle CPU, the blocked load is updated during
+> >> load balancing.
+> >>
+> >> sd->balance_interval increases with the number of CPUs in the domain.
+> >> On an Arm DynamIQ system, sched domains containing CPUs with the same
+> >> capacity do not exist. On a Pixel6 with 4 little, 2 mid, 2 big CPUs:
+> >> - sd->min_interval = 8
+> >> - sd->min_interval = 16
+> >>
+> >> The balance interval is doubled if the system is balanced, meaning
+> >> that a balanced system will likely update blocked load every 16ms.
+> >
+> > The real max boundary is LOAD_AVG_PERIOD that is used to update
+> > nohz.next_blocked. This is the max between 2 updates of blocked load.
+> > The other ones are opportunistics updates when a normal load balance
+> > is triggered.
+>
+> I wanted to mean that on an idle CPU with ticks still on, the cfs_rq load
+> is only updated through this path:
+> sched_balance_trigger() {
+>    if (time_after_eq(jiffies, rq->next_balance))
+>      raise_softirq(SCHED_SOFTIRQ);
+> }
+>
+> ...
+>
+> sched_balance_softirq()
+> \-sched_balance_update_blocked_averages()
+>
+> If the next_balance happens every 16ms, this means feec() might operate
+> its task placement using an (up to) 16ms old util signal. The CPU might
 
-Indeed, thanks for spotting that.  I'll fix this in the next version.  I'll also 
-drop lock_sock/release_sock in qrtr_sock_set_report_endpoint (patch 9).
+This is true for all idle CPUs and not only the local one with tick
+still firing when idle
 
-> 
-> Also, QRTR_BIND_ENDPOINT in a later patch will not need lock_sock()
-> neither.  The value is u32, so you can use WRITE_ONCE() here and
-> READ_ONCE() in getsockopt().
-> 
+> thus look busier than what it actually is.
 
-Makes sense, I'll fix this as well.
+yes and it can be up to 32 ms because the real max limit between 2
+updates is currently set to LOAD_AVG_PERIOD.  You can probably find a
+unitary test on a board that takes advantage of some "random" update
+during idle ticks but you will still have some old values on the
+system and you don't have any control of their max period.
 
-> 
->> +
->> +	switch (optname) {
->> +	case QRTR_REPORT_ENDPOINT:
->> +		assign_bit(QRTR_F_REPORT_ENDPOINT, &ipc->flags, val);
->> +		break;
->> +	default:
->> +		rc = -ENOPROTOOPT;
->> +	}
->> +
->> +	release_sock(sk);
->> +
->> +	return rc;
->> +}
->> +
->> +static int qrtr_getsockopt(struct socket *sock, int level, int optname,
->> +			   char __user *optval, int __user *optlen)
->> +{
->> +	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
->> +	struct sock *sk = sock->sk;
->> +	unsigned int val;
->> +	int len;
->> +	int rc = 0;
->> +
->> +	if (level != SOL_QRTR)
->> +		return -ENOPROTOOPT;
->> +
->> +	if (get_user(len, optlen))
->> +		return -EFAULT;
->> +
->> +	if (len < sizeof(val))
->> +		return -EINVAL;
->> +
->> +	lock_sock(sk);
-> 
-> Same remark.
-> 
-> 
->> +
->> +	switch (optname) {
->> +	case QRTR_REPORT_ENDPOINT:
->> +		val = test_bit(QRTR_F_REPORT_ENDPOINT, &ipc->flags);
->> +		break;
->> +	default:
->> +		rc = -ENOPROTOOPT;
->> +	}
->> +
->> +	release_sock(sk);
->> +
->> +	if (rc)
->> +		return rc;
->> +
->> +	len = sizeof(int);
->> +
->> +	if (put_user(len, optlen) ||
->> +	    copy_to_user(optval, &val, len))
->> +		rc = -EFAULT;
->> +
->> +	return rc;
->> +}
->> +
->>   static int qrtr_release(struct socket *sock)
->>   {
->>   	struct sock *sk = sock->sk;
+You could also reduce min_interval to a lower value but this will not
+take care of other idle cpus
 
+>
+> >
+> >>
+> >> The find_energy_efficient_cpu() function might thus relies on outdated
+> >> util signals to place tasks, leading to bad energy placement.
+> >
+> > Moving from 8ms to 16 ms is what makes the difference for you ?
+>
+> With this patch, the cfs_rq signal of an idle CPU is updated every tick,
+> so every 4ms.
+
+If the CPU is kept in the shallowest idle state then it is not
+expected to stay for a long time which also means not that old
+outdated value.
+
+And what if the tick is 1ms or 10ms ?
+
+>
+> >
+> > The LOAD_AVG_PERIOD mas period has been used as a default value but if
+> > it's too long, we could consider changing the max period between 2
+> > updates
+> >
+> >>
+> >> Update blocked load on sched tick if:
+> >> - the rq is idle
+> >> - the load balancer will not be triggered.
+> >>
+> >> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> >> ---
+> >>   kernel/sched/fair.c | 21 ++++++++++++++++-----
+> >>   1 file changed, 16 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> >> index 225b31aaee55..2f03bd10ac7a 100644
+> >> --- a/kernel/sched/fair.c
+> >> +++ b/kernel/sched/fair.c
+> >> @@ -9841,15 +9841,12 @@ static unsigned long task_h_load(struct task_struct *p)
+> >>   }
+> >>   #endif
+> >>
+> >> -static void sched_balance_update_blocked_averages(int cpu)
+> >> +static void update_blocked_averages(struct rq *rq)
+> >>   {
+> >>          bool decayed = false, done = true;
+> >> -       struct rq *rq = cpu_rq(cpu);
+> >> -       struct rq_flags rf;
+> >>
+> >> -       rq_lock_irqsave(rq, &rf);
+> >> -       update_blocked_load_tick(rq);
+> >>          update_rq_clock(rq);
+> >> +       update_blocked_load_tick(rq);
+> >>
+> >>          decayed |= __update_blocked_others(rq, &done);
+> >>          decayed |= __update_blocked_fair(rq, &done);
+> >> @@ -9857,6 +9854,18 @@ static void sched_balance_update_blocked_averages(int cpu)
+> >>          update_blocked_load_status(rq, !done);
+> >>          if (decayed)
+> >>                  cpufreq_update_util(rq, 0);
+> >> +}
+> >> +
+> >> +static void sched_balance_update_blocked_averages(int cpu)
+> >> +{
+> >> +       struct rq *rq = cpu_rq(cpu);
+> >> +       struct cfs_rq *cfs_rq;
+> >> +       struct rq_flags rf;
+> >> +
+> >> +       cfs_rq = &rq->cfs;
+> >> +
+> >> +       rq_lock_irqsave(rq, &rf);
+> >> +       update_blocked_averages(rq);
+> >>          rq_unlock_irqrestore(rq, &rf);
+> >>   }
+> >>
+> >> @@ -12877,6 +12886,8 @@ void sched_balance_trigger(struct rq *rq)
+> >>
+> >>          if (time_after_eq(jiffies, rq->next_balance))
+> >>                  raise_softirq(SCHED_SOFTIRQ);
+> >> +       else if (idle_cpu(rq->cpu))
+> >> +               update_blocked_averages(rq);
+> >
+> > would be good to explain why you don't need rq lock here
+>
+> This is a mistake, the lock is indeed required.
+
+update_blocked_averages() can take time as we go through all cgroups
+and interrupts are still disabled here whereas they are not during
+softirq. Some already complained that running
+update_blocked_averages() can impact the system latency that is why we
+moved the update out of schedler path for the newly idle case for
+example.
+
+IMO, you should keep the update in the softirq and take advantage if
+this tick to update other idle CPUs which don't have idle tick.
+
+>
+> >
+> > There is no rate limit so we can do this every tick (possibly  1ms)
+> > when staying in shallowest state
+>
+> I'm not sure we understood each other as this patch should no be related
+> to NOHZ CPUs. So please let me know if I used a wrong path as you said,
+> or if a rate limit would be needed.
+
+If your problem is about too old pelt value for idle CPUs because the
+load balance interval and the next_block period are too high then you
+should fix it for all idle CPUs with the  next_block period probably
+
+>
+> >
+> > So it's looks better to update the period between 2 update of blocked
+> > load instead of adding a new path
+> >
+> >>
+> >>          nohz_balancer_kick(rq);
+> >>   }
+> >> --
+> >> 2.25.1
+> >>
+>
+> Regards,
+> Pierre
 
