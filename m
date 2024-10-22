@@ -1,222 +1,184 @@
-Return-Path: <linux-kernel+bounces-376286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D64F9AA2AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356B29AA2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9461C21BDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8381C2211F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4181D19D8B4;
-	Tue, 22 Oct 2024 13:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81F719DF52;
+	Tue, 22 Oct 2024 13:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QlNivqPw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EF5yIK1c"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7819ABBD;
-	Tue, 22 Oct 2024 13:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD58194ADB;
+	Tue, 22 Oct 2024 13:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602188; cv=none; b=O0GvlxCUdHvu5no7QPYv+BRBocB+NUotvdeERQgEjd7FTutQEmv5uV2L8ktbj2rxTlczFdt0ZSPWI1FS/JDld7Me5TxNv1iaZAd1gNEJFyivMuLAsMIF15wXIQ0Xj0fms7rxx1yxUzG8Hn5NTYNJpBO+7gTS1a4lsHHwGdYwCHA=
+	t=1729602285; cv=none; b=dJpcjzHl5C+xoNv+eY3X1LCXPrDCvc4GeQxAVld1fM1+lL8/4S/Edvc0NT8W3/73q9u5Brc+g6SvjT42wO27JRDAeEqcvEceowALBxpu6cMS4Xg3yZQbVG9CFKRvnoJTGB1JbQ0bB0rCeYbruhdJbFS1gOfQKlWczDApRdlhb6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602188; c=relaxed/simple;
-	bh=TjKlg22W28xE7/B9Ew7UzmE7XquWslpHMP0GirJkxvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBCk2n3UrJ9lQA994KeOBgMPWMA6BW47DikUI3cYpO+8GbfnytW0V9C2CkxnDZlPps7BNKJjpMnIaC+oqNgX30gYtj8Izj8PDKMsrQmDKgFP6M5/4ckLL1NzuoF6+iuhe2QAYYEe3yHzC9EKB1SredP29P11vrqeeoHyDCdjXUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QlNivqPw; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729602187; x=1761138187;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TjKlg22W28xE7/B9Ew7UzmE7XquWslpHMP0GirJkxvE=;
-  b=QlNivqPwXHX6a40p3asObBNBksWb72zY0hha/HFDmIQ/m3AwfP0jcz6t
-   I0Xd0KJCRbFm0JhunaGYLyw2ugOilEoB1ckY6mE+vG12+hdj+MvpunPiY
-   PE6rS5+YnVvsiPJmNs+UWFl5kLyFcxYb+MhpUjLEtVpWkkOW7V0jGblrM
-   fL7QVrVuiddBITzw7LygLN8Bypuo/dX36zWBmYeGpyeO6A4NstOCTxnEZ
-   VlvrlLXDHw3qFc8AWKjZZanWnseKsoEhhLzG7YQDiLXumN0OSn4QnhDI2
-   1J0kClyaK9IvhlBuo11WXKcbFx3r4B9+eCT07TsGiPefN7TCx6nNlHj5C
-   g==;
-X-CSE-ConnectionGUID: u3RU2gTXR6KVyI7UCZsWBQ==
-X-CSE-MsgGUID: FhvJ/VVjT6ebnMGKXBvdSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29340194"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="29340194"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 06:03:06 -0700
-X-CSE-ConnectionGUID: KE0rJWUvSa2HCjEM8odeoA==
-X-CSE-MsgGUID: wsdV1iyOTk2Dqk/Tgk8vGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="117299572"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa001.jf.intel.com with ESMTP; 22 Oct 2024 06:03:05 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	ak@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2] perf/x86/intel: New start period for the freq mode
-Date: Tue, 22 Oct 2024 06:04:14 -0700
-Message-Id: <20241022130414.2493923-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1729602285; c=relaxed/simple;
+	bh=cbH0B8zscu4imBTHxG+Lvc8tuZdEhL0wvzGmBSkhDRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5aRkwilMoSNewW2r81HMNOt7jgEg9jEuyzXjLZVY25KMiH+uRRtA8zCpBIY1iDlKqKqmRE0Y+TUOtqwOCfXsQf7UDraBnWnCXD1bEBAOU/wgRrgwNqHfDXYDtwLIcZDeIJAlgLSsQ2xXaUsnH0TZrGHA8bGPuFk+YdtBj0A0+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EF5yIK1c; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso1094934a91.2;
+        Tue, 22 Oct 2024 06:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729602282; x=1730207082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pWDeRgm8AjTmhY393T7IKu9ZeB7eJOW+Adot/DNWsok=;
+        b=EF5yIK1cxKpcCdaFY9vdGXPUSsoTAdMbO/piR5a3PRRBGhkXH2R4hrsO2+48fOq/I+
+         q9GJeFG1Ox8NyrRC6yuSyxeLoNkDZ9ixgucb1LhYPHk2ivvhp4vuS5+Y3E/nzaXvSddo
+         d69RY0Q+UTqQlagrzNNmW135l7CxjWCTUyHAZrHeH1ihYmrgl6TwzU1MYsvnHqpYW5Nw
+         ThtRcG8dpgZPK3PLbO8tby/mayYPg5676CBWZWyRg7sEMQvSKsD+c1hZzmp43QVYGEgT
+         WILVOv9Vw1IlII93UdMHVPh3qHqv9NvP15WgJlv7gCXYt3MMQ8G/RjN237RaprKTb0Lf
+         oU7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729602282; x=1730207082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pWDeRgm8AjTmhY393T7IKu9ZeB7eJOW+Adot/DNWsok=;
+        b=CVdYEqBVtgE/PHRwdF+N660VNdbsgRQCpC2JghC0dkvr8sC/MKAlyQM87Itjp+C5+g
+         4ii/dogI+4rddwQV+DNx/M3Caw5xt/b8eVFZw4fffQNAjaXZBzBnIe2Sa93qdr7FFBzW
+         9/IXsnl2FZd9Dr2Gf9QZziJh1AUY1fMkf6hv2xOxCsEO0FLTXctW/jqkoVyzO/oZ9VDA
+         spRpOfV6P6O4DdId1sWJeT/hGyHtjSa7y6v1t8yYdsRVSmkNPoscTmx8aihy9r10gkr/
+         QpxfFbzGg2Uzw5dQCo4KnLFiM1wg7IzDeTKUubbrS1jsfJ93puPHJJ+hK2eFPa9W5JIR
+         3REw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsfpsUdYkXp5tYTA/deiSl4exq/FiLEV8Z37rryD3BPhkD/5GMpDjyW893ScW5iZS+8uQIaO4XQWrRbes=@vger.kernel.org, AJvYcCWlbK5r8lxUgvlEepBDt6cyFvDpiFu9WjDsZGPoI5a1cP+j3E1AONq+CQAVrbOWxJd2apTUQbBxcyYb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw18JFZDHtqZTFKoDVE8hB8n559h7Xf/GDEsFR5CY5b4aiXA0ug
+	QDHjBHymqYpVW9demUWhLtktSOhczpjV5Sg1I1KBcfcjwoAK/O/OX/5G6qM/jZt9Sli5H1ihAZb
+	LSscmMkdiPlPZuM1zZZgYVSFBQkh3FQ==
+X-Google-Smtp-Source: AGHT+IH52G7hhVJzsWn9Mn7Q9OsulLJoDWAxP7UAnkiQV5yHiISOtioTuU80uizG3qQb9Fr754ZF0erA82kY5KLwkoo=
+X-Received: by 2002:a17:90a:e296:b0:2e2:de92:2d52 with SMTP id
+ 98e67ed59e1d1-2e561a58096mr7189173a91.9.1729602282458; Tue, 22 Oct 2024
+ 06:04:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014152502.1477809-1-superm1@kernel.org> <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+ <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
+In-Reply-To: <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 22 Oct 2024 09:04:30 -0400
+Message-ID: <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
+Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
+ VGA device
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, 
+	Mario Limonciello <mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Oct 22, 2024 at 2:31=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidia.com>=
+ wrote:
+>
+> Hi Luke,
+>
+> On 2024/10/15 4:04 PM, Luke Jones wrote:
+> > On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
+> >> From: Mario Limonciello <mario.limonciello@amd.com>
+> >>
+> >> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display dev=
+ice.
+> >>
+> >> ```
+> >> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce
+> >> RTX 4070 Max-Q / Mobile] (rev a1)
+> >> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
+> >> Strix [Radeon 880M / 890M] (rev c1)
+> >> ```
+> >>
+> >> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as th=
+e
+> >> boot VGA device, but really the eDP is connected to the AMD PCI displa=
+y
+> >> device.
+> >>
+> >> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device=
+.
+> >>
+> >> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+> >> Reported-by: Luke D. Jones <luke@ljones.dev>
+> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---
+> >>   drivers/pci/vgaarb.c | 7 -------
+> >>   1 file changed, 7 deletions(-)
+> >>
+> >> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> >> index 78748e8d2dba..05ac2b672d4b 100644
+> >> --- a/drivers/pci/vgaarb.c
+> >> +++ b/drivers/pci/vgaarb.c
+> >> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device =
+*vgadev)
+> >>              return true;
+> >>      }
+> >>
+> >> -    /*
+> >> -     * Vgadev has neither IO nor MEM enabled.  If we haven't found an=
+y
+> >> -     * other VGA devices, it is the best candidate so far.
+> >> -     */
+> >> -    if (!boot_vga)
+> >> -            return true;
+> >> -
+> >>      return false;
+> >>   }
+> >>
+> >> --
+> >> 2.43.0
+> >
+> > Hi Mario,
+> >
+> > I can verify that this does leave the `boot_vga` attribute set as 0 for=
+ the NVIDIA device.
+>
+> Does the following diff work for you?
+> This variant should be less risky for most systems.
+>
+> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> index 78748e8d2dba..3fb734cb9c1b 100644
+> --- a/drivers/pci/vgaarb.c
+> +++ b/drivers/pci/vgaarb.c
+> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device *vga=
+dev)
+>                  return true;
+>          }
+>
+> +       if (vga_arb_integrated_gpu(&pdev->dev))
+> +               return true;
+> +
 
-The freq mode is the current default mode of Linux perf. 1 period is
-used as a start period. The period is auto-adjusted in each tick or an
-overflow to meet the frequency target.
+The problem is that the integrated graphics does not support VGA.
 
-The start period 1 is too low and may trigger some issues.
-- Many HWs do not support period 1 well.
-  https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
-- For an event that occurs frequently, period 1 is too far away from the
-  real period. Lots of the samples are generated at the beginning.
-  The distribution of samples may not be even.
-- A low start period for the frequently occurring event also challenges
-  virtualization, which has a longer path to handle a PMI.
+Alex
 
-The limit_period only checks the minimum acceptable value for HW.
-It cannot be used to set the start period. Because, some events may
-need a very low period. The limit_period cannot be set too high. It
-doesn't help with the events that occur frequently.
-
-It's hard to find a universal start period for all events. The idea is
-only to give an estimate for the popular HW and HW cache events. For the
-rest of the events, start from the lowest possible recommended value.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-
-Changes since V1:
-- Move to Intel specific code
-
- arch/x86/events/intel/core.c | 85 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 812b1a1cdf47..d3b133384361 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4076,6 +4076,85 @@ static void intel_pmu_set_acr_dyn_mask(struct perf_event *event, int idx,
- 		event->hw.dyn_mask &= mask;
- }
- 
-+static u64 intel_pmu_freq_start_period(struct perf_event *event)
-+{
-+	int type = event->attr.type;
-+	u64 config, factor;
-+	s64 start;
-+
-+	/*
-+	 * The 127 is the lowest possible recommended SAV (sample after value)
-+	 * for a 4000 freq (default freq), according to the event list JSON file.
-+	 * Also, assume the workload is idle 50% time.
-+	 */
-+	factor = 64 * 4000;
-+	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
-+		goto end;
-+
-+	/*
-+	 * The estimation of the start period in the freq mode is
-+	 * based on the below assumption.
-+	 *
-+	 * For a cycles or an instructions event, 1GHZ of the
-+	 * underlying platform, 1 IPC. The workload is idle 50% time.
-+	 * The start period = 1,000,000,000 * 1 / freq / 2.
-+	 *		    = 500,000,000 / freq
-+	 *
-+	 * Usually, the branch-related events occur less than the
-+	 * instructions event. According to the Intel event list JSON
-+	 * file, the SAV (sample after value) of a branch-related event
-+	 * is usually 1/4 of an instruction event.
-+	 * The start period of branch-related events = 125,000,000 / freq.
-+	 *
-+	 * The cache-related events occurs even less. The SAV is usually
-+	 * 1/20 of an instruction event.
-+	 * The start period of cache-related events = 25,000,000 / freq.
-+	 */
-+	config = event->attr.config & PERF_HW_EVENT_MASK;
-+	if (type == PERF_TYPE_HARDWARE) {
-+		switch (config) {
-+		case PERF_COUNT_HW_CPU_CYCLES:
-+		case PERF_COUNT_HW_INSTRUCTIONS:
-+		case PERF_COUNT_HW_BUS_CYCLES:
-+		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
-+		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
-+		case PERF_COUNT_HW_REF_CPU_CYCLES:
-+			factor = 500000000;
-+			break;
-+		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
-+		case PERF_COUNT_HW_BRANCH_MISSES:
-+			factor = 125000000;
-+			break;
-+		case PERF_COUNT_HW_CACHE_REFERENCES:
-+		case PERF_COUNT_HW_CACHE_MISSES:
-+			factor = 25000000;
-+			break;
-+		default:
-+			goto end;
-+		}
-+	}
-+
-+	if (type == PERF_TYPE_HW_CACHE)
-+		factor = 25000000;
-+end:
-+	/*
-+	 * Usually, a prime or a number with less factors (close to prime)
-+	 * is chosen as an SAV, which makes it less likely that the sampling
-+	 * period synchronizes with some periodic event in the workload.
-+	 * Minus 1 to make it at least avoiding values near power of twos
-+	 * for the default freq.
-+	 */
-+	start = DIV_ROUND_UP_ULL(factor, event->attr.sample_freq) - 1;
-+
-+	if (start > x86_pmu.max_period)
-+		start = x86_pmu.max_period;
-+
-+	if (x86_pmu.limit_period)
-+		x86_pmu.limit_period(event, &start);
-+
-+	return start;
-+}
-+
- static int intel_pmu_hw_config(struct perf_event *event)
- {
- 	int ret = x86_pmu_hw_config(event);
-@@ -4087,6 +4166,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	if (ret)
- 		return ret;
- 
-+	if (event->attr.freq && event->attr.sample_freq) {
-+		event->hw.sample_period = intel_pmu_freq_start_period(event);
-+		event->hw.last_period = event->hw.sample_period;
-+		local64_set(&event->hw.period_left, event->hw.sample_period);
-+	}
-+
- 	if (event->attr.precise_ip) {
- 		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
- 			return -EINVAL;
--- 
-2.38.1
-
+>          /*
+>           * Vgadev has neither IO nor MEM enabled.  If we haven't found a=
+ny
+>           * other VGA devices, it is the best candidate so far.
+>
+>
+> Kai-Heng
+>
+> >
+> > Tested-by: Luke D. Jones <luke@ljones.dev>
+>
 
