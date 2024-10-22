@@ -1,178 +1,186 @@
-Return-Path: <linux-kernel+bounces-375438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009E89A95E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:02:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776949A95E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF771C21519
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2F82843C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FEB13D8AC;
-	Tue, 22 Oct 2024 02:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712D1139CEF;
+	Tue, 22 Oct 2024 02:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQ08WxWt"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjGW5/53"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202EA83CD6;
-	Tue, 22 Oct 2024 02:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2764136E30
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729562477; cv=none; b=GQ0byrKnWwEvez68t+Vt4UvtuWw2ZRwMyG0YGCSSWhLsR++ZkD03vb0k1uhe9gzwLLovQhU9USIbOgMq0u49FbGBVjzBdtFsKSV1DU9JKT577PqK39CKUndg49I3oZGNE+2f0o+ynWgK+gtVwWb+AGvj881/bS2PK4Y23GFUWD4=
+	t=1729562515; cv=none; b=MUwrBPK+/W4EdcnufK/LCqhJp5GHPmNwVvToZI+Gw6N+T3l7JN1pkxp40jiXY5YI4hO1cCf0c9PsBcb/V5BtO3W5cMhZH87lT1CYqS7GHnEYt5ox9xKIcSKknl9Bq6UajpFYCKKbwYlHLYLlyRRBdpj/k6xIkhb3IaoyB5idNz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729562477; c=relaxed/simple;
-	bh=o6Un0vRMRUqycL4MmnrAjs1Ms4xRyK/xfz+CckTV5pI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rU5eEgxwSX28UaA5oK0FCG1pn01acnaTaMOZxDlw0kDqoQ7mts9LAzHagRGeowF0uBDuW+0y/b3i04Ehr6yG9sXFhLZjiwSZHmfIwXSZ2OUpRpjfkkUuTOflNdBreR4ocq7xMQek+uf3+bqQM3sPRZAAD8liJ1WzM0+2ywTeFBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQ08WxWt; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso4048159a12.2;
-        Mon, 21 Oct 2024 19:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729562475; x=1730167275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqWSsJAT5CNspq5A+SSkQskz+lBebgcxEADf0JhvbYs=;
-        b=HQ08WxWtJ862AwgLuLeJHLBmflc0+shUefs2J+AJLA0etZoF9+nhFD6zc5K9GJYaAl
-         /sXCWET6Y/nzG9CT5/mjKhcKNBR3xmcfV7gRGswS8s2QWxP+XjO/CDZZaOcWptbHX/zR
-         SwM42O7f78z2l3Z44OetRoRMAk4ODI/fBVzu5+LwJmM282w5WtHsDQBfxFuZrNwHe2DY
-         7H3WLn6yHojn2ADCn+qG5leRcK9CuptFZQlKRYwcNDTKNBCDBWr2Vy+Wkduqct2ssLYW
-         Q2VI3d2MkB3E9qzi8ON3dn+M7ar2Rf3z87PxAyhmkclobvWIDN05R8GrA0oztO5fvLEP
-         UUzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729562475; x=1730167275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqWSsJAT5CNspq5A+SSkQskz+lBebgcxEADf0JhvbYs=;
-        b=gP7IW8BVnubHh2CBIn9UOt4oB5HOBJvLksaYO1v/MFLqlPSUgS991zTe1Twrb48jGH
-         eAeoWT1cM37bm/cCboW51IoXu0fQCXSI3UaYjPRp9iSznFYz4THI0fXDRd3eaE6G1b+1
-         SINCfAJ6VKf7Vwfd/yy/LBfZyAahq+z4b3VD38jriFVEcPSS7z+eD0GAZ+QCxnbTpvn5
-         DfBdZ3S7ONmyVD7Vz5R6duYNYpjXetj8dRZTxr2Y8ZU9zD3dJmQHHiNQ8dQrgjwN2UBW
-         Y/8OrriV2msYZcGO82jEhZ02Rpn6/eS3DFqmfxakxIROOANUYANsCI7zqf9JdfC7qSoY
-         +pmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLwgew3pLWn7JpTHpLSn7JlglvPGiN11YlCEmlrj14TYjV4stUcH6hdCUdZhcX8Yv9aLzofaHLeaKT5b4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqZckIVTZH6MhC0O88VfaKMdaduZxMXmPwtMRaet8y4BB5uk9a
-	DoXLb6/m1wDttFzU9W4tijFWR6FRMJ5d0W0y92j5hoWtm+L8gTwtTEtGJKl1w4XvffaC6O38P+0
-	I4RK+ldtDlde9bMjmBFcuDCPTOeg=
-X-Google-Smtp-Source: AGHT+IFhP5j6y7ZS2yWSDvsNSQHVT7qtvC2GPgYS0LHkoG4Lp6+eIf2B85lDKyS+N+sFDohAxpridyp2S11du1hxG3U=
-X-Received: by 2002:a05:6a21:458a:b0:1d7:2249:689 with SMTP id
- adf61e73a8af0-1d92c5729c2mr20355759637.33.1729562475143; Mon, 21 Oct 2024
- 19:01:15 -0700 (PDT)
+	s=arc-20240116; t=1729562515; c=relaxed/simple;
+	bh=p1IPA7AXgFr6MIFjf4vUo0APCh0tHO4LcVmBobcRXkk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CaDGNuA/lExnxMgzeh9vpI2L8EeW/qwJVEBMyWIAhHt59dANtZhUI/IuUuFpO+uWTNJTdTGQMcwfeK4EBDOwTVeX7wpEuw4xb/oWCOSDWB7XU6g4+Ntb7rpciSaWXviDTZFpV0p0xnMNQq5LA0lq0p28QkxHCKf9N/GCfUEL2Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjGW5/53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B269C4CEC3;
+	Tue, 22 Oct 2024 02:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729562515;
+	bh=p1IPA7AXgFr6MIFjf4vUo0APCh0tHO4LcVmBobcRXkk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jjGW5/5315A4KM1hioo70ew7mF5SznAT92PGxI2lfKrvEA9ovqeIFY6xSdNah+w/+
+	 gpmNCcCpD1xrpOt6M274DEBSXF8RDhbUnbaxkdAX1bAn4h9a9vX7jxgIAT7CO6sAfZ
+	 r8qKx97trKG9OPDwvnUJz/KBYEW6760qeqnQCdzpaQf7u+8riIPusW6zL/YuFn0xjo
+	 hPGdswqkC9vzpI3JgH2UyaySsTYRrw4DjrPVkJDqH64dGW0xqyi0bpNu171mYYR3Jh
+	 p4eVaVFh2TloO+EAZKe/De9J5jBWOy9JMGXBA+9LZeFhoYSD+i7xfzPavT0ywtEEwS
+	 MO+jVyyPo2H8A==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3] f2fs: fix to parse temperature correctly in f2fs_get_segment_temp()
+Date: Tue, 22 Oct 2024 10:01:49 +0800
+Message-Id: <20241022020149.2302191-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com> <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
-In-Reply-To: <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 21 Oct 2024 19:01:02 -0700
-Message-ID: <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
-To: paulmck@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 5:21=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
->
-> On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
-> > On Mon, Oct 21, 2024 at 3:13=E2=80=AFPM Paul E. McKenney <paulmck@kerne=
-l.org> wrote:
-> > >
-> > > For almost 20 years, the int return value from srcu_read_lock() has
-> > > been always either zero or one.  This commit therefore documents the
-> > > fact that it will be non-negative.
-> > >
-> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Andrii Nakryiko <andrii@kernel.org
-> > >
-> > > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > > index bab1dae3f69e6..512a8c54ba5ba 100644
-> > > --- a/include/linux/srcu.h
-> > > +++ b/include/linux/srcu.h
-> > > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct =
-*ssp, int read_flavor);
-> > >   * a mutex that is held elsewhere while calling synchronize_srcu() o=
-r
-> > >   * synchronize_srcu_expedited().
-> > >   *
-> > > - * The return value from srcu_read_lock() must be passed unaltered
-> > > - * to the matching srcu_read_unlock().  Note that srcu_read_lock() a=
-nd
-> > > - * the matching srcu_read_unlock() must occur in the same context, f=
-or
-> > > - * example, it is illegal to invoke srcu_read_unlock() in an irq han=
-dler
-> > > - * if the matching srcu_read_lock() was invoked in process context. =
- Or,
-> > > - * for that matter to invoke srcu_read_unlock() from one task and th=
-e
-> > > - * matching srcu_read_lock() from another.
-> > > + * The return value from srcu_read_lock() is guaranteed to be
-> > > + * non-negative.  This value must be passed unaltered to the matchin=
-g
-> > > + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
-> > > + * srcu_read_unlock() must occur in the same context, for example, i=
-t is
-> > > + * illegal to invoke srcu_read_unlock() in an irq handler if the mat=
-ching
-> > > + * srcu_read_lock() was invoked in process context.  Or, for that ma=
-tter to
-> > > + * invoke srcu_read_unlock() from one task and the matching srcu_rea=
-d_lock()
-> > > + * from another.
-> >
-> > For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
-> > Presumably the same non-negative index will be returned/consumed there
-> > as well, right? Can we add a blurb to that effect for them as well?
->
-> Does the change shown below cover it?
+In __get_segment_type(), __get_segment_type_6() may return
+CURSEG_COLD_DATA_PINNED or CURSEG_ALL_DATA_ATGC log type, but
+following f2fs_get_segment_temp() can only handle persistent
+log type, fix it.
 
-Yep, looks good, thank you! You might want to fix
-s/srcu_read_unlock/__srcu_read_unlock/, while at it, but that's
-orthogonal.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- initialize type variable in __get_segment_type()
+ fs/f2fs/f2fs.h    |  5 +++--
+ fs/f2fs/file.c    |  4 ++--
+ fs/f2fs/segment.c | 33 +++++++++++++++++++++++++--------
+ fs/f2fs/segment.h |  4 ----
+ 4 files changed, 30 insertions(+), 16 deletions(-)
 
->
-> > Otherwise LGTM, thanks!
-> >
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
->
-> Thank you -- I will apply on my next rebase.
->
->                                                 Thanx, Paul
->
-> > >   */
-> > >  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires=
-(ssp)
-> > >  {
->
-> ------------------------------------------------------------------------
->
-> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> index 07147efcb64d3..3d587bf2b2c12 100644
-> --- a/kernel/rcu/srcutree.c
-> +++ b/kernel/rcu/srcutree.c
-> @@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
->  /*
->   * Counts the new reader in the appropriate per-CPU element of the
->   * srcu_struct.
-> - * Returns an index that must be passed to the matching srcu_read_unlock=
-().
-> + * Returns a guaranteed non-negative index that must be passed to the
-> + * matching srcu_read_unlock().
->   */
->  int __srcu_read_lock(struct srcu_struct *ssp)
->  {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3c6f3cce5779..7190b5677e44 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1019,7 +1019,7 @@ static inline void set_new_dnode(struct dnode_of_data *dn, struct inode *inode,
+ #define NR_CURSEG_PERSIST_TYPE	(NR_CURSEG_DATA_TYPE + NR_CURSEG_NODE_TYPE)
+ #define NR_CURSEG_TYPE		(NR_CURSEG_INMEM_TYPE + NR_CURSEG_PERSIST_TYPE)
+ 
+-enum {
++enum log_type {
+ 	CURSEG_HOT_DATA	= 0,	/* directory entry blocks */
+ 	CURSEG_WARM_DATA,	/* data blocks */
+ 	CURSEG_COLD_DATA,	/* multimedia or GCed data blocks */
+@@ -3759,7 +3759,8 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 			block_t old_addr, block_t new_addr,
+ 			unsigned char version, bool recover_curseg,
+ 			bool recover_newaddr);
+-int f2fs_get_segment_temp(int seg_type);
++enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
++						enum log_type seg_type);
+ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 			block_t old_blkaddr, block_t *new_blkaddr,
+ 			struct f2fs_summary *sum, int type,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 75a8b22da664..0e7a0195eca8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4858,8 +4858,8 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
+ {
+ 	struct inode *inode = iter->inode;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int seg_type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
+-	enum temp_type temp = f2fs_get_segment_temp(seg_type);
++	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
++	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
+ 
+ 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
+ 	submit_bio(bio);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bb2fd98331cd..a0347a59be6c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3604,18 +3604,35 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 	}
+ }
+ 
+-int f2fs_get_segment_temp(int seg_type)
++enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
++						enum log_type type)
+ {
+-	if (IS_HOT(seg_type))
+-		return HOT;
+-	else if (IS_WARM(seg_type))
+-		return WARM;
+-	return COLD;
++	struct curseg_info *curseg = CURSEG_I(sbi, type);
++	enum temp_type temp = COLD;
++
++	switch (curseg->seg_type) {
++	case CURSEG_HOT_NODE:
++	case CURSEG_HOT_DATA:
++		temp = HOT;
++		break;
++	case CURSEG_WARM_NODE:
++	case CURSEG_WARM_DATA:
++		temp = WARM;
++		break;
++	case CURSEG_COLD_NODE:
++	case CURSEG_COLD_DATA:
++		temp = COLD;
++		break;
++	default:
++		f2fs_bug_on(sbi, 1);
++	}
++
++	return temp;
+ }
+ 
+ static int __get_segment_type(struct f2fs_io_info *fio)
+ {
+-	int type = 0;
++	enum log_type type = CURSEG_HOT_DATA;
+ 
+ 	switch (F2FS_OPTION(fio->sbi).active_logs) {
+ 	case 2:
+@@ -3631,7 +3648,7 @@ static int __get_segment_type(struct f2fs_io_info *fio)
+ 		f2fs_bug_on(fio->sbi, true);
+ 	}
+ 
+-	fio->temp = f2fs_get_segment_temp(type);
++	fio->temp = f2fs_get_segment_temp(fio->sbi, type);
+ 
+ 	return type;
+ }
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 8bf09fb67841..c5228e1dfe9b 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -34,10 +34,6 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ 	f2fs_bug_on(sbi, seg_type >= NR_PERSISTENT_LOG);
+ }
+ 
+-#define IS_HOT(t)	((t) == CURSEG_HOT_NODE || (t) == CURSEG_HOT_DATA)
+-#define IS_WARM(t)	((t) == CURSEG_WARM_NODE || (t) == CURSEG_WARM_DATA)
+-#define IS_COLD(t)	((t) == CURSEG_COLD_NODE || (t) == CURSEG_COLD_DATA)
+-
+ #define IS_CURSEG(sbi, seg)						\
+ 	(((seg) == CURSEG_I(sbi, CURSEG_HOT_DATA)->segno) ||	\
+ 	 ((seg) == CURSEG_I(sbi, CURSEG_WARM_DATA)->segno) ||	\
+-- 
+2.40.1
+
 
