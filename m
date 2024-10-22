@@ -1,174 +1,164 @@
-Return-Path: <linux-kernel+bounces-376442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60029AB199
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:03:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FCD9AB1A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D36E1F24386
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4864285953
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1021A2C15;
-	Tue, 22 Oct 2024 15:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61511A2C04;
+	Tue, 22 Oct 2024 15:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr+fK39j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LlAbotyQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956CC1A265B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402AF85C5E;
+	Tue, 22 Oct 2024 15:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729609414; cv=none; b=jfaEpxAUxMKx08Kmy9yKum7k9SbcrmLSvkCG8geC/4bcJGPdIE31EjZ87VKC/is7/Rb4botAlGXykPST5DfuOcBQcDQxjedFpRd1vrJNHBD8mKb69GngdZFe9qySxFp5vtqQEbLDoaKcJgLwfNOsOLx7WniMeY+6EOdiDi5ZEac=
+	t=1729609459; cv=none; b=Ew5x7TSkhoCkvyL6hcbDibsw/rpZhXI3FiC+wtLMHVJujSW3a9m3hAQ8pzGKImrfpmLgTJAouWiQBJUrTSdy67lsEfLez13NOnYBcqp8GcZRjo6kL4RCqoOFmdfxBglip9/OYVWL9ePwBqSc5mb5eZnxHjSwW53O3B0H8qt//ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729609414; c=relaxed/simple;
-	bh=EXIbBWpPxQgw5OS+2NNlvlI+XZ4mQxYPcta2uTuFDik=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=diU4U7z5S9rZaEPqk4QEJsKMvAfxLdGIrVUIGCcZtlgDo2BAQfsxptXDw+bcy8afKa4FsMD0zoNNG2gvHyX94K0Uru2wzWIh/TGzWVh0KHJgBCrFbQ3RAhpBY6oYp6HgZq9vrGhz9d9RPePD+fER0uoPn+aX/T3wRJMW+QHKJfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr+fK39j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155D9C4CEC3;
-	Tue, 22 Oct 2024 15:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729609414;
-	bh=EXIbBWpPxQgw5OS+2NNlvlI+XZ4mQxYPcta2uTuFDik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jr+fK39jEPMv8GhnVtleuXBvliCGw2V3l9S84b9y2yRSr35+23AgavMlOle1NFKYz
-	 xfEYB5EaMmz5x5nQoQf7aAZ/rteed4MiNfuG0ZHcukw36mL+m8Y3qyPwoWxU4FbIn2
-	 kIwzROGLUkrVqEk7G7b6CiREo8J8MxcHnlM9F+0q/fWrFIwEcy67LYnSMyhzqB5txm
-	 DKwtkezNDgvByrivnNRYSfjLjabFTa5PS5o802h7epDAtZXIJvG8dBmcBJuklFisGM
-	 SaS8iiEY6aOJP/w/vSuZ9x44D5NBS/wLdqhDV4dG9o+twZ8zxkHSLKYChLL9sYVVEY
-	 6xGoU9ELfBTtQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3GPy-005ocD-RP;
-	Tue, 22 Oct 2024 16:03:31 +0100
-Date: Tue, 22 Oct 2024 16:03:30 +0100
-Message-ID: <86a5ew41tp.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-In-Reply-To: <20241021042218.746659-4-yuzhao@google.com>
-References: <20241021042218.746659-1-yuzhao@google.com>
-	<20241021042218.746659-4-yuzhao@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729609459; c=relaxed/simple;
+	bh=QUUBW21t3BimnstQVgGZ0SBenbQzNgaGQZcFRj4mm8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IP8QphdTMuHcOH9BIOQmHLbXQNDhKunDNnWEgbg64WUXmb8Dpq7cLyKKd8WTQCyhLrqxd+Ddj6wmGvpOGutYtnaQQMn+8EoRc5ZYeGei46hreYoeUmBAjVJev5jJzsHAY8Qq9CozF3lbHCifH5CTh7+CLfev8OdJv16ppGM8SS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LlAbotyQ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729609458; x=1761145458;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QUUBW21t3BimnstQVgGZ0SBenbQzNgaGQZcFRj4mm8Y=;
+  b=LlAbotyQHbEfEsioiJ3aQZ7TI9wfh7PQCpGxBC9h3LyU8IV+SMLrXkNs
+   j1eTwNLqVKRog8k2HHSI62ZLo54/gPCpZLVUmkE4bWS4DCfHhpIZwq3h4
+   1ATIwvylkm1QCfCl7FAu1lOTw5nTnB6J4HWIpjVf/NY3da0yxGRoDTJW5
+   v57a5tWSWagvWzEaIFtvzZOOELaL7SIMVNvV70l8RXEMjq9nAiHsPMLrK
+   ZroN1JbRJlO6cOPk4Yz2pNOI5KP6drmz1IDrhS8Xkuz06fCy7DginxC4l
+   2v1KeTm+wFbSKG+85lhsdrXFB2tC1TY0ekePYvfBr1DHRDrxzqucSRemH
+   A==;
+X-CSE-ConnectionGUID: qkAPX3eSReqtCbTygba2Xw==
+X-CSE-MsgGUID: yWmVD47TSXqDjIgq7AoTaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="33079480"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="33079480"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 08:04:16 -0700
+X-CSE-ConnectionGUID: t2EfxH96Ts+ZMKuBfhIFQA==
+X-CSE-MsgGUID: JAHYnJKXTd6WFkKNAaIiYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="80072066"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 08:04:10 -0700
+Message-ID: <8795c4ad-e3ac-47aa-92dd-f899042cefc0@linux.intel.com>
+Date: Tue, 22 Oct 2024 17:04:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v29 01/33] xhci: support setting interrupt moderation IMOD
+ for secondary interrupters
+To: Greg KH <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.de>
+Cc: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ dmitry.torokhov@gmail.com, corbet@lwn.net, lgirdwood@gmail.com,
+ tiwai@suse.com, krzk+dt@kernel.org, pierre-louis.bossart@linux.intel.com,
+ Thinh.Nguyen@synopsys.com, broonie@kernel.org, bgoswami@quicinc.com,
+ robh@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org, alsa-devel@alsa-project.org,
+ Mathias Nyman <mathias.nyman@linux.intel.com>
+References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
+ <20241015212915.1206789-2-quic_wcheng@quicinc.com>
+ <2024101747-defog-squiggly-ef54@gregkh>
+ <5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
+ <2024101824-hammock-elastic-8d38@gregkh> <87wmi02qcj.wl-tiwai@suse.de>
+ <2024102240-gag-famished-245c@gregkh>
+Content-Language: en-US
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <2024102240-gag-famished-245c@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 21 Oct 2024 05:22:15 +0100,
-Yu Zhao <yuzhao@google.com> wrote:
+On 10/22/2024 4:02 PM, Greg KH wrote:
+> On Tue, Oct 22, 2024 at 03:56:44PM +0200, Takashi Iwai wrote:
+>> On Fri, 18 Oct 2024 07:52:35 +0200,
+>> Greg KH wrote:
+>>>
+>>> On Thu, Oct 17, 2024 at 05:07:12PM -0700, Wesley Cheng wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 10/16/2024 11:40 PM, Greg KH wrote:
+>>>>> On Tue, Oct 15, 2024 at 02:28:43PM -0700, Wesley Cheng wrote:
+>>>>>> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>>>>>
+>>>>>> Allow creators of xHCI secondary interrupters to specify the interrupt
+>>>>>> moderation interval value in nanoseconds when creating the interrupter.
+>>>>>>
+>>>>>> If not sure what value to use then use the xhci driver default
+>>>>>> xhci->imod_interval
+>>>>>>
+>>>>>> Suggested-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>>>>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>>>>> Link: https://lore.kernel.org/r/20240905143300.1959279-13-mathias.nyman@linux.intel.com
+>>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>> ---
+>>>>>>   drivers/usb/host/xhci-mem.c | 8 +++++++-
+>>>>>>   drivers/usb/host/xhci.c     | 4 ++--
+>>>>>>   drivers/usb/host/xhci.h     | 5 ++++-
+>>>>>>   3 files changed, 13 insertions(+), 4 deletions(-)
+>>>>> This is already in 6.12-rc1, which makes me confused as to what tree you
+>>>>> made this series against.
+>>>>
+>>>> Sorry, I didn't fetch the latest changes from usb-next.
+>>>
+>>> It wasn't even usb-next, it was 6.12-rc1, so I don't know what tree you
+>>> based this on :(
+>>>
+>>>> In this case, should I rebase and resbumit?
+>>>
+>>> As the series can't be applied as-is, probably.  But I think you might
+>>> want to collect some acks from the sound people and xhci developers, as
+>>> I can't do anything with this until they look at the changes.
+>>
+>> Honestly speaking, I couldn't follow fully the discussions about the
+>> fundamental design -- IIRC, Pierre and others had concerns to the way
+>> to manage the offload device via kcontrols.  Did we get consensus?
 > 
-> GIC v3 and later support SGI broadcast, i.e., the mode that routes
-> interrupts to all PEs in the system excluding the local CPU.
+> I don't think so.
 > 
-> Supporting this mode can avoid looping through all the remote CPUs
-> when broadcasting SGIs, especially for systems with 200+ CPUs. The
-> performance improvement can be measured with the rest of this series
-> booted with "hugetlb_free_vmemmap=on irqchip.gicv3_pseudo_nmi=1":
+>> I believe that's the biggest obstacle in the audio side, i.e. what's
+>> visible to users.  The kernel internals can be corrected at any time
+>> later.
 > 
->   cd /sys/kernel/mm/hugepages/
->   echo 600 >hugepages-1048576kB/nr_hugepages
->   echo 2048kB >hugepages-1048576kB/demote_size
->   perf record -g -- bash -c "echo 600 >hugepages-1048576kB/demote"
-> 
->          gic_ipi_send_mask()  bash sys time
-> Before:  38.14%               0m10.513s
-> After:    0.20%               0m5.132s
-> 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> ---
->  drivers/irqchip/irq-gic-v3.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index ce87205e3e82..42c39385e1b9 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1394,9 +1394,20 @@ static void gic_send_sgi(u64 cluster_id, u16 tlist, unsigned int irq)
->  	gic_write_sgi1r(val);
->  }
->  
-> +static void gic_broadcast_sgi(unsigned int irq)
-> +{
-> +	u64 val;
-> +
-> +	val = BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_SGI_ID_SHIFT);
+> I would like to see that agreed on before I even look at the usb side.
 
-As picked up by the test bot, please fix the 32bit build.
+My main concern is still that one USB audio device can be accessed via 
+two different cards exposed in userspace. Usual USB one, and the one 
+from device which does "offload". Suggested implementation achieves it 
+by adding additional controls, which need to be set in specific way to 
+achieve offload. Overall while I understand the mechanism, I'm not 
+exactly convinced that it is the best way from end user point of view.
 
-> +
-> +	pr_devel("CPU %d: broadcasting SGI %u\n", smp_processor_id(), irq);
-> +	gic_write_sgi1r(val);
-> +}
-> +
->  static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
->  {
->  	int cpu;
-> +	cpumask_t broadcast;
->  
->  	if (WARN_ON(d->hwirq >= 16))
->  		return;
-> @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
->  	 */
->  	dsb(ishst);
->  
-> +	cpumask_copy(&broadcast, cpu_present_mask);
+"Implementation" part in Documentation added in patch 19 shows how it 
+looks in userspace now.
 
-Why cpu_present_mask? I'd expect that cpu_online_mask should be the
-correct mask to use -- we don't IPI offline CPUs, in general.
+If you don't mind two sound cards being used to access same piece of HW, 
+current implementation looks ok to me.
 
-> +	cpumask_clear_cpu(smp_processor_id(), &broadcast);
-> +	if (cpumask_equal(&broadcast, mask)) {
-> +		gic_broadcast_sgi(d->hwirq);
-> +		goto done;
-> +	}
-
-So the (valid) case where you would IPI *everyone* is not handled as a
-fast path? That seems a missed opportunity.
-
-This also seem an like expensive way to do it. How about something
-like:
-
-	int mcnt = cpumask_weight(mask);
-	int ocnt = cpumask_weight(cpu_online_mask);
-	if (mcnt == ocnt)  {
-		/* Broadcast to all CPUs including self */
-	} else if (mcnt == (ocnt - 1) &&
-		   !cpumask_test_cpu(smp_processor_id(), mask)) {
-		/* Broadcast to all but self */
-	}
-
-which avoids the copy+update_full compare.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+See also:
+https://lore.kernel.org/linux-sound/75ffde3a-7fef-4c15-bfc8-87756e1c3f11@linux.intel.com/
+where I described how I would prefer it to look.
 
