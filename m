@@ -1,252 +1,126 @@
-Return-Path: <linux-kernel+bounces-376387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584FD9AB0BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1C99AB0AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148B0284259
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44CD2842B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125611A08AF;
-	Tue, 22 Oct 2024 14:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A861A08B1;
+	Tue, 22 Oct 2024 14:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="BbQWkyNA"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkKidgYe"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F3F1A08B8;
-	Tue, 22 Oct 2024 14:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9219D060;
+	Tue, 22 Oct 2024 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606994; cv=none; b=jzZjuNkba0mG2hV7kCiw79eXFtWOIdknGXrmXoZyth0oSqgmOxoheCXl7qnqrJmMverMHxXrmhqX3I6U2bdIaUjyRxnH2GYSQeDSGoHNM4LQHZAhhXM6Mn3+lScXudDB6D4OCJiz0zn1frbUNSvjkqhEj5VSzu5ZDlx2oArMGlE=
+	t=1729606743; cv=none; b=sVfc75KAb8WWvJdKWkcc8pv/wejd7Ksd6XrdSvpZkTTXMVESH7xnkYWdW1DBL4GeQosJczC/Tl9HU2ohaROW9laNmORUv1G3/31CYosPnbUaL8t0QFcTZSBChlZhYe0j8nzRFHP0Qq9IicJEEZuri0qZp12n5HCf0CYmJskRL18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606994; c=relaxed/simple;
-	bh=Ad0YIBgT8a4XBjr9QwbT4YDHymoOo59VtJa/LIQQ0JI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpOC2ixqWJgwSxpWGOGsYoIIQtNpaPxyshqs8gara14MEyy7mrM1mlMp3XjyhJGEVc7OmHT7fdV9OIEbAjnHZgBIbAG+1vmPZMo206y8Lf58KqVPJWtX1mUugQmKVY+9eDvjh5oik0PeKDJdZreNIbKTxvn/judMRU3Hp370+Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=BbQWkyNA; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id A9836100002;
-	Tue, 22 Oct 2024 17:22:49 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru A9836100002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1729606969;
-	bh=R/ZBEBlMFFXwAeR/41ouwU/0n/oT+PT0C3FpAtWGODs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=BbQWkyNAqKkbxybXY5d0zQrT4YKJyYXrQ7XojB4rva2y8/ENfEgWoB8tpkmps1eo1
-	 n+RCRDexeBdBMUi/zB+BG0QMm2dNk1egnq//1m0InYW18edWEVm/oYI9actR06Nmig
-	 l6H++aAaR6LlCHg+sMnO3gXc5VyzuICYiw68OhDjx7E/KbKZ988cU4FqMKO5+MHWqN
-	 tVtOacteCdSIFvLhAThEt8Vq1K6n0hBYQClTpzUlWbIKIOSKmpSAhbdhsxI5LXZYB7
-	 Rez/aMpMf3uz1kNQMjZY0cZF+KSEAlley0he/xMVJwqjyMu9I7kjpvpx92j7GxB+6j
-	 XFyibxmTHqOtA==
-Received: from smtp.sberdevices.ru (unknown [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 22 Oct 2024 17:22:49 +0300 (MSK)
-Date: Tue, 22 Oct 2024 17:22:48 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Lee Jones <lee@kernel.org>
-CC: <pavel@ucw.cz>, <linux-kernel@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, <kernel@salutedevices.com>,
-	<rockosov@gmail.com>, Alexey Romanov <avromanov@salutedevices.com>
-Subject: Re: [PATCH v2] leds: introduce ordered workqueue for leds events
- instead of system_wq
-Message-ID: <20241022142248.lzm45fzisrcgtitd@CAB-WSD-L081021>
-References: <20240903223936.21292-1-ddrokosov@salutedevices.com>
- <20240916111733.c5rp4l666rtdz7bt@CAB-WSD-L081021>
- <20240917080412.GB9955@google.com>
+	s=arc-20240116; t=1729606743; c=relaxed/simple;
+	bh=Q+1mGVztRNdJIrHuhOmd/0Qa1sTvnz9cDv4O75qLyV8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=frAyJl1V87P/clILTnA2Lmwd+96sCk/WvsuQa2xGal5BCrcdzWeK+trTZa+V1oAuZ/SPF+2wi/yynthItNZ8pjrs8Px7+9Ttf1qwxPFG9e7sfRJmV/xaZQ86TxVA3zAZ9XS2OupJGyI9TQyT5G7TOuNr5jOVXp+PL+t5cz2t15A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkKidgYe; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315baec681so58982585e9.2;
+        Tue, 22 Oct 2024 07:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729606739; x=1730211539; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MdMzAusJBRJh6pyCqNld+00ftFOuHm80MKqVa6AO4Zc=;
+        b=RkKidgYeH3CWy9GrDj4X4BMvjyxHZ4otahPldyej0HzLT3bzYnV+iS93JYKjsoNZM8
+         b5mYZ1z2avdo4dh8Qosom6NHS+RV5n6ND2Xz90zUDQosDmXD7hzrqFioltbkm4to0v4t
+         JVHLo/gJy06yUfAfmprJHl8MrRfu2SvctwRnqLDr9lbEgE0DpxpKwtCTEFs6OBrt6G5d
+         4vVIGJbO5Y4wGumiDK+vc23UFqHH7NG+mjJZRaVwxPIavaUs9gbOx9kuO7dpjgX47xJX
+         xI1joCMlINnOzKUpcTVN1b7VhkuAU9mPVPf/ycGfiQPcSTkfT/xm8SIRA0Fz1V4YiVTK
+         TeqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729606739; x=1730211539;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MdMzAusJBRJh6pyCqNld+00ftFOuHm80MKqVa6AO4Zc=;
+        b=A8awVjxTp892ombtaVx3IZHT2ORlIq0QIPjcDEY48Bw1G9NefKz2W9QqD81W7ZTFR7
+         J6MxZ/d2z4W0WYUvWS4Ol+hnNR6Ys1dISLv6fcfFZZ96O0qAtUUH9NrGzHVOli0G8qxo
+         /36WmyCXOxSeXVwUzRM9Rp8shTPLu+Y+ET0SsSKDmJXjJr3QAIVjFOzRCaZ6HYfzt3ra
+         kOyKg869ayU6sz5zND93Yban6IYzD/iKKaWmVxZxGVQNFyoJgWMQaR67arzOSxonmeWx
+         ZHOgsplU94xJcOMlnagPLy12RNk+TYaoEH/gXFvpMVOp47UE1Y2/x5AVkX9EPWXmlTgb
+         UIug==
+X-Forwarded-Encrypted: i=1; AJvYcCWwDLzvrrBIY5nWL9Y3miaP3ornG3YRihkhZJ7e6/siSIJ4PIduHAeAimiHkdrjnI23Irnva2tVewMXhm7w@vger.kernel.org, AJvYcCXTAEvdqytIaunCg1s9B8fX8FddLf3ykd3ts740MWJUb/qA3IA04iR/5zkxGRczqStV3NRDKrmunXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3v3WS85GxkpssMlhRxHjZyhG0n7tNY3dOWgiJ/4DnITIZJQYD
+	PjuqaIRPf+hqX3NiVLfhKVYaLPOrkHWpj+0SkGr43e4EOxHhO6Ag
+X-Google-Smtp-Source: AGHT+IEmQEXvqqnADJThezvpn0o63z/g54dizNY6aFFV3VlbdG1pYwhqjHXTAfK0QWRhqxT2nflXlg==
+X-Received: by 2002:a05:600c:510f:b0:431:1868:417f with SMTP id 5b1f17b1804b1-43161667a1cmr131050425e9.17.1729606739308;
+        Tue, 22 Oct 2024 07:18:59 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc4c7sm88553235e9.48.2024.10.22.07.18.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 07:18:58 -0700 (PDT)
+Message-ID: <561655d4b3bd063cb6ee339294ab9c62a5b06d53.camel@gmail.com>
+Subject: Re: [PATCH] drivers/iio/adc/ad7124.c: fix division by zero in
+ ad7124_set_channel_odr()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Zicheng Qu <quzicheng@huawei.com>, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+ alexandru.tachici@analog.com, 	linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
+Date: Tue, 22 Oct 2024 16:23:17 +0200
+In-Reply-To: <20241022134330.574601-1-quzicheng@huawei.com>
+References: <20241022134330.574601-1-quzicheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240917080412.GB9955@google.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188624 [Oct 22 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2, {Track_Chinese_Simplified, text}, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/22 08:29:00
-X-KSMG-LinksScanning: Clean, bases: 2024/10/22 08:30:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/22 10:03:00 #26785789
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hello Lee,
+On Tue, 2024-10-22 at 13:43 +0000, Zicheng Qu wrote:
+> In the ad7124_write_raw() function, parameter val can potentially
+> be zero. This may lead to a division by zero when DIV_ROUND_CLOSEST()
+> is called within ad7124_set_channel_odr(). The ad7124_write_raw()
+> function is invoked through the sequence: iio_write_channel_raw() ->
+> iio_write_channel_attribute() -> iio_channel_write(), with no checks
+> in place to ensure val is non-zero.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> ---
 
-I hope this message finds you well.
-I wanted to ask for your thoughts on whether there was enough time for
-testing and if we can proceed with merging this patchset.
+LGTM,
 
-I appreciate any feedback about it.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-On Tue, Sep 17, 2024 at 09:04:12AM +0100, Lee Jones wrote:
-> On Mon, 16 Sep 2024, Dmitry Rokosov wrote:
-> 
-> > Hello Lee!
-> > 
-> > What are the next steps? Should I make any changes, or are we waiting
-> > for test results from the mailing list members?
-> 
-> This is an intrusive core change that was submitted during -rc6.
-> 
-> It's going to need some time on the list for people to respond.
-> 
-> > Sorry for the ping.
-> > 
-> > On Wed, Sep 04, 2024 at 01:39:30AM +0300, Dmitry Rokosov wrote:
-> > > This allows to setup ordered workqueue for leds events. This may be
-> > > useful, because default 'system_wq' does not guarantee execution order
-> > > of each work_struct, thus for several brightness update requests (for
-> > > multiple leds), real brightness switch could be in random order.
-> > > 
-> > > Yes, for sysfs-based leds we have flush_work() call inside
-> > > brightness_store() operation, but it's blocking call, so userspace
-> > > caller can be blocked at a long time, which means leds animation stream
-> > > can be broken.
-> > > 
-> > > Ordered workqueue has the same behaviour as system_wq + flush_work(),
-> > > but all scheduled works are async and userspace caller is not blocked,
-> > > which it better for userspace animation scheduling.
-> > > 
-> > > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> > > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > > ---
-> > > Changes v2 since v1 at [1]:
-> > >     - replace "leds" with "LEDs" in the log message
-> > > 
-> > > Links:
-> > >     [1] https://lore.kernel.org/all/20240820155407.32729-1-ddrokosov@salutedevices.com/
-> > > ---
-> > >  drivers/leds/led-class.c | 12 +++++++++++-
-> > >  drivers/leds/led-core.c  |  6 +++---
-> > >  include/linux/leds.h     |  1 +
-> > >  3 files changed, 15 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > index c66d1bead0a4..b5e28ad54f7f 100644
-> > > --- a/drivers/leds/led-class.c
-> > > +++ b/drivers/leds/led-class.c
-> > > @@ -25,6 +25,8 @@
-> > >  static DEFINE_MUTEX(leds_lookup_lock);
-> > >  static LIST_HEAD(leds_lookup_list);
-> > >  
-> > > +static struct workqueue_struct *leds_wq;
-> > > +
-> > >  static ssize_t brightness_show(struct device *dev,
-> > >  		struct device_attribute *attr, char *buf)
-> > >  {
-> > > @@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
-> > >  	if (state == LED_OFF)
-> > >  		led_trigger_remove(led_cdev);
-> > >  	led_set_brightness(led_cdev, state);
-> > > -	flush_work(&led_cdev->set_brightness_work);
-> > >  
-> > >  	ret = size;
-> > >  unlock:
-> > > @@ -548,6 +549,8 @@ int led_classdev_register_ext(struct device *parent,
-> > >  
-> > >  	led_update_brightness(led_cdev);
-> > >  
-> > > +	led_cdev->wq = leds_wq;
-> > > +
-> > >  	led_init_core(led_cdev);
-> > >  
-> > >  #ifdef CONFIG_LEDS_TRIGGERS
-> > > @@ -666,12 +669,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
-> > >  
-> > >  static int __init leds_init(void)
-> > >  {
-> > > +	leds_wq = alloc_ordered_workqueue("leds", 0);
-> > > +	if (!leds_wq) {
-> > > +		pr_err("failed to create LEDs ordered workqueue\n");
-> > > +		return -ENOMEM;
-> > > +	}
-> > > +
-> > >  	return class_register(&leds_class);
-> > >  }
-> > >  
-> > >  static void __exit leds_exit(void)
-> > >  {
-> > >  	class_unregister(&leds_class);
-> > > +	destroy_workqueue(leds_wq);
-> > >  }
-> > >  
-> > >  subsys_initcall(leds_init);
-> > > diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> > > index 89c9806cc97f..9769ac49be20 100644
-> > > --- a/drivers/leds/led-core.c
-> > > +++ b/drivers/leds/led-core.c
-> > > @@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
-> > >  		led_cdev->delayed_delay_on = delay_on;
-> > >  		led_cdev->delayed_delay_off = delay_off;
-> > >  		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
-> > > -		schedule_work(&led_cdev->set_brightness_work);
-> > > +		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> > >  		return;
-> > >  	}
-> > >  
-> > > @@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
-> > >  		 */
-> > >  		if (!brightness) {
-> > >  			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
-> > > -			schedule_work(&led_cdev->set_brightness_work);
-> > > +			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> > >  		} else {
-> > >  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-> > >  				&led_cdev->work_flags);
-> > > @@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
-> > >  		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
-> > >  	}
-> > >  
-> > > -	schedule_work(&led_cdev->set_brightness_work);
-> > > +	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
-> > >  
-> > > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> > > index 6300313c46b7..7c9f1cb12ab9 100644
-> > > --- a/include/linux/leds.h
-> > > +++ b/include/linux/leds.h
-> > > @@ -169,6 +169,7 @@ struct led_classdev {
-> > >  	int			 new_blink_brightness;
-> > >  	void			(*flash_resume)(struct led_classdev *led_cdev);
-> > >  
-> > > +	struct workqueue_struct *wq; /* LED workqueue */
-> > >  	struct work_struct	set_brightness_work;
-> > >  	int			delayed_set_value;
-> > >  	unsigned long		delayed_delay_on;
-> > > -- 
-> > > 2.43.0
-> > > 
-> > 
-> > -- 
-> > Thank you,
-> > Dmitry
-> 
-> -- 
-> Lee Jones [李琼斯]
+> =C2=A0drivers/iio/adc/ad7124.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index a5d91933f505..b79c48d46ccc 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -637,7 +637,7 @@ static int ad7124_write_raw(struct iio_dev *indio_dev=
+,
+> =C2=A0
+> =C2=A0	switch (info) {
+> =C2=A0	case IIO_CHAN_INFO_SAMP_FREQ:
+> -		if (val2 !=3D 0) {
+> +		if (val2 !=3D 0 || val =3D=3D 0) {
+> =C2=A0			ret =3D -EINVAL;
+> =C2=A0			break;
+> =C2=A0		}
 
--- 
-Thank you,
-Dmitry
 
