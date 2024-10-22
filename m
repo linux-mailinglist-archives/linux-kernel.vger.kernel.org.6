@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-376055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586EC9A9F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D62A9A9F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAD41C2524C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4FB1C252C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D3A199FB5;
-	Tue, 22 Oct 2024 09:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D168019992E;
+	Tue, 22 Oct 2024 09:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SpQCMdAz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUdeeDj4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F50198E91
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D0E155330;
+	Tue, 22 Oct 2024 09:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590938; cv=none; b=RfRHk1C4JyyyKtO8z/PaSGxFrfetqrid2ZZeNGc2D4msA2mjTvNoFeXsugXNYhj0c4M323+gxNz2nKaUgNNvhIJk0lKxgWUWPwyTzJGjjX41uPLCTytCN+kYN4E89cuY2iHjmGr03HpenmbhlMD9yfzCZnK5nGuBOyeL09FRoDs=
+	t=1729590989; cv=none; b=VtF/KucmSWP2zjqxzcnKC0IctQLSSo5d/Wlo3rJgGnFyyIr7lXyWRakyUlFTkRqNPnxI4+fO88SD1qfWYPwE79UziNkVtmn9/vW2WKQ/BaJG+qsAhqgiYiC2VQm4YQoVlQfKyePt5OAhAjXDcpN5oTwsmGXIl36ztIUKCIikG7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590938; c=relaxed/simple;
-	bh=ib0DWrahXU+UyLhjJUyjqhEX8gbxfkcMrsQFOh4hUoo=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AsNU9Dzq71SSuxTUXUFAssq8aQAOI5ve1RIMMS+gkoExx43OOdqGkExikCYbMubC7uDRNt5F18yekCiaPYvbdFq50zio6cAEMDH6rIzcQreaLIGlS9MoQ3Gdr5i/Evl/T3gXe0cRhOiluNJQ2r2/6X78/1ylM4qXelPWT0I9e/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SpQCMdAz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729590935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ib0DWrahXU+UyLhjJUyjqhEX8gbxfkcMrsQFOh4hUoo=;
-	b=SpQCMdAz5l4Q/BYwYXQ/sER5YLgSIL1kt53ppQyKGtInB/G6bgfi3diAIbmkyRuGUr/qZ3
-	S5XKWiDpEzXjxaynVYdwOC3DNwEMDKHX1FPjybrSJP9gMZiyU2BidyUBt71MdHbzH7C3po
-	aj5CkTFePZ9GrHKBAfiIcpAVPd5hTTQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-558-V7oviks_M1y8tq02Of1UWw-1; Tue, 22 Oct 2024 05:55:34 -0400
-X-MC-Unique: V7oviks_M1y8tq02Of1UWw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315b7b0c16so39723405e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:55:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729590933; x=1730195733;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ib0DWrahXU+UyLhjJUyjqhEX8gbxfkcMrsQFOh4hUoo=;
-        b=l+u4ob0aTg0EjJCYQk8NtT8SaRwm16FRcUV8S3OaKG0YjlvIRGQdty4bQieGw5R0Vq
-         kSgm4l+vHQbyJ6H6YKOd5QSQIxAaB4c2czOTt6LOOA9/rIFLI0HtboXQioojDNMUkKWJ
-         DW1iSsUbQjLohTkvINeXjgKkh9nkEJlgcGXklCu4RfMQkvPz5TIFx6MkCfmMcg47v9PW
-         2DqE3cXefvAYx1gQ3oJ7JeBl7QeWw7ozTJykxFQr6J5DvNJdPjKYAgHaAWYMLeBMWffc
-         88cLxFqfVZvsIp8H6hD+2ojYogmwSr1uKBioqY2IBomACwiPKRxMsUJu2LwKWDm0zvuy
-         eUnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdv0jWkVJ4Ba/GF+yA2nn1Jsk/ySewrZ6wmC1j550238S/JTDpe7yD4CfXbiOakjNJUQE//lODJyvN6fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7RnS75Qwk1jLppCP+3EhwxMS9kTd6i9Mz19uCqnZEKKF41f1A
-	FxAEjyHC8INgIkdyZWh0ofVDvIal7WZKxKUPzPcYZnvGmRGcvDN/l3h+zKXXmUWGaZspXfTtq4f
-	LaV6ERtJ8vrjbP36ftGedz1Jhl2SM1ndhMvIPykkcKVu3IK9/ITPx2R7iwHl3JQ==
-X-Received: by 2002:a05:600c:5124:b0:431:40ca:ce44 with SMTP id 5b1f17b1804b1-43161691682mr122114235e9.30.1729590933370;
-        Tue, 22 Oct 2024 02:55:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgyq6n+8jcts2tjTo5SADW9rqMjfT6xN3E7y9DOoeJqaiyEJ0e6Yke+AVbsNQve6hNbgctXw==
-X-Received: by 2002:a05:600c:5124:b0:431:40ca:ce44 with SMTP id 5b1f17b1804b1-43161691682mr122113835e9.30.1729590932884;
-        Tue, 22 Oct 2024 02:55:32 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b93ea6sm6296161f8f.84.2024.10.22.02.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:55:32 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id DAE67160B2D3; Tue, 22 Oct 2024 11:55:31 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>,
- bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, "David S.
- Miller" <davem@davemloft.net>, Eduard Zingerman <eddyz87@gmail.com>, Eric
- Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>, Helge Deller
- <deller@gmx.de>, Jakub Kicinski <kuba@kernel.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linux-riscv@lists.infradead.org, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, netdev@vger.kernel.org, Palmer Dabbelt
- <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Puranjay Mohan <puranjay12@gmail.com>,
- Puranjay Mohan <puranjay@kernel.org>, Shuah Khan <shuah@kernel.org>, Song
- Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song
- <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next 3/5] selftests/bpf: don't mask result of
- bpf_csum_diff() in test_verifier
-In-Reply-To: <20241021122112.101513-4-puranjay@kernel.org>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-4-puranjay@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 22 Oct 2024 11:55:31 +0200
-Message-ID: <871q08ihrg.fsf@toke.dk>
+	s=arc-20240116; t=1729590989; c=relaxed/simple;
+	bh=ICvx67HfupNV7X8ez0ig1ke+d2T0Pj/8g4aUrNDFUY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=re1xhmndDNZuS9lboXq/N0m5KkhhUOj0Wv2NaWIT7i2Mbyyxp5f0r4eDwFUDBbGMsy84EYD7YcVkUu03YxFcFFkGBS3T3apI5hHasioxhP1dZvk7lgDBjYoHPW2wh6Lpx/nXcBTwOue2ztoXlb+iTqDZLuIciW2nINx/hCE5sKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUdeeDj4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11A8C4CEE7;
+	Tue, 22 Oct 2024 09:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729590988;
+	bh=ICvx67HfupNV7X8ez0ig1ke+d2T0Pj/8g4aUrNDFUY0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aUdeeDj4MlL2pvldvpH6pwJSfyJLF7Sd2Fc2V8dTHSDFWmUqf339UphKAjWSQVlgc
+	 LNyjNcsGT1E6jZ+ttQculDHCoVXp8Rw4px2rpchmx8QFN15J5i6aCfrx5aunj4hfHK
+	 oOrTE3gAGsvbqBsJiGGab18lciLVxr8FJJYSD1RsRu1PYr12zjEZp04YQVFxjv2KQP
+	 /PQvZ1WMQbopa6h3VsZ4NzhsMZS2Q4nqiF1NyhLrOeo8Zxqc13yC9KGANklSOTS7Ow
+	 cos2GRIJNpFMbBR1rXKEUj3vWQKjqoTmyR4WcBwCwpTYiQXwd83ng4pCJonu0B5Y9e
+	 imowkwNUS6Fgg==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7181eb9ad46so2170149a34.1;
+        Tue, 22 Oct 2024 02:56:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsoX9kngFvY3zL/UzAq2UYWbcD819EAhUipE5F7lzQk7Sk0BHGINZxZoJvyLliwV8aCjBdNbCziSw=@vger.kernel.org, AJvYcCW4kFPmqkVGKfcxHOSc6GYxO7aylH9crogceoYR27NL6Gi4wGU/k9Uop2WsHzxKb8tYLLRIhyTV0iweAk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1qfQKsi47wDSgjUTCHGqk1yHkgjZ/M5SGROI5Nh0N+gFmR2yK
+	EvHRPvhsQh8TmCXnQ5CUi0no16nbemc5a6nfsodbPp/xJ5bhhQHNPwxoSH3Kr43n2VfnXncExzT
+	+5pMwD3KR5qjswH01t0GUVARBRbI=
+X-Google-Smtp-Source: AGHT+IEOOET6wayelTMNOqOUVlcPkSPvAVtkLnZ7XVyFHiatKVn2buuJSdTUziR7DtaK5ZWpUyUjWkTG5gDaem6WXcs=
+X-Received: by 2002:a05:6870:e3ce:b0:270:c1e:41ad with SMTP id
+ 586e51a60fabf-2892c49ea37mr11588730fac.35.1729590987984; Tue, 22 Oct 2024
+ 02:56:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <2215082.irdbgypaU6@rjwysocki.net> <CAJZ5v0jYzw7hXaX+5AvO407d8vo725_-wHLQW6Q1fqXXJGSb6g@mail.gmail.com>
+ <CAJZ5v0gEgr7Q49JSQQ37_2VbdXBTDPZmoYHuCSACJW_3gdmuwQ@mail.gmail.com> <e77b2e7d-771e-40dc-8953-8f2cded7cb7f@arm.com>
+In-Reply-To: <e77b2e7d-771e-40dc-8953-8f2cded7cb7f@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 Oct 2024 11:56:15 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gtiwAic2DL62=-JE8wT4ed+p5Wen9rZnhH4PBicRqo9A@mail.gmail.com>
+Message-ID: <CAJZ5v0gtiwAic2DL62=-JE8wT4ed+p5Wen9rZnhH4PBicRqo9A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] thermal: core: Fixes and cleanups, mostly
+ related to thermal zone init and exit
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Puranjay Mohan <puranjay@kernel.org> writes:
+Hi Lukasz,
 
-> The bpf_csum_diff() helper has been fixed to return a 16-bit value for
-> all archs, so now we don't need to mask the result.
+On Tue, Oct 22, 2024 at 12:44=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
+wrote:
 >
-> This commit is basically reverting the below:
+> Hi Rafael,
 >
-> commit 6185266c5a85 ("selftests/bpf: Mask bpf_csum_diff() return value
-> to 16 bits in test_verifier")
+> On 10/21/24 12:05, Rafael J. Wysocki wrote:
+> > On Fri, Oct 11, 2024 at 8:50=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> >>
+> >> On Fri, Oct 4, 2024 at 10:11=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysoc=
+ki.net> wrote:
+> >>>
+> >>> Hi Everyone,
+> >>>
+> >>> After posting the two series of thermal core patches for 6.13:
+> >>>
+> >>> https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
+> >>>
+> >>> and
+> >>>
+> >>> https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
+> >>>
+> >>> before the 6.12 merge window, I have decided to reorder the changes i=
+ncluded in
+> >>> these series, so that fixes and more significant cleanups (for exampl=
+e, changing
+> >>> they layout of data structures) go first, followed by the changes rel=
+ated to
+> >>> using guards for locking, and the optimization involving sorted lists=
+ becomes
+> >>> the last piece.
+> >>>
+> >>> This series is the first part and the majority of patches in it come =
+from the
+> >>> second (RFC) series mentioned above.  Of course, they needed to be re=
+based to
+> >>> be applied in the new order.  It is on top of 6.12-rc1 with
+> >>>
+> >>> https://lore.kernel.org/linux-pm/12549318.O9o76ZdvQC@rjwysocki.net/
+> >>>
+> >>> applied and it will be added to my thermal-core-testing branch.  It i=
+s in v2
+> >>> to start with because all of the patches in it have already been post=
+ed in
+> >>> some form.
+> >>>
+> >>> The first 10 patches fix some potential issues related to thermal zon=
+e
+> >>> initialization and exit (for example, user space may start to interac=
+t with
+> >>> a thermal zone during its initialization before it's ready and system=
+ suspend
+> >>> taking place at a wrong time may skip a new thermal zone so it is not=
+ suspended)
+> >>> and do some cleanups related to that.  This concludes with the remova=
+l of the
+> >>> need_update field from struct thermal_zone_device.
+> >>>
+> >>> The last two patches move lists of thermal instances from thermal zon=
+es to
+> >>> trip point descriptors and clean up some code on top of that.
+> >>>
+> >>> Please refer to the individual patch changelogs for details.
+> >>
+> >> This material is now present in the thermal-core-testing and
+> >> thermal-core-experimental branches in linux-pm.git.
+> >
+> > I gather that it is not controversial and it has been around for quite
+> > a while, and it was discussed during the PM+TC session at the LPC, so
+> > I've just applied it for 6.13.
 >
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> I hope it wasn't too late. The patch set looks good and I have
+> added my reviewed tags.
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-
+No, it wasn't, thank you!
 
