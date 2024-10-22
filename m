@@ -1,121 +1,236 @@
-Return-Path: <linux-kernel+bounces-375549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06FB9A9733
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822369A9731
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D531F1C20A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F8D0B213D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FCF13BAC6;
-	Tue, 22 Oct 2024 03:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10A413B297;
+	Tue, 22 Oct 2024 03:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jrXdjWA+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dP+eGJwT"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CA913A416;
-	Tue, 22 Oct 2024 03:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECF213957B;
+	Tue, 22 Oct 2024 03:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729568462; cv=none; b=pQoLhQKWE6tEAkjUiRHmsIF10xk8TvtTpl/3PFL588J9+u7jeXRbxUr+y6XruUtCQztn3kfojX0Cp4dQwGVE3slNaIhtYQR1x+mWMy3vFBDrAlHFpb4jqO+of0051HPKJBL/cCVveugZ/oBoJg7IF9eUw64CT3P0DriRmj1m+NI=
+	t=1729568430; cv=none; b=Wrl3PjEz1yPNRjiLbRqc7/kGlEAft0HZUJ97PP39veU6uuB2Z3ij1JrF1HSH2Eu6uF8UaMZSqk5TGRquWPbf4/5NxyzQ+q6YBBXaHHfwE1sZuU6bNbJsDZeIBxc9y6VSo7qAJF34X1VmW9RyNQz76keshOHKvgDlGEKJ4NlEJuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729568462; c=relaxed/simple;
-	bh=oZ/sHu2Aj21HZjujmiwtCdiSKjniswQaqv0Y3l/OwzA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OJD6En+FT9j0lv+rvyLq2Vl4KkWObPcn9RS2I1LmWqYfdsSD/tmqp3lfnR3LJvcYnz/FqZ7NPdJweE2f+x9if69nbPyPH3bxu8vgCGn87t7O9lSy61kKfXiP2s29B7WgG1HhXFdAb769MMd5kuE83C/cRqUkjF7wwyAutvklsC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jrXdjWA+; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729568460; x=1761104460;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oZ/sHu2Aj21HZjujmiwtCdiSKjniswQaqv0Y3l/OwzA=;
-  b=jrXdjWA+frD16UZaP6COLG+CMM5yaJ+aEHIJR058MjUb6EUl5HUHRcJ1
-   fYTWxwV5OnxwD0oGsD5Dr0oxMCvuAuJMIxbbmCh5D3TV+oCMG4mV2pKVV
-   yq+E46PNtchTz8/TL+YMSGkoWzkzaJHF5KcN5pYS66940wC3SCv5Lm0JR
-   xAAFtRgmH/njbYMmRWNoLzIENlmb9shQXc17yHjOaDagsPcCN81atxd41
-   f7FUylczkYMTTliPuQK3fqufnh303dpEXWeo7s5g1U+nuHDhkO1D9E1wV
-   Bq/L3mJcRXaNLX8+6+OR3oYinua6d8+RhZwY6Vt/QZa572dhP3iLXceA6
-   g==;
-X-CSE-ConnectionGUID: 3FTThUABSYOhAfBaV3ktfA==
-X-CSE-MsgGUID: ehBU+kmJR+SQlzldYmOWFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="54486093"
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="54486093"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 20:40:19 -0700
-X-CSE-ConnectionGUID: 47iCjRLnQHCXnCoWQay3Jw==
-X-CSE-MsgGUID: Qxh8VIPkRp+3Cb9ZbOBmLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="84802562"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 20:40:14 -0700
-Message-ID: <1886d618-5539-4108-96c7-afebb65b2c80@linux.intel.com>
-Date: Tue, 22 Oct 2024 11:40:11 +0800
+	s=arc-20240116; t=1729568430; c=relaxed/simple;
+	bh=6dDi3qz50TuBesIjcJCS9Db6LXc38eCyjZ4+I/1n15c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bRUrGQwGb+QeGPBieCPUqzT/Kp+PBCG5NE3zZMRr2Aw49OZ2FBK8uQkoE8mnul2jF8PCcmRdPilPgg2N857oh6VbLlFM2uHWEFRkHVltdTUBCWRCwDx6vscWma42AeQUijUTiTDftz81+1kBeCexvwD2UtphN1qiBV7os77RyyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dP+eGJwT; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ebc05007daso1040832eaf.1;
+        Mon, 21 Oct 2024 20:40:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729568427; x=1730173227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IsIBMtBRdHgmgd4OuwKprKni4fu/k/MvfWuk44rUY64=;
+        b=dP+eGJwTNtyNiu8MBIy71QtoOjirgzpTtk3zH89EKYjKhK38OXzPHFgQex/x9ywb4d
+         yRwnq2vzBMs3P1Y2oWUI31hg6aOx3cjQRRXgpYPw8Haswsn1CeHYBkF/QNwQQHHcRZuf
+         TVRxq9MGTabnvx4449N0MOa+zxnGQ1d0Q/cUhsgGYYBNkRyVInjUjyWxR6G1k0j8EBbz
+         9ZeDQjCkHZ8/9FojJ0nJuCn79I3gO9G0Pqrz47gzPhPYNzSdIigsi5FzxjUtabgSd16D
+         /E2IeAB3Jgaxp0UioCs45xE2fOZOmBVycU8e3HSm4L2zFlxXxUyegT8C/7+F7H+fI7AT
+         +mxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729568427; x=1730173227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IsIBMtBRdHgmgd4OuwKprKni4fu/k/MvfWuk44rUY64=;
+        b=GCSTfi/hkeHjRsJ5CoMj8NDj5NhPInuzHP1HPjIA1Cr0ui+gWUT7R69klZwQyMil5n
+         rmlPq+3y/cf5CNzL+1xBB00LqCWKekJSg5BkMcHh9pbMDRd2Y1vermABKR8xHbHe0yIO
+         6QzQp5o+/fXp3WUPP87Sx1fN7OXpfKfRwF3XTzoe99Aqb0mTnAQV7unp+1qXQ34X+DLT
+         daLucKjDznoh2dAHG67zrXYJsA78jRQSxGc4rtWempofYTZo6rHPYD0tEF1943vnANFv
+         NV8Qf/OhA+KHQX6CjfUeBpHzHkGBeCu963z1UvAXRz8YNs1JAxNDE5vl0QDZvGw+Hb1i
+         HfHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhEFSoEaBrvXmYi02eRnBGEGh3H9P9XrMEFEo8KHHe77Vruray/rSMTt91riRtVzilYPYAOaxdjEu9/Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwETAVyXRkhbE4IcxdxTq3KY9jEChliZshHEF7Zq2pgrJLMlIZM
+	BWU9tiVOtyi7LyLaWbK6nBdKMEn5d7gq7gTzbD6RXVzHL7B+ksU3GJUywv5oiuIAJpmT5AUv/dq
+	EEj4DEnqdPERX/esBQxDO8eFmsSU=
+X-Google-Smtp-Source: AGHT+IGe3Nw+1nbJUnYfqVAvcUuvQuavIukZTZbVhLPSYvrvk6LLBWU1vU6yR4jRs3HKGr9nJmTsuylApSB7vflQ76w=
+X-Received: by 2002:a05:6870:8086:b0:288:679e:ca8a with SMTP id
+ 586e51a60fabf-28caff1eb49mr1237426fac.18.1729568427394; Mon, 21 Oct 2024
+ 20:40:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, joro@8bytes.org, suravee.suthikulpanit@amd.com,
- robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
- mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
- smostafa@google.com, yi.l.liu@intel.com, aik@amd.com,
- zhangfei.gao@linaro.org, patches@lists.linux.dev
-Subject: Re: [PATCH v4 02/14] iommufd/viommu: Add IOMMU_VDEVICE_ALLOC ioctl
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- will@kernel.org
-References: <cover.1729555967.git.nicolinc@nvidia.com>
- <2404ee8d2bd97e7b8c4c45b24cf52b157fb0b635.1729555967.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <2404ee8d2bd97e7b8c4c45b24cf52b157fb0b635.1729555967.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+ <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
+ <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop> <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
+ <22a02204-8d14-41ae-af40-dfea79dec09d@paulmck-laptop>
+In-Reply-To: <22a02204-8d14-41ae-af40-dfea79dec09d@paulmck-laptop>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 21 Oct 2024 20:40:14 -0700
+Message-ID: <CAEf4Bza_XLALKvOzyc9f22hrXWkvcX7yb=D0W3FUFrAmPAZHHg@mail.gmail.com>
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
+To: paulmck@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/22 8:20, Nicolin Chen wrote:
-> Introduce a new ioctl to allocate a vDEVICE object. Since a vDEVICE object
-> is a connection of an iommufd_iommufd object and an iommufd_viommu object,
+On Mon, Oct 21, 2024 at 8:30=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> On Mon, Oct 21, 2024 at 07:01:02PM -0700, Andrii Nakryiko wrote:
+> > On Mon, Oct 21, 2024 at 5:21=E2=80=AFPM Paul E. McKenney <paulmck@kerne=
+l.org> wrote:
+> > >
+> > > On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
+> > > > On Mon, Oct 21, 2024 at 3:13=E2=80=AFPM Paul E. McKenney <paulmck@k=
+ernel.org> wrote:
+> > > > >
+> > > > > For almost 20 years, the int return value from srcu_read_lock() h=
+as
+> > > > > been always either zero or one.  This commit therefore documents =
+the
+> > > > > fact that it will be non-negative.
+> > > > >
+> > > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > > Cc: Andrii Nakryiko <andrii@kernel.org
+> > > > >
+> > > > > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > > > > index bab1dae3f69e6..512a8c54ba5ba 100644
+> > > > > --- a/include/linux/srcu.h
+> > > > > +++ b/include/linux/srcu.h
+> > > > > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_str=
+uct *ssp, int read_flavor);
+> > > > >   * a mutex that is held elsewhere while calling synchronize_srcu=
+() or
+> > > > >   * synchronize_srcu_expedited().
+> > > > >   *
+> > > > > - * The return value from srcu_read_lock() must be passed unalter=
+ed
+> > > > > - * to the matching srcu_read_unlock().  Note that srcu_read_lock=
+() and
+> > > > > - * the matching srcu_read_unlock() must occur in the same contex=
+t, for
+> > > > > - * example, it is illegal to invoke srcu_read_unlock() in an irq=
+ handler
+> > > > > - * if the matching srcu_read_lock() was invoked in process conte=
+xt.  Or,
+> > > > > - * for that matter to invoke srcu_read_unlock() from one task an=
+d the
+> > > > > - * matching srcu_read_lock() from another.
+> > > > > + * The return value from srcu_read_lock() is guaranteed to be
+> > > > > + * non-negative.  This value must be passed unaltered to the mat=
+ching
+> > > > > + * srcu_read_unlock().  Note that srcu_read_lock() and the match=
+ing
+> > > > > + * srcu_read_unlock() must occur in the same context, for exampl=
+e, it is
+> > > > > + * illegal to invoke srcu_read_unlock() in an irq handler if the=
+ matching
+> > > > > + * srcu_read_lock() was invoked in process context.  Or, for tha=
+t matter to
+> > > > > + * invoke srcu_read_unlock() from one task and the matching srcu=
+_read_lock()
+> > > > > + * from another.
+> > > >
+> > > > For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock=
+().
+> > > > Presumably the same non-negative index will be returned/consumed th=
+ere
+> > > > as well, right? Can we add a blurb to that effect for them as well?
+> > >
+> > > Does the change shown below cover it?
+> >
+> > Yep, looks good, thank you! You might want to fix
+> > s/srcu_read_unlock/__srcu_read_unlock/, while at it, but that's
+> > orthogonal.
+>
+> As long as we are in the area...  Please see below for the update.
+>
+> Thoughts?
+>
 
-nit:
+LGTM
 
-:s/iommufd_iommufd/iommufd_device/g
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-or not?
-
-> require both as the ioctl inputs and take refcounts in the ioctl handler.
-> 
-> Add to the vIOMMU object a "vdevs" xarray, indexed by a per-vIOMMU virtual
-> device ID, which can be:
->   - Virtual StreamID on a nested ARM SMMUv3, an index to a Stream Table
->   - Virtual DeviceID on a nested AMD IOMMU, an index to a Device Table
->   - Virtual ID on a nested Intel VT-D IOMMU, an index to a Context Table
-> 
-> Then, let the idev structure hold the allocated vdev pointer with a proper
-> locking protection.
-> 
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-> ---
->   drivers/iommu/iommufd/iommufd_private.h |  12 +++
->   include/linux/iommufd.h                 |   2 +
->   include/uapi/linux/iommufd.h            |  26 ++++++
->   drivers/iommu/iommufd/device.c          |  11 +++
->   drivers/iommu/iommufd/main.c            |   7 ++
->   drivers/iommu/iommufd/viommu.c          | 108 ++++++++++++++++++++++++
->   6 files changed, 166 insertions(+)
-
-Thanks,
-baolu
+>                                                         Thanx, Paul
+>
+> ------------------------------------------------------------------------
+>
+> commit 4433b7d3785d8d2a700f5ed5ca234c64bc63180e
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Mon Oct 21 15:09:39 2024 -0700
+>
+>     srcu: Guarantee non-negative return value from srcu_read_lock()
+>
+>     For almost 20 years, the int return value from srcu_read_lock() has
+>     been always either zero or one.  This commit therefore documents the
+>     fact that it will be non-negative, and does the same for the underlyi=
+ng
+>     __srcu_read_lock().
+>
+>     [ paulmck: Apply Andrii Nakryiko feedback. ]
+>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> index bab1dae3f69e6..512a8c54ba5ba 100644
+> --- a/include/linux/srcu.h
+> +++ b/include/linux/srcu.h
+> @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp=
+, int read_flavor);
+>   * a mutex that is held elsewhere while calling synchronize_srcu() or
+>   * synchronize_srcu_expedited().
+>   *
+> - * The return value from srcu_read_lock() must be passed unaltered
+> - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+> - * the matching srcu_read_unlock() must occur in the same context, for
+> - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+> - * if the matching srcu_read_lock() was invoked in process context.  Or,
+> - * for that matter to invoke srcu_read_unlock() from one task and the
+> - * matching srcu_read_lock() from another.
+> + * The return value from srcu_read_lock() is guaranteed to be
+> + * non-negative.  This value must be passed unaltered to the matching
+> + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
+> + * srcu_read_unlock() must occur in the same context, for example, it is
+> + * illegal to invoke srcu_read_unlock() in an irq handler if the matchin=
+g
+> + * srcu_read_lock() was invoked in process context.  Or, for that matter=
+ to
+> + * invoke srcu_read_unlock() from one task and the matching srcu_read_lo=
+ck()
+> + * from another.
+>   */
+>  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp=
+)
+>  {
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 07147efcb64d3..ae17c214e0de5 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
+>  /*
+>   * Counts the new reader in the appropriate per-CPU element of the
+>   * srcu_struct.
+> - * Returns an index that must be passed to the matching srcu_read_unlock=
+().
+> + * Returns a guaranteed non-negative index that must be passed to the
+> + * matching __srcu_read_unlock().
+>   */
+>  int __srcu_read_lock(struct srcu_struct *ssp)
+>  {
 
