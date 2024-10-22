@@ -1,261 +1,217 @@
-Return-Path: <linux-kernel+bounces-375720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A262E9A99F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:37:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190589A9A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338651F22BBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:37:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 774BFB2148A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12287145B07;
-	Tue, 22 Oct 2024 06:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6C145FE4;
+	Tue, 22 Oct 2024 06:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzTccQX1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AiKA/CeD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E4412C491;
-	Tue, 22 Oct 2024 06:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5A4139590
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579012; cv=none; b=ECci2gLagsi2Khqe+HEus69Bwy9CtE7euUkLYDP2g3FIg2UU8zQT4ToqQB9lpRVCeSPSpgM9oxlAcCqu4yfNi1wBbVVNWyrnaXFJMExub83U4IzbHFDVs4zgSrvI/EBxYzegirMN0/0Sksu0P4YblH6SnGhW+9IlAaR3v7i4Zvc=
+	t=1729579233; cv=none; b=a+c2gTcyJE2hTFcj/+cqvB4IdqrWK9zPBT8S5nGutZ3QAWmj21PdIytsRqStW1Acc1N/9TgT5RIKeo6wUBe0IF1i9I12HFntJn/eB/tCegQ9X24T/+d9px82U3cJycQ8LdZGXQwANt1jez6TuJU2IRBBVJeiV9aRieVu5Y7F8/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579012; c=relaxed/simple;
-	bh=kgom7S4dPlCjQ4rDpUTg5UtN9tz4unR1RuFCpmQYr4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgPWbCuCHx3SNiTLGnfOvhPH/SgxAHldy3nof84tI0XXaY5vHwx1zj1sNkPk0KLBd6IquQ0WehkR5gpKIpC0iGRwvML22WL/zFyVS3v61cvROcoGXTXKHrFFqvhUv/LcSyJrSGOWa2aX9/k+dxOdT3mpj9fFWZoHdUkr1EtRmzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzTccQX1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DE5C4CEC3;
-	Tue, 22 Oct 2024 06:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729579011;
-	bh=kgom7S4dPlCjQ4rDpUTg5UtN9tz4unR1RuFCpmQYr4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZzTccQX1j4on01K8VyRf17gqFj0ymMUyxBZtwOyYPrdHSq0HsJatq0hT8InZv1D/H
-	 XDJxI4qjhWaUdMbZrODgqT88qZQJC82fZhGBBSDBNZwAzWVwsX9fNro1O3M2Kb20+G
-	 0OLhqf2uAq6XIP12BatWLl6opWnNsJbddsomfpvmd2LQoJeESVM20j5vFgj8CKU7XL
-	 BkRIerY3xAGdXfvy9S2KogKBL71a2LtrrTKRH7/z9sTubA4lRuxRFz0opMnEgH8xhE
-	 evgPcRP0wUt34nQ8L2RZGKBPyTI5DzFGgBIegQPxn1jbHBn6ppkp59StN4HG1cUrZN
-	 Xr6HzShE0XyYw==
-Date: Mon, 21 Oct 2024 23:36:49 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 12/16] perf lock: Move common lock contention code to
- new file
-Message-ID: <ZxdIAfwD7YzyRMI-@google.com>
-References: <20241016042415.7552-1-irogers@google.com>
- <20241016042415.7552-13-irogers@google.com>
+	s=arc-20240116; t=1729579233; c=relaxed/simple;
+	bh=ObS/CD1nC9BsnXstuf+6HnMfJ4rOcKFcdJkNNFG/3VA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KrYRS7Dauwa1WVpUWQRXFOrTJqIFN8bI49NnrCDKoCW391XyxMxL+pFT7GCKujmwGGowZysxDNDaN+l2KE8kg1ctoqjnQfVk5LbmD7CRfWZdbCQ0Hnghxn1hvKrFwyfG2kyXxq6x5ZgrJSUcJWj1rK6dALXVQK4Btrmj4RK8Y9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AiKA/CeD; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729579232; x=1761115232;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ObS/CD1nC9BsnXstuf+6HnMfJ4rOcKFcdJkNNFG/3VA=;
+  b=AiKA/CeD34HcDTm9swyzEqHvnRvLEuBrcwCRj5NcOPdSI5OcAxKYf0f+
+   +ygsHWQ+0e19Z3HGzkOxX4V1ONnat1ZsCGc+3xfc2HybluF/4eQwdxOsa
+   Wc7vUrQbZHox8f0ADB+nAKNj5wDKrI4JtAEYU6SUqqK+Ug0++bJ+g+fyg
+   +pRD+n75piYr8ZPI12TuJNNjw/XkRo4alUTTfU25TY5mar2+TAaiGHl6e
+   ngTtSDfI8l3QT87dC/s0oNci7ZqcsirwnkQNwjpofOFbH3CFkMEN6L3BN
+   PYCHC9S4mF3ITbkMTcTBp5O/sgn0NjpHtYoPFZaKGaJOciK8VRZlKrEcu
+   A==;
+X-CSE-ConnectionGUID: ksqh0stvQ3+lqHy/cAjrjw==
+X-CSE-MsgGUID: 5SzColo2RBOWtsFTqaHBpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40213393"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40213393"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 23:40:32 -0700
+X-CSE-ConnectionGUID: vn4ZM4mfTwCfPsfjBRxIrg==
+X-CSE-MsgGUID: d6Oc0JBjSj2aCIRY2JkM0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="79762777"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 23:40:29 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: MengEn Sun <mengensun88@gmail.com>
+Cc: akpm@linux-foundation.org,  alexjlzheng@tencent.com,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  mengensun@tencent.com
+Subject: Re: [PATCH linux-mm v2] mm: make pcp_decay_high working better with
+ NOHZ full
+In-Reply-To: <1729574046-3392-1-git-send-email-mengensun@tencent.com> (MengEn
+	Sun's message of "Tue, 22 Oct 2024 13:14:06 +0800")
+References: <87msix6e8c.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<1729574046-3392-1-git-send-email-mengensun@tencent.com>
+Date: Tue, 22 Oct 2024 14:36:56 +0800
+Message-ID: <87v7xk4p9z.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016042415.7552-13-irogers@google.com>
+Content-Type: text/plain; charset=ascii
 
-On Tue, Oct 15, 2024 at 09:24:11PM -0700, Ian Rogers wrote:
-> Avoid references from util code to builtin-lock that require python
-> stubs. Move the functions and related variables to
-> util/lock-contention.c. Add max_stack_depth parameter to
-> match_callstack_filter to avoid sharing a global variable.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-lock.c             | 137 +--------------------
->  tools/perf/util/Build                 |   1 +
->  tools/perf/util/bpf_lock_contention.c |   2 +-
->  tools/perf/util/lock-contention.c     | 170 ++++++++++++++++++++++++++
->  tools/perf/util/lock-contention.h     |  37 ++----
->  tools/perf/util/python.c              |  17 ---
->  6 files changed, 185 insertions(+), 179 deletions(-)
->  create mode 100644 tools/perf/util/lock-contention.c
-> 
-[SNIP]
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 2a2f7780e595..ea2d9eced92e 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -121,6 +121,7 @@ perf-util-y += topdown.o
->  perf-util-y += iostat.o
->  perf-util-y += stream.o
->  perf-util-y += kvm-stat.o
-> +perf-util-y += lock-contention.o
->  perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
->  perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
->  perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
-> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
-> index 41a1ad087895..37e17c56f106 100644
-> --- a/tools/perf/util/bpf_lock_contention.c
-> +++ b/tools/perf/util/bpf_lock_contention.c
-> @@ -458,7 +458,7 @@ int lock_contention_read(struct lock_contention *con)
->  		if (con->save_callstack) {
->  			bpf_map_lookup_elem(stack, &key.stack_id, stack_trace);
->  
-> -			if (!match_callstack_filter(machine, stack_trace)) {
-> +			if (!match_callstack_filter(machine, stack_trace, con->max_stack)) {
->  				con->nr_filtered += data.count;
->  				goto next;
->  			}
-> diff --git a/tools/perf/util/lock-contention.c b/tools/perf/util/lock-contention.c
-> new file mode 100644
-> index 000000000000..841bb18b1f06
-> --- /dev/null
-> +++ b/tools/perf/util/lock-contention.c
-[SNIP]
-> +#ifndef HAVE_BPF_SKEL
-> +int lock_contention_prepare(struct lock_contention *con __maybe_unused)
-> +{
-> +	return 0;
-> +}
-> +
-> +int lock_contention_start(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +int lock_contention_stop(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +int lock_contention_finish(struct lock_contention *con __maybe_unused)
-> +{
-> +	return 0;
-> +}
-> +
-> +int lock_contention_read(struct lock_contention *con __maybe_unused)
-> +{
-> +	return 0;
-> +}
-> +#endif  /* !HAVE_BPF_SKEL */
+MengEn Sun <mengensun88@gmail.com> writes:
 
-Do we really need this part?  Why not leave it in the header file?
+> Thank you for your suggestion. I understand and am ready to make
+> some changes  
+>
+>> 
+>> Have verified the issue with some test?  If not, I suggest you to do
+>> that.
+>> 
+>
+> I have conducted tests:
+> Applying this patch or not does not have a significant impact on the
+> test results.
 
-Thanks,
-Namhyung
+I don't expect some measurable performance difference with the patch.
+If we can observe that the PCP size isn't tuned down to high_min before
+and is after, that should be a valid test result to show the value of
+the patch.  Can you try that?  The PCP size can be observed via
+/proc/zoneinfo.
 
+> perhaps my testing was not thorough enough. #^_^
+>
+> But, the logic of the code is like following:
+> CPU0                              CPUx
+> ----                              -----
+>                                   T0: vmstat_work is pending
+> T1: vmstat_shepherd
+>     check vmstat_work
+>     and do nothing
+>                                   T2: vmstat_work is in unpending state.
+>
+>                                   T3: alloc many pages
+>                                   T4: free all the pages allocated at T3
+>                                   T5: entry NOHZ, flushing all zonestats
+>                                       and nodestats
+> T6: next vmstat_shepherd fired
+>
+> In my opinion, there are indeed some issues. I'm not sure if there's
+> something I haven't understood?
+>
+>
+> By the way,
+> There are two other questions for me:
+> Q1:
+> Vmstat_work is a **deferreable work** So, It may be delayed for a long time
+> by NOHZ. As a result, "vmstat_update() may not be executed once every
+> second in the above scenario. Therefore, I'm not sure if using a deferrable
+> work to reduce pcp->high is appropriate. In my tests, if I don't use
+> deferrable work, it takes about a minute to reduce high to high_min, but
+> using deferrable work may take several minutes to reduce high to high_min.
 
-> diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-contention.h
-> index 1a7248ff3889..bfa5c7db0a5d 100644
-> --- a/tools/perf/util/lock-contention.h
-> +++ b/tools/perf/util/lock-contention.h
-> @@ -67,10 +67,11 @@ struct lock_stat {
->   */
->  #define MAX_LOCK_DEPTH 48
->  
-> -struct lock_stat *lock_stat_find(u64 addr);
-> -struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
-> +/* based on kernel/lockdep.c */
-> +#define LOCKHASH_BITS		12
-> +#define LOCKHASH_SIZE		(1UL << LOCKHASH_BITS)
->  
-> -bool match_callstack_filter(struct machine *machine, u64 *callstack);
-> +extern struct hlist_head *lockhash_table;
->  
->  /*
->   * struct lock_seq_stat:
-> @@ -148,7 +149,14 @@ struct lock_contention {
->  	bool save_callstack;
->  };
->  
-> -#ifdef HAVE_BPF_SKEL
-> +struct option;
-> +int parse_call_stack(const struct option *opt, const char *str, int unset);
-> +bool needs_callstack(void);
-> +
-> +struct lock_stat *lock_stat_find(u64 addr);
-> +struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
-> +
-> +bool match_callstack_filter(struct machine *machine, u64 *callstack, int max_stack_depth);
->  
->  int lock_contention_prepare(struct lock_contention *con);
->  int lock_contention_start(void);
-> @@ -156,25 +164,4 @@ int lock_contention_stop(void);
->  int lock_contention_read(struct lock_contention *con);
->  int lock_contention_finish(struct lock_contention *con);
->  
-> -#else  /* !HAVE_BPF_SKEL */
-> -
-> -static inline int lock_contention_prepare(struct lock_contention *con __maybe_unused)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline int lock_contention_start(void) { return 0; }
-> -static inline int lock_contention_stop(void) { return 0; }
-> -static inline int lock_contention_finish(struct lock_contention *con __maybe_unused)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline int lock_contention_read(struct lock_contention *con __maybe_unused)
-> -{
-> -	return 0;
-> -}
-> -
-> -#endif  /* HAVE_BPF_SKEL */
-> -
->  #endif  /* PERF_LOCK_CONTENTION_H */
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 35d84a96dbec..91fd444615cd 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -18,7 +18,6 @@
->  #include "mmap.h"
->  #include "util/kwork.h"
->  #include "util/sample.h"
-> -#include "util/lock-contention.h"
->  #include <internal/lib.h>
->  #include "../builtin.h"
->  
-> @@ -1311,22 +1310,6 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
->  	return NULL;
->  }
->  
-> -bool match_callstack_filter(struct machine *machine __maybe_unused, u64 *callstack __maybe_unused)
-> -{
-> -	return false;
-> -}
-> -
-> -struct lock_stat *lock_stat_find(u64 addr __maybe_unused)
-> -{
-> -	return NULL;
-> -}
-> -
-> -struct lock_stat *lock_stat_findnew(u64 addr __maybe_unused, const char *name __maybe_unused,
-> -				int flags __maybe_unused)
-> -{
-> -	return NULL;
-> -}
-> -
->  int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
->  {
->  	return -1;
-> -- 
-> 2.47.0.rc1.288.g06298d1525-goog
-> 
+It's not a big issue to take longer time to decay pcp->high.
+
+> Q2:
+> On a big machine, for example, with 1TB of memory, the default maximum
+> memory on PCP can be 1TB * 0.125.
+> This portion of memory is not accounted for in MemFree in /proc/meminfo.
+> Users can see this portion of memory from /proc/zoneinfo, but the memory
+> reported by the `free` command is reduced.
+> can we include the PCP memory in the MemFree statistic in /proc/meminfo?
+
+This has been discussed before.
+
+https://lore.kernel.org/linux-mm/20220816084426.135528-1-wangkefeng.wang@huawei.com/
+https://lore.kernel.org/linux-mm/20240830014453.3070909-1-mawupeng1@huawei.com/
+
+>> > While, This seems to be fine:
+>> > - if freeing and allocating memory occur later, it may the
+>> >   high_max may be adjust automatically
+>> > - If memory is tight, the memory reclamation process will
+>> >   release the pcp
+>> 
+>> This could be a real issue for me.
+>
+> Thanks, I will test more carefully for those issue
+>
+>> 
+>> > Whatever, we make vmstat_shepherd to checking whether we need
+>> > decay pcp high_max, and fire pcp_decay_high early if we need.
+>> >
+>> > Fixes: 51a755c56dc0 ("mm: tune PCP high automatically")
+>> > Reviewed-by: Jinliang Zheng <alexjlzheng@tencent.com>
+>> > Signed-off-by: MengEn Sun <mengensun@tencent.com>
+>> > ---
+>> > changelog:
+>> > v1: https://lore.kernel.org/lkml/20241012154328.015f57635566485ad60712f3@linux-foundation.org/T/#t
+>> > v2: Make the commit message clearer by adding some comments.
+>> > ---
+>> >  mm/vmstat.c | 9 +++++++++
+>> >  1 file changed, 9 insertions(+)
+>> >
+>> > diff --git a/mm/vmstat.c b/mm/vmstat.c
+>> > index 1917c034c045..07b494b06872 100644
+>> > --- a/mm/vmstat.c
+>> > +++ b/mm/vmstat.c
+>> > @@ -2024,8 +2024,17 @@ static bool need_update(int cpu)
+>> >  
+>> >  	for_each_populated_zone(zone) {
+>> >  		struct per_cpu_zonestat *pzstats = per_cpu_ptr(zone->per_cpu_zonestats, cpu);
+>> > +		struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+>> >  		struct per_cpu_nodestat *n;
+>> >  
+>> > +		/* per_cpu_nodestats and per_cpu_zonestats maybe flush when cpu
+>> > +		 * entering NOHZ full, see quiet_vmstat. so, we check pcp
+>> > +		 * high_{min,max} to determine whether it is necessary to run
+>> > +		 * decay_pcp_high on the corresponding CPU
+>> > +		 */
+>> 
+>> Please follow the comments coding style.
+>> 
+>>                 /*
+>>                  * comments line 1
+>>                  * comments line 2
+>>                  */
+>> 
+>
+> Thank you for your suggestion. I understand and am ready to make
+> some changes
+>
+>> > +		if (pcp->high_max > pcp->high_min)
+>> > +			return true;
+>> > +
+>> 
+>> We don't tune pcp->high_max/min in fact.  Instead, we tune pcp->high.
+>> Your code may make need_update() return true in most cases.
+>
+> You are right, using high_max is incorrect. May i use pcp->high > pcp->high_min?
+>
+>> 
+>> >  		/*
+>> >  		 * The fast way of checking if there are any vmstat diffs.
+>> >  		 */
+
+--
+Best Regards,
+Huang, Ying
 
