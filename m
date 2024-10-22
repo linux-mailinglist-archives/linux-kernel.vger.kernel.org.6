@@ -1,146 +1,99 @@
-Return-Path: <linux-kernel+bounces-376102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F439AA015
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:29:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747C59AA018
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3285287646
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275C71F213A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F2419D897;
-	Tue, 22 Oct 2024 10:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EFA19AA56;
+	Tue, 22 Oct 2024 10:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyPlxy5c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zs9blZI+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uSrCMAvb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE56019C543;
-	Tue, 22 Oct 2024 10:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E244199FA9;
+	Tue, 22 Oct 2024 10:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729592883; cv=none; b=TUBljE1w1IKa7ysAK0fD8xfsXuvhDAN8ZmosRNBBcffsi3S9ieVLOQZ+7r3e8y92zBNFaIMenMnp4K9+UhP3UqzJEnZv3KdJrhsTJnMjWI+nrXbxoL7cIuK+G0v55DZCtV93NYq4icVow/pVSgsirx2gUZzbziPaunYCXFu+MJc=
+	t=1729592954; cv=none; b=USTKD7xdGJYn73yD8MnbWxO2e4xs1zo4ap3fNzcnYbGmb4lT7nvHQfkhVzj0Ca+ymqjMjBCDfkf2DAaa5JOmS0iv9uOqan+Ghc/YMXrzIj4zol4cxjyO9cETT3LiicuVMEkB0XWS993UMHMro13P7g3QUScIOD1cIlCXVlFGoWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729592883; c=relaxed/simple;
-	bh=jPx+IRUONoAgH3KFjgYaCrDCw64YdeqQ3+EqFJXljGQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SywjKgeS4IKZbL8jtYafaTu2+z48v2mj7f0Am0hTfh7GTHTrQac9ycpn+fhylotmITk9hu/MRjB26a/VdCz6vcQtH9pRsejmKC1xklg/lV653LeI8tRvR3uncliJC2u0VVewm29eOm6UJmJBeXP1wHb0hGtY6k62E/NMku1hMJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyPlxy5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 82BFAC4CEEB;
-	Tue, 22 Oct 2024 10:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729592883;
-	bh=jPx+IRUONoAgH3KFjgYaCrDCw64YdeqQ3+EqFJXljGQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=iyPlxy5cEym5z4dc5fuFg0Hs1iBgHTGF+Mzq7b7hxHgnmiWLEDpaDwcKmqkxIRF0v
-	 3glK1uFH24QFWFpU3stuYIGPyrVVrkOXgsZ3PHLjXCdjCBKIj9ZOha8WdKEpP8Y06F
-	 /3vSajHOZ9Lu2z9WbM7YDohEVZHQjbZ9pI5sVtI5syUPE1wsGDpaWMIe63XIsfKLjm
-	 Sa4q/mVXsckKYKtxbBex8tAUBFHnUpF9MTge8S8itJbLsPECkVNufGLpjOc9FRRKQU
-	 D2slIuLxUe/URAVFj6w4ZTYF7CF14CYnEC97Nm3/mxVZ+GRUPyXQdISU+Zdj6M3Zmf
-	 CATtDb6UpHlpQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9F9D1CDD7;
-	Tue, 22 Oct 2024 10:28:02 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Tue, 22 Oct 2024 15:57:33 +0530
-Subject: [PATCH 5/5] PCI/pwrctl: Remove pwrctl device without iterating
- over all children of pwrctl parent
+	s=arc-20240116; t=1729592954; c=relaxed/simple;
+	bh=AdqEWVCjvQ9cX5LIitiP/udTDEsBSHs7TRfODlwnqxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceuVmv6uQpcGWbUDrMu6vkkAe8UO2lhOBkTiJg0m3VOjBHWa+jodp84NGTOGeV31H3a1VgiSaSOR6vHCwFDwqJoAtKz5HnfmMYQRlm9Ry5laM9HS+Xw/cQ+ocGYnW9Z0Ck1AJ5CkhOiIYIPaThqzsR8NBjRdfTrL3lkSLc5YKq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zs9blZI+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uSrCMAvb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Oct 2024 12:29:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729592950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAdvRwujWMRHeBKzzgyAj7FeqHh/4jni2bkEpMcquyQ=;
+	b=zs9blZI+TsCB7J5FS8pPdWCj3vGIB4dNscF74H1u07K2i8SIqn/ZeirC0hsrxnnpwRTuWe
+	oZUGBW3B30eb6MLoJL3h3T9/oehsZK3ruAIyhBmfpAfn6sjso4ZqbjZ7tYve7FqB/9PHkN
+	gG0HgSlrbRlaIh3s/0rCENVhTaB5px+IaouHfSSFQ75M9oUZY79uYi43A9iKwduri3iOFN
+	zSZeZwGceqPKeXZ8JyvQJsj2QdhVMjd/cxg1bE264PBrL2+olHJqXe6ogosthj6FUnRK4S
+	lBcXdbhbhAD5CUOKXNQMDtywWQO6uz/5XXx4+aOXU71eIC7NFbQMZeXxOEI8OQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729592950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAdvRwujWMRHeBKzzgyAj7FeqHh/4jni2bkEpMcquyQ=;
+	b=uSrCMAvbHgB3OuLjG8vZDxGdrUEf6PEIajH8RXM0Quui7p7YTVWhHKT5LYRuYSKddjwNKo
+	C5F3Y+quNcIjyeDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
+	mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, ankur.a.arora@oracle.com, efault@gmx.de,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 1/3] tracing: Replace TRACE_FLAG_IRQS_NOSUPPORT with
+ its config option.
+Message-ID: <20241022102906.KNgo1A2_@linutronix.de>
+References: <20241021151257.102296-1-bigeasy@linutronix.de>
+ <20241021151257.102296-2-bigeasy@linutronix.de>
+ <20241022031418.12154e63@rorschach.local.home>
+ <20241022095241.RFY4Iiu_@linutronix.de>
+ <20241022061959.31775f7a@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-pci-pwrctl-rework-v1-5-94a7e90f58c5@linaro.org>
-References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
-In-Reply-To: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1846;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=Fx4nsEA2QZpP1ERShZZ8bZw3IQBN6+Um75DdA2nrjyg=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnF34v/nlnaSD9lCRQmkUSbC0gN51VH+Ya8loNI
- VZhLq3xK7eJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZxd+LwAKCRBVnxHm/pHO
- 9WpUCACKafJIXVlw/tZAI/sQS1x6dJE+i6hX9zJsxTo/DczSyuwA6FHOswiX8NHCLJZyYTyspGt
- rFNtE5+WOuWGABNRXUvTZLGAOJZljL1UHYFJMkPRzuLUfFhTPjuEJ2aXkYTFz6tJaaAoah74P8r
- hUrkZve4eH0d3qRD3NDeZuwBIhT0ZyGPN9j32ESnqYhBhyuY6vxemjBM38NAWSDFc5gUdSBufzA
- Lwa8k652Feas0X9FUPl+RrPjjq/Yot8oDfpSiKhAnPQNYLinqbLfb6vrAbphM9VMDRv35P01xNY
- lgPl05mHeyzVat+aw1w4oGVinO277ji4pUNpIEanlGGfbcHs
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022061959.31775f7a@rorschach.local.home>
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 2024-10-22 06:19:59 [-0400], Steven Rostedt wrote:
+> On Tue, 22 Oct 2024 11:52:41 +0200
+> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> 
+> > > 
+> > > Please just remove NOSUPPORT and do not touch NEED_RESCHED.  
+> > 
+> > Then I put the lazy bit where we have not NOSUPPORT.
+> 
+> I'm afraid user space will confuse this with the NOSUPPORT.
 
-There is no need to iterate over all children of the pwrctl device parent
-to remove the pwrctl device. Since the pwrctl device associated with the
-PCI device can be found using of_find_device_by_node() API, use it directly
-instead.
+So? We don't ignore this for now and recycle that bit? If I got it
+right, only PPC32 was using that NOSUPPORT bit.
+What are the options given that it has to be an 8 bit field?
 
-If any pwrctl devices lying around without getting associated with the PCI
-devices, then those will be removed once their parent device gets removed.
+> -- Steve
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/remove.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index e4ce1145aa3e..3dd9b3024956 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -17,16 +17,16 @@ static void pci_free_resources(struct pci_dev *dev)
- 	}
- }
- 
--static int pci_pwrctl_unregister(struct device *dev, void *data)
-+static void pci_pwrctl_unregister(struct device *dev)
- {
--	struct device_node *pci_node = data, *plat_node = dev_of_node(dev);
-+	struct platform_device *pdev;
- 
--	if (dev_is_platform(dev) && plat_node && plat_node == pci_node) {
--		of_device_unregister(to_platform_device(dev));
--		of_node_clear_flag(plat_node, OF_POPULATED);
--	}
-+	pdev = of_find_device_by_node(dev_of_node(dev));
-+	if (!pdev)
-+		return;
- 
--	return 0;
-+	of_device_unregister(pdev);
-+	of_node_clear_flag(dev_of_node(dev), OF_POPULATED);
- }
- 
- static void pci_stop_dev(struct pci_dev *dev)
-@@ -34,8 +34,7 @@ static void pci_stop_dev(struct pci_dev *dev)
- 	pci_pme_active(dev, false);
- 
- 	if (pci_dev_is_added(dev)) {
--		device_for_each_child(dev->dev.parent, dev_of_node(&dev->dev),
--				      pci_pwrctl_unregister);
-+		pci_pwrctl_unregister(&dev->dev);
- 		device_release_driver(&dev->dev);
- 		pci_proc_detach_device(dev);
- 		pci_remove_sysfs_dev_files(dev);
-
--- 
-2.25.1
-
-
+Sebastian
 
