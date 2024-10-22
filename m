@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-376358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C239AB03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:59:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4B29AB051
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3731F1C20E71
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:59:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8D61F2302C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C204819F41C;
-	Tue, 22 Oct 2024 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDD019E82A;
+	Tue, 22 Oct 2024 14:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="UMgJLlvm"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BUiZYvTg"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422A545945
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7981AD7;
+	Tue, 22 Oct 2024 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729605555; cv=none; b=eS9lxePQRK1JGWGvlx29Eth1NqUi9bNYOLmWtWp2e5y78oPhO2HpIhQvfUZm7104cIOuvMnhzB/u98Qze0FmYGAefhkjfPD9TR3kXTs7tEtz/hMACg+IzSngaPpNB2Qwo5qcGlm2SlKWxB1ETVUOREIV7+9KAZCKDysBYx5b0+Q=
+	t=1729605737; cv=none; b=c8WIvhReikt0VioX6Q3oIfUaRp8uPtraPsn58OwegursvnMaOpNYj6GCsm+Sy1o6q78B5HAiy6bWsLjBMB18PVTtInx3nenr68+wTGgykGPnECK9GSt+e+IeqnKcrhwcCQkTBb/cHPAu9yx4R7lYBucwCtZxrimGihk+7Z5qW5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729605555; c=relaxed/simple;
-	bh=DTSva1rdvle9rEOtFTrkRxClj8575m9lPIDOzsRbJ3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCfYYh0dm1qVndNHneUYd+/DFBRHYw9oV1k1tUnc9dS6wdkkferfQnTFg6XAuT8vAeMIy+X2sTfkyIs2z/PxqBQzRDQpuDSgjb4m6EjIAAS6bK4iAY8i5q6lOX7I6na5Ij22nSp6unmN5T08c6qbhOKj/FrQdAGCAcf3SNa0aDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=UMgJLlvm; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ce65c8e13so48660185ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iiitd.ac.in; s=google; t=1729605550; x=1730210350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AE1/S8Ag+DpltPPDbeSO11HJbF7pe5vny3HkFSWRggA=;
-        b=UMgJLlvmuQB4oAXP7Y0EdzqFaqQPTOJC5+jgVEAWyZSD3Kg183cUL3b3Yet/bjbqMj
-         tAkK4iRktlqxgsYXU+AmMnB03Zi+7p+mHe5QIF9RdREaTZfGoDmiI16kSSNTdggfepQ9
-         123DnjmLBPAOAk+ikXptEhRJXdA0cM37lABTM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729605550; x=1730210350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AE1/S8Ag+DpltPPDbeSO11HJbF7pe5vny3HkFSWRggA=;
-        b=s4KhTX8D1Ewy+Bg4vnscqVnMwippmIZqLtpR2zgoZA+tkiTl2K6Yy1zeRKLJfqy1IY
-         eJLGrFZYSxldzIHrjgYewVGj7kLnlPq7p7iwpoDKBDRXAKXjHLSR3Ya5SZDrINidZiic
-         Ws+uWkeZIT9cJyd7Lnvx4ADNVB8L5CBSx4zZwMjw74SXHqUxKSGqFpS/FKoMbHhsB+wV
-         /2yKfi7QQg8Y3VfRpDVMW9ibFhvGiWmwp0qBwI1oNK1JTOEEyiQEIYjt1YjQzJBflf6O
-         +5x3SFt2KHvtzGd/I7jzgGuoG9iar7JmxO42ncYSxFnDx5z5s5FP0eUfcHN02lk+//XE
-         eZGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQYcXpBpNFsCOLp2IST2GHCrqZhDsmJP7yMx7InEn526Vl0m5vMhP6LePV//4UvVNf008npWO1Qrc25VE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyykbWR/YK505R21i9SBhneFPVQnXjcueJhTWBEaw8/WYxmOiAz
-	C9pWWZ5rIukY8nN7YROL0hMb3eq4pQyrHJLOxONzfrNQt5Uk/aEDG2ZS45bDt2k=
-X-Google-Smtp-Source: AGHT+IE3cStKJ14M6UyhkDM72HyPZvjtoDBt5iaFcTvLq+3WsoQSeAog08b6B4C5Az7aChT6eiQgMA==
-X-Received: by 2002:a17:902:f541:b0:20c:e169:eb75 with SMTP id d9443c01a7336-20e983f00efmr28705215ad.2.1729605550457;
-        Tue, 22 Oct 2024 06:59:10 -0700 (PDT)
-Received: from fedora ([103.3.204.148])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6396sm43106995ad.16.2024.10.22.06.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 06:59:09 -0700 (PDT)
-Date: Tue, 22 Oct 2024 19:29:02 +0530
-From: Manas <manas18244@iiitd.ac.in>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Anup Sharma <anupnewsmail@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Revert "bcachefs: Add asserts to
- bch2_dev_btree_bitmap_marked_sectors()"
-Message-ID: <d56wz2z6qne7lym3nidzb36yal25cmnaebjw6mkrz4lykw7ntz@jw6xsbveq227>
-References: <20241021-revert-assert-bch2-v1-1-e869c7c55bb6@iiitd.ac.in>
- <9ec25394-3d89-41b3-b62e-2d522cdc7319@huawei.com>
+	s=arc-20240116; t=1729605737; c=relaxed/simple;
+	bh=ED3j1hRpxBmLLUASk+1iG/4g/xGTzTGN2UHy/Z5W9NU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aKpX7adM+qSatwkkst8B32vlp2gMQ020IHM5n5aM1vDk+nDnoB6RI3yR0HC8FG9yEEpMq9vopC2kiJpvHh6zQrVQhcCqECDpYo5eiBihFXZ+ifNoBi88woYfOTEI0Nd/HRLdzuDpxjrIcuF7+a4KL6d4lTmu+bkunPoQPLKicZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BUiZYvTg; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=5wraFinemnXvechAgSBWJnCfd74TP5J4MGgea03qWBw=;
+	t=1729605735; x=1730815335; b=BUiZYvTgG8a5ap62uzIci5gCchCCLOwajFayKKUEwiDdx4H
+	QhamWLdtU8Bs16DLisUyQTIVUkuFHYcXX05gI8WIc72yu3WiaPCjsOfiLLLphipPfEiYWPLtSSX1k
+	q+1AxjQwKz/gSq201FkLWCdA8ezfDN809h1ZU+6taFZYuShIcT8tMDIKFmYxjt4rAdp1euVmEFfFy
+	PhscJoclPo3FgAq3zJCZWOESK7kfvU6kKnLVw7/BYZRmf+dyFpR6+pPQNnUU0hQ+6beN1un8oinbG
+	Rd7oWlvf3BWDNShMRKBH3Ax1RmYpj3Nhpq5bsV2sHhpG0RLcv42fitGY2e4Ewn0g==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t3FSc-00000001lNY-2Uoq;
+	Tue, 22 Oct 2024 16:02:10 +0200
+Message-ID: <e3c39c3e7be70993c7fa07e58c2beda52ff44cb9.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] debugfs: add small file operations for most files
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander
+ Viro <viro@zeniv.linux.org.uk>, "Rafael J . Wysocki" <rafael@kernel.org>
+Date: Tue, 22 Oct 2024 16:02:09 +0200
+In-Reply-To: <2024102201-pummel-mournful-d349@gregkh>
+References: 
+	<20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
+	 <2024102201-pummel-mournful-d349@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <9ec25394-3d89-41b3-b62e-2d522cdc7319@huawei.com>
+X-malware-bazaar: not-scanned
 
-On 22.10.2024 09:43, Hongbo Li wrote:
->On 2024/10/22 0:48, Manas via B4 Relay wrote:
->>From: Manas <manas18244@iiitd.ac.in>
->>
->>This reverts commit 60f2b1bcf519416dbffee219132aa949d0c39d0e.
->>
->>This syzbot bug[1] is triggered due to the BUG_ON assertions added in
->>__bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
->>63 '?'. This triggers both the assertions.
->>
->>Reverting the commit does not reproduce the said bug.
->>
->>[1] https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
->>
->>Signed-off-by: Manas <manas18244@iiitd.ac.in>
->>Reported-by: syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
->>Closes: https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
->>---
->>This syzbot bug[1] is triggered due to the BUG_ON assertions added in
->>__bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
->>63 '?'. This triggers both the assertions.
->>
->>I am unfamiliar with the codebase, and there wasn't a lore discussion
->>about the assertions in the commit, so I am unsure about the relevance
->>of these assertions.
->>
->>Reverting the commit does not reproduce the said bug.
->>
->>[1] https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
->>---
->>  fs/bcachefs/sb-members.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->>diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
->>index fb08dd680dacf82bca414f424024e4a00bf432de..9790fd47338c46d2af30547e1f41a1e578b71aa4 100644
->>--- a/fs/bcachefs/sb-members.c
->>+++ b/fs/bcachefs/sb-members.c
->>@@ -450,9 +450,6 @@ static void __bch2_dev_btree_bitmap_mark(struct bch_sb_field_members_v2 *mi, uns
->>  		m->btree_bitmap_shift += resize;
->>  	}
->>-	BUG_ON(m->btree_bitmap_shift > 57);
->>-	BUG_ON(end > 64ULL << m->btree_bitmap_shift);
->>-
->May be this is not good way by just removing the BUG_ON. In my humble 
->opinion, the former code have checked m->btree_bitmap_shift in 
->bch2_dev_btree_bitmap_marked_sectors. May be add the similar condition 
->in this helper will be better.
->
-Hi Hongbo, thanks for reviewing this. I was unsure about the fix so I decided to
-initiate the conversation by reverting. Yes, that makes sense. I am sending a
-fresh patch adding that condition.
+On Tue, 2024-10-22 at 15:55 +0200, Greg Kroah-Hartman wrote:
+> On Tue, Oct 22, 2024 at 03:18:34PM +0200, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> >=20
+> > As struct file_operations is really big, but (most) debugfs
+> > files only use simple_open, read, write and perhaps seek, and
+> > don't need anything else, this wastes a lot of space for NULL
+> > pointers.
+> >=20
+> > Add a struct debugfs_short_fops and some bookkeeping code in
+> > debugfs so that users can use that with debugfs_create_file()
+> > using _Generic to figure out which function to use.
+> >=20
+> > Converting mac80211 to use it where possible saves quite a
+> > bit of space:
+> >=20
+> > 1010127  205064    1220 1216411  128f9b net/mac80211/mac80211.ko (befor=
+e)
+> >  981199  205064    1220 1187483  121e9b net/mac80211/mac80211.ko (after=
+)
+> > -------
+> >  -28928 =3D ~28KiB
+> >=20
+> > With a marginal space cost in debugfs:
+> >=20
+> >    8701	    550	     16	   9267	   2433	fs/debugfs/inode.o (before)
+> >   25233	    325	     32	  25590	   63f6	fs/debugfs/file.o  (before)
+> >    8914	    558	     16	   9488	   2510	fs/debugfs/inode.o (after)
+> >   25380	    325	     32	  25737	   6489	fs/debugfs/file.o  (after)
+> > ---------------
+> >    +360      +8
+> >=20
+> > (All on x86-64)
+> >=20
+> > A simple spatch suggests there are more than 300 instances,
+> > not even counting the ones hidden in macros like in mac80211,
+> > that could be trivially converted, for additional savings of
+> > about 240 bytes for each.
+> >=20
+> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+>=20
+> I imagine you want to take this through the wireless tree for the second
+> patch, so feel free to do that and add:
 
--- 
-Manas
+I don't even really care, we're not likely to be changing the mac80211
+debugfs code in a way that'd create (significant) conflicts. But I can
+do that, thanks!
+
+johannes
 
