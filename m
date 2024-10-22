@@ -1,223 +1,94 @@
-Return-Path: <linux-kernel+bounces-376063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5FE9A9F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFAA99A9F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBFB1C2210F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180E61C2238A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7228419995D;
-	Tue, 22 Oct 2024 09:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VqzZr0qs"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C3D1C27;
+	Tue, 22 Oct 2024 10:00:22 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5F21991B9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD9F18E76B;
+	Tue, 22 Oct 2024 10:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591195; cv=none; b=N1clDUDxmDb+iPVen/GF48F8ZOwCPO9xFy+n09jd2C8P2msHkFGvxDosujcFYF6mPkphMjzjXHLfXIPI5pIBnyJO+dhB5NDeDnR6WebDhz3yiXSkOJplssviDXhPNpnT3uUmIGTKcVHZjGxFRafZXDRWrzh6hR9JCQZT0IPXveA=
+	t=1729591222; cv=none; b=PccJJ0aVP4CJXQWZo56qTshBSGs4eAkBnWPg1marqr6MAG0ZXHovcDHxtZyiPYmvTdIoAcqjdxSQ1PBaatA6/ocrFKvHqnrpMP5aI88htg9vwh8RZm6JcGUvk5MBPDNLmxCH5i98WAYLJ6MfJBnuWhiVQByN/uqAq5QfxW6hE6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591195; c=relaxed/simple;
-	bh=WyTNn9Kvl5r4cjirWMedKm36u/M6pfnFsku29HKXjTc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WY+XAuHBc/hkzVhnqZpfbbXpK6RPqgZpF/WQI/vv8mlkb/8NNC7Ee2OmcsRssxfayjdOOfSU+NsDBroWXjz9+8PotUjsbXd0Vm37JrZsKwri7pTSU69Ppow+PLI4y9LNUkKyImOTTv+O3sYaoQpt3UsrZY0hrPMOu0Nay6oC+ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VqzZr0qs; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so6779527a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729591191; x=1730195991; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tse3WFb+Cqy4NQjY2x57/IK1kjaHJljLdncZwV39uDw=;
-        b=VqzZr0qsUcJgB4DeGo2/5JVsn/HLozrOMVl+HBvFOqQyFN0tvM9e72o6ADyPHp5Tb9
-         ND5T3aR5EFGXRCS5Z62AC11A7V7RxybVCPMAqVa/ea1YzLd7qwhDb9kUZ/Znn3xiUWDc
-         AAvPCH3Banj3kxwUgiBIQ7w+e6qi+VUpeSpY3nXZTw6LNe+ArHaUtbBSuzU5jvBvte1e
-         ju9MwbhcNea1x6nJwPsrqiqf0Fml4vwwCyo0it1J5/sM/88yTTMLmXbbNIL3naUCZJmZ
-         +AfcMxG/1RkINMDijbOBPy8kLHqVgMIfHYgWjKvq/h2fBJxHA/83BUHIYHWBglNHbh/U
-         mOaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729591191; x=1730195991;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tse3WFb+Cqy4NQjY2x57/IK1kjaHJljLdncZwV39uDw=;
-        b=BgH9UMAmwVMUU4oMNwVrFcZU0Yb40OkzwoefdREG6zSVFdRqbqz36KDs4peZitXxnD
-         ZN0d95aw+YTgmDaRMF14z8hrCfoE1j1SoJmGqScs9zciy8b1jPd9AsIN9O3HqRb/MoZp
-         0/wz8tBtYon8FoEETnS98bS8xBeovEg4yTjjaGDuXCOvEGlH4pxgR15IHBzDNdrJLhn0
-         ewBk+mPmHN40kFdW6QxPTTMTNR3/Qpppe4zaePwpl+2qnNatCCk9ZE4BqfZUQDoBBWg+
-         lp5WyqTOOzd9FxKdF+HhtMCVmUhWWG7LAEMSexoIPjCpYoNxAbJN4hoFWig73j9CvvZF
-         K9+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWq/fNmrWKxgvMwL97GE8oA1IibsufWVbrEUD5mqPFG/bHhmTPMX7zX2pPGycpLUaN0aNh4da4r1XeTpLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXzRGA82WTyPijaPBNId90+daVt2Wc0+Z5iK/NAJcVD7Vls6pt
-	yOns1twtF7EZZKXtJVRk/o6Rfz5jRAsV88X/62Mi7NgXxIGz5UGdiZlq+Fqz3RA=
-X-Google-Smtp-Source: AGHT+IGsNax4L/Gs6SdwZlVryK8Odsx0A/4SKDkH5jIR6gUFIIm5jqy15/Lspkq6C28pNgM1cfZgyA==
-X-Received: by 2002:a17:907:7b92:b0:a9a:420:8472 with SMTP id a640c23a62f3a-a9a69ca04e3mr1598636166b.42.1729591190900;
-        Tue, 22 Oct 2024 02:59:50 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d8381sm313843166b.45.2024.10.22.02.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:59:50 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 22 Oct 2024 12:00:12 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
- for RaspberryPi RP1
-Message-ID: <Zxd3rAspFDglujkM@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
- <zequ4ps7h6ynr2y5yrcqm3tpvvmmrgc6auupfy435rpysiyypf@7cd2zbwhk3ya>
+	s=arc-20240116; t=1729591222; c=relaxed/simple;
+	bh=m0jciRWov6/Pb0WczR1f3Lnq/y1Tdtrih+STLR9VlJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1/8SlSwQyH56kmPoQ4Td7aXURgcOPq34MpPIHei+DBmx6NZ5r6vFYU2s6aRtFp+sWeQAp0qr1MZHmpHrBUuaONLzmDh+8U+OeH+HxmvC2CTb0ePrqafwwoa0F38txhoqdWRuK+uO+Ce7sFxCtCe3qT0eyH/j7jRMMH4ZcezsPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E9E6C1C006B; Tue, 22 Oct 2024 12:00:18 +0200 (CEST)
+Date: Tue, 22 Oct 2024 12:00:18 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/91] 6.1.114-rc1 review
+Message-ID: <Zxd3skksiPPTYZMV@duo.ucw.cz>
+References: <20241021102249.791942892@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pujFqurOXd2c9nDO"
+Content-Disposition: inline
+In-Reply-To: <20241021102249.791942892@linuxfoundation.org>
+
+
+--pujFqurOXd2c9nDO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <zequ4ps7h6ynr2y5yrcqm3tpvvmmrgc6auupfy435rpysiyypf@7cd2zbwhk3ya>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi!
 
-On 08:26 Tue 08 Oct     , Krzysztof Kozlowski wrote:
-> On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
-> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> > schema is intended as minimal support for the clock generator and
-> > gpio controller peripherals which are accessible through BAR1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
-> >  MAINTAINERS                                   |   1 +
-> >  2 files changed, 111 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > new file mode 100644
-> > index 000000000000..3f099b16e672
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 MFD PCI device
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RaspberryPi RP1 is a PCI multi function device containing
-> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > +  and others.
-> > +  The peripherals are accessed by addressing the PCI BAR1 region.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    additionalItems: true
-> 
-> Why is this true? This is final schema, not a "common" part.
+> This is the start of the stable review cycle for the 6.1.114 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-The 'compatible' property I've specified in rp1.dtso is not strictly
-necessary since it will be added automatically during the dynamic device
-node creation by the OF subsystem, and will be something like this:
+CIP testing did not find any problems here:
 
-"pci1de4,1", "pciclass,0200000", "pciclass,0200"
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
 
-I've redefined simply as "pci1de4,1" in the dtso so it can be validated
-against the relative binding schema, and I opted for a shorter name since
-the RP1 is not really a simple ethernet controller as advertised by the 
-config space (pciclass=2). The schema definition allows for the "relaxed"
-extended version, shoudl someone want to use it for resemblance with the
-dynamically create compatibel string.
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
-> 
-> > +    maxItems: 3
-> > +    items:
-> > +      - const: pci1de4,1
-> > +
-> > +patternProperties:
-> > +  "^pci-ep-bus@[0-2]$":
-> > +    $ref: '#/$defs/bar-bus'
-> > +    description:
-> > +      The bus on which the peripherals are attached, which is addressable
-> > +      through the BAR.
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +$defs:
-> > +  bar-bus:
-> > +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
-> > +    unevaluatedProperties: false
-> > +
-> > +    properties:
-> > +      "#interrupt-cells":
-> > +        const: 2
-> > +        description:
-> > +          Specifies respectively the interrupt number and flags as defined
-> > +          in include/dt-bindings/interrupt-controller/irq.h.
-> > +
-> > +      interrupt-controller: true
-> > +
-> > +      interrupt-parent:
-> > +        description:
-> > +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
-> > +          PCI interrupts on behalf of peripheral generated interrupts.
-> > +
-> > +    patternProperties:
-> > +      "^clocks(@[0-9a-f]+)?$":
-> 
-> Why @ is optional? Your device is fixed, not flexible.
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-Right.
+--pujFqurOXd2c9nDO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Many thanks,
-Andrea
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Best regards,
-> Krzysztof
-> 
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZxd3sgAKCRAw5/Bqldv6
+8n5oAKCeLZWZSYnwkLPsGvu+M43IMRHeaQCePcyyp4blxEr1GePNTb9nxQ7bUTA=
+=z2vA
+-----END PGP SIGNATURE-----
+
+--pujFqurOXd2c9nDO--
 
