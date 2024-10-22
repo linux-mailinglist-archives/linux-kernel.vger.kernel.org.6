@@ -1,149 +1,252 @@
-Return-Path: <linux-kernel+bounces-376413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227EE9AB128
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B899AB12C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B152B23C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:45:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2CAB23F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EA11A0BD1;
-	Tue, 22 Oct 2024 14:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9773C1A0718;
+	Tue, 22 Oct 2024 14:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aUDEGs4l"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GQS6Ee3x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D588042065;
-	Tue, 22 Oct 2024 14:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07FD7DA7C;
+	Tue, 22 Oct 2024 14:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729608316; cv=none; b=u37CKxpfLprfdx4jEVp1Rnlulykk5EjsPsfbNRg4xDP0qSZIIFg9KMXYNNEJak8oiHLRH3kUx4t6FnZUOhT82Ntz0VBQ4sM9k6sUq+Tf1BW7FbSKLi0rCZD8hZ21aFlmQhIjeZRUSI99vaxnuVOXIPrvwpgDsBT1/PoYuhQkvqE=
+	t=1729608335; cv=none; b=S7OahKHBl/czY0inWqUhICBYv4v6UkNlsEMjQR4h7+4Qvc3TTly2+c8Mat+xLpnQRW4VV6Mv3FKMGdo7BARTW0dcX//+ph3hesIsqVVz4/rqBiKr9VFMxqIRBmBZLZglT6xvkRuyGgUD2ns+zaXoVzptMa6P51B/5M7NhjFsGT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729608316; c=relaxed/simple;
-	bh=3rSf6p+Eb338S3jqFz7thCVwdKBWMkoB5j+tB+1HwJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hGH63D47iuRnsliTF5CX5ZRK2XmSfMnWU7miIqc5JMimsyZ7m6k0AoZLI6qC2jGWdy+7DfuBysCrxe7s6Axh7bK+3yVLUexqgjngr/p/hI0N6KWlxHYxaCk8MAtqIwdVMhoa5D257EoqxslTtVcWOmHHsHHUXYjG4ZIaXFzVtFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aUDEGs4l; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M2HIko029688;
-	Tue, 22 Oct 2024 14:45:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=pIsmFpDMFhgpKpzx7/i5ySZCnPjETM
-	qgNut5wXDL46U=; b=aUDEGs4lIzBl2L42bzvATNq4ehd8irPjtzukODO2wTiKRL
-	qbQrWFu1qwZub/BulXTj2UA6iEdeLF1ODx7tYF0tiRYFWPX3HzCvTF1gAvnJc+3+
-	95Hm3+QrSHd0Fg4jg2WSSfRCbY/f6M0bclQfM849+hRVhy4uJSThYyV+wWxzG5Tc
-	K65BA/xeVTTlL25xlvqJpS7yrbuQ21EcaXAUS5A6ucuxYZTdIxVrAiaofNerI4jm
-	C/5A3WJ6/SAVSeJt9yUwF9L58WX/YZjkXQ5gP7YG/f+dmXcAC9B4ipv1x5atTf76
-	EIg3+5aTEWJYlHd3DMRHX3gwvdCCPWGV7+J6Le7w==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5euefs3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 14:45:12 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49MCjmdD026416;
-	Tue, 22 Oct 2024 14:45:11 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42cq3sbtvb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 14:45:11 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49MEj8bS35390078
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Oct 2024 14:45:08 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 11F3820043;
-	Tue, 22 Oct 2024 14:45:08 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D070F2004D;
-	Tue, 22 Oct 2024 14:45:07 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 22 Oct 2024 14:45:07 +0000 (GMT)
-Date: Tue, 22 Oct 2024 16:45:06 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, david@redhat.com
-Subject: Re: [PATCH v4 00/11] s390/kvm: Handle guest-related program
- interrupts in KVM
-Message-ID: <20241022144506.13839-B-hca@linux.ibm.com>
-References: <20241022120601.167009-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1729608335; c=relaxed/simple;
+	bh=8dw1hiQ0u7Oy3sa4M/iR3fwXrom58zBKrO67YiZdB0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TIWFpt+eyP7N+ya3yIZEAPqnPtEJpop45R6QNgN0oHibWJZCGVuHzRMLl4vfDTeYlflx96O9YUk4h3wj7MKOS001sFwiloKw2bzKSXUOWcpe5UglNZXbErgAQyytAQT3zgqvyVglSw9HSmKmwlJkXDhvYbz9yOAHe9wffSgHhP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GQS6Ee3x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB223C4CEC3;
+	Tue, 22 Oct 2024 14:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729608335;
+	bh=8dw1hiQ0u7Oy3sa4M/iR3fwXrom58zBKrO67YiZdB0s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GQS6Ee3x3kAmacpVuQe4merR4RFkr9/tYoEvzIQURJYHNpaDijjEOwR8XvfpH+A+5
+	 XLWgE/F+N885gmc0Ltcexo1TXoy0Md1bBU+wmHp8UH43huqEaRpBr83GE9xJGIHFbZ
+	 gLJhplZ2FY7aDLxJxiy1eACbGbVBOJdKYZuLbOmA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 5.10.228
+Date: Tue, 22 Oct 2024 16:45:30 +0200
+Message-ID: <2024102230-surpass-uncloak-e888@gregkh>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022120601.167009-1-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -ErL8fIKzmqcf_3B5-B_4LFHoleawTBC
-X-Proofpoint-ORIG-GUID: -ErL8fIKzmqcf_3B5-B_4LFHoleawTBC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 spamscore=0 suspectscore=0 phishscore=0 impostorscore=0
- mlxlogscore=522 mlxscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220093
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 02:05:50PM +0200, Claudio Imbrenda wrote:
-> This patchseries moves the handling of host program interrupts that
-> happen while a KVM guest is running into KVM itself.
-> 
-> All program interrupts that happen in the host while a KVM guest is
-> running are due to DAT exceptions. It is cleaner and more maintainable
-> to have KVM handle those.
-> 
-> As a side effect, some more cleanups is also possible.
-> 
-> Moreover, this series serves as a foundation for an upcoming series
-> that will further move as much s390 KVM memory managament as possible
-> into KVM itself, and away from the rest of the kernel.
-...
-> Claudio Imbrenda (8):
->   s390/entry: Remove __GMAP_ASCE and use _PIF_GUEST_FAULT again
->   s390/kvm: Remove kvm_arch_fault_in_page()
->   s390/mm/gmap: Refactor gmap_fault() and add support for pfault
->   s390/mm/gmap: Fix __gmap_fault() return code
->   s390/mm/fault: Handle guest-related program interrupts in KVM
->   s390/kvm: Stop using gmap_{en,dis}able()
->   s390/mm/gmap: Remove gmap_{en,dis}able()
->   s390: Remove gmap pointer from lowcore
-> 
-> Heiko Carstens (3):
->   s390/mm: Simplify get_fault_type()
->   s390/mm: Get rid of fault type switch statements
->   s390/mm: Convert to LOCK_MM_AND_FIND_VMA
-> 
->  arch/s390/Kconfig                 |   1 +
->  arch/s390/include/asm/gmap.h      |   3 -
->  arch/s390/include/asm/kvm_host.h  |   5 +-
->  arch/s390/include/asm/lowcore.h   |   3 +-
->  arch/s390/include/asm/processor.h |   5 +-
->  arch/s390/include/asm/ptrace.h    |   2 +
->  arch/s390/kernel/asm-offsets.c    |   3 -
->  arch/s390/kernel/entry.S          |  44 ++-----
->  arch/s390/kernel/traps.c          |  23 +++-
->  arch/s390/kvm/intercept.c         |   4 +-
->  arch/s390/kvm/kvm-s390.c          | 142 +++++++++++++++-------
->  arch/s390/kvm/kvm-s390.h          |   8 +-
->  arch/s390/kvm/vsie.c              |  17 ++-
->  arch/s390/mm/fault.c              | 195 +++++-------------------------
->  arch/s390/mm/gmap.c               | 151 +++++++++++++++--------
->  15 files changed, 281 insertions(+), 325 deletions(-)
+I'm announcing the release of the 5.10.228 kernel.
 
-Series applied, thanks!
+All users of the 5.10 kernel series must upgrade.
+
+The updated 5.10.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.10.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                            |    2 
+ arch/arm64/kernel/probes/decode-insn.c              |   16 ++++--
+ arch/arm64/kernel/probes/simulate-insn.c            |   18 ++-----
+ arch/powerpc/mm/numa.c                              |    6 +-
+ arch/s390/kvm/diag.c                                |    2 
+ arch/x86/entry/entry.S                              |    5 ++
+ arch/x86/entry/entry_32.S                           |    6 +-
+ arch/x86/include/asm/cpufeatures.h                  |    5 +-
+ arch/x86/kernel/apic/apic.c                         |   14 +++++
+ arch/x86/kernel/cpu/bugs.c                          |   32 ++++++++++++
+ arch/x86/kernel/cpu/common.c                        |    3 +
+ arch/x86/kernel/cpu/resctrl/core.c                  |    4 -
+ block/blk-rq-qos.c                                  |    2 
+ drivers/bluetooth/btusb.c                           |   13 +++--
+ drivers/gpu/drm/radeon/radeon_encoders.c            |    2 
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                 |    1 
+ drivers/iio/adc/Kconfig                             |    4 +
+ drivers/iio/common/hid-sensors/hid-sensor-trigger.c |    2 
+ drivers/iio/dac/Kconfig                             |    3 +
+ drivers/iio/light/opt3001.c                         |    4 +
+ drivers/iio/light/veml6030.c                        |    5 --
+ drivers/iio/proximity/Kconfig                       |    2 
+ drivers/irqchip/irq-gic-v3-its.c                    |   26 +++++++---
+ drivers/net/ethernet/cadence/macb_main.c            |   14 ++++-
+ drivers/parport/procfs.c                            |   22 ++++----
+ drivers/s390/char/sclp_vt220.c                      |    4 -
+ drivers/usb/host/xhci.h                             |    2 
+ drivers/usb/serial/option.c                         |    8 +++
+ fs/fat/namei_vfat.c                                 |    2 
+ fs/nilfs2/dir.c                                     |   50 ++++++++++----------
+ fs/nilfs2/namei.c                                   |   39 ++++++++++-----
+ fs/nilfs2/nilfs.h                                   |    2 
+ include/linux/fsl/enetc_mdio.h                      |    3 -
+ include/linux/irqchip/arm-gic-v4.h                  |    4 +
+ io_uring/io_uring.c                                 |   21 ++++++++
+ kernel/time/posix-clock.c                           |    3 +
+ mm/swapfile.c                                       |    2 
+ net/bluetooth/af_bluetooth.c                        |    1 
+ net/ipv4/tcp_output.c                               |    2 
+ net/mac80211/cfg.c                                  |    3 +
+ net/mac80211/key.c                                  |    2 
+ net/mptcp/mib.c                                     |    2 
+ net/mptcp/mib.h                                     |    2 
+ net/mptcp/protocol.c                                |   26 ++++++++--
+ net/mptcp/protocol.h                                |    1 
+ net/mptcp/subflow.c                                 |    3 -
+ sound/pci/hda/patch_conexant.c                      |   19 +++++++
+ virt/kvm/kvm_main.c                                 |    5 +-
+ 48 files changed, 307 insertions(+), 112 deletions(-)
+
+Aaron Thompson (1):
+      Bluetooth: Remove debugfs directory on module init failure
+
+Aneesh Kumar K.V (1):
+      powerpc/mm: Always update max/min_low_pfn in mem_topology_setup()
+
+Benjamin B. Frost (1):
+      USB: serial: option: add support for Quectel EG916Q-GL
+
+Breno Leitao (1):
+      KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
+
+Christophe JAILLET (1):
+      iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
+
+Daniele Palmas (1):
+      USB: serial: option: add Telit FN920C04 MBIM compositions
+
+Emil Gedenryd (1):
+      iio: light: opt3001: add missing full-scale range value
+
+Felix Moessbauer (2):
+      io_uring/sqpoll: do not allow pinning outside of cpuset
+      io_uring/sqpoll: do not put cpumask on stack
+
+Geliang Tang (1):
+      mptcp: track and update contiguous data status
+
+Greg Kroah-Hartman (1):
+      Linux 5.10.228
+
+Javier Carrasco (8):
+      iio: dac: ad5770r: add missing select REGMAP_SPI in Kconfig
+      iio: dac: ltc1660: add missing select REGMAP_SPI in Kconfig
+      iio: dac: stm32-dac-core: add missing select REGMAP_MMIO in Kconfig
+      iio: adc: ti-ads8688: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
+      iio: light: veml6030: fix ALS sensor resolution
+      iio: light: veml6030: fix IIO device retrieval from embedded device
+      iio: proximity: mb1232: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
+      iio: adc: ti-ads124s08: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
+
+Jens Axboe (2):
+      io_uring/sqpoll: retain test for whether the CPU is valid
+      io_uring/sqpoll: close race on waiting for sqring entries
+
+Jim Mattson (1):
+      x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+
+Jinjie Ruan (1):
+      posix-clock: Fix missing timespec64 check in pc_clock_settime()
+
+Johannes Berg (1):
+      wifi: mac80211: fix potential key use-after-free
+
+Johannes Wikner (4):
+      x86/cpufeatures: Add a IBPB_NO_RET BUG flag
+      x86/entry: Have entry_ibpb() invalidate return predictions
+      x86/bugs: Skip RSB fill at VMEXIT
+      x86/bugs: Do not use UNTRAIN_RET with IBPB on entry
+
+Liu Shixin (1):
+      mm/swapfile: skip HugeTLB pages for unuse_vma
+
+Luiz Augusto von Dentz (1):
+      Bluetooth: btusb: Fix regression with fake CSR controllers 0a12:0001
+
+Marc Zyngier (1):
+      irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
+
+Mark Rutland (2):
+      arm64: probes: Remove broken LDR (literal) uprobe support
+      arm64: probes: Fix simulate_ldr*_literal()
+
+Mathias Nyman (1):
+      xhci: Fix incorrect stream context type macro
+
+Michael Mueller (1):
+      KVM: s390: Change virtual to physical address access in diag 0x258 handler
+
+Nathan Chancellor (1):
+      x86/resctrl: Annotate get_mem_config() functions as __init
+
+Nianyao Tang (1):
+      irqchip/gic-v3-its: Fix VSYNC referencing an unmapped VPE on GIC v4.1
+
+Nikolay Kuratov (1):
+      drm/vmwgfx: Handle surface check failure correctly
+
+OGAWA Hirofumi (1):
+      fat: fix uninitialized variable
+
+Oleksij Rempel (1):
+      net: macb: Avoid 20s boot delay by skipping MDIO bus registration for fixed-link PHY
+
+Omar Sandoval (1):
+      blk-rq-qos: fix crash on rq_qos_wait vs. rq_qos_wake_function race
+
+Paolo Abeni (2):
+      mptcp: handle consistently DSS corruption
+      tcp: fix mptcp DSS corruption due to large pmtu xmit
+
+Pawan Gupta (2):
+      x86/entry_32: Do not clobber user EFLAGS.ZF
+      x86/entry_32: Clear CPU buffers after register restore in NMI return
+
+Ryusuke Konishi (1):
+      nilfs2: propagate directory read errors from nilfs_find_entry()
+
+Takashi Iwai (1):
+      parport: Proper fix for array out-of-bounds access
+
+Thomas Weißschuh (1):
+      s390/sclp_vt220: Convert newlines to CRLF instead of LFCR
+
+Vasiliy Kovalev (2):
+      ALSA: hda/conexant - Fix audio routing for HP EliteOne 1000 G2
+      ALSA: hda/conexant - Use cached pin control for Node 0x1d on HP EliteOne 1000 G2
+
+Ville Syrjälä (1):
+      drm/radeon: Fix encoder->possible_clones
+
+Wei Fang (1):
+      net: enetc: add missing static descriptor and inline keyword
+
+Zhang Rui (1):
+      x86/apic: Always explicitly disarm TSC-deadline timer
+
 
