@@ -1,163 +1,97 @@
-Return-Path: <linux-kernel+bounces-375726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5881C9A9A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:40:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79E79A9A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE411C2283D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:40:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E5A9B2135B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD381547F5;
-	Tue, 22 Oct 2024 06:38:56 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45B5146D59;
+	Tue, 22 Oct 2024 06:56:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A2148FEB;
-	Tue, 22 Oct 2024 06:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579C2811F1;
+	Tue, 22 Oct 2024 06:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579135; cv=none; b=QIirAsV77dWcwDptzYj1uJCvHOuvIXs7KAMadxPGpu63I6wZ0pHR4vpbKv/usReWm8Fh9AIQQ0h/UJpljTGk6wpKINkfci5IrJS4chx9lEbWlJf6V47cZSSLCSG/y+Jfl6zPo4klFOQUPiugzr6gtyz+UEA19XQiemyHO7s6Txs=
+	t=1729580202; cv=none; b=Bg0I7yBHXzqEYUavo0k1F/vFlsjhAgzO8eC2XYRE8mhWSqPcBhd04BnVuc4yiK0mDRPT6iZpqi4+xqu4pOn7qgtwGBKBKNnadOrC2mjN9PpmsApKbQQ3x1GS/1bUxxiVXnvgL57U4i5AR6YzGT9S/RsKmFPknRSDnYc7B/Qm/is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579135; c=relaxed/simple;
-	bh=NruRxDbtWUAi9ypHhO4KN8/V+Bt3Z0G1/lVst7Kgr9E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YIOO1T4M5jPcE7Afn68AFTcoG7RxUntZsQS1aiTcHkWek1zTkuvSjWq/zTEAfAgMIIK0+djLuCVZ39vRqYzi/DxUJVlV3e4eZL5aON0y5FtqwU9EVBMadb3H9qLrcYwqPo5W1R3tJcC1AQWTiYiVyM83oZJaAh1x6bikCmIoGsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXjBD3jW1zfdXM;
-	Tue, 22 Oct 2024 14:36:20 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4EDCA140123;
-	Tue, 22 Oct 2024 14:38:50 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Oct
- 2024 14:38:49 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<hawk@kernel.org>, <john.fastabend@gmail.com>,
-	<maciej.fijalkowski@intel.com>, <vedang.patel@intel.com>,
-	<jithu.joseph@intel.com>, <andre.guedes@intel.com>, <horms@kernel.org>,
-	<jacob.e.keller@intel.com>, <sven.auhagen@voleatech.de>,
-	<alexander.h.duyck@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v3 net 4/4] ixgbevf: Fix passing 0 to ERR_PTR in ixgbevf_run_xdp()
-Date: Tue, 22 Oct 2024 14:56:23 +0800
-Message-ID: <20241022065623.1282224-5-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241022065623.1282224-1-yuehaibing@huawei.com>
-References: <20241022065623.1282224-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1729580202; c=relaxed/simple;
+	bh=1yIlvSXY/Rv3BHmPoud25WQ741qvCQ2J1M4VqyS72VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MtGcX563G2mGj4hGPX9HSUNnXZRbDU1vO99mfx6RUrsXje+l1QJNFYUJE11EsroCVG5Og7piL6Iq4xiGa70SQA30abd8H2oYOMcwL41Vy0Jddira1t/u/8NTxqa9A7p7L8O9LVMMmpzGn4MjkPkDbzJPxvTZOQtYdmnrOuQHhSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5F2C4CEC3;
+	Tue, 22 Oct 2024 06:56:40 +0000 (UTC)
+Date: Tue, 22 Oct 2024 02:56:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gianfranco Trad <gianf.trad@gmail.com>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] fgraph: fix unused value in register_ftrace_graph()
+Message-ID: <20241022025637.6852bac9@rorschach.local.home>
+In-Reply-To: <20241021102428.287998-2-gianf.trad@gmail.com>
+References: <20241021102428.287998-2-gianf.trad@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-ixgbevf_run_xdp() converts customed xdp action to a negative error code
-with the sk_buff pointer type which be checked with IS_ERR in
-ixgbevf_clean_rx_irq(). Remove this error pointer handing instead use
-plain int return value.
+On Mon, 21 Oct 2024 12:24:29 +0200
+Gianfranco Trad <gianf.trad@gmail.com> wrote:
 
-Fixes: c7aec59657b6 ("ixgbevf: Add XDP support for pass and drop actions")
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- .../net/ethernet/intel/ixgbevf/ixgbevf_main.c | 23 ++++++++-----------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+> Coverity reports unused assignment to value ret. [1]
+> ret is assigned to 0 here, but that stored value is overwritten before
+> it can be used. The overwrite might happen either at line 1277, 1290 
+> or eventually at line 1306. Therefore, cleanup the unused assignment.
+> 
+> [1] Coverity Scan, CID 1633338
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 149911e3002a..183d2305d058 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -732,10 +732,6 @@ static bool ixgbevf_cleanup_headers(struct ixgbevf_ring *rx_ring,
- 				    union ixgbe_adv_rx_desc *rx_desc,
- 				    struct sk_buff *skb)
- {
--	/* XDP packets use error pointer so abort at this point */
--	if (IS_ERR(skb))
--		return true;
--
- 	/* verify that the packet does not have any known errors */
- 	if (unlikely(ixgbevf_test_staterr(rx_desc,
- 					  IXGBE_RXDADV_ERR_FRAME_ERR_MASK))) {
-@@ -1044,9 +1040,9 @@ static int ixgbevf_xmit_xdp_ring(struct ixgbevf_ring *ring,
- 	return IXGBEVF_XDP_TX;
- }
- 
--static struct sk_buff *ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
--				       struct ixgbevf_ring  *rx_ring,
--				       struct xdp_buff *xdp)
-+static int ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
-+			   struct ixgbevf_ring *rx_ring,
-+			   struct xdp_buff *xdp)
- {
- 	int result = IXGBEVF_XDP_PASS;
- 	struct ixgbevf_ring *xdp_ring;
-@@ -1080,7 +1076,7 @@ static struct sk_buff *ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
- 		break;
- 	}
- xdp_out:
--	return ERR_PTR(-result);
-+	return result;
- }
- 
- static unsigned int ixgbevf_rx_frame_truesize(struct ixgbevf_ring *rx_ring,
-@@ -1122,6 +1118,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 	struct sk_buff *skb = rx_ring->skb;
- 	bool xdp_xmit = false;
- 	struct xdp_buff xdp;
-+	int xdp_res = 0;
- 
- 	/* Frame size depend on rx_ring setup when PAGE_SIZE=4K */
- #if (PAGE_SIZE < 8192)
-@@ -1165,11 +1162,11 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 			/* At larger PAGE_SIZE, frame_sz depend on len size */
- 			xdp.frame_sz = ixgbevf_rx_frame_truesize(rx_ring, size);
- #endif
--			skb = ixgbevf_run_xdp(adapter, rx_ring, &xdp);
-+			xdp_res = ixgbevf_run_xdp(adapter, rx_ring, &xdp);
- 		}
- 
--		if (IS_ERR(skb)) {
--			if (PTR_ERR(skb) == -IXGBEVF_XDP_TX) {
-+		if (xdp_res) {
-+			if (xdp_res == IXGBEVF_XDP_TX) {
- 				xdp_xmit = true;
- 				ixgbevf_rx_buffer_flip(rx_ring, rx_buffer,
- 						       size);
-@@ -1189,7 +1186,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 		}
- 
- 		/* exit if we failed to retrieve a buffer */
--		if (!skb) {
-+		if (!xdp_res && !skb) {
- 			rx_ring->rx_stats.alloc_rx_buff_failed++;
- 			rx_buffer->pagecnt_bias++;
- 			break;
-@@ -1203,7 +1200,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 			continue;
- 
- 		/* verify the packet layout is correct */
--		if (ixgbevf_cleanup_headers(rx_ring, rx_desc, skb)) {
-+		if (xdp_res || ixgbevf_cleanup_headers(rx_ring, rx_desc, skb)) {
- 			skb = NULL;
- 			continue;
- 		}
--- 
-2.34.1
+What does the above mean? For such a simple change, is it really
+unnecessary?
+
+> 
+> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+> ---
+>  kernel/trace/fgraph.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 41e7a15dcb50..cc2e065c1c8d 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1262,7 +1262,6 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  			return ret;
+>  		}
+>  		fgraph_initialized = true;
+> -		ret = 0;
+
+Not to mention that if this is to go, why not get rid of the
+declaration part too? That is:
+
+-	int ret = 0;
++	int ret;
+
+But still, this code is about to be merged with other code where this
+change may cause issues. This is such a slow path that getting rid of
+the extra initialization may not be worth it.
+
+-- Steve
+
+
+>  	}
+>  
+>  	if (!fgraph_array[0]) {
 
 
