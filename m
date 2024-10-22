@@ -1,214 +1,142 @@
-Return-Path: <linux-kernel+bounces-376355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727409AB02F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B609AB048
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B871C22120
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABFF1C2099F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009991A01AB;
-	Tue, 22 Oct 2024 13:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC6719F133;
+	Tue, 22 Oct 2024 13:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zYP90jaF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vIs0nCwm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B5TBZtQQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ERVik9h3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J4W+gWEq"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF5319F133;
-	Tue, 22 Oct 2024 13:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE7A19F10A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729605364; cv=none; b=scyLnSoFSHExt8s0rSwuQmJvgPV3me57zSMNMtrstHkwtUhqg/GEn2DI4RxhUcGHAfkKhIO3Rv1/7BbceIkgTkD94k0FI7xZ51pooRTB2oaFll/R+fT5V1jYd3Z4HbScZdWiHn5VfJWcsOMJ1dSb2FI4o7OcJ06iKpJTFrlsjsE=
+	t=1729605573; cv=none; b=JbrY/+4tyVqfjClZ2ORUdWfiPRCXWT92LCaN8QKFc5dw6dliSjw49C1uZqtVUuGfcqY9+8eFXZRv85zxpUJygkqOxSSfkBnOj6EIEy2Z6OiuyqatjHgsKKul4OQGph2HUP1a3n6EP33H5l0yIjuVRCf11d3wexO+WIP2ye8YuSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729605364; c=relaxed/simple;
-	bh=Y7HT68PXYjz7d0Br/DnftiWOw45gz2zuwSv4S657zF4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eGe7TvekAaJJoPFjpVTUraJCVi25y3BU24Atn4v25UgbAMS2UHSBbaLn/Q7d6k7qstmNl8RIjTzGHjsDCRtZrj+iAyilironWuYpi8SWEoGAFT0yo+ulKOb8UOXaGKhixXiiCXT2zcYD8ELJRvKsLQuS+7bZMr8NcPcYBXzeIHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zYP90jaF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vIs0nCwm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B5TBZtQQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ERVik9h3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D6F6D1FD13;
-	Tue, 22 Oct 2024 13:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729605359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdcbEOWzL6eyI2kQxh26Goo1tOGvWeIqXTumtwk51No=;
-	b=zYP90jaFV5Pb19n9JW5vzlWwFSGAe0FYGkbu+Cfa+verVBwzWQkpkwgHO33ZFE1a1dvdZK
-	0tuttYC1/ND40gdt/oVuioznRPistLudIU9xk6Zdof6abOgPA7P/swYId5Xclt2KqFkUPn
-	faS1AQNksTyS2I8MJkUgpI7CfoJCs9Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729605359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdcbEOWzL6eyI2kQxh26Goo1tOGvWeIqXTumtwk51No=;
-	b=vIs0nCwm9UqtOTXXFO9pD/BP3RbeOj6NRCQ/HfioJ6yWSWynK/EOKscWg2EUYRGgcMo+x4
-	vQLfd+I0xAxQduAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=B5TBZtQQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ERVik9h3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729605358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdcbEOWzL6eyI2kQxh26Goo1tOGvWeIqXTumtwk51No=;
-	b=B5TBZtQQGPrR/TbPsDqk7IKz5X7Tmi0z8yWulsHmNXfN58NXJ7pLzmeTOndtyhgQYMDGux
-	Jhn5TKi5cbmYtWR3p10EYoWsI7n5dizutXWa+Q0ru1VZjUVhTK/eHUtBqUewhTzBQ8rmi6
-	WUSrnL82ebJ0sAg8lV98eb4e0td5tnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729605358;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdcbEOWzL6eyI2kQxh26Goo1tOGvWeIqXTumtwk51No=;
-	b=ERVik9h3/yqOOJhof89a2VZZjwOFO1icKKHLZh4yt4bADxjSZ5iuEx8HZ24zLD+hyEGHWK
-	EX0IGujbRuv0oXAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 98B1B13AC9;
-	Tue, 22 Oct 2024 13:55:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id M/jDJO6uF2epZwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 22 Oct 2024 13:55:58 +0000
-Date: Tue, 22 Oct 2024 15:56:44 +0200
-Message-ID: <87wmi02qcj.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	srinivas.kandagatla@linaro.org,
-	mathias.nyman@intel.com,
-	perex@perex.cz,
-	conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com,
-	corbet@lwn.net,
-	lgirdwood@gmail.com,
-	tiwai@suse.com,
-	krzk+dt@kernel.org,
-	pierre-louis.bossart@linux.intel.com,
-	Thinh.Nguyen@synopsys.com,
-	broonie@kernel.org,
-	bgoswami@quicinc.com,
-	robh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH v29 01/33] xhci: support setting interrupt moderation IMOD for secondary interrupters
-In-Reply-To: <2024101824-hammock-elastic-8d38@gregkh>
-References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
-	<20241015212915.1206789-2-quic_wcheng@quicinc.com>
-	<2024101747-defog-squiggly-ef54@gregkh>
-	<5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
-	<2024101824-hammock-elastic-8d38@gregkh>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1729605573; c=relaxed/simple;
+	bh=nmYzQvTLOd0AGimaPnzCNLv4y+hjTiGHY+PQ9ErcrK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPVl4Bdkc+WKZjrLUmyxmQ9qp9p0FRqEgeiMzKobYO/6bzIyalDBVfpc78wEL0mLhHc79eII53iekV8nVhZY21KhNPNwIJfsDsMSyAqGsEfxiehReb3R1Zr/obFKZM1q3zRmM/8W4WG7ZagVGAQzXo561iBcNsDTaGRtWwG9Yeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J4W+gWEq; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=YU7gQ+91UdId9E/ZlgbwaAF/ub8pej+7IhY0GgrdJQM=; b=J4W+gWEqhx5eKf8Eufpl99xgXO
+	XSiqHWQVTa2VDcpK6F6VW6vrG0zQMUL0yNC8BVynISkfyxap2FiMRn8NJHrB0stK4Tb8HMjgGMdYb
+	LK/cknjPn+jeeSkfMMYEWcSwNLQb122GBH5O52JZutib1XESXMKLfw1U1TQzlhOkRq1oPev7T5lM1
+	sSGqKnnXfQWPuXd9/mfQaX8dnWtlnimqAsWAcx6gu33fizUELnDU1QhlB6tBcgbdezj9s/8/FVc8+
+	3f77nSEhO5dI8acYDJGQScR4P3kkjGxtbd2kqI12IIdCU71+gNU/cKGQRnCnG0ucYhsayqhzVMKEd
+	3K0rY/sg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:32780)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1t3FP4-0004yH-1a;
+	Tue, 22 Oct 2024 14:58:30 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1t3FOv-0002lB-38;
+	Tue, 22 Oct 2024 14:58:21 +0100
+Date: Tue, 22 Oct 2024 14:58:21 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, catalin.marinas@arm.com,
+	will@kernel.org, oleg@redhat.com, tglx@linutronix.de,
+	peterz@infradead.org, luto@kernel.org, kees@kernel.org,
+	wad@chromium.org, rostedt@goodmis.org, arnd@arndb.de,
+	ardb@kernel.org, broonie@kernel.org, rick.p.edgecombe@intel.com,
+	leobras@redhat.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Message-ID: <Zxevfe-PZgB_Z8hi@shell.armlinux.org.uk>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: D6F6D1FD13
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[dt];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,linaro.org,intel.com,perex.cz,kernel.org,gmail.com,lwn.net,suse.com,linux.intel.com,synopsys.com,quicinc.com,vger.kernel.org,alsa-project.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.01
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, 18 Oct 2024 07:52:35 +0200,
-Greg KH wrote:
+On Thu, Oct 17, 2024 at 04:25:36PM +0100, Mark Rutland wrote:
+> Hi,
 > 
-> On Thu, Oct 17, 2024 at 05:07:12PM -0700, Wesley Cheng wrote:
-> > Hi Greg,
-> > 
-> > On 10/16/2024 11:40 PM, Greg KH wrote:
-> > > On Tue, Oct 15, 2024 at 02:28:43PM -0700, Wesley Cheng wrote:
-> > >> From: Mathias Nyman <mathias.nyman@linux.intel.com>
-> > >>
-> > >> Allow creators of xHCI secondary interrupters to specify the interrupt
-> > >> moderation interval value in nanoseconds when creating the interrupter.
-> > >>
-> > >> If not sure what value to use then use the xhci driver default
-> > >> xhci->imod_interval
-> > >>
-> > >> Suggested-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> > >> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> > >> Link: https://lore.kernel.org/r/20240905143300.1959279-13-mathias.nyman@linux.intel.com
-> > >> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > >> ---
-> > >>  drivers/usb/host/xhci-mem.c | 8 +++++++-
-> > >>  drivers/usb/host/xhci.c     | 4 ++--
-> > >>  drivers/usb/host/xhci.h     | 5 ++++-
-> > >>  3 files changed, 13 insertions(+), 4 deletions(-)
-> > > This is already in 6.12-rc1, which makes me confused as to what tree you
-> > > made this series against.
-> > 
-> > Sorry, I didn't fetch the latest changes from usb-next.
+> On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
+> > Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
+> > to use the generic entry infrastructure from kernel/entry/*. The generic
+> > entry makes maintainers' work easier and codes more elegant, which aslo
+> > removed a lot of duplicate code.
 > 
-> It wasn't even usb-next, it was 6.12-rc1, so I don't know what tree you
-> based this on :(
+> >  arch/arm64/Kconfig                    |   1 +
+> >  arch/arm64/include/asm/entry-common.h | 172 ++++++++++++
+> >  arch/arm64/include/asm/ptrace.h       |   5 +
+> >  arch/arm64/include/asm/stacktrace.h   |   5 +-
+> >  arch/arm64/include/asm/syscall.h      |   6 +-
+> >  arch/arm64/include/asm/thread_info.h  |  23 +-
+> >  arch/arm64/kernel/entry-common.c      | 368 +++++---------------------
+> >  arch/arm64/kernel/ptrace.c            |  90 -------
+> >  arch/arm64/kernel/signal.c            |   3 +-
+> >  arch/arm64/kernel/syscall.c           |  18 +-
+> >  include/linux/entry-common.h          |  90 +++++++
+> >  include/linux/thread_info.h           |  13 +
+> >  kernel/entry/common.c                 |  37 +--
+> >  13 files changed, 395 insertions(+), 436 deletions(-)
+> >  create mode 100644 arch/arm64/include/asm/entry-common.h
 > 
-> > In this case, should I rebase and resbumit?
-> 
-> As the series can't be applied as-is, probably.  But I think you might
-> want to collect some acks from the sound people and xhci developers, as
-> I can't do anything with this until they look at the changes.
+> Looking at this I have a few concerns, which I've tried to explain
+> below.
 
-Honestly speaking, I couldn't follow fully the discussions about the
-fundamental design -- IIRC, Pierre and others had concerns to the way
-to manage the offload device via kcontrols.  Did we get consensus?
+One concern I notice Mark didn't mention is (and I've made this same
+point in response to LinusW's series doing similar for 32-bit ARM)
+is... we need to quantify what the impact is of making these changes.
 
-I believe that's the biggest obstacle in the audio side, i.e. what's
-visible to users.  The kernel internals can be corrected at any time
-later.
+Historically, people have worked hard to make the overhead from
+syscalls as low as possible - if one looks at the x86 architecture,
+Linux first started off using int $0x80 to deliver syscalls to the
+kernel. Later CPUs invented sysenter and syscall instructions which
+I guess result in increased performance over the old int $0x80
+approach.
 
+syscall entry/exit times are one of those trivial things to measure,
+most commonly done by seeing how many getpid() calls one can make
+to the kernel in a defined period of time - and it's one of those
+measurements people consider (rightly or wrongly) to be a measure
+of the system performance.
 
-thanks,
+When one considers that the majority of interactions userspace has
+with the kernel involve syscalls, one can see why this is an
+important path to be as performant as possible.
 
-Takashi
+So, I think it's important to always quantify what the impact is of
+any major change to the kernel entry/exit paths - it's all part of
+properly evaluating whether the change makes sense.
+
+If switching to generic code causes a significant degredation in
+performance, then that needs to be investigated and fixed - not
+waited for until someone pops up and eventually says "hey, that
+change to use the generic code resulted in our systems becoming
+much less performant!" six or twelve months down the road.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
