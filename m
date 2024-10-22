@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-375634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E224D9A9871
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0487D9A9876
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1071F23AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9CA1F23C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CBC13E04C;
-	Tue, 22 Oct 2024 05:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CD13B586;
+	Tue, 22 Oct 2024 05:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDCxp6ef"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiYOgB0S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B38313DBBE;
-	Tue, 22 Oct 2024 05:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4A0139566;
+	Tue, 22 Oct 2024 05:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575126; cv=none; b=pqXMD1CrFM5Nd8Efra16ltKQqOUvAL/dFcCMdQfKhW5kc8LN85OKTi85q1qhsqGlk/2omGyVWbbKrfzKL1JbOiDm9QnQoQWe6fYmgzB3q+cA9HnW6cEJRoEV1sX1WSakES4BOfe0GGp3iiMr4vklBHf6womO66sBs+J7OrMbSPw=
+	t=1729575137; cv=none; b=bSNIaEBwyG2vcwDjgvcdO77tg7JVQrNMv3z57g1BKdENSoX82QSYEjR9hb2Ga7mBb6KsKursBzbk4IKVmSKGE9LwvHzkO72DOzjA9giYdhWQc+4/jXxXuZJBqUHah41Ze6t2od06tWf8L1PrI+lXUwMNd5ldDu43bEcRutVC5bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575126; c=relaxed/simple;
-	bh=+XQ07RcYr/8lQR11wBVNG7FGw7Y3qYnD5XkLswk1QQI=;
+	s=arc-20240116; t=1729575137; c=relaxed/simple;
+	bh=6pdKu0R5DU7xBdvkPQVF4MFji5daPjJvJvF/nx/iZTY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UzzU1I5pNPV/ZWL5jRkP4Fb1y3Eq1SovwnvnZJyhO4z6UqzLQVkfL8xUddS3wwrZq+02tcM+2JBN02oXUutRMuHmbbuRAmnmrAZKqeUSrAZLEoiEEsY3uC3vFSpkDuqVCVs58E99nG2mS4IcMGBjhoU1geNhjOrbQ0CzX7nTXCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDCxp6ef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADCAC4CEC7;
-	Tue, 22 Oct 2024 05:32:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hplHhDUCqeiW0FJFx+loW4TRmfT1fw942I0yhudTXqFLGJw8qteNc8eO3Enw8Y5Kypv+nhfnM6EvKYgevnu6qVf8UlcICu7O73KAAyZxRWPHTwFNEa+3JdFEgPospB3wL7kYWOVIxXt+qw1dbKhqQ9ulIaAb/VLQWDwR3E1keE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiYOgB0S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5349BC4CEC3;
+	Tue, 22 Oct 2024 05:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729575126;
-	bh=+XQ07RcYr/8lQR11wBVNG7FGw7Y3qYnD5XkLswk1QQI=;
+	s=k20201202; t=1729575137;
+	bh=6pdKu0R5DU7xBdvkPQVF4MFji5daPjJvJvF/nx/iZTY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YDCxp6ef9uWhUbxhj+St5pgeNVCCQCf/fqM5amEV2hOouQHGiXCIS7mw5hIKivGqz
-	 RtJMH9kggK+9wyYKHDosNE2dDPOQfMhVJ93bZ5fcF94RISacKqckCvvkXGCdL+O+Mu
-	 P9ZlxE8FqApCSuZ07rGt95HPLwClMAo7uoJn50f+/FvM6sR3dzJeAemXGDyn0uggkX
-	 6gD/hrlJ9oy5q/YyDzjqbVmqNUupV9j10/bKTb5jRfo42F1Isx+XPybjnZR3vUZ9eS
-	 tN7ElVlnLhrOrvYMwuR1xC5UJbc6VCfYpUP6M6YgJvFgfgLZMBs75xdG+jTENGL3Bu
-	 bOkAOIf+T/qkg==
+	b=NiYOgB0S6LWSVWNJ+V+KTNcDrBBERN9FT0kGFNfJAn9n5bPDPjwNH9s/qP8llu8bb
+	 iq5+Nx02AMz3XJrpoBXPtIxv005cPhPDX4Ita0Jkb/Cxfsqhyryav/z28AacscyShp
+	 bf95t3je7apJtC6o6M7srSQFyfOSpckWlFYJ2LewUc1dB6l3jd+X1KoC5gP6RwUDzC
+	 LirbcFd3b/zR9sLYDNzEDCyKKGhHSSl67+HyY7E5D3nf0JzMDWeOrqIdS2/kszomTv
+	 4lBCAGfenjZl83t2YAVrd4h2XhJdJID73rH5I5/c7iXrvAdMPM4tN2XaWwGbUvdV/t
+	 ilXRAaqrjSzMQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: jckuo@nvidia.com, kishon@kernel.org, thierry.reding@gmail.com, 
- jonathanh@nvidia.com, nkristam@nvidia.com, 
- Dipendra Khadka <kdipendra88@gmail.com>
-Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240930191101.13184-1-kdipendra88@gmail.com>
-References: <20240930191101.13184-1-kdipendra88@gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
-Message-Id: <172957512345.488725.7168237326292852194.b4-ty@kernel.org>
-Date: Tue, 22 Oct 2024 11:02:03 +0530
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Xin Liu <quic_liuxin@quicinc.com>
+In-Reply-To: <20240925-qcs8300_ufs_phy_binding-v3-1-c1eb5c393b09@quicinc.com>
+References: <20240925-qcs8300_ufs_phy_binding-v3-1-c1eb5c393b09@quicinc.com>
+Subject: Re: [PATCH v3] dt-bindings: phy: Add QMP UFS PHY compatible for
+ QCS8300
+Message-Id: <172957513423.488852.1097223397140343310.b4-ty@kernel.org>
+Date: Tue, 22 Oct 2024 11:02:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +64,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 30 Sep 2024 19:11:00 +0000, Dipendra Khadka wrote:
-> Add error pointer check after tegra_xusb_find_lane().
+On Wed, 25 Sep 2024 15:34:32 +0800, Jingyi Wang wrote:
+> Document the QMP UFS PHY compatible for Qualcomm QCS8300 to support
+> physical layer functionality for UFS found on the SoC. Use fallback to
+> indicate the compatibility of the QMP UFS PHY on the QCS8300 with that
+> on the SA8775P.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] phy: tegra: xusb: Add error pointer check in xusb.c
-      commit: e70d2677ef4088d59158739d72b67ac36d1b132b
+[1/1] dt-bindings: phy: Add QMP UFS PHY compatible for QCS8300
+      commit: 30c280bc8e4555d55d7de7b85983990356c1e8e9
 
 Best regards,
 -- 
