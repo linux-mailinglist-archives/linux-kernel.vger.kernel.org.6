@@ -1,150 +1,189 @@
-Return-Path: <linux-kernel+bounces-375590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1199A97E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:31:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4E69A97EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08FA284B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACEF51F23D8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A02B8287D;
-	Tue, 22 Oct 2024 04:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601F8563E;
+	Tue, 22 Oct 2024 04:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="czdyb2K4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARS4QCzq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6259C8002A;
-	Tue, 22 Oct 2024 04:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706E38B;
+	Tue, 22 Oct 2024 04:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729571491; cv=none; b=so35gipMFtjb8/YK+bq13Hxt2eKj3bLeLxAbjKdr3oivKiINjbOiuabibywLKT6rsEhZVa8qIN91szioX/bGMSxO5fS3KCQyTekArO00GIGlfnjLSPrKMTuRBvJ6fdc1FjWaRXccK2ooItg2PrbD+JwwUM2o70mXAY+yefd1+QQ=
+	t=1729571505; cv=none; b=BDkdFEMXmreGOrTHwvCZyKPNcrAgpPTf1imwAqcfMX+03DkHJlHyg9WQkd44P6nmtzkH0sToaw8sR9T4Hk4Y604DqpIj+7YbtduyajkxK3qmla6PnMpgDbzlLhSoHw2GbBtli+u2ttHFTyu1fcEa3CX78DBhRIKLRJi+p6+2VMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729571491; c=relaxed/simple;
-	bh=xZoHbrKmig+5nmpk1WocTQRf5OEtGSwALU08ezJUsqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qgauLKGSEbVVOHWONCd0HGx9ZG0EE/Kea7PCzU7UlhhX2iyza64+ZawZgXkeZs4alCYbsdU3m7jCsoML9DcMIzJGY1KMaNhv+yFl+XTsBIvXckR9JEwU4xd7L/3Nln9bX+y3MrUicVqbqSGsl4ih4BEx/meepzO1t+teim3bvCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=czdyb2K4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJrnqV017139;
-	Tue, 22 Oct 2024 04:31:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6h5iGtO94+T34vjXeQ8JgZMIZwPeD65QwF7Tw1HNYwg=; b=czdyb2K4Idbpg+Gb
-	RkZCcBFjZk72QTdEdWd0ruM5hCam+s+xGC7/E1rFwYS2akAdk/nlIWC1708VZqD2
-	FWFahc6KRfl3b3SOMVoruTR+Q56L/Ov0oxE/ZMPezDNHpPdZjNWbFQiGY9JZ3Ztr
-	Y2pi0P70P8aTXEs0SkxeeUyxGW357pYbVAGex+JQwYSnq9du26CsaWc1kiNVSXJi
-	ATxQ8/5k2HOsn2OW+uupFaH+vdx5jBnY+Zz1wiC+Ypu5J28qhtLEL4k/2zyzISwC
-	Z8g3jY7wzKvEIt3OohIlKe4+Q2qtNfom7i0I0B0f8J9eXQFx3jzucQIoUSvJZGQ8
-	zu9kjQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmdqas50-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 04:31:25 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M4VOep030279
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 04:31:24 GMT
-Received: from [10.216.44.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
- 2024 21:31:20 -0700
-Message-ID: <a7410975-cc74-493d-b0c4-5dbd3eb43c8d@quicinc.com>
-Date: Tue, 22 Oct 2024 10:01:17 +0530
+	s=arc-20240116; t=1729571505; c=relaxed/simple;
+	bh=JMmllV14RxvZYGSLvcuoLFa+QPWXIA4n1DSytG3zbNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LC9TPoGSKz6zFdMFR4X80z9wKQKpf0vT+AmygYP2QX+FrJIK4J8eLvs400d0ub9Z3ZfUnTUHr2lzMxWMLRKb5Pw49luZWEQxPSleDNgApU02jTLm5D5g6fHPuok9AcTXIKVzfSKShb07ej2s6EKnMBhsFLJJ2Qeh1doFgtB7cdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARS4QCzq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D800C4CEC3;
+	Tue, 22 Oct 2024 04:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729571505;
+	bh=JMmllV14RxvZYGSLvcuoLFa+QPWXIA4n1DSytG3zbNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ARS4QCzqVeAuPpPAOMnoV+wMs5UzgiExWTl4F2GVzYPeL28mg2DNp7GtMDYzeIulE
+	 bU0kkDAC3roa2u9omxWrN381IwkPoxibb/hGR4frA1kTvtYWuJHuyKluroQRIGDVUE
+	 zbqtGobhOsIX3U+RIUut3yOFHx81Bq8PBzZyNKJj04kX2Iw1tpKKIjJlGdXinpMqif
+	 x/Qck7q66ssC/Nr+ZeulTZOPELehBH15VBIOeXjeihd9m+GV0VNWMBfLMDu0+nAMU4
+	 1BCZ12Ewk3LXfoJIr0veDpWH9njMw8KWlKBQHVatNDtPnbFMCBCuqJem+yL99E/TSc
+	 Y2VSYMLUEzXRA==
+Date: Mon, 21 Oct 2024 21:31:43 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Junhao He <hejunhao3@huawei.com>, irogers@google.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
+	yangyicong@huawei.com, linuxarm@huawei.com,
+	prime.zeng@hisilicon.com
+Subject: Re: [PATCH v2] perf metrics: Support parsing metrics if platforms
+ only have json table of system PMU
+Message-ID: <Zxcqr85riwxaHwQG@google.com>
+References: <20241010074430.16685-1-hejunhao3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] dt-bindings: clock: qcom: Add QCS8300 video clock
- controller
-To: Rob Herring <robh@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-5-859095e0776c@quicinc.com>
- <20241021181641.GA874673-robh@kernel.org>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <20241021181641.GA874673-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GDfbSgFSE5uVNNJj8G4BZX2zwyHwjdLB
-X-Proofpoint-GUID: GDfbSgFSE5uVNNJj8G4BZX2zwyHwjdLB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 spamscore=0 mlxscore=0 phishscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410220028
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241010074430.16685-1-hejunhao3@huawei.com>
 
+Hello,
 
-
-On 10/21/2024 11:46 PM, Rob Herring wrote:
-> On Fri, Oct 18, 2024 at 04:42:33PM +0530, Imran Shaik wrote:
->> Add device tree bindings for the video clock controller on Qualcomm
->> QCS8300 platform.
+On Thu, Oct 10, 2024 at 03:44:30PM +0800, Junhao He wrote:
+> The system PMUs don't depend on the certain CPUs and we don't need a CPUID
+> to metric table mapping to match the json event for generating the metric
+> table. For example HiSilicon HIP09 only have json events table of system
+> PMUs in the "sys/" subdirectory.
 > 
-> That's obvious reading the diff. How is it different from the sa8775p
-> version? It must be different or you should have a fallback compatible.
+> Currently for this case the struct of system metric table
+> "pmu_metrics__hisilicon_hip09_sys" generating works fine and metrics
+> display as expected by using `perf list`. But `perf stat` doesn't work
+> for such metrics.
 > 
+>   $ perf list metric
+>   Metrics:
+>     cpa_p0_avg_bw
+>          [Average bandwidth of CPA Port 0]
+>     cpa_p1_avg_bw
+>          [Average bandwidth of CPA Port 1]
+>   $ perf stat -M cpa_p0_avg_bw --timeout 1000 --> No error messages output
+>   $ echo $?
+>   234
+> 
+> The metricgroup__parse_groups() expects to find an cpu metric table, but
+> the hisilicon/hip09 doesn't uses CPUID to map json events and metrics, so
+> pmu_metrics_table__find() will return NULL, than the cmd run failed.
+> 
+> But in metricgroup__add_metric(), the function parse for each sys metric
+> and add it to metric_list, which also will get an valid sys metric table.
+> So, we can ignore the NULL result of pmu_metrics_table__find() and to use
+> the sys metric table.
+> 
+> metricgroup__parse_groups
+>  -> parse_groups
+>      -> metricgroup__add_metric_list
+>          -> metricgroup__add_metric
+> 	     -> pmu_for_each_sys_metric   --> parse for each sys metric
+> 
+> Testing:
+>   $ perf stat -M cpa_p0_avg_bw --timeout 1000
+> 
+>  Performance counter stats for 'system wide':
+> 
+>      4,004,863,602      cpa_cycles                #     0.00 cpa_p0_avg_bw
+>                  0      cpa_p0_wr_dat
+>                  0      cpa_p0_rd_dat_64b
+>                  0      cpa_p0_rd_dat_32b
+> 
+>        1.001306160 seconds time elapsed
 
-The QCS8300 Video clock controller is mostly identical to SA8775P, but 
-QCS8300 has minor difference. Hence, re-using the SA8775P VideoCC for 
-QCS8300. I will update the commit text with the details and post next 
-series.
+Ian, can you please review this?
 
 Thanks,
-Imran
+Namhyung
 
->>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
->> index 928131bff4c1..07e5d811d816 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
->> @@ -18,6 +18,7 @@ description: |
->>   properties:
->>     compatible:
->>       enum:
->> +      - qcom,qcs8300-videocc
->>         - qcom,sa8775p-videocc
->>   
->>     clocks:
->>
->> -- 
->> 2.25.1
->>
-
+> 
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> Tested-by: Yicong Yang <yangyicong@hisilicon.com>
+> ---
+> v1 --> v2:
+>  -Add some comments to explain the table is null.
+>  -Modify the patch commit.
+>  -Add Yicong Test-by.
+> v1:https://lore.kernel.org/all/20240807040002.47119-1-hejunhao3@huawei.com/
+> ---
+>  tools/perf/util/metricgroup.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> index 69f6a46402c3..cb428eabd485 100644
+> --- a/tools/perf/util/metricgroup.c
+> +++ b/tools/perf/util/metricgroup.c
+> @@ -1123,7 +1123,7 @@ static int metricgroup__add_metric_sys_event_iter(const struct pmu_metric *pm,
+>  
+>  	ret = add_metric(d->metric_list, pm, d->modifier, d->metric_no_group,
+>  			 d->metric_no_threshold, d->user_requested_cpu_list,
+> -			 d->system_wide, d->root_metric, d->visited, d->table);
+> +			 d->system_wide, d->root_metric, d->visited, d->table ?: table);
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -1226,7 +1226,8 @@ static int metricgroup__add_metric_callback(const struct pmu_metric *pm,
+>   * @system_wide: Are events for all processes recorded.
+>   * @metric_list: The list that the metric or metric group are added to.
+>   * @table: The table that is searched for metrics, most commonly the table for the
+> - *       architecture perf is running upon.
+> + *       architecture perf is running upon. This value could be NULL if no core
+> + *       metrics matches the architecture and we'll try to use the table of system PMUs.
+>   */
+>  static int metricgroup__add_metric(const char *pmu, const char *metric_name, const char *modifier,
+>  				   bool metric_no_group, bool metric_no_threshold,
+> @@ -1239,7 +1240,8 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
+>  	int ret;
+>  	bool has_match = false;
+>  
+> -	{
+> +	/* Add core metrics to the metric list */
+> +	if (table) {
+>  		struct metricgroup__add_metric_data data = {
+>  			.list = &list,
+>  			.pmu = pmu,
+> @@ -1263,6 +1265,7 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
+>  		has_match = data.has_match;
+>  	}
+>  	{
+> +		/* Parse metrics table of system PMUs */
+>  		struct metricgroup_iter_data data = {
+>  			.fn = metricgroup__add_metric_sys_event_iter,
+>  			.data = (void *) &(struct metricgroup_add_iter_data) {
+> @@ -1697,7 +1700,8 @@ int metricgroup__parse_groups(struct evlist *perf_evlist,
+>  	const struct pmu_metrics_table *table = pmu_metrics_table__find();
+>  
+>  	if (!table)
+> -		return -EINVAL;
+> +		pr_debug("The core metric table not found, continue to parse system metric table\n");
+> +
+>  	if (hardware_aware_grouping)
+>  		pr_debug("Use hardware aware grouping instead of traditional metric grouping method\n");
+>  
+> -- 
+> 2.33.0
+> 
 
