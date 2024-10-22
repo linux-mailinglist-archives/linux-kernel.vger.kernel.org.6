@@ -1,287 +1,209 @@
-Return-Path: <linux-kernel+bounces-375611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFE69A982C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF369A982D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F4D1C21569
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B071F23AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB112F38B;
-	Tue, 22 Oct 2024 05:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F9E12F588;
+	Tue, 22 Oct 2024 05:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JtpPrw0x"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2068.outbound.protection.outlook.com [40.107.21.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5oopKOg"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E956080C13;
-	Tue, 22 Oct 2024 05:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729574018; cv=fail; b=n0wf4w088yQDwIfmG9M9HcvPJ3L3vM7xumDwcHvO3zrRLoykKMKRTEDJTBIcI5ZOjkSKqeEVceYMb9PgqhJxDP3a03DbCWJJXaU4gTydIHTog70tkPcN6979icG6p8tpxYrsn7KP0S04m/+HTI4iwL4tKh/1jNAxMlw1AVlhLLw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729574018; c=relaxed/simple;
-	bh=K6Dm6fNNp5j563fPpmK/gUNWh4SWiOnytgmdxsEtQGA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=r8FvMLYgkp8naslmbFz2fBdUQ25zDd8bjxGXiwU1el8LrRh0zaVrlDrI+YyY0Kljg3bQK9lgQunBSqMTmloI2swFFLQglMeaR4iZjbroOpEdHHiR+I7lQXXddI6fmwFkHTE1DO++zpczeQs2f90RqlWMs0BM48EYK5DFqxhOUns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JtpPrw0x; arc=fail smtp.client-ip=40.107.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HHIOLwMjV9KKa3d8hFHfVFCbde94HrdqcYj1j88pIzqKb0MVjO17tytS4hzazDp1OZWLQ1SqXn0BVEAiXId9OsOVxGdolFWP+dolRMTdkcMyaldkZ22u/naCQtPQBAVlaW2r6P4iyrAZ5+LhuJ95wjFBXuWOtlD8tYIe89zcGT/Ved+ArMkXethVYPwv/D0IpXDZatdsnHIsth8o/lVmBSm/k3z74m29DRACQj+ygP37UyX901Ci2DcB2PF6v9BYn1ajy+/We7/Qag3G5TtekAmW6UXSojE1wkTmhGf1j3kJ/4szHWY/MpkZu8JizG4a3jO+fARLHrDU2u3xojdyDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T9M72VkwieO7WraoCooEVoKNQiS77ebKnIuH7pWIOGo=;
- b=H+K/BwslmnMQx+Pv3c1rtJp+1SEovOk/t8H29sRXowY/+E/UDAkRpNMh02U72smyjC3WWS/ymr13FTxmOM+kdjIGiTtOLrvwhEN+eGKu5VJR4N92guPRM5nV9weT2RUAMaylwGI6CVwoyeT80TNbgF4ynyk+hntjwLhbKtBPDm6D33+Tx9mRwyvn4eOwRxalydztnpP/SGyLbCjZ2CCxJoh8ESodqI1NdVCEZ9AHbqwRKgMxEL1oYd2W8a2XQuLqzwkVzHBawtktgURY3mDlO+nWwL3naDtXwg+EeMSk5ycCjuOn5DNZmZJGPL85Zh1W+mjjpCen2uLNStYNNmkhdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T9M72VkwieO7WraoCooEVoKNQiS77ebKnIuH7pWIOGo=;
- b=JtpPrw0xvXfpz57XsOIT31bXBFEx8yYmFlnVqJ6EE0xG6gZpctM68sWeJfEkWunYvSXJZfpE4qnyGHRy6isNLPdgpXiQpI7NcjdaR8seF6jtf0jdlfxQMn8h6loDZ6Frzp3BhDmTVhcXUh17pxk3bn/tlN56aCpI4tG56pCN1u7LRrNvcC5r7Q94HmHEKN0wBuxFJEZCvvhPpFDjc7KWzl0BRgRPRlIXVWKi/lATB2fqWF2mQTwRDMQwYi1T2KVLajZU86IKhDeMCEhjt/GpPOONlL8R6AB25crJ9w007OPHt//djAX7rSOyulEwKuMXsY+XQqQRjXdpiqFkidvuSw==
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
- by VI1PR04MB6957.eurprd04.prod.outlook.com (2603:10a6:803:135::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.26; Tue, 22 Oct
- 2024 05:13:32 +0000
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37%5]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 05:13:25 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-CC: POPESCU Catalin <catalin.popescu@leica-geosystems.com>, Amitkumar Karwar
-	<amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
-	"marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com"
-	<luiz.dentz@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Thread-Topic: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Thread-Index:
- AQHbFlGi4L5ELajEYECFBoJDru1aa7J5aBLQgAAySQCAAao9AIAAIGOAgBV25oCAABNWAIAAK2IAgAE1RoA=
-Date: Tue, 22 Oct 2024 05:13:25 +0000
-Message-ID:
- <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
- <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
- <20241021064129.trchqa2oickna7pc@pengutronix.de>
- <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
- <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
-In-Reply-To: <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR04MB8429:EE_|VI1PR04MB6957:EE_
-x-ms-office365-filtering-correlation-id: 42dc6038-1791-402f-8c3a-08dcf2584205
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?1iv1teaH505MiRv3Rt6kXmm9w7b9GfjHlDVYFeMZ/bLXgm/WPTYeWFqnJNGp?=
- =?us-ascii?Q?Qs+tHs5Afh64XElOw/IW6zMWIDfLiHTch057JZL0dyEJFCx+rlQzi2xUsQdS?=
- =?us-ascii?Q?my8jatLmQXI4VAD6cvtz7aSfQHyvLVbTJFV2O5yF5UJR0zhUNMqaIRXHM/NM?=
- =?us-ascii?Q?dBWjodXsU0fe1jLr+y78vVcOsha0vXX5lsi7fnOUx31r7/ERcpObHoktfUuP?=
- =?us-ascii?Q?6JHjZYSipTAkKwbrVQDc56qbwiTCJMlRd3pumj4iOaBjq7vUYiFa0Fazkw5d?=
- =?us-ascii?Q?Gb2WMwA7+icUUOmNkSag64tJSGMhs427x635zswlWVBMkKlKcOPwf87w9t1U?=
- =?us-ascii?Q?lcN+Z6x0T/163N5p7M05bh7ll141SYusKCgSMWntcJV6Z+FVioglpPEbXb/e?=
- =?us-ascii?Q?yol2JiT+hfGx5RUidjVlKV28CghekVDW+aLeSwF4WsmsIMsnp3Wwue/YBf+Q?=
- =?us-ascii?Q?kIKLqPX+ONpX0Pp8SPfKGXG+0ZRjZp9M4tk1IYafgW7kSV9W5Et/KbuTh3i6?=
- =?us-ascii?Q?uMM+8xHfYVhg3/Z1eVOt9FwqicDVtk0D+tzQU2kiq9CVPRoxFoGRMt6K82Li?=
- =?us-ascii?Q?zIeW5em9E3GJiBodpnFJuTIOs4XSPEGyfdeQINCNlZdGhcAz1KsaYeelbpBs?=
- =?us-ascii?Q?ASlF6JPlTFr5uAMDc23VTJTY9WEGuBQQFSNxL3QWPLFCfNgKhAc9KLtFQ2XC?=
- =?us-ascii?Q?aJXMY97ZiRxf06f85c80yvZ5CUlkTVLkq+XrmFFfZ4ZKtIfz+lwc2KxUYVZm?=
- =?us-ascii?Q?jrpXwx1HOLT9Lj5EZwPsJcTOoB9Pfv9Of5tblIkfmhl7B/gZ/2sPJFB1NTBq?=
- =?us-ascii?Q?4FTCMzF5dfkqgGH4R3wTmJ8nfosP0V/noJU0v8ucPsbuQlnO5V40GqUunJhM?=
- =?us-ascii?Q?j+rTBPEiPi98eZlg1A24Ai1eMLRUl0DBXfGV4Q4ID18tORb8ItJwGVNeNMTN?=
- =?us-ascii?Q?rrf1jMkvRLAbkyCVsu0+H5YNB7NmCv2nAaaSU33a2Ai3nFSkHPo+0WCqxQgD?=
- =?us-ascii?Q?PqUFcYb01iy5VRrEX4//KWIZKxtD7eL89eQMCk0jwFDN2ULutmQe2KWdgQjs?=
- =?us-ascii?Q?01WHVzgCo35673JkadZLoj3S/rDxgdedj2+IRKN83FqnXoEJ6drT7nHtb6Bc?=
- =?us-ascii?Q?5IXKLliitPSvet3xz9aOjp8u6/vcsq/p5XwbNtEajWarRtMvhGr4JjUSXhiA?=
- =?us-ascii?Q?oafXKynroiVeeaa+SD8KWQhP/bsN1PHE/i4B1NxBlqvzSr0P17/QeAJKYwcr?=
- =?us-ascii?Q?lbsKEpHTBmdsA/ZAl9QxiA+3n/qbPipv1jmLmwwedbQZ9y2HeT9uZmgU4dxy?=
- =?us-ascii?Q?IToA/eNlbzB9om/Q6rncwB3CJMBKgDWpsk1adze4vxY0riY9mIysH0fvbVEX?=
- =?us-ascii?Q?og7VkXE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?o1+jQo55/iUfsyqqjsGuJ4f5R5Ug7sI5FotZh+jQoUM5pY38twZqrnc86Yj3?=
- =?us-ascii?Q?90v/I+y8KLQhS4KJV++tC2UMDX5AqDI62Dyx1YysOF6Ul8MhwXw2GXaBYE58?=
- =?us-ascii?Q?Q158Zha+ZKi+63Sa37M6dh+ANX8ZWatsTBXWcq/y1vCimoeaaX0Dr6SdZxh1?=
- =?us-ascii?Q?Ry3hiohZC+Qi5MqyBQtrnRYOW5UkcRIqgvEd6+ITb38WdOtc1nUs2jUk5Zj5?=
- =?us-ascii?Q?ijgElDzm5CS6f8NwHMCdCSyLbJDsHZPbxsx1xYr0Tc8gGGIR66upF8BtPF9I?=
- =?us-ascii?Q?Yd8CtO2Y1KlZyeAJfoYCMai+Gy2lypALC4ej6JiolarXFgQVbxYjdLZIQDGr?=
- =?us-ascii?Q?df/z3yVMuZFcrZXPqPrQYAtM1ajPYbkI+JeeGd+IgSd9ZxhoKL5HKZ1oSiFv?=
- =?us-ascii?Q?4ay3wYhJ2rRke50VpSiK4ZpHlF7krcZsa77ShOQmOnaX+i0st3+ZdSgRD/Oy?=
- =?us-ascii?Q?JLohMDQ058lT6J6//Us90sGoFuOboR+vp9PkyfED5pGgDosr+QXq5xMDr7O6?=
- =?us-ascii?Q?w7EZ8XjyVZdeYg+u/dg7SrEsvDXV0Exxqja+c/uR3zmb89qI5qSaoy4my45t?=
- =?us-ascii?Q?AYES9Vte03XEEkCeAzZQIt1GYQhGqkASfqy4RE9oaTfSblV+9+qUk60PYnb7?=
- =?us-ascii?Q?rcWMWHIoxSTh0f2JHf29gdMWRgymmTZ4GUCht5vONFD+DAC5qtojDgrmoedy?=
- =?us-ascii?Q?TCCdDZnUuEYTXrW/WYV1zJ3JlaHJGSA5E4OtAokX4DaoVG0hnYWMm7rn2ySY?=
- =?us-ascii?Q?BUDc8/3qn7wBjh9CrfrCqPnw2gWIlYy5yJE/2MNrPocwirbaLx12Pj6USzKw?=
- =?us-ascii?Q?Ar3byvV0He3j3ksyY7GX9Y79CKOx/jJFadBqR+cWv1oUkPbY0VggBjnN1/Sn?=
- =?us-ascii?Q?Xjdtsp1DYJdy4MC++6LTRleOPk5eP+q4740ZL9Vy+9FEHBsN8oslhjt1Segc?=
- =?us-ascii?Q?iQlXUS7yujieUxlqdddvow9E+usS/1XPvcm0ntKPyRBBzNi0n/vGntyNpfEi?=
- =?us-ascii?Q?YD+8pI3yDAF5S8K9S1D4SGCq0wfawRFhssPg13jckswyGbcsk1h2k4aJaCwb?=
- =?us-ascii?Q?KEeLzFqewXkMHXSiDtKGFp9KbWgrztIdrqoAKUOlFwC4Zt6P9vurC8LaKca1?=
- =?us-ascii?Q?mB9KaPP6inU/LjNkVeCBaOJkkHTH+tmkYtcbwb6DVcsaLgP4xawS6FhBFRxy?=
- =?us-ascii?Q?KYMeF3VRQ+olB1dnM55iQ967YkmIA60NzX/wjJyesm+U8VrxP2m+GtD6APvR?=
- =?us-ascii?Q?lFrbd5ekrscPLVp2qV+M5HgKdYRWmSA3YLDrwhV6h3Et3L/yllIm5XZoLE+q?=
- =?us-ascii?Q?aG46abxMIG+K9CqXG6F2mwHnpL9klSNy9HOZmoEqsYk9wr2/2pGofEJpyAxW?=
- =?us-ascii?Q?IB7a5MM0dY1vCWlV7ffnt+SShgst1qLctTIBir2yNI3WESYDqiEhebdyh7E1?=
- =?us-ascii?Q?SV0IxumzvRKn2+8erfQKiPxOCq+2qIUXdvFI0/hlgcdPQk3dFl9BLjF972JP?=
- =?us-ascii?Q?+ccFBj1ZX/eCEr2yT4FVTrc181FewiOr9U4UdkBD/1X6ysHkpWkwbNemqkYl?=
- =?us-ascii?Q?h6hDna/g7peN7mwD/3oj6SG8vEooUWzM/GKji7OC?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C8C12C522
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729574050; cv=none; b=t4bHUat6yhUnJgn4/FqLo754LDWvBt4DB4fM47WQwDJ5w+6Rd/Fp+Zc2ZAvEMueELAkWIE4OSds5uE/fPEsoRPFMXjV92Yvkv9qeFYgbFEoz8ClYHt3tnP2V7ZZAtmp1VyrSZAslpspQi7uWoOHyFgVeQX/lhVboHbqz3YOXywc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729574050; c=relaxed/simple;
+	bh=SlJkwPGyAmgj+3nVc5GPEvLAsxK3Oim7R9eglxcJbDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=bklZLTHuUHvvQlx84YyqSC9FcFRJm3FQ9ZYY7szc1qsphtk0EGHDW94qMxcQoUlaS8MX+/qYUn802rAZK7NwoKdG+9B3OpDl0Cr5HPxVHscQyhw/agbd7WgABYXxMw3YN+gs8V6pPEMR4WU+FnHba7o2rT+Af7zYKKxzGJnHmjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5oopKOg; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2dcf4b153so3799709a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729574049; x=1730178849; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=at3mNX0tawpFGP5P12WETb9tShYw0qm9sRbMOHP+YTI=;
+        b=E5oopKOgIaZD5vebQQ/3xatvoUCzWgD8M+rRmj4V6A2oBU3VFxNbiOgYEpBvOgSj+D
+         K0BC27A6We8FA88Wp/fZWxsHXiPc0Xvghczn7QzfKA0cTB39ey9W0RRzdFUpyJfz5Kj7
+         WHwdt9KwOJ7CaVyKXCy8aMO0BTOJOGYH5jZ41/4jIcM+tKrXR/mNQNe+Z70ms3mOAikO
+         eMSEEZUyIFgs3O10nE2bumGYpwayofDM1ZqLuQvC5VJZtFUnSIuPBjDfsoSwHtg5YP8A
+         81Nl5TK3uKqm4lU5rHce3FPTs+yinPYFSyEHqY7otMwmmKB0kpNXU5W8Bw+Td+Ff6nMz
+         HVZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729574049; x=1730178849;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=at3mNX0tawpFGP5P12WETb9tShYw0qm9sRbMOHP+YTI=;
+        b=joa9auNJ54ATdVfOM1cL6C11Oyi0RG6ZNwlU3bhtIW9fgye82RfqfFKQJOpys5Udwt
+         srz7SFtuo/RQ5rkhvhvV/OCNZj6aA5Tj5unrYPm4jb+y0GIttfDTYy8BzgTxzd1h+XcN
+         Z9wxwwdIVc7VCnrWsGl82Yy5vR6mmSy0OxDuNCAACzxfSNfpnabDV+DXJWf7J6ih/qkb
+         J2/l/j3zpyXE3+U/C0o33WHZGsdcUZ9iSCpVr3D1lMQQ1KqcbiUhh4s8HBUeVyNNPjOM
+         cBQ5rcfL1DO+OQbll7VB6gNh63hvlEbM8zCxvuT8ojaZnRl1qY6QyrbgK/ZTCveqNfbu
+         BHZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVySZrVkbzD0wk7+0O56eKV+cQgxndZzykDxbtrpxfrbmKU38Gcat16FvAWyuDUrNReQEfn6EU/3Mxh/c8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg4prZXSKBcS/71ilnKPeqJ1HAe5xOJmDpZkMyfcfc3j/P9fTU
+	dHjAgRTRNTzGVmkUT26ZZk3D/Q1Dx4d1Z2ujs9FN846spFdOlDsz
+X-Google-Smtp-Source: AGHT+IFheUPN8TAJ6sSMv8qbClgGA9hLNbm4NdGj+Q2op7OD6KynBw2ik4mcP300XeC70jTavoRX2A==
+X-Received: by 2002:a17:90a:8990:b0:2e2:bbcd:6cbb with SMTP id 98e67ed59e1d1-2e5da552565mr2318855a91.6.1729574048496;
+        Mon, 21 Oct 2024 22:14:08 -0700 (PDT)
+Received: from localhost.localdomain ([43.153.70.29])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad2616b9sm5032149a91.3.2024.10.21.22.14.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2024 22:14:08 -0700 (PDT)
+From: MengEn Sun <mengensun88@gmail.com>
+X-Google-Original-From: MengEn Sun <mengensun@tencent.com>
+To: ying.huang@intel.com
+Cc: akpm@linux-foundation.org,
+	alexjlzheng@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mengensun88@gmail.com,
+	mengensun@tencent.com
+Subject: Re: [PATCH linux-mm v2] mm: make pcp_decay_high working better with NOHZ full
+Date: Tue, 22 Oct 2024 13:14:06 +0800
+Message-Id: <1729574046-3392-1-git-send-email-mengensun@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <87msix6e8c.fsf@yhuang6-desk2.ccr.corp.intel.com>
+References: <87msix6e8c.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42dc6038-1791-402f-8c3a-08dcf2584205
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2024 05:13:25.7920
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 10kIdJ1QvKB+sLJUKDoojOE+llueH/2Ys8DLQUTYBwhZ03Z7oRGN15xPHL8zyTnCPCnfCO54s80JW0K2me58nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6957
+
+Thank you for your suggestion. I understand and am ready to make
+some changes  
+
+> 
+> Have verified the issue with some test?  If not, I suggest you to do
+> that.
+> 
+
+I have conducted tests:
+Applying this patch or not does not have a significant impact on the test results.
+perhaps my testing was not thorough enough. #^_^
+
+But, the logic of the code is like following:
+CPU0                              CPUx
+----                              -----
+                                  T0: vmstat_work is pending
+T1: vmstat_shepherd
+    check vmstat_work
+    and do nothing
+                                  T2: vmstat_work is in unpending state.
+
+                                  T3: alloc many pages
+                                  T4: free all the pages allocated at T3
+                                  T5: entry NOHZ, flushing all zonestats
+                                      and nodestats
+T6: next vmstat_shepherd fired
+
+In my opinion, there are indeed some issues. I'm not sure if there's
+something I haven't understood?
 
 
+By the way,
+There are two other questions for me:
+Q1:
+Vmstat_work is a **deferreable work** So, It may be delayed for a long time
+by NOHZ. As a result, "vmstat_update() may not be executed once every
+second in the above scenario. Therefore, I'm not sure if using a deferrable
+work to reduce pcp->high is appropriate. In my tests, if I don't use
+deferrable work, it takes about a minute to reduce high to high_min, but
+using deferrable work may take several minutes to reduce high to high_min.
 
-> -----Original Message-----
-> From: Marco Felsch <m.felsch@pengutronix.de>
-> Sent: Monday, October 21, 2024 6:26 PM
-> To: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>; Sherry Sun
-> <sherry.sun@nxp.com>; Amitkumar Karwar <amitkumar.karwar@nxp.com>;
-> Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>; marcel@holtmann.org;
-> luiz.dentz@gmail.com; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; p.zabel@pengutronix.de; linux-
-> bluetooth@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; GEO-CHHER-bsp-development <bsp-
-> development.geo@leica-geosystems.com>
-> Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support fo=
-r
-> supply and reset
->=20
-> On 24-10-21, Krzysztof Kozlowski wrote:
-> > On 21/10/2024 08:41, Marco Felsch wrote:
-> > > On 24-10-07, Krzysztof Kozlowski wrote:
-> > >> On 07/10/2024 14:58, POPESCU Catalin wrote:
-> > >>>>>>
-> > >>>>>> +  vcc-supply:
-> > >>>>>> +    description:
-> > >>>>>> +      phandle of the regulator that provides the supply voltage=
-.
-> > >>>>>> +
-> > >>>>>> +  reset-gpios:
-> > >>>>>> +    description:
-> > >>>>>> +      Chip powerdown/reset signal (PDn).
-> > >>>>>> +
-> > >>>>> Hi Catalin,
-> > >>>>>
-> > >>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
-> means that both wifi and BT controller will be powered on and off at the
-> same time.
-> > >>>>> Taking the M.2 NXP WIFI/BT module as an example,
-> pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has alread=
-y
-> controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
-> > >>>>> It is not clear to me what exactly pins for vcc-supply and reset-=
-gpios
-> you describing here. Can you help understand the corresponding pins on M.=
-2
-> interface as an example? Thanks.
-> > >>>
-> > >>> Hi Sherry,
-> > >>>
-> > >>> Regulators and reset controls being refcounted, we can then
-> > >>> implement powerup sequence in both bluetooth/wlan drivers and have
-> > >>> the drivers operate independently. This way bluetooth driver would
-> > >>> has no dependance on the wlan driver for :
-> > >>>
-> > >>> - its power supply
-> > >>>
-> > >>> - its reset pin (PDn)
-> > >>>
-> > >>> - its firmware (being downloaded as part of the combo firmware)
-> > >>>
-> > >>> For the wlan driver we use mmc power sequence to drive the chip
-> > >>> reset pin and there's another patchset that adds support for reset
-> > >>> control into the mmc pwrseq simple driver.
-> > >>>
-> > >>>> Please wrap your replies.
-> > >>>>
-> > >>>> It seems you need power sequencing just like Bartosz did for
-> Qualcomm WCN.
-> > >>>
-> > >>> Hi Krzysztof,
-> > >>>
-> > >>> I'm not familiar with power sequencing, but looks like way more
-> > >>> complicated than reset controls. So, why power sequencing is
-> > >>> recommended here ? Is it b/c a supply is involved ?
-> > >>
-> > >> Based on earlier message:
-> > >>
-> > >> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
-> > >> means that both wifi and BT controller will be powered on and off
-> > >> at the same time."
-> > >>
-> > >> but maybe that's not needed. No clue, I don't know the hardware.
-> > >> But be carefully what you write in the bindings, because then it wil=
-l be
-> ABI.
-> > >
-> > > We noticed the new power-sequencing infrastructure which is part of
-> > > 6.11 too but I don't think that this patch is wrong. The DT ABI
-> > > won't break if we switch to the power-sequencing later on since the
-> "reset-gpios"
-> > > are not marked as required. So it is up to the driver to handle it
-> > > either via a separate power-sequence driver or via "power-supply"
-> > > and "reset-gpios" directly.
+Q2:
+On a big machine, for example, with 1TB of memory, the default maximum
+memory on PCP can be 1TB * 0.125.
+This portion of memory is not accounted for in MemFree in /proc/meminfo.
+Users can see this portion of memory from /proc/zoneinfo, but the memory
+reported by the `free` command is reduced.
+can we include the PCP memory in the MemFree statistic in /proc/meminfo?
+
+> > While, This seems to be fine:
+> > - if freeing and allocating memory occur later, it may the
+> >   high_max may be adjust automatically
+> > - If memory is tight, the memory reclamation process will
+> >   release the pcp
+> 
+> This could be a real issue for me.
+
+Thanks, I will test more carefully for those issue
+
+> 
+> > Whatever, we make vmstat_shepherd to checking whether we need
+> > decay pcp high_max, and fire pcp_decay_high early if we need.
 > >
-> > That's not the point. We expect correct hardware description. If you
-> > say now it has "reset-gpios" but later say "actually no, because it
-> > has PMU", I respond: no. Describe the hardware, not current Linux.
->=20
-> I know that DT abstracts the HW. That said I don't see the problem with t=
-his
-> patch. The HW is abstracted just fine:
->=20
-> shared PDn          -> reset-gpios
-> shared power-supply -> vcc-supply
->=20
+> > Fixes: 51a755c56dc0 ("mm: tune PCP high automatically")
+> > Reviewed-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> > Signed-off-by: MengEn Sun <mengensun@tencent.com>
+> > ---
+> > changelog:
+> > v1: https://lore.kernel.org/lkml/20241012154328.015f57635566485ad60712f3@linux-foundation.org/T/#t
+> > v2: Make the commit message clearer by adding some comments.
+> > ---
+> >  mm/vmstat.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/mm/vmstat.c b/mm/vmstat.c
+> > index 1917c034c045..07b494b06872 100644
+> > --- a/mm/vmstat.c
+> > +++ b/mm/vmstat.c
+> > @@ -2024,8 +2024,17 @@ static bool need_update(int cpu)
+> >  
+> >  	for_each_populated_zone(zone) {
+> >  		struct per_cpu_zonestat *pzstats = per_cpu_ptr(zone->per_cpu_zonestats, cpu);
+> > +		struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+> >  		struct per_cpu_nodestat *n;
+> >  
+> > +		/* per_cpu_nodestats and per_cpu_zonestats maybe flush when cpu
+> > +		 * entering NOHZ full, see quiet_vmstat. so, we check pcp
+> > +		 * high_{min,max} to determine whether it is necessary to run
+> > +		 * decay_pcp_high on the corresponding CPU
+> > +		 */
+> 
+> Please follow the comments coding style.
+> 
+>                 /*
+>                  * comments line 1
+>                  * comments line 2
+>                  */
+> 
 
-Actually we should use vcc-supply to control the PDn pin, this is the power=
- supply for NXP wifi/BT.
+Thank you for your suggestion. I understand and am ready to make
+some changes
 
-Best Regards
-Sherry
+> > +		if (pcp->high_max > pcp->high_min)
+> > +			return true;
+> > +
+> 
+> We don't tune pcp->high_max/min in fact.  Instead, we tune pcp->high.
+> Your code may make need_update() return true in most cases.
+
+You are right, using high_max is incorrect. May i use pcp->high > pcp->high_min?
+
+> 
+> >  		/*
+> >  		 * The fast way of checking if there are any vmstat diffs.
+> >  		 */
+> 
+> --
+> Best Regards,
+> Huang, Ying
+
+Best Regards,
+MengEn, Sun
 
