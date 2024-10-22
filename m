@@ -1,355 +1,347 @@
-Return-Path: <linux-kernel+bounces-376523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F329AB2B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:53:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931589AB2BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DA31C21D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA281F238FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD1A1C3F3E;
-	Tue, 22 Oct 2024 15:48:36 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5753A1B532F;
+	Tue, 22 Oct 2024 15:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="NHXbWMrT"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2050.outbound.protection.outlook.com [40.107.21.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1501C32F5;
-	Tue, 22 Oct 2024 15:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612116; cv=none; b=t5VwRrXZRZ9WcQtUeShwpJeixA1QKCD/zIQgAkzvqID4u9yh/xhzQb6vsChoAvfldXdX1AspCrnvqNAIjklxH0hZmlpy4OLBghWFIYB37RUHmQqgHG38G8A1MfIRoN0ZTauIq8hisiCZ1Gv+IbxmjTbsCPTPD98ydInUwEvG/mQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612116; c=relaxed/simple;
-	bh=AdsxBL+HowTfQfp20uGO4M1QXogghGZmZa12oO1KsOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ratpN5BuYmkgVOIs3Nn4C430aLlkALeJWkHnfiPr+PYQ5ajiD8SBIXEuAEgfRefEed3vH2Ulmds89M3Zr09yMenMM4/78DURJMyfSk1t0jai6Ub2puKU9z6WOt+6/MB8y53x5qNG4cXUPIqHUu7A2X560V2QvbkbB9KdZFBQJZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99ebb390a5so1251033666b.1;
-        Tue, 22 Oct 2024 08:48:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729612112; x=1730216912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l6DzR1waiIbLIB43OdnODx0TO5r904Jk+JL2Jrn/w4o=;
-        b=vAiunIfLPCu62om1DhVYi7Vk7iBXeG8RQ3DSCSOxk0l+3UQ7kdnalvnW85+VUAF7dD
-         9be/ueidVKacyXgqU3bJYmu7H6fSOlAcOGwUjgpbeBMIdWf+4NDsQgT5q7pIJIzS8z9p
-         o8NMDU29NpXCEO3Qpo+P8sbt/Qt7zMFGLvgJnDJ7xVX0tvz0lUrQgtidW4lZ6SIz+Ghp
-         aWvAtPNPYZpheMNFcYhNA5wKfHwGmMMxUyiGCpbTbxVR2ExBsXjDx9hgIknlvPPQ1yTQ
-         NySEVcZ2BU1eICviPrUasFwa0vOFwBGNrkc80yQDRHMhQXxLafT3eCk3ABhxzs5Cnpkw
-         diUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9SqsbkNDqpq5AQdHMYsAoVg8DrW13CKEWeUcOvEcKnIkBCRbuLJQvOTVdLns2w/U/kifJL6PwDOYLSOjo@vger.kernel.org, AJvYcCWp/62oMVnIvHOoNuxYqKO2cE9NX+BtLeXt2bbYYnMgkG9HsUZWsCwYRq8x5K6YoyduakTvn4+s+9/ajeWv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8LGgsqF7KlP3Q3CeiY2H/8uHc6guWQOPvusceo7CIyvOpFojk
-	AsdZdBKin0Bt8BYBu/uemo7YoYaTE0g1niP3a+6an5n56WxDChOeoC+0JOQ6
-X-Google-Smtp-Source: AGHT+IH6KE6hCkcgXGBT6Ek728JlwRZgFOUrDsEgNEpxlcXWIF+1DjSA/Zy8kmsTmMUGL6mUkiO2rQ==
-X-Received: by 2002:a17:906:f585:b0:a9a:df:9e58 with SMTP id a640c23a62f3a-a9aaa540e82mr409910166b.16.1729612111421;
-        Tue, 22 Oct 2024 08:48:31 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a23csm353748366b.205.2024.10.22.08.48.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 08:48:31 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99e3b3a411so1108264666b.0;
-        Tue, 22 Oct 2024 08:48:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUS4plXPdZ0H8HYnIc0yWUYDg7n8sC/J9OJT+OmBzvgNr3pytqfVDTHTsgTBoe6FvIjlwtQIZ9LwM6rrp4t@vger.kernel.org, AJvYcCWfLCUuoNSW2mBkI+gzB1KD7vip/YAW3ssKSFHKxSkY12wznHW84+QXTaKYFqwlujWhIGHn1TS2kR8JIh3E@vger.kernel.org
-X-Received: by 2002:a17:907:2cc5:b0:a99:5f65:fd9a with SMTP id
- a640c23a62f3a-a9aaa620d5cmr420810166b.21.1729612110989; Tue, 22 Oct 2024
- 08:48:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004301A01BE;
+	Tue, 22 Oct 2024 15:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729612167; cv=fail; b=KlbnOtVorAh2VPvGa31BTchVa8iPlEPtX2I104vY6ZdLfiLk3lxhzxCQO6h0FGbcKniiIBpxUbv38ZVNG5NiSNw4SjBb9rYv/T6UWfVLu+8EFzwGSXtK75LAa1BxLcP1AvhiopGJu/Sprk/pfHCKeKm0NhPofl0+Wws5CXDl5ME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729612167; c=relaxed/simple;
+	bh=OND9KHjdgCYcDKUgaiP+CrQzNCp58UqZe/uchPb8MBg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EIEGj32CpewCG/j5TESPsicIe02qt7Xy05rH6rnCNkpw90UY+7ycgKmSNBOf63FA+3hzPZqKCgBeRcB3j/INNZY/VVvfzi1oScxiDwGr/PamZWbDesv9MPkFh4kUYEASjo+ir826M+QHGjXpnXQfjRaRnc/4nMDKHzcJl/gW18w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=NHXbWMrT; arc=fail smtp.client-ip=40.107.21.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vpI9pTDq5B2yKEsnJqUVNl7TIXlTKoBfabJfIqsFeWYFAfi/Oc8oq/3rK5RCxcbBeaPfH3mX5lnXBKdGV+Q/SCRHNa/KRy+jHk2HZ2h5R8JfFymMUuqkDiqJvcaXEoNd8raJJUVAkpA7aJ9o84dleJMnjSjN61hlMWpuTe655GpiSQIMNW8Rq2/fE/QRzSzASwMrC4/OQbLO/2ZR8Cf1jKUH+EtzXrBLvyqWNNenaLisPUQ9D4xgCbui4Xo6u1CB7k1c3CDL8EPNLcpanVdyByfW/Oci68ZXKOshLGiAdxDEg8cU4vD9+ex4+0MqC2uB3bHmm6vE6KD7pmjN7c+vlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OND9KHjdgCYcDKUgaiP+CrQzNCp58UqZe/uchPb8MBg=;
+ b=CIiqCboX7hF1vrsnPl5WF0RHd8adL3wSDI2GlInSPzjyJuXrRwhnuoxyhQmscfzuhHLfuie9x7u1vtJFNoXH5eBJQ/SU+ifTiL18Gyl5IU9odmxI3xXuy43f5+qT1nCtNNk9X0zjp0wy+iqwVSlJKpsD49dNjRfG+Pl0Ogj1NNpkyoR90c6mieGZcWsXBK4dMTo1mBqdOzneYRV5nI7599sCwM+FtpOzfYW5tTlmuRi1Bk+awQr0oXe/kFq74OaZG6xRqELI4xA3lQQhr+SazMo8LFL/L52IHxVStYEN2Qm5ayp9IZrM8WSH8dBxdWKchrw3xVbS/OaSbK0KgsVijA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
+ header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OND9KHjdgCYcDKUgaiP+CrQzNCp58UqZe/uchPb8MBg=;
+ b=NHXbWMrTRblK5QL0zeHts8dQqi//Kva22EnaODwfOTs9geyHghAGrr0in1D6f5eJqEecQKWqogl1RVUk6BtMR4RxjEY26BjlcpbLgIQYMemcfExYTAdhXszuuBFuLrJeOVjaFhIRAnwH6oRIX84w/mxuYqN5BM8BLa8PsL1w/jY=
+Received: from DBAPR06MB6901.eurprd06.prod.outlook.com (2603:10a6:10:1a0::11)
+ by PA1PR06MB9252.eurprd06.prod.outlook.com (2603:10a6:102:456::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 15:49:21 +0000
+Received: from DBAPR06MB6901.eurprd06.prod.outlook.com
+ ([fe80::3988:68ff:8fd1:7ea0]) by DBAPR06MB6901.eurprd06.prod.outlook.com
+ ([fe80::3988:68ff:8fd1:7ea0%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 15:49:21 +0000
+From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
+To: Sherry Sun <sherry.sun@nxp.com>, Marco Felsch <m.felsch@pengutronix.de>
+CC: Amitkumar Karwar <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale
+	<neeraj.sanjaykale@nxp.com>, "marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "linux-bluetooth@vger.kernel.org"
+	<linux-bluetooth@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, GEO-CHHER-bsp-development
+	<bsp-development.geo@leica-geosystems.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Thread-Topic: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Thread-Index:
+ AQHbFlGYxegmsfkbQ0S2PUUKI4YS47J5bJAAgAAtywCAAao9AIAAIGOAgBV25oCAABNWAIAAK2IAgAE7AYCAACRCgIAADPSAgAADvgCAAGT1gIAAF8QA
+Date: Tue, 22 Oct 2024 15:49:20 +0000
+Message-ID: <9b09774e-d0ed-4c97-b6a0-e976580b5bb5@leica-geosystems.com>
+References:
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+ <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241022072311.ubh2sia5lwgvebsg@pengutronix.de>
+ <DB9PR04MB8429657FCB48ACAD74FDD471924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241022082256.nzfxqp67tdaxtn56@pengutronix.de>
+ <DB9PR04MB84292445D0FEDB8211ED52C3924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <DB9PR04MB84292445D0FEDB8211ED52C3924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Accept-Language: en-CH, en-US
+Content-Language: aa
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=leica-geosystems.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DBAPR06MB6901:EE_|PA1PR06MB9252:EE_
+x-ms-office365-filtering-correlation-id: 75fbc406-b43e-45ad-2af4-08dcf2b1183f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?anFjcWFGRndxU3hEME11SUpZelY0L2JTZ082LytGVERoT0RmejZtekpWWUVH?=
+ =?utf-8?B?VlhtRXBOS1Z1RUZqTytNK1hEMy9vd1p5alBoUEV4bDd0UDErYjJDVkhidnhZ?=
+ =?utf-8?B?VW5xMWVHbTFDYkFGVkFUWFg3UXJOMnI1RlhmUmwzbkVNUXk3Ym1pbjVrSjVV?=
+ =?utf-8?B?ZXA1VHpRQkNKbTRmYld1ZFV4STlYN0k5ZUFiZEEwTHFpSjU3WDdaRkcwVThL?=
+ =?utf-8?B?VkhVOXRyUGU3TGlMeC8xZi91TkxIWVJUZUtFNTVlS3hIUUFuQy9JbnJkZS9p?=
+ =?utf-8?B?Z3RIS3JnS05nK3pKNU9qM3RRSkFTWTdvc212c1dWd0JneEY3YlUvd1UxZS9x?=
+ =?utf-8?B?L3pYM0ZWem1XbjlIK0FNOFJWMC8zWE1SWUlsS1Vzam1oZW1IUm4vaUZuVGJG?=
+ =?utf-8?B?KzFtRSs4OEFKemlCL0E5S0xwSWRxMTFhcGt0UmVHMnJ5dlVuYzE2dW05cnFx?=
+ =?utf-8?B?dlJ2VWJoaENva2I0QUhVSTlpalFrM3RQZ1pGV3ErUGtpUXJOVCtCMUlwM3NY?=
+ =?utf-8?B?UWZnajBFZ25pUDVOSzhvWVZpWkt3bEJCTnZRS3BHZUptRWlXUWh3WElIazFq?=
+ =?utf-8?B?TjU1TUhkL29kOVNjb3QrODYra1JyQ3o1Z3E0REJSVTM2Q25RM0N6c0x3Y3NZ?=
+ =?utf-8?B?bktQZmJuOXdRZ28zNmQyQjZoR1o3a3I1TjRFZVFRcUZZSWlvQ3NiRS9TdmFF?=
+ =?utf-8?B?L3NSNDlmc2kvdG5jVUtVUkwwZDhLTSsyMWdWL2pTelNmRlBiVVluRTk0VUZG?=
+ =?utf-8?B?ajlKSW9XaSsyTU82bUxiRkMvRHFQRWY5OUF5YWxVdUlqaktzanRxbXBKZjdx?=
+ =?utf-8?B?aU1rQXNPbFY4T1psb2s0Yy96cEt3Z0ROVWFiMStkUHlhUElnQndubys4N3lV?=
+ =?utf-8?B?WU1JeTF6SGlwWlpLaGV5ZkNQMGRIalVneTJHOG9Ncmo2Tmh6QlpMZ21nSjRD?=
+ =?utf-8?B?VHBQODNxU05VejRHQVhtM0pkbXZmdzNEQ01ITERoKzN2elZPdVM0K0YwRzlR?=
+ =?utf-8?B?cEVOOXFiRHphbCtiL09ESkdUdE9vd2tsNW1adGV2SE9TVDJ5eFU0dElsMGJK?=
+ =?utf-8?B?K0grVFJ4eERCeG9IYnUrQURWcy8vb1ZIeEhrUURkeEl0b0NVMWczSGlXQnU0?=
+ =?utf-8?B?Q2NBS0ZaUFBEQ0FtQkZpcE91RzR3Rk1WK2ZnMUdld2Y0eGxWR3U0L000RGJh?=
+ =?utf-8?B?K0RQQU5PNVB3aEFLZC8zWVMvbGttWjRLVkxxUVNucDlLTEVWSE9NWHJrem1R?=
+ =?utf-8?B?M3VTenJSS0k5MEtKY0tkOG9halVSemxnaXh5K1hNRUpHd1J4QWVwT0J5blVB?=
+ =?utf-8?B?Z0pnak8vY0laZzc1MS9jZFRXZms0RnZEcktlcEdwdUdVUUZnVWNoQTFiYVpp?=
+ =?utf-8?B?QmtwblpON3dtb3hNSXFlek9pMWdITUdUdXNHRG1xRER3azhJVFhleVFqV2Q3?=
+ =?utf-8?B?di9KZFNraUxMb1dYQ2tveGxaZW1xQWFidHNwaHFSNndqZmFSSWpOUHN3ZGh4?=
+ =?utf-8?B?dzlCZFdNY2EyeTJ6azhPWnlhUkh5UEFBSkZWZm1TWWZuNEkwUHg2UGQzbWxN?=
+ =?utf-8?B?MnVqOVJUVHVwVlBoMldQZFRLN1VXQzJQS1BESXhFVVJrdzhDUTJGdnk0QW1v?=
+ =?utf-8?B?aUdxSXNreEs0R3lVRE9vcXZTTUJGTW4vVXFGNjUyNUlkTE1ETkpRekxMeEdB?=
+ =?utf-8?B?ZXNFbG8wVW91cnNTczBldXpJdndSSEF6N1RqLzY4UkFVMEtpUTYzNXg1QUN4?=
+ =?utf-8?B?YnNNNStxOU15SkZra2Z5UnAwZDVGU2tPYUtVZDBkWFUrRXYzcE4yeGwzZm02?=
+ =?utf-8?Q?Mvh2J9HeHxt7ZwFgDoynSLIgjidbvwpU9igOo=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBAPR06MB6901.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?c1ZqN2FDNjZDaFVuUWlZUDNqVm9KZE9WQlNaTUxoSk1DU0pEaFoyckh3Q1l5?=
+ =?utf-8?B?ak1UVXJ3d3cyVUp2Mnp3cE5UWDBvZWtKODEwbkk0ME1aVXNsQ3ltZmd2M1Fx?=
+ =?utf-8?B?Z3IyemdjUjVRbkFjWSs2cTFTZzBCalkveE9wS0h6TDVUN1NvVXJLOEpkWGxj?=
+ =?utf-8?B?SW5XazZjTW9BSzdTcFBSci9hSzhRcTJYdVJ2ZjhjZjZzVWNXQ3lld1hnMHla?=
+ =?utf-8?B?NlhzSlNqcXBscDlRTWFvRUkycnlqNGdsWXI1MDlVbnNEQjVEMW1qcThHV3o0?=
+ =?utf-8?B?UnlWYWVZYUJ2SUdyUzVrWk1yc0ZTTzB6VGpPOFlZdFVjMkhNbWI1Skx4ZFd4?=
+ =?utf-8?B?b1VpQlJVY3VjVHpyTzZuV3dldEZXZlM2WHBhSkxkdGVDTHAwSGRWNGMweXFH?=
+ =?utf-8?B?c0h6cTgySmo4RDZDK0FJOGZCcVFQS3R1alZxV2tyZ1doaVdMNkNHL09kM1Yr?=
+ =?utf-8?B?UVppTG5YYUpPcnAvdGx5T2p6cVNlN2dRKzhSMUUwZ2VUbWVHVUx2blBZdzVI?=
+ =?utf-8?B?eVI3MUlJRmpPZ1FsenZMUWs2a3FKTEJjNVJMdWNiY2poTkxmZ1RFVG42YUVs?=
+ =?utf-8?B?emEwZFRKd0dndmpTaUM1aGFUKzZZelliM0Q0bmgzWTZQMFNCUWNlNFRuc3Nw?=
+ =?utf-8?B?KzRDN1JPOHlPeHdTWkdRdFFzTmt4Z0VEOGdrMWljNzhoaWJKWFo5Umd2eXIr?=
+ =?utf-8?B?eDdDaTJRN0VhMWd3MTZ4R1phN2dVVXVBclA2Zm5UT3c5V0wybzBra3pldnhL?=
+ =?utf-8?B?elE1emhKbnRTRlh1NDg1ZzNJVGs1SE9NS3U1ZjRFdk9qT2pRT0dqYUlFa1hX?=
+ =?utf-8?B?bENZcmVESlkwcjhhVDhLQkNQNnhQQ0pJVW9CT2tIeVdKOW9zU0Y0NnQvRW9C?=
+ =?utf-8?B?VlB4d0hKRzZtcnB0dlJ5QWVyVHFOTDh2N3F4dW1aeWpOT3RSSC82NnkxcEtH?=
+ =?utf-8?B?d1BCZ21EeWVEOTBqU0xkSGZRdU55bnFIS0pDaEdaK0I3YWsrZFROQW4wMG0x?=
+ =?utf-8?B?eWU4MG1BMHF3a1U0eVFaQVVCUU90aEIvTlgwb0c2OWZzQ0FzS2ZoY1pxTHd1?=
+ =?utf-8?B?alNrTGdtZmNFT0NsU1pxZk5LaVI3UHhWTUZBQTNoSEw1SkV1bmxmakRmK0NL?=
+ =?utf-8?B?U0RxWFVLNUZoUXZaajBFT3gyUFRVb1hJN2UyVG4yYTZEaGFzZHNyTldHUzhI?=
+ =?utf-8?B?a1dZZFpKTUgyRFdobjd0ZTR2K1JTdER3WnZsZ045bmlmTUhEVFhMWG0xeVBa?=
+ =?utf-8?B?c29lSkQwU1l0T1grYjFNR01CUjN4VjdyQkw2b0NVVVRGeXVCeElxNnJRTkZH?=
+ =?utf-8?B?S3paa1dMWGpTME4vNWhpSElKK1Z1clB5cysyRW10LzdPQ0RJWUFST3hmcFVm?=
+ =?utf-8?B?amJXQTY5Q0VjK2RjQWxURThsMUdyMUpsUUNGYTlzem1BUi95S091MWpzclRx?=
+ =?utf-8?B?Ym5oRFdiYnB2cTRieStBbWpTRE9GTXZ5MlBPUWU2NWoyK0ErZHlhMy96Uklj?=
+ =?utf-8?B?Zjg2UlJWZ2lxMm9mTG5Sc28rQ3NMRXFOL0dITGJXaWpwSjhJeE5QUWRubEZS?=
+ =?utf-8?B?YkZ1ZHhxaHBFcGlhSWtjMFVpd2syaWw1ZTFQMzQ2N05sR1NxVmpka05meDBs?=
+ =?utf-8?B?ZlNkNFZheUpKUldHQmhMbnJlS1V1REFQcXVsZWxSajZQMmhyU2gxQ2psMlo4?=
+ =?utf-8?B?TEpxNUdNSTJTQ2pXK3FBUm4rbXhsbnJQeEl3eERCd21NWTNGYVlHYTE4UFRm?=
+ =?utf-8?B?QWo2TzdGdXFEZ29PTTk5Y1lYUEVsRFZjL01KTmpTaHlqdjh6eFgzNkEyOUJM?=
+ =?utf-8?B?bnRkWXRQR1BxdDdoaTF5MkRlNStJUmFnYWdhT3phU3FEeVI3d2Q2OG9GanlG?=
+ =?utf-8?B?b1VHd0pVSGtsL1UrbEs5KzNyeGhncVhtaDd4ZHpmK1lhUWxRc1NJTUdMWUZU?=
+ =?utf-8?B?ajdRbDBHUVJ5cStPYUdyOWp1ODNMMmFpZmxpWTd0MkFLZWJFb250ZndBcFZs?=
+ =?utf-8?B?cEE0OHc5clR5UThINTBMOUNIZFpSU3JXNVBTYWdTV0gwV0RRS2FrSDRCVVM5?=
+ =?utf-8?B?TXZPdDZsaDdjOEtPTFJKbEZRSThCbkl2UVZoVC9jZGZkOXBtaHMvVWkwdWlD?=
+ =?utf-8?B?c1lFT3BOQldTSFBjdWF6R2N3M1E5TEIxS3h5NU1TSFMyK2JnK2xNU01CYTNG?=
+ =?utf-8?B?dVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4C2EB8A63A88B74882C194156A43568D@eurprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2411941.1729552461@warthog.procyon.org.uk>
-In-Reply-To: <2411941.1729552461@warthog.procyon.org.uk>
-From: Marc Dionne <marc.dionne@auristor.com>
-Date: Tue, 22 Oct 2024 12:48:19 -0300
-X-Gmail-Original-Message-ID: <CAB9dFdvhZurKzcavW9-2gtkv+LcwVm_UZ=LaJc+vcBp0irf7cA@mail.gmail.com>
-Message-ID: <CAB9dFdvhZurKzcavW9-2gtkv+LcwVm_UZ=LaJc+vcBp0irf7cA@mail.gmail.com>
-Subject: Re: [PATCH] afs: Fix missing subdir edit when renamed between parent dirs
-To: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DBAPR06MB6901.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75fbc406-b43e-45ad-2af4-08dcf2b1183f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2024 15:49:20.9089
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: batF0nyPxdhQmJqIzShmaqjk0S3XOUqI/qcCv9Ygbr1ZcSp3hN68qp+MjGtkERZcJIzKljSLbfs4rIbIRMy+DbbzpmGcz3V9BIexklmsNS2a/neWqDexwkDvVseracDU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR06MB9252
 
-On Mon, Oct 21, 2024 at 8:14=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> When rename moves an AFS subdirectory between parent directories, the
-> subdir also needs a bit of editing: the ".." entry needs updating to poin=
-t
-> to the new parent (though I don't make use of the info) and the DV needs
-> incrementing by 1 to reflect the change of content.  The server also send=
-s
-> a callback break notification on the subdirectory if we have one, but we
-> can take care of recovering the promise next time we access the subdir.
->
-> This can be triggered by something like:
->
->     mount -t afs %example.com:xfstest.test20 /xfstest.test/
->     mkdir /xfstest.test/{aaa,bbbb,aaa/ccc}
->     mv /xfstest.test/{aaa/ccc,bbbb/ccc}
->     touch /xfstest.test/bbbb/ccc/d
->
-> When the pathwalk for the touch hits "ccc", kafs spots that the DV is
-> incorrect and downloads it again unnecessarily.
->
-> Fix this, if the rename target is a directory and the old and new
-> parents are different, by:
->
->  (1) Incrementing the DV number of the target locally.
->
->  (2) Editing the ".." entry in the target to refer to its new parent's
->      vnode ID and uniquifier.
->
-> cc: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->  fs/afs/dir.c               |   25 ++++++++++++
->  fs/afs/dir_edit.c          |   91 ++++++++++++++++++++++++++++++++++++++=
-++++++-
->  fs/afs/internal.h          |    2
->  include/trace/events/afs.h |    7 ++-
->  4 files changed, 122 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-> index f8622ed72e08..474062d22712 100644
-> --- a/fs/afs/dir.c
-> +++ b/fs/afs/dir.c
-> @@ -12,6 +12,7 @@
->  #include <linux/swap.h>
->  #include <linux/ctype.h>
->  #include <linux/sched.h>
-> +#include <linux/iversion.h>
->  #include <linux/task_io_accounting_ops.h>
->  #include "internal.h"
->  #include "afs_fs.h"
-> @@ -1823,6 +1824,8 @@ static int afs_symlink(struct mnt_idmap *idmap, str=
-uct inode *dir,
->
->  static void afs_rename_success(struct afs_operation *op)
->  {
-> +       struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
-> +
->         _enter("op=3D%08x", op->debug_id);
->
->         op->ctime =3D op->file[0].scb.status.mtime_client;
-> @@ -1832,6 +1835,22 @@ static void afs_rename_success(struct afs_operatio=
-n *op)
->                 op->ctime =3D op->file[1].scb.status.mtime_client;
->                 afs_vnode_commit_status(op, &op->file[1]);
->         }
-> +
-> +       /* If we're moving a subdir between dirs, we need to update
-> +        * its DV counter too as the ".." will be altered.
-> +        */
-> +       if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-> +           op->file[0].vnode !=3D op->file[1].vnode) {
-> +               u64 new_dv;
-> +
-> +               write_seqlock(&vnode->cb_lock);
-> +
-> +               new_dv =3D vnode->status.data_version + 1;
-> +               vnode->status.data_version =3D new_dv;
-> +               inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
-> +
-> +               write_sequnlock(&vnode->cb_lock);
-> +       }
->  }
->
->  static void afs_rename_edit_dir(struct afs_operation *op)
-> @@ -1873,6 +1892,12 @@ static void afs_rename_edit_dir(struct afs_operati=
-on *op)
->                                  &vnode->fid, afs_edit_dir_for_rename_2);
->         }
->
-> +       if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-> +           new_dvnode !=3D orig_dvnode &&
-> +           test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-> +               afs_edit_dir_update_dotdot(vnode, new_dvnode,
-> +                                          afs_edit_dir_for_rename_sub);
-> +
-
-Empty line with some whitespace.
-
->         new_inode =3D d_inode(new_dentry);
->         if (new_inode) {
->                 spin_lock(&new_inode->i_lock);
-> diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-> index a71bff10496b..fe223fb78111 100644
-> --- a/fs/afs/dir_edit.c
-> +++ b/fs/afs/dir_edit.c
-> @@ -127,10 +127,10 @@ static struct folio *afs_dir_get_folio(struct afs_v=
-node *vnode, pgoff_t index)
->  /*
->   * Scan a directory block looking for a dirent of the right name.
->   */
-> -static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qst=
-r *name,
-> +static int afs_dir_scan_block(const union afs_xdr_dir_block *block, cons=
-t struct qstr *name,
->                               unsigned int blocknum)
->  {
-> -       union afs_xdr_dirent *de;
-> +       const union afs_xdr_dirent *de;
->         u64 bitmap;
->         int d, len, n;
->
-> @@ -492,3 +492,90 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
->         clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
->         goto out_unmap;
->  }
-> +
-> +/*
-> + * Edit a subdirectory that has been moved between directories to update=
- the
-> + * ".." entry.
-> + */
-> +void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnod=
-e *new_dvnode,
-> +                               enum afs_edit_dir_reason why)
-> +{
-> +       union afs_xdr_dir_block *block;
-> +       union afs_xdr_dirent *de;
-> +       struct folio *folio;
-> +       unsigned int nr_blocks, b;
-> +       pgoff_t index;
-> +       loff_t i_size;
-> +       int slot;
-> +
-> +       _enter("");
-> +
-> +       i_size =3D i_size_read(&vnode->netfs.inode);
-> +       if (i_size < AFS_DIR_BLOCK_SIZE) {
-> +               clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-> +               return;
-> +       }
-> +       nr_blocks =3D i_size / AFS_DIR_BLOCK_SIZE;
-> +
-> +       /* Find a block that has sufficient slots available.  Each folio
-> +        * contains two or more directory blocks.
-> +        */
-> +       for (b =3D 0; b < nr_blocks; b++) {
-> +               index =3D b / AFS_DIR_BLOCKS_PER_PAGE;
-> +               folio =3D afs_dir_get_folio(vnode, index);
-> +               if (!folio)
-> +                       goto error;
-> +
-> +               block =3D kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE =
-- folio_pos(folio));
-> +
-> +               /* Abandon the edit if we got a callback break. */
-> +               if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-> +                       goto invalidated;
-> +
-> +               slot =3D afs_dir_scan_block(block, &dotdot_name, b);
-> +               if (slot >=3D 0)
-> +                       goto found_dirent;
-> +
-> +               kunmap_local(block);
-> +               folio_unlock(folio);
-> +               folio_put(folio);
-> +       }
-> +
-> +       /* Didn't find the dirent to clobber.  Download the directory aga=
-in. */
-> +       trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
-> +                          0, 0, 0, 0, "..");
-> +       clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-> +       goto out;
-> +
-> +found_dirent:
-> +       de =3D &block->dirents[slot];
-> +       de->u.vnode  =3D htonl(new_dvnode->fid.vnode);
-> +       de->u.unique =3D htonl(new_dvnode->fid.unique);
-> +
-> +       trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
-> +                          ntohl(de->u.vnode), ntohl(de->u.unique), "..")=
-;
-> +
-> +       kunmap_local(block);
-> +       folio_unlock(folio);
-> +       folio_put(folio);
-> +       inode_set_iversion_raw(&vnode->netfs.inode, vnode->status.data_ve=
-rsion);
-> +
-> +out:
-> +       _leave("");
-> +       return;
-> +
-> +invalidated:
-> +       kunmap_local(block);
-> +       folio_unlock(folio);
-> +       folio_put(folio);
-> +       trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
-> +                          0, 0, 0, 0, "..");
-> +       clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-> +       goto out;
-> +
-> +error:
-> +       trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
-> +                          0, 0, 0, 0, "..");
-> +       clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-> +       goto out;
-> +}
-> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-> index 52aab09a32a9..c9d620175e80 100644
-> --- a/fs/afs/internal.h
-> +++ b/fs/afs/internal.h
-> @@ -1073,6 +1073,8 @@ extern void afs_check_for_remote_deletion(struct af=
-s_operation *);
->  extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct a=
-fs_fid *,
->                              enum afs_edit_dir_reason);
->  extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum =
-afs_edit_dir_reason);
-> +void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnod=
-e *new_dvnode,
-> +                               enum afs_edit_dir_reason why);
->
->  /*
->   * dir_silly.c
-> diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-> index 450c44c83a5d..a0aed1a428a1 100644
-> --- a/include/trace/events/afs.h
-> +++ b/include/trace/events/afs.h
-> @@ -331,7 +331,11 @@ enum yfs_cm_operation {
->         EM(afs_edit_dir_delete,                 "delete") \
->         EM(afs_edit_dir_delete_error,           "d_err ") \
->         EM(afs_edit_dir_delete_inval,           "d_invl") \
-> -       E_(afs_edit_dir_delete_noent,           "d_nent")
-> +       EM(afs_edit_dir_delete_noent,           "d_nent") \
-> +       EM(afs_edit_dir_update_dd,              "u_ddot") \
-> +       EM(afs_edit_dir_update_error,           "u_fail") \
-> +       EM(afs_edit_dir_update_inval,           "u_invl") \
-> +       E_(afs_edit_dir_update_nodd,            "u_nodd")
->
->  #define afs_edit_dir_reasons                             \
->         EM(afs_edit_dir_for_create,             "Create") \
-> @@ -340,6 +344,7 @@ enum yfs_cm_operation {
->         EM(afs_edit_dir_for_rename_0,           "Renam0") \
->         EM(afs_edit_dir_for_rename_1,           "Renam1") \
->         EM(afs_edit_dir_for_rename_2,           "Renam2") \
-> +       EM(afs_edit_dir_for_rename_sub,         "RnmSub") \
->         EM(afs_edit_dir_for_rmdir,              "RmDir ") \
->         EM(afs_edit_dir_for_silly_0,            "S_Ren0") \
->         EM(afs_edit_dir_for_silly_1,            "S_Ren1") \
-
-A few nits:
-- There's an empty line with whitespace that I indicated above.
-- I don't think your example in the commit message is quite sufficient
-to show the problem; after a MakeDir the new directory will always get
-fetched from the server, before or after the fix.  You need to modify
-it before the rename so that the local dir data is valid, for instance
-by creating an additional file in "ccc".
-
-That said the fix looks good and does fix the issue.
-
-Marc
+T24gMjIvMTAvMjAyNCAxNjoyNCwgU2hlcnJ5IFN1biB3cm90ZToNCj4gW+aUtuWIsOatpOmCruS7
+tueahOafkOS6m+S6uumAmuW4uOS4jeS8muaUtuWIsOadpeiHqiBzaGVycnkuc3VuQG54cC5jb20g
+55qE55S15a2Q6YKu5Lu244CC6K+36K6/6ZeuIGh0dHBzOi8vYWthLm1zL0xlYXJuQWJvdXRTZW5k
+ZXJJZGVudGlmaWNhdGlvbu+8jOS7peS6huino+S4uuS7gOS5iOi/meS4gOeCueW+iOmHjeimgeOA
+gl0NCj4NCj4gVGhpcyBlbWFpbCBpcyBub3QgZnJvbSBIZXhhZ29u4oCZcyBPZmZpY2UgMzY1IGlu
+c3RhbmNlLiBQbGVhc2UgYmUgY2FyZWZ1bCB3aGlsZSBjbGlja2luZyBsaW5rcywgb3BlbmluZyBh
+dHRhY2htZW50cywgb3IgcmVwbHlpbmcgdG8gdGhpcyBlbWFpbC4NCj4NCj4NCj4+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+PiBGcm9tOiBNYXJjbyBGZWxzY2ggPG0uZmVsc2NoQHBlbmd1
+dHJvbml4LmRlPg0KPj4gU2VudDogVHVlc2RheSwgT2N0b2JlciAyMiwgMjAyNCA0OjIzIFBNDQo+
+PiBUbzogU2hlcnJ5IFN1biA8c2hlcnJ5LnN1bkBueHAuY29tPg0KPj4gQ2M6IFBPUEVTQ1UgQ2F0
+YWxpbiA8Y2F0YWxpbi5wb3Blc2N1QGxlaWNhLWdlb3N5c3RlbXMuY29tPjsgQW1pdGt1bWFyDQo+
+PiBLYXJ3YXIgPGFtaXRrdW1hci5rYXJ3YXJAbnhwLmNvbT47IE5lZXJhaiBTYW5qYXkgS2FsZQ0K
+Pj4gPG5lZXJhai5zYW5qYXlrYWxlQG54cC5jb20+OyBtYXJjZWxAaG9sdG1hbm4ub3JnOw0KPj4g
+bHVpei5kZW50ekBnbWFpbC5jb207IHJvYmhAa2VybmVsLm9yZzsga3J6aytkdEBrZXJuZWwub3Jn
+Ow0KPj4gY29ub3IrZHRAa2VybmVsLm9yZzsgcC56YWJlbEBwZW5ndXRyb25peC5kZTsgbGludXgt
+DQo+PiBibHVldG9vdGhAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtDQo+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBHRU8tQ0hIRVItYnNwLWRldmVs
+b3BtZW50IDxic3AtDQo+PiBkZXZlbG9wbWVudC5nZW9AbGVpY2EtZ2Vvc3lzdGVtcy5jb20+OyBL
+cnp5c3p0b2YgS296bG93c2tpDQo+PiA8a3J6a0BrZXJuZWwub3JnPg0KPj4gU3ViamVjdDogUmU6
+IFtQQVRDSCAxLzJdIGR0LWJpbmRpbmdzOiBuZXQ6IGJsdWV0b290aDogbnhwOiBhZGQgc3VwcG9y
+dCBmb3INCj4+IHN1cHBseSBhbmQgcmVzZXQNCj4+DQo+PiBPbiAyNC0xMC0yMiwgU2hlcnJ5IFN1
+biB3cm90ZToNCj4+Pg0KPj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4+PiBGcm9t
+OiBNYXJjbyBGZWxzY2ggPG0uZmVsc2NoQHBlbmd1dHJvbml4LmRlPg0KPj4+PiBTZW50OiBUdWVz
+ZGF5LCBPY3RvYmVyIDIyLCAyMDI0IDM6MjMgUE0NCj4+Pj4gVG86IFNoZXJyeSBTdW4gPHNoZXJy
+eS5zdW5AbnhwLmNvbT4NCj4+Pj4gQ2M6IFBPUEVTQ1UgQ2F0YWxpbiA8Y2F0YWxpbi5wb3Blc2N1
+QGxlaWNhLWdlb3N5c3RlbXMuY29tPjsNCj4+Pj4gQW1pdGt1bWFyIEthcndhciA8YW1pdGt1bWFy
+LmthcndhckBueHAuY29tPjsgTmVlcmFqIFNhbmpheSBLYWxlDQo+Pj4+IDxuZWVyYWouc2FuamF5
+a2FsZUBueHAuY29tPjsgbWFyY2VsQGhvbHRtYW5uLm9yZzsNCj4+Pj4gbHVpei5kZW50ekBnbWFp
+bC5jb207IHJvYmhAa2VybmVsLm9yZzsga3J6aytkdEBrZXJuZWwub3JnOw0KPj4+PiBjb25vcitk
+dEBrZXJuZWwub3JnOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOyBsaW51eC0NCj4+Pj4gYmx1ZXRv
+b3RoQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0K
+Pj4+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBHRU8tQ0hIRVItYnNwLWRldmVsb3BtZW50IDxi
+c3AtDQo+Pj4+IGRldmVsb3BtZW50Lmdlb0BsZWljYS1nZW9zeXN0ZW1zLmNvbT47IEtyenlzenRv
+ZiBLb3psb3dza2kNCj4+Pj4gPGtyemtAa2VybmVsLm9yZz4NCj4+Pj4gU3ViamVjdDogUmU6IFtQ
+QVRDSCAxLzJdIGR0LWJpbmRpbmdzOiBuZXQ6IGJsdWV0b290aDogbnhwOiBhZGQNCj4+Pj4gc3Vw
+cG9ydCBmb3Igc3VwcGx5IGFuZCByZXNldA0KPj4+Pg0KPj4+PiBPbiAyNC0xMC0yMiwgU2hlcnJ5
+IFN1biB3cm90ZToNCj4+Pj4+PiBPbiAyNC0xMC0yMSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90
+ZToNCj4+Pj4+Pj4gT24gMjEvMTAvMjAyNCAwODo0MSwgTWFyY28gRmVsc2NoIHdyb3RlOg0KPj4+
+Pj4+Pj4gT24gMjQtMTAtMDcsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+Pj4+Pj4+Pj4g
+T24gMDcvMTAvMjAyNCAxNDo1OCwgUE9QRVNDVSBDYXRhbGluIHdyb3RlOg0KPj4+Pj4+Pj4+Pj4+
+PiArICB2Y2Mtc3VwcGx5Og0KPj4+Pj4+Pj4+Pj4+PiArICAgIGRlc2NyaXB0aW9uOg0KPj4+Pj4+
+Pj4+Pj4+PiArICAgICAgcGhhbmRsZSBvZiB0aGUgcmVndWxhdG9yIHRoYXQgcHJvdmlkZXMgdGhl
+IHN1cHBseQ0KPj4gdm9sdGFnZS4NCj4+Pj4+Pj4+Pj4+Pj4gKw0KPj4+Pj4+Pj4+Pj4+PiArICBy
+ZXNldC1ncGlvczoNCj4+Pj4+Pj4+Pj4+Pj4gKyAgICBkZXNjcmlwdGlvbjoNCj4+Pj4+Pj4+Pj4+
+Pj4gKyAgICAgIENoaXAgcG93ZXJkb3duL3Jlc2V0IHNpZ25hbCAoUERuKS4NCj4+Pj4+Pj4+Pj4+
+Pj4gKw0KPj4+Pj4+Pj4+Pj4+IEhpIENhdGFsaW4sDQo+Pj4+Pj4+Pj4+Pj4NCj4+Pj4+Pj4+Pj4+
+PiBGb3IgTlhQIFdJRkkvQlQgY2hpcCwgV0lGSSBhbmQgQlQgc2hhcmUgdGhlIG9uZSBQRG4gcGlu
+LA0KPj4+Pj4+Pj4+Pj4+IHdoaWNoDQo+Pj4+Pj4gbWVhbnMgdGhhdCBib3RoIHdpZmkgYW5kIEJU
+IGNvbnRyb2xsZXIgd2lsbCBiZSBwb3dlcmVkIG9uIGFuZA0KPj4+Pj4+IG9mZiBhdCB0aGUgc2Ft
+ZSB0aW1lLg0KPj4+Pj4+Pj4+Pj4+IFRha2luZyB0aGUgTS4yIE5YUCBXSUZJL0JUIG1vZHVsZSBh
+cyBhbiBleGFtcGxlLA0KPj4+Pj4+IHBpbjU2KFdfRElTQUJMRTEpIGlzIGNvbm5lY3RlZCB0byB0
+aGUgV0lGSS9CVCBjaGlwIFBEbiBwaW4sIHdlDQo+Pj4+Pj4gaGFzIGFscmVhZHkgY29udHJvbGxl
+ZCB0aGlzIHBpbiBpbiB0aGUgY29ycmVzcG9uZGluZyBQQ0llL1NESU8NCj4+Pj4+PiBjb250cm9s
+bGVyIGR0cw0KPj4+PiBub2Rlcy4NCj4+Pj4+Pj4+Pj4+PiBJdCBpcyBub3QgY2xlYXIgdG8gbWUg
+d2hhdCBleGFjdGx5IHBpbnMgZm9yIHZjYy1zdXBwbHkNCj4+Pj4+Pj4+Pj4+PiBhbmQgcmVzZXQt
+Z3Bpb3MNCj4+Pj4+PiB5b3UgZGVzY3JpYmluZyBoZXJlLiBDYW4geW91IGhlbHAgdW5kZXJzdGFu
+ZCB0aGUgY29ycmVzcG9uZGluZw0KPj4+Pj4+IHBpbnMgb24gTS4yIGludGVyZmFjZSBhcyBhbiBl
+eGFtcGxlPyBUaGFua3MuDQo+Pj4+Pj4+Pj4+IEhpIFNoZXJyeSwNCj4+Pj4+Pj4+Pj4NCj4+Pj4+
+Pj4+Pj4gUmVndWxhdG9ycyBhbmQgcmVzZXQgY29udHJvbHMgYmVpbmcgcmVmY291bnRlZCwgd2Ug
+Y2FuDQo+Pj4+Pj4+Pj4+IHRoZW4gaW1wbGVtZW50IHBvd2VydXAgc2VxdWVuY2UgaW4gYm90aCBi
+bHVldG9vdGgvd2xhbg0KPj4+Pj4+Pj4+PiBkcml2ZXJzIGFuZCBoYXZlIHRoZSBkcml2ZXJzIG9w
+ZXJhdGUgaW5kZXBlbmRlbnRseS4gVGhpcw0KPj4+Pj4+Pj4+PiB3YXkgYmx1ZXRvb3RoIGRyaXZl
+ciB3b3VsZCBoYXMgbm8gZGVwZW5kYW5jZSBvbiB0aGUgd2xhbg0KPj4gZHJpdmVyIGZvciA6DQo+
+Pj4+Pj4+Pj4+IC0gaXRzIHBvd2VyIHN1cHBseQ0KPj4+Pj4+Pj4+Pg0KPj4+Pj4+Pj4+PiAtIGl0
+cyByZXNldCBwaW4gKFBEbikNCj4+Pj4+Pj4+Pj4NCj4+Pj4+Pj4+Pj4gLSBpdHMgZmlybXdhcmUg
+KGJlaW5nIGRvd25sb2FkZWQgYXMgcGFydCBvZiB0aGUgY29tYm8NCj4+Pj4+Pj4+Pj4gZmlybXdh
+cmUpDQo+Pj4+Pj4+Pj4+DQo+Pj4+Pj4+Pj4+IEZvciB0aGUgd2xhbiBkcml2ZXIgd2UgdXNlIG1t
+YyBwb3dlciBzZXF1ZW5jZSB0byBkcml2ZSB0aGUNCj4+Pj4+Pj4+Pj4gY2hpcCByZXNldCBwaW4g
+YW5kIHRoZXJlJ3MgYW5vdGhlciBwYXRjaHNldCB0aGF0IGFkZHMNCj4+Pj4+Pj4+Pj4gc3VwcG9y
+dCBmb3IgcmVzZXQgY29udHJvbCBpbnRvIHRoZSBtbWMgcHdyc2VxIHNpbXBsZSBkcml2ZXIuDQo+
+Pj4+Pj4+Pj4+DQo+Pj4+Pj4+Pj4+PiBQbGVhc2Ugd3JhcCB5b3VyIHJlcGxpZXMuDQo+Pj4+Pj4+
+Pj4+Pg0KPj4+Pj4+Pj4+Pj4gSXQgc2VlbXMgeW91IG5lZWQgcG93ZXIgc2VxdWVuY2luZyBqdXN0
+IGxpa2UgQmFydG9zeiBkaWQNCj4+Pj4+Pj4+Pj4+IGZvcg0KPj4+Pj4+IFF1YWxjb21tIFdDTi4N
+Cj4+Pj4+Pj4+Pj4gSGkgS3J6eXN6dG9mLA0KPj4+Pj4+Pj4+Pg0KPj4+Pj4+Pj4+PiBJJ20gbm90
+IGZhbWlsaWFyIHdpdGggcG93ZXIgc2VxdWVuY2luZywgYnV0IGxvb2tzIGxpa2Ugd2F5DQo+Pj4+
+Pj4+Pj4+IG1vcmUgY29tcGxpY2F0ZWQgdGhhbiByZXNldCBjb250cm9scy4gU28sIHdoeSBwb3dl
+cg0KPj4+Pj4+Pj4+PiBzZXF1ZW5jaW5nIGlzIHJlY29tbWVuZGVkIGhlcmUgPyBJcyBpdCBiL2Mg
+YSBzdXBwbHkgaXMNCj4+IGludm9sdmVkID8NCj4+Pj4+Pj4+PiBCYXNlZCBvbiBlYXJsaWVyIG1l
+c3NhZ2U6DQo+Pj4+Pj4+Pj4NCj4+Pj4+Pj4+PiAiRm9yIE5YUCBXSUZJL0JUIGNoaXAsIFdJRkkg
+YW5kIEJUIHNoYXJlIHRoZSBvbmUgUERuIHBpbiwNCj4+Pj4+Pj4+PiB3aGljaCBtZWFucyB0aGF0
+IGJvdGggd2lmaSBhbmQgQlQgY29udHJvbGxlciB3aWxsIGJlDQo+Pj4+Pj4+Pj4gcG93ZXJlZCBv
+biBhbmQgb2ZmIGF0IHRoZSBzYW1lIHRpbWUuIg0KPj4+Pj4+Pj4+DQo+Pj4+Pj4+Pj4gYnV0IG1h
+eWJlIHRoYXQncyBub3QgbmVlZGVkLiBObyBjbHVlLCBJIGRvbid0IGtub3cgdGhlIGhhcmR3YXJl
+Lg0KPj4+Pj4+Pj4+IEJ1dCBiZSBjYXJlZnVsbHkgd2hhdCB5b3Ugd3JpdGUgaW4gdGhlIGJpbmRp
+bmdzLCBiZWNhdXNlDQo+Pj4+Pj4+Pj4gdGhlbiBpdCB3aWxsIGJlDQo+Pj4+Pj4gQUJJLg0KPj4+
+Pj4+Pj4gV2Ugbm90aWNlZCB0aGUgbmV3IHBvd2VyLXNlcXVlbmNpbmcgaW5mcmFzdHJ1Y3R1cmUg
+d2hpY2ggaXMNCj4+Pj4+Pj4+IHBhcnQgb2YNCj4+Pj4+Pj4+IDYuMTEgdG9vIGJ1dCBJIGRvbid0
+IHRoaW5rIHRoYXQgdGhpcyBwYXRjaCBpcyB3cm9uZy4gVGhlIERUDQo+Pj4+Pj4+PiBBQkkgd29u
+J3QgYnJlYWsgaWYgd2Ugc3dpdGNoIHRvIHRoZSBwb3dlci1zZXF1ZW5jaW5nIGxhdGVyDQo+Pj4+
+Pj4+PiBvbiBzaW5jZSB0aGUNCj4+Pj4+PiAicmVzZXQtZ3Bpb3MiDQo+Pj4+Pj4+PiBhcmUgbm90
+IG1hcmtlZCBhcyByZXF1aXJlZC4gU28gaXQgaXMgdXAgdG8gdGhlIGRyaXZlciB0bw0KPj4+Pj4+
+Pj4gaGFuZGxlIGl0IGVpdGhlciB2aWEgYSBzZXBhcmF0ZSBwb3dlci1zZXF1ZW5jZSBkcml2ZXIg
+b3IgdmlhDQo+PiAicG93ZXItc3VwcGx5Ig0KPj4+Pj4+Pj4gYW5kICJyZXNldC1ncGlvcyIgZGly
+ZWN0bHkuDQo+Pj4+Pj4+IFRoYXQncyBub3QgdGhlIHBvaW50LiBXZSBleHBlY3QgY29ycmVjdCBo
+YXJkd2FyZSBkZXNjcmlwdGlvbi4NCj4+Pj4+Pj4gSWYgeW91IHNheSBub3cgaXQgaGFzICJyZXNl
+dC1ncGlvcyIgYnV0IGxhdGVyIHNheSAiYWN0dWFsbHkNCj4+Pj4+Pj4gbm8sIGJlY2F1c2UgaXQg
+aGFzIFBNVSIsIEkgcmVzcG9uZDogbm8uIERlc2NyaWJlIHRoZSBoYXJkd2FyZSwNCj4+Pj4+Pj4g
+bm90IGN1cnJlbnQNCj4+Pj4gTGludXguDQo+Pj4+Pj4gSSBrbm93IHRoYXQgRFQgYWJzdHJhY3Rz
+IHRoZSBIVy4gVGhhdCBzYWlkIEkgZG9uJ3Qgc2VlIHRoZQ0KPj4+Pj4+IHByb2JsZW0gd2l0aCB0
+aGlzIHBhdGNoLiBUaGUgSFcgaXMgYWJzdHJhY3RlZCBqdXN0IGZpbmU6DQo+Pj4+Pj4NCj4+Pj4+
+PiBzaGFyZWQgUERuICAgICAgICAgIC0+IHJlc2V0LWdwaW9zDQo+Pj4+Pj4gc2hhcmVkIHBvd2Vy
+LXN1cHBseSAtPiB2Y2Mtc3VwcGx5DQo+Pj4+PiBBY3R1YWxseSB3ZSBzaG91bGQgdXNlIHZjYy1z
+dXBwbHkgdG8gY29udHJvbCB0aGUgUERuIHBpbiwgdGhpcyBpcw0KPj4+Pj4gdGhlIHBvd2VyIHN1
+cHBseSBmb3IgTlhQIHdpZmkvQlQuDQo+Pj4+IFBsZWFzZSBkb24ndCBzaW5jZSB0aGlzIGlzIHJl
+Z3VsYXIgcGluIG9uIHRoZSB3bGFuL2J0IGRldmljZSBub3QgdGhlDQo+PiByZWd1bGF0b3IuDQo+
+Pj4+IFBlb3BsZSBvZnRlbiBkbyB0aGF0IGZvciBHUElPcyBpZiB0aGUgZHJpdmVyIGlzIG1pc3Np
+bmcgdGhlIHN1cHBvcnQNCj4+Pj4gdG8gcHVsbCB0aGUgcmVzZXQvcGRuL2VuYWJsZSBncGlvIGJ1
+dCB0aGUgZW5hYmxlLWdwaW8gb24gdGhlDQo+Pj4+IHJlZ3VsYXRvciBpcyB0byBlbmFibGUgdGhl
+IHJlZ3VsYXRvciBhbmQgX25vdF8gdGhlIGJ0L3dsYW4gZGV2aWNlLg0KPj4+Pg0KPj4+PiBUaGVy
+ZWZvcmUgdGhlIGltcGxlbWVudGF0aW9uIENhdGFsaW4gcHJvdmlkZWQgaXMgdGhlIGNvcnJlY3Qg
+b25lLg0KPj4+Pg0KPj4+IEZvciBOWFAgd2lmaS9CVCwgdGhlIFBEbiBpcyB0aGUgb25seSBwb3dl
+ciBjb250cm9sIHBpbiwgbm8gc3BlY2lmaWMNCj4+PiByZWd1bGF0b3IsIHBlciBteSB1bmRlcnN0
+YW5kaW5nLCBpdCBpcyBhIGNvbW1vbiB3YXkgdG8gY29uZmlndXJlIHRoaXMNCj4+PiBwaW4gYXMg
+dGhlIHZjYy1zdXBwbHkgZm9yIHRoZSB3aWZpIGludGVyZmFjZShTRElPIG9yIFBDSWUpLg0KPj4g
+TkFDSy4gRWFjaCBhY3RpdmUgZXh0ZXJuYWwgY2hpcCBuZWVkcyBwb3dlciwgdGhpcyBpcyBzdXBw
+bGllZCB2aWEgYW4gc3VwcGx5LQ0KPj4gcmFpbCBhbmQgdGhpcyBpcyB3aGF0IHZjYy92ZGQvdmEv
+dmRpby92KioqLXN1cHBseSBhcmUgdXNlZCBmb3IuDQo+Pg0KPj4gVGhlIFBEbiBpcyBhIGRpZ2l0
+YWwgaW5wdXQgc2lnbmFsIHdoaWNoIHRlbGxzIHRoZSBjaGlwIHRvIGdvIGludG8gcG93ZXItDQo+
+PiBkb3duL3Jlc2V0IG1vZGUgb3Igbm90Lg0KPj4NCj4+PiByZWdfdXNkaGMzX3ZtbWM6IHJlZ3Vs
+YXRvci11c2RoYzMgew0KPj4+ICAgICAgICAgICBjb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhl
+ZCI7DQo+Pj4gICAgICAgICAgIHJlZ3VsYXRvci1uYW1lID0gIldMQU5fRU4iOw0KPj4+ICAgICAg
+ICAgICByZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4+PiAgICAgICAgICAg
+cmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzMwMDAwMD47DQo+Pj4gICAgICAgICAgIGdwaW8g
+PSA8JnBjYWw2NTI0IDIwIEdQSU9fQUNUSVZFX0hJR0g+Ow0KPj4+ICAgICAgICAgICBlbmFibGUt
+YWN0aXZlLWhpZ2g7DQo+Pj4gfTsNCj4+IFRoaXMgaXMgd2hhdCBJIG1lYW50IHByZXZpb3VzbHks
+IHlvdSBkbyB1c2UgYSByZWd1YWx0b3IgZGV2aWNlIGZvciBzd2l0Y2hpbmcNCj4+IHRoZSBQRG4g
+c2lnbmFsLiBUaGlzIGlzIG5vdCBjb3JyZWN0LCBhbGJlaXQgYSBsb3Qgb2YgcGVvcGxlIGFyZSBk
+b2luZyB0aGlzDQo+PiBiZWNhdXNlIHRoZXkgZG9uJ3Qgd2FudCB0byBhZGFwdCB0aGUgZHJpdmVy
+LiBUaGUgJ2dwaW8nDQo+PiB3aXRoaW4gdGhpcyByZWd1YWx0b3Igc2hvdWxkIGVuYWJsZS9kaXNh
+YmxlIHRoaXMgcGFydGljdWxhciBwaHlzaWNhbCByZWd1YWx0b3IuDQo+Pg0KPiBTb3JyeSBJIHNl
+ZSBpdCBkaWZmZXJlbnRseS4gSSBjaGVja2VkIHRoZSBkYXRhc2hlZXQgb2YgTlhQIHdpZmkgY2hp
+cCh0YWtpbmcgSVc2MTINCj4gYXMgYW4gZXhhbXBsZSksIHRoZSBQRG4gcGluIGlzIG5vdCB0aGUg
+QlQgcmVzZXQgcGluLCB3ZSB1c3VhbGx5IHRha2UgaXQgYXMgdGhlDQo+IFBNSUNfRU4vV0xfUkVH
+X09OIHBpbiB0byBjb250cm9sIHRoZSB3aG9sZSBjaGlwIHBvd2VyIHN1cHBseS4NCj4NCj4gSSB0
+aGluayB0aGUgcmVzZXQtZ3BpbyBhZGRlZCBoZXJlIHNob3VsZCBjb250cm9sIHRoZSBJTkRfUlNU
+X0JUIHBpbg0KPiAoSW5kZXBlbmRlbnQgc29mdHdhcmUgcmVzZXQgZm9yIEJsdWV0b290aCksIHNp
+bWlsYXIgZm9yIHRoZQ0KPiBJTkRfUlNUX1dMIHBpbihJbmRlcGVuZGVudCBzb2Z0d2FyZSByZXNl
+dCBmb3IgV2ktRmkpLg0KPg0KPiBCZXN0IFJlZ2FyZHMNCj4gU2hlcnJ5DQoNClBEbiBpcyBub3Qg
+dGhlIEJUIHJlc2V0IDoNCg0KLSBQRG4gaXMgYSBjaGlwIHJlc2V0IGFuZCBpcyBzaGFyZWQgYi93
+IEJUIGFuZCBXSUZJIDogaGVuY2UsIGl0IG5lZWRzIHRvIA0KYmUgbWFuYWdlZCBhcyBhIHJlc2V0
+IGNvbnRyb2wNCg0KLSBCVCByZXNldCBpcyBzcGVjaWZpYyB0byBCVCBhbmQgY2FuIGJlIGhhbmRs
+ZWQgYXMgYSBzaW1wbGUgZ3BpbyBhcyBpdCdzIA0Kbm90IGJlaW5nIHNoYXJlZCB3aXRoIG90aGVy
+IGRyaXZlciAoZS5nIFdJRkkpDQoNCkkndmUgb25seSBhZGRlZCBzdXBwb3J0IGZvciBwb3dlci1z
+dXBwbHkgYW5kIFBEbi4NCg0KQlQgc3BlY2lmaWMgcmVzZXQgaGFzIGJlZW4gaWdub3JlZCBzbyBm
+YXIgYXMgaXQncyBvcHRpb25hbCBzb2Z0d2FyZSANCnJlc2V0IGFuZCBpdCBjYW4gYmUgbGVmdCBv
+cGVuIGlmIG5vdCBuZWVkZWQgaW4gdGhlIGRlc2lnbi4NCg0KDQo=
 
