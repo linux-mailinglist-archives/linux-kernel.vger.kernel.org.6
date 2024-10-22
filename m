@@ -1,171 +1,276 @@
-Return-Path: <linux-kernel+bounces-376847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001479AB6A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:21:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325E39AB6A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F721F244D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB5A1C23264
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC471CB30A;
-	Tue, 22 Oct 2024 19:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="bELYHvwZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H6zspTfZ"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB631CB30A;
+	Tue, 22 Oct 2024 19:19:56 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAB2145A1C;
-	Tue, 22 Oct 2024 19:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3621C9DD8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729624875; cv=none; b=LH55ai7sFNvVSSKvKZEBqBfYizLjU8Dmv6gDCEnuEv20R6+O9w0qHUOtdYuWhhX+Q7CyA9qxKg3Z2ZE/mA27J7fcJnDVxo+TsIFH7SuR9GftYuxDh/r8hR6paRmoRf9Gm/aFETrivNAEii2LqMsjx4xDrx19LmnENhiDxYk2FrQ=
+	t=1729624796; cv=none; b=bC7LbKthxGH5VtiIYy+ShcdYrGwrq32vq1o+ehPqUiBEY9MH5yQ4c3WYdR2FOE/PhXWKUPZR7xtxBnhp4ffs5HJtz59BwyZMy3HSuoDjyThVhEVtgUexmUivzo0DZfHbkpixdcXspVUS62ZRdQxzA75ivlNsDI8vpz78MpSPbKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729624875; c=relaxed/simple;
-	bh=8hqHwDO0XlcLjjZBbacn4BFLTsGpQmiwPIKeRXlimLo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hKydjGIdj78lG/eixjDVROySRlcy/lUh299OMVnzI9aOxXsn1ob3cRn+98SeLct6kUlqbs8X9VBjQoT0fYbiNGKAbVPzXd+2Wt30pxhWuGIG10uEFc+xcf5XQRa7x3CZ7vRLId8rB1BmF2UdKcctYLcR617vaUVbEUO+TpmuoNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=bELYHvwZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H6zspTfZ; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 06E5B25400B7;
-	Tue, 22 Oct 2024 15:21:11 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-02.internal (MEProxy); Tue, 22 Oct 2024 15:21:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729624870;
-	 x=1729711270; bh=YHB2IYFWfTwBLpy762QpSjMtmDROEmTXcySdS9WRAhs=; b=
-	bELYHvwZZKmVwLK3nDNvaxwcPBwFkOq4OpoVCw0j/BRXWetiavR9nn3lw3SkNNwn
-	PV/eV2JK6HIk2grvgL89AB08tXRKggy98jJSA6a85jW4kL2lum+UCHghlJ0v4rr4
-	692ZZTpAKBrO7D2WoPqHzxhBOPUtTduqUqk66FNxVoc5pBcCGSJP74gX1wASWAf0
-	TLSJz0kukfKsey9EwJfIipiZnxhPJPVUnl312x0L9gwL4PoPpt+A0vufPk++vTAs
-	HtrFC7IlGlyk3rJhYQaaqr0XJ5sVP8kPMq8sFCl8Fbm3Zkwa6w2prc1zuXSUYwuC
-	sN2GFuYoilW2+t+6LTuTWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729624870; x=
-	1729711270; bh=YHB2IYFWfTwBLpy762QpSjMtmDROEmTXcySdS9WRAhs=; b=H
-	6zspTfZlh4TUlusn/j/Dyh3Q0op8h5A4kn+3PQ3v4yUaWmMHmeygnBtCDg++vxwl
-	++x2RyvWl5mIeYSc6ZaVk7q2B2HN4coVUfiu6udHJba+RpWNq1wxj2GnfgRbR60q
-	knzBU9gDs707V1im9212HNBcKK1yYQkkkVCHLDhaXPf3HQjP9/y5nZaonot86T9u
-	+ZTW6g+Rmx0so8SwFGwUvw+oxB40B5C+p1P0kt3kBl9su2lMxAtf0N9LHYeHWqGc
-	4LxUdmwwR2ZnroZQrTaxISUfyv4uI9MhYZfNRnyoK+z0ui9H9b7oHsZ2pAec3m0f
-	rj1tK7EvBNzu+9imwpqtA==
-X-ME-Sender: <xms:JvsXZznpfbCTvm9yPQ0PsxqHIRdLWTGJVnV1J0VQnDKBRUrZVbZ4aA>
-    <xme:JvsXZ22fp_uUSo_hSu4pWM7mixR_47uEeBiXVqm2JoWWmbYVl0CxsQDvf3BKHscfr
-    oiTdU4kvJn89qOJ3d0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgudefiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfevkeejueeukeef
-    hfelleejheeuudfgteffvdetkeffjeduleffvdejkeefhedvnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
-    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdr
-    tghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:JvsXZ5ondzVpjtEPgaXCTp3nZHXmZa9TMFjAElajzVVr4wSRNGwvUw>
-    <xmx:JvsXZ7mkKyRcTJfii_OPi7d14ixqkphGkMCsYThuxFwQn-Jgkj6uJw>
-    <xmx:JvsXZx0dYyEmQvIhG0Db_g2_DZwK1FkLa0lUWFtirzLNHoanMCwP8A>
-    <xmx:JvsXZ6sP_sBfpzQHly_IoKNxzK-UbL8waeNjYFmpRMmdvLmAjXdOzw>
-    <xmx:JvsXZ6yf2grjlqmEFtAY5aAKdQ4tEPe-u-7SvC09zYrdpFHrtuPBbCOO>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4F8B03C0066; Tue, 22 Oct 2024 15:21:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729624796; c=relaxed/simple;
+	bh=wshjq/oxHWC7mtxx3lsUikYyyMnLYQh5pu/b/Vxt1QI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MIFij16lMk20rc9umNBOPCj6juQoPcf3KSmls/EoonfZ8Uz0pn3iVAnU/VzsEFwVg1fcBMhyQK8nQrvw9b2J0L0L2C8+BbwIgFYr2DYU0oySoNL1vHM6svLcHbpj0g6N5Sw5prXbMBr0x2EszrvzJd9Nuz+w8Yy+yjUU1vNCuyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so61090985ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:19:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729624793; x=1730229593;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7j03T2wlfYmatPG5AVeoste/ARfMJozjZtqiBQvfIvw=;
+        b=X71IY8tYRsxHVKohLye9c0F5MB4oNK37uTDO/0Dqil3sY9OxLEflZKqSFO+7QptvK2
+         QXh5tqmfb6KHjA3vEh70O/yy4XLYztq+3YgjaQawksgww5lOFIydtdgZvah3Y3ehXQDD
+         +IbpfkZImGpQOaCUlN0hGCGSLvXO6yKNbklEJWgrQDgCb97Idh0hop3F2zvIzETUwuf2
+         hFTHkH85M8Pm62AVT9ykqM4yrEsUR4BTIm5IPPqJPoBf+ouWRIMh9xZsYHCrTRwi9r2F
+         nngtilDUrLGMXcstOTzGrZLQmd5knBEI0cFwKu9XdfrjMy5tPfJTegAfI7qyxq+zRotv
+         deBA==
+X-Gm-Message-State: AOJu0Yx7VPOGdN1UC4dbChevIuyW9NRcaIejbb1y1bui5dGun1GuL3JX
+	zVQT7aP0FnBG0zrSph1L8RdWxDxrM8pYND0wD7yyGtX6tDDGXYq5OoC9kZYinh4U+HGMo06uGCk
+	B2L8t3AMcWehLWrIFlNEH84YrdLNyZM+7BFpVW9bAMUPztyVHcYpHJDk=
+X-Google-Smtp-Source: AGHT+IHc5hSkQ14ZGbtXAqNKEtDK9a6JSIu5KMIytV+osWW30EREKjpZDdsQSI9TQ3lXlsIsbG9/1LQdqZFuL3/1WDGO3GBCIi3Z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 22 Oct 2024 15:19:23 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Message-Id: <7b3de78f-fa9f-4213-b9c2-3dfb9c7f3e45@app.fastmail.com>
-In-Reply-To: <6ced79c1-4bff-f44c-c61c-56ae7d9758c3@linux.intel.com>
-References: <mpearson-lenovo@squebb.ca>
- <20241021193837.7641-1-mpearson-lenovo@squebb.ca>
- <20241021193837.7641-3-mpearson-lenovo@squebb.ca>
- <6ced79c1-4bff-f44c-c61c-56ae7d9758c3@linux.intel.com>
-Subject: Re: [PATCH 3/4] platform/x86: think-lmi: Allow empty admin password
-Content-Type: text/plain; charset=utf-8
+X-Received: by 2002:a05:6e02:180a:b0:3a0:4d1f:519c with SMTP id
+ e9e14a558f8ab-3a4d592e278mr2298515ab.3.1729624793495; Tue, 22 Oct 2024
+ 12:19:53 -0700 (PDT)
+Date: Tue, 22 Oct 2024 12:19:53 -0700
+In-Reply-To: <000000000000797bd1060a457c08@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6717fad9.050a0220.10f4f4.016c.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ilpo
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On Tue, Oct 22, 2024, at 3:59 AM, Ilpo J=C3=A4rvinen wrote:
-> On Mon, 21 Oct 2024, Mark Pearson wrote:
->
->> SVP =3D BIOS Supervisor/Admin password
->> SMP =3D BIOS System password
->>=20
->> If SMP ACL is enabled in the BIOS then the system allows you to set t=
-he
->> SMP without a SVP password configured. Change code to allow this.
->> BIOS will return permissions error if SVP is required.
->>=20
->> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> ---
->>  drivers/platform/x86/think-lmi.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/=
-think-lmi.c
->> index 46ab82fb2898..751e351dfc42 100644
->> --- a/drivers/platform/x86/think-lmi.c
->> +++ b/drivers/platform/x86/think-lmi.c
->> @@ -469,7 +469,12 @@ static ssize_t new_password_store(struct kobject=
- *kobj,
->>  		if (ret)
->>  			goto out;
->> =20
->> -		if (tlmi_priv.pwd_admin->pwd_enabled) {
->> +		/*
->> +		 * Note admin password not always required if SMPControl enabled i=
-n BIOS,
->
-> is not always required
->
->> +		 * So only set if it's configured.
->> +		 * Let BIOS figure it out - we'll get an error if operation not pe=
-rmitted
->
-> operation is not permitted.
->
-> Please reflow the comment to fit into 80 chars (this only relates to=20
-> comments to keep their line lengths readable without large eye movemen=
-t).
->
->> +		 */
->> +		if (tlmi_priv.pwd_admin->pwd_enabled && strlen(tlmi_priv.pwd_admin=
-->password)) {
->>  			ret =3D tlmi_opcode_setting("WmiOpcodePasswordAdmin",
->>  					tlmi_priv.pwd_admin->password);
->>  			if (ret)
->>=20
->
-> --=20
->  i.
+***
 
-Thanks for the review.
-I'll update those. I'll give it a couple of days in case there is any ot=
-her feedback
-Mark
+Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+Author: luiz.dentz@gmail.com
+
+#syz test
+
+On Tue, Oct 22, 2024 at 12:44=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> #syz test
+>
+> On Mon, Oct 7, 2024 at 4:54=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > #syz test
+> >
+> > On Mon, Oct 7, 2024 at 1:16=E2=80=AFPM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> > >
+> > > #syz test
+> > >
+> > > On Fri, Oct 4, 2024 at 1:24=E2=80=AFPM Luiz Augusto von Dentz
+> > > <luiz.dentz@gmail.com> wrote:
+> > > >
+> > > > #syz test
+> > > >
+> > > > On Fri, Oct 4, 2024 at 12:06=E2=80=AFPM Luiz Augusto von Dentz
+> > > > <luiz.dentz@gmail.com> wrote:
+> > > > >
+> > > > > #syz test
+> > > > >
+> > > > > On Thu, Oct 3, 2024 at 3:21=E2=80=AFPM Luiz Augusto von Dentz
+> > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > >
+> > > > > > #syz test
+> > > > > >
+> > > > > > On Thu, Oct 3, 2024 at 12:32=E2=80=AFPM Luiz Augusto von Dentz
+> > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > >
+> > > > > > > #syz test
+> > > > > > >
+> > > > > > > On Thu, Oct 3, 2024 at 11:38=E2=80=AFAM Luiz Augusto von Dent=
+z
+> > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > #syz test
+> > > > > > > >
+> > > > > > > > On Wed, Oct 2, 2024 at 4:46=E2=80=AFPM Luiz Augusto von Den=
+tz
+> > > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > > >
+> > > > > > > > > #syz test
+> > > > > > > > >
+> > > > > > > > > On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von D=
+entz
+> > > > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > #syz test
+> > > > > > > > > >
+> > > > > > > > > > On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von=
+ Dentz
+> > > > > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > #syz test
+> > > > > > > > > > >
+> > > > > > > > > > > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto v=
+on Dentz
+> > > > > > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > > > > > >
+> > > > > > > > > > > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.=
+com>
+> > > > > > > > > > > >
+> > > > > > > > > > > > This makes use of disable_delayed_work_sync instead
+> > > > > > > > > > > > cancel_delayed_work_sync as it not only cancel the =
+ongoing work but also
+> > > > > > > > > > > > disables new submit which is disarable since the ob=
+ject holding the work
+> > > > > > > > > > > > is about to be freed.
+> > > > > > > > > > > >
+> > > > > > > > > > > > In addition to it remove call to sco_sock_set_timer=
+ on __sco_sock_close
+> > > > > > > > > > > > since at that point it is useless to set a timer as=
+ the sk will be freed
+> > > > > > > > > > > > there is nothing to be done in sco_sock_timeout.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.=
+appspotmail.com
+> > > > > > > > > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4=
+c0d0c4cde787116d465
+> > > > > > > > > > > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeo=
+uts with delayed_work")
+> > > > > > > > > > > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.den=
+tz@intel.com>
+> > > > > > > > > > > > ---
+> > > > > > > > > > > >  net/bluetooth/sco.c | 13 +------------
+> > > > > > > > > > > >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > > > > > > > > > > >
+> > > > > > > > > > > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sc=
+o.c
+> > > > > > > > > > > > index a5ac160c592e..2b1e66976068 100644
+> > > > > > > > > > > > --- a/net/bluetooth/sco.c
+> > > > > > > > > > > > +++ b/net/bluetooth/sco.c
+> > > > > > > > > > > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct=
+ hci_conn *hcon, int err)
+> > > > > > > > > > > >         }
+> > > > > > > > > > > >
+> > > > > > > > > > > >         /* Ensure no more work items will run befor=
+e freeing conn. */
+> > > > > > > > > > > > -       cancel_delayed_work_sync(&conn->timeout_wor=
+k);
+> > > > > > > > > > > > +       disable_delayed_work_sync(&conn->timeout_wo=
+rk);
+> > > > > > > > > > > >
+> > > > > > > > > > > >         hcon->sco_data =3D NULL;
+> > > > > > > > > > > >         kfree(conn);
+> > > > > > > > > > > > @@ -442,17 +442,6 @@ static void __sco_sock_close(s=
+truct sock *sk)
+> > > > > > > > > > > >
+> > > > > > > > > > > >         case BT_CONNECTED:
+> > > > > > > > > > > >         case BT_CONFIG:
+> > > > > > > > > > > > -               if (sco_pi(sk)->conn->hcon) {
+> > > > > > > > > > > > -                       sk->sk_state =3D BT_DISCONN=
+;
+> > > > > > > > > > > > -                       sco_sock_set_timer(sk, SCO_=
+DISCONN_TIMEOUT);
+> > > > > > > > > > > > -                       sco_conn_lock(sco_pi(sk)->c=
+onn);
+> > > > > > > > > > > > -                       hci_conn_drop(sco_pi(sk)->c=
+onn->hcon);
+> > > > > > > > > > > > -                       sco_pi(sk)->conn->hcon =3D =
+NULL;
+> > > > > > > > > > > > -                       sco_conn_unlock(sco_pi(sk)-=
+>conn);
+> > > > > > > > > > > > -               } else
+> > > > > > > > > > > > -                       sco_chan_del(sk, ECONNRESET=
+);
+> > > > > > > > > > > > -               break;
+> > > > > > > > > > > > -
+> > > > > > > > > > > >         case BT_CONNECT2:
+> > > > > > > > > > > >         case BT_CONNECT:
+> > > > > > > > > > > >         case BT_DISCONN:
+> > > > > > > > > > > > --
+> > > > > > > > > > > > 2.46.1
+> > > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > --
+> > > > > > > > > > > Luiz Augusto von Dentz
+> > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > --
+> > > > > > > > > > Luiz Augusto von Dentz
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > --
+> > > > > > > > > Luiz Augusto von Dentz
+> > > > > > > >
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > --
+> > > > > > > > Luiz Augusto von Dentz
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > --
+> > > > > > > Luiz Augusto von Dentz
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > Luiz Augusto von Dentz
+> > > > >
+> > > > >
+> > > > >
+> > > > > --
+> > > > > Luiz Augusto von Dentz
+> > > >
+> > > >
+> > > >
+> > > > --
+> > > > Luiz Augusto von Dentz
+> > >
+> > >
+> > >
+> > > --
+> > > Luiz Augusto von Dentz
+> >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+>
+> --
+> Luiz Augusto von Dentz
+
+
+
+--=20
+Luiz Augusto von Dentz
 
