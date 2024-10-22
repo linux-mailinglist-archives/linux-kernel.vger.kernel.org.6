@@ -1,134 +1,161 @@
-Return-Path: <linux-kernel+bounces-376693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FC29AB4F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9FF9AB4FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F38B1C2092E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37694283D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393F81BD50D;
-	Tue, 22 Oct 2024 17:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14131BDA88;
+	Tue, 22 Oct 2024 17:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fODqioL5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TAtlxhGO"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E531BD4E0;
-	Tue, 22 Oct 2024 17:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2AC1BC091
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617838; cv=none; b=V5hVmgKPsCa78fTDrPsMNrwKvYCjJpRaj1XablQCEyhyQr6k35nN4hig9IvjljTqL+k0uDviYhGFrQo8eGqvQ3b9cnIUfTKaC8+xxIXvlMbZ2+/LQBp4O9cu3Uk++hfF9whOcC287Hb5AoktRBr9RKuIuwLQTe/wgyjPRlHUES4=
+	t=1729617894; cv=none; b=kOr/zpaNbUzFcYwUX+bwCLUPM6tKXu3vHC2UoLVpzjjUbTcD5Hvj4pgz21ssSZQolBXDPFQpCRHfFWUlGglvfLJeDGUd+kvOQcyYSkHVmI53elMKsbAD1oxJ7m+V/i5RxBgG2qGZC9lBEDvV+hL7MIzlE4sZH0YZkuNXLuncBNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617838; c=relaxed/simple;
-	bh=u774XJNJoKaoO7NkJoZ6UrZ6tUzrujqv0gRuGOzw/hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shaBt0LF9hSIPgqeqLwWTehV8OP6L6LOf/NuFeYofUO4dMjFgI1u6bMA6Ule8tmZwafSZxpVm3+Huhtffc0qByL09kvaLEOItxvOjv4TbFwaVpmvL3e45YL+rHk3uTGgEsiBsW2X3c++0yJ12tVWK8xay1Fn9J9SFK6ucT76Jtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fODqioL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96122C4CEC3;
-	Tue, 22 Oct 2024 17:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729617838;
-	bh=u774XJNJoKaoO7NkJoZ6UrZ6tUzrujqv0gRuGOzw/hg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fODqioL5YDB0GPyFq7GnX4U/RJwKQTIXdfMCHOpPXB8lT0AmCmjbsHBbvb+c33QCD
-	 zxieNmT+ESorvyOEpKL6pHuvEKnZ3MXFamJiEA99iS3xUsBwKPOhAqL97AUNyLwosV
-	 EJ9Pjg/d9ZmscmCFEqq+PdWyeJyReFUQViKwtf94yzzotdDwEzHu3ogziBN91mIpZQ
-	 IDtkhHjrq2vFCLANnec6WtTzXUnky4VckPLJvJHzEs4QmiCTEMmbZXkQTVtTFL9RXT
-	 Z8aEjr0NgfHNaHGjv1OeCuQOERkN3fSiSBL8eV3QJTAT2QCbATu2S8Udq07jlMPrwq
-	 yxjxt6l6BLw2g==
-Date: Tue, 22 Oct 2024 18:23:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Yassine Oudjana <yassine.oudjana@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: mediatek: Add bindings for
- MT6735 syscon clock and reset controllers
-Message-ID: <20241022-map-unsightly-fafb554b8f9b@spud>
-References: <20241021121618.151079-1-y.oudjana@protonmail.com>
- <20241021121618.151079-2-y.oudjana@protonmail.com>
- <20241021-goatskin-wafer-7582dbcfe1d1@spud>
- <78f4da13-cbff-415b-a8eb-ec16108b5c00@collabora.com>
+	s=arc-20240116; t=1729617894; c=relaxed/simple;
+	bh=xwc23gWqC5d98YMWFqF/Xhb3SJe/ZnUf9483lyiAdvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=syvBTSU3SOmTQVs8iMpC9w1+X1Hv7m5YfUyXoC8nr0/1VKCKuN5hAKAs5mEPxXYGhGSTD3VhaEXpUtGv0YsM7cymRAjZAOURi2xawM2bkpwYCrRVO84vYYbDcPZ/n5hUHfBHDLJNPfqM+tOB9YJPkGiJHLXh/Et0AEaFHRHyxjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TAtlxhGO; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315baec69eso54926935e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729617891; x=1730222691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BEt47/5AYkkm+7sRkURZTwcxLPliTpnnCDYwMEIuRCE=;
+        b=TAtlxhGOiGMbHWybwE62zXrXtGXrL4eN9G3vv58bmkoSmpyb+NSFSlFuvbdUcbsD+E
+         zR3BT2AVk8p2j5k9/GJgYlzc3zdIWw7cdbdWSgNteOdOexVKHnb7UDIfUESF8yVSo45s
+         qbXuxoN9z3xBrJ8J8ImlNDh78LCvhFHq93BJrWg4tCEQg1cUkdQZ9kDNy9N+lyK5kH8x
+         Eopt4rCE9jRKlJpsppQHCRxAuNv6f9jmKoR8H8XseOxgvhm8r0wddzHfuAIeltGlwmHZ
+         h3+wrHK2pRnNPjSIin/gWYWoAopXH8NsKW9zjOuIWWtU/Cb0R1fGQIXgqV6ZZDT1h0DI
+         r0gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729617891; x=1730222691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BEt47/5AYkkm+7sRkURZTwcxLPliTpnnCDYwMEIuRCE=;
+        b=eI9LKVILP7rHoHaihF7vK/1o3G0gIVBa6RC/BW3H9p3ASLi3e2XYTG4myT+83St4qY
+         1GQg18gzQdca6Hvbc78JFyG/uQNNVa5RMa/qgW5kcc68KRUdwpz3yJQIE3PCmOnNu3ZU
+         hSZhkIfkSRva1xxnHc6JucLdLoOcWD++PgUcnTJYtK1MOcNuilxe86rcTx0Wtbxwo7e7
+         y0bEvQX99iYEBFE5phc1bkxSuskEPsDCpFPp0cz57HCooeDLduCEqHS8TMAUQSlO5YYz
+         uoFOYIMOvJmA6HHAvj4MfaB42FCYP0rlUo9eoYG+jjPwjCLQTFM7aNNjVQ9Kzq+YKNMl
+         ZKPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWimiN7LljBdVL3rzESp9XPtaVpLCl7X/8zo5Sya67sccwZzWIDogxRsU5oj7y/Vnp+6oLXtmjwCTcEFNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIA6p5TTBg2DtZe2TOX1wci4WUYXRCk+Qk/K5GbzPiLMwml67m
+	VZpOfIAPoM8yto0zDjTwz4RAX2hPju3PjygyIvLllPm0BkLmMje9+NKGP2O9uanFe7hMy8t+Usz
+	YUUsvW1NZFzrMDKxY8r4kyzLF3nAn9LMDx4di
+X-Google-Smtp-Source: AGHT+IGmXY2PcsYCDDDdMG2hgteb25/thWXJMg5ZQZjESPJOsd2kGa1X9jjQZfEia+y8Dt4u8IqR2iRrDoHqsyEWFJA=
+X-Received: by 2002:adf:fbce:0:b0:37c:d244:bdb1 with SMTP id
+ ffacd0b85a97d-37efb7af8afmr181342f8f.26.1729617890704; Tue, 22 Oct 2024
+ 10:24:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MGdtz8fU63TqFAKQ"
-Content-Disposition: inline
-In-Reply-To: <78f4da13-cbff-415b-a8eb-ec16108b5c00@collabora.com>
-
-
---MGdtz8fU63TqFAKQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241021-static-mutex-v5-1-8d118a6a99b7@google.com>
+ <ZxZxzjEaSZ8e_6mn@boqun-archlinux> <CAH5fLgg=Hb5NDaQQJW4SVh+hCj51bp+BzCMQs=Pg_L+_MMiZgA@mail.gmail.com>
+ <ZxfWglfYr52xTIO4@Boquns-Mac-mini.local>
+In-Reply-To: <ZxfWglfYr52xTIO4@Boquns-Mac-mini.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 22 Oct 2024 19:24:38 +0200
+Message-ID: <CAH5fLggv98iPAPm=PPa686osmfjqcdH9D3wD47ytCqkqbgwx7w@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: add global lock support
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 11:36:20AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 21/10/24 18:56, Conor Dooley ha scritto:
-> > On Mon, Oct 21, 2024 at 03:16:15PM +0300, Yassine Oudjana wrote:
-> > > From: Yassine Oudjana <y.oudjana@protonmail.com>
-> > >=20
-> > > Add device tree bindings for syscon clock and reset controllers (IMGS=
-YS,
-> > > MFGCFG, VDECSYS and VENCSYS).
-> > >=20
-> > > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> > > ---
-> > >   .../bindings/clock/mediatek,syscon.yaml           |  4 ++++
-> > >   MAINTAINERS                                       |  6 ++++++
-> > >   .../dt-bindings/clock/mediatek,mt6735-imgsys.h    | 15 ++++++++++++=
-+++
-> > >   .../dt-bindings/clock/mediatek,mt6735-mfgcfg.h    |  8 ++++++++
-> > >   .../dt-bindings/clock/mediatek,mt6735-vdecsys.h   |  9 +++++++++
-> > >   .../dt-bindings/clock/mediatek,mt6735-vencsys.h   | 11 +++++++++++
-> > >   .../dt-bindings/reset/mediatek,mt6735-mfgcfg.h    |  9 +++++++++
-> > >   .../dt-bindings/reset/mediatek,mt6735-vdecsys.h   | 10 ++++++++++
-> >=20
-> > Is it really necessary to have individual files foe each of these? Seems
-> > a bit extra, no?
-> >=20
->=20
-> It's only good for including smaller headers in each driver (and/or DT, b=
-ut
-> then the SoC DT will anyway include them all).
->=20
-> I'm fine with that, but I'm also fine with one header for clock and one f=
-or reset.
->=20
-> So.. Conor, it's however you prefer :-)
+On Tue, Oct 22, 2024 at 6:44=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Tue, Oct 22, 2024 at 02:46:19PM +0200, Alice Ryhl wrote:
+> > On Mon, Oct 21, 2024 at 5:23=E2=80=AFPM Boqun Feng <boqun.feng@gmail.co=
+m> wrote:
+> > >
+> > > On Mon, Oct 21, 2024 at 01:17:23PM +0000, Alice Ryhl wrote:
+> > > [...]
+> > > > +///
+> > > > +/// A global mutex used to protect all instances of a given struct=
+.
+> > > > +///
+> > > > +/// ```
+> > > > +/// # mod ex {
+> > > > +/// # use kernel::prelude::*;
+> > > > +/// kernel::sync::global_lock! {
+> > > > +///     // SAFETY: Initialized in module initializer before first =
+use.
+> > > > +///     unsafe(uninit) static MY_MUTEX: Mutex<(), Guard =3D MyGuar=
+d, LockedBy =3D LockedByMyMutex> =3D ();
+> > >
+> > > Thanks! This looks much better now ;-)
+> > >
+> > > But I still want to get rid of "LockedBy=3D", so I've tried and seems=
+ it
+> > > works, please see the below diff on top of your patch, I think it's
+> > > better because:
+> > >
+> > > * Users don't to pick up the names for the locked_by type ;-)
+> > > * It moves a significant amount of code out of macros.
+> > > * By having:
+> > >
+> > >     struct MyStruct {
+> > >         my_counter: GlobalLockedBy<MyGuard, u32>,
+> > >     }
+> > >
+> > >   , it's much clear for users to see which guard is used to protected
+> > >   `my_counter`.
+> > >
+> > > I prefer this way. Any concern about doing this?
+> >
+> > I think I came up with an even better way of doing it. The macro can
+>
+> Cool!
+>
+> > generate a dummy token type for the global lock, and then we can have
+> > three types: GlobalLock<T>, GlobalGuard<T>, GlobalLockedBy<T> that are
+> > all generic over the token type. The token type is an empty enum with
+>
+> Just to make sure I understand it, so let's say the token type's name is
+> `TK`, you mean we have GlobalLock<T, TK>, GlobalGuard<T, TK> and
+> GlobalLockedBy<S, TK>? Where T is the type protected by the static mutex
+> and S is the type protected by the locked_by type?
 
-It's not worth respinning for, IMO, but I think having 8 and 9 line
-header files for 2 definitions is silly.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Something along those lines, yes.
 
---MGdtz8fU63TqFAKQ
-Content-Type: application/pgp-signature; name="signature.asc"
+> > no contents, but implements an unsafe trait saying that there's only
+> > one static using it.
+> >
+> > This way we also do not need the helper module, as we no longer need
+> > to generate a struct with private fields.
+> >
+>
+> Sounds good to me. Do you plan to let the user name the token type? It's
+> fine to me, or do you want to name the token based on the static lock
+> name?
 
------BEGIN PGP SIGNATURE-----
+The name of the lock has the wrong case, so we can't really reuse it.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxffqAAKCRB4tDGHoIJi
-0jppAQC3jp73TDDQ8ceo7QUcuVoccM5RURc39pRsxAGOCXGfdwEA/dA9MNvMdUWv
-jSwY6hOKcpjb/PE5XD01uo3g0gxiBwE=
-=3GWk
------END PGP SIGNATURE-----
-
---MGdtz8fU63TqFAKQ--
+Alice
 
