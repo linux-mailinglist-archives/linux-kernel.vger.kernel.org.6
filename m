@@ -1,135 +1,292 @@
-Return-Path: <linux-kernel+bounces-377137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1239ABA46
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229C69ABA49
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BABE1C229FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D279C281F25
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F0E1CEEAB;
-	Tue, 22 Oct 2024 23:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5841CEEAD;
+	Tue, 22 Oct 2024 23:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpIho9le"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O8uqpfVq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F91BD50D;
-	Tue, 22 Oct 2024 23:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208661BD50D;
+	Tue, 22 Oct 2024 23:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729641375; cv=none; b=B/n2dBwd77L8BNCG6oyrIxpI8AbVGi/kx3dPZ9j/tSU6+gbYu0B+zUYkaDKT6B/h3bFkaEr6A/JeSvC+PbhHlgHXj5uYKv3F6Esdg+IgKvPE+JkjddQkpT7sVYU6GAeWXS0BacIXsKf4y/QGRldMCWIxulEkryslvWdVUjd8XTQ=
+	t=1729641504; cv=none; b=YutaM1DLRHb0/BjlFxoNWzm8alowMwLrO75hSGviaW7fNlnjju+QYMGxzgLpe0vljTLJp7XIShMwHeIMTxg211dW1ejppKqa8a8qUa7e9CJk48+CdZAm3eBWbmanNK7h994CDnX6aUQ0yuh2MMmFCS0iAudfga2uBfhqpGr/huA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729641375; c=relaxed/simple;
-	bh=e2hAaQM0XX6PjQAwxGQKXiU/PpBnZNCFNDfx+tjBkCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qswZhvgXwFx06Ph9HQlLOtyM+Ip+HOxWYzgY8sKjFnKrQWa/0A3ToB8+5YVBW57dq9nOh9L8t6TF3Ivu9yl60AEffBp0JGgj2jdgVce7ecafhJoGNZTd3JhFZhd+D8tp3ftGok4v/4o0jYYtSEyjwTufzc5bD5eR+SyF7yBL2z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpIho9le; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e5e5c43497so28148027b3.3;
-        Tue, 22 Oct 2024 16:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729641373; x=1730246173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nCQfmesisgkdQENbkAFngac7Vdn97CRauegzzavyEn8=;
-        b=dpIho9leI2pjNcIR83t/jrAG4pVphsu4tnRrzOs/aPWak5ztg06X22JV6+JStVS74o
-         zllTXbp+tizGVZWnWCd3/yxZaICN9oxHjRay3keRiGNv4vykiHkggbPP/QUBla9KbDwi
-         Y436Sg8dtH4fukk3nujDV1Ijfwv8Tqy+pHG6T+P3oQQ1VxsoZJA31Bt4PLrBqqNr0Mk+
-         eArRSH4zYYSYz8xiPHzvcNSyWU/LDUm5vVQ4UQHs8H4nduFBK05lSA1uFZ6wS6LkRjh1
-         c1F2PQEZjeOUOJkxpXEWyYlTqLS6j/hQi5ff7Pw3gy4zP9OajLZYC7tOHZS9QaCyV41K
-         Mmiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729641373; x=1730246173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nCQfmesisgkdQENbkAFngac7Vdn97CRauegzzavyEn8=;
-        b=i9siBJmU0MvouNZm9yj2hNeTO+K3+tmZcBj+GBcEU6Hydm2K/xFBA6e92BvLrk2RqS
-         Sq2itO5+442SBYXpvSjYLg+cXani+N+NmMuMmwuhyAGVb9KpyOCBu3k7gDhevXl/MYpB
-         kuVNNFThlmcVfvWQtcr6/MzRYSpkgou0C1Lu1NcToICp8wHhN6J/fAQXeXB4LUi5pQ0r
-         CxYjJGj+oD6g/b6UcnjNuvUPaDBpRFBDBBU9rksvu/5BTB1vZwQetF8abZq2kcUSpwla
-         AAVNol2HnIfa9b6q/JdGVF9HCvIo6r4pJHZBDO9IJ+EvWWmMt6H5SA/20daW8C4p0FTS
-         GEBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH+w7bbK0jcOFwVTUzmBvuXyGaf/vleAauw2wZJX09kFp5TMd3zrvkgqs7GxURWNaA0FSOeeWdOIRxmYfR@vger.kernel.org, AJvYcCW8qWRjqtWVa2WRnv1NioCQ01tI/N3exaHFt4Hd0AB4d12uprThZyRqFgB556U2fHCpFIck8H2S+qEXTc4y0ER359kxI4WC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE9fl+7oyOa1kyII7siO6vYZE0OsnYHwo9+J9lvDIzzxUt1SNK
-	UmTJKCGDG8qDmLbGuj5BfEafi956YizDSP7DAt5JvcjX30XdNs54VLcA1zecnu+AMSsoMasoOwV
-	W+d6b6em/r5RNzvaqUbzVtFXXmjs=
-X-Google-Smtp-Source: AGHT+IEN/G2bT/7jBH2AxNMZ5hUtZocZ3uvl5liobuvYVI5bWSIKgcmMHAlkt5rev48ra2x7D2iMq8QnP7XCqnvIoxk=
-X-Received: by 2002:a05:690c:62c5:b0:6e5:aaf7:68d0 with SMTP id
- 00721157ae682-6e7f0e3fffamr9118637b3.18.1729641372712; Tue, 22 Oct 2024
- 16:56:12 -0700 (PDT)
+	s=arc-20240116; t=1729641504; c=relaxed/simple;
+	bh=hSGNsERuXpOnj5mD1JvsJFKgJ7F+L+49oiKUk4AO4fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bwD46IQ1n5uKyXaw0H/aH7+MIQMhPOkauBOG8IDK9NamkE7zGf+Sk2JW5PnQEm4j0XaZW1lGzuB97MAEXZiSzf3TMnO3xD/MMDeYrOt/pFu+WsXc2+Jz6qjyI4qo0/1nh0nLM4Yt4nJaiiyJM30lxOI6JNL2xZGOxUmSwUGt/1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O8uqpfVq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLa3s6025442;
+	Tue, 22 Oct 2024 23:58:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8BhHv7AKGfqd/X1TNPoDzozZI272RDnDgnhCY3+4Qbg=; b=O8uqpfVqW19+2KBi
+	ZOMG1/bBKHGewzK+7wlCt5k+Y64imnErPqIU1CgW2FbV2VpdOpexvIzeXUWVK4mI
+	P0fyfI7069pZNLg/BaELCnI/OKKhFWGFWAqfPIvdf01v+SRulhMKFH9DAoT/2+Kg
+	k6SjwfNW550b9OLEZiLcg2QEwLpWcVVKJ+tssWg0CZPLGQq43Bq0yptjPcZ93NPC
+	oIyqFWNCRHmDV7JdnUxoEcLEL0ZgKxLnbBU5hJOMeYB31C1MkEVmCfE5zNen0vxY
+	gHk/V5qhr1/+N7A4QSWD+ErXURLBSGJWkgPo1WSPP7QQfy77PaxGbLp3tG6RVhac
+	6iCEnA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em4088xy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 23:58:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MNw9Qe025711
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 23:58:09 GMT
+Received: from [10.110.103.186] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 16:58:08 -0700
+Message-ID: <e4fe74c7-6c37-4bab-96bf-a62727dcd468@quicinc.com>
+Date: Tue, 22 Oct 2024 16:58:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
- <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
- <CAMw=ZnSkm1U-gBEy9MBbjo2gP2+WHV2LyCsKmwYu2cUJqSUeXg@mail.gmail.com>
- <CAHC9VhRY81Wp-=jC6-G=6y4e=TSe-dznO=j87i-i+t6GVq4m3w@mail.gmail.com> <5fe2d1fea417a2b0a28193d5641ab8144a4df9a5.camel@gmail.com>
-In-Reply-To: <5fe2d1fea417a2b0a28193d5641ab8144a4df9a5.camel@gmail.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Wed, 23 Oct 2024 00:56:01 +0100
-Message-ID: <CAMw=ZnSz8irtte09duVxGjmWRJq-cp=VYSzt6YHgYrvbSEzVDw@mail.gmail.com>
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 06/10] net: qrtr: Allow sendmsg to target an
+ endpoint
+To: Denis Kenzior <denkenz@gmail.com>, <netdev@vger.kernel.org>
+CC: Marcel Holtmann <marcel@holtmann.org>, Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241018181842.1368394-1-denkenz@gmail.com>
+ <20241018181842.1368394-7-denkenz@gmail.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20241018181842.1368394-7-denkenz@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bJVsf1lranxjBNZVbI16qRrXMuOEVjWP
+X-Proofpoint-GUID: bJVsf1lranxjBNZVbI16qRrXMuOEVjWP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220155
 
-On Wed, 23 Oct 2024 at 00:45, <luca.boccassi@gmail.com> wrote:
->
-> On Sat, 5 Oct 2024 at 17:06, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Fri, Oct 4, 2024 at 2:48=E2=80=AFPM Luca Boccassi <luca.boccassi@gma=
-il.com> wrote:
-> > > On Wed, 2 Oct 2024 at 15:48, Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Wed, Oct 2, 2024 at 10:25=E2=80=AFAM <luca.boccassi@gmail.com> w=
-rote:
-> >
-> > ...
-> >
-> > > > [NOTE: please CC the LSM list on changes like this]
-> > > >
-> > > > Thanks Luca :)
-> > > >
-> > > > With the addition of the LSM syscalls we've created a lsm_ctx struc=
-t
-> > > > (see include/uapi/linux/lsm.h) that properly supports multiple LSMs=
-.
-> > > > The original char ptr "secctx" approach worked back when only a sin=
-gle
-> > > > LSM was supported at any given time, but now that multiple LSMs are
-> > > > supported we need something richer, and it would be good to use thi=
-s
-> > > > new struct in any new userspace API.
-> > > >
-> > > > See the lsm_get_self_attr(2) syscall for an example (defined in
-> > > > security/lsm_syscalls.c but effectively implemented via
-> > > > security_getselfattr() in security/security.c).
-> > >
-> > > Thanks for the review, makes sense to me - I had a look at those
-> > > examples but unfortunately it is getting a bit beyond my (very low)
-> > > kernel skills, so I've dropped the string-based security_context from
-> > > v2 but without adding something else, is there someone more familiar
-> > > with the LSM world that could help implementing that side?
-> >
-> > We are running a little short on devs/time in LSM land right now so I
-> > guess I'm the only real option (not that I have any time, but you know
-> > how it goes).  If you can put together the ioctl side of things I can
-> > likely put together the LSM side fairly quickly - sound good?
->
-> Here's a skeleton ioctl, needs lsm-specific fields to be added to the new=
- struct, and filled in the new function:
 
-Forgot to mention, this is based on the vfs.pidfs branch of
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+
+On 10/18/2024 11:18 AM, Denis Kenzior wrote:
+> Allow QIPCRTR family sockets to include QRTR_ENDPOINT auxiliary data
+> as part of the sendmsg system call.  By including this parameter, the
+> client can ask the kernel to route the message to a given endpoint, in
+> situations where multiple endpoints with conflicting node identifier
+> sets exist in the system.
+> 
+> For legacy clients, or clients that do not include QRTR_ENDPOINT data,
+> the endpoint is looked up, as before, by only using the node identifier
+> of the destination qrtr socket address.
+> 
+> Signed-off-by: Denis Kenzior <denkenz@gmail.com>
+> Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+> Reviewed-by: Andy Gross <agross@kernel.org>
+> ---
+>   net/qrtr/af_qrtr.c | 80 +++++++++++++++++++++++++++++++++-------------
+>   net/qrtr/qrtr.h    |  2 ++
+>   2 files changed, 60 insertions(+), 22 deletions(-)
+> 
+> diff --git a/net/qrtr/af_qrtr.c b/net/qrtr/af_qrtr.c
+> index 568ccb1d8574..23749a0b0c15 100644
+> --- a/net/qrtr/af_qrtr.c
+> +++ b/net/qrtr/af_qrtr.c
+> @@ -106,6 +106,36 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
+>   	return container_of(sk, struct qrtr_sock, sk);
+>   }
+>   
+> +int qrtr_msg_get_endpoint(struct msghdr *msg, u32 *out_endpoint_id)
+> +{
+> +	struct cmsghdr *cmsg;
+> +	u32 endpoint_id = 0;
+> +
+> +	for_each_cmsghdr(cmsg, msg) {
+> +		if (!CMSG_OK(msg, cmsg))
+> +			return -EINVAL;
+> +
+> +		if (cmsg->cmsg_level != SOL_QRTR)
+> +			continue;
+> +
+> +		if (cmsg->cmsg_type != QRTR_ENDPOINT)
+> +			return -EINVAL;
+> +
+> +		if (cmsg->cmsg_len < CMSG_LEN(sizeof(u32)))
+> +			return -EINVAL;
+> +
+> +		/* Endpoint ids start at 1 */
+> +		endpoint_id = *(u32 *)CMSG_DATA(cmsg);
+> +		if (!endpoint_id)
+> +			return -EINVAL;
+> +	}
+> +
+> +	if (out_endpoint_id)
+> +		*out_endpoint_id = endpoint_id;
+
+In the case when there is no cmsg attached to the msg. Would it be safer 
+to assign out_endpoint_id to 0 before returning?
+
+I see that in qrtr_sendmsg() there is a risk of using msg_endpoint_id 
+without it being initialized or assigned a value in this function.
+
+> +
+> +	return 0;
+> +}
+> +
+>   static unsigned int qrtr_local_nid = 1;
+>   
+>   /* for node ids */
+> @@ -404,14 +434,16 @@ static int qrtr_node_enqueue(struct qrtr_node *node, struct sk_buff *skb,
+>    *
+>    * callers must release with qrtr_node_release()
+>    */
+> -static struct qrtr_node *qrtr_node_lookup(unsigned int nid)
+> +static struct qrtr_node *qrtr_node_lookup(unsigned int endpoint_id,
+> +					  unsigned int nid)
+>   {
+>   	struct qrtr_node *node;
+>   	unsigned long flags;
+> +	unsigned long key = (unsigned long)endpoint_id << 32 | nid;
+>   
+>   	mutex_lock(&qrtr_node_lock);
+>   	spin_lock_irqsave(&qrtr_nodes_lock, flags);
+> -	node = radix_tree_lookup(&qrtr_nodes, nid);
+> +	node = radix_tree_lookup(&qrtr_nodes, key);
+>   	node = qrtr_node_acquire(node);
+>   	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
+>   	mutex_unlock(&qrtr_node_lock);
+> @@ -953,6 +985,7 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+>   	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
+>   	struct sock *sk = sock->sk;
+>   	struct qrtr_node *node;
+> +	u32 msg_endpoint_id;
+>   	u32 endpoint_id = qrtr_local_nid;
+>   	struct sk_buff *skb;
+>   	size_t plen;
+> @@ -965,46 +998,48 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+>   	if (len > 65535)
+>   		return -EMSGSIZE;
+>   
+> +	rc = qrtr_msg_get_endpoint(msg, &msg_endpoint_id);
+> +	if (rc < 0)
+> +		return rc;
+> +
+>   	lock_sock(sk);
+>   
+>   	if (addr) {
+> -		if (msg->msg_namelen < sizeof(*addr)) {
+> -			release_sock(sk);
+> -			return -EINVAL;
+> -		}
+> +		rc = -EINVAL;
+>   
+> -		if (addr->sq_family != AF_QIPCRTR) {
+> -			release_sock(sk);
+> -			return -EINVAL;
+> -		}
+> +		if (msg->msg_namelen < sizeof(*addr))
+> +			goto release_sock;
+> +
+> +		if (addr->sq_family != AF_QIPCRTR)
+> +			goto release_sock;
+>   
+>   		rc = qrtr_autobind(sock);
+> -		if (rc) {
+> -			release_sock(sk);
+> -			return rc;
+> -		}
+> +		if (rc)
+> +			goto release_sock;
+>   	} else if (sk->sk_state == TCP_ESTABLISHED) {
+>   		addr = &ipc->peer;
+>   	} else {
+> -		release_sock(sk);
+> -		return -ENOTCONN;
+> +		rc = -ENOTCONN;
+> +		goto release_sock;
+>   	}
+>   
+>   	node = NULL;
+>   	if (addr->sq_node == QRTR_NODE_BCAST) {
+>   		if (addr->sq_port != QRTR_PORT_CTRL &&
+>   		    qrtr_local_nid != QRTR_NODE_BCAST) {
+> -			release_sock(sk);
+> -			return -ENOTCONN;
+> +			rc = -ENOTCONN;
+> +			goto release_sock;
+>   		}
+>   		enqueue_fn = qrtr_bcast_enqueue;
+>   	} else if (addr->sq_node == ipc->us.sq_node) {
+>   		enqueue_fn = qrtr_local_enqueue;
+>   	} else {
+> -		node = qrtr_node_lookup(addr->sq_node);
+> +		endpoint_id = msg_endpoint_id;
+> +
+> +		node = qrtr_node_lookup(endpoint_id, addr->sq_node);
+>   		if (!node) {
+> -			release_sock(sk);
+> -			return -ECONNRESET;
+> +			rc = endpoint_id ? -ENXIO : -ECONNRESET;
+> +			goto release_sock;
+>   		}
+>   		enqueue_fn = qrtr_node_enqueue;
+>   	}
+> @@ -1043,6 +1078,7 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+>   
+>   out_node:
+>   	qrtr_node_release(node);
+> +release_sock:
+>   	release_sock(sk);
+>   
+>   	return rc;
+> @@ -1057,7 +1093,7 @@ static int qrtr_send_resume_tx(struct qrtr_cb *cb)
+>   	struct sk_buff *skb;
+>   	int ret;
+>   
+> -	node = qrtr_node_lookup(remote.sq_node);
+> +	node = qrtr_node_lookup(cb->endpoint_id, remote.sq_node);
+>   	if (!node)
+>   		return -EINVAL;
+>   
+> diff --git a/net/qrtr/qrtr.h b/net/qrtr/qrtr.h
+> index 11b897af05e6..22fcecbf8de2 100644
+> --- a/net/qrtr/qrtr.h
+> +++ b/net/qrtr/qrtr.h
+> @@ -34,4 +34,6 @@ int qrtr_ns_init(void);
+>   
+>   void qrtr_ns_remove(void);
+>   
+> +int qrtr_msg_get_endpoint(struct msghdr *msg, u32 *out_endpoint_id);
+> +
+>   #endif
 
