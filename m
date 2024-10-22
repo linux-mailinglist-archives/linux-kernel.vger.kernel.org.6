@@ -1,209 +1,715 @@
-Return-Path: <linux-kernel+bounces-375573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C177A9A9780
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6301F9A979D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5EF1C212EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A361C20EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C3082D83;
-	Tue, 22 Oct 2024 04:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB10823DE;
+	Tue, 22 Oct 2024 04:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CDeQJyCC"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Tr4nTv5F"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E3C819;
-	Tue, 22 Oct 2024 04:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6611284A22;
+	Tue, 22 Oct 2024 04:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729570358; cv=fail; b=nPVnLHySpvKwRQsf4nmxS8W8ljPMPg5WewSBrTwq0nDN3D6ALnI1xbrTCt675wryW+gSuJg1WNcA0n/cZnRbunCDOrLfhxH22b8MQM9qvbAD4IU+iP9NJ8niAtxmhXuv8wh1sf1t3AetkxrhZem7zYvk6OOmSG59WjJHvAyhjHw=
+	t=1729570474; cv=fail; b=A9sppnOxRkVPp9SYuf5hKGTCx5wEEpEm8eA+oPi7Eb2MPKhso3VHvE/ohVh0dTI6xaH28nx1g1CVeggX49LYpRkkpdemaqoSedKbXc1LREDnGjIIIjjWwpyvhl27gxgJj134J6Kh5pinMh4kvAc28QHaFuSl/1jBB8hUV65cZC8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729570358; c=relaxed/simple;
-	bh=gBntMdWysATfoBQWKQHSZ+L2aSUXRgt0HicNBkVkl7w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a1chJiU5QUFhtNeI6Nh5CjH9nltmhFspa6gFRbP2MDYuqqkChkFbJEbHQrv5RXrYQZBjBt56Lx3wK10OfbDBNvhb0jllKATFsnIg70/DYTxvn5el1Nr/ERuTPvl9ltszFWKdqWm/ZLBK7H0BcMjSP7mwFnWdYSkrH0M5ppFoClE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CDeQJyCC; arc=fail smtp.client-ip=40.107.223.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1729570474; c=relaxed/simple;
+	bh=UW6b27a2c3YYyhuS0ict8KzuU8mBx1No4PlLtnK6wUo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ng6rbmSxCAEEeTuENtxKkftMRcBBjMSrb4PG8t7iDPev4x8D7co924PCBoixnnkcATQiVJXywC6xo4SqZur8sv67dSgB1h5zdO67pvKnQzELmGj+PgmUS1KlU2guOY0qL2j2RncTRFaivaPHbvzb76tL5CLCjBj0D9uiLHJL7Vs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Tr4nTv5F; arc=fail smtp.client-ip=40.107.236.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fkvpdcwrp6c5NDgeaqo/2tJmUy/GwFId/zVMBodQ3qPSb5e1dkfkTS1ZvoWPdddV0HwqxvhRRpdVO2DP8EUz7+aRB9BgUwi9Tvk1Y4h7PKBLX5UmW2VOn+YqxiMixNAnXZ5a6e7e/yKQ2lnZUu76+4uql7XZkoJa0b26srAno08v4NoMVES9ACIrxtrfBTbvkKKH1kxmkTmVih/QZkpYDY1sJXmwaTcB553FtLk1C1idKPu25bzh9i9xJ2GpKC9jE0FffcegZXsfKNE9QyMUlBRNhLQQkEr/Kk4mZJdtORd6F6ppQZAivrcnKuFuNX2B6+P41nOpwpkm1bDjP85+iA==
+ b=jVU+Za3Qg+tpfkrGfwrE1Fyh5uVxx8eOSQV3iJ/splTRowL5qiaO2il+uRL6mvyFz0XYh7kMATO6Rpv+qRJv7AC4GbmQ1tZIBGqh0KqqNHHynRrAz4KdqN79UNqrHrMpFrRqvrq5LKL8xaxa+cgKU981pZ8A2C9tF/tEwpvroF/uNO2zdmD9v8PBdmqFqEvGN34wfGEd6Wu4cX0QjvSMRVmhU7zioVzcQ6EsWX0hrUfUJVsI3UxZQPeKk+XBeRC5P5z2ruotpUL78jTCyPY44x0RC0Q2yw6XGsN0xeX1gVPZxEgra9GprfulFnCdX20iH5PDRKa5msCeJCmy4JjerQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bH2V/ltbOydoJJzmmZozva/IkYWTEDkPL6IP/GFusu4=;
- b=pnOSyg/qo2j4ptPBhcVAhHJuaUTK5S6PqiSvxFnzgP2zPLZArYQ23GKMDKPgon7U0As3jxmdT+64V7S2wW4dBx65ce+AhHhCXhTbtOyin4/hNqhRyOAz8727cuXHzyW1trmaGysErtuXy4N29z40IcfGLm9QF2VlZsC7cN2G5OAya7reVHL5i9T3UCdmIXy00Jx7w+187ldzcVKLuHJdTSwZ6Y0zbPvsoKmLPTQ4MCrE09hIfd2FkPk6cP1iUPJHhhJOSUbaIYmTaD8MTpm9VAOnLlwPsdAs6XpdqyTJQgaPXn/M0vDfi+jnes6UdJzMRbw49r+IRHnntgja2ODKpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=xEa0y6dfZQrmjws3g7JNhuOZUx6oCw9umhgIDVLbtfQ=;
+ b=c1w8CDHFUx4zMyzI0yJt1xbjiIgKhqeUj2d/KRZIyV7DUfV60QRgbRYyKIS+ElGmr5dQuU847F3ce+jB9LYfbtg9F509qWnltMhiTKrACb8qPy+8oyQPvOL2W3ty+u+0MxY/EWASdXRKQn5ErzecfgUuOKg1Yn5mh739kU97mlgjaa7fnqryB4SQxTkFaGdyljsXjuCzlVYUBCnz8z7Oy6BwgWrLn12Jnlyv9kzMW7GJUXwYP5FFEZ2NewrukrvCUXxF7TCT0TaEj1QlCRJvnXu9YWo421ZadFcaGz8NkCfPpvhns1NOe5NCpZdyYbt2yHn5+gJrpidl/Gi4y8fjYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=perex.cz smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bH2V/ltbOydoJJzmmZozva/IkYWTEDkPL6IP/GFusu4=;
- b=CDeQJyCC1Dw5DsWsLIdTzsPFNeZ7ea9DcuaH/r9oIpp0APxofTz5BfXW0n5l9W2vrv4VeeoZ543LqTHH/KCG1rsMt763JpyXdtT7Ca3ZejRj2Q96L5cskaDLfEu1p0eO80Vi+s92GRA3lbHgonhaO2Rkq8FiiiWSvh5lHQX2V4w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- PH7PR12MB9101.namprd12.prod.outlook.com (2603:10b6:510:2f9::21) with
+ bh=xEa0y6dfZQrmjws3g7JNhuOZUx6oCw9umhgIDVLbtfQ=;
+ b=Tr4nTv5FBOpJ/A0TPZ65N2eiR6eTpm0rDc4C//a2MHJ1D6IxT4aRdYZ4eWihZFF2/IT43BM67LlA+I2Y1j7R6C7nvdhKGaznYWBlwCWUnMmcy8KsO3Y3z/RD9xLk127rRZjz5KN/b1W0QrSqDX8ZRUsIYJ+J369xyEBwquj2ltsGV+3HAlDA9YQwRJqZubdiVNJS4d+N87wSoC8rz83Vws/aFBS5bu5CoTPGMr5aHQs43sy84rWk2q4ti8x2cDnZ24cer4/wkyQU2pPAjEs2cwFrp7J5GsTB1sdn8c6TS4PkqHOCHKyYLcj1hu9cMWKpqaDPgl/Do5HtWM0Sv1RELw==
+Received: from MN0P222CA0005.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::8)
+ by CY8PR12MB7313.namprd12.prod.outlook.com (2603:10b6:930:53::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
- 2024 04:12:33 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 04:12:32 +0000
-Message-ID: <134c03b8-aa94-6d61-6d2b-965154c72949@amd.com>
-Date: Tue, 22 Oct 2024 09:42:23 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v13 01/13] x86/sev: Carve out and export SNP guest
- messaging init routines
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-2-nikunj@amd.com>
- <5350829a-d30f-41b4-82db-8ed822e13d09@wanadoo.fr>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <5350829a-d30f-41b4-82db-8ed822e13d09@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0159.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::20) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+ 2024 04:14:27 +0000
+Received: from BN2PEPF0000449F.namprd02.prod.outlook.com
+ (2603:10b6:208:531:cafe::ff) by MN0P222CA0005.outlook.office365.com
+ (2603:10b6:208:531::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29 via Frontend
+ Transport; Tue, 22 Oct 2024 04:14:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN2PEPF0000449F.mail.protection.outlook.com (10.167.243.150) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Tue, 22 Oct 2024 04:14:26 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Oct
+ 2024 21:14:25 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 21 Oct 2024 21:14:24 -0700
+Received: from build-sheetal-20240822T015656669.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Mon, 21 Oct 2024 21:14:24 -0700
+From: "Sheetal ." <sheetal@nvidia.com>
+To: <perex@perex.cz>, <tiwai@suse.com>, <broonie@kernel.org>,
+	<linux-sound@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lgirdwood@gmail.com>, <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+	<mkumard@nvidia.com>, <spujar@nvidia.com>, Ritu Chaudhary <rituc@nvidia.com>,
+	Sheetal <sheetal@nvidia.com>
+Subject: [PATCH] ASoC: tegra: Add support for S24_LE audio format
+Date: Tue, 22 Oct 2024 04:13:30 +0000
+Message-ID: <20241022041330.3421765-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|PH7PR12MB9101:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6c13eb1-efc1-4324-6867-08dcf24fc04f
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|CY8PR12MB7313:EE_
+X-MS-Office365-Filtering-Correlation-Id: 818d87eb-8f09-4300-eb4f-08dcf2500458
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WkJ2ZVdyTkhrUVhXb2hOenZsQU5ycFpOZmVzalllTnhKWUlUMFoycElqZnhr?=
- =?utf-8?B?cTdOTHJDSXRNRHlRWnBIMGtZYjhuL0VFZHFhVzkrTENNeVlpQW5qaEJyMmxR?=
- =?utf-8?B?TnVUUTJqZ2UwK0F3VlVsYkt3VXg2dm05Y1hKY0I0b08vTTFMT0FNR3J5d2hB?=
- =?utf-8?B?M3ZFTXJlR2gzWFdQUlJYa2VKRjJaTUVNSHhVb2lvZFdid3NORWlSL2lRV3Ax?=
- =?utf-8?B?d1VyUWRKbytVNzI5TGtxYkEwejF1aEp1b3o0SzBQd1huSS8xYjd0aGR2ZmhD?=
- =?utf-8?B?Zm1abHhhbFh2R3VWUVlIWXlxaEJENHJsZjJkRGx4SzZ2ODllZDloNEEzdUQr?=
- =?utf-8?B?ZXBTMUVQakpYYzYxYmRpS0xNTVEvTkFkemVjNGdFQ1VPUHJObmJrSEhDYzIy?=
- =?utf-8?B?UFdlS1VlbHVqM1JyejN2Vmxjay9Kc1RvYkVLb25NQVpNQ0QrdXpkYTVmTTZX?=
- =?utf-8?B?eGRjckw5blJ0SE1oTTRXYVdRa3g0enhUTXZ4K1NPUnFhbkhnbWY4QmtZalVy?=
- =?utf-8?B?TFZZY01abjRpRTNEOTVuRkx5a1kvK3NJSUxOLzZsS2twU1RzazNVNk5ZZDI2?=
- =?utf-8?B?VFgzTW53YXpob3E2UWF2RjV5dmJFZCtkQmR4ZmNuVnNkVDljc1pnWENyc3Ix?=
- =?utf-8?B?U290LzlIWEdvK3Y4dmZHUnNUUGFzd1RuclNkemZHTC9UTG4wcUd5dHdXNWtE?=
- =?utf-8?B?U0JSZWY4bUsvendZZVo2Ynd2cjBqekpFc0V6OUZhOEcyREJsc2pXK0RUL2Mw?=
- =?utf-8?B?UEVUVjZOZjcrSk9tNEp2WHdDaTVuMThxKytwYTFEVXVIRW5DWVp4NVNON0l4?=
- =?utf-8?B?RzZTNWZ5TEV5Sks5QTJ1all6ZURxSUFHdjV6UFpUemVFSlJ1VHF5RUtEeHJa?=
- =?utf-8?B?TWh4eVVZeERvUENlKzFHZllzbWF0MWpwMzdaTVNMRzBaQjh3bUJ5ZHFXMHdz?=
- =?utf-8?B?eHdUSER3dnZtU3ZNTTlsNGNwbi9mcUNabnRxUjV5UlRIN3ZEbjYvTGY2WnhP?=
- =?utf-8?B?TXdKK29DaDA4M2FHd3B1eVpWZXl2cXZjQllWd0hocDI4NDYvN0RnZ1BxNS9E?=
- =?utf-8?B?V0xBUUhqTUtHMEFrcG5oQnl5ZUFSMDVmNXM2ODQ1aEgwZnpLd1JidHlNcXp0?=
- =?utf-8?B?YXppOGd2OG5WQVNhdjU4K2FVaFhRUm1UZTUrS0NLRzEvTmpLNDlyRkFFR0pG?=
- =?utf-8?B?YVVjdnkyT2lPMjJuTGIrb2IvQ1c2cWdXYkE3MHpoMFErVkxETGN2QVFEZXJ4?=
- =?utf-8?B?TWdYbTU5M3hEcVNxbVR1UTZkaWpFSzRPeDBsTnBaOFFicXBWRTVyamZ0dSsz?=
- =?utf-8?B?T2QyK3VHc2UwZ3hqYzdBZHRvMHdwWDJhR2JNMWE1Ullmd2kxbGlVR09aVzRU?=
- =?utf-8?B?ZFYyaUJ5Y2YzbkVieW1Bb0xsTGlNNlowbDFsRkRrSzk3RkY5VHcyNnAyS1pj?=
- =?utf-8?B?L21Pd1NQWStLV2RPa0w4UlkxKzk2TGpaNmU5Y2JNUXlITVFSTTczS1VLVUNO?=
- =?utf-8?B?ODdTaktIQmpydDZqeitKYW1XbFhLcXVQVGl1V1RVYUhGSUNwZ0RDQUhqV3Iy?=
- =?utf-8?B?RVF3d3JRSm9TSjRma1JPV1ZlaFdhN1FjMXZ0QnQ4K0NTNEF6NWJwcmh4TjFx?=
- =?utf-8?B?cXppYmJUb0N2TDdNR1ZMYnlYVE1Db09mbjhCMnAybDJPR2x2Rm5Ua09tbVMy?=
- =?utf-8?B?Rm8xUjFUZ0d5eEprWnY4cU5vak53ak8yeElka0JaVzV0TkJ1NUJpMWRyL2dk?=
- =?utf-8?Q?5CLhXn4vIygyRjXppuDAupKj+g5cJarPFuodctA?=
+	=?us-ascii?Q?Y7AM62YhId1c00omKv8fGSwNl4RJgWoITN1cgvdDJ8rAez8RNdZtEqK1NLfD?=
+ =?us-ascii?Q?1zCN34V6Sbse6lPZ6nLiZyVq3ETipDHjDr/LkzG0HF7AtZMSj5JU+NLfmZlo?=
+ =?us-ascii?Q?KFk7gJKw3y1CFJVLqb1sOCzW9aIg2dyfe0D1wBDklmeYV7krJ5B1VfXoxw3o?=
+ =?us-ascii?Q?6Lyc3C68f0hgxl6sbEV4EkRWaabkOLSdLTpvOm5DeiYOVMRhKRv+VtQsHca2?=
+ =?us-ascii?Q?0I7H3yZFvbDCFFrn+fe1EoMHD12SqlwSDb/7tHVSfn3DV9UbS/wHlIjm6nqW?=
+ =?us-ascii?Q?7SLren+XhVtHdJiGeYfUQQAhWZ2oO8PIvWyus5h4Zl+rdJnUlYDDPSiDpNQq?=
+ =?us-ascii?Q?rc2D8VUieUlVW3mzFguUFUGlA3joXrWcT2Cr61CDYtvt3VqM/87YtW1Jj1rR?=
+ =?us-ascii?Q?Sgajg3y48KIl888mD+4kTIKBe3bkchwWM0DxahYberetRLBDy1SdU9iTJNn2?=
+ =?us-ascii?Q?1/VeRKlZrWT14gQ4THW0KjyCgsZtOlHOLTjtDSA1iq+EWchZ39ZNw4L6kJSX?=
+ =?us-ascii?Q?yOn2/+kcNk12tUWE1UJM+odLKy/Qq7Y47VWCA/A98dxVOShvKPMqUX+M6Sq1?=
+ =?us-ascii?Q?f0zAJK310gd/+eqKSKwrnA1p1sdWJwmtHCHgcpLUt0ZYyT/0UQrgyBoMlIvY?=
+ =?us-ascii?Q?1gTi2BoqscFrltwVM/4a1LfitTisZcrH9okvoVBsXzKnUfKevQruXU13w+WM?=
+ =?us-ascii?Q?Ss5DpNjhPWDLCtzAYviH/XsmTkfF/eS5OmmSrGi+A2eh66NUr7AK2dbSJlaj?=
+ =?us-ascii?Q?diZZ2uD0eBuKezrXnCDKF5j6jCAMz0gJ0pX7qiNlqbiPAXhTiiz7CvWW/Yjs?=
+ =?us-ascii?Q?GafQIjuo6TYH89XMUuo2R63Iv1SP2GfSstWazXWkhw2AiW8mWlHNPO/Tlzhg?=
+ =?us-ascii?Q?W7L4uBOJE+If0qijTMhQXMHc5iyuMczJYm/pLt61DT3NRzZW/3xWm4M+u9j5?=
+ =?us-ascii?Q?HWOfN6sKkpa/41U1xaHzY7XEn0cJiAT5RdTPOAw7+XXjJdANuIXRr3PZZYvj?=
+ =?us-ascii?Q?GT+ywL4cv2NUk7umzYjYAUjig6dOi0614NZUWCDhwux8NvYIPrEv2VPa519p?=
+ =?us-ascii?Q?jTowWjQvfaQqeQqfsUJ4WXZbCUns9cNDlQ+8jklkCtDeF3EaQ/0dwi6lHw+W?=
+ =?us-ascii?Q?FddZL4crafz4gBYQWhkwfE4/yiqD0C56sUAcR1atAbHaUUjy3NTwa5Ab4zDg?=
+ =?us-ascii?Q?hJ1Do5pIvRq6wiqoJVD8lDuX9YbI3Ig1+rcdTrP54J6FCk1TIkk/0S3b7rL7?=
+ =?us-ascii?Q?OzTOZ9MNVB3FC9Gqt/cNgeXJsbGX5rCG086HIirYXI+L7iCv7fWvoDv58POt?=
+ =?us-ascii?Q?JdOBnn2yf4yQworCYW9AuRO/PQSIVUgIVPszDTy1FQgAroTXkzGXrkp0t3rD?=
+ =?us-ascii?Q?Q9yiTgD5yd65mg+YXtVJ2Xxflv1nVMp9kgRXgQ16w4Ywdvnzxg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFVXdXRmWmNBTExWL21UYU5Sc3J6YjZJY0Q0YmlhTGRLTnhHYlJ1SkYzTWJC?=
- =?utf-8?B?UDhEK2wwY0Zsd2toTVRzWFdJQzBnY2w4YmtOOWExUUhMRFdJYUFpYWJENUZY?=
- =?utf-8?B?QTl0aVI0MEFNREpxd1dVbEVJaHQ4dmIzeWthYWFFSmlpN0N2MERDc2wzL0lp?=
- =?utf-8?B?b1Y5Q0tVVUk2QXd4Snp3QUJDbGFFamRSSGZFcFV4UW83aHFwSVRlWDZkekRy?=
- =?utf-8?B?QXV5dWJzemxka0xoOHRYK3ovbTlRSkhUTStCK3VCSis2dy8raXVnc3d6R3JS?=
- =?utf-8?B?UjJacjJnSGNjMmtWRFdSUU5TZzFsR1lValMyVVpUTHNmQ1hJcEZqWEk4NXk1?=
- =?utf-8?B?WVNQUzZIU0tuUk0xT3NSNnNUUksrcmcrem0yR1NKRkYraDh5ek5rc2JhZGE4?=
- =?utf-8?B?cWRxeDB6aHVpMjRGVkxiYnVLd1B1ZlFkRUJzSjJDRlFjTi9jcnpFVlU1OEYw?=
- =?utf-8?B?UENISHZzR1NPVzFGSnJhcDFnWkdtL3prbUZra3RoelVFZnFjSGg3WUZZMlhB?=
- =?utf-8?B?RU9maS9QcnQ5T0F2VWd6emRQbG85TGFQQlgycVZwVkRGZk16Rkh3Szl4KzZl?=
- =?utf-8?B?SkdYL25DcEFwR29OZ1FOaGVTNkJlMWg5eThpMGFxanE4NVdtZzNUcWlGUk9o?=
- =?utf-8?B?MFlTZHE3eHpUL3BKZ24yOTBWcWR0d25MeHpZeU90aFpUditGU05LcmM2NWM5?=
- =?utf-8?B?aUdvN1JjVTJzSWFhMFlmV3BOSDRyTWNBNGZRY0pvOFB1RHp4MXJCQitkVVNk?=
- =?utf-8?B?WEc3STkvMnBqcFpLazl2MEZkZkRveElDOWdIYnphc2N4Z2R0RVByY2dJOWFY?=
- =?utf-8?B?NkdKaDZVanpnaUY2dWlXdVNjTHppRWhJekVPZ2VsM1ovUFluS2hkSDJxNnk5?=
- =?utf-8?B?MlR6V0Z5cnNWQUJPbk1tOW1aMEZMV2JVajZwREhJbG1xb3lvVUpBaXJpRFhM?=
- =?utf-8?B?OXMxYzBucTBNRkkvTXZIVnp2RU92YU5qNEJoQ29tR3k5ZnFXaHVRS3ZObVQy?=
- =?utf-8?B?cXQ5V29hcUY2MEl6QVREMWsrNFdHYjdKSWVRMXV1TGphallsVGFnNjV2M3Zn?=
- =?utf-8?B?U3BuU1R0WUQ0V2JJZU5nOTNmb1lXWGIrc3d0dUZpckpYSjc3Rk9vZ2JDMXdF?=
- =?utf-8?B?aFpYWGxMS2RZMHVVb21LdEJIc0JDYnVLK3FkNUlXeEJHQlczUENzbEU5dGlI?=
- =?utf-8?B?MmVwZmUwa3NxMkpQS1FMcGpXVlYvNWZKZDd0UUFRcTkxUzduWm8vSC9ocGRY?=
- =?utf-8?B?djdwNEZSSXlWZ3FiRSs5VWJiakFzeFh6eXlHWGx3THVsZ1FieHhHSEp0SGhC?=
- =?utf-8?B?bEZUWjhVc1EzcnAzckxBSklrS1pXY0VKUjV3ZmV4SkpUMFhsZjdJVTZZeDRI?=
- =?utf-8?B?NDhqVWVxTmVJRysxSTBReHgwNnBjQlNYQ3o2b2g4UHZhNTlKVU5GSFZ1cU9x?=
- =?utf-8?B?MzRHb3hnTW9LUWFiYlFFVnQ4UFJ5OEIxSlg2a0EvVm5NaEZZWjlmakg4Wmw3?=
- =?utf-8?B?R0NlZHI3V1JOQUpxMDlMTnMySkptczJlMmtzN2RlVkZaWWJBbWwwUmJJenNq?=
- =?utf-8?B?aW9pSGJKaDB0QmdsYm9JM2RGSzIzeVl3L1ZKbFNHOFJyNzd4MlNONWFRdXdS?=
- =?utf-8?B?ZXhIT3hwWk1TYWF0U0UrQ3lwRWowcDlkTDVNUnp6OUgxRkFQTTMyK3hWWCsw?=
- =?utf-8?B?emtHK25STmlnSFJvL0ZadEZYMkpSUUpvdjdqVFpTcHpobDhib3VaSHlMRWJT?=
- =?utf-8?B?QVFPV2taREhtTGlueisxbVZCN3Y1d1dEVW5KWVIvTW9RVmloWEFJRkozWUkx?=
- =?utf-8?B?U1l3cjRjVUVneEFta2M2SVlCTUw3cUpCazNDUGFuUTQ1cTJuSmR3a0RKTmFJ?=
- =?utf-8?B?L0NOQ0JUVE5VVE45UlNuVGNXWkFJNU5pK0J3RjZMa3FMOVF6ZlQyY3F4VU85?=
- =?utf-8?B?T2xrU1VOS0k3dTFMaEQzNlNheThrclMrVDJyWVg2VnRPcFlySDJSVUU5ajY5?=
- =?utf-8?B?c0hlczl0UkZGTFp1S1VzSytzbmRJRVNRSHVyR1NGQ1BjR0U2Q0s3QWpHdEhl?=
- =?utf-8?B?R3dPL216bXQzR1VGdDdiNkxIbml3ZjN4ZlZIRm1lV1NrOSs1cm5BbXFsVGtv?=
- =?utf-8?Q?TZefYD8guyvplqkh751retOj8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6c13eb1-efc1-4324-6867-08dcf24fc04f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 04:12:32.6432
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 04:14:26.2134
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4Vg3ncr1aYzZrQ5fl/Ds7eL9ZEvV2wU6mM8EpIV8BCoWtsIIGWCvRG0s+Iom5bfvmaVyuwh5tKjFJifVbRMcag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9101
+X-MS-Exchange-CrossTenant-Network-Message-Id: 818d87eb-8f09-4300-eb4f-08dcf2500458
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7313
 
-On 10/21/2024 1:18 PM, Christophe JAILLET wrote:
-> Le 21/10/2024 à 07:51, Nikunj A Dadhania a écrit :
->> Currently, the SEV guest driver is the only user of SNP guest messaging.
->> All routines for initializing SNP guest messaging are implemented within
->> the SEV guest driver. To add Secure TSC guest support, these initialization
->> routines need to be available during early boot.
->>
->> Carve out common SNP guest messaging buffer allocations and message
->> initialization routines to core/sev.c and export them. These newly added
->> APIs set up the SNP message context (snp_msg_desc), which contains all the
->> necessary details for sending SNP guest messages.
->>
->> At present, the SEV guest platform data structure is used to pass the
->> secrets page physical address to SEV guest driver. Since the secrets page
->> address is locally available to the initialization routine, use the cached
->> address. Remove the unused SEV guest platform data structure.
->>
->> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
->> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
->> ---
-> 
-> ...
-> 
->> +static inline bool is_vmpck_empty(struct snp_msg_desc *mdesc)
->> +{
->> +    char zero_key[VMPCK_KEY_LEN] = {0};
-> 
-> Nitpick: I think this could be a static const.
-> 
+From: Ritu Chaudhary <rituc@nvidia.com>
 
-As the primary objective of this patch is to move the code, I have retained the
-previous implementation.
+Add support for S24_LE format for all internal and IO AHUB
+modules, except for ASRC (which is already supported).
 
-Regards
-Nikunj
+The data flow happens as mentioned below:
+
+- ADMAIF picks 24-bit valid data and converts it to 32-bit before
+  sending to internal AHUB modules. This makes the driver change
+  simpler for internal AHUB modules.
+- IO modules CIF converts the 32-bit data to 24-bit before sending it
+  to the external world.
+- To maintain consistency across modules, conversions between 24-bit
+  and 32-bit occur either at ADMAIF or at the IO modules CIF.
+
+This feature has been thoroughly tested and verified with all internal
+AHUB modules on the Jetson AGX Orin Platform, as well as with the
+external RT5640 codec.
+
+Signed-off-by: Ritu Chaudhary <rituc@nvidia.com>
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+ sound/soc/tegra/tegra186_dspk.c   |  3 +++
+ sound/soc/tegra/tegra210_admaif.c | 11 +++++++++--
+ sound/soc/tegra/tegra210_adx.c    |  9 +++++++--
+ sound/soc/tegra/tegra210_amx.c    |  9 +++++++--
+ sound/soc/tegra/tegra210_dmic.c   |  7 +++++--
+ sound/soc/tegra/tegra210_i2s.c    | 14 ++++++++++++--
+ sound/soc/tegra/tegra210_i2s.h    |  9 +++++----
+ sound/soc/tegra/tegra210_mixer.c  |  9 +++++++--
+ sound/soc/tegra/tegra210_mvc.c    |  9 +++++++--
+ sound/soc/tegra/tegra210_ope.c    |  9 +++++++--
+ sound/soc/tegra/tegra210_sfc.c    |  9 +++++++--
+ 11 files changed, 76 insertions(+), 22 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
+index 508128b7783e..1be6c09cbe1a 100644
+--- a/sound/soc/tegra/tegra186_dspk.c
++++ b/sound/soc/tegra/tegra186_dspk.c
+@@ -245,6 +245,7 @@ static int tegra186_dspk_hw_params(struct snd_pcm_substream *substream,
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
+ 		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
+ 		cif_conf.client_bits = TEGRA_ACIF_BITS_24;
+@@ -313,6 +314,7 @@ static struct snd_soc_dai_driver tegra186_dspk_dais[] = {
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_48000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE |
++			   SNDRV_PCM_FMTBIT_S24_LE |
+ 			   SNDRV_PCM_FMTBIT_S32_LE,
+ 	    },
+ 	},
+@@ -324,6 +326,7 @@ static struct snd_soc_dai_driver tegra186_dspk_dais[] = {
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_48000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE |
++			   SNDRV_PCM_FMTBIT_S24_LE |
+ 			   SNDRV_PCM_FMTBIT_S32_LE,
+ 	    },
+ 	    .ops = &tegra186_dspk_dai_ops,
+diff --git a/sound/soc/tegra/tegra210_admaif.c b/sound/soc/tegra/tegra210_admaif.c
+index a866aeb2719d..58fdb0e79954 100644
+--- a/sound/soc/tegra/tegra210_admaif.c
++++ b/sound/soc/tegra/tegra210_admaif.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_admaif.c - Tegra ADMAIF driver
+-//
+-// Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -285,6 +285,11 @@ static int tegra_admaif_hw_params(struct snd_pcm_substream *substream,
+ 		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
+ 		valid_bit = DATA_16BIT;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
++		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
++		cif_conf.client_bits = TEGRA_ACIF_BITS_24;
++		valid_bit = DATA_32BIT;
++		break;
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
+ 		cif_conf.client_bits = TEGRA_ACIF_BITS_32;
+@@ -561,6 +566,7 @@ static const struct snd_soc_dai_ops tegra_admaif_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -570,6 +576,7 @@ static const struct snd_soc_dai_ops tegra_admaif_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra_admaif_dai_ops,			\
+diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
+index 109f763fe211..3e6e8f51f380 100644
+--- a/sound/soc/tegra/tegra210_adx.c
++++ b/sound/soc/tegra/tegra210_adx.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_adx.c - Tegra210 ADX driver
+-//
+-// Copyright (c) 2021-2023 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -127,6 +127,7 @@ static int tegra210_adx_set_audio_cif(struct snd_soc_dai *dai,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -237,6 +238,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -246,6 +248,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_adx_in_dai_ops,		\
+@@ -260,6 +263,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.channels_max = 16,			\
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
++				   SNDRV_PCM_FMTBIT_S16_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+@@ -269,6 +273,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.channels_max = 16,			\
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
++				   SNDRV_PCM_FMTBIT_S16_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+diff --git a/sound/soc/tegra/tegra210_amx.c b/sound/soc/tegra/tegra210_amx.c
+index 38a2d6ec033b..a9ef22c19e81 100644
+--- a/sound/soc/tegra/tegra210_amx.c
++++ b/sound/soc/tegra/tegra210_amx.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_amx.c - Tegra210 AMX driver
+-//
+-// Copyright (c) 2021-2023 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -144,6 +144,7 @@ static int tegra210_amx_set_audio_cif(struct snd_soc_dai *dai,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -266,6 +267,7 @@ static const struct snd_soc_dai_ops tegra210_amx_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -275,6 +277,7 @@ static const struct snd_soc_dai_ops tegra210_amx_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_amx_in_dai_ops,		\
+@@ -290,6 +293,7 @@ static const struct snd_soc_dai_ops tegra210_amx_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -299,6 +303,7 @@ static const struct snd_soc_dai_ops tegra210_amx_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_amx_out_dai_ops,		\
+diff --git a/sound/soc/tegra/tegra210_dmic.c b/sound/soc/tegra/tegra210_dmic.c
+index d9b577f146dc..7986be71f43d 100644
+--- a/sound/soc/tegra/tegra210_dmic.c
++++ b/sound/soc/tegra/tegra210_dmic.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_dmic.c - Tegra210 DMIC driver
+-//
+-// Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -139,6 +139,7 @@ static int tegra210_dmic_hw_params(struct snd_pcm_substream *substream,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -325,6 +326,7 @@ static struct snd_soc_dai_driver tegra210_dmic_dais[] = {
+ 			.channels_max = 2,
+ 			.rates = SNDRV_PCM_RATE_8000_48000,
+ 			.formats = SNDRV_PCM_FMTBIT_S16_LE |
++				   SNDRV_PCM_FMTBIT_S24_LE |
+ 				   SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 	},
+@@ -336,6 +338,7 @@ static struct snd_soc_dai_driver tegra210_dmic_dais[] = {
+ 			.channels_max = 2,
+ 			.rates = SNDRV_PCM_RATE_8000_48000,
+ 			.formats = SNDRV_PCM_FMTBIT_S16_LE |
++				   SNDRV_PCM_FMTBIT_S24_LE |
+ 				   SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_dmic_dai_ops,
+diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2s.c
+index a3908b15dfdc..07ce2dbe6c00 100644
+--- a/sound/soc/tegra/tegra210_i2s.c
++++ b/sound/soc/tegra/tegra210_i2s.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_i2s.c - Tegra210 I2S driver
+-//
+-// Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -629,6 +629,7 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -656,6 +657,11 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
+ 		sample_size = 16;
+ 		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
++		val = I2S_BITS_24;
++		sample_size = 32;
++		cif_conf.client_bits = TEGRA_ACIF_BITS_24;
++		break;
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		val = I2S_BITS_32;
+ 		sample_size = 32;
+@@ -720,6 +726,7 @@ static struct snd_soc_dai_driver tegra210_i2s_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -729,6 +736,7 @@ static struct snd_soc_dai_driver tegra210_i2s_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 	},
+@@ -741,6 +749,7 @@ static struct snd_soc_dai_driver tegra210_i2s_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -750,6 +759,7 @@ static struct snd_soc_dai_driver tegra210_i2s_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_i2s_dai_ops,
+diff --git a/sound/soc/tegra/tegra210_i2s.h b/sound/soc/tegra/tegra210_i2s.h
+index fe478f3d8435..543332de7405 100644
+--- a/sound/soc/tegra/tegra210_i2s.h
++++ b/sound/soc/tegra/tegra210_i2s.h
+@@ -1,8 +1,8 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * tegra210_i2s.h - Definitions for Tegra210 I2S driver
++/* SPDX-License-Identifier: GPL-2.0-only
++ * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++ * All rights reserved.
+  *
+- * Copyright (c) 2020 NVIDIA CORPORATION. All rights reserved.
++ * tegra210_i2s.h - Definitions for Tegra210 I2S driver
+  *
+  */
+ 
+@@ -87,6 +87,7 @@
+ 
+ #define I2S_BITS_8				1
+ #define I2S_BITS_16				3
++#define I2S_BITS_24				5
+ #define I2S_BITS_32				7
+ #define I2S_CTRL_BIT_SIZE_MASK			0x7
+ 
+diff --git a/sound/soc/tegra/tegra210_mixer.c b/sound/soc/tegra/tegra210_mixer.c
+index e07e2f1d2f70..410259d98dfb 100644
+--- a/sound/soc/tegra/tegra210_mixer.c
++++ b/sound/soc/tegra/tegra210_mixer.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_mixer.c - Tegra210 MIXER driver
+-//
+-// Copyright (c) 2021 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -248,6 +248,7 @@ static int tegra210_mixer_set_audio_cif(struct tegra210_mixer *mixer,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -312,6 +313,7 @@ static const struct snd_soc_dai_ops tegra210_mixer_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -321,6 +323,7 @@ static const struct snd_soc_dai_ops tegra210_mixer_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_mixer_in_dai_ops,		\
+@@ -336,6 +339,7 @@ static const struct snd_soc_dai_ops tegra210_mixer_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -345,6 +349,7 @@ static const struct snd_soc_dai_ops tegra210_mixer_in_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				SNDRV_PCM_FMTBIT_S16_LE |	\
++				SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_mixer_out_dai_ops,		\
+diff --git a/sound/soc/tegra/tegra210_mvc.c b/sound/soc/tegra/tegra210_mvc.c
+index 4ead52564ab6..119f17501478 100644
+--- a/sound/soc/tegra/tegra210_mvc.c
++++ b/sound/soc/tegra/tegra210_mvc.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_mvc.c - Tegra210 MVC driver
+-//
+-// Copyright (c) 2021 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -441,6 +441,7 @@ static int tegra210_mvc_set_audio_cif(struct tegra210_mvc *mvc,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -569,6 +570,7 @@ static struct snd_soc_dai_driver tegra210_mvc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -578,6 +580,7 @@ static struct snd_soc_dai_driver tegra210_mvc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 	},
+@@ -592,6 +595,7 @@ static struct snd_soc_dai_driver tegra210_mvc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -601,6 +605,7 @@ static struct snd_soc_dai_driver tegra210_mvc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_mvc_dai_ops,
+diff --git a/sound/soc/tegra/tegra210_ope.c b/sound/soc/tegra/tegra210_ope.c
+index e2bc604e8b79..c595cec9baab 100644
+--- a/sound/soc/tegra/tegra210_ope.c
++++ b/sound/soc/tegra/tegra210_ope.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2022-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_ope.c - Tegra210 OPE driver
+-//
+-// Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -47,6 +47,7 @@ static int tegra210_ope_set_audio_cif(struct tegra210_ope *ope,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -129,6 +130,7 @@ static struct snd_soc_dai_driver tegra210_ope_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -138,6 +140,7 @@ static struct snd_soc_dai_driver tegra210_ope_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 	},
+@@ -150,6 +153,7 @@ static struct snd_soc_dai_driver tegra210_ope_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -159,6 +163,7 @@ static struct snd_soc_dai_driver tegra210_ope_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_ope_dai_ops,
+diff --git a/sound/soc/tegra/tegra210_sfc.c b/sound/soc/tegra/tegra210_sfc.c
+index e16bbb44cc77..df88708c733c 100644
+--- a/sound/soc/tegra/tegra210_sfc.c
++++ b/sound/soc/tegra/tegra210_sfc.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
+ //
+ // tegra210_sfc.c - Tegra210 SFC driver
+-//
+-// Copyright (c) 2021-2023 NVIDIA CORPORATION.  All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -3133,6 +3133,7 @@ static int tegra210_sfc_set_audio_cif(struct tegra210_sfc *sfc,
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		audio_bits = TEGRA_ACIF_BITS_32;
+ 		break;
+@@ -3395,6 +3396,7 @@ static struct snd_soc_dai_driver tegra210_sfc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -3404,6 +3406,7 @@ static struct snd_soc_dai_driver tegra210_sfc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_sfc_in_dai_ops,
+@@ -3417,6 +3420,7 @@ static struct snd_soc_dai_driver tegra210_sfc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.capture = {
+@@ -3426,6 +3430,7 @@ static struct snd_soc_dai_driver tegra210_sfc_dais[] = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |
+ 				SNDRV_PCM_FMTBIT_S16_LE |
++				SNDRV_PCM_FMTBIT_S24_LE |
+ 				SNDRV_PCM_FMTBIT_S32_LE,
+ 		},
+ 		.ops = &tegra210_sfc_out_dai_ops,
+-- 
+2.17.1
+
 
