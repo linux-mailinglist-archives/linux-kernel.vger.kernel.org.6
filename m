@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-375956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF8B9A9DC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE4A9A9DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F57283ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:00:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940A7283F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B615154434;
-	Tue, 22 Oct 2024 09:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BB01940B9;
+	Tue, 22 Oct 2024 09:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KBgey3b/"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmc7OXB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AB913A87C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D285D22083;
+	Tue, 22 Oct 2024 09:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587642; cv=none; b=jc6yDUQK/oc8wEeFYwePwZY3cJwICnlSzFwzgyPpuwX8cV5OddeXbWkO3NNtqoDA3ySv7WqY3ptVgpHZuT+meSqCaY4kAG59OvW11YeUbe2UF7usf6vds6MYjjwWINmt1c5b9Hr8WR4bRbT+EMnGOhUasC4fqop47BtLQ0sCx/c=
+	t=1729587655; cv=none; b=brpUUhUpShsfmn0xAkVpO72EHZNkgQ86OnBApUokXpqdyqNji9hXAhGz2aClwquI0Wy/hZIMGr1Os1ZGkEfT25KNp/6S7zBQLZSFvF+BAkwdzT8+vHNzacC2bQksqRPv33StpA8b3uALa+Ucu4HmU20GvJvA3dsD0/oZW9Q5d1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587642; c=relaxed/simple;
-	bh=pAMUEcrcBBsjn/My8edrOsqWlD5Q2CpOfj3OFx998zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUOCYKFaDhDDjSlwDE7hu/W+s6M89+QBBwrw5Cv6q1AeCz4HXA7nqNPp/UZfT5mEUjtYtOvslzmep77T2TVwM5+nBd8yZFBa2raLa39pbfD0gUtvd+GA3IbPThIAQwtVz5wf+8/5K52jhVZvtdizMayqZeqSXAE8nloHZRCYGvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KBgey3b/; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315eac969aso31930425e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729587639; x=1730192439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0hFaN/sAZ28IQv/kQdloNCB5hICOmfCsUB3mKiGC9T4=;
-        b=KBgey3b/9Qar7Uk3cKT6KNPur8uyJpcufAlborSNqSRIxq7sfZ203o+a9UCbhOZCTx
-         fYWRJw7lEHv2g3IQy4En8xkoYvcMy5TX7ETmj+Gi4T60v5l8mCLFcnHa2uC5z66dgmR7
-         xLVfFRjqSGxDEPi5h3YdQoY3KZ5T5Xx8F68T9Dq24P0Zo2RIEvHaJzM1qapttzq2O6zS
-         fefusX4o/C4n0H2fgTBKG/0S6yNi7fH3ituaqPlsS5MI7lIPDUfYr6Ky1Tn9nPDOBhmN
-         zf6FI1shgoE0N4/40F0qvQZRFsoxjBAeZCMbrkdMZwUlKUYVK3di3ijF13shLjwF/f2D
-         Hq3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729587639; x=1730192439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0hFaN/sAZ28IQv/kQdloNCB5hICOmfCsUB3mKiGC9T4=;
-        b=a2FuRjfwqoJjL8Nu0/y1/Xg4MwzSuV0EDu9LDHySziT+JpfI2RZ9BD7y6G76mQIPo2
-         v1XzJcCkgN8Py96EimBs9lSCxqvv9Qnl0/oPTTjHYIovPUpYpyShiR2KCUCj7Qh8Ossp
-         pEiztnVP5qwDnLhtc6jfKltebySzubLIvrmh+Lmh1YCp7Py5UM5+yseEpGxABsWUCZXy
-         CWhnLMcGm9+mz0zOb4DiCkL7ttC2e6hZmm81GIYQTymgPAXzq31j/gAB5Dz42FrLtjxJ
-         l2gzWD9cgBOGIOu99KxNAaaUk064GCnJ8BValbp4aMd5IkKJDBf95AXQUjUqGBQZdxF7
-         Oatg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3w6FLbzQkZIDWnHruSrXEJt2ZC8j8tgbmvOPxfEGMHqhEItAn0F3Tee8lH7Q+3v9WaOtVPwLbv5BbsQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpSlfqPDojYzKx9wiWd6kw1jrrAl4WEcQB0o4ebJE68dII/hCk
-	NSn5G/FZybDsqQ1HBVvMmeDJDjQkmoMaGqvKPjrSS6deflGxgSuSSFH+wT/5W6E=
-X-Google-Smtp-Source: AGHT+IGBvL9DpIJxEKjzegaN2LTWBJWj4BRs/DC6X3KS+aNbMbld2ASHJC5m+D7+R6fz4Usrb++PBg==
-X-Received: by 2002:a7b:c051:0:b0:431:55af:a220 with SMTP id 5b1f17b1804b1-4317bd8e649mr13858785e9.12.1729587638519;
-        Tue, 22 Oct 2024 02:00:38 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58f1fdsm81759835e9.28.2024.10.22.02.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:00:38 -0700 (PDT)
-Date: Tue, 22 Oct 2024 11:00:36 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Michael Vetter <mvetter@suse.com>
-Cc: linux-kselftest@vger.kernel.org, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] selftests: livepatch: test livepatching a kprobed
- function
-Message-ID: <ZxdptC2sP8z9wiYi@pathway.suse.cz>
-References: <20241017200132.21946-1-mvetter@suse.com>
+	s=arc-20240116; t=1729587655; c=relaxed/simple;
+	bh=o2gQumhbj6TkS5MexAl/H7osNUxHltKph93k317WY0E=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LQaAZyJrkW6A3hTt6S7eg7T5zbbafF7rrPaejgaAoVNssEdQg2arwYQAe+MebfXJDWn/srbAKCZRjwfX1O8lwH4g+UwNNbzlTwUfuq83VUJda1O13/U6bzdaW6fmXcadSJx90avPwZduktLZe4ZuYGS6sq93fGl/ZjWoshxpELk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmc7OXB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72ADC4CEC3;
+	Tue, 22 Oct 2024 09:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729587654;
+	bh=o2gQumhbj6TkS5MexAl/H7osNUxHltKph93k317WY0E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jmc7OXB6Rjh0AoWjy/yY8nCzBsfAGKwJDKN44cc2mEv4XMleapb3V2vG0/x5UlgDH
+	 cACO0vjU5DoaVsQfHijEyV+AaCk6OOaDIIa6Lak5AMVzwscJgqxri7skeNMGbipgZK
+	 NfY/fn6OPlK7H7RUBCnlsGvhB0Ps+ps+dAY5LZizpjCq5jp9Mh6f9UTJ2/ggJKq4qS
+	 QHQzcIg/bQJinymcnO0uD8dOvZ6XM+X8l745BL9J0GzXtgWLerVIia2GfUFSdT86Zv
+	 VINSmPwqFA2dXifsqPdTGzp1EPbNhCQxpH1CI+eLRoDnriC0eTs382KxghonoZszGJ
+	 ehwpfosZG8/TA==
+Date: Tue, 22 Oct 2024 18:00:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Sven Schnelle
+ <svens@linux.ibm.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Florent Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
+ N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew
+ Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph
+ tracer
+Message-Id: <20241022180048.989a3470b23ed34d048b246a@kernel.org>
+In-Reply-To: <20241021163139.6950-F-hca@linux.ibm.com>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904040206.36809.2263909331707439743.stgit@devnote2>
+	<yt9ded4gfdz0.fsf@linux.ibm.com>
+	<20241016101022.185f741b@gandalf.local.home>
+	<20241018124952.17670-E-hca@linux.ibm.com>
+	<20241022001534.96c0d1813d8f4a26563d4663@kernel.org>
+	<20241021163139.6950-F-hca@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017200132.21946-1-mvetter@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu 2024-10-17 22:01:29, Michael Vetter wrote:
-> Thanks for all the reviews.
+On Mon, 21 Oct 2024 18:31:39 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
+
+> > > Please note that this only works for addresses in the kernel address
+> > > space. For user space the full 64 bit address range (minus the top
+> > > page) can be used for user space applications.
+> > 
+> > I wonder what is the unsigned long size (stack entry size) of the
+> > s390? is it 64bit?
 > 
-> V5:
-> Replace /sys/kernel/livepatch also in other/already existing tests.
-> Improve commit message of 3rd patch.
+> The s390 kernel is 64 bit only. So unsigned long is 64 bit as well.
+> 
 
-With the syntax error fixed by Joe:
+Ah, got it.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
+> > > I'm just writing this
+> > > here, just in case something like this comes up for uprobes or
+> > > something similar as well.
+> > 
+> > I'm considering another solution if it doesn't work. Of course if
+> > above works, it is the best compression ratio.
+> 
+> I'm think we are not talking about uprobes here, and everything ftrace
+> related would just work (tm) with the first four MSBs assumed to be
+> zero.
 
-Note: I could fix the syntax error when pushing the patchset.
-      There is no need to send v6 if this is the only problem.
+yeah, but we still have other 32bit architectures support (e.g. i386, arm).
 
-Best Regards,
-Petr
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
