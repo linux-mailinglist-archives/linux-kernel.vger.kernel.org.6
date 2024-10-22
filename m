@@ -1,126 +1,107 @@
-Return-Path: <linux-kernel+bounces-376383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1C99AB0AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977BD9AB0BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44CD2842B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:19:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 436E41F237B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A861A08B1;
-	Tue, 22 Oct 2024 14:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC511A08CC;
+	Tue, 22 Oct 2024 14:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkKidgYe"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmGD1Ybx"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9219D060;
-	Tue, 22 Oct 2024 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C619DFB5;
+	Tue, 22 Oct 2024 14:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606743; cv=none; b=sVfc75KAb8WWvJdKWkcc8pv/wejd7Ksd6XrdSvpZkTTXMVESH7xnkYWdW1DBL4GeQosJczC/Tl9HU2ohaROW9laNmORUv1G3/31CYosPnbUaL8t0QFcTZSBChlZhYe0j8nzRFHP0Qq9IicJEEZuri0qZp12n5HCf0CYmJskRL18=
+	t=1729607019; cv=none; b=JMwQ9Hg4beu22jO0Fc+W21QdL8YCP4pn24dIONNz1BG5q5DaRSdLIAm432NjOwPGURt/v00MrDaEAB/lveAU7/njUQhA64us1WyzulOfwk3tygp8Aio4g37SiXGS4C9Yr8VwOERBW2XAh3/IX+cRERcjjcwlJmtxzxzJhDDY69M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606743; c=relaxed/simple;
-	bh=Q+1mGVztRNdJIrHuhOmd/0Qa1sTvnz9cDv4O75qLyV8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=frAyJl1V87P/clILTnA2Lmwd+96sCk/WvsuQa2xGal5BCrcdzWeK+trTZa+V1oAuZ/SPF+2wi/yynthItNZ8pjrs8Px7+9Ttf1qwxPFG9e7sfRJmV/xaZQ86TxVA3zAZ9XS2OupJGyI9TQyT5G7TOuNr5jOVXp+PL+t5cz2t15A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkKidgYe; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1729607019; c=relaxed/simple;
+	bh=9izoLQvL9+XeDFGAZpzQi842u8VFnvbtKis5N4G1O44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YeRo6mmTYoR9Jk+Mp0qDRqASqWOz3WnuOxGw0TKkWxWcQfrTNqx27klzfkw1OafHXi7UjzViGYzxOCg6tk/RaUlC4yhFcaU9qcygGsRENomakVB+Ob9D6FcgSYc27urSEhg50zUToWFBH80qt/omDa0evnbSr5Yrvplv+8U3q+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmGD1Ybx; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315baec681so58982585e9.2;
-        Tue, 22 Oct 2024 07:19:01 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288d74b3a91so3176757fac.0;
+        Tue, 22 Oct 2024 07:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729606739; x=1730211539; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MdMzAusJBRJh6pyCqNld+00ftFOuHm80MKqVa6AO4Zc=;
-        b=RkKidgYeH3CWy9GrDj4X4BMvjyxHZ4otahPldyej0HzLT3bzYnV+iS93JYKjsoNZM8
-         b5mYZ1z2avdo4dh8Qosom6NHS+RV5n6ND2Xz90zUDQosDmXD7hzrqFioltbkm4to0v4t
-         JVHLo/gJy06yUfAfmprJHl8MrRfu2SvctwRnqLDr9lbEgE0DpxpKwtCTEFs6OBrt6G5d
-         4vVIGJbO5Y4wGumiDK+vc23UFqHH7NG+mjJZRaVwxPIavaUs9gbOx9kuO7dpjgX47xJX
-         xI1joCMlINnOzKUpcTVN1b7VhkuAU9mPVPf/ycGfiQPcSTkfT/xm8SIRA0Fz1V4YiVTK
-         TeqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729606739; x=1730211539;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1729607017; x=1730211817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MdMzAusJBRJh6pyCqNld+00ftFOuHm80MKqVa6AO4Zc=;
-        b=A8awVjxTp892ombtaVx3IZHT2ORlIq0QIPjcDEY48Bw1G9NefKz2W9QqD81W7ZTFR7
-         J6MxZ/d2z4W0WYUvWS4Ol+hnNR6Ys1dISLv6fcfFZZ96O0qAtUUH9NrGzHVOli0G8qxo
-         /36WmyCXOxSeXVwUzRM9Rp8shTPLu+Y+ET0SsSKDmJXjJr3QAIVjFOzRCaZ6HYfzt3ra
-         kOyKg869ayU6sz5zND93Yban6IYzD/iKKaWmVxZxGVQNFyoJgWMQaR67arzOSxonmeWx
-         ZHOgsplU94xJcOMlnagPLy12RNk+TYaoEH/gXFvpMVOp47UE1Y2/x5AVkX9EPWXmlTgb
-         UIug==
-X-Forwarded-Encrypted: i=1; AJvYcCWwDLzvrrBIY5nWL9Y3miaP3ornG3YRihkhZJ7e6/siSIJ4PIduHAeAimiHkdrjnI23Irnva2tVewMXhm7w@vger.kernel.org, AJvYcCXTAEvdqytIaunCg1s9B8fX8FddLf3ykd3ts740MWJUb/qA3IA04iR/5zkxGRczqStV3NRDKrmunXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3v3WS85GxkpssMlhRxHjZyhG0n7tNY3dOWgiJ/4DnITIZJQYD
-	PjuqaIRPf+hqX3NiVLfhKVYaLPOrkHWpj+0SkGr43e4EOxHhO6Ag
-X-Google-Smtp-Source: AGHT+IEmQEXvqqnADJThezvpn0o63z/g54dizNY6aFFV3VlbdG1pYwhqjHXTAfK0QWRhqxT2nflXlg==
-X-Received: by 2002:a05:600c:510f:b0:431:1868:417f with SMTP id 5b1f17b1804b1-43161667a1cmr131050425e9.17.1729606739308;
-        Tue, 22 Oct 2024 07:18:59 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc4c7sm88553235e9.48.2024.10.22.07.18.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 07:18:58 -0700 (PDT)
-Message-ID: <561655d4b3bd063cb6ee339294ab9c62a5b06d53.camel@gmail.com>
-Subject: Re: [PATCH] drivers/iio/adc/ad7124.c: fix division by zero in
- ad7124_set_channel_odr()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Zicheng Qu <quzicheng@huawei.com>, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, jic23@kernel.org,
- alexandru.tachici@analog.com, 	linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
-Date: Tue, 22 Oct 2024 16:23:17 +0200
-In-Reply-To: <20241022134330.574601-1-quzicheng@huawei.com>
-References: <20241022134330.574601-1-quzicheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        bh=vB05a1h1HYduhrKYbkuyyOCoaOP+I+DevYClOEMl/5Q=;
+        b=WmGD1Ybxg1/uWoA8Js0gyhwADknxAZnRyogC2edK6QdbYYR0w9m0x7peJZseDUjXJh
+         B2615QIdUxfW6vlFYS9XxOR6q0jGxJDjOnmZ0Z6xM9PkH4fdK7E31VMbkgxSsWB1Fs4Y
+         gywx7L9wPrWEUTOaRI08mqT8dYx5g0rFSfEJZeucoGYnc607/A2w19PhZfN0XLkOcegk
+         QB7elTuYUOqCQVSd7kwyEF43u+DFp1njjpZJ0Qf6BRn8vu6ueRcrH/yZhZheheWMwbIh
+         mhWm7svizeLsu4BYS3LQLvNIvq6BpDtFbx8s17A6Xtqss2vGMXFtiLeri+pykqXywqgT
+         1UYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729607017; x=1730211817;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vB05a1h1HYduhrKYbkuyyOCoaOP+I+DevYClOEMl/5Q=;
+        b=t4SixBkr2D4GuqTvMoQgBJWCrwtfxV8m+LtXdCvCY2HDK6kI8uQF3Qf98ZjwU8KlbW
+         NZmMlaiTP+m6rYbWbb6rwKCAPjNuXGMq3trDCOkT5hDtdU4rj2Lrd1rC2Ym12I8EzpmQ
+         xbboUVCntNVA1E1yJGcZPHEPMOe2SfOyhpqQOdre4rohVvEHO5sVzXHCXXupF5U3ASHU
+         sD3ur8LQGEFL8d+6GHRvzOK7kJaGgSNHytet7baZjqKjCMPhK4EUTGUreECIIAr7MIXx
+         Bs+3088E3d2j4L0YNUpQ0/PZvw+4LPhB3WgCznutqs8KzMRWdNyZfe0MZj7okrrG9nXw
+         QC9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVsFtVYUKNiS0qmtNcBdRfLsGSEhcIApnxssP7AalObJLSMFmRbUf7UpZ5Hzy/128rbER/WvnFyhRMkWqX8@vger.kernel.org, AJvYcCWGC/ePUphcxypgg//T4GskTpnmQ/d6WB0wL7qRB2xixbT5ad28SAbUDD3DL1sWBQgrnHsUBXo9EvlXcjVm@vger.kernel.org, AJvYcCXAAGKGKDagnil8vCaUeLqXC7ovwxCcmJlD8S0/TPCzneTET5+FFNsSyoZd0Ny/vrLexcSCgmuO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBFWDJq5sHun1l9DhGukKEdtcNIDf3Fp02bNqw6Eth8O9Y0bQd
+	HvRoN7Y4c9fW6qY/fdKTaVVqhRbt+PKVoLiOl4jOo/Jy8kFQ0Eyh
+X-Google-Smtp-Source: AGHT+IF4WhscBrGUKTc6WqwPclP/DimY/FTSznyFF8tD0zUVANTbzOwj3pZ3UuRn+IRVfyA1U/ZQvg==
+X-Received: by 2002:a05:6870:9126:b0:268:9f88:18ef with SMTP id 586e51a60fabf-2892c2cb210mr12817941fac.13.1729607017583;
+        Tue, 22 Oct 2024 07:23:37 -0700 (PDT)
+Received: from [192.168.1.22] (syn-070-114-247-242.res.spectrum.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-28c79257f45sm1783857fac.20.2024.10.22.07.23.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 07:23:37 -0700 (PDT)
+Message-ID: <85e7b4cb-58da-4277-b822-742179ee8cbd@gmail.com>
+Date: Tue, 22 Oct 2024 09:23:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 01/10] net: qrtr: ns: validate msglen before
+ ctrl_pkt use
+To: Chris Lew <quic_clew@quicinc.com>, netdev@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>, Andy Gross <agross@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018181842.1368394-1-denkenz@gmail.com>
+ <20241018181842.1368394-2-denkenz@gmail.com>
+ <82f296f8-9538-4c89-952f-ff8768c5a0b7@quicinc.com>
+Content-Language: en-US
+From: Denis Kenzior <denkenz@gmail.com>
+In-Reply-To: <82f296f8-9538-4c89-952f-ff8768c5a0b7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-10-22 at 13:43 +0000, Zicheng Qu wrote:
-> In the ad7124_write_raw() function, parameter val can potentially
-> be zero. This may lead to a division by zero when DIV_ROUND_CLOSEST()
-> is called within ad7124_set_channel_odr(). The ad7124_write_raw()
-> function is invoked through the sequence: iio_write_channel_raw() ->
-> iio_write_channel_attribute() -> iio_channel_write(), with no checks
-> in place to ensure val is non-zero.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> ---
+Hi Chris,
 
-LGTM,
+>> +        if ((size_t)msglen < sizeof(pkt))
+> 
+> sizeof(*pkt)?
+> 
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Indeed.  Thank you for catching that, will fix in the next version.
 
-> =C2=A0drivers/iio/adc/ad7124.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index a5d91933f505..b79c48d46ccc 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -637,7 +637,7 @@ static int ad7124_write_raw(struct iio_dev *indio_dev=
-,
-> =C2=A0
-> =C2=A0	switch (info) {
-> =C2=A0	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		if (val2 !=3D 0) {
-> +		if (val2 !=3D 0 || val =3D=3D 0) {
-> =C2=A0			ret =3D -EINVAL;
-> =C2=A0			break;
-> =C2=A0		}
+Regards,
+-Denis
 
 
