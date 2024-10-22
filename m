@@ -1,146 +1,426 @@
-Return-Path: <linux-kernel+bounces-375571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7866B9A976E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79489A9771
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 960771F23088
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2242819A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB46C770FD;
-	Tue, 22 Oct 2024 04:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB6B839F4;
+	Tue, 22 Oct 2024 04:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/IAsobp"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n16qwmKt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852F819;
-	Tue, 22 Oct 2024 04:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CC8819;
+	Tue, 22 Oct 2024 04:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729569945; cv=none; b=UXj2dNa8lEevNlzE/XCujSE972gDzWDkyCJuWEhG5U7wnODaVLYyNKArwg0uHvBN1clcjpYIHRg4gIXSX5591y7WOkmn4v7A624IFEMxUOQhrcUq1Fb4geos4YTjwAX/Bcbu1qJhyyfXPM6SE5tIWAOTeqNzWwhTzp2k+gmiIH8=
+	t=1729570104; cv=none; b=guWC52xISMz4oPAlXGEfjeNZxWtv4e147WHTe1RgA8B5ph317vXv3eWMxQefdE+gurUG4/mosHz44k9pGe8FnOHEUbapCme/TNbkvT43yC0z4iGxKR8Q9OLqePbo/taO0Sgt94MDZGYcJZPprLG7SRrZhxCuNXDK4QED/W8S+o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729569945; c=relaxed/simple;
-	bh=eJyVsZi1XXXWsu+AWkgjRqdLWtAtzfdi0mXUYDcPs0s=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=aqK+vtPLxGe0OAciA8PVYOaMt6UjnRbuAB55Hg2dYWLHXkPlr720ciul3yuPo6nSOGwksB+F1Aux/etdOEPWTFztvF2m4mO9aqIuYSYunfW85cBrj3zbkg+HQDJ9NkQloqEk601c0tsm1A2stCwQAwgIpjhOGB6smFZ9X+AV65g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/IAsobp; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so4045994a12.0;
-        Mon, 21 Oct 2024 21:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729569942; x=1730174742; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qeYyq2oOzR5uOQR9ScxbvYco7XW/CAhsEW70HQRkLlg=;
-        b=F/IAsobpNLrKC0VD6U79l34VX4SExW977/LFstV64kcawx84TDm96GJeAVAlfFIFYV
-         ENtdxW1X2SZPdix+aaCMqeBcArnJrp1tGAlH+m/gb2fb+mDxiSWYa3bLpToTRVSpnaVd
-         pXDnKohsbE+qdDXFdeAO4hW331dQbjdfz2DFErxCPg7QT2TP/P2JCSkgMz5V51rzrsEG
-         xoFyisjbUP1Up3s6lYG6/fEO02edBAGoYqMu5ovwCRahF9BPgIAXMSF3uwcpoUBWJUvH
-         L8t92xeJQT2R2UFJ711mIZO/nC22cSXy0BKPvW7szu8n6H+xq6xtOJvHMVCCgjfAxavX
-         4b1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729569942; x=1730174742;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qeYyq2oOzR5uOQR9ScxbvYco7XW/CAhsEW70HQRkLlg=;
-        b=ACuyaQA04pvrSUffNhemsYDVhcBwjzh2bPlVzPbwhickC7pnEaA2N18IQaBLkeoODg
-         Fv7cG9RjiswPe3DOccHQ+EifN9yQINzlz0vkJFotMyDSwY7eZU7axphTHUpAFWMN3xPX
-         TOnv6bTkj+D33NXf5Nuiq+gXWBUn5zhOQsu7Yf/Z9ltz8bKvMFuD8WQa5w/hl3pxoxpm
-         DdMZmkOG3LYb8oC47eMLwYcMleHb84I/k4QmDeXLMlhywbz0eeL52v6EquN14SAMYswh
-         IeaeVL9BhDCQgn+W2r3SXReoH5mymxTE43zFUC6+yixYek9QAhBPZwstMHj2FmQG4u97
-         /qNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjiin8eQ/untwcZzO36p+C0MrNmMcfMj1gkFEZ2tewE44uo4f1cbxKtl9EAQux3HTofQNgT3C/IdDBnhgDMA==@vger.kernel.org, AJvYcCUyBFvbsXM9QSwP6tg9JhuUf4/ZMY09gCn2V6WoVDCYdW0mnje9O/k/zxXnxU5+cxOn+EG4NbkP41igfWw7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyE5h7ciaFAeiyqWMpE7jj5OKMaKTH/OlCQff1TWBfGyBSNsLc
-	bk3xp/oR5s0GXPaZ+Jpnsr2Bua3+lfeC4XWiQiCA9OvNIWqjsvNtx48SRw9L
-X-Google-Smtp-Source: AGHT+IEEt239aEO1r2xrdV3J65WlKODbaqXoH+Q2k7+nVHltvgSx6xPDMT0LT/wXHf3XqYpmlOhpbA==
-X-Received: by 2002:a05:6a21:393:b0:1c8:de01:e7e5 with SMTP id adf61e73a8af0-1d96c3ee885mr2427407637.15.1729569942387;
-        Mon, 21 Oct 2024 21:05:42 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a409:cb40:2dbb:16ed:d48d:b2b3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312e2bsm3721755b3a.42.2024.10.21.21.05.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 21:05:42 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+	s=arc-20240116; t=1729570104; c=relaxed/simple;
+	bh=+ycSQl2H6IXKDvyHV+HVCIl31ZSyMkLa6AnN1rC0+MY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkDJgyWRFo9phzrPkwM0wR2Tah+jBzVXA7dyliowofPQ+4Ik7k2EDRL2ralREFbwiMx3PEP6qe5OTLgVclDBMQBkSr9FhTRdIc4muPTPHJ6kcWeJCIN2a+N3nQzc13VttG+W5o++5v3gC2egtDLASgfEXdqxvb9DdbOvD+LoU24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n16qwmKt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D69C4CEC3;
+	Tue, 22 Oct 2024 04:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729570104;
+	bh=+ycSQl2H6IXKDvyHV+HVCIl31ZSyMkLa6AnN1rC0+MY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n16qwmKtQ4Kt/lsf7R1IAgfcd9YzS+o2AqY4kvS+VG01ok2/LBdX/oXYcBFOGydK6
+	 rTDAf7PuN+xIVEw1fCQ3g0dJ488I2DZmfEYTo3CVUGXn4lyR849RJwkjCjnYCzpY3+
+	 QL0BPiU4N9PFzB8Moz799u/6h9T16DwH1xjcb1jwWNDZkC3hl+krxIQmfXilIZsv7b
+	 tKYkdCkS+iAUtgRBACxJrxjjEfN02Wti8Hz64IYhb1Bepgecl/TDMuOIZKJTCLoiuw
+	 b4hRcgFZDqF/ckBHE2BA10bVAYeoJNDm2qNz8Kdpi5YK6686RMxOugokqD+GjJWVEA
+	 IXVbzTUJ4ljUQ==
+Date: Mon, 21 Oct 2024 21:08:22 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH -next v5 1/2] perf stat: Support inherit events during
+ fork() for bperf
+Message-ID: <ZxclNg9Y5hUXGXCf@google.com>
+References: <20241021110201.325617-1-wutengda@huaweicloud.com>
+ <20241021110201.325617-2-wutengda@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-Date: Tue, 22 Oct 2024 13:05:30 +0900
-Message-Id: <D983ED6A-1206-4D3F-AAEB-4572BD81AB2B@gmail.com>
-References: <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
-Cc: kent.overstreet@linux.dev, mmpgouride@gmail.com,
- linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-In-Reply-To: <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
-To: Hongbo Li <lihongbo22@huawei.com>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021110201.325617-2-wutengda@huaweicloud.com>
+
+Hello,
+
+On Mon, Oct 21, 2024 at 11:02:00AM +0000, Tengda Wu wrote:
+> bperf has a nice ability to share PMUs, but it still does not support
+> inherit events during fork(), resulting in some deviations in its stat
+> results compared with perf.
+> 
+> perf stat result:
+> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
+>    Performance counter stats for './perf test -w sqrtloop':
+> 
+>        2,316,038,116      cycles
+>        2,859,350,725      instructions
+> 
+>          1.009603637 seconds time elapsed
+> 
+>          1.004196000 seconds user
+>          0.003950000 seconds sys
+> 
+> bperf stat result:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+> 
+>    Performance counter stats for './perf test -w sqrtloop':
+> 
+>           18,762,093      cycles
+>           23,487,766      instructions
+> 
+>          1.008913769 seconds time elapsed
+> 
+>          1.003248000 seconds user
+>          0.004069000 seconds sys
+> 
+> In order to support event inheritance, two new bpf programs are added
+> to monitor the fork and exit of tasks respectively. When a task is
+> created, add it to the filter map to enable counting, and reuse the
+> `accum_key` of its parent task to count together with the parent task.
+> When a task exits, remove it from the filter map to disable counting.
+> 
+> After support:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+> 
+>  Performance counter stats for './perf test -w sqrtloop':
+> 
+>      2,316,252,189      cycles
+>      2,859,946,547      instructions
+> 
+>        1.009422314 seconds time elapsed
+> 
+>        1.003597000 seconds user
+>        0.004270000 seconds sys
+> 
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> ---
+>  tools/perf/builtin-stat.c                     |  1 +
+>  tools/perf/util/bpf_counter.c                 | 35 +++++--
+>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 98 +++++++++++++++++--
+>  tools/perf/util/bpf_skel/bperf_u.h            |  5 +
+>  tools/perf/util/target.h                      |  1 +
+>  5 files changed, 126 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 3e6b9f216e80..8bc880479417 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -2620,6 +2620,7 @@ int cmd_stat(int argc, const char **argv)
+>  	} else if (big_num_opt == 0) /* User passed --no-big-num */
+>  		stat_config.big_num = false;
+>  
+> +	target.inherit = !stat_config.no_inherit;
+>  	err = target__validate(&target);
+>  	if (err) {
+>  		target__strerror(&target, err, errbuf, BUFSIZ);
+> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+> index 7a8af60e0f51..73fcafbffc6a 100644
+> --- a/tools/perf/util/bpf_counter.c
+> +++ b/tools/perf/util/bpf_counter.c
+> @@ -394,6 +394,7 @@ static int bperf_check_target(struct evsel *evsel,
+>  }
+>  
+>  static	struct perf_cpu_map *all_cpu_map;
+> +static __u32 filter_entry_cnt;
+>  
+>  static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>  				       struct perf_event_attr_map_entry *entry)
+> @@ -444,12 +445,32 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>  	return err;
+>  }
+>  
+> +static int bperf_attach_follower_program(struct bperf_follower_bpf *skel,
+> +					 enum bperf_filter_type filter_type,
+> +					 bool inherit)
+> +{
+> +	struct bpf_link *link;
+> +	int err = 0;
+> +
+> +	if ((filter_type == BPERF_FILTER_PID ||
+> +	    filter_type == BPERF_FILTER_TGID) && inherit)
+> +		/* attach all follower bpf progs to enable event inheritance */
+> +		err = bperf_follower_bpf__attach(skel);
+> +	else {
+> +		link = bpf_program__attach(skel->progs.fexit_XXX);
+> +		if (IS_ERR(link))
+> +			err = PTR_ERR(link);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  static int bperf__load(struct evsel *evsel, struct target *target)
+>  {
+>  	struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff};
+>  	int attr_map_fd, diff_map_fd = -1, err;
+>  	enum bperf_filter_type filter_type;
+> -	__u32 filter_entry_cnt, i;
+> +	__u32 i;
+>  
+>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
+>  		return -1;
+> @@ -529,9 +550,6 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  	/* set up reading map */
+>  	bpf_map__set_max_entries(evsel->follower_skel->maps.accum_readings,
+>  				 filter_entry_cnt);
+> -	/* set up follower filter based on target */
+> -	bpf_map__set_max_entries(evsel->follower_skel->maps.filter,
+> -				 filter_entry_cnt);
+>  	err = bperf_follower_bpf__load(evsel->follower_skel);
+>  	if (err) {
+>  		pr_err("Failed to load follower skeleton\n");
+> @@ -543,6 +561,7 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  	for (i = 0; i < filter_entry_cnt; i++) {
+>  		int filter_map_fd;
+>  		__u32 key;
+> +		struct bperf_filter_value fval = { i, 0 };
+>  
+>  		if (filter_type == BPERF_FILTER_PID ||
+>  		    filter_type == BPERF_FILTER_TGID)
+> @@ -553,12 +572,14 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  			break;
+>  
+>  		filter_map_fd = bpf_map__fd(evsel->follower_skel->maps.filter);
+> -		bpf_map_update_elem(filter_map_fd, &key, &i, BPF_ANY);
+> +		bpf_map_update_elem(filter_map_fd, &key, &fval, BPF_ANY);
+>  	}
+>  
+>  	evsel->follower_skel->bss->type = filter_type;
+> +	evsel->follower_skel->bss->inherit = target->inherit;
+>  
+> -	err = bperf_follower_bpf__attach(evsel->follower_skel);
+> +	err = bperf_attach_follower_program(evsel->follower_skel, filter_type,
+> +					    target->inherit);
+>  
+>  out:
+>  	if (err && evsel->bperf_leader_link_fd >= 0)
+> @@ -623,7 +644,7 @@ static int bperf__read(struct evsel *evsel)
+>  	bperf_sync_counters(evsel);
+>  	reading_map_fd = bpf_map__fd(skel->maps.accum_readings);
+>  
+> -	for (i = 0; i < bpf_map__max_entries(skel->maps.accum_readings); i++) {
+> +	for (i = 0; i < filter_entry_cnt; i++) {
+>  		struct perf_cpu entry;
+>  		__u32 cpu;
+>  
+> diff --git a/tools/perf/util/bpf_skel/bperf_follower.bpf.c b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> index f193998530d4..0595063139a3 100644
+> --- a/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> +++ b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> @@ -5,6 +5,8 @@
+>  #include <bpf/bpf_tracing.h>
+>  #include "bperf_u.h"
+>  
+> +#define MAX_ENTRIES 102400
+> +
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+>  	__uint(key_size, sizeof(__u32));
+> @@ -22,25 +24,29 @@ struct {
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_HASH);
+>  	__uint(key_size, sizeof(__u32));
+> -	__uint(value_size, sizeof(__u32));
+> +	__uint(value_size, sizeof(struct bperf_filter_value));
+> +	__uint(max_entries, MAX_ENTRIES);
+> +	__uint(map_flags, BPF_F_NO_PREALLOC);
+>  } filter SEC(".maps");
+>  
+>  enum bperf_filter_type type = 0;
+>  int enabled = 0;
+> +int inherit;
+>  
+>  SEC("fexit/XXX")
+>  int BPF_PROG(fexit_XXX)
+>  {
+>  	struct bpf_perf_event_value *diff_val, *accum_val;
+>  	__u32 filter_key, zero = 0;
+> -	__u32 *accum_key;
+> +	__u32 accum_key;
+> +	struct bperf_filter_value *fval;
+>  
+>  	if (!enabled)
+>  		return 0;
+>  
+>  	switch (type) {
+>  	case BPERF_FILTER_GLOBAL:
+> -		accum_key = &zero;
+> +		accum_key = zero;
+>  		goto do_add;
+>  	case BPERF_FILTER_CPU:
+>  		filter_key = bpf_get_smp_processor_id();
+> @@ -49,22 +55,34 @@ int BPF_PROG(fexit_XXX)
+>  		filter_key = bpf_get_current_pid_tgid() & 0xffffffff;
+>  		break;
+>  	case BPERF_FILTER_TGID:
+> -		filter_key = bpf_get_current_pid_tgid() >> 32;
+> +		/* Use pid as the filter_key to exclude new task counts
+> +		 * when inherit is disabled. Don't worry about the existing
+> +		 * children in TGID losing their counts, bpf_counter has
+> +		 * already added them to the filter map via perf_thread_map
+> +		 * before this bpf prog runs.
+> +		 */
+> +		filter_key = inherit ?
+> +			     bpf_get_current_pid_tgid() >> 32 :
+> +			     bpf_get_current_pid_tgid() & 0xffffffff;
+
+I'm not sure why this is needed.  Isn't the existing code fine?
+
+Thanks,
+Namhyung
 
 
-
-> Hongbo Li <lihongbo22@huawei.com> wrote:
->=20
-> =EF=BB=BF
->=20
->> On 2024/10/21 23:43, Jeongjun Park wrote:
->> The size of a.data_type is set abnormally large, causing shift-out-of-bou=
-nds.
->> To fix this, we need to add validation on a.data_type in
->> alloc_lru_idx_fragmentation().
->> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
->> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> ---
->>  fs/bcachefs/alloc_background.h | 3 +++
->>  1 file changed, 3 insertions(+)
->> diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_backgroun=
-d.h
->> index f8e87c6721b1..163a67b97a40 100644
->> --- a/fs/bcachefs/alloc_background.h
->> +++ b/fs/bcachefs/alloc_background.h
->> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_ty=
-pe type)
->>  static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
->>                            struct bch_dev *ca)
->>  {
->> +    if (a.data_type >=3D BCH_DATA_NR)
->> +        return 0;
->> +
->=20
-> oh, I found I have done the same thing in [1]("Re: [syzbot] [bcachefs?] UB=
-SAN: shift-out-of-bounds in bch2_alloc_to_text"). But in my humble opinion, t=
-he validation changes also should be added. And in addition, move the condit=
-ion about a.data_type into data_type_movable will be better. Just my persona=
-l opinion.:)
->=20
-> [1] https://www.spinics.net/lists/kernel/msg5412619.html
-
-I still disagree with the fix to make data_type_movable() do the validation,=
-=20
-but I think [1] is definitely a patch that needs to be added.=20
-
-However, [1] is far from preventing the shift oob vulnerability described=20=
-
-in that syzbot report. Therefore, I think [1] should be written as a=20
-standalone patch and committed, rather than as a patch for that=20
-syzbot report.
-
->=20
-> Thanks,
-> Hongbo
->=20
->>      if (!data_type_movable(a.data_type) ||
->>          !bch2_bucket_sectors_fragmented(ca, a))
->>          return 0;
->> --
+>  		break;
+>  	default:
+>  		return 0;
+>  	}
+>  
+> -	accum_key = bpf_map_lookup_elem(&filter, &filter_key);
+> -	if (!accum_key)
+> +	fval = bpf_map_lookup_elem(&filter, &filter_key);
+> +	if (!fval)
+>  		return 0;
+>  
+> +	accum_key = fval->accum_key;
+> +	if (fval->exited)
+> +		bpf_map_delete_elem(&filter, &filter_key);
+> +
+>  do_add:
+>  	diff_val = bpf_map_lookup_elem(&diff_readings, &zero);
+>  	if (!diff_val)
+>  		return 0;
+>  
+> -	accum_val = bpf_map_lookup_elem(&accum_readings, accum_key);
+> +	accum_val = bpf_map_lookup_elem(&accum_readings, &accum_key);
+>  	if (!accum_val)
+>  		return 0;
+>  
+> @@ -75,4 +93,70 @@ int BPF_PROG(fexit_XXX)
+>  	return 0;
+>  }
+>  
+> +/* The program is only used for PID or TGID filter types. */
+> +SEC("tp_btf/task_newtask")
+> +int BPF_PROG(on_newtask, struct task_struct *task, __u64 clone_flags)
+> +{
+> +	__u32 parent_key, child_key;
+> +	struct bperf_filter_value *parent_fval;
+> +	struct bperf_filter_value child_fval = { 0 };
+> +
+> +	if (!enabled)
+> +		return 0;
+> +
+> +	switch (type) {
+> +	case BPERF_FILTER_PID:
+> +		parent_key = bpf_get_current_pid_tgid() & 0xffffffff;
+> +		child_key = task->pid;
+> +		break;
+> +	case BPERF_FILTER_TGID:
+> +		parent_key = bpf_get_current_pid_tgid() >> 32;
+> +		child_key = task->tgid;
+> +		if (child_key == parent_key)
+> +			return 0;
+> +		break;
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	/* Check if the current task is one of the target tasks to be counted */
+> +	parent_fval = bpf_map_lookup_elem(&filter, &parent_key);
+> +	if (!parent_fval)
+> +		return 0;
+> +
+> +	/* Start counting for the new task by adding it into filter map,
+> +	 * inherit the accum key of its parent task so that they can be
+> +	 * counted together.
+> +	 */
+> +	child_fval.accum_key = parent_fval->accum_key;
+> +	child_fval.exited = 0;
+> +	bpf_map_update_elem(&filter, &child_key, &child_fval, BPF_NOEXIST);
+> +
+> +	return 0;
+> +}
+> +
+> +/* The program is only used for PID or TGID filter types. */
+> +SEC("tp_btf/sched_process_exit")
+> +int BPF_PROG(on_exittask, struct task_struct *task)
+> +{
+> +	__u32 pid;
+> +	struct bperf_filter_value *fval;
+> +
+> +	if (!enabled)
+> +		return 0;
+> +
+> +	/* Stop counting for this task by removing it from filter map.
+> +	 * For TGID type, if the pid can be found in the map, it means that
+> +	 * this pid belongs to the leader task. After the task exits, the
+> +	 * tgid of its child tasks (if any) will be 1, so the pid can be
+> +	 * safely removed.
+> +	 */
+> +	pid = task->pid;
+> +	fval = bpf_map_lookup_elem(&filter, &pid);
+> +	if (fval)
+> +		fval->exited = 1;
+> +
+> +	return 0;
+> +}
+> +
+>  char LICENSE[] SEC("license") = "Dual BSD/GPL";
+> diff --git a/tools/perf/util/bpf_skel/bperf_u.h b/tools/perf/util/bpf_skel/bperf_u.h
+> index 1ce0c2c905c1..4a4a753980be 100644
+> --- a/tools/perf/util/bpf_skel/bperf_u.h
+> +++ b/tools/perf/util/bpf_skel/bperf_u.h
+> @@ -11,4 +11,9 @@ enum bperf_filter_type {
+>  	BPERF_FILTER_TGID,
+>  };
+>  
+> +struct bperf_filter_value {
+> +	__u32 accum_key;
+> +	__u8 exited;
+> +};
+> +
+>  #endif /* __BPERF_STAT_U_H */
+> diff --git a/tools/perf/util/target.h b/tools/perf/util/target.h
+> index d582cae8e105..2ee2cc30340f 100644
+> --- a/tools/perf/util/target.h
+> +++ b/tools/perf/util/target.h
+> @@ -17,6 +17,7 @@ struct target {
+>  	bool	     default_per_cpu;
+>  	bool	     per_thread;
+>  	bool	     use_bpf;
+> +	bool	     inherit;
+>  	int	     initial_delay;
+>  	const char   *attr_map;
+>  };
+> -- 
+> 2.34.1
+> 
 
