@@ -1,128 +1,193 @@
-Return-Path: <linux-kernel+bounces-375735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD1D9A9A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FADD9A9A2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFC8B22391
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E841F22CEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800DB149C54;
-	Tue, 22 Oct 2024 06:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76438146580;
+	Tue, 22 Oct 2024 06:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tCLG31Du"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFnAsAeE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470A114830F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C197E3232;
+	Tue, 22 Oct 2024 06:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579373; cv=none; b=EIikQPOKFSnzv82JwAXYahUaG33aCwoT4Pot4biijx3SMmBLNj+W6NiE7uAeuDee8qfn6fmsvWqczNxRTKsqbhOtmkfaw2q67SiB1plswJkXrzSkQ3P+5SPGK+IgJVylgTSCW8npnC/UJ5iEEzhiwxTjQ0yhKv1tWLmw6kVppv4=
+	t=1729579467; cv=none; b=Zq13bnH/K23IdWr97EViALkjMdcs/bK+d+MUlBRmKBWnsyh8EgLQMfMtMVi9Yt+imNBAOVfGzR6cWy891VjtkoLBHuVh3FqYoTOyGHZFDodq0DwLvKpun2TrvWwoNRiF81nxH3xc3wj86Gv2V1FVr091+MtzWUAxezL4644591c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579373; c=relaxed/simple;
-	bh=6PBa+Qvoo1U7dPLtQp2fv7kQwyV0nwSgzL0nLq/hfpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPrpE+hTLmatp8hEejIdusgLaeBKABbsRuKCqKjF80qjVEBw9TCrJDNUiwDs7kn+2VYQ2Gz/vlOwznQpx7JlYpKHkfD3rJMv4qh4gVSy0aBgfnQgzvAqW+46yGZSA6If2Sxstw5voAFwF+/RZdJKdlsMfNDGag7fc+lnC9UvB80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tCLG31Du; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d4ee8d15aso437018f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729579370; x=1730184170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ztbetuKuCAG4xpiy9biwiMZIEYTR+UuLmyONPGKxx24=;
-        b=tCLG31DurdwdE9+pN5nPpdAZxXPi3rA9XQY+WeDEvzlElQEB46ik35Gi5a29L0D/75
-         qenv5Ev+vM17AavG2lG66WD3TTbOJOiI8bjlLvoGd4m22BoJ+Cimx3LCvUiHL9ACYz/4
-         k/S8BlOgK4E3WbLvnAtA1eIUPcZkSkgfLj/ZhEBVUqcteVWSC2X/aN+2oMTOdAQgPwJX
-         uWkxFSydunZUycPi3oAUJ0AH5EJSo9/WkeBJW1crO3Q2MT1O8WBW2Ucw7b0kPZOmO5og
-         klSglJkQPQ/bQH1U114wT4u5IiiX2mMp5IfRyPSKvBldcnoNnp9caGM6k9gwvOOzpL4j
-         pTDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729579370; x=1730184170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ztbetuKuCAG4xpiy9biwiMZIEYTR+UuLmyONPGKxx24=;
-        b=L3HDzYo8FNUesBW+nxZVSe9SOiKUKHN8eGKGGU4Cw3UfFKjfnK9X+m3z1iN9Cgq4Pt
-         LQGv86ov4pZTLF03L/6sss2llG+UJ6ot1cQe104GQDfy/0ojnl9UrdM0XCdvy8m8XuUn
-         2BgLq+XIbL4CJPXQq+Yii8kyfUAESnpYPvZub30HL0wJj0V3L7Edlp1fgb5AUkmKFNJI
-         q6D9455lqN2bxWaLItPLptPGsJlYykUuwz+sKhc1T4q4Xb+7S+yi8Sa7aPrDIqzYFwh6
-         tktZ1c0tKuodVxWzcbLNfgYarEDlKTxnMmJ/N9+uPGDAxYK1VRW4DDnteIU4GYH39srs
-         MgHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL4qBeQ+PPOLiWSJp+usX6D7zsxI+M2B2+cJe5o6az3jMY0+cKpY83K8Z4XdlLk3DRuLCvaYKOQk2fPZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAmz2cMAQ760DBBU2uHbiizDPTNUsfjHnxpmiLs1KT3b1evnUU
-	0+R9S6uxeGZJF92y/95enkjwNEriWn4QmXodAPnJxRq+hi6WKIiB+XHBw+X9vb8=
-X-Google-Smtp-Source: AGHT+IEHQ0Nm3uSdjaODv2aTXm+D9OjTtt75SBNZU7edu3Bqv7g5ZesIWn1TqWP3SdH5sWHuh6A8pg==
-X-Received: by 2002:a5d:5889:0:b0:378:955f:d47d with SMTP id ffacd0b85a97d-37eb4860850mr5014701f8f.11.1729579369586;
-        Mon, 21 Oct 2024 23:42:49 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc501sm78231705e9.43.2024.10.21.23.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 23:42:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Subject: [PATCH] dt-bindings: pinctrl: qcom,sm8650-lpass-lpi-pinctrl: Add SM8750
-Date: Tue, 22 Oct 2024 08:42:45 +0200
-Message-ID: <20241022064245.22983-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729579467; c=relaxed/simple;
+	bh=WHYtqEj6eKwKaQm6D/1FwTR37a31xmIR32wf+Ihmaz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0VSCvdv51SMZZmNgjfdNM+ukPpz1GbM/yyE5zoR4E2klv3f7FmlgWVRr472n6AvuY/90LQBQ/+o1+bC58RIo4PgkeCXw+hr6cbc2slwRnb9pYpwyNmWcI5wnwGLtNuR7sA5HyW5LFPuMrriH+uu7wi2z/SbpHSCmto/eAWkao8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFnAsAeE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B39C4CEC3;
+	Tue, 22 Oct 2024 06:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729579467;
+	bh=WHYtqEj6eKwKaQm6D/1FwTR37a31xmIR32wf+Ihmaz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YFnAsAeEdY6SyMiSAgYxoAoT9xjguXn1VTQ+mZRPDFcIhyxr2cqnp3IAHLeryjOuT
+	 OEEQScV+pbQNH6bdn5UEgv+Oqn8XYHU3H+12DGOHjUXPiY8O1EmwPLHHGWNiOrjGVi
+	 xH0+A5Puuxmtj4qo2EyxpU7awfwSUdBVTOaAqAZkg2ObAyb5epWtn4Du4w7pID89f1
+	 X5dCclHvHbuF77Yel2iZ+g4KjMezOCAKqTGiaca5xXK0asrtcCbYRdtKrQaPdp87Up
+	 Y2vUX8hEYgItEBR4BRkBF+sfgW7dZrmB3hBEFisCi8vtbbYujDlyz5rQm8mklxy8Ww
+	 KDAUafJmv6XpA==
+Date: Mon, 21 Oct 2024 23:44:25 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 13/16] perf bench: Remove reference to cmd_inject
+Message-ID: <ZxdJyRpCv7dmmin9@google.com>
+References: <20241016042415.7552-1-irogers@google.com>
+ <20241016042415.7552-14-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241016042415.7552-14-irogers@google.com>
 
-Document compatible for Qualcomm SM8750 SoC LPASS TLMM pin controller,
-fully compatible with previous SM8650 generation (same amount of pins
-and functions).
+On Tue, Oct 15, 2024 at 09:24:12PM -0700, Ian Rogers wrote:
+> Avoid `perf bench internals inject-build-id` referencing the
+> cmd_inject sub-command that requires perf-bench to backward reference
+> internals of builtins. Replace the reference to cmd_inject with a call
+> to main. To avoid python.c needing to link with something providing
+> main, drop the libperf-bench library from the python shared object.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Looks like a clever trick!  But I guess by removing libperf-bench from
+the python object, you can remove the reference to cmd_inject, right?
 
----
+Thanks,
+Namhyung
 
-Cc: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml     | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml
-index db7214362301..e90a5274647d 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml
-@@ -16,7 +16,11 @@ description:
- 
- properties:
-   compatible:
--    const: qcom,sm8650-lpass-lpi-pinctrl
-+    oneOf:
-+      - const: qcom,sm8650-lpass-lpi-pinctrl
-+      - items:
-+          - const: qcom,sm8750-lpass-lpi-pinctrl
-+          - const: qcom,sm8650-lpass-lpi-pinctrl
- 
-   reg:
-     items:
--- 
-2.43.0
-
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Makefile.perf          |  7 +++++--
+>  tools/perf/bench/inject-buildid.c | 13 +++++++------
+>  tools/perf/util/python.c          |  6 ------
+>  3 files changed, 12 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 105f734b6820..e54c6953cf02 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -487,6 +487,9 @@ endif
+>  EXTLIBS := $(call filter-out,$(EXCLUDE_EXTLIBS),$(EXTLIBS))
+>  LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+>  
+> +PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH),$(PERFLIBS))
+> +LIBS_PY = -Wl,--whole-archive $(PERFLIBS_PY) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+> +
+>  export INSTALL SHELL_PATH
+>  
+>  ### Build rules
+> @@ -735,9 +738,9 @@ all: shell_compatibility_test $(ALL_PROGRAMS) $(LANG_BINDINGS) $(OTHER_PROGRAMS)
+>  # Create python binding output directory if not already present
+>  $(shell [ -d '$(OUTPUT)python' ] || mkdir -p '$(OUTPUT)python')
+>  
+> -$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): util/python.c util/setup.py $(PERFLIBS)
+> +$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): util/python.c util/setup.py $(PERFLIBS_PY)
+>  	$(QUIET_GEN)LDSHARED="$(CC) -pthread -shared" \
+> -        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBS)' \
+> +        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBS_PY)' \
+>  	  $(PYTHON_WORD) util/setup.py \
+>  	  --quiet build_ext; \
+>  	cp $(PYTHON_EXTBUILD_LIB)perf*.so $(OUTPUT)python/
+> diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
+> index a759eb2328be..f55c07e4be94 100644
+> --- a/tools/perf/bench/inject-buildid.c
+> +++ b/tools/perf/bench/inject-buildid.c
+> @@ -52,7 +52,7 @@ struct bench_dso {
+>  static int nr_dsos;
+>  static struct bench_dso *dsos;
+>  
+> -extern int cmd_inject(int argc, const char *argv[]);
+> +extern int main(int argc, const char **argv);
+>  
+>  static const struct option options[] = {
+>  	OPT_UINTEGER('i', "iterations", &iterations,
+> @@ -294,7 +294,7 @@ static int setup_injection(struct bench_data *data, bool build_id_all)
+>  
+>  	if (data->pid == 0) {
+>  		const char **inject_argv;
+> -		int inject_argc = 2;
+> +		int inject_argc = 3;
+>  
+>  		close(data->input_pipe[1]);
+>  		close(data->output_pipe[0]);
+> @@ -318,15 +318,16 @@ static int setup_injection(struct bench_data *data, bool build_id_all)
+>  		if (inject_argv == NULL)
+>  			exit(1);
+>  
+> -		inject_argv[0] = strdup("inject");
+> -		inject_argv[1] = strdup("-b");
+> +		inject_argv[0] = strdup("perf");
+> +		inject_argv[1] = strdup("inject");
+> +		inject_argv[2] = strdup("-b");
+>  		if (build_id_all)
+> -			inject_argv[2] = strdup("--buildid-all");
+> +			inject_argv[3] = strdup("--buildid-all");
+>  
+>  		/* signal that we're ready to go */
+>  		close(ready_pipe[1]);
+>  
+> -		cmd_inject(inject_argc, inject_argv);
+> +		main(inject_argc, inject_argv);
+>  
+>  		exit(0);
+>  	}
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 91fd444615cd..c52da509ae58 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -19,7 +19,6 @@
+>  #include "util/kwork.h"
+>  #include "util/sample.h"
+>  #include <internal/lib.h>
+> -#include "../builtin.h"
+>  
+>  #define _PyUnicode_FromString(arg) \
+>    PyUnicode_FromString(arg)
+> @@ -1309,8 +1308,3 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
+>  {
+>  	return NULL;
+>  }
+> -
+> -int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
+> -{
+> -	return -1;
+> -}
+> -- 
+> 2.47.0.rc1.288.g06298d1525-goog
+> 
 
