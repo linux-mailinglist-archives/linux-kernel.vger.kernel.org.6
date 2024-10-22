@@ -1,153 +1,149 @@
-Return-Path: <linux-kernel+bounces-376864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DDA9AB6D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF049AB6D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C18B2403E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:32:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8002EB23C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AA01CDFA9;
-	Tue, 22 Oct 2024 19:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B0A1CC151;
+	Tue, 22 Oct 2024 19:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJbzDQeB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rl3E10eC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB99D1CB313;
-	Tue, 22 Oct 2024 19:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF4A1C9EC2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729625442; cv=none; b=qft9f0k1vw3D0CleZBFJ23qLYu404J7eCITmKaquEgVxEADJs49UQOGWvVoKo0e7WNrfjdcTnVJPnCQsh/tn9Lq43OmCP9FT2QJujIjrfEYRIWD9oatTEGlrKnIckYVovPo1kJGVQGUrfW8AAwTxEHOfhY6dYZ07wqvubme2Zt0=
+	t=1729625466; cv=none; b=hnUwJDKB3Y/ZdFVGxykh17766vZ/3wiCF9KU7BUCbBR6iM9Q4YqP55g3Ij0M4UAvN98W4jjKO0FsE6LbzXkSjeQM9mMc98PNQ5mqco8dH5CHN/GgucNIWRcYiJWvEDRPNf58QPFb3oLpfLucYOkpY5Xaozur1RDO3wUIJAcEtRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729625442; c=relaxed/simple;
-	bh=dCbDDMlar/U699XnQ2ErjEcbtjkZrBueuembTEYSNxY=;
+	s=arc-20240116; t=1729625466; c=relaxed/simple;
+	bh=5IQ/ppc7+JlLPx+hkAOzlEt+fDBk4swp5GV5ul9evFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhoiFA+2OEq5diEBtPNFJ8yUg3K4GxjzD0bWn+Zhm5pqinwZNPjXikJJG4p8fiKACwwX4PhPUiRMhGrqOSErTHI6OijKcQlVy/ntlOW4QLqmohmS6VAhzQndbUHt6aukpeoHQy/Nsll5JqHV70h9a1vjrkggZzFDPUbFbynqE4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJbzDQeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE79C4CEC3;
-	Tue, 22 Oct 2024 19:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729625442;
-	bh=dCbDDMlar/U699XnQ2ErjEcbtjkZrBueuembTEYSNxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nJbzDQeBjWaGAVBTFL8sr5atOmMKR9mcFM5S7WZUKQUTb9vxh1Kr/jvGxgk8vEAFw
-	 VX6R9DkQMDRtywxI+FVcTmZteL3bSewa9lVmaMjr827oEYWGtNcbw86iGXLxDZ4Q/5
-	 KqXy2R6I+p9IvJ6uE/Tw94U237k/54TBjT2+LI5F7BeINywjJefyFs/0k96bMNgpY2
-	 1tS5Rc0KWEy0gc1aaSH1ffu79CnEIvPdh4ikNvGxRQ3Kpdn/cCo9bSmA30ZtQ9qzC1
-	 ExClEZkcrIWdEtJSPQSyE6StoLBAPP5w1ZFirPITyUJyXTgcG5xY1Efwgcz45w8cef
-	 nG46KTbX8it0A==
-Date: Tue, 22 Oct 2024 12:30:38 -0700
-From: Kees Cook <kees@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <202410221225.32958DF786@keescook>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a97kd7rBp99DF12S5c2Icck7s2TDLb8MVy7QPCczwa3ySq2QzNvOaKIwfWAc/Xb/NSwxsPvaPcjqoyfrpdH2f71PiW9sOjBuXr7Fd/Gsc679rxvV6YkHKIgkPMEUZwFK78oVMOCglfZftV+3cJcgq3g/Xs0m6DoscNZjyfYv87M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rl3E10eC; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729625465; x=1761161465;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5IQ/ppc7+JlLPx+hkAOzlEt+fDBk4swp5GV5ul9evFw=;
+  b=Rl3E10eCSE/nLyu/Yy8eOzyi8CfHymf6ixmVBA1FIsROIuwNqQ1GCmIF
+   f5dFwvdDexDYsSAiqVbq2tZTklDvLsl7Z4tHQJv8zsdVZs8aljRBDjMdl
+   MIbyD5YByyml0EXo7jm3zITJzkXf6bWhkYtZngJdyFucXrk68S4g1Dgjz
+   GkTttgQ7KNSkrNPR87/xTpU5Xd0PWp4ctbYsLImg2vA3IfJbGGvd4BO//
+   4JV33Ou323065+LtdpfInt/oPXdzSWUEyp9nERc6npO84UdwWJ8CF5LAk
+   hYm+KPrPY+Qekcsqzks93HfB9lUygqbEw1TtvDzOBcXM65TEKNCnOqz6h
+   g==;
+X-CSE-ConnectionGUID: +ZS8n8kmTZC+cl7Y42iQMg==
+X-CSE-MsgGUID: pLFDKitJQYq+0b544knGYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29077388"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="29077388"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 12:31:04 -0700
+X-CSE-ConnectionGUID: Pwm7nuaRS+OM+Ao/bzXSFQ==
+X-CSE-MsgGUID: VwQ5hbwkRxu5oP8/NSHLAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="84759782"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 22 Oct 2024 12:31:00 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3Kan-000U0d-2J;
+	Tue, 22 Oct 2024 19:30:57 +0000
+Date: Wed, 23 Oct 2024 03:30:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com
+Cc: oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Will Deacon <will@kernel.org>,
+	Evgenii Stepanov <eugenis@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v2 4/9] kasan: sw_tags: Support tag widths less than 8
+ bits
+Message-ID: <202410230354.sjewoFxA-lkp@intel.com>
+References: <20241022015913.3524425-5-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zxf3vp82MfPTWNLx@sashalap>
+In-Reply-To: <20241022015913.3524425-5-samuel.holland@sifive.com>
 
-On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
-> On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
-> > 
-> > The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
-> > 
-> >  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
-> > 
-> > are available in the Git repository at:
-> > 
-> >  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
-> 
-> Hi Linus,
-> 
-> There was a sub-thread on the linus-next discussion around improving
-> telemetry around -next/lore w.r.t soaking time and mailing list reviews
-> (https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
-> 
-> I've prototyped a set of scripts based on suggestions in the thread, and
-> wanted to see if you'd find it useful. A great way to test it out is with
-> a random pull request you'd review anyway :)
+Hi Samuel,
 
-This looks really nice to me! Maybe add top-level grade ("B-") based on
-the stats available. You can call it the Nominal Acceptance Grade bot
-(NAGbot). Can so that everyone will pay attention, declare that it is an
-LLM (Large Linus Model).
+kernel test robot noticed the following build errors:
 
-> Is the below useful in any way? Or do you already do something like this
-> locally and I'm just wasting your time?
-> 
-> If it's useful, is bot reply to PRs the best way to share this? Any
-> other information that would be useful?
-> 
-> Here it goes:
-> 
-> 
-> Days in -next:
-> ----------------------------------------
->  0  | ███████████ (5)
->  1  |
->  2  | █████████████████████████████████████████████████ (21)
->  3  |
->  4  |
->  5  |
->  6  |
->  7  |
->  8  |
->  9  |
-> 10  |
-> 11  |
-> 12  |
-> 13  |
-> 14+ |
-> 
-> Commits that didn't spend time in -next:
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on arm64/for-next/core masahiroy-kbuild/for-next masahiroy-kbuild/fixes linus/master v6.12-rc4 next-20241022]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'd include a count summary "(5 of 26: 19%)"
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/kasan-sw_tags-Use-arithmetic-shift-for-shadow-computation/20241022-100129
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20241022015913.3524425-5-samuel.holland%40sifive.com
+patch subject: [PATCH v2 4/9] kasan: sw_tags: Support tag widths less than 8 bits
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241023/202410230354.sjewoFxA-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241023/202410230354.sjewoFxA-lkp@intel.com/reproduce)
 
-> --------------------
-> a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
-> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
-> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-> 3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
-> eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410230354.sjewoFxA-lkp@intel.com/
 
-And then maybe limit this to 5 or 10 (imagine a huge PR like netdev or
-drm).
+All errors (new ones prefixed by >>):
 
-> 
-> 
-> Commits that weren't found on lore.kernel.org/all:
+   In file included from include/linux/kasan.h:7,
+                    from include/linux/mm.h:31,
+                    from arch/sh/kernel/asm-offsets.c:14:
+>> include/linux/kasan-tags.h:5:10: fatal error: asm/kasan.h: No such file or directory
+       5 | #include <asm/kasan.h>
+         |          ^~~~~~~~~~~~~
+   compilation terminated.
+   make[3]: *** [scripts/Makefile.build:102: arch/sh/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1203: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:224: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:224: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-"(9 of 26: 35%)"
 
-> --------------------
-> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
-> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
-> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
-> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
-> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
-> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
-> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
-> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
+vim +5 include/linux/kasan-tags.h
 
-Nice work!
+     4	
+   > 5	#include <asm/kasan.h>
+     6	
 
 -- 
-Kees Cook
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
