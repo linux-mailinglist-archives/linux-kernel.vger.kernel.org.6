@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-375704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F1C9A99BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:19:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0189A99BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898C71C21034
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7882826C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3B7145B1D;
-	Tue, 22 Oct 2024 06:19:02 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDA613BC35;
+	Tue, 22 Oct 2024 06:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE0GrhsN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE821E495;
-	Tue, 22 Oct 2024 06:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E20433B0;
+	Tue, 22 Oct 2024 06:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729577942; cv=none; b=bCJZIHCzR/89jL2QPXW/vo+STiB3ODI/Y4W73rTh5B2lnOb+uJyEKtgPWnMczxTKCYDHeglhPUiQ0DM8kmJs4A5IV6bQ/gTvF/lWhCKbvoA3aDHpM35WDwJ9aCsqqgHp4VTYavaG5etBETIx6Rxvnuu4TwlrRb6sqBVIrY52yZ0=
+	t=1729577938; cv=none; b=bQm9Dbdxg8+e1b81/R9HE3XqHsyCWTGm69KVMHmoKfC74hl/VxIfh1CPq5K5IhyU5YVI8DEWTZs5XPMIj98ylnd8fEGxoURa4n622vh5l7NUjVjTKTWQ/o507DaHWNrpX7cQhgCEYP9JNBs26d41UBJUlhuR5IpJd+qWQmTq44U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729577942; c=relaxed/simple;
-	bh=tLiAn0BeLFoim24NopHHPe7F7XmfCPa+lJJMTWGqkMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=piqLs/HJjdMZ59EUKWw8geKvJBI4b1zd6gzjioxN6R/wk48hkB+0AzN+cSM5WMUa/Et6FItpoB7VALh8CNaXem5LF44c7E5K4+9AM/bZLw3zFqZlxWArAhavEsW315i/OBtD7D0yRFbqNfgmW1zt3LFui0f30pDn1jhvknaZpVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XXhmX0DYXz1jBJk;
-	Tue, 22 Oct 2024 14:17:32 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7C7B11A016C;
-	Tue, 22 Oct 2024 14:18:53 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 22 Oct 2024 14:18:52 +0800
-Message-ID: <04cecf07-85c0-4830-9f98-ffe96923d440@huawei.com>
-Date: Tue, 22 Oct 2024 14:18:52 +0800
+	s=arc-20240116; t=1729577938; c=relaxed/simple;
+	bh=9Zz4m5o8MjVThAJP+7kBq+bAHkWCNX6LN7doLoE52j0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jPEHJuxq/SxRLeK9XcLOQEdemsWr3j8V/U9nK0iU2Fkj9VRKSsfwMcO4DaieUwTL+1z1yP3DC4CLFRZCguDxlttWRy+a0WYNkUS+VDLmGvI0belotwESRTo697CzLC5G6I+SS6GzC8+XyEhwH4/ytkpms0g0m57Tv/cbekeM0P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE0GrhsN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FB4C4CEC3;
+	Tue, 22 Oct 2024 06:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729577937;
+	bh=9Zz4m5o8MjVThAJP+7kBq+bAHkWCNX6LN7doLoE52j0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NE0GrhsNu9+OD/21xf45YTba0c9g/tSsqz5+RMkmsg71a+3V79YEcQxT51VmKB5my
+	 NSEWcKklAjXaQ/ybvrFmWEtipJpExtl9hrbITGP4H5/5WBECWVlG3mrIfXOjMLy8tH
+	 /NYXbEFs3tqadF6Csw8WyHj+C/bv6xcJkG1/UEf6tmGxIsHi8FI0ZYAiDXjVfOdk9+
+	 uq0h4+9KtA+NT7hXKd7etFiq9GXEULl+H+ghEiLQNlubS4nxViR6l76Q38uT36EWL1
+	 zE3PWsler7LJPKZpSzEf0U+e7AEBNM7pcwGYMhITU4WrJE7nctjZnPWVKprMAgI2L3
+	 2NVNBjB6BNf7Q==
+Date: Tue, 22 Oct 2024 08:18:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	"Satya Durga Srinivasu Prabhala --cc=linux-arm-msm @ vger . kernel . org" <quic_satyap@quicinc.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] dt-bindings: clock: qcom: Add SM8750 GCC clock
+ controller
+Message-ID: <qxhsw4sg4feiaee7npio2e7gxi5d2gwsupdculzyhc7xxg6ci2@di532b2jmonc>
+References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
+ <20241021230359.2632414-5-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
- contention on siglock
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-CC: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<bpf@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov
-	<oleg@redhat.com>
-References: <20240815014629.2685155-1-liaochang1@huawei.com>
- <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
- <20240915151803.GD27726@redhat.com>
- <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com>
- <CAEf4BzbWLf3K4C7GT58nXZ0FJfnoeCdLeRvKtwA76oM9Jdm7jg@mail.gmail.com>
- <e62dbebc-d366-453a-b305-67f50baeff05@huawei.com>
- <CAEf4BzYUdPJrgy1Dqinxk5ATPxA8WCTzQW3QcWobZpXjiYDZNw@mail.gmail.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <CAEf4BzYUdPJrgy1Dqinxk5ATPxA8WCTzQW3QcWobZpXjiYDZNw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021230359.2632414-5-quic_molvera@quicinc.com>
 
-
-
-在 2024/10/22 1:18, Andrii Nakryiko 写道:
-> On Mon, Oct 21, 2024 at 3:43 AM Liao, Chang <liaochang1@huawei.com> wrote:
->>
->>
->>
->> 在 2024/10/12 3:34, Andrii Nakryiko 写道:
->>> On Tue, Sep 17, 2024 at 7:05 PM Liao, Chang <liaochang1@huawei.com> wrote:
->>>>
->>>> Hi, Peter and Masami
->>>>
->>>> I look forward to your inputs on these series. Andrii has proven they are
->>>> hepful for uprobe scalability.
->>>>
->>>> Thanks.
->>>>
->>>> 在 2024/9/15 23:18, Oleg Nesterov 写道:
->>>>> Hi Liao,
->>>>>
->>>>> On 09/14, Liao, Chang wrote:
->>>>>>
->>>>>> Hi, Oleg
->>>>>>
->>>>>> Kindly ping.
->>>>>>
->>>>>> This series have been pending for a month. Is thre any issue I overlook?
->>>>>
->>>>> Well, I have already acked both patches.
->>>>>
->>>>> Please resend them to Peter/Masami, with my acks included.
->>>>>
->>>
->>> Hey Liao,
->>>
->>> I didn't see v4 from you for this patch set with Oleg's acks. Did you
->>> get a chance to rebase, add acks, and send the latest version?
->>
->> Andrii,
->>
->> I am ready to send v4 based on the latest kernel from next tree. Otherwise,
->> I haven't heard back from any of maintainers except Oleg, so I'm a bit unsure
->> if I should make further changes to this series.
->>
+On Mon, Oct 21, 2024 at 04:03:56PM -0700, Melody Olvera wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
 > 
-> Let's just rebase to the latest tip/perf/core and resend with Oleg's
-> ack. Hopefully this should be enough.
-
-OK, the v4 is on the way with Masami's Acked-by.
-
+> Add device tree bindings for the video clock controller on Qualcomm
+> SM8750 platform.
 > 
->>>
->>>>> Oleg.
->>>>>
->>>>>
->>>>
->>>> --
->>>> BR
->>>> Liao, Chang
->>
->> --
->> BR
->> Liao, Chang
->>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,sm8750-gcc.yaml       |  65 +++++
+>  include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
+>  2 files changed, 291 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
+> new file mode 100644
+> index 000000000000..5e46cccd6e6c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller on SM8750
+> +
+> +maintainers:
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and power
+> +  domains on SM8750
+> +
+> +  See also:: include/dt-bindings/clock/qcom,sm8750-gcc.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8750-gcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board Always On XO source
+> +      - description: Sleep clock source
+> +      - description: PCIE 0 Pipe clock source
+> +      - description: PCIE 1 Pipe clock source
+> +      - description: PCIE 1 Phy Auxiliary clock source
+> +      - description: UFS Phy Rx symbol 0 clock source
+> +      - description: UFS Phy Rx symbol 1 clock source
+> +      - description: UFS Phy Tx symbol 0 clock source
+> +      - description: USB3 Phy wrapper pipe clock source
 
--- 
-BR
-Liao, Chang
+
+It's the same as sm8650, so it should be there. No need for new file.
+
+Best regards,
+Krzysztof
 
 
