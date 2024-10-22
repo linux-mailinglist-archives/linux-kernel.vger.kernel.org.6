@@ -1,343 +1,224 @@
-Return-Path: <linux-kernel+bounces-377037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FC59AB912
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D69AB917
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DBF1C232DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8AF1F23771
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D079F1CEAD4;
-	Tue, 22 Oct 2024 21:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19FA1CDA27;
+	Tue, 22 Oct 2024 21:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="flkqyZbE"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GT/Wd/fj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TKiHmgmj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF511CDFBD
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DF515573B;
+	Tue, 22 Oct 2024 21:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729633985; cv=none; b=fPnJPOU0utbNNijKWk2Poq3Yd1IowmcnEaEd3yHCq0sVDF/xAG+ZLK5di624TPXB3paccucPp9WaoJWwQq8rxtdLfqRxiQtGYW5q68mRKNIudsSRu8/bSCtz7ZUCde1q6dE6VBZSSu6hJxmsSidHE7swaQ29m+BHtBZ0FXT24u4=
+	t=1729634035; cv=none; b=gTLAX2eDnPGeP8ogYBldQnfD2vXLNzSJwlsrpCgfVKvqJDJN/leeXt7aSeC7mg5UUJH40LTf98v6n8zJZrzXM8ZRKdGaTVA9vQuUxGHRQblfPGG+jFN4zJp1x0/3aC0vNfYaA6RN4vEXnn+FFNtSfhvv18R5Xu9oNaKIRnZ4sCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729633985; c=relaxed/simple;
-	bh=uXNQQt4GmPGz8CyecR0wdkkb7QgO0NDr8DnSq+dZQrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RgCkVGW0sLSpdaQcv2lqvWiflIlQ/7FI2f+JwLIBYmAMVJYCXVyoKt/36Mo78CxkfFed2tKvh2bEfBZQovfA3/yplOYI5OTca0KQEVPA88s2Z16jTTLwt/N4mFRcE7Ki00ki9BAospmT0shHTYKYQqyL6q1ScM29sYqxsGL1rUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=flkqyZbE; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e93d551a3so4363161b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1729633983; x=1730238783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yu/fX3X5EHjeQVvxkbdBwctpaSABzbSE8yyiwWRX/QA=;
-        b=flkqyZbERRcScgcl915h6iWp2/CgLrbhx/HFgRUg+4Mw3I1vk1icdX1N732DJ4dcgC
-         ba7fOLOkcFZPYvpdOA1LP+eRg1SKCEtmJMZUFuQMmV8zTh6mI9aT5wjbWL8sgaJQz4Bo
-         AtaSsHO/ivU91mw9rMuIf4dM5z7WoIv8ujBOI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729633983; x=1730238783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yu/fX3X5EHjeQVvxkbdBwctpaSABzbSE8yyiwWRX/QA=;
-        b=l+9tKiWxBQ97vx2QC1QQWLQoDZGT7IvFCO3KKrLCbYHFIpLNSC1vy23Tm29QeEholA
-         izcq3thmFMtoZfAHTAa2jljecIO03lTIcwtsftYMOlVno/FNkH25i+pFGE3OtNhDKWmJ
-         OD5aNywixiiBgXOcZUAJVQSB79FMbnV1hDiFpr0iLaePRgPPlDfDN8CvxxD5Lfsm7TWc
-         idX22cztQpoV4HO4UcrqG1qMDWZp2FkP7KiPpIbX177XCnBUUu4VzEsjvr10h51SYYcM
-         zmaw7QV1X5fPUTCFR4lc2iexb9r7a5BZ2OblNxiSzS6Sftvd8n+ba6bwlK9PxruAVa+a
-         8vQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDfbQzsUQ7wc3U9Znni4YGAY0SpVhg5Mp1F7/waQwE+32ep6uNB5k70DdrhI2MaWEJfrVBp5xacEQ9vQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/ptOxWN7KiPFpsMBoZ/oodo4/6INC95T0RCOHzTRxVmgIfzBp
-	F7J4aP9kgcOGDSzNS90YioU9GK/dLMryShOvOFLZFZed/zJN5vyaw78yjIEHPzY=
-X-Google-Smtp-Source: AGHT+IH4isynMkoiDOybRISeWiy9JT1O/biRUjKmi+P0qbCUFonIWqa8OOZz8Txnn8elOaBsjA6aHQ==
-X-Received: by 2002:a05:6a00:4f90:b0:71d:f64d:ec60 with SMTP id d2e1a72fcca58-72030babcb0mr922064b3a.7.1729633982713;
-        Tue, 22 Oct 2024 14:53:02 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d75b9sm5194375b3a.131.2024.10.22.14.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 14:53:02 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: jacob.e.keller@intel.com,
-	kurt@linutronix.de,
-	vinicius.gomes@intel.com,
-	Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path))
-Subject: [iwl-next v4 2/2] igc: Link queues to NAPI instances
-Date: Tue, 22 Oct 2024 21:52:45 +0000
-Message-Id: <20241022215246.307821-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241022215246.307821-1-jdamato@fastly.com>
-References: <20241022215246.307821-1-jdamato@fastly.com>
+	s=arc-20240116; t=1729634035; c=relaxed/simple;
+	bh=1xspFbBNeFfPQZ0bdINnhp7gA77sMk56qJo3yLiyh/I=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=QVUNUOWi03GGM/mhVjAkDocEdLrp9j91nvXYRN7MBJk8aZEFSnMf12DHZwuK9HvjUjcVZoBGMPsUCRGFgqJmM2f9gUS/ahsEfPeVGflq4hsv2VMmPopYm8PYrlkQnJWRdlq3PwMXgNQhLxCtryzY+1iyjnI7RbU9WLe2V7D4bYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GT/Wd/fj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TKiHmgmj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Oct 2024 21:53:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729634030;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NphCggOTd45C2oyVUTvFrGKCTzkpGm5Ad7+aiRNa3uc=;
+	b=GT/Wd/fjrzHVXeqvJkHb3CrVM2AGIOjOpEfgMEmER0vEMeAc6l+2Nrc9ZwW/kpLv5DSoDW
+	4AxhOP09WNt01urjBiWa+Y5d89MODBeUooYkQleBjtBiPmibtRaCGFiK7s0u83VkBJGotL
+	St+lSRpaJGUfQSNH9hITkTcvMljYnDvWhJX2/X2l6AKWioxetZJX0MviwvwzEP0wbU0500
+	46wdTYUMudd55XrQm672mvtNy9CHhT7VAIezvRhrZytMzu7SfgGvOtw9j0yne3E0iL6dqu
+	8neMJfpyZpxAjQJkjLs2QiASVJtMFYFuxAGOd3meDCZzvboW9ZtlnQ0rtjoEwg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729634030;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NphCggOTd45C2oyVUTvFrGKCTzkpGm5Ad7+aiRNa3uc=;
+	b=TKiHmgmjAcA3I2MR7Buto3hSJakZ9qw8w0RbzcWEH8AeCwri0phFwqPqXWWhW1VpvjTBqE
+	JpxtwOCE7Je56HCw==
+From: "tip-bot2 for Qiuxu Zhuo" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] locking/pvqspinlock: Convert fields of 'enum
+ vcpu_state' to uppercase
+Cc: Waiman Long <longman@redhat.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240809014802.15320-1-qiuxu.zhuo@intel.com>
+References: <20240809014802.15320-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172963402982.1442.4924559467557584983.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Link queues to NAPI instances via netdev-genl API so that users can
-query this information with netlink. Handle a few cases in the driver:
-  1. Link/unlink the NAPIs when XDP is enabled/disabled
-  2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
+The following commit has been merged into the locking/core branch of tip:
 
-Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
+Commit-ID:     2628cbd03924b91a360f72117a9b9c78cfd050e7
+Gitweb:        https://git.kernel.org/tip/2628cbd03924b91a360f72117a9b9c78cfd050e7
+Author:        Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+AuthorDate:    Fri, 09 Aug 2024 09:48:02 +08:00
+Committer:     Boqun Feng <boqun.feng@gmail.com>
+CommitterDate: Thu, 17 Oct 2024 21:21:16 -07:00
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
+locking/pvqspinlock: Convert fields of 'enum vcpu_state' to uppercase
 
-[{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+Convert the fields of 'enum vcpu_state' to uppercase for better
+readability. No functional changes intended.
 
-Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
-is present for both rx and tx queues at the same index, for example
-index 0:
-
-{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-
-To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
-the grub command line option "maxcpus=2" to force
-igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
-
-Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
-
-$ lscpu | grep "On-line CPU"
-On-line CPU(s) list:      0,2
-
-$ ethtool -l enp86s0  | tail -5
-Current hardware settings:
-RX:		n/a
-TX:		n/a
-Other:		1
-Combined:	2
-
-$ cat /proc/interrupts  | grep enp
- 144: [...] enp86s0
- 145: [...] enp86s0-rx-0
- 146: [...] enp86s0-rx-1
- 147: [...] enp86s0-tx-0
- 148: [...] enp86s0-tx-1
-
-1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
-report 4 IRQs with unique NAPI IDs:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump napi-get --json='{"ifindex": 2}'
-[{'id': 8196, 'ifindex': 2, 'irq': 148},
- {'id': 8195, 'ifindex': 2, 'irq': 147},
- {'id': 8194, 'ifindex': 2, 'irq': 146},
- {'id': 8193, 'ifindex': 2, 'irq': 145}]
-
-Now we examine which queues these NAPIs are associated with, expecting
-that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
-have its own NAPI instance:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
-[{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Link: https://lore.kernel.org/r/20240809014802.15320-1-qiuxu.zhuo@intel.com
 ---
- v4:
-   - Add rtnl_lock/rtnl_unlock in two paths: igc_resume and
-     igc_io_error_detected. The code added to the latter is inspired by
-     a similar implementation in ixgbe's ixgbe_io_error_detected.
+ kernel/locking/qspinlock_paravirt.h | 36 ++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
- v3:
-   - Replace igc_unset_queue_napi with igc_set_queue_napi(adapater, i,
-     NULL), as suggested by Vinicius Costa Gomes
-   - Simplify implemention of igc_set_queue_napi as suggested by Kurt
-     Kanzenbach, with a tweak to use ring->queue_index
-
- v2:
-   - Update commit message to include tests for IGC_FLAG_QUEUE_PAIRS
-     disabled
-   - Refactored code to move napi queue mapping and unmapping to helper
-     functions igc_set_queue_napi and igc_unset_queue_napi
-   - Adjust the code to handle IGC_FLAG_QUEUE_PAIRS disabled
-   - Call helpers to map/unmap queues to NAPIs in igc_up, __igc_open,
-     igc_xdp_enable_pool, and igc_xdp_disable_pool
-
- drivers/net/ethernet/intel/igc/igc.h      |  2 ++
- drivers/net/ethernet/intel/igc/igc_main.c | 41 ++++++++++++++++++++---
- drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 ++
- 3 files changed, 40 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-index eac0f966e0e4..b8111ad9a9a8 100644
---- a/drivers/net/ethernet/intel/igc/igc.h
-+++ b/drivers/net/ethernet/intel/igc/igc.h
-@@ -337,6 +337,8 @@ struct igc_adapter {
- 	struct igc_led_classdev *leds;
+diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+index ac2e225..dc1cb90 100644
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -38,13 +38,13 @@
+ #define PV_PREV_CHECK_MASK	0xff
+ 
+ /*
+- * Queue node uses: vcpu_running & vcpu_halted.
+- * Queue head uses: vcpu_running & vcpu_hashed.
++ * Queue node uses: VCPU_RUNNING & VCPU_HALTED.
++ * Queue head uses: VCPU_RUNNING & VCPU_HASHED.
+  */
+ enum vcpu_state {
+-	vcpu_running = 0,
+-	vcpu_halted,		/* Used only in pv_wait_node */
+-	vcpu_hashed,		/* = pv_hash'ed + vcpu_halted */
++	VCPU_RUNNING = 0,
++	VCPU_HALTED,		/* Used only in pv_wait_node */
++	VCPU_HASHED,		/* = pv_hash'ed + VCPU_HALTED */
  };
  
-+void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
-+			struct napi_struct *napi);
- void igc_up(struct igc_adapter *adapter);
- void igc_down(struct igc_adapter *adapter);
- int igc_open(struct net_device *netdev);
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 7964bbedb16c..04aa216ef612 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -4948,6 +4948,22 @@ static int igc_sw_init(struct igc_adapter *adapter)
- 	return 0;
+ struct pv_node {
+@@ -266,7 +266,7 @@ pv_wait_early(struct pv_node *prev, int loop)
+ 	if ((loop & PV_PREV_CHECK_MASK) != 0)
+ 		return false;
+ 
+-	return READ_ONCE(prev->state) != vcpu_running;
++	return READ_ONCE(prev->state) != VCPU_RUNNING;
  }
  
-+void igc_set_queue_napi(struct igc_adapter *adapter, int vector,
-+			struct napi_struct *napi)
-+{
-+	struct igc_q_vector *q_vector = adapter->q_vector[vector];
-+
-+	if (q_vector->rx.ring)
-+		netif_queue_set_napi(adapter->netdev,
-+				     q_vector->rx.ring->queue_index,
-+				     NETDEV_QUEUE_TYPE_RX, napi);
-+
-+	if (q_vector->tx.ring)
-+		netif_queue_set_napi(adapter->netdev,
-+				     q_vector->tx.ring->queue_index,
-+				     NETDEV_QUEUE_TYPE_TX, napi);
-+}
-+
- /**
-  * igc_up - Open the interface and prepare it to handle traffic
-  * @adapter: board private structure
-@@ -4955,6 +4971,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
- void igc_up(struct igc_adapter *adapter)
- {
- 	struct igc_hw *hw = &adapter->hw;
-+	struct napi_struct *napi;
- 	int i = 0;
+ /*
+@@ -279,7 +279,7 @@ static void pv_init_node(struct mcs_spinlock *node)
+ 	BUILD_BUG_ON(sizeof(struct pv_node) > sizeof(struct qnode));
  
- 	/* hardware has been reset, we need to reload some things */
-@@ -4962,8 +4979,11 @@ void igc_up(struct igc_adapter *adapter)
+ 	pn->cpu = smp_processor_id();
+-	pn->state = vcpu_running;
++	pn->state = VCPU_RUNNING;
+ }
  
- 	clear_bit(__IGC_DOWN, &adapter->state);
+ /*
+@@ -308,26 +308,26 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ 		/*
+ 		 * Order pn->state vs pn->locked thusly:
+ 		 *
+-		 * [S] pn->state = vcpu_halted	  [S] next->locked = 1
++		 * [S] pn->state = VCPU_HALTED	  [S] next->locked = 1
+ 		 *     MB			      MB
+-		 * [L] pn->locked		[RmW] pn->state = vcpu_hashed
++		 * [L] pn->locked		[RmW] pn->state = VCPU_HASHED
+ 		 *
+ 		 * Matches the cmpxchg() from pv_kick_node().
+ 		 */
+-		smp_store_mb(pn->state, vcpu_halted);
++		smp_store_mb(pn->state, VCPU_HALTED);
  
--	for (i = 0; i < adapter->num_q_vectors; i++)
--		napi_enable(&adapter->q_vector[i]->napi);
-+	for (i = 0; i < adapter->num_q_vectors; i++) {
-+		napi = &adapter->q_vector[i]->napi;
-+		napi_enable(napi);
-+		igc_set_queue_napi(adapter, i, napi);
-+	}
- 
- 	if (adapter->msix_entries)
- 		igc_configure_msix(adapter);
-@@ -5192,6 +5212,7 @@ void igc_down(struct igc_adapter *adapter)
- 	for (i = 0; i < adapter->num_q_vectors; i++) {
- 		if (adapter->q_vector[i]) {
- 			napi_synchronize(&adapter->q_vector[i]->napi);
-+			igc_set_queue_napi(adapter, i, NULL);
- 			napi_disable(&adapter->q_vector[i]->napi);
+ 		if (!READ_ONCE(node->locked)) {
+ 			lockevent_inc(pv_wait_node);
+ 			lockevent_cond_inc(pv_wait_early, wait_early);
+-			pv_wait(&pn->state, vcpu_halted);
++			pv_wait(&pn->state, VCPU_HALTED);
  		}
- 	}
-@@ -6021,6 +6042,7 @@ static int __igc_open(struct net_device *netdev, bool resuming)
- 	struct igc_adapter *adapter = netdev_priv(netdev);
- 	struct pci_dev *pdev = adapter->pdev;
- 	struct igc_hw *hw = &adapter->hw;
-+	struct napi_struct *napi;
- 	int err = 0;
- 	int i = 0;
  
-@@ -6056,8 +6078,11 @@ static int __igc_open(struct net_device *netdev, bool resuming)
+ 		/*
+-		 * If pv_kick_node() changed us to vcpu_hashed, retain that
++		 * If pv_kick_node() changed us to VCPU_HASHED, retain that
+ 		 * value so that pv_wait_head_or_lock() knows to not also try
+ 		 * to hash this lock.
+ 		 */
+-		cmpxchg(&pn->state, vcpu_halted, vcpu_running);
++		cmpxchg(&pn->state, VCPU_HALTED, VCPU_RUNNING);
  
- 	clear_bit(__IGC_DOWN, &adapter->state);
+ 		/*
+ 		 * If the locked flag is still not set after wakeup, it is a
+@@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ {
+ 	struct pv_node *pn = (struct pv_node *)node;
+-	u8 old = vcpu_halted;
++	u8 old = VCPU_HALTED;
+ 	/*
+ 	 * If the vCPU is indeed halted, advance its state to match that of
+ 	 * pv_wait_node(). If OTOH this fails, the vCPU was running and will
+@@ -374,7 +374,7 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ 	 * subsequent writes.
+ 	 */
+ 	smp_mb__before_atomic();
+-	if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
++	if (!try_cmpxchg_relaxed(&pn->state, &old, VCPU_HASHED))
+ 		return;
  
--	for (i = 0; i < adapter->num_q_vectors; i++)
--		napi_enable(&adapter->q_vector[i]->napi);
-+	for (i = 0; i < adapter->num_q_vectors; i++) {
-+		napi = &adapter->q_vector[i]->napi;
-+		napi_enable(napi);
-+		igc_set_queue_napi(adapter, i, napi);
-+	}
+ 	/*
+@@ -407,7 +407,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 	 * If pv_kick_node() already advanced our state, we don't need to
+ 	 * insert ourselves into the hash table anymore.
+ 	 */
+-	if (READ_ONCE(pn->state) == vcpu_hashed)
++	if (READ_ONCE(pn->state) == VCPU_HASHED)
+ 		lp = (struct qspinlock **)1;
  
- 	/* Clear any pending interrupts. */
- 	rd32(IGC_ICR);
-@@ -7385,7 +7410,9 @@ static int igc_resume(struct device *dev)
- 	wr32(IGC_WUS, ~0);
+ 	/*
+@@ -420,7 +420,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 		 * Set correct vCPU state to be used by queue node wait-early
+ 		 * mechanism.
+ 		 */
+-		WRITE_ONCE(pn->state, vcpu_running);
++		WRITE_ONCE(pn->state, VCPU_RUNNING);
  
- 	if (netif_running(netdev)) {
-+		rtnl_lock();
- 		err = __igc_open(netdev, true);
-+		rtnl_unlock();
- 		if (!err)
- 			netif_device_attach(netdev);
- 	}
-@@ -7440,14 +7467,18 @@ static pci_ers_result_t igc_io_error_detected(struct pci_dev *pdev,
- 	struct net_device *netdev = pci_get_drvdata(pdev);
- 	struct igc_adapter *adapter = netdev_priv(netdev);
- 
-+	rtnl_lock();
- 	netif_device_detach(netdev);
- 
--	if (state == pci_channel_io_perm_failure)
-+	if (state == pci_channel_io_perm_failure) {
-+		rtnl_unlock();
- 		return PCI_ERS_RESULT_DISCONNECT;
-+	}
- 
- 	if (netif_running(netdev))
- 		igc_down(adapter);
- 	pci_disable_device(pdev);
-+	rtnl_unlock();
- 
- 	/* Request a slot reset. */
- 	return PCI_ERS_RESULT_NEED_RESET;
-diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
-index e27af72aada8..4da633430b80 100644
---- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-@@ -84,6 +84,7 @@ static int igc_xdp_enable_pool(struct igc_adapter *adapter,
- 		napi_disable(napi);
- 	}
- 
-+	igc_set_queue_napi(adapter, queue_id, NULL);
- 	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
- 	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
- 
-@@ -133,6 +134,7 @@ static int igc_xdp_disable_pool(struct igc_adapter *adapter, u16 queue_id)
- 	xsk_pool_dma_unmap(pool, IGC_RX_DMA_ATTR);
- 	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
- 	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-+	igc_set_queue_napi(adapter, queue_id, napi);
- 
- 	if (needs_reset) {
- 		napi_enable(napi);
--- 
-2.25.1
-
+ 		/*
+ 		 * Set the pending bit in the active lock spinning loop to
+@@ -460,7 +460,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 				goto gotlock;
+ 			}
+ 		}
+-		WRITE_ONCE(pn->state, vcpu_hashed);
++		WRITE_ONCE(pn->state, VCPU_HASHED);
+ 		lockevent_inc(pv_wait_head);
+ 		lockevent_cond_inc(pv_wait_again, waitcnt);
+ 		pv_wait(&lock->locked, _Q_SLOW_VAL);
 
