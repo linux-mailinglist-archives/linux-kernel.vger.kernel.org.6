@@ -1,157 +1,133 @@
-Return-Path: <linux-kernel+bounces-376292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDEA9AA2C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA2F9AA2C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE7E1F247AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DB91F24AD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA55A19DF6A;
-	Tue, 22 Oct 2024 13:08:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB912BCF8
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057CD19DF9E;
+	Tue, 22 Oct 2024 13:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="mpm9NsO/"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA79F19CD1B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602510; cv=none; b=GWFytjbMRVdXF4igRpPlcadBMjmoF2LBu7B/JkMOrG6jJx8V9bug1Y8iZ5nhHuWYbSq5kD4kqyFWcwMwxFi8wT5yZEIY6h2LCJy+IoDhUX3P0LDXpmexEUJJvgu5IkFkIAdmndOb5f16misWrI9jUA8oZZjaIYxIx3dgz20KiMs=
+	t=1729602525; cv=none; b=j18z8KDfqiQTIr+X7OPNkkTGzAxZx+6yAXJeTHZ+/u8Dohl65keaDY/mN9Baq/OyS/BfRcPQH7CYr5VTEbIUeQVvcxy4RVhkfUNBaKufu/evbzaZy5mFHWt0nX/MgV9OW7ce29C8RBlDwrSFHxQ29cw7lTEib0uS3KhrUxAvlHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602510; c=relaxed/simple;
-	bh=Lvf3VCdj0oePEPLd9OgAk9/9XtNuaMN0oAVLHjHdHvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atfosaF5M/Q2SBXd1tl8Od/0md+braKfStoXy1neBgvnSmcS5xfRZk1IL9j1vZLFQRHSk4uCCFpAJMk4wytLsYOXa6HovlRTd3qDZbGIJXZUsJC3S6LL0vzEUWj6+yNZEchCNCGf0XuPNT4GQRE8DQm6auY1T6EfLpupoKvlSa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C506497;
-	Tue, 22 Oct 2024 06:08:56 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3104B3F73B;
-	Tue, 22 Oct 2024 06:08:24 -0700 (PDT)
-Date: Tue, 22 Oct 2024 14:08:12 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
-	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
-	kees@kernel.org, wad@chromium.org, rostedt@goodmis.org,
-	arnd@arndb.de, ardb@kernel.org, broonie@kernel.org,
-	rick.p.edgecombe@intel.com, leobras@redhat.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
-Message-ID: <ZxejvAmccYMTa4P1@J2N7QTR9R3>
-References: <20240629085601.470241-1-ruanjinjie@huawei.com>
- <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
- <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
+	s=arc-20240116; t=1729602525; c=relaxed/simple;
+	bh=3cVOqkFRTnn4fFWxsQTNO55gu0wUXV9eMQLfnE+68dU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gzw3Xe6rSQF2Rgb4Cd/gJVTP4qKjgUC+ZsaRvnHkgCGxxFDsjkRszbxUZNan33ovkdobpDNoFkAQzptO5ohge7bkSCVz5sYOLLzXf9BWNd7tiZuUPxOa9xK+x7PIXLDqEyZXWvBW7citPVVTlltkZWp65l1yCqiS0S2XypWx778=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=mpm9NsO/; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c767a9c50so51895365ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1729602523; x=1730207323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eSD76+9WkSJmJmUZ0lbLq6LmsKkpMwJOlweUzuTVP0o=;
+        b=mpm9NsO/sfGnu3xOQHDwQLGxLRiYKVMDQBMTUd5qZwqd4/QawZkt1zzIgN/wn85krQ
+         DWxgBUtz65t/i4Ayn7sMMKR+DlA+Kwqgo2agvysE6hEj2ZnAjOQXbt/LB921AFtaBa6i
+         BhJ88/W/zaN6bosobRr6riPnGYY5KbPzzzXtYYxYftu1Z3hXw+xkTf4Zm9PgWlY2DD1d
+         UfdHgJ/sgyeyabIkbQxWJaj0AA4SRR2xkqLS2m6c9j8kqDL7FHewB9C7joOMdAUD/8Pw
+         rLfoZd7d6mrV621Y2rhgV8MiZhXYZFgVrcAoVV8pMVMlD3z97DZtuw8ioV5T3ziDQSGc
+         i1qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729602523; x=1730207323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eSD76+9WkSJmJmUZ0lbLq6LmsKkpMwJOlweUzuTVP0o=;
+        b=eX3TbYtClS+cucvk0cJ7dEMt4plZUYm1SVGuqtrd9Gj3RLk48otxhurf0gRRj32AnS
+         EcWUAtCSVjRNy6lWA5J9n/uDKmmJKt2omD1d92Hc4G4f8FdyKhk5aD/6sD2lGjajOC8x
+         eUHK/knrwYtlcSdKc2lq25jboF2ndWSG1fNevM6oLinznuAP9EZwtMJE6avX77pG3b3B
+         y2dXuAZDa7qgTTw991OEFwXifGVvcnkU3gf9Ejxpx7NBpHIy6DryLxXDHFWKc4ifNgUK
+         d/Ex0GOTxUa95jvxeFAfOVdXzx6Aq3JOJ+6+GKsjh/F1X7Xl8nlKqPIoa8cJe+AuCVOA
+         gATw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSfgozeAWx+71jZGCpdN4BmSfYGiGR+NigWPDeIsMqRNL/IZx61vYip75Fp5YbEbTP9gatVKv93MJYcWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Ju47oHOAtfoLVPoYsQhvXFRiVbOqlgmxSYYk1oTW2oSqmqYc
+	KAGEQ2dYXF8iytpBz4GKX8vZ8L+sipF06ahmMZTRQupBmhlyeS5o1a4YcFoP3a2c+4MMO6npNz/
+	8wwRFSpD0RPOI0YnqRWllrm9FHR3Z4ROrIMaIPg==
+X-Google-Smtp-Source: AGHT+IHbGo2VQ8g5GmCprVUnwQHQ7CqOubSGDzGzyMmpKVAzodR2cXRT87GluNUR/opfbavjfYATFita6FYBPaa1n2s=
+X-Received: by 2002:a05:6a20:e617:b0:1d4:e51a:932 with SMTP id
+ adf61e73a8af0-1d92c4a0187mr20939890637.8.1729602523000; Tue, 22 Oct 2024
+ 06:08:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
+References: <20241021102256.706334758@linuxfoundation.org>
+In-Reply-To: <20241021102256.706334758@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Tue, 22 Oct 2024 22:08:32 +0900
+Message-ID: <CAKL4bV6PwEy7ShiMBj18NofyQxtC3guaRwh_ZNUOOS2Ei4Hz3Q@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/124] 6.6.58-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 08:07:54PM +0800, Jinjie Ruan wrote:
-> On 2024/10/17 23:25, Mark Rutland wrote:
-> > There's also some indirection that I don't think is necessary *and*
-> > hides important ordering concerns and results in mistakes. In
-> > particular, note that before this series, enter_from_kernel_mode() calls
-> > the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
-> > management is performed by __enter_from_kernel_mode():
-> > 
-> > 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
-> > 	{
-> > 	        __enter_from_kernel_mode(regs);
-> > 		mte_check_tfsr_entry();
-> > 		mte_disable_tco_entry(current);
-> > 	}
-> > 
-> > ... whereas after this series is applied, those MTE checks are placed in
-> > arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
-> > necessary lockdep+RCU management. That is broken.
-> > 
-> > It would be better to keep that explicit in the arm64 entry code with
-> > arm64-specific wrappers, e.g.
-> > 
-> > 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
-> > 	{
-> > 		irqentry_state_t state = irqentry_enter(regs);
-> > 		mte_check_tfsr_entry();
-> > 		mte_disable_tco_entry(current);
-> > 
-> > 		return state;
-> > 	}
-> 
-> Hi, Mark, It seems that there is a problem for
-> arm64_preempt_schedule_irq() when wrap irqentry_exit() with
-> exit_to_kernel_mode().
-> 
-> The arm64_preempt_schedule_irq() is about PREEMPT_DYNAMIC and preempt
-> irq which is the raw_irqentry_exit_cond_resched() in generic code called
-> by irqentry_exit().
-> 
-> Only __el1_irq() call arm64_preempt_schedule_irq(), but when we switch
-> all exit_to_kernel_mode() to arm64-specific one that wrap
-> irqentry_exit(), not only __el1_irq() but also el1_abort(), el1_pc(),
-> el1_undef() etc. will try to reschedule by calling
-> arm64_preempt_schedule_irq() similar logic.
+Hi Greg
 
-Yes, the generic entry code will preempt any context where an interrupt
-*could* have been taken from.
+On Mon, Oct 21, 2024 at 7:39=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.58 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.58-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-I'm not sure it actually matters either way; I believe that the generic
-entry code was written this way because that's what x86 did, and
-checking for whether interrupts are enabled in the interrupted context
-is cheap.
+6.6.58-rc1 tested.
 
-I's suggest you first write a patch to align arm64's entry code with the
-generic code, by removing the call to arm64_preempt_schedule_irq() from
-__el1_irq(), and adding a call to arm64_preempt_schedule_irq() in
-__exit_to_kernel_mode(), e.g.
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-| static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs)
-| {
-| 	...
-| 	if (interrupts_enabled(regs)) {
-| 		...
-| 		if (regs->exit_rcu) {
-| 			...
-| 		}
-| 		...
-| 		arm64_preempt_schedule_irq();
-| 		...
-| 	} else {
-| 		...
-| 	}
-| }
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-That way the behaviour and structure will be more aligned with the
-generic code, and with that as an independent patch it will be easier to
-review/test/bisect/etc.
+[    0.000000] Linux version 6.6.58-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Tue Oct 22 21:03:58 JST 2024
 
-This change will have at least two key impacts:
+Thanks
 
-(1) We'll preempt even without taking a "real" interrupt. That
-    shouldn't result in preemption that wasn't possible before, 
-    but it does change the probability of preempting at certain points,
-    and might have a performance impact, so probably warrants a
-    benchmark.
-
-(2) We will not preempt when taking interrupts from a region of kernel
-    code where IRQs are enabled but RCU is not watching, matching the
-    behaviour of the generic entry code.
-
-    This has the potential to introduce livelock if we can ever have a
-    screaming interrupt in such a region, so we'll need to go figure out
-    whether that's actually a problem.
-
-    Having this as a separate patch will make it easier to test/bisect
-    for that specifically.
-
-Mark.
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
