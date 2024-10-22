@@ -1,233 +1,165 @@
-Return-Path: <linux-kernel+bounces-376598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5262E9AB3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A369AB3A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB641F232E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF16D1F21E37
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4531A264C;
-	Tue, 22 Oct 2024 16:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828961B1D61;
+	Tue, 22 Oct 2024 16:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bg6wJNCa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZGRL2LX4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DDD1BBBC5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556EE136345;
+	Tue, 22 Oct 2024 16:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613707; cv=none; b=FH7yfgieBrhQwqi+U51C1z0MjH9uovpv3xmyYQg3sE7cPi4xB1IgyHHx7MXYivmHFr6dsXBpsWELbvOMY/YCIGEYeCxxuU+d8YbE9+dn9KBWU8JYD0KIU1171etz+jxGt9v4OcX/zXxhHJGR2daPfYLNnK/fyKJyswHFJBJ1klQ=
+	t=1729613843; cv=none; b=n5FfaQ1jyqcVfpmJHkUnm758c15dTyeckV7eneTeAVB9g9dqhxnIpZjJmDr8gLTnwawpB9jms7VKG0VIAFOA+siM83XqLLYwWWMd3uobibihMMw0RJ/MOXcWDxi6AMiPB1j5eFh55maM8ld+u61qRGmJVX/t0BvK+s2VuB7v350=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613707; c=relaxed/simple;
-	bh=5C93Ix0HLmGpLBxBT0CiwU4XpptXz4IaLPa8ArGBDlE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V+qLIgK33PbkS7Unn1cMnGD9hC8kstPpv5ECGSbgRSsYgGFJeduSqjXB8e5DiwdXQLo154My+Fu2dT4b2w/7DXXxdoi7WqipfpyYEyhW2t96kMFk8Q7bYJAKQWtofMTjCh6lWVaJUTghLP6IfOv0EjA4rl1n4bqoFeeXjNgk01Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bg6wJNCa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD93EC4CEC3;
-	Tue, 22 Oct 2024 16:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729613706;
-	bh=5C93Ix0HLmGpLBxBT0CiwU4XpptXz4IaLPa8ArGBDlE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bg6wJNCavjpzrle+OLfs6VjMWtM8KMmz/Z3F8oBUHYHWgZROvaTvyS+ZXyqKW794v
-	 NomG7jFH9vbKBam/stDAynZ1z77Z7AOFlMpC0gNjrTTprIyKFGKPcLzHe0/0bybNIN
-	 QMG8a5xlMoqNe7GajScxquvTSl/EJQyVfVsSoRi2bRQM4LMMM6g3c9j59gaJ0elJFY
-	 mw6QBHKu2f+l7BvOBX4oQPdumU+FxqaBNQQdVfvWlz3ChfYZMWvdvXxjnhE5Vn8q7N
-	 vxpOtffuW0xUGKZpNGOYdw6M799Sw8oFhMit7zCW479ZvPlg9TzMCNPJfPULLmfe+n
-	 Evnyn8pM2adMA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3HXE-005py4-7s;
-	Tue, 22 Oct 2024 17:15:04 +0100
-Date: Tue, 22 Oct 2024 17:15:03 +0100
-Message-ID: <868qug3yig.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
+	s=arc-20240116; t=1729613843; c=relaxed/simple;
+	bh=OFG7HFBoDbhMI8g7Y0r6Mn6NKm9OxNRgu1rPCmMM3zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYIBRDi9a4D3eO6oT4hPx4UioF3L0P5kxcWo8V7ld+PDJncSZAM20JA4cOcZKjmhgmfOKSkB9JNLW+/KuMUcK9RwjaH2KMQaIvmN0Qm5KaZP8iroQ6Z9ub+Xfl2xT+lYU0Q8UpdxhYQ+rrWqJBMKEnL8oWHvQPuWnfzMskg+ehw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZGRL2LX4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF6B740E0184;
+	Tue, 22 Oct 2024 16:17:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SxRAUl6Qx8eO; Tue, 22 Oct 2024 16:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729613832; bh=7VI+P72dXu6jlbrLu+mj4ToB+LSegaKux0yMSJVY1L8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZGRL2LX47xj4+x5nUWTk6qLQo0uorMLfWGLV54Sqml8sjmkqbcJ8lduVAy5s0SFRI
+	 e9fN4jrQGgHvrUT45siw4x++tGpUCPZ2dXTRG/aWB4TpMd0z4eS6JKjVb93lx85vqw
+	 8nQuuIJlm+7G67mXuBlMNzOAcY0s4Z/LbuDosAcy7n14ISoHzI+nKBYgSu7SkToTmU
+	 k/qGEXRG/t7R83envtCR74bZDzIHWJgBJKBAlR5Ytob4BPjyYhR6TRlSnkimlgyz+X
+	 OYSwvnxwn4+fgkAN5PZXfK+xE4ux9fKE2VFvVBeWT8H8uXtn6Iczis0+Zf0KEDc//j
+	 OQytNdiHdZcTxd23G5bFWRkEDlv+4hnmqqIJo0Es8CCFhzAhw6enA0vll6rPxjgfdn
+	 AmpEOU3psFsEYAMlXT2RGQLWbgeuqsgisFybtrYftqTErq52ofk/Hulnt1KLGImc+Q
+	 pFCheKGYViGDP178iRmUpokm2dtLigY020fKdn14msl4XOe4N0qy35OFpOce0NF1Kg
+	 HfF4HnI4AasTC3UafDxPNSWJ3g1/qev5iS12Fwx3D+Oye8Nicae8E1YjBqI+SiE2Gx
+	 Fgzfq9LhnJ9OkEU4XxJDlYP+qMnJy6dQkMXeZXGGTbqnOyMLTcxXlbuxFYSr9l753q
+	 k6TWNR8XDnB9w9uw0PVV3zH8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 46AC040E0194;
+	Tue, 22 Oct 2024 16:16:49 +0000 (UTC)
+Date: Tue, 22 Oct 2024 18:16:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
-In-Reply-To: <20241021042218.746659-5-yuzhao@google.com>
-References: <20241021042218.746659-1-yuzhao@google.com>
-	<20241021042218.746659-5-yuzhao@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Subject: Re: [PATCH v3 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
+Message-ID: <20241022161642.GJZxfP6kbzHPahW3oe@fat_crate.local>
+References: <20241016-imx95_edac-v3-0-86ae6fc2756a@nxp.com>
+ <20241016-imx95_edac-v3-3-86ae6fc2756a@nxp.com>
+ <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+ <ZxfEvxA+0iMKBZh4@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZxfEvxA+0iMKBZh4@lizhi-Precision-Tower-5810>
 
-On Mon, 21 Oct 2024 05:22:16 +0100,
-Yu Zhao <yuzhao@google.com> wrote:
+On Tue, Oct 22, 2024 at 11:29:03AM -0400, Frank Li wrote:
+> > You can't keep Reviewed-by tags when you change a patch considerably: Documentation/process/submitting-patches.rst
 > 
-> Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
-> time, and then reliably resume them when the local CPU exits critical
-> sections that preclude the execution of remote CPUs.
+> Sorry, I omitted it since it is nxp internal reviewer. Do I need repost
+> it?
+
+No, I can zap it.
+
+> > > Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> >
+> > What does that SOB tag mean?
 > 
-> A typical example of such critical sections is BBM on kernel PTEs.
-> HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
-> commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
-> HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
-> 
->   This is deemed UNPREDICTABLE by the Arm architecture without a
->   break-before-make sequence (make the PTE invalid, TLBI, write the
->   new valid PTE). However, such sequence is not possible since the
->   vmemmap may be concurrently accessed by the kernel.
-> 
-> Supporting BBM on kernel PTEs is one of the approaches that can make
-> HVO theoretically safe on arm64.
+> It is original nxp layerscape platform maintainer. He leave NXP recently
+> and some item in MAINTANERS already been removed. It intents to fix
+> layerscape platform problem at beginning. And orginal patch have his SOB.
+> So I kept as original one.
 
-Is the safety only theoretical? I would have expected that we'd use an
-approach that is absolutely rock-solid.
+Ok.
 
-> 
-> Note that it is still possible for the paused CPUs to perform
-> speculative translations. Such translations would cause spurious
-> kernel PFs, which should be properly handled by
-> is_spurious_el1_translation_fault().
+You forgot to comment on this part:
 
-Speculative translation faults are never reported, that'd be a CPU
-bug. *Spurious* translation faults can be reported if the CPU doesn't
-implement FEAT_ETS2, for example, and that has to do with the ordering
-of memory access wrt page-table walking for the purpose of translations.
-
-> 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> ---
->  arch/arm64/include/asm/smp.h |  3 ++
->  arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++---
->  2 files changed, 88 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
-> index 2510eec026f7..cffb0cfed961 100644
-> --- a/arch/arm64/include/asm/smp.h
-> +++ b/arch/arm64/include/asm/smp.h
-> @@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
->  extern void crash_smp_send_stop(void);
->  extern bool smp_crash_stop_failed(void);
->  
-> +void pause_remote_cpus(void);
-> +void resume_remote_cpus(void);
-> +
->  #endif /* ifndef __ASSEMBLY__ */
->  
->  #endif /* ifndef __ASM_SMP_H */
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 3b3f6b56e733..68829c6de1b1 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
->  static int nr_ipi __ro_after_init = NR_IPI;
->  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
->  
-> -static bool crash_stop;
-> +enum {
-> +	SEND_STOP = BIT(0),
-> +	CRASH_STOP = BIT(1),
-> +};
-> +
-> +static unsigned long stop_in_progress;
->  
->  static void ipi_setup(int cpu);
->  
-> @@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
->  #endif
->  }
->  
-> +static DEFINE_SPINLOCK(cpu_pause_lock);
-
-PREEMPT_RT will turn this into a sleeping lock. Is it safe to sleep as
-you are dealing with kernel mappings?
-
-> +static cpumask_t paused_cpus;
-> +static cpumask_t resumed_cpus;
-> +
-> +static void pause_local_cpu(void)
-> +{
-> +	int cpu = smp_processor_id();
-> +
-> +	cpumask_clear_cpu(cpu, &resumed_cpus);
-> +	/*
-> +	 * Paired with pause_remote_cpus() to confirm that this CPU not only
-> +	 * will be paused but also can be reliably resumed.
-> +	 */
-> +	smp_wmb();
-> +	cpumask_set_cpu(cpu, &paused_cpus);
-> +	/* paused_cpus must be set before waiting on resumed_cpus. */
-> +	barrier();
-
-I'm not sure what this is trying to enforce. Yes, the compiler won't
-reorder the set and the test. But your comment seems to indicate that
-also need to make sure the CPU preserves that ordering, and short of a
-DMB, the test below could be reordered.
-
-> +	while (!cpumask_test_cpu(cpu, &resumed_cpus))
-> +		cpu_relax();
-> +	/* A typical example for sleep and wake-up functions. */
-
-I'm not sure this is "typical",...
-
-> +	smp_mb();
-> +	cpumask_clear_cpu(cpu, &paused_cpus);
-> +}
-> +
-> +void pause_remote_cpus(void)
-> +{
-> +	cpumask_t cpus_to_pause;
-> +
-> +	lockdep_assert_cpus_held();
-> +	lockdep_assert_preemption_disabled();
-> +
-> +	cpumask_copy(&cpus_to_pause, cpu_online_mask);
-> +	cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
-
-This bitmap is manipulated outside of your cpu_pause_lock. What
-guarantees you can't have two CPUs stepping on each other here?
-
-> +
-> +	spin_lock(&cpu_pause_lock);
-> +
-> +	WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
-> +
-> +	smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
-> +
-> +	while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
-> +		cpu_relax();
-
-This can be a lot of things to compare, specially that you are
-explicitly mentioning large systems. Why can't this be implemented as
-a counter instead?
-
-Overall, this looks like stop_machine() in disguise. Why can't this
-use the existing infrastructure?
-
-Thanks,
-
-	M.
+> > >= 0 implies != -1, right?
+> >
+> > IOW?
+> >
+> > diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> > index 846a4ba25342..fe822cb9b562 100644
+> > --- a/drivers/edac/fsl_ddr_edac.c
+> > +++ b/drivers/edac/fsl_ddr_edac.c
+> > @@ -328,24 +328,21 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+> >  	 * TODO: Add support for 32-bit wide buses
+> >  	 */
+> >  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> > -		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> > +		u64 cap = (u64)cap_high << 32 | cap_low;
+> >  		u32 s = syndrome;
+> >
+> >  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+> >  				&bad_data_bit, &bad_ecc_bit);
+> >
+> > -		if (bad_data_bit != -1)
+> > -			fsl_mc_printk(mci, KERN_ERR,
+> > -				"Faulty Data bit: %d\n", bad_data_bit);
+> > -		if (bad_ecc_bit != -1)
+> > -			fsl_mc_printk(mci, KERN_ERR,
+> > -				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> > -
+> > -		if (bad_data_bit >= 0)
+> > +		if (bad_data_bit >= 0) {
+> > +			fsl_mc_printk(mci, KERN_ERR, "Faulty Data bit: %d\n", bad_data_bit);
+> >  			cap ^= 1ULL << bad_data_bit;
+> > +		}
+> >
+> > -		if (bad_ecc_bit >= 0)
+> > +		if (bad_ecc_bit >= 0) {
+> > +			fsl_mc_printk(mci, KERN_ERR, "Faulty ECC bit: %d\n", bad_ecc_bit);
+> >  			s ^= 1 << bad_ecc_bit;
+> > +		}
+> >
+> >  		fsl_mc_printk(mci, KERN_ERR,
+> >  			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+> >
 
 -- 
-Without deviation from the norm, progress is not possible.
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
