@@ -1,215 +1,157 @@
-Return-Path: <linux-kernel+bounces-376799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9529AB5FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8199B9AB600
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708981C22FB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CE31C228C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938501C9B82;
-	Tue, 22 Oct 2024 18:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32D71C9DDB;
+	Tue, 22 Oct 2024 18:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTn1tJu5"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIY8ekuB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFC317C98;
-	Tue, 22 Oct 2024 18:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247CB17C98;
+	Tue, 22 Oct 2024 18:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729621865; cv=none; b=q6JZpxDgTvwmS5KNmz9JSVTr9wdTYa7UC3/TSywa1ltaULy//gqSqOTJiHrF5nUFu99eg6x2yJ575Ts1Wt5J+/VnlHzpkvDGOEehKpZlx7ORdRfhuzJ6SEbSITECSeNrvDX6OslSVleUpdt0HE5eJcxf7M9neCwusag9zoV8YII=
+	t=1729621986; cv=none; b=rmAAHF73Wc8W0ECpgqjiCr1PHX4QqSpaQMo57JBm17rT9KX5NAV0TjMhieZlWSZjQFIvDCMPlpspm4m3M8f1+ePt3zbIwiqon++NNUQsLgOpXw+WQClKLcqueMz5DQlFrt6HG0w7CHM78ET1sN7sI4ZbcgNqDfyGzRKXbehmaOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729621865; c=relaxed/simple;
-	bh=xTb8QwlkDrFvVCaS/iISwDtl8ozTXuI+iQ6WbjUmlVo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZOfiItdMGWfAei/YQXGY9YNaWRKTMToqpdW+CsKSI8F3qk8W88GZD1bw3jNFnT0NW9Qw1VshvoVHlMR6LdIPjTgTI3nbBf5i/OtuRONrhHyk6b2pf0LDEzfTK/GrR6NVIppacMrKJqyFYD8Ahozx0FvqSHKi/NlkJ1w8l80V/pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTn1tJu5; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c6f492d2dso69023215ad.0;
-        Tue, 22 Oct 2024 11:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729621863; x=1730226663; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnQ7+rCkZXbyztDomRcRBcbYj2/yEVcOEKxWmvn0n34=;
-        b=YTn1tJu5/p18yZhU8Vc76cuJ123E0xlg+mTGUQoiltgXFXtGHcxkDfYdzJ3yhNDLwZ
-         ABRPffoKPT2mFHqeqtSwHZfnQD6hlzuE3viMguQHNEdKxTbCMlvV6S0Qnn2EhOhTw3rc
-         6jAw9s2XvMHtnPdejFu2t+JL4Czj84dr0GuLda3yQRCFsuqc7vXYygkLHa6hLlyhr26b
-         vjeZvDp1cJwagRe4hrSVJi3KN6MxLixhkFshVlWGuygUICe0w8ONVk+OQZvbV6cp4zFN
-         T7fGSQuNQz7POy9t+Q9pcxzH1Hv+DPup9+9d1N/P2Vkfbuyod4pOJraR7kd3yWd6Bbaj
-         xddw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729621863; x=1730226663;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tnQ7+rCkZXbyztDomRcRBcbYj2/yEVcOEKxWmvn0n34=;
-        b=Oga2IBzlRLkZTa7Ibg2LTGpJhk1eLwStl3aKSpVz8kl0MFPv0le2J+PpMyvSP9pjI/
-         YubW58OND1VzLkEeWnpsCor/jgcmW2X2jqI6agZaXuj1qAI6GNhz7j1vx555cK5mq2/r
-         XKXLegzDsJC+nxSluIGh+gexdMbz3I9DwK4WUa50CCNMuT1WRe70pri9CU5iPyY/lGb8
-         s/XTMwKmNgQScF4HxVkrnb6p7zlSimImB0P3aRUl5lrKIlddOqez8izew5PPK4JR1bmO
-         d3DYBLJu9jh2ZyVMVkHImIVEmrm3V7QjcxCbcfE1ABghh+JXFS5RNl/eBHmEhpo2Uv+6
-         WrTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF3kfa0FZSBjxuW6ooUkyxbz0xqaKkktq/nKtpS2WkgKEygz1/q13dLOjcagA6OKUzeizmVS+5PzTzs/c=@vger.kernel.org, AJvYcCX7PDMbi3s4ibbyv5fFE4Gj3Ln1iNSAwVAfxaQoQuYqqMvAecsJxdHdk4ftNjgHunrKEuRY5/Ke/vLzwGmxFj5L@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnyTrat1hbu4D+smwkIAZWPGFRHeYTdm1PQVJoANlbJ8SRUjZV
-	QQpGlmcqwryFUFD9XPvasuo3UbmEE7paq1IaWjjLIJveRQOx80mv
-X-Google-Smtp-Source: AGHT+IHNdIPSmh+KeUexo2AeMR5Kp5A3TMqBsgaSE6HwpIK/uR5kOZ2/kuoHeRlJKRjEZO2vxBLvJw==
-X-Received: by 2002:a17:902:ce10:b0:20c:8cc4:cf2c with SMTP id d9443c01a7336-20fa9deaa57mr880345ad.10.1729621863301;
-        Tue, 22 Oct 2024 11:31:03 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:850b:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0db968sm45380775ad.200.2024.10.22.11.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 11:31:02 -0700 (PDT)
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Tue, 22 Oct 2024 18:30:52 +0000
-Subject: [PATCH v2] selftests: tc-testing: Fix typo error
+	s=arc-20240116; t=1729621986; c=relaxed/simple;
+	bh=24yn3OFS2AZsp+QNzelAVzSZ8vU4Vf1mostOE7lH+eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+ZiOd8o5yibG95f/k8W6PgREDKj+xtQupVuRuN7AUR6c0xyiCE0jJvsRngMnDRkBANYRGJRhADwqAJu1fcbV0cVhAVF4cNQIyeAtYIPmIqPoy1VnqIrVMU1QVPKoL7UTWohK98VwqvmvDY7rIZ4q+KUi+g3BYcJ1YFtKVg6dnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIY8ekuB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3E0C4CEC3;
+	Tue, 22 Oct 2024 18:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729621986;
+	bh=24yn3OFS2AZsp+QNzelAVzSZ8vU4Vf1mostOE7lH+eM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uIY8ekuBu6EGpDByeacwBvKaIs+/IfvWXCPWtLCmSX+6np6LqmsOvkjL23NcPFnOz
+	 NB6btTGM0gJI9D5w84sqroMhRqrAqo4jIrqzkddhQuTzTL5gHhHhzqKMlVND+GFxKc
+	 pCOA2dnIWNULlciSdDahpz7nU9cdwsPDs5cKdfekiQ8QxfqQBWpsgBjplbk58Cfp+L
+	 yup+QcY4G3Wq7BgLg0wJbARfw4QJCbiKc7eIVX0794Ro7zoNsZDhV+vjmN0A7pWqt+
+	 xxWDVzAngod994Gh0F3vzExRT+m5F5Qh+oJ66PQmLhcqH22w7JrQZPMyw1sHiDO4ht
+	 YlCR/jazJceEw==
+Date: Tue, 22 Oct 2024 15:33:00 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
+	Andrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, james.clark@linaro.org,
+	alan.maguire@oracle.com
+Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
+ in clang 12
+Message-ID: <Zxfv3BupKqhi3zGV@x1>
+References: <20241011021403.4089793-1-howardchu95@gmail.com>
+ <Zw61TUe1V97dKWer@google.com>
+ <Zw7D9HXBanPLUO4G@x1>
+ <Zw7JgJc0LOwSpuvx@x1>
+ <Zw7SkmEaz730uVbL@x1>
+ <Zw8fqyCZNqSABMkM@google.com>
+ <Zw_MFwkejeWC2qbv@x1>
+ <ZxfbNJ6nKXzoEYVn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-multiple_spell_error-v2-1-7e5036506fe5@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFvvF2cC/22NwQ6CMBBEf4Xs2RpaEZST/2EIKXULmxRKtkg0p
- P9uJfHm3N4k82aDgEwYoM42YFwpkJ8SqEMGZtBTj4IeiUHlqpC5rMT4dAvNDtswo3MtMnsWl06
- VlU3BooI0nRktvXbtvUk8UFg8v/eXVX7bn/D6X7hKIYXVxtri1J1Lmd/6UZM7Gj9CE2P8AJkyv
- Ny4AAAA
-To: Jamal Hadi Salim <jhs@mojatatu.com>, 
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
- Anup <anupnewsmail@gmail.com>, Karan Sanghavi <karansanghvi98@gmail.com>, 
- Simon Horman <horms@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729621860; l=4633;
- i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
- bh=xTb8QwlkDrFvVCaS/iISwDtl8ozTXuI+iQ6WbjUmlVo=;
- b=Sq6UjlXOKPGlyDZunQuNtchlMv7Y9txwG1Hic9eSLsNzhN627SeyJ0KOOIvj8PLqyppw+Q+2Q
- OxYSwVKjAkrATQte18MS/J3qA0F7R2C+HFx+IBVg8YR5rP/TIizYU3V
-X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
- pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZxfbNJ6nKXzoEYVn@google.com>
 
-Correct the typo errors in json files
+On Tue, Oct 22, 2024 at 10:04:52AM -0700, Namhyung Kim wrote:
+> Hi Arnaldo,
+> 
+> On Wed, Oct 16, 2024 at 11:22:15AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Oct 15, 2024 at 07:06:35PM -0700, Namhyung Kim wrote:
+> > > Hi Arnaldo,
+> > > 
+> > > On Tue, Oct 15, 2024 at 05:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > On Tue, Oct 15, 2024 at 04:58:56PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > > So I'm trying adding extra bounds checking, marking the index as
+> > > > > volatile, adding compiler barriers, etc, all the fun with the verifier,
+> > > > > but got distracted with other stuff, coming back to this now.
+> > > >  
+> > > > > Ok, the following seems to do the trick:
+> > > >  
+> > > > > [acme@dell-per740-01 perf-tools]$ git diff
+> > > > > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > > index 3b30aa74a3ae..ef87a04ff8d0 100644
+> > > > > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > > > > @@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> > > > >                                 augmented = true;
+> > > > >                 } else if (size < 0 && size >= -6) { /* buffer */
+> > > > >                         index = -(size + 1);
+> > > > > +                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
+> > > > >                         aug_size = args->args[index];
+> > > > >  
+> > > > >                         if (aug_size > TRACE_AUG_MAX_BUF)
+> > > > > 
+> > > > > I'll now test it without Howard's patch to see if it fixes the RHEL8 +
+> > > > > clang 17 case.
+> > > > 
+> > > > It works with this one-liner + the simplified patch from Howard and also
+> > > > on this other system (RHEL9), as well as with Fedora 40, it would be
+> > > > nice if someone could test with clang 16 and report back the version of
+> > > > the kernel tested as well as the distro name/release, that way I can try
+> > > > to get my hands on such as system and test there as well.
+> > > > 
+> > > > Its all at:
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tmp.perf-tools
+> > > > 
+> > > > This is the current set of patches that when further tested will go to
+> > > > Linus for v6.12:
+> > > > 
+> > > > ⬢[acme@toolbox perf-tools]$ git log --oneline torvalds/master..
+> > > > ff14baa7a290bf42 (HEAD -> perf-tools, x1/perf-tools, perf-tools/tmp.perf-tools) perf trace augmented_raw_syscalls: Add more checks to pass the verifier
+> > > > 46180bec048aad85 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
+> > > > 45d1aadac64869a2 perf build: Change the clang check back to 12.0.1
+> > > 
+> > > Wouldn't it be better to have this change after fixing the verifier
+> > > issues in the later commits?
+> > 
+> > I'm still testing it, this is a one-liner, so I think that the order in
+> > which the patches are applied isn't important. Also Howard's patch (the
+> > simplified one) doesn't clash with it.
+> 
+> I'm afraid if it'd break git bisect by allowing old clang versions
+> before the fix.
 
-- "diffferent" is corrected to "different".
-- "muliple" and "miltiple" is corrected to "multiple".
+I can reorder the patches if you think it is interesting, but from the
+extended set of tests I'm performing on different kernel and clang
+version and in x86_64 and arm 64-bit, 32-bit and various distros, I'm
+not sure bisection is an option for BPF programs at this stage 8-)
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
-Changes in v2:
-- Rewrote short log and commit message
-- Link to v1: https://lore.kernel.org/r/20241019-multiple_spell_error-v1-1-facff43b5610@gmail.com
----
- tools/testing/selftests/tc-testing/tc-tests/filters/basic.json  | 6 +++---
- tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json | 6 +++---
- tools/testing/selftests/tc-testing/tc-tests/filters/flow.json   | 2 +-
- tools/testing/selftests/tc-testing/tc-tests/filters/route.json  | 2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+There, did it now it looks like this:
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json b/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-index d1278de8ebc3..c9309a44a87e 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-@@ -67,7 +67,7 @@
-     },
-     {
-         "id": "4943",
--        "name": "Add basic filter with cmp ematch u32/link layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/link layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-@@ -155,7 +155,7 @@
-     },
-     {
-         "id": "32d8",
--        "name": "Add basic filter with cmp ematch u32/network layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/network layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-@@ -243,7 +243,7 @@
-     },
-     {
-         "id": "62d7",
--        "name": "Add basic filter with cmp ematch u32/transport layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/transport layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-index 03723cf84379..35c9a7dbe1c4 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-@@ -67,7 +67,7 @@
-     },
-     {
-         "id": "0234",
--        "name": "Add cgroup filter with cmp ematch u32/link layer and miltiple actions",
-+        "name": "Add cgroup filter with cmp ematch u32/link layer and multiple actions",
-         "category": [
-             "filter",
-             "cgroup"
-@@ -155,7 +155,7 @@
-     },
-     {
-         "id": "2733",
--        "name": "Add cgroup filter with cmp ematch u32/network layer and miltiple actions",
-+        "name": "Add cgroup filter with cmp ematch u32/network layer and multiple actions",
-         "category": [
-             "filter",
-             "cgroup"
-@@ -1189,7 +1189,7 @@
-     },
-     {
-         "id": "4319",
--        "name": "Replace cgroup filter with diffferent match",
-+        "name": "Replace cgroup filter with different match",
-         "category": [
-             "filter",
-             "cgroup"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json b/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-index 58189327f644..996448afe31b 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-@@ -507,7 +507,7 @@
-     },
-     {
-         "id": "4341",
--        "name": "Add flow filter with muliple ops",
-+        "name": "Add flow filter with multiple ops",
-         "category": [
-             "filter",
-             "flow"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/route.json b/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-index 8d8de8f65aef..05cedca67cca 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-@@ -111,7 +111,7 @@
-     },
-     {
-         "id": "7994",
--        "name": "Add route filter with miltiple actions",
-+        "name": "Add route filter with multiple actions",
-         "category": [
-             "filter",
-             "route"
+⬢ [acme@toolbox perf-tools]$ git log --oneline torvalds/master..
+5d3a1b9ca3b1a059 (HEAD -> perf-tools) perf trace arm32: Fix iteration of syscall ids in syscalltbl->entries
+34d2358a24fb5963 perf trace augmented_raw_syscalls: Add more checks to pass the verifier
+cdb84c31bd2813de perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
+e5c1811c590c4312 perf build: Change the clang check back to 12.0.1
+39c6a356201ebbd7 perf trace: The return from 'write' isn't a pid
+ab8aaab874c4aa37 tools headers UAPI: Sync linux/const.h with the kernel headers
+⬢ [acme@toolbox perf-tools]$
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241017-multiple_spell_error-8b267ffffe47
+Is that what you meant?
 
-Best regards,
--- 
-Karan Sanghavi <karansanghvi98@gmail.com>
+Thanks,
 
+- Arnaldo
 
