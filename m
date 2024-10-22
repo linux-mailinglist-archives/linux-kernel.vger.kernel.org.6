@@ -1,285 +1,406 @@
-Return-Path: <linux-kernel+bounces-376243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD229AA207
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B6F9AA20E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D065281FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4741F22E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C172B19CCEC;
-	Tue, 22 Oct 2024 12:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jy8Wb+a6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AA719CCF3;
+	Tue, 22 Oct 2024 12:24:38 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CB7146D78;
-	Tue, 22 Oct 2024 12:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3844A1E495
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729599771; cv=none; b=RsqqbvABqEvx9JO4xH/MnR+lwhkFgbYm2dTWcXcNQAwcXFD1apn1/2HIiQri9CSadbYIpLelbYRFt1Sq3XgSXk4RHinAKH8GKSsTcq7iU/MDwmnUrMrv7bnMaZNn3fmeL0GHUmqDsLTciRQjOw5cxN5hS82pNOfVsH3MXcTaHyI=
+	t=1729599877; cv=none; b=t9P29lJfx79uPR6vcxGmTwhW7fFYDZPaKWC4Em8cPwHaqiGEqPRm3cAWKX0w0X0HNYoduCxoFi71H5G97mmb7FJqqjRihdMICLOwrfv8hfHipXH4+F/U3hzq0QNOZwtq1+ksKjKRtcelufjcfNFeQTOzw/kAVwQZ86/iRKBzpVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729599771; c=relaxed/simple;
-	bh=rJbleJQxI6miYx1TXF/6W93DeB7LRmc2OcUVp6DzVyM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VfvvWIB54zAqL9zFJxvmqFXxa21JE6/lterJxqu5IuZKxRIj4bVam9NC0ggLRT6wFTmW8lZImXHAjCBWMuzqlPLRIDNKK/SrFNvnbl+gbRlMYvrxKoWInEabrHctGI6tRzk4m+3yo9Ty6R63fF7sczWBjSlBt40Ozu+4z5qaI2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jy8Wb+a6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MC9x8C025868;
-	Tue, 22 Oct 2024 12:22:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=cOI8qm3Kv36No/LbxhZZ0t2OrkaIE9xcy4eQD81YBUQ=; b=jy
-	8Wb+a6Gv+nb3nG7w47zjBSdX1qBczDALPd47Us+sIV2eCmOZdesgz0yRG817+wqZ
-	Pdmc2fZCk3jIl1HeCvGXr/yldWT6ln7r/dA990Rvo25qIsXmWktQOZNt01tInr3E
-	fD6DNAb10ZegQxADcwZfHfO2QTWePsTxsMD90mmaa/aHShFD3etwV0JHBpQ6xoqn
-	kQlAuFXXtjnAqAesFigm4qfR9l3r/hqKLTlwLB7iX1rAW2KBzG69cN33A36hlmSv
-	YNvMm5/YklgasZn2Jak90aGKgCAtGbht1W9ux7TVMBARTUBbuXTKiyv7g5je1Pub
-	ILkqLTVEVMRIvcGyn/Yg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ebtm8124-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 12:22:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MCMZSd015860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 12:22:35 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+	s=arc-20240116; t=1729599877; c=relaxed/simple;
+	bh=wxBLD5jS27FgtwijP790/nFhA7SlDjWs0bV4enwgi7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EkZ0XconPdj5HuhgJPNyy9uLxvRkSG0e0Gez9bfHoRzcj9s4QU2lnxqUgaAJwkZ2LraRSmA16sGb+N+1ncPfcl7UlfQtMRhTISLL2g7JQ11Wf3A6bywB+RLPiFhwtM8RrOG42U16tgT5+DrckyUSuNvsceSz/ke1AymSbK7+3vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XXrv13J8LzQs28;
+	Tue, 22 Oct 2024 20:23:41 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 656FB18010F;
+	Tue, 22 Oct 2024 20:24:32 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 22 Oct 2024 05:22:32 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <shuah@kernel.org>, <hannes@cmpxchg.org>, <surenb@google.com>,
-        <quic_pintu@quicinc.com>, <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-CC: <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>
-Subject: [PATCH] selftests/sched: add basic test for psi
-Date: Tue, 22 Oct 2024 17:51:58 +0530
-Message-ID: <20241022122158.2136-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+ 15.2.1258.34; Tue, 22 Oct 2024 20:24:31 +0800
+Message-ID: <ede06bc0-0719-4a6f-b67a-d7b576ca4df9@huawei.com>
+Date: Tue, 22 Oct 2024 20:24:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L9znsB6kpUeXQlLomLTQu1eW2ZQPOqLw
-X-Proofpoint-GUID: L9znsB6kpUeXQlLomLTQu1eW2ZQPOqLw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=969 adultscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220079
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-5-shiyongbang@huawei.com>
+ <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-There is a psi module that exists under kernel/sched/psi.
-Add a basic test to test the psi.
-This test just add the basic support to check cpu/memory/io interface.
-Further test will be added on top of this.
 
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
----
- MAINTAINERS                              |  2 +
- tools/testing/selftests/sched/.gitignore |  1 +
- tools/testing/selftests/sched/Makefile   |  4 +-
- tools/testing/selftests/sched/config     |  1 +
- tools/testing/selftests/sched/psi_test.c | 85 ++++++++++++++++++++++++
- tools/testing/selftests/sched/run_psi.sh | 36 ++++++++++
- 6 files changed, 127 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/sched/psi_test.c
- create mode 100755 tools/testing/selftests/sched/run_psi.sh
+> On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
+>> From: baihan li <libaihan@huawei.com>
+>>
+>> To support DP interface displaying in hibmc driver. Add
+>> a encoder and connector for DP modual.
+>>
+>> Signed-off-by: baihan li <libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
+>>   4 files changed, 217 insertions(+), 2 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 693036dfab52..8cf74e0d4785 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o hibmc_drm_dp.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> new file mode 100644
+>> index 000000000000..7a50f1d81aac
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -0,0 +1,195 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +
+>> +#include <linux/io.h>
+>> +
+>> +#include <drm/drm_probe_helper.h>
+>> +#include <drm/drm_simple_kms_helper.h>
+>> +#include <drm/drm_atomic_helper.h>
+>> +#include <drm/drm_drv.h>
+>> +#include <drm/drm_edid.h>
+>> +
+>> +#include "hibmc_drm_drv.h"
+>> +#include "dp/dp_kapi.h"
+>> +
+>> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>> +{
+>> +	int count;
+>> +
+>> +	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+>> +				     connector->dev->mode_config.max_height);
+>> +	drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
+> What? Please parse EDID instead.
+>
+>> +
+>> +	return count;
+>> +}
+>> +
+>> +static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> +	.get_modes = hibmc_dp_connector_get_modes,
+>> +};
+>> +
+>> +static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
+>> +	.reset = drm_atomic_helper_connector_reset,
+>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>> +	.destroy = drm_connector_cleanup,
+>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>> +};
+>> +
+>> +static void dp_mode_cfg(struct drm_device *dev, struct dp_mode *dp_mode,
+>> +			struct drm_display_mode *mode)
+>> +{
+>> +	dp_mode->field_rate = drm_mode_vrefresh(mode);
+>> +	dp_mode->pixel_clock = mode->clock / 1000; /* 1000: khz to hz */
+>> +
+>> +	dp_mode->h_total = mode->htotal;
+>> +	dp_mode->h_active = mode->hdisplay;
+>> +	dp_mode->h_blank = mode->htotal - mode->hdisplay;
+>> +	dp_mode->h_front = mode->hsync_start - mode->hdisplay;
+>> +	dp_mode->h_sync = mode->hsync_end - mode->hsync_start;
+>> +	dp_mode->h_back = mode->htotal - mode->hsync_end;
+>> +
+>> +	dp_mode->v_total = mode->vtotal;
+>> +	dp_mode->v_active = mode->vdisplay;
+>> +	dp_mode->v_blank = mode->vtotal - mode->vdisplay;
+>> +	dp_mode->v_front = mode->vsync_start - mode->vdisplay;
+>> +	dp_mode->v_sync = mode->vsync_end - mode->vsync_start;
+>> +	dp_mode->v_back = mode->vtotal - mode->vsync_end;
+> No need to copy the bits around. Please use drm_display_mode directly.
+>
+>> +
+>> +	if (mode->flags & DRM_MODE_FLAG_PHSYNC) {
+>> +		drm_info(dev, "horizontal sync polarity: positive\n");
+>> +		dp_mode->h_pol = 1;
+>> +	} else if (mode->flags & DRM_MODE_FLAG_NHSYNC) {
+>> +		drm_info(dev, "horizontal sync polarity: negative\n");
+>> +		dp_mode->h_pol = 0;
+>> +	} else {
+>> +		drm_err(dev, "horizontal sync polarity: unknown or not set\n");
+>> +	}
+>> +
+>> +	if (mode->flags & DRM_MODE_FLAG_PVSYNC) {
+>> +		drm_info(dev, "vertical sync polarity: positive\n");
+>> +		dp_mode->v_pol = 1;
+>> +	} else if (mode->flags & DRM_MODE_FLAG_NVSYNC) {
+>> +		drm_info(dev, "vertical sync polarity: negative\n");
+> No spamming, use DRM debugging macros.
+>
+>> +		dp_mode->v_pol = 0;
+>> +	} else {
+>> +		drm_err(dev, "vertical sync polarity: unknown or not set\n");
+>> +	}
+>> +}
+>> +
+>> +static int dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +{
+>> +	struct dp_mode dp_mode = {0};
+>> +	int ret;
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+>> +
+>> +	dp_mode_cfg(dp->drm_dev, &dp_mode, mode);
+>> +	ret = hibmc_dp_mode_set(dp, &dp_mode);
+>> +	if (ret)
+>> +		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void dp_enable(struct hibmc_dp *dp)
+>> +{
+>> +	hibmc_dp_display_en(dp, true);
+>> +}
+>> +
+>> +static void dp_disable(struct hibmc_dp *dp)
+>> +{
+>> +	hibmc_dp_display_en(dp, false);
+>> +}
+>> +
+>> +static int hibmc_dp_hw_init(struct hibmc_drm_private *priv)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = hibmc_dp_kapi_init(&priv->dp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	hibmc_dp_display_en(&priv->dp, false);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void hibmc_dp_hw_uninit(struct hibmc_drm_private *priv)
+>> +{
+>> +	hibmc_dp_kapi_uninit(&priv->dp);
+>> +}
+> Inline all these one-line wrappers, they serve no purpose.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 84a73e90cfe8..d84ff9ca36a9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18548,10 +18548,12 @@ F:	include/uapi/linux/pps.h
- PRESSURE STALL INFORMATION (PSI)
- M:	Johannes Weiner <hannes@cmpxchg.org>
- M:	Suren Baghdasaryan <surenb@google.com>
-+M:	Pintu Kumar <quic_pintu@quicinc.com>
- R:	Peter Ziljstra <peterz@infradead.org>
- S:	Maintained
- F:	include/linux/psi*
- F:	kernel/sched/psi.c
-+F:	tools/testing/selftests/sched/psi_test.c
- 
- PRINTK
- M:	Petr Mladek <pmladek@suse.com>
-diff --git a/tools/testing/selftests/sched/.gitignore b/tools/testing/selftests/sched/.gitignore
-index 6996d4654d92..2b15c11b93e6 100644
---- a/tools/testing/selftests/sched/.gitignore
-+++ b/tools/testing/selftests/sched/.gitignore
-@@ -1 +1,2 @@
- cs_prctl_test
-+psi_test
-diff --git a/tools/testing/selftests/sched/Makefile b/tools/testing/selftests/sched/Makefile
-index 099ee9213557..795f6613eb2c 100644
---- a/tools/testing/selftests/sched/Makefile
-+++ b/tools/testing/selftests/sched/Makefile
-@@ -8,7 +8,7 @@ CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -Wl,-rpath=./ \
- 	  $(CLANG_FLAGS)
- LDLIBS += -lpthread
- 
--TEST_GEN_FILES := cs_prctl_test
--TEST_PROGS := cs_prctl_test
-+TEST_GEN_FILES := cs_prctl_test psi_test
-+TEST_PROGS := cs_prctl_test run_psi.sh
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/sched/config b/tools/testing/selftests/sched/config
-index e8b09aa7c0c4..287cccd434fd 100644
---- a/tools/testing/selftests/sched/config
-+++ b/tools/testing/selftests/sched/config
-@@ -1 +1,2 @@
- CONFIG_SCHED_DEBUG=y
-+CONFIG_PSI=y
-diff --git a/tools/testing/selftests/sched/psi_test.c b/tools/testing/selftests/sched/psi_test.c
-new file mode 100644
-index 000000000000..eeba138d2b39
---- /dev/null
-+++ b/tools/testing/selftests/sched/psi_test.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <string.h>
-+#include <fcntl.h>
-+
-+
-+struct load_avg {
-+	float avg10;
-+	float avg60;
-+	float avg300;
-+	unsigned long long total;
-+};
-+
-+struct pressure {
-+	struct load_avg some;
-+	struct load_avg full;
-+};
-+
-+
-+int psi_get_data_from_proc_pressure(const char *path, struct pressure *p)
-+{
-+	FILE *fp;
-+	int rc = -1;
-+	int ret = 0;
-+
-+	if (path == NULL || p == NULL)
-+		return -1;
-+
-+	fp = fopen(path, "r");
-+	if (fp == NULL)
-+		return -1;
-+
-+	while (!feof(fp)) {
-+		rc = fscanf(fp, "some avg10=%f avg60=%f avg300=%f total=%llu\n",
-+			&p->some.avg10, &p->some.avg60, &p->some.avg300, &p->some.total);
-+		if (rc < 1) {
-+			ret = -1;
-+			break;
-+		}
-+
-+		/* Note: In some cases (cpu) full may not exists */
-+		rc = fscanf(fp, "full avg10=%f avg60=%f avg300=%f total=%llu\n",
-+			&p->full.avg10, &p->full.avg60, &p->full.avg300, &p->full.total);
-+		/* We don't care about full case. This is needed to avoid warnings */
-+		rc = 0;
-+	}
-+
-+	fclose(fp);
-+
-+	return ret;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret;
-+	struct pressure rs = {0,};
-+	char path[32];
-+
-+	if (argc < 2) {
-+		fprintf(stderr, "usage: %s <path>\n", argv[0]);
-+		return -1;
-+	}
-+
-+	memset(&rs, 0, sizeof(rs));
-+	printf("Pressure data: %s\n", argv[1]);
-+	snprintf(path, sizeof(path)-1, "/proc/pressure/%s", argv[1]);
-+
-+	ret = psi_get_data_from_proc_pressure(path, &rs);
-+	if (ret < 0) {
-+		printf("PSI <%s>: FAIL\n", argv[1]);
-+		return -1;
-+	}
-+	printf("Some Avg10   = %5.2f\n", rs.some.avg10);
-+	printf("Some Avg60   = %5.2f\n", rs.some.avg60);
-+	printf("Some Avg300  = %5.2f\n", rs.some.avg300);
-+	printf("Some Total  = %llu\n", rs.some.total);
-+	printf("Full Avg10  = %5.2f\n", rs.full.avg10);
-+	printf("Full Avg60  = %5.2f\n", rs.full.avg60);
-+	printf("Full Avg300 = %5.2f\n", rs.full.avg300);
-+	printf("Full Total  = %llu\n", rs.full.total);
-+
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/sched/run_psi.sh b/tools/testing/selftests/sched/run_psi.sh
-new file mode 100755
-index 000000000000..d0b1c7ae3736
---- /dev/null
-+++ b/tools/testing/selftests/sched/run_psi.sh
-@@ -0,0 +1,36 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+# Just one node check is enough to detect psi
-+if [ ! -e /proc/pressure/cpu ]; then
-+	echo "PSI not present..."
-+	exit $ksft_skip
-+fi
-+
-+echo ""
-+./psi_test cpu
-+if [ $? -ne 0 ]; then
-+	echo "CPU - [FAIL]"
-+else
-+	echo "CPU - [PASS]"
-+fi
-+
-+echo ""
-+./psi_test memory
-+if [ $? -ne 0 ]; then
-+	echo "MEMORY - [FAIL]"
-+else
-+	echo "MEMORY - [PASS]"
-+fi
-+
-+echo ""
-+./psi_test io
-+if [ $? -ne 0 ]; then
-+	echo "IO - [FAIL]"
-+else
-+	echo "IO - [PASS]"
-+fi
--- 
-2.17.1
+Hi Dmitry,
 
+Yes, it make sense to be inline. But it is generally better to let the compiler decide when to inline a function.
+
+Thanks,
+Baihan
+
+
+>> +
+>> +static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
+>> +				    struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
+>> +
+>> +	if (dp_prepare(dp, mode))
+>> +		return;
+>> +
+>> +	dp_enable(dp);
+>> +}
+>> +
+>> +static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
+>> +				     struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +
+>> +	dp_disable(dp);
+>> +}
+>> +
+>> +static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+>> +	.atomic_enable = hibmc_dp_encoder_enable,
+>> +	.atomic_disable = hibmc_dp_encoder_disable,
+>> +};
+>> +
+>> +void hibmc_dp_uninit(struct hibmc_drm_private *priv)
+>> +{
+>> +	hibmc_dp_hw_uninit(priv);
+>> +}
+>> +
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv)
+>> +{
+>> +	struct drm_device *dev = &priv->dev;
+>> +	struct drm_crtc *crtc = &priv->crtc;
+>> +	struct hibmc_dp *dp = &priv->dp;
+>> +	struct drm_connector *connector = &dp->connector;
+>> +	struct drm_encoder *encoder = &dp->encoder;
+>> +	int ret;
+>> +
+>> +	dp->mmio = priv->mmio;
+>> +	dp->drm_dev = dev;
+>> +
+>> +	ret = hibmc_dp_hw_init(priv);
+>> +	if (ret) {
+>> +		drm_err(dev, "dp hw init failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	encoder->possible_crtcs = drm_crtc_mask(crtc);
+>> +	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
+> I think drm_simple_foo interfaces are being deprecated. Please copy
+> required code into the driver instead.
+>
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp encoder failed: %d\n", ret);
+>> +		goto err_init;
+>> +	}
+>> +
+>> +	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
+>> +
+>> +	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
+>> +				 DRM_MODE_CONNECTOR_DisplayPort);
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp connector failed: %d\n", ret);
+>> +		goto err_init;
+>> +	}
+>> +
+>> +	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
+>> +
+>> +	drm_connector_attach_encoder(connector, encoder);
+>> +
+>> +	return 0;
+>> +
+>> +err_init:
+>> +	hibmc_dp_hw_uninit(priv);
+>> +
+>> +	return ret;
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> index 9f9b19ea0587..c90a8db021b0 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> @@ -93,6 +93,10 @@ static const struct drm_mode_config_funcs hibmc_mode_funcs = {
+>>   
+>>   static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   {
+>> +#define DP_HOST_SERDES_CTRL		0x1f001c
+>> +#define DP_HOST_SERDES_CTRL_VAL		0x8A00
+>> +#define DP_HOST_SERDES_CTRL_MASK	0x7FFFE
+>> +
+> #defines outside of the function body.
+>
+>>   	struct drm_device *dev = &priv->dev;
+>>   	int ret;
+>>   
+>> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   		return ret;
+>>   	}
+>>   
+>> +	/* if DP existed, init DP */
+>> +	if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
+>> +	     DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
+>> +		ret = hibmc_dp_init(priv);
+>> +		if (ret)
+>> +			drm_err(dev, "failed to init dp: %d\n", ret);
+>> +	}
+>> +
+>>   	ret = hibmc_vdac_init(priv);
+>>   	if (ret) {
+>>   		drm_err(dev, "failed to init vdac: %d\n", ret);
+>> -		return ret;
+> Why?
+>
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -239,6 +250,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+>>   
+>>   static int hibmc_unload(struct drm_device *dev)
+>>   {
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>>   	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>>   
+>>   	drm_atomic_helper_shutdown(dev);
+>> @@ -247,6 +259,9 @@ static int hibmc_unload(struct drm_device *dev)
+>>   
+>>   	pci_disable_msi(to_pci_dev(dev->dev));
+>>   
+>> +	if (priv->dp.encoder.possible_crtcs)
+>> +		hibmc_dp_uninit(priv);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> index 6b566f3aeecb..aa79903fe022 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/i2c.h>
+>>   
+>>   #include <drm/drm_framebuffer.h>
+>> +#include "dp/dp_kapi.h"
+>>   
+>>   struct hibmc_connector {
+>>   	struct drm_connector base;
+>> @@ -37,6 +38,7 @@ struct hibmc_drm_private {
+>>   	struct drm_crtc crtc;
+>>   	struct drm_encoder encoder;
+>>   	struct hibmc_connector connector;
+> It seems this needs to be refactored too, to separate VGA connector /
+> encoder / CRTC to a child struct.
+>
+>> +	struct hibmc_dp dp;
+>>   };
+>>   
+>>   static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
+>> @@ -59,4 +61,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv);
+>>   
+>>   int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
+>>   
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv);
+>> +void hibmc_dp_uninit(struct hibmc_drm_private *priv);
+>> +
+>>   #endif
+>> -- 
+>> 2.33.0
+>>
 
