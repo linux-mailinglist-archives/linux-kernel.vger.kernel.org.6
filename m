@@ -1,66 +1,87 @@
-Return-Path: <linux-kernel+bounces-376668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E305F9AB4A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA699AB4A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F81F241C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30C1B22C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ECA1BC9EB;
-	Tue, 22 Oct 2024 17:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C411474C9;
+	Tue, 22 Oct 2024 17:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyS4WoSL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVZb3sRX"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFEC256D;
-	Tue, 22 Oct 2024 17:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9477256D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616695; cv=none; b=cS6RrJn1Um4MxnKoXAY7XehQtDKOPsHn5k0VnfyiRemi/mOsfiCzKdAp45ydQRGKoU9t1/x4jOWGG38Ubd/w7jdPB9TLhPfpp8ZEBLrs4E0Un+CspcBia0CUvprUXDhXuS6ygW3eL0vMV6leksdTgKZvbAIEbOe3FAfhcsCLhlk=
+	t=1729616723; cv=none; b=J8DFXPCTqNiudqnMunS2b8b7uuE49and2tf67lgoPqD1Zxl9pMA2SFvVzbqqSMkyJoM5dExj5nXErEmcyNpkx4P6xv31I3S+JKto0ZFOCFGYhIXOybzvSQFHLWvxf31VosXMtudJXV4WmkB2VAdFvJ4+ve7ZxKWTSi4eH+L6Fwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616695; c=relaxed/simple;
-	bh=dnzywOLb2D/osssfwAX6Xm+weLGD8+cwQbYfop+7Tc8=;
+	s=arc-20240116; t=1729616723; c=relaxed/simple;
+	bh=GIQYkP95DpNNqjHPx+GVVjcUxfLNLK4bVCRYu91sUN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBCASb93/thtld9/U6Ov5YHtjsrLEiLg5y7GOPsKSFHFtGwVw9fuODzdFWxosvDZVa13ZDiF6VcOlotRGX+C9AtYcLtgwW5C4yRht5Z92260BbGViDcoOB5VsOlqw0jiFOOAO9U9HT58BFnaQprzAJeomgGTMOzKSW6cqF2lLUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyS4WoSL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC0C4CEC7;
-	Tue, 22 Oct 2024 17:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729616694;
-	bh=dnzywOLb2D/osssfwAX6Xm+weLGD8+cwQbYfop+7Tc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyS4WoSLGRXfsWgv53aWFoSFVcEkEEFzsWeiWw9jSxxLoYzCzGDIQXtNxOlhdL3mt
-	 rbq9pW5zHq7gaF353s2YeEC14WE0VIlGV/EW+n971qQ3RDVwTxx58iJMIcnhtQzoss
-	 aEoEAA5W43IGNeLYcPI+vBCcAOhzCXQ3BVWx7dvxDFgPj7ouygSvr7dzcG3QK29nMN
-	 /kB0owkzDz1kJMi+W53V2OQWEsUJBxfS4NS8XSYodskCnNMNgq1MHLk3nzjOvlnZ/K
-	 Tokl9Lf+onURwDmL4zDCaTReOJYMruz3nk+znaUbv03rGlcsNXb8nmwWc4U6e1O9bd
-	 zHF2v2rsdNX9g==
-Date: Tue, 22 Oct 2024 10:04:52 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
-	Andrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, james.clark@linaro.org,
-	alan.maguire@oracle.com
-Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
- in clang 12
-Message-ID: <ZxfbNJ6nKXzoEYVn@google.com>
-References: <20241011021403.4089793-1-howardchu95@gmail.com>
- <Zw61TUe1V97dKWer@google.com>
- <Zw7D9HXBanPLUO4G@x1>
- <Zw7JgJc0LOwSpuvx@x1>
- <Zw7SkmEaz730uVbL@x1>
- <Zw8fqyCZNqSABMkM@google.com>
- <Zw_MFwkejeWC2qbv@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m72coXHl+1/0dNBnYJUspcRC/Cvk716bI8ruHVEUn124QTdrkFjybizh9pf1bi2KT4WFdIvXppwqYJD1i9x3GS4D5IteAXp7pmfTnO+kB40Y2o/G36xkiDRXrrDAMz58BghQnXVwO2wFUbSKJkWoH9Q4PF4ByY786wFkYGNHebk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVZb3sRX; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso4802983a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729616721; x=1730221521; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ApU3fV+UtKxcEYZyM6H87gs38rNpBSSNhr/eTWWEXY4=;
+        b=UVZb3sRXDRYymQ3279okG0TR5rjGPhTRkxEiKH3HKZM7D7H/wMUGdSiWQnG4dy9hCz
+         tEsZTNR5k+X1pEtRKjQYH9J9OLraW8rbKIHh64w4kO6Jmr0ZMzGKQk3IJP19GNJY6P4g
+         zraM0/mOFxy0iFpz3w+4gQ5VBnbbODwr2PY2zFLLRztJ5k9641VI6AXVAiJKZIY2V9Ha
+         v4B58wZl6+AjUHkv5Pz5nTMXfPJM2RxhIGSJOz0G/JcJLi/yh8vetN/YczuavaHSKjcS
+         GMxHBETdZ9V/Fob1fSqOwkRtb2j+3zKKOePN7je2f47a9kk7xdfO0q7dKpNtHrz/CiKf
+         TH9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729616721; x=1730221521;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ApU3fV+UtKxcEYZyM6H87gs38rNpBSSNhr/eTWWEXY4=;
+        b=Tq1qTboLvI+5snGVlN296ZHW8t5ZbIOAPu0i7TrThJNMUYvvEeydrCkiWaWfxlyUGF
+         CGiGv5evAdVp/LD6lH+Dj2de75tppsu8Kru94+XQkX/j5K1f80yRA4Q/4wvNknn8GJFn
+         HKDPjEAlHx3v0Cf2TEWqiHfu3LOyMETKTttm1JY2eR3yBaHEJj5SF/hUeVRjMUi0LbVH
+         M0qJEFuuPpokjkYKhARpEF5JU7Ad1gquZofSineGZ2mvT0602DDwN4drqzNxtXkqnWNO
+         RLe0QMWwk+DYgXfYvwSuuotFNV1JQOZR+P8fTFsGmo+m46rLI+DfP9/4R7r7vbLkD4Uj
+         yCOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+BgoMn3kAfY04y48TZOePyZ+azrmjFuYIO4YqWtJO8uGzYwVrrEioICpgcQQjYcAUzxhsu23uyB1Xexc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtN0IR4nTlJil46cUsm3Fy593JTnBfAFOsSV2a9r3X/8F9dA+h
+	dKlDRki2GGYTpXAPdH8TvAK9eweSisgeTDbnjw3NAgHRx0qFxky7VfDAdwNqTw==
+X-Google-Smtp-Source: AGHT+IHRqsW0sRulSaBfDKEdAZUSpR9q80CX2UTyubbP2o+xbSDVjhZp8NPAD81dLI0BL9hvAVo41w==
+X-Received: by 2002:a17:90b:1185:b0:2e2:cef9:4d98 with SMTP id 98e67ed59e1d1-2e561a01146mr16890078a91.25.1729616721232;
+        Tue, 22 Oct 2024 10:05:21 -0700 (PDT)
+Received: from thinkpad ([36.255.17.224])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad389146sm6432096a91.26.2024.10.22.10.05.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 10:05:20 -0700 (PDT)
+Date: Tue, 22 Oct 2024 22:35:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: kw@linux.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	frank.li@nxp.com, l.stach@pengutronix.de, robh+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v4 6/9] PCI: imx6: Make *_enable_ref_clk() function
+ symmetric
+Message-ID: <20241022170514.s6ejwj2w64nivqui@thinkpad>
+References: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
+ <1728981213-8771-7-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,84 +91,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zw_MFwkejeWC2qbv@x1>
+In-Reply-To: <1728981213-8771-7-git-send-email-hongxing.zhu@nxp.com>
 
-Hi Arnaldo,
+On Tue, Oct 15, 2024 at 04:33:30PM +0800, Richard Zhu wrote:
+> Ensure the *_enable_ref_clk() function is symmetric by addressing missing
+> disable parts on some platforms.
 
-On Wed, Oct 16, 2024 at 11:22:15AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Oct 15, 2024 at 07:06:35PM -0700, Namhyung Kim wrote:
-> > Hi Arnaldo,
-> > 
-> > On Tue, Oct 15, 2024 at 05:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, Oct 15, 2024 at 04:58:56PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > So I'm trying adding extra bounds checking, marking the index as
-> > > > volatile, adding compiler barriers, etc, all the fun with the verifier,
-> > > > but got distracted with other stuff, coming back to this now.
-> > >  
-> > > > Ok, the following seems to do the trick:
-> > >  
-> > > > [acme@dell-per740-01 perf-tools]$ git diff
-> > > > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > index 3b30aa74a3ae..ef87a04ff8d0 100644
-> > > > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > @@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
-> > > >                                 augmented = true;
-> > > >                 } else if (size < 0 && size >= -6) { /* buffer */
-> > > >                         index = -(size + 1);
-> > > > +                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
-> > > >                         aug_size = args->args[index];
-> > > >  
-> > > >                         if (aug_size > TRACE_AUG_MAX_BUF)
-> > > > 
-> > > > I'll now test it without Howard's patch to see if it fixes the RHEL8 +
-> > > > clang 17 case.
-> > > 
-> > > It works with this one-liner + the simplified patch from Howard and also
-> > > on this other system (RHEL9), as well as with Fedora 40, it would be
-> > > nice if someone could test with clang 16 and report back the version of
-> > > the kernel tested as well as the distro name/release, that way I can try
-> > > to get my hands on such as system and test there as well.
-> > > 
-> > > Its all at:
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tmp.perf-tools
-> > > 
-> > > This is the current set of patches that when further tested will go to
-> > > Linus for v6.12:
-> > > 
-> > > ⬢[acme@toolbox perf-tools]$ git log --oneline torvalds/master..
-> > > ff14baa7a290bf42 (HEAD -> perf-tools, x1/perf-tools, perf-tools/tmp.perf-tools) perf trace augmented_raw_syscalls: Add more checks to pass the verifier
-> > > 46180bec048aad85 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
-> > > 45d1aadac64869a2 perf build: Change the clang check back to 12.0.1
-> > 
-> > Wouldn't it be better to have this change after fixing the verifier
-> > issues in the later commits?
+This warrants a Fixes tag. And the patch subject should be something like,
+
+"PCI: imx6: Fix the missing reference clock disable logic"
+
+> Also, remove the duplicate
+> imx7d_pcie_init_phy() function as it is the same as
+> imx7d_pcie_enable_ref_clk().
 > 
-> I'm still testing it, this is a one-liner, so I think that the order in
-> which the patches are applied isn't important. Also Howard's patch (the
-> simplified one) doesn't clash with it.
 
-I'm afraid if it'd break git bisect by allowing old clang versions
-before the fix.
+This is a cleanup, so should be a separate patch.
 
-Thanks,
-Namhyung
-
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 33 +++++++++++----------------
+>  1 file changed, 13 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 93e2bcf9aa0a..161daad34a94 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -388,13 +388,6 @@ static int imx8mq_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  	return 0;
+>  }
 >  
-> > > 4e21679eb81b5f0d perf trace: The return from 'write' isn't a pid
-> > > 2d2314d4b09b5ed9 tools headers UAPI: Sync linux/const.h with the kernel headers
-> > > ⬢[acme@toolbox perf-tools]$
-> > 
-> > I guess you also need the syscalltbl fix from Jiri Slaby.
-> > 
-> > https://lore.kernel.org/linux-perf-users/3a592835-a14f-40be-8961-c0cee7720a94@kernel.org/
-> 
-> Right, he provided a report about the patch I sent solving the case, I
-> have to check if he replied to my question about perf trace actually
-> _working_ on a 32-bit arch system.
-> 
-> I also want to test it, I'm trying to get hold of such a system.
-> 
-> - Arnaldo
+> -static int imx7d_pcie_init_phy(struct imx_pcie *imx_pcie)
+> -{
+> -	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12, IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0);
+> -
+> -	return 0;
+> -}
+> -
+>  static int imx_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  {
+>  	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> @@ -593,13 +586,13 @@ static int imx_pcie_attach_pd(struct device *dev)
+>  
+>  static int imx6sx_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
+>  {
+> -	if (enable)
+> -		regmap_clear_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> -				  IMX6SX_GPR12_PCIE_TEST_POWERDOWN);
+> -
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +			   IMX6SX_GPR12_PCIE_TEST_POWERDOWN,
+> +			   enable ? 0 : IMX6SX_GPR12_PCIE_TEST_POWERDOWN);
+>  	return 0;
+>  }
+>  
+> +
+
+Spurious change.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
