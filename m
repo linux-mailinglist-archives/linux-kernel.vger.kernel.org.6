@@ -1,196 +1,212 @@
-Return-Path: <linux-kernel+bounces-376230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC949AA1DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3139AA1E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE59628110A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1BB283160
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBC419D89D;
-	Tue, 22 Oct 2024 12:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IxpDD1OI"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AC019E7EB;
+	Tue, 22 Oct 2024 12:08:02 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ADA1E495
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD27199938
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729598846; cv=none; b=dpjde0CT6czozKAMVslqWqO6jGtGyxVbDJ1rbqRn045VpGe6gH+PqHu49gy7KQbLefYF/vg8gU7pVc0t0n8vaiOIUKX7aVqPmQQ0qFLRuXZnhcBoCj88jawjYxHBTcYP3A2lpPnK23+EHQl334zd7nBLRUYjAxPAozIL0kStsuA=
+	t=1729598881; cv=none; b=ETDgAGh//ne6c44ZynwIqBQ8uN6svzdCyh9BYgzuWtBsqabTI9r5j7NV+TeAGuxRsoRlb90SnaZDrCc8+m2lT99UR3T6j5SMTdPVcINoA6zVgzK8auF7GsgEDYIStBSHjoy3g2kd6ZnzpMhl/o2LNhoYi+WLInI2t1cOhmyCWW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729598846; c=relaxed/simple;
-	bh=ypVmF3KckB4SDotlID4pbkX5I4usC60b1WU/JnwgWoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfiLehIDBPtXYwHvhxn/yRqz+TGEpFyTj9Wj5k0cNk825Ut70qDMXEsOdzFJI0sMF2HxCNA+UbXrd1LtXu5uJaWRSUxCDoxRTfMX4VVSPulnPZ/46dBLz4obuC7H7gkKMujS/2QKabXSyiWVxjkbgLRPeOej5hzuApzE9+TVTaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IxpDD1OI; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BEEC140E0198;
-	Tue, 22 Oct 2024 12:07:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id k6ikJ325I-qD; Tue, 22 Oct 2024 12:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729598837; bh=opQibdbvwFuAxShZh1e267678NsYFG3zr2t3eyY8z7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IxpDD1OIhPq8XsSfQf9UMihV/jtK8PLggX/PdrQcgEgI3L8zsjzSf/2+UZd0KWf/u
-	 n1Qd9CWvvm9VahQfEvEOfMz1jaGh78//5TzadKBz9YYXOCRKj+aTKlNaOFq3uG+3kN
-	 kTXI7P9E48fszkV6N052EoGwJmL5rvteBtILJBaUQt7itOQSSck7jbVd2Fbvn+oNDB
-	 yRyNsyDT+hpy6FboP9+hPpHgk5rhFQlVlJLPUhCkPLnTTHn5B87vkags05bzR3AvOn
-	 UJmTVMUOW45CXZ+4mr+l+WZE1fn0HnZVbXXgqH9dDJ6YO0hXNwZS2K0oruZ5+Nu38N
-	 kLB/98V4jyiPQBUNsh1ZEXTX93g8/1V4yMVX+Gv6Kv3kNOY6Ep/5J3R0YOuFqNXMhO
-	 BbKfLUV4PsQuzbwal2Gm2nOjsUEzJqG4dBOX3EDb6CMmKLVcXyxK/S2NqquELq/W0b
-	 KAtRfxWWAZVKgF8olU6DBujjgT8R0le/T8I/Su5W6pVgn5vE3yEQY0J/5lrlmUeATN
-	 /M4e335Fvitk3aQS6qjn3T/oPpEKkprarO42oLiUCOJhJ0p9l0Eh3nuf3ZXIgXjYlI
-	 6j+Or9PImkF2jMaBZzQgSJkNn5oG1gU1tE2CDZ7UOsLpYW/ls986gU4b7L5/O8jFej
-	 Ce6XzxwAu4MsNEQbOd6H9VGk=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0AEF540E0184;
-	Tue, 22 Oct 2024 12:07:11 +0000 (UTC)
-Date: Tue, 22 Oct 2024 14:07:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: [PATCH 1/2] x86/microcode/AMD: Pay attention to the stepping
- dynamically
-Message-ID: <20241022120711.GEZxeVbw_NzT_U1Cu4@fat_crate.local>
-References: <1bb5dd7f-15b5-4d9d-97ef-75ebdc24e7d9@kernel.dk>
- <20241019093748.GAZxN97LS_dJ3DNrpd@fat_crate.local>
- <436b4fc7-6369-40d9-8e88-556cbf5a5687@kernel.dk>
- <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
- <b2fd70bb-9414-49e0-bdb8-5c538f247dea@kernel.dk>
- <20241020121819.GAZxT1CyR_5vLLZ5e6@fat_crate.local>
- <df217737-6e2c-41fe-b558-3e2ab6dc0d9e@kernel.dk>
- <20241021073140.GAZxYDXCk02lSrG3-T@fat_crate.local>
- <daa98312-cc66-4c2f-8e64-01358ee99305@kernel.dk>
- <20241022120531.GDZxeVC0WeUPhInkYh@fat_crate.local>
+	s=arc-20240116; t=1729598881; c=relaxed/simple;
+	bh=su60vmc+u8hJulSAsiny0wMAAlibdpwxrlWj7/iF8s0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mt7cg3ElLEFX3JK1huBAUt8H6GivqevAtOpVjB0U1+P34G8167k38Ie7+FvlMbxSynaaReyIiAn5TX9q7Vg7mxHr6neYhBl/+P8/FGfrd1XaHdBS/S81s5R09oqDcGQ7mBCIHL8prAqG8FEHvUfaolH9olPU2IjuZOmgihSqIx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XXrXz01YXz1ynKk;
+	Tue, 22 Oct 2024 20:08:02 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id DDC1014037D;
+	Tue, 22 Oct 2024 20:07:55 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Oct 2024 20:07:55 +0800
+Message-ID: <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
+Date: Tue, 22 Oct 2024 20:07:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022120531.GDZxeVC0WeUPhInkYh@fat_crate.local>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <rostedt@goodmis.org>,
+	<arnd@arndb.de>, <ardb@kernel.org>, <broonie@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Mon, 21 Oct 2024 10:27:52 +0200
 
-Commit in Fixes changed how a microcode patch is loaded on Zen and newer
-but the patch matching needs to happen with different rigidity,
-depending on what is being done:
 
-1) When the patch is added to the patches cache, the stepping must be
-   ignored because the driver still supports different steppings per
-   system
+On 2024/10/17 23:25, Mark Rutland wrote:
+> Hi,
+> 
+> On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
+>> Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
+>> to use the generic entry infrastructure from kernel/entry/*. The generic
+>> entry makes maintainers' work easier and codes more elegant, which aslo
+>> removed a lot of duplicate code.
+> 
+>>  arch/arm64/Kconfig                    |   1 +
+>>  arch/arm64/include/asm/entry-common.h | 172 ++++++++++++
+>>  arch/arm64/include/asm/ptrace.h       |   5 +
+>>  arch/arm64/include/asm/stacktrace.h   |   5 +-
+>>  arch/arm64/include/asm/syscall.h      |   6 +-
+>>  arch/arm64/include/asm/thread_info.h  |  23 +-
+>>  arch/arm64/kernel/entry-common.c      | 368 +++++---------------------
+>>  arch/arm64/kernel/ptrace.c            |  90 -------
+>>  arch/arm64/kernel/signal.c            |   3 +-
+>>  arch/arm64/kernel/syscall.c           |  18 +-
+>>  include/linux/entry-common.h          |  90 +++++++
+>>  include/linux/thread_info.h           |  13 +
+>>  kernel/entry/common.c                 |  37 +--
+>>  13 files changed, 395 insertions(+), 436 deletions(-)
+>>  create mode 100644 arch/arm64/include/asm/entry-common.h
+> 
+> Looking at this I have a few concerns, which I've tried to explain
+> below.
+> 
+> Firstly, this is difficult to review (and will be difficult to test,
+> queue. and debug in future) because lots of independent changes are made
+> all at once. I think that needs to be split out more.
+> 
+> It would be good if preparatory rework/cleanup could be split into a few
+> patches that we could consider queueing before the rest of the series,
+> or even if we decide to not pick the rest of the series. For example,
+> patch 2 should be split into:
+> 
+> * One patch that replaces arm64's interrupts_enabled() with
+>   regs_irqs_disabled(), removing interrupts_enabled() entirely rather
+>   than implementing regs_irqs_disabled() using interrupts_enabled().
+> 
+>   That'll require updating existing users, but the end result will be
+>   more consistent and have fewer lines of code.
+> 
+> * One patch that changes on_thread_stack() from a macro to a function.
+>   The commit message for patch 2 currently says:
+> 
+>   >  Make on_thread_stack() compatible with generic entry.   
+>  
+>   ... but it's not clear to me *what* that incompatibility is, and that
+>   should be explained in the commit message.
+> 
+> * One patch that splits report_syscall() into report_syscall_enter() and
+>   report_syscall_exit(). This should have no functional change.
+> 
+> Patch 3 in particular is very hard to follow because several unrelated
+> complex systems are updated simultaneously. It would be really nice if
+> we could move to the generic sycall code separately from moving the rest
+> of the entry code, as the sycall handling code is a particularly
+> important ABI concern, and it's difficult to see whether we're making
+> ABI changes (accidentaly or knowingly).
+> 
+> Can we split that up (e.g. splitting the generic code first into
+> separate entry and syscall files), or are those too tightly coupled for
+> that to be possible?
+> 
+> At the end of the series, pt_regs::{lockdep_hardirqs,exit_rcu} still
+> exist, though they're unused. It would be nicer if we could get rid of
+> those in a preparatory patch, e.g. have enter_from_kernel_mode() and
+> exit_to_kernel_mode() use an irqentry_state_t (or a temporary
+> arm64-specific version). That would make the subsequent changes clearer
+> since we'd already have the same structure.
+> 
+> In the end result, there's a lot of bouncing between noinstr functions
+> where things are inlined today. For example, el0_da() calls
+> irqentry_enter_from_user_mode(), which is an out-of-line noinstr wrapper
+> for enter_from_user_mode(), which is an __always_inline function in a
+> header. It would be nice to avoid unnecessary bouncing through
+> out-of-line functions. I see s390 and x86 use enter_from_user_mode()
+> directly.
+> 
+> There's also some indirection that I don't think is necessary *and*
+> hides important ordering concerns and results in mistakes. In
+> particular, note that before this series, enter_from_kernel_mode() calls
+> the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
+> management is performed by __enter_from_kernel_mode():
+> 
+> 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
+> 	{
+> 	        __enter_from_kernel_mode(regs);
+> 		mte_check_tfsr_entry();
+> 		mte_disable_tco_entry(current);
+> 	}
+> 
+> ... whereas after this series is applied, those MTE checks are placed in
+> arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
+> necessary lockdep+RCU management. That is broken.
+> 
+> It would be better to keep that explicit in the arm64 entry code with
+> arm64-specific wrappers, e.g.
+> 
+> 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+> 	{
+> 		irqentry_state_t state = irqentry_enter(regs);
+> 		mte_check_tfsr_entry();
+> 		mte_disable_tco_entry(current);
+> 
+> 		return state;
+> 	}
 
-2) When the patch is matched for loading, then the stepping must be
-   taken into account because each CPU needs the patch matching its
-   stepping
+Hi, Mark, It seems that there is a problem for
+arm64_preempt_schedule_irq() when wrap irqentry_exit() with
+exit_to_kernel_mode().
 
-Take care of that by making the matching smarter.
+The arm64_preempt_schedule_irq() is about PREEMPT_DYNAMIC and preempt
+irq which is the raw_irqentry_exit_cond_resched() in generic code called
+by irqentry_exit().
 
-Fixes: 94838d230a6c ("x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID")
-Reported-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/91194406-3fdf-4e38-9838-d334af538f74@kernel.dk
----
- arch/x86/kernel/cpu/microcode/amd.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+Only __el1_irq() call arm64_preempt_schedule_irq(), but when we switch
+all exit_to_kernel_mode() to arm64-specific one that wrap
+irqentry_exit(), not only __el1_irq() but also el1_abort(), el1_pc(),
+el1_undef() etc. will try to reschedule by calling
+arm64_preempt_schedule_irq() similar logic.
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index f63b051f25a0..1ae36ab37fe8 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -613,16 +613,19 @@ static int __init save_microcode_in_initrd(void)
- }
- early_initcall(save_microcode_in_initrd);
- 
--static inline bool patch_cpus_equivalent(struct ucode_patch *p, struct ucode_patch *n)
-+static inline bool patch_cpus_equivalent(struct ucode_patch *p,
-+					 struct ucode_patch *n,
-+					 bool ignore_stepping)
- {
- 	/* Zen and newer hardcode the f/m/s in the patch ID */
-         if (x86_family(bsp_cpuid_1_eax) >= 0x17) {
- 		union cpuid_1_eax p_cid = ucode_rev_to_cpuid(p->patch_id);
- 		union cpuid_1_eax n_cid = ucode_rev_to_cpuid(n->patch_id);
- 
--		/* Zap stepping */
--		p_cid.stepping = 0;
--		n_cid.stepping = 0;
-+		if (ignore_stepping) {
-+			p_cid.stepping = 0;
-+			n_cid.stepping = 0;
-+		}
- 
- 		return p_cid.full == n_cid.full;
- 	} else {
-@@ -644,13 +647,13 @@ static struct ucode_patch *cache_find_patch(struct ucode_cpu_info *uci, u16 equi
- 	WARN_ON_ONCE(!n.patch_id);
- 
- 	list_for_each_entry(p, &microcode_cache, plist)
--		if (patch_cpus_equivalent(p, &n))
-+		if (patch_cpus_equivalent(p, &n, false))
- 			return p;
- 
- 	return NULL;
- }
- 
--static inline bool patch_newer(struct ucode_patch *p, struct ucode_patch *n)
-+static inline int patch_newer(struct ucode_patch *p, struct ucode_patch *n)
- {
- 	/* Zen and newer hardcode the f/m/s in the patch ID */
-         if (x86_family(bsp_cpuid_1_eax) >= 0x17) {
-@@ -659,6 +662,9 @@ static inline bool patch_newer(struct ucode_patch *p, struct ucode_patch *n)
- 		zp.ucode_rev = p->patch_id;
- 		zn.ucode_rev = n->patch_id;
- 
-+		if (zn.stepping != zp.stepping)
-+			return -1;
-+
- 		return zn.rev > zp.rev;
- 	} else {
- 		return n->patch_id > p->patch_id;
-@@ -668,10 +674,14 @@ static inline bool patch_newer(struct ucode_patch *p, struct ucode_patch *n)
- static void update_cache(struct ucode_patch *new_patch)
- {
- 	struct ucode_patch *p;
-+	int ret;
- 
- 	list_for_each_entry(p, &microcode_cache, plist) {
--		if (patch_cpus_equivalent(p, new_patch)) {
--			if (!patch_newer(p, new_patch)) {
-+		if (patch_cpus_equivalent(p, new_patch, true)) {
-+			ret = patch_newer(p, new_patch);
-+			if (ret < 0)
-+				continue;
-+			else if (!ret) {
- 				/* we already have the latest patch */
- 				kfree(new_patch->data);
- 				kfree(new_patch);
--- 
-2.43.0
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> ... which would avoid the need for arch_enter_from_kernel_mode(), make
+> that ordering obvious, and would remove the need to modify all the
+> callers.
+> 
+> Likewise for the user entry/exit paths, which would avoid the visual
+> imbalance of:
+> 	
+> 	irqentry_enter_from_user_mode();
+> 	...
+> 	exit_to_user_mode_wrapper()
+> 
+> Thanks,
+> Mark.
+> 
 
