@@ -1,246 +1,365 @@
-Return-Path: <linux-kernel+bounces-376481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D41B9AB234
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:34:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBC59AB238
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 492702810FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:34:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D34B233C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB1C14EC71;
-	Tue, 22 Oct 2024 15:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kewLYScJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6d71W1R8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1382E406;
-	Tue, 22 Oct 2024 15:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D7F19D06D;
+	Tue, 22 Oct 2024 15:34:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C961A08DB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611269; cv=none; b=fMPQkHT+FYCR9o7+HRzMA0Aib67UJlIXdRuAs+0RxV48L5lJxXv260GdQ55oYAuE00w+08MP6prRdYZhPs8v9lAtDLH4lLMJ9sBJw0uKXRPfIu4fCWuX+l9CRBt67dvr1Yqg+qGtwBxDqd9G1Sbwx/Va+H2V0E/VfHNoaht+byQ=
+	t=1729611288; cv=none; b=BB8MLopVlwd+UnMACapH7lxiDqLQaQV4Be47FIdRes20akoBufQl6SHFtA8lxTKbAy+kB1udeoTaI8HkFtft29URgySrgu7xW6u9kxd/exhNVCvL1UsYpGPMQPv7Yp06eCclRT76gxTGkUVPeXx/daC6I6d9XSRRa/QtoKvpbtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611269; c=relaxed/simple;
-	bh=WTT9n2/PNilXGm6zGJ+nXbkXPErEwo0WspX+D+nAxsc=;
+	s=arc-20240116; t=1729611288; c=relaxed/simple;
+	bh=6geRVq+SGBjo6vvTzl+muPcMzTn0q/2GUlREkMTtFuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4biHpnUdHrisP2zDtXjG2oy3YbxiTrnPA2Qwx5Df4utbE8i6Tbo8ny6TAGsUqI8Vo0C8vhW79MMjdBQB2u1CXvbs1PzfIuLkzpGqPrKvxh0udcyG9B2xhhqTMsjKzHCr4GKIHgreXZoYZAmjmPKuPjmah5k/BOqiZkuMbZ5LBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kewLYScJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6d71W1R8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Oct 2024 17:34:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729611263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHGHaUWDWX+IWGBPfOe3MVJPsb+2BgkqR9GtGbroFjc=;
-	b=kewLYScJFRqCvN+Ao7+BuRLdKlMhuITQdz7dcPVcaF4GKiEw5t+i5lWT4VjK99yspekP0s
-	pW5vnki+2e9L8eBwdXx/ZV/7nrivdUH5b+pLDl8XGOc7O0+oisOPklHIV5f5SV1TMb8+Tu
-	Tc4ZPTMjLeEdwTS0sBNyY0hMGggItHN5HQj5/XtJbRBzmzxHP0HA4uzZCXM7YEb+yl3lC6
-	wkZgzfO5zBb2lwdDTNhDtoIv+vNyO05l/UR537JOPN9fj6HCL1x54su9R8AD8RMnv7StQ3
-	x0UJZoQ8SLwLq7TfFzlznCc15Lug3ZXgLpCjCfxbs528ylQmnrwgRgCsucV2qA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729611263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHGHaUWDWX+IWGBPfOe3MVJPsb+2BgkqR9GtGbroFjc=;
-	b=6d71W1R8gRlitrcVkTI8Ia70hXKoPFDDXAA5bNbv6X1j6FgXoZHZ//VjgtqIutO0pqZO2q
-	BJNpX1tWufSjxTAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
- PREEMPT_RT.
-Message-ID: <20241022153421.zLWiABPU@linutronix.de>
-References: <20241004103842.131014-1-bigeasy@linutronix.de>
- <20241004103842.131014-2-bigeasy@linutronix.de>
- <ZxeomPnsi6oGHKPT@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgtbzOeOBY6yR1dpwwxCsBX7qRyPINMg/aQgnCltka7517A1uHCPU65ib2yptSF5eUoEXAnvVvx3gXYG/6GR/xJNgmLSdP37TrqEh05MvZm1JdZ6pMFSRNcOXtrWMWTcxU3agYjeZOTMmnRxIpsptPmVMCoqjEN8eDAzYmNCnTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAE0D497;
+	Tue, 22 Oct 2024 08:35:14 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9EAB3F73B;
+	Tue, 22 Oct 2024 08:34:42 -0700 (PDT)
+Date: Tue, 22 Oct 2024 16:34:32 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH 3/3] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
+Message-ID: <ZxfGAHAn6I41ZLZV@J2N7QTR9R3>
+References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
+ <20241001043602.1116991-4-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZxeomPnsi6oGHKPT@localhost.localdomain>
+In-Reply-To: <20241001043602.1116991-4-anshuman.khandual@arm.com>
 
-On 2024-10-22 15:28:56 [+0200], Frederic Weisbecker wrote:
-> Le Fri, Oct 04, 2024 at 12:17:04PM +0200, Sebastian Andrzej Siewior a =C3=
-=A9crit :
-> > A timer/ hrtimer softirq is raised in-IRQ context. With threaded
-> > interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
-> > for the processing of the softirq.
->=20
-> It took me some time to understand the actual problem (yeah I know...)
->=20
-> Can this be rephrased as: "Timer and hrtimer softirq vectors are special
-> in that they are always raised in-IRQ context whereas other vectors are
-> more likely to be raised from threaded interrupts or any regular tasks
-> when threaded interrupts or PREEMPT_RT are enabled. This leads to
-> waking ksoftirqd for the processing of the softirqs whenever timer
-> vectors are involved.
+On Tue, Oct 01, 2024 at 10:06:02AM +0530, Anshuman Khandual wrote:
+> Currently there can be maximum 16 breakpoints, and 16 watchpoints available
+> on a given platform - as detected from ID_AA64DFR0_EL1.[BRPs|WRPs] register
+> fields. But these breakpoint, and watchpoints can be extended further up to
+> 64 via a new arch feature FEAT_Debugv8p9.
+> 
+> This first enables banked access for the breakpoint and watchpoint register
+> set via MDSELR_EL1, extended exceptions via MDSCR_EL1.EMBWE and determining
+> available breakpoints and watchpoints in the platform from ID_AA64DFR1_EL1,
+> when FEAT_Debugv8p9 is enabled.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/debug-monitors.h |  1 +
+>  arch/arm64/include/asm/hw_breakpoint.h  | 50 ++++++++++++++++++++-----
+>  arch/arm64/kernel/debug-monitors.c      | 16 ++++++--
+>  arch/arm64/kernel/hw_breakpoint.c       | 33 ++++++++++++++++
+>  4 files changed, 86 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/debug-monitors.h b/arch/arm64/include/asm/debug-monitors.h
+> index 13d437bcbf58..a14097673ae0 100644
+> --- a/arch/arm64/include/asm/debug-monitors.h
+> +++ b/arch/arm64/include/asm/debug-monitors.h
+> @@ -20,6 +20,7 @@
+>  #define DBG_MDSCR_KDE		(1 << 13)
+>  #define DBG_MDSCR_MDE		(1 << 15)
+>  #define DBG_MDSCR_MASK		~(DBG_MDSCR_KDE | DBG_MDSCR_MDE)
+> +#define DBG_MDSCR_EMBWE		(1UL << 32)
+>  
+>  #define	DBG_ESR_EVT(x)		(((x) >> 27) & 0x7)
+>  
+> diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
+> index bd81cf17744a..362c4d4a64ac 100644
+> --- a/arch/arm64/include/asm/hw_breakpoint.h
+> +++ b/arch/arm64/include/asm/hw_breakpoint.h
+> @@ -79,8 +79,8 @@ static inline void decode_ctrl_reg(u32 reg,
+>   * Limits.
+>   * Changing these will require modifications to the register accessors.
+>   */
+> -#define ARM_MAX_BRP		16
+> -#define ARM_MAX_WRP		16
+> +#define ARM_MAX_BRP		64
+> +#define ARM_MAX_WRP		64
+>  
+>  /* Virtual debug register bases. */
+>  #define AARCH64_DBG_REG_BVR	0
+> @@ -94,13 +94,25 @@ static inline void decode_ctrl_reg(u32 reg,
+>  #define AARCH64_DBG_REG_NAME_WVR	wvr
+>  #define AARCH64_DBG_REG_NAME_WCR	wcr
+>  
+> +static inline bool is_debug_v8p9_enabled(void)
+> +{
+> +	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+> +	int dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
+> +
+> +	return dver == ID_AA64DFR0_EL1_DebugVer_V8P9;
+> +}
+> +
+>  /* Accessor macros for the debug registers. */
+>  #define AARCH64_DBG_READ(N, REG, VAL) do {\
+>  	VAL = read_sysreg(dbg##REG##N##_el1);\
+> +	if (is_debug_v8p9_enabled())	\
+> +		preempt_enable();	\
+>  } while (0)
+>  
+>  #define AARCH64_DBG_WRITE(N, REG, VAL) do {\
+>  	write_sysreg(VAL, dbg##REG##N##_el1);\
+> +	if (is_debug_v8p9_enabled())	\
+> +		preempt_enable();	\
+>  } while (0)
 
-Oki.
+Without looking any further in this patch, this is clearly the wrong
+level of abstraction. Any disable/enable of preemption should be clearly
+balanced in a caller rather than half of that being hidden away in a
+low-level primitive.
 
-> > Once the ksoftirqd is marked as pending (or is running) it will collect
-> > all raised softirqs. This in turn means that a softirq which would have
-> > been processed at the end of the threaded interrupt, which runs at an
-> > elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
-> > priority and competes with every regular task for CPU resources.
->=20
-> But for ksoftirqd to collect other non-timers softirqs, those vectors must
-> have been raised before from a threaded interrupt, right? So why those
-> vectors didn't get a chance to execute at the end of that threaded interr=
-upt?
+Wherever this lives it needs a comment explaining what it is doing and
+why. I assume this is intended to protect the bank in sequences like:
 
-This statement is no longer accurate since
-	d15121be74856 ("Revert "softirq: Let ksoftirqd do its job"")
+	MSR	MDSELR, <...>
+	ISB
+	MRS	<..._, BANKED_REGISTER
 
-So the "collect all" part is no longer.
+... but is theat suffucient for mutual exclusion against
+exception handlers, or does that come from somewhere else?
 
-> OTOH one problem I can imagine is a threaded interrupt preempting ksoftir=
-qd
-> which must wait for ksoftirqd to complete due to the local_bh_disable()
-> in the beginning of irq_forced_thread_fn(). But then isn't there some
-> PI involved on the local lock?
+>  struct task_struct;
+> @@ -138,19 +150,37 @@ static inline void ptrace_hw_copy_thread(struct task_struct *task)
+>  /* Determine number of BRP registers available. */
+>  static inline int get_num_brps(void)
+>  {
+> -	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+> -	return 1 +
+> -		cpuid_feature_extract_unsigned_field(dfr0,
+> -						ID_AA64DFR0_EL1_BRPs_SHIFT);
+> +	u64 dfr0, dfr1;
+> +	int dver, brps;
+> +
+> +	dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+> +	dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
+> +	if (dver == ID_AA64DFR0_EL1_DebugVer_V8P9) {
+> +		dfr1 = read_sanitised_ftr_reg(SYS_ID_AA64DFR1_EL1);
+> +		brps = cpuid_feature_extract_unsigned_field_width(dfr1,
+> +								  ID_AA64DFR1_EL1_BRPs_SHIFT, 8);
+> +	} else {
+> +		brps = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_BRPs_SHIFT);
+> +	}
+> +	return 1 + brps;
+>  }
+>  
+>  /* Determine number of WRP registers available. */
+>  static inline int get_num_wrps(void)
+>  {
+> -	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+> -	return 1 +
+> -		cpuid_feature_extract_unsigned_field(dfr0,
+> -						ID_AA64DFR0_EL1_WRPs_SHIFT);
+> +	u64 dfr0, dfr1;
+> +	int dver, wrps;
+> +
+> +	dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+> +	dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
+> +	if (dver == ID_AA64DFR0_EL1_DebugVer_V8P9) {
+> +		dfr1 = read_sanitised_ftr_reg(SYS_ID_AA64DFR1_EL1);
+> +		wrps = cpuid_feature_extract_unsigned_field_width(dfr1,
+> +								  ID_AA64DFR1_EL1_WRPs_SHIFT, 8);
+> +	} else {
+> +		wrps = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_WRPs_SHIFT);
+> +	}
+> +	return 1 + wrps;
+>  }
+>  
+>  #ifdef CONFIG_CPU_PM
+> diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+> index 024a7b245056..af643c935f2e 100644
+> --- a/arch/arm64/kernel/debug-monitors.c
+> +++ b/arch/arm64/kernel/debug-monitors.c
+> @@ -23,6 +23,7 @@
+>  #include <asm/debug-monitors.h>
+>  #include <asm/system_misc.h>
+>  #include <asm/traps.h>
+> +#include <asm/hw_breakpoint.h>
 
-Yes, there is PI involved on the local lock. So this will happen.
+Nit: these are ordered alphabetically, please keep them that way.
 
-> Sorry I'm probably missing something...
+>  
+>  /* Determine debug architecture. */
+>  u8 debug_monitors_arch(void)
+> @@ -34,7 +35,7 @@ u8 debug_monitors_arch(void)
+>  /*
+>   * MDSCR access routines.
+>   */
+> -static void mdscr_write(u32 mdscr)
+> +static void mdscr_write(u64 mdscr)
+>  {
+>  	unsigned long flags;
+>  	flags = local_daif_save();
+> @@ -43,7 +44,7 @@ static void mdscr_write(u32 mdscr)
+>  }
+>  NOKPROBE_SYMBOL(mdscr_write);
+>  
+> -static u32 mdscr_read(void)
+> +static u64 mdscr_read(void)
+>  {
+>  	return read_sysreg(mdscr_el1);
+>  }
+> @@ -76,10 +77,11 @@ early_param("nodebugmon", early_debug_disable);
+>   */
+>  static DEFINE_PER_CPU(int, mde_ref_count);
+>  static DEFINE_PER_CPU(int, kde_ref_count);
+> +static DEFINE_PER_CPU(int, embwe_ref_count);
 
-Try again without the "ksoftirqd will collect it all" since this won't
-happen since the revert I mentioned.
+We have refcounting for MDE and KDE because they enable debug exceptions
+to be taken (and e.g. require a hypervisor to do more work when they're
+enabled), but AFAICT that's not true for EMBWE.
 
-> > This introduces long delays on heavy loaded systems and is not desired
-> > especially if the system is not overloaded by the softirqs.
-> >=20
-> > Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
-> > timers thread and let it run at the lowest SCHED_FIFO priority.
-> > Wake-ups for RT tasks happen from hardirq context so only timer_list ti=
-mers
-> > and hrtimers for "regular" tasks are processed here.
->=20
-> That last sentence confuses me. How are timers for non regular task proce=
-ssed
-> elsewhere? Ah you mean RT tasks rely on hard hrtimers?
+Do we need to refcount EMBWE?
 
-Correct. A clock_nanosleep() for a RT task will result in wake_up() from
-hardirq. A clock_nanosleep() for a !RT task will result in wake_up()
-=66rom ksoftirqd or now the suggested ktimersd.
+>  void enable_debug_monitors(enum dbg_active_el el)
+>  {
+> -	u32 mdscr, enable = 0;
+> +	u64 mdscr, enable = 0;
+>  
+>  	WARN_ON(preemptible());
+>  
+> @@ -90,6 +92,9 @@ void enable_debug_monitors(enum dbg_active_el el)
+>  	    this_cpu_inc_return(kde_ref_count) == 1)
+>  		enable |= DBG_MDSCR_KDE;
+>  
+> +	if (is_debug_v8p9_enabled() && this_cpu_inc_return(embwe_ref_count) == 1)
+> +		enable |= DBG_MDSCR_EMBWE;
 
-Quick question: Do we want this in forced-threaded mode, too? The timer
-(timer_list timer) and all HRTIMER_MODE_SOFT are handled in ksoftirqd.
+... which suggests that this could simplified to be:
 
-> > The higher priority
-> > ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
-> >=20
-> > Using a dedicated variable to store the pending softirq bits values
-> > ensure that the timer are not accidentally picked up by ksoftirqd and
-> > other threaded interrupts.
-> > It shouldn't be picked up by ksoftirqd since it runs at lower priority.
-> > However if ksoftirqd is already running while a timer fires, then
-> > ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
-> > Ideally we try to avoid having ksoftirqd running.
-> >=20
-> > The timer thread can pick up pending softirqs from ksoftirqd but only
-> > if the softirq load is high. It is not be desired that the picked up
-> > softirqs are processed at SCHED_FIFO priority under high softirq load
-> > but this can already happen by a PI-boost by a force-threaded interrupt.
-> >=20
-> > [ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
-> >   local_pending_timers() for tick_nohz_next_event() ]
-> >=20
-> > [ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
-> >   softirq is currently served. ]
-> >=20
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >  include/linux/interrupt.h | 29 ++++++++++++++
-> >  kernel/rcu/rcutorture.c   |  6 +++
-> >  kernel/softirq.c          | 82 ++++++++++++++++++++++++++++++++++++++-
-> >  kernel/time/hrtimer.c     |  4 +-
-> >  kernel/time/tick-sched.c  |  2 +-
-> >  kernel/time/timer.c       |  2 +-
-> >  6 files changed, 120 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> > index 457151f9f263d..4a4f367cd6864 100644
-> > --- a/include/linux/interrupt.h
-> > +++ b/include/linux/interrupt.h
-> > @@ -616,6 +616,35 @@ extern void __raise_softirq_irqoff(unsigned int nr=
-);
-> >  extern void raise_softirq_irqoff(unsigned int nr);
-> >  extern void raise_softirq(unsigned int nr);
-> > =20
-> > +#ifdef CONFIG_PREEMPT_RT
->=20
-> This needs a comment section to explain why a dedicated
-> timers processing is needed.
+	if (is_debug_v8p9_enabled())
+		enable != DBG_MDSCR_EMBWE;
 
-Okay.
+... and likewise below, unless I'm missing some reason why we must
+refcount this?
 
-> > +DECLARE_PER_CPU(struct task_struct *, timersd);
-> > +DECLARE_PER_CPU(unsigned long, pending_timer_softirq);
-> > +
-> > +extern void raise_timer_softirq(void);
-> > +extern void raise_hrtimer_softirq(void);
-> > +
-> > +static inline unsigned int local_pending_timers(void)
->=20
-> Let's align with local_softirq_pending() naming and rather
-> have local_timers_pending() ?
+> diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+> index 722ac45f9f7b..30156d732284 100644
+> --- a/arch/arm64/kernel/hw_breakpoint.c
+> +++ b/arch/arm64/kernel/hw_breakpoint.c
+> @@ -103,10 +103,40 @@ int hw_breakpoint_slots(int type)
+>  	WRITE_WB_REG_CASE(OFF, 14, REG, VAL);	\
+>  	WRITE_WB_REG_CASE(OFF, 15, REG, VAL)
+>  
+> +static int set_bank_index(int n)
+> +{
+> +	int mdsel_bank;
+> +	int bank = n / 16, index = n % 16;
+> +
+> +	switch (bank) {
+> +	case 0:
+> +		mdsel_bank = MDSELR_EL1_BANK_BANK_0;
+> +		break;
+> +	case 1:
+> +		mdsel_bank = MDSELR_EL1_BANK_BANK_1;
+> +		break;
+> +	case 2:
+> +		mdsel_bank = MDSELR_EL1_BANK_BANK_2;
+> +		break;
+> +	case 3:
+> +		mdsel_bank = MDSELR_EL1_BANK_BANK_3;
+> +		break;
 
-good.
+Since this is a trivial mapping, do we actually need the switch?
 
-> > +{
-> > +	return __this_cpu_read(pending_timer_softirq);
-> > +}
-> > +
-> > +#ifdef CONFIG_PREEMPT_RT
-> > +static void timersd_setup(unsigned int cpu)
-> > +{
->=20
-> That also needs a comment.
+> +	default:
+> +		pr_warn("Unknown register bank %d\n", bank);
+> +	}
+> +	preempt_disable();
+> +	write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
+> +	isb();
+> +	return index;
+> +}
+> +
+>  static u64 read_wb_reg(int reg, int n)
+>  {
+>  	u64 val = 0;
+>  
+> +	if (is_debug_v8p9_enabled())
+> +		n = set_bank_index(n);
+> +
+>  	switch (reg + n) {
+>  	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BVR, AARCH64_DBG_REG_NAME_BVR, val);
+>  	GEN_READ_WB_REG_CASES(AARCH64_DBG_REG_BCR, AARCH64_DBG_REG_NAME_BCR, val);
 
-Why we want the priority I guess.
+As above, this would be better as something like:
 
-=E2=80=A6
-> > +void raise_hrtimer_softirq(void)
-> > +{
-> > +	raise_ktimers_thread(HRTIMER_SOFTIRQ);
-> > +}
-> > +
-> > +void raise_timer_softirq(void)
-> > +{
-> > +	unsigned long flags;
-> > +
-> > +	local_irq_save(flags);
-> > +	raise_ktimers_thread(TIMER_SOFTIRQ);
-> > +	wake_timersd();
->=20
-> This is supposed to be called from hardirq only, right?
-> Can't irq_exit_rcu() take care of it? Why is it different
-> from HRTIMER_SOFTIRQ ?
+	// rename the existing read_wb_reg(), unchanged
+	static u64 __read_wb_reg(int reg, int n);
 
-Good question. This shouldn't be any different compared to the hrtimer
-case. This is only raised in hardirq, so yes, the irq_save can go away
-and the wake call, too.
+	static u64 read_wb_reg(int reg, int n)
+	{
+		u64 val;
 
-> Thanks.
+		if (!is_debug_v8p9_enabled())
+			return __read_wb_reg(reg, n);
 
-Sebastian
+		/*
+		 * TODO: explain here
+		 */
+		preempt_disable();
+		write_sysreg_s(...); // MDSELR
+		isb();
+		val = __read_wb_reg(reg, idx_within_bank);
+		preempt_enable();
+
+		return val;
+	}
+
+... or:
+
+	static u64 read_wb_reg(int reg, int n)
+	{
+		u64 val;
+
+		if (is_debug_v8p9_enabled()) {
+			/*
+			 * TODO: explain here
+			 */
+			preempt_disable();
+			write_sysreg_s(...); // MDSELR
+			isb();
+			val = __read_wb_reg(reg, idx_within_bank);
+			preempt_enable();
+		} else {
+			val = __read_wb_reg(reg, n);
+		}
+
+		return val;
+	}
+
+... which is more lines but *vastly* clearer. 
+
+Likewise for the write case.
+
+Mark.
 
