@@ -1,480 +1,241 @@
-Return-Path: <linux-kernel+bounces-375675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EA59A9925
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EB39A9918
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B96F9B22225
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C3F284EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874601448E6;
-	Tue, 22 Oct 2024 06:02:28 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2132.outbound.protection.outlook.com [40.107.239.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6AD13B592;
+	Tue, 22 Oct 2024 06:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="mSOi+0bd";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="F1RZtedC"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACE013D89D;
-	Tue, 22 Oct 2024 06:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C344A3232;
+	Tue, 22 Oct 2024 06:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.153.144
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729576947; cv=fail; b=S9eyn8AQpbjPK2Ezv3PPTjXo0v6fo9HEOV0VGmBmO9bUEKsMT4atpSlRVOWSjIKsw5vYF98JXaIV57RGl/PwufAmo/4RRfYsHVB7tiQsoIrN9U5jM3h3VwBW2344bar37Xntw8vsA0K47WxpHV/hiYsJ2KVwauV4cYVHUlULvAo=
+	t=1729576908; cv=fail; b=jxIfhCRA6lD37KDgWWY9njzfuDm2RO4yA/CCv93m8Ql9Z5bng9499wHe8sKLFEfxpOj4NNG1OIve7dyYkZjdIMLaCfVORUJeafupY0k1MUjrH1TLKjwJ3rRrDpWYck4H0O6EOed9bsWo9PoYuHsY7ky460cYpJJQzbgdo/X3jHI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729576947; c=relaxed/simple;
-	bh=SoDpkVuHdbubAoi+rNOSjLnobcAo23GXiUzxzt55rEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WFjdxaLwDNfjuN+aLL2tEusrKB33qOcxr2IcGcXPoorL7tEcZaXJBtFEjuj4a3Fn5PozB5KM1uT65p3+pJLpI/NX4wetGchJ7mMXOUaRLozlkWr2m7xZzvYgLgmZfkDItUEvKqD4DkWDvVb3E7nc7m4Ce0WRovcHzwqF3ckjHaM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+	s=arc-20240116; t=1729576908; c=relaxed/simple;
+	bh=QX5Brsc5erJ27Jpmv0Sz1oje8zVP/zpMyNPLCqcpdQw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pCaT3OkSULHpBqW9h2x7We/V4a31PQb8V54AKQI8mSrCz89GybF9slWa73n9SmcKbwLayn4fQ7vAJl1FAVk+3JE+8xUnXdT+bycae/kOtykGn3BdveyetgVxeSVspx46N3r0jWuuy07SBxBe6Spop2Ij+8HWwJ0hkD5PG4M26GU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=mSOi+0bd; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=F1RZtedC; arc=fail smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1729576906; x=1761112906;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=QX5Brsc5erJ27Jpmv0Sz1oje8zVP/zpMyNPLCqcpdQw=;
+  b=mSOi+0bdeirOIqI1WMh1Io0c2pGxmI+94aKoOjh7E5+OxCBSzX0U2Sas
+   OpLbL7TZrv/+U4w1qRgOJboe0+CIm6Kyu4ZB6APsISFMOwY8Xc1ViOkfs
+   JKtx9a6zSCQynt+Pcl5+TbPyJmAbqvSlFA9tILUDZc3HNd/clDTawllcn
+   B7mWiJloxFRvVbFRXPPp8EiQMYaEtUVj4NZrvRPDiJutwKYKtYWeRZx2Z
+   T+V95ZIXfkGtfTtmz0SmzjEPcXBWi7LjM5P6aNX9ruGNQFqYZ+80bK1k8
+   tSZ2ELC/15nPg2B7AoeYTk3/5gSV1GemAroXaehEfBxMR0hGnKhbMPXFy
+   A==;
+X-CSE-ConnectionGUID: uHjDQCAtQhqY6MebGm04nQ==
+X-CSE-MsgGUID: ia7opgYZT7S9Y8fyPnGr1g==
+X-IronPort-AV: E=Sophos;i="6.11,222,1725292800"; 
+   d="scan'208";a="30660746"
+Received: from mail-bn8nam12lp2168.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.168])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Oct 2024 14:01:45 +0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t2W8Ru4gusC22PMI0wR4cSqacUhDOhP1TyLx1CUM3r8VU2wxZfKplnq5cXdN1rBSEvry2AitbTXmkR13oIcBeVaa8MCguW03fjmCTPFwvc0DeFPTle6pBIgt7ztSwHjrvUIbpak2u05RYw4l6YTxDJRtJbP2+54eBYsES/g+jTTPbpGSx8i3CFPvIxESowSwd907ttYsy+fBRyZz9xV3lkyjjyJBIkgAiXhlHlrKKPXsYrE9V7IOFp1JB7XvkQNdzX4vCrU31/yQO/zKgOtHE6YVN4hSJj3JMIJ/+unZwsVsFbfX3I1AQfxeHw88SHUl3fNOSuCdHcLqEDIYOWerMQ==
+ b=skv+Fi/pC8z8LZOgBiSheEqYcTAPsKQnmGfbi+/yDyDSHbuRYlByrDOFAMzlmKPOmxkMMZhtJy4+htnH0VPZeUyXGUFRvF06wYs610rHK5x9Tg2bE1JB9sPRIg5iis7PbSC5O0Lih2Wts8jpVEgFgEnALGxXeuYdc43c3HtQF3DIBl7ds2VKEraEvwf5vYw1WCymqft28i7EMsMgXIPJVKkJ1lec0D0MXfrPMBAJiOu8DDdcfgXLh1dIPUXP+syemZpt27Br7s+6ABV034iWr1P1NUCRys+VFkCdtdVnavwy7PDZdVL7fmxx1CJnofbOUdIUHvlnzIHsBaAdWYAJXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=obKS0nVaG9w06EQHkCIoFe7sDTP1JIfNnLgbuU5t6oc=;
- b=OwWH771aQDB0JOg4Yp4oX6G2MG7yL1d98CVYDfnucoMNUhOhvPDo5nmthoRI4vRcxRmgRmhkk+CEZVBbbqkhAfOTqCUP+xNw+1FBvPa7rUZQGnMjueEdtiXNFpqfn16G2zTgriU8O8maWAgo5vflNSnVoLugtLC+AVZtdHQ4R4OAK6U1R2Z3RDxMlMxcFNlcDDHbzVndCs8pmvldt5vZatJ9HXm3ZyFFq+TErnIb83Ddl3hbaH+JY4ChUy6Uyt6RA7r8qTH0u+OVp2vumNrg1PafzNgVCl4TxqmvdlHiZ6jlo54csVHZhv9Nj8W6bIIp6wgRblDKvBB/h9MF29mIiQ==
+ bh=QX5Brsc5erJ27Jpmv0Sz1oje8zVP/zpMyNPLCqcpdQw=;
+ b=KnkVT6MwuX9wjtyG0MLsULVGVZLQjb1L8jh4y5t95aVNX8fQQagXQl2TK9mtRE8i9xFYLE4lwecBB6NCeB3iMsfFMfJoWLO+HEqkc9zHUiKE25f0NL7uzeRWNqqqMwczECGnBsRDukj73nCjt0fDb8bb2+sl9dcK9iTAkcmHDb2CyxqxL+KTmsp5KBVLAfsDKrKWP4gLUXqujauLVd7fjh5Cu62tfof3xNrjtmwKqSBNLan6Cc4fSd/kF5qXP412MBiI8IpZ+bgratF4WGYjLOVgCkW9H6QSx7gRn25dfnW77hjb0/FYNZeTh8ZiOhYl7jvdn7N/HQufhosoN3GPmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN0P287MB2019.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1b8::9)
- by PN2P287MB1711.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1a9::10) with
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QX5Brsc5erJ27Jpmv0Sz1oje8zVP/zpMyNPLCqcpdQw=;
+ b=F1RZtedCfCSpC7ha2JqWkfD1YIqiYg5+UJncK3gOPhcRMNsy/8XHbWR64j3YbV6enTqqxSpkRBeDMslm4EtLR2qaV7zlq6DVJokG1JIgXNmtLQA7C9qMHoyJwzdVhh3pqIRM2/mJz4kjAI8uRIEbDAstCMI/tMcJ2gGFRApJFCU=
+Received: from BL0PR04MB6564.namprd04.prod.outlook.com (2603:10b6:208:17d::11)
+ by CH2PR04MB7109.namprd04.prod.outlook.com (2603:10b6:610:9e::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
- 2024 06:02:20 +0000
-Received: from PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
- ([fe80::368a:445f:b1be:4bd6]) by PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
- ([fe80::368a:445f:b1be:4bd6%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 06:02:20 +0000
-From: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-To: linus.walleij@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to yaml format
-Date: Tue, 22 Oct 2024 11:31:27 +0530
-Message-ID: <20241022060157.36372-1-himanshu.bhavani@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN3PR01CA0012.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:95::21) To PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:1b8::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 22 Oct
+ 2024 06:01:43 +0000
+Received: from BL0PR04MB6564.namprd04.prod.outlook.com
+ ([fe80::bd7b:c391:6f87:5a9f]) by BL0PR04MB6564.namprd04.prod.outlook.com
+ ([fe80::bd7b:c391:6f87:5a9f%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 06:01:43 +0000
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
+	<martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/4] scsi: ufs: core: Use reg_lock to protect HCE register
+Thread-Topic: [PATCH 4/4] scsi: ufs: core: Use reg_lock to protect HCE
+ register
+Thread-Index: AQHbI7GX04FTCZ+iXkyEl3HUW5xNrrKRoRCAgACkxoA=
+Date: Tue, 22 Oct 2024 06:01:43 +0000
+Message-ID:
+ <BL0PR04MB6564D0850FA21E845B558FAEFC4C2@BL0PR04MB6564.namprd04.prod.outlook.com>
+References: <20241021120313.493371-1-avri.altman@wdc.com>
+ <20241021120313.493371-5-avri.altman@wdc.com>
+ <c58e4fce-0a74-4469-ad16-f1edbd670728@acm.org>
+In-Reply-To: <c58e4fce-0a74-4469-ad16-f1edbd670728@acm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL0PR04MB6564:EE_|CH2PR04MB7109:EE_
+x-ms-office365-filtering-correlation-id: ffd70e14-2b2c-470d-19be-08dcf25f010e
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WC9vcm90aHRtK2RNcE53d0dFM3pXc3FSNUFiOUdPdVdrNm9GeSsyQzRwT1cx?=
+ =?utf-8?B?R09sQUt6VzBzY0M3dHVTSk1uSXBrYzlvMXpZNjZDUU9jR2R1M0poVXNCRGZM?=
+ =?utf-8?B?elZTNzFzM3ViRk91MXE4WmZMalhSUXRBSmxUV3M1OVhrSksrVnVXcjNiR2Zo?=
+ =?utf-8?B?b1djWGRJRStxMWU3WXRvUjJMMTRrelhYaGNJNXYwZXZmVUVFZ1NKRzZwZ1FI?=
+ =?utf-8?B?alBKQjdvaDQxUjZ5MTN3Qzc0aWVBbU1mTDdXMUNZb3dFc3VlTjhTUUZPTkJX?=
+ =?utf-8?B?N2ZIczNoa3pFalo1SDdjQWFDejNJWERlUmdHR0M3S3RkUVFrMStpMkxzQkJV?=
+ =?utf-8?B?OG9qaWZ5NjRjb3VHQWxiK3UzUHUwYkYwQ3JRTE9GZ1RERWN6Q2t4VFNDVXRO?=
+ =?utf-8?B?dnJpTy9tZE12cjB3dlpIT1A2enloSUFvbmx0SUJCbVN0cFVsajM5TGNMdUxK?=
+ =?utf-8?B?NXhhTnlMKytYT0pMd0RXVVhIeVA0ai9VVWZCNTM5VWlhcVArbnpLQjI0emY1?=
+ =?utf-8?B?MkFzVjVNc29zTE8zS2srTEJ0SjRHdnJmWGNEbC8vRFYrUE1GTlpRQ0I5Zk9B?=
+ =?utf-8?B?cXQ5MUVCR2FJWmRCeW01aXBxRDQ5TDBGRmpPZi8zcnoyYzNZelRhb2FVSFZo?=
+ =?utf-8?B?ODJyMTJDSkIxMXM3UGszN2ZMNW5LZTFkTlE1K3BucXJZb0dMVUdYVU1JaWNG?=
+ =?utf-8?B?KzA5Mi9zakV6MHNXNDY5YXoxazZwWm40bE5oMEVpSjNPVXlyYVcweXl4bHpG?=
+ =?utf-8?B?ZEFCYnFKcVJiK2Jvc3BJZWxNOGR5bVd6MUVhLzdKb3NXSjB4bWRQSS9QVS80?=
+ =?utf-8?B?VDJJaXV4YjVHZFdrMzFmTmlBTWxhK1ROVmJvWVJCSmQ0TEViMFRpejhVamxY?=
+ =?utf-8?B?elM5TG9FZ2pZZWg4TUJRSmFLSi82OXVmeDZSellrK3BObmpPRTEzS2I1MVNX?=
+ =?utf-8?B?UW5wRFllVGoxMHFzRFVhYkNjcFdDbVZBTkRKdVQyNEZkdUpLN2puVmdkZlBq?=
+ =?utf-8?B?U1Z1UExUYVQ1VlhMT1VEdkxJTzBacGF0OTQ0WTM4WExibndvb0t4aUFJb0FG?=
+ =?utf-8?B?VWU4WUhDc1k2L3E4NVhWYzRrV29CZ1dnNFFwYkRQS1hlMzRMSmRMRExkSnph?=
+ =?utf-8?B?ZEZCNExPM213NlB4Sk8yNUdvZjBLeHRYd2x6eDlObXhnaUFxQ3VQZEJONThH?=
+ =?utf-8?B?WHlKdFJRUG1hRGxOYlQyeU9XOEZUZDJYdHd3VTVYaERFWEhkRkM0L24vOGJz?=
+ =?utf-8?B?aWNBdHZ6RnRpTVlpeThDZVJaU1pMY3NIdjBRUUR4a2JDRTJ6V2E3VTVjeE5Q?=
+ =?utf-8?B?K1NwQXdIT3lTUFBWbVRxMFlleWlXMzJDSVdmWjE3cXdpaWNMa1hXWUVLeFph?=
+ =?utf-8?B?Vk91K29hRFZSd2Q4TFNEZ3czWlp0NXJycmM1WDNXNlhXczVNUEM3SlN4bkw1?=
+ =?utf-8?B?RTdFbzNVajR1eUMvd2tYRWZDdzc4bTBrbS9xS2tIcUZYRzNzOFdOWkowRHhr?=
+ =?utf-8?B?NlZmZ0RjOGpSbzhCdEM3QXQ0cDY4a01QSk81MTBsRVN5S0Y3TGdMdzkzdy84?=
+ =?utf-8?B?TTlUcUlFbnBlWU1hRTEzd3hQczRETnpHTVZjQ1NIazJoWmtRNVZIa1VBZ2w0?=
+ =?utf-8?B?RGpyUjJJSUJtczB4emV1U2xHZjJRSXNSUE1yclNiRDhnR0crMGZlNXhtRHE2?=
+ =?utf-8?B?ZGg3by9jd3lkSkhDSTgyaVZFR1pFeE8vLzlxaUU3WDNoNEEvenF1UXN1elhu?=
+ =?utf-8?B?V0JoWE1nQWZoUGJIZ1lPZDdJMXR6USt5U2UzZ1RVU25WK290cEw0UGZQQ1Zn?=
+ =?utf-8?Q?pHOfSYH/1NSrXOB+fR7ty78KyROReLKamW+eU=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6564.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?U2JTSWgvSUJhQXRadnZyNnJtVXYrOTFWSXBvcmpvYlZuYWhLaSt4OWRlOHUw?=
+ =?utf-8?B?ellmRVdXdnZoUTVLQkpSZmw3K0NJblhBOGxaVURsUmhDUktEelBLdEJrNEJz?=
+ =?utf-8?B?a3hZZ2kvT3ZGais1WTVNS3QzZUdqbWpTcjdvb013ZXV2c1JCbTFNKytEVzFO?=
+ =?utf-8?B?ZzNMeTFaY3ZLNEFXdlFlL1FFbnVNRXBKQlI2d3FnSWZsMy9samt4dm5UcjVn?=
+ =?utf-8?B?OXVUUlo2WmY3SDF4NnIzMUNhcDRzVWZxRVJMak0rSXZjTjNDY0ZmakN1SGVI?=
+ =?utf-8?B?RGZ3eDcxNG1mNHpMaGx5QWZsMVdTbCtLR0hKM20xb3o5ODRyMy9ld0EvbWk4?=
+ =?utf-8?B?eVdyME80ZHFEcTRoY1lNV0hJQkhGb25PeWFiWGc4R3JjOUFodGU2dFJtVTdk?=
+ =?utf-8?B?dVVRb2JQS2ptdk5vd1I4T3BkYmlMMzJUQmprcHlqR2NQVnBSSEZLOTFDWFhl?=
+ =?utf-8?B?c1lOcVQwbC9vNE13UW92U3ZoNndPdi9VTHJORU14VTRyUUFadTcrWFVHTity?=
+ =?utf-8?B?Y1ltV1VqTjF2ZkxsVlNFT3lpM3huSkNaYkNXN0tWU2hhc1pvQisxR20vZVM5?=
+ =?utf-8?B?TFF6OWpzTkRBNXJSeXdLN1Bia1B1NmhyZEY2MHQrL2Q0bkxjV2trYWgrY2pF?=
+ =?utf-8?B?Kzlab09VTkw0UWlWMUdWZnVmanNRcVNYd1AxTmQxRkJmNlpESEZYRzc0dGlS?=
+ =?utf-8?B?cFBocnJWMmxKV0s4cGJBeEdWUFRkd1EyY2wvMzZqbGovcUlxVHlVeTVlNSs2?=
+ =?utf-8?B?TitkSWp1clQrRWIvZU9BODVBTzNpNHJNK3NHSXYvQzRJTEU1YzdHYWR1am9t?=
+ =?utf-8?B?TmpFWk1qWmx6cnZrOEw2SDg5QjJPYTQ5TUVRNUYza2YzM3FDZzdBSDFTb1lZ?=
+ =?utf-8?B?VDAxR2ZSVEZNMitBMmtwTzRyUFhxdG9UZjVqZTNXV2V0ZE1GWERUS3Y0OHR4?=
+ =?utf-8?B?L1d1OWtTRnlGdytzZFVsUy9BWmUvMlpMYmQ4NFFXMytvUll1ajRHMldWOXdB?=
+ =?utf-8?B?bnQ0NFZCc0ROOGNRUmhwZ0RpZTdBS0tjZnEwaG4yMjdELzQwaVJWTkE4d1hq?=
+ =?utf-8?B?MkhRSG11QkVFYTV1ODVYY0h6bTROMnhYa3hCUzBrVGpvajczZCtwdkFWdkVh?=
+ =?utf-8?B?czlkbjc3OVdrcDlhdkQ0eUx0QU5Ka1E3dWZ5OFU1dXkwRmV1Qlhjb0h3WG0x?=
+ =?utf-8?B?VXBNZ1k1WUN1ZDVWcm9ZTURjKzFsVzVUL3p6WnhtNmdMMkFyc3pjWXoxWVJF?=
+ =?utf-8?B?bDBaWDNMc1kwS1JKanFiTWJSZHdyTjhwWTIwcjY5S3o5S1BPMWdEUy9kQ1pa?=
+ =?utf-8?B?YVovcnZoTFNpZW5NUzRiNnJSZTZvUmhhdlg1TEpkTWE0TnowVEI5RmdVcnVH?=
+ =?utf-8?B?blB6bm9ZcEV6b2YvZGMrd3NnRXkxRndLYXNza1VDWTdPWjdlamhiRlhsTitP?=
+ =?utf-8?B?RnIvcXNISkNScFJQcGoxbVF1RWVlWmZMWXNPelhBeS9lOTRJL3VkbGY0MkFo?=
+ =?utf-8?B?VkxTTlN2emM5Nm1pRVFCVWdHQ0Rad1U2WEZhTDkwb2I0QzNaUUR4WEZhcmpR?=
+ =?utf-8?B?M0IyTFY2cWNkVmZZbGxVSEFZTU9UMzZmOVRYS3gyTXc2K3J2VWVkY2k0S3ZM?=
+ =?utf-8?B?aDgrMDJvRVJtc29vN1l3UW9wRmlhckxNQnhKQ2JoaHl0SjQxZnljOHQ1cnNs?=
+ =?utf-8?B?ekpXNkdQQk5zRHRZWkhZbXY4bXFxdDh6WXprWG9nQUkwc01QZWNCWCt1dWRG?=
+ =?utf-8?B?SzNhNityQ3k4Wk8xS2JJblpjZU95R1NuZDNLeDRWR00yOHp6aUhpbG8rRnFq?=
+ =?utf-8?B?M2t5eklaT1JrbVJrU2ZOcElXYlA5OWhndVdXOEhGeTQ1TWd1K092cy80NFR6?=
+ =?utf-8?B?NmREc1RGaFJBSTJkNzVIVWxsV1lTL04vVlB2dzRJL1RraFV6WEZpZFVMSit4?=
+ =?utf-8?B?akY2VHpRbzNyMUU1bFNTenpFYXFveFpLbTFWN0h0VzJFakNwUGFtMW94ODI3?=
+ =?utf-8?B?UmUzUVRhdlN6Ymd5UmxFa1NySkpqcG91bmx3NVp1Zmt6ZXNFR2F0U3lnNDNM?=
+ =?utf-8?B?R2IxOVNJclJ1WFQ2WGZLNEozeVlhSi9FOGRHSmJYZDdCOXRwRTlTckp1Y2J1?=
+ =?utf-8?Q?r3DDSGeVoqZlJBKugK7I3ys8F?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0P287MB2019:EE_|PN2P287MB1711:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b105667-106b-40d9-f94b-08dcf25f173b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sVXtrNflOU2oabbMw6qRUCLmEn/6l7zJL81pKeqMbL3OTOd+MszWqYFCTlTl?=
- =?us-ascii?Q?LGBbBajYFS+S4AQJd77f4tFtIWll78P1Bg9/wQxGJp8vtH0x3My3XWfyybTP?=
- =?us-ascii?Q?2YZZhKl7edNYNYqfVkoLKP5hKTlYe8mqWDCIFIq06AUaX/IXP1tUrnHzAvLi?=
- =?us-ascii?Q?8cmMbkrEQQCRvQIG/R8JvbS200VCBgvshn70zZzfsaVQ+WhIQaPJ7ttNol7C?=
- =?us-ascii?Q?XE0M0xpZmoZgzlQIrBnmsyYb0cbrGVOIy+52t+bhVrJJ0Nahq4PcYLRvjBba?=
- =?us-ascii?Q?dxZYZjJv5Zh+pOjieErAG39P1C9iABXc7XGo2dbMBKUt7yE7kPP6BpeS3VOF?=
- =?us-ascii?Q?uBfb4ubKBtFgOZOxHMK+k/I9vhElMXrt6Y2Ucj0d5gPUxCVcGWbWiWv1xlK3?=
- =?us-ascii?Q?cJwJ1ssFv2IQpXQlES3krQNGPsr8cRrOHDuGvAmRnNVbtqf4gooxd98SOGon?=
- =?us-ascii?Q?1smZQReUFKQ0pHjOdPooM0bn+M2aBKL2U0MfgAiSCqWLNkD9W3Fjg/hwIpw8?=
- =?us-ascii?Q?kZYL3eI2G++sicTMRdjg+7y83JHYhx8MNwFoA88lkfvq8AzDca51mU3HusKX?=
- =?us-ascii?Q?4jbExB0gKhnP7PVg8K3Gh2UmfKIcKSjfU/DYAGef/jyy8vfUM6f+9zWXeudE?=
- =?us-ascii?Q?GMl6XW+DW9ZfzDaDa96veOiUJqr9e3iNI/SmrWIOOSNku/7XlNbHyj6azLFI?=
- =?us-ascii?Q?MF//XP6gxw6wunq5elDt6NnxLg7jHqfAs2O6V0bVopeqRr7GeXdaQ8psQW/M?=
- =?us-ascii?Q?JfHXouwLfQwpjU4mbDWVXfZW6lGAV0rbqThmHTUnOSgL+sbZTXQ6+3LnFzmB?=
- =?us-ascii?Q?AlSwlR6ItS+U0vQH1bO+ZfIHWkacNm9kplkq7vD05EluYtc8eZt9QYweNFlJ?=
- =?us-ascii?Q?Mc6yVC871Yp9TZnXx3TM9Z5a1aPfbYoC+yAvTEnjfAZqcO1JhuWT1lAMU5hU?=
- =?us-ascii?Q?MlvgF4R5HOjX6F+fAYrguLnP3Lue5w/dJka09MH9jKjRDUisVptIpQzZ70Gd?=
- =?us-ascii?Q?tOSSJkLaTXy23/tilx8eCYThU+NPQgTPcjGlTLHMzxNAnvwHFER7dB3w4bcT?=
- =?us-ascii?Q?LW8CNS9NL9Tp5A/45H5bAsnrsqtKtzkRmP3CewQFm8rSCV81uGpBDK6Wy+Yi?=
- =?us-ascii?Q?xIWZWKypbgka1Bd09tIQSrjG39NuyzfAzArvfHjk8+t6nMaZBF0Ljt9WB5MX?=
- =?us-ascii?Q?yNy7QacO+zrdCobzzub9gKRmSJO8NGhPInn8hAAU8c8A7aSFmdYSeC31/MfK?=
- =?us-ascii?Q?wVimCkdeExrZPMRwWjCKs4z6M/HTH2+LOyv5m1cYtAYkwnYDo8jIfedDbAWi?=
- =?us-ascii?Q?f2/p8R0OqyaaIoztUw2S87Fi?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2019.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?r3GyHls5gcYeqUpQy77QxwTnkP2ogk8A6Tm9Bd40apaZwKmhCpOH61jNkV1C?=
- =?us-ascii?Q?poVJuTZozbD0nHbL4pQ0031FEvzWO9AaZa59FNj8Sx2aasJa+tteRmO8gzzP?=
- =?us-ascii?Q?peDNr1iYqunw3toMr4XOyAwquAYcfPGcdLaapPCU2C+Wz0xVtZpqXzJeNXW0?=
- =?us-ascii?Q?r+A76iH6Uq8bwdFs+ANTzDkFlyvAcWvvw3MKkARINvjE1QfloOW0t9gvExML?=
- =?us-ascii?Q?FFTfHEDrrVBTNzwLmtTc+IftD1uh0qsLrBLd9rcHTPmpjZHwo29X41tgXk0l?=
- =?us-ascii?Q?2CEl869YKfgygxUTQZ0SHvn8yRCNMy1FFGgdJ25DNfNekOniRXKGLKlmVOgT?=
- =?us-ascii?Q?lZrYF9LQtmH7iueI/tmRbstlUBXxqrCAOQ2JCm/Xc7c3O604tgm+xYgBgowe?=
- =?us-ascii?Q?LPxs7k93FfmvTzijPAtwQqutKommNeXHCUx3lhia67PgSVI3/lO4rWRCJJ88?=
- =?us-ascii?Q?RNI1Vfn/cBtaZ+y2zc7xoObH+yiUfm9cbNoS7cyu9MFk5jX9vGmxLCSycgGg?=
- =?us-ascii?Q?8HfuXnm9kJl/t5Kghc4wrFPZnNVn/0kKLg6lZt7EPEx0RaK/Zq8SliksDfAe?=
- =?us-ascii?Q?pYjF65tOM1KXM8Yox1EE+k0nFrMpv7TOxnZumEjEjpeklpXrBnCPoDjN0r/z?=
- =?us-ascii?Q?O1ssnF2dXn+g/0ad8iDKERdG1pD8np99SZh4NxqEmsDwIQKU17pkYMxDI6jF?=
- =?us-ascii?Q?t/0i0stNUMuw4KPCyTaAk7azjpFW2ZvUiAgDfWrBw00eBR0xTUvu71mzcSO2?=
- =?us-ascii?Q?Ve/EfIY8m2K2K5yLpKZtHAKYEpZtqtskZmL9Vqeao3JkeAaqB6yVF2T5kaPC?=
- =?us-ascii?Q?M7di7olDBzpQeos58EN0R5NpV3ru5Muhlwl+UfoW5nrUzOw2L8ZHNgd6UEjP?=
- =?us-ascii?Q?mOrFkekS2ZKPfWTkuZB7IyomtrArZXdc/RxpfxE2ixpn/g9+Yby70EquKU38?=
- =?us-ascii?Q?MH1KIHnYq9zcAGFpYarAthKFOROqpBRBq1of3N+Ks+cZyWl0Oh/LmsLXmGV2?=
- =?us-ascii?Q?HnOzihwCKsBVS2FnTtMG5vjBDPjY2JOYZlhvOLulMpZuPsc3W0kWj3cy6WIp?=
- =?us-ascii?Q?0TtQbhPl/lRWVL9k5l00CLZp1nD2Hd0/4bWaK6Y0bVAgfqd9mvzPr6lwjwl0?=
- =?us-ascii?Q?rcNaWTV6UTatvjqezfGTm8jKDG+rXX6nh2l3rxy06FYfbXpGZtUe9auH40fJ?=
- =?us-ascii?Q?9qOc+3dzc2kywE+CCXRgJxO54dydm9tsspCVsbVZ0hwjAmUWQ2FJa6kAieh6?=
- =?us-ascii?Q?4yNWJZCH+5LmsMrEtp44Pt7QZQHxxduc/SLX5vobDcPJ7YW8nZuexn9F6SRf?=
- =?us-ascii?Q?UCtdOOxuXCW+5Ug8PKZSVYT21UbgZyfzrhzKhJwsY+Z6V36soBuGrtuSif4P?=
- =?us-ascii?Q?myj3U4RSSx/45i5BWcScCs66bJo0yeuXRRCFQtEEoYRL0tj322ng8tW1Ocp/?=
- =?us-ascii?Q?6Dol358Iv0/KIbW5nnRVLwJGxiHJSL/h2P+dgVG1oFW5mAVk05Qq9tqwoNUF?=
- =?us-ascii?Q?EVVc9nggJg13Jon8Ob9vlzt/lJZz6EJGpsWm4tIHM9A6i3xCqQ7/k/z+ZTSR?=
- =?us-ascii?Q?WcRVg+ByJFbpf6syjQ64lPQ+TuiVoOUNK9ET1F+hiTtqNlelXedfzta/yXSi?=
- =?us-ascii?Q?8CHKfRk9Gz9UHaicNNYbLr4=3D?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b105667-106b-40d9-f94b-08dcf25f173b
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	d1VxxrP4zlrCljMbrsSElHnp3bnijNgfA+kzaNgDwHr2i9kgwdwTyqUE/lPvt3/wsGkOk6y8jOo54jkaTkKsDSyQt5FfZpV7ptHW22biK00vZXeZ/cw/1NOt+U7x1O2f2+DwexoJWzz/IMiFpWo9FMN+LWh7wII2f0sD1jiKbwts09KqQiB9URXCufjhLfP946yTa+IZREPLh32db3UHJfV8Cpnd1QWkSyhj45pF/oIa/kvZTp528TMLC5soaXE8ovQteuDmNw6GFg/dwwjJ565SCeRbPLUxkFYWzzBg54gx3FuBorllPLSyZzZd3gmuF9WH6USxGrdgYw0DpKWQNQXG+u7MnNr/6Nz6TCUlb1xvDCtwf28lAb5MSy9P6krnmio+YOOs+MVSznIsLE70Aw31XkAGXefczmEV9qBSnGXXYKvK+BBuTfVEQNNbA6JyIA68KaFRq+dfFtG/IFKCNQIM8ZQS62k5MQNU6CPYo07KNI0Sm7UFCpl7pEsA/E5pClQpjed4xUba9L0XQVlwen1gienjVWLdXOWRK761fVsCSK2e2Q5s0R9qZz+3BJSxwcFb1krp/BjnZckBGXgvKeGcl9CX1oCk0GltgRN7MZ1jT6UhVy8d8pLLBYVuNslk
+X-OriginatorOrg: wdc.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 06:02:20.6814
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6564.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffd70e14-2b2c-470d-19be-08dcf25f010e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2024 06:01:43.3062
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LQlFlS9QhYXppE3UYTuGHyREo32jJ5zEIa61j/bhckWpzoFFT4JacD/Ne8QdU9Sok1W1z8NqsPaLl5uVit8qvIhAmAf+XWm4UXlRq7X35rpfJ4rcNwFzNTApSuyIDbaJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1711
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: P4wnG+3264uW6O9Dgs8ubyXj/Y53DEcAWumbsZ4Y7upvLkWztKcgnvzpNl7115+wfzRoUKg6XpBb1CUT5ACj7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR04MB7109
 
-Convert the text bindings of pinctrl-mcp23s08 to YAML so it could be used to
-validate the DTS.
-
-Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
----
- .../bindings/pinctrl/pinctrl-mcp23s08.txt     | 148 -----------------
- .../bindings/pinctrl/pinctrl-mcp23s08.yaml    | 153 ++++++++++++++++++
- 2 files changed, 153 insertions(+), 148 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-deleted file mode 100644
-index 2fa5edac7a35..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-+++ /dev/null
-@@ -1,148 +0,0 @@
--Microchip MCP2308/MCP23S08/MCP23017/MCP23S17 driver for
--8-/16-bit I/O expander with serial interface (I2C/SPI)
--
--Required properties:
--- compatible : Should be
--    - "mcp,mcp23s08" (DEPRECATED) for  8 GPIO SPI version
--    - "mcp,mcp23s17" (DEPRECATED) for 16 GPIO SPI version
--    - "mcp,mcp23008" (DEPRECATED) for  8 GPIO I2C version or
--    - "mcp,mcp23017" (DEPRECATED) for 16 GPIO I2C version of the chip
--
--    - "microchip,mcp23s08" for  8 GPIO SPI version
--    - "microchip,mcp23s17" for 16 GPIO SPI version
--    - "microchip,mcp23s18" for 16 GPIO SPI version
--    - "microchip,mcp23008" for  8 GPIO I2C version or
--    - "microchip,mcp23017" for 16 GPIO I2C version of the chip
--    - "microchip,mcp23018" for 16 GPIO I2C version
--    NOTE: Do not use the old mcp prefix any more. It is deprecated and will be
--    removed.
--- #gpio-cells : Should be two.
--  - first cell is the pin number
--  - second cell is used to specify flags as described in
--    'Documentation/devicetree/bindings/gpio/gpio.txt'. Allowed values defined by
--    'include/dt-bindings/gpio/gpio.h' (e.g. GPIO_ACTIVE_LOW).
--- gpio-controller : Marks the device node as a GPIO controller.
--- reg : For an address on its bus. I2C uses this a the I2C address of the chip.
--        SPI uses this to specify the chipselect line which the chip is
--        connected to. The driver and the SPI variant of the chip support
--        multiple chips on the same chipselect. Have a look at
--        microchip,spi-present-mask below.
--
--Required device specific properties (only for SPI chips):
--- mcp,spi-present-mask (DEPRECATED)
--- microchip,spi-present-mask : This is a present flag, that makes only sense for SPI
--        chips - as the name suggests. Multiple SPI chips can share the same
--        SPI chipselect. Set a bit in bit0-7 in this mask to 1 if there is a
--        chip connected with the corresponding spi address set. For example if
--        you have a chip with address 3 connected, you have to set bit3 to 1,
--        which is 0x08. mcp23s08 chip variant only supports bits 0-3. It is not
--        possible to mix mcp23s08 and mcp23s17 on the same chipselect. Set at
--        least one bit to 1 for SPI chips.
--    NOTE: Do not use the old mcp prefix any more. It is deprecated and will be
--    removed.
--- spi-max-frequency = The maximum frequency this chip is able to handle
--
--Optional properties:
--- #interrupt-cells : Should be two.
--  - first cell is the pin number
--  - second cell is used to specify flags.
--- interrupt-controller: Marks the device node as a interrupt controller.
--- drive-open-drain: Sets the ODR flag in the IOCON register. This configures
--        the IRQ output as open drain active low.
--- reset-gpios: Corresponds to the active-low RESET# pin for the chip
--
--Optional device specific properties:
--- microchip,irq-mirror: Sets the mirror flag in the IOCON register. Devices
--        with two interrupt outputs (these are the devices ending with 17 and
--        those that have 16 IOs) have two IO banks: IO 0-7 form bank 1 and
--        IO 8-15 are bank 2. These chips have two different interrupt outputs:
--        One for bank 1 and another for bank 2. If irq-mirror is set, both
--        interrupts are generated regardless of the bank that an input change
--        occurred on. If it is not set, the interrupt are only generated for the
--        bank they belong to.
--        On devices with only one interrupt output this property is useless.
--- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
--        configures the IRQ output polarity as active high.
--
--Example I2C (with interrupt):
--gpiom1: gpio@20 {
--        compatible = "microchip,mcp23017";
--        gpio-controller;
--        #gpio-cells = <2>;
--        reg = <0x20>;
--
--        interrupt-parent = <&gpio1>;
--        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
--        interrupt-controller;
--        #interrupt-cells=<2>;
--        microchip,irq-mirror;
--};
--
--Example SPI:
--gpiom1: gpio@0 {
--        compatible = "microchip,mcp23s17";
--        gpio-controller;
--        #gpio-cells = <2>;
--        microchip,spi-present-mask = <0x01>;
--        reg = <0>;
--        spi-max-frequency = <1000000>;
--};
--
--Pull-up configuration
--=====================
--
--If pins are used as output, they can also be configured with pull-ups. This is
--done with pinctrl.
--
--Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
--for details of the common pinctrl bindings used by client devices,
--including the meaning of the phrase "pin configuration node".
--
--Optional Pinmux properties:
----------------------------
--Following properties are required if default setting of pins are required
--at boot.
--- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
--- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
--		<pinctrl-bindings.txt>.
--
--The pin configurations are defined as child of the pinctrl states node. Each
--sub-node have following properties:
--
--Required properties:
--------------------
--- pins: List of pins. Valid values of pins properties are:
--		      gpio0 ... gpio7 for the devices with 8 GPIO pins and
--		      gpio0 ... gpio15 for the devices with 16 GPIO pins.
--
--Optional properties:
---------------------
--The following optional property is defined in the pinmux DT binding document
--<pinctrl-bindings.txt>. Absence of this property will leave the configuration
--in its default state.
--	bias-pull-up
--
--Example with pinctrl to pull-up output pins:
--gpio21: gpio@21 {
--	compatible = "microchip,mcp23017";
--	gpio-controller;
--	#gpio-cells = <0x2>;
--	reg = <0x21>;
--	interrupt-parent = <&socgpio>;
--	interrupts = <0x17 0x8>;
--	interrupt-names = "mcp23017@21 irq";
--	interrupt-controller;
--	#interrupt-cells = <0x2>;
--	microchip,irq-mirror;
--	pinctrl-names = "default";
--	pinctrl-0 = <&i2cgpio0irq>, <&gpio21pullups>;
--	reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
--
--	gpio21pullups: pinmux {
--		pins =	"gpio0", "gpio1", "gpio2", "gpio3",
--			"gpio4", "gpio5", "gpio6", "gpio7",
--			"gpio8", "gpio9", "gpio10", "gpio11",
--			"gpio12", "gpio13", "gpio14", "gpio15";
--		bias-pull-up;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
-new file mode 100644
-index 000000000000..3904b8adba44
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
-@@ -0,0 +1,153 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+# Copyright 2024 Silicon Signals Pvt. Ltd.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/pinctrl-mcp23s08.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip I/O expander with serial interface (I2C/SPI)
-+
-+maintainers:
-+  - Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-+
-+description: |
-+  Microchip MCP23008, MCP23017, MCP23S08, MCP23S17, MCP23S18 GPIO expander
-+  chips.These chips provide 8 or 16 GPIO pins with either I2C or SPI interface.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - microchip,mcp23s08
-+      - microchip,mcp23s17
-+      - microchip,mcp23s18
-+      - microchip,mcp23008
-+      - microchip,mcp23017
-+      - microchip,mcp23018
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description: GPIO specifier for active-low reset pin.
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    description: Maximum frequency for SPI devices.
-+
-+  microchip,spi-present-mask:
-+    description: |
-+      SPI present mask. Specifies which chips are present on the shared SPI
-+      chipselect. Each bit in the mask represents one SPI address.
-+    $ref: /schemas/types.yaml#/definitions/uint8
-+
-+  microchip,irq-mirror:
-+    type: boolean
-+    description: |
-+      Sets the mirror flag in the IOCON register. Devices with two interrupt
-+      outputs (these are the devices ending with 17 and those that have 16 IOs)
-+      have two IO banks IO 0-7 form bank 1 and IO 8-15 are bank 2. These chips
-+      have two different interrupt outputs One for bank 1 and another for
-+      bank 2. If irq-mirror is set, both interrupts are generated regardless of
-+      the bank that an input change occurred on. If it is not set,the interrupt
-+      are only generated for the bank they belong to.
-+
-+  microchip,irq-active-high:
-+    type: boolean
-+    description: |
-+      Sets the INTPOL flag in the IOCON register.This configures the IRQ output
-+      polarity as active high.
-+
-+  drive-open-drain:
-+    type: boolean
-+    description: |
-+      Sets the ODR flag in the IOCON register. This configures the IRQ output as
-+      open drain active low.
-+
-+  pinmux:
-+    type: object
-+    properties:
-+      pins:  
-+        description: |
-+          The list of GPIO pins controlled by this node. Each pin name corresponds
-+          to a physical pin on the GPIO expander.
-+        items:
-+          pattern: "^gpio([0-9]|[1][0-5])$"
-+        maxItems: 16
-+
-+      bias-pull-up:
-+        type: boolean
-+        description: Configures pull-up resistors for the GPIO pins.
-+
-+    required:
-+      - pins
-+      - bias-pull-up
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        
-+        mcp23017: gpio@20 {
-+            compatible = "microchip,mcp23017";
-+            reg = <0x20>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+
-+            interrupt-parent = <&gpio1>;
-+            interrupts = <17 IRQ_TYPE_LEVEL_LOW>; // Check this line
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+
-+            microchip,irq-mirror;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&pinctrl_i2c_gpio0>, <&gpio21pullups>;
-+            reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
-+            
-+            gpio21pullups: pinmux {
-+                pins = "gpio0", "gpio1", "gpio2", "gpio3",
-+                       "gpio4", "gpio5", "gpio6", "gpio7",
-+                       "gpio8", "gpio9", "gpio10", "gpio11",
-+                       "gpio12", "gpio13", "gpio14", "gpio15";
-+                bias-pull-up;
-+            };
-+        };
-+    };
-+
-+  - |
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        
-+        mcp23s17: gpio@0 {
-+            compatible = "microchip,mcp23s17";
-+            reg = <0>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            spi-max-frequency = <1000000>;
-+            microchip,spi-present-mask = /bits/ 8 <0x01>;
-+        };
-+    };
--- 
-2.43.0
-
+PiBPbiAxMC8yMS8yNCA1OjAzIEFNLCBBdnJpIEFsdG1hbiB3cm90ZToNCj4gPiBVc2UgdGhlIGhv
+c3QgcmVnaXN0ZXIgbG9jayB0byBzZXJpYWxpemUgYWNjZXNzIHRvIHRoZSBIb3N0IENvbnRyb2xs
+ZXINCj4gPiBFbmFibGUgKEhDRSkgcmVnaXN0ZXIgYXMgd2VsbCwgaW5zdGVhZCBvZiB0aGUgaG9z
+dF9sb2NrLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQXZyaSBBbHRtYW4gPGF2cmkuYWx0bWFu
+QHdkYy5jb20+DQo+ID4gLS0tDQo+ID4gICBkcml2ZXJzL3Vmcy9jb3JlL3Vmc2hjZC5jIHwgNCAr
+Ky0tDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygt
+KQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMgYi9kcml2
+ZXJzL3Vmcy9jb3JlL3Vmc2hjZC5jDQo+ID4gaW5kZXggNGVlZTczN2E0ZmQ1Li4zY2M4ZmZjNjky
+OWYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy91ZnMvY29yZS91ZnNoY2QuYw0KPiA+ICsrKyBi
+L2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMNCj4gPiBAQCAtNDc5NSw5ICs0Nzk1LDkgQEAgdm9p
+ZCB1ZnNoY2RfaGJhX3N0b3Aoc3RydWN0IHVmc19oYmEgKmhiYSkNCj4gPiAgICAgICAgKiBPYnRh
+aW4gdGhlIGhvc3QgbG9jayB0byBwcmV2ZW50IHRoYXQgdGhlIGNvbnRyb2xsZXIgaXMgZGlzYWJs
+ZWQNCj4gPiAgICAgICAgKiB3aGlsZSB0aGUgVUZTIGludGVycnVwdCBoYW5kbGVyIGlzIGFjdGl2
+ZSBvbiBhbm90aGVyIENQVS4NCj4gPiAgICAgICAgKi8NCj4gPiAtICAgICBzcGluX2xvY2tfaXJx
+c2F2ZShoYmEtPmhvc3QtPmhvc3RfbG9jaywgZmxhZ3MpOw0KPiA+ICsgICAgIHNwaW5fbG9ja19p
+cnFzYXZlKCZoYmEtPnJlZ19sb2NrLCBmbGFncyk7DQo+ID4gICAgICAgdWZzaGNkX3dyaXRlbCho
+YmEsIENPTlRST0xMRVJfRElTQUJMRSwgIFJFR19DT05UUk9MTEVSX0VOQUJMRSk7DQo+ID4gLSAg
+ICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZShoYmEtPmhvc3QtPmhvc3RfbG9jaywgZmxhZ3MpOw0K
+PiA+ICsgICAgIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmhiYS0+cmVnX2xvY2ssIGZsYWdzKTsN
+Cj4gPg0KPiA+ICAgICAgIGVyciA9IHVmc2hjZF93YWl0X2Zvcl9yZWdpc3RlcihoYmEsIFJFR19D
+T05UUk9MTEVSX0VOQUJMRSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIENPTlRST0xMRVJfRU5BQkxFLA0KPiA+IENPTlRST0xMRVJfRElTQUJMRSwNCj4gDQo+IEhp
+IEF2cmksDQo+IA0KPiBIb3cgYWJvdXQgcHJvY2VlZGluZyBhcyBmb2xsb3dzIGZvciB1ZnNoY2Rf
+aGJhX3N0b3AoKToNCj4gKiBSZW1vdmUgdGhlIGNvbW1lbnQgYWJvdmUgdGhlIHVmc2hjZF93cml0
+ZWwoKSBjYWxsIGFuZCBhZGQgYQ0KPiAgICBkaXNhYmxlX2lycSgpIGNhbGwgaW5zdGVhZC4NCj4g
+KiBDYWxsIGVuYWJsZV9pcnEoKSBhZnRlciB1ZnNoY2Rfd3JpdGVsKCkgaGFzIGZpbmlzaGVkIGFu
+ZCBiZWZvcmUNCj4gICAgdWZzaGNkX3dhaXRfZm9yX3JlZ2lzdGVyKCkgaXMgY2FsbGVkLg0KPiAq
+IERvIG5vdCBob2xkIGFueSBsb2NrIGFyb3VuZCB0aGUgdWZzaGNkX3dyaXRlbCgpIGNhbGwuDQo+
+IA0KPiBBbHRob3VnaCB0aGUgbGVnYWN5IGludGVycnVwdCBpcyBkaXNhYmxlZCBieSBzb21lIGJ1
+dCBub3QgYWxsDQo+IHVmc2hjZF9oYmFfc3RvcCgpIGNhbGxlcnMsIEkgdGhpbmsgaXQgaXMgc2Fm
+ZSB0byBuZXN0IGRpc2FibGVfaXJxKCkgY2FsbHMuIEZyb20NCj4ga2VybmVsL2lycS9tYW5hZ2Uu
+YzoNCj4gDQo+IHZvaWQgX19kaXNhYmxlX2lycShzdHJ1Y3QgaXJxX2Rlc2MgKmRlc2MpIHsNCj4g
+ICAgICAgICBpZiAoIWRlc2MtPmRlcHRoKyspDQo+ICAgICAgICAgICAgICAgICBpcnFfZGlzYWJs
+ZShkZXNjKTsNCj4gfQ0KVGhhbmtzLiBJIHRoaW5rIEknbGwgZXhjbHVkZSB0aGlzIG9uZSBmcm9t
+IHRoaXMgc2VyaWVzLg0KSSB3YW50IGl0IHRvIGJlIGNsZWFyIHRoYXQgYWxsIGluc3RhbmNlcyBh
+cmUgYWJvdXQgcmVtb3ZpbmcgcmVkdW5kYW50IGhvc3RfbG9jayBjYWxscyBiZWZvcmUgcmVnaXN0
+ZXIgYWNjZXNzLg0KSGVyZSwgaXTigJlzIGEgYml0IGRpZmZlcmVudCBzaW5jZSBuZWVkIHRvIHZl
+cmlmeSB0aGF0IHRoZSBVRlMgaW50ZXJydXB0IGhhbmRsZXIgaXMgbm90IGFjdGl2ZSBvbiBhbm90
+aGVyIENQVS4NCkkgd2lsbCBmb2xsb3cgeW91ciBzdWdnZXN0aW9uIC0gYnV0IGluIGFub3RoZXIg
+c2VyaWVzLg0KDQpUaGFua3MsDQpBdnJpDQo+IA0KPiBUaGFua3MsDQo+IA0KPiBCYXJ0Lg0K
 
