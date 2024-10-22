@@ -1,199 +1,194 @@
-Return-Path: <linux-kernel+bounces-375315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499629A949F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A2A9A949D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82E71F23753
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A419D1F23845
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDDF1EEE0;
-	Tue, 22 Oct 2024 00:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDBDEEBB;
+	Tue, 22 Oct 2024 00:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H9x6GQ5T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GlZ18t27"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F09323D;
-	Tue, 22 Oct 2024 00:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C0D81E;
+	Tue, 22 Oct 2024 00:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556258; cv=none; b=drYxmgLWhiAzjt8ISboZJBDES0Z0nw9y6+EZJDg1W3IKxRpdPLW780GnkQKeieOfFztM/UBIuD2tNpCCgFNZ9rI7qkzT7GWgfoIgEJQC/MANQG9hNvE/gZU+onZ0x1pj3AJgeT+bm63NWeVfDyizjxgzn25y8choM6xmSb0SNM4=
+	t=1729556257; cv=none; b=Kyx/dxR5JxGvhZzcjl7sSHYqCZRXwL25hY0bS499ZXzKvMxaOy73LUO4fiHhR37Jx0YRILGmzS105hZCZm1OiXAJIRVkt+FaipgBynnVjsdcPkMhqq0GEQsvxDalM9hpeH6x9dq/r1nzdo+FWmngatRAhDxeDD4yIVomwx3RE0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556258; c=relaxed/simple;
-	bh=8foRClbi0ov1PrOIWtTzAzLs+dOjfgrS1ihOVOBOuKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QFSYl9XpwUhA7PMqu30tpX802c3ab2zoIK3iuAeoM+c94YebWppKvBckdkjrLFRTatXzt1OMnVyEpDNTUXMomKs6aK9jBV4n7bmtWn2RMIKRTUMx3h8Gp+DsfKxk0UoKYqkvVa0C+iMyOg7DPEaiKzNRvQumnLiQq5QnTZyU3fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H9x6GQ5T; arc=none smtp.client-ip=198.175.65.12
+	s=arc-20240116; t=1729556257; c=relaxed/simple;
+	bh=wqfHdyxb/kjiHcZmQPqoNSZPVIR84oe8ss6HVFUOwzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KvYwr7gU9eN+4tQHJy1OffX5N6a3fSRLyFAmFzPeG1G9ACvxL8bxoYjlQyFNcfN4sq8dxm3Ws8a9vDJONn4LaksGD9pEsX2nGCv76xcIHRyRaYBtpCZ+QIKY73l+KRpPUFolsjcGYOM0hSDw03NrV4yU/kfWwKguqWfMVf5gwrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GlZ18t27; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729556257; x=1761092257;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8foRClbi0ov1PrOIWtTzAzLs+dOjfgrS1ihOVOBOuKM=;
-  b=H9x6GQ5TKyypsNGi40PAlUvHuY9isUDPpcjR1YUfS89BtOftPaGO1AqD
-   kaBxfWEQztzA6YfqzpFqFL/QIiYlSodf0Rvj5Z3sFxvEP+ljnZJqUC+zq
-   Gt64srxithH8I2H2I/BrdfMkQ1FnpMBlaucnf2s1Lg33Nn17/O68R6ECv
-   gu2lSgdgEHi7L95TdgSKDHg0rXvDX5aSmSonHnb/hLiGraKoby9xVfSGf
-   ywgZ1vqb2T9YDQBqkeiOSsLRIqeVfyaUB4Tep36BWaHVmyIxqzYux6nWF
-   kTacFlL/DXcahN8FdM64UllskuVGWCstDwhvQEbhWZxyejX6xS+iKRj18
+  t=1729556256; x=1761092256;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wqfHdyxb/kjiHcZmQPqoNSZPVIR84oe8ss6HVFUOwzg=;
+  b=GlZ18t27pZvRrpXRBfy44tIm9JBL6c8FTQvevuifjU5seeNfPn44LQba
+   a9pzg+Gamz+yGWKpEXF0pXcXd0a6F5A0STmYRrVcRvPDk+6hAx+npTv3U
+   JgpbqXQiD5L8+4BYjLRUsoukaUfM3xmAwBjx6A7djYvncaC3QT4zWIUUd
+   Ng61FKp0/Y+r6ZqSEa/KIwntlXQDv42i3q/UC2D9uPa99W8xii4Rvjlz8
+   guUkWvq2i2m2Bt03fW/3bcZLiGtVaTShY71fQhbcmjsuZVPcWoKu6yQZ8
+   koxfHAr37U7vTrQ57mXWQpxvO34WcZ2ItmBs5w4Bjve1u0NwhYUqduY48
    w==;
-X-CSE-ConnectionGUID: Bs0WXJWdRAmO9ebABBMffQ==
-X-CSE-MsgGUID: cszAtTfxQGiTv56ktLxEmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="40454332"
+X-CSE-ConnectionGUID: Aep2jQ6bSjOr3q5HiB6gMA==
+X-CSE-MsgGUID: azezhFMWQau628RE5Zx11A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="54472250"
 X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="40454332"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:36 -0700
-X-CSE-ConnectionGUID: TFyYhElHSGKAmhjR7QALnw==
-X-CSE-MsgGUID: n0VVFdrdRYWs1zDR7t2CCg==
+   d="scan'208";a="54472250"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:35 -0700
+X-CSE-ConnectionGUID: MnR38BX4RmCrpfgk41urDg==
+X-CSE-MsgGUID: K1ZSWeElSoKympaffv36Lw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="110514238"
-Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:31 -0700
-From: Zhang Rui <rui.zhang@intel.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: rui.zhang@intel.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jmattson@google.com
-Subject: [PATCH] x86/acpi: Fix LAPIC/x2APIC parsing order
-Date: Tue, 22 Oct 2024 08:17:12 +0800
-Message-Id: <20241022001712.9218-1-rui.zhang@intel.com>
-X-Mailer: git-send-email 2.34.1
+   d="scan'208";a="79621338"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO [10.124.223.237]) ([10.124.223.237])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:34 -0700
+Message-ID: <8489127b-1292-475d-b67a-b0fc868d8a4b@intel.com>
+Date: Mon, 21 Oct 2024 17:17:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
+ a switch() statement
+To: Sohil Mehta <sohil.mehta@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
+ "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+ <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+ <20241016123036.21366-7-qiuxu.zhuo@intel.com>
+ <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
+ <ZxLBwO4HkkJG4WYn@agluck-desk3.sc.intel.com>
+ <2d011a77-a46e-4589-ae91-80d8d29e4124@intel.com>
+ <CY8PR11MB71348AA655274E611CFFFE6C89412@CY8PR11MB7134.namprd11.prod.outlook.com>
+ <SJ1PR11MB6083262976EDEC69FFF449FAFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <88e77a00-ad62-4670-9d4e-a146bd8b420c@intel.com>
+ <SJ1PR11MB60832636201CA40AD13C02C1FC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <7a902c13-bfdf-4319-9e31-81c199ecf65c@intel.com>
+ <SJ1PR11MB6083E463572AC9E110A7199FFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <42d59ea5-5b36-49cd-b04a-4480064fff02@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <42d59ea5-5b36-49cd-b04a-4480064fff02@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On some systems, the same CPU (with the same APIC ID) is assigned a
-different logical CPU id after commit ec9aedb2aa1a ("x86/acpi: Ignore
-invalid x2APIC entries").
+On 10/21/24 15:57, Sohil Mehta wrote:
+> On 10/21/2024 11:40 AM, Luck, Tony wrote:
+>>>> Intel model number allocation policies aren't necessarily sequential.
+>>> Model numbers are assumed to be sequential at least within family 6.
+>> Assumption can only be applied retroactively to simpler times.  Looking
+>> at the timelines and model numbers for pure-Atom, pure-Core, Hybrid,
+>> and Xeon, they are somewhat jumbled.
+>>
+> Agreed. Using range checks within a family with extreme care and
+> avoiding cross-family ones seems like the saner thing to do.
+> 
+> Maybe everything in the future is enumerated and VFM checks would not be
+> needed 🙂
+> 
+> Trying to understand more, I have more questions than answers. With the
+> introduction of Family 0x19, do we need to reevaluate some of the
+> existing model checks?
+> 
+> early_init_intel():
+> if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+>     (c->x86 == 0x6 && c->x86_model >= 0x0e))
+> 	set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+> 
+> It seems "constant_tsc" wouldn't show on Diamond rapids. Do we need it to?
 
-This means that Linux enumerates the CPUs in a different order, which
-violates ACPI specification[1] that states:
+We only have a handful of these and they're mostly for early family 6
+things.  I bet there's less than half a dozen.
 
-  "OSPM should initialize processors in the order that they appear in
-   the MADT"
+Let's just list them in one of our match structures:
 
-The problematic commit parses all LAPIC entries before any x2APIC
-entries, aiming to ignore x2APIC entries with APIC ID < 255 when valid
-LAPIC entries exist. However, it disrupts the CPU enumeration order on
-systems where x2APIC entries precede LAPIC entries in the MADT.
+const u32 NOT_SUPPORTED = UINT_MAX; // or another special, invalid VFM
+const u32 ALL_SUPPORTED = 0;
 
-Fix the problem by separately checking LAPIC entries before parsing any
-LAPIC or x2APIC entries.
+static const struct x86_cpu_id table[] __initconst = {
+	X86_MATCH_FAM(INTEL,   3, NOT_SUPPORTED),
+	X86_MATCH_FAM(INTEL,   4, NOT_SUPPORTED),
+	X86_MATCH_FAM(INTEL,   5, NOT_SUPPORTED),
+	X86_MATCH_FAM(INTEL,   6, INTEL_CORE_YONAH),
+	X86_MATCH_FAM(INTEL, 0xf, INTEL_P4_WHATEVER),
+	X86_MATCH_VEN(INTEL,      ALL_SUPPORTED),
+};
 
-1. https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html#madt-processor-local-apic-sapic-structure-entry-order
+... and then use it like this:
 
-Cc: stable@vger.kernel.org
-Reported-by: Jim Mattson <jmattson@google.com>
-Closes: https://lore.kernel.org/all/20241010213136.668672-1-jmattson@google.com/
-Fixes: ec9aedb2aa1a ("x86/acpi: Ignore invalid x2APIC entries")
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Tested-by: Jim Mattson <jmattson@google.com>
----
- arch/x86/kernel/acpi/boot.c | 50 +++++++++++++++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 5 deletions(-)
+	m = x86_match_cpu(table);
+	// Non-Intel lands here:
+	if (!m)
+		return false;
 
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 4efecac49863..c70b86f1f295 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -226,6 +226,28 @@ acpi_parse_x2apic(union acpi_subtable_headers *header, const unsigned long end)
- 	return 0;
- }
- 
-+static int __init
-+acpi_check_lapic(union acpi_subtable_headers *header, const unsigned long end)
-+{
-+	struct acpi_madt_local_apic *processor = NULL;
-+
-+	processor = (struct acpi_madt_local_apic *)header;
-+
-+	if (BAD_MADT_ENTRY(processor, end))
-+		return -EINVAL;
-+
-+	/* Ignore invalid ID */
-+	if (processor->id == 0xff)
-+		return 0;
-+
-+	/* Ignore processors that can not be onlined */
-+	if (!acpi_is_processor_usable(processor->lapic_flags))
-+		return 0;
-+
-+	has_lapic_cpus = true;
-+	return 0;
-+}
-+
- static int __init
- acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned long end)
- {
-@@ -257,7 +279,6 @@ acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned long end)
- 			       processor->processor_id, /* ACPI ID */
- 			       processor->lapic_flags & ACPI_MADT_ENABLED);
- 
--	has_lapic_cpus = true;
- 	return 0;
- }
- 
-@@ -1029,6 +1050,8 @@ static int __init early_acpi_parse_madt_lapic_addr_ovr(void)
- static int __init acpi_parse_madt_lapic_entries(void)
- {
- 	int count, x2count = 0;
-+	struct acpi_subtable_proc madt_proc[2];
-+	int ret;
- 
- 	if (!boot_cpu_has(X86_FEATURE_APIC))
- 		return -ENODEV;
-@@ -1037,10 +1060,27 @@ static int __init acpi_parse_madt_lapic_entries(void)
- 				      acpi_parse_sapic, MAX_LOCAL_APIC);
- 
- 	if (!count) {
--		count = acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC,
--					acpi_parse_lapic, MAX_LOCAL_APIC);
--		x2count = acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_X2APIC,
--					acpi_parse_x2apic, MAX_LOCAL_APIC);
-+		/* Check if there are valid LAPIC entries */
-+		acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC, acpi_check_lapic, MAX_LOCAL_APIC);
-+
-+		/*
-+		 * Enumerate the APIC IDs in the order that they appear in the
-+		 * MADT, no matter LAPIC entry or x2APIC entry is used.
-+		 */
-+		memset(madt_proc, 0, sizeof(madt_proc));
-+		madt_proc[0].id = ACPI_MADT_TYPE_LOCAL_APIC;
-+		madt_proc[0].handler = acpi_parse_lapic;
-+		madt_proc[1].id = ACPI_MADT_TYPE_LOCAL_X2APIC;
-+		madt_proc[1].handler = acpi_parse_x2apic;
-+		ret = acpi_table_parse_entries_array(ACPI_SIG_MADT,
-+				sizeof(struct acpi_table_madt),
-+				madt_proc, ARRAY_SIZE(madt_proc), MAX_LOCAL_APIC);
-+		if (ret < 0) {
-+			pr_err("Error parsing LAPIC/X2APIC entries\n");
-+			return ret;
-+		}
-+		count = madt_proc[0].count;
-+		x2count = madt_proc[1].count;
- 	}
- 	if (!count && !x2count) {
- 		pr_err("No LAPIC entries present\n");
--- 
-2.34.1
+	if (VFM_MODEL(c->x86_vfm) >= m->driver_data)
+		return true;
 
+	return false;
 
