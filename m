@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-376189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689379AA151
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0644C9AA146
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B6F1C239AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC93A28334A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A3A19C556;
-	Tue, 22 Oct 2024 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="JgCK9my9"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25B219C57F;
+	Tue, 22 Oct 2024 11:42:49 +0000 (UTC)
+Received: from mail115-63.sinamail.sina.com.cn (mail115-63.sinamail.sina.com.cn [218.30.115.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83F413BAC3;
-	Tue, 22 Oct 2024 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0179199EBB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.63
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597568; cv=none; b=rN/O3NompjT+EoNk3c3guvksvmz+ZPoLgglhnQzWJOyUwONB3D5VHdcFRhPaA5IJWI0MoLNGRL7u53qlsrnUnTRL5rKeXGAO211WZUi9gOkiNPbkI2EC9LZQose1VOSQFDntto7j+yyMr1IaemnjlwAHcxmwfe3Oqipc8R4cabk=
+	t=1729597369; cv=none; b=Al9vw50DAfp94BsoLvIZM6PfatI80j51kjJvq24IDIFDZ3QKOUwQX8UEqkY+cqmFKsGjxVHDt0uUe/KDKPlwwjWQczpr2KwbZwiVtuQsl+F7/sMh0arcAlR5BFMdBpk1VEL5OuPRfF4bjFGudESnE30CPQNwW7R76FfI/iNA7ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597568; c=relaxed/simple;
-	bh=dyhqqPxWxhvsXZ6xt+xmu1F0phNnHnKPqdBnuj3cJiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bsi/4/oICf2WnJpwqdI6VcACHijHxU/3a5tSQe/l1RvdFRK7lcWLQZg6QdF1LZMOK9rkNr3yQqn3O2OAUBSrj32cHvy/ZpU8FJkjc6O+a0asPlhY4fupG6gL6UvDCILATUfsVLmF8BytRqgZh4OKvZ96Kb3Dpyp0i8vEUiRVMHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=JgCK9my9; arc=none smtp.client-ip=212.227.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1729597543; x=1730202343; i=christian@heusel.eu;
-	bh=NPOMW9DlAcdetDnRxy3ZQhFfvGu4tQyYYBb/IlBYNOc=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JgCK9my94PiRC+zc4h+BpE65/Eesuwsi+G8kI7rgZn+xy+wu6bzrp57ECV8zfxZy
-	 3Ekc52UfKMkrtNzJv/qBYIXjX/CQfFinRYmWRQBHo7d2APOGOkjPFgaUpfm6k0pjo
-	 DhdqULYWeyxhOSZRWyXIHl1cCP2bT6cYTJwh1ex5Ildm9EYmpvAQdDjvP8NLP3KFD
-	 mw8mzA3J0kZ6xM9zyYiTilEocQ0c1HnuarJa/MXHtlSX6ZqcULi7GBY1Mx/82mjMP
-	 zF5Z0iKx3xw5oC4bk0ELwSjfREdxiJEIcyVnct5H+6po3nXrFJYHcEAHeSrOmX/qF
-	 HWSNFV5FWktDUZkxbg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue011
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MWzwP-1tRFS71pub-00RC7q; Tue, 22
- Oct 2024 13:39:38 +0200
-Date: Tue, 22 Oct 2024 13:39:36 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-Message-ID: <49328035-265d-43bc-9d5a-39207f51519c@heusel.eu>
-References: <20241021102259.324175287@linuxfoundation.org>
+	s=arc-20240116; t=1729597369; c=relaxed/simple;
+	bh=fiLvjqiCky4scaYOA6J4GlmocifpCmL/hB2+SAwnFfo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fSEgYBNtUL1raJH4MSg0rf/rz6Pye/dDSNVMvSx2Pmp2bEZrQS+BVbLVVw8MzlrpdtAz01k14wtadyq/rcNmfcd0jaxSp0/RPERvs2dgcqmVCWEitOwT76CphB5+oRaP09J2pJNX7+A+aperHR0Zcu5IiAIDgqHCyBgpsHhbpzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.205])
+	by sina.com (10.185.250.22) with ESMTP
+	id 67178FA900007C24; Tue, 22 Oct 2024 19:42:37 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1711477602652
+X-SMAIL-UIID: E3EC872BFAA84B73A8990DED069A75CD-20241022-194237-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Date: Tue, 22 Oct 2024 19:42:25 +0800
+Message-Id: <20241022114225.2314-1-hdanton@sina.com>
+In-Reply-To: <0abd3cbd-0e8a-43b2-8cb0-6556297aa7c9@suse.com>
+References: <67153205.050a0220.1e4b4d.0048.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ta6ncjdj7z2jnkjg"
-Content-Disposition: inline
-In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
-X-Provags-ID: V03:K1:Fc3fseVtIWAO1mndAvhytRWAovJgA3SDx6UdOnfPvhFrtqHSn92
- XwFFCb6aqxVea34XEAWRAvTgwm+TACFc66AesaIXBKjksdtYLjHdNNF4Ab/4bjX0skPIUIZ
- lz1F6K/6D2qUl3Wt1EDhuhlka+U2uPdIhbAJ+ePKXJNXwCCKf4/tpvrjR7BDvj+6Br6v+3k
- KjeInRCJn8S57v0Oif5Cw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2BIzwOjDU78=;AqUiFCVHW7BfsrMhkRiiIJqXEIN
- 4Q0VqfAgnq7HFXoJLWWhotadBy2MvLYK+34Nh6/mxIp60JUyAnQJh4BIyJKiJIawd2Y7Dtr+k
- kojiQKw+gDuF/Ey8oiLhoFwGGdjcSNRLnHrIf9FLPn1JEUrUgr04WVV2/MI1XjR8w0xEze1pi
- 3Q4GIzKq7JKWDH/XzWHp/1TuB1h+ig9F1mCp12JfHgu4SrRlhGU3uoazZgUn6SYnYh738oiwN
- UciGKw89Zf6hRLiBBxmee7+sLQ1iy9SBIP6O+mdLGHQhk7AW4bGP7veV2NYRO2PGCy6kjkuO6
- c0n8OZomfqFrdHtDhlonWziW7f9TWbGmMJqqjWOs9lDFhJ8XGXP8Em7hXGRK4z0mHrL7dzp37
- 0sUHYbwo9CLMPcF+vJ2LGlFsMhAydJTLoRzJkfo8m371PzrEG5QT8Y5Drelkng2ivgxdPDV95
- fnWmssYBuAt57qCBZJiN7jUEXUrY7sAPlN592qWBmvsPWsrfP5HQc2hrzW+oJO8FGYIe+91Bl
- yIe4FWg+UtTtedovhNclm0OTGY2EXDBTFqoXbRDSChqqPpfsOQ7/Hpz/Qzr5pWffVPQM4R/iu
- wNW2ECZ5+DbulRqxHEGE3/kpQ6CIfb2bRK9HReqtDmjnFoyZ7Vim/SA0pUzvaVOEDkWfu+hqL
- fZ1Cilm3sh8SKC7/qoiemMP0ShJ1m0DYe8midGQFILhww/Ie8k7jJZF+/QWjWQ0+dBs5NXfvc
- V/7+DFRpqcI1oFZYA2xKssrNOkH0ZLCmQ==
+Content-Transfer-Encoding: 8bit
 
-
---ta6ncjdj7z2jnkjg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-MIME-Version: 1.0
-
-On 24/10/21 12:22PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.5 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, 21 Oct 2024 10:04:52 +0200 Oliver Neukum <oneukum@suse.com>
+> On 20.10.24 18:38, syzbot wrote:
+>   
+> > INFO: task kworker/0:0:8 blocked for more than 143 seconds.
+> >        Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > task:kworker/0:0     state:D stack:24544 pid:8     tgid:8     ppid:2      flags:0x00004000
+> > Workqueue: pm pm_runtime_work
+> > Call Trace:
+> >   <TASK>
+> >   context_switch kernel/sched/core.c:5322 [inline]
+> >   __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
+> >   __schedule_loop kernel/sched/core.c:6759 [inline]
+> >   schedule+0xe7/0x350 kernel/sched/core.c:6774
+> 
+> And this sleeps forever. This must not happen.
+> >   usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
+> >   usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
+> 
+> We are changing our mind, presumably due to a timeout
+> >   usb_start_wait_urb+0x255/0x4c0 drivers/usb/core/message.c:65
+> 
+> We are sending a control message, presumably to enable
+> remote wakeup
+> >   usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
+> >   usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
+> >   usb_enable_remote_wakeup drivers/usb/core/hub.c:3365 [inline]
+> >   usb_port_suspend+0x339/0xf10 drivers/usb/core/hub.c:3472
+> 
+> Suspending ...
+> >   usb_generic_driver_suspend+0xeb/0x1d0 drivers/usb/core/generic.c:302
+> >   usb_suspend_device drivers/usb/core/driver.c:1272 [inline]
+> >   usb_suspend_both+0x66d/0x9c0 drivers/usb/core/driver.c:1443
+> >   usb_runtime_suspend+0x49/0x180 drivers/usb/core/driver.c:1968
+> 
+> This very much looks like the HC driver used to run these tests
+> can hand in unlink. If that happens there is nothing usbcore
+> or a driver can do.
 >
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
+A one-line change could survive the reproducer [1].
 
-Hello Greg,
-
-I have tested the 6.11.5-rc1 and saw that it still has the [iptables
-regression][0]. Since there already is a [fix pending][1] (I guess you
-are aware since you commented in the thread), it would be good to
-include it once it meets the stable criteria. Also while the issue
-sounds a bit harmless at first it breaks [tailscale routing][2] so it
-has a real world impact.
-
-So I can't really sign off on this realease, but also everything besides
-the issue mentioned above seems to work!
-
-Cheers,
-Chris
-
-
-[0]: https://lore.kernel.org/all/CANPzkXkRKf1a6ZvOJU=m3NwW4B0gQnQSRggw=ZnK6kBYmqLtBw@mail.gmail.com/
-[1]: https://lore.kernel.org/all/8cd31ad2-7351-4275-ab11-bca6494f408a@leemhuis.info/
-[2]: https://github.com/tailscale/tailscale/issues/13863
-
---ta6ncjdj7z2jnkjg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmcXjvgACgkQwEfU8yi1
-JYXHeQ//S8H3EBT4HWeWQ6uj+5WpiVARUVeluo9n9et1kPl2vjPZ0dfW4fWV1Z20
-bNCTaplfzgEaPReGxSoa/MSSx7PkkiLDwG8qFVlg73jdOCJGwpBq86lzHvkszluX
-h02bpqcvWIKlAYPAYzO69yJN+uuZqq++yceQQWkCXj3dTu0wTr6c+HVWRna5dMEU
-5+IhUKu8kd5/RYd33MUInMdkVfP/8CCMGnl7d1ga5JAo9v/P53wyMUuKXjiF+oFc
-FnTcNQx2t7/7MA+5mnPatBOHJyr6rOupdQig/ABk5cpG5VdU0Th1XX/ZqMuH7UFM
-23IZ1aLGnzCyBzUQ4I/3erZbjQj483PRJ1RCDskBc58MzxaspbjsToNjeabSykFg
-Tx/levMrqmKoKbCQHN2uBiyhQST/a/P1teuHf/zNg8qlOVoQlsAY0XIa4RHlNToM
-eY8RZ4DXBUkcFwx8NCMmNqOcRWI46sd1SEFHM1mWhizKG+KFmstZxgsY3OaRZq1V
-cw8UePWgB4Be3aXaJbpjj2PNKJhhmOrVV/pB+ciKvPNtvpx9pF/HGjeBuKq+DnDS
-m0fRNBnS6mKx+aQ/IXdUlpm57/uh6dPMBbrZ0FaoNrQ6a2nhwzE60s0K0wlNDBVj
-8ZMSlKCvyMHBN8nTAhAkHvUIQcXQMfa96EZ/73i3/B6F1XJgBho=
-=E5VW
------END PGP SIGNATURE-----
-
---ta6ncjdj7z2jnkjg--
+[1] https://yhbt.net/lore/lkml/67178c80.050a0220.1e4b4d.0075.GAE@google.com/
 
