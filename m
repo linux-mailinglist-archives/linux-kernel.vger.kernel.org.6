@@ -1,274 +1,254 @@
-Return-Path: <linux-kernel+bounces-375422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D479A95BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:54:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0391F9A95C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45EFB21C6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946BC283A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1C130ADA;
-	Tue, 22 Oct 2024 01:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BA2139CE2;
+	Tue, 22 Oct 2024 01:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ScgDM2NA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdpsbvUU"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B245C85C5E;
-	Tue, 22 Oct 2024 01:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729562050; cv=fail; b=CoXLt0J/xCSFqvJO513X6o22VZbXNHA5NS3A6molBRkuiSpB5BxC3BzCGeqTqEQ+KQ5rmhLEUqLZE0S1/lBqghbVuG43sO5pmBhQ8LulvIgW/tECZhjmf4qH5z9mxEYjsbNrX9JA+EoTlkGFz+Yzv8KDHVyBmGkMqGH6BSkUQ4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729562050; c=relaxed/simple;
-	bh=8yRyP2nHyBr3YHZqHnhR5JYSESMoX354VTwOhIHORQg=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BdJLmixQGcEzodf8R3eEkvN2PaJkEtpTNha5JEncFj0+2DsroFsoFmZUFF6U+F6BZMI2dV1FcefjwLtWhypEXQJcyYrRgiG0f8qCffqJ+SUnXPVhFvZZcdMPChXPH7g9lcGe5KoP17HPlm1kowZE1/myIlWP+DbSQoIkkh4d0GY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ScgDM2NA; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729562046; x=1761098046;
-  h=date:from:to:subject:message-id:references:in-reply-to:
-   mime-version;
-  bh=8yRyP2nHyBr3YHZqHnhR5JYSESMoX354VTwOhIHORQg=;
-  b=ScgDM2NAFAbOcF3eXBMYgYKJYanHj7LeG3heTPIU0+ZOfa2LbxrZqzLZ
-   0cASYmcaP63HzwjX5LiJCQNDWBY05SgrzINt7KYhNM6twOQbguZ2jtsy+
-   wepRUN/ZH+Jpy9G3IT0SuofaXerRmAUl/J+HHVlQdScwLlF6uDJFfha5t
-   DA4VHVUAtZsHNf9kJKCW2gTZpi68t7yCqMGijkou4zJwTFLUCuDg/kQHz
-   B1Z9/jTGGIEO4PTzR/dSsDzvyQgtL5E/U09mlDCtzaQSIS2T1lQkAtnsS
-   Dt78xfHJE4zqR8R6xXUvCK1C0RxeGt16ldfjs306qCL+E+499hwJXzmv9
-   g==;
-X-CSE-ConnectionGUID: K7sEx0T9SSWYQT4wyrXDAQ==
-X-CSE-MsgGUID: hnNRWVAeQ+W86Qw+r7Tj2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="54479302"
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="54479302"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 18:54:05 -0700
-X-CSE-ConnectionGUID: r/ePf2H8T2maZDIcNCjWdg==
-X-CSE-MsgGUID: U3Ta9e51S7ikpsQ7x5qIFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="83709274"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 18:54:05 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 21 Oct 2024 18:54:04 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 18:54:04 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 21 Oct 2024 18:54:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s1HdyWX+fy0lI98VTjWoEIcPg0NcFl8VViGuZwRI1cLsQKp9R8MfflxgMPkswg7AltJVowcYuTx70VHGVxpDi1sulfOg/VF4x6WX+LVzEVx88d0dyPRpzdUuHs9b5JkmXz74FF3YOiLAx9Ch7yfmOAh2aCzLFGXI1lyUAW8noWInbbYCdUeilEBHp4T+mfd9fBDbyoQyF2ssMyUrphVFom/PDol9RxwcppywYe1t13xIlnm3Cy3fEJDQcSv7iZd2YLukXzzJ2pq/KB+PEYKhyMMxf1dsN8M8AH6pf0SlXnEIvl0hbP8oU1jZW4AMFhVeGrZdIz5e8qG9P82AGVj9lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eNK2SJGHETZ9FyGQWDkWAXz89VMDhbFpJMHUFHYFC8A=;
- b=zKi23Ijmyxp33Ua5QWbqldpmZHtQsi1ciV9C/kPG0A2tmm61XfQVhYsdZaWbcm8pMgkYvuEBfwp+w4YjbIQrvW9d9Adbj765cM/DZmeJNU5DUq0cmgw7gx7LnyK7ylAsbEqDk2poWoENj2+JL3ux1lq0Snmi6nhFJFMAba0ALIYY71uDGyLDLgAivCTkIrss7cGjDDhy45LtAT7Uo1VitYGFUrUOXGkQiDg61IhS1PhhxK3g4m0HA8N86lRmYB4oSZuluLw5MFNu3cA3yqv3v1S4cTFclBkURr4eT9C8FSIOsv8h61Q3BwDzaM435kBN2O0V2EfyloggkAiVHosWmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by MW4PR11MB8266.namprd11.prod.outlook.com (2603:10b6:303:1e3::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
- 2024 01:54:01 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
- 01:54:01 +0000
-Date: Mon, 21 Oct 2024 18:53:57 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Terry Bowman <terry.bowman@amd.com>, <ming4.li@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <dave@stgolabs.net>,
-	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <mahesh@linux.ibm.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 01/15] cxl/aer/pci: Add CXL PCIe port error handler
- callbacks in AER service driver
-Message-ID: <671705b5bb95b_231229468@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
- <20241008221657.1130181-2-terry.bowman@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241008221657.1130181-2-terry.bowman@amd.com>
-X-ClientProxiedBy: MW4PR04CA0257.namprd04.prod.outlook.com
- (2603:10b6:303:88::22) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D709584E11;
+	Tue, 22 Oct 2024 01:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729562059; cv=none; b=g8pFgkXrTr85VjDQb5oWT9gNSP2Y/F6OrJlmeA4MrstC0kwDtze2Lgb9guOOqPmA9wC//TW3eMfVaRkaUTVgdMllVYRcJ+JjGoBkYVuFIMTHGX1V0yytUvf30BLVfnwkNmWK6jGpNjgNVJ2s14nOYR+4Fld2Qbk5H19JbBPYvoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729562059; c=relaxed/simple;
+	bh=6bnD5a89H0ka6IkNa/kaRsRVl5uxcAA0X4uwUtxHOcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C522Jc/Aq7XkFEv+GziD1qtcCSNIccKAxj9iKkhmVIFc0Ly7BI+ulPF0iLWL7ImGTQAP29+J2hEbRxuP6CuzRYMBwvTJS3GSpS0VFJ4aCsjoHmt711kLOSPX/kTgfdXj2BqqnjpT7/qoHCEE8ia9Zo8NBFAzBmXXjulxGdvVit0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdpsbvUU; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e7086c231so3850181b3a.0;
+        Mon, 21 Oct 2024 18:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729562057; x=1730166857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JCdfHyckjC3R7H8wnx3yShAwMrDQcCGjf7SsvmeYhDI=;
+        b=fdpsbvUUS/dvj1pH5vnVmi73zUdcFVRm9uPGWHFM3lNzTgSXpuU6nsmvDh+9Kb55SK
+         ipBipTui4DqmWFlMu9ZkspbHgpHBAvtPkRuf2iC8L1ozod0jHWGCe7W/odxOZnSQOKWW
+         KIStLdbW9Km1JqRpsxeUONDuo18dPcuhEMTBxFnYkpy9pjTX6f3V6K1kNxaCuOje/m3t
+         vEXl+vl9wWehXqm1ItRW/J7K7gULXNlGtizS/8JnhumYeQYSOOLzXkW9GraIl8C5duVT
+         RZAQvt+iLIqKAQt3XnL/f5WmryKxj4dYY/pudSvwbM1WyefK/Q1XUyuTsPwJCszwmDI1
+         161A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729562057; x=1730166857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JCdfHyckjC3R7H8wnx3yShAwMrDQcCGjf7SsvmeYhDI=;
+        b=OFt1YTh8W6A8Yfr8jk4ttgk165FNj75bIl2Ok2mwvtT9+W4wdkH3L2mioFKzJCDjq6
+         mxANWE4WMZ2pd+loHXQ/SoRB8cIirv5/19zBPko2Tint104eXSYt+avXZTCTX1jac1Nx
+         7DQaPAU0JqICIQezOuz8sXjcboa9NB8MqMxOgQLbwVIX2s9skSfXpHF4uhQvgXOCaxo4
+         FcsN/utvKngpjSpBdr9Ln5svzwwuuD6SdAhG3bJoi4W1pPAJ1Lpw6WUfuwwYZboas5rz
+         XeN0Jsw5GlkQEdofZS36WJsURLPiImTNYV0M3rXxiLUbDWPTVGvy0b3XaL6Cmi7qqgIT
+         65Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCK67No5G5LXjoiyfPTlnUKl192w4pNEB1Or++b/tusdffxIMuMO6mvo8aBvVsHE9jFzg0AvRI@vger.kernel.org, AJvYcCWdMGtu6G5OzQ6pRvIAy1QJERE48dL0qQOioVZ6vG6ugpW73zMNFdDeFgX2YKeG1o/I6U5h3TCC8PjH14G5@vger.kernel.org, AJvYcCX1in8nCajh9do0ZcnTucsQY+ydkHnEH38C4sI0K1W/VRURG6/5L6P/NzNnkZF4GKYSRW7lqEXfAPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq7EMQf7+bpG8zXolPDf9UuCQbgIFcGC2Jh8qRfFukGKEilBBg
+	utH830Sn6iAFw0KZK6GjBWjQRASPEXIxEtHcH5HpcTkr6BVAHHvf
+X-Google-Smtp-Source: AGHT+IFPTmihNK+AQ2CrQcJ+9qy3A3ihoWuZYosOY1eCQBikwEf4E92hGMMpi+7HrXqUQRwPeFm+rA==
+X-Received: by 2002:a05:6a00:3d43:b0:71e:4c18:8e3b with SMTP id d2e1a72fcca58-71ea3192bfamr20066087b3a.2.1729562056867;
+        Mon, 21 Oct 2024 18:54:16 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407ea4sm3566037b3a.201.2024.10.21.18.54.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 18:54:16 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id EA5AD425A747; Tue, 22 Oct 2024 08:54:12 +0700 (WIB)
+Date: Tue, 22 Oct 2024 08:54:12 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+	masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	hridya@google.com, smoreland@google.com
+Cc: kernel-team@android.com
+Subject: Re: [PATCH v4 1/1] binder: report txn errors via generic netlink
+ (genl)
+Message-ID: <ZxcFxFfQM8gc5EEz@archie.me>
+References: <20241021191233.1334897-1-dualli@chromium.org>
+ <20241021191233.1334897-2-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MW4PR11MB8266:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe357ece-a8d5-4eeb-3520-08dcf23c66b7
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?m2WHVAvYsoMvAsT6bN85DAj4LQM4lhk6gVnPc624lSrtNOVIKOKCLg7lZqWB?=
- =?us-ascii?Q?eJcpykvE3fuKDCzud22R2BAQhqdoDL5Y0pkin6BPB+9W2Iqel6S2QadGLXHt?=
- =?us-ascii?Q?JlL32LXouknup0Ir3iVpDiReWidHBnFX02EBA45yavZmCq2Ra6w+ATWyMY79?=
- =?us-ascii?Q?GpgzMiLiNEQPGagKZyLYO4d6LRi9BoQXoHDEqyBkcrLXV9fzRIqw0erO79bo?=
- =?us-ascii?Q?zkZrhqukCCFrQ/baEiuR0Nij+5hb2q1H6xxwoHc+lI26iYB+orkxhuka9Qpx?=
- =?us-ascii?Q?cS/C24LBhE4DqB1Zb+l1Y2NdtLRKkyyYe/9+JbaLQYIb1TlZbnobE8U78Dmc?=
- =?us-ascii?Q?EvjG7UGL5zAmUMuT4hzxJqXGhCzMws1+5OikfjLcG+/K+exkd/gg7rVQsiZu?=
- =?us-ascii?Q?j+qFpvMi9qZZiOKq7nxDjqNEcyuifUUjbT+QuxyPaw7hoIbB4CTl6cITqa/m?=
- =?us-ascii?Q?ONs6iMA+HY1UdMWG7Yc2uZtzT8LQt7CIwjvqHMPDuTCj35XvRLBUhjdKmXXY?=
- =?us-ascii?Q?YdR13QNDeXN1i7Pl2hqGDhU+UvLPDzy1gMPQjhntCci139eX0h2RzOPG+LWt?=
- =?us-ascii?Q?hYOQ7aSvA5DWcFnk1WEXzZAd3X9I3dIuAm5qo8Z3bdv+UyTViRSdoLGImUaI?=
- =?us-ascii?Q?IinV6/wi2WDb6VwbuILutNzYVi0nVmC+r/lDODTZMHlyJbjgBL6GEX333wAP?=
- =?us-ascii?Q?Faow9AGDxcquGw2f4pVvMv0sR9V4EfMa6hf+u4cFzqsuWmZS46fZU0TBRXQ2?=
- =?us-ascii?Q?8iBizHNBEg4yQ4EnR27Xigqq+aFgi4qfBI86Rw8Q4EGWhFL0h+NRX0lDelIt?=
- =?us-ascii?Q?PcgENyQJM3YQwTk5visHC8I3FrLkoMAo8FwJ6gbdf1CxB/CoqVg4DlENjjFv?=
- =?us-ascii?Q?lvQXQdLAcfOlD9XtRhjF8e9qmkRE5CFVREmgGwihqW6fmwHcB264fcSi47KS?=
- =?us-ascii?Q?DEiSG7Cb0mxYT8l/IAKSoNndRb5akufZzRh7K+GH4DLN9iMkVn1YFWVGB3mw?=
- =?us-ascii?Q?WSQo/6cVYH5pXtbQuzX2GixreAwVdu6agCdo7/Nh+XfOeYUp8bF3IJ7XNeRm?=
- =?us-ascii?Q?UWFHK8HQUQyy9l7U6un9Ki9ngMY1X7XOX7rNU5RasjxCpV3KaBAcPuK0Ul61?=
- =?us-ascii?Q?NCeTaEwHl+XjHWwcFLpkzebyj4S05Nf+NrxECNuWhdke6s8dURH4eFs/M/ke?=
- =?us-ascii?Q?wM1oUE3zE4e+ylGSd6nMVxIbjTcmK1Kxnex/BKk+sv0zYfYWqiX5EtbX6wEz?=
- =?us-ascii?Q?2Qb1ZrciCrtrGv2qrNu8XlDJzgVO01nFLFzbSdP9RqXYxJsmYHRMiVxn2vZV?=
- =?us-ascii?Q?E6jS3bBAa7F77mSXO3kzsFWFvaXkdtKUjHhcAF+oxGzR6nlmDlwR/uDDPJG6?=
- =?us-ascii?Q?dCRihKU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1G+4ZX3fnSw+FcmmlJmNqIo/89PT0fvwqmsUfjyPgIugL/P4MoYKObtZK5h2?=
- =?us-ascii?Q?4rIMTSERZ+Sr/79kp8EkrGBQkcn8vm00GCqBXDaCUfWglyAYgjT8aQ5295fo?=
- =?us-ascii?Q?Wd8UTBJBZmuMqWsQeawk6EKrwhu77KQ4a8jpZPboeVi367XiaJocDbwoZ8Kr?=
- =?us-ascii?Q?rVIZJZTRZt2vNpB6TlHLCWPBtUxvg110Ri6VFHLSn0TUo+52vek0zr47QVDL?=
- =?us-ascii?Q?APS6RHgl8L6uyCDP1xpEVySxHrIr1oXg3hOcKundmL6MOcbZ/qd2CplXhdaU?=
- =?us-ascii?Q?ZchaWq8/yG+dgE0C56e2seSeZ0KwHp27/J1IERNeTsqO/amh/OajBYjIKM/h?=
- =?us-ascii?Q?+Ipvv+Al/sZcIaAD+cVjABQqMDV7a9wSsXBTqHSAKSz6RHZM485utycqPW5a?=
- =?us-ascii?Q?SLZf+RFjAitdeTlvZG2MfSmrAqPeS50rgl9G6tqysfzbzPmgRmn5/oyqy941?=
- =?us-ascii?Q?G6k1S+F+hJYH0lNruxwowUf2YORN9w38YaHTPHm48a7wP6g1RzDKdceCN9dr?=
- =?us-ascii?Q?FCYRI/Jxm/rBHms9AiuG5KmYG/RYME4fXYEGSYMZK8ruBsPXS8TBpo6JGUeL?=
- =?us-ascii?Q?Ij2DAc41mNgu1IsD+EAFamGBpgLDy8cNP/Yv5jIboKHxnQ7spz73ayM/VRfa?=
- =?us-ascii?Q?02xqERLxYLajEfG1upu9Z6+9Xdk0FLf4syQECvq5K/Q44k4ne1xUTOdnSN2f?=
- =?us-ascii?Q?qPn2PdBNQiKuUOULtGHGID2JzZddslIhkN9TYhpn74AXU39ka9h062ItvX2P?=
- =?us-ascii?Q?9zDr8z/arZ+WjL3Vs0iPG2imaO98yOg95DT0Q7BH14QFm5Bjz/SmMotJBHV2?=
- =?us-ascii?Q?lPBL3iTVRIF/Ywz3RyJjrtWYyveuqflORwGgm0Jzsrz26UZUUKsaGAXuaTV1?=
- =?us-ascii?Q?pVZJvFW0G/5pv3RK/FE/Lecelxyk/E4tilSIt+8BRgvYOLRO2w4nTLt0EDhW?=
- =?us-ascii?Q?QeijccEJKpkfb0xC6qE7LfZ6gU7Xfr18AVLTfLCBKnV5BXDlaw+TsMBBd2y8?=
- =?us-ascii?Q?SsyB1fkAfcHCJqdbgQg3K7gSv3rR0n+rQ0Po1sqyXjMyv0iIACwn7cvjpwD6?=
- =?us-ascii?Q?5v4pMCIe8krYxkp6bLx714ENc+Hjg2f/MxYEdPqEl2rLLuNfSbzatM9p5Pa4?=
- =?us-ascii?Q?NIuW29psW39kl9N1htJQEyOl40Ba7akf1I7EArSwrKwARX7qD7c1R/JJrhJs?=
- =?us-ascii?Q?u39xOgeunLklt14P94Xxzcx8SPD4AeF9y3biWdOURhAtcLmgGGRAgH8fnkJv?=
- =?us-ascii?Q?V99P6IHNM5kLq2FJidJu54FV5PGdHKvqvuetmhYzQBUKh8sxJcin4MTt8C4g?=
- =?us-ascii?Q?/YTH68hklWPpUD7i/bn3ebhv/aoc11zA4jSiCa03avsN6bbX7200weRQni6G?=
- =?us-ascii?Q?GJDvMbdd6m5lGEs8B+sRTXO6pp/vDxfMmb/vdGezdiqhTDKEA6FzBIPVHo7o?=
- =?us-ascii?Q?JVxVqDBmYJuydJgsxiWTTpVeYizl5s+cdsAqHiZeNdRhsBWUodirzWc4KyMK?=
- =?us-ascii?Q?iBXtxyKg7hecnzrOWnl/TbV4zJi1rz0GaFtkbVAgXD3AyZA6y60VzOhalxgH?=
- =?us-ascii?Q?SgSF6sduKWr/BErG149nIMF8zXS0wNv/UXvrDt6TqxYFXzCYhj1tagc+I4lk?=
- =?us-ascii?Q?Rw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe357ece-a8d5-4eeb-3520-08dcf23c66b7
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 01:54:01.6464
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yo4fg7eMMA8OHWC6HQV5CrEEvgqpk4cMkxt+dlNO2wDw4g9GhJznpWRagddGy0ey3FwOYMMGM7XY4yTmPBUy1MA6sYGkrfwHV2iMTK/SOEE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB8266
-X-OriginatorOrg: intel.com
-
-Terry Bowman wrote:
-> CXL protocol errors are reported to the OS through PCIe correctable and
-> uncorrectable internal errors. However, since CXL PCIe port devices
-> are currently bound to the portdrv driver, there is no mechanism to
-> notify the CXL driver, which is necessary for proper logging and
-> handling.
-> 
-> To address this, introduce CXL PCIe port error callbacks along with
-> register/unregister and accessor functions. The callbacks will be
-> invoked by the AER driver in the case protocol errors are reported by
-> a CXL port device.
-> 
-> The AER driver callbacks will be used in future patches implementing
-> CXL PCIe port error handling.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->  drivers/pci/pcie/aer.c | 22 ++++++++++++++++++++++
->  include/linux/aer.h    | 14 ++++++++++++++
->  2 files changed, 36 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 13b8586924ea..a9792b9576b4 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -50,6 +50,8 @@ struct aer_rpc {
->  	DECLARE_KFIFO(aer_fifo, struct aer_err_source, AER_ERROR_SOURCES_MAX);
->  };
->  
-> +static struct cxl_port_err_hndlrs cxl_port_hndlrs;
-
-I think this can afford to splurge on a few more letters and make this
-
-static struct cxl_port_error_handlers cxl_port_error_handlers;
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZQ9idZBCwrcv4Hah"
+Content-Disposition: inline
+In-Reply-To: <20241021191233.1334897-2-dualli@chromium.org>
 
 
+--ZQ9idZBCwrcv4Hah
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 21, 2024 at 12:12:33PM -0700, Li Li wrote:
+> diff --git a/Documentation/admin-guide/binder_genl.rst b/Documentation/ad=
+min-guide/binder_genl.rst
+> new file mode 100644
+> index 000000000000..48a0ceab6552
+> --- /dev/null
+> +++ b/Documentation/admin-guide/binder_genl.rst
+> @@ -0,0 +1,92 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
->  /* AER stats for the device */
->  struct aer_stats {
->  
-> @@ -1078,6 +1080,26 @@ static inline void cxl_rch_handle_error(struct pci_dev *dev,
->  					struct aer_err_info *info) { }
->  #endif
->  
-> +void register_cxl_port_hndlrs(struct cxl_port_err_hndlrs *_cxl_port_hndlrs)
-> +{
-> +	cxl_port_hndlrs.error_detected = _cxl_port_hndlrs->error_detected;
-> +	cxl_port_hndlrs.cor_error_detected = _cxl_port_hndlrs->cor_error_detected;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(register_cxl_port_hndlrs, CXL);
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Generic Netlink for the Android Binder Driver (Binder Genl)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +
-> +void unregister_cxl_port_hndlrs(void)
-> +{
-> +	cxl_port_hndlrs.error_detected = NULL;
-> +	cxl_port_hndlrs.cor_error_detected = NULL;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(unregister_cxl_port_hndlrs, CXL);
+> +The Generic Netlink subsystem in the Linux kernel provides a generic way=
+ for
+> +the Linux kernel to communicate to the user space applications. In the k=
+ernel
+                                                     "... via binder driver=
+"?
+> +binder driver, it is used to report various kinds of binder transactions=
+ to
+> +user space administration process. The binder driver allows multiple bin=
+der
+                                      "The driver allows multiple ..."
+> +devices and their corresponding binder contexts. Each binder context has=
+ a
+                                                    "Each context has ..."
+> +independent Generic Netlink for security reason. To prevent untrusted us=
+er
+> +applications from accessing the netlink data, the kernel driver uses uni=
+cast
+> +mode instead of multicast.
 > +
-> +struct cxl_port_err_hndlrs *find_cxl_port_hndlrs(void)
-> +{
-> +	return &cxl_port_hndlrs;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(find_cxl_port_hndlrs, CXL);
+> +Basically, the user space code use the "set" command to request what kin=
+ds
+> +of binder transactions should be reported by the kernel binder driver. T=
+he
+                                    "... reported by the driver."
+> +kernel binder driver use "reply" command to acknowledge the request. The
+"The driver then use ..."
+> +"set" command also register the current user space process to receive the
+> +reports. When the user space process exits, the previous request will be
+> +reset to prevent any potential leaks.
+> +
+> +Currently the binder driver can report binder trasnactiosn that "failed"
+"Currently the driver can report binder transactions that ..."
+> +to reach the target process, or that are "delayed" due to the target pro=
+cess
+> +being frozen by cgroup freezer, or that are considered "spam" according =
+to
+> +existing logic in binder_alloc.c.
+> +
+> +When the specified binder transactions happened, the binder driver uses =
+the
+"When the specified transactions happen, the driver ..."
+> +"report" command to send a generic netlink message to the registered pro=
+cess,
+> +containing the payload struct binder_report.
+> +
+> +More details about the flags, attributes and operations can be found at =
+the
+> +the doc sections in Documentations/netlink/specs/binder_genl.yaml and the
+> +kernel-doc comments of the new source code in binder.{h|c}.
+> +
+> +Using Binder Genl
+> +-----------------
+> +
+> +The Binder Genl can be used in the same way as any other generic netlink
+> +drivers. The user space application uses a raw netlink socket to send co=
+mmands
+"Userspace application uses ..."
+> +to and receive packets from the kernel driver.
+> +
+> +NOTE: if the user applications that talks to the Binder Genl driver exit=
+s,
+"Note that if ..." or .. note:: block? I lean towards the latter, though.
+> +the kernel driver will automatically reset the configuration to the defa=
+ult
+> +and stop sending more reports to prevent leaking memory.
+> +
+> +Usage example (user space pseudo code):
+> +
+> +::
+> +
+> +    // open netlink socket
+> +    int fd =3D socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+> +
+> +    // bind netlink socket
+> +    bind(fd, struct socketaddr);
+> +
+> +    // get the family id of the binder genl
+> +    send(fd, CTRL_CMD_GETFAMILY, CTRL_ATTR_FAMILY_NAME, "binder");
+> +    void *data =3D recv(CTRL_CMD_NEWFAMILY);
+> +    __u16 id =3D nla(data)[CTRL_ATTR_FAMILY_ID];
+> +
+> +    // enable per-context binder report
+> +    send(fd, id, BINDER_GENL_CMD_SET, 0, BINDER_GENL_FLAG_FAILED |
+> +            BINDER_GENL_FLAG_DELAYED);
+> +
+> +    // confirm the per-context configuration
+> +    void *data =3D recv(fd, BINDER_GENL_CMD_REPLY);
+> +    __u32 pid =3D  nla(data)[BINDER_GENL_ATTR_PID];
+> +    __u32 flags =3D nla(data)[BINDER_GENL_ATTR_FLAGS];
+> +
+> +    // set optional per-process report, overriding the per-context one
+> +    send(fd, id, BINDER_GENL_CMD_SET, getpid(),
+> +            BINDER_GENL_FLAG_SPAM | BINDER_REPORT_OVERRIDE);
+> +
+> +    // confirm the optional per-process configuration
+> +    void *data =3D recv(fd, BINDER_GENL_CMD_REPLY);
+> +    __u32 pid =3D  nla(data)[BINDER_GENL_A_ATTR_PID];
+> +    __u32 flags =3D nla(data)[BINDER_GENL_A_ATTR_FLAGS];
+> +
+> +    // wait and read all binder reports
+> +    while (running) {
+> +            void *data =3D recv(fd, BINDER_GENL_CMD_REPORT);
+> +            struct binder_report report =3D nla(data)[BINDER_GENL_A_ATTR=
+_REPORT];
+> +
+> +            // process struct binder_report
+> +            do_something(&report);
+> +    }
+> +
+> +    // clean up
+> +    send(fd, id, BINDER_GENL_CMD_SET, 0, 0);
+> +    send(fd, id, BINDER_GENL_CMD_SET, getpid(), 0);
+> +    close(fd);
 
-I guess I will need to go deeper into the code, but I would not have
-expected that new registration interfaces are needed. Each 'struct
-pci_driver' could optionally include CXL error handlers alongside their
-PCIe error handlers and when CXL AER errors are broadcast only the CXL
-handlers are invoked. I.e. the registration is something like:
+Thanks.
 
-diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-index 6af5e0425872..42db26195bda 100644
---- a/drivers/pci/pcie/portdrv.c
-+++ b/drivers/pci/pcie/portdrv.c
-@@ -793,6 +793,7 @@ static struct pci_driver pcie_portdriver = {
-        .shutdown       = pcie_portdrv_shutdown,
- 
-        .err_handler    = &pcie_portdrv_err_handler,
-+       .cxl_err_handler = &cxl_portdrv_err_handler,
- 
-        .driver_managed_dma = true,
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--ZQ9idZBCwrcv4Hah
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxcFvwAKCRD2uYlJVVFO
+ozMsAP4z+TRLgNiahdgfPND5nkXQU2GLM1ALLk+ik+9Zd741XQEA9wchTxd3r+lf
+DEteoADKxlz4JRd91xc+SIsbMI6oCAQ=
+=5+26
+-----END PGP SIGNATURE-----
+
+--ZQ9idZBCwrcv4Hah--
 
