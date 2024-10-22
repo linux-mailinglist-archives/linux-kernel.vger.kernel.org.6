@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-377073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB999AB986
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032709AB97D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36751B2258D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCAB1F23491
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860B51CDA25;
-	Tue, 22 Oct 2024 22:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R34GQA+3"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C703198E70;
-	Tue, 22 Oct 2024 22:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FBF1CDA11;
+	Tue, 22 Oct 2024 22:31:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF86D18DF6B;
+	Tue, 22 Oct 2024 22:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636309; cv=none; b=Q6blpuOxr2iRUrgvRzA+grFR7cuyha5pqOdvc75pzMqwGfRbvjkPS8sS8FmX3VqsIIEVPvTtL2UOtLSTuLIiIpAALF6ZfSIy6ZQmDUpwlBUdQ6Phr/muWZJ0uZia7ccbObxcLXAgq4GODP2oibblXx55T/Dp9edgoU1UINBwoC4=
+	t=1729636260; cv=none; b=HRRcO2FyPV3JC1OH1YSMktKOXYU2PE6vUS0ElA29FOwhsRI1OWlrJHID7J1pXF45rPgBP4PX4YtNqwyXIUva4OyXler5TPUbxvvhgaxXVdkWWmshumYp1fUu80csw6dSJb3jaEfdVOpFOJ2y4nTKQVV03KRyuLMGBcVhbWPNmgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636309; c=relaxed/simple;
-	bh=ocjuPZBQcm/gWoqJic+qab9ral+ThqVee195AQgsKkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D0s9kgw4zIiFs/ieqIukrm3srVm3rWuO8PzkXfIJ5sHucYVx1WX8V6T5DGNM2RLnuI5rG4kBZZCBnCAXv2cgTGYnGX1y4dz7RtislWwk4Pw1Acp8fJ7uQvUV0Z09hiMYGQV3IMekFvZVZEHluiPQbUOpjNQPCrwQZNLI4VbSVUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R34GQA+3; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2b71fd16fso997596a91.3;
-        Tue, 22 Oct 2024 15:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729636307; x=1730241107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PBpv4lygubL36e25IlDlHYVhQfEMD1LpJ9xSKfCH59o=;
-        b=R34GQA+3L3iLgJl+SPKzLE5nuB/g6u250oBm+Y33x7MyP4FAfoePGRfGnNkY8bnBx6
-         L0kEKBxYspnkWfQJcwMqDEYHDhNsncXhIHZCSTFj6TpbQLylsEgH41zb/WkfXgQydpGK
-         x42BzqrIdMv+cKSaIIVwYIilLiibtsq/yAeKbeP+IxkO3Lb98642be7MfVyKrAUxCYK/
-         8gNgoKHLhiCv1+oJbr6tIQODhDsDf3hKOJW6V+LpdgYARLAWeADQjpcsm4WxfBOmcc4b
-         GiwmJiZnbxrfTho9gWROnZ4Olu+14FlF6G9lGEVMOfhi4V+Ocr26lwISuyFDbxRpGY0u
-         8i4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729636307; x=1730241107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PBpv4lygubL36e25IlDlHYVhQfEMD1LpJ9xSKfCH59o=;
-        b=Q6MtBAI6MjFCp/2N4mhyTyqJQsmaHXZ/b3t1gl9sHxohzhXg5mXCbnrmLD62qAiWDH
-         RBbpnfkMl25TBlIOAr/NfPZe2jmQO5Wuu1kXiRPGQh9Ds4d5RjMVMmfP+6pNyCog9f/8
-         Iw7meetMTPwe7tZtpdViKVxy0UFZzGzOIlozIGFO/qv/L/vyXjtnwlqKJ9QpqgfWWMpB
-         3nrLPvI5+wp6xFjEJH3za5oGphx0Z+p9/zIIxNe24rCjaOIBaIPw5Yq0f+6JqqWiwslF
-         Mmj9EYbI2VTKrxcfmSND6tcl5TONgOIolMRto3YfU+XQyegicessFSmzRCAIU/z85tzP
-         MS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYwpjccLiva7PIWlllXTos5rzo/FnihpSiTbqqQcA1M7gTRJj6fSzoA99wmUCA1mLDWm2KwGwPDPXCz8Xvgk=@vger.kernel.org, AJvYcCWwhQqNf4eo9sn5vL8QOl842QrreBTspUjFc/218moK06Cfk2K2yxlKBpxmHc5IIwVWEHq7Qc9VtRbsRg==@vger.kernel.org, AJvYcCXgdueFVHZMWHvPMFUYmqJQN2v+BzCSvIH92/DJXqsWMGby+xUgpRX8kGWAHVLzGAd7ei2ZBIkPRWlBAkW8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIojq4TRL//3yHpfv+SktWbsTbp34FL8eZbT++ioJyg5Z0U030
-	pU1jI1btzymfbsxHHFptS2b6DMPLjjY0HTFYknITQc6lkYbFQJ8MXSeUCwdYkaLwKUb9Cu+zr4q
-	fZVwMeRVBqMAAR1QiWf6mliUBQJc=
-X-Google-Smtp-Source: AGHT+IF0Wv7Vo0CTXqsPq9UXSA/5GUboFf7wua2ylNI/g94oPhAOc52VDUG52CbXVCp+BaDOVxFamTT3zwtxiXqa4No=
-X-Received: by 2002:a17:90a:d80d:b0:2e2:abab:c456 with SMTP id
- 98e67ed59e1d1-2e76b5b7e1emr221085a91.1.1729636306837; Tue, 22 Oct 2024
- 15:31:46 -0700 (PDT)
+	s=arc-20240116; t=1729636260; c=relaxed/simple;
+	bh=tGktF6vSZoG/5Nm3AOwDxotBmxHl3UEOtQYzSdmFcUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GdHB2dwRNd0F9KigZ8kdFAserwZn1g9XfW0j2HUEkMi2qPb17Ed3R/+YESYwpIeL2+7BeFmgKQTihkfofuXNZctbsAh5YdKu1FsErYf3qn3T5pG/OWNoMZfWqjwVqWZPddSRapWITB381slto8/RP1dxUJPDClDfbjmnjnM8TlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED9CE497;
+	Tue, 22 Oct 2024 15:31:26 -0700 (PDT)
+Received: from [10.57.56.252] (unknown [10.57.56.252])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CEA83F528;
+	Tue, 22 Oct 2024 15:30:55 -0700 (PDT)
+Message-ID: <a67fe4fe-d4a8-4659-802f-8c7da4aa555b@arm.com>
+Date: Tue, 22 Oct 2024 23:32:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903173027.16732-3-frazar00@gmail.com>
-In-Reply-To: <20240903173027.16732-3-frazar00@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 23 Oct 2024 00:31:34 +0200
-Message-ID: <CANiq72mXuDbT4aSH6DTiAK0AWZjSg+qgHH+L0fP8sZaYYSvFHg@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: rust: fix formatting for kernel::block::mq::Request
-To: Francesco Zardi <frazar00@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/11] thermal: core: Separate thermal zone governor
+ initialization
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <4985597.31r3eYUQgx@rjwysocki.net>
+ <4408795.ejJDZkT8p0@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <4408795.ejJDZkT8p0@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 3, 2024 at 8:00=E2=80=AFPM Francesco Zardi <frazar00@gmail.com>=
- wrote:
->
-> Fix several issues with rustdoc formatting for the
-> `kernel::block::mq::Request` module, in particular:
->
-> - An ordered list not rendering correctly, fixed by using numbers prefixe=
-s
->   instead of letters
->
-> - Code snippets formatted as regular text, fixed by wrapping the code wit=
-h
->   `back-ticks`
->
-> - References to types missing intra-doc links, fixed by wrapping the
->   types with [square brackets]
->
-> Reported-by: Miguel Ojeda <ojeda@kernel.org>
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1108
-> Signed-off-by: Francesco Zardi <frazar00@gmail.com>
 
-Applied to `rust-next` -- thanks everyone!
 
-    [ Added an extra intra-doc link. Took the chance to add some periods
-      for consistency. Reworded slightly. - Miguel ]
+On 10/10/24 23:20, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> In preparation for a subsequent change that will switch over the thermal
+> core to using a mutex guard for managing thermal_governor_lock, move
+> the code running in thermal_zone_device_register_with_trips() under that
+> lock into a separate function called thermal_zone_init_governor().
+> 
+> While at it, drop a useless comment.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a resend of
+> 
+> https://lore.kernel.org/linux-pm/2495577.jE0xQCEvom@rjwysocki.net/
+> 
+> ---
+>   drivers/thermal/thermal_core.c |   36 +++++++++++++++++++++---------------
+>   1 file changed, 21 insertions(+), 15 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -1343,6 +1343,25 @@ int thermal_zone_get_crit_temp(struct th
+>   }
+>   EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
+>   
+> +static int thermal_zone_init_governor(struct thermal_zone_device *tz)
+> +{
+> +	struct thermal_governor *governor;
+> +	int ret;
+> +
+> +	mutex_lock(&thermal_governor_lock);
+> +
+> +	if (tz->tzp)
+> +		governor = __find_governor(tz->tzp->governor_name);
+> +	else
+> +		governor = def_governor;
+> +
+> +	ret = thermal_set_governor(tz, governor);
+> +
+> +	mutex_unlock(&thermal_governor_lock);
+> +
+> +	return ret;
+> +}
+> +
+>   static void thermal_zone_init_complete(struct thermal_zone_device *tz)
+>   {
+>   	struct thermal_cooling_device *cdev;
+> @@ -1407,7 +1426,6 @@ thermal_zone_device_register_with_trips(
+>   	struct thermal_trip_desc *td;
+>   	int id;
+>   	int result;
+> -	struct thermal_governor *governor;
+>   
+>   	if (!type || strlen(type) == 0) {
+>   		pr_err("No thermal zone type defined\n");
+> @@ -1505,21 +1523,9 @@ thermal_zone_device_register_with_trips(
+>   	if (result)
+>   		goto release_device;
+>   
+> -	/* Update 'this' zone's governor information */
+> -	mutex_lock(&thermal_governor_lock);
+> -
+> -	if (tz->tzp)
+> -		governor = __find_governor(tz->tzp->governor_name);
+> -	else
+> -		governor = def_governor;
+> -
+> -	result = thermal_set_governor(tz, governor);
+> -	if (result) {
+> -		mutex_unlock(&thermal_governor_lock);
+> +	result = thermal_zone_init_governor(tz);
+> +	if (result)
+>   		goto unregister;
+> -	}
+> -
+> -	mutex_unlock(&thermal_governor_lock);
+>   
+>   	if (!tz->tzp || !tz->tzp->no_hwmon) {
+>   		result = thermal_add_hwmon_sysfs(tz);
+> 
+> 
+> 
 
-Cheers,
-Miguel
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
