@@ -1,142 +1,156 @@
-Return-Path: <linux-kernel+bounces-375373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBAD9A951D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E60C39A9524
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57016282E9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915F3283184
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC2B7406D;
-	Tue, 22 Oct 2024 00:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2XneRuG7"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0131C86131;
+	Tue, 22 Oct 2024 00:47:48 +0000 (UTC)
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2040.outbound.protection.outlook.com [40.92.103.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47705127E01
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729558042; cv=none; b=ZR2YYkYhbwqvTG3nYo32oasxP9905GijRIx48AMxENyuPYSAiGJzwZ/Ontqunk44iKzALxrL8sN4lw8i/B3IgakHwhIGppWmEiJ0DBjr3Jn9Mrp6TWpEPBXob7JOQsovKeCn/8PUsmE90JJXBoY5nT8w4pSGNxxi4XFLWMzkgbk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729558042; c=relaxed/simple;
-	bh=/ZZM1+dJhOvu0mr/UtOV9hTqZs4pXxjwQKKx0hCIUpU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AKhJq59lKhkV4bL5DlFS13RyyWwWMQHiQJx/cIjiGatyK3dw2JWjSY5pqiRGbnjBl2j5Bqx2S7dC+ChU9uW9hwzYvfqLnQjBA0wRHfXEJ7k6lXKHlZM3VNM8tZNSK7r47tPpN0usZ9jXzN2G4JQA/H6HKVd1rOpmTxqiLXFE8Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2XneRuG7; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e0082c1dd0so106010287b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729558039; x=1730162839; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=60wgcSLTXVxTzPUjoeX/E6FIWkDuwYegYI4IrChLCKo=;
-        b=2XneRuG77wAX6zrNp8ejfDvvLyhrzvmReF2/azXsWlbn2+Sc6Fr9evwo5vQfSHH2ch
-         ie2sVi321yxyA3Gbl0RhzlMg8PHPMA2SdSWQEBsaRUckn2n0TtX1zT6B7fVJMSlOebql
-         9+orpy2qAy6jFIlxEIlNzAzqNBgErBRYlRypRJ9ZgEFgfu3rKwq3G9sZcPwn1NbojhFV
-         Yig94blRaIjzicOcOn4+qxlWDsr8wLjEm/RpUSxwLMy5zduML2qc7/HkGExJdbpI1zA5
-         R5XhSHdwzNZA4jqUeyII1lxfzHklpXzpDl/yx1Urep2T0JM6xKztjFEAM661YUzY75nt
-         /Y7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729558039; x=1730162839;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=60wgcSLTXVxTzPUjoeX/E6FIWkDuwYegYI4IrChLCKo=;
-        b=v4svYVlsCQLF08J9H79udUpDjzREeT9td6sV3l5TetHrmDJ+HEK+3dWUwflYciJfNw
-         UgsxjOaNkSawMPveWd/07//RFxJsBuwpbOa6MsKpFl19V2M1PZmj784cXCJ2ylHVKIvZ
-         +F/PFioQO0PmlN5n37AVnKuTyR7k0rLgT7AohKh0diDi9hFRkwJsJG8PnUzVLkSqhI9l
-         7vuBMVNNSq8yd96FXFlEhhpXPpOtemQlSrW/dz/DYxWeXDcCZWljiEXrjiApXUyhAzio
-         Vki8CoKx2jU9BjY0rifCFl5EYNWwBAaa38q9PohsZLVRxKraBXlJfUkCOFpfo9EKUbC1
-         1oeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAAwCyz5vVOd8jFzXI6d72L4DgIWg7Ahf2U43eadxG4CADtz61JOiqyvcE6p+b8zMdiCBe4HbpVOgHuBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ0hFEN7GkpHS9rrBeY5UtDHII+Cxp3vGy2soEp4ZocfTioG7M
-	kdTLUMGDxFmRpEUDrPjcJuhWUtcR8aPrwKR4OQIn5fl+Se6gtvo5hA7TIaC9DlsFk2LitRB6tj6
-	i1m27mQ==
-X-Google-Smtp-Source: AGHT+IFiyt/4iIInAWKLwhqunyPq9QHonJj64kutF9hny1NRpAVPZ5zeWGMGBu5qDtED4tv1AgjC9hWx+3+e
-X-Received: from rananta-linux.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fac1])
- (user=rananta job=sendgmr) by 2002:a05:690c:3582:b0:6e3:2f0b:b595 with SMTP
- id 00721157ae682-6e5bfd58c16mr738297b3.5.1729558039164; Mon, 21 Oct 2024
- 17:47:19 -0700 (PDT)
-Date: Tue, 22 Oct 2024 00:47:10 +0000
-In-Reply-To: <20241022004710.1888067-1-rananta@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40707A15A;
+	Tue, 22 Oct 2024 00:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729558067; cv=fail; b=ClvMpVklH6yuhyWBnwKzIzKtJ+6Xe5eDyJSADmTbjLeJm0aE+CXFWIg1tJHsXQl4VL6ToNmhq27sMBsf7+hUILxk1B1uqxqHNnvdgVMBBFxX+EPWJnL4iFWJ6Z/W0JNMyqREZsosq3amm/Yd8tYwZqZmNHBXGEH97jfvuiIWJng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729558067; c=relaxed/simple;
+	bh=ktMpXPEN3cn0BlwAum8KPYSIBbwWZW99xOS9KEwXHtI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eQXcXmvV9bGrtiLDOGiTv2whhElBr0TzWrOi8n32yhNLXx+VUaAImuScgdvIDSaXgevuIkjz/vJ5vpXs7kMkLA6r2ydLZ/JGZZt/cKNO1toVgvLP9OXpuuU8QnvuYm8mfLVz9pGYJVqflR3yEr1Ao4JjiZKvFnK9k0PevRQwPc4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; arc=fail smtp.client-ip=40.92.103.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lwNK0QG+9WD7tR59SDlKNlSvRrPI9lTr3QvkVuQ4ZFjbZIdV05f+Z3BnXaURjvnclw+3+ErFl1zWBBjDjUSRY/+nGtKUo410O7BA+GobipJYE2t//gLjQObUy34XK8tUt162GixT5LuoHhKHQy42wOe59uzj3iGbjOfowSR7m/uGjyJDDTJhQPCNucgEs0D47qwVCTmrO4XulCYp41CzB7SaO7ZMPQykxBAKJVggKKwQCnr7SXzRttHfIQs/vNjrDZJO+q+yv/6SQhUOV0oiwh6oUeaXOUH7A1eDLfeRfHU89Dkah0THztdfMQ1kfW/p1gZ2NOZiM61ZZOZvyEmaoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ktMpXPEN3cn0BlwAum8KPYSIBbwWZW99xOS9KEwXHtI=;
+ b=IFSfTj3GULCYVCDQRRTB2JCjRet1c+4uAnH27908CfLRw+4Z2eCI5l+lH/ZEd8c6ZAlO/2sfEmC/prCda/PyThWeF8JKenC/BYwVLO9liF00RjM0eVIvw0VBSePFl7anRAAkAPmAS1MpPqBhibO/Q//KPo3O0Dh7nGp07OWg/elRA2k0jembz5GrdwS/o8yB1KrKdu2PdyW8NG4B7rlLwOQcXmEnnB84AsDVrRa8Ms+auNANaaCw0+OvQKDBqUcsbMOMMzQeILLxzzkWyDPtYfb1mEJCZi5Gw2oNxZ0mN7RQC4JvDfcAo8f+JyHAoFDsnlpO4UvuJ2zuA/iKWYe5mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN2PPF99355ADDE.INDP287.PROD.OUTLOOK.COM (2603:1096:c04:1::137) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 22 Oct
+ 2024 00:47:33 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 00:47:33 +0000
+Message-ID:
+ <MA0P287MB2822C943624A02C54E9A62C9FE4C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 22 Oct 2024 08:47:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+To: Inochi Amaoto <inochiama@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-5-inochiama@gmail.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20241021103617.653386-5-inochiama@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0046.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::14) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <087c1882-3cdb-4518-bf5e-1654bca3def8@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241022004710.1888067-1-rananta@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241022004710.1888067-4-rananta@google.com>
-Subject: [kvm-unit-tests PATCH 3/3] arm: fpu: Fix the input/output args for
- inline asm in fpu.c
-From: Raghavendra Rao Ananta <rananta@google.com>
-To: Subhasish Ghosh <subhasish.ghosh@arm.com>, Joey Gouly <joey.gouly@arm.com>, 
-	Andrew Jones <andrew.jones@linux.dev>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, 
-	Raghavendra Rao Anata <rananta@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2PPF99355ADDE:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30ce1516-4972-47f0-de33-08dcf2331dad
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|461199028|5072599009|6090799003|8060799006|7092599003|15080799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	mcP6pv9DMARQwpZIQu3wK55uU1NCVHvTdANbLRu0vr6g3Q8gXA/TMLdYiT87tj5tne2VmIbTa6cxkMF9mbbGmfgyqO1KXGwJfGpa1p8lMpAUwycaW4CpGks9WXUWzqGjRk81cwfXRSd17l2UjV6lO9IKEg+uQKrKq4h0HiwCMUj94+ZnTGg0Xuo+eJAozdbHqV3883/2uWwlzOFPNMW7p40ZTf/g1j7jTDmbJeiG0T93cMCXJVDalYuAgZPWHdqV+mOKC7siB9qWfVZDzo4Pwxt8Uum3FgAogjxvZpub5uV7IZYglCs4lxKlKLAu8/eCI8IB5ER71gOf38Icti+pSqM2rmjnRDxucJuw5mTsFTIGrB5bcBzsIXVtMpEEubVpDVzbcvfxsJRm1gNaYnYdV1agqU8LQzJYV2NpvOvqMEHG0HR1OTsNR0MoLGXx+6wa05SaBCGSMcCXe8Kjone9MHbKRPHgWvr70IVj6J46ucFxMaA/UkoF6lyH0x+wQiAX8utFOtCpAurIKgRndJzpS3WLEk9T5oy4LK6b7BkrRMTwjyqhkcr5u9bSlesTsGO3TgHbzcRm0qqRhOTI1bHaWUW/VDxBkmf4LU7VxeYpgDC0xXNk30yrzjWB07sppXnAdMwOtaTRigytKKgqC3gdscJGJ9r7il/ZSJREqRvVVfzD0dtDP1a7HjiESt+NItTXs/PJ5Ed/OonqCWisb8GRNpfESDlR1pnFgV1cWRVRhdsgDQEkBy8Xe8KKKsW1hMjxwW3cRXCojZwIQFFXaONe9Q==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VDk2WjVnRXZSdVRpUnhGMlY1UE14TGxiQ1ZqS01WVFR4dks3MWdCS2RNY3Zj?=
+ =?utf-8?B?dGZGMzlybmZBLy9iUjlXcVBWdTRtY0lkUjJQRmhlY04rU0xYMG9zMnFzZjlj?=
+ =?utf-8?B?VGlOU0xrN3hDM2FNWXRHcEpaeVhBSG9zQ2pEWGJoK1QvQlpVNndGcmhkTUdZ?=
+ =?utf-8?B?WGdQY3NuSjZRdXc5bkFENUhxSUZ3VG05VEx3T1ZVa1BlSGZZRUV2MDZUWURT?=
+ =?utf-8?B?VjMzYnE3TC96eVZOWjBkZ1phcVNyUWVDMVk3M3E5SWgva3NwZ1ZVSGppbXU0?=
+ =?utf-8?B?WnJ5MnpSSU9OVmpMQURUNlFvTnFtNnUyMkRaYitNSEt2UzhHc1FsYWNuOUpy?=
+ =?utf-8?B?SUlFa2NsRkNjbVlrQ0QxNnlUZlAxTmY0MEdCbWplSVp2NTlqeUtSaThMK0c3?=
+ =?utf-8?B?NEV5RjlQNlNKbWtRYXJhYVVUUVZNbDY4VjJVajNXdDBScDNaR3dhTWd4Vktq?=
+ =?utf-8?B?T1pBR2FXZEtoeWNpYnVzRjBsclM2K3hZZ2RveHl6MXc2czhyUVMrcVAwQXRj?=
+ =?utf-8?B?VHdDM2R0bWNjdzdMVDZaTEkxRlN6clBubnU5WEpCRE94czVaRWFsT2w5UjB0?=
+ =?utf-8?B?RVVSYUZpb2lKOGZvQWF5dHBCelJQN25ORm1DMVpoTGZLUytQVkVtSmMxZk1Y?=
+ =?utf-8?B?SHd0YzM1bEk4SVVsNWQ1OVJ1K2JhbnptbFAxazJWMkNIb0VYYVd1UklzUHVl?=
+ =?utf-8?B?bGk2TFowZ1hYWHAzWncycHFReWtRcTVBWExaRGhtb2RBbFJGK0ZvdmdmV3FT?=
+ =?utf-8?B?TTJvVCtGSnZiZG9vVERkcTlhZCs2b3d0WVBVQVBQNCtDOHROclM4SE00UnhR?=
+ =?utf-8?B?VFhBUkVqeHhCbkxMb3d0R3NReGd0WmlLbXpSejVvRFh1aXhzeVA0aU84dzIz?=
+ =?utf-8?B?ZkdzSkNmZFpZR0JXN3ZqUEttMnVjTnRHTzhhd2FlMU1qZjFYQWNJa3hoOGo0?=
+ =?utf-8?B?eXR0N2lGUFpwV2xiUCsxZFNGNG1KbXVjdTlBUzZQQ0FUdTFOUlVzT0txRGpk?=
+ =?utf-8?B?NWhxRklMTXVHS3diT2ZPTGN4RnNscU56aXZ4WU9zOVp3NWgzWVAzay9QbFRk?=
+ =?utf-8?B?TDhVb1FzQnY4NkE5V2ZtdlBSVmp2QWFsN0xiTE1vWUZsUmtNMXNabXNNN2hN?=
+ =?utf-8?B?aU1ZWTZhN1ZacUJCUkQyd2IvTytCTHZvTXFpMEZXQmxsNTVGbUVMMGFYR3hh?=
+ =?utf-8?B?WDZUaEt1ejdNQnFBbXZzWVp4ekNlZzZUUENOaFVQczVYdFNRNGRIWHNUTUhE?=
+ =?utf-8?B?KzhROVVkakU0R3JqQjQ5RERpMjAxWVlNdmhYYzZ0cTdNNTJFTzMyWk9XVmJr?=
+ =?utf-8?B?WS9NTEdxYkduUCtTTXJiUTR6ZXhyeWFCZXc4LzlPMWZVbk91ak54RyswdXV5?=
+ =?utf-8?B?eVljK3Jxbi9Jb0hjNlJVOUhuUjFxN3VoVkFVR3UyTmVQNk9EaFBraTBCK05o?=
+ =?utf-8?B?d2lhRDE4RGlOeCtxcU1XSTRjQWJsSlk4MjRLOVp5Y1hmQW9PZ2VOZVR4K3h6?=
+ =?utf-8?B?bExBSElVdFQveFhxa25FcldXd09WYldMMVBTTE1CN0M2aWJ5OSt1a1dWRk1Z?=
+ =?utf-8?B?OTBMZUtvRjh5MVJhUmZ2Q3B2UFh6aHBzMzNSc1UxOGVScVIvNlZLRitUa01E?=
+ =?utf-8?B?N3lYdzZtYXFLeGNoVHhXTVQrRERzTW04bUxqV0ZIRVdvdk9BL3d5V0YwcXlR?=
+ =?utf-8?Q?97vk2OP717J+MuF7Al+K?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30ce1516-4972-47f0-de33-08dcf2331dad
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 00:47:33.6697
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPF99355ADDE
 
-The macros fpu_reg_{read,write} post-increment the '__val'
-pointer register as a part of 'stp' and 'ldp' instructions.
-As a result, mark it with "+r" for the compiler to treat it
-as read-write operand.
 
-On the contrary, sve_reg_read() never updates the value of the
-pointer/register. Hence, mark this as "r" for the compiler to
-treat it as read-only operand.
+On 2024/10/21 18:36, Inochi Amaoto wrote:
+[......]
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> new file mode 100644
+> index 000000000000..83c67c061182
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> @@ -0,0 +1,132 @@
+[......]
+> +module_platform_driver(sophgo_dwmac_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Sophgo DWMAC platform driver");
 
-Without these adjustments, the compiler can potentially perform
-optimizations over the registers holding the pointers that could
-lead to data aborts.
+Missing MODULE_AUTHOR ......
 
-Fixes: d47d370c8f ("arm: Add test for FPU/SIMD context save/restore")
-Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
----
- arm/fpu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arm/fpu.c b/arm/fpu.c
-index 587b6ea3..6b0411d3 100644
---- a/arm/fpu.c
-+++ b/arm/fpu.c
-@@ -54,7 +54,7 @@ static inline bool arch_collect_entropy(uint64_t *random)
- 		     "stp q26, q27, [%0], #32\n\t"	\
- 		     "stp q28, q29, [%0], #32\n\t"	\
- 		     "stp q30, q31, [%0], #32\n\t"	\
--		     : "=r" (__val)			\
-+		     : "+r" (__val)			\
- 		     :					\
- 		     : "v0", "v1", "v2", "v3",		\
- 			"v4", "v5", "v6", "v7",		\
-@@ -87,8 +87,8 @@ do {							\
- 		     "ldp q26, q27, [%0], #32\n\t"	\
- 		     "ldp q28, q29, [%0], #32\n\t"	\
- 		     "ldp q30, q31, [%0], #32\n\t"	\
-+		     : "+r" (__val)			\
- 		     :					\
--		     : "r" (__val)			\
- 		     : "v0", "v1", "v2", "v3",		\
- 			"v4", "v5", "v6", "v7",		\
- 			"v8", "v9", "v10", "v11",	\
-@@ -138,8 +138,8 @@ do {							\
- 		     "str z29, [%0, #29, MUL VL]\n"	\
- 		     "str z30, [%0, #30, MUL VL]\n"	\
- 		     "str z31, [%0, #31, MUL VL]\n"	\
--		     : "=r" (__val)			\
- 		     :					\
-+		     : "r" (__val)			\
- 		     : "z0", "z1", "z2", "z3",		\
- 			"z4", "z5", "z6", "z7",		\
- 			"z8", "z9", "z10", "z11",	\
--- 
-2.47.0.105.g07ac214952-goog
 
 
