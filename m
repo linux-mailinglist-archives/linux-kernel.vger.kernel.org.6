@@ -1,124 +1,72 @@
-Return-Path: <linux-kernel+bounces-375897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F729A9C9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E9B9A9C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405601C23CFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29741C23D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410C416E860;
-	Tue, 22 Oct 2024 08:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GAwhu8DB"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9986A18858A;
+	Tue, 22 Oct 2024 08:30:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF7314D433
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBEE13DDA7;
+	Tue, 22 Oct 2024 08:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585836; cv=none; b=LPxrdlD/Tg8DOyiURJxq8f9uv9X6CEiZnBvH9TkJxM1eMgSKzsMRstvdC8DfmmRqK8syW9L6/QB7O92YlqBWEgyvhP2aTUfjDteBG8GOBnKaMQGhcP09/DR7BF3I7giWVkgLfi6cXlAFrY+M6it0k0s76NsL0M7PRbFZ1yuRsJY=
+	t=1729585842; cv=none; b=Egb0WqpB9FosmGEVbe9uGzqp5HvWDHk7kdBspVaNFdHGoewOHP/K6RgHhgbiUTNZqQodf69uw0kDrZhvCzTvTlANTNlNIm+PuxQtBguCUtCzyfxeRuvuDrHGFnPo7Jf8At48yJpHMF35kQ2mkTVhQPjXkqIY88s0f4Mpz7rxvmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585836; c=relaxed/simple;
-	bh=ABrP2T7wExOQyqkYpNLKLmOwDqn1+TlRIsQ7QCM1o28=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UHGC5Rywaxi0+UWpJ7yAr7i+w6A0aUaoPLVZvmFERC+6lJ1vrSQEQDF7TdJEsggqPzolYPX3Mz3OnJ1pwlr51hJxuvfvqL1yhOtaOFfIiWpQgHREbcuIUK00EYfF+O2APAHO0+aiF3yGVAW2URCCEtyxsLuiSjOpFRZ9PjiDaTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GAwhu8DB; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbe3ea8e3fso33283096d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729585834; x=1730190634; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jE1YL9r21lc0YZaBKWTuwm+nSpuAMUC4CZUF3FgCHiA=;
-        b=GAwhu8DBliN+pMNHnyQv5jQXpVQm5egMXqj90kiofgpoCH1l96hv++o5ivPSZocZqs
-         EQ16k0FYEsQ4mdK/9wfgYAE+CV1YtNNInHIg/z13W4TMqUOA3qZdpVhRK4Ey/xZM3fB/
-         w24CMpSd49I3OXIFRkMPqvAfII5rv2tPgwYlg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729585834; x=1730190634;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jE1YL9r21lc0YZaBKWTuwm+nSpuAMUC4CZUF3FgCHiA=;
-        b=mDZNEYHJXyVm9Z0mVzCHj96B6102T0SshHfVJCGCwcDRF8ybneCabLvZfv3yTHWrJ3
-         d7VJjSaHYbU8n9489jvTZRv3fJS8ivEpZ347rDM/IcAbZbcWzUZ7XVKwsOLuyuF1LxFf
-         tKl0dLFTqlaKdgyI6RAeeM3eXadzdjynZzPFpW/FJGQ1ZiXwQIm6GuasoYxGyor2DyWb
-         ekDhOohJyLWRUUclrtD5QJrPtXgK5T8oCQ+H+SeP6XCkQR92LC5xNV79mPZZDdzjUNxM
-         QJToT5yaIurS/k2g/cCSAMTFG3XcpC4GTpbjmKw7Z6NwdPyl4XYSd0p+TOThOz1ukjhw
-         cWiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpzWph/OYz+xqjTPRHS4F4wOjGwveZ7I63QIIC7vAZUeM0q90Wjtnwx2gh0+3IqUYHZsthPOresCEzWZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgXri+BrUJR6U7iKS2uivE1c3zIXXn40FYlqeh3VnmrBZm6TVS
-	WlTrva/zV2SBvYhrUG8fsJs0rdWNUnY3QGfrIa+qoBBHdLUZ834g2MSGJ1acSA==
-X-Google-Smtp-Source: AGHT+IEqm+L95rwR0JZlT0tvAQ/2q+TGPaCEpoZTL9bpYQosz5c+FF4KsMLm3x5SAO1viUtEp/4mUQ==
-X-Received: by 2002:a05:6214:3382:b0:6cb:e90c:7c72 with SMTP id 6a1803df08f44-6ce23deaa81mr19495736d6.21.1729585834117;
-        Tue, 22 Oct 2024 01:30:34 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce009e287asm26350146d6.105.2024.10.22.01.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 01:30:32 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 22 Oct 2024 08:30:30 +0000
-Subject: [PATCH] media: uvcvideo: Fix deadlock during uvc_probe
+	s=arc-20240116; t=1729585842; c=relaxed/simple;
+	bh=5Njuhc8rhJkQU9CTHRevd6sR9bgN0vMxuEgrmVe3riY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gYYK9KFh7NWHKrYQ47koqksRqWnNxGC/HlOhuidZs4HZZc+pDAggU7+jZ3rWgc1MUHIVx+CVb+Ma0IFKrpObTk6PM0docJ2mAeNCLNVPh9sCVj9FhFNp22IbV/NzDw42I1XmznosVTrAl9OMluuox2xmOUQHSH1x4hLrUbzyGhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144FCC4CEC3;
+	Tue, 22 Oct 2024 08:30:40 +0000 (UTC)
+Date: Tue, 22 Oct 2024 04:30:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+Message-ID: <20241022043037.13efb239@rorschach.local.home>
+In-Reply-To: <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+	<20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+	<20241022012809.1ef083cd@rorschach.local.home>
+	<075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-race-unreg-v1-1-2212f364d9de@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAKViF2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAyMj3aLE5FTd0ryi1HRdC1MjS9MU07Sk1NRUJaCGgqLUtMwKsGHRsbW
- 1AAdD5pxcAAAA
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-If uvc_probe() fails, it can end up calling uvc_status_unregister() before
-uvc_status_init() is called.
+On Tue, 22 Oct 2024 07:42:10 +0200
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
 
-Fix this by checking if dev->status is NULL or not in
-uvc_status_unregister()
+> > This part of the patch shouldn't be needed because those shoudl be
+> > called by irq_enter() and irq_exit(). Does this not work if you don't
+> > have these?  
+> 
+> Thanks for your quick review !
 
-Reported-by: syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-media/20241020160249.GD7770@pendragon.ideasonboard.com/T/#m506744621d72a2ace5dd2ab64055be9898112dbd
-Fixes: c5fe3ed618f9 ("media: uvcvideo: Avoid race condition during unregister")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_status.c | 2 ++
- 1 file changed, 2 insertions(+)
+\o/
 
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index 06c867510c8f..b3527895c2f6 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -294,6 +294,8 @@ int uvc_status_init(struct uvc_device *dev)
- 
- void uvc_status_unregister(struct uvc_device *dev)
- {
-+	if (!dev->status)
-+		return;
- 	uvc_status_suspend(dev);
- 	uvc_input_unregister(dev);
- }
+> Indeed, it works without those lines, so the patch is now a one-liner 
+> :-). I will wait for the second part to be reviewed before sending v2.
 
----
-base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
-change-id: 20241022-race-unreg-85295d5fbeee
+I don't know enough about m68k to review that patch. Just incase you
+were expecting me to review it.
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+-- Steve
 
