@@ -1,303 +1,196 @@
-Return-Path: <linux-kernel+bounces-376753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D549AB584
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:55:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242A29AB589
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD504286950
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:55:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57D15B22E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0151C6F76;
-	Tue, 22 Oct 2024 17:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB1F1C8FAE;
+	Tue, 22 Oct 2024 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZK49nZ+"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MAo/ETK2"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BA61C6F5E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619724; cv=none; b=eD2ikOOyol3VI8BVy6iKGqQIiqFWxaO6bbOQeHzlYtsNQW5w/HSCnbr2Wm7RaRkUrIMXJ83hGSZ6MqXKsNr+0Mh/su7/3nFpXJfw7vsYfypFsLZeBplv7OW2gw6qR5N20jKcruetW+2sdCGx91TxUxCDIahzpJ5uN570fAwYwoY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619724; c=relaxed/simple;
-	bh=+Y+/PcGgJpMk2nEE5XYeoZ6N0UGmnv/pk5IX0E6cZvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3R3cLW8AywFPtwUkalYB0o3CUSgiPAacT0COt93LU0jTHQ6T2SXZ/3E8Y2kiz1MaIhCt7PmlEABl7lk1knzVJxUjKWRoFzDgL72bei+8VFjBp78KYsPUU+rlhT1D3iXsndPqLudbtlqHit57vSH9nMp2kujMKqZiJrR1pAHJWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZK49nZ+; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71ea2643545so3913722b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729619722; x=1730224522; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fR1p2CdHlCuEEst6VnVj+vTqihZCOT2GJV0XoDP9RwQ=;
-        b=WZK49nZ+VdOY2Zt5vTehBYlVf+Fuqe5XT9Wfp33WvILCWQStOvXaZcxf2UTjr8J/UX
-         gmxYPCOGjPiVzlZeSXybjzFcZJ909G/Z7aCXl48RRfjQK7FtU/zOMhlPuJbAMfjbLS/w
-         8YmqG1zfDxBJtTh7FID9Bc4s0FjJen3a4UhQjUsPzULpVDNGvHPiY9yO91jVIpsGQUVJ
-         AkR9pmSrhmGCnSrIqsKsKxJzv5+0BnxoFK/OqILm+9divK/5Bg4gvQDdScmZOhEoEX2h
-         FDUAYqirPMcdP1rnNra7zxv6obG1+EabUdSoaV0BeZX/S24pv5XKtG/qxJ9f3TFlJsRF
-         yTIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729619722; x=1730224522;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fR1p2CdHlCuEEst6VnVj+vTqihZCOT2GJV0XoDP9RwQ=;
-        b=jNh+u6v2bx4Utbl6WcVTlwJsB0C2gFYWwew8+ruqR1a9zNb5cgUCmvSRvvx0SMcSAx
-         uGmJebsy1iOCxMPIst99yeWTSP09yC81srjnVkKmE3X2dulQy8nXyKOsczLMzAXIcLWW
-         wxV7WdOLrqWWszv+GXSN7ipn+EYDNlw8ybRJ2hKcPoNCtQLEZqudlYGddsDSX02hSDBJ
-         +I0KNCmhgdKfTXjYsTSZiLAyh9wO70GzoGza/vwVqN47oam1xdQjXPXASE5x43ez9/h/
-         pXq/uYV9z78OWqzMWuilkhPQEXsvBW+PAXE6Q0lbdqE1wtHRv4QGRr/+j9I7HxtMYtp8
-         x6Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcfuyd8J+CuN54rQXaS3u2BmINMhfLeX24ZtBZ+6e2pEbTfHXQr8N4Mc/PL6NCuADeArfaTeJrByOui6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+EQ+1J8Dh23UXOp0Hdxe0JjgaXLd1xRizNgwzJV40g6iVs0E
-	7cOJuHLPOQIqSy/yAwaestbmHRgwr578FqxejMgefnH+10XeacLd
-X-Google-Smtp-Source: AGHT+IEiIOJraMTaUAeMRUDZ+DwSmyD/DtDSzP4HDPiKn396oOIVhQfUkOZkRlFZsCHpf+QrfKVVQA==
-X-Received: by 2002:a05:6a20:d80c:b0:1d9:239b:a125 with SMTP id adf61e73a8af0-1d92c4df420mr19971012637.15.1729619721093;
-        Tue, 22 Oct 2024 10:55:21 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([106.37.123.36])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407da1sm5004535b3a.191.2024.10.22.10.55.17
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 10:55:20 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2] mm, swap: avoid over reclaim of full clusters
-Date: Wed, 23 Oct 2024 01:55:12 +0800
-Message-ID: <20241022175512.10398-1-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.47.0
-Reply-To: Kairui Song <kasong@tencent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DF61C579C;
+	Tue, 22 Oct 2024 17:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729619781; cv=fail; b=UxjTgLALixR3rmwX/69IiAwP3nUb904V54qBcwtk9hY/97GPrKUZLbukzymm9tchgX4CK789hXFU/jlC9Ugo/8CdayIMrjqt3oOmykxm8V7mv3Kb3Du/q2joidHsrQN1KfhBNv4NpPWducQhqE3KoDnnFZHDiUuOhtad2H8a96U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729619781; c=relaxed/simple;
+	bh=Fbj9/hPG7n2qB8Mwk2Mku7qajuvbKG9C9nV23PPn3Aw=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=pVhBD2t4gN5GCz2lyJ32i2ivf5D7KTWzQ4sWHcpGSZW0ldlWGzMnswuYg71t/JEsyNI2tdf5hpJXs+ULoduXI0ePVKk7lVepa+lq+tXCzzJlwdBrVRWtRpVHUa9JVZoTOtzydsuWvUjj5F25mDiKhsRpTjbSm3XC2mzDKyCLLfA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MAo/ETK2; arc=fail smtp.client-ip=40.107.223.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s0C5/iqvYVUlF+O68SR72NqMJYPkn4RweNI64D3Qr495msgo6Cb8hXGhYgU5oOntF31e3sxNaJlqNuQ+yIZFkxtpjDHs+9EVDLn11r5++g3JtiquCWWRmUCl99St9VTrACXWPvl5uGOWqETjQKgUj9KSBTqJeHUP7Bd4up4q8zVWfZK8rNF/EFTB9DlMPobgaqiHSwiW/g7Sj4pa9FWhe+jqpqJBAxTyIMkjysogxrPLn3wEtLQNy6dJOlrLaK0hZDX33vouyd5G5e6+9KjNSbicEjWp/6do8jIK3QUUTfTGYuXTMInUstGW0cmuY+6TOPDCBqwhBigkZ2Ii/1gx8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z8vy2kx4OyGMwTMQBscz6AY213PZcHqDw/OVNpOsIwY=;
+ b=pbQbdIK/NiX5ygNDgd9ATqs2ckk83kagWNMHfv4vGS+V/xYtBwcZz0dH/EaQJN4rGSezeZz14X1k5+o4XfZFiFTV0pM736euzwzmUsXykv4uWSXMY6iYFrZpc0svXweKk8ZaHFwHmhYLrXkZqra4I7sqYHR5sLR85ULEO3z0T8ND6uqRvI3NVwd0LPY372rCSQHeIgE26Jz1dzLMskajsIvZxfynkfv8R5KKiznMJmGgm98+sJ1OeU4CNMjezMrl85QDBRiQZ4Sb/MjXPK9oc1GIjk+GGOJZH7oAIydbsAO0Ge+4qI/+wqTJBXmXb0yN0yHcnoQaqCoxnWsaPNarbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z8vy2kx4OyGMwTMQBscz6AY213PZcHqDw/OVNpOsIwY=;
+ b=MAo/ETK2edpT6dJaShlekHKAXtqoB0ajKn9Up6I7N05+/AWtkeqteVp+NhnuVycdWar3sHB9HfzgN1T1+lNJsM1QVUo/399DascF8lpSJuRrsYQssRhszIOLCAAtmLco0PF6c/OflBvl0ARxTtCaxIjmcKGQ4+Two92bEdvRoMh1IiDpvxqUBgukcHz4EKsTsCcHaLggKTRmEIFIN0KbkVyaWDu6ZM13PxvdID8GABcc/pM4ZKRguDngdweVmR8MTf2M8voKCXVuVsVg+VG0q2g0bAwbuuwxYHpF7fyfaDaNDplGT+/m1WoMpuEfSks5Ck+SgMaPvBRUrCPijrnQsw==
+Received: from CH3P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::23)
+ by PH7PR12MB6444.namprd12.prod.outlook.com (2603:10b6:510:1f8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 17:56:12 +0000
+Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
+ (2603:10b6:610:1e8:cafe::28) by CH3P220CA0001.outlook.office365.com
+ (2603:10b6:610:1e8::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17 via Frontend
+ Transport; Tue, 22 Oct 2024 17:56:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Tue, 22 Oct 2024 17:56:11 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:55:55 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:55:55 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Oct 2024 10:55:55 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/52] 5.10.228-rc1 review
+In-Reply-To: <20241021102241.624153108@linuxfoundation.org>
+References: <20241021102241.624153108@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <d6ae5bbd-93b8-490c-8baa-e8f85541fdea@rnnvmail204.nvidia.com>
+Date: Tue, 22 Oct 2024 10:55:55 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|PH7PR12MB6444:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54aaf705-ea38-41f7-7273-08dcf2c2d0a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V09Gd1JBcXVqMVdScXVGS1FMMWs1VEZ2Sk9sbmNiSTJtVHhlNVNiY2wrWjNh?=
+ =?utf-8?B?bm9iRitxMU5EN2FaWlpITW9ISmxmWkkxVnUzRG1SMkJEWk1vaHZhUUZzSmlx?=
+ =?utf-8?B?UFBYYVUrUy9GQkExTG9aUWdYZnU1RncwS0x1YTJ5NXJ6TkxsZ2pvRzg0bGFI?=
+ =?utf-8?B?ZnZhVUR5bW5LaHFvYTBjVWN2cEdROTV1MWkwMjJXZGVYQ0xzUnJTYStrR3Bz?=
+ =?utf-8?B?bURtdE9rcldqOWdaT2NHalVnWTlwaDN2c3Y5eUNxQlJSaGx1YWd0U0t4K3ZE?=
+ =?utf-8?B?cUhGUXQ5WWNhaWZsSnplVE1NSGhiQm13a3h0RnJxa3pJejFBMVMvVFV2Nk11?=
+ =?utf-8?B?SW9oSmpxUkhQSnlpUUxqaXMrR2x0K2RTQnQzdjczUmlQQzlYWFZWY2h4TFdG?=
+ =?utf-8?B?Q0hqNzR2MmRpRC80WTVmdklOUDFHV3l4SmIrS3dMZnJERVZOeXBoZEQ5TnNy?=
+ =?utf-8?B?c3l1bUlPcWo5WU1xRytoU01wRnp6bm5zdmVBR21VQTlYUFQ0Z1l5M09BS0xY?=
+ =?utf-8?B?Mk5JTHdxTTBMcFlBMTNkUUNVTnF0MW04Y0Q2Ukp5ZVhReUZkYUxvTTVrZFdI?=
+ =?utf-8?B?MDVFRzhSN1ZQL2NpM2Q5d3VoYWlwSVZrOTBJMmhEV2lTSFFkdnVWYm8zSmRq?=
+ =?utf-8?B?ZStBY2dwNlVobXQzS1E5czJNNUpkenp6ZWNoK1NXOHhlbjlDZVQ5MXZNZExS?=
+ =?utf-8?B?QjE5aVhQd2VnOHViNVh3L0I4dFlab09iQ081ZWIyYllBdEdWYmREQVFSS0hO?=
+ =?utf-8?B?UkJZekJuU0dwL1pLdDVjaDBqSnJhWFJFODArMUpIU3dtN1RGMFFqZjlQemxt?=
+ =?utf-8?B?QVpLUTN3ODNvYzBZeGNuMXdscHZONUJNRW16cHJsMjl6akxNd2RSbXdtdWRk?=
+ =?utf-8?B?bWEzOXo4VlpOdUtwTENKMFp6bzRtTHUvOHljaTVJdjcrZFVSblpaVkZFbnJZ?=
+ =?utf-8?B?cTlveDAxQzlSeDEzcjdrRHhPZGFwdzNuSlpsRm5uQ0FnRHFFUkpWZk81ZjZP?=
+ =?utf-8?B?YTltQnNTRTE2czNzRE1DbjAvVHJvaU5NbjBFTE0ydXBPN2tmREhzd3VDZnpD?=
+ =?utf-8?B?clFuVTdmRjkraHM1U2s4RlIvMUxyb1FSODhkNjZjN0FIOUpPZUprd0FVYktj?=
+ =?utf-8?B?KzhpL2ZjTEg3WGFnZlpsNUNWeXJLYnRHSE9lRkRrQm8wb3NmRlVEeDFiQVZF?=
+ =?utf-8?B?UG1zT1VIQ0owV3Vwa2ZRaGdoYkQ0RVZnajB3SFkvNmZaMWtYb2kxbGZaZFU5?=
+ =?utf-8?B?encxSjZoeDB5WERZdXpsc251UVJiS3JKd2RYYWxaS0ZhNWlSaHM5TDMxZ3Yy?=
+ =?utf-8?B?MUl5ZzVZWXpuZkxOaVc1elRHU0QraHl4NjNVS0tkbG5Md2h2b3VSUDhKYSs2?=
+ =?utf-8?B?TWxxTzM3WWdQYTNHYk5jTzU2cXBDWk9WZi9wRnFPYktXVXk2aDhLY08rTUZw?=
+ =?utf-8?B?dDg1SGs1dkhzRCtvdXJvbmZRL3d6eVpMRWUydjB2ZkJUN1BCNlZkNmFsTkFp?=
+ =?utf-8?B?RHltcHAxK0xxQ21zUHZSNHc3WU9Rc3lqSTFqWFpDMm5hV1hFZWdqUzQxcUYr?=
+ =?utf-8?B?NENoYmt5M0tJbmdhVk9UelhyZ2xyTWgyMkY4L0NOb1RLSll0dGo1WFZrOVVj?=
+ =?utf-8?B?WFQrcldmRW15YnhQWUxSTnMxem1mbi9jOXNTN3hMVktCOWxMRE5SVXZQelcy?=
+ =?utf-8?B?aENzalNjWC8vSW80TU5jWVE0Z1VsTDhsUHN6THdnQXRCNlpwZmEzbkFQQnBx?=
+ =?utf-8?B?b29DNk9QeGtBTlBTU0E1OGpISEFwV0toSm9EclQ0NG5YaFgwdGpKNGZ3NXlu?=
+ =?utf-8?B?YmtUSXVYWWhteUdwd2NNUlcyM2MrN2NBMUJCanZ4bnUyRlVtVE5JZHBrNnN3?=
+ =?utf-8?B?NTNBU1VxRyt0V20wSWRRd3RPTm05TUtTdjRTQnp3NEwrd3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 17:56:11.6286
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54aaf705-ea38-41f7-7273-08dcf2c2d0a5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6444
 
-From: Kairui Song <kasong@tencent.com>
+On Mon, 21 Oct 2024 12:25:21 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.228 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-When running low on usable slots, cluster allocator will try to reclaim
-the full clusters aggressively to reclaim HAS_CACHE slots. This guarantees
-that as long as there are any usable slots, HAS_CACHE or not, the swap
-device will be usable and workload won't go OOM early.
+All tests passing for Tegra ...
 
-Before the cluster allocator, swap allocator fails easily if device is
-filled up with reclaimable HAS_CACHE slots. Which can be easily
-reproduced with following simple program:
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    67 tests:	67 pass, 0 fail
 
-    #include <stdio.h>
-    #include <string.h>
-    #include <linux/mman.h>
-    #include <sys/mman.h>
-    #define SIZE 8192UL * 1024UL * 1024UL
-    int main(int argc, char **argv) {
-        long tmp;
-        char *p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
-               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        memset(p, 0, SIZE);
-        madvise(p, SIZE, MADV_PAGEOUT);
-        for (unsigned long i = 0; i < SIZE; ++i)
-            tmp += p[i];
-        getchar(); /* Pause */
-        return 0;
-    }
+Linux version:	5.10.228-rc1-g11656f6fe2df
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Setup a 8G non ramdisk swap, the first run of the program will swapout
-8G ram successfully. But run same program again after the first run
-paused, the second run can't swapout all 8G memory as now half of the
-swap device is pinned by HAS_CACHE. There was a random scan in the old
-allocator that may reclaim part of the HAS_CACHE by luck, but it's
-unreliable.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-The new allocator's added reclaim of full clusters when device is low on
-usable slots. But when multiple CPUs are seeing the device is low on usable
-slots at the same time, they ran into a thundering herd problem.
-
-This is an observable problem on large machine with mass parallel workload,
-as full cluster reclaim is slower on large swap device and higher number
-of CPUs will also make things worse.
-
-Testing using a 128G ZRAM on a 48c96t system. When the swap device is
-very close to full (eg. 124G / 128G), running build linux kernel with
-make -j96 in a 1G memory cgroup will hung (not a softlockup though)
-spinning in full cluster reclaim for about ~5min before go OOM.
-
-To solve this, split the full reclaim into two parts:
-
-- Instead of do a synchronous aggressively reclaim when device is low,
-  do only one aggressively reclaim when device is strictly full with a
-  kworker. This still ensures in worst case the device won't be unusable
-  because of HAS_CACHE slots.
-
-- To avoid allocation (especially higher order) suffer from HAS_CACHE
-  filling up clusters and kworker not responsive enough, do one synchronous
-  scan every time the free list is drained, and only scan one cluster. This
-  is kind of similar to the random reclaim before, keeps the full clusters
-  rotated and has a minimal latency. This should provide a fair reclaim
-  strategy suitable for most workloads.
-
-Fixes: 2cacbdfdee65 ("mm: swap: add a adaptive full cluster cache reclaim")
-Signed-off-by: Kairui Song <kasong@tencent.com>
-
----
-
-Update from V1:
-https://lore.kernel.org/linux-mm/20240925175241.46679-1-ryncsn@gmail.com/
-- Resend patch, minor adjustment of commit message.
-
- include/linux/swap.h |  1 +
- mm/swapfile.c        | 49 +++++++++++++++++++++++++++-----------------
- 2 files changed, 31 insertions(+), 19 deletions(-)
-
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index ca533b478c21..f3e0ac20c2e8 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -335,6 +335,7 @@ struct swap_info_struct {
- 					 * list.
- 					 */
- 	struct work_struct discard_work; /* discard worker */
-+	struct work_struct reclaim_work; /* reclaim worker */
- 	struct list_head discard_clusters; /* discard clusters list */
- 	struct plist_node avail_lists[]; /*
- 					   * entries in swap_avail_heads, one
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index b0915f3fab31..46bd4b1a3c07 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -731,15 +731,16 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si, unsigne
- 	return offset;
- }
- 
--static void swap_reclaim_full_clusters(struct swap_info_struct *si)
-+/* Return true if reclaimed a whole cluster */
-+static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
- {
- 	long to_scan = 1;
- 	unsigned long offset, end;
- 	struct swap_cluster_info *ci;
- 	unsigned char *map = si->swap_map;
--	int nr_reclaim, total_reclaimed = 0;
-+	int nr_reclaim;
- 
--	if (atomic_long_read(&nr_swap_pages) <= SWAPFILE_CLUSTER)
-+	if (force)
- 		to_scan = si->inuse_pages / SWAPFILE_CLUSTER;
- 
- 	while (!list_empty(&si->full_clusters)) {
-@@ -749,28 +750,36 @@ static void swap_reclaim_full_clusters(struct swap_info_struct *si)
- 		end = min(si->max, offset + SWAPFILE_CLUSTER);
- 		to_scan--;
- 
-+		spin_unlock(&si->lock);
- 		while (offset < end) {
- 			if (READ_ONCE(map[offset]) == SWAP_HAS_CACHE) {
--				spin_unlock(&si->lock);
- 				nr_reclaim = __try_to_reclaim_swap(si, offset,
- 								   TTRS_ANYWAY | TTRS_DIRECT);
--				spin_lock(&si->lock);
--				if (nr_reclaim > 0) {
--					offset += nr_reclaim;
--					total_reclaimed += nr_reclaim;
--					continue;
--				} else if (nr_reclaim < 0) {
--					offset += -nr_reclaim;
-+				if (nr_reclaim) {
-+					offset += abs(nr_reclaim);
- 					continue;
- 				}
- 			}
- 			offset++;
- 		}
--		if (to_scan <= 0 || total_reclaimed)
-+		spin_lock(&si->lock);
-+
-+		if (to_scan <= 0)
- 			break;
- 	}
- }
- 
-+static void swap_reclaim_work(struct work_struct *work)
-+{
-+	struct swap_info_struct *si;
-+
-+	si = container_of(work, struct swap_info_struct, reclaim_work);
-+
-+	spin_lock(&si->lock);
-+	swap_reclaim_full_clusters(si, true);
-+	spin_unlock(&si->lock);
-+}
-+
- /*
-  * Try to get swap entries with specified order from current cpu's swap entry
-  * pool (a cluster). This might involve allocating a new cluster for current CPU
-@@ -800,6 +809,10 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 		goto done;
- 	}
- 
-+	/* Try reclaim from full clusters if free clusters list is drained */
-+	if (vm_swap_full())
-+		swap_reclaim_full_clusters(si, false);
-+
- 	if (order < PMD_ORDER) {
- 		unsigned int frags = 0;
- 
-@@ -881,13 +894,6 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 	}
- 
- done:
--	/* Try reclaim from full clusters if device is nearfull */
--	if (vm_swap_full() && (!found || (si->pages - si->inuse_pages) < SWAPFILE_CLUSTER)) {
--		swap_reclaim_full_clusters(si);
--		if (!found && !order && si->pages != si->inuse_pages)
--			goto new_cluster;
--	}
--
- 	cluster->next[order] = offset;
- 	return found;
- }
-@@ -922,6 +928,9 @@ static void swap_range_alloc(struct swap_info_struct *si, unsigned long offset,
- 		si->lowest_bit = si->max;
- 		si->highest_bit = 0;
- 		del_from_avail_list(si);
-+
-+		if (vm_swap_full())
-+			schedule_work(&si->reclaim_work);
- 	}
- }
- 
-@@ -2816,6 +2825,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	wait_for_completion(&p->comp);
- 
- 	flush_work(&p->discard_work);
-+	flush_work(&p->reclaim_work);
- 
- 	destroy_swap_extents(p);
- 	if (p->flags & SWP_CONTINUED)
-@@ -3376,6 +3386,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		return PTR_ERR(si);
- 
- 	INIT_WORK(&si->discard_work, swap_discard_work);
-+	INIT_WORK(&si->reclaim_work, swap_reclaim_work);
- 
- 	name = getname(specialfile);
- 	if (IS_ERR(name)) {
--- 
-2.47.0
-
+Jon
 
