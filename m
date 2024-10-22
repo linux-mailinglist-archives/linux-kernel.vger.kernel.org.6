@@ -1,230 +1,208 @@
-Return-Path: <linux-kernel+bounces-376530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A089AB2D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC5D9AB2D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534571F2380E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B712823F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200631BD516;
-	Tue, 22 Oct 2024 15:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720E1BE853;
+	Tue, 22 Oct 2024 15:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="tVu5B3a4"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrzyoCB5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EBB1A0BE5;
-	Tue, 22 Oct 2024 15:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ECC1A2C11;
+	Tue, 22 Oct 2024 15:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612386; cv=none; b=uK8xFLnRh3KGj352mY2dERoX0emVIDmOjAq5roVomcDUMNhRgscTYrShayfZt++Ig1VxnoD+gLVAVKCapAAZZICH9onFFZRS4VM25NoaOztJhLK9m9WlNG0xzgfDG5Rx2rAhlFCRz2/t6Ge7kKnbT7jwWhI5IsDq6pH3j7a0AdM=
+	t=1729612432; cv=none; b=qqycrjvFUPCqCKB491gALRn5rn4Em/NMOBY1QZIEDGjXBthtNk1CYjd3Vr8UX8atagcxcNcEUxe1zuBKHUNYykcoRwMpxGPE+NJrkpH/vUi9Gc/YY45UVWETsYujy8NXBlwLK9NHUN6cwTMZ8qN/eGchPLUfIrcc9SmVm8phy4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612386; c=relaxed/simple;
-	bh=E/UAvka1n7z9ij2CuqhFm1AyT+Zu8JQCBOu4+xengb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rxPMib+M+t4y4uM27oWdOynzmQw2Qq/Rjw9CfXqlAvsXP/d6km0DF6xXXwUFcpYlJwgTKcaFunuKQTvr08su0mcqsaZrzQDNUbjzRgBBGwoFUJD9bI1nXlmhmV0CglEJb3PzzYqpdavZp8ohFHZ4BBl1mRUGBWkxRhsJKEEs8ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=tVu5B3a4; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1729612369; x=1730217169; i=wahrenst@gmx.net;
-	bh=RV+ln9RGgJV6dhIgZJMxiS/O8xy7NYZZWNSQrK9dlaU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tVu5B3a4hO1uvcZmMsYRlNxvJwK2YBjEjdaeg5pW8rNmBCzf+a+e8PAMiXqVRK4i
-	 8WBjBT7Gw7Pi6cnXuexPRsjd+Ds0AZ3c/pE4/Ic1JuOzt7w/3goXZBEbXhj77x93i
-	 k9pjVLRlCRJgtkJ4UHKjd0hzuL96zNnwXV3teTxB5uMTGr52UjiH/H21v+K1PMWvW
-	 u+rgKVIKDJY+0rgRsEP1xcQ7Xvy4lbS/AGzZwNdNeRbCSD10Ku1H14zFq4OodTWcb
-	 z1VEHFo9Kd/4EBmLMjaYFvFdVho9uhR3VdczRBv52tzt4PUejdpQKIhk99KjVV7eQ
-	 ZNiIwOirTUR76mMftw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N7QxB-1tz8k13EBp-017oWp; Tue, 22
- Oct 2024 17:52:48 +0200
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	stable@vger.kernel.org
-Subject: [PATCH net] net: vertexcom: mse102x: Fix possible double free of TX skb
-Date: Tue, 22 Oct 2024 17:52:42 +0200
-Message-Id: <20241022155242.33729-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729612432; c=relaxed/simple;
+	bh=NCPHS5bmUtmyFfGQb7gvqJyh2iCM3PUOw9Dl1pgSsME=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=duinIqd0517xk8sLnwwml8bDlIwu8SropO10R2G/SSLTsf7nG769Gna16bTZ2R6x1wP68q68j6cKoVB1coj6TRa3leFf6BeSj+w7UI+8hJXHL/KATfqwi4Mkat6JABsta7FViVC6YNuU71pHORN6D0l9ts6I60QACJPu1YCA5Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrzyoCB5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC7A8C4CEC7;
+	Tue, 22 Oct 2024 15:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729612431;
+	bh=NCPHS5bmUtmyFfGQb7gvqJyh2iCM3PUOw9Dl1pgSsME=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KrzyoCB5kRxaoJ9qB7Q1JxYdRfnriknOZAkJvZC1q7+njWYo9p8Phs6KoT0l/su4Y
+	 Y0BkWhS3J89Ru6Oymx0vVsjWMlvoqEMWBUJVysJnKD+WiVc2VsJiMHPPiPcjtECGlU
+	 jdqPTDsPgcn/335zWliWtmBeVUViRcQgcFcfRFHjGOyr3t2eW/ATLoSGKPDOUcQEoD
+	 JwuKJ6Ra5Fx5J6U7fDl0eqnsBFcO6hsMMYM9+Wm3RZmwUOXS2oNDTjJ3VdX6IT2qp2
+	 LltwbygvlJOXnDegjq2zaKyzX77SrRDpQ+Pg/EQqdQnqhzYSBNFgCb9+ot28WDukDd
+	 K0/KkOvqYw1SA==
+Date: Tue, 22 Oct 2024 10:53:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	francesco.dolcini@toradex.com, Frank.li@nxp.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v3] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Message-ID: <20241022155349.GA880566@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:o83L+zdpzDcAsGb4jmD8H3bd7YA7xy9pYJ14zviwmE10SMBU6Is
- /iq8zpfZhIax1pJXkSDWCYjBMbzD9WKH5yCoFfHcCYDcmXd4qfyTvtUcERb16eEsp+ZZXa4
- c5PWdeKog5LdqrE91aHwS+mR9aDTn0f8sRI+gV7eolijdbgZKQHRwfdDj59fs4adacVoPz2
- LwRfapYGqyFroPzCYFRIg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cyO25HjhE4E=;4E982vO7r9/m6NXJli9arVBGaIZ
- ihfyKkQQ/wt9+LYHqnF2SvgHUFjlPrdMPElew01WddJM6d4Ti+lJNtrjHA2eywBT8N8W3JMSh
- NeTkiiI+NdUWeGv8424wggTFLH/vXcf6t77HAXY1J5BpSJmuMQgLpZIxKBlUbBxZA9rvkzDd9
- hUVUB7fligv8fxfXDpJCThRArnXSueiCXIxAVGCUk1xofl2rwE3OsAabxBGMWrqEx0kt3CRZT
- vKO82SUEhmRN+ZQ47EDakCGdXbl1Wu2Wn+AVyPzcT4au6g6lEECnPLBRA0ZE15h/UMnOxF1Zz
- aePagNC5VMtcnJ2MsvB6hDO5x8MvMj5VERskISabawfR1bGpcrlPrvoKK3fiwiciBiK2jRIGm
- qNhVbg7zWUF7u6DuVWlFDvucxon8nkChJa2eHeH256OWjCxxD4/x0TuRswdwAc/6IExI4i5Gh
- ydf1ZEfko9tmfuBT3Kfo5sTg2VLcMUZlOzZ19sEaWZ/SnAA6hComN93OmxX/u3VtYQwIBVpwN
- DhJm9Grx7ipYaW1Rwqwk7DHxSK2yDWcShNn0oXWe7cjC8xC5ncsSOz3m5PYOmFIAoqRjv0Czv
- sJfGM9ZXcUHOwsujqw/KFbehpjQjH1YLu/g18pO3GBN+AovB96/w8EtRRl32buj3I/xUYaG9B
- zfQFYFPncnpYfPwNPOKy20glD02yoZJgYEYf0xioI4NGqHnSkGA5AIal/2qqVSlgFLCocP6dm
- G+/Z5n34bMn8GHHrtgsADoNti+M7+IPaz+Jx4PhuUz74XgZ1qw2/8WBJy0LEcgqxRaTZTnNYT
- VtPbupeGfTNBa+ioIbe3NI7g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021124922.5361-1-eichest@gmail.com>
 
-The scope of the TX skb is wider than just mse102x_tx_frame_spi(),
-so in case the TX skb room needs to be expanded, also its pointer
-needs to be adjusted. Otherwise the already freed skb pointer would
-be freed again in mse102x_tx_work(), which leads to crashes:
+On Mon, Oct 21, 2024 at 02:49:13PM +0200, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> The suspend/resume support is broken on the i.MX6QDL platform. This
+> patch resets the link upon resuming to recover functionality. It shares
+> most of the sequences with other i.MX devices but does not touch the
+> critical registers, which might break PCIe. This patch addresses the
+> same issue as the following downstream commit:
+> https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
+> In comparison this patch will also reset the device if possible because
+> the downstream patch alone would still make the ath10k driver crash.
+> Without this patch suspend/resume will not work if a PCIe device is
+> connected. The kernel will hang on resume and print an error:
+> ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+> 8<--- cut here ---
+> Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
 
-  Internal error: Oops: 0000000096000004 [#2] PREEMPT SMP
-  CPU: 0 PID: 712 Comm: kworker/0:1 Tainted: G      D            6.6.23
-  Hardware name: chargebyte Charge SOM DC-ONE (DT)
-  Workqueue: events mse102x_tx_work [mse102x]
-  pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-  pc : skb_release_data+0xb8/0x1d8
-  lr : skb_release_data+0x1ac/0x1d8
-  sp : ffff8000819a3cc0
-  x29: ffff8000819a3cc0 x28: ffff0000046daa60 x27: ffff0000057f2dc0
-  x26: ffff000005386c00 x25: 0000000000000002 x24: 00000000ffffffff
-  x23: 0000000000000000 x22: 0000000000000001 x21: ffff0000057f2e50
-  x20: 0000000000000006 x19: 0000000000000000 x18: ffff00003fdacfcc
-  x17: e69ad452d0c49def x16: 84a005feff870102 x15: 0000000000000000
-  x14: 000000000000024a x13: 0000000000000002 x12: 0000000000000000
-  x11: 0000000000000400 x10: 0000000000000930 x9 : ffff00003fd913e8
-  x8 : fffffc00001bc008
-  x7 : 0000000000000000 x6 : 0000000000000008
-  x5 : ffff00003fd91340 x4 : 0000000000000000 x3 : 0000000000000009
-  x2 : 00000000fffffffe x1 : 0000000000000000 x0 : 0000000000000000
-  Call trace:
-   skb_release_data+0xb8/0x1d8
-   kfree_skb_reason+0x48/0xb0
-   mse102x_tx_work+0x164/0x35c [mse102x]
-   process_one_work+0x138/0x260
-   worker_thread+0x32c/0x438
-   kthread+0x118/0x11c
-   ret_from_fork+0x10/0x20
-  Code: aa1303e0 97fffab6 72001c1f 54000141 (f9400660)
+https://chris.beams.io/posts/git-commit/
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-tip.rst?id=v6.11#n134
 
-Cc: stable@vger.kernel.org
-Fixes: 2f207cbf0dd4 ("net: vertexcom: Add MSE102x SPI support")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/net/ethernet/vertexcom/mse102x.c | 34 ++++++++++++------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+Add blank lines between paragraphs.  Drop the "8<--- cut here" thing.
 
-diff --git a/drivers/net/ethernet/vertexcom/mse102x.c b/drivers/net/ethern=
-et/vertexcom/mse102x.c
-index a04d4073def9..8b9e700a1e63 100644
-=2D-- a/drivers/net/ethernet/vertexcom/mse102x.c
-+++ b/drivers/net/ethernet/vertexcom/mse102x.c
-@@ -216,7 +216,7 @@ static inline void mse102x_put_footer(struct sk_buff *=
-skb)
- 	*footer =3D cpu_to_be16(DET_DFT);
- }
+What does "reset the link" mean?  Please use the same terminology as
+the PCIe spec when possible.
 
--static int mse102x_tx_frame_spi(struct mse102x_net *mse, struct sk_buff *=
-txp,
-+static int mse102x_tx_frame_spi(struct mse102x_net *mse, struct sk_buff *=
-*txp,
- 				unsigned int pad)
- {
- 	struct mse102x_net_spi *mses =3D to_mse102x_spi(mse);
-@@ -226,29 +226,29 @@ static int mse102x_tx_frame_spi(struct mse102x_net *=
-mse, struct sk_buff *txp,
- 	int ret;
+The downstream commit log ("WARNING: this is not the official
+workaround; user should take own risk to use it") doesn't exactly
+inspire confidence.
 
- 	netif_dbg(mse, tx_queued, mse->ndev, "%s: skb %p, %d@%p\n",
--		  __func__, txp, txp->len, txp->data);
-+		  __func__, *txp, (*txp)->len, (*txp)->data);
+It sounds like this resets *endpoints*?  That sounds scary and
+unexpected in suspend/resume.
 
--	if ((skb_headroom(txp) < DET_SOF_LEN) ||
--	    (skb_tailroom(txp) < DET_DFT_LEN + pad)) {
--		tskb =3D skb_copy_expand(txp, DET_SOF_LEN, DET_DFT_LEN + pad,
-+	if ((skb_headroom(*txp) < DET_SOF_LEN) ||
-+	    (skb_tailroom(*txp) < DET_DFT_LEN + pad)) {
-+		tskb =3D skb_copy_expand(*txp, DET_SOF_LEN, DET_DFT_LEN + pad,
- 				       GFP_KERNEL);
- 		if (!tskb)
- 			return -ENOMEM;
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> ---
+> Changes in v3:
+> - Added a new flag to the driver data to indicate that the suspend/resume
+>   is broken on the i.MX6QDL platform. (Frank)
+> - Fix comments to be more relevant (Mani)
+> - Use imx_pcie_assert_core_reset in suspend (Mani)
+> 
+>  drivers/pci/controller/dwc/pci-imx6.c | 57 +++++++++++++++++++++------
+>  1 file changed, 46 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 808d1f1054173..09e3b15f0908a 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -82,6 +82,11 @@ enum imx_pcie_variants {
+>  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
+>  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
+>  #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
+> +/**
+> + * Because of ERR005723 (PCIe does not support L2 power down) we need to
+> + * workaround suspend resume on some devices which are affected by this errata.
+> + */
+> +#define IMX_PCIE_FLAG_BROKEN_SUSPEND		BIT(9)
+>  
+>  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
+>  
+> @@ -1237,9 +1242,19 @@ static int imx_pcie_suspend_noirq(struct device *dev)
+>  		return 0;
+>  
+>  	imx_pcie_msi_save_restore(imx_pcie, true);
+> -	imx_pcie_pm_turnoff(imx_pcie);
+> -	imx_pcie_stop_link(imx_pcie->pci);
+> -	imx_pcie_host_exit(pp);
+> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
+> +		/**
 
--		dev_kfree_skb(txp);
--		txp =3D tskb;
-+		dev_kfree_skb(*txp);
-+		*txp =3D tskb;
- 	}
+Single asterisks above, here, and below.
 
--	mse102x_push_header(txp);
-+	mse102x_push_header(*txp);
+> +		 * The minimum for a workaround would be to set PERST# and to
+> +		 * set the PCIE_TEST_PD flag. However, we can also disable the
+> +		 * clock which saves some power.
+> +		 */
+> +		imx_pcie_assert_core_reset(imx_pcie);
+> +		imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
+> +	} else {
+> +		imx_pcie_pm_turnoff(imx_pcie);
+> +		imx_pcie_stop_link(imx_pcie->pci);
+> +		imx_pcie_host_exit(pp);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1253,14 +1268,32 @@ static int imx_pcie_resume_noirq(struct device *dev)
+>  	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
+>  		return 0;
+>  
+> -	ret = imx_pcie_host_init(pp);
+> -	if (ret)
+> -		return ret;
+> -	imx_pcie_msi_save_restore(imx_pcie, false);
+> -	dw_pcie_setup_rc(pp);
+> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
+> +		ret = imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
+> +		if (ret)
+> +			return ret;
+> +		ret = imx_pcie_deassert_core_reset(imx_pcie);
+> +		if (ret)
+> +			return ret;
+> +		/**
+> +		 * Using PCIE_TEST_PD seems to disable msi and powers down the
+> +		 * root complex. This is why we have to setup the rc again and
+> +		 * why we have to restore the msi register.
 
- 	if (pad)
--		skb_put_zero(txp, pad);
-+		skb_put_zero(*txp, pad);
+s/msi/MSI/
 
--	mse102x_put_footer(txp);
-+	mse102x_put_footer(*txp);
-
--	xfer->tx_buf =3D txp->data;
-+	xfer->tx_buf =3D (*txp)->data;
- 	xfer->rx_buf =3D NULL;
--	xfer->len =3D txp->len;
-+	xfer->len =3D (*txp)->len;
-
- 	ret =3D spi_sync(mses->spidev, msg);
- 	if (ret < 0) {
-@@ -368,7 +368,7 @@ static void mse102x_rx_pkt_spi(struct mse102x_net *mse=
-)
- 	mse->ndev->stats.rx_bytes +=3D rxlen;
- }
-
--static int mse102x_tx_pkt_spi(struct mse102x_net *mse, struct sk_buff *tx=
-b,
-+static int mse102x_tx_pkt_spi(struct mse102x_net *mse, struct sk_buff **t=
-xb,
- 			      unsigned long work_timeout)
- {
- 	unsigned int pad =3D 0;
-@@ -377,11 +377,11 @@ static int mse102x_tx_pkt_spi(struct mse102x_net *ms=
-e, struct sk_buff *txb,
- 	int ret;
- 	bool first =3D true;
-
--	if (txb->len < ETH_ZLEN)
--		pad =3D ETH_ZLEN - txb->len;
-+	if ((*txb)->len < ETH_ZLEN)
-+		pad =3D ETH_ZLEN - (*txb)->len;
-
- 	while (1) {
--		mse102x_tx_cmd_spi(mse, CMD_RTS | (txb->len + pad));
-+		mse102x_tx_cmd_spi(mse, CMD_RTS | ((*txb)->len + pad));
- 		ret =3D mse102x_rx_cmd_spi(mse, (u8 *)&rx);
- 		cmd_resp =3D be16_to_cpu(rx);
-
-@@ -437,7 +437,7 @@ static void mse102x_tx_work(struct work_struct *work)
-
- 	while ((txb =3D skb_dequeue(&mse->txq))) {
- 		mutex_lock(&mses->lock);
--		ret =3D mse102x_tx_pkt_spi(mse, txb, work_timeout);
-+		ret =3D mse102x_tx_pkt_spi(mse, &txb, work_timeout);
- 		mutex_unlock(&mses->lock);
- 		if (ret) {
- 			mse->ndev->stats.tx_dropped++;
-=2D-
-2.34.1
-
+> +		 */
+> +		ret = dw_pcie_setup_rc(&imx_pcie->pci->pp);
+> +		if (ret)
+> +			return ret;
+> +		imx_pcie_msi_save_restore(imx_pcie, false);
+> +	} else {
+> +		ret = imx_pcie_host_init(pp);
+> +		if (ret)
+> +			return ret;
+> +		imx_pcie_msi_save_restore(imx_pcie, false);
+> +		dw_pcie_setup_rc(pp);
+>  
+> -	if (imx_pcie->link_is_up)
+> -		imx_pcie_start_link(imx_pcie->pci);
+> +		if (imx_pcie->link_is_up)
+> +			imx_pcie_start_link(imx_pcie->pci);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1485,7 +1518,9 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  	[IMX6Q] = {
+>  		.variant = IMX6Q,
+>  		.flags = IMX_PCIE_FLAG_IMX_PHY |
+> -			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE,
+> +			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE |
+> +			 IMX_PCIE_FLAG_BROKEN_SUSPEND |
+> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
+>  		.dbi_length = 0x200,
+>  		.gpr = "fsl,imx6q-iomuxc-gpr",
+>  		.clk_names = imx6q_clks,
+> -- 
+> 2.43.0
+> 
 
