@@ -1,190 +1,137 @@
-Return-Path: <linux-kernel+bounces-376572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F2E9AB35D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:07:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54A79AB362
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DEE91F242D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB15D1C22898
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7391D1BB6BE;
-	Tue, 22 Oct 2024 16:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6931A0AF5;
+	Tue, 22 Oct 2024 16:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cJSPzcCW"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uChcW7Dq"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2640139CEF;
-	Tue, 22 Oct 2024 16:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E2919F131
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613121; cv=none; b=HMMAak0KOEG7EWyBhI5Hcuq/yu4TFtlmjaI6qcc7YoDBQeyw//PMlIhxIqbEtDKwS3p1Rb/WZsl5xgWyu2JuMfdZuyjK9ed9Gub04H9HH/M/FOCxQVr/vzw3/tp5Rf88JZFee/2UYt748V/D/UdfTPSVHM3ZaQul6iCiH/L1wyI=
+	t=1729613239; cv=none; b=rzWhKzNj73zjiUyZO2MerHy/6MNNqlWOEOPinw2waX7hEn6bz0ASs3z+u/4/ZT7xVRhanpN9AoBZ81RjYholCRWsSKp9cLPGQLHmfHgIUYfmTfi9pVC8XY/NEnDRTXdpDS/bKVwUWyrdFmM4CMKKXjQH3RHy9KsAfXzMnt473xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613121; c=relaxed/simple;
-	bh=OynJaLzMucy3vyn4kZXuh4tD4dsnHaoATki7l4g0SmM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V0csBPn3mCtkxhH+6RzRBpQ2b7feBCEpWHBLXfYfrJlGTxTVSScNERtEpiEdQQvTddI5a1C8ir/vG1cEi8z/Kks/YZfPZtV/4mgY8aLy+k/I5IoGb206CE8rLmMffXYy9EmaKASg8HOuECVvA7gOl/4/EOeF7NHrrmIaI8cbZzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cJSPzcCW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729613117;
-	bh=OynJaLzMucy3vyn4kZXuh4tD4dsnHaoATki7l4g0SmM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=cJSPzcCWjFLx6mkYM+D4SNX8Nk0MW+obST65upmRoc37JhwJb2tiy6WNT8/TfU02O
-	 KMwsLCr13ftAJt5XEkynWkHmaB7rNhgFOJZ/VWkEtCV7B5pdT0WP3FZLqPP7HYindA
-	 vW0oqi8GHrUowMvqQ52EA5wX0gBiZVtGrD+S6el+jFspQZTD0iezRInZZgu/8NJis3
-	 gZF7ToI/9yOs4vpzt8jUUy2c2gG9g3x2vXwGO7IXeiAZqZZteEBS4X9zuF5d+RuSn5
-	 yoVrIEzcs1LFJH8FycR+s7lL+K2cONMi3ym+ezH+89t/m/g47KNJHKOKJGbzCD0psE
-	 xPUKxupBP6bgg==
-Received: from localhost (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0F2717E3677;
-	Tue, 22 Oct 2024 18:05:17 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 22 Oct 2024 19:04:42 +0300
-Subject: [PATCH v3] arm64: dts: rockchip: Enable HDMI0 on rock-5a
+	s=arc-20240116; t=1729613239; c=relaxed/simple;
+	bh=yzQsSYfHeihUsChvpuaOONbDivuLpNaJaW0LLuBKdN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nZ1yKGK3BWF18XZOB2IxGWSQ3RLXqTaVP0Ekkf8tnNAzqq9Wdtd+nbfd1IeUwVMvPVSs4YvBb72/hYfmkMw48gXCEhq8RJMccc+p5tjHWj/NK11+br1mLS8h8oRxTunfxRWTdCLMLG2xrUp8K4eu+0EE0yoJmH8IRj4gov5NQnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uChcW7Dq; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729613233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=n52RayRNzRsyQEiYVNwVsqKfALVoNrkzsm4wddplA60=;
+	b=uChcW7DqZ1Lp6aDNkqr2H6rWhe1k6hGZEIkci5asTlmZiCDzsHYkmEQiVR5qaZXB1YnAbK
+	SBlextf1R1Hn/0YUD1qCQcT01YlHyYtRNFhSTKZOAkmKKt+DFjYo++cewFIuNJzbcfHZvI
+	uJ9WtBwIRziAZ3/sqhiZ9WIY0WMxlQY=
+From: andrey.konovalov@linux.dev
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: [PATCH] kasan: remove vmalloc_percpu test
+Date: Tue, 22 Oct 2024 18:07:06 +0200
+Message-Id: <20241022160706.38943-1-andrey.konovalov@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-rk3588-hdmi0-dt-v3-1-3cc981e89afb@collabora.com>
-X-B4-Tracking: v=1; b=H4sIABnNF2cC/4XNTQ7CIBCG4as0rMUM9EfoynsYF5QBS2yLgYZom
- t5d2sSNLly+XzLPLCSa4EwkbbGQYJKLzk85ykNBdK+mm6EOcxMOvGLABA33shaC9jg6oDhTplh
- ZI8CpUZbkq0cw1j138XLN3bs4+/DaHyS2rR9L/liJUaAdCsultEZpPGs/DKrzQR21H8nmJf7H4
- NmomkajACOsld/Guq5vYTSqjPYAAAA=
-X-Change-ID: 20241018-rk3588-hdmi0-dt-1a135d0076af
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add the necessary DT changes to enable HDMI0 on Radxa ROCK 5A.
+From: Andrey Konovalov <andreyknvl@gmail.com>
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Commit 1a2473f0cbc0 ("kasan: improve vmalloc tests") added the
+vmalloc_percpu KASAN test with the assumption that __alloc_percpu always
+uses vmalloc internally, which is tagged by KASAN.
+
+However, __alloc_percpu might allocate memory from the first per-CPU
+chunk, which is not allocated via vmalloc(). As a result, the test might
+fail.
+
+Remove the test until proper KASAN annotation for the per-CPU allocated
+are added; tracked in https://bugzilla.kernel.org/show_bug.cgi?id=215019.
+
+Fixes: 1a2473f0cbc0 ("kasan: improve vmalloc tests")
+Reported-by: Samuel Holland <samuel.holland@sifive.com>
+Link: https://lore.kernel.org/all/4a245fff-cc46-44d1-a5f9-fd2f1c3764ae@sifive.com/
+Reported-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Link: https://lore.kernel.org/all/CACzwLxiWzNqPBp4C1VkaXZ2wDwvY3yZeetCi1TLGFipKW77drA@mail.gmail.com/
+Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
 ---
-Since the initial support for the RK3588 HDMI TX Controller [1] has been
-merged as of next-20241018, let's enable the HDMI0 output port for the
-following boards: Radxa ROCK 5A & 5B, Rockchip RK3588 EVB1 V10, Xunlong
-Orange Pi 5+.
+ mm/kasan/kasan_test_c.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-Thanks,
-Cristian
-
-[1]: https://lore.kernel.org/all/20241016-b4-rk3588-bridge-upstream-v10-0-87ef92a6d14e@collabora.com/
----
-Changes in v3:
-- Used the proper (i.e. micro) HDMI connector type for ROCK 5A (Jonas)
-- Rebased series onto next-20241022 and dropped patches already merged
-  by Heiko
-- Link to v2: https://lore.kernel.org/r/20241019-rk3588-hdmi0-dt-v2-0-466cd80e8ff9@collabora.com
-
-Changes in v2:
-- Updated descriptions for rock-5a & rock-5b patches to include Radxa,
-  per Naoki's review; also collected his Tested-by on the latter
-- Included Naoki's HPD pin related fix in rock-5a patch and dropped the
-  UNTESTED prefix from the subject
-- Link to v1: https://lore.kernel.org/r/20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com
----
- arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts | 52 ++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-index 5882027ab64c94066ead9a1c6cc84226968a69c8..3ca23555d90c5fedd95d4e8681c073b6523f5bf8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-@@ -5,6 +5,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
- #include "rk3588s.dtsi"
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9d3..d8fb281e439d5 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1810,32 +1810,6 @@ static void vm_map_ram_tags(struct kunit *test)
+ 	free_pages((unsigned long)p_ptr, 1);
+ }
  
- / {
-@@ -35,6 +36,17 @@ chosen {
- 		stdout-path = "serial2:1500000n8";
- 	};
- 
-+	hdmi0-con {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		port {
-+			hdmi0_con_in: endpoint {
-+				remote-endpoint = <&hdmi0_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -301,6 +313,31 @@ &gmac1_rgmii_clk
- 	status = "okay";
- };
- 
-+&hdmi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmim0_tx0_cec
-+		     &hdmim1_tx0_hpd
-+		     &hdmim0_tx0_scl
-+		     &hdmim0_tx0_sda>;
-+	status = "okay";
-+};
-+
-+&hdmi0_in {
-+	hdmi0_in_vp0: endpoint {
-+		remote-endpoint = <&vp0_out_hdmi0>;
-+	};
-+};
-+
-+&hdmi0_out {
-+	hdmi0_out_con: endpoint {
-+		remote-endpoint = <&hdmi0_con_in>;
-+	};
-+};
-+
-+&hdptxphy_hdmi0 {
-+	status = "okay";
-+};
-+
- &mdio1 {
- 	rgmii_phy1: ethernet-phy@1 {
- 		/* RTL8211F */
-@@ -793,3 +830,18 @@ &usb_host1_ohci {
- &usb_host2_xhci {
- 	status = "okay";
- };
-+
-+&vop_mmu {
-+	status = "okay";
-+};
-+
-+&vop {
-+	status = "okay";
-+};
-+
-+&vp0 {
-+	vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
-+		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
-+		remote-endpoint = <&hdmi0_in_vp0>;
-+	};
-+};
-
----
-base-commit: 7436324ebd147598f940dde1335b7979dbccc339
-change-id: 20241018-rk3588-hdmi0-dt-1a135d0076af
+-static void vmalloc_percpu(struct kunit *test)
+-{
+-	char __percpu *ptr;
+-	int cpu;
+-
+-	/*
+-	 * This test is specifically crafted for the software tag-based mode,
+-	 * the only tag-based mode that poisons percpu mappings.
+-	 */
+-	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_KASAN_SW_TAGS);
+-
+-	ptr = __alloc_percpu(PAGE_SIZE, PAGE_SIZE);
+-
+-	for_each_possible_cpu(cpu) {
+-		char *c_ptr = per_cpu_ptr(ptr, cpu);
+-
+-		KUNIT_EXPECT_GE(test, (u8)get_tag(c_ptr), (u8)KASAN_TAG_MIN);
+-		KUNIT_EXPECT_LT(test, (u8)get_tag(c_ptr), (u8)KASAN_TAG_KERNEL);
+-
+-		/* Make sure that in-bounds accesses don't crash the kernel. */
+-		*c_ptr = 0;
+-	}
+-
+-	free_percpu(ptr);
+-}
+-
+ /*
+  * Check that the assigned pointer tag falls within the [KASAN_TAG_MIN,
+  * KASAN_TAG_KERNEL) range (note: excluding the match-all tag) for tag-based
+@@ -2023,7 +1997,6 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(vmalloc_oob),
+ 	KUNIT_CASE(vmap_tags),
+ 	KUNIT_CASE(vm_map_ram_tags),
+-	KUNIT_CASE(vmalloc_percpu),
+ 	KUNIT_CASE(match_all_not_assigned),
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
+-- 
+2.25.1
 
 
