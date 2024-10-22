@@ -1,155 +1,166 @@
-Return-Path: <linux-kernel+bounces-375592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B676B9A97ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27659A97F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F23A28459F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5809B1F23E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607A57581F;
-	Tue, 22 Oct 2024 04:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF692126C0B;
+	Tue, 22 Oct 2024 04:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dFbYyg3Y"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hubSYBaz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B934938B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6354F1F2;
+	Tue, 22 Oct 2024 04:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729571629; cv=none; b=krffALpqj9ULmp8PNpsE7pfoLuGiITBSrYUBG5IQAzvFWsthXYE44Kz186nvmZfLKH4E6zBhAVaZ8f3yIbfFLPJ5jbPmKm7JlCglQTwvaVAcBamA7jBwR0mMryQPdpvB+00CHl/QblINTI+yj2Q0MuvnJsI4Yzbe0gA1Qkx95uk=
+	t=1729571920; cv=none; b=QHpK0PZOHPH0AvulLkLtIwJAyVJwN8XvZT5x/hQ85HvXAsZXpJVJYrsudFZkCOOnRrIBZ1eIG06DeV7dO4OjdPIWZ/mzQOjptfWuyMjuK7SdJcaDO9Lk5L3eQM6aBuEi4/n/aipw0K2NkHo3KfwiDLx4XccXlX1O7Eqv6xhUpfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729571629; c=relaxed/simple;
-	bh=Sa3oORQqqGKaLUUCrGj70IwTcSiY1Q9b956Lzj6Bt8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZHaI1YkBgXgXBNDV0ykgYoAPcewlG7uWi0oWGm8cGMTyR8WGV7INGFiCVXA2+m0la1g3mzpIO4j1pd+2/4wlWGbomUxpoYJd1vPU/Nn2NzdWRrvb/e5Pi44Dwzz71gwAAlZ2n3STHuZVL3svxkg+isHryeqTLijqKFZCWCdVVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dFbYyg3Y; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 04:33:40 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729571625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IYudzfRvqnvDrVSQ5OS6WPxzQKmU/bqfR5hedKDTCKM=;
-	b=dFbYyg3YUK5pfW0S+Y1TI21U+iPDscaGB1HzfEXFatq9rMNJJkVi2nG+DQwaJrcRBYZI1H
-	Th850TVnIIpBYxQnhBBV8zJSSE/GpQJ1k2DzyQ2uEpuY2XRhmD5TkrwsTOlNmi0g0KJFIq
-	JrPZwYPHeuKYoKW+vmq6/+QruuYEul4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
- free_pages_prepare()
-Message-ID: <ZxcrJHtIGckMo9Ni@google.com>
-References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
- <Zxa60Ftbh8eN1MG5@casper.infradead.org>
- <ZxcKjwhMKmnHTX8Q@google.com>
- <ZxcgR46zpW8uVKrt@casper.infradead.org>
+	s=arc-20240116; t=1729571920; c=relaxed/simple;
+	bh=za3YqSqD4Wfcsj/D9CW+BVvGkZaGQkM47ir4X4Chnc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XSHvk72JxvKGEl1fLuCl2JhI/uyELV3c+WjegZpTrqMsAU7Dtx9NUymGtXiXE01qGW3oPnSEVkoggVeNPGQp1v5edGmtxlZnKBE9u3PHerHToAbyM1Z0knqlPJBxHbCXjzhG6tPlDP2Vg15fwlWyeT5l5ojx33hX0Mfs6LiTICU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hubSYBaz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LIE6Bj001055;
+	Tue, 22 Oct 2024 04:38:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5ve/hy7uOdV9SIh9rFk1tNdtPzkxDZdPB7C19tNaF4I=; b=hubSYBaz364uxPLd
+	KP/4GbFlIQB0AW6yl0a/euzMt7sygSMFARA9jpc862cazoJzQyg1U7cSLEm/PP9h
+	oUUz8AmPJspdoRUBJ1pXa5qjWANHOrJoq2p6zvQU4x1Ta6STMJSS32BcquSmYJHC
+	hc7kYGmjA3kxlb+k93boE0At8TvbJKCDI3bXIbsvYABbXHYZOJkb0IARKs7gWOKw
+	+Q8LLl4IqhQHlz/u70nCiU5DNUz5h3qfrte4lVMaB5sfvgaZtq76iSpLxgRfTq/Q
+	cRmGwnOz8CH+Ch6ts8ejuzZyMat/w+p0QPWMB0xmjAsJJw13w4l1cqOR5WODLwoo
+	hnxbsQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmj12udm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 04:38:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M4cXGU006789
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 04:38:33 GMT
+Received: from [10.216.44.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
+ 2024 21:38:28 -0700
+Message-ID: <af978f3e-31a8-46ff-9513-92cca96063a3@quicinc.com>
+Date: Tue, 22 Oct 2024 10:08:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxcgR46zpW8uVKrt@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] clk: qcom: Add support for Video Clock Controller on
+ QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
+ <2wahtcgpz7juse325f6vp5od75pwrwyl5v3c2ln2xa64qzpvid@f43c7uxx34r6>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <2wahtcgpz7juse325f6vp5od75pwrwyl5v3c2ln2xa64qzpvid@f43c7uxx34r6>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3XZIkn0qZ_bQoKo9gjg8bDBOoNXgyRuk
+X-Proofpoint-ORIG-GUID: 3XZIkn0qZ_bQoKo9gjg8bDBOoNXgyRuk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=999 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220029
 
-On Tue, Oct 22, 2024 at 04:47:19AM +0100, Matthew Wilcox wrote:
-> On Tue, Oct 22, 2024 at 02:14:39AM +0000, Roman Gushchin wrote:
-> > On Mon, Oct 21, 2024 at 09:34:24PM +0100, Matthew Wilcox wrote:
-> > > On Mon, Oct 21, 2024 at 05:34:55PM +0000, Roman Gushchin wrote:
-> > > > Fix it by moving the mlocked flag clearance down to
-> > > > free_page_prepare().
-> > > 
-> > > Urgh, I don't like this new reference to folio in free_pages_prepare().
-> > > It feels like a layering violation.  I'll think about where else we
-> > > could put this.
-> > 
-> > I agree, but it feels like it needs quite some work to do it in a nicer way,
-> > no way it can be backported to older kernels. As for this fix, I don't
-> > have better ideas...
+
+
+On 10/18/2024 5:38 PM, Dmitry Baryshkov wrote:
+> On Fri, Oct 18, 2024 at 04:42:34PM +0530, Imran Shaik wrote:
+>> Add support to the QCS8300 Video clock controller by extending
+>> the SA8775P Video clock controller, which is mostly identical
+>> but QCS8300 has minor difference.
+>>
+>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/videocc-sa8775p.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
+>> index bf5de411fd5d..d0494ba81f5f 100644
+>> --- a/drivers/clk/qcom/videocc-sa8775p.c
+>> +++ b/drivers/clk/qcom/videocc-sa8775p.c
+>> @@ -524,6 +524,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
+>>   
+>>   static const struct of_device_id video_cc_sa8775p_match_table[] = {
+>>   	{ .compatible = "qcom,sa8775p-videocc" },
+>> +	{ .compatible = "qcom,qcs8300-videocc" },
 > 
-> Well, what is KVM doing that causes this page to get mapped to userspace?
-> Don't tell me to look at the reproducer as it is 403 Forbidden.  All I
-> can tell is that it's freed with vfree().
+> Sorted, please.
 > 
-> Is it from kvm_dirty_ring_get_page()?  That looks like the obvious thing,
-> but I'd hate to spend a lot of time on it and then discover I was looking
-> at the wrong thing.
 
-One of the pages is vcpu->run, others belong to kvm->coalesced_mmio_ring.
+Sure, I will fix this in next patch series.
 
-Here is the reproducer:
+>>   	{ }
+>>   };
+>>   MODULE_DEVICE_TABLE(of, video_cc_sa8775p_match_table);
+>> @@ -550,6 +551,9 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
+>>   	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
+>>   	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
+>>   
+> 
+> Comment?
+> 
 
-#define _GNU_SOURCE
+Sure, I will update the comment details for qcs8300-videocc in next 
+patch series.
 
-#include <endian.h>
-#include <fcntl.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
+Thanks,
+Imran
 
-#ifndef __NR_mlock2
-#define __NR_mlock2 325
-#endif
+>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
+>> +		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
+>> +
+>>   	/* Keep some clocks always enabled */
+>>   	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
+>>   	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
 
-uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
-
-#ifndef KVM_CREATE_VM
-#define KVM_CREATE_VM 0xae01
-#endif
-
-#ifndef KVM_CREATE_VCPU
-#define KVM_CREATE_VCPU 0xae41
-#endif
-
-int main(void)
-{
-  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
-          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  intptr_t res = syscall(__NR_openat, /*fd=*/0xffffff9c, /*file=*/"/dev/kvm",
-                /*flags=*/0, /*mode=*/0);
-  if (res != -1)
-    r[0] = res;
-  res = syscall(__NR_ioctl, /*fd=*/r[0], /*cmd=*/KVM_CREATE_VM, /*type=*/0ul);
-  if (res != -1)
-    r[1] = res;
-  res = syscall(__NR_ioctl, /*fd=*/r[1], /*cmd=*/KVM_CREATE_VCPU, /*id=*/0ul);
-  if (res != -1)
-    r[2] = res;
-  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0xb36000ul,
-          /*prot=PROT_SEM|PROT_WRITE|PROT_READ|PROT_EXEC*/ 0xful,
-          /*flags=MAP_FIXED|MAP_SHARED*/ 0x11ul, /*fd=*/r[2], /*offset=*/0ul);
-  syscall(__NR_mlock2, /*addr=*/0x20000000ul, /*size=*/0x400000ul,
-          /*flags=*/0ul);
-  syscall(__NR_mremap, /*addr=*/0x200ab000ul, /*len=*/0x1000ul,
-          /*newlen=*/0x1000ul,
-          /*flags=MREMAP_DONTUNMAP|MREMAP_FIXED|MREMAP_MAYMOVE*/ 7ul,
-          /*newaddr=*/0x20ffc000ul);
-  return 0;
-}
 
