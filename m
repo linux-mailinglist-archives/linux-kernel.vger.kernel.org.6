@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-376622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60329AB40F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30D49AB416
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7021F22C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AC081F217D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0D51BC078;
-	Tue, 22 Oct 2024 16:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8041BBBEE;
+	Tue, 22 Oct 2024 16:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXREBZhn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6zSFuUN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E8D19AA53;
-	Tue, 22 Oct 2024 16:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE1578C8B;
+	Tue, 22 Oct 2024 16:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729614680; cv=none; b=dzcQBo+NtVD1/pEPOLubAdKZOgs5e0KBqiwM7J08MK1rc++j/6ByMFhd73JkDxzZ8TTGL2Z/vPYeLDP4wXOUIGsGnavJlzNek6YuJxV3pvLke4P+dxJRXof73mjycJPJpwS0eNauouvWaI3cagvtzVAncKWDgnkpA7J6v5dHBZ4=
+	t=1729614786; cv=none; b=mniXpYPM0IX1R1NGUvvcuayMjHqqLqhBwwjJHQoP+oqQzfwYhgbq79N3kAK5GERQ9hLIph90bIVwUjMHuI7r61719HKDbGgLD4VbwuuIuEDrmGuTeADPCkk5/0FAARjtiSmXHSF7v4CJNJ4sp+svKPvJ5Z4AlLDn7la7DCl/Vc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729614680; c=relaxed/simple;
-	bh=KVLjpT7ZX9iWAD/24xl4Rm7ljfOUWX5ZNEqXbQPnM3w=;
+	s=arc-20240116; t=1729614786; c=relaxed/simple;
+	bh=X6TV2v5iwKpDVoweZscfUpkWmmhWrS5LE/vNHM2rfDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlYzZRtSP9FDL0ScAS9yTbnND3vj71lyWk3h9Vld4k5PalFe+fU+xT4ANqNEjr6ygMnXI2/VbM/7NjiLzxh7lisb7p/Fr76NLH3Hcfoo6n1c1WSlOMqUC++2XnaAlI9Zw2YhmnAk3i6AmSqS1er+j0inBrPuuQtgU2DVaUVmd/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXREBZhn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9B1C4CEC3;
-	Tue, 22 Oct 2024 16:31:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0e3bZ0AazlCMOmaTRxG1fTadnbmuzIjJoSrTdKsxxz4abF4+UNlSrdxvsE8zxnPEe2BcELfCR8yRWY2865QWGETIU0NGmd/8w1zHDpkjxMJ4sqPm8Xvlw07lZCmXYM7cAKP1cyfeMOQnLHrNgjarpPcQ4KJyUoGWIW8PlyCikg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6zSFuUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F83C4CEC3;
+	Tue, 22 Oct 2024 16:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729614679;
-	bh=KVLjpT7ZX9iWAD/24xl4Rm7ljfOUWX5ZNEqXbQPnM3w=;
+	s=k20201202; t=1729614786;
+	bh=X6TV2v5iwKpDVoweZscfUpkWmmhWrS5LE/vNHM2rfDo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dXREBZhnbOCRyRJEiURpCXE06H6GgDVmaDwtKIv+czCXlz1h/52ulbmftS6fG+Tnx
-	 dCqMNvASD8vVoYHQuGjLuqnhuKgGT8YDa0kOiJrDe35i2qr8Xh7/WrZmIU/bQIj1Ja
-	 u30hBzV0fpl90CzpENJ2z/BI6VyMbl71Yerxkvgzd8zsB2t35BZoH4heOmmCy9BY8Q
-	 0x7oCYfVw9yi5tpbQnalxiSW58VaD+NMdTcur4P28wR9wzlnUBUAaesH5UAqDhbsnn
-	 XyVe6/bHCA3EvoAZYBCp7ayqhIy3gaKahLp8UPxoMAOTZ5y32gz4Kr5ULC1fgxFVw+
-	 XBDrdYm83U25Q==
-Date: Tue, 22 Oct 2024 17:31:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	jason-ch chen <Jason-ch.Chen@mediatek.com>,
-	Chen Zhong <chen.zhong@mediatek.com>,
-	Flora Fu <flora.fu@mediatek.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 5/6] regulator: Add driver for MediaTek MT6328 PMIC
- regulators
-Message-ID: <8b4814d7-15da-4c0d-8d6d-0707a8c2eb74@sirena.org.uk>
-References: <20241018081050.23592-1-y.oudjana@protonmail.com>
- <20241018081050.23592-6-y.oudjana@protonmail.com>
+	b=U6zSFuUNNsR7AkaKYUVHvNmzBpaAkUE+ecCYLdiLCL0te+fHZEtPJaJZKPBvhrw6O
+	 kGUFs2B48vEBMZ+BVcUtH6yhn6JQb8ezUEJR6UgAqnoYg85r36e72Ncn7XNUZnrQ8W
+	 6pN0wckrQPPOkV01z9I1w0kXWc3thP2CaRS9ZtlTVHFL/p9j/njfZdZZE0iQsTl8IG
+	 dPefu0a+MZjzvPnHXgCuvWcZ8W1PdWsGA8LZ4IPSdBoqeNlTX2tz4rqReUo0UH5xm0
+	 T8Am8fjMiVhOYerxOBA01g0b3TTCZfmlNuqweczdycXU9YtYGz4P4qyAVLLfD0yyzl
+	 Vx/kgLyeio1cg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t3Hos-000000005iC-0Qbl;
+	Tue, 22 Oct 2024 18:33:18 +0200
+Date: Tue, 22 Oct 2024 18:33:18 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH RFC] usb: typec: ucsi: Set orientation as none when
+ connector is unplugged
+Message-ID: <ZxfTzrEpCG7NITq4@hovoldconsulting.com>
+References: <20241017-usb-typec-ucsi-glink-add-orientation-none-v1-1-0fdc7e49a7e7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="33tXnPvbLYFDgAR7"
-Content-Disposition: inline
-In-Reply-To: <20241018081050.23592-6-y.oudjana@protonmail.com>
-X-Cookie: Surprise due today.  Also the rent.
-
-
---33tXnPvbLYFDgAR7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241017-usb-typec-ucsi-glink-add-orientation-none-v1-1-0fdc7e49a7e7@linaro.org>
 
-On Fri, Oct 18, 2024 at 11:10:47AM +0300, Yassine Oudjana wrote:
+On Thu, Oct 17, 2024 at 07:01:01PM +0300, Abel Vesa wrote:
+> Currently, the ucsi glink client is only reporting orientation normal or
+> reversed, based on the level of the gpio. On unplug, it defaults to
+> orientation normal instead of none. This confuses some of the orientation
+> switches drivers as they might rely on orientation none in order to
+> configure the HW in some sort of safe mode.
 
-> +static int mt6328_ldo_table_set_mode(struct regulator_dev *rdev, unsigned int mode)
-> +{
-> +	int ret, val = 0;
-> +	struct mt6328_regulator_info *info = rdev_get_drvdata(rdev);
-> +
-> +	if (!info->modeset_mask) {
-> +		dev_err(&rdev->dev, "regulator %s doesn't support set_mode\n",
-> +			info->desc.name);
-> +		return -EINVAL;
+Can you be more specific here (e.g. so that reviewers and backporter can
+determine whether this is a fix that should be backported to stable)?
+
+Which driver is confused? How does this manifest itself?
+
+Is this an issue today? Or something you need for future work, etc?
+
+> So propagate the orientation
+> none instead when the connector status flags says cable is disconnected.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/usb/typec/ucsi/ucsi_glink.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index 3e4d88ab338e50d4265df15fc960907c36675282..b3bc02e4b0427a894c5b5df470af47433145243e 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -185,6 +185,11 @@ static void pmic_glink_ucsi_connector_status(struct ucsi_connector *con)
+>  	struct pmic_glink_ucsi *ucsi = ucsi_get_drvdata(con->ucsi);
+>  	int orientation;
+>  
+> +	if (!(con->status.flags & UCSI_CONSTAT_CONNECTED)) {
+> +		typec_set_orientation(con->port, TYPEC_ORIENTATION_NONE);
+> +		return;
 > +	}
+> +
+>  	if (con->num >= PMIC_GLINK_MAX_PORTS ||
+>  	    !ucsi->port_orientation[con->num - 1])
+>  		return;
 
-If the regulator doesn't support setting modes it shouldn't have any
-mode operations, then the core will take care of handling things
-appropriately.
-
-Otherwise this looks good.
-
---33tXnPvbLYFDgAR7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcX000ACgkQJNaLcl1U
-h9Ce+wf/ZIulqT3K3IhJ+KVWRcq3tjdhPl/Mej1+R59I03LxzaQpb8o43HQxSAxe
-SU0os389dSUkyF+kdhdT9f6YnIbW+vKIYPS38wU/5vfJN83xndKz8fBXDIxypF+W
-p9CnJwD0oQdITaqwTv3R5hfguCOZjh4YZLOgF4lLnhrxE5n3xHTAd3xaDK8gFhDb
-3igU5G1wWXv1t4bo88lF+fVeV/UvAllmm/cMimxvkDXpC+0rVwyVE+TMXZ6+70j0
-HzjxF8MNukQREubLvlekRPkCKzcNJ69HTiMYsDNN8YEf2YNWgbfzTJIap31+vm1U
-wiwCOzsm/3hF/CDv5/gVqprY892Ehw==
-=zs8D
------END PGP SIGNATURE-----
-
---33tXnPvbLYFDgAR7--
+Johan
 
