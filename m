@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-377064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F79AB96D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B219AB974
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192461F23E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843D01F23999
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162A1CDA02;
-	Tue, 22 Oct 2024 22:24:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBB91A2547;
-	Tue, 22 Oct 2024 22:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5291CCEF9;
+	Tue, 22 Oct 2024 22:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKAdn1N3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84211BD4F9
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729635858; cv=none; b=IMkIfmwqI9gaW58w7edGYNNHj4w34ahvwbpV1SzKICJWPIpp9lwKqiKQyYadFFoPDzoftbzTlLeZHKYUeE9pyUKl0zfz2+VBXrn/FW04ocUZ2RHnxEN25EjLiyEE8PPlnS6p5kGzwaTCD1O4v57YaCcUI2SrpmrGM7D+F9pxRes=
+	t=1729635944; cv=none; b=r4jF/c1jU1cF5kLGDegSu0+Ybl1R5Ep6xIS/alfQtIN59sCVBdD2LMnER2fM7q1TrwSTA+G7UeAleMAf8XWSmBUuU7nIr0aS4XZ885H2sfystuwPgm6f6zJMX1hH/tKfpX4QUX8y1wnrgOs+hZK/O5AQ3Gbxmw7bbkF6nvdaQeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729635858; c=relaxed/simple;
-	bh=LoklsZ5kNbjG7ecRihxDQqqb27hzsyvkCadGx4Bg554=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uzgg4R/xYYwi/CkR2krlRPJ06dWVoWv+QjGsqzYPKnHitA+PHHQVn8ZT5IXjcmGMAK/o6I9vtDPIAiXkpCTti32LmCcgY4TUaPYy/4df8LTJjiR0I6lKj9jUFZgnud2pf0QHQtAcJLLjqhuPMFsxH7qm/CKspXy8B5RMpXtQgho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4E79497;
-	Tue, 22 Oct 2024 15:24:45 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 865D03F528;
-	Tue, 22 Oct 2024 15:24:14 -0700 (PDT)
-Message-ID: <fd8729ab-85ba-4cbb-80f2-c5e188987d62@arm.com>
-Date: Tue, 22 Oct 2024 23:25:23 +0100
+	s=arc-20240116; t=1729635944; c=relaxed/simple;
+	bh=N0LPDcrfLkRnaKSBZN0tR4CqQGZZHF+TGNXD4iKi6Wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFniih3yn4IFtDszeYFPJYO2ohC89LqwfUfE4z1a2yCgDxTebrQY8n+ubUUN1yCLoXZtX6HHpqlVYTe9j7aSDfQeu33HPE8D3SE+N3uiDH9RHDEdIwzpenSdBIFrovF7pQM5hwn+CElJTKVJsJkVcFI5bJbv5BD8RtfBhLlOBtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKAdn1N3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF03C4CECD;
+	Tue, 22 Oct 2024 22:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729635944;
+	bh=N0LPDcrfLkRnaKSBZN0tR4CqQGZZHF+TGNXD4iKi6Wo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nKAdn1N3X0Goqp4kpdQMRFOHhBUnjmJ2NUzonqI4QR/Mm/A8eh4Nq9oFbrbJ80+jy
+	 +i7UBMau9Ly88rl+OXlkIilDVmciUVIBmGrMJzVo2X1CPOVvNIfTqTf26uiUGgR8YG
+	 BROjYjqkVRcwQESnV2corM8B8iFCMoWVAzYceTtlm6I3WLKj46tbzlfN+rpySDUCBH
+	 sa2D1OzlzkyE+5hQvSsSCtylvnmrJUAcx/9WhjI/6zlrVdaBgJGbOstUKTIMbGhO2x
+	 hs4tep7o/f+9u5eW1Bhdlj9p9pwRHnQPmMwGo/ZAK80et2JT1BBG4/i7BscPuT9zmr
+	 Q/ObYbx/du8vA==
+Date: Tue, 22 Oct 2024 15:25:41 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Stephane Eranian <eranian@google.com>,
+	Ananth Narayan <ananth.narayan@amd.com>,
+	Sandipan Das <sandipan.das@amd.com>
+Subject: Re: [PATCH 5/5] perf/x86: Relax privilege filter restriction on AMD
+ IBS
+Message-ID: <ZxgmZd0Hryqr6BoN@google.com>
+References: <20240905031027.2567913-1-namhyung@kernel.org>
+ <20240905031027.2567913-6-namhyung@kernel.org>
+ <49fd4eb5-ee7b-45f5-a40f-dbfd793cdff4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/11] thermal: core: Add and use cooling device guard
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <2655659.Lt9SDvczpP@rjwysocki.net>
- <CAJZ5v0h_tsCKpvZuHejCF4qnvJt7+=GqMGc7YgiM=Eu55bKBCg@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0h_tsCKpvZuHejCF4qnvJt7+=GqMGc7YgiM=Eu55bKBCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49fd4eb5-ee7b-45f5-a40f-dbfd793cdff4@amd.com>
 
-
-
-On 10/14/24 13:26, Rafael J. Wysocki wrote:
-> On Fri, Oct 11, 2024 at 12:22 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->>
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Add and use a special guard for cooling devices.
->>
->> This allows quite a few error code paths to be simplified among
->> other things and brings in code size reduction for a good measure.
->>
->> No intentional functional impact.
->>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>
->> This is a new iteration of
->>
->> https://lore.kernel.org/linux-pm/1890654.atdPhlSkOF@rjwysocki.net/
->>
->> v1 -> v2: Rearrange cur_state_store()
->>
->> ---
->>   drivers/thermal/gov_power_allocator.c |   21 +++++++--------
->>   drivers/thermal/gov_step_wise.c       |    6 ++--
->>   drivers/thermal/thermal_core.c        |   17 +++---------
->>   drivers/thermal/thermal_debugfs.c     |   25 +++++++++++-------
->>   drivers/thermal/thermal_helpers.c     |   19 +++-----------
->>   drivers/thermal/thermal_sysfs.c       |   45 ++++++++++++----------------------
->>   include/linux/thermal.h               |    3 ++
->>   7 files changed, 57 insertions(+), 79 deletions(-)
->>
-
-[snip]
-
->>
->>          stats = cdev->stats;
->> -       if (!stats) {
->> -               len = -ENODATA;
->> -               goto unlock;
->> -       }
->> +       if (!stats)
->> +               return -ENODATA;
->>
->>          len += snprintf(buf + len, PAGE_SIZE - len, " From  :    To\n");
->>          len += snprintf(buf + len, PAGE_SIZE - len, "       : ");
+On Tue, Oct 15, 2024 at 07:06:24PM +0530, Ravi Bangoria wrote:
+> Hi Namhyung,
 > 
-> There is one more "goto unlock" statement in this function that needs
-> to be replaced with "return".
+> On 05-Sep-24 8:40 AM, Namhyung Kim wrote:
+> > While IBS is available for per-thread profiling, still regular users
+> > cannot open an event due to the default paranoid setting (2) which
+> > doesn't allow unprivileged users to get kernel samples.  That means
+> > it needs to set exclude_kernel bit in the attribute but IBS driver
+> > would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+> > we want and I've been getting requests to fix this issue.
+> > 
+> > This should be done in the hardware, but until we get the HW fix we may
+> > allow exclude_{kernel,user} in the attribute and silently drop the
+> > samples in the PMU IRQ handler.  It won't guarantee the sampling
+> > frequency or even it'd miss some with fixed period too.  Not ideal,
+> > but that'd still be helpful to regular users.
+> > 
+> > To minimize the confusion, let's add 'swfilt' bit to attr.config2 which
+> > is exposed in the sysfs format directory so that users can figure out
+> > if the kernel support the privilege filters by software.
+> > 
+> >   $ perf record -e ibs_op/swfilt=1/uh true
 > 
-> I'll send an update of it shortly.
-> 
+> Shall we add an example in tools/perf/Documentation/perf-amd-ibs.txt?
 
-OK, I will review that when it's ready.
+Yep, I'll update the document when I send the tooling changes.
+
+> 
+> 
+> > +static struct attribute *swfilt_attrs[] = {
+> > +	&format_attr_swfilt.attr,
+> > +	NULL,
+> > +};
+> > +
+> >  static struct attribute *fetch_l3missonly_attrs[] = {
+> >  	&fetch_l3missonly.attr.attr,
+> >  	NULL,
+> > @@ -598,6 +604,11 @@ static struct attribute_group group_rand_en = {
+> >  	.attrs = rand_en_attrs,
+> >  };
+> >  
+> > +static struct attribute_group group_swfilt = {
+> > +	.name = "format",
+> > +	.attrs = swfilt_attrs,
+> > +};
+> > +
+> >  static struct attribute_group group_fetch_l3missonly = {
+> >  	.name = "format",
+> >  	.attrs = fetch_l3missonly_attrs,
+> > @@ -612,6 +623,7 @@ static struct attribute_group group_zen4_ibs_extensions = {
+> >  
+> >  static const struct attribute_group *fetch_attr_groups[] = {
+> >  	&group_rand_en,
+> > +	&group_swfilt,
+> >  	&empty_caps_group,
+> >  	NULL,
+> >  };
+> 
+> Causes:
+> 
+>   # dmesg
+>   sysfs: cannot create duplicate filename '/devices/ibs_fetch/format'
+>   Failed to register pmu: ibs_fetch, reason -17
+> 
+> Rename rand_en_attrs[] to fetch_attrs[], add &format_attr_swfilt.attr
+> to it and remove &group_swfilt from fetch_attr_groups[]. And I guess
+> it should work.
+
+Thanks for the review, I'll update the code as you suggested.
+
+Namhyung
+
 
