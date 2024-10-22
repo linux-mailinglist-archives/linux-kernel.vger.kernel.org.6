@@ -1,261 +1,107 @@
-Return-Path: <linux-kernel+bounces-376591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066A69AB38B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA4C9AB388
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE961F22A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E391C227AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEB71C1744;
-	Tue, 22 Oct 2024 16:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LUmlfbTo"
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA271BDA85
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9561B5820;
+	Tue, 22 Oct 2024 16:10:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FA51BE857;
+	Tue, 22 Oct 2024 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613448; cv=none; b=VWwd9UpyaKGuhbW8NvVLUIteATCwFR5ISSwF5t6tx6x+toFZwZzGiZjxgJsP+t6dVHZN8m93vZQBVk2hKRinxuyWuv4Fy3ss3dNwKYhZufrRz3kZhhopNBx3wOXW3A98TLwMHvbPcqO0WWJbdI96sPINdC6MnoUTrVCpXEZkpI4=
+	t=1729613443; cv=none; b=BJgwTk6ZwvJWVVmWc8aSKYLRZrVn9lXMTGDU2n9Pt3ni4dgdKM1abrMiHPnQ5tKMaePY99h5FPKV2hbfc8xQDklW+qfrcBu4/M6XDMJK926Betb4GTcKJYat4XmfzYwYnSMrc769Ks/uaXSlSYlt3srvAQqQSfIejF9nu+vCSP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613448; c=relaxed/simple;
-	bh=kZv6/PhbP7J5pxayWAbXtkpzTHCgWjbVAn3a0JLUYh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NkWecRDkqTzBVywYcbU0LLvUBPc2vnvV2jh9VdATwq0iqMFi6GQkpN/T31LhVMsURHS2Bbzd3R1RlkLqomx1rDp7wGg7kSXhpZChf+7BMb5V6LXjmoHX1wSraCj1w6ShFdNwpPdHmDE15pGRQ/ZnUyb13PhRoko3r5VtmL5i8hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LUmlfbTo; arc=none smtp.client-ip=185.125.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XXxwt506Jz1BWm;
-	Tue, 22 Oct 2024 18:10:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729613438;
-	bh=3Ve6yuPT5FwORVe2zeYvy54uPJqtXG32ke83iyO8jcM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LUmlfbTo2grw9nX/t2dsQYzcviD+2TyFUuzcDqdASyu6vIZVhlAM5Ju1N5WudaSFe
-	 MD59m4YToB0gEFIIsojq5z2GPVeHYIU3fZfuREneW9KtPLMRre3V+G7rutNg4UXZQV
-	 gIU0RPDR3UvCA+rjpAH52nx28mGOy26ODe3AoORY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XXxws6v0Sz6Tk;
-	Tue, 22 Oct 2024 18:10:37 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v2 14/14] landlock: Control log events with LANDLOCK_RESTRICT_SELF_LOGLESS
-Date: Tue, 22 Oct 2024 18:10:09 +0200
-Message-ID: <20241022161009.982584-15-mic@digikod.net>
-In-Reply-To: <20241022161009.982584-1-mic@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
+	s=arc-20240116; t=1729613443; c=relaxed/simple;
+	bh=sJlwNI5V9oYYAabgfoaSfOAgFY0ULQEOwfiJkm4D2tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9eoLqSQ3fc1U3f9bpPY+otL2wWxGZyPHVzJB5GNCrphqEcLG945vCM6dnKUXd1iUou3UykiaCLxqJV/WpgO5IhTTsQRdlC2TUA0OlP9kpbwc6l30tyDBVq6Ub6PcebOOczznYLMnWB0jM3LYd3ycavazK7yHJa32q26914tq7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07E99497;
+	Tue, 22 Oct 2024 09:11:10 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCF923F73B;
+	Tue, 22 Oct 2024 09:10:37 -0700 (PDT)
+Date: Tue, 22 Oct 2024 17:10:34 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64/boot: Enable EL2 requirements for
+ FEAT_Debugv8p9
+Message-ID: <ZxfOeqyb3RvsdYbU@J2N7QTR9R3>
+References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
+ <20241001043602.1116991-3-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001043602.1116991-3-anshuman.khandual@arm.com>
 
-Most of the time we want to log denied access because they should not
-happen and such information helps diagnose issues.  However, when
-sandboxing processes that we know will try to access denied resources
-(e.g. unknown, bogus, or malicious binary), we might want to not log
-related access requests that might fill up logs.
+On Tue, Oct 01, 2024 at 10:06:01AM +0530, Anshuman Khandual wrote:
+> Fine grained trap control for MDSELR_EL1 register needs to be configured in
+> HDFGRTR2_EL2, and HDFGWTR2_EL2 registers when kernel enters at EL1, but EL2
+> is also present. This adds a new helper __init_el2_fgt2() initializing this
+> new FEAT_FGT2 based fine grained registers.
+> 
+> MDCR_EL2.EBWE needs to be enabled for additional (beyond 16) breakpoint and
+> watchpoint exceptions when kernel enters at EL1, but EL2 is also present.
+> This updates __init_el2_debug() as required for FEAT_Debugv8p9.
+> 
+> While here, also update booting.rst with MDCR_EL3 and SCR_EL3 requirements.
 
-To disable any log for a specific Landlock domain, add a
-LANDLOCK_RESTRICT_SELF_LOGLESS optional flag to the
-landlock_restrict_self() system call.
+[...]
 
-Because this flag is set for a specific Landlock domain, it makes it
-possible to selectively mask some access requests that would be logged
-by a parent domain, which might be handy for unprivileged processes to
-limit logs.  However, system administrators should still use the audit
-filtering mechanism.
+> +  For CPUs with FEAT_Debugv8p9 extension present:
+> +
+> +  - If the kernel is entered at EL1 and EL2 is present:
+> +
+> +    - HDFGRTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+> +    - HDFGWTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+> +    - MDCR_EL2.EBWE (bit 43) must be initialized to 0b1
+> +
+> +  - If EL3 is present:
+> +
+> +    - MDCR_EL3.TDA (bit 9) must be initialized to 0b0
 
-There is intentionally no audit nor sysctl configuration to re-enable
-these logless domains.  This is delegated to the user space program.
+AFAICT we need TDA==0 this regardless of FEAT_Debugv8p9 (and e.g. we need
+MDCR_EL3.TPM==0 where FEAT_PMUv3 is implemented), so we should probably
+check if there's anything else we haven't yet documented in MDCR_EL3.
 
-Increment the Landlock ABI version to reflect this interface change.
+[...]
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Closes: https://github.com/landlock-lsm/linux/issues/3
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241022161009.982584-15-mic@digikod.net
----
+>  .Lskip_trace_\@:
+> +	mrs	x1, id_aa64dfr0_el1
+> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
+> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
+> +	b.lt	.Lskip_dbg_v8p9_\@
+> +
+> +	mov	x0, #MDCR_EL2_EBWE
+> +	orr	x2, x2, x0
 
-We could export and use audit_filter() to avoid computing the youngest
-denied layer, but I'm not sure it's worth it.
+That can be:
 
-We need to patch the samples/landlock/sandboxer to use
-LANDLOCK_RESTRICT_SELF_LOGLESS because it is a sandboxer, but at the
-same time it is useful to test this patch series without this flag.
----
- include/uapi/linux/landlock.h | 14 ++++++++++++++
- security/landlock/audit.c     | 13 ++++++++-----
- security/landlock/domain.h    |  1 +
- security/landlock/syscalls.c  | 25 ++++++++++++++++++++-----
- 4 files changed, 43 insertions(+), 10 deletions(-)
+	orr	x2, x2, #MDCR_EL2_EBWE
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 33745642f787..3b31d373ef74 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -62,6 +62,20 @@ struct landlock_ruleset_attr {
- #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
- /* clang-format on */
- 
-+/*
-+ * sys_landlock_restrict_self() flags:
-+ *
-+ * - %LANDLOCK_RESTRICT_SELF_LOGLESS: Do not create any log related to the
-+ *   enforced restrictions.  This should only be set by tools launching unknown
-+ *   or untrusted programs (e.g. a sandbox tool, container runtime, system
-+ *   service manager).  Because programs sandboxing themselves should fix any
-+ *   denied access, they should not set this flag to be aware of potential
-+ *   issues reported by system's logs (i.e. audit).
-+ */
-+/* clang-format off */
-+#define LANDLOCK_RESTRICT_SELF_LOGLESS			(1U << 0)
-+/* clang-format on */
-+
- /**
-  * enum landlock_rule_type - Landlock rule type
-  *
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index b551812b8bc9..9235590997d7 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -401,11 +401,6 @@ void landlock_log_denial(const struct landlock_ruleset *const domain,
- 	if (!audit_enabled)
- 		return;
- 
--	ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
--			     AUDIT_LANDLOCK_DENY);
--	if (!ab)
--		return;
--
- 	missing = request->access;
- 	if (missing) {
- 		size_t youngest_layer;
-@@ -426,6 +421,14 @@ void landlock_log_denial(const struct landlock_ruleset *const domain,
- 			get_hierarchy(domain, request->layer_plus_one - 1);
- 	}
- 
-+	if (READ_ONCE(youngest_denied->log_status) == LANDLOCK_LOG_DISABLED)
-+		return;
-+
-+	ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
-+			     AUDIT_LANDLOCK_DENY);
-+	if (!ab)
-+		return;
-+
- 	audit_log_format(ab, "domain=%llu blockers=", youngest_denied->id);
- 	log_blockers(ab, request->type, missing);
- 	audit_log_lsm_data(ab, &request->audit);
-diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-index 1374497d9a9b..765d5689fbb0 100644
---- a/security/landlock/domain.h
-+++ b/security/landlock/domain.h
-@@ -22,6 +22,7 @@
- enum landlock_log_status {
- 	LANDLOCK_LOG_PENDING = 0,
- 	LANDLOCK_LOG_RECORDED,
-+	LANDLOCK_LOG_DISABLED,
- };
- 
- /**
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 335067e36feb..48c26ed8c099 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -151,7 +151,12 @@ static const struct file_operations ruleset_fops = {
- 	.write = fop_dummy_write,
- };
- 
--#define LANDLOCK_ABI_VERSION 6
-+/*
-+ * The Landlock ABI version should be incremented for each new Landlock-related
-+ * user space visible change (e.g. Landlock syscalls).  Only increment this
-+ * version once per Linux release.
-+ */
-+#define LANDLOCK_ABI_VERSION 7
- 
- /**
-  * sys_landlock_create_ruleset - Create a new ruleset
-@@ -452,7 +457,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
-  * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
-  *
-  * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
-- * @flags: Must be 0.
-+ * @flags: Supported value: %LANDLOCK_RESTRICT_SELF_LOGLESS.
-  *
-  * This system call enables to enforce a Landlock ruleset on the current
-  * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
-@@ -478,6 +483,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 	struct cred *new_cred;
- 	struct landlock_cred_security *new_llcred;
- 	int err;
-+	bool is_logless = false;
- 
- 	if (!is_initialized())
- 		return -EOPNOTSUPP;
-@@ -490,9 +496,12 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	/* No flag for now. */
--	if (flags)
--		return -EINVAL;
-+	if (flags) {
-+		if (flags == LANDLOCK_RESTRICT_SELF_LOGLESS)
-+			is_logless = true;
-+		else
-+			return -EINVAL;
-+	}
- 
- 	/* Gets and checks the ruleset. */
- 	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
-@@ -517,6 +526,12 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 		goto out_put_creds;
- 	}
- 
-+	if (is_logless) {
-+#ifdef CONFIG_AUDIT
-+		new_dom->hierarchy->log_status = LANDLOCK_LOG_DISABLED;
-+#endif /* CONFIG_AUDIT */
-+	}
-+
- 	/* Replaces the old (prepared) domain. */
- 	landlock_put_ruleset(new_llcred->domain);
- 	new_llcred->domain = new_dom;
--- 
-2.47.0
-
+Mark.
 
