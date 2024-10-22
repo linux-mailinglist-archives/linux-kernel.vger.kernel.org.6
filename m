@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-376012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBA99A9E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A499A9F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136A41C23158
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E468C1C2516B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8693198A2C;
-	Tue, 22 Oct 2024 09:35:17 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C319A285;
+	Tue, 22 Oct 2024 09:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLuSga9d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675F338DF9;
-	Tue, 22 Oct 2024 09:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2A11993B9;
+	Tue, 22 Oct 2024 09:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729589717; cv=none; b=feJzNVxn4HtvM9Rf8c80CzFduAG3W6Nelfra2pALQEDt/MKOXlS7/etuIidmeC3JyUXj/kBAe6d53UCsHemAYpooi87vd9jEGL40kopuHdW108twgSz7ED3OQwHfKTCaSI8JjR4ELJTdRzdQToAhZ6jx9s8g8UbVQUBFnTx9Gu0=
+	t=1729590831; cv=none; b=j+LkuLBRbWZgWyHFabHIVjgWymglSkTcCSKEWapXtFl1C/IYaY4RjL4tYwJTCcqKBgNJ5MU9X7hj3AFPXfzAvkeASBjpUX0e/VktXw2s05UDbrsBFW0ILtPZHOp7KZpX4v5ZJbV9rJSyeNCpRTqj7JvfZHJmkE7TaQWK2wfxVAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729589717; c=relaxed/simple;
-	bh=Rp2YAPmT6eb5+b/9irGQcM/XdUNlyVMMg51kRmiKBqs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q6mAjqQ5Idtzb4/Z5FdwTpbhqT9GS4zBFPluzmdUkbVwDV+i79T+h680ykwtW9qUk+2OMk2Hx25FdSKNbiIQcgcN7FYvmHWJopwEGyNY9EzwK4RHEw1bbFYD3C555z5IFXUIA3z9KuhBjT7cwbM0h9/F9nl6ovR6phiQ0vRFGuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XXn6J41w6z1T8mM;
-	Tue, 22 Oct 2024 17:33:12 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id D4C5C1402CA;
-	Tue, 22 Oct 2024 17:35:12 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Oct
- 2024 17:35:12 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <clm@fb.com>, <josef@toxicpanda.com>, <Johannes.Thumshirn@wdc.com>,
-	<dsterba@suse.com>, <mpdesouza@suse.com>, <gniebler@suse.com>
-CC: <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v2] btrfs: Fix passing 0 to ERR_PTR in btrfs_search_dir_index_item()
-Date: Tue, 22 Oct 2024 17:52:08 +0800
-Message-ID: <20241022095208.1369473-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729590831; c=relaxed/simple;
+	bh=scM++PRarp/aL6EIAnPspEEa4tB6O8OVUGdyT5ywHWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wk6cWbqCOVDYExnTvAt3gx4sEaSOclPbQxBNbKjz3X6MB5Xl2GM849KPpk4gJ1luXw7H+B3jINHfClHpI+BKzG5iXZWdg9u9IOfp9prNXmv31IagDUOfQeTZF48vDjvp7udZy2Y+21OsiTND8vVgtw8iPGjuO72x5jnOMbAt6v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLuSga9d; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729590830; x=1761126830;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=scM++PRarp/aL6EIAnPspEEa4tB6O8OVUGdyT5ywHWg=;
+  b=lLuSga9drB5qOM5feq6YfdeXJ5LXlqB0CETQAk5zlBeKPdyEXH0UOa2e
+   z8MblJcSuel2gwbA2lKbdW1Sxk1MeL4IQ0HyLu0PS7RJeh9H6DDTrSQdb
+   DHSjMXJGJxj2PgHbRP2nk9UgOTmez2fhLMNa5/ii5yt0x28TKwta9Z6XX
+   2jZWPhLy8LOibMH9SnjMwRgsPlHZQvIB4uS2Fb9P2MT/NqlMHJjqqdQFC
+   mbb9lZP1toaQR341tu4fLHtSm81VcfhP9Cn9QE2k0LLBswEh7BVCRk5FS
+   zYBPN7xgAGTTPHkZx7Li4m1/8d1s6igkYlW5EMYAww9diKxsPWyQGfFuy
+   A==;
+X-CSE-ConnectionGUID: WBOhAiRuTiCsY8cr96Pt4g==
+X-CSE-MsgGUID: XbeRHvjkRGOwzeSSlWD3Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="29320777"
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="29320777"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 02:52:34 -0700
+X-CSE-ConnectionGUID: dtMF4WWlS2enATM/z7NnNw==
+X-CSE-MsgGUID: V81PCzHpTli7AWTOne9nsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="110635030"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 22 Oct 2024 02:52:31 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3BYy-000TPr-0b;
+	Tue, 22 Oct 2024 09:52:28 +0000
+Date: Tue, 22 Oct 2024 17:52:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matt Johnston <matt@codeconstruct.com.au>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Dung Cao <dung@os.amperecomputing.com>
+Subject: Re: [PATCH net v2] mctp i2c: handle NULL header address
+Message-ID: <202410221734.IWc5paM1-lkp@intel.com>
+References: <20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au>
 
-ret may be zero in btrfs_search_dir_index_item() and should not passed
-to ERR_PTR(). Now btrfs_unlink_subvol() is the only caller to this,
-reconstructed it to check ERR_PTR(-ENOENT) while ret >= 0, this fix
-smatch warnings:
+Hi Matt,
 
-fs/btrfs/dir-item.c:353
- btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
+kernel test robot noticed the following build warnings:
 
-Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
-v2: return ERR_PTR(-ENOENT) while ret >= 0
----
- fs/btrfs/dir-item.c | 4 ++--
- fs/btrfs/inode.c    | 7 ++-----
- 2 files changed, 4 insertions(+), 7 deletions(-)
+[auto build test WARNING on cb560795c8c2ceca1d36a95f0d1b2eafc4074e37]
 
-diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
-index d3093eba54a5..1ea5d8fcfbf7 100644
---- a/fs/btrfs/dir-item.c
-+++ b/fs/btrfs/dir-item.c
-@@ -345,8 +345,8 @@ btrfs_search_dir_index_item(struct btrfs_root *root, struct btrfs_path *path,
- 			return di;
- 	}
- 	/* Adjust return code if the key was not found in the next leaf. */
--	if (ret > 0)
--		ret = 0;
-+	if (ret >= 0)
-+		ret = -ENOENT;
- 
- 	return ERR_PTR(ret);
- }
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index acb206d5da3b..7569c8b27f9f 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4373,11 +4373,8 @@ static int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
- 	 */
- 	if (btrfs_ino(inode) == BTRFS_EMPTY_SUBVOL_DIR_OBJECTID) {
- 		di = btrfs_search_dir_index_item(root, path, dir_ino, &fname.disk_name);
--		if (IS_ERR_OR_NULL(di)) {
--			if (!di)
--				ret = -ENOENT;
--			else
--				ret = PTR_ERR(di);
-+		if (IS_ERR(di)) {
-+			ret = PTR_ERR(di);
- 			btrfs_abort_transaction(trans, ret);
- 			goto out;
- 		}
+url:    https://github.com/intel-lab-lkp/linux/commits/Matt-Johnston/mctp-i2c-handle-NULL-header-address/20241021-123741
+base:   cb560795c8c2ceca1d36a95f0d1b2eafc4074e37
+patch link:    https://lore.kernel.org/r/20241021-mctp-i2c-null-dest-v2-1-4503e478517c%40codeconstruct.com.au
+patch subject: [PATCH net v2] mctp i2c: handle NULL header address
+config: alpha-randconfig-r122-20241022 (https://download.01.org/0day-ci/archive/20241022/202410221734.IWc5paM1-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20241022/202410221734.IWc5paM1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410221734.IWc5paM1-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/mctp/mctp-i2c.c:599:23: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [assigned] [usertype] llsrc @@     got unsigned char const *dev_addr @@
+   drivers/net/mctp/mctp-i2c.c:599:23: sparse:     expected unsigned char [assigned] [usertype] llsrc
+   drivers/net/mctp/mctp-i2c.c:599:23: sparse:     got unsigned char const *dev_addr
+   drivers/net/mctp/mctp-i2c.c: note: in included file (through include/linux/module.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+
+vim +599 drivers/net/mctp/mctp-i2c.c
+
+   579	
+   580	static int mctp_i2c_header_create(struct sk_buff *skb, struct net_device *dev,
+   581					  unsigned short type, const void *daddr,
+   582					  const void *saddr, unsigned int len)
+   583	{
+   584		struct mctp_i2c_hdr *hdr;
+   585		struct mctp_hdr *mhdr;
+   586		u8 lldst, llsrc;
+   587	
+   588		if (len > MCTP_I2C_MAXMTU)
+   589			return -EMSGSIZE;
+   590	
+   591		if (daddr)
+   592			lldst = *((u8 *)daddr);
+   593		else
+   594			return -EINVAL;
+   595	
+   596		if (saddr)
+   597			llsrc = *((u8 *)saddr);
+   598		else
+ > 599			llsrc = dev->dev_addr;
+   600	
+   601		skb_push(skb, sizeof(struct mctp_i2c_hdr));
+   602		skb_reset_mac_header(skb);
+   603		hdr = (void *)skb_mac_header(skb);
+   604		mhdr = mctp_hdr(skb);
+   605		hdr->dest_slave = (lldst << 1) & 0xff;
+   606		hdr->command = MCTP_I2C_COMMANDCODE;
+   607		hdr->byte_count = len + 1;
+   608		hdr->source_slave = ((llsrc << 1) & 0xff) | 0x01;
+   609		mhdr->ver = 0x01;
+   610	
+   611		return sizeof(struct mctp_i2c_hdr);
+   612	}
+   613	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
