@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-376754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB519AB586
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:55:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6CA9AB583
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E12B224B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926871F238CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0934B1C7B84;
-	Tue, 22 Oct 2024 17:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D281C6F69;
+	Tue, 22 Oct 2024 17:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dZLhVVx3"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBBvj0ZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07491C6F7A;
-	Tue, 22 Oct 2024 17:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D511C6F56;
+	Tue, 22 Oct 2024 17:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619749; cv=none; b=CbPkM61Vlbkr96zVVve96QkMAwQx36RToJ3ZCJkxDK3rdeFoZDNnNJkzJ0AiJtEARmbK0hfNxg9xhrIDi+pQZsdIwsHKRoR6+5qAimg/SePlTZqp5ATM4AeJgBk8VjxS8YJTONgnT01d/j21GazqCbUeY6Gz+U54GOkl0UWroMI=
+	t=1729619695; cv=none; b=bcNO1u4MfnUIutddSWjM45Spm67xNqH86w7pyvlmsD9Sux1w4k3igHIKZOGXmf2LOxQ7qxS3ZkbVOARYZ2zNgs3Oc4cd9oBM1ZDlZN8HKZQtmJsO/x+NGyh/UHapLhv7gjopbJsK7K7elg9aBYcRz/tiiL6uUKGqRXoTyhcd6Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619749; c=relaxed/simple;
-	bh=Vaf0w7i/nQ6+pn4pXvNq//bDCD4PZWv1QLzVeflMW1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L6ZX6Q94+aPQvFZ6K/Srpmk7qUv9j9e0ABZILDz7c/CPg7E/JBTLBnMT46Bzc18Jkxi9nM77sNaIQjOLIpFqLynt4h6PhgdG3TBIRzrFoQDRBR1mSg0dBgHWTPyU4Y9bcGBCf/3GlXhaVK5xAA+MR9PCrCH2C1vkojENkcjuir8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=dZLhVVx3; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729619745;
-	bh=Vaf0w7i/nQ6+pn4pXvNq//bDCD4PZWv1QLzVeflMW1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dZLhVVx3IwTxuLXEoUv0axoYfG8RlbazapiWDPoN1Ll0NwOwg6u9XKFpobHj0cO3f
-	 2eG0DbIW+vmG4aW2GIYYn4ngIDmSKqltZIMKvB/OAA+lNCKNf+3bjtJNxwPWMDhppS
-	 4Xi5XQkwz9pbZiY2Ky/TwzfEAm+A9pAkShUpCCBFePJ0FlGM7VTrC68naKmpnvMKOE
-	 mYN5p/NnJGftUlT7WNETbDw0ss0uOdpn1e9/Y+aR8/4GvZrrR1wSl1BK7g97Vs5153
-	 W/BWyerfywavQ5a725izW4qtK6gP9YYXDi6s/+Cj1zFJIJBr1hhr0B5FHPWww3NPqK
-	 Qp3POfi4jqJGw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XY0G91j46zS5v;
-	Tue, 22 Oct 2024 13:55:45 -0400 (EDT)
-Message-ID: <3362d414-4d6f-43a7-80af-1c72c5e66d70@efficios.com>
-Date: Tue, 22 Oct 2024 13:54:01 -0400
+	s=arc-20240116; t=1729619695; c=relaxed/simple;
+	bh=nLbAoVMUYyE5cMe1vr0m+KdrW988ArZe2IMHu2HfY4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=r/84e1kvAFV4Bih1U/fiQsFulsQd+RlOzsBvDEg+1/+YRzlmLerr2M6B8womRc0aJgLcpVSGfbzBlR8sJKpcVxWVnxMDKEwL9/2lFtusbA7AjYF7VN+so49/kKOefew/CW/C6J3GBiCKHABXB9azjok1ATK/i57AS7EoU0ng6FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBBvj0ZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12066C4CEC7;
+	Tue, 22 Oct 2024 17:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729619695;
+	bh=nLbAoVMUYyE5cMe1vr0m+KdrW988ArZe2IMHu2HfY4c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eBBvj0ZRu88+FxwCUlLk0ymo8kxA7pnODwhMCbSiMn/RXqO/E5LkmhwmWMdXcVhyU
+	 hKjWyQjVBRDZo4CzLQ3XhHltQ824RXzAEOIZvEugma2XUardhkk5nOt2Gb27QD+oPd
+	 Gh0LPV2pBBeZYyf8DU7ytk5cwzZ9rjR+/FIdYNp7W5n6YnOla8QpvtH8hrd2+mEpAI
+	 e0E/LuHz8S1j5eYUOaZHicBk67KI5MjY3e+cQACo901R3pvScl/WwxgCUaM+O5fPWy
+	 EDBAFuaJSmr3TSlBGd+MDf/GSEq0jjKaWccGMRg4lwICQl3nGrm2lTMe6Ku6R29MQO
+	 Zs9S4DLrlNGLg==
+From: SeongJae Park <sj@kernel.org>
+To: Zheng Yejian <zhengyejian@huaweicloud.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	foersleo@amazon.de,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	shakeel.butt@linux.dev,
+	sieberf@amazon.com,
+	yeweihua4@huawei.com,
+	brendanhiggins@google.com,
+	davidgow@google.com,
+	rmoar@google.com,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH v2 1/2] mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
+Date: Tue, 22 Oct 2024 10:54:52 -0700
+Message-Id: <20241022175452.42218-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241022083927.3592237-2-zhengyejian@huaweicloud.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
-To: Jordan Rife <jrife@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
- Michael Jeanson <mjeanson@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, Alexei Starovoitov <ast@kernel.org>
-References: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
- <CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-22 12:14, Jordan Rife wrote:
-> I assume this patch isn't meant to fix the related issues with freeing
-> BPF programs/links with call_rcu?
+Hi Zheng,
 
-No, indeed. I notice that bpf_link_free() uses a prog->sleepable flag to
-choose between:
 
-                 if (sleepable)
-                         call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
-                 else
-                         call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
+We Cc kunit folks for any DAMON kunit test changes, so I Cc-ed them.
 
-But the faultable syscall tracepoint series does not require syscall programs
-to be sleepable. So some changes may be needed on the ebpf side there.
+On Tue, 22 Oct 2024 16:39:26 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
+
+> According to the logic of damon_va_evenly_split_region(), currently
+> following split case would not meet the expectation:
+> 
+>   Suppose DAMON_MIN_REGION=0x1000,
+>   Case: Split [0x0, 0x3000) into 2 pieces, then the result would be
+>         acutually 3 regions:
+>           [0x0, 0x1000), [0x1000, 0x2000), [0x2000, 0x3000)
+>         but NOT the expected 2 regions:
+>           [0x0, 0x1000), [0x1000, 0x3000) !!!
+> 
+> The root cause is that when calculating size of each split piece in
+> damon_va_evenly_split_region():
+> 
+>   `sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);`
+> 
+> both the dividing and the ALIGN_DOWN may cause loss of precision,
+> then each time split one piece of size 'sz_piece' from origin 'start' to
+> 'end' would cause more pieces are split out than expected!!!
+> 
+> To fix it, count for each piece split and make sure no more than
+> 'nr_pieces'. In addition, add above case into damon_test_split_evenly().
+> 
+> After this patch, damon-operations test passed:
+
+Just for a clarification.  damon-operations test doesn't fail without this
+patch.  This patch introduces two changes.  A new kunit test, and a bug fix.
+Without the bug fix, the new kunit test fails.
+
+I usually prefer separating test changes from fixes (introduc a fix first, and
+then the test for it, to avoid unnecessary test failures).  But, given the
+small size and the simplicity of the kunit change for this patch, I think
+introducing it together with the fix is ok.
 
 > 
-> On the BPF side I think there needs to be some smarter handling of
-> when to use call_rcu or call_rcu_tasks_trace to free links/programs
-> based on whether or not the program type can be executed in this
-> context. Right now call_rcu_tasks_trace is used if the program is
-> sleepable, but that isn't necessarily the case here. Off the top of my
-> head this would be BPF_PROG_TYPE_RAW_TRACEPOINT and
-> BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE, but may extend to
-> BPF_PROG_TYPE_TRACEPOINT? I'll let some of the BPF folks chime in
-> here, as I'm not entirely sure.
+>  # ./tools/testing/kunit/kunit.py run damon-operations
+>  [...]
+>  ============== damon-operations (6 subtests) ===============
+>  [PASSED] damon_test_three_regions_in_vmas
+>  [PASSED] damon_test_apply_three_regions1
+>  [PASSED] damon_test_apply_three_regions2
+>  [PASSED] damon_test_apply_three_regions3
+>  [PASSED] damon_test_apply_three_regions4
+>  [PASSED] damon_test_split_evenly
+>  ================ [PASSED] damon-operations =================
+> 
+> Fixes: 3f49584b262c ("mm/damon: implement primitives for the virtual memory address spaces")
+> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
 
-A big hammer solution would be to make all grace periods waited for after
-a bpf tracepoint probe unregister chain call_rcu and call_rcu_tasks_trace.
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
-Else, if we properly tag all programs attached to syscall tracepoints as
-sleepable, then keeping the call_rcu_tasks_trace() only for those would
-work.
 
 Thanks,
+SJ
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+[...]
 
