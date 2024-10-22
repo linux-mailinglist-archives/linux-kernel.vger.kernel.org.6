@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-377077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1700B9AB990
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:40:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279E39AB991
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A141C2275E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:40:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D745B218BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117D11CDA24;
-	Tue, 22 Oct 2024 22:40:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657E51CDA35;
+	Tue, 22 Oct 2024 22:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AX+qs5pk"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372371CCEFA
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35F1CCEFA
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636805; cv=none; b=O8HV80nNw/wRJpqUB1AOlV4w+eBBn+CCZtD1ZJBvTSF4JMtaxu9f5JDrsBZjriGZe50pNeMBaBIL58TvoG7miApaEBrOi/amQc5O+Au9TtV+JavC4T0r3GcOTrskN+lmwFpjDU/ulOBf2+xyJdbAa+I4slSZN0JYmDegeP6ZciQ=
+	t=1729636824; cv=none; b=Hf5hUwYUqTCbBn3N/OeL2Bl+fz8oDs5EVM6KlkZcuPBkWzm8FjJzLasP/tTmoHPopzyL+d+OloDYCezWE3W/VJLOB9YHSn3GBQyuwm9IV1IETbKTGQXQB2Sggiya0DKHLTVGZm7bGCr2yCoQrjqNNzdaYPh8belyxkiviU32WXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636805; c=relaxed/simple;
-	bh=phBVLes0EV2/53JJr2Gi4gx7fPeuqgGJan2+8ojPUGY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qeU21hR0tTsBKsINgHpqnW6IJFVPp/x9uxhi2c7Ef0vp4bjKfSLwMJziqWMHUqn/eBZugIMlcLit9FGS6pjrfutZwtWepMRq1O01KJH/1PZnYbklhonZikb1eESlg6/IlXilkzKUkKHPuVF6ZiIOE6XOvGM89Wf+zjVq5RtGErk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so61448705ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:40:03 -0700 (PDT)
+	s=arc-20240116; t=1729636824; c=relaxed/simple;
+	bh=lIRTsB8/7w9aiXGwumD/5t2Ntq2v4lrXMrKQWp3Dvbk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VdHh0Wvxga/rJqhSlr7dCF64a3a6P1mYJiln+GrGzYOpi/RFlwXsX7VKfekyhJpN8KoIr9LoUBu99BJnQrNlfcY1cfVt4Xuxlvghi+u0o4LH/vv3nhTczuyraIKGqG7h/Vv8gjm54kDtsllnmtBVQorsuBYIE0TT3CXt6Eq/b5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AX+qs5pk; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so6010704276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729636822; x=1730241622; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1Ogz5IrclLTw1aKz0Jr4sQzXNdx/+9D4zH2hrfc475g=;
+        b=AX+qs5pkC8iLWioSeNcXJsbZHQZos14yxFPXunaQBtu4utumfK0EO9yRl8wuzfIR2V
+         NGMIRNxBd6+E+i3eTVfewrdVuwikgl/1w6OZ+f6rm8EeF5ltSZ4UAqzB1O5fRYz4Mu0a
+         KU/fy6q3B+DkZXTVyZs5+dvY1XRHyIYIGlUPXyg7Z3Ad4rZOo6znvtRgEth8DXJmqiqY
+         O+FHkWRwDCUGJz5KyDUuT7gER//hStrHLMDkQuXghU8Q5WwvO7BzHaX/Lam3p1H82iUK
+         dDNgWzrtI4AOBsdo+icMKbusJFIaI5GQ4aPn7AMAX/47s2xjBnRMwxeVrVwrvmpvcU7a
+         2Xcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729636803; x=1730241603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0L43JcTxYg6YBJypmDWpXDnBf2fpMX9zvoBTA9Jr5TY=;
-        b=aKAFmOzjxwt40W71awNcP1Bo3i0PkHmopdWosMuU8dmeKnvH/BqzwzK8t5m/ug6nj2
-         1X/OkWr9zfwExZaA8fbAEN8Q/vsWI3CgrYHWblfa3zcNJS8uMWgkS1dcbAD2CKNZ08UV
-         1GdvVs3VBR+h6Jfg8MnIi9pIJ4PPoObmLOn1Ws8dWkVOKHKFgAqmVM3terkYIS+I7fZA
-         zT45mULxf8NzXL4H/os/tlNbwnYc7ABi5+aaEqVo5iZmhXql5vATcy27hSpRLdGYooi1
-         9LYhrK3TJI2OZdpvOtAj1XuGuqeNFunkhg7twnEe0iZXBiJxGsIz4E6kxS5s85piDCh5
-         eyCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK46+QVctsKzvq/W64s9TS2iLCIHKpav0xDSsMZkhv0YD4iWBeZR5HNV3MO1bdwpgQHKRXtVN34G63Jjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdKvgC+4BleC/bTMomts29UNkOA9bi2ZV5FzRMuP4RjjfjP7Oa
-	1NHrpZo4ycokCZt6o1SXbtLyNAN1VFWpCvmUZJVgrm3mEwyvoKM/i19WrcbCJE2JBsQkH46E477
-	YekzUbwKPjOoqKg2dRaSx/crevP5TzimmzJuwCrUDn1tePcbgn3na4BQ=
-X-Google-Smtp-Source: AGHT+IFBX2zym8MCNwv6AGAgsdEsKJDBDGVbPUI4+l0N/sAM/LuxywrokX66LEJRVKtBGFbGOcmYsRsQ2MsN1Ut0GTCMeR2Qpzir
+        d=1e100.net; s=20230601; t=1729636822; x=1730241622;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Ogz5IrclLTw1aKz0Jr4sQzXNdx/+9D4zH2hrfc475g=;
+        b=kHe/zwOuc1KF+3YqHbtynXVT2pHwfxFEDi04EjVEZU+CsmXZmaupD8w1sbv+DZhAiF
+         5W/7D6vs9zEZY0J9xPxmOZgiLnW3sktVmZj8jfS/q7w8HwnGfHMERj2w3bwKShvHPtI9
+         lr6QJKIwzmsXDp6nz5nOJZAsG48GygUJ2mgE/zc8xpVzLdDAM8T0bK5ObitEVPfqUt66
+         9tJeF1/+8SWQ9fzhut/9GE26nbOq9jeSgzx0bKjImm3+73y/c0Madh3lRv1QjVhq9B9f
+         Tgwzj3j93lptKiyL0cdnnZFS2YP1dwC0fBPanFQE1ascvVSjlxi0yKkFd0m3l5uah5MF
+         rU4A==
+X-Gm-Message-State: AOJu0YxzTIPURpWm7HY9xLJLSpjehBKVn98I1E3KlwpAAv7XtCds1yI7
+	34mQ46FDET2tqECOpDzGFZoC2Ziuwcdzy/7Tspmgb0kTiT7/TbCMxzJrDRXqdfmR8ZycxPy06ht
+	qLMpk9Qb7dGrBebGQcdcOtE0NnuhqsUqCIaoM
+X-Google-Smtp-Source: AGHT+IEmrsL2mmkfIDitJhu5hcsn1FCdFgoNp9yTZPRQ4wh8Fc5z5cgTKRA2GP4UtQ1w7pzOVlBNjul4y6nKwKhEXes=
+X-Received: by 2002:a05:6902:1246:b0:e29:2ab7:6c03 with SMTP id
+ 3f1490d57ef6-e2e3a65e7a0mr461330276.33.1729636821968; Tue, 22 Oct 2024
+ 15:40:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:3a0:451b:ade3 with SMTP id
- e9e14a558f8ab-3a4d595d6e1mr6997365ab.10.1729636803300; Tue, 22 Oct 2024
- 15:40:03 -0700 (PDT)
-Date: Tue, 22 Oct 2024 15:40:03 -0700
-In-Reply-To: <49b1ba71-1c1e-43e9-a012-42c17f0aad85@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671829c3.050a0220.10f4f4.0182.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_free_fork
-From: syzbot <syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 22 Oct 2024 18:40:11 -0400
+Message-ID: <CAHC9VhT5P_FgPr=k6y91HjTMM1GCQH_kcPR=p2Ux-coTYYR_EA@mail.gmail.com>
+Subject: Commit 6e90b675cf94 ("MAINTAINERS: Remove some entries due to various
+ compliance requirements.")
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+If we as a community are going to drop subsystems/individuals from
+MAINTAINERS due to "compliance requirements", can we at least
+explicitly list those requirements in the commit description?  In
+addition, if we're going to provide a path back for those who have
+been dropped, can we either provide the instructions, or a link, in
+the commit description?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
-Tested-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f4a640580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa3d7fc2fd6ea40d
-dashboard link: https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10eb8287980000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+paul-moore.com
 
