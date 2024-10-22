@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-376874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25209AB6F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C549AB6F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C36B23E91
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2741DB240F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54A31C9DFA;
-	Tue, 22 Oct 2024 19:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598C91CBE9C;
+	Tue, 22 Oct 2024 19:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kk4+s0mQ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+bmmlKh"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFED61465A5;
-	Tue, 22 Oct 2024 19:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCF21465A5;
+	Tue, 22 Oct 2024 19:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729625763; cv=none; b=GViMMKx6ScHaHRlKxhRJ5Cc4wvLIwSnMRSGNxcYT5CYJi1yLaiLicAmiJP35l9/V1tDo397jOZwpZGdGWTNoIZuBHyVE5W0fNpz4TE5bQAMXu5gBSKdsMQh9Kwjeynk/XQb3GRV8k1JMzkE6vriECpKt69C/86ABnl3A5UeV7oI=
+	t=1729625769; cv=none; b=Ea1QICiARIqQ4XxlBiDCceB3bjjBNTMAfVQGGIAT3zjFJrjUcAVGfLzpq8JXkyMsCLr4Jn17naKCfQuRYjSzdnLLw2iqZ9sCQIQXfNDQ704cm9KKer6lifKCMFcVixIJYTqfYgtwCpp4W+pE59qXUWw+II51WnZdSInNQA/C2rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729625763; c=relaxed/simple;
-	bh=I/WoiMzEECRPe6MXg3HaJw19HDgI/LDm8teB4tvExR0=;
+	s=arc-20240116; t=1729625769; c=relaxed/simple;
+	bh=LVPIjCkp9cgePCACWtO/nlUWug0wOy0Ogz8clHkiz8g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=juMNmF8lsv0ad4KoY6EYDd5Q811AurWcD6nuMQcLigrknouvTQofOH7ApZcu5SVtggu5GOUM+tGKFeKhPTAxIWBHsHnYvbpqascB5PqWptUsUTSKGT/x3yaxVGgd6dhATh/y+sMu3Dp/wgQI5OP/80kaMRPk5QP4JojQ3dpzY8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kk4+s0mQ; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=YHh16g+WCRI4aCEA1QV7EItICv2xSk3/+MiIG5tlmOoMLWewupuNbAPDeVWPa5ACc2CP3h3DhvTHwNlAODmP/+C8FZajpd7Y+cgagDUYq7BBAZDiitvHFiUgbqOkHCKYAMqNRLqQGhrPE+pZp1K56dOfInp6OFYWNgLpWo5Y0SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+bmmlKh; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c803787abso1358215ad.0;
-        Tue, 22 Oct 2024 12:36:01 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a3b8b34be9so21112585ab.2;
+        Tue, 22 Oct 2024 12:36:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729625761; x=1730230561; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729625767; x=1730230567; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cGUU/iG7YJDkLyArhva5LWM7ySXTw/bZxI0PEkU3+xc=;
-        b=Kk4+s0mQQAP6kzreiDJXYwPIsTqCDQqWCzQYog9FeYlEtNBjg8Gd1upg1iq4c2XZEX
-         fm2c6LHePIQ1WlSzdseCQZNr+DbdBIhiHOGAjoAQBxyAqhsNAaUfRZU1VLq7fQWYlMKy
-         0M/9HJ57s1bc7bMEQbeOZXumII+2//Tx4EzzZmBDQ6UG9dEmph4rIVY3yG33ccd0dlNS
-         9m/eudH0IIvXQr1je67eH3lyrBJWM4B6PJYcBj/M3/ebk0knXw2qrLgETvFSz848/IUJ
-         d3JowAar1WtgcGpDTyfZb4QAyqJbhA5jWOURbfnP7sB73jeF4kWV+fHzd/FN7nb+ymmA
-         Eq7A==
+        bh=dV9l/v2LcDXnviTDuNMkbMeVnn+PWfoffe417y/FNaw=;
+        b=B+bmmlKhznJ8ri8wFCS9oNfKR0Lu5z5HnO+yrzh+i1CE5hH7VtOYjvbLHXa/8HKs5+
+         qQrRkyiSYJ+evlrx9+Wxe7coAZiMMNAUSwB34PeN+Gg2YwgmGaDAfT4gsaPeE9EU2gVy
+         pNBgK7LEafEiLKSqlkkwzXrfoTT8Uai1ObNiOhAIyicbdWSilj57w7U7NHDrIdp3GwdU
+         dNK8C1tM7rV41130KAFx2n2tCpNd/BND3MnJb5Z5iPELpnfIa7usb7iY5pQKc9jTsVDZ
+         n+Zy2uePvQLBEcErDOypIKJue3xkakZ3NoUVYpH0+uD+4CF1oexwo75Mf10ItJnIO2a8
+         e5IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729625761; x=1730230561;
+        d=1e100.net; s=20230601; t=1729625767; x=1730230567;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cGUU/iG7YJDkLyArhva5LWM7ySXTw/bZxI0PEkU3+xc=;
-        b=VS4MIUyjrkD5SLZqM8ie/IfqqyciKruIWHEzYQGfLux8wyXPZnEj11W1QUS7rfQaQO
-         eHwhOtNSWF3S179E353UNubCK+I4dVu5YX9qyKO5ZC65Ggm5kvCCuTWUK+4N1tz+Gkh3
-         9nEvUzG0Yn/kLYEoLeH31i3kK9NE2Av0umQHDoL0b4DoAJKtprm0nOK4rjsFlShwQNdg
-         BUDfSWBuSLAZgLZdeW1q9BJFu4skKHyW4/NBGk9nVgMBc8xAQlL3wRk5pBvOWFNDFVBL
-         3rj74QOuLDCvwANdHj4d2kChmhA3YmgYDj4IwXA6QXnW+aTqGqR9sTcfpRho2/i7blmV
-         6CXw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0GDULceboZj5hE5SxeeJZhH0QadngsH25SKO2ivJFmjmpThcejTw8hgis7WtaQ5ZkbU8C6BZ8UFBxxfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymvbDDWgkmp4v7jh2j37FfjDSatf3UbDAJAjbC1t/VUaBmgjEp
-	7X0NlDlIzZ5dKabXJhI075/3ey8c553Ps1/rmDqPFqoKXB+wVhPh
-X-Google-Smtp-Source: AGHT+IF0hH1aKXgSZGmueQFJTPu4by03l1jAsjzPCoRjd1QS9+mDIqVHJuSSKO/3/auin2gHgPWK3w==
-X-Received: by 2002:a17:903:1c4:b0:20c:f6c5:7f6c with SMTP id d9443c01a7336-20e9701dd7fmr50654715ad.16.1729625760598;
-        Tue, 22 Oct 2024 12:36:00 -0700 (PDT)
+        bh=dV9l/v2LcDXnviTDuNMkbMeVnn+PWfoffe417y/FNaw=;
+        b=ZtWUPFwiZz5uDPc+QO+sPDjuv9QqYKDDhh4/5yFN44/k+cfjqhZHM7vF3Kl2LSHv6B
+         rD4z5xh0BVEVBHOFBqZ3UHoHryXpMl2hZPggxBVw2ZuBmzFxhNJ0dEcTqzd7svY3aKYl
+         CQe58ASfnqMikO2i1lxDJeUkW+YwZUI+8OTkYzNWHM15FQLxdYj1bfDrFgaa3Mknb017
+         pLzWZwYexaW8bflx4paX0Y9okaVkmAqkOD0Pc1GPvRWcctDm2S9H/419G19jgTXCoNzW
+         +dMuiOMYLv3ttXCILhDFgkW5GwOiSedo5F10yyy94Ry7LtlPs017FqHkUhomolT66QMT
+         Cy/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzT1feL9cVtidWbRf9x4YfAqMCIHmaNnjXtI/ahJdsVOavHIZu6aFm/GCQLzi/m1HntSqsb0lyklIJ+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj7TwsoACk8Wi5TfmGcyE4h/pmitHd3eoU/WJoYUThcXru3NCx
+	dZ79qAF7Aajvgfta8hPNKImSuPP1L3IwHjl2Yy6VpntC7W8J7n2F
+X-Google-Smtp-Source: AGHT+IHLlalPSHm8zG0hppdjSOOKHduEt8dQUk/4lbr+y7EGhPZQjy5bqFOm5stgAa1QyW5y40KauA==
+X-Received: by 2002:a05:6e02:1749:b0:3a2:7592:2c5 with SMTP id e9e14a558f8ab-3a4d59be0c3mr2384155ab.17.1729625767259;
+        Tue, 22 Oct 2024 12:36:07 -0700 (PDT)
 Received: from CNSZTL-DEB.lan ([2408:8262:245d:4d65:bc4b:53ff:fead:2725])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafb1e0sm5467316a12.3.2024.10.22.12.35.54
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafb1e0sm5467316a12.3.2024.10.22.12.36.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 12:36:00 -0700 (PDT)
+        Tue, 22 Oct 2024 12:36:06 -0700 (PDT)
 From: Tianling Shen <cnsztl@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,9 +80,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] arm64: dts: rockchip: fix model name for FriendlyElec NanoPi R3S
-Date: Wed, 23 Oct 2024 03:35:26 +0800
-Message-ID: <20241022193537.1117919-2-cnsztl@gmail.com>
+Subject: [PATCH 2/5] arm64: dts: rockchip: replace deprecated snps,reset props for NanoPi R3S
+Date: Wed, 23 Oct 2024 03:35:27 +0800
+Message-ID: <20241022193537.1117919-3-cnsztl@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241022193537.1117919-1-cnsztl@gmail.com>
 References: <20241022193537.1117919-1-cnsztl@gmail.com>
@@ -94,38 +94,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the marketing name for model name, this matches the dt-binding.
-Also update the website url in copyright.
+Replace deprecated snps,reset props and move them to the PHY node.
 
 Fixes: 50decd493c83 ("arm64: dts: rockchip: Add FriendlyARM NanoPi R3S board")
 Suggested-by: Jonas Karlman <jonas@kwiboo.se>
 Signed-off-by: Tianling Shen <cnsztl@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts b/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
-index a7a55d68dbb6..6bc17f755b79 100644
+index 6bc17f755b79..66a00cddda0c 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
-@@ -3,7 +3,7 @@
-  * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
-  *
-  * Copyright (c) 2024 FriendlyElec Computer Tech. Co., Ltd.
-- * (http://www.friendlyarm.com)
-+ * (http://www.friendlyelec.com)
-  *
-  * Copyright (c) 2024 Tianling Shen <cnsztl@gmail.com>
-  */
-@@ -17,7 +17,7 @@
- #include "rk3566.dtsi"
+@@ -149,10 +149,6 @@ &gmac1m0_tx_bus2_level3
+ 		     &gmac1m0_rx_bus2
+ 		     &gmac1m0_rgmii_clk_level2
+ 		     &gmac1m0_rgmii_bus_level3>;
+-	snps,reset-gpio = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+-	snps,reset-active-low;
+-	/* Reset time is 20ms, 100ms for rtl8211f */
+-	snps,reset-delays-us = <0 20000 100000>;
+ 	status = "okay";
+ };
  
- / {
--	model = "FriendlyARM NanoPi R3S";
-+	model = "FriendlyElec NanoPi R3S";
- 	compatible = "friendlyarm,nanopi-r3s", "rockchip,rk3566";
+@@ -414,6 +410,9 @@ rgmii_phy1: ethernet-phy@1 {
+ 		interrupts = <RK_PC3 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&eth_phy_reset_pin>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+ 	};
+ };
  
- 	aliases {
 -- 
 2.47.0
 
