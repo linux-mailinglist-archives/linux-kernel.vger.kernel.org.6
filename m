@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-376915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FED9AB769
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFF89AB768
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D8C1C241B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D9A1F240E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B0A1CBEA6;
-	Tue, 22 Oct 2024 20:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE9D1CBE80;
+	Tue, 22 Oct 2024 20:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Ndzwbot2"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWU8vR6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AB1C9ED2;
-	Tue, 22 Oct 2024 20:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B4013AA2B;
+	Tue, 22 Oct 2024 20:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729627598; cv=none; b=eZA5q+vNIMdqKQV/Lh0stccEu8bm9KtJwOTKtg+2shuPwNTEpyo0xX3hc6dBtC+v3TwgiVosKTJusDMpltUaGpBOGjgyiLzCy/2v6yBkov+SSMKGwSVt4L/HPL9dawUJ9GDE/PKnzKYS8xnPuscmN3rGYIjLQVwRE2oag5MP5H4=
+	t=1729627570; cv=none; b=UqNRiZXwHjsX7z3C9G66WQKPlV+My8NZYtehMKFd2o8PQpUaVKpH96G50G4P4mFwhEuzw6I3iPCru5iKhA9Ipo+mEK/ebUyAfcyZg57/xRd9/XA8ZwBZIR9DqiBVV+5sXEz7xrdnPl3pNjni0Pbs/Unj8s0oGz3j3uZW37/Q6f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729627598; c=relaxed/simple;
-	bh=drK3eYYnJyoywUvF3r02TIDWaPZHQ8aA0CUG3R0HUiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kG6ZhLlKlnzWz/svJ175lcpfJ+4KXBP6DvdEM7HySnD994j6oobVAaDhTNPg3kSuLkJTsmLV3BbzVBnV8Zjr21xSbxoG0qR7r/30qA3dm1duNn6BXd9PogqzunOT4MeuxRl2QUF7AUB8dGZHvJBfaF/OcTm5Pqg6QJPO2ZmS9NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Ndzwbot2; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729627593;
-	bh=drK3eYYnJyoywUvF3r02TIDWaPZHQ8aA0CUG3R0HUiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ndzwbot2E0Pi1n7eCyEi4HOE/bJBXQcpmVezyCZbLmzpcuTwc7Bxp4bPOoTucS/V6
-	 0OqvJVWdHQfmqQWAZQOMbS8F9RqBlGpAn7ut3uCIG0i5aprX742NZ8htLcOtrmdwZf
-	 48Myj/g9O/Ip95bTB7GN6fmGN19H9xUWpM1wnWLlumxdr3icfA3b/BGp/K83oQDcU0
-	 bhbIxQ11L4QDdZTYv8/64l9XZfmJavxXDBqU5qNELXaUg1ylRtB6hQhAfvxZamqG3U
-	 w7L2D1LXaqEqhLF2eFaeXmh4imlPvEn/gEpMg9gIqYWsThhvXqB3+DU+XDYDD8DRcj
-	 Gxni1Nj1Y9Cag==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XY3951TMQzSQX;
-	Tue, 22 Oct 2024 16:06:33 -0400 (EDT)
-Message-ID: <1ab8fe0d-de92-49be-b10b-ebb5c7f5573a@efficios.com>
-Date: Tue, 22 Oct 2024 16:04:49 -0400
+	s=arc-20240116; t=1729627570; c=relaxed/simple;
+	bh=pTXa0lFnMCDyEuXkjtGuHVSkjWu46Z7KtuaG27m8gsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ds8mUDlTf0QTO+T1CIVafh8Csd0jYI/8Lt9X0zmflA9q5//9PRah2GER1M9dNuSrnP5ishg1N4fu1J9/BP/KGzPGGMioUSy4vMZMBZHqFNZzlnUqcoHiokeCU7TGCXbqKIPCrhGHUAqcgRJdw77LR3n6yWtttnEfRl+sM+aGtbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWU8vR6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4434C4CEC3;
+	Tue, 22 Oct 2024 20:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729627570;
+	bh=pTXa0lFnMCDyEuXkjtGuHVSkjWu46Z7KtuaG27m8gsY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oWU8vR6eaw/ebks0Qu91duBCh4+FYt6COOeQ6QB1fibVdJistw75v74cYH9EpwrRu
+	 gNI8a5l1jgqpR+ncp9B7Qe8uxORFleXbp+tYs4svPt/tJu7rGj64vTqhjiQDFH41Xm
+	 ewaKr3zd6Es+VdxozjMG8sArLu4m+wf9wCg9KTY2ofyJmqDqFlMPOxM7GZAV4SLHQT
+	 SP9h600q15BUmOj5QMy5ld5CGWSN0yhRsgMNIjiVsXceM5B96MjK+mOxdszLC9dXwg
+	 fkMCE9RgacwTFWqHCak7c1gTHhuB1ecPOuaQjdNC9ShYxEOaZni06HnYNJ8Rr0HIcN
+	 r/kp3tYjCU/Jw==
+Date: Tue, 22 Oct 2024 21:06:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Zicheng Qu <quzicheng@huawei.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
+ linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com,
+ judy.chenhui@huawei.com
+Subject: Re: [PATCH] drivers/staging/iio/frequency/ad9832.c: fix division by
+ zero in ad9832_calc_freqreg()
+Message-ID: <20241022210602.691d6351@jic23-huawei>
+In-Reply-To: <6c896172-d372-442a-a61e-6b3e46b9cbb0@stanley.mountain>
+References: <20241022134354.574614-1-quzicheng@huawei.com>
+	<6c896172-d372-442a-a61e-6b3e46b9cbb0@stanley.mountain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jordan Rife <jrife@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
- Michael Jeanson <mjeanson@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>
-References: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
- <CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
- <3362d414-4d6f-43a7-80af-1c72c5e66d70@efficios.com>
- <CAEf4BzYBR95uBY58Wk2R-h__m5-gV0FmbrxtDgfgxbA1=+u0BQ@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4BzYBR95uBY58Wk2R-h__m5-gV0FmbrxtDgfgxbA1=+u0BQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-22 15:53, Andrii Nakryiko wrote:
-> On Tue, Oct 22, 2024 at 10:55 AM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> On 2024-10-22 12:14, Jordan Rife wrote:
->>> I assume this patch isn't meant to fix the related issues with freeing
->>> BPF programs/links with call_rcu?
->>
->> No, indeed. I notice that bpf_link_free() uses a prog->sleepable flag to
->> choose between:
->>
->>                   if (sleepable)
->>                           call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
->>                   else
->>                           call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
->>
->> But the faultable syscall tracepoint series does not require syscall programs
->> to be sleepable. So some changes may be needed on the ebpf side there.
+On Tue, 22 Oct 2024 17:25:21 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+
+> It would be better if the subject prefix were "staging: iio: ad9832:"
 > 
-> Your fix now adds a chain of call_rcu -> call_rcu_tasks_trace ->
-> kfree, which should work regardless of sleepable/non-sleepable. For
-> the BPF-side, yes, we do different things depending on prog->sleepable
-> (adding extra call_rcu_tasks_trace for sleepable, while still keeping
-> call_rcu in the chain), so the BPF side should be good, I think.
-> 
->>
->>>
->>> On the BPF side I think there needs to be some smarter handling of
->>> when to use call_rcu or call_rcu_tasks_trace to free links/programs
->>> based on whether or not the program type can be executed in this
->>> context. Right now call_rcu_tasks_trace is used if the program is
->>> sleepable, but that isn't necessarily the case here. Off the top of my
->>> head this would be BPF_PROG_TYPE_RAW_TRACEPOINT and
->>> BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE, but may extend to
->>> BPF_PROG_TYPE_TRACEPOINT? I'll let some of the BPF folks chime in
->>> here, as I'm not entirely sure.
->>
-> 
->  From the BPF standpoint, as of right now, neither of RAW_TRACEPOINT or
-> TRACEPOINT programs are sleepable. So a single RCU grace period is
-> fine. But even if they were (and we'll allow that later on), we handle
-> sleepable programs with the same call_rcu_tasks_trace -> call_rcu
-> chain.
+> [PATCH] staging: iio: ad9832: fix division by zero in ad9832_calc_freqreg()
+Keep the frequency as well, though less important in staging as we
+have only a few drivers there.
 
-Good points, in this commit:
+I fixed up the patch title and applied this to the fixes-togreg branch of iio.git.
 
-commit 4aadde89d8 ("tracing/bpf: disable preemption in syscall probe")
-I took care to disable preemption around use of the bpf program attached
-to a syscall tracepoint, which makes this change a no-op from the
-tracers' perspective.
+Thanks,
 
-It's only when you'll decide to remove this preempt-off and allow
-syscall tracepoints to sleep in bpf that you'll need to tweak that.
+Jonathan
 
 > 
-> That's just to say that I don't think that we need any BPF-specific
-> fix beyond what Mathieu is doing in this patch, so:
+> On Tue, Oct 22, 2024 at 01:43:54PM +0000, Zicheng Qu wrote:
+> > In the ad9832_write_frequency() function, clk_get_rate() might return 0.
+> > This can lead to a division by zero when calling ad9832_calc_freqreg().
+> > The check if (fout > (clk_get_rate(st->mclk) / 2)) does not protect
+> > against the case when fout is 0. The ad9832_write_frequency() function
+> > is called from ad9832_write(), and fout is derived from a text buffer,
+> > which can contain any value.
+> > 
+> > Link: https://lore.kernel.org/all/2024100904-CVE-2024-47663-9bdc@gregkh/
+> > Fixes: ea707584bac1 ("Staging: IIO: DDS: AD9832 / AD9835 driver")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>  
 > 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-Thanks!
-
-Mathieu
-
+> Otherwise it looks good.
 > 
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
->> A big hammer solution would be to make all grace periods waited for after
->> a bpf tracepoint probe unregister chain call_rcu and call_rcu_tasks_trace.
->>
->> Else, if we properly tag all programs attached to syscall tracepoints as
->> sleepable, then keeping the call_rcu_tasks_trace() only for those would
->> work.
->>
->> Thanks,
->>
->> Mathieu
->>
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> https://www.efficios.com
->>
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> regards,
+> dan carpenter
+> 
 
 
