@@ -1,218 +1,253 @@
-Return-Path: <linux-kernel+bounces-375401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5729A957A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:34:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5429A957C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5911C230E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 589E1B22026
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70A784FAD;
-	Tue, 22 Oct 2024 01:34:51 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D6126C04;
+	Tue, 22 Oct 2024 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tTjmYTsL"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2051.outbound.protection.outlook.com [40.107.93.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142E7DDAB;
-	Tue, 22 Oct 2024 01:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729560891; cv=none; b=DNGMIdqKakon8UkyaUIgibdUpW86Tco3Bo83ZIPiSF0Ti8RhEeyWOzPvlMd+E1QeCAm/9e2EtIUoaDfqFQGXpqlkHlPWsaU5MYzRLZH6t22ApQjkdEDY+OfXupygxpf607+DRyBi+fJRi22suox3lhi9TbQpvbmoCsKRItMlqaU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729560891; c=relaxed/simple;
-	bh=U1t5H9KMAGplXd+4dfjgkmnyOonoucwRr1r/MWt1X7s=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:References:
-	 From:In-Reply-To; b=jvUWMoKCFqcAh83isnlGvcRrE7dYpUZs63tjN5/pwZJlbBnGuFOAOQQsRGBGTmle0WlrN9sQ3nOxv2kTBNVvvXrHOFyzslnUi8DfwiOiYRVWfbSyGYQqMJpYUqNLNlmvChc4rNvHd42uDvVfAB5VzIag1lZ8bWyCmuPQaWW2JgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XXZSY2z8jz2Fb7s;
-	Tue, 22 Oct 2024 09:33:17 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id CB8E61A0188;
-	Tue, 22 Oct 2024 09:34:38 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 09:34:38 +0800
-Content-Type: multipart/mixed;
-	boundary="------------rJdxhcEMxXilpbky7mxxYNYR"
-Message-ID: <d72c960b-b524-4c8a-9809-7885aaf6a904@huawei.com>
-Date: Tue, 22 Oct 2024 09:34:36 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF7654652;
+	Tue, 22 Oct 2024 01:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729560963; cv=fail; b=n9LFpJR94tC3ef4oBvkzsKi1lCZGwwbcVESqvbBAPbZLjF/bSwEjpmLMl6IyLFJF+VqXlXbvDEJW4z5mvlL2ACWgxIte0URpMjHknZrLnKKic0HPM8h7oH3VtXV5FfPXo32RrsB+CkhzGk/lEq06u53XHv1A0m066eHa8ypWp2Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729560963; c=relaxed/simple;
+	bh=aRtDYu06Z/4NYZJ3XbqcGX8gdwlTR2UHMnHzUC3PfTQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jqF8lvMKjlG1zEz8SYtOQtq+DHEcMpE8gzk5nD6bGwkKb9xWXDpvsBup4D1tKmvdUFw4vcgozKrUgf4pvthN+DB5cY/KzAsmBSRjKgVTSXM/HMDvi9E1PZb0fvA3MOMHy0ZRlvGqrJdH2mSZztm56kBH4CaSepoBdMpMQwoF/Tg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tTjmYTsL; arc=fail smtp.client-ip=40.107.93.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tKhcFd26tnaqlv9Wa2dffhkBChpf722k8WXyLzKpbvq1kEaXZL3OaTx/cMHcvE4E5XOtu+6kjTyrl1srFGZuuUO08sww85uXQUeQcM092MEckZ47JYgr+Zj+8FSwndxeHbOAuVTnVR6nNlNQrcxn91zdhZn2+MgxGXFu3OXFCAMCGuxJHXxK3hFS79dQlO2+fu6kSXO6KtSElu90EYivrm02TM2F6NArggchujlT18gUlXwCrtRXZkBOfE6c1VYt/AnfRndH9ZdknXyLEOtbYcwAstrDWnv7BiAXxhl7hPznOujCGfZUAtLziJF/K/sTeEybwp/RVoPTgiDwY48P1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KJJxzB62zbqFxrJMSl25dilLZQZOYQF0Hh8UmoL6z0Y=;
+ b=PfaUFdgdL888gVs0PzsiGEgPLuNgwWPDWoOS3waEPiGQBf9c8tFdjK89Tb2OlTXZXDykmUDYr54AZ7z0JRkYKsJMAk+5UD9ucmUs+cmI1wqU0Y+P37D8kjr2mQ+SD4Jh6fIjGymCrVtuRcEpWfgCbWVIw0qTL/AgLgv6km3925q16iTPTaWYHpxhbMPshwe5PuHlaGjjx4BAKLLMw+IDZr4FlhO4rk5qNYecXIkkIaXCjvwVzUbkAz+1chBEE5oNoHRXLUmVR/5dXsNoMxrEZCahQLk3ZLOSsJ8t2Rjl+309ggiN+qRyMJwRbtw5vLNjR9rv4+YUVSprHMFEGkqnbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KJJxzB62zbqFxrJMSl25dilLZQZOYQF0Hh8UmoL6z0Y=;
+ b=tTjmYTsLtMlOv1vf9aW4h38ze9OXBBZzGh/594C2U1OSwIX1Bbob9wqmP0zK7l5fuVckCs6nQzNelLdOAJaLlX0A8wKNg5yjW0zHunLEVpi62X3rQ2WM/cAi4K8XaIIQfwlCC43D2JyHU6Q6sJljWrVLjXJykoMIBTofTnLk7MOdAUchpnOv8JLXSiEW/T7MyiEeRxwdNVisVSJT9JfKg6vRtpsCnxDN4IEW/90nYLewNcmd0Bu3DQhcCyWWf79RqbbGPRKxZLKrODhB7AMEucgu7sRQpk5zfhA4+PkfKRSP6HFN44Nk9Kgan9wPvw4IjDe2VTRnnAAs3AunUt34bw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB7914.namprd12.prod.outlook.com (2603:10b6:510:27d::13)
+ by CH3PR12MB7497.namprd12.prod.outlook.com (2603:10b6:610:153::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 22 Oct
+ 2024 01:35:58 +0000
+Received: from PH7PR12MB7914.namprd12.prod.outlook.com
+ ([fe80::8998:fe5c:833c:f378]) by PH7PR12MB7914.namprd12.prod.outlook.com
+ ([fe80::8998:fe5c:833c:f378%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 01:35:58 +0000
+Message-ID: <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
+Date: Tue, 22 Oct 2024 09:35:53 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
+ VGA device
+To: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>
+References: <20241014152502.1477809-1-superm1@kernel.org>
+ <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+Content-Language: en-US
+From: Kai-Heng Feng <kaihengf@nvidia.com>
+In-Reply-To: <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TPYP295CA0043.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:7::11) To PH7PR12MB7914.namprd12.prod.outlook.com
+ (2603:10b6:510:27d::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
- bch2_alloc_to_text
-To: syzbot <syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>,
-	<kent.overstreet@linux.dev>, <linux-bcachefs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-References: <6715f84b.050a0220.10f4f4.003e.GAE@google.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <6715f84b.050a0220.10f4f4.003e.GAE@google.com>
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7914:EE_|CH3PR12MB7497:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4008687-d4ce-41e4-1180-08dcf239e0db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDVKY3R0S2FoZmV3anBnU2FGTGFuU0FPblZ4Q21vK1MvMWpZZVdnSVFSbE5R?=
+ =?utf-8?B?bjRNSHlZZEVsZE1zc3dDRTMrZ2hZcjRwTUJuaFpPblFHVTZxNXB3b3l2Wm9B?=
+ =?utf-8?B?OWdBNWQ4dkJtcTBvVFE0NjFwK1Z0M1BQT0NyeUc1M0FwVHR3azRuSFBSRFo3?=
+ =?utf-8?B?bDEyTDlNN1RMSkc3QjdNaWFKdzZMUWtwMFA3NFUxQ1MvamtvN2FQUTB1UzEz?=
+ =?utf-8?B?SU96MUlVVjRUNDJROWQxeGJxSXZ3UU5KR1luNHhYcXpVc3g5NHFETjV5eVNN?=
+ =?utf-8?B?Y21LbzlrakEzRXZDSkI4THcvUWoyWWxXOXJReWs3eEFOajlsQmJKd0VVcis0?=
+ =?utf-8?B?K2NPTHpwYU43YmQ3OXlGK3dqL1AyUXBCNG1FU0dtSXcrbWRyWVgreWgyNFND?=
+ =?utf-8?B?SlgrWHVuNTU1eGF2aUF2MlZ1TTdnWGFWYkgzL3RrcDEwOXowZUhKWVc4RUZ6?=
+ =?utf-8?B?WWorVFcvcERudVRRQnJnZkVPazF0TzV4STZTenVZMUJNbngwQmZuN1VQQmlp?=
+ =?utf-8?B?UWVnR25LUkdnNXdmVDBya2xhZE5SaHBDSWttUjBHN3ZyV21GVUZYeGt6WVkr?=
+ =?utf-8?B?d3BOYlUxY3BPWEI4MllVOEsvdGZZUFN1VXBEY2hRTWFTZ3VRZ0ttUzVXemNi?=
+ =?utf-8?B?UTBXamJ3cFhDMXYrSkdtVFRLVDc1Nkoxb0VyMURDV3dPRFhkc1dCd3EzMEJ2?=
+ =?utf-8?B?UjhDbWlDZHFHSDh2OTloRmtKbi9oVTFpWlBFRjlicHozMWtzaVdqM0h5QkpG?=
+ =?utf-8?B?aU5xdG1WdmpYRG80Zjhsbjc5UFNmaDY3MWY5QnE5VURndHMwSThsa3llWWhp?=
+ =?utf-8?B?T0Z2aDA3dzZrTXR0TDZ1K21BbG1aM05FZmNMdnltM3NnUlgxbG9RYXdJcFBJ?=
+ =?utf-8?B?ZFpvN2lkTERjTE1Rb2dJTWRmMFNWTkdkTW5VU0JIYmpsSmo2TVdDenJlWTZh?=
+ =?utf-8?B?bmxUVlFUUjFTTVh1alVkeUg5SHlBb0hmMHBEV1VaejliV0V1d09PSDBLQlZK?=
+ =?utf-8?B?b3JEUGN4TzQwQVdpRkJWNmQwRGRPbWY2L3FMOGhWWEdSR05yNmUrWm8rc0dL?=
+ =?utf-8?B?MFRVbkpOTmkxVTlsNHlvVGxPTnhwbkJOZDlESjRoUXZuM1N5cXdMT3MxV05J?=
+ =?utf-8?B?WkJ1bytqaCtOUGVBSTlMVnZ4QjRlbHY1OVlKOGZGQ1VrSkN6cWpxVG1hR1pB?=
+ =?utf-8?B?RGg2TllNeHpkcTRpd0krdG1tdzZXazM3eUhsUDkwYk15aHQ2R3AzeGd3OVdo?=
+ =?utf-8?B?bXM3UFdac2x3T2Y2ZFBXWUloODJsVmZ4dnhwQkRJemljd0crbmoxbXFYcmtu?=
+ =?utf-8?B?Y09BQUtadEVBOHliTGUvZnYyTDMzRnB0VnJvbjZLd2VhVldiZkd1bTdMeFdW?=
+ =?utf-8?B?OEQ0RWVtdEdkcHNnVXFQYmFzU2pmcWcyVHdnNEw5VENSd1BOMkRTTm9ETHlW?=
+ =?utf-8?B?cTNiU0NrUGwrN29XQXQ2M2ZnTDA5d0xmU3h1WVJCdy9KdE9MTjlYV0d2dm1m?=
+ =?utf-8?B?VjJuRnBneG1nZWp4TDFHL240Z2sva1FWNUFkL3hlK1lobC9QOWpKOHBDVTZD?=
+ =?utf-8?B?ZVFjeC9yVW01ZDRTRzF3ZzJYUnp6anQ4ZHc1THpSM0xOTFJKRHdQaE9RN0Y2?=
+ =?utf-8?B?Mm4xMGczL0FrZVp1cTJOK1c2R2ZuK0pQcnM0ZE0wcHpwUVY2NE9mbGNhMHJB?=
+ =?utf-8?B?RnAzaXc1dUVsTng5SE9hSG9ZelQya0RQYmRvSnZTandyM0JPUzI3S2MxK2hp?=
+ =?utf-8?Q?kjowUWw/s85RF2KnmiS4qFzmYwmwBxi11rYbDhU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tlc1TGdMNFM5K05SOUhKZHU2a1crYUx4Qnd4NzJhcTNaZTBkYXJzMHFVWmFk?=
+ =?utf-8?B?VlYxZTJvd1RwVElTUjM3REVvaU5oV0VnT2I5Zk5TdTFUSlhzVk9RZDU3aUZT?=
+ =?utf-8?B?a0FQZnB3OHA5Ly9PdlkwTEhDM3ZRcWtHaE5QMHF5Zm56aTE1NHpFS2RQSFlx?=
+ =?utf-8?B?UVpPSzlBOFN6aVN0QVkzUkd6UTJwUXNqb0JpdzlMK2pGOHdHZnJaMy82aExL?=
+ =?utf-8?B?alFPYlZMNkRlTC9yMDhjTmhFZXdrUTErMEFicXpTZDZXSlcxZmtpT1c5VWRX?=
+ =?utf-8?B?c29xdGhsWWpoRXZJWC9Hb1V3TFBnUWFaOHRsUkkveTJSZno4NU80SW0wS3VF?=
+ =?utf-8?B?azdrMnRQT2FqbjJ2WG9USnVkQ3lpV2IzNkZwNklyZDlQbWRBTWxqM2JvWVFk?=
+ =?utf-8?B?RUw0TER3bUhtVHdQSTcyN0dJRE1vTzcrYkEzWm9Od20xU0xaV1F5RHhWYWNo?=
+ =?utf-8?B?VVAxbkNaUitEdEFjVDVTT1ZLZ21jRVpNRC92bmo5VEVIQ2MyMjlydWVUY1M3?=
+ =?utf-8?B?Q0Q5UEg4d0dOcUZCNk16RW9JcEFRQzFybzNLQTZiem5rZVJYejBabEhHQVlM?=
+ =?utf-8?B?eEJ3alZXZUN6VXAyN3UwWEhGL0hCcWh3ZjFOQW45SmExN3JldCszZkRrMlBw?=
+ =?utf-8?B?Qnp4c2FkNWpUWWlEMTVoK2pQdTNEZERUOGg5V1pWTTNhZ0E5NVJpSktROVVO?=
+ =?utf-8?B?dzZsQXdENmpEd2ZicFRHMnJTaFo3dFc0K3p2QzQvc1Z4ejV5VVgySzVWakIw?=
+ =?utf-8?B?TjNuQldkK0toK3JnaElFbG9USWJwUkpzL0s1YXVvLzRwSWM1d0NuRUdHTStJ?=
+ =?utf-8?B?TC9XWTZlUG40WnBETldyVlBGSUNGeEp0LzBYTTV0bnVQeW1sTk9DNnJyVkYy?=
+ =?utf-8?B?SVZ1cGdSMGR6U09CRG9rVHNkK05HeUNNa2ZNTEFKL1VKWU4wbkhuc1VsalVB?=
+ =?utf-8?B?WGs1U3RHTG55QS9iZ1J2YzFObGZYMHdGeFp4N21zTkZlVmRRUGYrSGdibVkx?=
+ =?utf-8?B?ZXV1NzhWczNLNllIUjZqOHRRMEhyT3lJWDk4aXI3aFN0UEl2VkZpaXpSQ042?=
+ =?utf-8?B?WG5PdUlPaHhpemt0SDVBb2FvenRMSW43VGVGYVpzdTlvWE9QUDBjUmtBcVhi?=
+ =?utf-8?B?SVpkMStUSFFlTklCN2ZSdUowQWtZN0ZQeDIwZkQ2TVUxVHBHWTNtUC8rTGhD?=
+ =?utf-8?B?a3h1WEIxa2ZoM2hJR0k3enFuWGp2eGhsZzlZYmNXa2pRSzk0N0c2cHl6K2RZ?=
+ =?utf-8?B?QVlabUxZL0gzc0xhY3RZRHBQeG80eE5FYzJQc0FvbXlhcVZSSnBHZ0kyYlNt?=
+ =?utf-8?B?NTgxdUpWSlU5ejNodmRmY0s1dWJXWU1Mc3gydlg3ajVMYWZaSEtabHlBbTBu?=
+ =?utf-8?B?NHdyTFIxRzRvZHlnQi9UZy9YVzdkUWV0bkhrQ3JmVllUSHRsUUtIbEZyMUJW?=
+ =?utf-8?B?NWQvc1c5RGhKYlNIOVFxbXgzSXg2UkJ3VXJGYnM4TW01VnptY05iYW9NNVZr?=
+ =?utf-8?B?ZExMRXgvbG9BL1VJVnRUbVlBZzNMbUNZcU1aL2VVTkUrY0diZFprR1pEemta?=
+ =?utf-8?B?amlyeHZwVTArb3YyVTBGZkJKUjM1TWdlNnVPZ3FpRzV1RjFtczVCNERXTUI0?=
+ =?utf-8?B?a3Q4dEh2ZWNObTFVUVhGSDVVVVVUdTRoTGlrYVJYcmIwY0pEYWN5bUo5ZXZN?=
+ =?utf-8?B?QkxKTWh6eEVoOENoVks0bVBmWXFHc1R5ZXo3MmdQY2JOeExNU2pEWEtSdHZm?=
+ =?utf-8?B?VnhjNk5uZGM2Nm16YmxKM08xVTZyWWlTdUhNSnNwV1J4WTgxenlvOFVGVGlZ?=
+ =?utf-8?B?dVNveVpNK2s4Z0NnaEl5aW5vS0JJbHFOTUEwalFSSjhSbzRub1Vaa3RXaWta?=
+ =?utf-8?B?RmJNV1kydko3VmNHclhqTzcwaWEyMHkwTkMra3pDWW0xU3VrNU12QXJ0ZitJ?=
+ =?utf-8?B?dGJSSzlqUjU3V0R3dmVRajhoUlhWUXNmSWNLUzl2ZjNuaUdaTHY5SFo4Nklm?=
+ =?utf-8?B?dkxGN2FuQWV2ZnZDRERCU3prZHJIbVZwRU1HdFhEd05zMzc4NXA5UFNsVjB5?=
+ =?utf-8?B?ZDFRM1QrQzIwZ1E5b0VyRU5WVEQwQ2xGWDFERUx3dzB5Y3JNb2NneS9VVGF1?=
+ =?utf-8?Q?Zb8+29ImvwwLRLF1FcEpi2yoL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4008687-d4ce-41e4-1180-08dcf239e0db
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7914.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 01:35:58.2476
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7M3VIRYI0rkK5csIKJoicm2k/sjQTcg2K9Ic+3tP1ftMG8ZFe5sV0rIDjRhPu7YF8wRdTRIZR7pg2tzThlt34Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7497
 
---------------rJdxhcEMxXilpbky7mxxYNYR
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Luke,
 
-#syz test: 
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 
-c964ced77262
+On 2024/10/15 4:04 PM, Luke Jones wrote:
+> On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display device.
+>>
+>> ```
+>> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce
+>> RTX 4070 Max-Q / Mobile] (rev a1)
+>> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
+>> Strix [Radeon 880M / 890M] (rev c1)
+>> ```
+>>
+>> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as the
+>> boot VGA device, but really the eDP is connected to the AMD PCI display
+>> device.
+>>
+>> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device.
+>>
+>> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+>> Reported-by: Luke D. Jones <luke@ljones.dev>
+>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   drivers/pci/vgaarb.c | 7 -------
+>>   1 file changed, 7 deletions(-)
+>>
+>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+>> index 78748e8d2dba..05ac2b672d4b 100644
+>> --- a/drivers/pci/vgaarb.c
+>> +++ b/drivers/pci/vgaarb.c
+>> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
+>>   		return true;
+>>   	}
+>>
+>> -	/*
+>> -	 * Vgadev has neither IO nor MEM enabled.  If we haven't found any
+>> -	 * other VGA devices, it is the best candidate so far.
+>> -	 */
+>> -	if (!boot_vga)
+>> -		return true;
+>> -
+>>   	return false;
+>>   }
+>>
+>> -- 
+>> 2.43.0
+> 
+> Hi Mario,
+> 
+> I can verify that this does leave the `boot_vga` attribute set as 0 for the NVIDIA device.
 
-On 2024/10/21 14:44, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    c964ced77262 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12d9745f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7f45fa9805c40db3f108
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12637887980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a1e830580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c964ced7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e937ef58569a/vmlinux-c964ced7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f1df9880ca4b/bzImage-c964ced7.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/00439b875347/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-> 
-> bcachefs (loop0): fatal error - emergency read only
-> bcachefs (loop0): insufficient writeable journal devices available: have 0, need 1
-> rw journal devs: loop0
-> ------------[ cut here ]------------
-> UBSAN: shift-out-of-bounds in fs/bcachefs/alloc_background.h:165:13
-> shift exponent 129 is too large for 32-bit type 'unsigned int'
-> CPU: 0 UID: 0 PID: 5104 Comm: syz-executor159 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->   ubsan_epilogue lib/ubsan.c:231 [inline]
->   __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
->   data_type_movable fs/bcachefs/alloc_background.h:165 [inline]
->   alloc_lru_idx_fragmentation fs/bcachefs/alloc_background.h:171 [inline]
->   bch2_alloc_to_text+0xc79/0xce0 fs/bcachefs/alloc_background.c:369
->   __bch2_bkey_fsck_err+0x1c8/0x280 fs/bcachefs/error.c:454
->   bch2_alloc_v4_validate+0x931/0xef0 fs/bcachefs/alloc_background.c:259
->   bch2_btree_node_read_done+0x3e7e/0x5e90 fs/bcachefs/btree_io.c:1223
->   btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1327
->   bch2_btree_node_read+0x2433/0x2a10
->   __bch2_btree_root_read fs/bcachefs/btree_io.c:1753 [inline]
->   bch2_btree_root_read+0x617/0x7a0 fs/bcachefs/btree_io.c:1775
->   read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:524
->   bch2_fs_recovery+0x2585/0x39c0 fs/bcachefs/recovery.c:854
->   bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
->   bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
->   vfs_get_tree+0x90/0x2b0 fs/super.c:1800
->   do_new_mount+0x2be/0xb40 fs/namespace.c:3507
->   do_mount fs/namespace.c:3847 [inline]
->   __do_sys_mount fs/namespace.c:4055 [inline]
->   __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f7b61a11dea
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffff7f9a888 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffff7f9a8a0 RCX: 00007f7b61a11dea
-> RDX: 00000000200058c0 RSI: 0000000020000100 RDI: 00007ffff7f9a8a0
-> RBP: 0000000000000004 R08: 00007ffff7f9a8e0 R09: 00000000000058c6
-> R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-> R13: 00007ffff7f9a8e0 R14: 0000000000000003 R15: 0000000001000000
->   </TASK>
-> ---[ end trace ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
---------------rJdxhcEMxXilpbky7mxxYNYR
-Content-Type: text/plain; charset="UTF-8";
-	name="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_alloc_to_te.patch"
-Content-Disposition: attachment;
-	filename*0="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_alloc_to_te.pa";
-	filename*1="tch"
-Content-Transfer-Encoding: base64
+Does the following diff work for you?
+This variant should be less risky for most systems.
 
-RnJvbSAxN2ZkMzY2MDkxZDEwNDcwMmFmNWIwNjk5YWM3M2IwNmQwYjU3NjE5IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSG9uZ2JvIExpIDxsaWhvbmdibzIyQGh1YXdlaS5j
-b20+DQpEYXRlOiBNb24sIDIxIE9jdCAyMDI0IDE1OjM1OjA5ICswODAwDQpTdWJqZWN0OiBb
-UEFUQ0hdIGJjYWNoZWZzOiBGaXggc2hpZnQtb3V0LW9mLWJvdW5kcyBpbiBiY2gyX2FsbG9j
-X3RvX3RleHQNCg0KVGhlIHN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGlzc3VlOg0KYGBg
-DQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NClVCU0FOOiBzaGlmdC1v
-dXQtb2YtYm91bmRzIGluIGZzL2JjYWNoZWZzL2FsbG9jX2JhY2tncm91bmQuaDoxNjU6MTMN
-CnNoaWZ0IGV4cG9uZW50IDEyOSBpcyB0b28gbGFyZ2UgZm9yIDMyLWJpdCB0eXBlICd1bnNp
-Z25lZCBpbnQnDQoNCkNhbGwgVHJhY2U6DQogPFRBU0s+DQogX19kdW1wX3N0YWNrIGxpYi9k
-dW1wX3N0YWNrLmM6OTQgW2lubGluZV0NCiBkdW1wX3N0YWNrX2x2bCsweDI0MS8weDM2MCBs
-aWIvZHVtcF9zdGFjay5jOjEyMA0KIHVic2FuX2VwaWxvZ3VlIGxpYi91YnNhbi5jOjIzMSBb
-aW5saW5lXQ0KIF9fdWJzYW5faGFuZGxlX3NoaWZ0X291dF9vZl9ib3VuZHMrMHgzYzgvMHg0
-MjAgbGliL3Vic2FuLmM6NDY4DQogZGF0YV90eXBlX21vdmFibGUgZnMvYmNhY2hlZnMvYWxs
-b2NfYmFja2dyb3VuZC5oOjE2NSBbaW5saW5lXQ0KIGFsbG9jX2xydV9pZHhfZnJhZ21lbnRh
-dGlvbiBmcy9iY2FjaGVmcy9hbGxvY19iYWNrZ3JvdW5kLmg6MTcxIFtpbmxpbmVdDQogYmNo
-Ml9hbGxvY190b190ZXh0KzB4Yzc5LzB4Y2UwIGZzL2JjYWNoZWZzL2FsbG9jX2JhY2tncm91
-bmQuYzozNjkNCiBfX2JjaDJfYmtleV9mc2NrX2VycisweDFjOC8weDI4MCBmcy9iY2FjaGVm
-cy9lcnJvci5jOjQ1NA0KIGJjaDJfYWxsb2NfdjRfdmFsaWRhdGUrMHg5MzEvMHhlZjAgZnMv
-YmNhY2hlZnMvYWxsb2NfYmFja2dyb3VuZC5jOjI1OQ0KIC4uLg0KYGBgDQoNCkluIGJjaDJf
-YWxsb2NfdjRfdmFsaWRhdGUsIGJjYWNoZWZzIGRvZXNuJ3QgY2hlY2sgdGhlIGludmFsaWQN
-CmRhdGFfdHlwZSBpbiBzd2l0Y2gtY2FzZS4gQW5kIHRoaXMgd2lsbCBjYXVzZSBzaGlmdC1v
-dXQtb2YtYm91bmRzDQplcnJvciBmb3IgaW52YWxpZCBkYXRhX3R5cGUuIFRoaXMgY2FuIGJl
-IGVhc2lseSBhdm9pZGVkIGJ5IGFkZGluZw0KdGhlIGRlZmF1bHQgYnJhbmNoIGluIHN3aXRj
-aCBzdGF0ZW1lbnQgZm9yIGhhbmRsaW5nIHRoZSBkYXRhX3R5cGUuDQoNClJlcG9ydGVkLWJ5
-OiBzeXpib3QrN2Y0NWZhOTgwNWM0MGRiM2YxMDhAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNv
-bQ0KQ2xvc2VzOiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9N2Y0
-NWZhOTgwNWM0MGRiM2YxMDgNCkZpeGVzOiA3MWFiYTU5MDI5N2UgKCJiY2FjaGVmczogQWx3
-YXlzIGNoZWNrIGFsbG9jIGRhdGEgdHlwZSIpDQpTaWduZWQtb2ZmLWJ5OiBIb25nYm8gTGkg
-PGxpaG9uZ2JvMjJAaHVhd2VpLmNvbT4NCi0tLQ0KIGZzL2JjYWNoZWZzL2FsbG9jX2JhY2tn
-cm91bmQuYyB8IDQgKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCg0K
-ZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2FsbG9jX2JhY2tncm91bmQuYyBiL2ZzL2JjYWNo
-ZWZzL2FsbG9jX2JhY2tncm91bmQuYw0KaW5kZXggNmUxNjFmOGZmZThkLi4wOWZmNDFjYWM1
-ZjggMTAwNjQ0DQotLS0gYS9mcy9iY2FjaGVmcy9hbGxvY19iYWNrZ3JvdW5kLmMNCisrKyBi
-L2ZzL2JjYWNoZWZzL2FsbG9jX2JhY2tncm91bmQuYw0KQEAgLTMxNCw2ICszMTQsMTAgQEAg
-aW50IGJjaDJfYWxsb2NfdjRfdmFsaWRhdGUoc3RydWN0IGJjaF9mcyAqYywgc3RydWN0IGJr
-ZXlfc19jIGssDQogCQlicmVhazsNCiAJY2FzZSBCQ0hfREFUQV9zdHJpcGU6DQogCQlicmVh
-azsNCisJZGVmYXVsdDoNCisJCWJrZXlfZnNja19lcnJfb24odHJ1ZSwgYywgYWxsb2Nfa2V5
-X2RhdGFfdHlwZV9iYWQsDQorCQkJCSAidW5rbm93biBkYXRhIHR5cGUgJXUiLCBhLmRhdGFf
-dHlwZSk7DQorCQlicmVhazsNCiAJfQ0KIGZzY2tfZXJyOg0KIAlyZXR1cm4gcmV0Ow0KLS0g
-DQoyLjM0LjENCg==
+diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+index 78748e8d2dba..3fb734cb9c1b 100644
+--- a/drivers/pci/vgaarb.c
++++ b/drivers/pci/vgaarb.c
+@@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
+                 return true;
+         }
 
---------------rJdxhcEMxXilpbky7mxxYNYR--
++       if (vga_arb_integrated_gpu(&pdev->dev))
++               return true;
++
+         /*
+          * Vgadev has neither IO nor MEM enabled.  If we haven't found any
+          * other VGA devices, it is the best candidate so far.
+
+
+Kai-Heng
+
+> 
+> Tested-by: Luke D. Jones <luke@ljones.dev>
+
 
