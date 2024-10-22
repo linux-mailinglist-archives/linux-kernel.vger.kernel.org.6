@@ -1,135 +1,76 @@
-Return-Path: <linux-kernel+bounces-377032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35ED9AB901
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6F69AB902
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32238B23EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:47:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61EC1F22CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0741CDFA3;
-	Tue, 22 Oct 2024 21:47:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496D91CC17D;
-	Tue, 22 Oct 2024 21:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCADF1CB304;
+	Tue, 22 Oct 2024 21:49:01 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205E7136E21
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729633637; cv=none; b=QehjbO5/b4SMcNrH+dzltQxW1jsCupE4aOXC/5batgFVrD2fi0qQ1FBQhgvgtlLt6gZ18wbgXE1QVlMSrEeycrDE4l+ucThph+vLBG5GQNERJVCE3MzbPWtamlx7RtDrCRIufB+GzCgPTYpmLUQgpjmZCZat6CNtZOrewDSnbpo=
+	t=1729633741; cv=none; b=lXIfgtTQgnuvLJ8qHqcnColpfDmSEBIWrhR6ReoGvL1ugZha/uxNO+ZkA3FTOKhUtt+SG0IAGLdy5EXIFa/45EyHj02CRAb7+Y/w/SGCU6Qw7vBNdmQxVYSwqqFtEtcrmUgpqc70do0vuKFZmUMAH/vPbeMqClpRFILFuZi3Zag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729633637; c=relaxed/simple;
-	bh=cRvRYJc/6c0akFGJFIRKhOuJQrbFgybnciS6j3ZUjeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5i09tqiLLFDDhpZdMInzo53R7hdVtzI2Y1eJp0tKf4p5nr0c3+9VjkGwkwi6qwrONcsDQA9r1F5mtWY8tOzDt3h26Q78O+Ca1I+IU2MeC3IRAQ1BEV934UbKyjyJXHKokJbHG5D7vP8JC8RDk8V9scD8W2J5NrICcGzI7vwNmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4280D497;
-	Tue, 22 Oct 2024 14:47:44 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 427DC3F528;
-	Tue, 22 Oct 2024 14:47:13 -0700 (PDT)
-Message-ID: <8594c611-4eac-45b1-9ab1-bd54c9642bf1@arm.com>
-Date: Tue, 22 Oct 2024 22:48:22 +0100
+	s=arc-20240116; t=1729633741; c=relaxed/simple;
+	bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aB+0YmspeBD7NZSz1tOusWeqI6UDF7TJUx8a9mKZMZf38dz4tvQ+lpu/nPfuA4VrOl1stAf8djAJkXrOAFEg0fbuVYJjuIsRttG6Ojr5k3Kf/EoRWWy4xhtx0C6WSHTJZFuduGiK/R/RbeIMP1xe5Voft9OuiMqSZmAQgKoM0Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso63004995ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:48:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729633739; x=1730238539;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
+        b=oitqPC85UFLbUBft9A4LSu1pkl3382mt5OGDpJPTit3KifGcidnKgwWITDI/ZeGcQ8
+         ttNUqWc5BXxXZX4GQIMFc0dcCSAqoL24XFws3mmEJzR9J4t16srIzTwJWEurPADeGk7w
+         WdjuRQ6/A2MLQUxIf5AZjWtSvVqpDJivnacn2YCJCIkfJ5r+5aV6rRMvcvbsFXVIA7zz
+         30rh/zNPayB2cOnNj/Oa0ZFdgGVSphbDlf6Kqpicdw6aCvAiosK1e/254Zrxy0aruzVY
+         Nn3AS7RcmSOR2iqG6a7ZSVXCtPBwpSjTG3ZL9cKw/J3KD2toJAqAG/OK76Wlsqtu7F9t
+         n8Yg==
+X-Gm-Message-State: AOJu0Ywmne8VPsukkcPgrmH4a485d8YJZ1efVLqzlrIlx/uRyRdMu0Sm
+	h4K5D1Y6K2xlH/RnUKctERLv54ewx020cYjL85OCV15PU/bK4qUB33ALnDYJ32+1Sv9obxuyJWS
+	ajA9qXUWDw31amclDjReAFadOIo6s+dga1/r1UZP7PDMD5b9XVrO0QVw=
+X-Google-Smtp-Source: AGHT+IH1JDQ5mOMORl5uksKAz9LtF14btGraBbeST6eFQfyGiytT4zzduEX4gPbYotkf8jzSQ/Gz9w3OPzU/4YDc3VP+9bv39A+C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] thermal: core: Introduce
- thermal_instance_delete()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <3275745.5fSG56mABF@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3275745.5fSG56mABF@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:13a6:b0:3a3:449b:5989 with SMTP id
+ e9e14a558f8ab-3a4d59fea52mr5376635ab.21.1729633739333; Tue, 22 Oct 2024
+ 14:48:59 -0700 (PDT)
+Date: Tue, 22 Oct 2024 14:48:59 -0700
+In-Reply-To: <66fa3eb3.050a0220.6bad9.0030.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67181dcb.050a0220.10f4f4.017d.GAE@google.com>
+Subject: Re: [syzbot] general protection fault in btree_node_iter_and_journal_peek
+From: syzbot <syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 10/10/24 23:15, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> It is not necessary to walk the thermal_instances list in a trip
-> descriptor under a cooling device lock, so acquire that lock only
-> for deleting the given thermal instance from the list of thermal
-> instances in the given cdev.
-> 
-> Moreover, in analogy with the previous change that introduced
-> thermal_instance_add(), put the code deleting the given thermal
-> instance from the lists it is on into a separate new function
-> called thermal_instance_delete().
+Subject: general protection fault in btree_node_iter_and_journal_peek
+Author: pz010001011111@proton.me
 
-make sense
-
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/2224279.Mh6RI2rZIc@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   17 ++++++++++++-----
->   1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -866,6 +866,17 @@ free_mem:
->   	return result;
->   }
->   
-> +static void thermal_instance_delete(struct thermal_instance *instance)
-> +{
-> +	list_del(&instance->trip_node);
-> +
-> +	mutex_lock(&instance->cdev->lock);
-> +
-> +	list_del(&instance->cdev_node);
-> +
-> +	mutex_unlock(&instance->cdev->lock);
-> +}
-> +
->   /**
->    * thermal_unbind_cdev_from_trip - unbind a cooling device from a thermal zone.
->    * @tz:		pointer to a struct thermal_zone_device.
-> @@ -882,16 +893,12 @@ static void thermal_unbind_cdev_from_tri
->   {
->   	struct thermal_instance *pos, *next;
->   
-> -	mutex_lock(&cdev->lock);
->   	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
->   		if (pos->cdev == cdev) {
-> -			list_del(&pos->trip_node);
-> -			list_del(&pos->cdev_node);
-> -			mutex_unlock(&cdev->lock);
-> +			thermal_instance_delete(pos);
->   			goto unbind;
->   		}
->   	}
-> -	mutex_unlock(&cdev->lock);
->   
->   	return;
->   
-> 
-> 
-> 
-
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+#syz test
 
