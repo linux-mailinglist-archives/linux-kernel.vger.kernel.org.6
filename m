@@ -1,94 +1,85 @@
-Return-Path: <linux-kernel+bounces-376611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BAF9AB3CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:24:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22F69AB3E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0641C21F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3181284626
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C2E1BBBC0;
-	Tue, 22 Oct 2024 16:24:21 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8B81BBBD7;
+	Tue, 22 Oct 2024 16:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8eYlxpy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF221A4F1B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02891BB6BE;
+	Tue, 22 Oct 2024 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729614261; cv=none; b=rIwJBU/0oWycI4+1cPkw8PeCDxlUekXMa0WpPl/P4wrTG45YDKsjSUJVkgHNkQ+uaXMykjVHbrz8DyfdMOVF9IqcG3nQYLUygYXdmiBDxjitUI+mNodcYySkJnq4+DwKPCGKAT22RESOvKHf/yh2qcXch6nC9nC/apVpzhvjU6c=
+	t=1729614323; cv=none; b=TI0zG4rR6Hsd+Wn77RhaKIQ3V9JlC08FVhdvFWfumXvFm/2pvJAybfIk8Dj4H1Ky87iesfR1yC4Q+4tkGpTFpEBbrKNvJ3PB5/jNUQdABVmcBld2IK2CAyenW4Lfe8jF64ogZmwgiVb+vFsVORzq5SNT+vbGfwrShIchIhmRdnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729614261; c=relaxed/simple;
-	bh=TaaTMM3UxQWbFXrjZD8NbUwl2Jn1hwjRyh9yQQ+Ff4A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=E/4sySa6NNPJSqdCOlnOD9jNJv2tkpSwh8zVRt0cPynoaY2NPJZVJLgJHgAJBJCJyqiVyBY8BcNLqIeKddt88ZEWd8QdFCbmqQsLwtfgMIM054bhKdAeA8K7mFNWfgMoZLw7m8PmBfpH2wnyEXYgRiikaG5z+KPMjK+K36cxJrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c803787abso45603265ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:24:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729614258; x=1730219058;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TaaTMM3UxQWbFXrjZD8NbUwl2Jn1hwjRyh9yQQ+Ff4A=;
-        b=nhr7zqh2ZFrK3QEvFws4U4SziIa45pmeEC8TxNvJ4zGNSj1phGvLMtRWS7DS0uzQCY
-         yXpJX6gajxo1H3VmatFwUiafaoDk9zYUO6kzYyxatj5glZQEsQEnA4Pq0vqPoiT2LGys
-         a9SDH1yddfEceK5tvXx72d+dmL1fFL3/LikSV1y0X9DUpMUtT3f1dAlsdU00NE2U9bcx
-         uTySpe935Bf763rpWGGLBh8R1Z8w6nsY1mfLw/i5yi2qpnfNgtQJiq/sJssdtB6DX7Co
-         4JoirlYiEnphL36ZWYK2CQnE1iDxdYQihMb/Lvm66cWO7GPPHsQ7+Gp4YHiqdKCajEho
-         8UtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXS3XEwhydtxzsdYUyqeYiRkUeaFNvLGme42v5fBBnP87QTl81IABJBHy4wRjy1iRjmHlahfc+RHMrksY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwId80uUtvRmTz194Q2668A4y3jsU5k8gKDe2RS6mcRbB95Unce
-	QLIAJboxB8eek79KT9kPvxYKyMChZOcKBlB5k03KUxAyFZOrN9KoMT7X4HWRsB0=
-X-Google-Smtp-Source: AGHT+IFaD/j1Rlq40Aw5sjAcS1z8YIlzMkor00MFlOjtln9GzriHDQFJiXnHbn4jt+cYqpNSUiqZDQ==
-X-Received: by 2002:a17:902:dacb:b0:20c:7196:a1e9 with SMTP id d9443c01a7336-20e96feb050mr65803955ad.13.1729614257846;
-        Tue, 22 Oct 2024 09:24:17 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0d9f05sm44498595ad.186.2024.10.22.09.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 09:24:17 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Thomas Richard <thomas.richard@bootlin.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: tony@atomide.com, u-kumar1@ti.com, gregory.clement@bootlin.com,
- thomas.petazzoni@bootlin.com, theo.lebrun@bootlin.com,
- richard.genoud@bootlin.com, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Richard
- <thomas.richard@bootlin.com>
-Subject: Re: [PATCH v2] pmdomain: ti-sci: set the GENPD_FLAG_ACTIVE_WAKEUP
- flag for all PM domains
-In-Reply-To: <20241022-8250-omap-no-console-suspend-v2-1-cc3d102b8a1e@bootlin.com>
-References: <20241022-8250-omap-no-console-suspend-v2-1-cc3d102b8a1e@bootlin.com>
-Date: Tue, 22 Oct 2024 09:24:16 -0700
-Message-ID: <7hbjzct8b3.fsf@baylibre.com>
+	s=arc-20240116; t=1729614323; c=relaxed/simple;
+	bh=hg1K/hUnb1N4PHZXAe7Z3VEVyWsDIXMOdk9gxdCDWc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVvyboztaj0VaXhXh0r2NxUwHKhEL1DqdzxlNvZVe+OzN2IEy6aDke44cAA/HrNL55mbD76ZU6jkXQpCXd3yBx+S9lVzb0mZ6qSV6iYg0/YJVGIb3GDzEfiBOk7Ep5CiDDbQX8bLQ8Cc8oqK1MzfveNzF5ByS6rugs4b+ZzOBSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8eYlxpy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312F3C4CEE3;
+	Tue, 22 Oct 2024 16:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729614323;
+	bh=hg1K/hUnb1N4PHZXAe7Z3VEVyWsDIXMOdk9gxdCDWc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8eYlxpyWBvZgyslB4xQH0OhdfkTTCNRT14J726K3zdGQkh4NpQV7yj4h4Y6pdHvU
+	 ZoO8zFj95KH3L6+WAMT4nVwiKoeerYUcwle+u/ZroEsY6Mgq/N2FNR5VecEIzVneRg
+	 00URIGo7dAAo6xpcV5gwSnB5yKGLWFTm/9pqGkZGlceBQRsuyaeE9rWm7eXCc1Bd88
+	 dhtAbUJWhkAAN6acIXJpWmLXXKMImk1tJT7r8leZ9rixFo11xcuqivjv4byulkoUyQ
+	 EVz9oEQ121R309ETHkGl4UUnUPMPXNEnj7JY0tgMcPIw3B/KJAmv8Jl1a+lUH98fLS
+	 9US/M5DwBPKFw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t3HhN-000000005Yf-30XV;
+	Tue, 22 Oct 2024 18:25:33 +0200
+Date: Tue, 22 Oct 2024 18:25:33 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
+Message-ID: <ZxfR_XM9U-HSXTz_@hovoldconsulting.com>
+References: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
 
-Thomas Richard <thomas.richard@bootlin.com> writes:
+On Wed, Jul 10, 2024 at 04:07:23PM +0200, Konrad Dybcio wrote:
+> The 32-bit BAR spaces are reaching outside their assigned register
+> regions. Shrink them to match their actual sizes.
+> While at it, unify the style.
+> 
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-> With this flag, if a device is marked on the wakeup path, the correspondi=
-ng
-> PM domain is kept powered on.
->
-> This commit fixes the no_console_suspend support for some TI platforms
-> (tested on J7200). In case of no_console_suspend the serial core marks the
-> device on the wakeup path, but without this patch the power domain is
-> powered off anyway.
->
-> Suggested-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+This one seems to have fallen through the cracks.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Bjorn, can you pick it up or do you want Konrad to resend?
+
+Johan
 
