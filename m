@@ -1,105 +1,82 @@
-Return-Path: <linux-kernel+bounces-377017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4586A9AB8CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8F29AB8CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C55284CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2971C1C233B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DD420012F;
-	Tue, 22 Oct 2024 21:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8101D0148;
+	Tue, 22 Oct 2024 21:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="I2U39Ejh"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGONeI+s"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088AF1FF7B5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40801CCEF1;
+	Tue, 22 Oct 2024 21:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729632901; cv=none; b=CmH5qOATn/myGtbLCo68u5zD5qyWvLCXZAc1t8Gistpw1COtejqCArFvZAErH9RYFQPBkEE5MI4vWpBo5SVT62dZSLPt/7A+mxki6fyqlN0v70ASlXycJbkDPBgiqo0/lxZIOwryRsuKFI/+pELLYM7PtIsX9dtwnD8R742pG1E=
+	t=1729632923; cv=none; b=FZRTxcsGN67o4etgiPKVAf5PXzPzCAKdJz+H066Hh41hOTjCQTTUwxmskqPloh4F1+wuqJP8rc35UU0Qru6Sf+GKFJLdQEnoSPGh9L8loBVp4HIqoGVi3DDM2xjdk5WMV1Qog3WTmlt9sEAx/Btrmo4ZHijMrh5SSY6fqa6KBn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729632901; c=relaxed/simple;
-	bh=vPwlrbEZICwJySvKEDe0ketAegKzxYlX66KxGsRhSew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HqnyIHtMGiDzI03uNHzgbNBIF/d2E50f+t1C6/q5sI7QR3OchObKkBlABb4o3CEStzmaEUXrtgEiUfltpe3R5GiAKkiiI2vqn8vtYiHNHrpzaQAXtE2HVV+wGvfYJIJ+IbLHcOPoZNKDhHL2PVlWV6vWjfEVfnIj90oq4OGOEkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=I2U39Ejh; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4609d75e2f8so2158871cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:34:59 -0700 (PDT)
+	s=arc-20240116; t=1729632923; c=relaxed/simple;
+	bh=9HkTwBHIl+4fWbc0RXcjQqJa73jC831/0ypjtBYZmXI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZvxYY4tlmonHIMxgu1rx2XhqKcUAX5MMnFpQhiFnag4budCGG6g+xYWy4Mqso2dEq8PkmKCS168JaiJnPmd15eeCuzdmE1Mg77lCEyOOsyNXpVOcRxvjFEOCiDeZRA35mn97K6nIG+hk6dpLfFQ9lwaDwLYECEF1LBvVf+uO8LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGONeI+s; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cdb889222so59358155ad.3;
+        Tue, 22 Oct 2024 14:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1729632899; x=1730237699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Y78ubexqEa4jb5hMLl30/Xq5Y9Xokfp+mSha683Q8I=;
-        b=I2U39EjhyDafxvJfSnhOrjQXXMep4ooXvriCjP1wQOvHxIwk/Gde8GEXrgkeibmbiu
-         Nhpovxx5i164KmiGQtSfraPrKpTi7EbvpyFXwCNJ21IZQxmC7RCsfdEvdM8y6efOvK0o
-         vtZbiiwgFP3QEupseiAy8xj5xhDaku9GK7uVqskp7PZxSSYmW6wERzxi2XUoAqDxCNDX
-         zgTREzS5lzOrwE5E94MkOQRUEu8Jq9WirAGpRpgEllq7nr5nHl7pfx0VqTqQGV7a9oqu
-         jekphsVKehOu1btdaaWILQtuDqCZ3uBoneIGqWeGCH7x+0zg0y8yeH3qzVV4n6TH/gcO
-         zlrw==
+        d=gmail.com; s=20230601; t=1729632921; x=1730237721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9HkTwBHIl+4fWbc0RXcjQqJa73jC831/0ypjtBYZmXI=;
+        b=NGONeI+srd1KrTRcF2V1LQOoO7yACDMoUJ0phHMF7oWJVGc98sOn35/4tH8rgwwlyu
+         1r94wtpwIh1baSviiIXh2a98nICXm2msKwYPASFONB23Bcz++Pm0sry3KboEy7qtpXfd
+         fKzD6QxT8FgS0TgkkC01DyaA3CkNy2doGwtJHPwqutzelhi5Ll+mM76DsVenFF8Markq
+         H8Yinaih2QoGGyhcpNBjjZC0MeFcSqxXift8OKVCDRPwumV5IlV58FoB+yN2UJzKqzDb
+         HObZFvhY+50HLy3kmo3Mv/MUGDPB5mS1SQSn3fJ9TI5s394PAOlWAgOVGEMN/zGfYQST
+         kmDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729632899; x=1730237699;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Y78ubexqEa4jb5hMLl30/Xq5Y9Xokfp+mSha683Q8I=;
-        b=rAa2poJOJMRt4+v5VjLuqK/7wOdNUA5Nnr6j1VapJc6WKq2cMhFpHDLzZHxOb7h3Bw
-         HPnpAwjYAY+/Arb8JhWkFZSmqwUVzwtzIeQkJFTfs2sxb9OWPsrJZf1via1IYODd5TiR
-         QYyzjZiDPyh0Mvtk9pRzxsw5F3nQAYIcoBOCd1Joa9KwIhj5xgJpWHO4bLxPJtD/Cdva
-         jMYy+FbYx8kM59z1r1z4dAbH6RPXgivkR+GqKgUF4EVt5xmYhr+TEs5RhiG6U6KXk80q
-         xAC8DG0ms9V9lBAfQ8pat/6XKNnHSbSEKNI8yq0b0kgNAP6s8HEWqSRFuoWbwHL7hyo8
-         ptVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4MrEylO6HIxusoSzJr+/MZADBfF4vYQVJ5cAWNizzDFs2n5bQk+kqPEFRMMUxzFjiK6iJ/oRNEEu5MMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlBx3iJizxScTq5YBHm6ArO8a1sMFAHLAFWLTtJ6g960IdB1TY
-	n8T6EsbTnB7DwvlHqajpHt7tyIzSA8xIqbLWA+ImzEAW0mPcAcNzEGQGl9yutxk=
-X-Google-Smtp-Source: AGHT+IH7eGA0cnfOQp14jPD3sIr1Ycw9daRo5ztpuW4QPmIXbYkKfaWizk6DGwzl4TxDDXn1JCZDPg==
-X-Received: by 2002:ac8:7d04:0:b0:459:a824:a1c2 with SMTP id d75a77b69052e-46114102e22mr12146281cf.22.1729632898984;
-        Tue, 22 Oct 2024 14:34:58 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c62f4dsm33845841cf.28.2024.10.22.14.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 14:34:58 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: x86@kernel.org,
+        d=1e100.net; s=20230601; t=1729632921; x=1730237721;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9HkTwBHIl+4fWbc0RXcjQqJa73jC831/0ypjtBYZmXI=;
+        b=Z4MTMiqV7jN+AVMNdDoXRyxJtpF6W/eOd5PZiovaHJKiR9rcFu4kIprmwKO+5vBkG1
+         tDNVaISyBRXRgO2ntuL5ZKXy7NUUVJBTTk+mdR7RK+9VbVMDSJt4JmLeHpEZe+Sc7KXa
+         ugb5X1NBgrKkz31divDznwUjrzmsdrAw56bxWgmTDzX3YDYmwE2q4/79dfoaUt9tgoxn
+         cFwGO85SjRiJHJACd9deKoVSCoIsy8rjifCNiOC1V+7DIdkY6cB4RFwrq5s1sMLnDkBm
+         NUYOiZV4WW2NjAGaKv7L899CMU9oswHl6BejWFM5uEknBjbESHuLpHLL62AL4Nn0zXNi
+         pQNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUc9wqvKUBRKNepGkZCZrwcFiahYuLIDGtP2biaU33FBoTnFhehCMKWn9Qe56yd5QFXO4oab878/ro=@vger.kernel.org, AJvYcCViHanzzayUxCwMcRHjFRvmhA8y9sIZzGDk0kaQVZCrjFNgtqq+P0ofiH83Kt+tNfDcBXX1flemOVkGSat6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFGHINLrqA7OCVZs8jTymZVJrK7wmiugnN1K15Zmu6/DTKuvL1
+	AnugT+MM5cvnnEa0xjCtZQbciiWXrFoMyxh66+R7ylJLvqYH+IsM
+X-Google-Smtp-Source: AGHT+IFn3p00Ey22ySvpESE2IURm7SgTJfYs4aw6WFV2IqbMJG2rDRTcHYXqFjAQfktwZDLiDhLpQQ==
+X-Received: by 2002:a17:90a:d903:b0:2db:2939:d9c0 with SMTP id 98e67ed59e1d1-2e76b5b8fcfmr379816a91.2.1729632920898;
+        Tue, 22 Oct 2024 14:35:20 -0700 (PDT)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad4ed73fsm6726369a91.44.2024.10.22.14.35.19
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 22 Oct 2024 14:35:20 -0700 (PDT)
+From: anish kumar <yesanishhere@gmail.com>
+To: ohad@wizery.com,
+	bjorn.andersson@linaro.org,
+	mathieu.poirier@linaro.org,
+	corbet@lwn.net
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: linux-cxl@kvack.org,
-	Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rrichter@amd.com,
-	Terry.Bowman@amd.com,
-	dave.jiang@intel.com,
-	ira.weiny@intel.com,
-	alison.schofield@intel.com,
-	gourry@gourry.net,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	david@redhat.com,
-	osalvador@suse.de,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org
-Subject: [PATCH v3 3/3] acpi,srat: give memory block size advice based on CFMWS alignment
-Date: Tue, 22 Oct 2024 17:34:50 -0400
-Message-ID: <20241022213450.15041-4-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241022213450.15041-1-gourry@gourry.net>
-References: <20241022213450.15041-1-gourry@gourry.net>
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 0/1] remoteproc documentation changes 
+Date: Tue, 22 Oct 2024 14:35:09 -0700
+Message-Id: <20241022213516.1756-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,80 +85,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Capacity is stranded when CFMWS regions are not aligned to block size.
-On x86, block size increases with capacity (2G blocks @ 64G capacity).
+This patch series transitions the documentation
+for remoteproc from the staging directory to the
+mainline kernel. It introduces both kernel and
+user-space APIs, enhancing the overall documentation
+quality. Additionally, an index has been added to
+ensure compatibility with the readthedocs.io
+formatting requirements.
 
-Use CFMWS base/size to report memory block size alignment advice.
+V3:
+Seperated out the patches further to make the intention
+clear for each patch.
 
-After the alignment, the acpi code begins populating numa nodes with
-memblocks, so probe the value just prior to lock it in.  All future
-callers should be providing advice prior to this point.
-
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/acpi/numa/srat.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 44f91f2c6c5d..35e6f7c17f60 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -14,6 +14,7 @@
- #include <linux/errno.h>
- #include <linux/acpi.h>
- #include <linux/memblock.h>
-+#include <linux/memory.h>
- #include <linux/numa.h>
- #include <linux/nodemask.h>
- #include <linux/topology.h>
-@@ -333,6 +334,29 @@ acpi_parse_memory_affinity(union acpi_subtable_headers *header,
- 	return 0;
- }
- 
-+/* Advise memblock on maximum block size to avoid stranded capacity. */
-+static int __init acpi_align_cfmws(union acpi_subtable_headers *header,
-+				   void *arg, const unsigned long table_end)
-+{
-+	struct acpi_cedt_cfmws *cfmws = (struct acpi_cedt_cfmws *)header;
-+	u64 start = cfmws->base_hpa;
-+	u64 size = cfmws->window_size;
-+	unsigned long bz;
-+
-+	for (bz = SZ_64T; bz >= SZ_256M; bz >>= 1) {
-+		if (IS_ALIGNED(start, bz) && IS_ALIGNED(size, bz))
-+			break;
-+	}
-+
-+	if (bz >= SZ_256M) {
-+		if (memory_block_advise_max_size(bz) < 0)
-+			pr_warn("CFMWS: memblock size advise failed\n");
-+	} else
-+		pr_err("CFMWS: [BIOS BUG] base/size alignment violates spec\n");
-+
-+	return 0;
-+}
-+
- static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- 				   void *arg, const unsigned long table_end)
- {
-@@ -545,6 +569,15 @@ int __init acpi_numa_init(void)
- 	 * Initialize a fake_pxm as the first available PXM to emulate.
- 	 */
- 
-+	/* Align memblock size to CFMW regions if possible */
-+	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_align_cfmws, NULL);
-+
-+	/*
-+	 * Nodes start populating with blocks after this, so probe the max
-+	 * block size to prevent it from changing in the future.
-+	 */
-+	memory_block_probe_max_size();
-+
- 	/* fake_pxm is the next unused PXM value after SRAT parsing */
- 	for (i = 0, fake_pxm = -1; i < MAX_NUMNODES; i++) {
- 		if (node_to_pxm_map[i] > fake_pxm)
--- 
-2.43.0
-
+V2:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
 
