@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-375365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003559A950B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D059A950E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9FE1C223D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4022857C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16A2E822;
-	Tue, 22 Oct 2024 00:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C841E871;
+	Tue, 22 Oct 2024 00:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tr/G2/Zl"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqJW6JLB"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1F64A1E;
-	Tue, 22 Oct 2024 00:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2984917993;
+	Tue, 22 Oct 2024 00:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729557602; cv=none; b=kJHrv3Dgw9tjE+cY90FhNkjjJF6qcyShR4lX0Kk/0PIt6B+EFLzmdo/00v1Y4nPAlq6WD9vt5wK/REhwrNyMQLuVFIpz9zmwHHfoGbIhzAv2TO4TOOP8TOUEVKHB55nHu2bAA4KjJM4EzJD/Nx/ER1NXsphFxaRB726KFPf96iI=
+	t=1729557808; cv=none; b=txWSW3S0bpeuGO8vpB19ypr7rwygraGyToccjWdx0/ZfEkc7QhA5NRvsHO/6Wv8+D8rR0d+IB9a4AhR3c0mCamp5ycxEM/dKyp6WwSbeJoZYyi3DptmyC3waHW89UWUoIPNipGsAFOPivaPm+VyYqCZgGu+SuWv9gYzFC5SKfBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729557602; c=relaxed/simple;
-	bh=ftG8XJktiJrDNHiIuR6Dr/LhGMKj7yUiktxEXg0BP+g=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=T7lV5moLqF372u8yGQbrpSZ33T217bDRmkl4BOvfvNChuPTBihRw0WDHqDkKXdrlGs1OSJYUrzxQUUsgftoz/su9tbrqGq6VERf9BQdltVmHQMyFmOS2s9qVM1HcdrF1Bqask6Ityj5wItYDygY5oqIFAaUP3r3tHEWE9W8phlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tr/G2/Zl; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1729557808; c=relaxed/simple;
+	bh=bTlNqxfrs2cU2x3eIsIrMVd2Hvfp3KF090R05gwDV10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nl52hGqpFXS+Umm8H8UaEzdkgm04kFG9immkP8NOwuzQlp1uQ1fdbh4pYNRffQyzLYaBa5Y3WaW8ROY7nsLoadJSqfp8a+a8sKpyZVU7Y+ChzFiqljMyZ3+OvKpdIuLlPp7fog3uP6V93j8pQG6Dx14ECnaroYrAdM6lSiWxyS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqJW6JLB; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ce5e3b116so39505245ad.1;
-        Mon, 21 Oct 2024 17:40:00 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6ed072cdaso3539146a12.0;
+        Mon, 21 Oct 2024 17:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729557600; x=1730162400; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jdbuZGrra7A3+6D+E69xeqbotHoVIk2n5QRQ0Erx25U=;
-        b=Tr/G2/ZlJuA15JCnQu1BwgXDE8V3gfRaClwbzM/1Tw+VzeymbxjTacikng65THx+HR
-         E1L2M1YJLUuLkvQwHiNRcweS5/e/BzvPM8IRVb0LvW5Xk0PiJXYiYH9RhVk/2XaonGED
-         gaR8t3vOcfX1lVMIgGtINSRU1p9LUhSuJbgtZnYBJoBaLAqh7m50JjWrQ/Tfm/fo90v1
-         QG7SvMF4M/7iMyzCOW8cqPU+wuFe5nxlOZs/JTAD6uK3RoqU70UfJCxeRaEmI5tcFqEc
-         6RltXx234dUnsVtPjBSIJBXLjZIqe6CHdJPUWT786vZQNEOhv2EVbTdFWY2H8F4g6bxU
-         Ah5g==
+        d=gmail.com; s=20230601; t=1729557806; x=1730162606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jjUFXuysliNb6jOc1fF186zy4oPHVFc3jmgowhIzG7U=;
+        b=jqJW6JLB6/XMKPBXWNoQhKpRo3L15lvkIXsqQzvDxHiJGVi9z4MRyn90ZxQ13JqR66
+         jPd6VliNHcs6Dko/QpqQniU0ygQXnIeph+kDEAfaKnDvD4IRII5G6LpZYqTWnEwno/mK
+         LjqqLBMpxCut3Sdgp/o2aMaIvwn0b7skFzqNiJnANElPDpOPQptRGYKMWkehCvDnLBhR
+         358/Xe1J836XhhkbdWTpBLII0K/dT1q/4ECXT0tn26V2qIPkBcFkyF5JJkI65/c8AJAc
+         LIHV8UmN5c+g0CWWWEzHjNY1uwdrI97xWJeBxthHK5m3lrVc5bYSUOmt2rqVtOYWCIr7
+         OJhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729557600; x=1730162400;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729557806; x=1730162606;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jdbuZGrra7A3+6D+E69xeqbotHoVIk2n5QRQ0Erx25U=;
-        b=hQif9empeNxPCQz/secUCarg6mNkLGzFQsbD6PkqLTpMYlSsvokkQ4f13ZiKIJPxzj
-         E1V8oTtbUSh6gh3s8bIxD+pv+0btVmaDwac3ewtr3zFCZSx9idPdCstgtZU5kag3jd5b
-         DWWLGw511a/3H/xoZ5WjILPQKv/SDsD9HaEqUF5yP/MoYa3RtOg6NY+crLGFjv4XMZWV
-         vySWTlHsqtwhG3c+nhnJAu0Tjeye1YOAsNEqeQno08j6KJOXgignMVHaT9j+tRXkYlJ7
-         Xuxs/tyxwCX0MRA79mjYUIeqSOjkjmwvA2i1PmcfJyOaz7j/8j5mwHKeTuvHYD9XSuOn
-         7gjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+9erQq/bain4T15ag38v7Z6isi8DMCpjvyx7UDozvJ1m8xBBCGWjLmEkXVs9gPrjh2XP1R0buOuMwqEo=@vger.kernel.org, AJvYcCX8nAzfgtpTjhML2Lm3ktlNSFledyKm2rmywwBZeo4MlyzsNHAe/nZNCKgW/oc/slo7/dmyviEYbzb1j8dB1lk=@vger.kernel.org, AJvYcCXgX3qY760mhoRYKuLRrYGFQmRaOsd9dAcsDB1FPIN3CySktVVG9qvbn10KXDpSn6QEL+Sn23Jq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx27MjJZ5LO1BAJv/nw+PP/JwxQoH9R9fEvSxN6MUYEPDP2xj0P
-	wa9gcVbj/8SbhQdsnp6OzrXJpyVKsEinzTHLxmBFEB+Rtb6wHQ1A4RH+NnMe
-X-Google-Smtp-Source: AGHT+IGABpgowUdHxqLjCCAtRNC/zGp0XhSBCcyiWuT+FC9TgrFJv55n0y1iBhEPI1qvUL6kn74RjA==
-X-Received: by 2002:a17:902:ce85:b0:206:a87c:2864 with SMTP id d9443c01a7336-20e5a9441ffmr149158125ad.42.1729557599495;
-        Mon, 21 Oct 2024 17:39:59 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a409:cb40:2dbb:16ed:d48d:b2b3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bd5ddsm31904985ad.141.2024.10.21.17.39.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 17:39:59 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+        bh=jjUFXuysliNb6jOc1fF186zy4oPHVFc3jmgowhIzG7U=;
+        b=itw7L0ueQwcumvlhs8PWQ3tuekmxM8+lpFxSlvydYxbkKome/2QnzvBJmAR6glj+IH
+         VXD8g+BwIc5JkQM8FLMAAfIDW6EtzLnAWGTUfRLqEH0C9n0o7cA+pUQB/EJA8T2fGLa9
+         5zHA9Q1bYhIaBxEXUivOmxGArr4DFmcJYGuqESRFKll0+N6WQj9y0Gw8tbm03s1Z0MZz
+         Pj0dC3CAl3iJXPOLfbtiKtyJp4oTLJZd8/nnWRVq6i5FsXLDJT3AZfWEyoBNnlRAi1aZ
+         zAHkA3JIGT4PH2CHNP/aFwMr19Mo3A4sEVYOoL4Sz2MXUCZB5hHP26etmmGQWKsknsAE
+         OVEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMad+vL0T9ICOURymB85HaZujxnNSWhex8xPDwi7ac5vsP0bkI312C0aRAtEdFaYWUS4As6NbaWgVC@vger.kernel.org, AJvYcCXFG7A5STEh7rYdN/nHjIRPlBZ7N6dxp/N+wTnkXSsNh8RiUIpcxU77rbvP7+uzW96Jka5JbvIziPpqG/gI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA0YmHQUVyG1KPqGDs8IfAW6F/wxx7N3EbOBRFL5SO7IIKenKZ
+	BalAa5ky6VywSvPtcDUQo6kxDWJMS0r4GoG3ORBf3N23T2gvj/Ud
+X-Google-Smtp-Source: AGHT+IEq9b7KSsszMUpYsfGE1VXvTcTwMm/M8YEebR28lh04TKoLDBUZwYW1inEXr+gQf50tCmONog==
+X-Received: by 2002:a05:6a21:2b02:b0:1d9:6d08:4b43 with SMTP id adf61e73a8af0-1d96d084bb3mr1244594637.22.1729557806408;
+        Mon, 21 Oct 2024 17:43:26 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad517450sm4582085a91.51.2024.10.21.17.43.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 17:43:26 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Conor Dooley <conor@kernel.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 0/2] Add board support for Sipeed LicheeRV Nano
+Date: Tue, 22 Oct 2024 08:43:04 +0800
+Message-ID: <172955777485.235966.17744261419572259209.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
+References: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
-Date: Tue, 22 Oct 2024 09:39:47 +0900
-Message-Id: <311B4F6D-9D70-44A8-A367-ED2721C58AC4@gmail.com>
-References: <1D787F7E-08E2-4F21-B7D3-68A9F345E79E@gmail.com>
-Cc: toke@toke.dk, Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
- vasanth@atheros.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <1D787F7E-08E2-4F21-B7D3-68A9F345E79E@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Thu, 10 Oct 2024 17:07:05 +0200, Thomas Bonnefille wrote:
+> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+> minimal device tree files for this board to make it boot to a basic
+> shell.
+> 
+> 
 
+Applied to for-next, thanks!
 
-> Jeongjun Park <aha310510@gmail.com> wrote:
->=20
-> =EF=BB=BF
->=20
->> Kalle Valo <kvalo@kernel.org> wrote:
->>=20
->> =EF=BB=BFJeongjun Park <aha310510@gmail.com> wrote:
->>=20
->>> I found the following bug in my fuzzer:
->>>=20
->>> UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_h=
-st.c:26:51
->>> index 255 is out of range for type 'htc_endpoint [22]'
->>> CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
->>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/=
-01/2014
->>> Workqueue: events request_firmware_work_func
->>> Call Trace:
->>>  <TASK>
->>>  dump_stack_lvl+0x180/0x1b0
->>>  __ubsan_handle_out_of_bounds+0xd4/0x130
->>>  htc_issue_send.constprop.0+0x20c/0x230
->>>  ? _raw_spin_unlock_irqrestore+0x3c/0x70
->>>  ath9k_wmi_cmd+0x41d/0x610
->>>  ? mark_held_locks+0x9f/0xe0
->>>  ...
->>>=20
->>> Since this bug has been confirmed to be caused by insufficient verificat=
-ion
->>> of conn_rsp_epid, I think it would be appropriate to add a range check f=
-or
->>> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring=
-.
->>>=20
->>> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
->>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
->>> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
->>=20
->> Patch applied to ath-next branch of ath.git, thanks.
->>=20
->=20
+[1/2] riscv: dts: sophgo: Add initial SG2002 SoC device tree
+      https://github.com/sophgo/linux/commit/93b61555f5095a44fe00df27399270867fbf278a
+[2/2] riscv: dts: sophgo: Add LicheeRV Nano board device tree
+      https://github.com/sophgo/linux/commit/d32552307b6c526aa75a9f9a0ea29a4a7f1746b9
 
-Cc: <stable@vger.kernel.org>
+Thanks,
+Inochi
 
-> I think this patch should be applied to the next rc version immediately
-> to fix the oob vulnerability as soon as possible, and also to the
-> stable version.
->=20
-> Regards,
->=20
-> Jeongjun Park
->=20
->> 8619593634cb wifi: ath9k: add range check for conn_rsp_epid in htc_connec=
-t_service()
->>=20
->> --
->> https://patchwork.kernel.org/project/linux-wireless/patch/20240909103855.=
-68006-1-aha310510@gmail.com/
->>=20
->> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpa=
-tches
->> https://docs.kernel.org/process/submitting-patches.html
->>=20
 
