@@ -1,140 +1,242 @@
-Return-Path: <linux-kernel+bounces-375828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4099A9B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:45:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5871D9A9B74
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2BFCB21B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:45:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B645DB212A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387F4148316;
-	Tue, 22 Oct 2024 07:45:24 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8685414A4F9;
+	Tue, 22 Oct 2024 07:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1n7MXVHm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lzwsiTr9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1n7MXVHm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lzwsiTr9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E9079CF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA7B146D68
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583123; cv=none; b=KReQGTL4ln9tz7dWXIQSPn1moSxm80ayc2dwv/89B9/RIotf1skkzD6ICs34qqch2142IjbgkZdOZjeTVMxgYdumeO/G2tygYmQb/Y1U6ZQOCnp+63zWnzZG/7lXitsASXTGS5uDF3a8+LrOzqX39/VYfUanZSOBeHEZj06us5o=
+	t=1729583356; cv=none; b=TPXiJz6vyG1PnX9cJ5s6ojB+2KevwrFt2VLlij69YEagUrUGOC+C/OjoQ9FUJoIjVkLok1zIFrntUaoCC+qm4RiLtqaP0Uou+af621rzu4tubNAVAsUH2CUHth2HdtdRwZTyuPiPcyaTUPTUsE8VGqCAlvg+H0IB6zJTrGd4Vjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583123; c=relaxed/simple;
-	bh=LAAo4ZftQ3FWeIe9LTkcFVNX4YbZA1Iy70loF29/mdc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fFVESXZ2IBgjfdOfvwFf74q1LHHJaaU/DlozT71VfrOSwN4iQZ+1FL1nxRT4TmMl+3XzRPnMZOOxKPlWub8pZi4jzfmY7TX6jJuPrb9olWYlRa/IbhMiOFJre/4IXetjmjBp4aN0tOvb3vNyGlm0tzqIxBqcMvqb3s8zUSbTBeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XXkjy1tnqz1ynMr;
-	Tue, 22 Oct 2024 15:45:26 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3775C1A016C;
-	Tue, 22 Oct 2024 15:45:19 +0800 (CST)
-Received: from [10.174.178.219] (10.174.178.219) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 15:45:18 +0800
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Kunkun Jiang <jiangkunkun@huawei.com>
-References: <20241002204959.2051709-1-maz@kernel.org>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
-Date: Tue, 22 Oct 2024 15:45:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+	s=arc-20240116; t=1729583356; c=relaxed/simple;
+	bh=JIBJ4WOG+AeTkswaT04lD/+oeGL72JWI1TbKNinGrHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdZC7XmU58w1HRMITJAvpG7B54RsIfpD5NodkIXLWyagGqzWQq3B5KN9swW8pl2qurnE50lfPJSduFUGm38qGAb6YkrsVsNEBNouQPEWEB3bvScPDD0gRxw1Zqi13twnahY/K41/arI93AoK/xDhry0a3ItgBGgteLvBd7k9VlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1n7MXVHm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lzwsiTr9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1n7MXVHm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lzwsiTr9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1ED3621C79;
+	Tue, 22 Oct 2024 07:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729583353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7sZdKMGSdM6kuvLwufr4oBJIa0eABSyj1x+dLkMRJ8=;
+	b=1n7MXVHm6P6xSUKAFFCHHBL1jHjA3GLQvxX8tJ+Lmm84sbnSceCMM4psZa7nAK96qpZ9KU
+	9kDX/CdxyzZawiHEiVv70dsH7swJXu3isuZvM2jbB266+jkDpaDeJoM99e52UCyGEwCeOt
+	CW+QUaKH+H4yIFuG2Y9FMnIhKN4eFgw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729583353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7sZdKMGSdM6kuvLwufr4oBJIa0eABSyj1x+dLkMRJ8=;
+	b=lzwsiTr9kgCRA8TwWBeyL+sx6DSNIMKiJQtLRAddW1+k4MjRxzvr62vUXJdwLxPk8Z1ZPJ
+	hfzZssdpyjBGUEDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1n7MXVHm;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=lzwsiTr9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729583353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7sZdKMGSdM6kuvLwufr4oBJIa0eABSyj1x+dLkMRJ8=;
+	b=1n7MXVHm6P6xSUKAFFCHHBL1jHjA3GLQvxX8tJ+Lmm84sbnSceCMM4psZa7nAK96qpZ9KU
+	9kDX/CdxyzZawiHEiVv70dsH7swJXu3isuZvM2jbB266+jkDpaDeJoM99e52UCyGEwCeOt
+	CW+QUaKH+H4yIFuG2Y9FMnIhKN4eFgw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729583353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7sZdKMGSdM6kuvLwufr4oBJIa0eABSyj1x+dLkMRJ8=;
+	b=lzwsiTr9kgCRA8TwWBeyL+sx6DSNIMKiJQtLRAddW1+k4MjRxzvr62vUXJdwLxPk8Z1ZPJ
+	hfzZssdpyjBGUEDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B7EB13AC9;
+	Tue, 22 Oct 2024 07:49:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qQdCB/hYF2dCbgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 22 Oct 2024 07:49:12 +0000
+Date: Tue, 22 Oct 2024 09:49:06 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH -V3] x86/tdx, memory hotplug: Check whole hot-adding
+ memory range for TDX
+Message-ID: <ZxdY8ty-nAj3dlQQ@localhost.localdomain>
+References: <20241022031617.159969-1-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241002204959.2051709-1-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022031617.159969-1-ying.huang@intel.com>
+X-Rspamd-Queue-Id: 1ED3621C79
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Hi Marc,
+On Tue, Oct 22, 2024 at 11:16:17AM +0800, Huang Ying wrote:
+> On systems with TDX (Trust Domain eXtensions) enabled, current kernel
+> checks the TDX compatibility of the hot-added memory ranges through a
+> memory hotplug notifier for each memory_block.  If a memory range
+> which isn't TDX compatible is hot-added, for example, some CXL memory,
+> the command line as follows,
+> 
+>   $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
+> 
+> will report something like,
+> 
+>   bash: echo: write error: Operation not permitted
+> 
+> If pr_debug() is enabled, current kernel will show the error message
+> like below in the kernel log,
+> 
+>   online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
+> 
+> Both are too general to root cause the problem.  This may confuse
+> users.  One solution is to print some error messages in the TDX memory
+> hotplug notifier.  However, kernel calls memory hotplug notifiers for
+> each memory block, so this may lead to a large volume of messages in
+> the kernel log if a large number of memory blocks are onlined with a
+> script or automatically.  For example, the typical size of memory
+> block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
+> will be logged.
+> 
+> Therefore, this patch checks the TDX compatibility of the whole
+> hot-adding memory range through a newly added architecture specific
+> function (arch_check_hotplug_memory_range()).  If this patch rejects
+> the memory hot-adding for TDX compatibility, it will output a kernel
+> log message like below,
+> 
+>   virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
+> 
+> The target use case is to support CXL memory on TDX enabled systems.
+> If the CXL memory isn't compatible with TDX, the kernel will reject
+> the whole CXL memory range.  While the CXL memory can still be used
+> via devdax interface.
+> 
+> This also makes the original TDX memory hotplug notifier useless, so
+> this patch deletes it.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 
-On 2024/10/3 4:49, Marc Zyngier wrote:
-> Kunkun Jiang reports that there is a small window of opportunity for
-> userspace to force a change of affinity for a VPE while the VPE has
-> already been unmapped, but the corresponding doorbell interrupt still
-> visible in /proc/irq/.
-> 
-> Plug the race by checking the value of vmapp_count, which tracks whether
-> the VPE is mapped ot not, and returning an error in this case.
-> 
-> This involves making vmapp_count common to both GICv4.1 and its v4.0
-> ancestor.
-> 
-> Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
-> ---
->  drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++------
->  include/linux/irqchip/arm-gic-v4.h |  4 +++-
->  2 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index fdec478ba5e7..ab597e74ba08 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -797,8 +797,8 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
->  	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
->  
->  	if (!desc->its_vmapp_cmd.valid) {
-> +		alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
->  		if (is_v4_1(its)) {
-> -			alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
->  			its_encode_alloc(cmd, alloc);
->  			/*
->  			 * Unmapping a VPE is self-synchronizing on GICv4.1,
-> @@ -817,13 +817,13 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
->  	its_encode_vpt_addr(cmd, vpt_addr);
->  	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
->  
-> +	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> +
->  	if (!is_v4_1(its))
->  		goto out;
->  
->  	vconf_addr = virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
->  
-> -	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
+Acked-by: Oscar Salvador <osalvador@suse.de>
+
+One question below:
+
+...
+
+> +int tdx_check_hotplug_memory_range(u64 start, u64 size)
+>  {
+> -	struct memory_notify *mn = v;
 > -
->  	its_encode_alloc(cmd, alloc);
+> -	if (action != MEM_GOING_ONLINE)
+> -		return NOTIFY_OK;
+> +	u64 start_pfn = PHYS_PFN(start);
+> +	u64 end_pfn = PHYS_PFN(start + size);
 >  
 >  	/*
-> @@ -3806,6 +3806,13 @@ static int its_vpe_set_affinity(struct irq_data *d,
->  	struct cpumask *table_mask;
->  	unsigned long flags;
+>  	 * Empty list means TDX isn't enabled.  Allow any memory
+> -	 * to go online.
+> +	 * to be hot-added.
+>  	 */
+>  	if (list_empty(&tdx_memlist))
+> -		return NOTIFY_OK;
+> +		return 0;
 >  
-> +	/*
-> +	 * Check if we're racing against a VPE being destroyed, for
-> +	 * which we don't want to allow a VMOVP.
-> +	 */
-> +	if (!atomic_read(&vpe->vmapp_count))
-> +		return -EINVAL;
+>  	/*
+>  	 * The TDX memory configuration is static and can not be
+> -	 * changed.  Reject onlining any memory which is outside of
+> +	 * changed.  Reject hot-adding any memory which is outside of
+>  	 * the static configuration whether it supports TDX or not.
+>  	 */
+> -	if (is_tdx_memory(mn->start_pfn, mn->start_pfn + mn->nr_pages))
+> -		return NOTIFY_OK;
+> +	if (is_tdx_memory(start_pfn, end_pfn))
+> +		return 0;
+>  
+> -	return NOTIFY_BAD;
+> +	pr_info("Reject hot-adding memory range: %#llx-%#llx for TDX compatibility.\n",
+> +		start, start + size);
 
-We lazily map the vPE so that vmapp_count is likely to be 0 on GICv4.0
-implementations with the ITSList feature. Seems that that implementation
-is not affected by the reported race and we don't need to check
-vmapp_count for that.
+Why not using pr_err() here?
 
-Testing rc4 on my 920 server triggers the WARN_ON() in vgic_v3_load().
+I was checking which kind of information level we use when failing at
+hot-adding memory, and we seem to be using pr_err(), and pr_debug() when
+onlining/offlining.
 
-void vgic_v3_load(struct kvm_vcpu *vcpu)
-{
-	WARN_ON(vgic_v4_load(vcpu));
+Not a big deal, and not saying it is wrong, but was just wondering the reasoning
+behind.
 
-Thanks,
-Zenghui
+
+-- 
+Oscar Salvador
+SUSE Labs
 
