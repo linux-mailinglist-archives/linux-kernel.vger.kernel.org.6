@@ -1,260 +1,474 @@
-Return-Path: <linux-kernel+bounces-375784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796CF9A9ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E166E9A9AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092951F25967
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9429C2831B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7831149DF0;
-	Tue, 22 Oct 2024 07:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B10314A08E;
+	Tue, 22 Oct 2024 07:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="QHHHDDXo"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2049.outbound.protection.outlook.com [40.107.104.49])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QYZJiZ8U"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD8F13B280;
-	Tue, 22 Oct 2024 07:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581415; cv=fail; b=ELkoQ39ibWj+6iaf4tVb1v5SZ3CGgtjVeedue80Khm4ttef+F9iD0qUO3C2deeLVjP4Up/OVdSWw9yY9KKxvPekXGoL8iWP3dPnpNb1DhJc9Q+fLsGGhx4Bak8jJblrSVMezhoxZB3TcxwkRFLlCMuBdc4zSPfpEukOh4uA6Yp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581415; c=relaxed/simple;
-	bh=CXNgvlwb+QCcDezmhpzlfvCOFnPGJno9q7tbkhCJ2jc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KIZ0UUALwt+SQZdWuclSYb8BFDFHAi9W4aatIup+v2EkKhkXLoVYYhvQVp+yZv4ljYqdbNMxrWqfxxEBEMmOKq02mt7iJ6PZdkFp5iPAcj+HS3FL+kz1qAQBh0jJVTq1JEdUZR/hAvmLvWR1svr9MjEyPEcu4LI8U6JYKXdpdJw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=QHHHDDXo; arc=fail smtp.client-ip=40.107.104.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q/UrknTu+p1DPcEacHlgtMS7wMXlMQjDJEnarHfyynJVo/enia9A1tqoTZ14HvFduoX5g3tYheGRvJhSc2LMQgsPxI6tToVMeJa8cXgXXfgbSjHtjxRfcJ186WVyPh+BAMFYdBVJZd0B0bkfw7Ef+3zpC/O+i4eTVSf6bnboTqEbqG0H/o+Y4nA/lxJncWVhuQTtrcrx+BL/1yByZ8oCRJO5zCG6ucz7oVHH2JiCXiGZcm3l1mfDcYce2zvXrCmlwwvyLkcUbafEIuusPAA4/p+0Uns83nuQ8FaiLiJqm4n5v7IbSCWmr1fiIJ676aCVpNbfpAG9Ab4ndkSHnPkT4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CXNgvlwb+QCcDezmhpzlfvCOFnPGJno9q7tbkhCJ2jc=;
- b=blzFGMx0ueLED3go3EOy18yS6uspPzkG5EjVqkJMITR+ddkTcGjwBZTZKgwpUmmLcth3cmnmAK+efTmqWV3PFOEZclQE0bBtzn+RKVSKpgYPN6AXWU/nIJ+fKCIcdwmW6XWnQCPS+x821T4yX4pZGUqqSd/NQy5q/YKR5bC1Avz7e2Ueb+moBt2e80bwuierzZgtUcwtvmnumHOSP9I31/0Uk/uFutNJm6Okwr5TpMX9cDP1rhqhr7jpY5U5NIiXMj4J9Gh/oUVG/A9aKY0Hf+zL5c3ezEpzz7mOvAddwS91C+Vk9dfMS1QFv7a5f/qhnvKxBDk99L4HtJGhUMZdYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CXNgvlwb+QCcDezmhpzlfvCOFnPGJno9q7tbkhCJ2jc=;
- b=QHHHDDXo1DNDPasmh9wnqdgmDUksto540lCZIlRwkeCUyxQ8/+n9Xp5b6pPNNbpjvfluwdokWPP9WyRAU8XUdlC70iGPaofwy8sK4gDSqdy0W7eoA8rnYFJqsEEvQNGWIG8e7Z0SK5RAAKjbowOCDNf9dea9/WX9Vx7VdyS1554=
-Received: from AM7PR02MB5784.eurprd02.prod.outlook.com (2603:10a6:20b:de::15)
- by PAXPR02MB8197.eurprd02.prod.outlook.com (2603:10a6:102:240::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
- 2024 07:16:48 +0000
-Received: from AM7PR02MB5784.eurprd02.prod.outlook.com
- ([fe80::33dc:f613:4b96:46aa]) by AM7PR02MB5784.eurprd02.prod.outlook.com
- ([fe80::33dc:f613:4b96:46aa%4]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 07:16:48 +0000
-From: Emil Gedenryd <Emil.Gedenryd@axis.com>
-To: "jic23@kernel.org" <jic23@kernel.org>
-CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "dannenberg@ti.com" <dannenberg@ti.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "lars@metafoo.de"
-	<lars@metafoo.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Kernel
-	<Kernel@axis.com>
-Subject: Re: [PATCH v4 2/2] iio: light: opt3001: add support for TI's opt3002
- light sensor
-Thread-Topic: [PATCH v4 2/2] iio: light: opt3001: add support for TI's opt3002
- light sensor
-Thread-Index:
- AQHbFY8HuXJEWWs0RkmgVD58ZYYY2rJ5uMQAgAEugICABWagAIAA4L0AgAIYDQCAAo/4AIALzFEAgADWCQA=
-Date: Tue, 22 Oct 2024 07:16:47 +0000
-Message-ID: <3af72a433e575c0085b20c5c420b2ab242ec50ea.camel@axis.com>
-References: <20241003-add_opt3002-v4-0-c550dc4591b4@axis.com>
-	 <20241003-add_opt3002-v4-2-c550dc4591b4@axis.com>
-	 <20241006141624.3fa5bf34@jic23-huawei>
-	 <b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
-	 <20241010184742.1747bfe2@jic23-huawei>
-	 <fab164228b4d567a147cd8d93150e687c6db0c70.camel@axis.com>
-	 <20241012161040.1506a7a4@jic23-huawei>
-	 <9e93042237c3c9815d7b1be5ba85be61239b76e8.camel@axis.com>
-	 <20241021192836.1b1fe68d@jic23-huawei>
-In-Reply-To: <20241021192836.1b1fe68d@jic23-huawei>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM7PR02MB5784:EE_|PAXPR02MB8197:EE_
-x-ms-office365-filtering-correlation-id: 0d7129b6-4a5f-4e79-3da3-08dcf2697e0d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NW9jNWNvaFk4YkV3bnhsaWo5R1g5UWRvNkRLM2R4Tm9OcmhXVDFCcFp3N1Z2?=
- =?utf-8?B?T01IMjhzMHhqeHZ5V0FLNUE3ZDlsZmZjK0FpU0pUeEYyNWN5SC9tOWhpM0Nx?=
- =?utf-8?B?cEFBVW9NTnN4cHpsU2ZhV0ZwM0dHMXlKRXRrOUptd0kvVnRKYXRHcDFUQld4?=
- =?utf-8?B?Z2QrL3JWT1J0VDltN0pFajFqZVl1TGY5R1YxZWdNWHRaaEdRbGlLUTdxMndD?=
- =?utf-8?B?R1hXc3pNblJXMVZOdUNHSXVncTFQVFNaYmdtdlNwSEhyaXhlSmhmdkpLT01t?=
- =?utf-8?B?U3h1TmxoamMvc2tjTExaMlZvNTc4blJGMDcxVGNoS0lWZ0NZamtFRU13clB6?=
- =?utf-8?B?TC9FSmRaajZEdVNmcUZwWUxUNHVJRHlaT0RsYmdkS3JpSGE5VWZPZlBIYjRh?=
- =?utf-8?B?N0kzNVFTVjJ0bHVnL0pVUE1YV2oyNTZWQVM5aGpiYlR3WXUwbXAveDZUWFBk?=
- =?utf-8?B?SitGSU1ENGRMMkJLNE5lNXlXb3B6RCtEVUJNcUhRNEhkTGIrSjV6UFBWRG9J?=
- =?utf-8?B?U0dPckRJT25nQmFjaFJIVEJ6T3dRdVdvRktIaUg5Rk1BS2RGS0d4dEVxRTJX?=
- =?utf-8?B?YncvNFpuWnpsR0t5NlplMFpNUXNZKzUrRDJjVzJEcmpQTmtQK3hBNUhsdjUz?=
- =?utf-8?B?YUk4cVBRL1NlTXVGeGY4WTh2QWUyaHlqa2lRek5zMDZSdVZhQ2lZRHljVXNw?=
- =?utf-8?B?YmVqVm5wRFpiZjVnKzJpOERHSXBGS3llbUQ3QUFzdm9hUS85SjczVHpBOUtH?=
- =?utf-8?B?MnlIdVNNbTRxakhaaSs4NEREeS8rL2ZubkE3UmwvNC9KWHMrUytZMWNGckhE?=
- =?utf-8?B?SnBMM3ovVUR6cVJGV1NvM0NybHlTNyt3b1FxQ0FFN2RqOXZhTHlnWUJOR1BT?=
- =?utf-8?B?VzVDREZoUklwVnlWaS9KZnUwTGppRHZBYVlIdk9Ja1FaWFNHR3lnTm9FdVcv?=
- =?utf-8?B?bkw1OTVMaTJ3V2NJTHJkR3NZSVVwUjRCUEhnL0pxcThWVUE2MG9ycUpvN2J1?=
- =?utf-8?B?ejJVVlkzeVJyeDM3b0x6Tzl4TnlISXhtYy93SzdLclZ5dC9FRUlOSDFLWDc1?=
- =?utf-8?B?TUdEUi9jNzVKdHNUQ3RGOEhmb3B2a3p1aHNxbzNmSytxQWdPOXNWd0xmU2xL?=
- =?utf-8?B?dGc4L1R4SUdJalNBTlRQalhCWXJlZ05NMVV3UnljeWNtTUdxcisycFg1VHFN?=
- =?utf-8?B?ZGxmWi96WDJWWmExSzE1REFEeE56V2RqYlJPZko5bWthS2lLMTdGY2U0bmVC?=
- =?utf-8?B?VFhtOWUrZUVKYytKK0JjK2FVVEQ3ZXdWcmxyaExTY1NmVG92MTFSenRQTi9y?=
- =?utf-8?B?ZGJXVmJFR0tsYnlUTS82MDlHOGtiVWx6Vmg3Si90am02cjhvUXg5MG1qR2l2?=
- =?utf-8?B?L2VCVm1kbmpJbTVMZXJwYmFpY1hHODFlVlZUVjN1RUZsMVptQnN2VmtZSTRK?=
- =?utf-8?B?aHN3T0FJaEkxelRrVDJuVjcvTjhUZmdjbzEyUUluK2ViR1dGbHlZbnRRdXlG?=
- =?utf-8?B?VVhYVDJiL1MxOUpBVXZGbUtrQWNRQkJ0bVROSUQ4NzBNN2JPOUplU1cwb2dr?=
- =?utf-8?B?MzBVRHNYeHREQVN0aEVJRWtQZjlDNVltZjd3NGpWaTRRRXdlTVdCbWtWTzlz?=
- =?utf-8?B?SHBlOU5HWkI4eGlmWXFEbHRGWG01Mkw1T0VGM3o2bmRudVU0MGJrV1JLRUwz?=
- =?utf-8?B?Y2RqVWk2TzNRWGZFSHRMRkJWcjNtcHhJWTh4ZmRwalgxM3NWWE1ycllERnJC?=
- =?utf-8?B?WldjM2lWVXczVHJzdXgwd2FGUVF2WFMwYmw5ZGY0ZFJEcSsvQkpTaml2NEww?=
- =?utf-8?B?SktVVUo2SWplWHpYemVwZld2S2doUWhIaFgwMDV5SkNidTdYRmNHcWlSQUYy?=
- =?utf-8?Q?CvQpUAa8060bd?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR02MB5784.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YkpwRi9wQzlKdVczRGR6SVovVHVYVXg1RkR0TEhRMUJmOHRlRXY3UG8zdXVM?=
- =?utf-8?B?SGdjR0Y3bEt1dkhqWkxhLzJYWTFqMGhZZWtWRW1JZFFpZlFnZkt5czZvUXVU?=
- =?utf-8?B?RmdxSGVIN2c3WXdDZ1VjN3NvcE1tUkxqVGpPZTlTNThCSElBT0JzdHlxUlRq?=
- =?utf-8?B?QVd5NldJZUJNVmlhSnlwRTI2dnUvbEhyMytKazNnNmFuQnRSOFVBeHk2NGI4?=
- =?utf-8?B?cWZGYUdmR21yb01jRlp1K0JUcFRnaC9NWmJMZzI5OHRHSkVxSGsxcCtaYXZo?=
- =?utf-8?B?dzNnTFJPQkxGWDR1bU5Xb0pBT0lHemZ2WCtEUlI2eDg3YXN4ZUtPdTRxVXNn?=
- =?utf-8?B?NE9tazFwZEUveVhzM2FZbmlxWWtMRHExRTRoUTRjMXJRVlVFd3orUVhQN1hx?=
- =?utf-8?B?Mm9qMlZTZE9BWEFEZ1hibW1kRHZ0aGY5Qm9RSnlHYitSSFZ2NDBVOCt0SlRn?=
- =?utf-8?B?NUZPSGE4bWxPZTEydjlLV2lWWGdmZlBuOHVVNWVSTU15MVpqRjdSRTFCSzNl?=
- =?utf-8?B?a01wZ1NsdXp4L3F3QkZCNG1DYmZhMmpIVHdBWC94UDFQL3ZiQThJRFYzcUZu?=
- =?utf-8?B?QkVCRVZmTUpTalRGelpORnhkVmxWdC9xeDM5RjBIdk9kWFZucWtqNnRqMS9k?=
- =?utf-8?B?R1Y2WWVENHlCU3ZVdVZxRDM3TlZJTFlhK1kzREV4enVuOG02RThlMzZNejBH?=
- =?utf-8?B?V0ptSVNJZkk3UzdrM1RIeEVoUnhVKzQvWjN2NHZsSFR1ZDE4SU9UUm9UNUM3?=
- =?utf-8?B?V2kxM1NDY1A3YXZDNVMwMGNlSUR4UjZKT2sxdTJVRkdiRkRKeS9CRkVQYW9l?=
- =?utf-8?B?RVRycEV2eEZjcFAwdHYrM1dHZVpMMG1OdDZYNzF6VVhNYUxaQm93VGx3L2k5?=
- =?utf-8?B?WVZPQmFtay9ZN0xGTVd3VmNmcDhBQWRkWFpkd1oyYW1sUWNtekV2eSs1UnFO?=
- =?utf-8?B?cktyNHlWZGRIdDhvVFY4YWpZQlBPOTFHRmQwK25yYmdJeGEzb05xSUFiWDFm?=
- =?utf-8?B?cmNURHFBajEyNnNVY0lqaHI1aUtsQlp1ZDUxbnFzMlNYQUlRc3h1Nk1MNjJr?=
- =?utf-8?B?TmRFZEt2MzEveS8zd2VlRjhOc1JBVWRkdE1BZE55SGEveWhRM3RPeHl4VEJ5?=
- =?utf-8?B?Qml6dmhvcS9oZGwwOFJjSjRIb3N2RDZJSjdGRlBMNXRncDM5NnRpZnY4dk5Q?=
- =?utf-8?B?UlN5aFd4SWd4c1ZnTjRCMnRXMzZFbFErczFsN3ZoQ2xxeVpsdzJBVFdwcXFE?=
- =?utf-8?B?TFAwWE8rd0UvemlYT1JSOENvNmpTM2tsR2IyRmsxUGt3SytXMmNMUHBWcmZF?=
- =?utf-8?B?ZmNGNXhETjNLOFJZM0tyak9MMWZvRWNTdERmWDZvSnZPa3FxZFFzWGZQZEZl?=
- =?utf-8?B?VStVVTl3YW9HTXArWFlSNUtmSkVWYnpqSEdKU1YxUVZXL1dWZ2RDeWxmbWVp?=
- =?utf-8?B?SjJEaGt6eE50ZzBsUkRpZ2JMSm52OHN5VkVsMFBwTjVqNkNETnQ5NG9od2F2?=
- =?utf-8?B?RDRBYU1pTklTVlFFckEzUFV6RWZRMjRFbkgyWG1keXNjVUExUWxRekZMa0Zw?=
- =?utf-8?B?bEx2Mk4ycm5oMkdKTlZvTUxtS0luZDhBbVphZEVvVTZESXkzVzdEWko4aWg5?=
- =?utf-8?B?SU9zYnFDNll0NHkwTUxqRC92bzBSTzVUa1NiOUNrTVRScnRRSkQ0b0NES0VP?=
- =?utf-8?B?a21qQlFXdlRJSzZCa09YcXo3enZrQ3pzdnNlUzJZZnU2RTBSanByMnp5N3VT?=
- =?utf-8?B?eVdIQWVYaHdlaU9UOUFXN1dNaDh5WkxtNFg1NG1GcUhYZ1MyK1NVMG9yN3No?=
- =?utf-8?B?endtSHdTZURrWVpkQVlxaFRNSE9IZjRjY1NYNFNXS2FjUTQ2RURpSXRxZ3oy?=
- =?utf-8?B?NHlpanVSSGVZYTAvc0RyOVdiZ1NmTllRSXYzbXJ6dHJIVXJlZHM2OVBvUjM4?=
- =?utf-8?B?NzUwalUya29JcVloaGZqTmJKM1NGNzVlbHBDN01KVXdsUXhKb1NwT3c1b0VY?=
- =?utf-8?B?VmdrRklvTzBKZzhQQ080a29aZUZLcTlVMFFIWUtOZWV3NWFkWkExSnFzOGpN?=
- =?utf-8?B?N081MXpzRzRjZDhUMUV1aWVHeTZZSEsxTzBqT1ZRSjdzK3NyczdlRytNU3Yv?=
- =?utf-8?Q?rgCMW0Mhjc6jQ3oIfDaEmz+8C?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0BDA9EE448C25C46A1DB023EA2D2C0F8@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40E412FB2E;
+	Tue, 22 Oct 2024 07:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729581524; cv=none; b=l51FLMRtN3jVr9LsN+0SELtrRD2CPtKGh5SPhKdlgEAyX0wFOpoz7kgwZLZs2fFN1QC1XQ85lhC8/nbF+mw2fA9D5RCby16a34v6EcXLj/lhcVNoSOcsBY8NLIxR7GDc7EwsGf5lom418BVrhSt8aRBYmjsFdWLTA31BnTb60YM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729581524; c=relaxed/simple;
+	bh=/5ixtaMbalvDpJJwfD0BzexaBvsrWL+N26FdmAvrBUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kKdIR48Xgd6E5Wz886xMRldJqbP0xR6k4/lKLeGMeXcahLFgaPyHkZkcqrqWMI6mqgPSlodo/tzAQevY3wyVqCDoXsLQDVVf9xcp7rHQKR/CHqXmbV0Lf5u3tL93O1fc0UWTx+313WDiegeiHMF2+Lx5m/3VwqDsMQYMwY/Lksc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QYZJiZ8U; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M00OCU014935;
+	Tue, 22 Oct 2024 07:18:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xqGOi+LaRxpqzDOGdLlElAJCeTtbp1S+F7o+lAODmps=; b=QYZJiZ8UrVzMrszZ
+	2BHXsZGk52a9Na6dcRWVMLxYNb/j6x0Ff7z/1P4iPz0mQ5veUMYyuvNmcZ2rbTTZ
+	USEQVi2m9w85Q2le4ESYazw2AZKXYqhuZiG3yoOx6JHZvHq1knpDmz/VnmTIp5RC
+	lFfxn4XUnqG72Z57A8GvVTZodoE16lEvnf6AZ7V22NBBbSurMXkOfPZ/KeeD1alj
+	GmVVGxqi/W5k6jj09RcvcTo3H2rmgxcM0IfMu3QGdnpcLBgg7duNbfCFyjfAYftc
+	U1Yny/CNh4DUNQq0yjwoEIAi1z9nT3tawUnYwJYLlcvVXxHSc69ywP+XcoZGMEZw
+	bshJxA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkbt3mj3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 07:18:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7IVr5001778
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 07:18:31 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 00:18:27 -0700
+Message-ID: <afab811c-4de5-8a63-554d-b24704e1bdcb@quicinc.com>
+Date: Tue, 22 Oct 2024 12:48:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR02MB5784.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d7129b6-4a5f-4e79-3da3-08dcf2697e0d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2024 07:16:47.9859
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IXHxapkoQSFHbc6loWXRJW8UFjwgq9Yp8QZXeM4q6N7owbWkNPgmmS+tmRCs5Vjb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR02MB8197
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V4 3/5] firmware: arm_scmi: vendors: Add QCOM SCMI Generic
+ Extensions
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
+        <quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
+        <arm-scmi@vger.kernel.org>, Amir Vajid <avajid@quicinc.com>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <20241007061023.1978380-4-quic_sibis@quicinc.com>
+ <3vj55wm7j6fz32q2pynzqikl4yysno5zdlpt6zz6xylcv237ak@bwejn7zn5o3o>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <3vj55wm7j6fz32q2pynzqikl4yysno5zdlpt6zz6xylcv237ak@bwejn7zn5o3o>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OF6RgkDKHYKAw1oStKWf2nMtZN6c4L0O
+X-Proofpoint-GUID: OF6RgkDKHYKAw1oStKWf2nMtZN6c4L0O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ phishscore=0 spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410220046
 
-T24gTW9uLCAyMDI0LTEwLTIxIGF0IDE5OjI4ICswMTAwLCBKb25hdGhhbiBDYW1lcm9uIHdyb3Rl
-Og0KPiBPbiBNb24sIDE0IE9jdCAyMDI0IDA2OjE4OjI5ICswMDAwDQo+IEVtaWwgR2VkZW5yeWQg
-PEVtaWwuR2VkZW5yeWRAYXhpcy5jb20+IHdyb3RlOg0KPiANCj4gPiBPbiBTYXQsIDIwMjQtMTAt
-MTIgYXQgMTY6MTAgKzAxMDAsIEpvbmF0aGFuIENhbWVyb24gd3JvdGU6DQo+ID4gPiBPbiBGcmks
-IDExIE9jdCAyMDI0IDA3OjEyOjA1ICswMDAwDQo+ID4gPiBFbWlsIEdlZGVucnlkIDxFbWlsLkdl
-ZGVucnlkQGF4aXMuY29tPiB3cm90ZToNCj4gPiA+ICAgDQo+ID4gPiA+IE9uIFRodSwgMjAyNC0x
-MC0xMCBhdCAxODo0NyArMDEwMCwgSm9uYXRoYW4gQ2FtZXJvbiB3cm90ZTogIA0KPiA+ID4gPiA+
-IE9uIE1vbiwgNyBPY3QgMjAyNCAwNzoxOTowNiArMDAwMA0KPiA+ID4gPiA+IEVtaWwgR2VkZW5y
-eWQgPEVtaWwuR2VkZW5yeWRAYXhpcy5jb20+IHdyb3RlOg0KPiA+ID4gPiA+ICAgICANCj4gPiA+
-ID4gPiA+IE9uIFN1biwgMjAyNC0xMC0wNiBhdCAxNDoxNiArMDEwMCwgSm9uYXRoYW4gQ2FtZXJv
-biB3cm90ZTogICAgDQo+ID4gPiA+ID4gPiA+IE9uIFRodSwgMyBPY3QgMjAyNCAxNDoyMjoxNyAr
-MDIwMA0KPiA+ID4gPiA+ID4gPiBFbWlsIEdlZGVucnlkIDxlbWlsLmdlZGVucnlkQGF4aXMuY29t
-PiB3cm90ZTogICAgICANCj4gPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gPiArc3RydWN0
-IG9wdDMwMDFfY2hpcF9pbmZvIHsNCj4gPiA+ID4gPiA+ID4gPiArCWNvbnN0IHN0cnVjdCBpaW9f
-Y2hhbl9zcGVjICgqY2hhbm5lbHMpWzJdOw0KPiA+ID4gPiA+ID4gPiA+ICsJZW51bSBpaW9fY2hh
-bl90eXBlIGNoYW5fdHlwZTsNCj4gPiA+ID4gPiA+ID4gPiArCWludCBudW1fY2hhbm5lbHM7DQo+
-ID4gPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gPiA+ICsJY29uc3Qgc3RydWN0IG9wdDMwMDFf
-c2NhbGUgKCpzY2FsZXMpWzEyXTsgICAgICANCj4gPiA+ID4gPiA+ID4gVGhpcyBkb2Vzbid0IGNv
-bXBpbGUgZm9yIG1lIGFzIG9uZSBvZiB0aGUgdHdvIG9wdGlvbnMgb25seQ0KPiA+ID4gPiA+ID4g
-PiBoYXMgMTEgZW50cmllcy4gIFlvdSBjb3VsZCBlaXRoZXIgZm9yY2UgdGhlbSB0byBiZSAxMg0K
-PiA+ID4gPiA+ID4gPiBlbnRyaWVzIGVhY2ggb3IgdXNlIGEgcG9pbnRlciB3aXRob3V0IHRoZSBz
-aXplIGFuZA0KPiA+ID4gPiA+ID4gPiBhZGQgYSBudW1fc2NhbGVzIGVudHJ5IGluIGhlcmUuDQo+
-ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiBKb25hdGhhbiAgICAgIA0KPiA+ID4gPiA+ID4g
-DQo+ID4gPiA+ID4gPiBIaSBKb25hdGhhbiwNCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gQXJl
-IHlvdSBidWlsZGluZyBvbiB0b3Agb2YgdGhlIHBhdGNoIHRoYXQgd2FzIGFjY2VwdGVkIGluIGVh
-cmxpZXIgdmVyc2lvbnMgb2YgdGhpcw0KPiA+ID4gPiA+ID4gcGF0Y2ggc2V0PyBUaGF0IHBhdGNo
-IGFkZHMgdGhlIHR3ZWxmdGggbWlzc2luZyBzY2FsZSB2YWx1ZSBmb3IgdGhlIG9wdDMwMDEuDQo+
-ID4gPiA+ID4gPiBTZWU6wqBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA5MTYtYWRk
-X29wdDMwMDItdjMtMS05ODRiMTkwY2Q2OGNAYXhpcy5jb20vDQo+ID4gPiA+ID4gPiANCj4gPiA+
-ID4gPiA+IFNob3VsZCBJIGhhdmUgYWRkZWQgc29tZSB0YWcgdG8gaGlnaGxpZ2h0IHRoZSBkZXBl
-bmRlbmN5IGZvciB0aGlzIHZlcnNpb24gb2YgdGhlDQo+ID4gPiA+ID4gPiBwYXRjaCBzZXQ/ICAg
-IA0KPiA+ID4gPiA+IEFoLiAgWWVzLCBJIHdhcyBoYWxmIGFzbGVlcC4NCj4gPiA+ID4gPiBUaGV5
-IGFyZSBnb2luZyB2aWEgZGlmZmVyZW50IGJyYW5jaGVzIChzbG93IGFuZCBmYXN0KSBzbyBJJ2xs
-IGhhdmUgdG8NCj4gPiA+ID4gPiBzaXQgb24gdGhpcyBzZXJpZXMgdW50aWwgYWZ0ZXIgdGhhdCBm
-aXggaXMgaW4gdGhlIHVwc3RyZWFtIGZvciB0aGUgdG9ncmVnDQo+ID4gPiA+ID4gYnJhbmNoIG9m
-IGlpby5naXQuDQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gSWYgSSBzZWVtIHRvIGhhdmUgbG9zdCBp
-dCBhZnRlciB0aGF0IGlzIHRoZSBjYXNlIGZlZWwgZnJlZSB0byBnaXZlIG1lIGEgcG9rZS4NCj4g
-PiA+ID4gPiANCj4gPiA+ID4gPiBKb25hdGhhbg0KPiA+ID4gPiA+ICAgICANCj4gPiA+ID4gSGks
-DQo+ID4gPiA+IA0KPiA+ID4gPiBObyB3b3JyaWVzLiBKdXN0IHRvIGNsYXJpZnksIGRvIHlvdSBt
-ZWFuIHNpdCBvbiBpdCBhcyB0aGF0IHlvdSB3aWxsIGNvbnRpbnVlIHJldmlld2luZw0KPiA+ID4g
-PiB0aGUgY29kZSBhZnRlciB0aGUgZml4IGlzIGluIHVwc3RyZWFtLCBvciBzaG91bGQgSSBjb25z
-aWRlciB0aGlzIHBhdGNoIHRvIGJlIGFwcHJvdmVkPyAgDQo+ID4gPiBBc3N1bWluZyBub3Qgb3Ro
-ZXIgcmV2aWV3IGNvbWVzIGluLCBJIGNvbnNpZGVyIHRoaXMgcmVhZHkgdG8gZ28uICANCj4gPiAN
-Cj4gPiBHcmVhdCwgdGhhbmsgeW91IQ0KPiA+IA0KPiA+ID4gPiANCj4gPiA+ID4gQWxzbywgZG8g
-eW91IGhhdmUgYW4gYXBwcm94aW1hdGlvbiBvZiB3aGF0IHRpbWUgZnJhbWUgd2UncmUgdGFsa2lu
-ZyBhYm91dD8gIA0KPiA+ID4gMiB3ZWVrcyBtb3N0IGxpa2VseS4NCj4gPiA+IA0KPiA+ID4gSSd2
-ZSBqdXN0IHNlbnQgR3JlZyBLSCBhIHB1bGwgcmVxdWVzdCB3aXRoIHRoZSBmaXggaW4gaXQuIEhl
-IHdpbGwgaG9wZWZ1bGx5DQo+ID4gPiBwaWNrIHRoYXQgdXAgYW5kIHRoZW4gc2VuZCBhIHB1bGwg
-cmVxdWVzdCBvbiB0byBMaW51cy4gIFRoZW4gd2Ugd2FpdCBmb3IgdGhlDQo+ID4gPiBuZXh0IHJj
-IGFmdGVyIHRoYXQgYXQgd2hpY2ggcG9pbnQgR3JlZyB3aWxsIHByb2JhYmx5IHB1bGwgaXQgaW50
-byBjaGFyLW1pc2MtbmV4dCBvcg0KPiA+ID4gSSBjYW4gYWx3YXlzIG1lcmdlIGl0IGludG8gbXkg
-dG9ncmVnIGJyYW5jaCBvbmNlIGl0IGlzIGluIGEgcmVsZWFzZSBjYW5kaWRhdGUgb2YNCj4gPiA+
-IExpbnVzJyB0cmVlLg0KPiA+ID4gDQo+ID4gPiBJbiBwYXJhbGxlbCB3aXRoIHRoYXQgSSdsbCBw
-cm9iYWJseSBkbyBhIHB1bGwgcmVxdWVzdCBmb3Igd2hhdCBpcyBhbHJlYWR5IGluIHRoZQ0KPiA+
-ID4gdG9ncmVnIHRyZWUgdG8gZ2V0IGEgbG90IG9mIHN0dWZmIGluIGNoYXItbWlzYy1uZXh0IGZv
-ciB0aGUgbmV4dCBjeWNsZS4gVGhhdCBtYWtlcw0KPiA+ID4gdGhlIGhpc3RvcnkgYSBsaXR0bGUg
-Y2xlYW5lciBhcyBJIGNhbiBmYXN0IGZvcndhcmQgbXkgdHJlZSBhbmQgZW5kIHVwIHdpdGgNCj4g
-PiA+IHdoYXRldmVyIGlzIGluIGNoYXItbWlzYy1uZXh0IChob3BlZnVsbHkgaW5jbHVkaW5nIHRo
-aXMpLg0KPiA+ID4gDQo+ID4gPiBBbnlob3csIGEgYml0IG9mIHRyZWUganVnZ2xpbmcgZm9yIG1l
-LCBidXQgd2UgaGF2ZSBwbGVudHkgb2YgdGltZSBhcyByYzMgd2lsbCBwcm9iYWJseQ0KPiA+ID4g
-YmUgb3V0IHRvbW9ycm93IGFuZCBpdCBub3JtYWxseSBnb2VzIHRvIHJjNyBhdCBvbmUgcmMgYSB3
-ZWVrICANCj4gPiANCj4gPiBUaGFuayB5b3UgZm9yIHRoZSBpbmZvcm1hdGlvbiBhbmQgZm9yIHRo
-ZSBoZWxwIGR1cmluZyB0aGUgcmV2aWV3IHByb2Nlc3MgZm9yIHRoaXMgcGF0Y2guDQo+ID4gQmVz
-dCByZWdhcmRzLA0KPiA+IEVtaWwNCj4gDQo+IEFwcGxpZWQgdG8gdGhlIHRvZ3JlZyBicmFuY2gg
-b2YgaWlvLmdpdCBhbmQgcHVzaGVkIG91dCBpbml0aWFsbHkgYXMgdGVzdGluZyB0bw0KPiBsZXQg
-dGhlIGJ1aWxkIGJvdHMgc2VlIGlmIHRoZXkgY2FuIGZpbmQgYW55dGhpbmcgd2UgbWlzc2VkLg0K
-PiANCj4gSSdsbCBwdXNoIGl0IG91dCBmb3IgbGludXgtbmV4dCB0byBwaWNrIHVwIGluIGEgZmV3
-IGRheXMuDQo+IA0KPiBKb25hdGhhbg0KDQpIaSBKb25hdGhhbiwgdGhhbmsgeW91IGZvciB0aGUg
-dXBkYXRlIQ0KQmVzdCByZWdhcmRzLA0KRW1pbA0KDQo+IA0KPiA+ID4gDQo+ID4gPiBUaGFua3Ms
-DQo+ID4gPiANCj4gPiA+IEpvbmF0aGFuICANCj4gPiA+ID4gQmVzdCBSZWdhcmRzLA0KPiA+ID4g
-PiBFbWlsIA0KPiA+ID4gPiAgIA0KPiA+ID4gICANCj4gPiANCj4gDQoNCg==
+
+
+On 10/7/24 23:43, Dmitry Baryshkov wrote:
+> On Mon, Oct 07, 2024 at 11:40:21AM GMT, Sibi Sankar wrote:
+>> The QCOM SCMI Generic Extensions Protocol provides a generic way of
+>> exposing a number of Qualcomm SoC specific features (like memory bus
+>> scaling) through a mixture of pre-determined algorithm strings and
+>> param_id pairs hosted on the SCMI controller.
+>>
+>> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+>> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+>> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+>> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+>> Co-developed-by: Amir Vajid <avajid@quicinc.com>
+>> Signed-off-by: Amir Vajid <avajid@quicinc.com>
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+
+Thanks again for spending time to review the series!
+
+>> ---
+>>
+>> v3:
+>> * Pick up Rb tag and fixup/re-order elements of the vendor ops [Christian]
+>> * Follow naming convention and folder structure used by IMX
+>> * Add missing enum in the vendor protocol and fix documentation [Konrad]
+>>
+>>   drivers/firmware/arm_scmi/Kconfig             |   1 +
+>>   drivers/firmware/arm_scmi/Makefile            |   1 +
+>>   .../firmware/arm_scmi/vendors/qcom/Kconfig    |  15 ++
+>>   .../firmware/arm_scmi/vendors/qcom/Makefile   |   2 +
+>>   .../arm_scmi/vendors/qcom/qcom-generic-ext.c  | 184 ++++++++++++++++++
+>>   include/linux/scmi_qcom_protocol.h            |  39 ++++
+>>   6 files changed, 242 insertions(+)
+>>   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+>>   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Makefile
+>>   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+>>   create mode 100644 include/linux/scmi_qcom_protocol.h
+>>
+>> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+>> index dabd874641d0..73128442d97b 100644
+>> --- a/drivers/firmware/arm_scmi/Kconfig
+>> +++ b/drivers/firmware/arm_scmi/Kconfig
+>> @@ -71,6 +71,7 @@ config ARM_SCMI_DEBUG_COUNTERS
+>>   
+>>   source "drivers/firmware/arm_scmi/transports/Kconfig"
+>>   source "drivers/firmware/arm_scmi/vendors/imx/Kconfig"
+>> +source "drivers/firmware/arm_scmi/vendors/qcom/Kconfig"
+>>   
+>>   endif #ARM_SCMI_PROTOCOL
+>>   
+>> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
+>> index 9ac81adff567..58cf4d656cbb 100644
+>> --- a/drivers/firmware/arm_scmi/Makefile
+>> +++ b/drivers/firmware/arm_scmi/Makefile
+>> @@ -12,6 +12,7 @@ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
+>>   
+>>   obj-$(CONFIG_ARM_SCMI_PROTOCOL) += transports/
+>>   obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/imx/
+>> +obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/qcom/
+>>   
+>>   obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+>>   obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
+>> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Kconfig b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+>> new file mode 100644
+>> index 000000000000..5dd9e8a6b75f
+>> --- /dev/null
+>> +++ b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+>> @@ -0,0 +1,15 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +menu "ARM SCMI QCOM Vendor Protocols"
+>> +
+>> +config QCOM_SCMI_GENERIC_EXT
+>> +	tristate "Qualcomm Technologies, Inc. Qcom SCMI vendor Protocol"
+>> +	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
+>> +	help
+>> +	  The QCOM SCMI vendor protocol provides a generic way of exposing
+>> +	  a number of Qualcomm SoC specific features (like memory bus scaling)
+>> +	  through a mixture of pre-determined algorithm strings and param_id
+>> +	  pairs hosted on the SCMI controller.
+>> +
+>> +	  This driver defines/documents the message ID's used for this
+>> +	  communication and also exposes the operations used by the clients.
+>> +endmenu
+>> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Makefile b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
+>> new file mode 100644
+>> index 000000000000..6b98fabbebb8
+>> --- /dev/null
+>> +++ b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
+>> @@ -0,0 +1,2 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +obj-$(CONFIG_QCOM_SCMI_GENERIC_EXT) += qcom-generic-ext.o
+>> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+>> new file mode 100644
+>> index 000000000000..f7cd949161df
+>> --- /dev/null
+>> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+>> @@ -0,0 +1,184 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/scmi_qcom_protocol.h>
+>> +
+>> +#include "../../common.h"
+>> +
+>> +/**
+>> + * enum qcom_generic_ext_protocol_cmd - vendor specific commands supported by SCMI Qualcomm
+>> + *                                      generic vendor protocol.
+>> + *
+>> + * This protocol is intended as a generic way of exposing a number of Qualcomm SoC
+>> + * specific features through a mixture of pre-determined algorithm string and param_id
+>> + * pairs hosted on the SCMI controller.
+>> + *
+>> + * The QCOM SCMI Vendor Protocol has the protocol id as 0x80 and vendor id set to
+>> + * Qualcomm and the implementation version set to 0x20000. The PROTOCOL_VERSION command
+>> + * returns version 1.0.
+>> + *
+>> + * @QCOM_SCMI_SET_PARAM: message_id: 0x10 is used to set the parameter of a specific algo_str
+>> + *                       hosted on QCOM SCMI Vendor Protocol. The tx len depends on the
+>> + *                       algo_str used.
+>> + * @QCOM_SCMI_GET_PARAM: message_id: 0x11 is used to get parameter information of a specific
+>> + *                       algo_str hosted on QCOM SCMI Vendor Protocol. The tx and rx len
+>> + *                       depends on the algo_str used.
+>> + * @QCOM_SCMI_START_ACTIVITY: message_id: 0x12 is used to start the activity performed by
+>> + *                            the algo_str.
+>> + * @QCOM_SCMI_STOP_ACTIVITY: message_id: 0x13 is used to stop a pre-existing activity
+>> + *                           performed by the algo_str.
+> 
+> Drop message_id's from the definitions. They duplicate enum values.
+
+ack
+
+> 
+>> + */
+>> +enum qcom_generic_ext_protocol_cmd {
+>> +	QCOM_SCMI_SET_PARAM = 0x10,
+>> +	QCOM_SCMI_GET_PARAM = 0x11,
+>> +	QCOM_SCMI_START_ACTIVITY = 0x12,
+>> +	QCOM_SCMI_STOP_ACTIVITY = 0x13,
+>> +};
+>> +
+>> +/**
+>> + * struct qcom_scmi_msg - represents the various parameters to be populated
+>> + *                        for using the QCOM SCMI Vendor Protocol
+>> + *
+>> + * @ext_id: reserved, must be zero
+>> + * @algo_low: lower 32 bits of the algo_str
+>> + * @algo_high: upper 32 bits of the algo_str
+>> + * @param_id: serves as token message id to the specific algo_str
+>> + * @buf: serves as the payload to the specified param_id and algo_str pair
+>> + */
+>> +struct qcom_scmi_msg {
+>> +	__le32 ext_id;
+>> +	__le32 algo_low;
+>> +	__le32 algo_high;
+>> +	__le32 param_id;
+>> +	__le32 buf[];
+>> +};
+>> +
+>> +static int qcom_scmi_set_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			       u64 algo_str, u32 param_id)
+>> +{
+>> +	struct scmi_xfer *t;
+>> +	struct qcom_scmi_msg *msg;
+>> +	int ret;
+>> +
+>> +	ret = ph->xops->xfer_get_init(ph, QCOM_SCMI_SET_PARAM, buf_len + sizeof(*msg), 0, &t);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	msg = t->tx.buf;
+>> +	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
+>> +	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
+>> +	msg->param_id = cpu_to_le32(param_id);
+>> +
+>> +	memcpy(msg->buf, buf, t->tx.len - sizeof(*msg));
+>> +
+>> +	ret = ph->xops->do_xfer(ph, t);
+>> +	ph->xops->xfer_put(ph, t);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int qcom_scmi_get_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			       u64 algo_str, u32 param_id, size_t rx_size)
+>> +{
+>> +	struct scmi_xfer *t;
+>> +	struct qcom_scmi_msg *msg;
+>> +	int ret;
+>> +
+>> +	ret = ph->xops->xfer_get_init(ph, QCOM_SCMI_GET_PARAM, buf_len + sizeof(*msg), rx_size, &t);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	msg = t->tx.buf;
+>> +	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
+>> +	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
+>> +	msg->param_id = cpu_to_le32(param_id);
+>> +	memcpy(msg->buf, buf, t->tx.len - sizeof(*msg));
+> 
+> Isn't it buf_len?
+
+> 
+>> +
+>> +	ret = ph->xops->do_xfer(ph, t);
+>> +	memcpy(buf, t->rx.buf, t->rx.len);
+>> +	ph->xops->xfer_put(ph, t);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int qcom_scmi_start_activity(const struct scmi_protocol_handle *ph, void *buf,
+>> +				    size_t buf_len, u64 algo_str, u32 param_id)
+>> +{
+>> +	struct scmi_xfer *t;
+>> +	struct qcom_scmi_msg *msg;
+>> +	int ret;
+>> +
+>> +	ret = ph->xops->xfer_get_init(ph, QCOM_SCMI_START_ACTIVITY, buf_len + sizeof(*msg), 0, &t);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	msg = t->tx.buf;
+>> +	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
+>> +	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
+>> +	msg->param_id = cpu_to_le32(param_id);
+>> +
+>> +	memcpy(msg->buf, buf, t->tx.len - sizeof(*msg));
+> 
+> Isn't it buf_len?
+> 
+>> +
+>> +	ret = ph->xops->do_xfer(ph, t);
+>> +	ph->xops->xfer_put(ph, t);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int qcom_scmi_stop_activity(const struct scmi_protocol_handle *ph, void *buf,
+>> +				   size_t buf_len, u64 algo_str, u32 param_id)
+>> +{
+>> +	struct scmi_xfer *t;
+>> +	struct qcom_scmi_msg *msg;
+>> +	int ret;
+>> +
+>> +	ret = ph->xops->xfer_get_init(ph, QCOM_SCMI_STOP_ACTIVITY, buf_len + sizeof(*msg), 0, &t);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	msg = t->tx.buf;
+>> +	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
+>> +	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
+>> +	msg->param_id = cpu_to_le32(param_id);
+>> +
+>> +	memcpy(msg->buf, buf, t->tx.len - sizeof(*msg));
+> 
+> Isn't it buf_len?
+
+ack
+
+> 
+>> +
+>> +	ret = ph->xops->do_xfer(ph, t);
+>> +	ph->xops->xfer_put(ph, t);
+> 
+> Could you please extract a common helper that handles xfer for you?
+> Seeing the same code 4 times is 3 times too much in my opinion.
+
+Yup, you have been asking for this multiple times already.
+Will get it addressed in the next re-spin.
+
+> 
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static struct qcom_generic_ext_ops qcom_proto_ops = {
+>> +	.set_param = qcom_scmi_set_param,
+>> +	.get_param = qcom_scmi_get_param,
+>> +	.start_activity = qcom_scmi_start_activity,
+>> +	.stop_activity = qcom_scmi_stop_activity,
+>> +};
+>> +
+>> +static int qcom_generic_ext_protocol_init(const struct scmi_protocol_handle *ph)
+>> +{
+>> +	u32 version;
+>> +
+>> +	ph->xops->version_get(ph, &version);
+>> +
+>> +	dev_info(ph->dev, "QCOM Generic Vendor Version %d.%d\n",
+>> +		 PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
+> 
+> dev_dbg, please.
+
+Few protocols had them marked as info. Sure, I'll convert it to dbg
+instead.
+
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct scmi_protocol qcom_generic_ext = {
+>> +	.id = SCMI_PROTOCOL_QCOM_GENERIC,
+>> +	.owner = THIS_MODULE,
+>> +	.instance_init = &qcom_generic_ext_protocol_init,
+>> +	.ops = &qcom_proto_ops,
+>> +	.vendor_id = "Qualcomm",
+>> +	.impl_ver = 0x20000,
+>> +};
+>> +module_scmi_protocol(qcom_generic_ext);
+>> +
+>> +MODULE_DESCRIPTION("QCOM SCMI Generic Vendor protocol");
+>> +MODULE_LICENSE("GPL");
+>> diff --git a/include/linux/scmi_qcom_protocol.h b/include/linux/scmi_qcom_protocol.h
+>> new file mode 100644
+>> index 000000000000..8f82c42e566d
+>> --- /dev/null
+>> +++ b/include/linux/scmi_qcom_protocol.h
+>> @@ -0,0 +1,39 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * SCMI Message Protocol driver QCOM extension header
+>> + *
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _LINUX_SCMI_QCOM_PROTOCOL_H
+>> +#define _LINUX_SCMI_QCOM_PROTOCOL_H
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/device.h>
+> 
+> It doesn't look like you need those two headers.
+
+Thanks for catching this.
+
+-Sibi
+
+> 
+>> +#include <linux/types.h>
+>> +
+>> +#define SCMI_PROTOCOL_QCOM_GENERIC    0x80
+>> +
+>> +struct scmi_protocol_handle;
+>> +
+>> +/**
+>> + * struct qcom_generic_ext_ops - represents the various operations provided
+>> + *				 by QCOM Generic Vendor Protocol
+>> + *
+>> + * @set_param: set parameter specified by param_id and algo_str pair.
+>> + * @get_param: retrieve parameter specified by param_id and algo_str pair.
+>> + * @start_activity: initiate a specific activity defined by algo_str.
+>> + * @stop_activity: halt previously initiated activity defined by algo_str.
+>> + */
+>> +struct qcom_generic_ext_ops {
+>> +	int (*set_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			 u64 algo_str, u32 param_id);
+>> +	int (*get_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			 u64 algo_str, u32 param_id, size_t rx_size);
+>> +	int (*start_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			      u64 algo_str, u32 param_id);
+>> +	int (*stop_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+>> +			     u64 algo_str, u32 param_id);
+>> +};
+>> +
+>> +#endif /* _LINUX_SCMI_QCOM_PROTOCOL_H */
+>> -- 
+>> 2.34.1
+>>
+> 
 
