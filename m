@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-376794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B006D9AB5F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:24:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399419AB5F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4875DB2106A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A831C22BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB771BE23F;
-	Tue, 22 Oct 2024 18:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23B91BE23F;
+	Tue, 22 Oct 2024 18:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSgrNqBf"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgjXqMB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F313AD26;
-	Tue, 22 Oct 2024 18:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287B61BD03F;
+	Tue, 22 Oct 2024 18:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729621436; cv=none; b=PKJrN48hIEoDWUOG8xbY2O2Fa43YKPmCdSBkLa4KqWb1PzH5No5gQuLVVc5EHXmDfIeevNEWoyV334lvNHrrPY26MJoewjOy5JUbzOkfs1M/ZpwBMLgzpzJA8EsYQzx1e8YTVhDlGLkioKj1cakJI7Yp1IqJeDVReW/bKlx7WDI=
+	t=1729621520; cv=none; b=iB/OoijfcwnV+7LCdHxdfKsQ0KSDCk2L8hqJDnI1580rO9zDg9YhNVRiizVKmoagVjXJmqM0K4Env09eCXIW1etYHO6c8N4f8Yrcly7T/LMOFPLTUZscazFC/63mS9W7DE6h1kRBg2FREfuPMh+aU65m6yuulEaK/SnR2izfsgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729621436; c=relaxed/simple;
-	bh=BOMAYDW+Igb6QzFLZKO09qOvyXKcXFjsCFi4QDdyGIA=;
+	s=arc-20240116; t=1729621520; c=relaxed/simple;
+	bh=uJOh1SR8v7FhnAuONru4SIa9hiSNYTb28wi6YMVJRKI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kil5tJCjFABDyZadGwb6H6KCnRM2Kfjm+wNzhzfuUa6KYco9fQSaY0ZH+SA/BIWT/eGTEFKMtPVZTAeP+mTwdjt/rjYO2Pps5UNdZakpFl+aA0cwscrRG4ntwE1I0yEtv3jUtS8lXyr68tQiVx4mCYm0+aQozrBk7hk4ylEU6Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSgrNqBf; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso61774881fa.0;
-        Tue, 22 Oct 2024 11:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729621433; x=1730226233; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSybiWG6nkcP2XymYOQshi5jKk8nvWAvANTV5h8LSvQ=;
-        b=hSgrNqBfzbwBaADRr9/j714DjhwANHTeA3NAzWe6kF8WiOXOsabvJCxlMCuY1zNSIz
-         fun6C7WGEt6+Ga+ZbyuVVlHhIjSBlHQ0awzJhkxJHTKkx2R40yXDZQSmOBgjgLbhC5f5
-         UOJgOXGUyOQlDOaJphnvyM/oB8ogYmDnhA1lHQK2PB30oPLRFoH6rhPJtyKMxCF2vI46
-         gDBk8bCEHM853hwGkuW5cYT2K+aHz97CJdGTJCKG5gPlhkoY6GvJQsOpwnYJTmyhjo6R
-         zYwKGmwUuvsIOKAKmEhDrKsADqDsDShJGru/oeZN7dA7Q6onrcVEPNWmbzyh0KXLJTD3
-         RvAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729621433; x=1730226233;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WSybiWG6nkcP2XymYOQshi5jKk8nvWAvANTV5h8LSvQ=;
-        b=ZzXIULBRWkkFd62tqvRO93IgsQCImBmEvq0sfseja3ytjXBHaWOBj9iSAlPQUx6XPH
-         HCd4QkJ1o2L6B7ci3769Fd62VQPZOmdKO2gWVrioFn0i4TIOjjyPKSmTmyHjT+pv023b
-         9TAg017mKQUhBm5MBIdKHjDPP51qLhQf0cxuY1G5Fl7jbzfX9f8fjaSMfdc72/IbTwDU
-         CMKDnOaDtWegyYiz2uAz63xdxhgdMuZsl6AGFbgD3B1W6f5s7RmJRQb/jdxHeVarSOQc
-         NCVG+a7D7EjF+Qo4LruKLrbXImUtzPIzKYW6SEjgESTRuPU6cJJmh//6AwSHTxGZ9NYg
-         ZDnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuMX/I15SLggEqWP98Jz6PVvdezP+sx64DmPSgv8L1CcxGvSO31+6pAS305Pm0rcDrx9suuPjltp9u/X8=@vger.kernel.org, AJvYcCWJqdNnYGK5Jbp23mi4Oy2uphnheBjn8sKJXKJbidQvT9aUaW5Gl2NoiitH8AELYcUtTyt0C8nQki4Ts1mrfc2a@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNKFzp1Lf4UNoOalprJarZHYYqJ3kvQy8IUhMwDdOTcrBZbw8I
-	G22Exs9LLhODTWcff8i5QF2WN0kOdADe67y0qj/hHDTYsFIR5DEIqyNk31LEjEatVr1sCrOKNyx
-	7evgnSRHbWl6h2/IWStjjZ1jYWJ8=
-X-Google-Smtp-Source: AGHT+IHSTWuh+cxuAsDJ11/P+22UZ1Tqj+2WUC5apoHe2/LrdHzloxdsnOAOqkMCPMLoPH3wlnoI8wXTro7nhk17wUQ=
-X-Received: by 2002:a2e:9d0b:0:b0:2fa:fc98:8235 with SMTP id
- 38308e7fff4ca-2fc9bc46569mr2204131fa.42.1729621432497; Tue, 22 Oct 2024
- 11:23:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=bYr0GLOuRzy2jS3NMgjGkOz3A8mdPhKcY7ZUyJa8o5k3hslbd+Ij8C5K5AQgLKPsOLxJ9xiB6FXkJUXD2Lu/JAWwg3weWoa3DbTNKn7FkbWQP+vXTr1HYi/9gVfRYRTsuoqTXh7+kCBeSEEa9yIripAlvNoNNdlz1htq3O8YgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgjXqMB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE93AC4CEC7;
+	Tue, 22 Oct 2024 18:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729621518;
+	bh=uJOh1SR8v7FhnAuONru4SIa9hiSNYTb28wi6YMVJRKI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pgjXqMB6sYQCtrnnf6C4TYI7Mmf+t2JJmTU8BP5fzWl6GcmHO786Bf9VvxK0Im2c0
+	 jZOQDXYcwDhWiJIU0VMk0tFdZJqSdABb7o4bxQW3/eyG5lFbAHZvdQzRj3ejKW8xeO
+	 k00dk5BAaGPeFOK6WUfsO6zkmvvcovBSz+xlOSVaBhOlCTfG2M2AX1YyMp6rb632Nt
+	 dbm9wOhae6c0bd6FR2Sxm4wBtR3Bp93226zxTQ36H+X8uV+9x24bBsudLPAPL9D6/I
+	 PhXvNSJzr+aIN/MkjGjMO2xi+xAAFkbqCkTf3nHlOTEvGHLROK9f3yEk7b2T3oNRGW
+	 xwxG7L0IMdIuA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539fbbadf83so7872675e87.0;
+        Tue, 22 Oct 2024 11:25:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWgBzl5Sv1N2mpr8iAa2vzpYCVE5H2y+NrG9Xnv/v8dI8SxOw8cJjCUNOCUEFe2CzPNx/oJ+kwu6K8UlDa@vger.kernel.org, AJvYcCXWkYzc6xW7Xq332F7iZyZlqnqs7d1mU2OEIrhxg9BAOMPV+g7eaUzvcfgfaBS17xDU2COo1AYlavd/Qcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoVfEZ+Q9CVFTUBuXSnNfzYpuq7qDqs6FLRkV3BZFHXe6x9Mia
+	6bOpNLQ2JBxRbvnJ9YBY6JoQ2UPrGHBNDPROgckiJK8kGsgN9czanHp6ka4Fk45JlVqDdroswQL
+	naDhbh1gjQw/2YsrAHtEjE7Zz2hI=
+X-Google-Smtp-Source: AGHT+IHOmNp0Hx4TCwtJw9r1z+I3AfLbSk1w41Q9dHVt8eynv8u+g5IP/8iHve0xLFfreOQwuS09lFti/yhunEAUyBs=
+X-Received: by 2002:a05:6512:3c81:b0:53a:aea:a9e1 with SMTP id
+ 2adb3069b0e04-53b13a3a251mr2155832e87.54.1729621517466; Tue, 22 Oct 2024
+ 11:25:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022122158.2136-1-quic_pintu@quicinc.com> <20241022140556.GB219474@cmpxchg.org>
-In-Reply-To: <20241022140556.GB219474@cmpxchg.org>
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Tue, 22 Oct 2024 23:53:40 +0530
-Message-ID: <CAOuPNLg_Y6aNwj8muAWhm7ibcNZ7dp6t57CFKB+oZoV1Ao_xBA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/sched: add basic test for psi
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Pintu Kumar <quic_pintu@quicinc.com>, shuah@kernel.org, surenb@google.com, 
-	peterz@infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org
+References: <20241021203846.930-1-esalomatkina@ispras.ru>
+In-Reply-To: <20241021203846.930-1-esalomatkina@ispras.ru>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 23 Oct 2024 03:24:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATq9t7iYN52rw3B_5wJH3X32pp96c0maGNtXG5Abjpx0g@mail.gmail.com>
+Message-ID: <CAK7LNATq9t7iYN52rw3B_5wJH3X32pp96c0maGNtXG5Abjpx0g@mail.gmail.com>
+Subject: Re: [PATCH v2] sumversion: Fix a memory leak in get_src_version()
+To: Elena Salomatkina <esalomatkina@ispras.ru>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Johannes,
+On Tue, Oct 22, 2024 at 5:39=E2=80=AFAM Elena Salomatkina
+<esalomatkina@ispras.ru> wrote:
+>
+> strsep() modifies its first argument - buf.
+> If an error occurs in the parsing loop, an invalid pointer
+> will be passed to the free() function.
+> Make the pointer passed to free() match the return value of
+> read_text_file().
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: 9413e7640564 ("kbuild: split the second line of *.mod into *.usyms=
+")
+> Signed-off-by: Elena Salomatkina <esalomatkina@ispras.ru>
+> ---
+> v2: Rename 'orig' to 'pos'
 
-On Tue, 22 Oct 2024 at 19:36, Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Tue, Oct 22, 2024 at 05:51:58PM +0530, Pintu Kumar wrote:
-> > There is a psi module that exists under kernel/sched/psi.
-> > Add a basic test to test the psi.
->
-> I'm not sure this is a valuable use of test cycles. The mere existence
-> and basic format of the files is very unlikely to be buggy, and such a
-> bug wouldn't hide for very long either.
->
-Yes, I agree this is just a basic version to prepare for the test framework.
-Once the framework is available more tests can be added, such as trigger poll.
-If you have any other suggestions for the test please let me know.
+No, I did not ask this. Please read my previous email.
 
-> > @@ -18548,10 +18548,12 @@ F:  include/uapi/linux/pps.h
-> >  PRESSURE STALL INFORMATION (PSI)
-> >  M:   Johannes Weiner <hannes@cmpxchg.org>
-> >  M:   Suren Baghdasaryan <surenb@google.com>
-> > +M:   Pintu Kumar <quic_pintu@quicinc.com>
->
-> $ git log --oneline --author='Pintu Kumar' kernel/sched/psi.c | wc -l
-> 0
->
-> Really? ;)
->
-oh sorry.
-This maintainer was added for tools/testing/sefttests/sched/psi_test
-after referring to existing once.
-Otherwise, checkpatch was giving below warning:
+ 'p' or 'pos' : advances every time strsep() is called
+ 'buf'  : hold the allocated buffer and is passed to free()
 
-WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-#51:
-new file mode 100644
-total: 0 errors, 1 warnings, 134 lines checked
 
-Please let me know what is the correct way.
 
-Thanks,
-Pintu
+
+>
+>  scripts/mod/sumversion.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/mod/sumversion.c b/scripts/mod/sumversion.c
+> index 6bf9caca0968..03774957d8b9 100644
+> --- a/scripts/mod/sumversion.c
+> +++ b/scripts/mod/sumversion.c
+> @@ -385,7 +385,7 @@ static int parse_source_files(const char *objfile, st=
+ruct md4_ctx *md)
+>  /* Calc and record src checksum. */
+>  void get_src_version(const char *modname, char sum[], unsigned sumlen)
+>  {
+> -       char *buf;
+> +       char *buf, *pos;
+>         struct md4_ctx md;
+>         char *fname;
+>         char filelist[PATH_MAX + 1];
+> @@ -393,7 +393,7 @@ void get_src_version(const char *modname, char sum[],=
+ unsigned sumlen)
+>         /* objects for a module are listed in the first line of *.mod fil=
+e. */
+>         snprintf(filelist, sizeof(filelist), "%s.mod", modname);
+>
+> -       buf =3D read_text_file(filelist);
+> +       pos =3D buf =3D read_text_file(filelist);
+>
+>         md4_init(&md);
+>         while ((fname =3D strsep(&buf, "\n"))) {
+> @@ -406,5 +406,5 @@ void get_src_version(const char *modname, char sum[],=
+ unsigned sumlen)
+>
+>         md4_final_ascii(&md, sum, sumlen);
+>  free:
+> -       free(buf);
+> +       free(pos);
+>  }
+> --
+> 2.33.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
