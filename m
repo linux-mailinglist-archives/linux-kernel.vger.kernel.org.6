@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-376721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B5F9AB524
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:33:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1A19AB525
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D482C1C24952
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F03287DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD501C6F4B;
-	Tue, 22 Oct 2024 17:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B681C8FAE;
+	Tue, 22 Oct 2024 17:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H+F84tAV"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqtLDWWD"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64051C57B6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039061C6F6B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729618278; cv=none; b=pXqJBH2E8yhlE7vMx5K2plJ4q6uTDQk+nQ9MgDmS0LXXU9Mx2uBaLOaAdJy4SZpb7hUuduLKHdXFJ+HnPRHVsuCidfiIWoy0ntiw2mNlAgDv+7vgPPs2eTNPtOYGs45pXHFsSARD7SUKlYDjYwSKlsva2BL8yX6iF6EsRiNINaM=
+	t=1729618282; cv=none; b=bnKKt2jC/MJEeuOOTCAhrC/PXX5aH5rYlgUw8ugWu1Ala9r200nQvRaBCx1KBp4UNEniU6xQ+LTGI/koFpCapEl8zeK5dQpN6G4WVg3lmmUvOOwCPe47rB+bvhxl4uyeHF5h8ZF+mFP+TkhsUziVJx88HPHaxEc5pOi3NVWyzMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729618278; c=relaxed/simple;
-	bh=a/SJnAfZ++cIVzZ0MOXAnphnbstLnHOB9fZ5EurCpyc=;
+	s=arc-20240116; t=1729618282; c=relaxed/simple;
+	bh=nzHuTvDmWygMaXjwH3QcnN5kJk52moDDMgfOxj3g/cM=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=F1Qe2MvmOzfqxLuMWXEGu3z/4SFHmm6W7yIhqf00nYFVjAafYmxsQR1KOWYFaRmihSqn++otyaYkOb2+H2m2pFEkZVVf2h7dEe8nHZ5ZeqLX77A7VGHdWCYoIqsg5eYFYOUhN1oMeJ/j225fw8XY9BT1VUOYUww1ahN3zjWb9iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H+F84tAV; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=Cx+tTEi4N7q+lVIc6szvDVz7cx95B9OsA4PyBOpoqSmmKORQNiQ2lMkkvf4XzRX20cM2HPFXnFPkIMXFVu3aLLX/S26Z/QMOQ6UEBwrwgge/zuR6FRD3FtCseYzpldv4QftA5JDU5kmVMG/kdicnP8mvjCiJ4X0kkoI1Y2kfsSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqtLDWWD; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2939e25402so9454176276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:31:16 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d9e31e66eeso118825047b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729618276; x=1730223076; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729618278; x=1730223078; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XfPboL9tDGHiiStyDSuUXrmQVY6xilnSC3mqb44Upvg=;
-        b=H+F84tAVydPdjGpz0hmykG5pNmhIC+25qU5uNC4FT+D/t/3hiChNHjvJ0nbYj/58ZA
-         C+BeeKXpxB/QocLesRzZBmRw876UC88VM5viAssceJcMPjcFyvI4V7Tg4XkgtCBpa7MI
-         KdvgwaTwiZ/KHfgsuLAMpNyQlnm7G9OQU/EG5gq1PsMLouaYRTFotRJwB7v2+M2wBByV
-         wEq8cxlJFLmZ5w8D3b85kKtbdSCM4gpsLZZPC8LA7ik+WoVckfqbDUjTaKPwSBBm6vQy
-         IrQV2V5ZGpmlB+iHdSjq3Uoe/UviRbiFEamZewpJkIp+br5WgVvoKUnKP4CADLhu1a/u
-         tn2g==
+        bh=EAxWlDzpsO6EVzLYVc/EaqicqPV6/ujgED/chHKdAkA=;
+        b=VqtLDWWDlWIg7206VeZT2Yic/l3wEeuSs3Mt2xLU8UPrITRo4DWA63Aah5NOdEA/GY
+         UdSatRX9VZcEUzEo/FUvf44atXdiszra63GdoaJq0CM7SqpT8lfEAwJak97WB+n6xhxp
+         a2LFjLC0Gi/It85AcQbsDgFw9xWsX+uGr7eVb2otwmjA4jrWIbS+UVrau9lirCuV3dEQ
+         6+X+15kSMAjp26q1IrzrTXtDRS8VvUF+nUEkXh24UXT4XdBKu5qqpzCjlStsHeFlxeR1
+         mNWBV6BiBlNw3yxZyL6BXpE9OWAc5CPtAD+3zw5EUl39J4VzCUrnMgiugK5YUtpeH+j+
+         4WfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729618276; x=1730223076;
+        d=1e100.net; s=20230601; t=1729618278; x=1730223078;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XfPboL9tDGHiiStyDSuUXrmQVY6xilnSC3mqb44Upvg=;
-        b=O2RRX0q1B1zWbiEIhuv7tXS4/M8I9nokuz99WnZBRlKsMzeDGw3Cim6MnUf3eg3KQq
-         UXraVE01ckxhCqm7IiLh+hGkF77eYHqrsa0FOxyNudELx93C9UenHQliJtd3SIjbJafu
-         LFnuGjGbhassSmuSXPFQ1rWx3PZFQqCHBA00nFxcTHlgu3bczxN9hb6qHNS/ZJBv0wFn
-         lfkaDao/xrYP5zWnl1GEFEtb1it4TYiDY206rv4XJuhquArKqwUzWlF5Iz7rJnmM5gGL
-         eg3iLFo0yJLWAirZQnej5AJCCMfsQo7xZXvZPPiRTRr3heOSXn97gGGjl1zf57hSTsVe
-         myTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCGPl3lRWuVsPXvWbvYW8zsnweOmZW27JHSag6S3V1hByYJAYYuGFTsuj5306GYfdBDXhnDA4lwD/mOL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMJ9phT5FNU2ucG0sCSpbLr6N+J1vsnjVlvp0ml4ZLd1Rqm3mK
-	LdZyOPWdug4EIJVjqJJve6IllYzEfN91UrE9IzZCL0lgmbFS6Z5rT8fAy9OPex1v+hOSSkyrd6y
-	8/MB+PQ==
-X-Google-Smtp-Source: AGHT+IGCLZBFLtm70BOUOBJbP5T6K0jZmBV7v3k9f+Sgp12tlexCZccbgnAElZqFxYL3YtgPtnkCAjDHu9BF
+        bh=EAxWlDzpsO6EVzLYVc/EaqicqPV6/ujgED/chHKdAkA=;
+        b=tqLF+bUuDx/YF/IiH1MpY+EtiS815EqvtW95+y7J7xrv3KNXYXfwQhd9KUI/ae2Oem
+         y2YrppiP2iCRPxUYkEnwwMwnGAOR784Kl7OQ+WP3VZ6ihXX4ePlEu4U+WJd262gAf3fM
+         qk+MMBKbTG33ptQZzEwnIXUZvogoP+bRvsjB9Joe/vJBv2Vng72OinMLjyCnHW89XDQq
+         Mr1NT+Aa+RYdux49z/5tVKSUE0nXwWbDKRBUvGn6zL2oKclLrmQm/XdEXPSifxS+LLgP
+         F2swdONBDqR+vEPo/agnPFIZErdYXwyJ++8aDLf+gfi00c0AO3knr26KoYR6ppObYuYa
+         dIfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9NJFtDbAQUxDpsSJCVO43t+Qgd7Ov4nadaEOv79D6PLikUUNBZieD0vZjlA8Ee6czlyawNcghnUyzej0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm+LYImaZvOC0SEuxdJfI3vAVWCZ09Vx1VZc+xk6QLRhIfU9iD
+	coLiB94lfHEnT5dlGJjW9PnC+t6hfvq1TxmV57WLr2TZCkU6Amnk1QXmHRYxU+Ep25ngdL88Ww9
+	8/0IwkQ==
+X-Google-Smtp-Source: AGHT+IHoKmZxZXKoWcnKzQPXbsoKR4Y6hMAv1bquFP9rfNz7KebTHJNwy0MloiRBi4V47ViBBMyDsbxnAaAw
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:57ba:88e0:aaf6:282])
- (user=irogers job=sendgmr) by 2002:a25:ced1:0:b0:e28:ec75:75ed with SMTP id
- 3f1490d57ef6-e2bb1018b3emr28314276.0.1729618275780; Tue, 22 Oct 2024 10:31:15
- -0700 (PDT)
-Date: Tue, 22 Oct 2024 10:30:09 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:fd2:b0:69b:c01:82a5 with SMTP id
+ 00721157ae682-6e5bfc5d0b9mr4269907b3.7.1729618278049; Tue, 22 Oct 2024
+ 10:31:18 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:30:10 -0700
 In-Reply-To: <20241022173015.437550-1-irogers@google.com>
-Message-Id: <20241022173015.437550-12-irogers@google.com>
+Message-Id: <20241022173015.437550-13-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241022173015.437550-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v3 11/16] perf env: Move arch errno function to only use in env
+Subject: [PATCH v3 12/16] perf lock: Move common lock contention code to new file
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,96 +90,502 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Move arch_syscalls__strerrno_function out of builtin-trace.c to env.c
-so that there isn't a util to builtin function call. This allows the
-python.c stub to be removed. Also, remove declaration/prototype from
-env.h and make static to reduce scope.
+Avoid references from util code to builtin-lock that require python
+stubs. Move the functions and related variables to
+util/lock-contention.c. Add max_stack_depth parameter to
+match_callstack_filter to avoid sharing a global variable.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-trace.c                  | 1 -
- tools/perf/trace/beauty/arch_errno_names.sh | 3 ++-
- tools/perf/util/env.c                       | 2 ++
- tools/perf/util/env.h                       | 2 --
- tools/perf/util/python.c                    | 6 ------
- 5 files changed, 4 insertions(+), 10 deletions(-)
+ tools/perf/builtin-lock.c             | 137 +--------------------
+ tools/perf/util/Build                 |   1 +
+ tools/perf/util/bpf_lock_contention.c |   2 +-
+ tools/perf/util/lock-contention.c     | 170 ++++++++++++++++++++++++++
+ tools/perf/util/lock-contention.h     |  37 ++----
+ tools/perf/util/python.c              |  17 ---
+ 6 files changed, 185 insertions(+), 179 deletions(-)
+ create mode 100644 tools/perf/util/lock-contention.c
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 0b30297b4ecb..dbcf74a9e047 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1108,7 +1108,6 @@ static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size _
- 	    .strtoul	= STUL_STRARRAY_FLAGS, \
- 	    .parm	= &strarray__##array, }
+diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+index 062e2b56a2ab..f66948b1fbed 100644
+--- a/tools/perf/builtin-lock.c
++++ b/tools/perf/builtin-lock.c
+@@ -46,15 +46,6 @@
+ static struct perf_session *session;
+ static struct target target;
  
--#include "trace/beauty/arch_errno_names.c"
- #include "trace/beauty/eventfd.c"
- #include "trace/beauty/futex_op.c"
- #include "trace/beauty/futex_val3.c"
-diff --git a/tools/perf/trace/beauty/arch_errno_names.sh b/tools/perf/trace/beauty/arch_errno_names.sh
-index 30d3889b2957..b22890b8d272 100755
---- a/tools/perf/trace/beauty/arch_errno_names.sh
-+++ b/tools/perf/trace/beauty/arch_errno_names.sh
-@@ -57,7 +57,8 @@ create_arch_errno_table_func()
- 	archlist="$1"
- 	default="$2"
- 
--	printf 'arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch)\n'
-+	printf 'static arch_syscalls__strerrno_t *\n'
-+	printf 'arch_syscalls__strerrno_function(const char *arch)\n'
- 	printf '{\n'
- 	for arch in $archlist; do
- 		arch_str=$(arch_string "$arch")
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index 1edbccfc3281..a903917a09a4 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -22,6 +22,8 @@ struct perf_env perf_env;
- #include "bpf-utils.h"
- #include <bpf/libbpf.h>
- 
-+#include "trace/beauty/arch_errno_names.c"
-+
- void perf_env__insert_bpf_prog_info(struct perf_env *env,
- 				    struct bpf_prog_info_node *info_node)
- {
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 51b36c36019b..6a61ceff10bc 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -56,8 +56,6 @@ struct pmu_caps {
- 
- typedef const char *(arch_syscalls__strerrno_t)(int err);
- 
--arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch);
+-/* based on kernel/lockdep.c */
+-#define LOCKHASH_BITS		12
+-#define LOCKHASH_SIZE		(1UL << LOCKHASH_BITS)
 -
- struct perf_env {
- 	char			*hostname;
- 	char			*os_release;
+-static struct hlist_head *lockhash_table;
+-
+-#define __lockhashfn(key)	hash_long((unsigned long)key, LOCKHASH_BITS)
+-#define lockhashentry(key)	(lockhash_table + __lockhashfn((key)))
+-
+ static struct rb_root		thread_stats;
+ 
+ static bool combine_locks;
+@@ -67,24 +58,13 @@ static unsigned long bpf_map_entries = MAX_ENTRIES;
+ static int max_stack_depth = CONTENTION_STACK_DEPTH;
+ static int stack_skip = CONTENTION_STACK_SKIP;
+ static int print_nr_entries = INT_MAX / 2;
+-static LIST_HEAD(callstack_filters);
+ static const char *output_name = NULL;
+ static FILE *lock_output;
+ 
+-struct callstack_filter {
+-	struct list_head list;
+-	char name[];
+-};
+-
+ static struct lock_filter filters;
+ 
+ static enum lock_aggr_mode aggr_mode = LOCK_AGGR_ADDR;
+ 
+-static bool needs_callstack(void)
+-{
+-	return !list_empty(&callstack_filters);
+-}
+-
+ static struct thread_stat *thread_stat_find(u32 tid)
+ {
+ 	struct rb_node *node;
+@@ -477,93 +457,6 @@ static struct lock_stat *pop_from_result(void)
+ 	return container_of(node, struct lock_stat, rb);
+ }
+ 
+-struct lock_stat *lock_stat_find(u64 addr)
+-{
+-	struct hlist_head *entry = lockhashentry(addr);
+-	struct lock_stat *ret;
+-
+-	hlist_for_each_entry(ret, entry, hash_entry) {
+-		if (ret->addr == addr)
+-			return ret;
+-	}
+-	return NULL;
+-}
+-
+-struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags)
+-{
+-	struct hlist_head *entry = lockhashentry(addr);
+-	struct lock_stat *ret, *new;
+-
+-	hlist_for_each_entry(ret, entry, hash_entry) {
+-		if (ret->addr == addr)
+-			return ret;
+-	}
+-
+-	new = zalloc(sizeof(struct lock_stat));
+-	if (!new)
+-		goto alloc_failed;
+-
+-	new->addr = addr;
+-	new->name = strdup(name);
+-	if (!new->name) {
+-		free(new);
+-		goto alloc_failed;
+-	}
+-
+-	new->flags = flags;
+-	new->wait_time_min = ULLONG_MAX;
+-
+-	hlist_add_head(&new->hash_entry, entry);
+-	return new;
+-
+-alloc_failed:
+-	pr_err("memory allocation failed\n");
+-	return NULL;
+-}
+-
+-bool match_callstack_filter(struct machine *machine, u64 *callstack)
+-{
+-	struct map *kmap;
+-	struct symbol *sym;
+-	u64 ip;
+-	const char *arch = perf_env__arch(machine->env);
+-
+-	if (list_empty(&callstack_filters))
+-		return true;
+-
+-	for (int i = 0; i < max_stack_depth; i++) {
+-		struct callstack_filter *filter;
+-
+-		/*
+-		 * In powerpc, the callchain saved by kernel always includes
+-		 * first three entries as the NIP (next instruction pointer),
+-		 * LR (link register), and the contents of LR save area in the
+-		 * second stack frame. In certain scenarios its possible to have
+-		 * invalid kernel instruction addresses in either LR or the second
+-		 * stack frame's LR. In that case, kernel will store that address as
+-		 * zero.
+-		 *
+-		 * The below check will continue to look into callstack,
+-		 * incase first or second callstack index entry has 0
+-		 * address for powerpc.
+-		 */
+-		if (!callstack || (!callstack[i] && (strcmp(arch, "powerpc") ||
+-						(i != 1 && i != 2))))
+-			break;
+-
+-		ip = callstack[i];
+-		sym = machine__find_kernel_symbol(machine, ip, &kmap);
+-		if (sym == NULL)
+-			continue;
+-
+-		list_for_each_entry(filter, &callstack_filters, list) {
+-			if (strstr(sym->name, filter->name))
+-				return true;
+-		}
+-	}
+-	return false;
+-}
+-
+ struct trace_lock_handler {
+ 	/* it's used on CONFIG_LOCKDEP */
+ 	int (*acquire_event)(struct evsel *evsel,
+@@ -1165,7 +1058,7 @@ static int report_lock_contention_begin_event(struct evsel *evsel,
+ 		if (callstack == NULL)
+ 			return -ENOMEM;
+ 
+-		if (!match_callstack_filter(machine, callstack)) {
++		if (!match_callstack_filter(machine, callstack, max_stack_depth)) {
+ 			free(callstack);
+ 			return 0;
+ 		}
+@@ -2449,34 +2342,6 @@ static int parse_lock_addr(const struct option *opt __maybe_unused, const char *
+ 	return ret;
+ }
+ 
+-static int parse_call_stack(const struct option *opt __maybe_unused, const char *str,
+-			   int unset __maybe_unused)
+-{
+-	char *s, *tmp, *tok;
+-	int ret = 0;
+-
+-	s = strdup(str);
+-	if (s == NULL)
+-		return -1;
+-
+-	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+-		struct callstack_filter *entry;
+-
+-		entry = malloc(sizeof(*entry) + strlen(tok) + 1);
+-		if (entry == NULL) {
+-			pr_err("Memory allocation failure\n");
+-			free(s);
+-			return -1;
+-		}
+-
+-		strcpy(entry->name, tok);
+-		list_add_tail(&entry->list, &callstack_filters);
+-	}
+-
+-	free(s);
+-	return ret;
+-}
+-
+ static int parse_output(const struct option *opt __maybe_unused, const char *str,
+ 			int unset __maybe_unused)
+ {
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 2a2f7780e595..ea2d9eced92e 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -121,6 +121,7 @@ perf-util-y += topdown.o
+ perf-util-y += iostat.o
+ perf-util-y += stream.o
+ perf-util-y += kvm-stat.o
++perf-util-y += lock-contention.o
+ perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+ perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
+ perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
+index 41a1ad087895..37e17c56f106 100644
+--- a/tools/perf/util/bpf_lock_contention.c
++++ b/tools/perf/util/bpf_lock_contention.c
+@@ -458,7 +458,7 @@ int lock_contention_read(struct lock_contention *con)
+ 		if (con->save_callstack) {
+ 			bpf_map_lookup_elem(stack, &key.stack_id, stack_trace);
+ 
+-			if (!match_callstack_filter(machine, stack_trace)) {
++			if (!match_callstack_filter(machine, stack_trace, con->max_stack)) {
+ 				con->nr_filtered += data.count;
+ 				goto next;
+ 			}
+diff --git a/tools/perf/util/lock-contention.c b/tools/perf/util/lock-contention.c
+new file mode 100644
+index 000000000000..841bb18b1f06
+--- /dev/null
++++ b/tools/perf/util/lock-contention.c
+@@ -0,0 +1,170 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "debug.h"
++#include "env.h"
++#include "lock-contention.h"
++#include "machine.h"
++#include "symbol.h"
++
++#include <limits.h>
++#include <string.h>
++
++#include <linux/hash.h>
++#include <linux/zalloc.h>
++
++#define __lockhashfn(key)	hash_long((unsigned long)key, LOCKHASH_BITS)
++#define lockhashentry(key)	(lockhash_table + __lockhashfn((key)))
++
++struct callstack_filter {
++	struct list_head list;
++	char name[];
++};
++
++static LIST_HEAD(callstack_filters);
++struct hlist_head *lockhash_table;
++
++int parse_call_stack(const struct option *opt __maybe_unused, const char *str,
++		     int unset __maybe_unused)
++{
++	char *s, *tmp, *tok;
++	int ret = 0;
++
++	s = strdup(str);
++	if (s == NULL)
++		return -1;
++
++	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
++		struct callstack_filter *entry;
++
++		entry = malloc(sizeof(*entry) + strlen(tok) + 1);
++		if (entry == NULL) {
++			pr_err("Memory allocation failure\n");
++			free(s);
++			return -1;
++		}
++
++		strcpy(entry->name, tok);
++		list_add_tail(&entry->list, &callstack_filters);
++	}
++
++	free(s);
++	return ret;
++}
++
++bool needs_callstack(void)
++{
++	return !list_empty(&callstack_filters);
++}
++
++struct lock_stat *lock_stat_find(u64 addr)
++{
++	struct hlist_head *entry = lockhashentry(addr);
++	struct lock_stat *ret;
++
++	hlist_for_each_entry(ret, entry, hash_entry) {
++		if (ret->addr == addr)
++			return ret;
++	}
++	return NULL;
++}
++
++struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags)
++{
++	struct hlist_head *entry = lockhashentry(addr);
++	struct lock_stat *ret, *new;
++
++	hlist_for_each_entry(ret, entry, hash_entry) {
++		if (ret->addr == addr)
++			return ret;
++	}
++
++	new = zalloc(sizeof(struct lock_stat));
++	if (!new)
++		goto alloc_failed;
++
++	new->addr = addr;
++	new->name = strdup(name);
++	if (!new->name) {
++		free(new);
++		goto alloc_failed;
++	}
++
++	new->flags = flags;
++	new->wait_time_min = ULLONG_MAX;
++
++	hlist_add_head(&new->hash_entry, entry);
++	return new;
++
++alloc_failed:
++	pr_err("memory allocation failed\n");
++	return NULL;
++}
++
++bool match_callstack_filter(struct machine *machine, u64 *callstack, int max_stack_depth)
++{
++	struct map *kmap;
++	struct symbol *sym;
++	u64 ip;
++	const char *arch = perf_env__arch(machine->env);
++
++	if (list_empty(&callstack_filters))
++		return true;
++
++	for (int i = 0; i < max_stack_depth; i++) {
++		struct callstack_filter *filter;
++
++		/*
++		 * In powerpc, the callchain saved by kernel always includes
++		 * first three entries as the NIP (next instruction pointer),
++		 * LR (link register), and the contents of LR save area in the
++		 * second stack frame. In certain scenarios its possible to have
++		 * invalid kernel instruction addresses in either LR or the second
++		 * stack frame's LR. In that case, kernel will store that address as
++		 * zero.
++		 *
++		 * The below check will continue to look into callstack,
++		 * incase first or second callstack index entry has 0
++		 * address for powerpc.
++		 */
++		if (!callstack || (!callstack[i] && (strcmp(arch, "powerpc") ||
++						(i != 1 && i != 2))))
++			break;
++
++		ip = callstack[i];
++		sym = machine__find_kernel_symbol(machine, ip, &kmap);
++		if (sym == NULL)
++			continue;
++
++		list_for_each_entry(filter, &callstack_filters, list) {
++			if (strstr(sym->name, filter->name))
++				return true;
++		}
++	}
++	return false;
++}
++
++#ifndef HAVE_BPF_SKEL
++int lock_contention_prepare(struct lock_contention *con __maybe_unused)
++{
++	return 0;
++}
++
++int lock_contention_start(void)
++{
++	return 0;
++}
++
++int lock_contention_stop(void)
++{
++	return 0;
++}
++
++int lock_contention_finish(struct lock_contention *con __maybe_unused)
++{
++	return 0;
++}
++
++int lock_contention_read(struct lock_contention *con __maybe_unused)
++{
++	return 0;
++}
++#endif  /* !HAVE_BPF_SKEL */
+diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-contention.h
+index 1a7248ff3889..bfa5c7db0a5d 100644
+--- a/tools/perf/util/lock-contention.h
++++ b/tools/perf/util/lock-contention.h
+@@ -67,10 +67,11 @@ struct lock_stat {
+  */
+ #define MAX_LOCK_DEPTH 48
+ 
+-struct lock_stat *lock_stat_find(u64 addr);
+-struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
++/* based on kernel/lockdep.c */
++#define LOCKHASH_BITS		12
++#define LOCKHASH_SIZE		(1UL << LOCKHASH_BITS)
+ 
+-bool match_callstack_filter(struct machine *machine, u64 *callstack);
++extern struct hlist_head *lockhash_table;
+ 
+ /*
+  * struct lock_seq_stat:
+@@ -148,7 +149,14 @@ struct lock_contention {
+ 	bool save_callstack;
+ };
+ 
+-#ifdef HAVE_BPF_SKEL
++struct option;
++int parse_call_stack(const struct option *opt, const char *str, int unset);
++bool needs_callstack(void);
++
++struct lock_stat *lock_stat_find(u64 addr);
++struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
++
++bool match_callstack_filter(struct machine *machine, u64 *callstack, int max_stack_depth);
+ 
+ int lock_contention_prepare(struct lock_contention *con);
+ int lock_contention_start(void);
+@@ -156,25 +164,4 @@ int lock_contention_stop(void);
+ int lock_contention_read(struct lock_contention *con);
+ int lock_contention_finish(struct lock_contention *con);
+ 
+-#else  /* !HAVE_BPF_SKEL */
+-
+-static inline int lock_contention_prepare(struct lock_contention *con __maybe_unused)
+-{
+-	return 0;
+-}
+-
+-static inline int lock_contention_start(void) { return 0; }
+-static inline int lock_contention_stop(void) { return 0; }
+-static inline int lock_contention_finish(struct lock_contention *con __maybe_unused)
+-{
+-	return 0;
+-}
+-
+-static inline int lock_contention_read(struct lock_contention *con __maybe_unused)
+-{
+-	return 0;
+-}
+-
+-#endif  /* HAVE_BPF_SKEL */
+-
+ #endif  /* PERF_LOCK_CONTENTION_H */
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 77e02fcc51dd..35d84a96dbec 100644
+index 35d84a96dbec..91fd444615cd 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -16,7 +16,6 @@
- #include "thread_map.h"
- #include "trace-event.h"
+@@ -18,7 +18,6 @@
  #include "mmap.h"
--#include "util/env.h"
  #include "util/kwork.h"
  #include "util/sample.h"
- #include "util/lock-contention.h"
-@@ -1305,11 +1304,6 @@ PyMODINIT_FUNC PyInit_perf(void)
- /* The following are stubs to avoid dragging in builtin-* objects. */
- /* TODO: move the code out of the builtin-* file into util. */
+-#include "util/lock-contention.h"
+ #include <internal/lib.h>
+ #include "../builtin.h"
  
--arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch __maybe_unused)
+@@ -1311,22 +1310,6 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
+ 	return NULL;
+ }
+ 
+-bool match_callstack_filter(struct machine *machine __maybe_unused, u64 *callstack __maybe_unused)
+-{
+-	return false;
+-}
+-
+-struct lock_stat *lock_stat_find(u64 addr __maybe_unused)
 -{
 -	return NULL;
 -}
 -
- struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
- 				       struct kwork_class *class __maybe_unused,
- 				       struct kwork_work *key  __maybe_unused)
+-struct lock_stat *lock_stat_findnew(u64 addr __maybe_unused, const char *name __maybe_unused,
+-				int flags __maybe_unused)
+-{
+-	return NULL;
+-}
+-
+ int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
+ {
+ 	return -1;
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
