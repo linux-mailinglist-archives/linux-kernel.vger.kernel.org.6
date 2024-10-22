@@ -1,157 +1,178 @@
-Return-Path: <linux-kernel+bounces-376800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8199B9AB600
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:33:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B197E9AB604
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CE31C228C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487F71F23C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32D71C9DDB;
-	Tue, 22 Oct 2024 18:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC391C9DF0;
+	Tue, 22 Oct 2024 18:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIY8ekuB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d7sd5Lwf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247CB17C98;
-	Tue, 22 Oct 2024 18:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128451C9DF6;
+	Tue, 22 Oct 2024 18:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729621986; cv=none; b=rmAAHF73Wc8W0ECpgqjiCr1PHX4QqSpaQMo57JBm17rT9KX5NAV0TjMhieZlWSZjQFIvDCMPlpspm4m3M8f1+ePt3zbIwiqon++NNUQsLgOpXw+WQClKLcqueMz5DQlFrt6HG0w7CHM78ET1sN7sI4ZbcgNqDfyGzRKXbehmaOQ=
+	t=1729622058; cv=none; b=ffOqEIKNh9EujP+We8cdI2LZ1Q3P3ueGpOaqJ73SLwH4hRmlVN6yw1DzFoGPxVOQZIJRUJ8uH1j/ftjApXEXBbNRm9l+284lI4tox2VLEXXufMymDe7QzZSRCzCrOEPYR8LcMJ5cFwN3Skld2towqhQmsBGxegZTj3KgaEwJZWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729621986; c=relaxed/simple;
-	bh=24yn3OFS2AZsp+QNzelAVzSZ8vU4Vf1mostOE7lH+eM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+ZiOd8o5yibG95f/k8W6PgREDKj+xtQupVuRuN7AUR6c0xyiCE0jJvsRngMnDRkBANYRGJRhADwqAJu1fcbV0cVhAVF4cNQIyeAtYIPmIqPoy1VnqIrVMU1QVPKoL7UTWohK98VwqvmvDY7rIZ4q+KUi+g3BYcJ1YFtKVg6dnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIY8ekuB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3E0C4CEC3;
-	Tue, 22 Oct 2024 18:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729621986;
-	bh=24yn3OFS2AZsp+QNzelAVzSZ8vU4Vf1mostOE7lH+eM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uIY8ekuBu6EGpDByeacwBvKaIs+/IfvWXCPWtLCmSX+6np6LqmsOvkjL23NcPFnOz
-	 NB6btTGM0gJI9D5w84sqroMhRqrAqo4jIrqzkddhQuTzTL5gHhHhzqKMlVND+GFxKc
-	 pCOA2dnIWNULlciSdDahpz7nU9cdwsPDs5cKdfekiQ8QxfqQBWpsgBjplbk58Cfp+L
-	 yup+QcY4G3Wq7BgLg0wJbARfw4QJCbiKc7eIVX0794Ro7zoNsZDhV+vjmN0A7pWqt+
-	 xxWDVzAngod994Gh0F3vzExRT+m5F5Qh+oJ66PQmLhcqH22w7JrQZPMyw1sHiDO4ht
-	 YlCR/jazJceEw==
-Date: Tue, 22 Oct 2024 15:33:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
-	Andrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, james.clark@linaro.org,
-	alan.maguire@oracle.com
-Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
- in clang 12
-Message-ID: <Zxfv3BupKqhi3zGV@x1>
-References: <20241011021403.4089793-1-howardchu95@gmail.com>
- <Zw61TUe1V97dKWer@google.com>
- <Zw7D9HXBanPLUO4G@x1>
- <Zw7JgJc0LOwSpuvx@x1>
- <Zw7SkmEaz730uVbL@x1>
- <Zw8fqyCZNqSABMkM@google.com>
- <Zw_MFwkejeWC2qbv@x1>
- <ZxfbNJ6nKXzoEYVn@google.com>
+	s=arc-20240116; t=1729622058; c=relaxed/simple;
+	bh=uqvMv2qcH507Z4cXI6P2BA/JVywnyuGJGGjWaRzv1Ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eA3sils3I4Ga0jZae2PrN525wkVBIzjQcoI8OgWDILDB6+gXUZtpwm61szaGwSsXiWkhmCo17DSVwh8XUbYIVyGshyd2XzSzrc2yGLZnKdTYvhUImvu1sMq6KjMgaPRmzNEk9bmPJk3js5O/7rXE53vkDOUIIz9Mi87ux0YKW18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d7sd5Lwf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBpCQf029658;
+	Tue, 22 Oct 2024 18:34:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s1wCfXW6A7n+muEvuhES2GIPbbBcS3gOW+5pey9Nj0A=; b=d7sd5LwfZWNJC1F7
+	2/mRLC3t20l2nsI57HxYXoKpg+15l6gDjH4+OQLZzL4P3ZfOSu/4k8+oi/ssf//R
+	Oq/i3uX91lyxORbntGsUJj7mkxrSKyvr4t/tSOO/hDLAdOTUImHO2TGoLijIFshm
+	gq0vHpoqhodSEZy01UFNqvd5RpOFPxGKIUnb71eKurLhgsrarT2tFP+hBZJ0NRcZ
+	ep8b73t37SPicIcWqE7Byau8yvAYzeKUvH3beCgn4I93dSbXsNcjXomIbwmkk+9i
+	TaVsj+d7/jp3xj+E/eePxYFaetvo2FoTwXX6lLNxxIH/MJlOe/wC2VSPBopifd3y
+	+LzWKg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ebhes7ht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 18:34:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MIY2kK008464
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 18:34:03 GMT
+Received: from [10.216.8.66] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 11:34:00 -0700
+Message-ID: <5e52d6c5-6e42-4244-bf66-a2d1343ad868@quicinc.com>
+Date: Wed, 23 Oct 2024 00:03:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: qcom: qcom_tzmem: Implement sanity
+ checks
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
+ <20241014111527.2272428-3-quic_kuldsing@quicinc.com>
+ <CAMRc=MfR8rK3EnZx3_9rxkwgv6f8jA4X0u0cGBkpJ89d5i1MKw@mail.gmail.com>
+ <f46a9180-ca71-458e-9693-ed9badc85e72@quicinc.com>
+ <21630547-552b-43e0-906f-840610327876@quicinc.com>
+ <CACMJSeuM=xmtvJr_DOZNdsj6FpF50xgXx1VED4OW6cv=s2qW5w@mail.gmail.com>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <CACMJSeuM=xmtvJr_DOZNdsj6FpF50xgXx1VED4OW6cv=s2qW5w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxfbNJ6nKXzoEYVn@google.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kNeDY5o7bwG1ezubyTFkuHWzJt0vR_nR
+X-Proofpoint-ORIG-GUID: kNeDY5o7bwG1ezubyTFkuHWzJt0vR_nR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220120
 
-On Tue, Oct 22, 2024 at 10:04:52AM -0700, Namhyung Kim wrote:
-> Hi Arnaldo,
+
+
+On 10/22/2024 12:27 PM, Bartosz Golaszewski wrote:
+> On Tue, 22 Oct 2024 at 07:43, Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 10/16/2024 2:31 PM, Kuldeep Singh wrote:
+>>>
+>>> On 10/14/2024 6:38 PM, Bartosz Golaszewski wrote:
+>>>> On Mon, Oct 14, 2024 at 1:19 PM Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
+>>>>>
+>>>>> The qcom_tzmem driver currently has exposed APIs that lack validations
+>>>>> on required input parameters. This oversight can lead to unexpected null
+>>>>> pointer dereference crashes.
+>>>>>
+>>>>
+>>>> The commit message is not true. None of the things you changed below
+>>>> can lead to a NULL-pointer dereference.>
+>>>>> To address this issue, add sanity for required input parameters.
+>>>>>
+>>>>> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+>>>>> ---
+>>>>>  drivers/firmware/qcom/qcom_tzmem.c | 6 ++++++
+>>>>>  1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+>>>>> index 92b365178235..977e48fec32f 100644
+>>>>> --- a/drivers/firmware/qcom/qcom_tzmem.c
+>>>>> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+>>>>> @@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
+>>>>>
+>>>>>         might_sleep();
+>>>>>
+>>>>> +       if (!config->policy)
+>>>>> +               return ERR_PTR(-EINVAL);
+>>>>
+>>>> This is already handled by the default case of the switch.
+>>>
+>>> Ack. Need to drop.
+>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L218
+>>>
+>>> While examining qcom_tzmem_pool_free under the same principle, it
+>>> appears the following check is unnecessary.
+>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
+>>>
+>>
+>> Bartosz,
+>> I am thinking to remove below check in next rev like mentioned above.
+>> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
+>>
+>> Do you have any other opinion here?
+>> Please let me know.
+>>
 > 
-> On Wed, Oct 16, 2024 at 11:22:15AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Oct 15, 2024 at 07:06:35PM -0700, Namhyung Kim wrote:
-> > > Hi Arnaldo,
-> > > 
-> > > On Tue, Oct 15, 2024 at 05:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > On Tue, Oct 15, 2024 at 04:58:56PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > > So I'm trying adding extra bounds checking, marking the index as
-> > > > > volatile, adding compiler barriers, etc, all the fun with the verifier,
-> > > > > but got distracted with other stuff, coming back to this now.
-> > > >  
-> > > > > Ok, the following seems to do the trick:
-> > > >  
-> > > > > [acme@dell-per740-01 perf-tools]$ git diff
-> > > > > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > > index 3b30aa74a3ae..ef87a04ff8d0 100644
-> > > > > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > > > @@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
-> > > > >                                 augmented = true;
-> > > > >                 } else if (size < 0 && size >= -6) { /* buffer */
-> > > > >                         index = -(size + 1);
-> > > > > +                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
-> > > > >                         aug_size = args->args[index];
-> > > > >  
-> > > > >                         if (aug_size > TRACE_AUG_MAX_BUF)
-> > > > > 
-> > > > > I'll now test it without Howard's patch to see if it fixes the RHEL8 +
-> > > > > clang 17 case.
-> > > > 
-> > > > It works with this one-liner + the simplified patch from Howard and also
-> > > > on this other system (RHEL9), as well as with Fedora 40, it would be
-> > > > nice if someone could test with clang 16 and report back the version of
-> > > > the kernel tested as well as the distro name/release, that way I can try
-> > > > to get my hands on such as system and test there as well.
-> > > > 
-> > > > Its all at:
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tmp.perf-tools
-> > > > 
-> > > > This is the current set of patches that when further tested will go to
-> > > > Linus for v6.12:
-> > > > 
-> > > > ⬢[acme@toolbox perf-tools]$ git log --oneline torvalds/master..
-> > > > ff14baa7a290bf42 (HEAD -> perf-tools, x1/perf-tools, perf-tools/tmp.perf-tools) perf trace augmented_raw_syscalls: Add more checks to pass the verifier
-> > > > 46180bec048aad85 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
-> > > > 45d1aadac64869a2 perf build: Change the clang check back to 12.0.1
-> > > 
-> > > Wouldn't it be better to have this change after fixing the verifier
-> > > issues in the later commits?
-> > 
-> > I'm still testing it, this is a one-liner, so I think that the order in
-> > which the patches are applied isn't important. Also Howard's patch (the
-> > simplified one) doesn't clash with it.
-> 
-> I'm afraid if it'd break git bisect by allowing old clang versions
-> before the fix.
+> No, let's keep the NULL-pointer check and add it to qcom_tzmem_free(),
+> I'm not against it. I was just saying that in the latter case it will
+> already be handled by the radix tree lookup.
 
-I can reorder the patches if you think it is interesting, but from the
-extended set of tests I'm performing on different kernel and clang
-version and in x86_64 and arm 64-bit, 32-bit and various distros, I'm
-not sure bisection is an option for BPF programs at this stage 8-)
+Hey, I think you misread my comment. Let me explain more.
+As agreed, Will drop (!config->policy) check from qcom_tzmem_pool_new
+because it's already present.
+https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L218
 
-There, did it now it looks like this:
+Keep (!vaddr) check in qcom_tzmem_free as discussed above.
+https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L411
 
-⬢ [acme@toolbox perf-tools]$ git log --oneline torvalds/master..
-5d3a1b9ca3b1a059 (HEAD -> perf-tools) perf trace arm32: Fix iteration of syscall ids in syscalltbl->entries
-34d2358a24fb5963 perf trace augmented_raw_syscalls: Add more checks to pass the verifier
-cdb84c31bd2813de perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
-e5c1811c590c4312 perf build: Change the clang check back to 12.0.1
-39c6a356201ebbd7 perf trace: The return from 'write' isn't a pid
-ab8aaab874c4aa37 tools headers UAPI: Sync linux/const.h with the kernel headers
-⬢ [acme@toolbox perf-tools]$
+And last thing, like we don't check (!pool) in qcom_tzmem_alloc as it
+cannot be null, same way I believe (!pool) is unnecessary in
+qcom_tzmem_pool_free as qcom_tzmem_pool_new should return valid pool and
+if not, should be handled by calling driver.
+https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L369
+https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
 
-Is that what you meant?
-
-Thanks,
-
-- Arnaldo
+-- 
+Regards
+Kuldeep
 
