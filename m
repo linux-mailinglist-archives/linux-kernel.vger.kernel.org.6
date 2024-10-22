@@ -1,121 +1,172 @@
-Return-Path: <linux-kernel+bounces-376484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61AA9AB239
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263EE9AB247
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A1C1C20DAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:35:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1F91F21C96
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527B19D082;
-	Tue, 22 Oct 2024 15:35:21 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447CE1A3BDE;
+	Tue, 22 Oct 2024 15:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yg5GZziJ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBD2E406
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0434E2E406
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611320; cv=none; b=DaI6OHZUWpmmwAfErkLde/Ni7UXE5OgB05oL1jssB3aGirxEHNdzm4ZN/CouG1LOhJK5SDCgllDMLedSQRV9Z0xye2Xf7skObqo2KJioI/QYOpYp+RPswBN2Xw7vfnnQGzMCHqsYqKxPl+c9mOA/qq5yXlIwm3MCjrdUG6oEk4E=
+	t=1729611560; cv=none; b=GMStJ8H3/PAN3oqwSvDrPsyEfVpxnLLaOHoNacMnv6HLJHuQZvVj330Cp2byo2qt8XiwxkV8SMIkV7yk5Yrlw6Uu2hLrd45oZp1i3KtZEfHRrL5tGLB13aX8UeyIn+oc8x/ixhAwn48LscUQdyQFUmr01uKs2Vh9KTCR/BN/lCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611320; c=relaxed/simple;
-	bh=nkBsWZUWSOcM0yo4KYSZ+/LH3tU/zrMJWHq+Du+NU4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ymhcf6yhy32oN53+lBHrYp+A9j26YgGDBdjkKNSpFpfR1iJNwy8MaqW9lkJkXHs0sDilaMJH+GaGIbG5dGVHRDDlQyT24YPlP8ViCC7Q2NDLsfMrXpH3MX3mfHpr05/y5OnOZhZJ3WK2fej8tJsfyUoHgpoX1SXLIsNcfXFYGi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43152b79d25so56298895e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:35:16 -0700 (PDT)
+	s=arc-20240116; t=1729611560; c=relaxed/simple;
+	bh=KyehdRFnOqClt4ckcijRDX2btN2UgjYXojkVtGk19rM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMnV/XbBAt6u8gY3EgqQXX8WY8M6w9B25WJfO06tKOyQgmFtO22Lw2qditZpQTcTDyARy82GHdHn/totExYwly/fLKnWWd9qXvAxLynaTLESIwV0RmcB+8ZL5jTWtZdfYpyhfA6hCEvHsHttbH+Gt3kWzkIILogvRpGfzLOxMSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yg5GZziJ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e72db7bb1so4182922b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729611558; x=1730216358; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4UhBP+lxA4PuI1pN/Opr4ffBjn9LJSMHIGdfxJak84M=;
+        b=yg5GZziJfv9IcGwyz9GmsygvMkwdTDM0Aq0gC0AKOdl2ULRcJ9GDmP8Nuqe1cTrPIw
+         HMxDuMZ8vAaydUl0x3S1a6vUZqsSf7p2I4mZ9Yx8tjUZD05LwqIFMJdz0pWRryXpcIcQ
+         P7boRmE4/VKE+vzBBq9mhpEWNPpqXzQXmHRwReZV5iWpgCJOkUGG5K8r0tJTQS9bTVoc
+         1WgbsrSUQTkwd1Ep7L9ogrKB/8ezpckhSnRVWCVh7THK/xDwp8kY3mX9KN4aKNiJv9PM
+         UCqooa0kkBwE3/5TqoMArdcEMk8tPlYI8wCckpifSZearmcaQI2nEL0sWC696yp+2yi5
+         4I6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729611315; x=1730216115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729611558; x=1730216358;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvlo2uETQ2snXpBq1iCPCkeSnP5byMcjRDdafhy0y68=;
-        b=HovN/bIwWEeNdWF4gf+cDGcO4GS3ABOuC5vpphCuheROxRMspvvw8XQXiq3OU+DrHA
-         CljrT4TrjR1nhXXnQfsE67tMNiY1t7AnjYUA0unx8KaMP+aYJrmYjcIVhWyQJ4b5EuFH
-         ZLyDCinSxZuVcl//QHKWJsM9T+BdrlB+mZYoSCQzXjKKxq9cT/pmUBd6Pn7302VqIEsN
-         EuUU9LZ8t4F6fXrCJylzMDcDOEpH9BpSbDlpopgusNLHUqlTIGljJ4o+FftjD6FftrzL
-         GoRZrNokFnWvACsE5bzlMz9SWZScCU5Bv17gXMitl4wFOnKzUm48PGkHQvpjJ6CwFAy6
-         qrXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo+/DwSeLJEQTzUeIh5MWogAe8DX7g6iqYxYC7vux0/Rp0xJkE9pmpFYJVP+A5yd01N/D++XYIcDax/qA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC6UXqfmxW2OpRDLHVjqJvt2B7sD4y05bIVrsvXH1VvMA+Q34M
-	CI3qfCiaH1CkAloEcS/YcN9Y91+Aqke5V7cU/hPfAwM94G5LmNcK
-X-Google-Smtp-Source: AGHT+IFM15e8t9aQmJ040Sdj79eaCYPFM1kKKnWe5i4vZVqn/VWSAzCFkq1f17YommJ53VnHhrXKbQ==
-X-Received: by 2002:a05:600c:3b98:b0:42c:bd27:4c12 with SMTP id 5b1f17b1804b1-4317ca9b56emr24273035e9.10.1729611315014;
-        Tue, 22 Oct 2024 08:35:15 -0700 (PDT)
-Received: from [10.100.102.74] ([89.138.78.158])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fc36sm91845765e9.18.2024.10.22.08.35.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 08:35:14 -0700 (PDT)
-Message-ID: <6b00d25e-fe6a-4552-9945-d6181af83137@grimberg.me>
-Date: Tue, 22 Oct 2024 18:35:11 +0300
+        bh=4UhBP+lxA4PuI1pN/Opr4ffBjn9LJSMHIGdfxJak84M=;
+        b=nic39TuIHwKo0E3oyBED6M5buvlWlKif1VBi2homEoxgbpLQR8FCr3es4gsy1lIh88
+         H4inxSQ3N489Aeo7JqtLzGWO3Lo0r1sFZUIhxrJWE7LNybyIrABHReEHSOzLZpQQFo54
+         PbPq1EOhQ2v/RfZoeIsuekjnJOI/fwxsReSsXmNm2CaJZiWO6CSQdW0+p5Akeq3snS4x
+         pfllRVxQbS3jyqkM+FoYhif8soiZNF52ZxNvWyVq13+cex/jPggr2mIASfABtw/O+hMo
+         /QGf6nWLz0g/sl92UklSXjy8d9oBkONH0YyFeu4ylN1afPRiMUtu+x+k+h5zK71u0PzY
+         N2Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr8Zvrc6D0PkdJWgXoJobe7sHqXdh8wDPghwJFbel0+LnafoeuXYTUiB9lRRnY4Dyxd8/z71v1hHsjIlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFaaT1KVpKWht+PZpKc7wjqfYulFE/42/zzafd2wTyIm6MI8WD
+	Ypwb6BOE5XciaHlVJZxCBLr5zQ5WRPUY9pwclGOaYVks9+DnrSRsbSbYNr+fUA==
+X-Google-Smtp-Source: AGHT+IHTLfLxPFhRlrarKiYn46g4SklVOs57wHpWONQ2VMauVhk6JqEzb66pf6djTsJvgzguysbpeQ==
+X-Received: by 2002:a05:6a00:318f:b0:71e:60fc:ad11 with SMTP id d2e1a72fcca58-71ee4b07d49mr2955925b3a.16.1729611558265;
+        Tue, 22 Oct 2024 08:39:18 -0700 (PDT)
+Received: from thinkpad ([36.255.17.224])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13eb0c8sm4889990b3a.182.2024.10.22.08.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 08:39:17 -0700 (PDT)
+Date: Tue, 22 Oct 2024 21:09:12 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Denis Kenzior <denkenz@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 00/10] QRTR Multi-endpoint support
+Message-ID: <20241022153912.hoa2wbqtkvwjzuyo@thinkpad>
+References: <20241018181842.1368394-1-denkenz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring
- namespaces
-To: Keith Busch <kbusch@kernel.org>, Abhishek Bapat <abhishekbapat@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Prashant Malani <pmalani@google.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241016213108.549000-1-abhishekbapat@google.com>
- <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
- <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com>
- <Zxe8e2zS5dA61Jou@kbusch-mbp>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <Zxe8e2zS5dA61Jou@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241018181842.1368394-1-denkenz@gmail.com>
 
+On Fri, Oct 18, 2024 at 01:18:18PM -0500, Denis Kenzior wrote:
+> The current implementation of QRTR assumes that each entity on the QRTR
+> IPC bus is uniquely identifiable by its node/port combination, with
+> node/port combinations being used to route messages between entities.
+> 
+> However, this assumption of uniqueness is problematic in scenarios
+> where multiple devices with the same node/port combinations are
+> connected to the system.  A practical example is a typical consumer PC
+> with multiple PCIe-based devices, such as WiFi cards or 5G modems, where
+> each device could potentially have the same node identifier set.  In
+> such cases, the current QRTR protocol implementation does not provide a
+> mechanism to differentiate between these devices, making it impossible
+> to support communication with multiple identical devices.
+> 
+> This patch series addresses this limitation by introducing support for
+> a concept of an 'endpoint.' Multiple devices with conflicting node/port
+> combinations can be supported by assigning a unique endpoint identifier
+> to each one.  Such endpoint identifiers can then be used to distinguish
+> between devices while sending and receiving messages over QRTR sockets.
+> 
 
+Thanks for your work on this! I'm yet to look into the details but wondering how
+all the patches have Reviewed-by tags provided that this series is 'RFC v1'.
+Also, it is quite surprising to see the review tag from Andy Gross who quit Qcom
+quite a while ago and I haven't seen him reviewing any Qcom patches for so long.
 
+- Mani
 
-On 22/10/2024 17:53, Keith Busch wrote:
-> On Thu, Oct 17, 2024 at 02:32:18PM -0700, Abhishek Bapat wrote:
->> On Thu, Oct 17, 2024 at 9:40 AM Keith Busch <kbusch@kernel.org> wrote:
->>> On Wed, Oct 16, 2024 at 09:31:08PM +0000, Abhishek Bapat wrote:
->>>> max_hw_sectors based on DMA optimized limitation") introduced a
->>>> limitation on the value of max_hw_sectors_kb, restricting it to 128KiB
->>>> (MDTS = 5). This restricion was implemented to mitigate lockups
->>>> encountered in high-core count AMD servers.
->>> There are other limits that can constrain transfer sizes below the
->>> device's MDTS. For example, the driver can only preallocate so much
->>> space for DMA and SGL descriptors, so 8MB is the current max transfer
->>> sizes the driver can support, and a device's MDTS can be much bigger
->>> than that.
->>>
->>> Anyway, yeah, I guess having a controller generic way to export this
->>> sounds like a good idea, but I wonder if the nvme driver is the right
->>> place to do it. The request_queue has all the limits you need to know
->>> about, but these are only exported if a gendisk is attached to it.
->>> Maybe we can create a queue subdirectory to the char dev too.
->> Are you suggesting that all the files from the queue subdirectory should
->> be included in the char dev (/sys/class/nvme/nvmeX/queue/)? Or that
->> just the max_hw_sectors_kb value should be shared within the queue
->> subdirectory? And if not the nvme driver, where else can this be done
->> from?
-> You'd may want to know max_sectors_kb, dma_alignment, nr_requests,
-> virt_boundary_mask. Maybe some others.
->
-> The request_queue is owned by the block layer, so that seems like an
-> okay place to export it, but attached to some other device's sysfs
-> directory instead of a gendisk.
->
-> I'm just suggesting this because it doesn't sound like this is an nvme
-> specific problem.
+> The patch series maintains backward compatibility with existing clients:
+> the endpoint concept is added using auxiliary data that can be added to
+> recvmsg and sendmsg system calls.  The QRTR socket interface is extended
+> as follows:
+> 
+> - Adds QRTR_ENDPOINT auxiliary data element that reports which endpoint
+>   generated a particular message.  This auxiliary data is only reported
+>   if the socket was explicitly opted in using setsockopt, enabling the
+>   QRTR_REPORT_ENDPOINT socket option.  SOL_QRTR socket level was added
+>   to facilitate this.  This requires QRTR clients to be updated to use
+>   recvmsg instead of the more typical recvfrom() or recv() use.
+> 
+> - Similarly, QRTR_ENDPOINT auxiliary data element can be included in
+>   sendmsg() requests.  This will allow clients to route QRTR messages
+>   to the desired endpoint, even in cases of node/port conflict between
+>   multiple endpoints.
+> 
+> - Finally, QRTR_BIND_ENDPOINT socket option is introduced.  This allows
+>   clients to bind to a particular endpoint (such as a 5G PCIe modem) if
+>   they're only interested in receiving or sending messages to this
+>   device.
+> 
+> NOTE: There is 32-bit unsafe use of radix_tree_insert in this patch set.
+> This follows the existing usage inside net/qrtr/af_qrtr.c in
+> qrtr_tx_wait(), qrtr_tx_resume() and qrtr_tx_flow_failed().  This was
+> done deliberately in order to keep the changes as minimal as possible
+> until it is known whether the approach outlined is generally acceptable.
+> 
+> Denis Kenzior (10):
+>   net: qrtr: ns: validate msglen before ctrl_pkt use
+>   net: qrtr: allocate and track endpoint ids
+>   net: qrtr: support identical node ids
+>   net: qrtr: Report sender endpoint in aux data
+>   net: qrtr: Report endpoint for locally generated messages
+>   net: qrtr: Allow sendmsg to target an endpoint
+>   net: qrtr: allow socket endpoint binding
+>   net: qrtr: Drop remote {NEW|DEL}_LOOKUP messages
+>   net: qrtr: ns: support multiple endpoints
+>   net: qrtr: mhi: Report endpoint id in sysfs
+> 
+>  include/linux/socket.h    |   1 +
+>  include/uapi/linux/qrtr.h |   7 +
+>  net/qrtr/af_qrtr.c        | 297 +++++++++++++++++++++++++++++++------
+>  net/qrtr/mhi.c            |  14 ++
+>  net/qrtr/ns.c             | 299 +++++++++++++++++++++++---------------
+>  net/qrtr/qrtr.h           |   4 +
+>  6 files changed, 459 insertions(+), 163 deletions(-)
+> 
+> -- 
+> 2.45.2
+> 
 
-Won't it be confusing to find queue/ directory in controller nvmeX sysfs 
-entry?
-
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
