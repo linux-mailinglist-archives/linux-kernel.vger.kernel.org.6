@@ -1,101 +1,90 @@
-Return-Path: <linux-kernel+bounces-376151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7F59AA0DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DD69AA0F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BEAA283EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65B92836EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A49219C55C;
-	Tue, 22 Oct 2024 11:09:04 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C567319B5B4;
+	Tue, 22 Oct 2024 11:16:37 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17DA19ADA3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3551140E38;
+	Tue, 22 Oct 2024 11:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729595343; cv=none; b=n2xWbyG4Ccd/TuAZDrgw8uPZ/lDSHsj/EXa0fM27pDbRH28Ui1ke6OY0ANL0AVdJXXKVE1epiuogAvcsKMAZZQkr3VFYwHHhh23JIT6sM18ibUG/3+KgsuqK7ezyTnobFJCwEOu1B0mBcX9iULLTZ/ZTokDNNay/9Je2JQ/MskM=
+	t=1729595797; cv=none; b=mOCf4lXVh6juf92E3ZYsKBnR8CBTyTVpU5f5jy1m5w5pGD8+jrx/BELxHY1YMefePp6GhuXMvWiCtccogss9DBVbJwF4y563jBHLyD0bG+shLV4iMOYz+s0nwDaWc2rhU/f9hi1k3a2EoP08KAkCSB9hQebhzS+v+7h4s8xcT6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729595343; c=relaxed/simple;
-	bh=j/P5XcejjQdLAmnOA9ZylcRGFZcZRVaRls4QqwxeTnc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=cCuQzgWiIHyhPkt+Q0yoYUQYjptyu1uKl5qMhhK24+KawoZi9H4LYNy9pz7AynKdmwIS3GsiIwF9zQS5JDqh0CVtNMogp3vI3apQXnuCehKEhnpbIsY1N8iD147ysCHV4/wUi/8dLlyzmWu0xP5Qriy5Rpzfl/eDS0OOWUh0hNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-9-IRasUf_yOseRZNZNNpdKww-1; Tue, 22 Oct 2024 12:07:47 +0100
-X-MC-Unique: IRasUf_yOseRZNZNNpdKww-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 22 Oct
- 2024 12:07:46 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 22 Oct 2024 12:07:46 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Bartosz Golaszewski' <brgl@bgdev.pl>, Jiri Slaby <jirislaby@kernel.org>
-CC: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, James Bottomley
-	<James.Bottomley@hansenpartnership.com>, Greg KH
-	<gregkh@linuxfoundation.org>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH] lib: string_helpers: fix potential snprintf() output
- truncation
-Thread-Topic: [PATCH] lib: string_helpers: fix potential snprintf() output
- truncation
-Thread-Index: AQHbJFRQeh3oqbVfUku0a/hfxUzxIbKSma/Q
-Date: Tue, 22 Oct 2024 11:07:46 +0000
-Message-ID: <bb500daac1dc4cd9abd3f5e39f9329be@AcuMS.aculab.com>
-References: <20241021100421.41734-1-brgl@bgdev.pl>
- <bb705eb7-c61c-4da9-816e-cbb46c0c16e4@kernel.org>
- <CAMRc=Mcp4LBj0ZZx=hUg9KBk04XXcAtiNv+QjQesN1iCpDC+KA@mail.gmail.com>
-In-Reply-To: <CAMRc=Mcp4LBj0ZZx=hUg9KBk04XXcAtiNv+QjQesN1iCpDC+KA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1729595797; c=relaxed/simple;
+	bh=RE7QboNpMBgSiw0fo/Slo9j2GqJzmqWLlWEefQOhWhM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VwSUlNxf4GIjwflocwAn8E0SjBPYCRR5cRMf5fSDo7AAGIDxwJg4+JvqeSug23GPqUzwNOJvV3WBGef/yzFCmejlSVbD7mdl8eh6JKrYBSnMqgtsvYNbwfR/L6Y0levL4uvXiRMfuSIYo0HoVXbwS18aSb6PteDng9nVIT+TQeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXqMF58cgzpWsw;
+	Tue, 22 Oct 2024 19:14:33 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id DD96B18007C;
+	Tue, 22 Oct 2024 19:16:30 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Oct 2024 19:16:30 +0800
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+To: <jgg@ziepe.ca>, <leon@kernel.org>
+CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
+	<tangchengchang@huawei.com>
+Subject: [PATCH for-rc 0/5] RDMA/hns: Bugfixes
+Date: Tue, 22 Oct 2024 19:10:12 +0800
+Message-ID: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-RnJvbTogQmFydG9zeiBHb2xhc3pld3NraQ0KPiBTZW50OiAyMiBPY3RvYmVyIDIwMjQgMDg6MzAN
-Cj4gDQo+IE9uIFR1ZSwgT2N0IDIyLCAyMDI0IGF0IDk6MTXigK9BTSBKaXJpIFNsYWJ5IDxqaXJp
-c2xhYnlAa2VybmVsLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBPbiAyMS4gMTAuIDI0LCAxMjowNCwg
-QmFydG9zeiBHb2xhc3pld3NraSB3cm90ZToNCj4gPiA+IEZyb206IEJhcnRvc3ogR29sYXN6ZXdz
-a2kgPGJhcnRvc3ouZ29sYXN6ZXdza2lAbGluYXJvLm9yZz4NCj4gPiA+DQo+ID4gPiBUaGUgb3V0
-cHV0IG9mICIuJTAzdSIgd2l0aCB0aGUgdW5zaWduZWQgaW50IGluIHJhbmdlIFswLCA0Mjk0OTY2
-Mjk1XSBtYXkNCj4gPiA+IGdldCB0cnVuY2F0ZWQgaWYgdGhlIHRhcmdldCBidWZmZXIgaXMgbm90
-IDEyIGJ5dGVzLg0KPiA+DQo+ID4gUGVyaGFwcywgaWYgeW91IGVsYWJvcmF0ZSBvbiBob3cgJ3Jl
-bWFpbmRlcicgY2FuIGJlY29tZSA+IDk5OT8NCj4gPg0KPiANCj4gWWVhaCwgSSBndWVzcyBpdCBj
-YW4ndC4gTm90IHN1cmUgd2hhdCB3ZSBkbyBhYm91dCBzdWNoIGZhbHNlDQo+IHBvc2l0aXZlcywg
-ZG8gd2UgaGF2ZSBzb21lIGNvbW1vbiB3YXkgdG8gc3VwcHJlc3MgdGhlbT8NCg0KVGhlIG9ubHkg
-d2F5IEkndmUgZm91bmQgaXMgdG8gJ2xhdW5kZXInIHRoZSBidWZmZXIgc2l6ZSB1c2luZw0KT1BU
-SU1JU0VSX0hJREVfVkFSKCkuDQpBbHRob3VnaCBJIGNhbiBpbWFnaW5lIGFuIHVwZGF0ZSB0byBn
-Y2MgdGhhdCBjaGVja3Mgc2l6ZW9mIChidWZmZXIpDQphcyB3ZWxsIC0gc28gdGhhdCB3b3VsZCBh
-bHNvIG5lZWQgbGF1bmRlcmluZy4NCg0KWW91IGFjdHVhbGx5IHdhbnQ6DQojZGVmaW5lIE9QVElN
-RVJfSElERV9WQUwoeCkgXA0KICAoeyBfX2F1dG9fdHlwZSBfeCA9IHg7IE9QVElNRVJfSElERV9W
-QVIoX3gpOyBfeDt9KQ0Kc28geW91IGNhbiBkbzoNCglzbnByaW50ZihPUFRJTUlTRVJfSElERV9W
-QUwoYnVmZmVyKSwgT1BUT01JU0VSX0hJREVfVkFMKHNpemVvZiBidWZmZXIpLCBmbXQsIC4uLikN
-Cg0KUGVyaGFwcyB0aGF0IGNvdWxkIGJlIHNucHJpbnRfdHJ1bmNhdGUoKSA/DQoNCglEYXZpZA0K
-DQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFy
-bSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAo
-V2FsZXMpDQo=
+Some hns bugfixes.
+Patch #5 has been sent once before:
+https://lore.kernel.org/lkml/4c202653-1ad7-d885-55b7-07c77a549b09@hisilicon.com/T/#m05883778af8e39438d864e9c0fb9062aa09f362c
+
+Junxian Huang (1):
+  RDMA/hns: Use dev_* printings in hem code instead of ibdev_*
+
+Yuyu Li (1):
+  RDMA/hns: Modify debugfs name
+
+wenglianfa (3):
+  RDMA/hns: Fix an AEQE overflow error caused by untimely update of
+    eq_db_ci
+  RDMA/hns: Fix flush cqe error when racing with destroy qp
+  RDMA/hns: Fix cpu stuck caused by printings during reset
+
+ drivers/infiniband/hw/hns/hns_roce_cq.c      |   4 +-
+ drivers/infiniband/hw/hns/hns_roce_debugfs.c |   3 +-
+ drivers/infiniband/hw/hns/hns_roce_device.h  |   3 +
+ drivers/infiniband/hw/hns/hns_roce_hem.c     |  48 +++---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c   | 155 +++++++++++--------
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.h   |   5 +
+ drivers/infiniband/hw/hns/hns_roce_mr.c      |   4 +-
+ drivers/infiniband/hw/hns/hns_roce_qp.c      |  68 +++++---
+ drivers/infiniband/hw/hns/hns_roce_srq.c     |   4 +-
+ 9 files changed, 177 insertions(+), 117 deletions(-)
+
+--
+2.33.0
 
 
