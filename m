@@ -1,103 +1,200 @@
-Return-Path: <linux-kernel+bounces-375879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1523C9A9C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953489A9C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73AB3B22E43
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55199283B7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DBF16F85E;
-	Tue, 22 Oct 2024 08:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nYfqMRqc"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6FA183CC3;
+	Tue, 22 Oct 2024 08:20:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E428115E5D3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03CB13BAC6;
+	Tue, 22 Oct 2024 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585182; cv=none; b=P6UIiFSEq+QV/4lzP889MuC1tE31TSuCzlyE6iTcVlvYTdK0kZobk1r1yzg0UyUso8wrNoqRJZS9XLp0+25P31Rzl/mDDy+uk4dfneRQVZEpEbYCoe7Lg4LOZmWjHBroDDRJSlR8B7SSgKO15Rw5rsk67oOGaVf0spzXjeG5VfA=
+	t=1729585207; cv=none; b=Up78S8KLwa5Qb3fOhJvBNxdLDOgy2BzR27Ic9wdmvke+690z4F/ez15anmh9TjZxp8mw5yC1epG/lKxdvFC0esotB+tiUm+Pc4FXYQ9R51US2jFjK0EUtPrev/m5rsiiftZcpyQvxFT78mLl9AApUqn6qsy3vphYYDs5o3YT+EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585182; c=relaxed/simple;
-	bh=nDEq6xflV38Oys6mIGHJEcOdSrdQnYTmfgJUgN3pu2c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=D6Hgm0i7E6nFPL++qJugCnwhCppg7JB/Nf0Z20y50VcFP8xuN0+L4622F4aF8RRoqLY2Bh0f6CBGeiHc/3Sud1Jdnek5Xfa9YLjLUg+PLfi9DZE1CF2Cg58wEdJqg3jveJmJpui+NRCUSqYn+Z6fd85Stdv3VxMmZRTjcydDrQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nYfqMRqc; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314b316495so51627745e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729585178; x=1730189978; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FL7mVxMp+9R/aCr51mmHchZz4EvxpV8Oo1TSu+Ak7HI=;
-        b=nYfqMRqcr8Yskxe8DXd8sKjQ/POixyZja21U/M3/b0/FNN4Bc63PoJjLwY9xs4v+EE
-         UjhGwwiVlSLgNugY28fsLsYjy64+bU95FjhsgSk9P6SdOQQM1v3DlMYG/sraL2M+vUgb
-         2b5mUJS6CVEhW14zZH96PLfh8kOzjGAaLb/SyF69S7E8CG0jHSRr9e9wXGdesX8B3Sna
-         1wYPD81GI+lCNE83oaNmHOYW0yCZ5c2gv42qUJU2sBgV0/GhltyVpXPccggEBPaji+8v
-         jN1JEPVbv96wfJO67N+P4TKioK4ruW+UHUWIg5pwi7UIU4sJpahUVZqQkGtqizHpPgos
-         7VWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729585178; x=1730189978;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FL7mVxMp+9R/aCr51mmHchZz4EvxpV8Oo1TSu+Ak7HI=;
-        b=v22vVCgvtvlJfaNyNS8Ud686z91CBHS2fxx9llpZw2HcxfLXH5ZLG/8Hv9eU0hjtMG
-         zgTC7e+QNm0VWpesd+IOaShxZ2E8kJb3hEQbgQjm2a0AXGyrx6Rgr0N4aCbRWpAQLfqV
-         RpW9Y20/h7K9+ImOD5ab5rA+3Fyg4jWNGCb+3mF4e4DI0xYK9hH6nxEt2lT8XQgtQ2Cn
-         6NhYBDtjKMFnHajzMlEzmQhInjCimqcoXhSUxMA8Z7AtPeMbD2rLcZZ1gfwILpX5MWd3
-         1WTCcRPcXT2GouoDJ+VnrUDyc8A6lcLcoykBIdD33/4MwyHZ/I47jiaOBrtfsnCwHBGV
-         BmrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA9kd5Re/zxGSfGIm10DyMHCW4IIxMo7AQC4SX614EEcwxwB5juI3jiK4197s56AoDzCv0wVhevNZCoaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAbN3BU3z9vYO0TTWYaNB1QXbKEhQzPouDuf+CCvxjDxFgTfPH
-	8n8dZG36QSNuiCVPShlRUvolUQmKJC7q/1i1g+lhLc/BDUFPxJz5k7zWxy3+gmQ=
-X-Google-Smtp-Source: AGHT+IE5vRD2Vte+CM4kdc57GSfq9BMFWtI/WIUONZMXx/Kfa0SAtSqvVmqF0g9m0UTtA9qWK+DO7w==
-X-Received: by 2002:a05:600c:4fcd:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-4317cb09538mr14288875e9.30.1729585178324;
-        Tue, 22 Oct 2024 01:19:38 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0a4b26dsm6074261f8f.45.2024.10.22.01.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 01:19:37 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
-References: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
-Subject: Re: [PATCH v2] clk: amlogic: axg-audio: use the auxiliary reset
- driver
-Message-Id: <172958517664.9195.129752834617236997.b4-ty@baylibre.com>
-Date: Tue, 22 Oct 2024 10:19:36 +0200
+	s=arc-20240116; t=1729585207; c=relaxed/simple;
+	bh=IY2vJ4lBZFQ9T1PaAjWN5lFuG7xVDM/dvhYtDtFIOno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHlMg9mml1AVO1OEmM/eWmO8sZxoKenL7m0JzgnmpKhvyOH+/xJzUKBELTIcdsjRWGdP2XUGOJn0Pvvm3dPS6EUmAFysaTvnKaR2z88OsgcCQkAbJT6gvxFjumPeI3UsPw6CjQNFIyVlXIQRYfUqoX3iGJF8eRwsnVcbIY6ls3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C13C4CEC3;
+	Tue, 22 Oct 2024 08:20:04 +0000 (UTC)
+Date: Tue, 22 Oct 2024 04:20:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jordan Rife <jrife@google.com>, mathieu.desnoyers@efficios.com
+Cc: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
+ andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ martin.lau@linux.dev, mattbobrowski@google.com, mhiramat@kernel.org,
+ sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
+ yonghong.song@linux.dev
+Subject: Re: [syzbot] [trace?] [bpf?] KASAN: slab-use-after-free Read in
+ bpf_trace_run2 (2)
+Message-ID: <20241022042001.09055543@rorschach.local.home>
+In-Reply-To: <20241021182347.77750-1-jrife@google.com>
+References: <67121037.050a0220.10f4f4.000f.GAE@google.com>
+	<20241021182347.77750-1-jrife@google.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-Applied to clk-meson (clk-meson-next), thanks!
 
-[1/1] clk: amlogic: axg-audio: use the auxiliary reset driver
-      (no commit info)
+Mathieu, can you look at this?
 
-Best regards,
---
-Jerome
+[ more below ]
+
+On Mon, 21 Oct 2024 18:23:47 +0000
+Jordan Rife <jrife@google.com> wrote:
+
+> I performed a bisection and this issue starts with commit a363d27cdbc2
+> ("tracing: Allow system call tracepoints to handle page faults") which
+> introduces this change.
+> 
+> > + *
+> > + * With @syscall=0, the tracepoint callback array dereference is
+> > + * protected by disabling preemption.
+> > + * With @syscall=1, the tracepoint callback array dereference is
+> > + * protected by Tasks Trace RCU, which allows probes to handle page
+> > + * faults.
+> >   */
+> >  #define __DO_TRACE(name, args, cond, syscall)				\
+> >  	do {								\
+> > @@ -204,11 +212,17 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+> >  		if (!(cond))						\
+> >  			return;						\
+> >  									\
+> > -		preempt_disable_notrace();				\
+> > +		if (syscall)						\
+> > +			rcu_read_lock_trace();				\
+> > +		else							\
+> > +			preempt_disable_notrace();			\
+> >  									\
+> >  		__DO_TRACE_CALL(name, TP_ARGS(args));			\
+> >  									\
+> > -		preempt_enable_notrace();				\
+> > +		if (syscall)						\
+> > +			rcu_read_unlock_trace();			\
+> > +		else							\
+> > +			preempt_enable_notrace();			\
+> >  	} while (0)  
+> 
+> Link: https://lore.kernel.org/bpf/20241009010718.2050182-6-mathieu.desnoyers@efficios.com/
+> 
+> I reproduced the bug locally by running syz-execprog inside a QEMU VM.
+> 
+> > ./syz-execprog -repeat=0 -procs=5 ./repro.syz.txt  
+> 
+> I /think/ what is happening is that with this change preemption may now
+> occur leading to a scenario where the RCU grace period is insufficient
+> in a few places where call_rcu() is used. In other words, there are a
+> few scenarios where call_rcu_tasks_trace() should be used instead to
+> prevent a use-after-free bug when a preempted tracepoint call tries to
+> access a program, link, etc. that was freed. It seems the syzkaller
+> program induces page faults while attaching raw tracepoints to
+> sys_enter making preemption more likely to occur.
+> 
+> kernel/tracepoint.c
+> ===================
+> > ...
+> > static inline void release_probes(struct tracepoint_func *old)
+> > {
+> > 	...
+> > 	call_rcu(&tp_probes->rcu, rcu_free_old_probes); <-- Here
+
+Have you tried just changing this one to call_rcu_tasks_trace()?
+
+-- Steve
+
+> > 	...
+> > }
+> > ...  
+> 
+> kernel/bpf/syscall.c
+> ====================
+> > static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
+> > {
+> > 	bpf_prog_kallsyms_del_all(prog);
+> > 	btf_put(prog->aux->btf);
+> > 	module_put(prog->aux->mod);
+> > 	kvfree(prog->aux->jited_linfo);
+> > 	kvfree(prog->aux->linfo);
+> > 	kfree(prog->aux->kfunc_tab);
+> > 	if (prog->aux->attach_btf)
+> > 		btf_put(prog->aux->attach_btf);
+> > 
+> > 	if (deferred) {
+> > 		if (prog->sleepable) <------ HERE: New condition needed?
+> > 			call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_rcu);
+> > 		else
+> > 			call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
+> > 	} else {
+> > 		__bpf_prog_put_rcu(&prog->aux->rcu);
+> > 	}
+> > }
+> > 
+> > static void bpf_link_free(struct bpf_link *link)
+> > {
+> > 	const struct bpf_link_ops *ops = link->ops;
+> > 	bool sleepable = false;
+> > 
+> > 	bpf_link_free_id(link->id);
+> > 	if (link->prog) {
+> > 		sleepable = link->prog->sleepable;
+> > 		/* detach BPF program, clean up used resources */
+> > 		ops->release(link);
+> > 		bpf_prog_put(link->prog);
+> > 	}
+> > 	if (ops->dealloc_deferred) {
+> > 		/* schedule BPF link deallocation; if underlying BPF program
+> > 		 * is sleepable, we need to first wait for RCU tasks trace
+> > 		 * sync, then go through "classic" RCU grace period
+> > 		 */
+> > 		if (prog->sleepable) <------ HERE: New condition needed?
+> > 			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+> > 		else
+> > 			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
+> > 	} else if (ops->dealloc)
+> > 		ops->dealloc(link);
+> > }  
+> 
+> After patching things locally to ensure that call_rcu_tasks_trace() is
+> always used in these three places I was unable to induce a KASAN bug
+> to occur whereas before it happened pretty much every time I ran 
+> ./sys-execprog within a minute or so.
+> 
+> I'm a bit unsure about the actual conditions under which
+> call_rcu_tasks_trace() should be used here though. Should there perhaps
+> be another condition such as `preemptable` which is used to determine
+> if call_rcu_tasks_trace() or call_rcu() should be used to free
+> links/programs? Is there any harm in just using call_rcu_tasks_trace()
+> every time in combination with rcu_trace_implies_rcu_gp() like it is
+> in bpf_link_defer_dealloc_mult_rcu_gp()?
+> 
+> > static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)?
+> > {
+> > 	if (rcu_trace_implies_rcu_gp())
+> > 		bpf_link_defer_dealloc_rcu_gp(rcu);
+> > 	else
+> > 		call_rcu(rcu, bpf_link_defer_dealloc_rcu_gp);
+> > }  
+> 
+> - Jordan
 
 
