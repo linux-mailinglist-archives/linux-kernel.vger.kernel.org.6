@@ -1,214 +1,110 @@
-Return-Path: <linux-kernel+bounces-375608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656F99A9821
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B09A9824
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEBF71F239F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA43F1F239C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E017812D1EA;
-	Tue, 22 Oct 2024 05:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FD312F38B;
+	Tue, 22 Oct 2024 05:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mu60vOcQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7Gbq3NS"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AC910E0;
-	Tue, 22 Oct 2024 05:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B98312C522;
+	Tue, 22 Oct 2024 05:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729573906; cv=none; b=pDVoTyENzLvb63y57EqhogwXQb9Jbm8POyIUexK08GL4m18lVy3H4KjYCs2OPcuWRxZhSwr2rVLYnJwCsWHb9NFE+2Zbe4DJQHXFRzibzEXWK6jmCVcuXFkeO/yvMSNoPGizz9Ej10WbtTdy9yJlAOyDS+IkKI+IpCduCFgDWT8=
+	t=1729573921; cv=none; b=IYZxv7awz1a0Zw8BxM6O5Jn35/C7/mJBB9oF6WZAyvQdp0fHkvoi+wXbdcPTiyYzybqaO/nJE90/mwYmoVe+K4g+vaKJLePAB8aVC/+qscw0pKOVOi2Zw53rUkn/CZRq8Y8QZVsL1pYap62jNYyADpWj8cDbzMnCyNINGxvjDvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729573906; c=relaxed/simple;
-	bh=77///Hghh184qaPOXx3OjQPZRdLqRN10rmRRS+IaLto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dYBKSBZ0yy1h6merb2kTKRS2p6GGEak72qcDF8pJhnBaJQm5hMJQyACGwpyE6yjQL8BVSTAW0A41vKvtJYAeuUM0hne4L9xeQZV4bGb7P0cSDTGzQLOcWWZDzOBC5efS4AFrBwowtYeR1TQ/Foi2bw2v7oPwOdxEVy+NKB9qPdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mu60vOcQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A97C4CEC3;
-	Tue, 22 Oct 2024 05:11:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729573905;
-	bh=77///Hghh184qaPOXx3OjQPZRdLqRN10rmRRS+IaLto=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mu60vOcQtKJUhNQVlvcjbHMjXfGgK2l/h8rykjvHFRKIlBcxkiXx00rrpY21GykkH
-	 1bWy0BOFIvxR8/pfJxkg7oRmgXDoIfZ0IzAz5nWHnJOyFxDTqRdVtVf087iJh8N5CC
-	 0uq9CrtyfBirHb7mv9g8hgpWpYnZIWfkYscx/v8KA9tGDSeacPCWP3wjVRPudjaHMM
-	 QJz1V6RygnHcvpVvtBgVqXv+aQVF7A+QiSaWaIkdZmYgXTF/K1ZzKkcq8CdDpDRURQ
-	 ozBi9urCkLxzCAwA2TaGPp7LnOpQ4ydwIpc34+jj3ajuKA3SLqPseMooTtIb/z5zJR
-	 INcN5y1baoVFQ==
-Message-ID: <e7a1622e-6406-478f-bd3e-08a8490d4db0@kernel.org>
-Date: Tue, 22 Oct 2024 07:11:36 +0200
+	s=arc-20240116; t=1729573921; c=relaxed/simple;
+	bh=6nL3F0+rXvu/ufwo6ILRxMgK5uGgnngX3VW9rqLR2cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jJIpTq/icyRW0cA/hioFV932fuymwI68jfcLgOZe8Vazjkn8Uajb463/hb/u3G1q5aVDPoPFZaD94n2tLUPlmogNqx1apC8oQk6bY/9hL7y8RNnHpRjS0n5RTuIZxtCZ9/CMoiMRPQCrO6LGdWaLD7UCoVRiVIw7Oi0WTbP9B8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7Gbq3NS; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c693b68f5so55562675ad.1;
+        Mon, 21 Oct 2024 22:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729573919; x=1730178719; darn=vger.kernel.org;
+        h=content-disposition:content-description:mime-version:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cKMBsCanZz1Gh8n+AXUDeahzWcX6egHuFJT38KRlsqs=;
+        b=U7Gbq3NSUCTWk9aoGgC3vkORAN4WO/65FMpR9u7w/ny/Jze3lZvd0RswgDvD5Nj/9T
+         VlMoxZ/rumAG/7W6tX943EIx4P5IRZz0xpTLOB60zJdGiK4uyYt5XMzWJh6W1l4SrLg/
+         K3bQ9iT3gTwgAPvfIZZrtDXVExwMSOsuFuJPlYw1pWChup5cb1MtYMbf4cuMCCHWMqks
+         tCxG2PDPEYIR0nLKVkPbA8DL/zZdtkbo9gkRIOFg8I0q027IUV0L3QfA4eCi/HNEGll+
+         ETaefy5aWpyfteZyW3KDhy1IMnGiAyPrEft1xW3EMdsudNzTwHrnrDH64b+h17NMfiPn
+         2GmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729573919; x=1730178719;
+        h=content-disposition:content-description:mime-version:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cKMBsCanZz1Gh8n+AXUDeahzWcX6egHuFJT38KRlsqs=;
+        b=qNxYZS+XK8SMhtdPBCcBSR2leXHpsqQ69DtRFqBolO7xayrJ/89uETRqXl7YW2zS9/
+         mX9vMS7tHgkQ3GRgTDaVENJWBDnq90F2MR4YtOQY+SSM5cBBY1en72wNYQ/1GVcAnOrQ
+         mv2Gi3YvSQFO7SFgPTAX2PGoO2FpikQjARC6ERG6GdIp62VA9Nu/JB01C050nbNeKcQo
+         kzl94DM9nk2FMGYZl080gGXshHmedsZB5vRIBJ9qfVMLLomrMdvJTKBildjo6dJf+myQ
+         Q5aFPg2lw7MbB8lcdsb05xbvnbICqI/s4/6xuHzDOtcQsnlSe6u6QZUOHAAYpyXPC0tC
+         86Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ew3arVYQfKXMbV/iZIiF+B9+fjjAfCP42L7qUYm5IQJE1OLTNgNKS0mxSmrOvzz0XckeA/zyQUuDVYTR@vger.kernel.org, AJvYcCUCTi0NA9rBSx+CC5RuM7pHNX3i8kO4ZMrGlwQG/Lc6RR6XtTf60lD0w9hDr1WgZu55QT/QUA4pp/ce9sqhS1I=@vger.kernel.org, AJvYcCVLLcfNmB0dCy1GjrAJguImSCbo7QD1mIcDvR5JrzDvpsB7eysfgNJ2cNtoA/RHPgCBt9nxPXPo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM83+bzzumhZtWzd6gNdz+J9Bx8sKWx46R4um4hNC8/yGnN4Yz
+	GcqVrdXDUUtLp4lFebW1Q/JoSKftByjkUzoBPccAxT13DtWAmsft
+X-Google-Smtp-Source: AGHT+IFa0NskIKUN1a+IaBC/kiN3u+O4oI32iW4jSozQeLQ+HEEZ9YiELB5Tn/cEBttmtLXKufCSSw==
+X-Received: by 2002:a17:903:2306:b0:205:3e6d:9949 with SMTP id d9443c01a7336-20e98596fc9mr18662135ad.52.1729573919236;
+        Mon, 21 Oct 2024 22:11:59 -0700 (PDT)
+Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:f589:b8ad:400:2216])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f3665sm34705005ad.271.2024.10.21.22.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 22:11:58 -0700 (PDT)
+Date: Mon, 21 Oct 2024 23:11:56 -0600
+From: Johnny Park <pjohnny0508@gmail.com>
+To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [net-next] igb: Fix spelling "intialize"->"initialize"
+Message-ID: <Zxc0HP27kcMwGyaa@Fantasy-Ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
- Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
- <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
- "marcel@holtmann.org" <marcel@holtmann.org>,
- "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
- <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
- <20241021064129.trchqa2oickna7pc@pengutronix.de>
- <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
- <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Description: Typo fix "intialize" -> "initialize"
+Content-Disposition: inline
 
-On 21/10/2024 12:25, Marco Felsch wrote:
-> On 24-10-21, Krzysztof Kozlowski wrote:
->> On 21/10/2024 08:41, Marco Felsch wrote:
->>> On 24-10-07, Krzysztof Kozlowski wrote:
->>>> On 07/10/2024 14:58, POPESCU Catalin wrote:
->>>>>>>>
->>>>>>>> +  vcc-supply:
->>>>>>>> +    description:
->>>>>>>> +      phandle of the regulator that provides the supply voltage.
->>>>>>>> +
->>>>>>>> +  reset-gpios:
->>>>>>>> +    description:
->>>>>>>> +      Chip powerdown/reset signal (PDn).
->>>>>>>> +
->>>>>>> Hi Catalin,
->>>>>>>
->>>>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
->>>>>>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
->>>>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
->>>>>
->>>>> Hi Sherry,
->>>>>
->>>>> Regulators and reset controls being refcounted, we can then implement 
->>>>> powerup sequence in both bluetooth/wlan drivers and have the drivers 
->>>>> operate independently. This way bluetooth driver would has no dependance 
->>>>> on the wlan driver for :
->>>>>
->>>>> - its power supply
->>>>>
->>>>> - its reset pin (PDn)
->>>>>
->>>>> - its firmware (being downloaded as part of the combo firmware)
->>>>>
->>>>> For the wlan driver we use mmc power sequence to drive the chip reset 
->>>>> pin and there's another patchset that adds support for reset control 
->>>>> into the mmc pwrseq simple driver.
->>>>>
->>>>>> Please wrap your replies.
->>>>>>
->>>>>> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
->>>>>
->>>>> Hi Krzysztof,
->>>>>
->>>>> I'm not familiar with power sequencing, but looks like way more 
->>>>> complicated than reset controls. So, why power sequencing is recommended 
->>>>> here ? Is it b/c a supply is involved ?
->>>>
->>>> Based on earlier message:
->>>>
->>>> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
->>>> that both wifi and BT controller will be powered on and off at the same
->>>> time."
->>>>
->>>> but maybe that's not needed. No clue, I don't know the hardware. But be
->>>> carefully what you write in the bindings, because then it will be ABI.
->>>
->>> We noticed the new power-sequencing infrastructure which is part of 6.11
->>> too but I don't think that this patch is wrong. The DT ABI won't break
->>> if we switch to the power-sequencing later on since the "reset-gpios"
->>> are not marked as required. So it is up to the driver to handle it
->>> either via a separate power-sequence driver or via "power-supply" and
->>> "reset-gpios" directly.
->>
->> That's not the point. We expect correct hardware description. If you say
->> now it has "reset-gpios" but later say "actually no, because it has
->> PMU", I respond: no. Describe the hardware, not current Linux.
-> 
-> I know that DT abstracts the HW. That said I don't see the problem with
-> this patch. The HW is abstracted just fine:
-> 
-> shared PDn          -> reset-gpios
-> shared power-supply -> vcc-supply
-> 
-> Right now the DT ABI for the BT part is incomplete since it assume a
-> running WLAN part or some hog-gpios to pull the device out-of-reset
-> which is addressed by this patchset.
-> 
-> Making use of the new power-sequencing fw is a Linux detail and I don't
-> see why the DT can't be extended later on. We always extend the DT if
-> something is missing or if we found a better way to handle devices.
+Simple patch that fixes the spelling mistake "intialize" in igb_main.c
 
-Sure, although I am not really confident that you understand the
-implications - you will not be able to switch to proper power-sequencing
-with above bindings, because it will not be just possible without
-breaking the ABI or changing hardware description (which you say it is
-"fine", so complete/done). I am fine with it, just mind the implications.
+Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 1ef4cb871452..ad091179872b 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
+ 	/* initialize pointer to rings */
+ 	ring = q_vector->ring;
+ 
+-	/* intialize ITR */
++	/* initialize ITR */
+ 	if (rxr_count) {
+ 		/* rx or rx/tx vector */
+ 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
+-- 
+2.43.0
 
 
