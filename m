@@ -1,98 +1,156 @@
-Return-Path: <linux-kernel+bounces-376250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48AD9AA21D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4F19AA228
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB3EB211D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77292281B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D388519CC21;
-	Tue, 22 Oct 2024 12:30:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B9719ABC2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E897319D074;
+	Tue, 22 Oct 2024 12:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FS8RM5Tm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EBF19CC0A;
+	Tue, 22 Oct 2024 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729600256; cv=none; b=pXPHMIEriapaPaf3yJAZl/DOyblnATgqytk950FhJf6tcsX17+E6+d6VZHJWMh/XnukZ+LxMs5es7KSrM9rNhsHXYeakpeVqEeWhkrEyNQDaDqSJvkIcSuI967q6gbVa3edEZMmRAd3sjVi8KPvc8Nur27yg84j567vEt6Fzet0=
+	t=1729600383; cv=none; b=dhV/LlZ0AMUR6zqJs63Dtp2lzr31+zx55boMUU8Eb7LAb0bcXkP9qDJaxU9c1KSMZAbGGz2qZ5G33i6kcG6IUg9Tjz+G5kTXvHSIkaC0kkQADl2BnlAEFACUlAAFCO4dWDxq1v0WuI05n9E2hK2J3G5LkKYtYjXPVpVLWm2hSVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729600256; c=relaxed/simple;
-	bh=s8KpSZ+s4Sc9Y9N9eZe6/xcSLB5erCt8F2Bylz4cMlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Je/wJZ151RH9ylze2mFAMY3cPVwo+iedIGRQDbBSrZEaNYl3ugNQUJFdMODr7E5d0biSfb5Jcx0hFgjGr5Fif/HhxBOxljTPIMCxFCYeBlETxsZbeWxToAXWWQvptMO/4N/IeBVm+jGbuKDPI0xYEl65wC7UH4YsQyWm4DPR+TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB111497;
-	Tue, 22 Oct 2024 05:31:23 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D75B3F71E;
-	Tue, 22 Oct 2024 05:30:53 -0700 (PDT)
-Message-ID: <aa07f3e8-0f68-4772-975f-d9deefd7a019@arm.com>
-Date: Tue, 22 Oct 2024 13:30:51 +0100
+	s=arc-20240116; t=1729600383; c=relaxed/simple;
+	bh=kHt3cV2WqLQdIzNs9Ys4unZsTki57cMHnJVN6iEj/v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRIcQbzwI1fKqFDpY/WIJAr0Fg6FuFRNjgkkMM7WfUqtlr3XDCms0Zwt/SdI/txCBjtp/rabU5ugdbcWvKYizC7smnm7us8XwX5pEx9c8t6hGC8d5kZUkwaNOOk3hw3p8nH4GHEU2JwUY5GtYKeHASmBORnRA4NkMvgiavMi9sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FS8RM5Tm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9E55840E0263;
+	Tue, 22 Oct 2024 12:32:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MNtk12J5kIPF; Tue, 22 Oct 2024 12:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729600374; bh=Z5edvg9DeUaky1j2eJnv4m6KOWF6eAnEWvX5wYAyLdM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FS8RM5Tm1L0aw4EouK+utOpJEvMd4aOXkqBzYRp1y+x7XgyOlQQXTE0tGnWGX2gqM
+	 ZNbb7OtzIG/xw5D6zbAR5CVxtqmsedLQ1mjPo9Hc92ywvj8zKJ+i6D0j8lzM5XrWAM
+	 qIigmvhqGquc94Xp1JbiomBxxoWNaDlX2z86DNfOm/ro+lcy/oBvnrJvYBUljGLrk4
+	 VBXtjGdptFuUY5ozh/LHPNHNebNBLEOw0O9m3XBhDc3JQjKmawFdegGC0ujAW+6P1b
+	 mH0N9YnUM1jVYs/Po85b8LBy+51Gdqy9XTAe0cG38nND1xpFz86V6kE2S85eQEKebR
+	 +Zg5R0vUpwE66lSYIK+9aw2P3nTsOHRiv4ygtcQLNbGP04lBZ2MFdKdESbMOLLAtnb
+	 cjzfAW8MVrBUWMPaPf+eQ97JuPgPMCW5mBgyPGRQTiUbV7MdoUYWvRfpGukKZXx4Vc
+	 jUULXx3reQS3IyLyoMesssz6zPsAOGGWGucjI38ZdzRW0xPVckGL45I/ZMZwZ8rByU
+	 cVfRGyal8LWLtLNAZlUx/d1ck9Z3FAPnVeIQUcrrdO/5u7uHWtcEsqM00UqdlaVWth
+	 j0IvwcGU3OWNILW/lZeNT11jO9RoiQt5SKvbullqs82i092zNkNKsvOXWHIhIBaBtO
+	 aVEx6vu4sETu9e7oCKdxNRDw=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4937140E0184;
+	Tue, 22 Oct 2024 12:32:46 +0000 (UTC)
+Date: Tue, 22 Oct 2024 14:32:40 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Thompson <davthompson@nvidia.com>
+Cc: shravankr@nvidia.com, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] EDAC/bluefield: Use Arm SMC for EMI access on
+ BlueField-2
+Message-ID: <20241022123240.GGZxebaKRONhSThUCC@fat_crate.local>
+References: <20241021233013.18405-1-davthompson@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: Distinguish between sw-msi and msi
-To: Angus Chen <angus.chen@jaguarmicro.com>, "joro@8bytes.org"
- <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-References: <20241021113448.1894-1-angus.chen@jaguarmicro.com>
- <a25451b8-b898-4354-acd3-2826a340f9fe@arm.com>
- <TY0PR06MB49849D564F3FFE2E1957F4AF854C2@TY0PR06MB4984.apcprd06.prod.outlook.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <TY0PR06MB49849D564F3FFE2E1957F4AF854C2@TY0PR06MB4984.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021233013.18405-1-davthompson@nvidia.com>
 
-On 22/10/2024 1:02 pm, Angus Chen wrote:
-> Hi robin。
-> 
->> -----Original Message-----
->> From: Robin Murphy <robin.murphy@arm.com>
->> Sent: Monday, October 21, 2024 7:59 PM
->> To: Angus Chen <angus.chen@jaguarmicro.com>; joro@8bytes.org;
->> will@kernel.org
->> Cc: linux-kernel@vger.kernel.org; iommu@lists.linux.dev
->> Subject: Re: [PATCH] iommu: Distinguish between sw-msi and msi
->>
->> On 2024-10-21 12:34 pm, Angus Chen wrote:
->>> iommu_group_resv_type_string use the same string of IOMMU_RESV_MSI
->>> and IOMMU_RESV_SW_MSI, Make a distinction for these.
->>
->> Why? What in userspace needs to know the exact details of how the kernel
->> and the underlying hardware are routing MSIs?
-> We use smmu-v3 for a dpu design，and we set a private region to handle msi region like x86.
-> We set some private iommu register to control this.
-> If some customer want to use their os like openouler, we use sw-msi mode.
-> If some customer want to use our customize os ,we will set msi private.
-> Some customer use openouler and we private smmu-v3 module at the same time,
-> 
-> So I want to use reserve-type to distinguish between sw-msi and msi.
+On Mon, Oct 21, 2024 at 07:30:13PM -0400, David Thompson wrote:
+>  drivers/edac/bluefield_edac.c | 169 ++++++++++++++++++++++++++++++----
+>  1 file changed, 150 insertions(+), 19 deletions(-)
 
-But *why*? What do you expect userspace to do with this information? It 
-was a deliberate choice not to expose this distinction, precisely 
-*because* it should make no difference to a VFIO user whether an MSI 
-address range is defined by the platform or by the IOMMU driver, and if 
-userspace did think it wants to know that then it's probably doing 
-something wrong. IIRC, the reason for distinguishing "msi" from 
-"reserved" at all was just as a hint to userspace that although the 
-address range is still not usable for remapping memory, it's a good 
-place for a VMM to put an emulated MSI doorbell in GPA/IPA space.
+Some trivial simplifications ontop along with moving the struct member
+comments above them (not sideways) as requested.
 
-Also, this has been userspace ABI since 2017, and changing it has a high 
-risk of breaking existing users who are looking for an "msi" region, so no.
+I'll queue it with them ontop unless you see issues.
 
-Thanks,
-Robin.
+---
+diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
+index 126efb96deee..739132e5ed8a 100644
+--- a/drivers/edac/bluefield_edac.c
++++ b/drivers/edac/bluefield_edac.c
+@@ -89,7 +89,7 @@ struct bluefield_edac_priv {
+ 	/* access to secure regs supported */
+ 	bool svc_sreg_support;
+ 	/* SMC table# for secure regs access */
+-	u32 sreg_tbl_edac;
++	u32 sreg_tbl;
+ };
+ 
+ static u64 smc_call1(u64 smc_op, u64 smc_arg)
+@@ -138,15 +138,13 @@ static int secure_writel(void __iomem *addr, u32 data, u32 sreg_tbl)
+ 
+ static int bluefield_edac_readl(struct bluefield_edac_priv *priv, u32 offset, u32 *result)
+ {
+-	bool sreg_support = priv->svc_sreg_support;
+-	u32 sreg_tbl = priv->sreg_tbl_edac;
+ 	void __iomem *addr;
+ 	int err = 0;
+ 
+ 	addr = priv->emi_base + offset;
+ 
+-	if (sreg_support)
+-		err = secure_readl(addr, result, sreg_tbl);
++	if (priv->svc_sreg_support)
++		err = secure_readl(addr, result, priv->sreg_tbl);
+ 	else
+ 		*result = readl(addr);
+ 
+@@ -155,15 +153,13 @@ static int bluefield_edac_readl(struct bluefield_edac_priv *priv, u32 offset, u3
+ 
+ static int bluefield_edac_writel(struct bluefield_edac_priv *priv, u32 offset, u32 data)
+ {
+-	bool sreg_support = priv->svc_sreg_support;
+-	u32 sreg_tbl = priv->sreg_tbl_edac;
+ 	void __iomem *addr;
+ 	int err = 0;
+ 
+ 	addr = priv->emi_base + offset;
+ 
+-	if (sreg_support)
+-		err = secure_writel(addr, data, sreg_tbl);
++	if (priv->svc_sreg_support)
++		err = secure_writel(addr, data, priv->sreg_tbl);
+ 	else
+ 		writel(data, addr);
+ 
+@@ -393,7 +389,7 @@ static int bluefield_edac_mc_probe(struct platform_device *pdev)
+ 	 * b) property is present - indirectly access registers via SMC calls
+ 	 *    (assuming required Silicon Provider service version found)
+ 	 */
+-	if (device_property_read_u32(dev, "sec_reg_block", &priv->sreg_tbl_edac)) {
++	if (device_property_read_u32(dev, "sec_reg_block", &priv->sreg_tbl)) {
+ 		priv->svc_sreg_support = false;
+ 	} else {
+ 		/*
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
