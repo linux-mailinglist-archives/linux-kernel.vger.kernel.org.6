@@ -1,133 +1,238 @@
-Return-Path: <linux-kernel+bounces-375420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83D59A95B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:50:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92D99A95BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A451F22A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848DA2838E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95777126C04;
-	Tue, 22 Oct 2024 01:50:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C37130ADA;
+	Tue, 22 Oct 2024 01:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOCVCA6N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A512917993
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729561806; cv=none; b=fMvLEnxS8NEvlLRDbCo7WSn/YYamjZmtf6g/YkEIpAR7NMItYBTKjp1sO/AcZ7ynVI874XO24f1AmMwHS8GYXe1g2K9jKhx5Aa7jdTc6Vxa2Dr6swYB3xDzkFl7pHUXkF+TbJZUoN8eVly1sbTT5QcvgsuZ3larP1epLQI0bCPc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729561806; c=relaxed/simple;
-	bh=UTnuywt4nyP3mmg7CHAIDAQsx3aYs2JWUdkTAAFncmY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VcA1HWnXVjA2woHZrQJIS/YahP2Mkd0tVhgTNXCLoggaL5TvzbThkcPQv59V73AnocF2eXv+/Qns1H+AKhTpwqn+ERSvO6acHWvBBhpoi3GM/u2hjEcMA7lfmEBWPwhQ2pwoI/MJgJixUFLdKJ/QwSvc/8vsdgUc+FbriD0Srek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so49897755ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:50:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729561804; x=1730166604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HgmwNQfqsKcOMKindI3W18Ec0Q2U/e0fdYSbLLcH+oU=;
-        b=hzjP6AwyMAOTukWu953CG/eDnaV9LRgyjKQLBUstca4mS44tGBwLX3diZNFmZ7gLPf
-         EVmEXd2AC69M7hnqUp5/Sza7tDx0wdwPkY9KHb6Xdiss8NUFxCmnNInSa6wn6tE2APXw
-         ibgau395W+1584tEi1IDCKm3GtjA88BEZqeOGmtd9h+zgTyxxoiTXJPeI0ELIL9WD0F6
-         bg9v9QkxiywPVRAoWZKEkf8IZQ+CWw9ZarZfxNQQ6qz7+27mjfl6+of0AWfUuGecvsqN
-         Me3sCJj9le7IkFe5ruVBtcu08T1cZmW2F87D2RoFCc6YWKnNGZq2N7xG91k8qkRU9uA5
-         ZYyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2VRTZ/NEzzvi51gy2ECYmugJQLyrQpISOPHx1UfqSnK5TuXWpgw0V4seaAcSxRkqhf/sdJrLlCjjriDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySLHWi33YLkNNqnU2eV3vKETAcmnhj8SWC14jnFaDeGY5yb9gy
-	azhivRmdA4X10CviDuK1Gg7ntf69s7xr82xjO8HNJp9ADrcz3VfpCZcDms27yaxBOuhkTc3AKZj
-	j4DFmiPinNQnISgSS2SrMdOYoOuapevLKwD3qLz2bs2y7Ashk03+fsdU=
-X-Google-Smtp-Source: AGHT+IH1TBHWorIXr39NQH15YpMPv5VQb4pLKvKU5mnRA9ySO1FT9KwwGJBjmdokDkgNKI50msKUPwBSbumlb3viLzLFhHihbUn0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DF8768E7;
+	Tue, 22 Oct 2024 01:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729562032; cv=fail; b=HtYEMP6+BZ/sHie856Yha/ySLgO3Uw6PywEjw413zImsfU4G1yx90nf9gXQYoymbghGS9QltWJ+OnYF/68C5Y/bA91cj1U6jFHPwT90gd/6bFfUSk8bjl3Gg/1PISy4ubqYvHStLSWFI5aRLULFTvW2xvBgz0DjyOpvfwB5I9Do=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729562032; c=relaxed/simple;
+	bh=XjhrJ2fQOxX8pzclig076w+FmnMCFE9SZKR6Xc5K92g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mxQpM4/QbiDGGwJw04nAmGt//HhbiNkKbEVInD08Yu4zUHexjmBi8y/lMrFHLcNOc900FyE2yYbgDiJgWUuxYukC1EwpbbaJ95tvQdy3NNEDTv8pOstahRsCLG/8dk7y+1WB5M9JEPwURAIkxdq87ists8iHVPxUiVzYHktZW8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOCVCA6N; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729562030; x=1761098030;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=XjhrJ2fQOxX8pzclig076w+FmnMCFE9SZKR6Xc5K92g=;
+  b=JOCVCA6NJJQHUrPG/W45lggSEH1YzD3EUnBF7TynPrsZq2aH/b3c33fp
+   LOIPJtbmUIQbJwVQoN6pErXY5EX8sFws+r81VcrL4lo9Lx7+9KJuBZ40k
+   970DlMUYDVf9iDwWt/JtS2ql2gaaf4wFORTAHpcIDeKEpcS1pkmCDcSwO
+   0LoOwuliVvy0wATmj6Ws9SsHllc79usKIcYCbWq++p5ChSUOMb2r7kkff
+   EMdH46UTkhpQhXSoFIYMHCqS3WvhQgWDQe8Twnfu+S5Q/LClIOprCMyve
+   62BIPJmT96odEHWPt0rfHVZ+m7Tr/jJbRwWdQz9KseVwox39nsogzJiue
+   w==;
+X-CSE-ConnectionGUID: SPDcdaCQTaGqLMINL9Rsjg==
+X-CSE-MsgGUID: PD58AMdHS5W0XqdH9WW43g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29016766"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29016766"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 18:53:48 -0700
+X-CSE-ConnectionGUID: p7REMbFwSVSUCDkja+aZWg==
+X-CSE-MsgGUID: b6lAnnHaS/mwO+na22EQVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="79702689"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 18:53:48 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 21 Oct 2024 18:53:47 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 18:53:47 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.49) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 21 Oct 2024 18:53:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uKMu2e3qhVF5HYUfRtoEtFWB+7ItTuHNGbyaVbd4gs6IyhFcEDXqN60hGVS1Fbu55t4NASsaJG2vswCniIWT3codRO/lknE1pgeRQSmEZAkrXFnQBxjZitj3CSnQpbEFMo2o+Ydg7UingNu+7eCtAa1pdsh48BQ1+kgeQNQFGTO4DryPsjYj74sYzcsNovTbSL/R2gsRrePicrW5Hgl6TvWm3KAxnWq0wJ9dE+EOMmKwFvALbsOWz0694Fa7tiMmyQH83sEhjEKvvMmPrQYWcyxsB4Xf4tRYrhtPdx3svKBNjI5EcHxtupdZf4k+hCx2nrV9QOihC3h8NrI5L4X7VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KF/dcXgUkYQbnq50DWqb0NBRMqntWIroKy46rNU5eMQ=;
+ b=ds2K5DoTy9oLu5msJzOn3ECszjZQz/LOQaXH7iqfDciei3/IzH12+Jd+SdgFjKz84M8UF70F9Ny8y4bb3t+28GHDNO/uOBb5v/B5Zzq5IvVrMduYE0r15ug7X5WinCDPhZ5tEJ5rMIpZF1CNXCiwniK0kYODu0aKld/uy10PXtt7S7gdh/mtDr3ePuKm0/zomrKlA6ivWLNvBWtkRugqBGxwUreF5eSdrKXsyeyl2BO7WUiD9oFL3y9GS3YywXy/f3+SLF3FuFvHDFSxurwku1q8lWl4K1vgnOuIyaI8FJexINyOgv3Unm6TUePHbIh4GHmfhE42STBr0CJUIXUXQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ BL1PR11MB5238.namprd11.prod.outlook.com (2603:10b6:208:313::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.29; Tue, 22 Oct 2024 01:53:39 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 01:53:39 +0000
+Date: Tue, 22 Oct 2024 09:51:13 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+	"Oliver Upton" <oliver.upton@linux.dev>, Tianrui Zhao
+	<zhaotianrui@loongson.cn>, "Bibo Mao" <maobibo@loongson.cn>, Huacai Chen
+	<chenhuacai@kernel.org>, "Michael Ellerman" <mpe@ellerman.id.au>, Anup Patel
+	<anup@brainfault.org>, "Paul Walmsley" <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Christian
+ Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank
+	<frankja@linux.ibm.com>, "Claudio Imbrenda" <imbrenda@linux.ibm.com>,
+	<kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>, <loongarch@lists.linux.dev>,
+	<linux-mips@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Alex =?iso-8859-1?Q?Benn=E9e?=
+	<alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, David Stevens
+	<stevensd@chromium.org>, Andrew Jones <ajones@ventanamicro.com>
+Subject: Re: [PATCH v13 34/85] KVM: Get writable mapping for __kvm_vcpu_map()
+ only when necessary
+Message-ID: <ZxcFEQOk0MFQt0KU@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20241010182427.1434605-1-seanjc@google.com>
+ <20241010182427.1434605-35-seanjc@google.com>
+ <ZxYeFKl2KbZ3Ila1@yzhao56-desk.sh.intel.com>
+ <ZxaZtJGfN2_5Db6h@google.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZxaZtJGfN2_5Db6h@google.com>
+X-ClientProxiedBy: SI2PR01CA0036.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::22) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198b:b0:3a3:4221:b0d3 with SMTP id
- e9e14a558f8ab-3a4cd2f8be0mr11246615ab.0.1729561803849; Mon, 21 Oct 2024
- 18:50:03 -0700 (PDT)
-Date: Mon, 21 Oct 2024 18:50:03 -0700
-In-Reply-To: <d72c960b-b524-4c8a-9809-7885aaf6a904@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671704cb.050a0220.1e4b4d.006b.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text
-From: syzbot <syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, lihongbo22@huawei.com, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|BL1PR11MB5238:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae4234b2-2c35-4949-a44c-08dcf23c598a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?XR5uh6Iay0FxOBK2s0pBDA2OPpNMsxmkHZoWUey97VUYNqciH3YbDwPV3a?=
+ =?iso-8859-1?Q?XJWP2gvbfGb5NU9iOLclj+HZ87UPpBibjTXSM56C+P81EIh8tGxLTl79X7?=
+ =?iso-8859-1?Q?jdZzB7uTyNl5KaYQn5Ax3BXki80eRLplVsNj/Q8933GS6VS0EmAvCgxJ4p?=
+ =?iso-8859-1?Q?ZHrfV/Vg+YrAxZAj0Nb/uq+kOlpJv+zCiAR0+3AoYLzuFea1D1cyZ/a4iN?=
+ =?iso-8859-1?Q?t1IJGBU+iFc4aGJl0xH5/jmdhBs4ewDAC0UlHuUP8K7By1IYXQpn/nVc65?=
+ =?iso-8859-1?Q?QsLSsqjGdDFFlWLwwYWyr3vg0xa90t07+SRiwR2Tkvnog8+ys7Ib15EoXs?=
+ =?iso-8859-1?Q?dJK/9WUZaI09TYzjreBIH3GD+p5T6JUrbZRZG//Gj2SkkF2fUD9Lb38hvR?=
+ =?iso-8859-1?Q?xmx32QA5XlOS7kXbjdI9qGPbhVZK57jpXi/KUd7jEOqTUSyVCwHKToKKNO?=
+ =?iso-8859-1?Q?8gTR+5nNqf/4f3Lzp0/e4VTYCZf1sEzAAOpE3fM6WCv3p6qN0bfR6hC2aE?=
+ =?iso-8859-1?Q?sz6/l9ldqzgP+4ngiZbkFCP+TEW3gxInu7EXc5lSXWYG3aYCWZoU5cYVzh?=
+ =?iso-8859-1?Q?urx0KqRB9lzGz0UnwLi3KROy1gbLniiKGbHOxw/HBybiRv10uKXU7pMjwm?=
+ =?iso-8859-1?Q?cm4W/Bg9WRnWhYSGw5SRpmej4CiYIHM9qtZ6MUN6TKc5ZONCGwrMhCbt5e?=
+ =?iso-8859-1?Q?a2jNHukizwTIQajA7C/cxy26VQzV0R5xHLMN5FSE8asY/ZNk17JJILk4cl?=
+ =?iso-8859-1?Q?7t1duBDTxBlamv7a+3W9wwNoawcNdNWMQIcj8BJXvhvDgRxiwE2HWylO6f?=
+ =?iso-8859-1?Q?QfPC4etjhl5fdc6VGvVtBhwUtfTlolQ2JJZcCDbo78rL43ud5YVCOI0AJ6?=
+ =?iso-8859-1?Q?izIA7jvLgiFVbOEGBsu2MSakr0CFW7h3aNWAH+hEqNiRMOmmG4fuwhtr/K?=
+ =?iso-8859-1?Q?9O4+djOcBb5svg5QG/VLz2FtgV3XJW2Ae0W0rU4KfdiXLYMP1Wn6IoGnPn?=
+ =?iso-8859-1?Q?Ue2IstwoFRodu16X2+JiZGgLmyVYow+EvqlwkG0rbHLpTQSAKSA1BcYTgi?=
+ =?iso-8859-1?Q?BZZPplMCCim2jPV4hp8odg3uHodQF+zFFWuaBbCjsam9qL+j/yUabfTQr1?=
+ =?iso-8859-1?Q?gwS7hF8vba5kW4sNO7eMychtC5dOt5VPoUtT29giUx11qKSejlqS1rPg/R?=
+ =?iso-8859-1?Q?z2g7xIB/LawDSq7HKbBFT4p8MxCxkCJlKsXwuX78r8gy7Pi1s7IplL5sGv?=
+ =?iso-8859-1?Q?DAfg8RPufnjB4/ZlbLyDrLu3PNTO5D/ZsbqKWQbaM4KcHoelNxh1rfE3aU?=
+ =?iso-8859-1?Q?Nw8HXag2I5zQCyYvLJ0wp12SEQqueDPSFUshfHFskwn68IQ=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?hhwEO92IKHH1GRQW3yu8AzzXwNkVxg6RnVONBjkHNWTJkH24c12B+qJcl7?=
+ =?iso-8859-1?Q?P+TO9B394pyXEx5ZPGAMq9/5BcrEgN/v7tLZkwdFrUOOcnGB7pQFC3YIp5?=
+ =?iso-8859-1?Q?3VwqgP/4na26hAT0x7yKn4w4ya6nmXgyh29bxr7X/sLioMKuWgOf4Vva66?=
+ =?iso-8859-1?Q?DRcPUvbSI+fSkUDmn3UCnrVeCmOuz3oEpfx1Oya0nIhmAuRIGf2PJSAz0V?=
+ =?iso-8859-1?Q?Ynck8GXj8oT4gsR7OD6QjxGqBZZczdvgpcnjNoAxkcJKdY1kkQ36LW/rKr?=
+ =?iso-8859-1?Q?kiKgW/wC7ogZ0Gj8msThnbzG/yD0Y0h+7t3NWn0Kue0Y4FitQ8GkEDY6fV?=
+ =?iso-8859-1?Q?kIEudk3s9fn9sJdYrJZRrTHIXPvTbJeOxvI6QfvrXK8sOxUmCPAVQjeCt2?=
+ =?iso-8859-1?Q?AY1Z/6rLlDcXgCLX92Au0DT5tF7Ea8/VK/Dvqt5QdXQjmzHWDoBbbw/7aJ?=
+ =?iso-8859-1?Q?/ppgiOe0v4o2j2ZXKR7YewYe80fKogK0cCHYpEftU4Sx9c9Nlv9oaWqYsb?=
+ =?iso-8859-1?Q?f8l2Lue/imanUp6IT39tI8pNX5ewKOvUTMThzsxBkqD6/axEsteDPTFsRe?=
+ =?iso-8859-1?Q?YiNTDpBeSbSEOyZm8mraJTezCUswI2AAO35ISbpXi77lHFlzWumO6CE/1w?=
+ =?iso-8859-1?Q?BMQLKBceFIrW2ToxnN7vXHSXPibgRkukImA/hwfdvvnnbEErdoiI1tCMxp?=
+ =?iso-8859-1?Q?ywSfekANh7VoXPbeh208y/UM3XqGGvA9s8AWDwQ/7g66pYEemyAgdzQX1V?=
+ =?iso-8859-1?Q?axWGdHKWRqYEY2DosGS1Ep+zewHS22OfJu75BfY+2iWewC9lY7CeiRsaTv?=
+ =?iso-8859-1?Q?U3a4XNjLbAFPPVO9kYS6PGwQVvbk36EI84WC1E0H/NQem3UpJBdeKlPXqu?=
+ =?iso-8859-1?Q?qydVLP5rg4ovu6Zhgeckw9zKa96yxSKqnAw9bOPJDtql6kzLl15zWh5w71?=
+ =?iso-8859-1?Q?Z7CN67+zRZPVpwDEE+fs9d53GlKHUSgtmiVv2alFg/Mymb0YbQ8b0foirx?=
+ =?iso-8859-1?Q?2pfs9lcV77p7QBeW0MAs8Y7Y+q9OCZWVqhTNm6nUYlzkN7t7Hor0XspaLq?=
+ =?iso-8859-1?Q?DwGdzyge8wUKG04eMxvrvlk7p3b3PsmZGbaxxldrPA/khHa0Qr/GTcA310?=
+ =?iso-8859-1?Q?Fq416zrpjUabqOBlP7/VSxkGQew4xA9Cciq4ZWqEHoMGw5X9aHdbyREwYv?=
+ =?iso-8859-1?Q?pqUPQ9MWz6Msc/b1KSXJsVJNnUA3nJwnBbc7M4HidmsRTio2T6xL50445c?=
+ =?iso-8859-1?Q?K8y8OkLypduFsPkFvuGuzMW5L1IxnfcztGGaZy86rSK1mvIGNTiuCAnfUy?=
+ =?iso-8859-1?Q?y+rK6oC6ana/ZHNsUti58PrO5tl5TL/23wfUT81rRFUVSmAKE39vrfVx0S?=
+ =?iso-8859-1?Q?Cfl8DnnlLQ1qO06Y1OloS9COJgkZlMGDI/bKr25ezURCV1MEWsqAo/WFDp?=
+ =?iso-8859-1?Q?ASvSCzHPT8SaVCY9JQZdzCsEBfB7thRzcMpe7jOLPNddgQzg6wRvA3MNbD?=
+ =?iso-8859-1?Q?r18LTS0LXSLj6mBKuFEQ1kU+ZQS0IAiY4Y+N3tBmbPBdBCV4ZPlmle2emO?=
+ =?iso-8859-1?Q?IzreD8EeB4WiJoh90/KszH7Y6pwEM/ZWuGURNst72DaK/GQTXRuQIyBs+Y?=
+ =?iso-8859-1?Q?0ORx5krqbn61RtGKhdg4wcYmywWggvB7FH?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae4234b2-2c35-4949-a44c-08dcf23c598a
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 01:53:39.5332
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D50aO5VOQqfXGIwHC1fbS3wB9fskHfLDU3WTGhUcogM8D/opKwdZhOMgsFS54xGqFnSsfR4ulxUDNXGVweBLsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5238
+X-OriginatorOrg: intel.com
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in bch2_alloc_to_text
-
-bcachefs (loop0): fatal error - emergency read only
-bcachefs (loop0): insufficient writeable journal devices available: have 0, need 1
-rw journal devs: loop0
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/alloc_background.h:165:13
-shift exponent 129 is too large for 32-bit type 'unsigned int'
-CPU: 0 UID: 0 PID: 5607 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- data_type_movable fs/bcachefs/alloc_background.h:165 [inline]
- alloc_lru_idx_fragmentation fs/bcachefs/alloc_background.h:171 [inline]
- bch2_alloc_to_text+0xc79/0xce0 fs/bcachefs/alloc_background.c:373
- __bch2_bkey_fsck_err+0x1c8/0x280 fs/bcachefs/error.c:454
- bch2_alloc_v4_validate+0x97b/0xf30 fs/bcachefs/alloc_background.c:259
- bch2_btree_node_read_done+0x3e7e/0x5e90 fs/bcachefs/btree_io.c:1223
- btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1327
- bch2_btree_node_read+0x2433/0x2a10
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1753 [inline]
- bch2_btree_root_read+0x617/0x7a0 fs/bcachefs/btree_io.c:1775
- read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:524
- bch2_fs_recovery+0x2585/0x39c0 fs/bcachefs/recovery.c:854
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fca2ff7f79a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fca30df3e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fca30df3ef0 RCX: 00007fca2ff7f79a
-RDX: 00000000200058c0 RSI: 0000000020000100 RDI: 00007fca30df3eb0
-RBP: 00000000200058c0 R08: 00007fca30df3ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000100
-R13: 00007fca30df3eb0 R14: 00000000000058cc R15: 0000000020005940
- </TASK>
----[ end trace ]---
-
-
-Tested on:
-
-commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=139890a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f45fa9805c40db3f108
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15735c87980000
-
+On Mon, Oct 21, 2024 at 11:13:08AM -0700, Sean Christopherson wrote:
+> On Mon, Oct 21, 2024, Yan Zhao wrote:
+> > On Thu, Oct 10, 2024 at 11:23:36AM -0700, Sean Christopherson wrote:
+> > > When creating a memory map for read, don't request a writable pfn from the
+> > > primary MMU.  While creating read-only mappings can be theoretically slower,
+> > > as they don't play nice with fast GUP due to the need to break CoW before
+> > > mapping the underlying PFN, practically speaking, creating a mapping isn't
+> > > a super hot path, and getting a writable mapping for reading is weird and
+> > > confusing.
+> > > 
+> > > Tested-by: Alex Bennée <alex.bennee@linaro.org>
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >  virt/kvm/kvm_main.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index 080740f65061..b845e9252633 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -3122,7 +3122,7 @@ int __kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map,
+> > >  	struct kvm_follow_pfn kfp = {
+> > >  		.slot = gfn_to_memslot(vcpu->kvm, gfn),
+> > >  		.gfn = gfn,
+> > > -		.flags = FOLL_WRITE,
+> > > +		.flags = writable ? FOLL_WRITE : 0,
+> > >  		.refcounted_page = &map->pinned_page,
+> > >  		.pin = true,
+> > >  	};
+> > When writable is false, could we set ".pin = false," ?
+> 
+> Hmm, maybe?  I can't imagine anything would actually break, but unless FOLL_PIN
+> implies writing, my preference would still be to pin the page so that KVM always
+> pins when accessing the actual data of a page.
+Ok. So setting .pin = true here is because of KVM direct access, which does not
+check mmu notifier's invalidation callback.
 
