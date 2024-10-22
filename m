@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-376810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F343F9AB61C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:46:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3319F9AB624
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE901C23DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A74284847
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783921CB309;
-	Tue, 22 Oct 2024 18:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC661CB309;
+	Tue, 22 Oct 2024 18:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCUkyO7w"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="H5nwin2W"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517A212B93;
-	Tue, 22 Oct 2024 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22DC1C9DC5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729622789; cv=none; b=jK7f8ZhHJ7EPJ/NRBpOUHZ4f2WOUOK1ObY9cm+NkOIj9I5pcDzwqD83k/JLU1DTYxQ+EvktyQ3PkaZf9IQ7+5cwIoAGmREY0Y8ONx4motd1qfYZmQ1dIyaYQCO0clCLsqUu4lFQVOoFxfkA1rOwrDUaKKeHyOi7Vq83oCKBvRG0=
+	t=1729623012; cv=none; b=uoj3tOYG3uhmWqlzpmf5m/o+vQih1plFkpYEvsa5Tfl0fU74mpRecRUXPiTgYHmEQfCxCo8eAvTErqCaQuuDvW4wLtEhQGYXP3Q2axD9UZJstxQIS4bv0vkBsjHRciq2ptnVgoOgC40GLbQI4H8FlpnSvDHkKhmc2bv/mWYcbxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729622789; c=relaxed/simple;
-	bh=T/vFPOoiPY/UawWJJy0D0WBXjGtVYby2bTN8zCZ6MnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Z3PZddExUShuiumBihAuEEuaEj3BVt0DHnZyGkX7kAHV8HmFch8FO5ByuVTQaMZGUtphPsGfPihGruVEafN+itqWAJ1+7fgCJZQhz+JfjcXv4Y0uazip1Thw6wcRgrRZorQ3MIAFgx0L7qrC7S5lxrDeDX2rj3y9cYCI+fe7noA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCUkyO7w; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so58603645e9.3;
-        Tue, 22 Oct 2024 11:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729622784; x=1730227584; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDGG+ZQDHae1HZSzt9Uce9kPw28gcxjgHu8jDN2YlGk=;
-        b=GCUkyO7winUcCaq+eXZE3RchOGwUKm7Vej9Rnbq3UKKP3XmvCZPPjwmJyFNpS00EpQ
-         9hlGGgawstmMziVZnSf0/LW235vJHND4BuA9josjMhs8moAEQf5afPa/w3Op1bOtINFI
-         Bemk8oLtWEf4//BZFK4kZaJmE+4ELgKLlBr6Cug67OlO71NIcmcnU7alSeNjssUPoijj
-         Cwz2jL21ZE1csdjSYcgQBsCLukY2pjGtZpRFdc0il3jzJf89R2Cy40Ey5v61u7lomSUO
-         gpN6EkC1dTqTv+71juAcpgD5fX+17oRvoJwITqgMkCt4JZLV1abU6/qgrJxKWlK7uamt
-         2XQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729622784; x=1730227584;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LDGG+ZQDHae1HZSzt9Uce9kPw28gcxjgHu8jDN2YlGk=;
-        b=jGEE9ih/7jpEzUcEwa5h2ih+K8TiBevYn5pUWiHF44jSjTLwl/yWi+Nu3aniFV5+9S
-         BIxiY57c/oKXV045Gd/HqUJSgs3Y82xEDLqvQzuoMR/iy2//hxvrx/i6xm701A0Bf47H
-         WBScMKrPc9sGzaQ92wnFKc/Ld8tk9gNWDlDIffToB6MUpgVOcj2W4c3FAGo0Iq8ieqad
-         hZnbNtB8F0Z/pbMrVi3qGEO0noGjr6Kc08EqyIpDnZDjkgJMudMb53u+EZQq87BB2ITp
-         SevAJbEqIewHFfGmo+Y53jwtBtom5+5aYN/PGy4nh8Cv+ZQUxCH5xxrODnq9QVRZRQQc
-         uP+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWB3y5nn4g/vnYOMI+Rqv2uS+/4GL1sDzvPVu9dujWykPl1sDuZIG4UitO5RDhxcMjGwNk71p7GQZL2oNc=@vger.kernel.org, AJvYcCXxpzL9vTY9Mtkr6wXa3BFIW9rkuIFzE22/4/kfEwiUoKCcEmGZqgv82C2M11B4AZF0mqMPXmBf8fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRONxKwNigqPwqsYIqApyRdy+oyPp76lODELcZ3fM1xw9KPK/L
-	rtNZWatvRt1j5cdGm32UiPnwUfO4WJyYhiUD+uBlyVllD6wDr6pz
-X-Google-Smtp-Source: AGHT+IEGXgbWX9U0AaFuIJK13HFQXcaZ0nVPPJpIO1kzCYISrLnldzSg9tfWBna4Q2QBXEmg4Tk30A==
-X-Received: by 2002:a05:600c:1d22:b0:431:52a3:d9ea with SMTP id 5b1f17b1804b1-4318414298cmr1579635e9.0.1729622784314;
-        Tue, 22 Oct 2024 11:46:24 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c3140sm95635775e9.37.2024.10.22.11.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 11:46:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Nicolas Pitre <npitre@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH][next] thermal/drivers/mediatek/lvts_thermal: make read-only arrays static const
-Date: Tue, 22 Oct 2024 19:46:22 +0100
-Message-Id: <20241022184622.1296044-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729623012; c=relaxed/simple;
+	bh=rzEfqvMCwNPvnROLLEKOHkkfJYfrE/ITRVrNm+kfwcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJC/1TroG61NaxfKp4d0+wQi7I8ZTKi/kX6DRz/Z2/xtwXM9gC9PRdTzbifrqild9sykriLpFSMEn0b4R/l5cfUkYLinklbcoHJMvngspc6D9Md7AQMSGshmfZO0ZcdHOcDyBIORTJg5LUpXWMf/vnbW+g05HZW8RLKG/k/A+BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=H5nwin2W; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XY1St0zbczkgb;
+	Tue, 22 Oct 2024 20:50:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1729623006;
+	bh=f/ta3AxLOvb07LysQmqxTAkTwof++RaTMAGaYQwf3Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H5nwin2WAeaL2gX8GHUyjL4HXE+2Y21Zp8vXzHCpagTHtadYxGFVum8mfcnjnSIr0
+	 gmu6KnZ1BmC809SO/4nmMH+sILnGUFRER3zfPVG6SbiVE43b/a/gqPoys2jpp/FysG
+	 Qt1KIKARmFvm1hqC2lZ4yafaHXZwPYnJyyvuMFp0=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XY1Ss3whczLrS;
+	Tue, 22 Oct 2024 20:50:05 +0200 (CEST)
+Date: Tue, 22 Oct 2024 20:50:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v3 3/3] samples/landlock: Clarify option parsing behaviour
+Message-ID: <20241022.Oov8ohRe4shu@digikod.net>
+References: <20241019151534.1400605-1-matthieu@buffet.re>
+ <20241019151534.1400605-4-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241019151534.1400605-4-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-Don't populate the read-only arrays on the stack at run time, instead
-make them static const.
+On Sat, Oct 19, 2024 at 05:15:34PM +0200, Matthieu Buffet wrote:
+> Clarify the distinction between filesystem variables (mandatory)
+> and all others (optional).
+> For optional variables, explain the difference between unset variables
+> (no access check performed) and empty variables (nothing allowed for
+> lists of allowed paths/ports, or no effect for lists of scopes).
+> List LL_SCOPED values understood and their effect.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  samples/landlock/sandboxer.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index 38fc6ebd7222..96b451cf0531 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -296,23 +296,24 @@ static bool check_ruleset_scope(const char *const env_var,
+>  /* clang-format off */
+>  
+>  static const char help[] =
+> -	"usage: "
+> -	ENV_FS_RO_NAME "=\"...\" "
+> -	ENV_FS_RW_NAME "=\"...\" "
+> -	ENV_TCP_BIND_NAME "=\"...\" "
+> -	ENV_TCP_CONNECT_NAME "=\"...\" "
+> -	ENV_SCOPED_NAME "=\"...\" %1$s <cmd> [args]...\n"
+> +	"usage: " ENV_FS_RO_NAME "=\"...\" " ENV_FS_RW_NAME "=\"...\" "
+> +	"[other environment variables] %1$s <cmd> [args]...\n"
+>  	"\n"
+> -	"Execute a command in a restricted environment.\n"
+> +	"Execute the given command in a restricted environment.\n"
+> +	"Multi-valued settings (lists of ports, paths, scopes) are colon-delimited.\n"
+>  	"\n"
+> -	"Environment variables containing paths and ports each separated by a colon:\n"
+> -	"* " ENV_FS_RO_NAME ": list of paths allowed to be used in a read-only way\n"
+> -	"* " ENV_FS_RW_NAME ": list of paths allowed to be used in a read-write way\n"
+> +	"Mandatory settings:\n"
+> +	"* " ENV_FS_RO_NAME ": paths allowed to be used in a read-only way\n"
+> +	"* " ENV_FS_RW_NAME ": paths allowed to be used in a read-write way\n"
+>  	"\n"
+> -	"Environment variables containing ports are optional and could be skipped.\n"
+> -	"* " ENV_TCP_BIND_NAME ": list of ports allowed to bind (server)\n"
+> -	"* " ENV_TCP_CONNECT_NAME ": list of ports allowed to connect (client)\n"
+> -	"* " ENV_SCOPED_NAME ": list of scoped IPCs\n"
+> +	"Optional settings (when not set, their associated access check "
+> +	"is always allowed, which is different from an empty string which "
+> +	"means an empty list)\n"
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thermal/mediatek/lvts_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I would just add ":" at the end of the line.  No need to send another
+patch for that.
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 1997e91bb3be..ce223bab6b55 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -329,7 +329,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
- 
- static void lvts_update_irq_mask(struct lvts_ctrl *lvts_ctrl)
- {
--	u32 masks[] = {
-+	static const u32 masks[] = {
- 		LVTS_MONINT_OFFSET_SENSOR0,
- 		LVTS_MONINT_OFFSET_SENSOR1,
- 		LVTS_MONINT_OFFSET_SENSOR2,
-@@ -424,7 +424,7 @@ static irqreturn_t lvts_ctrl_irq_handler(struct lvts_ctrl *lvts_ctrl)
- {
- 	irqreturn_t iret = IRQ_NONE;
- 	u32 value;
--	u32 masks[] = {
-+	static const u32 masks[] = {
- 		LVTS_INT_SENSOR0,
- 		LVTS_INT_SENSOR1,
- 		LVTS_INT_SENSOR2,
--- 
-2.39.5
-
+> +	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
+> +	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
+> +	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
+> +	"  - \"a\" to restrict opening abstract unix sockets\n"
+> +	"  - \"s\" to restrict sending signals\n"
+>  	"\n"
+>  	"Example:\n"
+>  	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> -- 
+> 2.39.5
+> 
+> 
 
