@@ -1,125 +1,139 @@
-Return-Path: <linux-kernel+bounces-376492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B269AB255
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:43:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C31E9AB258
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D9D1C22432
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:43:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B22FB21C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F147C1AE843;
-	Tue, 22 Oct 2024 15:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466371B140D;
+	Tue, 22 Oct 2024 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bjHZZN0i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GK681qpW"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C37B1AA78A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB431A38E1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611758; cv=none; b=kijEZcWm7sMuMIOXx6v69QJTSICpVp2LZ8vtjc/S8TSLaWZqLVQ0M9HHIzrgNkf4hd8zlTTOrg4WA/sUJu4kcOaGopP4QWfNye7dgsC0k5ZOf/ohHYvLVEbsKAVj7du5CP8wCUdmtRPgG4vmOMxSMMfzRU/jdy4+em0WFWO4bX0=
+	t=1729611765; cv=none; b=LXDp8lzaN5VG3zmqSFuW4kpl1y/ZpEZzLkQeuYThEPf0L/W+jXRHPK0itD56lQbLvfmBQ8MFMXf9d0TPY0pLcyBu4bS2fmZU0IzSyEUXMctWYfelZt8Wx+Z4xKgBj/p3x9OZnhNZCSQfr8Pj4kNPTECaJykin2Ro5j3E7KBT9HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611758; c=relaxed/simple;
-	bh=KkcEm1heH6qM45iY126C0mw8JOB2BZ9tijaBhfgtQKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=N2LCRWSe+tOrsY27xy4qQJYqV2gBtw+3d8QIiPZevCmYsjpRQ4Lay5kygQMbaHonjt5bq7V6bGEaGpDYj53Ot4cBiPgECEtkDmdd4flvR1SwC30jqhbBplcEePV2qmLLXH9y8jry1/E01X7NgO38tW09WQxVJ/eQFFInycb7Dtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bjHZZN0i; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729611755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N8L0a2sNf8Nx+hrCNRPwEPYwI1EyXVV6XhvDB3voaRA=;
-	b=bjHZZN0iOt0ib1LJHgEClcgxiPaSr9oqDgm3cIqto/2IatNjOu77K8ZFFMmk69PWxt/hf7
-	OX+Ues/L6kAuVu3I1tluMp7mtbw0zw7GP5gSYR5WIfUzcP3cZeVGKY5ssPae8qO3pXS5Oc
-	oaHLpvVldoQa+3UcejisUFpDLpBOFa0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-3j5MmCliPwmxvU1Czep2qA-1; Tue, 22 Oct 2024 11:42:34 -0400
-X-MC-Unique: 3j5MmCliPwmxvU1Czep2qA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315d98a75fso40970155e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:42:33 -0700 (PDT)
+	s=arc-20240116; t=1729611765; c=relaxed/simple;
+	bh=Tb5ba7CKLTn8rkhkDlReivWDEzP/Y12f+/EWqIfz6pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6OqnSTPbFaKVD+jmj1kpVELuiErGeQdYNtwB0pQfGSBAKUPjJ1Ne733Dk5AuSFlaqwaqwnyfhS3xRLSfL0SDjpUk/NxYC7BkWezM+EHUL0vx5CITZI4VQU8OIb5K9PmiQ/XKEFRbAydmIfg+1YOQIznzTU+GeUfRaTw7RQmlDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GK681qpW; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aa086b077so696344866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729611762; x=1730216562; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb5ba7CKLTn8rkhkDlReivWDEzP/Y12f+/EWqIfz6pM=;
+        b=GK681qpWlwldmsONhp4g9jw+kpV/vTByK0HwMYSWsAOakVzk/8uFUWmbL65tKSDAk7
+         OIQntprktrEg9qW2VzQA5l1VOHZmXgsg731Tz2o2im5aYdfe2oNLTszM4t+er/A0My58
+         QzWnAyCyf3D7uttWRAEm/6Ia4p+6i/jaWLeUuTzYP1//aa0Nmswbez52Pt8SZOOTvgLv
+         /d/QwuTzQQHpLwm0yFUWzTwM9RdHwuUrx+05YtE5hUWXpQDLTKpFpsJPkVEY6OkMSklX
+         Sz/bG3YdfRKnkUCzsEFYRqpD8V0JFWA5gU+6Etxb6UQ3xZW0motMuyPTVb+/tjS14Z8P
+         cdfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729611753; x=1730216553;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8L0a2sNf8Nx+hrCNRPwEPYwI1EyXVV6XhvDB3voaRA=;
-        b=iu6MTwoUhDQgl633CGPNwR20nIzNUEmoccXkeymbW0uqrYDVm+urrXEo/Hojjzx/aH
-         y2UXwko7eriGYKSfTgN/rkhL8FS/SZJJcTrM67Anmt4PJEhEm3ReIPtrGWZeOCi0UPVR
-         u2Zlm/GVN2m8vnPalkK9kWseDU3PIQvMBG199Ud5nd31HXcle0HQmK070LS2PydOt/Sl
-         eeKJeKopIruMa1MeHJ0erFEfjh2Bp2fnLATQmM3F4sxlKnK1jDSF2Pq4geAguUr4trxn
-         MtuDKRVKK57VIV5PIpkjuI2ool8RwuxVDyDmaXHtraJ3j6V8zsoTRfaoqy2ltNX4aDxp
-         ezPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGs5kD0lVU1JkhPTLWrvqwEWR/wqYMTlUt1RMkWSPUJm6UEj9eshCLLl06c3zQ4ip+QeBkclSKCnhLII0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQvfFoggY1NO5E1jxZGbvCziuLu3RMIz45+gDKAsVVPzUXGBKk
-	QqC8dKtNDOF0ChJYgYT2Veu4hPpfkESTlKYnjOT0s5PUPDzJ9z04YNn0JugovtQ72chMYl3K98U
-	2Hmc/qVgaA998VTjTyT5/aFG7/KT5T+h0nx0pcSWGy+eKhkRFhtsdHnM8oWOtgA==
-X-Received: by 2002:a05:600c:3b9c:b0:42c:bc22:e074 with SMTP id 5b1f17b1804b1-43161691787mr133832265e9.29.1729611752894;
-        Tue, 22 Oct 2024 08:42:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwhKXrMzx/Cinc5O+rDnGcIjpf0iXTWlE+y+uSlSf/DDzlAuZPldVlein9rgfYdLZHT7HkOQ==
-X-Received: by 2002:a05:600c:3b9c:b0:42c:bc22:e074 with SMTP id 5b1f17b1804b1-43161691787mr133832095e9.29.1729611752514;
-        Tue, 22 Oct 2024 08:42:32 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cbe64sm91537855e9.40.2024.10.22.08.42.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 08:42:32 -0700 (PDT)
-Message-ID: <e9e80c32-2988-487a-a1ee-fab0caa863dd@redhat.com>
-Date: Tue, 22 Oct 2024 17:42:30 +0200
+        d=1e100.net; s=20230601; t=1729611762; x=1730216562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tb5ba7CKLTn8rkhkDlReivWDEzP/Y12f+/EWqIfz6pM=;
+        b=wg5iTV2cBzyWx0yGDTP3O/iIKvTl7XWZ51a01aXRoR5jnT2lIuRTHOpNUbUT2sabuB
+         De74PZMnAX8SySKQxGGv9O4ITYb2+3uoQIg0WsXLOCpHjMYf2xy+Qni9q7W7ptm2n0gu
+         tzrrAFj9o5pa1/YeWsD+1Ck0qOaECBPbiTMHM6Lby7tlumZgx1UqRJmmma6UTMmCf9dk
+         jhXK16DensvaIPIEpiVFhaQtA7FqsJTwdiCj4CAIAwqjFL9/1HwQs/40EyB97o87ANgQ
+         bodzAJvPbyP2GQWAPlDyVaWvUqgmTj1Q0Ga7MJNgDUUYvIZnMPpoFzC78CExefSjJk0J
+         Ph2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXLoJuwIH0H8GQ46T6rHoIIwKbX5x3Cx6RTkJdXdERjOKb+E6Xxeiu7RuNc71Uv4KVB4qvnD65aPXBKWUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZw02QpVzry8e8qy0c2SfeVRPJG/OcqT/RKv138iEc9RVfM3MU
+	gbC5+o3sx00W2xiSqD+LT2ELys68ooTgujiYWX9rialYobOlsVZG/vDo67aG1Jg=
+X-Google-Smtp-Source: AGHT+IH31g9A5tvlodwEJG6AIYxAUczXnCG2y8sRDax4YawMtiLAN/avicWxie7/dj2TwfmEdo/6WA==
+X-Received: by 2002:a17:906:6a07:b0:a9a:3cc6:f14c with SMTP id a640c23a62f3a-a9aa8a05ea6mr439944866b.48.1729611761895;
+        Tue, 22 Oct 2024 08:42:41 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f67f1sm353775166b.85.2024.10.22.08.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 08:42:41 -0700 (PDT)
+Date: Tue, 22 Oct 2024 17:42:38 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Chen Wang <unicornxw@gmail.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, 
+	chunzhi.lin@sophgo.com
+Subject: Re: [PATCH v4 0/3] pwm: Add pwm driver for Sophgo SG2042
+Message-ID: <i3zf5qoy7mrbqg2shag4rdwdptcjmfhr2zfxqcqzcobbnl4trd@n6ib4fobduq6>
+References: <cover.1729037302.git.unicorn_wang@outlook.com>
+ <MA0P287MB2822808440B26B1C445118BAFE4C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB2822C080A81F87037F9EE94CFE4C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] posix-clock: posix-clock: Fix unbalanced locking in
- pc_clock_settime()
-To: Thomas Gleixner <tglx@linutronix.de>, Jinjie Ruan
- <ruanjinjie@huawei.com>, anna-maria@linutronix.de, frederic@kernel.org,
- kuba@kernel.org, richardcochran@gmail.com, linux-kernel@vger.kernel.org
-References: <20241018100748.706462-1-ruanjinjie@huawei.com>
- <878qul802d.ffs@tglx>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <878qul802d.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3p5yql6s3yusktbg"
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB2822C080A81F87037F9EE94CFE4C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 
-On 10/19/24 01:26, Thomas Gleixner wrote:
-> On Fri, Oct 18 2024 at 18:07, Jinjie Ruan wrote:
->  If get_clock_desc() succeeds, it calls fget() for the clockid's fd,
->> and get the clk->rwsem read lock, so the error path should release
->> the lock to make the lock balance and fput the clockid's fd to make
->> the refcount balance and release the fd related reosurce.
->>
->> However the below commit left the error path locked behind resulting in
->> unbalanced locking. Check timespec64_valid_strict() before
->> get_clock_desc() to fix it, because the "ts" is not changed
->> after that.
->>
->> Fixes: d8794ac20a29 ("posix-clock: Fix missing timespec64 check in
->> pc_clock_settime()")
-> 
-> Jakub, I expect _you_ are going to pick this up and explain to Linus and
-> the stable people why we need a fix for the rushed in "fix".
 
-I'm sorry, I noticed this patch right now thanks to Anna-Maria head-up
-on netdev.
-I'll merge it into net before this week PR.
+--3p5yql6s3yusktbg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/3] pwm: Add pwm driver for Sophgo SG2042
+MIME-Version: 1.0
 
-Again, I'm sorry for this mess.
+Hello,
 
-Cheers,
+On Tue, Oct 22, 2024 at 08:53:42PM +0800, Chen Wang wrote:
+> Adding another email address of Uwe.
+>=20
+> Hi, Uwe, not sure if <u.kleine-koenig@baylibre.com>is another emailbox
+> adderss of yours?
+>=20
+>=20
+> On 2024/10/22 8:00, Chen Wang wrote:
+> > If it looks good to you, can you please apply the binding & driver part
+> > of this patchset for next v6.13=EF=BC=9FFor dts part, I will handle it.
 
-Paolo
+It's on my todo list, but not at the top. (See
+https://patchwork.ozlabs.org/project/linux-pwm/list/ for a part of my
+todo list that I usually tackle from old to new.)
 
+So please have some more patience. And FTR: Both email addresses reach
+me just fine.
+
+Best regards
+Uwe
+
+--3p5yql6s3yusktbg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcXx+sACgkQj4D7WH0S
+/k4X9wf+LjLZn7Y6+CUC3ywDEyn58ElxJveW4VehciYRmEqEsXeQEIVMOyuZTYzs
+sQAmqS+7ykouw7tQuJ+sVHPdO0sMHqFadkJ1ZIGEwTdYrRnFSL0YvZIAUB9nsKE6
+sJRLd9vuRdIrWPyQTeC/lrDU4RRlGM65Qtvbea5XTGu2vzXcjru9NuVjETol6F4Q
+MNDjvUNF7Aw0WKRSzxCzlA3CkxpMkmUPJn1TVnVrwXz2wSEcq4P7mPdMgBcYkHas
+9johxTldvYqd3SW4LgsbLmvi4zBK/hw+X4HTjfFvnzjPG6yDYziT2S+kPW9qMAZK
+KbWYT69PgQ7lWbfwC3k0pgsWu/G/aw==
+=L4hC
+-----END PGP SIGNATURE-----
+
+--3p5yql6s3yusktbg--
 
