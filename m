@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-375995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0D89A9E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:19:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65A99A9E4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5181C285000
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA101F21C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37D5199248;
-	Tue, 22 Oct 2024 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSD++rOE"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E2B1990DC;
-	Tue, 22 Oct 2024 09:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B2197A87;
+	Tue, 22 Oct 2024 09:18:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EEF193417;
+	Tue, 22 Oct 2024 09:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588737; cv=none; b=Q2zI+IIvGBFFV7o/5B4VsaoTq65Not1E9MleXCcI5/43oeL4CzTw47MfObha64Sy7AEFQkMXVMIp3VDSxFPa1Oti3jnfASGd0z4VW9fxU85GGO5JcM8A2eXSU2ceGJrKT3BVZtUy0wIyq1tPHeMBVf1SUzZxC+6+lhTN+5Z83Ug=
+	t=1729588730; cv=none; b=QwqImn2O+HVfIR7suHvWMiRK1ufDq7JnkqvwdxMYtyBT7pRcsPPde1PUgBsZvgrhAyMhls0QbL+Y1ottEyyXwEPHttm/g0cinkljDwmvEN9jD/47dQFkXyM5eCXXUoZonXC2OU8s44s6NXnpD+NMB6VZRKKGCCcKrYTdorHvd7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588737; c=relaxed/simple;
-	bh=ktUntblqwbX11lE4VFhQvbDpXlY5dHHrgSDM8lr7qU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQ+lv7Al11cQjNLz67XTJrZ2n/grcAWxvh/w9QvvYd8tpw9wMGYTggKql1F+Mcprzjm0YbXqdqFH4kslgHWdaWbro4UtVbcM2uTeHFmln1wZcwZjbcGivFyoVET2dmIfLs73c1hE1ULXlC7BU5WvGIBozFLAXXm5xKw+yU46+PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSD++rOE; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a628b68a7so699518466b.2;
-        Tue, 22 Oct 2024 02:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729588734; x=1730193534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktUntblqwbX11lE4VFhQvbDpXlY5dHHrgSDM8lr7qU8=;
-        b=gSD++rOE/qcNeRZkFQkVlCPKX/aN92S2nG04PEE+CZWVHrZH9QuQN4WjJivsKR1Cgv
-         VCSN7bt9suy/C4Uw+GjwHn4U7I/OpDvpU8ouxu+4gqcc3/6ZYk6wY1489NKtRLvFTxgb
-         uEJymQYzhmaplV8WKbFwtsZbxd3gqG4/w1OAAL8DNrRsPVkg38dWofO2vcrMbvFGJbl6
-         T9rQ7bK9a2/aS0DP6AAziPtncJefxdZvK0zPAqB84QcbVyOoeJ9GSc2IdIWPxp8/b5UK
-         I1MKxdO2bY0mbCNyscDF03wfOemC+CrN5Hd2Ib6akWdaWQ95GtTK0YtnOkA1BQ4ODf4u
-         EoPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729588734; x=1730193534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktUntblqwbX11lE4VFhQvbDpXlY5dHHrgSDM8lr7qU8=;
-        b=kR4UQn6PePfLtaeMyTMDZPnQxtx3NCKLBQusmwWlh0ZpD4SIvTVPTYkxw8vz+gK6od
-         NlZ4oRTngt/Hwm20eYAnLfG8fXy75XDSrvxA6rctzfiEgER8r9MLWyIjekYrwXlCgUlh
-         PFmn3vCiiaJV2Y2F1hsX7m0d/zuRN3GFkZi6fiGRELwdkMW8489Ih25C2VIgZ2q7/Sop
-         W0/cRHgsE02p0+9HyeyVe/Cw0fymi+LDWbQTFwHIijHpn/cGttGeO6Z7sonnwHqox9XG
-         wGij7hOgqMVRvBWj1RFWDM9t+QXa6dPWti5o1syoZ1Q/wwJF13PECma0btNU3bz9lDze
-         slfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUER0JRFobSThHTRk8VOg3qTBSzDkT02zjciCo6KDyyqZJomQoM3mery0rVd3Y1YM5dMq/pw4Jpd7PL9aWRby8=@vger.kernel.org, AJvYcCVsw3acpT/lPUThzKoy8zzlh7xGpc3Bxk3lkFSeHEEBzXTOvVy5GVTRp1gVkuuN3PKmWlmh8BQj@vger.kernel.org, AJvYcCXljo9jgp0f+Od212AsJfcAH8Ez5/4H0DXPSMC6TZ/TOyGs/XIqfqiil0i/H5aoaHYsq1QFgN+0R/336GV/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4fr70pA8UuIjzIfZI+GwgY7x4vCJ75RMCnYnuRmCImsv2XCmm
-	lhsoDrZj4bLwucoiSZkxAcfu+mFdXLs2IJ3sWHKlx2UvWshE4OMaWFvkMtiKst5SKifzgmpF1uq
-	DUFQy5+2AovzwmI8mRZmN/RAHaaOGv9al2tw=
-X-Google-Smtp-Source: AGHT+IFT5NKjcwFGWBwUpT8dc+RxKHbxg2bHl0QeeeMrYyjueQBanQ3EjdvlH7HxVnRLfDQObus8JJ17e5hMw2M7/mw=
-X-Received: by 2002:a17:907:7293:b0:a99:ef5d:443e with SMTP id
- a640c23a62f3a-a9a69773b2emr1500723866b.13.1729588733544; Tue, 22 Oct 2024
- 02:18:53 -0700 (PDT)
+	s=arc-20240116; t=1729588730; c=relaxed/simple;
+	bh=GZ4DZzLfaNYUZzQdV+gdnTQgV9+Vvce8HGSsHjInUDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SPZqf1bE+oVyiVrrdnFTpjsCq+8eKAdHEVh8YSSGWPosA9Z63BHlkUG7Efyui2iFX1a/bHQzf8xNAqrlkg5jE1yeUeW4Q0rbQ4PtGKJnO/7Uf/8Aj3czxCcv8tqBSCKKDfZccjBs2FHJ0qn7rutOGqHJlRedZF/F7tSMvnEuryY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75A39497;
+	Tue, 22 Oct 2024 02:19:13 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B01223F73B;
+	Tue, 22 Oct 2024 02:18:41 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:18:34 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	quic_sibis@quicinc.com, quic_nkela@quicinc.com,
+	dan.carpenter@linaro.org
+Subject: Re: [PATCH v2 1/5] firmware: arm_scmi: Account for SHMEM memory
+ overhead
+Message-ID: <Zxdt6vLeExBs744x@pluto>
+References: <20241021170726.2564329-1-cristian.marussi@arm.com>
+ <20241021170726.2564329-2-cristian.marussi@arm.com>
+ <5d6d545d-b6bc-4b37-b324-a664e4685100@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021100421.41734-1-brgl@bgdev.pl> <bb705eb7-c61c-4da9-816e-cbb46c0c16e4@kernel.org>
- <CAMRc=Mcp4LBj0ZZx=hUg9KBk04XXcAtiNv+QjQesN1iCpDC+KA@mail.gmail.com>
-In-Reply-To: <CAMRc=Mcp4LBj0ZZx=hUg9KBk04XXcAtiNv+QjQesN1iCpDC+KA@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 Oct 2024 12:18:17 +0300
-Message-ID: <CAHp75VdLuxL4tqodoiWE_Pq7VjwxVLa-mXnnnOT-j8W=3jetCg@mail.gmail.com>
-Subject: Re: [PATCH] lib: string_helpers: fix potential snprintf() output truncation
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d6d545d-b6bc-4b37-b324-a664e4685100@broadcom.com>
 
-On Tue, Oct 22, 2024 at 10:30=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> On Tue, Oct 22, 2024 at 9:15=E2=80=AFAM Jiri Slaby <jirislaby@kernel.org>=
- wrote:
-> >
-> > On 21. 10. 24, 12:04, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > The output of ".%03u" with the unsigned int in range [0, 4294966295] =
-may
-> > > get truncated if the target buffer is not 12 bytes.
-> >
-> > Perhaps, if you elaborate on how 'remainder' can become > 999?
->
-> Yeah, I guess it can't. Not sure what we do about such false
-> positives, do we have some common way to suppress them?
+On Mon, Oct 21, 2024 at 10:11:44AM -0700, Florian Fainelli wrote:
+> On 10/21/24 10:07, Cristian Marussi wrote:
+> > Transports using shared memory have to consider the overhead due to the
+> > layout area when determining the area effectively available for messages.
+> > 
 
-I already pointed out these kinds of warnings from GCC.
-https://lore.kernel.org/all/Zt73a3t8Y8uH5MHG@smile.fi.intel.com/
+Hi Florian,
 
---=20
-With Best Regards,
-Andy Shevchenko
+thanks for having a look.
+
+> > Till now, such definitions were ambiguos across the SCMI stack and the
+> > overhead layout area was not considered at all.
+> > 
+> > Add proper checks in the shmem layer to validate the provided max_msg_size
+> > against the effectively available memory area, less the layout.
+> > 
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > Note that as a consequence of this fix the default max_msg_size is reduced
+> > to 104 bytes for shmem-based transports, in order to fit into the most
+> > common implementations where the whole shmem area is sized at 128,
+> > including the 24 bytes of standard layout area.
+> > 
+> > This should have NO bad side effects, since the current maximum payload
+> > size of any messages across any protocol (including all the known vendor
+> > ones) is 76 bytes.
+> 
+> This looks good to me, just a small nit/suggestion:
+> 
+> [snip]
+> 
+> >   	size = resource_size(res);
+> > +	if (cinfo->max_msg_size + SCMI_SHMEM_LAYOUT_OVERHEAD > size) {
+> > +		dev_err(dev, "misconfigured SCMI shared memory\n");
+> > +		return IOMEM_ERR_PTR(-ENOSPC);
+> > +	}
+> > +
+> >   	addr = devm_ioremap(dev, res->start, size);
+> >   	if (!addr) {
+> >   		dev_err(dev, "failed to ioremap SCMI %s shared memory\n", desc);
+> > diff --git a/drivers/firmware/arm_scmi/transports/mailbox.c b/drivers/firmware/arm_scmi/transports/mailbox.c
+> > index e7efa3376aae..4e0396250ad0 100644
+> > --- a/drivers/firmware/arm_scmi/transports/mailbox.c
+> > +++ b/drivers/firmware/arm_scmi/transports/mailbox.c
+> > @@ -16,6 +16,8 @@
+> >   #include "../common.h"
+> > +#define SCMI_MAILBOX_MAX_MSG_SIZE	104
+> 
+> This IMHO, could be named SCMI_SHMEM_MAX_PAYLOAD_SIZE and used across all 3
+> transports that are loosely SHMEM-based?
+
+Yes indeed, just I was not so sure we want to stick to the same default
+across different transports that are based on SHMEM....even though they
+are in fact the same as of now, and anyway modifiable via DT if his
+series goes in...I'll see what Sudeep prefers in these regards.
+
+Thanks,
+Cristian
 
