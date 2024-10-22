@@ -1,159 +1,133 @@
-Return-Path: <linux-kernel+bounces-375926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805B29A9D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C87C9A9D5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B021F2593B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCD628257D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D189189905;
-	Tue, 22 Oct 2024 08:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E245186E2E;
+	Tue, 22 Oct 2024 08:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3sz6Tss"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cL6LLFMT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CE137747;
-	Tue, 22 Oct 2024 08:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C983A27735;
+	Tue, 22 Oct 2024 08:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586817; cv=none; b=sN6oDrKXNjRZhATEmkPXXRNLVFj91Zy5EKZhTRrl3OhZvvoR0fqLcNsNxWQj1BCYFI7IHuf5gG5Gy2O6yfbV9834DsxXPl2r6HtKPDVV81MeqLvVj+bXW40chl9WiB6E33VnA9yBkliP5wd5vHYWRk3/D8yFoCelKVLhSUoYYQ0=
+	t=1729586890; cv=none; b=la5GK3xI4rloqg/GJGVFt064yBOUefavRg2nDWkvYYl3eAIJuoaMF8f+BGwBtUB9mgxoYJHjfSomuRq5QJ+6V/VzwO3ib7QN62N6auNSdYikv3W/t0VHMC4/66oGOFIXTEEg7kfehBxEb7f8ctC0ZuRjgoZVYZFgLgDwx8q4yRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586817; c=relaxed/simple;
-	bh=KoxzzeJo6etocqx2b/o+OlOXOv6uNN7rqTozMtP8LX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZEd5JBzbFyduy/ee3uvUW0eH+8AuEuZdONDvsCB2D2sR0LeBwD1UihB1CaUqmWRqHiMKTOE9SD2gF+JTyJKLDzN2FPgMm7iQchtEACxMwu9V3ZJZqLrgrkSZDrc++oAI3ANIgHLFoSxFPjuxx6auN4VPA5DumJkbSrD8wMm49Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3sz6Tss; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6e38ebcc0abso58682267b3.2;
-        Tue, 22 Oct 2024 01:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729586815; x=1730191615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UUFrYT1eNOid4dqFuQyZap0oTpnRGPS1wGDonRnbV+Y=;
-        b=f3sz6TsskkMLkxbWVZYYpXmCpStSEutAQ1CfwXpPc2n3z7qjpD34HGUFgdzfmM0+H5
-         d1xhaOxB/WMFrKtc5v7oQ22aJPZsiTpT4ezSNu3d+DAxNbtgJbcCI7MTxctpeRyI9khN
-         72Vv+hxkkET9qFsvY32OAuKI4Ue8FETXAJ5KOGv1ld3J6VvvOaXkUmtcUuODc9vZj1xs
-         fT3tvaSZRNouSrtlGiLeUeaIM7NjjBoz6NAGEYaQH7Ce9YK2eFb07pkOywZBlq1X7JKx
-         Hj/bi3ALVvL7hEKIl9lElUydJx8SWDA5NG1s/kUiGe77sikehveVxW4ARCE5RpefVLo/
-         GV8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729586815; x=1730191615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UUFrYT1eNOid4dqFuQyZap0oTpnRGPS1wGDonRnbV+Y=;
-        b=rz7a8XNlCaku0RFN21CA/FsqWvIT+ArTk4hwu2gA8nLsTdntoUYajTRpJHgNd1kcLe
-         x7p0A3CjRuXCfKqB5/dSlskvUiOOuace/iwqdZZRTU7NQEpSQESJEd12Ro55aYaiuGz1
-         l3UECzvuobzhR5E/beDiVGNFgdi6T8Pjw8LgZxI2CM9B4bC44Dd1FW7hmdg/BxO6nRmZ
-         lqwOX8d0VqNeZkDTbPxEso/+25TyJnSC008J6QnM89GJ/oWyGTt61bi8dJgDcNc5s7Vn
-         dke1KJNtWfJyi2mOWqKKyyJsdvhOcQP5E0RZmbl0+BWuddB3SI7TtDU972/1NVfNXGik
-         tEdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPmTrQic0DerTIBLiAQ9AJHECtbjt2qtjDBFBopsoCscQKEFleOmGfXlQZBdK18ihPJdaLWYRe@vger.kernel.org, AJvYcCUQ9qLNq0dVtdlv/GuNam3iOuAaKARQN68umxnGwpd6ByWaqCgnaYRa3EE+D0up5Hg6KxX3xIAjhz7xxyIY@vger.kernel.org, AJvYcCW2b04eZ+Zv7LtlERuvFwbNiTSsGW6Z4EoHivUZBz8AuetNAILCo++smyF9off5EF4VgJ4=@vger.kernel.org, AJvYcCXfLWgf8fT4tK9s22jcJKOWbCFlfl2ogjhF8faQ986Kp7n+6qTJtrlXSHpaS7sgq4uu3yKotaOKJqiDahxoFQfN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMOOl7gU5iMpMziA0kcgCedhYvw+wJTc0otyRv1fhHMu+VVwyQ
-	RAV0xJn1a+W9o3bXFmXXodpTtxIAxwnZ3SlLVjMHQjLUIsLd1UyOTXSouik43dWbrrjyIXS6uXS
-	4lpcvqg1MHHML1y5jlKs47nnEcuE=
-X-Google-Smtp-Source: AGHT+IGa70DbIzj17jnQMKvxrqZzKAIwpBsupiT5kH056AnnXaak0bg1EodNANRT8iYvRLR4hMiz9fU4XeAZxEwSSaU=
-X-Received: by 2002:a05:690c:f8f:b0:6d3:f9a6:e29c with SMTP id
- 00721157ae682-6e5bf9a0846mr134520257b3.12.1729586814908; Tue, 22 Oct 2024
- 01:46:54 -0700 (PDT)
+	s=arc-20240116; t=1729586890; c=relaxed/simple;
+	bh=ZaJBE25KPFBQigTRnyWZIQp1hrrAkSpU0jDH7LJwlxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q++kXNKiGN4mAUEsOEdl0dFfOdvd4LFxnsUMMkzTiGpg+49fDiLMTBZ+p49AdoZIRq1oKP0ZFNvCG06g1pcub53TiJbkaKHnfD7Yi/HEkubpmZFj+3LOzg0WCTMmdy4Z742HZba6tJfllr8zliaOhwjM90YJYIIZp5KG3sphErA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cL6LLFMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C25C4CEC3;
+	Tue, 22 Oct 2024 08:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729586890;
+	bh=ZaJBE25KPFBQigTRnyWZIQp1hrrAkSpU0jDH7LJwlxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cL6LLFMTmtp80ohwK2agRJCArx6JnqttR6WG8rEWGVLgpWq9LUtPMCE3nVpUOk0H9
+	 s3MBr2vrP5VbkEsrWfbtkh3bWv1DY9YFJtJrAs9KQzaB7/V1LXuk00bHdxMIsAweJk
+	 f1q9iqZllzJeBPa2Q3ttQCG2xdCVz9hZJEkEXMIvM4ac1gLanWJqUlflEe7U640Von
+	 ei2NxZ7GxtsYGEdLP59WbBPiPHRH/qaEtRxa+lFaFnClHkx9j3yl1+zpqs8jWsw42C
+	 +IE7pmnKlaWO+btK3ngB9DEoM0ApvHo5CfT96Ezxn4jHKtLXXtcAA70LQaphRVUAkr
+	 BdGjHqdqBOdYw==
+Date: Tue, 22 Oct 2024 10:48:04 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Igor Pylypiv <ipylypiv@google.com>,
+	Niklas Cassel <niklas.cassel@wdc.com>, linux-ide@vger.kernel.org,
+	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ata: libata: Clear DID_TIME_OUT for ATA PT commands
+ with sense data
+Message-ID: <ZxdmxPAgNh9TNCU+@x1-carbon.wireless.wdc>
+References: <20240909154237.3656000-2-cassel@kernel.org>
+ <ZxYz871I3Blsi30F@ly-workstation>
+ <ZxZD-doogmnZGfRI@ryzen.lan>
+ <ZxZxLK7eSQ_bwkLe@ryzen.lan>
+ <Zxc7qLHYr60FJrD4@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015140800.159466-1-dongml2@chinatelecom.cn>
- <20241015140800.159466-3-dongml2@chinatelecom.cn> <71a20e24-10e8-42a8-8509-7e704aff9c5c@redhat.com>
-In-Reply-To: <71a20e24-10e8-42a8-8509-7e704aff9c5c@redhat.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 22 Oct 2024 16:47:50 +0800
-Message-ID: <CADxym3b6gat7Xs20oN12xsYNSGM3zaJkGirzGv57jA-+Kyr7+A@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/10] net: ip: make fib_validate_source()
- return drop reason
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org, 
-	roopa@nvidia.com, razor@blackwall.org, gnault@redhat.com, 
-	bigeasy@linutronix.de, idosch@nvidia.com, ast@kernel.org, 
-	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxc7qLHYr60FJrD4@ly-workstation>
 
-On Mon, Oct 21, 2024 at 6:20=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 10/15/24 16:07, Menglong Dong wrote:
-> > diff --git a/include/net/ip_fib.h b/include/net/ip_fib.h
-> > index 90ff815f212b..b3f7a1562140 100644
-> > --- a/include/net/ip_fib.h
-> > +++ b/include/net/ip_fib.h
-> > @@ -452,13 +452,16 @@ int __fib_validate_source(struct sk_buff *skb, __=
-be32 src, __be32 dst,
-> >                         dscp_t dscp, int oif, struct net_device *dev,
-> >                         struct in_device *idev, u32 *itag);
+On Tue, Oct 22, 2024 at 01:44:08PM +0800, Lai, Yi wrote:
+> On Mon, Oct 21, 2024 at 05:20:12PM +0200, Niklas Cassel wrote:
+> > On Mon, Oct 21, 2024 at 02:07:21PM +0200, Niklas Cassel wrote:
+> > > Hello Yi Lai,
+> > > 
+> > > On Mon, Oct 21, 2024 at 06:58:59PM +0800, Lai, Yi wrote:
+> > > > Hi Niklas Cassel,
+> > > > 
+> > > > Greetings!
+> > > > 
+> > > > I used Syzkaller and found that there is INFO: task hung in blk_mq_get_tag in v6.12-rc3
+> > > > 
+> > > > After bisection and the first bad commit is:
+> > > > "
+> > > > e5dd410acb34 ata: libata: Clear DID_TIME_OUT for ATA PT commands with sense data
+> > > > "
+> > > 
+> > > It might be that your bisection results are accurate.
+> > > 
+> > > However, after looking at the stacktraces, I find it way more likely that
+> > > bisection has landed on the wrong commit.
+> > > 
+> > > See this series that was just queued (for 6.13) a few days ago that solves a
+> > > similar starvation:
+> > > https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
+> > > 
+> > > You could perhaps run with v6.14-rc4 (which should be able to trigger the bug)
+> > > and then try v6.14-rc4 + that series applied, to see if you can still trigger
+> > > the bug?
+> > 
+> > Another patch that might be relevant:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e972b08b91ef48488bae9789f03cfedb148667fb
+> > 
+> > Which fixes a use after delete in rq_qos_wake_function().
+> > (We can see that the stack trace has rq_qos_wake_function() before
+> > getting stuck forever in rq_qos_wait())
+> > 
+> > Who knows what could go wrong when accessing a deleted entry, in the
+> > report there was a crash, but I could image other surprises :)
+> > The fix was first included in v6.12-rc4.
+> > 
 > >
-> > -static inline int
-> > +static inline enum skb_drop_reason
-> >  fib_validate_source(struct sk_buff *skb, __be32 src, __be32 dst,
-> >                   dscp_t dscp, int oif, struct net_device *dev,
-> >                   struct in_device *idev, u32 *itag)
-> >  {
-> > -     return __fib_validate_source(skb, src, dst, dscp, oif, dev, idev,
-> > -                                  itag);
-> > +     int err =3D __fib_validate_source(skb, src, dst, dscp, oif, dev, =
-idev,
-> > +                                     itag);
-> > +     if (err < 0)
-> > +             return -err;
-> > +     return SKB_NOT_DROPPED_YET;
-> >  }
->
-> It looks like the code churn in patch 1 is not needed??? You could just
-> define here a fib_validate_source_reason() helper doing the above, and
-> replace fib_validate_source with the the new helper as needed. Would
-> that work?
->
+> Hi Niklas,
+> 
+> Thanks for the info. I have tried using v6.12-rc4 kernel to reproduce
+> the issue. Using the same repro binary, the issue still exists.
 
-Of course, that works fine. I'm just trying to find a graceful way
-for this part. Defining a fib_validate_source_reason() here looks
-nice too, and we can ignore the 1st patch. I'll do it this way in
-the next version.
+Thanks a lot for your help with testing!
 
-Thanks!
-Menglong Dong
+The first series that I pointed to, which looks most likely to be related:
+https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
 
-> > @@ -1785,9 +1785,10 @@ static int __mkroute_input(struct sk_buff *skb, =
-const struct fib_result *res,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     err =3D fib_validate_source(skb, saddr, daddr, dscp, FIB_RES_OIF(=
-*res),
-> > -                               in_dev->dev, in_dev, &itag);
-> > +     err =3D __fib_validate_source(skb, saddr, daddr, dscp, FIB_RES_OI=
-F(*res),
-> > +                                 in_dev->dev, in_dev, &itag);
-> >       if (err < 0) {
-> > +             err =3D -EINVAL;
-> >               ip_handle_martian_source(in_dev->dev, in_dev, skb, daddr,
-> >                                        saddr);
->
-> I'm sorry for not noticing this issue before, but must preserve (at
-> least) the -EXDEV error code from the unpatched version or RP Filter MIB
-> accounting in ip_rcv_finish_core() will be fooled.
->
-> Thanks,
->
-> Paolo
->
+Is only merged in:
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
+
+It is not included in v6.12-rc4.
+
+Would it please be possible for you to test with Jens's for-6.13/block branch?
+
+
+Kind regards,
+Niklas
 
