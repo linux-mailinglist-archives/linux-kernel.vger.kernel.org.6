@@ -1,167 +1,75 @@
-Return-Path: <linux-kernel+bounces-375525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309AC9A96FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0F09A970A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD02287121
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A3C1C23C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150B145B22;
-	Tue, 22 Oct 2024 03:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506A441760;
+	Tue, 22 Oct 2024 03:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKrHKmEI"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25BC1442E8;
-	Tue, 22 Oct 2024 03:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CkdjjShL"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7A136E01;
+	Tue, 22 Oct 2024 03:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567412; cv=none; b=Wn4dSHJn9zER3f7uftvMpYpQqG6LVc7+JZQ2ZEzYIUgx/ZdKgsw0OzgzjWQpHISfCaEVnSRNG0YaD+2O2DMzgNyNFxa3gklghKcqhZTJnf4Gu8PPB5oEbThvd9hc+nomyCjXO54pCp8AWpbkIpLhCQoumOz8CzLKdghH+3k3v3s=
+	t=1729567657; cv=none; b=VVxHuKZDErqs6Kaz+ANFEEGVix5Md22wDFJn6XPwu0mbDXi6nBpehh3Bwyh3rVcPl/5tDMqsej0hTmKDx1MOizEXvl/iwWtt0HpByDHUdP1E+gURVJTVRjxJJfjrrS2XJP4csnrdq/z8xMVX2thOCBxOerzG27a2mKeUpDthQ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567412; c=relaxed/simple;
-	bh=EUdkE/JzIkciKin0lTeyOJWE2+TwwJIscWovAjZ3EOc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=d2C7/pgy4T3Cu+//qf9fqotk/Ig/VheRhO4Wqmo96ZGX5yL39aNyU55dRVlHK83FvGuD+OTnKnJO3c4KP/7Lqz+P8kGuElolbP+o32ItdzpkSvkRGU+fszEgH/MRN/aTzLoEFlXnLRKp/yOv65OmaNBsqhRtvgVAuA0O8OjsOKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKrHKmEI; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cb47387ceso45729805ad.1;
-        Mon, 21 Oct 2024 20:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729567409; x=1730172209; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YaALaW8nzNfwR2BNGGr9dEQJgHBRoXm2vibHMuBTRx4=;
-        b=lKrHKmEI488twOVxiN98vDMpEFdW8I24Whp8048aOHJUX+7vQa1aS3KGWtxrDYf1ON
-         TppEoZxnsmCivaB0ydB4z5NpTmOtmVrQMRjg0WxYBVH017Iil3dEQA+WadK8amU5Ux5q
-         LyoIqCCX72/28qmdqps4CI2sOpwcQ7hxYBuJRE6Wqd1HWqVfySDWNNSpe0BgoC6DPZz8
-         ivG2UZmEPLi/N2HAVrW3MYX7Nf2evbrQpxDO3cdvbMMlGhvA12GaUvVq8NdB4+7G7Z7J
-         bch8JP1kb7nG5akGTMATGCiEHngTPjAT/KH+M+VZeosAwNRjTO8X/v8oofeyTTqRl6ED
-         vO+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729567409; x=1730172209;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YaALaW8nzNfwR2BNGGr9dEQJgHBRoXm2vibHMuBTRx4=;
-        b=Dpc8bwHVNYLpkUjJWTw/9xD3an1qk4Wk69aH8Av9v05iVn+zxLzIK5mnLGJE90N6Ab
-         6PFGXRTZc7LkyxqoqtrKlPOxpRcGTftevwzawF74n0C0KnmaUaWq+a5+QXG+D0lkvfy6
-         prYPXKWKHX5EyYw6HL/vvvXS21LW5RwTjIFGOyBrq7DpVPAk2bnBZhdcS9d6H3Arnvmj
-         lAdmDLtyuzMl81crgEVPj+RYoqeUbRIrim786LDjxpmaHJx70YBP8S63yNd9nNE0f01i
-         sMV/uqtpXNhjp2cJfcd/ClYLDkbnsyZITWzqGw4NFaD7+pPWNrqNvS8xAF9mBwoJoskr
-         I2ug==
-X-Forwarded-Encrypted: i=1; AJvYcCV+hb1GFYaI1celWSDBv7sjqjDMsr9XX2T5LCk2GHu+7QLyvZCT5ij5PDp5LDeHItJiVY3iePO8lNxvDc6A@vger.kernel.org, AJvYcCX3ewhiCvaiYzHy8L685769Us0yfgtoGeKdR4Aq0Dbb7nvQK2ZoFscNT91rnVPq1hikNKQKz4X5RfrSfcXEPg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUPcEmZLjNn8UqNgyCDKhspMhndmjWnxTHCPaeiiqRVYul7CXa
-	eWaRjDto6NwC/PRMgZrQ/M7FeeNWc9niS9nV5eKyLyzNF+Sttkjw
-X-Google-Smtp-Source: AGHT+IEQ9l+rgtuChT4dveBuRdRhUbq8ydAi1dTuFwuQq8ykSCTLX2Ze/ydituja7uIUStfyHuX5GA==
-X-Received: by 2002:a17:902:da8f:b0:20d:2848:2bee with SMTP id d9443c01a7336-20e5a752281mr199612745ad.16.1729567408807;
-        Mon, 21 Oct 2024 20:23:28 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0cc12sm33346855ad.95.2024.10.21.20.23.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2024 20:23:28 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1729567657; c=relaxed/simple;
+	bh=5E/MUIWR/Iyu+JIdQ/r/WMUE9ombsVBOFdb/G/DxTYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXhUMSsJf1oU01zc+FwoS/UrxeJQaoJgXOTl+g54FQw0xbnGr2eae1/jNJGesIe+ONv2P+Nl3I5fLOhEToxhW1yY4c/uGoYhIyfmGReroyvH/ivRBWvPxPyrAmRBR+tU6OGwEy0jDma0+e0Iwyd+31HFbMgpfG5Z49i7x4DUhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CkdjjShL; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=dkDU2h6uW+xJKLl9ZR9Wm9eDWO5GXIm5Do45ucbhOLg=;
+	b=CkdjjShLW0crzKcz4i7Pe3NeRQcu5dh7LAZ9xHowsCuZYpCp8SSBNHr+1VTRV1
+	+WR5INlGK3Y0M56zBpb6q0xlSbKBDNLKhp2s3MqVXzPKLcO72J45FpqxPP6ozMk4
+	vf+I0wzHe3eLEqPNa7NVAnNTJZtq8pR0Mts/VPcA+Rnls=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnrfWCGxdnpbOUAA--.5406S3;
+	Tue, 22 Oct 2024 11:27:00 +0800 (CST)
+Date: Tue, 22 Oct 2024 11:26:58 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: robh@kernel.org, saravanak@google.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, horms@kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	philippe.schenker@toradex.com
+Subject: Re: [PATCH] arm64: dts: colibri-imx8x: Fix typo "rewritting"
+Message-ID: <ZxcbggAgGx67+xsX@dragon>
+References: <45F06B5D4CA9F444+20241018023340.47617-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
-Date: Tue, 22 Oct 2024 11:23:14 +0800
-Cc: Jeongjun Park <aha310510@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3F346797-D10A-4A03-BE5E-6AB3FE1F64BC@gmail.com>
-References: <20241021154356.38221-1-aha310510@gmail.com>
- <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
- <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
- <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
-To: Hongbo Li <lihongbo22@huawei.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45F06B5D4CA9F444+20241018023340.47617-1-wangyuli@uniontech.com>
+X-CM-TRANSID:Mc8vCgDnrfWCGxdnpbOUAA--.5406S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVco2UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxCAZWcXFXIWFAAAsr
 
-On Oct 22, 2024, at 11:05, Hongbo Li <lihongbo22@huawei.com> wrote:
->=20
->=20
->=20
-> On 2024/10/22 10:38, Alan Huang wrote:
->> On Oct 22, 2024, at 10:26, Hongbo Li <lihongbo22@huawei.com> wrote:
->>>=20
->>>=20
->>>=20
->>> On 2024/10/21 23:43, Jeongjun Park wrote:
->>>> The size of a.data_type is set abnormally large, causing =
-shift-out-of-bounds.
->>>> To fix this, we need to add validation on a.data_type in
->>>> alloc_lru_idx_fragmentation().
->>>> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
->>>> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
->>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>>> ---
->>>>  fs/bcachefs/alloc_background.h | 3 +++
->>>>  1 file changed, 3 insertions(+)
->>>> diff --git a/fs/bcachefs/alloc_background.h =
-b/fs/bcachefs/alloc_background.h
->>>> index f8e87c6721b1..163a67b97a40 100644
->>>> --- a/fs/bcachefs/alloc_background.h
->>>> +++ b/fs/bcachefs/alloc_background.h
->>>> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum =
-bch_data_type type)
->>>>  static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 =
-a,
->>>>         struct bch_dev *ca)
->>>>  {
->>>> + if (a.data_type >=3D BCH_DATA_NR)
->>>> + return 0;
->>>> +
->>>=20
->>> oh, I found I have done the same thing in [1]("Re: [syzbot] =
-[bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But
->> Your patch there is still triggering the issue.
-> Yeah, it just notify the issue and not prevent the issue. So I found =
-it should add a.data_type condition indeed. :)
->>> in my humble opinion, the validation changes also should be added. =
-And in addition, move the condition about a.data_type into
->> There is already the validation:
->> bkey_fsck_err_on(alloc_data_type(a, a.data_type) !=3D a.data_type
->=20
-> This is actually not enough. This only do some transition check. For =
-example, if a.data_type break when bch2_bucket_sectors_dirty (the data =
-corruption can lead to various situations occurring) is true, the helper =
-does noting.
+On Fri, Oct 18, 2024 at 10:33:40AM +0800, WangYuli wrote:
+> There is a spelling mistake of 'rewritting' in comments which
+> should be 'rewriting'.
+> 
+> Suggested-by: Simon Horman <horms@kernel.org>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 
-Make sense.
-
->=20
-> Thanks,
-> Hongbo
->=20
->> And the unknown data type is already printed in bch2_prt_data_type, =
-additional validation doesn=E2=80=99t help much.
->>> data_type_movable will be better. Just my personal opinion.:)
->> In my personal opinion, I don=E2=80=99t think so :)
->>>=20
->>> [1] https://www.spinics.net/lists/kernel/msg5412619.html
->>>=20
->>> Thanks,
->>> Hongbo
->>>=20
->>>>   if (!data_type_movable(a.data_type) ||
->>>>       !bch2_bucket_sectors_fragmented(ca, a))
->>>>   return 0;
->>>> --
-
+Applied, thanks!
 
 
