@@ -1,387 +1,232 @@
-Return-Path: <linux-kernel+bounces-376924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6DB9AB78B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F4E9AB78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B3A1F236FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625DF1C231A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29C31CBE95;
-	Tue, 22 Oct 2024 20:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17F1CB51D;
+	Tue, 22 Oct 2024 20:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7QPoJxN"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XWr8RoUk"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425C45A79B;
-	Tue, 22 Oct 2024 20:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5858C13E41A;
+	Tue, 22 Oct 2024 20:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729628195; cv=none; b=bdzQ+vTfq9cvkqaKW7qK4Y2ajHD5Vd0smUHOTBpzNaA/oZM48FNXUpiO0fjX163VjtsP5frdMiGMwL+VdeEqN8MeuBNqxoxLQku+qq8g4M+WZIQ8Erv/qVuzE/ca7mcRypg1kt9HFQM9ijXiOruHvvA0GUmeuubmvf+qaiC0Mxo=
+	t=1729628492; cv=none; b=OXhd+mv9+ayh1WV6YChNDuHheyUk+xuwdbjjnhOze53pL+n4JgMugIvdRZMyL2aZcOVFbAvAhfL+PXpUQ2SNNncdm9884WSN85Tagxu7VaSCy0aq1KlegT3Hgqcszbi9lHgoma09C93ZQ0Czg2P53ZpRL6auYcBC9QyoC+QnDQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729628195; c=relaxed/simple;
-	bh=npKCql1gTkKQ8u0oyH23Y+Nb4Kb778MtDPkELasbbdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PRdMffBanLuJ/7avFnW9RvdRpccfKHkRYNUpwXYkPiWM7DJWjgg9dO9yKUKycZgxfGayw25qyomlDIQqwOASp13Oq1NUC1DYGmcmCeUKcLGYaSzUqYvXoPRo0xYOEinT+vD3UBRZcIYpFSHYfBm2lg6fxsPjmECzmXEB/61c1WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7QPoJxN; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e49ef3bb9so143866b3a.1;
-        Tue, 22 Oct 2024 13:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729628192; x=1730232992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gB14F/a1LUamFMOcc37piKTi2MrjcGPFagP7mGf27wU=;
-        b=E7QPoJxNR59I7LDEI4THy4ZXwfVtVxrrrD5hfLcI68GU6qa03ngPdRCxuTyZPSPxxP
-         EhTRAxFcIa9vI6Fpl/RqAK40BkHgMeUPOLpKiZIrfvf9dwNUwE4yrmQw19pQbJjN/inO
-         BmK/j7Py25b3EvhJZ3a9pg1oAPSEBN67UO2kRTPa+vHuRZxHgpLRIGl2AldIwyDzokE9
-         yWLjCRQT0IHrR5+agOhAhMpXTIT8ssXEVkPDVP2YD26P3YYSqy0ltzikGNT5JjsvK95W
-         EUKD2Aof3HQLTpie1hpDNZKgi4QPSZudsU6hrBTsICtjlMeBLsXMHrxIoAwijVm0yrUx
-         6Jcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729628192; x=1730232992;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gB14F/a1LUamFMOcc37piKTi2MrjcGPFagP7mGf27wU=;
-        b=QyZtXQ81ptyOZi6QeyvVdA24WWAiuEVAiPG59iSUPafKcG/mjauylaHwOrzIGsIsFd
-         ajSppZvFt3dIJ9lkuz6Rk0AEJlJ+tqLJHPzDGe6wNInpCbGk6+XBPaanMsukej8M7br6
-         /0EyHrTk9sFzjBJ73YhIJhPunad5xvZ75X5L7qsUzyFriIRHiPov7CcdOWw0Bb/M33Ql
-         dzWLh+DU47m11zMDIXjW+LX0TTUAJC9VHq+v4GftJc2dr4qd0pSXtT0awzkl0J5o96cs
-         uBIcWW8SUmhfp/N3bA7UszH6EzWnQvB2vqj7Jr0xYszpEpYnwEE7UuzFk9FNbVFU8rCv
-         Swdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbRKp/iGUwCDvKRfN2T5b5uYmm7hg6LitKo9CV0zD2fDCYg+KkcmTFwpTG0ye3UUfnFQhvd6lgrsTAutg=@vger.kernel.org, AJvYcCVUaw7SeXrBNzDuazhZ2aoduN1I1Ao7XX1IjzFMMO/wU7P3qjXvLKVk9IrJFCS+EzyFJc0dmVsQCPW3pc//2uC5YZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1xYSE51MkUKDUnohH3u5wrwECpgp9WgmjWPwxKbp83mt8Pn1C
-	WdTExyHIUrKCpZQ25WY66aGS5cyv/hEopYz/fLUxe436Fcw1I3CPGeerx0Fe
-X-Google-Smtp-Source: AGHT+IFK8UnuUY6S0dV6mpuDMHpwvUq8V9yzyDQ3B2tJZboD7ScbY8qp/lcbfPBTEG9DY63eIwWzSA==
-X-Received: by 2002:aa7:8003:0:b0:71e:427e:e679 with SMTP id d2e1a72fcca58-71edc146704mr6597496b3a.4.1729628192136;
-        Tue, 22 Oct 2024 13:16:32 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312e7dsm5309557b3a.11.2024.10.22.13.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:16:31 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com (maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER),
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	George McCollister <george.mccollister@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER)
-Subject: [PATCHv2 net-next] net: dsa: use ethtool string helpers
-Date: Tue, 22 Oct 2024 13:16:29 -0700
-Message-ID: <20241022201629.139244-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729628492; c=relaxed/simple;
+	bh=Bb4tE5HNy/3Q9LupdWC/qtV3X2KPMD0LdQD8kno5cqQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AO0qA4qq8oMOsebf/iL4OC21RfGM/nxm/HYJWM3vw0FDBVb5Ast8iWQ61l8NPxYmIF5GcfJT3Vu5covX2eqcX0zPQ+Dgq7gpTf3fBqG+vuVnRFHd2EWvDpQ+5DXNLzWyauGWLPPmqjiJEg2mn+M4/t/MubLgcBVK92xx8WDSWPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XWr8RoUk; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729628488; x=1729887688;
+	bh=7TAwg2NhjgC2rD2Ah41EmrFWH8kOz2HRpf/iGmgs2SE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XWr8RoUkWoKS/rcp6d/VoKQQI+xLAJPc3bQAkmmZr3qZyHP4p8Kq8DkGtDVCrvgoQ
+	 8CjhBGKwBi86UpsqVEwpU81AkdDPv/QiVyEPs78weqCoj7UQr1i0//IqKQ4NYs2HHJ
+	 qtfiLfDHgkJqNYbbMF9dGzctdheUsoBeCsID69/SJR7BP9JTXti9AOtrLESgYeYGnS
+	 Vz6dI0LHqLd5TA402dAGUOuZcV7QHfwoqXsOTeAhmAVWiynnB25JCwC6vA9G1eCJCx
+	 4IB1+JshIGLr1E91ezStRK7OXXtgG5pgSEkxpONQ3Hs5jVtCRLrq2ImBshzkN1og2K
+	 Ro+bPxy7WSCrQ==
+Date: Tue, 22 Oct 2024 20:21:24 +0000
+To: syzbot <syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_key_insert_take
+Message-ID: <HzGVLZXHcn_UkULYJTtpdjJTmVWHsXHFOUSQ54FrsFFxO6-jL6ZBUR99YbWPqEpJKYVGnr3ofRAsCuKVG3eeB29-WGiPP68MfUr1thNAmjE=@proton.me>
+In-Reply-To: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
+References: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 8c65888c2f230d8ff27f6c928231d32e4abe6c6c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-These are the prefered way to copy ethtool strings.
+On Monday, October 21st, 2024 at 3:07 PM, syzbot <syzbot+47f334396d741f9cb1=
+ce@syzkaller.appspotmail.com> wrote:
 
-Avoids incrementing pointers all over the place.
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit: 15e7d45e786a Add linux-next specific files for 20241016
+> git tree: linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D10a5c24058000=
+0
+> kernel config: https://syzkaller.appspot.com/x/.config?x=3Dc36416f1c54640=
+c0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D47f334396d741f9=
+cb1ce
+> compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2=
+.40
+> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=3D11044487980000
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=3D12815830580000
+>=20
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/dis=
+k-15e7d45e.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinu=
+x-15e7d45e.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/b=
+zImage-15e7d45e.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/6ba77e840d=
+2c/mount_0.gz
+>=20
+> The issue was bisected to:
+>=20
+> commit d59f4aba096298347f0e0e5402843bb8505edc2d
+> Author: Kent Overstreet kent.overstreet@linux.dev
+>=20
+> Date: Sat Oct 12 02:53:09 2024 +0000
+>=20
+> bcachefs: -o norecovery now bails out of recovery earlier
+>=20
+> bisection log: https://syzkaller.appspot.com/x/bisect.txt?x=3D1580c487980=
+000
+> final oops: https://syzkaller.appspot.com/x/report.txt?x=3D1780c487980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1380c48798000=
+0
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com
+> Fixes: d59f4aba0962 ("bcachefs: -o norecovery now bails out of recovery e=
+arlier")
+>=20
+> ------------[ cut here ]------------
+> kernel BUG at fs/bcachefs/btree_journal_iter.c:190!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 1 UID: 0 PID: 1169 Comm: kworker/1:2 Not tainted 6.12.0-rc3-next-202=
+41016-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work (bcachefs-d=
+elete-dead-snapshots/)
+> RIP: 0010:bch2_journal_key_insert_take+0x180f/0x1830 fs/bcachefs/btree_jo=
+urnal_iter.c:190
+> Code: f1 fc ff ff e8 d2 51 78 fd 90 0f 0b e8 ca 51 78 fd 90 0f 0b e8 c2 5=
+1 78 fd 90 0f 0b e8 ba 51 78 fd 90 0f 0b e8 b2 51 78 fd 90 <0f> 0b e8 4a a1=
+ af 07 e8 a5 51 78 fd 90 0f 0b e8 9d 51 78 fd 90 0f
+>=20
+> RSP: 0018:ffffc9000430edc0 EFLAGS: 00010293
+> RAX: ffffffff841c909e RBX: 0000000000000040 RCX: ffff8880272b8000
+> RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
+> RBP: ffffc9000430ef30 R08: ffffffff841c7a8e R09: 1ffff1100de80035
+> R10: dffffc0000000000 R11: ffffed100de80036 R12: 0000000000000000
+> R13: ffff88806f400000 R14: dffffc0000000000 R15: ffff88806f44b310
+> FS: 0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:00000000000000=
+00
+> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000559ab32ac530 CR3: 00000000744be000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <TASK>
+>=20
+> bch2_journal_key_insert+0xb3/0x130 fs/bcachefs/btree_journal_iter.c:260
+> do_bch2_trans_commit_to_journal_replay+0x111/0x420 fs/bcachefs/btree_tran=
+s_commit.c:1003
+> __bch2_trans_commit+0x15d9/0x9420 fs/bcachefs/btree_trans_commit.c:1039
+> bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+> bch2_delete_dead_snapshots+0x19b6/0x5ae0 fs/bcachefs/snapshot.c:1655
+> bch2_delete_dead_snapshots_work+0x34/0x40 fs/bcachefs/snapshot.c:1730
+> process_one_work kernel/workqueue.c:3229 [inline]
+> process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+> worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+> kthread+0x2f0/0x390 kernel/kthread.c:389
+> ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> </TASK>
+>=20
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:bch2_journal_key_insert_take+0x180f/0x1830 fs/bcachefs/btree_jo=
+urnal_iter.c:190
+> Cod
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
----
- v2: remove curly braces from rzn1_a5psw.c
- drivers/net/dsa/b53/b53_common.c          |  3 +--
- drivers/net/dsa/bcm_sf2.c                 |  5 +----
- drivers/net/dsa/bcm_sf2_cfp.c             | 18 +++++-------------
- drivers/net/dsa/dsa_loop.c                |  3 +--
- drivers/net/dsa/hirschmann/hellcreek.c    |  8 ++------
- drivers/net/dsa/microchip/ksz_common.c    |  3 +--
- drivers/net/dsa/mv88e6xxx/chip.c          | 17 ++---------------
- drivers/net/dsa/mv88e6xxx/serdes.c        |  6 ++----
- drivers/net/dsa/rzn1_a5psw.c              |  6 ++----
- drivers/net/dsa/sja1105/sja1105_ethtool.c |  7 ++-----
- drivers/net/dsa/xrs700x/xrs700x.c         |  6 ++----
- net/dsa/user.c                            | 13 +++++--------
- 12 files changed, 26 insertions(+), 69 deletions(-)
+Seems this BUG is no longer being triggered. Output with 6.12-rc5:
+```
+executing program
+[   22.799942] loop0: detected capacity change from 0 to 32768
+[   22.835885] bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=
+=3Dmetadata_checksum=3Dnone,data_checksum=3Dns
+[   22.837429] bcachefs (loop0): recovering from clean shutdown, journal se=
+q 10
+[   22.843604] bcachefs (loop0): check_topology... done
+[   22.844050] bcachefs (loop0): accounting_read... done
+[   22.849861] bcachefs (loop0): alloc_read... done
+[   22.850282] bcachefs (loop0): stripes_read... done
+[   22.850738] bcachefs (loop0): snapshots_read... done
+[   22.851370] bcachefs (loop0): check_allocations...
+[   22.852430] btree ptr not marked in member info btree allocated bitmap
+[   22.852441]   u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ac6214=
+1f8dc7e261 written 24 min_key POS_MIN dg
+[   22.854503] bcachefs (loop0): Unable to continue, halting
+[   22.854977] bcachefs (loop0): bch2_gc_mark_key(): error fsck_errors_not_=
+fixed
+[   22.855673] bcachefs (loop0): bch2_gc_btree(): error fsck_errors_not_fix=
+ed
+[   22.856268] bcachefs (loop0): bch2_gc_btrees(): error fsck_errors_not_fi=
+xed
+[   22.857042] bcachefs (loop0): bch2_check_allocations(): error fsck_error=
+s_not_fixed
+[   22.857904] bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_=
+fixed
+[   22.858378] bcachefs (loop0): bch2_fs_start(): error starting filesystem=
+ fsck_errors_not_fixed
+[   22.858933] bcachefs (loop0): shutting down
+[   22.863434] bcachefs (loop0): shutdown complete
+[   23.256941] bcachefs: bch2_fs_get_tree() error: fsck_errors_not_fixed
+[   23.270355] repro.elf (193) used greatest stack depth: 25792 bytes left
+```
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index c39cb119e760..285785c942b0 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -989,8 +989,7 @@ void b53_get_strings(struct dsa_switch *ds, int port, u32 stringset,
- 
- 	if (stringset == ETH_SS_STATS) {
- 		for (i = 0; i < mib_size; i++)
--			strscpy(data + i * ETH_GSTRING_LEN,
--				mibs[i].name, ETH_GSTRING_LEN);
-+			ethtool_puts(&data, mibs[i].name);
- 	} else if (stringset == ETH_SS_PHY_STATS) {
- 		phydev = b53_get_phy_device(ds, port);
- 		if (!phydev)
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 9201f07839ad..2bb1832d21bc 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1180,11 +1180,8 @@ static const struct b53_io_ops bcm_sf2_io_ops = {
- static void bcm_sf2_sw_get_strings(struct dsa_switch *ds, int port,
- 				   u32 stringset, uint8_t *data)
- {
--	int cnt = b53_get_sset_count(ds, port, stringset);
--
- 	b53_get_strings(ds, port, stringset, data);
--	bcm_sf2_cfp_get_strings(ds, port, stringset,
--				data + cnt * ETH_GSTRING_LEN);
-+	bcm_sf2_cfp_get_strings(ds, port, stringset, data);
- }
- 
- static void bcm_sf2_sw_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
-index c88ee3dd4299..93cb43ed6e61 100644
---- a/drivers/net/dsa/bcm_sf2_cfp.c
-+++ b/drivers/net/dsa/bcm_sf2_cfp.c
-@@ -1283,23 +1283,15 @@ void bcm_sf2_cfp_get_strings(struct dsa_switch *ds, int port,
- 			     u32 stringset, uint8_t *data)
- {
- 	struct bcm_sf2_priv *priv = bcm_sf2_to_priv(ds);
--	unsigned int s = ARRAY_SIZE(bcm_sf2_cfp_stats);
--	char buf[ETH_GSTRING_LEN];
--	unsigned int i, j, iter;
-+	unsigned int i, j;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 1; i < priv->num_cfp_rules; i++) {
--		for (j = 0; j < s; j++) {
--			snprintf(buf, sizeof(buf),
--				 "CFP%03d_%sCntr",
--				 i, bcm_sf2_cfp_stats[j].name);
--			iter = (i - 1) * s + j;
--			strscpy(data + iter * ETH_GSTRING_LEN,
--				buf, ETH_GSTRING_LEN);
--		}
--	}
-+	for (i = 1; i < priv->num_cfp_rules; i++)
-+		for (j = 0; j < ARRAY_SIZE(bcm_sf2_cfp_stats); j++)
-+			ethtool_sprintf(&data, "CFP%03d_%sCntr", i,
-+					bcm_sf2_cfp_stats[j].name);
- }
- 
- void bcm_sf2_cfp_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
-index c70ed67cc188..adbab544c60f 100644
---- a/drivers/net/dsa/dsa_loop.c
-+++ b/drivers/net/dsa/dsa_loop.c
-@@ -121,8 +121,7 @@ static void dsa_loop_get_strings(struct dsa_switch *ds, int port,
- 		return;
- 
- 	for (i = 0; i < __DSA_LOOP_CNT_MAX; i++)
--		memcpy(data + i * ETH_GSTRING_LEN,
--		       ps->ports[port].mib[i].name, ETH_GSTRING_LEN);
-+		ethtool_puts(&data, ps->ports[port].mib[i].name);
- }
- 
- static void dsa_loop_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hirschmann/hellcreek.c
-index d798f17cf7ea..283ec5a6e23c 100644
---- a/drivers/net/dsa/hirschmann/hellcreek.c
-+++ b/drivers/net/dsa/hirschmann/hellcreek.c
-@@ -294,12 +294,8 @@ static void hellcreek_get_strings(struct dsa_switch *ds, int port,
- {
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(hellcreek_counter); ++i) {
--		const struct hellcreek_counter *counter = &hellcreek_counter[i];
--
--		strscpy(data + i * ETH_GSTRING_LEN,
--			counter->name, ETH_GSTRING_LEN);
--	}
-+	for (i = 0; i < ARRAY_SIZE(hellcreek_counter); ++i)
-+		ethtool_puts(&data, hellcreek_counter[i].name);
- }
- 
- static int hellcreek_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 4e8710c7cb7b..408ccb1f012e 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2113,8 +2113,7 @@ static void ksz_get_strings(struct dsa_switch *ds, int port,
- 		return;
- 
- 	for (i = 0; i < dev->info->mib_cnt; i++) {
--		memcpy(buf + i * ETH_GSTRING_LEN,
--		       dev->info->mib_names[i].string, ETH_GSTRING_LEN);
-+		ethtool_puts(&buf, dev->info->mib_names[i].string);
- 	}
- }
- 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 4f5193d86e65..1893fed00467 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -1162,8 +1162,7 @@ static int mv88e6xxx_stats_get_strings(struct mv88e6xxx_chip *chip,
- 	for (i = 0, j = 0; i < ARRAY_SIZE(mv88e6xxx_hw_stats); i++) {
- 		stat = &mv88e6xxx_hw_stats[i];
- 		if (stat->type & types) {
--			memcpy(data + j * ETH_GSTRING_LEN, stat->string,
--			       ETH_GSTRING_LEN);
-+			ethtool_puts(&data, stat->string);
- 			j++;
- 		}
- 	}
-@@ -1204,31 +1203,19 @@ static void mv88e6xxx_atu_vtu_get_strings(uint8_t *data)
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6xxx_atu_vtu_stats_strings); i++)
--		strscpy(data + i * ETH_GSTRING_LEN,
--			mv88e6xxx_atu_vtu_stats_strings[i],
--			ETH_GSTRING_LEN);
-+		ethtool_puts(&data, mv88e6xxx_atu_vtu_stats_strings[i]);
- }
- 
- static void mv88e6xxx_get_strings(struct dsa_switch *ds, int port,
- 				  u32 stringset, uint8_t *data)
- {
- 	struct mv88e6xxx_chip *chip = ds->priv;
--	int count = 0;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
- 	mv88e6xxx_reg_lock(chip);
- 
--	if (chip->info->ops->stats_get_strings)
--		count = chip->info->ops->stats_get_strings(chip, data);
--
--	if (chip->info->ops->serdes_get_strings) {
--		data += count * ETH_GSTRING_LEN;
--		count = chip->info->ops->serdes_get_strings(chip, port, data);
--	}
--
--	data += count * ETH_GSTRING_LEN;
- 	mv88e6xxx_atu_vtu_get_strings(data);
- 
- 	mv88e6xxx_reg_unlock(chip);
-diff --git a/drivers/net/dsa/mv88e6xxx/serdes.c b/drivers/net/dsa/mv88e6xxx/serdes.c
-index 01ea53940786..327831d2b547 100644
---- a/drivers/net/dsa/mv88e6xxx/serdes.c
-+++ b/drivers/net/dsa/mv88e6xxx/serdes.c
-@@ -144,8 +144,7 @@ int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip,
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6352_serdes_hw_stats); i++) {
- 		stat = &mv88e6352_serdes_hw_stats[i];
--		memcpy(data + i * ETH_GSTRING_LEN, stat->string,
--		       ETH_GSTRING_LEN);
-+		ethtool_puts(&data, stat->string);
- 	}
- 	return ARRAY_SIZE(mv88e6352_serdes_hw_stats);
- }
-@@ -405,8 +404,7 @@ int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip,
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6390_serdes_hw_stats); i++) {
- 		stat = &mv88e6390_serdes_hw_stats[i];
--		memcpy(data + i * ETH_GSTRING_LEN, stat->string,
--		       ETH_GSTRING_LEN);
-+		ethtool_puts(&data, stat->string);
- 	}
- 	return ARRAY_SIZE(mv88e6390_serdes_hw_stats);
- }
-diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 1135a32e4b7e..66974379334a 100644
---- a/drivers/net/dsa/rzn1_a5psw.c
-+++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -802,10 +802,8 @@ static void a5psw_get_strings(struct dsa_switch *ds, int port, u32 stringset,
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++) {
--		memcpy(data + u * ETH_GSTRING_LEN, a5psw_stats[u].name,
--		       ETH_GSTRING_LEN);
--	}
-+	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++)
-+		ethtool_puts(&data, a5psw_stats[u].name);
- }
- 
- static void a5psw_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/sja1105/sja1105_ethtool.c b/drivers/net/dsa/sja1105/sja1105_ethtool.c
-index decc6c931dc1..2ea64b1d026d 100644
---- a/drivers/net/dsa/sja1105/sja1105_ethtool.c
-+++ b/drivers/net/dsa/sja1105/sja1105_ethtool.c
-@@ -586,7 +586,6 @@ void sja1105_get_strings(struct dsa_switch *ds, int port,
- {
- 	struct sja1105_private *priv = ds->priv;
- 	enum sja1105_counter_index max_ctr, i;
--	char *p = data;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
-@@ -597,10 +596,8 @@ void sja1105_get_strings(struct dsa_switch *ds, int port,
- 	else
- 		max_ctr = __MAX_SJA1105PQRS_PORT_COUNTER;
- 
--	for (i = 0; i < max_ctr; i++) {
--		strscpy(p, sja1105_port_counters[i].name, ETH_GSTRING_LEN);
--		p += ETH_GSTRING_LEN;
--	}
-+	for (i = 0; i < max_ctr; i++)
-+		ethtool_puts(&data, sja1105_port_counters[i].name);
- }
- 
- int sja1105_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/drivers/net/dsa/xrs700x/xrs700x.c b/drivers/net/dsa/xrs700x/xrs700x.c
-index de3b768f2ff9..4dbcc49a9e52 100644
---- a/drivers/net/dsa/xrs700x/xrs700x.c
-+++ b/drivers/net/dsa/xrs700x/xrs700x.c
-@@ -91,10 +91,8 @@ static void xrs700x_get_strings(struct dsa_switch *ds, int port,
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(xrs700x_mibs); i++) {
--		strscpy(data, xrs700x_mibs[i].name, ETH_GSTRING_LEN);
--		data += ETH_GSTRING_LEN;
--	}
-+	for (i = 0; i < ARRAY_SIZE(xrs700x_mibs); i++)
-+		ethtool_puts(&data, xrs700x_mibs[i].name);
- }
- 
- static int xrs700x_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index 64f660d2334b..697e73494175 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -1042,15 +1042,12 @@ static void dsa_user_get_strings(struct net_device *dev,
- 	struct dsa_switch *ds = dp->ds;
- 
- 	if (stringset == ETH_SS_STATS) {
--		int len = ETH_GSTRING_LEN;
--
--		strscpy_pad(data, "tx_packets", len);
--		strscpy_pad(data + len, "tx_bytes", len);
--		strscpy_pad(data + 2 * len, "rx_packets", len);
--		strscpy_pad(data + 3 * len, "rx_bytes", len);
-+		ethtool_puts(&data, "tx_packets");
-+		ethtool_puts(&data, "tx_bytes");
-+		ethtool_puts(&data, "rx_packets");
-+		ethtool_puts(&data, "rx_bytes");
- 		if (ds->ops->get_strings)
--			ds->ops->get_strings(ds, dp->index, stringset,
--					     data + 4 * len);
-+			ds->ops->get_strings(ds, dp->index, stringset, data);
- 	} else if (stringset ==  ETH_SS_TEST) {
- 		net_selftest_get_strings(data);
- 	}
--- 
-2.47.0
+
 
 
