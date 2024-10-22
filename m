@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-376186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399E09AA149
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE9C9AA14C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC331F22404
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4329C1F23BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337DE19CCF9;
-	Tue, 22 Oct 2024 11:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893D4154426;
+	Tue, 22 Oct 2024 11:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cffjGT7C"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="w3pkMXVB"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BDD19C549
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6904B199EBB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597370; cv=none; b=Jru1XvNILOwiabPXF+kFllw9MRIipwBb6qm33orglkCQWmCiLE3ulQ3h2yLvRBNESjv3Z8amh8/cVy7PIvnhFItYImHl3KC2HBV28TmfjqrxjIkZxiB9loU2p8MiaDAXWcDtaOQPQpJbnAUsbuhSwVcSnlDKljNigVkb/vJL8L0=
+	t=1729597441; cv=none; b=WwKF5OynIC951UX9pi+twJyptJIORO6MD5kBzVfCH9P3UMb7XrVmMbMYGkc91Jhrxf2/LFQnusIDuUwq91eKXL/xPT8tanNqWl++h/tCUFMxnRUWhxTvamZ+8gorP9koe0xjoOSXDOWSw5uMzXxjXQHuzpsVjjggW7ESK/W4C6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597370; c=relaxed/simple;
-	bh=raa66sydrVS7SYiJ0GgKYuUMIZ/xbMw6qo8atNjsO8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyBp0oBDjiWfJoPT3lK/ScPtkzQSBWgnP/i6LJrjnSBLlCa9tAspSl9E4Wq7tg6xtTvpudTjN37cuVRuxaew7UvVvd8eTQbzixlwYuZg3dBE73jQM2pIm5mQPVEj60+8u1GpOxbt+Y4HzSwjCvr7avpkAYyGR2+QMPxLHo9LWvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cffjGT7C; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso740229166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:42:48 -0700 (PDT)
+	s=arc-20240116; t=1729597441; c=relaxed/simple;
+	bh=eBU03LmBOctVGp3oQT568nIvHtsc4hRjT+IESSBuhGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BJU+37Nl6b0HF4sRlLeEshESnXMoY4QlcYxnX4pPsNX3Nu3fV9ioWx8AVwgsd5yb6dE/1XTgMphUNf9OKAnMhMNf2JTS+oqsDxjn34T2g7BW1XsRs2mBE357NWJbl6/iT8ArdVRqQoAiQ1Q547+kb9cC0bdYOjVEr4owqjhMel8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=w3pkMXVB; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb58980711so56909681fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729597367; x=1730202167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8b6GJXioy/QHHMfPsIPiSHRGT4MhlfXPQwWNMxqLwkI=;
-        b=cffjGT7C3sFd5RxxcIaS31FqZeB7ognz3qpOyWbztqtehNtX9QrPX1yTHr6dh6SLiW
-         9qFK6w3Za90hoBxMl0TojlyY937xy1JHH7w/FfR5Vr0nDF02og7PdR8yWXUh4JkXoV8L
-         bweBrzUqvudH3Q0rTUm+RIhZyTQb9yN97MH7sz0Z6KM/JtRvsjEamz0UpDwWrX5ccuE1
-         PY8YZVNU/bc5vEzOqYgAsSovUOTrX88uWcYwwT5cLVHZiXZEQZvOegCNt4wfqgBMkLFB
-         whYr4T0fIEK5u16e6Zt45W46FoR+lwJPwwUlBn+J0Jt1iGC6uDVeJsyLdGvpozp8/ZuO
-         rt2g==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729597437; x=1730202237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eBU03LmBOctVGp3oQT568nIvHtsc4hRjT+IESSBuhGY=;
+        b=w3pkMXVBMOj8FFJsS1BfBAs6LPmi6Z5zx9/+7Td3p8ahd7GgOnAD6ftGnQRAryDK/x
+         qKPAHLFHJzNpIBNGPPYNWqObSKIpYbBC4zkP/xWgmN3/KESuEiMxE+cZOc1rcw9lzNCV
+         YdvC5mfrrpINcgRLf2cx6lzCoU6E2ZYNqjqiQF6TfTMEC0yQyQzx34sK3oyHvgC8bLF6
+         tNBxRRq+57pviehJChEmgAzAjM+z2NE9RvtcAEWCvLDGZH71CJRB2wAqLQQMsPN9PpBX
+         EuIh4EJPnc3KzCGZdq56LrtsTvLEwrWZGq5QYcdCqwtDfrxFW4sgBaCMZ4lbsEEFry5/
+         z8dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729597367; x=1730202167;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8b6GJXioy/QHHMfPsIPiSHRGT4MhlfXPQwWNMxqLwkI=;
-        b=ajV/e2edMqSOkhy42ADrKag3S2DHbz/erWY7w2B5rAefqESiQVdCkYy3e6wJ1mcXd7
-         STSSMATflffhIS/wls/6ldkxPSGtczeuRY/jHyQD0u6Y1CB61j0KBk93q0LRawHbBovq
-         RruUWcICslJho3IY8vdqjYfO+HLSe5KjaBuFOkuSc7cqiF8PLYnFWz+uEvIN1vT1HUTo
-         QQTfIIeY8USiDp2WjrJ+2zbi28/wZ8t2cMhf/1SjGtiaH1xYkpCzmt+e/OnheQjpSLJz
-         WUmUHJVKvjOtNYnG/N2O1jfNte1HInnoLc/GFjkiTmbty3t6Ims3jns8eTwj5JmF18eO
-         cUjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW14kH4WXJk1RRDED7vGRaRQ0ibg80UqbhvSuAEKNB+ajhAIeASVwL6CQOq7fMuBVd7RZPRwVxnkC1KOLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4bn+CCwR40UWyt0rkVDo01j1JNzoZH8kczWOgbqaKTNhDcpEG
-	NMsMWTXLK8s6UmRMCFZd1CaWkjJ29rNaHWDg3tdQjgT3/wXlBcQCXeWb3aZi8m8=
-X-Google-Smtp-Source: AGHT+IG2HVAkARznKGeXSSOz3pYHmzdRrakg/LgoenOtPU5eMNDOO3eQvdGmwFfjp7NcnbHTBiLBcg==
-X-Received: by 2002:a17:907:7d9e:b0:a99:f8e2:edec with SMTP id a640c23a62f3a-a9a69a7dc95mr1691628266b.21.1729597367082;
-        Tue, 22 Oct 2024 04:42:47 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9155a1c9sm328599966b.129.2024.10.22.04.42.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 04:42:46 -0700 (PDT)
-Message-ID: <df619b5f-998a-4c6f-af80-b2923264d16c@suse.com>
-Date: Tue, 22 Oct 2024 13:42:45 +0200
+        d=1e100.net; s=20230601; t=1729597437; x=1730202237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eBU03LmBOctVGp3oQT568nIvHtsc4hRjT+IESSBuhGY=;
+        b=gKYVUePILG6s1kYU6PMXlfa7Fi5lrA5pXjirRNgfF7+rQ7XGi4znWCYLfBlrg6c+wb
+         3AIpy77O3Tv8XNC8rgtYj21/tw0cykYz319IF5BMRsuN8LOqlYocFlF1cOEuvRqvTzbY
+         IM3fRp/sC0OwJX3RB5OMzuZVOjDpXcPdHAWbRJOHmowhuZeS4IbxlEJvE8u5Xo0wI5V8
+         8XNzG9XMiYQddErnt1kEBVAn39zC0jP846w5OICbxPOatcW+/q4CtBCI3Gn9sZLSMNxD
+         qEGbs1ZnUeufXFWcZsVJ6Cv16yiZ3j+cJ2wFMWSgmzKJn+QcRqFMg43nIbwFRHFEaKgD
+         bIPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkmLRvoWx9pHrFSmlOg9vmQ6gJ6NVXs/am+oXq991cYksqtKIPNNUcSzecC5wP/ieJHm/NB0OwLIfPDK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBBL+YScmhTRGiJez3sm/lxmWv4DRtyq+XAgVxO6wUqsv9F8fE
+	5OxFtRH2nnjxpbwFC1/EA5cwAUQsJDpc+55o6ALMgvfb1QUAw4L5Q/WUdDfCt0CCgnnJqbmcmxn
+	iJShxxD0RkzZua7P8yNKJpnX5S2Th8lUVTkka+9GEmjBxTl5W
+X-Google-Smtp-Source: AGHT+IHv0JU0J9PGLy6ffpUD6D75+O0gIi950/5GHBOoWR6xI0HvKP8Mmi0qw9gOuB95udIKzZNZU/BQNe7LaDl6Z0M=
+X-Received: by 2002:a05:6512:b01:b0:539:e776:71f2 with SMTP id
+ 2adb3069b0e04-53a154d04a7mr7743012e87.52.1729597437395; Tue, 22 Oct 2024
+ 04:43:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/19] gendwarfksyms: Expand structure types
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20241008183823.36676-21-samitolvanen@google.com>
- <20241008183823.36676-30-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20241008183823.36676-30-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241008160947.81045-1-brgl@bgdev.pl>
+In-Reply-To: <20241008160947.81045-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 22 Oct 2024 13:43:45 +0200
+Message-ID: <CAMRc=McL8DzSeiYm2C6f8NeyGFtZ6FZ2rycx8y2OrenNCEH7hQ@mail.gmail.com>
+Subject: Re: [PATCH] i2c: qup: use generic device property accessors
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/24 20:38, Sami Tolvanen wrote:
-> Recursively expand DWARF structure types, i.e. structs, unions, and
-> enums. Also include relevant DWARF attributes in type strings to
-> encode structure layout, for example.
-> 
-> Example output with --dump-dies:
-> 
->   subprogram (
->     formal_parameter structure_type &str {
->       member pointer_type {
->         base_type u8 byte_size(1) encoding(7)
->       } data_ptr data_member_location(0) ,
->       member base_type usize byte_size(8) encoding(7) length data_member_location(8)
->     } byte_size(16) alignment(8) msg
->   )
->   -> base_type void
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Neal Gompa <neal@gompa.dev>
+On Tue, Oct 8, 2024 at 6:09=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> There's no reason for this driver to use OF-specific property helpers.
+> Drop the last one in favor of the generic variant and no longer include
+> of.h.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-Looks ok to me, feel free to add:
+It's been two weeks. Ping?
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-
--- Petr
+Bart
 
