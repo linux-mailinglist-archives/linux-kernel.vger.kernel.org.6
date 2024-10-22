@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-375345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FF29A94DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:28:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61519A94E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89DAF1F215B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172191C2204D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60934126BF9;
-	Tue, 22 Oct 2024 00:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE02912C81F;
+	Tue, 22 Oct 2024 00:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBKu9akt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaQVuxJA"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ED78287D;
-	Tue, 22 Oct 2024 00:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1BD2BCFF;
+	Tue, 22 Oct 2024 00:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556489; cv=none; b=HUah9zNNL3/s3Nk/eohy4YByPd3XG49OgVycUBQrzIOQSWfMTBwmadXmwev6wNGAjtivXZ3tERhdQP7/PqPcpvUw57utqD1K7uFipleAoNNyoEaPo1S+iFgPT7EoM14Q75k2hJcBuncP2vLQXLmUooWZJuVftEu00E6avvjAkqg=
+	t=1729556570; cv=none; b=CRdUEg9ouSvAu4ZGmJLVhGlDy9hVdZpYiTX18P9HDyBcEi3a65KUt9FrZVPoDsbQb8emAQyIHmx1DkBbmWc0gpAPrTlLZiK+GXI8CtK5HsS2W7bHdpcc0R5Ax6hXtSBfXB3podQc5txR/ocmwx5WVyvW/gn0dKeIEFtqMxgwA3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556489; c=relaxed/simple;
-	bh=TBgXPGOZie5nnxV2HGSGU2pxHnXG9JCIXis3p1TO+vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwhoeZiUXxJWRe2qo2Qru2Yx4d+HR4ouskmMRwb2zzDcg6nzf6akKv7hAK9ZuS1ScHqPkmlUlcuZjW9VhriHWLdXa6y4LdY9Tkc0K3k6vMe8RRfseWlbyEwa6Cn6cJ/yODMDQE2xr0B0F5K/IBcuKX1QQAWhpenET/SmXznozUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBKu9akt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA2EC4CEC3;
-	Tue, 22 Oct 2024 00:21:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729556488;
-	bh=TBgXPGOZie5nnxV2HGSGU2pxHnXG9JCIXis3p1TO+vQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=cBKu9aktBjNKr8TgKRs+B/1qxfDGk+2Dgb3d65AfA+ZbxA6DjJAsoXqIiFRSuMRnG
-	 2CHAf3k2PQwwGCgtF1Gms6aIP6Y8L+yhiBxOtuOn2cNiZxTDK0T6qC9QOrJCxTp0+F
-	 0W2Fndl+YimeQlGATu1Lf1TRvcJ+97E58292ryfYy8+quA09nQcNfVdarrLrU1tVpT
-	 BSzAPTTdbGqPw/wj1ozVqNmFPX2uemyRCzxnkvVfcdbY6lRFQS7FkdTfF2gclMGNbB
-	 LnnPc6Q4PXt7BtCQHU7vTtGCe5QjA3tKnHSDiIH+ETYF47pXoBzGXJBww0TK5MT5OP
-	 usUjxpQCHTYtw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C89FBCE0F74; Mon, 21 Oct 2024 17:21:27 -0700 (PDT)
-Date: Mon, 21 Oct 2024 17:21:27 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
- srcu_read_lock()
-Message-ID: <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
+	s=arc-20240116; t=1729556570; c=relaxed/simple;
+	bh=kU9Qfs9jHR+7O99NBlCk1pShL5+gWZ4kBLat3S5g6Oc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=loPGAbVtzFqcLW447MhrkFg39uW7U7IGuk3Go/+p3XubZv+yBEBnih3boB1wDxp7CQOQeZZDtbfxbeYBrlRVXm+RvwAWZy5Eck3eII00X2fUEJsTXk1M+BmtUd0v2Dd/l2oCeAqs1lPLfc82s4iENYqGPs2a+CnpyTURq45DQ2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaQVuxJA; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso3340312b3a.3;
+        Mon, 21 Oct 2024 17:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729556568; x=1730161368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ELc2VNfYGfCeK2UF42Ln3Fj3tKuv/pEZ7/0ve5/dU8o=;
+        b=GaQVuxJAB4xyapM4KcN6bYE0UkebKR/PwrAv9N+8ojLq4QBKfPnovotx5ZFI9VNiMF
+         aj7pn81uG6TjSrmad2yiNWPlxxAOVy3lhTj8oAXUVPYIDLmJGgbMSBHxD8mMQftRbpDH
+         if5yhciG7d96wXbE1aqE8AFb6KbWsr2nxswo3WZsiX9o6wnMAauslb1x/24LEvC00CXs
+         +n9fuwaXtAGZJ3rBYfRMJ/tC3JNFYd/PyboljyKZEwepd/W55bxitshFIE+x+AYv61Zn
+         TzsF2uJPzIk/BNxsaDI3Ww2dBwpR/zF//cbURgkSAnWA4cGmZ2WF4WWV+I451CQ761A+
+         FoHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729556568; x=1730161368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ELc2VNfYGfCeK2UF42Ln3Fj3tKuv/pEZ7/0ve5/dU8o=;
+        b=gOg0UtTspKS0gqCXXi12xzk+zp2LVDdu88dHPVAzLICTdPlUCpAQE6ZxP3rC5L5n6W
+         yu3j5Os6vjONZ/S47YyddkXg+LyhLcd3erT4+wf6oksFuV89ytaGyumuBt8nx9ack7pl
+         QcqCjZgemGOknnN/wwPjRaLxg6OnBRSiGM/dZZPIuByENc2fAYrG5Am/TI5zG9XOjDiG
+         eM3pb6fTz7DVvN6tq6r1pz3lWpROfaUG2qzVKMYpYxj3qJx3BZH2saGA4aDVkp2yzJc8
+         GTqMjr8VD+UDwwUJPNhm5iE5zahxVBk2teER9TGXnY2oyL5Vi60zWOYN/dNPh3xuZG+R
+         fosA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIC4l/4e8Du9NTRdwMh9S/P8ufMNBDwt8YX+Z+D32y7oHJAYsDTotg+XxRopowI6EC9YT+FXvw1tezh+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLXkt0vPCv0h35p2JaNlDU6G4b84R6RVJ7PtcCdgaEr9+lH1EY
+	D9eBZ/30/chZqGJtr5ElGWRtvO42nL3HlPVM2Hb+iHJZU5ga/ZtYosu01MB+
+X-Google-Smtp-Source: AGHT+IHFBP2mhM0NByDq44BULF5QWXLyzJB9hTnq/zptRd7s5shJfDpgOzS6rZ7nWE6xpRy7IZlopg==
+X-Received: by 2002:a05:6a00:2196:b0:70d:2a88:a483 with SMTP id d2e1a72fcca58-71ea2f31fc3mr19997612b3a.0.1729556568013;
+        Mon, 21 Oct 2024 17:22:48 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132ffdcsm3515828b3a.46.2024.10.21.17.22.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 17:22:47 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rosen Penev <rosenp@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv8 net-next 0/5] ibm: emac: more cleanups
+Date: Mon, 21 Oct 2024 17:22:40 -0700
+Message-ID: <20241022002245.843242-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
 
-On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
-> On Mon, Oct 21, 2024 at 3:13 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > For almost 20 years, the int return value from srcu_read_lock() has
-> > been always either zero or one.  This commit therefore documents the
-> > fact that it will be non-negative.
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org
-> >
-> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > index bab1dae3f69e6..512a8c54ba5ba 100644
-> > --- a/include/linux/srcu.h
-> > +++ b/include/linux/srcu.h
-> > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
-> >   * a mutex that is held elsewhere while calling synchronize_srcu() or
-> >   * synchronize_srcu_expedited().
-> >   *
-> > - * The return value from srcu_read_lock() must be passed unaltered
-> > - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
-> > - * the matching srcu_read_unlock() must occur in the same context, for
-> > - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
-> > - * if the matching srcu_read_lock() was invoked in process context.  Or,
-> > - * for that matter to invoke srcu_read_unlock() from one task and the
-> > - * matching srcu_read_lock() from another.
-> > + * The return value from srcu_read_lock() is guaranteed to be
-> > + * non-negative.  This value must be passed unaltered to the matching
-> > + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
-> > + * srcu_read_unlock() must occur in the same context, for example, it is
-> > + * illegal to invoke srcu_read_unlock() in an irq handler if the matching
-> > + * srcu_read_lock() was invoked in process context.  Or, for that matter to
-> > + * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
-> > + * from another.
-> 
-> For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
-> Presumably the same non-negative index will be returned/consumed there
-> as well, right? Can we add a blurb to that effect for them as well?
+Tested on Cisco MX60W.
 
-Does the change shown below cover it?
+v2: fixed build errors. Also added extra commits to clean the driver up
+further.
+v3: Added tested message. Removed bad alloc_netdev_dummy commit.
+v4: removed modules changes from patchset. Added fix for if MAC not
+found.
+v5: added of_find_matching_node commit.
+v6: resend after net-next merge.
+v7: removed of_find_matching_node commit. Adjusted mutex_init patch.
+v8: removed patch removing custom init/exit. Needs more work.
 
-> Otherwise LGTM, thanks!
-> 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Rosen Penev (5):
+  net: ibm: emac: use netif_receive_skb_list
+  net: ibm: emac: use devm_platform_ioremap_resource
+  net: ibm: emac: use platform_get_irq
+  net: ibm: emac: use devm for mutex_init
+  net: ibm: emac: generate random MAC if not found
 
-Thank you -- I will apply on my next rebase.
+ drivers/net/ethernet/ibm/emac/core.c | 42 +++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-						Thanx, Paul
+-- 
+2.47.0
 
-> >   */
-> >  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-> >  {
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 07147efcb64d3..3d587bf2b2c12 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
- /*
-  * Counts the new reader in the appropriate per-CPU element of the
-  * srcu_struct.
-- * Returns an index that must be passed to the matching srcu_read_unlock().
-+ * Returns a guaranteed non-negative index that must be passed to the
-+ * matching srcu_read_unlock().
-  */
- int __srcu_read_lock(struct srcu_struct *ssp)
- {
 
