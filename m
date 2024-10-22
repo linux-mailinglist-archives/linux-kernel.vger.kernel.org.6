@@ -1,237 +1,195 @@
-Return-Path: <linux-kernel+bounces-375454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC269A9629
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:19:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8531D9A962C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C021F210AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:19:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02AB21F213BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040B61386B3;
-	Tue, 22 Oct 2024 02:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F80136E01;
+	Tue, 22 Oct 2024 02:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fp+WX3h3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oEYUtqoq"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1E61EB31;
-	Tue, 22 Oct 2024 02:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76E012CDBF
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729563552; cv=none; b=WgK+fggWWw7UFfcZcmj8Tjaze/9Rgta890SexOgh18gtarN3X/6nj0iVwi6fJortu7vOMNFTvd34d3Q6MUS0+iVLtj4i6KW7F6ihTBq+LNCtQd22ZstN+8MRKtx7UYVeqilQP3Wad5Qh3DF+9h97SiEjaR7gPR7OlEXg3uCFbJk=
+	t=1729563606; cv=none; b=onaqIyxekM7WiPyUCO6g+Fg6Dz8ycDn0NQ2RthxnP+TpZJlzC/camtHXnu13f3B3RcdsWFSTPwRxnyRrWkdPtiy4xTuflxzIM9asHFQa0ZnG0uawERy129m65Y1Qw+RqkG5pYeyBoMqQ8Td2Wr5Ka8xI+ZctdJprfET4VwDMELQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729563552; c=relaxed/simple;
-	bh=kuiaS1pD3f/ZDS7KrE8bkSfwA54/4xI1cHqQYECjNaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpDichY8sTknNXIvWETKF5YGdAG/7ZN4yhrPtp6NNvJZQDPB6dB/q0MO+vie0pwfLKw6U7yMrY11TFWPp1psHC4Mqlt2NjmBEcKsPlyv1SJekNtK1aIQ4WFaokk027L90oo7GN/Sw0sh8qaYYDIuQRVg44zgd/j5wrx/miw1DKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp+WX3h3; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729563550; x=1761099550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kuiaS1pD3f/ZDS7KrE8bkSfwA54/4xI1cHqQYECjNaI=;
-  b=fp+WX3h3pgAObOiRMFOYxdVVnhORmxwpRzS/e0SubjXtx51PlOKAddsu
-   GTpc2vx+xp0tPzMOc2EfRfsnvZd7CQ5yqpf5Hu25kvLSzD/t6otSb1MTf
-   AC3l7NHXw5YowzjtuR3T/+JIuXijIukP8hUUflPG1kvkDRDsn0/VvJFhU
-   /0xJsKJMoDomyOOA1lzV9NKfgHwZRbYoKS4qNUuqvHeb/+dLJ/ZNwz9bP
-   UyuJ+iQ4tzsM06nC9b+Ac2hz27jJye9LLi19mjcs7tFsGSmHpfGEJT9Y/
-   OH+FgcFTwi31QJSA1LqBGQwCMx7dkRIBslh3NZe3jVyP07/3DX4J8gWEd
-   A==;
-X-CSE-ConnectionGUID: Fh3iweLOTTK7yyHOiOrhyg==
-X-CSE-MsgGUID: 4RsLLM7JQrWGvMLDHEMD4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="39660256"
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="39660256"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 19:19:10 -0700
-X-CSE-ConnectionGUID: bhC2JcuDTJiODinbPQkcOw==
-X-CSE-MsgGUID: BQ6ytSXfSH6ufQrG9CC42w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="84784626"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 21 Oct 2024 19:19:07 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t34UC-000Svi-1Y;
-	Tue, 22 Oct 2024 02:19:04 +0000
-Date: Tue, 22 Oct 2024 10:18:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Pawel Dembicki <paweldembicki@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] net: dsa: vsc73xx: implement packet
- reception via control interface
-Message-ID: <202410220908.uFiUPMGy-lkp@intel.com>
-References: <20241020205452.2660042-2-paweldembicki@gmail.com>
+	s=arc-20240116; t=1729563606; c=relaxed/simple;
+	bh=/A/JHvM+Xu6S8RrPguJX8f2DiPe2ij2hlH9qaBDm1qY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q7oqa0DGwiMXoRsFWemLCrpozaGfA2jmxiUo3Zi0TPhwxDmuLVtx21cqaZ660fagqpG4DtSAVFn+cY6a65QfDIvzmSobTuz6wdll0kXPIf81Whb41r6gdKtjIiVOQAdZz2yZzPNzdCMdgWF5ez3rYxdePoT/t3e0GUS41shZ5+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oEYUtqoq; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f2b0d4a1-6603-4f46-79bf-5edf40429d4b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729563599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I1aEVtnHrE4hISzvygYPrgxHW3Lpc9qC8PgValIZUKU=;
+	b=oEYUtqoqryicx+MPWcoahuAh0u5l7rch8L1MEjq5psKQKFg9qQy+6NxPDeZrWWNGZOqff2
+	LO5wEJ6E+7Mv/dNOW14I8n/F5I6JmU9CLOdVSNkFrXDRhJvj8saXyM8dN6yrxmDIaMZ6+n
+	jWPtOx4yT/BbQLaDFoLZPljK/JjrmUg=
+Date: Tue, 22 Oct 2024 10:19:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020205452.2660042-2-paweldembicki@gmail.com>
-
-Hi Pawel,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Pawel-Dembicki/net-dsa-vsc73xx-implement-packet-reception-via-control-interface/20241021-050041
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241020205452.2660042-2-paweldembicki%40gmail.com
-patch subject: [PATCH net-next 2/3] net: dsa: vsc73xx: implement packet reception via control interface
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241022/202410220908.uFiUPMGy-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410220908.uFiUPMGy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410220908.uFiUPMGy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/dsa/vitesse-vsc73xx-core.c:935:30: warning: variable 'len' is uninitialized when used here [-Wuninitialized]
-     935 |         skb = netdev_alloc_skb(dev, len);
-         |                                     ^~~
-   drivers/net/dsa/vitesse-vsc73xx-core.c:885:23: note: initialize the variable 'len' to silence this warning
-     885 |         int ret, buf_len, len, part;
-         |                              ^
-         |                               = 0
-   1 warning generated.
+Subject: Re: [PATCH] slub/slub_kunit:fix a panic due to __kmalloc_cache_noprof
+ incorretly use
+To: Suren Baghdasaryan <surenb@google.com>, xiaopeitux@foxmail.com
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, yuzhao@google.com, xiaopei01@kylinos.cn,
+ gehao@kylinso.cn, xiongxin@kylinos.cn, Vlastimil Babka <vbabka@suse.cz>
+References: <tencent_C1486E2FA393F0B97DD7D308336E262A3407@qq.com>
+ <CAJuCfpEpxa=jPAZiu5OP=jwQw0awiYDv6x5sz6-BAmAK40iJ6w@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpEpxa=jPAZiu5OP=jwQw0awiYDv6x5sz6-BAmAK40iJ6w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +/len +935 drivers/net/dsa/vitesse-vsc73xx-core.c
+On 10/22/24 01:42, Suren Baghdasaryan wrote:
+> On Sun, Oct 20, 2024 at 11:59 PM <xiaopeitux@foxmail.com> wrote:
+>> From: Pei Xiao <xiaopei01@kylinos.cn>
+>>
+>> 'modprobe slub_kunit',will have a panic.The root cause is that
+>> __kmalloc_cache_noprof was directly ,which resulted in no alloc_tag
+>> being allocated.This caused current->alloc_tag to be null,leading to
+>> a null pointer dereference in alloc_tag_ref_set.
+> I think the root cause of this crash is the bug that is fixed by
+> https://lore.kernel.org/all/20241020070819.307944-1-hao.ge@linux.dev/.
+> Do you get this crash if you apply that fix?
+Yes, this patch has resolved the panic issue.
+>> Here is the log for the panic:
+>> [   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+>> [   74.780130][ T2158] Mem abort info:
+>> [   74.780406][ T2158]   ESR = 0x0000000096000004
+>> [   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [   74.781225][ T2158]   SET = 0, FnV = 0
+>> [   74.781529][ T2158]   EA = 0, S1PTW = 0
+>> [   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
+>> [   74.782288][ T2158] Data abort info:
+>> [   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>> [   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> [   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
+>> [   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+>> [   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
+>> [   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
+>> [   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
+>> [   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
+>> [   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+>> [   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> [   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
+>> [   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
+>>
+>> [   74.794095][ T2158] sp : ffff800084d33cd0
+>> [   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
+>> [   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
+>> [   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
+>> [   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
+>> [   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
+>> [   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
+>> [   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
+>> [   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
+>> [   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
+>> [   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
+>> [   74.801656][ T2158] Call trace:
+>> [   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
+>> [   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
+>> [   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
+>> [   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
+>> [   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+>> [   74.804768][ T2158]  kthread+0x10c/0x118
+>> [   74.805141][ T2158]  ret_from_fork+0x10/0x20
+>> [   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
+>> [   74.806176][ T2158] SMP: stopping secondary CPUs
+>> [   74.808130][ T2158] Starting crashdump kernel...
+>>
+> CC'ing Vlastimil.
+> This patch essentially reverts Vlastimil's "mm, slab: don't wrap
+> internal functions with alloc_hooks()" change. Please check why that
+> change was needed before proceeding.
+> If this change is indeed needed, please add:
 
-   879	
-   880	static void vsc73xx_polled_rcv(struct kthread_work *work)
-   881	{
-   882		struct vsc73xx *vsc = container_of(work, struct vsc73xx, dwork.work);
-   883		u16 ptr = VSC73XX_CAPT_FRAME_DATA;
-   884		struct dsa_switch *ds = vsc->ds;
-   885		int ret, buf_len, len, part;
-   886		struct vsc73xx_ifh ifh;
-   887		struct net_device *dev;
-   888		struct dsa_port *dp;
-   889		struct sk_buff *skb;
-   890		u32 val, *buf;
-   891		u16 count;
-   892	
-   893		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_SYSTEM, 0, VSC73XX_CAPCTRL, &val);
-   894		if (ret)
-   895			goto queue;
-   896	
-   897		if (!(val & VSC73XX_CAPCTRL_QUEUE0_READY))
-   898			/* No frame to read */
-   899			goto queue;
-   900	
-   901		/* Initialise reading */
-   902		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE, VSC73XX_BLOCK_CAPT_Q0,
-   903				   VSC73XX_CAPT_CAPREADP, &val);
-   904		if (ret)
-   905			goto queue;
-   906	
-   907		/* Get internal frame header */
-   908		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
-   909				   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &ifh.datah);
-   910		if (ret)
-   911			goto queue;
-   912	
-   913		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
-   914				   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &ifh.datal);
-   915		if (ret)
-   916			goto queue;
-   917	
-   918		if (ifh.magic != VSC73XX_IFH_MAGIC) {
-   919			/* Something goes wrong with buffer. Reset capture block */
-   920			vsc73xx_write(vsc, VSC73XX_BLOCK_CAPTURE,
-   921				      VSC73XX_BLOCK_CAPT_RST, VSC73XX_CAPT_CAPRST, 1);
-   922			goto queue;
-   923		}
-   924	
-   925		if (!dsa_is_user_port(ds, ifh.port))
-   926			goto release_frame;
-   927	
-   928		dp = dsa_to_port(ds, ifh.port);
-   929		dev = dp->user;
-   930		if (!dev)
-   931			goto release_frame;
-   932	
-   933		count = (ifh.frame_length + 7 + VSC73XX_IFH_SIZE - ETH_FCS_LEN) >> 2;
-   934	
- > 935		skb = netdev_alloc_skb(dev, len);
-   936		if (unlikely(!skb)) {
-   937			netdev_err(dev, "Unable to allocate sk_buff\n");
-   938			goto release_frame;
-   939		}
-   940	
-   941		buf_len = ifh.frame_length - ETH_FCS_LEN;
-   942		buf = (u32 *)skb_put(skb, buf_len);
-   943		len = 0;
-   944		part = 0;
-   945	
-   946		while (ptr < count) {
-   947			ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
-   948					   VSC73XX_BLOCK_CAPT_FRAME0 + part, ptr++,
-   949					   buf + len);
-   950			if (ret)
-   951				goto free_skb;
-   952			len++;
-   953			if (ptr > VSC73XX_CAPT_FRAME_DATA_MAX &&
-   954			    count != VSC73XX_CAPT_FRAME_DATA_MAX) {
-   955				ptr = VSC73XX_CAPT_FRAME_DATA;
-   956				part++;
-   957				count -= VSC73XX_CAPT_FRAME_DATA_MAX;
-   958			}
-   959		}
-   960	
-   961		/* Get FCS */
-   962		ret = vsc73xx_read(vsc, VSC73XX_BLOCK_CAPTURE,
-   963				   VSC73XX_BLOCK_CAPT_FRAME0, ptr++, &val);
-   964		if (ret)
-   965			goto free_skb;
-   966	
-   967		/* Everything we see on an interface that is in the HW bridge
-   968		 * has already been forwarded.
-   969		 */
-   970		if (dp->bridge)
-   971			skb->offload_fwd_mark = 1;
-   972	
-   973		skb->protocol = eth_type_trans(skb, dev);
-   974	
-   975		netif_rx(skb);
-   976		goto release_frame;
-   977	
-   978	free_skb:
-   979		kfree_skb(skb);
-   980	release_frame:
-   981		/* Release the frame from internal buffer */
-   982		vsc73xx_write(vsc, VSC73XX_BLOCK_CAPTURE, VSC73XX_BLOCK_CAPT_Q0,
-   983			      VSC73XX_CAPT_CAPREADP, 0);
-   984	queue:
-   985		kthread_queue_delayed_work(vsc->rcv_worker, &vsc->dwork,
-   986					   msecs_to_jiffies(VSC73XX_RCV_POLL_INTERVAL));
-   987	}
-   988	
+Hi Suren and Vlastimil
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In fact, besides the panic, there is also a warning here due to directly 
+invoking__kmalloc_cache_noprof
+
+Regarding this, do you have any suggestions?
+
+[58162.947016] WARNING: CPU: 2 PID: 6210 at 
+./include/linux/alloc_tag.h:125 alloc_tagging_slab_alloc_hook+0x268/0x27c
+[58162.957721] Call trace:
+[58162.957919]  alloc_tagging_slab_alloc_hook+0x268/0x27c
+[58162.958286]  __kmalloc_cache_noprof+0x14c/0x344
+[58162.958615]  test_kmalloc_redzone_access+0x50/0x10c [slub_kunit]
+[58162.959045]  kunit_try_run_case+0x74/0x184 [kunit]
+[58162.959401]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+[58162.959841]  kthread+0x10c/0x118
+[58162.960093]  ret_from_fork+0x10/0x20
+[58162.960363] ---[ end trace 0000000000000000 ]---
+
+
+Thanks
+
+Best regards
+
+Hao
+
+>
+> Fixes: a0a44d9175b349 ("mm, slab: don't wrap internal functions with
+> alloc_hooks()")
+>
+>> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+>> ---
+>>   include/linux/slab.h | 1 +
+>>   lib/slub_kunit.c     | 2 +-
+>>   2 files changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> index 10a971c2bde3..0149d36cd311 100644
+>> --- a/include/linux/slab.h
+>> +++ b/include/linux/slab.h
+>> @@ -827,6 +827,7 @@ void *__kmalloc_cache_noprof(struct kmem_cache *s, gfp_t flags, size_t size)
+>>   void *__kmalloc_cache_node_noprof(struct kmem_cache *s, gfp_t gfpflags,
+>>                                    int node, size_t size)
+>>                                  __assume_kmalloc_alignment __alloc_size(4);
+>> +#define kmalloc_cache(...)     alloc_hooks(__kmalloc_cache_noprof(__VA_ARGS__))
+>>
+>>   void *__kmalloc_large_noprof(size_t size, gfp_t flags)
+>>                                  __assume_page_alignment __alloc_size(1);
+>> diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+>> index 80e39f003344..4bf38f52dbbd 100644
+>> --- a/lib/slub_kunit.c
+>> +++ b/lib/slub_kunit.c
+>> @@ -141,7 +141,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
+>>   {
+>>          struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
+>>                                  SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
+>> -       u8 *p = __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
+>> +       u8 *p = kmalloc_cache(s, GFP_KERNEL, 18);
+>>
+>>          kasan_disable_current();
+>>
+>> --
+>> 2.34.1
+>>
 
