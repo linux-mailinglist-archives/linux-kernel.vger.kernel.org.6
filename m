@@ -1,116 +1,210 @@
-Return-Path: <linux-kernel+bounces-376964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012759AB825
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78CB9AB82D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248821C23C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611201F23E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6891CC89F;
-	Tue, 22 Oct 2024 21:02:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DD113AD2A;
-	Tue, 22 Oct 2024 21:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247121CCEC7;
+	Tue, 22 Oct 2024 21:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwm6Wyj3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63F1A3028;
+	Tue, 22 Oct 2024 21:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729630943; cv=none; b=aPOcumWebwAku1FvDmekW0u1QE5ODnbiXQXkOvPD/1ffFvhUiwMX6A+CaMsRcm1kHIDGG0VKVZizMb3q+j37/4dkr/MfO1XkuNuTKSApfUb2E+aCpvclaRGqG7Rk1yaynSM49ul2KGe1+0EAoIRkeCMX4mRtD7hMgeNJa831scA=
+	t=1729631121; cv=none; b=swS6c3MXGxXusW2JsevKPjUjXUzzHxU+wj8LlRDUFFkQ53AckLJL4i4Y7NKjH0pOuJR6+S9oixMR/0T4TNcRljz+AVCLBtTae7wIAOy8wrJjj1C8dTk/HS5tVmDr979RlubyzpBkAzi13EFkYUJeYN/9RGtr7IXF1oMNfQIHqZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729630943; c=relaxed/simple;
-	bh=PYbhW4klSjsJCjKaviplm9S2MfxW9Vf7YU0RXJuoGgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhtpHaMvt2jpAq4OD7cTrOddd7jgmh0GMdLFdOU0jeA4iCVC61rIizPTHWjVU/0uSuV9aHUISu8bHULtXMXqeUY3PKR5MntbxjY7mga0nXoMV+lMAWctLMT68m53eire2WVGXlWzOALwkfZSzMT5Q2uu/TjcIqoIXrWYgUetbm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1310497;
-	Tue, 22 Oct 2024 14:02:49 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E53A53F71E;
-	Tue, 22 Oct 2024 14:02:18 -0700 (PDT)
-Message-ID: <2b841fb2-49b8-480f-896b-0b5a3cc6a1e2@arm.com>
-Date: Tue, 22 Oct 2024 22:03:28 +0100
+	s=arc-20240116; t=1729631121; c=relaxed/simple;
+	bh=bJvQz9MiC/VgurH813d2V4r5Zs0ZMaCBNkCiF5+fGYo=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=POyWjXQnsQitF35r0JMgQA3PXKH+f8/wDcX65ELt9+tBG32FJ3tSq1lE4E0VXeZrMAy8/aO0Qo662iokCXZTSXKfaJoidAJaQK3kjEqRc2ESRE+7UbBYB3Bdi6eGIsYR62rogyGqsmyqy7arjzfL7nP+pBgwo+fbXEMaidO9GTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwm6Wyj3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEF3C4CEC7;
+	Tue, 22 Oct 2024 21:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729631120;
+	bh=bJvQz9MiC/VgurH813d2V4r5Zs0ZMaCBNkCiF5+fGYo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=bwm6Wyj3RPaPraAlcmvAbRAZqObSQRJe2bWoon+CeM3CxXWDRXTGMM/adJVqCa0Jl
+	 lYOZYOo9QA4oYRAIDvt9eSuiLR6oeCeth/W24QCnX4q9U3SObA3PVnK5y9L/o8ZOcd
+	 TtIIjLuI7T05fQsjo8nePYCkRynbGv3mFRcZlZpH1XQhV38CruVJfmyCVB9i2d15nY
+	 4Br4LOO/1E5IYAoXfDaaFN9Uu5GOFBk7lHrpE3ur3LHw0CAlp7g2lAnUcxxFHD1D1h
+	 QcDTWsIqNg6qGKH1hzvxHv4H+nLUvoI1K3yDnyLl25RIFUWB5BxaaIeT1wuBTmVS0O
+	 w32DLwpJeaYCw==
+Message-ID: <df9044e1f49f4b6567708693f41dbf9c.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/11] thermal: core: Add and use a reverse thermal
- zone guard
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <3344086.aeNJFYEL58@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3344086.aeNJFYEL58@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241019-clk_bulk_ena_fix-v4-1-57f108f64e70@collabora.com>
+References: <20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com> <20241019-clk_bulk_ena_fix-v4-1-57f108f64e70@collabora.com>
+Subject: Re: [PATCH v4 1/4] clk: Provide devm_clk_bulk_get_all_enabled() helper
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
+Date: Tue, 22 Oct 2024 14:05:18 -0700
+User-Agent: alot/0.10
 
-
-
-On 10/10/24 23:07, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Add a guard for unlocking a locked thermal zone temporarily and use it
-> in thermal_zone_pm_prepare().
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Quoting Cristian Ciocaltea (2024-10-19 04:16:00)
+> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> return the number of clocks stored in the clk_bulk_data table referenced
+> by the clks argument.  Without knowing the number, it's not possible to
+> iterate these clocks when needed, hence the argument is useless and
+> could have been simply removed.
+>=20
+> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
+> with devm_clk_bulk_get_all() in terms of the returned value:
+>=20
+>  > 0 if one or more clocks have been stored
+>  =3D 0 if there are no clocks
+>  < 0 if an error occurred
+>=20
+> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+> the past form of 'enable'.
+>=20
+> To reduce code duplication and improve patch readability, make
+> devm_clk_bulk_get_all_enable() use the new helper, as suggested by
+> Stephen Boyd.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
-> 
-> This is a new patch
-> 
-> ---
->   drivers/thermal/thermal_core.c |    8 +++-----
->   drivers/thermal/thermal_core.h |    3 +++
->   2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1702,11 +1702,9 @@ static void thermal_zone_pm_prepare(stru
->   		 * acquired the lock yet, so release it to let the function run
->   		 * and wait util it has done the work.
->   		 */
-> -		mutex_unlock(&tz->lock);
-> -
-> -		wait_for_completion(&tz->resume);
-> -
-> -		mutex_lock(&tz->lock);
-> +		scoped_guard(thermal_zone_reverse, tz) {
-> +			wait_for_completion(&tz->resume);
-> +		}
->   	}
->   
->   	tz->state |= TZ_STATE_FLAG_SUSPENDED;
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -148,6 +148,9 @@ struct thermal_zone_device {
->   DEFINE_GUARD(thermal_zone, struct thermal_zone_device *, mutex_lock(&_T->lock),
->   	     mutex_unlock(&_T->lock))
->   
-> +DEFINE_GUARD(thermal_zone_reverse, struct thermal_zone_device *,
-> +	     mutex_unlock(&_T->lock), mutex_lock(&_T->lock))
-> +
->   /* Initial thermal zone temperature. */
->   #define THERMAL_TEMP_INIT	INT_MIN
->   
-> 
-> 
-> 
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+I have minimized the diff further. Applied to clk-next (clk-devm). If
+the other patches can be merged through clk tree I'll need the PCI
+maintainers to ack, likely Bjorn?
+
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 975fac29b27f..5368d92d9b39 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -218,15 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct de=
+vice *dev, void *res)
+ 	clk_bulk_put_all(devres->num_clks, devres->clks);
+ }
+=20
+-int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+-					      struct clk_bulk_data **clks)
+-{
+-	int ret =3D devm_clk_bulk_get_all_enabled(dev, clks);
+-
+-	return ret > 0 ? 0 : ret;
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+-
+ int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+ 					       struct clk_bulk_data **clks)
+ {
+@@ -239,23 +230,23 @@ int __must_check devm_clk_bulk_get_all_enabled(struct=
+ device *dev,
+ 		return -ENOMEM;
+=20
+ 	ret =3D clk_bulk_get_all(dev, &devres->clks);
+-	if (ret <=3D 0) {
++	if (ret > 0) {
++		*clks =3D devres->clks;
++		devres->num_clks =3D ret;
++	} else {
+ 		devres_free(devres);
+ 		return ret;
+ 	}
+=20
+-	*clks =3D devres->clks;
+-	devres->num_clks =3D ret;
+-
+ 	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
+-	if (ret) {
++	if (!ret) {
++		devres_add(dev, devres);
++	} else {
+ 		clk_bulk_put_all(devres->num_clks, devres->clks);
+ 		devres_free(devres);
+ 		return ret;
+ 	}
+=20
+-	devres_add(dev, devres);
+-
+ 	return devres->num_clks;
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enabled);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 158c5072852e..1dcee6d701e4 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct dev=
+ice *dev, int num_clks,
+ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 				       struct clk_bulk_data **clks);
+=20
+-/**
+- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consume=
+r (managed)
+- * @dev: device for clock "consumer"
+- * @clks: pointer to the clk_bulk_data table of consumer
+- *
+- * Returns success (0) or negative errno.
+- *
+- * This helper function allows drivers to get all clocks of the
+- * consumer and enables them in one operation with management.
+- * The clks will automatically be disabled and freed when the device
+- * is unbound.
+- */
+-
+-int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+-					      struct clk_bulk_data **clks);
+-
+ /**
+  * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consum=
+er (managed)
+  * @dev: device for clock "consumer"
+@@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all=
+(struct device *dev,
+ 	return 0;
+ }
+=20
+-static inline int __must_check devm_clk_bulk_get_all_enable(struct device =
+*dev,
+-						struct clk_bulk_data **clks)
+-{
+-	return 0;
+-}
+-
+ static inline int __must_check devm_clk_bulk_get_all_enabled(struct device=
+ *dev,
+ 						struct clk_bulk_data **clks)
+ {
+@@ -1160,6 +1138,15 @@ static inline void clk_restore_context(void) {}
+=20
+ #endif
+=20
++/* Deprecated. Use devm_clk_bulk_get_all_enabled() */
++static inline int __must_check
++devm_clk_bulk_get_all_enable(struct device *dev, struct clk_bulk_data **cl=
+ks)
++{
++	int ret =3D devm_clk_bulk_get_all_enabled(dev, clks);
++
++	return ret > 0 ? 0 : ret;
++}
++
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. =
+*/
+ static inline int clk_prepare_enable(struct clk *clk)
+ {
 
