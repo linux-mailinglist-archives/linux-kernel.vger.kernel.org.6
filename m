@@ -1,83 +1,123 @@
-Return-Path: <linux-kernel+bounces-376601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FAE9AB3AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:18:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9CC9AB3AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970011C222D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8751F22954
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E98F1B5EB0;
-	Tue, 22 Oct 2024 16:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872341B14FA;
+	Tue, 22 Oct 2024 16:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Fk/oDjd8"
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhrT3cZZ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58C41A76D1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD0E136345
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613902; cv=none; b=cIL8FWBFOievOboxNQhErPwGXrfjCIiGRQ34xUyucT+Tv9st6PYpCD7y8IJ+3qVkrwzf3mj7nfkUBs/GKKQrZH3xL1p5++8m9hwb3FoC0KnLUlmVXbnbBP+ETTDNgnIOSecedYBHJe7APubziHfXmHfTpPP4fRJOFqyRBH82fyE=
+	t=1729613925; cv=none; b=QkCtvPltf8H8BZxhc3Mv1mk/DYxXCbI9svod0BMMniGtVX2to1wHBmiZtE9au1nCDdlFw8J5ZjLh7/Mbn9uu6Q1SkWAZDn390+U0bRvV8FOS/HUMf6AnsFODpWWNPYgxIqRaemPk7VhpJGvk7+Zec+7zOxVRnl3w6+LbR170QAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613902; c=relaxed/simple;
-	bh=a4vgyCUilUfBnoPWI19TuBaXml3Lm20oxY72FSpWIzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzEUnqdSMhUlUgpchMzookwhM0b+QApqszYL9nllh4GGjLjIzl4cPCBklApAyFW+BRnDB1xJowhvYCiWzcwdix8tOStXZJSN7D1b9iJLWbfg2+nTSYiHhCNUgTq881issobwihDQKGcXVUPikrYzn4MV1qPW/GzlifvE0/JJxF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Fk/oDjd8; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XXy5j52tgzKB;
-	Tue, 22 Oct 2024 18:18:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729613897;
-	bh=Fme+A2jYXvcHzY9G4s5D6co+KPiIbBIC0uaiwlaozzU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fk/oDjd8SrviRSQriZUz4hQfrdo9kbRkBTnNgiWolCVXQ+PRDWTlw9je5OiECY9uH
-	 OOSTOWh5UQimIWid7qNhEojf1KvUCB7PfQKUsHg9txE3Tm5gL1jDjbvn0QAASpZ62b
-	 c2nYCvT4yBxEocwcbu3XJxAMuAC1SpJverAYrIlw=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XXy5g5TFXzy9Z;
-	Tue, 22 Oct 2024 18:18:15 +0200 (CEST)
-Date: Tue, 22 Oct 2024 18:18:14 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
-	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
-	Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v2 00/14] Landlock audit support
-Message-ID: <20241022.Shah6itha0bu@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
+	s=arc-20240116; t=1729613925; c=relaxed/simple;
+	bh=5DF4+/ZWmhv5I5biiLVNcoyN7Q3dxQulKY9UzYfUC1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sztr+5m4WZ+N/0NxiceYbiYn48NINn+Kw/gSIOa23dIAKg5OgtfcSc851XG1qYanv3S4Ji4y/4h3Fg88pzrN2GDSiKPAMsiypfT5hEV6r1npgycSUbXk6X0H9iOJxmC4rPNaTbV27zw4tDFllC+mxH2aanKFr75k69hSVX86i+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhrT3cZZ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so4164772b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729613923; x=1730218723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DSXH4Gm2YkCG5jqOLZfgl1YXuWNP9Yfv+roVsfCw4LI=;
+        b=WhrT3cZZMsVwB2ZzBbcZUb47gDVYPApyLCF4T23rH3/0sRo6MgAgooprThSiyEkc0I
+         sAPkpRMMOT3Rn/6HBftY7ARscaqlCqsKFDE5A5Caj4rIvfAekmRVou1bP954dXcr/h96
+         MY+a2WbZ05pnUfi+buekdAD5IkbIWpgUC8GStPj2gg5hWprGyk2Vtt/dpoURSaHf9JRm
+         9H6nhND7ariWvI95d0u8h64K91cVrLlK3Bq3tZpsisDDibXG6Vplvk/8XW6PHpxYGsWB
+         bS2Du3ykHhMn8eyKLrD8nhoL3ItQUNMblO5jesmR6JfBjao+Lk7ymnSMP7Rq9osLE+8U
+         dXcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729613923; x=1730218723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DSXH4Gm2YkCG5jqOLZfgl1YXuWNP9Yfv+roVsfCw4LI=;
+        b=Ebp1pWBkFmLf6L3BHKzJVm/l9sA9t//wSG2Eu05QWj/5lUu3+jteZPNCARF8bCa0qX
+         BFN+IFWsj+zcPxzlWd9NiHMlug25xgPVXdxdIXjM1iOxphlkMC0LK3F3tZczdwjpW48V
+         IT4q0yeN7thBFrTqhNJOGmncU1q+blBF5Fr4/H5MXURMZVBPNkqj9My5imY1/zkihJjM
+         98ZSOxhqICV4ChXA8QN1hy4Qn0wybOfWVmUmRxAdW1jSjrpDp/5NCdSJL5opdHuuWvEr
+         ywFEGvAi81zow4mBFk7hQFAV3liXD0hIZaf3lMsOWhaExZoOrSi+Z1kZoA89woABoyfF
+         MANw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ7leLvMilr8wC5DDWc0yptzQCixgF9t7okhNWdocAm5+iICfNSneWQn3BQlmwTqxCry5WB8MrGEXhCBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBxEqpWFtVxon/4uGTFj5Wrerq8620chquE+z/Ar3tiDPMNd+u
+	dU9mIA92Y/sA/+Gr2zMQ993kACOrKYLcuc1HwIMCHp4v0rup/qcm
+X-Google-Smtp-Source: AGHT+IHQyzAjc0meceXpnMSob+rxgdiAsthihq0A0o40myz27LC+W3+w2lz2hV72240cPH71b29JYA==
+X-Received: by 2002:a05:6a21:350d:b0:1d9:ea5:19da with SMTP id adf61e73a8af0-1d96b6b6ed5mr3806414637.17.1729613922722;
+        Tue, 22 Oct 2024 09:18:42 -0700 (PDT)
+Received: from localhost (134.90.125.34.bc.googleusercontent.com. [34.125.90.134])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec14088fesm4894285b3a.200.2024.10.22.09.18.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 09:18:42 -0700 (PDT)
+From: Chia-I Wu <olvaffe@gmail.com>
+To: boris.brezillon@collabora.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Chunming Zhou <david1.zhou@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: faith.ekstrand@collabora.com
+Subject: [PATCH v2] drm/syncobj: ensure progress for syncobj queries
+Date: Tue, 22 Oct 2024 09:18:24 -0700
+Message-ID: <20241022161825.228278-1-olvaffe@gmail.com>
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241022161009.982584-1-mic@digikod.net>
-X-Infomaniak-Routing: alpha
 
-On Tue, Oct 22, 2024 at 06:09:55PM +0200, Mickaël Salaün wrote:
-> Hi,
-> 
-> This patch series adds audit support to Landlock.
+Userspace might poll a syncobj with the query ioctl.  Call
+dma_fence_enable_sw_signaling to ensure dma_fence_is_signaled returns
+true in finite time.
 
-> This series is based on my "next" branch, which includes these patches:
-> https://lore.kernel.org/r/20241022151144.872797-2-mic@digikod.net
+Fixes: 27b575a9aa2f ("drm/syncobj: add timeline payload query ioctl v6")
+Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-To ease testing, I pushed this series here:
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-audit
+---
+
+v2: add Signed-off-by and Fixes tags
+---
+ drivers/gpu/drm/drm_syncobj.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+index 4fcfc0b9b386c..58c5593c897a2 100644
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -1689,6 +1689,9 @@ int drm_syncobj_query_ioctl(struct drm_device *dev, void *data,
+ 			    DRM_SYNCOBJ_QUERY_FLAGS_LAST_SUBMITTED) {
+ 				point = fence->seqno;
+ 			} else {
++				/* ensure forward progress */
++				dma_fence_enable_sw_signaling(fence);
++
+ 				dma_fence_chain_for_each(iter, fence) {
+ 					if (iter->context != fence->context) {
+ 						dma_fence_put(iter);
+-- 
+2.47.0.105.g07ac214952-goog
+
 
