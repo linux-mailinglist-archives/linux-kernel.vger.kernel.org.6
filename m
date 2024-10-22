@@ -1,183 +1,106 @@
-Return-Path: <linux-kernel+bounces-375793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112FF9A9ADF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:23:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6E49A9AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7C51C21434
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:23:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A311C210C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9293814A4F3;
-	Tue, 22 Oct 2024 07:23:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965414A4F3;
+	Tue, 22 Oct 2024 07:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHyzakZ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E4584A22
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8955E84A22;
+	Tue, 22 Oct 2024 07:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581800; cv=none; b=Nm24Lj+S8SCeev+x63uF1QzPK1YyGWghqncz90vfoGziAFY8sqvzzqmf96fJ1POtBTutdW5sl1ruURcpR2/gWf1BYdhPs3Aonm1zCQz7NRJPoJm89/mZmgBz76VWc7Gb8oiOKyTISNr5IsTq8dXCCLeBMdDjmW5o38V9JA0iwU8=
+	t=1729581904; cv=none; b=LyE2og85QsSUw45Xs1ISzF9gAZnx1jX7NWa23WcOYy366UkF1kq4EVeUDbzpHmguykjFG2c/QI5gRgKydViNg7rrJbyL6SDgHtKt2aW9uVM45MEmfGpl1Plhw6qhYBHb3XC4U9suz3cOX1ePFR/M/puLxEz94UuCN2NVx4iR1V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581800; c=relaxed/simple;
-	bh=hOKrI3GQqLEYrRGRQ4W1xaNqTzfZ590TisBLQIuIizQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=quU/zyND3Yl+6ebHBQDMFVK0jIHcPgMDZyE8yvRwUpYGcSK+nUBZN6EDqppeTzFvIkUoTZMZRurayuDOw58y2YL4aMXpiQfr9dA9lFogToKfqkTm051Vaj1xxgMIrkc5VzUb/AafDuhWdMh7pVJfGQ0VGzcZf5S90XSDMpysyjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t39EW-0003v3-2i; Tue, 22 Oct 2024 09:23:12 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t39EV-000pEO-1c;
-	Tue, 22 Oct 2024 09:23:11 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t39EV-007Vcd-1H;
-	Tue, 22 Oct 2024 09:23:11 +0200
-Date: Tue, 22 Oct 2024 09:23:11 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Sherry Sun <sherry.sun@nxp.com>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
-	"marcel@holtmann.org" <marcel@holtmann.org>,
-	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Message-ID: <20241022072311.ubh2sia5lwgvebsg@pengutronix.de>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
- <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
- <20241021064129.trchqa2oickna7pc@pengutronix.de>
- <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
- <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
- <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1729581904; c=relaxed/simple;
+	bh=ngWS+GIk0+pbFvc76d3DZJxLDNDvzO17fhI2cqNi3Hg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=quWGNBmUYetJ7iCHeT9G5jEnhywHOPwv47xhMAb8Gj4lQ1C+xrUUBZ6Q0IBQyiZ8MoFnwMioUc/GLWxk7y//7fGOw8HKciww4xYoNoJ/QVyPRp9/0QAG0v3U9Zx6bnuD7Cq1d88VCFnYbm+3yOwJwLFelGuiyq7r/5zFo5jxr+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHyzakZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D604CC4CEC3;
+	Tue, 22 Oct 2024 07:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729581904;
+	bh=ngWS+GIk0+pbFvc76d3DZJxLDNDvzO17fhI2cqNi3Hg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=AHyzakZ406u7T6ByXYEMUa5KHIXi0YdQO8bHVuWgKNsvmobnCJ5GdqcVz5StyCoLc
+	 gYe6WaY8Gt3nyH4lAMrTCpiaLmZoaHWJHXA7NLiCa7IyZapfbvogvRTKVIcG7OO8xG
+	 liyN/iUp6LOsCH9tBkK4v1hqzabjzNDlPW1t3CpMeucir8NwSXnMdi/OgfoRtmKja8
+	 XGtEAd6BSLiKkzzuUHTx5uwYyLjtvDkkA7egmgBxyOXoSbonRY44fm5/wC6vhqIj1L
+	 ttjZp4n3dWM+5rmJjYu4uplQ/wKPPDrFGdt9zwtkY+NH5CybgNCdoMGfN1915xjR0i
+	 eDpGFft2H9+oA==
+Date: Tue, 22 Oct 2024 02:25:02 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+Cc: devicetree@vger.kernel.org, krzk+dt@kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linus.walleij@linaro.org, conor+dt@kernel.org
+In-Reply-To: <20241022060157.36372-1-himanshu.bhavani@siliconsignals.io>
+References: <20241022060157.36372-1-himanshu.bhavani@siliconsignals.io>
+Message-Id: <172958190288.3294457.18338479078694309889.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
+ yaml format
 
-On 24-10-22, Sherry Sun wrote:
-> > On 24-10-21, Krzysztof Kozlowski wrote:
-> > > On 21/10/2024 08:41, Marco Felsch wrote:
-> > > > On 24-10-07, Krzysztof Kozlowski wrote:
-> > > >> On 07/10/2024 14:58, POPESCU Catalin wrote:
-> > > >>>>>>
-> > > >>>>>> +  vcc-supply:
-> > > >>>>>> +    description:
-> > > >>>>>> +      phandle of the regulator that provides the supply voltage.
-> > > >>>>>> +
-> > > >>>>>> +  reset-gpios:
-> > > >>>>>> +    description:
-> > > >>>>>> +      Chip powerdown/reset signal (PDn).
-> > > >>>>>> +
-> > > >>>>> Hi Catalin,
-> > > >>>>>
-> > > >>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
-> > means that both wifi and BT controller will be powered on and off at the
-> > same time.
-> > > >>>>> Taking the M.2 NXP WIFI/BT module as an example,
-> > pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already
-> > controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
-> > > >>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios
-> > you describing here. Can you help understand the corresponding pins on M.2
-> > interface as an example? Thanks.
-> > > >>>
-> > > >>> Hi Sherry,
-> > > >>>
-> > > >>> Regulators and reset controls being refcounted, we can then
-> > > >>> implement powerup sequence in both bluetooth/wlan drivers and have
-> > > >>> the drivers operate independently. This way bluetooth driver would
-> > > >>> has no dependance on the wlan driver for :
-> > > >>>
-> > > >>> - its power supply
-> > > >>>
-> > > >>> - its reset pin (PDn)
-> > > >>>
-> > > >>> - its firmware (being downloaded as part of the combo firmware)
-> > > >>>
-> > > >>> For the wlan driver we use mmc power sequence to drive the chip
-> > > >>> reset pin and there's another patchset that adds support for reset
-> > > >>> control into the mmc pwrseq simple driver.
-> > > >>>
-> > > >>>> Please wrap your replies.
-> > > >>>>
-> > > >>>> It seems you need power sequencing just like Bartosz did for
-> > Qualcomm WCN.
-> > > >>>
-> > > >>> Hi Krzysztof,
-> > > >>>
-> > > >>> I'm not familiar with power sequencing, but looks like way more
-> > > >>> complicated than reset controls. So, why power sequencing is
-> > > >>> recommended here ? Is it b/c a supply is involved ?
-> > > >>
-> > > >> Based on earlier message:
-> > > >>
-> > > >> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
-> > > >> means that both wifi and BT controller will be powered on and off
-> > > >> at the same time."
-> > > >>
-> > > >> but maybe that's not needed. No clue, I don't know the hardware.
-> > > >> But be carefully what you write in the bindings, because then it will be
-> > ABI.
-> > > >
-> > > > We noticed the new power-sequencing infrastructure which is part of
-> > > > 6.11 too but I don't think that this patch is wrong. The DT ABI
-> > > > won't break if we switch to the power-sequencing later on since the
-> > "reset-gpios"
-> > > > are not marked as required. So it is up to the driver to handle it
-> > > > either via a separate power-sequence driver or via "power-supply"
-> > > > and "reset-gpios" directly.
-> > >
-> > > That's not the point. We expect correct hardware description. If you
-> > > say now it has "reset-gpios" but later say "actually no, because it
-> > > has PMU", I respond: no. Describe the hardware, not current Linux.
-> > 
-> > I know that DT abstracts the HW. That said I don't see the problem with this
-> > patch. The HW is abstracted just fine:
-> > 
-> > shared PDn          -> reset-gpios
-> > shared power-supply -> vcc-supply
+
+On Tue, 22 Oct 2024 11:31:27 +0530, Himanshu Bhavani wrote:
+> Convert the text bindings of pinctrl-mcp23s08 to YAML so it could be used to
+> validate the DTS.
 > 
-> Actually we should use vcc-supply to control the PDn pin, this is the
-> power supply for NXP wifi/BT.
+> Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> ---
+>  .../bindings/pinctrl/pinctrl-mcp23s08.txt     | 148 -----------------
+>  .../bindings/pinctrl/pinctrl-mcp23s08.yaml    | 153 ++++++++++++++++++
+>  2 files changed, 153 insertions(+), 148 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
+> 
 
-Please don't since this is regular pin on the wlan/bt device not the
-regulator. People often do that for GPIOs if the driver is missing the
-support to pull the reset/pdn/enable gpio but the enable-gpio on the
-regulator is to enable the regulator and _not_ the bt/wlan device.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Therefore the implementation Catalin provided is the correct one.
+yamllint warnings/errors:
 
-Regards,
-  Marco
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dts:85.3-86.1 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241022060157.36372-1-himanshu.bhavani@siliconsignals.io
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
