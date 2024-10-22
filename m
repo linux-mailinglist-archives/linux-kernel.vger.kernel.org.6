@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-376837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DE89AB680
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:13:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1339AB6A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188811F223A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD64283C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DF31CB312;
-	Tue, 22 Oct 2024 19:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CB61CB30C;
+	Tue, 22 Oct 2024 19:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V8Bw54Vw"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbU9V73R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE251C9EC0;
-	Tue, 22 Oct 2024 19:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBB01BDA8D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729624373; cv=none; b=fno0rDZGT3N/VDnCWZ9aZxe6PCZ2J15/XRyikd5gsGKimZx81u+Wnv0kNANjpovqA6R+bb8Pg/XzDLgwDITGOPi0s1e+LQ72GurW4heP83qvHzODRWEajB/kpJvMvu5m8Ts7QpSecr1AMZCTJufIHFGpu3D+vCpZo9fVBdx/AhI=
+	t=1729624809; cv=none; b=jsR4tRzrah8Gjt9yl4L+IS9l5wdz9Jt6Pn4Tt3+MIAkpxc1Byo23lJBL+D9g4F+933w0WQnYgaRVgg79Vl2O/RQFcWi6Zgpw5EmpYsLO9TQhHjZHIjjtngmSl5MQdPmTZljAW+0m1cm1SgIeTO46JwOIKL+Kgknk75xl0hhoA3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729624373; c=relaxed/simple;
-	bh=2ElciyA8j+bcr3KSKpFrhrYhf77IoHrspCERoE/gMBw=;
+	s=arc-20240116; t=1729624809; c=relaxed/simple;
+	bh=LZ2EybuFq1FkBRq13QtwAEuugNtKJzKtWb0yOGerabA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qL6KNK8Dp7+6WXfLbi8V77OagQL0/txbXCg/mxh4Ny1skUNW9u/CFFCk6NRokf10/AL88xaOrxzxAcJ0eCGkMkgfmFg5PB4bi4CnPUWU/WunienFxTcayx1Cz/PCeikQ7ZnBy+MNim39/X0VhDXCY68aljn6cKD4i34r2Qze/AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V8Bw54Vw; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NyBn1Ps/cKiHnj+q5tWxSAnKnyG3+UZjgcGjvB8gXlc=; b=V8Bw54VwUHs19zJZs0nY5KFr7W
-	Akz7ilXOgSAqfBUWNDrPBMykU/Vw4ZBsrHuky3PMAtaif81/KLsJvGQOmC6fy3y4hSxJLxH9Fic34
-	3X5gVIE5JumVsYA2ZQNllYdFG+/51o2Z260g8uaSKsnkUMF443y2oSuzXN0uQZ70ju0VIznHhCUa2
-	VvawoHlLrMg2EPIl33M1TzAOaOKkhBe+ROQ7VNroIz1udgb+cnW8IFhACl7RBxdjtYsldXVcEM22i
-	teDOcWiJnOfGr16PuXHuu07cvJl2ggSNlrMthXLbfhawc4DTnff9wlLs9+lOGqZf6CHc37wdyiB/G
-	EZ4kNAbA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3KJB-00000008GJG-3AUt;
-	Tue, 22 Oct 2024 19:12:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EAC7D30073F; Tue, 22 Oct 2024 21:12:44 +0200 (CEST)
-Date: Tue, 22 Oct 2024 21:12:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: paulmck@kernel.org, Alexander Potapenko <glider@google.com>,
-	syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>,
-	audit@vger.kernel.org, eparis@redhat.com,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
-Message-ID: <20241022191244.GB9657@noisy.programming.kicks-ass.net>
-References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com>
- <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
- <20241022113131.GD16066@noisy.programming.kicks-ass.net>
- <ZxerZIxg8kAMCvYc@elver.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRF9kGx51PWJa5X7iBBwOBuaXt5Qu0MpnoTzQ4k5fz2p1X9qebvv1+nOt9DUC/y7BLPMVyi9na+1SwWzlwfReLGLvXigNaea4bevxBpJ5xlO76kECB3QBxB4BFNIto/KIzvs9TiaJm/lMxTIe0x0tXOfLFfiApUaCaYil5p9cko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbU9V73R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4162C4CEC3;
+	Tue, 22 Oct 2024 19:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729624808;
+	bh=LZ2EybuFq1FkBRq13QtwAEuugNtKJzKtWb0yOGerabA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rbU9V73RoCqhv8aL0V3VEYxUwwDr7AZr6pe6EYfLXMxl15hUPVbxAXVuTmYPsRnQm
+	 lJDcPoOG8d3AzZwCY8yrSeUAJHqk9mH//pKIXG4qHg3gt1+Mhuh861kEeyHXN+7S8o
+	 EtbqxBMyxihFdAcm9BMApe4G5BzoksYrLx9gIGdN+cpb3VzdgJslZvN6nvTRnEPx0R
+	 jt3zTeXlkUoK5QDiz+Zw5eFUm4GFYw/B0im0+WfcZDf95MoNey46n5a/35o0R8YPK4
+	 oR6VlgFZ7MGx7h6lqeKSJsh6JzYSSgBpXhgpx8/BQk+Khu10UCbUTbS2YWnVEoJue2
+	 dxTkO/1vLkjUA==
+Date: Tue, 22 Oct 2024 21:12:48 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Wen Yang <wen.yang@linux.dev>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Christian Brauner <brauner@kernel.org>, 
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
+Message-ID: <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
+References: <20240905134818.4104-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +58,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxerZIxg8kAMCvYc@elver.google.com>
+In-Reply-To: <20240905134818.4104-1-wen.yang@linux.dev>
 
-On Tue, Oct 22, 2024 at 03:40:52PM +0200, Marco Elver wrote:
+On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
+> The do_proc_dointvec_minmax_conv_param structure provides the minimum and
+> maximum values for doing range checking for the proc_dointvec_minmax()
+> handler, while the do_proc_douintvec_minmax_conv_param structure also
+> provides these min/max values for doing range checking for the
+> proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
+Finally got around to reviewing this. Sorry for the wait. Thx for the
+patch but I don't like how this looks in terms of Integer promotion in
+32b architectures.
 
-> Which gives us:
 > 
->  | ==================================================================
->  | BUG: KCSAN: assert: race in dequeue_entities / ttwu_do_activate
->  | 
->  | write (marked) to 0xffff9e100329c628 of 4 bytes by interrupt on cpu 0:
->  |  activate_task kernel/sched/core.c:2064 [inline]
-> 
-> This is this one:
-> 
-> 	void activate_task(struct rq *rq, struct task_struct *p, int flags)
-> 	{
-> 		if (task_on_rq_migrating(p))
-> 			flags |= ENQUEUE_MIGRATED;
-> 		if (flags & ENQUEUE_MIGRATED)
-> 			sched_mm_cid_migrate_to(rq, p);
-> 
-> 		enqueue_task(rq, p, flags);
-> 
-> 		WRITE_ONCE(p->on_rq, TASK_ON_RQ_QUEUED);
-> 		ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-> 	}
-> 
->  |  ttwu_do_activate+0x153/0x3e0 kernel/sched/core.c:3671
->  |  ttwu_queue kernel/sched/core.c:3944 [inline]
->  |  try_to_wake_up+0x60f/0xaf0 kernel/sched/core.c:4270
+> To avoid duplicate code, a new proc_minmax_conv_param structure has been
+I'm not seeing duplicate code here as one is handling the int case and
+the other is handling the uint case. And it is making sure that all
+assignments and comparisons are without any Integer Promotion issues.
+I'm not saying that it cannot be done, but it has to address Integer
+Promotion issues in 32b architectures. 
 
->  | assert no writes to 0xffff9e100329c628 of 4 bytes by task 10571 on cpu 3:
->  |  __block_task kernel/sched/sched.h:2770 [inline]
+> introduced to replace both do_proc_dointvec_minmax_conv_param and
+> do_proc_douintvec_minmax_conv_param mentioned above.
 > 
-> And that's:
-> 
-> 	static inline void __block_task(struct rq *rq, struct task_struct *p)
-> 	{
-> 		WRITE_ONCE(p->on_rq, 0);
-> 		ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-> 		if (p->sched_contributes_to_load)
-> 			rq->nr_uninterruptible++;
-> 
->  |  dequeue_entities+0xd83/0xe70 kernel/sched/fair.c:7177
->  |  pick_next_entity kernel/sched/fair.c:5627 [inline]
->  |  pick_task_fair kernel/sched/fair.c:8856 [inline]
->  |  pick_next_task_fair+0xaf/0x710 kernel/sched/fair.c:8876
->  |  __pick_next_task kernel/sched/core.c:5955 [inline]
->  |  pick_next_task kernel/sched/core.c:6477 [inline]
->  |  __schedule+0x47a/0x1130 kernel/sched/core.c:6629
->  |  __schedule_loop kernel/sched/core.c:6752 [inline]
->  |  schedule+0x7b/0x130 kernel/sched/core.c:6767
+> This also prepares for the removal of sysctl_vals and sysctl_long_vals.
+If I'm not mistaken this is another patchset that you sent separetly. Is
+it "sysctl: encode the min/max values directly in the table entry"?
 
+...
 
-So KCSAn is trying to tell me these two paths run concurrently on the
-same 'p' ?!? That would be a horrible bug -- both these call chains
-should be holding rq->__lock (for task_rq(p)).
+> @@ -904,8 +890,7 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+>  		return ret;
+>  
+>  	if (write) {
+> -		if ((param->min && *param->min > tmp) ||
+> -		    (param->max && *param->max < tmp))
+> +		if ((param->min > tmp) || (param->max < tmp))
+>  			return -ERANGE;
+>  
+>  		WRITE_ONCE(*valp, tmp);
+> @@ -936,10 +921,10 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+>  int proc_douintvec_minmax(const struct ctl_table *table, int write,
+>  			  void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> -	struct do_proc_douintvec_minmax_conv_param param = {
+> -		.min = (unsigned int *) table->extra1,
+> -		.max = (unsigned int *) table->extra2,
+> -	};
+> +	struct proc_minmax_conv_param param;
+> +
+> +	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
+> +	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
+This is one of the cases where there is potential issues. Here, if the
+unsigned integer value of table->extra{1,2}'s value is greater than when
+the maximum value of a signed long, then the value assigned would be
+incorrect. Note that the problem does not go away if you remove the
+"unsigned" qualifier; it remains if table->extra{1,2} are originally
+unsigned.
 
+I'm not sure if there are more, but just having one of these things
+around make me uncomfortable. Please re-work the patch in order to
+remove this issue in order to continue review.
+
+best
+
+-- 
+
+Joel Granados
 
