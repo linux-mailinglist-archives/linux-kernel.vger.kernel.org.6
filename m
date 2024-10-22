@@ -1,146 +1,281 @@
-Return-Path: <linux-kernel+bounces-375902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7CE9A9CBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED76F9A9CD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B461C2089C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198611C2094B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C7E175D26;
-	Tue, 22 Oct 2024 08:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01A016E860;
+	Tue, 22 Oct 2024 08:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0c4RS/x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTTcR5kF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F9727735;
-	Tue, 22 Oct 2024 08:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1A140E38
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586062; cv=none; b=GgD+x5EGB/tihKD6eQ0PCpc9f6KqXVhpZb5SEqYLxras3OsEmeJsfkXhRKZ2VZt511ofXup66vZBuQ9o4SRpfK2MlGpRfnf+oVfWKPrD5T/I+d9ujDEreafzd9gj0d2rdjJlMYPFqhPpgILODtfxd3+Rj2hdAPjMbu2OR7DvmcI=
+	t=1729586193; cv=none; b=Vxat9f2tLmAx3pW+idRDMLybzOpqxbeDwy62NV+z/IMS4YAPjhVeIGRclu0B6l09XbXqDOUcGp73koOsy7mBi9adGKvYMLCaJ3ni1QRmG+xec0ni+tn5jtyZlmRYUMgqWXomhgp4wL9ei8AAUX8yKYJB00YMxTyGZUQdtXkx8eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586062; c=relaxed/simple;
-	bh=Yfb1iWGUJXstlWNlobPLhmH6H2P371QRprH0i6HollY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B0qDGyB19cTMtgp8xcvRR7u05o8im6VRnPHqtcXE11yqgYb6Dp874VYiiVf9r3Lt1KSTzUGL14PtcrLnP6y/jsvQQxT51M0ruShJvjdz80aD0u2mwm7GuBdBSgbbz8gBLK7Dx6EtxYxOJkFaQEZauk0N8mwXHCbl6Acrq7sB6iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0c4RS/x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LM0pX8027018;
-	Tue, 22 Oct 2024 08:34:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	54nng32DbGhXET0Bsu60daar/Um5vwD/G2DqIS75Lg8=; b=b0c4RS/xiCH96sYo
-	XbR6PNVn6YF3qwCIJHClKvxUDUrmUUDpwNvq5dmUv+WBmlFmqeWIC66VRHe7HLHO
-	CVwUgR5/IWHt9TeEfiVVR+rmJ5R/z29BZ62V6sy1qZscafrCrdqtxdACKysVRBDz
-	b8E+evdGDx1NcTd8hUHPlcYcYXVWTwgvToVa2yB6lSCWWzve4qND22Xy7uJ3QTlY
-	B5EUic1hGMljY10b+FGgPGp7Hofj8+mSwANpudci6Jucxy7apmQDJhOWqEBynEhM
-	+9afXUE5af7TDsQwJaUSaHGw5jxAfNaN+bFXqObw8tBo3u6kkADq8tc7ecSY1XSg
-	kzrxMQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj7h0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 08:34:15 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M8YDHk008794
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 08:34:13 GMT
-Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 01:34:08 -0700
-Message-ID: <d56b4e1f-ef5d-4626-8211-0cf957c8423f@quicinc.com>
-Date: Tue, 22 Oct 2024 16:34:06 +0800
+	s=arc-20240116; t=1729586193; c=relaxed/simple;
+	bh=cs3qnvWB45CLzEZtHHIHemYwXCravNhrfo6+sjOzGEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ApZEMVJJX6xT0qP82M08Mtmiit9iQMHGNefqPh9K1ncMS1j79HLWY/DsljbsYVN7MJyKvmvqGZyvtgwc0clijbG32eFAIfWtXawTYTHYYL3G5gBf3IfjhvGRzaNC9tuMab6L86NjjH7jF1ZGMmTYrLzxbne4LMb2diebNyqCl44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTTcR5kF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E30CC4CEC3;
+	Tue, 22 Oct 2024 08:36:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729586192;
+	bh=cs3qnvWB45CLzEZtHHIHemYwXCravNhrfo6+sjOzGEI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PTTcR5kFjecbk2kTj1+N+U5csP5E00xLf3PwOvMxrVpdcMb3W1bRt8HsISsB2Tyt4
+	 8J/shNDHPCZwo338KpTdXdxSGLrzveL0Hd40hkjQG5zEpriU541cy9GKb1evLsyAvu
+	 SlxXxpW7UyPj0pnZEvvHZZ/szVXt29mIuXyJfG/VppYXZX8SyABgCDKfzO8tMi45Ad
+	 cB3iFLYBMhPem/jA5JgGDHA09SKu335YbrAVFExDPMqcGsvx1j5666Kr/KyLQnCb9p
+	 zgdE/TcO3FPp8bOz6sQjKFY6JuMGlr0HoGN30K2WP2SJWvj4N+IgeEi8HpyAPeMeGl
+	 8Onaa64CuE0vA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com
+Subject: [PATCH v2] f2fs: fix to avoid potential deadlock in f2fs_record_stop_reason()
+Date: Tue, 22 Oct 2024 16:36:23 +0800
+Message-Id: <20241022083623.2641434-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
- peripherals
-To: Krzysztof Kozlowski <krzk@kernel.org>, <quic_fenglinw@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <kernel@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com>
- <354b544e-3799-4421-aeb3-8401dffb34d6@kernel.org>
-Content-Language: en-US
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-In-Reply-To: <354b544e-3799-4421-aeb3-8401dffb34d6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GidZGNKd9FlZJmXXbiT3bVdVLJUl-jzK
-X-Proofpoint-ORIG-GUID: GidZGNKd9FlZJmXXbiT3bVdVLJUl-jzK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410220054
+Content-Transfer-Encoding: 8bit
 
+syzbot reports deadlock issue of f2fs as below:
 
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc3-syzkaller-00087-gc964ced77262 #0 Not tainted
+------------------------------------------------------
+kswapd0/79 is trying to acquire lock:
+ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2199 [inline]
+ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_record_stop_reason+0x52/0x1d0 fs/f2fs/super.c:4068
 
-On 10/14/2024 6:45 PM, Krzysztof Kozlowski wrote:
-> On 14/10/2024 12:08, Tingguo Cheng wrote:
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> index 4ef969a6af150933c72a7a83374a5a2657eebc1b..b79c22730920e3097425e1d1933e744205b3c18e 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> @@ -6,6 +6,7 @@
->>   
->>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->>   #include "qcs615.dtsi"
->> +#include "qcs615-pmic.dtsi"
->>   / {
->>   	model = "Qualcomm Technologies, Inc. QCS615 Ride";
->>   	compatible = "qcom,qcs615-ride", "qcom,qcs615";
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index ac4c4c751da1fbb28865877555ba317677bc6bd2..9793161db515a2ef1df6465c8d0a04a11e71ffc1 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -517,6 +517,29 @@ sram@c3f0000 {
->>   			reg = <0x0 0x0c3f0000 0x0 0x400>;
->>   		};
->>   
->> +		spmi_bus: qcom,spmi@c440000 {
-> 
-> Please do not send your downstream code... Don't just copy and paste
-> that stuff.
-> 
-> Rewrite it from scratch or use the upstream as template. I find it waste
-> of time to comment or fix the same issue over and over again. The
-> problem is the way you work - copying and sending downstream at us. This
-> must stop.
-We have realized the problem, and we will be more careful.For the 
-current patch, I'll upload a new one with fixing
-> 
-> Best regards,
-> Krzysztof
-> 
+but task is already holding lock:
+ffff88804bd92610 (sb_internal#2){.+.+}-{0:0}, at: f2fs_evict_inode+0x662/0x15c0 fs/f2fs/inode.c:842
 
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (sb_internal#2){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1716 [inline]
+       sb_start_intwrite+0x4d/0x1c0 include/linux/fs.h:1899
+       f2fs_evict_inode+0x662/0x15c0 fs/f2fs/inode.c:842
+       evict+0x4e8/0x9b0 fs/inode.c:725
+       f2fs_evict_inode+0x1a4/0x15c0 fs/f2fs/inode.c:807
+       evict+0x4e8/0x9b0 fs/inode.c:725
+       dispose_list fs/inode.c:774 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:963
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4818
+       shrink_many mm/vmscan.c:4879 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+       kswapd_shrink_node mm/vmscan.c:6765 [inline]
+       balance_pgdat mm/vmscan.c:6957 [inline]
+       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       prepare_alloc_pages+0x147/0x5b0 mm/page_alloc.c:4493
+       __alloc_pages_noprof+0x16f/0x710 mm/page_alloc.c:4722
+       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+       alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+       folio_alloc_noprof+0x128/0x180 mm/mempolicy.c:2352
+       filemap_alloc_folio_noprof+0xdf/0x500 mm/filemap.c:1010
+       do_read_cache_folio+0x2eb/0x850 mm/filemap.c:3787
+       read_mapping_folio include/linux/pagemap.h:1011 [inline]
+       f2fs_commit_super+0x3c0/0x7d0 fs/f2fs/super.c:4032
+       f2fs_record_stop_reason+0x13b/0x1d0 fs/f2fs/super.c:4079
+       f2fs_handle_critical_error+0x2ac/0x5c0 fs/f2fs/super.c:4174
+       f2fs_write_inode+0x35f/0x4d0 fs/f2fs/inode.c:785
+       write_inode fs/fs-writeback.c:1503 [inline]
+       __writeback_single_inode+0x711/0x10d0 fs/fs-writeback.c:1723
+       writeback_single_inode+0x1f3/0x660 fs/fs-writeback.c:1779
+       sync_inode_metadata+0xc4/0x120 fs/fs-writeback.c:2849
+       f2fs_release_file+0xa8/0x100 fs/f2fs/file.c:1941
+       __fput+0x23f/0x880 fs/file_table.c:431
+       task_work_run+0x24f/0x310 kernel/task_work.c:228
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&sbi->sb_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+       f2fs_down_write fs/f2fs/f2fs.h:2199 [inline]
+       f2fs_record_stop_reason+0x52/0x1d0 fs/f2fs/super.c:4068
+       f2fs_handle_critical_error+0x2ac/0x5c0 fs/f2fs/super.c:4174
+       f2fs_evict_inode+0xa61/0x15c0 fs/f2fs/inode.c:883
+       evict+0x4e8/0x9b0 fs/inode.c:725
+       f2fs_evict_inode+0x1a4/0x15c0 fs/f2fs/inode.c:807
+       evict+0x4e8/0x9b0 fs/inode.c:725
+       dispose_list fs/inode.c:774 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:963
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4818
+       shrink_many mm/vmscan.c:4879 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+       kswapd_shrink_node mm/vmscan.c:6765 [inline]
+       balance_pgdat mm/vmscan.c:6957 [inline]
+       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &sbi->sb_lock --> fs_reclaim --> sb_internal#2
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_internal#2);
+                               lock(fs_reclaim);
+                               lock(sb_internal#2);
+  lock(&sbi->sb_lock);
+
+Root cause is there will be potential deadlock in between
+below tasks:
+
+Thread A				Kswapd
+- f2fs_ioc_commit_atomic_write
+ - mnt_want_write_file -- down_read lock A
+					- balance_pgdat
+					 - __fs_reclaim_acquire  -- lock B
+					  - shrink_node
+					   - prune_icache_sb
+					    - dispose_list
+					     - f2fs_evict_inode
+					      - sb_start_intwrite  -- down_read lock A
+ - f2fs_do_sync_file
+  - f2fs_write_inode
+   - f2fs_handle_critical_error
+    - f2fs_record_stop_reason
+     - f2fs_commit_super
+      - read_mapping_folio
+       - filemap_alloc_folio_noprof
+        - fs_reclaim_acquire  -- lock B
+
+Both threads try to acquire read lock of lock A, then its upcoming write
+lock grabber will trigger deadlock.
+
+Let's always create an asynchronous task in f2fs_handle_critical_error()
+rather than calling f2fs_record_stop_reason() synchronously to avoid
+this potential deadlock issue.
+
+Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
+Reported-by: syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6704d667.050a0220.1e4d62.0081.GAE@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- remove unneeded irq_context parameter from
+f2fs_handle_critical_error() pointed by Daejun Park.
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/f2fs.h       |  3 +--
+ fs/f2fs/super.c      | 13 +++++++------
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7f76460b721f..efda9a022981 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -32,7 +32,7 @@ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io,
+ 	f2fs_build_fault_attr(sbi, 0, 0);
+ 	if (!end_io)
+ 		f2fs_flush_merged_writes(sbi);
+-	f2fs_handle_critical_error(sbi, reason, end_io);
++	f2fs_handle_critical_error(sbi, reason);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9b7fa960cd8b..18a3343d8831 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3644,8 +3644,7 @@ int f2fs_quota_sync(struct super_block *sb, int type);
+ loff_t max_file_blocks(struct inode *inode);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag);
+-void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
+-							bool irq_context);
++void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason);
+ void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error);
+ void f2fs_handle_error_async(struct f2fs_sb_info *sbi, unsigned char error);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9325d8dc7f7d..d9e64ed14092 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4161,8 +4161,7 @@ static bool system_going_down(void)
+ 		|| system_state == SYSTEM_RESTART;
+ }
+ 
+-void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
+-							bool irq_context)
++void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason)
+ {
+ 	struct super_block *sb = sbi->sb;
+ 	bool shutdown = reason == STOP_CP_REASON_SHUTDOWN;
+@@ -4174,10 +4173,12 @@ void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
+ 	if (!f2fs_hw_is_readonly(sbi)) {
+ 		save_stop_reason(sbi, reason);
+ 
+-		if (irq_context && !shutdown)
+-			schedule_work(&sbi->s_error_work);
+-		else
+-			f2fs_record_stop_reason(sbi);
++		/*
++		 * always create an asynchronous task to record stop_reason
++		 * in order to avoid potential deadlock when running into
++		 * f2fs_record_stop_reason() synchronously.
++		 */
++		schedule_work(&sbi->s_error_work);
+ 	}
+ 
+ 	/*
 -- 
-Thank you & BRs
-Tingguo
+2.40.1
 
 
