@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-376959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209559AB818
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 717159AB81C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2791C210A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C681C230E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5F11CCB59;
-	Tue, 22 Oct 2024 20:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10AF1C9EBD;
+	Tue, 22 Oct 2024 21:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0+tW1at"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bF3kPAPs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DEF1BDA80;
-	Tue, 22 Oct 2024 20:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278B0188599;
+	Tue, 22 Oct 2024 21:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729630754; cv=none; b=CVxzIls4TSKQqSbw3KvOW/ot8RWlOhPPN3xfOQlHYbhRunq6qgiFidMPk5XLLmbAPSqx704Tbt13PHYial6dS3aeJkcpLvu9KLi4NjgsQl5kZRKvkQGE36FUPzNbAh6Fu66ypqrEqvUftddbiIDKLvRarz5esLnUf370hImhf6o=
+	t=1729630828; cv=none; b=lVpdpVygs5z165hslONU5hwk/5bDVKI71OZlDeIkkhuRUP+Td+zLU0PHzglpCi17PMWtp8asafa7ClYxEaOLlNP7ZJ/SxMycplOnPBP0sb47Ww0P0h5mOHMbC7n3u30GfDHbG2kW0nCxlexMjYiFzQcqxqVCW3Uf7KuBSI1J89A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729630754; c=relaxed/simple;
-	bh=hYznU99Gz6lDB78306nnP2N0S1YYbOsW3FeJCrSQz88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gs7lz+P52l6C7Vo2PtsMKRn7orPNNYLHlJv42MXwuuk1Llrzyhx70jo85O/PdX7h/hQNpnKQvrLDQbMEtzAYmZabjbwOxJ7tWouHOtgMyQPx8f8kelWHiRJMMPCEwQGBZYcPRqxT8UhV4AY1hJ1mi0E6D9WdbfPB13I8IFN/JH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0+tW1at; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-208cf673b8dso59501035ad.3;
-        Tue, 22 Oct 2024 13:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729630752; x=1730235552; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rGcVubgeABd0/PmmPiE/7qXUdJE2sMJ6ZOzH8qpp0iI=;
-        b=h0+tW1atFExNN3sR68L63uvwl0EaIshwGAjzVxcTusVBbxI+vRHWA3fdAj6JaXJrRE
-         g1FCSAy6hIkRwAwFtidPBfcAu2OsX/Of+auSalMKCYtDUsR5S6uJZ2Rrvd2OX584Q8Zq
-         rIVk/kb2xTfwxshHWSh/+2Ef26xUu4MhnTnELYjP8iCOs0cwIvbxNyrqcDj/ykbknOe+
-         lMRROY4GAVE851aeDb4k3vE9kzjfKsGPRw/embkqIjthaciTFnPuvfUoLk2/FXJowwe7
-         ov83Tx37c8px6rO+0GBScc39ExPsUJwhBwou/QicHw/uMHNURD3GGiUnIL2woQ8WGwlc
-         GCzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729630752; x=1730235552;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rGcVubgeABd0/PmmPiE/7qXUdJE2sMJ6ZOzH8qpp0iI=;
-        b=otPH7IxU0bM+NzWp/++R9jeatnUJq/HnexrZHpqhZjVtK9ezPY5Zr1NnAu8FAIECtU
-         QshVLsc1THXpIey4Us9ld+/ADVxSFymtOf5xT85Q5841LZ3A8apGvDQzQ3xQoES0Ad0o
-         PyHoqQ9f0oG+6DbOAX1xKRmfBO4ooZLn+nr+tohkwpNjJuy0TaBMHlhq6Z+mdEInOTiV
-         l5ClmtmOkgrATJ2MctNUz3dUKp6gRjB/UoHvfYkPIVvy/t/V/fop4tVD7YIAzu1Yl9CZ
-         t87yJxoZIYaQVUbOJ7dzvYOTh+6W9PUy5yw6JJdeFGnnendLZr46QP8mlklNVH6UTv7Q
-         lKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPxY1818/vBsY5gZ6ZYi3jAmHdZuIWMigk4DTqFjxJ7wiQBrUGtM73ldHYShvLAOw5RXk+oHxGo4ved1ax@vger.kernel.org, AJvYcCXWmjt2qmPW7tb05dlC5Ru3b3+yfjnIL9D0nZ/CdaAySaLZDE5H2rjcyNBwDxULj+VMFcjamkI4DK8tIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4lLb7Dk/1eD98fWPxDlU3NJEoxOjoFtkNnG7wXPopXCmXP6Gk
-	qVW9ILVJC7MhDk1ffkqdc1yis0r1ZTbOgtrdGChtTEKpYCHRyBh+
-X-Google-Smtp-Source: AGHT+IGJNU/cLwbWsuoQCsE3dJTP2JypH6Hr2f1MS7P2CbI5aJ0sG6TzIyW1dqVhAweQ4wLOdWoaaQ==
-X-Received: by 2002:a17:903:2312:b0:20c:ceb4:aa7f with SMTP id d9443c01a7336-20fa9e298c1mr6239915ad.11.1729630750519;
-        Tue, 22 Oct 2024 13:59:10 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:94ec:f4e5:1552:e2cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0c0e2dsm46581055ad.123.2024.10.22.13.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:59:10 -0700 (PDT)
-Date: Tue, 22 Oct 2024 13:59:07 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] input: automate of_node_put() calls for
- device_node
-Message-ID: <ZxgSG55LUbw08mp8@google.com>
-References: <20241021-input_automate_of_node_put-v3-0-cc73f636e1bc@gmail.com>
+	s=arc-20240116; t=1729630828; c=relaxed/simple;
+	bh=gPLFmUbd/s1xG1U0lhSkTgFdqgBBXgJWtCXko/8udOY=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B2+S/OHaesC2uzbRSNbVIPd1QnTVHSe4DSYvc6Rw6cs7O0Ej7zvsyuoLA5MK+Er1ECWy1zVz+R2LQ3oTUJJfuw9wpX93I3S2eMIjowlRrmMpBxoLVHxhm6jzhFZpfIbuHEaWhgFLcjB4LkI94k25PM75M6SiR3uHYz103hKI14M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bF3kPAPs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD627C4CEC7;
+	Tue, 22 Oct 2024 21:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729630828;
+	bh=gPLFmUbd/s1xG1U0lhSkTgFdqgBBXgJWtCXko/8udOY=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=bF3kPAPsTJRgfQID5/10+n24ujJRtJlC4eEp7qOzfLgmJECivgijTTted45XGIOqT
+	 gYe+OIII3QChKjIcJ4/+lyKCpBcbbd8DPkYdWg+uadMXNk7M08WJg202plQH9VQo5Q
+	 /+hF5W/SqAmOyAGEK4wAO1N4ilP5twLW03Qe4IdiXQe4c3J/epCy/3DIepuJwqJlv1
+	 KaK4PasoRafzpJKSMB9TOPCQBKxYVobp2GLtoRbWG0bcaNQX4dNdj2geIvLARvuQo+
+	 dXeemevA1ffmdKEo+4NdD3ixLVzKYEyqzhIWMW4T2ZLHUGSdhkG7xu+v+cK/9qLGGX
+	 FIsQ7iTo/4y9Q==
+From: Mark Brown <broonie@kernel.org>
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <1728884313-6778-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1728884313-6778-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH] ASoC: fsl_micfil: Add sample rate constraint
+Message-Id: <172963082563.164184.10497538395371277879.b4-ty@kernel.org>
+Date: Tue, 22 Oct 2024 22:00:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-input_automate_of_node_put-v3-0-cc73f636e1bc@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Mon, Oct 21, 2024 at 10:28:22PM +0200, Javier Carrasco wrote:
-> The first patch of the series provides device managed memory, which
-> simplifies bbc_bee_probe() and removes the need for the goto
-> instructions That also prepares the function for the second patch where
-> the cleanup attribute is used for 'dp'.
+On Mon, 14 Oct 2024 13:38:33 +0800, Shengjiu Wang wrote:
+> On some platforms, for example i.MX93, there is only one
+> audio PLL source, so some sample rate can't be supported.
+> If the PLL source is used for 8kHz series rates, then 11kHz
+> series rates can't be supported.
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> So add constraints according to the frequency of available
+> clock sources, then alsa-lib will help to convert the
+> unsupported rate for the driver.
+> 
+> [...]
 
-Applied the series, thank you.
+Applied to
 
--- 
-Dmitry
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: fsl_micfil: Add sample rate constraint
+      commit: b9a8ecf81066e01e8a3de35517481bc5aa0439e5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
