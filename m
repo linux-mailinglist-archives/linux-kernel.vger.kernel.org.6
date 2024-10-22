@@ -1,169 +1,146 @@
-Return-Path: <linux-kernel+bounces-376763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12C29AB5A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:58:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0F49AB5A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22E4FB22D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857101F23809
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7C1C9B9D;
-	Tue, 22 Oct 2024 17:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E901C9EA5;
+	Tue, 22 Oct 2024 17:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZKWjpjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="NzUTKapk"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D511C8FA2;
-	Tue, 22 Oct 2024 17:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8261C9B6D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619923; cv=none; b=r8/4P8vBoJequWIwtPaZ4rscK/gwOvaJgEVmZRHhTyy0r9YLZDQS9gi2nxVLdFuhIf5R5/FlWkywY7bnSdQuFSIrFhUlmwoVURaR7PJfeWDiqGlqnrO4pWWJgFZwyLF3B4yZHA9rrrG9bOgROXhZ7qWOP20Wm3hKn5JvFiZ0e+g=
+	t=1729619931; cv=none; b=RpdpCnFkVhUACGWFgsJXfgnHGXXk3oKy28ZunVLlJPJZCHWwjqIRpTByh9vRSfkSyHsDXEr6UbpzMvrUdPwHoeL63hebQAghawkPzt8Mne9fduDHPz7LGioj4Ut0H0s5NJVOr0bO8IE1Sa8JB8d6haebPoOSJnDf9lLmpH6NBX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619923; c=relaxed/simple;
-	bh=Fyj+9LPMtLUe2eVvE5RgiwHdVoAQjAYo+qQM7HZ2D7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fsZvc6N0Xbnnt/0P0QgQLDFKaY5IdK9gclDthArC//Qycn9pMwQOyNuewlnn8L01gtPGdLUA7UuK0nx6w6fia8LXL68GbqwAnH991ylMFXYgmU6Fv0IdRB/+2Vw55jBCTs1tDZhrlKPxIXDJRhEx60+WCyS2bEkQf0g1nIcbJ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZKWjpjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BF4C4CEC7;
-	Tue, 22 Oct 2024 17:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729619923;
-	bh=Fyj+9LPMtLUe2eVvE5RgiwHdVoAQjAYo+qQM7HZ2D7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cZKWjpjj1qNyeQ7B5y29MLuFRG2UvuLgN/FUET7zvdoFf6XBIdu1EMaDQbLDB18ET
-	 EbQMmQBb7i0B2TvM56L+KZtBbr/P7DJ2Nm2D8eeDhACq0hb/LExDNbLeFoFN5X8mZ3
-	 ukMJ7Bt7aJv8V/1Xoph+Yff1Sijguh8GE5k0UQAeTbH3MnAP+jlyeOa1SwRusZ3g2c
-	 5UicAplPLEy5SxybA2qtfUY8ZVmg9UEIYlCEuoic9uQjBWiPhBiAqYDbdlp2ZL5Bnx
-	 4vDaoT2gn99QNS32qHgIMHnE81CVmI7g3uodahABGo85B3GtGXEwE85r6G7vo1Zbm6
-	 7V8PbRNlW+rcg==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko
- <andrii@kernel.org>, bpf@vger.kernel.org, Daniel Borkmann
- <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eduard
- Zingerman <eddyz87@gmail.com>, Eric Dumazet <edumazet@google.com>, Hao Luo
- <haoluo@google.com>, Helge Deller <deller@gmx.de>, Jakub Kicinski
- <kuba@kernel.org>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linux-riscv@lists.infradead.org, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, netdev@vger.kernel.org, Palmer Dabbelt
- <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Shuah Khan <shuah@kernel.org>, Song Liu
- <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song
- <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next 4/5] selftests/bpf: Add benchmark for
- bpf_csum_diff() helper
-In-Reply-To: <CAEf4BzZ-gfBqez-QJCSRVOPnvz-inaiVdNGOFRCdc2KQbnmeZQ@mail.gmail.com>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-5-puranjay@kernel.org>
- <CAEf4BzY1LgCF1VOoAQkMdDTx87C0mfyftMvhvVU4GpsFc6fw5g@mail.gmail.com>
- <mb61pa5ewbfpk.fsf@kernel.org>
- <CAEf4BzZ-gfBqez-QJCSRVOPnvz-inaiVdNGOFRCdc2KQbnmeZQ@mail.gmail.com>
-Date: Tue, 22 Oct 2024 17:58:14 +0000
-Message-ID: <mb61p8qugc955.fsf@kernel.org>
+	s=arc-20240116; t=1729619931; c=relaxed/simple;
+	bh=bzWd8rKalKLnCDEJXyAj/PFeqHxExSaBmYI1WaZdk80=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oaJPKxs+JPM3kC8Eyln5SYpdh5sAIvBfI4yix9LCGRPCJkbM2BKugtP2wboQSs3pSfyHTul4DP4XqRytdWqEMlm45uc6zEi021CSWzw9QFk/7yvn1r0zFBdTnEam5eW9FNcZ9iFPIzTUeNzuZ6BC4p5md4WJxPfQuj6hup0MWgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=NzUTKapk; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b1539faa0bso390297285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:58:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1729619929; x=1730224729; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bzWd8rKalKLnCDEJXyAj/PFeqHxExSaBmYI1WaZdk80=;
+        b=NzUTKapkmGYBrvJAuyTdg00GeIUINpWtujuL8VgJnW87iKpzrT22j3YO8vYIEdUuAv
+         iDhMLEvMMyIt5gD1PcSVE4eX6x7tLm+JAhwIfUC5jN8ir0Vcsfil6FI69a4UtZxlIrCb
+         wBl0L9xO7vIDLeX6ROx4AFf62eEVesqZO+TwiRATmCwS8JwD1YAxy2ZCs2O2GtrXyUcv
+         2mSzfkcDz0kl9CZciKkiWCG/V/eMoIAbqjaGhfiX+ZdVKOrONQhRRQO2JibHfjaz3T8r
+         cmze/ECPhOr3mKoPiOaMsXwSrd28+ulMGIsf7lnWepWVat8lTgEyZvdzmbtVs4mHFWoC
+         R0Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729619929; x=1730224729;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bzWd8rKalKLnCDEJXyAj/PFeqHxExSaBmYI1WaZdk80=;
+        b=QPdCnOpM5HrC1KKCBHOalQ6TTD996mQ5YX1vRxXSJOR9l7eB7tMndgEq+Ww/+l9NpW
+         fNwKlEzVBCfpfpgeM7oaiCTNaDm6jd1Ao5V2kvkEiSUxre8yI4Ge9tv9k2ZJL0ZuS2bk
+         8ebBMeKUTeFvkYLT3iO6sfMEghwO53mUYY7+550CjFlni4KlfvLSL739i3Y/oPvzFQwJ
+         2PjPPhg3nNpe9gUHyf7bXomaxMmISXKoAo/TyJCIfnQ/4X+huhxNILQZkrG7aKO4nz/s
+         O1/EOwI1r6+AbwaewqXwXmqzZBHBbFqhb6PP4OItQr5zcgsEJAP1lzbdZ5Q66RTV1pCb
+         PhFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW81Qe9xs2cOvtG2/2JsUpGtivSXvcID6+pAKGh9KLgBJMhjWtFpJvy66J3OJTJjbRVinwlaw7QtQN3CK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEIxR689jKK37HFwHW52/fwPIzgwSADPR3iA+LIRncqZYO6hHo
+	1rGJ+3mV5z1AIha3bmd+ruxHX5915m+uzhYs4UU4wfVriVIX20Gc/WfEL+BYPQQ=
+X-Google-Smtp-Source: AGHT+IFdA/p619PkELXaREfuUW3E6V0uE6dktYYNp3frR0HpWhrRRTYooq1Sbx8ODU8q4H36RgRX0g==
+X-Received: by 2002:a05:6214:3991:b0:6ce:305e:324f with SMTP id 6a1803df08f44-6ce305e3471mr15960826d6.23.1729619928754;
+        Tue, 22 Oct 2024 10:58:48 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:862e::7a9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce009996e0sm30984706d6.82.2024.10.22.10.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 10:58:48 -0700 (PDT)
+Message-ID: <f8831b4e658b19a1df4cc02449bb74d730908de6.camel@ndufresne.ca>
+Subject: Re: Requirements to merge new heaps in the kernel
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: John Stultz <jstultz@google.com>, Maxime Ripard <mripard@redhat.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 22 Oct 2024 13:58:47 -0400
+In-Reply-To: <CANDhNCoLgzy=CPBWjBKLiJzRdnf=SS3AgtFJNB-CBYAo=UEQJA@mail.gmail.com>
+References: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
+	 <CANDhNCoLgzy=CPBWjBKLiJzRdnf=SS3AgtFJNB-CBYAo=UEQJA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+Le mardi 22 octobre 2024 =C3=A0 09:19 -0700, John Stultz a =C3=A9crit=C2=A0=
+:
+> On Tue, Oct 22, 2024 at 1:38=E2=80=AFAM Maxime Ripard <mripard@redhat.com=
+> wrote:
+> >=20
+> > I wanted to follow-up on the discussion we had at Plumbers with John an=
+d
+> > T.J. about (among other things) adding new heaps to the kernel.
+> >=20
+> > I'm still interested in merging a carve-out driver[1], since it seems t=
+o be
+> > in every vendor BSP and got asked again last week.
+> >=20
+> > I remember from our discussion that for new heap types to be merged, we
+> > needed a kernel use-case. Looking back, I'm not entirely sure how one
+> > can provide that given that heaps are essentially facilities for
+> > user-space.
+> >=20
+> > Am I misremembering or missing something? What are the requirements for
+> > you to consider adding a new heap driver?
+>=20
+> It's basically the same as the DRM subsystem rules.
+> https://docs.kernel.org/gpu/drm-uapi.html#open-source-userspace-requireme=
+nts
+> ie: There has to be opensource user for it, and the user has to be
+> more significant than a "toy" implementation (which can be a bit
+> subjective and contentious when trying to get out of a chicken and egg
+> loop).
 
-> On Tue, Oct 22, 2024 at 3:21=E2=80=AFAM Puranjay Mohan <puranjay@kernel.o=
-rg> wrote:
->>
->> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->>
->> > On Mon, Oct 21, 2024 at 5:22=E2=80=AFAM Puranjay Mohan <puranjay@kerne=
-l.org> wrote:
->> >>
->> >> Add a microbenchmark for bpf_csum_diff() helper. This benchmark works=
- by
->> >> filling a 4KB buffer with random data and calculating the internet
->> >> checksum on different parts of this buffer using bpf_csum_diff().
->> >>
->> >> Example run using ./benchs/run_bench_csum_diff.sh on x86_64:
->> >>
->> >> [bpf]$ ./benchs/run_bench_csum_diff.sh
->> >> 4                    2.296 =C2=B1 0.066M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 8                    2.320 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 16                   2.315 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 20                   2.318 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 32                   2.308 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 40                   2.300 =C2=B1 0.029M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 64                   2.286 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 128                  2.250 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 256                  2.173 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >> 512                  2.023 =C2=B1 0.055M/s (drops 0.000 =C2=B1 0.000M=
-/s)
->> >
->> > you are not benchmarking bpf_csum_diff(), you are benchmarking how
->> > often you can call bpf_prog_test_run(). Add some batching on the BPF
->> > side, these numbers tell you that there is no difference between
->> > calculating checksum for 4 bytes and for 512, that didn't seem strange
->> > to you?
->>
->> This didn't seem strange to me because if you see the tables I added to
->> the cover letter, there is a clear improvement after optimizing the
->> helper and arm64 even shows a linear drop going from 4 bytes to 512
->> bytes, even after the optimization.
->>
->
-> Regardless of optimization, it's strange that throughput barely
-> differs when you vary the amount of work by more than 100x. This
-> wouldn't be strange if this checksum calculation was some sort of
-> cryptographic hash, where it's intentional to have the same timing
-> regardless of amount of work, or something along those lines. But I
-> don't think that's the case here.
->
-> But as it is right now, this benchmark is benchmarking
-> bpf_prog_test_run(), as I mentioned, which seems to be bottlenecking
-> at about 2mln/s throughput for your machine. bpf_csum_diff()'s
-> overhead is trivial compared to bpf_prog_test_run() overhead and
-> syscall/context switch overhead.
->
-> We shouldn't add the benchmark that doesn't benchmark the right thing.
-> So just add a bpf_for(i, 0, 100) loop doing bpf_csum_diff(), and then
-> do atomic increment *after* the loop (to minimize atomics overhead).
+If there is a generic logic to decide to use a carve-out when using some
+specific device on specific platform, it would not be a problem to make
+userspace for it. I'm happy to take DMABuf patches in GStreamer notably (wh=
+ich
+could greatly help ensuring zero-copy path).
 
-Thanks, now I undestand what you meant. Will add the bpf_for() in the
-next version.
+But so far, all the proposals was just a base allocator, no way to know whe=
+n to
+use it and for which device. The actual mapping of heaps and device was lef=
+t to
+userspace, which to be honest would only work with a userspace Linux Alloca=
+tor
+library, with userspace drivers, or inside mesa if the devices are GPUs/NPU=
+s.
+This is a project Laurent Pinchard have hosted a workshop about during XDC.
 
-Thanks,
-Puranjay
+Nicolas
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZxfnuBQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nWzUAQCx+X49zgXVfFYGzNVpQy5I+g0VGJtB
-kJ8iKX/yW+N9bAEA46DffeNNQbUm6y2mo+L0YTeUgszTyKrtREUS5Ekd6gw=
-=Amtg
------END PGP SIGNATURE-----
---=-=-=--
+p.s. libcamera have device specific knowledge, and could of course be a sho=
+rter
+term user. Note that major distro are not happy that there is no memory
+accounting for dmabuf, bypassing sandboxes and limits.
 
