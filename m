@@ -1,276 +1,166 @@
-Return-Path: <linux-kernel+bounces-376845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325E39AB6A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:20:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3619AB6A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB5A1C23264
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2858DB2333C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB631CB30A;
-	Tue, 22 Oct 2024 19:19:56 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CD51CB314;
+	Tue, 22 Oct 2024 19:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dWvWBENQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3621C9DD8
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68381145A1C;
+	Tue, 22 Oct 2024 19:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729624796; cv=none; b=bC7LbKthxGH5VtiIYy+ShcdYrGwrq32vq1o+ehPqUiBEY9MH5yQ4c3WYdR2FOE/PhXWKUPZR7xtxBnhp4ffs5HJtz59BwyZMy3HSuoDjyThVhEVtgUexmUivzo0DZfHbkpixdcXspVUS62ZRdQxzA75ivlNsDI8vpz78MpSPbKw=
+	t=1729624926; cv=none; b=DhTyRc67UIft3BH7HwawbUFjZdEqMiJbqbeTRy6xMLRp3Nyi3ISQJBA6Wtd1mEqPfQFdaHtrBRet7oBulcNpdGobXmkkL1DQvQWo/rdRMPrKhGHsthJZXkxk0N8L5Kl+pwMJqE1Ycji9BpunZGSVfcw8BVHqND6ZMG/gd13oR4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729624796; c=relaxed/simple;
-	bh=wshjq/oxHWC7mtxx3lsUikYyyMnLYQh5pu/b/Vxt1QI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MIFij16lMk20rc9umNBOPCj6juQoPcf3KSmls/EoonfZ8Uz0pn3iVAnU/VzsEFwVg1fcBMhyQK8nQrvw9b2J0L0L2C8+BbwIgFYr2DYU0oySoNL1vHM6svLcHbpj0g6N5Sw5prXbMBr0x2EszrvzJd9Nuz+w8Yy+yjUU1vNCuyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so61090985ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:19:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729624793; x=1730229593;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7j03T2wlfYmatPG5AVeoste/ARfMJozjZtqiBQvfIvw=;
-        b=X71IY8tYRsxHVKohLye9c0F5MB4oNK37uTDO/0Dqil3sY9OxLEflZKqSFO+7QptvK2
-         QXh5tqmfb6KHjA3vEh70O/yy4XLYztq+3YgjaQawksgww5lOFIydtdgZvah3Y3ehXQDD
-         +IbpfkZImGpQOaCUlN0hGCGSLvXO6yKNbklEJWgrQDgCb97Idh0hop3F2zvIzETUwuf2
-         hFTHkH85M8Pm62AVT9ykqM4yrEsUR4BTIm5IPPqJPoBf+ouWRIMh9xZsYHCrTRwi9r2F
-         nngtilDUrLGMXcstOTzGrZLQmd5knBEI0cFwKu9XdfrjMy5tPfJTegAfI7qyxq+zRotv
-         deBA==
-X-Gm-Message-State: AOJu0Yx7VPOGdN1UC4dbChevIuyW9NRcaIejbb1y1bui5dGun1GuL3JX
-	zVQT7aP0FnBG0zrSph1L8RdWxDxrM8pYND0wD7yyGtX6tDDGXYq5OoC9kZYinh4U+HGMo06uGCk
-	B2L8t3AMcWehLWrIFlNEH84YrdLNyZM+7BFpVW9bAMUPztyVHcYpHJDk=
-X-Google-Smtp-Source: AGHT+IHc5hSkQ14ZGbtXAqNKEtDK9a6JSIu5KMIytV+osWW30EREKjpZDdsQSI9TQ3lXlsIsbG9/1LQdqZFuL3/1WDGO3GBCIi3Z
+	s=arc-20240116; t=1729624926; c=relaxed/simple;
+	bh=HedsURPxO+izpoIV2gScFCA9J6aHDDCpiRXKJsa6+G0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UMM4Et/9W2+6Z2LOXFKF41iH0AaRdVHM/44jjEt7AIHTWIQ6DkPUA5rWoEWiBfDPyIomJ1+Lyj+o15SjHFI6Un4WnbGZ1BpTEFJnU3jgAh48NbxaQps+BYa+VN+q3ebaJzQEpEHmaEyy9ZicIMR/hNlj6WsqubEmkGYCldpqIDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dWvWBENQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MIEsXH017119;
+	Tue, 22 Oct 2024 19:22:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=D+UKC341jhbqcwWUZeSgsz
+	3KKYVs9wK+9odKhq3fhBU=; b=dWvWBENQrXKQTyAjMqc/JfsbdCE/zyv0/F9Bgx
+	0rib0juEIrzm5jtLfDmefFyFsVKsgs2DCr8zSQC1kiKtTh1rlukKpyEgf6VxRl1N
+	B/4kdJyOj8E9ZuYA6JQZG8p6tLmYNYY7121QLre6DSEhjdxE/hg8XF7/zy44cYey
+	gA4WTlT1e8r8ucubsJoJcuVC/g+OIIQAXcQnoPJeSgZ9dmL+GjHA9No1r4+ahkG+
+	Pf/HJ9aQQ+8OTwr/gDPxDxack7k9B0kGNdWMBrdRKkd9csvsYm8lsCXn4x3MNOfv
+	XRG+eSHBCFna2nbSoWlW8jqVhkC1ijpsSSEyM3cj95fYLO1w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmdqdd7t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 19:21:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MJLwNb013185
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 19:21:58 GMT
+Received: from hu-kuldsing-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Oct 2024 12:21:56 -0700
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Qingqing
+ Zhou" <quic_qqzhou@quicinc.com>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH v3] firmware: qcom: scm: Return -EOPNOTSUPP for unsupported SHM bridge enabling
+Date: Wed, 23 Oct 2024 00:51:48 +0530
+Message-ID: <20241022192148.1626633-1-quic_kuldsing@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180a:b0:3a0:4d1f:519c with SMTP id
- e9e14a558f8ab-3a4d592e278mr2298515ab.3.1729624793495; Tue, 22 Oct 2024
- 12:19:53 -0700 (PDT)
-Date: Tue, 22 Oct 2024 12:19:53 -0700
-In-Reply-To: <000000000000797bd1060a457c08@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6717fad9.050a0220.10f4f4.016c.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NZyv92ICcgJZkbCDDpCyp110jqJLdBxl
+X-Proofpoint-GUID: NZyv92ICcgJZkbCDDpCyp110jqJLdBxl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410220125
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
 
-***
+When enabling SHM bridge, QTEE returns 0 and sets error 4 in result to
+qcom_scm for unsupported platforms. Currently, tzmem interprets this as
+an unknown error rather than recognizing it as an unsupported platform.
 
-Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-Author: luiz.dentz@gmail.com
+Error log:
+[    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
+[    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
 
-#syz test
+To address this, modify the function call qcom_scm_shm_bridge_enable()
+to remap result to indicate an unsupported error. This way, tzmem will
+correctly identify it as an unsupported platform case instead of
+reporting it as an error.
 
-On Tue, Oct 22, 2024 at 12:44=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> #syz test
->
-> On Mon, Oct 7, 2024 at 4:54=E2=80=AFPM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > #syz test
-> >
-> > On Mon, Oct 7, 2024 at 1:16=E2=80=AFPM Luiz Augusto von Dentz
-> > <luiz.dentz@gmail.com> wrote:
-> > >
-> > > #syz test
-> > >
-> > > On Fri, Oct 4, 2024 at 1:24=E2=80=AFPM Luiz Augusto von Dentz
-> > > <luiz.dentz@gmail.com> wrote:
-> > > >
-> > > > #syz test
-> > > >
-> > > > On Fri, Oct 4, 2024 at 12:06=E2=80=AFPM Luiz Augusto von Dentz
-> > > > <luiz.dentz@gmail.com> wrote:
-> > > > >
-> > > > > #syz test
-> > > > >
-> > > > > On Thu, Oct 3, 2024 at 3:21=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > >
-> > > > > > #syz test
-> > > > > >
-> > > > > > On Thu, Oct 3, 2024 at 12:32=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > >
-> > > > > > > #syz test
-> > > > > > >
-> > > > > > > On Thu, Oct 3, 2024 at 11:38=E2=80=AFAM Luiz Augusto von Dent=
-z
-> > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > #syz test
-> > > > > > > >
-> > > > > > > > On Wed, Oct 2, 2024 at 4:46=E2=80=AFPM Luiz Augusto von Den=
-tz
-> > > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > #syz test
-> > > > > > > > >
-> > > > > > > > > On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von D=
-entz
-> > > > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > #syz test
-> > > > > > > > > >
-> > > > > > > > > > On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von=
- Dentz
-> > > > > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > #syz test
-> > > > > > > > > > >
-> > > > > > > > > > > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto v=
-on Dentz
-> > > > > > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.=
-com>
-> > > > > > > > > > > >
-> > > > > > > > > > > > This makes use of disable_delayed_work_sync instead
-> > > > > > > > > > > > cancel_delayed_work_sync as it not only cancel the =
-ongoing work but also
-> > > > > > > > > > > > disables new submit which is disarable since the ob=
-ject holding the work
-> > > > > > > > > > > > is about to be freed.
-> > > > > > > > > > > >
-> > > > > > > > > > > > In addition to it remove call to sco_sock_set_timer=
- on __sco_sock_close
-> > > > > > > > > > > > since at that point it is useless to set a timer as=
- the sk will be freed
-> > > > > > > > > > > > there is nothing to be done in sco_sock_timeout.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.=
-appspotmail.com
-> > > > > > > > > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4=
-c0d0c4cde787116d465
-> > > > > > > > > > > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeo=
-uts with delayed_work")
-> > > > > > > > > > > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.den=
-tz@intel.com>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  net/bluetooth/sco.c | 13 +------------
-> > > > > > > > > > > >  1 file changed, 1 insertion(+), 12 deletions(-)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sc=
-o.c
-> > > > > > > > > > > > index a5ac160c592e..2b1e66976068 100644
-> > > > > > > > > > > > --- a/net/bluetooth/sco.c
-> > > > > > > > > > > > +++ b/net/bluetooth/sco.c
-> > > > > > > > > > > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct=
- hci_conn *hcon, int err)
-> > > > > > > > > > > >         }
-> > > > > > > > > > > >
-> > > > > > > > > > > >         /* Ensure no more work items will run befor=
-e freeing conn. */
-> > > > > > > > > > > > -       cancel_delayed_work_sync(&conn->timeout_wor=
-k);
-> > > > > > > > > > > > +       disable_delayed_work_sync(&conn->timeout_wo=
-rk);
-> > > > > > > > > > > >
-> > > > > > > > > > > >         hcon->sco_data =3D NULL;
-> > > > > > > > > > > >         kfree(conn);
-> > > > > > > > > > > > @@ -442,17 +442,6 @@ static void __sco_sock_close(s=
-truct sock *sk)
-> > > > > > > > > > > >
-> > > > > > > > > > > >         case BT_CONNECTED:
-> > > > > > > > > > > >         case BT_CONFIG:
-> > > > > > > > > > > > -               if (sco_pi(sk)->conn->hcon) {
-> > > > > > > > > > > > -                       sk->sk_state =3D BT_DISCONN=
-;
-> > > > > > > > > > > > -                       sco_sock_set_timer(sk, SCO_=
-DISCONN_TIMEOUT);
-> > > > > > > > > > > > -                       sco_conn_lock(sco_pi(sk)->c=
-onn);
-> > > > > > > > > > > > -                       hci_conn_drop(sco_pi(sk)->c=
-onn->hcon);
-> > > > > > > > > > > > -                       sco_pi(sk)->conn->hcon =3D =
-NULL;
-> > > > > > > > > > > > -                       sco_conn_unlock(sco_pi(sk)-=
->conn);
-> > > > > > > > > > > > -               } else
-> > > > > > > > > > > > -                       sco_chan_del(sk, ECONNRESET=
-);
-> > > > > > > > > > > > -               break;
-> > > > > > > > > > > > -
-> > > > > > > > > > > >         case BT_CONNECT2:
-> > > > > > > > > > > >         case BT_CONNECT:
-> > > > > > > > > > > >         case BT_DISCONN:
-> > > > > > > > > > > > --
-> > > > > > > > > > > > 2.46.1
-> > > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > --
-> > > > > > > > > > > Luiz Augusto von Dentz
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > --
-> > > > > > > > > > Luiz Augusto von Dentz
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > --
-> > > > > > > > > Luiz Augusto von Dentz
-> > > > > > > >
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > Luiz Augusto von Dentz
-> > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > > > > --
-> > > > > > > Luiz Augusto von Dentz
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > --
-> > > > > > Luiz Augusto von Dentz
-> > > > >
-> > > > >
-> > > > >
-> > > > > --
-> > > > > Luiz Augusto von Dentz
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Luiz Augusto von Dentz
-> > >
-> > >
-> > >
-> > > --
-> > > Luiz Augusto von Dentz
-> >
-> >
-> >
-> > --
-> > Luiz Augusto von Dentz
->
->
->
-> --
-> Luiz Augusto von Dentz
+Fixes: 178e19c0df1b ("firmware: qcom: scm: add support for SHM bridge operations")
+Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+v3:
+- Split patch series as it's a fix and required for other dependent patches.
+v2:
+- Link: https://lore.kernel.org/linux-arm-msm/20241014111527.2272428-1-quic_kuldsing@quicinc.com/
+v1:
+- Link: https://lore.kernel.org/linux-arm-msm/20241005140150.4109700-1-quic_kuldsing@quicinc.com/
+ 
+ drivers/firmware/qcom/qcom_scm.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index fba3ac676d1d..478538604225 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -112,6 +112,7 @@ enum qcom_scm_qseecom_tz_cmd_info {
+ };
+ 
+ #define QSEECOM_MAX_APP_NAME_SIZE		64
++#define SHMBRIDGE_RESULT_NOTSUPP		4
+ 
+ /* Each bit configures cold/warm boot address for one of the 4 CPUs */
+ static const u8 qcom_scm_cpu_cold_bits[QCOM_SCM_BOOT_MAX_CPUS] = {
+@@ -1361,6 +1362,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
+ 
+ int qcom_scm_shm_bridge_enable(void)
+ {
++	int ret;
++
+ 	struct qcom_scm_desc desc = {
+ 		.svc = QCOM_SCM_SVC_MP,
+ 		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
+@@ -1373,7 +1376,15 @@ int qcom_scm_shm_bridge_enable(void)
+ 					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
+ 		return -EOPNOTSUPP;
+ 
+-	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
++	ret = qcom_scm_call(__scm->dev, &desc, &res);
++
++	if (ret)
++		return ret;
++
++	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
++		return -EOPNOTSUPP;
++
++	return res.result[0];
+ }
+ EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
+ 
+-- 
+2.34.1
 
-
---=20
-Luiz Augusto von Dentz
 
