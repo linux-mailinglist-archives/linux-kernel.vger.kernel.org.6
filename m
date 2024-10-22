@@ -1,169 +1,154 @@
-Return-Path: <linux-kernel+bounces-376641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4329AB450
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A159AB453
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD44B214E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA21E1C22E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B421BC9E2;
-	Tue, 22 Oct 2024 16:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87D0139CE2;
+	Tue, 22 Oct 2024 16:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FqnCFpoq"
-Received: from sonic310-22.consmr.mail.bf2.yahoo.com (sonic310-22.consmr.mail.bf2.yahoo.com [74.6.135.196])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="krQjBik8"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D551A0BE1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B541A0BE1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615635; cv=none; b=IRMaLafC0ZwMp92FvjgbTbtHCb4ApZGJJo6ovrlbwHAqxbemZtoTLnqkrWGM5dFjmUmaYBbS4NH0aNnsNSmolvfSx+Ex041S9TnTXc3DV8reNH14n2chfCmqkVej2SVQROismxHzvOAn/Ay4U2cPXxxYosn+73V0AU4dQhhlZEo=
+	t=1729615692; cv=none; b=DFqfKFpWZOcHPcxY/pWBu7LZRHz8wISbwWwQq2EZl2oU6xDVWck7aYQKsN+PmzLnyPNVwrUM8thye9HRktEzSvhj1NQ7lfFdaHb3tGDM/fGYuKBlM1pXnnA18IZqLRLvaeK/oYNCPRRJB+a24Fv9NodqsL5AFbaIJoPa+z63dU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615635; c=relaxed/simple;
-	bh=LGvZfBG932kQ1YrUvUr/IcYClA07C6OSPqb3K/idqnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AN7wwz1hZ9m/91xToTmzaQ4QF+pvEN4B8mu6gYC9uA6w2vYvOHHD5zgJ+Rnk0UFNPkyVDP+w6x6ClnL9OzPVzn68TL4QDsxAm3vKN8O2pExU2i1DG9VSDadnhOqCsJg0LTkvONmVK6z/HPbiA8v6HW9tAV2FaYDDIOTQ7coQ8DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FqnCFpoq; arc=none smtp.client-ip=74.6.135.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=W+YjoM+UFsc+LXmblPgB436l9oughyTIbgOOXvBruAo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FqnCFpoq4jCFPithiMRhzrH6/bQ5DnkHF1qBy13oYrO4qV+tunzbgWpMQSbouxzN0DzGC9tVspro4/le3iFQO4VmLPPsJCAQ4zvywr2eOySFmQ0AUrSvPw5t0S4Wj0Z861cIHEc9vPng33XHQc5J6B4aKk9OBaLxCB7Ulck9ScoR4ddzfz7L551RBREZuIS2egH9hYTJPCNnxp+AKz1b2iZEvc1Xl8/vufKGziBM5EiTJ/ezWmFFnHramlaLI39n9AncgaCzHHwe450EKCDRo1bHQGOQPYQ8feeK/QM6+np54MtOmNYUjj8jGALU0HNjpbnzWR0Lr0i+0zhYTRe9Hg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=8ljbTKG1CBu5VxP3Wr9j7681FZtFjfm8i3yCvVR/QlJ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P0XBXDGHiWkYf8fBqsO1jjiuFU2PJy8pAI66/ED2pyc+3AzyGHxPZqUuS8R1L/o0qIiIZm8gNsNvtsXOWH/jwyFvsrelrz7x/L0OQL8yMt/kJZc0gs2Sg8TMjU1eJRFgitHIuDr535RNLHVAk0axb1R5iPuzKbjrnvpL/MJlVB34xZsCuSUlnABgMLOuTZdc8qLpML1ks90lLT6POrTeopYsQ158dBTaR5YzuQ1Kb2vpksVe/bgdHywr4Xy4M60CaPedcq+ZtvgKVqTg7ancNTk2Ev0IxjacndRzAoIYK2GCafcyW87r1Pvr1Ie9M8Qv++RX3PJvTahGVhe3k/8AGQ==
-X-YMail-OSG: S.gcgSEVM1mhBlYSMpGksHU3UnFXpOxOFfQ11kpgsEQ44mS6gPshQRhu44cC_TZ
- bLrtowY2iy1ZoKBaGB2XJf8vQDAtgxdylNVpLzxYzKdfgqeObMLWP4NodJoiOyh3UolCCyGnG0Op
- BVYEfXs3Oj2VOnki5cNJ.0Xy5H0X.qjThRv1eQSoe6Ykm6xyyi6w0_z.CSIqkgZUo6aeDeLKMa3A
- g64PLIvdQmbqscPkDrS.5lq1GNgJ3VYU.M6sE6HCSkIUomRUVlqP5_MzHE_UE9ckeuKPep3rwwTd
- ET2.wQWFZSNK84SRqHoER0vww.8jxfVVef.YLwC2_ald4dCtDA_UAI9_9gffQYZWLPbTJVHIAOOi
- fNTSTDf4EbaP8wDgqY_wvYjgSnc7c0jnzizqebZ47_xi4ZpIoCc2srV_.wH4yU4I_1PSMcAKIntg
- b8NBv0B8OkrBlz_QPZXRPzmFoAIxxqXVasnw5hKv5djFHIRjFE0uCeB6NFQuF9DceiDkAQ7IQInm
- qJpTDhwsNKdnhN7A521cyxy13Ix9zRPQWja7hheeLJ8MWHXmxetb5dqOoF_u5PLiShJW9pvY9vc9
- _wgt_SLecosY.Z9BEtaF8V_b4L9dMqWvfevM3_OOZ6s9zWjUcWqKzPQMwoOXExfyErPRIrNb99Ow
- JvWTRUtXIFvcTq.llSknRayxy9DFOPzzxNkkkCWme.UkQyt6loXVmafhvvV3SYEQtrDayKrswAQi
- hUcAwFet.msF1poOLI0IF54sYZhe3RGX0zAt5pzFJWmbaSE_dOQcEiqxDHPYMS5pVq37wSDTfcv5
- sTscDBC6LGo6imhe5y0OO0E1IdOsFYy7h_RyEHfS6PaC8TfTjmqmkWMWZp7LJI..NtXHX7R6pX6p
- bUQhxCPiJsMFQPwrB2jXFe_7IW8mGxXTGHCaUU3jM6dWrc4cyMpKrLU0PO9aFX1GaJbdOnD4DIbF
- uRLtFP2BzS0bdXk0fb4sXjnqtsh7X9Ao26PZfbgET02BUcsL0c7hcXGi50XkPVTYMkpr.wysgjMr
- fyB6C.2FFT.qt5RcsEUv3Uu3EqsSVZlSXHgp202dEqgXv.btqKQr3SqMpdGZz2pWvrJPvypIYy2s
- 1eyj83RK8oZCit9c3QuneekVol_KF68h7gthX_FP1XJJbcSCgjZAReVrg7FMSca.ZY_L3ZUUvI5m
- vN0fd.gYWoqOSXykbZl_iZr3gYlPor_ujRpi21MYWqeQvUaxL13j7tKxaoChbyJh_sROwMMc.gC6
- jl_LIMosVWAO9z8SO_ohfYEp5W6GHSDRTjuU_QwEP8JQAymkEcYTXxwUJCh4cqUDe.hvLJX0sjl1
- N31MLFBJZO9hqh_7jWqErDEsAmoEi_dyngqWrZgBXdux2GV8tL5WtG9PBW1zXYswNQNoBMFZRIPh
- s5fNcKkX3YMMzDz9TWNM1Wr6rojNVBkxMAT2WPav0RRTsdlS7yj_mPEngouIJXXDZ73SpavN3yS4
- .Cw96yAep9OtN0WQYkBRVA0IItTu7VzJXdWDqy28Rv4OhAqAS1gFK5e2AeSDMn_bnCrIyiruiMq3
- CgPFG1hblTSsgKYhdq4PtmhjD5YL81QElvtBhh7Ok5hIjJZE5LCD8OQSAyOorU2hGQpxU.iRtK3R
- hZWzOl9SVSxfxdZIhThhqtk03F242vn3C2YDHVNco.MIP3iwItYbuziIEan3abEV3SLtFqSYvLZM
- MOcDigr32.nTQVwb3Wc8rqOJcZnFBp4rF9RMbFUlGnEu4UCzZiTpYwyWAW8MZC4mDHgx9C26_nxt
- 5dR7HdNeDqxUpbdVSkI6wPOC7PscMKbcIak52A0BIqFSOY.B9dASRtTdqfqJyDu4P8q.tIWK_XFK
- z8yKzY8BLxBkUrIhHL3DDdC2oy5z2_OR4yZOyozaCmPxCN0CajPxJcLkBJI3fGr0PbZBWxpwb73Z
- rJk6WjlnmzCCJV.n.EUqBTqlilPm4z51BUgkXXXzhEXombZyEk0DyhJxt0DfjReKr9INKyiomtgX
- Bvo.aUICSmhoMx2U1x7ZBhvB.ec9egcK.s3MJeDR12DsQy1yfiEUyOiTWF2nyMHPWhZiGeWtpwq4
- FCldIVTUqnW71Xu5xnRybxAgm6O3mGytqZH92EgH0pKuWlwt9pXJqYGCtnFhykpo84nbHFYX3IfJ
- kzWoRd_xBb45psnPLUYPKZsXegO4AyuAI7H_LIckk60FkHLuDHKZ_oXF5q1C8E1Ii2XQdWt4lpHn
- kekTNVwjcBwhKUFgV.KqOoP6mGDyH8PJxv9jGcinNZxw2mtExFZBVo7h9fsaDWjHgUiIB88ISKr.
- C85D5HyLLGGypjUww
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cb6630a2-79bc-4591-ab0b-03f7386e3ee5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 16:47:06 +0000
-Received: by hermes--production-gq1-5dd4b47f46-dvwsq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6a5b3f8172a524a4157cdb05ea625898;
-          Tue, 22 Oct 2024 16:46:59 +0000 (UTC)
-Message-ID: <6dc1c686-108e-41a2-bda3-8744e5f7626f@schaufler-ca.com>
-Date: Tue, 22 Oct 2024 09:46:57 -0700
+	s=arc-20240116; t=1729615692; c=relaxed/simple;
+	bh=eB2r4a4nMF7jLZ5dNv6AlWAk7IIKZ4EHpTdNsNxxefk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFib7rax5acRo9A+sTPNkYBsLXReCs+WOwsCbvQl1niAtp26z7pvtvrlB0Fqvn7+AjNf4EZhljQyv+XpNr6D5a5ehWJvaS6jUVctaXgWwRSiaO4bPV14vlgyEi1wk0lWE+xwyhUVjVjwXDc2NwXrXnEwyu/GbOC7eErmoShZu3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=krQjBik8; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c70abba48so48622915ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729615690; x=1730220490; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3JEQ9MM+0bQRBQpufIz+g9Ep0xv8kpXfh0HhFXLCte8=;
+        b=krQjBik8lahTFsygWO7U0XmU5J+sC4djL3BfarQdP07uH3aruRoM/HM7+JrvIsk67D
+         aKJVo3TxFps+l5c7hvIlNLtjxKCLithtRDhUG3zA0+A2MCXyeLesW8yQxuwuJVODtdoq
+         Wj/YyRJX+FAzTYqRsyUCkkbwdpydxdvOi1+Um4G9ojXPcM8XmpHpFcR9lf6Am5kky5kI
+         oJIafh7oAhA81uGRqY+/BMEOeBhcEzqFhwgvBqd+886ck4UFsKQx55Xur2lVtJwpVnOI
+         dNJ4tqyMAL9qZ8PADFwPGqaYhUTemKMpGkVhD8VSAR25AA1j9ABbYoKViUw6Z4rfHvze
+         NgyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729615690; x=1730220490;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JEQ9MM+0bQRBQpufIz+g9Ep0xv8kpXfh0HhFXLCte8=;
+        b=IOvmc5TZZZG+xIM1kzzBxn8AbCM5HA3L/KimUqVepnA37mszUrAJa+pHvU7T2tVIZr
+         h4iA6TjScb0ly0m0/KE1T57UKsjKEyDrfEXe83oTdspzGDMmZ6blns4bWmf8NbdN8o9+
+         gKDoMP72KLt9WQIKMaQQaZJE2J93OJE1qkPYdXRvhH2UpG2Qs6UWORqMuut+px1fGtDK
+         +8L3mPtvUFe/JVlcFJh1ijC3WfXolDRRfNbcCMN81fda8rjC4G26KubPzTnZLAjcI9Ac
+         2NDs5iAhRQfyA8On/w8RMDXZPfeRfHo3t+4MHb2mx1yXXeTUdqyDgAab0iwq2sA1WKOw
+         XC6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVp01F5Gq4T3tssX27zKRNPnMxtz8L6c51eE1n/SKkxitGikC6WTmt0UZkq2I0qc2VElO4K6mtR1JpYdew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYp785EVWrVZlSabkrq7CNkRjX2T0R9ceb6CL7CrYf4D+8ASuT
+	RysQeT2Qn9NmkX/6mTWwSKfX2cjBKw6yMwg6kl2f86POBKVWnCtThSkD7Om7DQ==
+X-Google-Smtp-Source: AGHT+IFa07tHycQZi4y8Cv96iyWVS9+/qqyom7Z+lob5auNlXr7DiOgX6ejk3Gy2vlhqcjfCd1hWNw==
+X-Received: by 2002:a17:902:eccc:b0:20c:ca83:31c7 with SMTP id d9443c01a7336-20f54395ebdmr472615ad.54.1729615690130;
+        Tue, 22 Oct 2024 09:48:10 -0700 (PDT)
+Received: from thinkpad ([36.255.17.224])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f10dbf9sm44820105ad.308.2024.10.22.09.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 09:48:09 -0700 (PDT)
+Date: Tue, 22 Oct 2024 22:18:01 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: kw@linux.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	frank.li@nxp.com, l.stach@pengutronix.de, robh+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v4 3/9] PCI: imx6: Fetch dbi2 and iATU base addesses from
+ DT
+Message-ID: <20241022164801.h7eh2gkuiy7pfkmr@thinkpad>
+References: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
+ <1728981213-8771-4-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
- ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20241014151450.73674-5-casey@schaufler-ca.com>
- <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
- <d2d34843-e23c-40a7-92ae-5ebd7c678ad4@schaufler-ca.com>
- <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+In-Reply-To: <1728981213-8771-4-git-send-email-hongxing.zhu@nxp.com>
 
-On 10/22/2024 9:35 AM, Paul Moore wrote:
-> On Mon, Oct 21, 2024 at 8:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 10/21/2024 4:39 PM, Paul Moore wrote:
->>> On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Replace the (secctx,seclen) pointer pair with a single lsm_context
->>>> pointer to allow return of the LSM identifier along with the context
->>>> and context length. This allows security_release_secctx() to know how
->>>> to release the context. Callers have been modified to use or save the
->>>> returned data from the new structure.
->>>>
->>>> Special care is taken in the NFS code, which uses the same data structure
->>>> for its own copied labels as it does for the data which comes from
->>>> security_dentry_init_security().  In the case of copied labels the data
->>>> has to be freed, not released.
->>>>
->>>> The scaffolding funtion lsmcontext_init() is no longer needed and is
->>>> removed.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> Cc: ceph-devel@vger.kernel.org
->>>> Cc: linux-nfs@vger.kernel.org
->>>> ---
->>>>  fs/ceph/super.h               |  3 +--
->>>>  fs/ceph/xattr.c               | 16 ++++++----------
->>>>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
->>>>  fs/nfs/dir.c                  |  2 +-
->>>>  fs/nfs/inode.c                | 17 ++++++++++-------
->>>>  fs/nfs/internal.h             |  8 +++++---
->>>>  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
->>>>  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
->>>>  include/linux/lsm_hook_defs.h |  2 +-
->>>>  include/linux/nfs4.h          |  8 ++++----
->>>>  include/linux/nfs_fs.h        |  2 +-
->>>>  include/linux/security.h      | 26 +++-----------------------
->>>>  security/security.c           |  9 ++++-----
->>>>  security/selinux/hooks.c      |  9 +++++----
->>>>  14 files changed, 80 insertions(+), 101 deletions(-)
-> ..
->
->>>> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
->>>> index 039898d70954..47652d217d05 100644
->>>> --- a/include/linux/nfs_fs.h
->>>> +++ b/include/linux/nfs_fs.h
->>>> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
->>>>  {
->>>>  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
->>>>      if (label) {
->>>> -            kfree(label->label);
->>>> +            kfree(label->lsmctx.context);
->>> Shouldn't this be a call to security_release_secctx() instead of a raw
->>> kfree()?
->> As mentioned in the description, the NFS data is a copy that NFS
->> manages, so it does need to be freed, not released.
-> It does, my apologies.
->
-> However, this makes me wonder if using the lsm_context struct for the
-> private NFS copy is the right decision.  The NFS code assumes and
-> requires a single string, ala secctx, but I think we want the ability
-> to potentially do other/additional things with lsm_context, even if
-> this patchset doesn't do that.
+On Tue, Oct 15, 2024 at 04:33:27PM +0800, Richard Zhu wrote:
+> Since dbi2 and atu regs are added for i.MX8M PCIes. Fetch the dbi2 and iATU
+> base addresses from DT directly, and remove the useless codes.
+> 
 
-This came down to a choice about where the ugly code would be.
-I'll restore the old behavior.
+Again, what will happen to old dts that don't define these regions?
 
->
-> I would suggest keeping the NFS private copy as sec_ctx/sec_ctxlen and
-> keep the concept of a translation between the data structures in
-> place, even though it is just a simple string duplication right now.
->
+- Mani
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 20 --------------------
+>  1 file changed, 20 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 52a8b2dc828a..2ae6fa4b5d32 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1113,7 +1113,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
+>  			   struct platform_device *pdev)
+>  {
+>  	int ret;
+> -	unsigned int pcie_dbi2_offset;
+>  	struct dw_pcie_ep *ep;
+>  	struct dw_pcie *pci = imx_pcie->pci;
+>  	struct dw_pcie_rp *pp = &pci->pp;
+> @@ -1123,25 +1122,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
+>  	ep = &pci->ep;
+>  	ep->ops = &pcie_ep_ops;
+>  
+> -	switch (imx_pcie->drvdata->variant) {
+> -	case IMX8MQ_EP:
+> -	case IMX8MM_EP:
+> -	case IMX8MP_EP:
+> -		pcie_dbi2_offset = SZ_1M;
+> -		break;
+> -	default:
+> -		pcie_dbi2_offset = SZ_4K;
+> -		break;
+> -	}
+> -
+> -	pci->dbi_base2 = pci->dbi_base + pcie_dbi2_offset;
+> -
+> -	/*
+> -	 * FIXME: Ideally, dbi2 base address should come from DT. But since only IMX95 is defining
+> -	 * "dbi2" in DT, "dbi_base2" is set to NULL here for that platform alone so that the DWC
+> -	 * core code can fetch that from DT. But once all platform DTs were fixed, this and the
+> -	 * above "dbi_base2" setting should be removed.
+> -	 */
+>  	if (device_property_match_string(dev, "reg-names", "dbi2") >= 0)
+>  		pci->dbi_base2 = NULL;
+>  
+> -- 
+> 2.37.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
