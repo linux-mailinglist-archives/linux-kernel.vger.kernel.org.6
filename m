@@ -1,243 +1,210 @@
-Return-Path: <linux-kernel+bounces-375962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB539A9DE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC45F9A9DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E006B23FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EF9284F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85166196C6C;
-	Tue, 22 Oct 2024 09:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6601957FC;
+	Tue, 22 Oct 2024 09:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ihfKcFvA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaIbzR7T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E741940B9;
-	Tue, 22 Oct 2024 09:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB0B1940BC;
+	Tue, 22 Oct 2024 09:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587905; cv=none; b=jlfg1fSmL/3B9cdzv40Q1YSDFPkMTk5Z0Fkc7Mx06O7i5DELTwN0729YL+f7At9y0DRkLgG1QfYJnvWzx3W5Ka81j5J3NFa5Wr5HJ2dh4JA2b3yXESrnMrZ0Q4ZHT2jjn5GMdW1KJCyt0a0+j0L5A4NA0sqmCRbVfhkC+sKfPvM=
+	t=1729587928; cv=none; b=BHraOVAspYI05xpAA83n56godUAqtxcFuxT3W0hUVUXYZEFsMtvqitjbdrrb4z43ILPUGK5WKKDQvUpT1ytSI+hofK+JNrRm1i3GZram5DUWMqibeMsmjXvLq14LOQW4D8pbxkCkP7KuFpqIUFlow+4u75pvRYXIaWlUD9uIcU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587905; c=relaxed/simple;
-	bh=RpHFkVfZw0AbIR3xtzIa38SQHNStexiY4qowugrrTZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T1hC1LTOYuVEwtse464LEPVplXp+z/8/mc4VIjNvuhgkvHCv279xgvQHv4CaLoXWRCAdXbuVfiEtr3tXFwZZkFLy8D0Xs9XTMclT4ZNcdBH41c+OB6cKgM0vwWBNCzbJBZespRYENFRSdtj6RYrJXoVmA8JcXnNvLtzpi72XwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ihfKcFvA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729587902;
-	bh=RpHFkVfZw0AbIR3xtzIa38SQHNStexiY4qowugrrTZg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ihfKcFvAPzJ1jjddRGqWXAVCFvDyRfurcwcEXlbwFn9KeEPqedlIWFkHa8EAeaioY
-	 z5g2rVf2iXJE3ewnoD2QU72shFBMmANKa/KHZhdMQzNnhZeE7KRzWKpcgVuy4QqK8r
-	 31c/w2PPM8fGdaetfB8cPs5zXYDhAKfLnZVHshMxMOXlmTr/xi+N12nkHDxiO2x5Y0
-	 anTOhQEYQpA58ZvKZov+vDpsFDU5XOqXmWh8n2fTyHOUbRwA9L/SQUT0cKzuKD9Wka
-	 QYy1hRalt7HgpWuyhOiNWtsJYUhOBV4DkkY9WtpGuC5L9bWr7XS9wB620ncP2/IGLN
-	 Qgskb2Cub8Juw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9769A17E12AC;
-	Tue, 22 Oct 2024 11:05:01 +0200 (CEST)
-Message-ID: <cb070d12-7e6d-4b0b-9dad-af4b9d6c51bc@collabora.com>
-Date: Tue, 22 Oct 2024 11:05:01 +0200
+	s=arc-20240116; t=1729587928; c=relaxed/simple;
+	bh=KVj6eLMEBlRYZiWuK+4pxzDP6yrXseLw1QFl9GKKPqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1zTxCkuZA2WRLxIc993vv0L6BfACc2e2Qo/RnEiDj1zj3qZQvbFgZUFU/bBNSqr5LDu5ntOr5T3KtVVWiZ2QpLxmiVC6GTwT6azo3FHi9cWqGJXelqhpMwd8F2kADtQaCGseheXs9Bun6cybxr7F+8MtXmECj3ii7b7NXZAl54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KaIbzR7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFA6C4CEC3;
+	Tue, 22 Oct 2024 09:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729587927;
+	bh=KVj6eLMEBlRYZiWuK+4pxzDP6yrXseLw1QFl9GKKPqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KaIbzR7TbABpbidMnzsaoYQyVJzcf/VjoLrtLdymzrs2QUsV3fGEYFvnLdbMV0FUg
+	 g9cP42CHRcwhHTucWsLdQzhMyhUIMxUD3QRbDcFzZ5vsv4BcRXJF+gxCLzZEwTxhVp
+	 qWSoB7pvQoREg19EU9qFTOaZ79DkBqbvFKK078cWX7ZcMFWLu9RQXMJrsJ8NmKs3Xg
+	 j1IImKAGmUdPZstmuGUNYO90KGf+8HJnal+rfVOmF8U+3vSvf/ZgiHqpTcww3oMLdv
+	 /Cqgnmj4JEYNUSkKLLDuF0QeN8sjHkdMR1uh8bfQSLuG5jAI2ahekHqq6OycPrA0QV
+	 NqL8lqnfbQ4gA==
+Date: Tue, 22 Oct 2024 11:05:21 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <zmecavqq5iztb5pkdkk6q52lupolpnufisid4ljydesqh2dtoe@qynhfo3n2i6q>
+References: <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
+ <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
+ <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
+ <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: mediatek: Add drivers for MT6735 syscon clock
- and reset controllers
-To: Yassine Oudjana <yassine.oudjana@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20241021121618.151079-1-y.oudjana@protonmail.com>
- <20241021121618.151079-3-y.oudjana@protonmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241021121618.151079-3-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
 
-Il 21/10/24 14:16, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+Sorry I should have answered earlier...
+
+On Oct 09 2024, Werner Sembach wrote:
+> Resend because HTML mail ..., but I think I now know when Thunderbird does
+> it: Every time I include a link it gets converted.
 > 
-> Add drivers for IMGSYS, MFGCFG, VDECSYS and VENCSYS clocks and resets
-> on MT6735.
+> Hi
 > 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->   MAINTAINERS                               |  4 ++
->   drivers/clk/mediatek/Kconfig              | 32 +++++++++
->   drivers/clk/mediatek/Makefile             |  4 ++
->   drivers/clk/mediatek/clk-mt6735-imgsys.c  | 57 ++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-mfgcfg.c  | 61 +++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-vdecsys.c | 81 +++++++++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-vencsys.c | 53 +++++++++++++++
->   7 files changed, 292 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+> Am 08.10.24 um 17:21 schrieb Benjamin Tissoires:
+> > On Oct 08 2024, Werner Sembach wrote:
+> > > [...]
+> > Yeah, it just means that you can query or send the data. You can also
+> > use HIDIOCGINPUT() and HIDIOCSOUTPUT() to get a current input report and
+> > set an output report through the hidraw ioctl...
+> > 
+> > Internally, HIDIOCGINPUT() uses the same code path than
+> > HIDIOCGFEATURE(), but with the report type being an Input instead of a
+> > Feature. Same for HIDIOCSOUTPUT() and HIDIOCSFEATURE().
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 25484783f6a0b..939f9d29fc9bf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14533,9 +14533,13 @@ L:	linux-clk@vger.kernel.org
->   L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
->   S:	Maintained
->   F:	drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> +F:	drivers/clk/mediatek/clk-mt6735-imgsys.c
->   F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
-> +F:	drivers/clk/mediatek/clk-mt6735-mfgcfg.c
->   F:	drivers/clk/mediatek/clk-mt6735-pericfg.c
->   F:	drivers/clk/mediatek/clk-mt6735-topckgen.c
-> +F:	drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> +F:	drivers/clk/mediatek/clk-mt6735-vencsys.c
->   F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
->   F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
->   F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 7a33f9e92d963..4dd6d2d6263fd 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -133,6 +133,38 @@ config COMMON_CLK_MT6735
->   	  by apmixedsys, topckgen, infracfg and pericfg on the
->   	  MediaTek MT6735 SoC.
->   
-> +config COMMON_CLK_MT6735_IMGSYS
-> +	tristate "Clock driver for MediaTek MT6735 imgsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
+> Ok so just a difference in definition not in implementation.
+> 
+> Then I use a get feature report for the device status function and use it as
+> input and output at the same time, and use a set output report for the led
+> update function (which technically has a return value but i think it's
+> always 0 anyway).
 
-If this depends on COMMON_CLK_MT6735, it automatically also depends on
-ARCH_MEDIATEK, because the former cannot be selected without satisfying
-the dependency on the latter.
+not quite. You can not use a get feature to set something on the device.
 
-Also, with those being really dependant on COMMON_CLK_MT6735, it does
-not make any sense to COMPILE_TEST those alone anyway...
+The semantic is:
+Set -> "write" something on the device (from host to device)
+Get -> "read" something from the device (from device to host)
 
-> +	select COMMON_CLK_MEDIATEK
+Features can be set/get.
+Input can only be get.
+Output can only be set.
 
-The same goes for this select statement: it's already done when selecting
-COMMON_CLK_MT6735.
+The implementation in the kernel should enforce that.
 
-Finally:
+> 
+> I scoured the old thread about exposing WMI calls to userspace, because I
+> remembered that something here came up already.
+> 
+> 1. https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
+> -> Should be no problem? Because this is not generally exposing wmi calls,
+> just mapping two explicitly with sanitized input (whitelisting basically).
+> 
+> 2.
+> https://lore.kernel.org/all/b6d79727-ae94-44b1-aa88-069416435c14@redhat.com/
+> -> Do this concerns this apply here? The actual API to be used is LampArray
+> and the HID mapped WMI calls are just an "internal" interface for the BPF
+> driver, but technically UAPI.
+> 
+> Also at Armin and Hans: Do you have comments on this approach?
+> 
+> > > (well as far as I can tell the hut doesn't actual specify, if they need to
+> > > be feature reports, or am I missing something?)
+> > They can be both actually. The HUT is missing what's expected here :(.
+> > 
+> > However, looking at the HUT RR 84:
+> > https://www.usb.org/sites/default/files/hutrr84_-_lighting_and_illumination_page.pdf
+> > 
+> > There is an example of a report descriptor, and they are using Features.
+> > Not Input+Output.
+> > 
+> > And looking even further (above), in 3.5 Usage Definitions:
+> > 3.5.2, 3.5.3 and 3.5.5 all of them are meant to be a feature, like:
+> > LampArrayAttributesReport CL – Feature -
+> > LampAttributesRequestReport CL – Feature –
+> > LampAttributesResponseReport CL – Feature –
+> > LampArrayControlReport CL – Feature –
+> > 
+> > 3.5.4: can be either feature or output, like:
+> > LampMultiUpdateReport CL – Feature/Output –
+> > LampRangeUpdateReport CL – Feature/ Output –
+> > 
+> > So I guess the MS implementation can handle Feature only for all but the
+> > update commands.
+> Thanks for the link, I guess for the BPF driver I will stick to feature
+> reports for the LampArray part until there is actually a hid descriptor
+> spotted in the wild defining LampMultiUpdateReport and LampRangeUpdateReport
+> as Output and not feature.
+> > > and there is the pair with LampAttributesRequestReport and
+> > > LampAttributesResponseReport.
+> > Yeah, not a big deal. The bold IN and OUT are just to say that calling a
+> > setReport on a LampAttributesResponseReport is just ignored AFAIU.
+> > 
+> > > Sorry for my confusion over the hid spec.
+> > No worries. It is definitely confusing :)
+> 
+> On this note as I fathom:
+> 
+> Input Report (usually always get report): Interrupts (the ioctl just there
+> to repeat the last one?)
 
-config COMMON_CLK_MT6735_IMGSYS
-      tristate "Clock driver for MediaTek MT6735 imgsys"
-      depends on COMMON_CLK_MT6735
-      help
-        blah blah blah
+yeah, but from hidraw the kernel calls the device directly to query the
+report, so some device don't like that and just hang.
 
-is just fine - and shorter too :-)
+Rule of thumbs: never use get_report on an input report, unless the
+specification explicitely says that the device is supposed to support
+it for the given usage.
 
-> +	help
-> +	  This enables a driver for clocks provided by imgsys
-> +	  on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_MFGCFG
-> +	tristate "Clock driver for MediaTek MT6735 mfgcfg"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks and resets provided
-> +	  by mfgcfg on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_VDECSYS
-> +	tristate "Clock driver for MediaTek MT6735 vdecsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks and resets provided
-> +	  by vdecsys on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_VENCSYS
-> +	tristate "Clock driver for MediaTek MT6735 vencsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks provided by vencsys
-> +	  on the MediaTek MT6735 SoC.
-> +
->   config COMMON_CLK_MT6765
->          bool "Clock driver for MediaTek MT6765"
->          depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+> 
+> Output Report (usually always set report): Async write, no return value
+> (Buffer should stay untouched)
 
-..snip..
+yep
 
-> diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> new file mode 100644
-> index 0000000000000..f59b481aaa6da
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +#include <dt-bindings/clock/mediatek,mt6735-vdecsys.h>
-> +#include <dt-bindings/reset/mediatek,mt6735-vdecsys.h>
-> +
+> 
+> Feature report set: Sync write, no return value (Buffer should stay untouched)
 
-..snip..
+yep
 
-> +static u16 vdecsys_rst_bank_ofs[] = { VDEC_RESETB_CON, SMI_LARB1_RESETB_CON };
-> +
-> +static u16 vdecsys_rst_idx_map[] = {
-> +	[MT6735_VDEC_RST0_VDEC]		= 0 * RST_NR_PER_BANK + 0,
-> +
+> 
+> Feature report get: Sync read/write (intended only for read, but not limited
+> to it, uses singular buffer for both input and output)
 
-Please remove this extra blank line, it's not needed.
+sync read only, no write. The existing values in the incoming buffer are
+just overwritten.
 
-> +	[MT6735_VDEC_RST1_SMI_LARB1]	= 1 * RST_NR_PER_BANK + 0,
-> +};
-> +
-> +static const struct mtk_clk_rst_desc vdecsys_resets = {
-> +	.version = MTK_RST_SIMPLE,
-> +	.rst_bank_ofs = vdecsys_rst_bank_ofs,
-> +	.rst_bank_nr = ARRAY_SIZE(vdecsys_rst_bank_ofs),
-> +	.rst_idx_map = vdecsys_rst_idx_map,
-> +	.rst_idx_map_nr = ARRAY_SIZE(vdecsys_rst_idx_map)
-> +};
-> +
-> +static const struct mtk_clk_desc vdecsys_clks = {
-> +	.clks = vdecsys_gates,
-> +	.num_clks = ARRAY_SIZE(vdecsys_gates),
-> +
+> 
+> I kind of don't get why feature report set exists, but well it's the specs ^^.
 
-same here.
+if "feature report set" doesn't exist, you can not write a vlaue to a
+feature on a device (because get doesn't allow you to write).
 
-> +	.rst_desc = &vdecsys_resets
-> +};
-> +
-The rest looks good, and I'm confident that you're getting my R-b on v2.
+Anyway, it's a USB implementation detail: input/output are using URB, so
+direct USB read/write, when Features are using the control endpoint,
+which allows for a slightly different approach.
+
+And this transfered as output being async, when features are
+synchronous.
 
 Cheers,
-Angelo
+Benjamin
 
