@@ -1,307 +1,113 @@
-Return-Path: <linux-kernel+bounces-375602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526E79A9811
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347499A9812
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCFA1C21A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3AB01F240B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D24484D12;
-	Tue, 22 Oct 2024 04:54:42 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9C6F066;
+	Tue, 22 Oct 2024 04:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoKk0iLP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B674BF5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B06384D12;
+	Tue, 22 Oct 2024 04:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729572881; cv=none; b=om0CPvVzHuWfhTmTWXYsoxX0ssYPvvfojkq7VvGblCOuJAoDwWEaxXL4QcGghPlSgV4qZgRVlVEq+nQtGf3ALy6kUAbDb2jWaoWuIias4Z1ltuYu4okc6huMVfGtW9XLc54c+8ZSqWehPgrFEcHMDG/k2DpFPS63UwuGXCcyqYY=
+	t=1729572897; cv=none; b=DnPTJgtqpc0beis2juraFsIX4NJptNtifZpvrW9LBYKKibB70lz0KXyJ2f4i6HaxY9DcXHRXW2VJX1tcmuQY8kbLQv5UYdbAmzhQ6Dmgbx0CSjxioAyr+HjBLvH8ZjJltjwradi7gfJvhU/GUOzFSB/kIC2ECttrDoj67a/+HYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729572881; c=relaxed/simple;
-	bh=fYRyataZCYqxdiuZJ/N+NCEb95NiKOqzUPmalJiaSZ8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=azAcENW/DsdG4EMb6EU/PV5ga1fK8sR2TTcoOpNqCBmd+BydGovpaGbltcWoklWzkV8dWqL/+3s0V+xGwR0K29OPlIKatqGRsCahOqHjPEyIiDbNx2vVwmrx2UDtEP0RoCXpmKA4cxmGbKHAuVx0umPRKpGilwCjlTLTWUKzNso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83abb164a4fso337493139f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 21:54:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729572878; x=1730177678;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H2w58TfWMlDnWaDN+KDZJiub+xqW1M1SvKXxUacpIyY=;
-        b=Z6bGXPMe6wbryv+0hreZmNQ8HpLRJzEm+18+0owOkxdZtX+24wDLPb85uWkspdm5XP
-         p7DAfJ+glQMGfCqpmlnwupZKuJCtZdJBlgDOZ44AYqgA5ZiWU2TDaFRhWG34n/ZdPQOC
-         hO2ub5O3qLmfRIQdouTR5yY7aCUmbFcEoyODqOEQJMJ1raRVsHQo5fmuYB9FF1Yl88Os
-         e9qPlxUQ74CJwIwNNlXhfJeM/Dnl/wBLyYrIOz6VU8X2gMQN686MV7xQnhrIDlpy9tPw
-         bPqE2H/Y45/BPU9eWiECS5OvZSTDyHJdjOo0vomeUSz0LAJHENfLGo7LxulShWRk5WOz
-         FPxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUn/gZBSJg1aQ/QL4Zu6alRuyC5guuxbc0JlGbAfZHgHZU3ZZkBClItphvGqyoupTDQUq152pG0Qz487jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOdjw1ZordbIahAvbj6+N7wndGZ31LLQZKKm6Y26r4olEuaNc
-	RQhNEm42zizgU4kbwdX5J2Wd9cwI7tpvRb2w37yUZgKK7hqYR71ry1G79t77oHZ4FB7Np064PL2
-	sguUkTuNbKO0KULndIV3WYysvxXq7zaGmHV6y3+ATBm4Jwsp5Fu6iu5c=
-X-Google-Smtp-Source: AGHT+IEIxTptpqu3CmSIq83qAMQVRKU76tTCNdCJeAZdElb+I43oe+urcTHz58NvAgA98/C0Ec8EcOBjdbkVjLNxx5uIBeVXIUCS
+	s=arc-20240116; t=1729572897; c=relaxed/simple;
+	bh=Rg3jB1KUu3XeJP2mAoDRzVSH/rz4K/4b/bxmVMIHKks=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=hxYd3n4VvoAq+It3A0/htGqLUKdGYM0YYmEjNSPXrqdcDqXJFDO6EqV/MtwsZrgLPqsRTj5KquYCt2upsiJGZI5sGJJZOrXo7rRv/2q287nj5nwhN6O/dj/TJcPoDbaQKqL31Tp+ddDlSENCy9qoPJg2VlbwUlpDnopHNrwJt1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoKk0iLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC3EC4CEC3;
+	Tue, 22 Oct 2024 04:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729572897;
+	bh=Rg3jB1KUu3XeJP2mAoDRzVSH/rz4K/4b/bxmVMIHKks=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=uoKk0iLPuaeFI3qxBnug9MizLCRR2+0OgUO5cRhuaVbrFMxuyE0bI3NAKI0DIHLa3
+	 vUxBgVi8crkKHBSxC7+p+G1oT/MJ84Db/8XIjRYne6mim3IrRZL5vvK/rvHHlt3Xdu
+	 cayyLiNZIDxdswtTQ1idN+4rKjjNGZjkQB3q+wgt4X1Sms4F7Y+wV9NN93+v5gdBt4
+	 3fShg2F67HmzxOGLt+jIkuQqSSP3q+IwwHdc8xf0iOmV/UUILDEXUeBqd6xdr4V9vS
+	 klW9040RgddyzQCbmtPppSDuDgJoENEV7uzOorcSO6YO/16V/+qoavPKW1rGIxPeh5
+	 vb4qNIfK/B6RA==
+Date: Mon, 21 Oct 2024 21:54:53 -0700
+From: Kees Cook <kees@kernel.org>
+To: Sasha Levin <sashal@kernel.org>, torvalds@linux-foundation.org
+CC: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_linus-next=3A_improving_functional_?=
+ =?US-ASCII?Q?testing_for_to-be-merged_pull_requests?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ZxZ8MStt4e8JXeJb@sashalap>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+Message-ID: <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6b87:b0:83a:b52b:5cbb with SMTP id
- ca18e2360f4ac-83aea8fd0e1mr203325039f.5.1729572878521; Mon, 21 Oct 2024
- 21:54:38 -0700 (PDT)
-Date: Mon, 21 Oct 2024 21:54:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6717300e.050a0220.1e4b4d.006e.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in task_work_add
-From: syzbot <syzbot+4abde9163a953b8a0fd0@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    9ec59cb3edc7 KVM: arm64: Shave a few bytes from the EL2 id..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=17061430580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c154e2d4db830898
-dashboard link: https://syzkaller.appspot.com/bug?extid=4abde9163a953b8a0fd0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fc9a7d36d46a/disk-9ec59cb3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/30547ddd681e/vmlinux-9ec59cb3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5c4e02d0f97a/Image-9ec59cb3.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4abde9163a953b8a0fd0@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_next_frame_record_meta arch/arm64/kernel/stacktrace.c:216 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 arch_stack_walk+0x458/0x48c arch/arm64/kernel/stacktrace.c:404
-Modules linked in:
-CPU: 1 UID: 0 PID: 1 Comm: init Not tainted 6.12.0-rc3-syzkaller-g9ec59cb3edc7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 804000c5 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kunwind_next_frame_record_meta arch/arm64/kernel/stacktrace.c:216 [inline]
-pc : kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline]
-pc : kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline]
-pc : do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline]
-pc : kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline]
-pc : arch_stack_walk+0x458/0x48c arch/arm64/kernel/stacktrace.c:404
-lr : 0x0
-sp : ffff8000800176a0
-x29: ffff800080017750 x28: 1ffff00010002f58 x27: 00000000ffff8d68
-x26: dfff800000000000 x25: ffff0000c2c588c0 x24: dfff800000000000
-x23: ffff700010002ef0 x22: ffff800080017850 x21: ffff8000800176b8
-x20: ffff800080462114 x19: ffff8000800177a0 x18: dfff800000000000
-x17: ffff800123f21000 x16: ffff80008b490b1c x15: 0000000000000001
-x14: 1fffe000366c806a x13: ffff800097807ff0 x12: ffff800097808000
-x11: 0000000000000000 x10: ffff0000c1978000 x9 : ffff800097807e9f
-x8 : ffff800097807fd8 x7 : 0000000000000000 x6 : 000000000000003f
-x5 : 0000000000000040 x4 : fffffffffffffff0 x3 : 0000000000000000
-x2 : ffff0000c1978000 x1 : ffff800080029c40 x0 : 0000000000000001
-Call trace:
- kunwind_next_frame_record_meta arch/arm64/kernel/stacktrace.c:216 [inline] (P)
- kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline] (P)
- kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline] (P)
- do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline] (P)
- kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline] (P)
- arch_stack_walk+0x458/0x48c arch/arm64/kernel/stacktrace.c:404 (P)
- 0x0 (L)
- stack_trace_save+0xfc/0x1a0 kernel/stacktrace.c:122
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- __kasan_record_aux_stack+0xd0/0xec mm/kasan/generic.c:541
- kasan_record_aux_stack+0x14/0x20 mm/kasan/generic.c:546
- task_work_add+0xb8/0x464 kernel/task_work.c:66
- task_tick_mm_cid kernel/sched/core.c:10468 [inline]
- sched_tick+0x2a8/0x404 kernel/sched/core.c:5605
- update_process_times+0x204/0x260 kernel/time/timer.c:2524
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x324/0x478 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
- __hrtimer_run_queues+0x468/0xce0 kernel/time/hrtimer.c:1755
- hrtimer_interrupt+0x2c0/0xb64 kernel/time/hrtimer.c:1817
- timer_handler drivers/clocksource/arm_arch_timer.c:674 [inline]
- arch_timer_handler_virt+0x74/0x88 drivers/clocksource/arm_arch_timer.c:685
- handle_percpu_devid_irq+0x174/0x308 kernel/irq/chip.c:942
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq_desc kernel/irq/irqdesc.c:692 [inline]
- generic_handle_domain_irq+0x7c/0xc4 kernel/irq/irqdesc.c:748
- __gic_handle_irq drivers/irqchip/irq-gic-v3.c:843 [inline]
- __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:894 [inline]
- gic_handle_irq+0x6c/0x190 drivers/irqchip/irq-gic-v3.c:938
- call_on_irq_stack+0x24/0x4c arch/arm64/kernel/entry.S:891
- do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:310
- __el1_irq arch/arm64/kernel/entry-common.c:560 [inline]
- el1_interrupt+0x34/0x68 arch/arm64/kernel/entry-common.c:575
- el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:580
- el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
- spectre_v4_mitigations_off arch/arm64/kernel/proton-pack.c:425 [inline] (P)
- spectre_v4_enable_task_mitigation+0x80/0x218 arch/arm64/kernel/proton-pack.c:671 (P)
- spectre_v4_mitigations_off arch/arm64/kernel/proton-pack.c:424 [inline] (L)
- spectre_v4_enable_task_mitigation+0x68/0x218 arch/arm64/kernel/proton-pack.c:671 (L)
- start_thread arch/arm64/include/asm/processor.h:311 [inline]
- load_elf_binary+0x1ce0/0x215c fs/binfmt_elf.c:1346
- search_binary_handler fs/exec.c:1752 [inline]
- exec_binprm fs/exec.c:1794 [inline]
- bprm_execve+0x7e0/0x1490 fs/exec.c:1845
- kernel_execve+0x724/0x820 fs/exec.c:2012
- run_init_process+0x1bc/0x1ec init/main.c:1390
- try_to_run_init_process init/main.c:1397 [inline]
- kernel_init+0xdc/0x2a0 init/main.c:1525
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline]
-WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/stacktrace.c:223 dump_backtrace+0x980/0x9b0 arch/arm64/kernel/stacktrace.c:477
-Modules linked in:
-CPU: 1 UID: 0 PID: 1 Comm: init Not tainted 6.12.0-rc3-syzkaller-g9ec59cb3edc7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 004003c5 (nzcv DAIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline]
-pc : kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline]
-pc : do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline]
-pc : kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline]
-pc : dump_backtrace+0x980/0x9b0 arch/arm64/kernel/stacktrace.c:477
-lr : kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline]
-lr : kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline]
-lr : do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline]
-lr : kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline]
-lr : dump_backtrace+0x980/0x9b0 arch/arm64/kernel/stacktrace.c:477
-sp : ffff800080017140
-x29: ffff800080017200 x28: ffff80008f81b770 x27: ffff800080017160
-x26: ffff800097808000 x25: 0000000000000000 x24: ffff800097807e9f
-x23: ffff800097807fd8 x22: ffff800080017160 x21: ffff80008b5a7ad8
-x20: ffff80008b5a4a20 x19: ffff0000c1978000 x18: 0000000000000008
-x17: 0000000000000000 x16: ffff80008b3ca11c x15: ffff700011f0d634
-x14: 0000000000010004 x13: 0000000000000002 x12: ffff0000c1978000
-x11: 0000000000ff0100 x10: 0000000000ff0100 x9 : 0000000000010004
-x8 : ffff0000c1978000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff800080016838 x4 : ffff80008f8dd8a0 x3 : ffff800080396c78
-x2 : 0000000000000000 x1 : ffff80008f81b7b0 x0 : 0000000000000000
-Call trace:
- kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline] (P)
- kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline] (P)
- do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline] (P)
- kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline] (P)
- dump_backtrace+0x980/0x9b0 arch/arm64/kernel/stacktrace.c:477 (P)
- kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline] (L)
- kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline] (L)
- do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline] (L)
- kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline] (L)
- dump_backtrace+0x980/0x9b0 arch/arm64/kernel/stacktrace.c:477 (L)
- show_regs+0x34/0x44 arch/arm64/kernel/process.c:248
- __warn+0x134/0x6b8 kernel/panic.c:746
- __report_bug lib/bug.c:199 [inline]
- report_bug+0x298/0x5b0 lib/bug.c:219
- bug_handler+0x50/0x1fc arch/arm64/kernel/traps.c:1010
- call_break_hook arch/arm64/kernel/debug-monitors.c:319 [inline]
- brk_handler+0x17c/0x2e0 arch/arm64/kernel/debug-monitors.c:326
- do_debug_exception+0x1e4/0x398 arch/arm64/mm/fault.c:1002
- el1_dbg+0x64/0x80 arch/arm64/kernel/entry-common.c:490
- el1h_64_sync_handler+0x40/0xcc arch/arm64/kernel/entry-common.c:536
- el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
- kunwind_next_frame_record_meta arch/arm64/kernel/stacktrace.c:216 [inline] (P)
- kunwind_next_frame_record arch/arm64/kernel/stacktrace.c:248 [inline] (P)
- kunwind_next arch/arm64/kernel/stacktrace.c:278 [inline] (P)
- do_kunwind arch/arm64/kernel/stacktrace.c:309 [inline] (P)
- kunwind_stack_walk arch/arm64/kernel/stacktrace.c:380 [inline] (P)
- arch_stack_walk+0x458/0x48c arch/arm64/kernel/stacktrace.c:404 (P)
- 0x0 (L)
- stack_trace_save+0xfc/0x1a0 kernel/stacktrace.c:122
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- __kasan_record_aux_stack+0xd0/0xec mm/kasan/generic.c:541
- kasan_record_aux_stack+0x14/0x20 mm/kasan/generic.c:546
- task_work_add+0xb8/0x464 kernel/task_work.c:66
- task_tick_mm_cid kernel/sched/core.c:10468 [inline]
- sched_tick+0x2a8/0x404 kernel/sched/core.c:5605
- update_process_times+0x204/0x260 kernel/time/timer.c:2524
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x324/0x478 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
- __hrtimer_run_queues+0x468/0xce0 kernel/time/hrtimer.c:1755
- hrtimer_interrupt+0x2c0/0xb64 kernel/time/hrtimer.c:1817
- timer_handler drivers/clocksource/arm_arch_timer.c:674 [inline]
- arch_timer_handler_virt+0x74/0x88 drivers/clocksource/arm_arch_timer.c:685
- handle_percpu_devid_irq+0x174/0x308 kernel/irq/chip.c:942
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq_desc kernel/irq/irqdesc.c:692 [inline]
- generic_handle_domain_irq+0x7c/0xc4 kernel/irq/irqdesc.c:748
- __gic_handle_irq drivers/irqchip/irq-gic-v3.c:843 [inline]
- __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:894 [inline]
- gic_handle_irq+0x6c/0x190 drivers/irqchip/irq-gic-v3.c:938
- call_on_irq_stack+0x24/0x4c arch/arm64/kernel/entry.S:891
- do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:310
- __el1_irq arch/arm64/kernel/entry-common.c:560 [inline]
- el1_interrupt+0x34/0x68 arch/arm64/kernel/entry-common.c:575
- el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:580
- el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
- spectre_v4_mitigations_off arch/arm64/kernel/proton-pack.c:425 [inline] (P)
- spectre_v4_enable_task_mitigation+0x80/0x218 arch/arm64/kernel/proton-pack.c:671 (P)
- spectre_v4_mitigations_off arch/arm64/kernel/proton-pack.c:424 [inline] (L)
- spectre_v4_enable_task_mitigation+0x68/0x218 arch/arm64/kernel/proton-pack.c:671 (L)
- start_thread arch/arm64/include/asm/processor.h:311 [inline]
- load_elf_binary+0x1ce0/0x215c fs/binfmt_elf.c:1346
- search_binary_handler fs/exec.c:1752 [inline]
- exec_binprm fs/exec.c:1794 [inline]
- bprm_execve+0x7e0/0x1490 fs/exec.c:1845
- kernel_execve+0x724/0x820 fs/exec.c:2012
- run_init_process+0x1bc/0x1ec init/main.c:1390
- try_to_run_init_process init/main.c:1397 [inline]
- kernel_init+0xdc/0x2a0 init/main.c:1525
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-irq event stamp: 1359624
-hardirqs last  enabled at (1359623): [<ffff800083f42a84>] get_random_u64+0x338/0x584 drivers/char/random.c:554
-hardirqs last disabled at (1359624): [<ffff80008b48e24c>] __el1_irq arch/arm64/kernel/entry-common.c:557 [inline]
-hardirqs last disabled at (1359624): [<ffff80008b48e24c>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:575
-softirqs last  enabled at (1359132): [<ffff80008003084c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (1359130): [<ffff800080030818>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-irq event stamp: 1359624
-hardirqs last  enabled at (1359623): [<ffff800083f42a84>] get_random_u64+0x338/0x584 drivers/char/random.c:554
-hardirqs last disabled at (1359624): [<ffff80008b48e24c>] __el1_irq arch/arm64/kernel/entry-common.c:557 [inline]
-hardirqs last disabled at (1359624): [<ffff80008b48e24c>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:575
-softirqs last  enabled at (1359132): [<ffff80008003084c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (1359130): [<ffff800080030818>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On October 21, 2024 9:07:13 AM PDT, Sasha Levin <sashal@kernel=2Eorg> wrot=
+e:
+>In an attempt to address the concerns, we're trying out a new "linus-next=
+"
+>tree is being created and maintained with the following characteristics:
+>
+>	1=2E Composed of pull requests sent directly to Linus
+>
+>	2=2E Contains branches destined for imminent inclusion by Linus
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+But this means hours or a day or 2 at most=2E
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>	3=2E Higher code quality expectation (these are pull requests that
+>	maintainers expect Linus to pull)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Are people putting things in linux-next that they don't expect to send to =
+Linus? That seems like the greater problem=2E
 
-If you want to undo deduplication, reply with:
-#syz undup
+>	4=2E Continuous tree (not daily tags like in linux-next),
+>	facilitating easier bisection
+
+I'm not sure how useful that is given the very small time window to find b=
+ugs=2E
+
+>The linus-next tree aims to provide a more stable and testable
+>integration point compared to linux-next,
+
+Why not just use linux-next? I don't understand how this is any different =
+except that it provides very little time to do testing and will need manual=
+ conflict resolutions that have already been done in linux-next=2E
+
+How about this, instead: no one sends -rc1 PRs to Linus that didn't go thr=
+ough -next=2E Just have a bot that replies to all PRs with a health check, =
+and Linus can pull it if he thinks it looks good=2E=20
+
+For example, for a given PR, the bot can report:
+
+- Were the patches CCed to a mailing list?
+- A histogram of how long the patches were in next (to show bake times)
+- Are any patches associated with test failures? (0day and many other CIs =
+are already running tests against -next; parse those reports)
+
+We could have a real pre-submit checker! :)
+
+-Kees
+
+--=20
+Kees Cook
 
