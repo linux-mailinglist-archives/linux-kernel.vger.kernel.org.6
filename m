@@ -1,211 +1,238 @@
-Return-Path: <linux-kernel+bounces-376672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660749AB4AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3CD9AB4B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C091F24124
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1541428525D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7A1A3038;
-	Tue, 22 Oct 2024 17:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD911BD007;
+	Tue, 22 Oct 2024 17:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e18z5qEY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGROF7yt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1A64438B;
-	Tue, 22 Oct 2024 17:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB281B654C;
+	Tue, 22 Oct 2024 17:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616775; cv=none; b=lScmOqwXwmCat0B7lRJKT+WwMNUPF++E3ezHWMN5RYhXmWZb7JionBBKLEVIYZNrcKlJADAKIfulu0IPvBdNLo/AyDhF/S8Xo0zKgZwzDUQPxStqbJUd09iqLtDvJMVFFCgXms6XVBgviIetqvjJHtKZPU+0IW6ZziU41vgo9+g=
+	t=1729616792; cv=none; b=ZsQV318Eip/VUo7G42j2cVHnWpAGnPgpoXfy0E+ewCd4e8gCwqEUtGnSrpbAPxSudnsr4euLwdHaOLkQSUEEl9q63TRJDiFwLtLxNjV5JXkrBDarTYDb7VVQhG7HOyy5O3DUj2Zv+6LcOkxZ3A+w52vnQTgBBqNXD9T7wtgJjtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616775; c=relaxed/simple;
-	bh=JSq1PbKICLPD3uEw/HtbkFlY48LXhzmHMpUzmbOu/KA=;
+	s=arc-20240116; t=1729616792; c=relaxed/simple;
+	bh=uioEgb0DsXDhOsVLFcsAYKNJt4BaLDhV451d6aRsg9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBsu7AazZu6oRp6aso4UL822t+cloPS62THv+pXxkE9aj2AcLArdGNrt0K73NfCQt7sWwKxvIDAVGlmbb7k/m1a6ZqcjXmDYGVOueBoWjfOf04K1bEJ4pTFZtaMCDpBOi7Booht90ZUOB/w4LGcan+q508K3Fom++hVDoP2HxsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e18z5qEY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C67C4CEC3;
-	Tue, 22 Oct 2024 17:06:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/e4WxmtW/yObZ1wLc3M63vWQhxiRolLoSk07sbTm6xPOW8AKO+AGiL52e07hdw1dNlV4XdNmtaegQP/Ksedc8BaBudLWDoBD6KT1cLNhiZeE95JQDQZbZ3MUGDL4mkUeHoxt21DegGSiu5a8nxccv4KaRiSD/GEvMsaMf1llhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGROF7yt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48188C4CEC3;
+	Tue, 22 Oct 2024 17:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729616774;
-	bh=JSq1PbKICLPD3uEw/HtbkFlY48LXhzmHMpUzmbOu/KA=;
+	s=k20201202; t=1729616791;
+	bh=uioEgb0DsXDhOsVLFcsAYKNJt4BaLDhV451d6aRsg9I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e18z5qEYerXbFSihhum4dQ7H0airCV1cW9LE38K9rLigMXBv12l088+WqureaXLyh
-	 aYqXSxqQ2+u1pfol71i/9g6o1XqJVsyhwao5E74YAnohCRoeaPaCaqSGryVvV05YWm
-	 BF+1qnJfY3E4qr0lY35uDwzQ9vRJO+Xsn/RBhqwjZXYxdEOvlNSlEe1MS4GbS6O+1K
-	 I1+a0ENIx8/BkE6D5h2DjkXfXrFlKUYeml0TOg6SN4eVmJZWlMmeJNkqlWwuGyK6jG
-	 T9edol+8M23G48/Qq2a+yP+RisXYzUPoCGIa6Mci5zV3bfhetFFuWmx+7JuKMFGOpH
-	 ZX/WRaKpgrWLw==
-Date: Tue, 22 Oct 2024 18:06:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Richard van Schagen <vschagen@icloud.com>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [RFC PATCH v3 2/3] dt-bindings: crypto: Add Inside Secure
- SafeXcel EIP-93 crypto engine
-Message-ID: <20241022-most-politely-e85f571c05a3@spud>
-References: <20241021145642.16368-1-ansuelsmth@gmail.com>
- <20241021145642.16368-2-ansuelsmth@gmail.com>
+	b=JGROF7ytdD/nJ6XyS72Chnx6UF3ZaXqFdxx/xRgR0jjbFeaPml1PwXQS0kRIz3WII
+	 2xjWNto/wRi8mXI1g+QjZX8t8Ta0K+lFOK/0pfq6IgJNlnQoL0cNjQlI3xrndiXgKH
+	 eG4SsjqKoRQ9sXu9eLzxJY00sHe7HgSP4ertVJkpYOeQGGfOvSro4HNq5mpDOc8+l6
+	 DqF+DAR023TwRQmS0/05DhK2CChnS6+C3CRRZVfTH9wU6Gr2x2b+fajk8HDLGcX7GM
+	 6vs7CTgs0LLsedCh7SYVZzgolg+y1ErevX8Bggvzc1KXQG3lRvMpimqtApoXIkU6Ej
+	 2Cy6UJNEzwvKw==
+Date: Tue, 22 Oct 2024 18:06:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	donald.hunter@gmail.com, gregkh@linuxfoundation.org,
+	arve@android.com, tkjos@android.com, maco@android.com,
+	joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com,
+	surenb@google.com, arnd@arndb.de, masahiroy@kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
+	kernel-team@android.com
+Subject: Re: [PATCH v4 1/1] binder: report txn errors via generic netlink
+ (genl)
+Message-ID: <20241022170625.GJ402847@kernel.org>
+References: <20241021191233.1334897-1-dualli@chromium.org>
+ <20241021191233.1334897-2-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tBfP0HJf7nOgQAVw"
-Content-Disposition: inline
-In-Reply-To: <20241021145642.16368-2-ansuelsmth@gmail.com>
-
-
---tBfP0HJf7nOgQAVw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241021191233.1334897-2-dualli@chromium.org>
 
-On Mon, Oct 21, 2024 at 04:56:38PM +0200, Christian Marangi wrote:
-> Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
->=20
-> The IP is present on Airoha SoC and on various Mediatek devices and
-> other SoC under different names like mtk-eip93 or PKTE.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> Changes v3:
-> - Add SoC compatible with generic one
-> Changes v2:
-> - Change to better compatible
-> - Add description for EIP93 models
->=20
->  .../crypto/inside-secure,safexcel-eip93.yaml  | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secur=
-e,safexcel-eip93.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safex=
-cel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,saf=
-excel-eip93.yaml
-> new file mode 100644
-> index 000000000000..13341710ee31
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip=
-93.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Inside Secure SafeXcel EIP-93 cryptographic engine
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: |
-> +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
-> +  integrated in varios devices with very different and generic name from
-> +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
-> +  developed by Inside Secure and given to license to vendors.
-> +
-> +  The IP block is sold with different model based on what feature are
-> +  needed and are identified with the final letter. Each letter correspond
-> +  to a specific set of feature and multiple letter reflect the sum of the
-> +  feature set.
-> +
-> +  EIP-93 models:
-> +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
-> +    - EIP-93ie: i + SHA224/256, AES-192/256
-> +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
-> +    - EIP-93ies: i + e + s
-> +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
+On Mon, Oct 21, 2024 at 12:12:33PM -0700, Li Li wrote:
+> From: Li Li <dualli@google.com>
+> 
+> Frozen tasks can't process binder transactions, so sync binder
+> transactions will fail with BR_FROZEN_REPLY and async binder
+> transactions will be queued in the kernel async binder buffer.
+> As these queued async transactions accumulates over time, the async
+> buffer will eventually be running out, denying all new transactions
+> after that with BR_FAILED_REPLY.
+> 
+> In addition to the above cases, different kinds of binder error codes
+> might be returned to the sender. However, the core Linux, or Android,
+> system administration process never knows what's actually happening.
+> 
+> This patch introduces the Linux generic netlink messages into the binder
+> driver so that the Linux/Android system administration process can
+> listen to important events and take corresponding actions, like stopping
+> a broken app from attacking the OS by sending huge amount of spamming
+> binder transactions.
+> 
+> The new binder genl sources and headers are automatically generated from
+> the corresponding binder_genl YAML spec. Don't modify them directly.
+> 
+> Signed-off-by: Li Li <dualli@google.com>
 
-This implies that you should have a non-trivial set of fallbacks, with
-the "i" model as the base for that. eg:
+...
 
-"ie", "i"
-"is", "i"
-"iw", "i"
-"ies", "ie, "is", "i" (I dunno which would be a better order here)
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+
+...
+
+> @@ -2984,6 +2985,130 @@ static void binder_set_txn_from_error(struct binder_transaction *t, int id,
+>  	binder_thread_dec_tmpref(from);
+>  }
+>  
+> +/**
+> + * binder_find_proc() - set binder report flags
+> + * @pid:	the target process
+> + */
+> +static struct binder_proc *binder_find_proc(int pid)
+> +{
+> +	struct binder_proc *proc;
+> +
+> +	mutex_lock(&binder_procs_lock);
+> +	hlist_for_each_entry(proc, &binder_procs, proc_node) {
+> +		if (proc->pid == pid) {
+> +			mutex_unlock(&binder_procs_lock);
+> +			return proc;
+> +		}
+> +	}
+> +	mutex_unlock(&binder_procs_lock);
+> +
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * binder_genl_set_report() - set binder report flags
+> + * @proc:	the binder_proc calling the ioctl
+
+nit: binder_genl_set_report does not have a proc parameter,
+     but it does have a context parameter.
+
+> + * @pid:	the target process
+> + * @flags:	the flags to set
+> + *
+> + * If pid is 0, the flags are applied to the whole binder context.
+> + * Otherwise, the flags are applied to the specific process only.
+> + */
+> +static int binder_genl_set_report(struct binder_context *context, u32 pid, u32 flags)
+
+...
+
+>  static int __init init_binder_device(const char *name)
+>  {
+>  	int ret;
+> @@ -6920,6 +7196,11 @@ static int __init init_binder_device(const char *name)
+
+The code above this hunk looks like this:
+
+
+	ret = misc_register(&binder_device->miscdev);
+	if (ret < 0) {
+		kfree(binder_device);
+		return ret;
+	}
+
+>  
+>  	hlist_add_head(&binder_device->hlist, &binder_devices);
+>  
+> +	binder_device->context.report_seq = (atomic_t)ATOMIC_INIT(0);
+> +	ret = binder_genl_init(&binder_device->context.genl_family, name);
+> +	if (ret < 0)
+> +		kfree(binder_device);
+
+So I think that binder_device->miscdev needs to be misc_deregister'ed
+if we hit this error condition.
 
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: airoha,crypto-eip93
-> +      - enum:
-> +          - inside-secure,safexcel-eip93i
-> +          - inside-secure,safexcel-eip93ie
-> +          - inside-secure,safexcel-eip93is
-> +          - inside-secure,safexcel-eip93ies
-> +          - inside-secure,safexcel-eip93iw
+>  	return ret;
 
-I don't really get what's going on here. Why is the first compatible the
-generic one? That seems suspect to me, as I doubt the crypto block on a
-particular SoC varies? I'd expect to see some soc-specific compatibles
-with a fallback to the inside-secure IP version that it integrates.
+Probably adding an unwind ladder like this makes sense (completely untested!):
 
-Cheers,
-Conor.
+	ret = misc_register(&binder_device->miscdev);
+	if (ret < 0)
+		goto err_misc_deregister;
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    crypto@1e004000 {
-> +      compatible =3D "airoha,crypto-eip93", "inside-secure,safexcel-eip9=
-3ies";
-> +      reg =3D <0x1fb70000 0x1000>;
-> +
-> +      interrupts =3D <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +    };
-> --=20
-> 2.45.2
->=20
+	hlist_add_head(&binder_device->hlist, &binder_devices);
 
---tBfP0HJf7nOgQAVw
-Content-Type: application/pgp-signature; name="signature.asc"
+	binder_device->context.report_seq = (atomic_t)ATOMIC_INIT(0);
+	ret = binder_genl_init(&binder_device->context.genl_family, name);
+	if (ret < 0);
+		goto err_misc_deregister;
 
------BEGIN PGP SIGNATURE-----
+	return 0;
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfbgAAKCRB4tDGHoIJi
-0gWRAP9jiY6x9l9Ufpjhp/094FdBrAiNEO4VxSjzCIBxqQWXkAD/QLfnL6ZVzcbi
-dxCnGvhmIM1SsJP7gycqN6LPJsHwfQg=
-=p17h
------END PGP SIGNATURE-----
+err_misc_deregister:
+	misc_deregister(&binder_device->miscdev);
+err_free_dev:
+	kfree(binder_device);
+	return ret;
 
---tBfP0HJf7nOgQAVw--
+...
+
+> diff --git a/drivers/android/binder_genl.h b/drivers/android/binder_genl.h
+
+Perhaps it is because of a different version of net-next,
+but with this patch applied on top of the current head commit
+13feb6074a9f ("binder: report txn errors via generic netlink (genl)")
+I see:
+
+$ ./tools/net/ynl/ynl-regen.sh -f
+$ git diff
+
+diff --git a/include/uapi/linux/android/binder_genl.h b/include/uapi/linux/android/binder_genl.h
+index ef5289133be5..93e58b370420 100644
+--- a/include/uapi/linux/android/binder_genl.h
++++ b/include/uapi/linux/android/binder_genl.h
+@@ -3,12 +3,17 @@
+ /*	Documentation/netlink/specs/binder_genl.yaml */
+ /* YNL-GEN uapi header */
+ 
+-#ifndef _UAPI_LINUX_BINDER_GENL_H
+-#define _UAPI_LINUX_BINDER_GENL_H
++#ifndef _UAPI_LINUX_ANDROID/BINDER_GENL_H
++#define _UAPI_LINUX_ANDROID/BINDER_GENL_H
+ 
+ #define BINDER_GENL_FAMILY_NAME		"binder_genl"
+ #define BINDER_GENL_FAMILY_VERSION	1
+ 
++/**
++ * enum binder_genl_flag - Used with "set" and "reply" command below, defining
++ *   what kind \ of binder transactions should be reported to the user space \
++ *   administration process.
++ */
+ enum binder_genl_flag {
+ 	BINDER_GENL_FLAG_FAILED = 1,
+ 	BINDER_GENL_FLAG_DELAYED = 2,
+@@ -34,4 +39,4 @@ enum {
+ 	BINDER_GENL_CMD_MAX = (__BINDER_GENL_CMD_MAX - 1)
+ };
+ 
+-#endif /* _UAPI_LINUX_BINDER_GENL_H */
++#endif /* _UAPI_LINUX_ANDROID/BINDER_GENL_H */
+
+...
+
+-- 
+pw-bot: changes-requested
 
