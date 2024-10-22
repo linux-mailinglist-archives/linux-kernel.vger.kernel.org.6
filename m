@@ -1,103 +1,131 @@
-Return-Path: <linux-kernel+bounces-375527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D149A9707
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A54F9A971A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27603288563
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E2C1C21786
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC85113AD2F;
-	Tue, 22 Oct 2024 03:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB813D8B5;
+	Tue, 22 Oct 2024 03:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="R5wBhoMl"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5Njv7Ii"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9D41760;
-	Tue, 22 Oct 2024 03:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0582513A86A;
+	Tue, 22 Oct 2024 03:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567636; cv=none; b=sE8z3JAHHoXM7hpc6+bGNAu+A2HQiWg/A3GPMzxrloiVXS+x+m7S19K7YWI28QETgInq7/7HJpTzWqOmZbmR4cIUfvQ1B4LRVgWknXaZ7rPTNm8P2IGO6//S4lLGjjFnq29WjuCnmolYn6rQUX1dKXDyP5PnaLOWRbkA73WT6mc=
+	t=1729567745; cv=none; b=R+2eRtZnrn4lGZd6QYweHNSu2GsswGBgjlf0j30EoTUPCEZPsilbvlj66B2FtAf4by7/QwQkc2aEMQWin5JtsOwwPysDAquN44EoikIfKk20Xa/RUaEBaFt66z+w2C3lbBiD+Ojokk0dxZzuJrszeXsvBrN483y73s4k7CoYaYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567636; c=relaxed/simple;
-	bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GJNtE0YcNUMsMJoKAxaxilqz/upmIAg+seiHQRSM83SvpURc3E6FIdlPA7hJj04aMBEDdzyDOK1dB/q3Rj7xOfmIKDH5z4nQya1A4hpyu3fTSfRVwaCi/YMX3PpruddPeIVpqNuYdMDJ/RMw6soQCaBun/jQGntZ/pQ3HnuQQTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=R5wBhoMl; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49M3R3rE43442082, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1729567623; bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=R5wBhoMlUptSa2yRFEUDuLIKtf+11zzhmtn9WP5rmRLpH8f04K1mzP2q4fxlxnYps
-	 i3nBV/S/njdQr6vVDLmA1JU3S7jttvWluD/u/BaGVJbtpFnZ3zv39zeqap7pUIv5d8
-	 cPK2TExtliU7Fwyarqy1WZ3es3beijX9oblc/EZfGOGoAmTHmG55wh/68NobdOsQ3J
-	 jiXfE9a5p7ct6Umox1os3L/ljXoB2Rdo/9b8AK1aNo4cELD1DPOnqelZFgb2zUCUXk
-	 dfHSRSL+TMm/HS91C/Epc6+WkuHok5VOAXVG7MKE68hmFb/sdnvrYU0lQfA/fOPUPG
-	 ono0z2riL+N5Q==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49M3R3rE43442082
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Oct 2024 11:27:03 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 22 Oct 2024 11:27:03 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 22 Oct 2024 11:27:03 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
- RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
- 15.01.2507.035; Tue, 22 Oct 2024 11:27:03 +0800
-From: Zong-Zhe Yang <kevin_yang@realtek.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH next] wifi: rtw89: unlock on error path in rtw89_ops_unassign_vif_chanctx()
-Thread-Topic: [PATCH next] wifi: rtw89: unlock on error path in
- rtw89_ops_unassign_vif_chanctx()
-Thread-Index: AQHbI5mv2pwOn3Ho/kejuy2RYL9sTrKSGuGQ
-Date: Tue, 22 Oct 2024 03:27:03 +0000
-Message-ID: <6a80d4adc51f4ea884b5e02f16d8aaed@realtek.com>
-References: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
-In-Reply-To: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729567745; c=relaxed/simple;
+	bh=+EgaXF/VyRaCocT7c4QBaSaXuDPO+CiNlt6NTkbIoxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R2Y8yn7PGthLbrcNPmbs8oxrkX95xh4cAyiXLkffJj5X+L3bbbQgSEywjdKJqjK0RJa7i6rjWLeXYJMR/d8xvLtCS5kS2kGZ4VTgTK1nyeREBwie6OLg3hRcnXk5DdYcLJ0+ilmNqsP+CR0yspLnGsW5IecjiZmNcFD04Ydup7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5Njv7Ii; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so4717049276.0;
+        Mon, 21 Oct 2024 20:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729567743; x=1730172543; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8+of3sn6my3fTdyQClh+kg+3L6lJjqrKeiMmZ8o2XgE=;
+        b=l5Njv7IigfizQOTihrcWw6dI25N5frWONbUdQZJcboxN0TjqUnAG9x9ldZJWbzemoM
+         zK7eQl5xmyrbK+n6750rKWfpBuwKFqG2lUDjPUBtQKjsajThZ3gNCehujusl/FIG9mLF
+         DNHCmJ0066ejQyHdL/5nbEo4d8CxK1s8nC4vNAFhryfMcyuDnmy0oU63+2mK8fNvD9o4
+         U8NnpbLjQmhZEp3FgQ3wDDp5GhFF7XtzzTLr2bxysqFSiXPkoq2qVDF/QobuCKVDIutH
+         qQCn73sBZQPbCMrZj5U4Y+0Qfk4p3UX6Fcw+w05caso91/d8tb2Bz7MY7GFdDSO9M056
+         4XMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729567743; x=1730172543;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8+of3sn6my3fTdyQClh+kg+3L6lJjqrKeiMmZ8o2XgE=;
+        b=TRzcQugTVeKuxknTqzLiF6Cjm1DTQVhEkix/Xv00ds1RuRLp9LpSRB9okInvHpLdRC
+         dC9J/IW8HY/R/SALbUR7IxQleMTaKDHI74p8QS2hWRhTzzpkC8JojpA1iOc+kfvuDtz0
+         UniSgVHmLo2k6Ladnm9AWOWFrYukE7N/VUBx9Ogcj5cNT3Jv5uymUfb3yg7TQvkmHFMH
+         KEIMdb6TauuyYf6T019pgS7DOgebLWT2bg1f6XCJqNjJOw+XtgGJaxpEouFMb0wYXLTd
+         Z3hWU5ffjGloe0gX/12Ebi1L2S3NuYg9aSDzfoS7MrkYlQoxMGLCy3iiRvrNoIQGGB3f
+         YAag==
+X-Forwarded-Encrypted: i=1; AJvYcCVqZv7A0i41mTxoLGMdGx1hk2m+li0Wo8C6SJUJ3J7sB/n+a8wkMNAyO42oR4NW2xHxClA9T6RNhqU=@vger.kernel.org, AJvYcCXQtXyEg12i5o4G8UfvxC4qHHLZy/VBWQA5Kh4EXnLd6/TAR1ellnScvdUkBm2J+VDDiEuFUq3rsTAKGefP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEHeEgwPHgKmvS95wbLU1Y5ANBidlpdeF3A/MQ5nuuiIELXFEY
+	10NNMvc6MwpPueISqxfPpcRF6UhTYdcbCYpugraXS1vkfJDrZSun
+X-Google-Smtp-Source: AGHT+IEkFnW0xFEimjKvu3s+rbX3lF8V3Fc79mdDgyh2EDBVu5WJhRepTDGzvIugNEFmOl+gxhtBBw==
+X-Received: by 2002:a05:690c:a:b0:6e2:313a:a01e with SMTP id 00721157ae682-6e5bfc3f30dmr126243927b3.32.1729567742959;
+        Mon, 21 Oct 2024 20:29:02 -0700 (PDT)
+Received: from [192.168.2.226] ([107.175.133.150])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5d6f904sm9372707b3.135.2024.10.21.20.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 20:29:01 -0700 (PDT)
+Message-ID: <4cf5f422-d287-4f53-9af2-82bd7fe3b264@gmail.com>
+Date: Tue, 22 Oct 2024 11:28:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] docs/zh_CN: update the translation of mm/hmm.rst
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, alexs@kernel.org,
+ corbet@lwn.net, Yanteng Si <siyanteng@loongson.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1729327831.git.dzm91@hust.edu.cn>
+ <82259a2656549c90591dc3873f3d2e8a4fb41233.1729327831.git.dzm91@hust.edu.cn>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <82259a2656549c90591dc3873f3d2e8a4fb41233.1729327831.git.dzm91@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
->=20
-> [...]
->
-> @@ -1373,6 +1373,7 @@ static void rtw89_ops_unassign_vif_chanctx(struct i=
-eee80211_hw
-> *hw,
->=20
->         rtwvif_link =3D rtwvif->links[link_conf->link_id];
->         if (unlikely(!rtwvif_link)) {
-> +               mutex_unlock(&rtwdev->mutex);
->                 rtw89_err(rtwdev,
->                           "%s: rtwvif link (link_id %u) is not active\n",
->                           __func__, link_conf->link_id);
->
+Reviewed-by: Alex Shi <alexs@kernel.org>
 
-Acked-by: Zong-Zhe Yang <kevin_yang@realtek.com>
-
-Thanks
+On 10/19/24 16:54, Dongliang Mu wrote:
+> Update to commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in
+> heterogeneous memory management page")
+> 
+> scripts/checktransupdate.py reports:
+> 
+> Documentation/translations/zh_CN/mm/hmm.rst
+> commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in heterogeneous
+> memory management page")
+> commit 090a7f1009b8 ("docs/mm: remove references to hmm_mirror ops and
+> clean typos")
+> commit d56b699d76d1 ("Documentation: Fix typos")
+> 3 commits needs resolving in total
+> 
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+>  Documentation/translations/zh_CN/mm/hmm.rst | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/translations/zh_CN/mm/hmm.rst b/Documentation/translations/zh_CN/mm/hmm.rst
+> index babbbe756c0f..0669f947d0bc 100644
+> --- a/Documentation/translations/zh_CN/mm/hmm.rst
+> +++ b/Documentation/translations/zh_CN/mm/hmm.rst
+> @@ -129,13 +129,7 @@ struct page可以与现有的 mm 机制进行最简单、最干净的集成。
+>    int hmm_range_fault(struct hmm_range *range);
+>  
+>  如果请求写访问，它将在丢失或只读条目上触发缺页异常（见下文）。缺页异常使用通用的 mm 缺
+> -页异常代码路径，就像 CPU 缺页异常一样。
+> -
+> -这两个函数都将 CPU 页表条目复制到它们的 pfns 数组参数中。该数组中的每个条目对应于虚拟
+> -范围中的一个地址。HMM 提供了一组标志来帮助驱动程序识别特殊的 CPU 页表项。
+> -
+> -在 sync_cpu_device_pagetables() 回调中锁定是驱动程序必须尊重的最重要的方面，以保
+> -持事物正确同步。使用模式是::
+> +页异常代码路径，就像 CPU 缺页异常一样。使用模式是::
+>  
+>   int driver_populate_range(...)
+>   {
 
