@@ -1,76 +1,93 @@
-Return-Path: <linux-kernel+bounces-377033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6F69AB902
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:49:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0479AB906
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61EC1F22CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:49:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1C55B22023
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCADF1CB304;
-	Tue, 22 Oct 2024 21:49:01 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3321CC170;
+	Tue, 22 Oct 2024 21:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pwLNbUVP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205E7136E21
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48DE136E21
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729633741; cv=none; b=lXIfgtTQgnuvLJ8qHqcnColpfDmSEBIWrhR6ReoGvL1ugZha/uxNO+ZkA3FTOKhUtt+SG0IAGLdy5EXIFa/45EyHj02CRAb7+Y/w/SGCU6Qw7vBNdmQxVYSwqqFtEtcrmUgpqc70do0vuKFZmUMAH/vPbeMqClpRFILFuZi3Zag=
+	t=1729633949; cv=none; b=Bf88sWtZ0EY6oCtTOwWtrmfEfo+vJ0mNTW6jFvOJ3lcY4tVKaCgxEk+Kpt4iCLgKyLrgpZInzL8kdQIXsvBVd5ICsv4RQNIIIj4IWXK9gIH4TNDLFnEvjZ8Q/+qMLFINChW7SUBwli6qktuCsZ1kVGQIXXlambulFDHhvM/kEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729633741; c=relaxed/simple;
-	bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aB+0YmspeBD7NZSz1tOusWeqI6UDF7TJUx8a9mKZMZf38dz4tvQ+lpu/nPfuA4VrOl1stAf8djAJkXrOAFEg0fbuVYJjuIsRttG6Ojr5k3Kf/EoRWWy4xhtx0C6WSHTJZFuduGiK/R/RbeIMP1xe5Voft9OuiMqSZmAQgKoM0Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso63004995ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:48:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729633739; x=1730238539;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgoRgwn60d3VAzKBWFskiRRe2r5K270x6LmK8y4hdPY=;
-        b=oitqPC85UFLbUBft9A4LSu1pkl3382mt5OGDpJPTit3KifGcidnKgwWITDI/ZeGcQ8
-         ttNUqWc5BXxXZX4GQIMFc0dcCSAqoL24XFws3mmEJzR9J4t16srIzTwJWEurPADeGk7w
-         WdjuRQ6/A2MLQUxIf5AZjWtSvVqpDJivnacn2YCJCIkfJ5r+5aV6rRMvcvbsFXVIA7zz
-         30rh/zNPayB2cOnNj/Oa0ZFdgGVSphbDlf6Kqpicdw6aCvAiosK1e/254Zrxy0aruzVY
-         Nn3AS7RcmSOR2iqG6a7ZSVXCtPBwpSjTG3ZL9cKw/J3KD2toJAqAG/OK76Wlsqtu7F9t
-         n8Yg==
-X-Gm-Message-State: AOJu0Ywmne8VPsukkcPgrmH4a485d8YJZ1efVLqzlrIlx/uRyRdMu0Sm
-	h4K5D1Y6K2xlH/RnUKctERLv54ewx020cYjL85OCV15PU/bK4qUB33ALnDYJ32+1Sv9obxuyJWS
-	ajA9qXUWDw31amclDjReAFadOIo6s+dga1/r1UZP7PDMD5b9XVrO0QVw=
-X-Google-Smtp-Source: AGHT+IH1JDQ5mOMORl5uksKAz9LtF14btGraBbeST6eFQfyGiytT4zzduEX4gPbYotkf8jzSQ/Gz9w3OPzU/4YDc3VP+9bv39A+C
+	s=arc-20240116; t=1729633949; c=relaxed/simple;
+	bh=sx67XtoqX7DYUfE5EgXVY291TTwxiRJDjsZNR2whL6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8OfVQm6H0M1ZhXWGCFHyqpFtOf9+084nL0XbM5ulN0uDgJ18uTEmCiUlO/GmjbZLfGvEJw9MbyxhgxWcsvv9tENsWsivmwZ5oShEeehKncVkavVzT/rfaPmx06SDxLQij/21o3QpS6w2PQeOnWvLQFbvF97963SUWtD5QXk6a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pwLNbUVP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hZaaZxezYJoPjgvUIQ46ARJxZfsSw3SrOrxGEnlPJV4=; b=pwLNbUVPP/BuC0hUfq5oCm5rm3
+	NrhmhwwsjsH1NT3DeO8npLVkd5zH7P6lwik62WRkFztWgcJWYLjz3enRDtAjBaOHqwPPVn4lSrWPj
+	GIkfnuEsmtd7a/31DfPj0gElM/iSGGzHcPedLrL0RjzJbRCY/GiVzMLzzwv2weIVJuLkNEfUxHAso
+	8+VHiDPrdef0oiQPaCbrHAgDJ02vufYpHj1IFOJNqobZr1mLUKPcdmns8uzAj1BZsuZrE9k3jW8wT
+	8o1nw0nzni2TIFtfxAyi5c9gGw2Hrr8AIgSCJpCyqBCg0oGBWF66kwiUhIhpSODi7u8yr4e1VY3yE
+	nfdlwUoQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3MnT-000000024qp-0OXY;
+	Tue, 22 Oct 2024 21:52:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CB76130073F; Tue, 22 Oct 2024 23:52:10 +0200 (CEST)
+Date: Tue, 22 Oct 2024 23:52:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH 3/5] perf: Add pmu get/put
+Message-ID: <20241022215210.GA31953@noisy.programming.kicks-ass.net>
+References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
+ <20241008183501.1354695-4-lucas.demarchi@intel.com>
+ <20241014173246.GI16066@noisy.programming.kicks-ass.net>
+ <lunkl4llip7aafnyctwztggum37wsiznktb7z3ly73batmt6bu@m75kow4b4u6y>
+ <20241014192519.GN16066@noisy.programming.kicks-ass.net>
+ <20241016120302.GP33184@noisy.programming.kicks-ass.net>
+ <qtivtftbdvarukcxdr4yfwstzvnh4z7eipukwxymi4e2x76y54@dxqn3y22u2pw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a3:449b:5989 with SMTP id
- e9e14a558f8ab-3a4d59fea52mr5376635ab.21.1729633739333; Tue, 22 Oct 2024
- 14:48:59 -0700 (PDT)
-Date: Tue, 22 Oct 2024 14:48:59 -0700
-In-Reply-To: <66fa3eb3.050a0220.6bad9.0030.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67181dcb.050a0220.10f4f4.017d.GAE@google.com>
-Subject: Re: [syzbot] general protection fault in btree_node_iter_and_journal_peek
-From: syzbot <syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qtivtftbdvarukcxdr4yfwstzvnh4z7eipukwxymi4e2x76y54@dxqn3y22u2pw>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, Oct 18, 2024 at 02:46:31PM -0500, Lucas De Marchi wrote:
 
-***
+> I will give this a try with i915 and/or xe.
 
-Subject: general protection fault in btree_node_iter_and_journal_peek
-Author: pz010001011111@proton.me
+Less horrible version here:
 
-#syz test
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/pmu-unregister
+
+I've just pushed it out to the robots, but it builds, passes perf test
+and your dummy_pmu testcase (for me, on my one testbox and .config
+etc..)
+
+I'll let it sit with the robots for a few days and if they don't
+complain I'll post it.
+
+Thanks!
 
