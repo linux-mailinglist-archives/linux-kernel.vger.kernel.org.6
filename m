@@ -1,141 +1,253 @@
-Return-Path: <linux-kernel+bounces-376254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707F59AA237
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4439AA23C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7111C21A9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DA71F235A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3769819D098;
-	Tue, 22 Oct 2024 12:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F43D19DF44;
+	Tue, 22 Oct 2024 12:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lfZr6ZAC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cgbNgDpO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C28645945
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CD519D8BC;
+	Tue, 22 Oct 2024 12:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729600683; cv=none; b=KCJ9jQDRehIrJWPRqjfvPKGq07K6zkJoVPpP+BHhLpVRU54TzfezFKys6MCsFtuvUw736eKWirytIcLvZL4V1fvpBb/R43WaVK2OPpVguuygfVc+iVJi4VqogSXzE68L6dmjykGmFqgSaYVR0r7iktTfSlwR6k1/Qo/j8H4CN0Q=
+	t=1729600695; cv=none; b=LtAgJccmoKPSQAvQKuPvK0zqXf+KEWcmYxLoHtaVqQ7BSsTvAe2nCUEYmPFvOOTY2i+3e7DXSz1eGasGf17zwvV2AzHyNIHSD+9VCaPYWHLzY+mZZk5RF6LRVg2rPr44n8iCmVTYpgcTFNocqT4IYTqurJ7+cgRmp28aIurgUiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729600683; c=relaxed/simple;
-	bh=80p6TRDDaANp9oY3sQKNQll+cOAp0yaPI45072gADSY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AZBKYr6tvb1HnBNG1B6D0Wff9jnPH5fUoX0EcUSk2teQo31OvuYwYc8z2g6ZYIvCSCRMAxjbffspJjnpB8NjgejWFza6Gz4xTl/AvddceNhzMx2ey9C8xFn7DO5wDiEjBHAmEB7xH/qt9j8Sx2ztaQAUZIuvEdDi3Iuxzvd3MvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lfZr6ZAC; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1729600695; c=relaxed/simple;
+	bh=DLgB0RyK7HecqWHWaSWB1KTGQ554aUd6uSiDOmYkCe0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rjV0dV7yZinP0HPfzjJEg7s1MzxxIrL4P9C4Z52HBPf0zfwUJHG9AuRBcg/12/P7DRBliBluKrK2L3jwiCnowQnesx6AKl4XH3hBS5ZNLn4T+rgR6VdYvuLdL+2oMdXgNKbZEQ16VyNrY6OvKBocWbd4IkcVQcRJUmf3jh6swf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cgbNgDpO; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729600681; x=1761136681;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=80p6TRDDaANp9oY3sQKNQll+cOAp0yaPI45072gADSY=;
-  b=lfZr6ZACVFeIdoNcYKBR+9DWHj9VpfVcJYRUNvE/lVVPVITinkCf6oC0
-   AR8lG1zilckpxNZddM7QjJSca4Unei83/Xx3cZNbmr0m7KJOdva1YBLrD
-   6UUC0gspDy6KMtjSNPE+A1luMDR18G+Cng8CLKpz4lo0Gfn03ewlVw2FW
-   LxRKmY4kaPe9F5Nwx4x0BgeSK2yTGra2GuyuRsRYw1SJ9zfI8oVWY5Sew
-   13eLwsZ5Xb9swAFRR5ZlV1D77OMlagU77XRW1yIlefxvvxKvzbSaWTJXQ
-   A2Cnrd/5qwien8x/jHf/SveZOqQwjmpxiqf+rC/7yo0m4DvixS3HvaHoN
-   w==;
-X-CSE-ConnectionGUID: YO98F/ppQQaXPwbjIjC/xA==
-X-CSE-MsgGUID: r367l5IVRJ2c+4hs2F6iTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="31992801"
+  t=1729600694; x=1761136694;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=DLgB0RyK7HecqWHWaSWB1KTGQ554aUd6uSiDOmYkCe0=;
+  b=cgbNgDpOHra8yBzY/KVO35hnHC2CvN8Vv7OhvSjeUyI9L0qPeprN03te
+   CqWyqW5fRb7Lcty78WuB/63elGgKYehkCKGazK7sazjXWv363HB69T3bA
+   4l/6nFuCwg4+n1F7D7dPNwdzLZqVY3A3cRI6S8PygBlTkLUWFSp9rafC4
+   zEa9n68+pFAj8MFaYZBF/s2Dg0YvmN9S6O1U+8RnszVxvxkjwH3TLA96b
+   EdcsBQcs/wRKZBRxTIOgS2dl0xkbjcjnZe5C8999R8ehPvBU60x1zM4H9
+   oWT3C8jZa566h2f1H8GhQvmMvx9HuApDSOLHCGIg4AHhk8/cWXg7M9svN
+   Q==;
+X-CSE-ConnectionGUID: tRIQhaxpRWi/VlN38cX+aw==
+X-CSE-MsgGUID: dAwMMA+ETuWJLP1ZW4H7Vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="39750065"
 X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="31992801"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:38:00 -0700
-X-CSE-ConnectionGUID: uTkioghMSPeSgkaqkuHPFQ==
-X-CSE-MsgGUID: wbCudxrTR2u/40qpP7IZXw==
+   d="scan'208";a="39750065"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:38:13 -0700
+X-CSE-ConnectionGUID: O9Tb6A5AR5W9iUWUW6VQPQ==
+X-CSE-MsgGUID: uVZBeJNwSIiZgxEq7MrWaQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="79418016"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.146])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:37:58 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 22 Oct 2024 15:37:55 +0300 (EEST)
-To: chen zhang <chenzhang@kylinos.cn>
-cc: Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com, 
-    luke@ljones.dev, LKML <linux-kernel@vger.kernel.org>, 
-    chenzhang_0901@163.com
-Subject: Re: [PATCH] platform/x86: eeepc-laptop: use sysfs_emit() instead of
- sprintf()
-In-Reply-To: <20241018095547.46006-1-chenzhang@kylinos.cn>
-Message-ID: <85fa60c9-0627-20c2-f101-ba367fd1cf37@linux.intel.com>
-References: <20241018095547.46006-1-chenzhang@kylinos.cn>
+   d="scan'208";a="79922838"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.4])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:38:09 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/display: Remove kstrdup_const() and
+ kfree_const() usage
+In-Reply-To: <6673435f-250a-4fb7-9843-20f050e85c7c@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+ <87h69srz1q.fsf@intel.com>
+ <6673435f-250a-4fb7-9843-20f050e85c7c@wanadoo.fr>
+Date: Tue, 22 Oct 2024 15:38:06 +0300
+Message-ID: <87iktkuxch.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Oct 2024, chen zhang wrote:
+On Fri, 04 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wro=
+te:
+> Le 04/10/2024 =C3=A0 11:35, Jani Nikula a =C3=A9crit=C2=A0:
+>> On Thu, 03 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> =
+wrote:
+>>> kstrdup_const() and kfree_const() can be confusing in code built as a
+>>> module. In such a case, it does not do what one could expect from the n=
+ame
+>>> of the functions.
+>>>
+>>> The code is not wrong by itself, but in such a case, it is equivalent to
+>>> kstrdup() and kfree().
+>>>
+>>> So, keep thinks simple and straightforward.
+>>>
+>>> This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
+>>> memory in intel_backlight_device_register()")
+>>=20
+>> Sorry, I guess I'm confused here. Or I just didn't read the commit
+>> message to [1] properly. Or both.
+>>=20
+>> So the whole point of [1] was that the _const versions can be confusing
+>> if i915 is builtin? But not wrong?
+>
+> I'll try to explain the whole story and (try to) be clearer.
 
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
-> 
-> Signed-off-by: chen zhang <chenzhang@kylinos.cn>
-> ---
->  drivers/platform/x86/eeepc-laptop.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/eeepc-laptop.c b/drivers/platform/x86/eeepc-laptop.c
-> index 03319a80e114..ba36b7bf6dc4 100644
-> --- a/drivers/platform/x86/eeepc-laptop.c
-> +++ b/drivers/platform/x86/eeepc-laptop.c
-> @@ -285,7 +285,7 @@ static ssize_t show_sys_acpi(struct device *dev, int cm, char *buf)
->  
->  	if (value < 0)
->  		return -EIO;
-> -	return sprintf(buf, "%d\n", value);
-> +	return sysfs_emit(buf, "%d\n", value);
+Thanks for the thorough explanations, pushed to drm-intel-next.
 
-Please add also #include <linux/sysfs.h> and include the correct list 
-among receipients when sending v2.
+BR,
+Jani.
 
--- 
- i.
+>
+>
+> [2] the intent of this initial patch was a micro-optimization which was=20
+> expected to save a few bytes of memory. The naming of the function=20
+> looked promising. However kstrdup_const() only saves the allocation=20
+> within the rodata section of the kernel [5,6]. The mechanism does not=20
+> work for code built as module.
+>
+> This patch *is not* broken by itself, it is just pointless most of the=20
+> time. So keeping it as-is is just fine, from my point of view.
+>
+> If built as a module, kstrdup_const() is just a plain kstrdup() and=20
+> kfree_const() is just kfree().
+>
+>
+>
+> [3] was a variation that tried to avoid the allocation in all cases,=20
+> should it be built as a module or not.
+> Being a micro-optimization of a slow path, your argument of keeping=20
+> things simple is just fine for me.
+>
+>
+>
+> [4] just revert [2].
+> [2] was not broken, so [4] does not fix anything. It just makes things=20
+> simpler and as before.
+>
+>
+> So the whole point of [1,3] was that the _const versions can be=20
+> confusing if i915 is *NOT* builtin.
+> But it *is* not wrong, just likely useless in such a case.
+>
+> So, from my point of view, keeping [2] as is, or applying [3] or [4] on=20
+> top of it does not change things much, and each solution is correct.
+>
+>
+>
+> The idea behind removing some usage of _const() function in modules is=20
+> related to the patch proposal [7] and more precisely the response of=20
+> Christoph Hellwig [8]. The patch [7] will not be applied because it=20
+> breaks things.
+> So, should this API be removed one day, or at least removed for modules,=
+=20
+> the more preparation work is already done (up to now: 4,9,10] the better=
+=20
+> it is.
+>
+> CJ
+>
+>
+>
+> [2]: 379b63e7e682 ("drm/i915/display: Save a few bytes of memory in=20
+> intel_backlight_device_register()")
+>
+> [3]:=20
+> https://lore.kernel.org/all/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727=
+533674.git.christophe.jaillet@wanadoo.fr/
+>
+> [4]:=20
+> https://lore.kernel.org/all/f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727=
+977199.git.christophe.jaillet@wanadoo.fr/
+>
+> [5]: https://elixir.bootlin.com/linux/v6.12-rc1/source/mm/util.c#L84
+> [6]:=20
+> https://elixir.bootlin.com/linux/v6.12-rc1/source/include/asm-generic/sec=
+tions.h#L177
+>
+> [7]:=20
+> https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.=
+org/
+> [8]: https://lore.kernel.org/all/ZvJfhDrv-eArtU8Y@infradead.org/
+>
+> [9]:=20
+> https://lore.kernel.org/all/63ac20f64234b7c9ea87a7fa9baf41e8255852f7.1727=
+374631.git.christophe.jaillet@wanadoo.fr/
+> [10]:=20
+> https://lore.kernel.org/all/06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727=
+375615.git.christophe.jaillet@wanadoo.fr/
+>
+>>=20
+>> BR,
+>> Jani.
+>>=20
+>>=20
+>> [1] https://lore.kernel.org/r/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1=
+727533674.git.christophe.jaillet@wanadoo.fr
+>>=20
+>>=20
+>>=20
+>>>
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>>   drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+>>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/g=
+pu/drm/i915/display/intel_backlight.c
+>>> index 9e05745d797d..3f81a726cc7d 100644
+>>> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
+>>> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+>>> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_co=
+nnector *connector)
+>>>   	else
+>>>   		props.power =3D BACKLIGHT_POWER_OFF;
+>>>=20=20=20
+>>> -	name =3D kstrdup_const("intel_backlight", GFP_KERNEL);
+>>> +	name =3D kstrdup("intel_backlight", GFP_KERNEL);
+>>>   	if (!name)
+>>>   		return -ENOMEM;
+>>>=20=20=20
+>>> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_co=
+nnector *connector)
+>>>   		 * compatibility. Use unique names for subsequent backlight devices=
+ as a
+>>>   		 * fallback when the default name already exists.
+>>>   		 */
+>>> -		kfree_const(name);
+>>> +		kfree(name);
+>>>   		name =3D kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+>>>   				 i915->drm.primary->index, connector->base.name);
+>>>   		if (!name)
+>>> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_co=
+nnector *connector)
+>>>   		    connector->base.base.id, connector->base.name, name);
+>>>=20=20=20
+>>>   out:
+>>> -	kfree_const(name);
+>>> +	kfree(name);
+>>>=20=20=20
+>>>   	return ret;
+>>>   }
+>>=20
+>
 
-
->  }
->  
->  #define EEEPC_ACPI_SHOW_FUNC(_name, _cm)				\
-> @@ -361,7 +361,7 @@ static ssize_t cpufv_show(struct device *dev,
->  
->  	if (get_cpufv(eeepc, &c))
->  		return -ENODEV;
-> -	return sprintf(buf, "%#x\n", (c.num << 8) | c.cur);
-> +	return sysfs_emit(buf, "%#x\n", (c.num << 8) | c.cur);
->  }
->  
->  static ssize_t cpufv_store(struct device *dev,
-> @@ -393,7 +393,7 @@ static ssize_t cpufv_disabled_show(struct device *dev,
->  {
->  	struct eeepc_laptop *eeepc = dev_get_drvdata(dev);
->  
-> -	return sprintf(buf, "%d\n", eeepc->cpufv_disabled);
-> +	return sysfs_emit(buf, "%d\n", eeepc->cpufv_disabled);
->  }
->  
->  static ssize_t cpufv_disabled_store(struct device *dev,
-> @@ -1025,7 +1025,7 @@ static ssize_t store_sys_hwmon(void (*set)(int), const char *buf, size_t count)
->  
->  static ssize_t show_sys_hwmon(int (*get)(void), char *buf)
->  {
-> -	return sprintf(buf, "%d\n", get());
-> +	return sysfs_emit(buf, "%d\n", get());
->  }
->  
->  #define EEEPC_SENSOR_SHOW_FUNC(_name, _get)				\
-> 
-
-
+--=20
+Jani Nikula, Intel
 
