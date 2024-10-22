@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-375591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F4E69A97EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B676B9A97ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACEF51F23D8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F23A28459F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601F8563E;
-	Tue, 22 Oct 2024 04:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607A57581F;
+	Tue, 22 Oct 2024 04:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARS4QCzq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dFbYyg3Y"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706E38B;
-	Tue, 22 Oct 2024 04:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B934938B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729571505; cv=none; b=BDkdFEMXmreGOrTHwvCZyKPNcrAgpPTf1imwAqcfMX+03DkHJlHyg9WQkd44P6nmtzkH0sToaw8sR9T4Hk4Y604DqpIj+7YbtduyajkxK3qmla6PnMpgDbzlLhSoHw2GbBtli+u2ttHFTyu1fcEa3CX78DBhRIKLRJi+p6+2VMc=
+	t=1729571629; cv=none; b=krffALpqj9ULmp8PNpsE7pfoLuGiITBSrYUBG5IQAzvFWsthXYE44Kz186nvmZfLKH4E6zBhAVaZ8f3yIbfFLPJ5jbPmKm7JlCglQTwvaVAcBamA7jBwR0mMryQPdpvB+00CHl/QblINTI+yj2Q0MuvnJsI4Yzbe0gA1Qkx95uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729571505; c=relaxed/simple;
-	bh=JMmllV14RxvZYGSLvcuoLFa+QPWXIA4n1DSytG3zbNU=;
+	s=arc-20240116; t=1729571629; c=relaxed/simple;
+	bh=Sa3oORQqqGKaLUUCrGj70IwTcSiY1Q9b956Lzj6Bt8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LC9TPoGSKz6zFdMFR4X80z9wKQKpf0vT+AmygYP2QX+FrJIK4J8eLvs400d0ub9Z3ZfUnTUHr2lzMxWMLRKb5Pw49luZWEQxPSleDNgApU02jTLm5D5g6fHPuok9AcTXIKVzfSKShb07ej2s6EKnMBhsFLJJ2Qeh1doFgtB7cdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARS4QCzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D800C4CEC3;
-	Tue, 22 Oct 2024 04:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729571505;
-	bh=JMmllV14RxvZYGSLvcuoLFa+QPWXIA4n1DSytG3zbNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ARS4QCzqVeAuPpPAOMnoV+wMs5UzgiExWTl4F2GVzYPeL28mg2DNp7GtMDYzeIulE
-	 bU0kkDAC3roa2u9omxWrN381IwkPoxibb/hGR4frA1kTvtYWuJHuyKluroQRIGDVUE
-	 zbqtGobhOsIX3U+RIUut3yOFHx81Bq8PBzZyNKJj04kX2Iw1tpKKIjJlGdXinpMqif
-	 x/Qck7q66ssC/Nr+ZeulTZOPELehBH15VBIOeXjeihd9m+GV0VNWMBfLMDu0+nAMU4
-	 1BCZ12Ewk3LXfoJIr0veDpWH9njMw8KWlKBQHVatNDtPnbFMCBCuqJem+yL99E/TSc
-	 Y2VSYMLUEzXRA==
-Date: Mon, 21 Oct 2024 21:31:43 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Junhao He <hejunhao3@huawei.com>, irogers@google.com
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
-	yangyicong@huawei.com, linuxarm@huawei.com,
-	prime.zeng@hisilicon.com
-Subject: Re: [PATCH v2] perf metrics: Support parsing metrics if platforms
- only have json table of system PMU
-Message-ID: <Zxcqr85riwxaHwQG@google.com>
-References: <20241010074430.16685-1-hejunhao3@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZHaI1YkBgXgXBNDV0ykgYoAPcewlG7uWi0oWGm8cGMTyR8WGV7INGFiCVXA2+m0la1g3mzpIO4j1pd+2/4wlWGbomUxpoYJd1vPU/Nn2NzdWRrvb/e5Pi44Dwzz71gwAAlZ2n3STHuZVL3svxkg+isHryeqTLijqKFZCWCdVVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dFbYyg3Y; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Oct 2024 04:33:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729571625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYudzfRvqnvDrVSQ5OS6WPxzQKmU/bqfR5hedKDTCKM=;
+	b=dFbYyg3YUK5pfW0S+Y1TI21U+iPDscaGB1HzfEXFatq9rMNJJkVi2nG+DQwaJrcRBYZI1H
+	Th850TVnIIpBYxQnhBBV8zJSSE/GpQJ1k2DzyQ2uEpuY2XRhmD5TkrwsTOlNmi0g0KJFIq
+	JrPZwYPHeuKYoKW+vmq6/+QruuYEul4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+Message-ID: <ZxcrJHtIGckMo9Ni@google.com>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+ <Zxa60Ftbh8eN1MG5@casper.infradead.org>
+ <ZxcKjwhMKmnHTX8Q@google.com>
+ <ZxcgR46zpW8uVKrt@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010074430.16685-1-hejunhao3@huawei.com>
+In-Reply-To: <ZxcgR46zpW8uVKrt@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Tue, Oct 22, 2024 at 04:47:19AM +0100, Matthew Wilcox wrote:
+> On Tue, Oct 22, 2024 at 02:14:39AM +0000, Roman Gushchin wrote:
+> > On Mon, Oct 21, 2024 at 09:34:24PM +0100, Matthew Wilcox wrote:
+> > > On Mon, Oct 21, 2024 at 05:34:55PM +0000, Roman Gushchin wrote:
+> > > > Fix it by moving the mlocked flag clearance down to
+> > > > free_page_prepare().
+> > > 
+> > > Urgh, I don't like this new reference to folio in free_pages_prepare().
+> > > It feels like a layering violation.  I'll think about where else we
+> > > could put this.
+> > 
+> > I agree, but it feels like it needs quite some work to do it in a nicer way,
+> > no way it can be backported to older kernels. As for this fix, I don't
+> > have better ideas...
+> 
+> Well, what is KVM doing that causes this page to get mapped to userspace?
+> Don't tell me to look at the reproducer as it is 403 Forbidden.  All I
+> can tell is that it's freed with vfree().
+> 
+> Is it from kvm_dirty_ring_get_page()?  That looks like the obvious thing,
+> but I'd hate to spend a lot of time on it and then discover I was looking
+> at the wrong thing.
 
-On Thu, Oct 10, 2024 at 03:44:30PM +0800, Junhao He wrote:
-> The system PMUs don't depend on the certain CPUs and we don't need a CPUID
-> to metric table mapping to match the json event for generating the metric
-> table. For example HiSilicon HIP09 only have json events table of system
-> PMUs in the "sys/" subdirectory.
-> 
-> Currently for this case the struct of system metric table
-> "pmu_metrics__hisilicon_hip09_sys" generating works fine and metrics
-> display as expected by using `perf list`. But `perf stat` doesn't work
-> for such metrics.
-> 
->   $ perf list metric
->   Metrics:
->     cpa_p0_avg_bw
->          [Average bandwidth of CPA Port 0]
->     cpa_p1_avg_bw
->          [Average bandwidth of CPA Port 1]
->   $ perf stat -M cpa_p0_avg_bw --timeout 1000 --> No error messages output
->   $ echo $?
->   234
-> 
-> The metricgroup__parse_groups() expects to find an cpu metric table, but
-> the hisilicon/hip09 doesn't uses CPUID to map json events and metrics, so
-> pmu_metrics_table__find() will return NULL, than the cmd run failed.
-> 
-> But in metricgroup__add_metric(), the function parse for each sys metric
-> and add it to metric_list, which also will get an valid sys metric table.
-> So, we can ignore the NULL result of pmu_metrics_table__find() and to use
-> the sys metric table.
-> 
-> metricgroup__parse_groups
->  -> parse_groups
->      -> metricgroup__add_metric_list
->          -> metricgroup__add_metric
-> 	     -> pmu_for_each_sys_metric   --> parse for each sys metric
-> 
-> Testing:
->   $ perf stat -M cpa_p0_avg_bw --timeout 1000
-> 
->  Performance counter stats for 'system wide':
-> 
->      4,004,863,602      cpa_cycles                #     0.00 cpa_p0_avg_bw
->                  0      cpa_p0_wr_dat
->                  0      cpa_p0_rd_dat_64b
->                  0      cpa_p0_rd_dat_32b
-> 
->        1.001306160 seconds time elapsed
+One of the pages is vcpu->run, others belong to kvm->coalesced_mmio_ring.
 
-Ian, can you please review this?
+Here is the reproducer:
 
-Thanks,
-Namhyung
+#define _GNU_SOURCE
 
-> 
-> Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> Tested-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
-> v1 --> v2:
->  -Add some comments to explain the table is null.
->  -Modify the patch commit.
->  -Add Yicong Test-by.
-> v1:https://lore.kernel.org/all/20240807040002.47119-1-hejunhao3@huawei.com/
-> ---
->  tools/perf/util/metricgroup.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-> index 69f6a46402c3..cb428eabd485 100644
-> --- a/tools/perf/util/metricgroup.c
-> +++ b/tools/perf/util/metricgroup.c
-> @@ -1123,7 +1123,7 @@ static int metricgroup__add_metric_sys_event_iter(const struct pmu_metric *pm,
->  
->  	ret = add_metric(d->metric_list, pm, d->modifier, d->metric_no_group,
->  			 d->metric_no_threshold, d->user_requested_cpu_list,
-> -			 d->system_wide, d->root_metric, d->visited, d->table);
-> +			 d->system_wide, d->root_metric, d->visited, d->table ?: table);
->  	if (ret)
->  		goto out;
->  
-> @@ -1226,7 +1226,8 @@ static int metricgroup__add_metric_callback(const struct pmu_metric *pm,
->   * @system_wide: Are events for all processes recorded.
->   * @metric_list: The list that the metric or metric group are added to.
->   * @table: The table that is searched for metrics, most commonly the table for the
-> - *       architecture perf is running upon.
-> + *       architecture perf is running upon. This value could be NULL if no core
-> + *       metrics matches the architecture and we'll try to use the table of system PMUs.
->   */
->  static int metricgroup__add_metric(const char *pmu, const char *metric_name, const char *modifier,
->  				   bool metric_no_group, bool metric_no_threshold,
-> @@ -1239,7 +1240,8 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
->  	int ret;
->  	bool has_match = false;
->  
-> -	{
-> +	/* Add core metrics to the metric list */
-> +	if (table) {
->  		struct metricgroup__add_metric_data data = {
->  			.list = &list,
->  			.pmu = pmu,
-> @@ -1263,6 +1265,7 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
->  		has_match = data.has_match;
->  	}
->  	{
-> +		/* Parse metrics table of system PMUs */
->  		struct metricgroup_iter_data data = {
->  			.fn = metricgroup__add_metric_sys_event_iter,
->  			.data = (void *) &(struct metricgroup_add_iter_data) {
-> @@ -1697,7 +1700,8 @@ int metricgroup__parse_groups(struct evlist *perf_evlist,
->  	const struct pmu_metrics_table *table = pmu_metrics_table__find();
->  
->  	if (!table)
-> -		return -EINVAL;
-> +		pr_debug("The core metric table not found, continue to parse system metric table\n");
-> +
->  	if (hardware_aware_grouping)
->  		pr_debug("Use hardware aware grouping instead of traditional metric grouping method\n");
->  
-> -- 
-> 2.33.0
-> 
+#include <endian.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#ifndef __NR_mlock2
+#define __NR_mlock2 325
+#endif
+
+uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
+
+#ifndef KVM_CREATE_VM
+#define KVM_CREATE_VM 0xae01
+#endif
+
+#ifndef KVM_CREATE_VCPU
+#define KVM_CREATE_VCPU 0xae41
+#endif
+
+int main(void)
+{
+  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
+          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  intptr_t res = syscall(__NR_openat, /*fd=*/0xffffff9c, /*file=*/"/dev/kvm",
+                /*flags=*/0, /*mode=*/0);
+  if (res != -1)
+    r[0] = res;
+  res = syscall(__NR_ioctl, /*fd=*/r[0], /*cmd=*/KVM_CREATE_VM, /*type=*/0ul);
+  if (res != -1)
+    r[1] = res;
+  res = syscall(__NR_ioctl, /*fd=*/r[1], /*cmd=*/KVM_CREATE_VCPU, /*id=*/0ul);
+  if (res != -1)
+    r[2] = res;
+  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0xb36000ul,
+          /*prot=PROT_SEM|PROT_WRITE|PROT_READ|PROT_EXEC*/ 0xful,
+          /*flags=MAP_FIXED|MAP_SHARED*/ 0x11ul, /*fd=*/r[2], /*offset=*/0ul);
+  syscall(__NR_mlock2, /*addr=*/0x20000000ul, /*size=*/0x400000ul,
+          /*flags=*/0ul);
+  syscall(__NR_mremap, /*addr=*/0x200ab000ul, /*len=*/0x1000ul,
+          /*newlen=*/0x1000ul,
+          /*flags=MREMAP_DONTUNMAP|MREMAP_FIXED|MREMAP_MAYMOVE*/ 7ul,
+          /*newaddr=*/0x20ffc000ul);
+  return 0;
+}
 
