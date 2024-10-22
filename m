@@ -1,213 +1,122 @@
-Return-Path: <linux-kernel+bounces-375948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6359A9DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810159A9DA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75171F26219
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE60E1C20A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBFB198853;
-	Tue, 22 Oct 2024 08:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596F81990DE;
+	Tue, 22 Oct 2024 08:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KtA4ToSH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JP/vevSM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90284191F65;
-	Tue, 22 Oct 2024 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3B4193092;
+	Tue, 22 Oct 2024 08:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587419; cv=none; b=X/oOTK6pojsQbNNYK3XfzpcilMs0VQBQxGbhIMugYoGc3QXOs8dTQ7bxVIsurZuPrZDSfRnsboK3QvGuLl2bXklZ87zzP9cjqR3d9cE0vQFeV+GKwMPSRbiOBfJyHgFeCL+OLyM2t2wGeUThCvYBw77aBOwTKIs4PA0ZUQB7Ld4=
+	t=1729587440; cv=none; b=KvcOiKqFyrr4rnxcu+LnmUzaMVL0Uz6YdYuU2okCITl+RNfz4OC3Ek0b02Ue0rPdNBZh8uMItjXtVnaPRbsx6eopQc043IB/zkUs0HOpNOkzaLRjIEwI8UBZpmQ/Z7C+GqOezIABSTJQDuoHqBeFE+HeKkhjArhL4OgNihCO7+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587419; c=relaxed/simple;
-	bh=PBS6patg8orzXZGMN84nPmy0cveg0QjRKx5CAIpZy8k=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mnK/BUXlMqrh7n/BRRF/d8mXy3p72tbSVNZ0OnRgedZ6P6YaScpXhxHgwAUTpWFTSkSoVvCqWb4eGe+qpfcIjr/UCmr+k61RHtEzGiJIXyDURebAIbNdtQ+0JHODkoTKVLX4JzObzkDGYVnfe+KK7tnTjeIXJTw92p6gkE3gAkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KtA4ToSH; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729587418; x=1761123418;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=PBS6patg8orzXZGMN84nPmy0cveg0QjRKx5CAIpZy8k=;
-  b=KtA4ToSHfHncqAVLHnG7C5l7EUk39Oiwb7mTTABRlEl/OaG4r8AG+nB7
-   R/UPB2uu42uHwqDpYHbxlaEM5moOj9/ByJY1giQ7PnBmNkA45/gXq1r0C
-   8cC+H09Muq+Dy/esGLDMcZl0u4PZNYb9w4DbY1hDZaglwVBLbZR8Myx8q
-   I+ajGF65VwC+tbJtNMvKWRKYbxyQhWaJqODzE0aN5ZdLrdQBEUF4QaaHy
-   PQuTVNPYwwo2lC9CBXJ4uZASNNxtF5bgQfIz0OByoyYml45+rk1J+S2ml
-   l42aWr1PvfqGgzZPmnivF5b7Rw808/rq2ycxn5lS6ClTwK7g/pDM4Ub7A
-   Q==;
-X-CSE-ConnectionGUID: EeqNBb3yS3uYQ/ldFc9PXQ==
-X-CSE-MsgGUID: 1/ydBne2Qb2aYKrhrBaFTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="28564714"
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="28564714"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:56:57 -0700
-X-CSE-ConnectionGUID: 0MU8dnb7QXGk+MiEJrRF7A==
-X-CSE-MsgGUID: KJGFvjYHSeq84FJ84h6e9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="110616118"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.146])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:56:53 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 22 Oct 2024 11:56:49 +0300 (EEST)
-To: Hans de Goede <hdegoede@redhat.com>
-cc: =?ISO-8859-15?Q?J=E9r=F4me_de_Bretagne?= <jerome.debretagne@gmail.com>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-    linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] platform/surface: aggregator_registry: Add Surface
- Pro 9 5G
-In-Reply-To: <8370d062-b3d2-46f5-9e7b-8e16edde8480@redhat.com>
-Message-ID: <555f8a3a-ae5e-57e7-f176-96c52e1a5d45@linux.intel.com>
-References: <20240908223505.21011-1-jerome.debretagne@gmail.com> <20240908223505.21011-4-jerome.debretagne@gmail.com> <f9cbd1c3-eb05-4262-bdc6-6d37e83179e5@gmail.com> <CA+kEDGEdd_s+DGKsVNY6Jy870B72eHuaj2EgEnwP8J46ZGbxpQ@mail.gmail.com>
- <8370d062-b3d2-46f5-9e7b-8e16edde8480@redhat.com>
+	s=arc-20240116; t=1729587440; c=relaxed/simple;
+	bh=htdXVuBg3rUPy01vK1UMoH1g0fkJC7jNj9EenNcP2hY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uq9i2khZe/cnsiUv1ZFWjgDsk9n1ph8eOzox3pm8fZ9wTxWcB1Jioxsc3J9W7108/aTMYhIAzkBy+iFqaDkf01+aJBd7QNhgpuRNrvXLgj391YIBWV6IVfKqplG3p7by35qQOLEOax0joPYhrUjBg1/mE8fkggEYMQAZPhp79qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JP/vevSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEA8C4CEC3;
+	Tue, 22 Oct 2024 08:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729587440;
+	bh=htdXVuBg3rUPy01vK1UMoH1g0fkJC7jNj9EenNcP2hY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JP/vevSM6dZ5CjZgbF+JPWInBBZi7QxSxJQTeGlIWg4akANwQIckgvexhbnWL4uPy
+	 9ZzayKAMqBVoWK+ABAtNcRmIJfYlXCSU+XEbMvramqx7wYKW2/Jj3veRaNCIWXrVJ1
+	 oMzmfx7lge3QWaBBImJajqh2XMT95tj9lT/UGVvDFlCmWFFYPl0ffhdevYA+2exIQh
+	 LktrII0F290bHJXSnwI9GsMOyJ/VFwqGtZarQ2Z0rfXQ5orovIHK/QDRWKgStsBCy4
+	 S9M9HVb78xbTglVJx5FOlqFDQ5ZKG+FZwVkDy34SDkEz0WPkrmqtCjeKcjS+WveQ25
+	 9D9nvKQzc2rFg==
+Date: Tue, 22 Oct 2024 09:57:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	andrew@lunn.ch, Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	horatiu.vultur@microchip.com,
+	jensemil.schulzostergaard@microchip.com,
+	Parthiban.Veerasooran@microchip.com, Raju.Lakkaraju@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	Richard Cochran <richardcochran@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, jacob.e.keller@intel.com,
+	ast@fiberby.net, maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next 01/15] net: sparx5: add support for lan969x
+ SKU's and core clock
+Message-ID: <20241022085713.GR402847@kernel.org>
+References: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
+ <20241021-sparx5-lan969x-switch-driver-2-v1-1-c8c49ef21e0f@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1015361985-1729587409=:969"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021-sparx5-lan969x-switch-driver-2-v1-1-c8c49ef21e0f@microchip.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Oct 21, 2024 at 03:58:38PM +0200, Daniel Machon wrote:
+> In preparation for lan969x, add lan969x SKU's (Stock Keeping Unit) to
+> sparx5_target_chiptype and set the core clock frequency for these
+> throughout. Lan969x only supports a core clock frequency of 328MHz.
+> 
+> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
---8323328-1015361985-1729587409=:969
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+...
 
-On Mon, 7 Oct 2024, Hans de Goede wrote:
+> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
+> index d1e9bc030c80..f48b5769e1b3 100644
+> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
+> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
+> @@ -475,6 +475,20 @@ static int sparx5_init_coreclock(struct sparx5 *sparx5)
+>  		else if (sparx5->coreclock == SPX5_CORE_CLOCK_250MHZ)
+>  			freq = 0; /* Not supported */
+>  		break;
+> +	case SPX5_TARGET_CT_LAN9694:
+> +	case SPX5_TARGET_CT_LAN9691VAO:
+> +	case SPX5_TARGET_CT_LAN9694TSN:
+> +	case SPX5_TARGET_CT_LAN9694RED:
+> +	case SPX5_TARGET_CT_LAN9696:
+> +	case SPX5_TARGET_CT_LAN9692VAO:
+> +	case SPX5_TARGET_CT_LAN9696TSN:
+> +	case SPX5_TARGET_CT_LAN9696RED:
+> +	case SPX5_TARGET_CT_LAN9698:
+> +	case SPX5_TARGET_CT_LAN9693VAO:
+> +	case SPX5_TARGET_CT_LAN9698TSN:
+> +	case SPX5_TARGET_CT_LAN9698RED:
+> +		freq = SPX5_CORE_CLOCK_328MHZ;
+> +		break;
 
-> Hi J=C3=A9r=C3=B4me,
->=20
-> On 7-Oct-24 8:44 PM, J=C3=A9r=C3=B4me de Bretagne wrote:
-> > Hi,
-> >=20
-> > I'm replying with Hans and Ilpo, who I initially forgot for this
-> > patch, sorry about that.
->=20
-> No worries thank you for forwarding Maximilian's review.
->=20
-> > Le mar. 10 sept. 2024 =C3=A0 23:29, Maximilian Luz
-> > <luzmaximilian@gmail.com> a =C3=A9crit :
-> >>
-> >> Looks good. Two very small nit-picks below, if this goes for a v3:
-> >=20
-> > Atm I'm not planning for a v3 as Bjorn has applied the other v2
-> > patches earlier today.
-> > Feel free to include the 2 small suggestions when applying this patch m=
-aybe?
-> >=20
-> >> On 9/9/24 12:35 AM, J=C3=A9r=C3=B4me de Bretagne wrote:
-> >>> Add SAM client device nodes for the Surface Pro 9 5G, with the usual
-> >>> battery/AC and HID nodes for keyboard and touchpad support.
-> >>>
-> >>> Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.=
-com>
-> >>> ---
-> >>>   .../surface/surface_aggregator_registry.c       | 17 ++++++++++++++=
-+++
-> >>>   1 file changed, 17 insertions(+)
-> >>>
-> >>> diff --git a/drivers/platform/surface/surface_aggregator_registry.c b=
-/drivers/platform/surface/surface_aggregator_registry.c
-> >>> index 25c8aa2131d6..8b34d7e465c2 100644
-> >>> --- a/drivers/platform/surface/surface_aggregator_registry.c
-> >>> +++ b/drivers/platform/surface/surface_aggregator_registry.c
-> >>> @@ -390,6 +390,21 @@ static const struct software_node *ssam_node_gro=
-up_sp9[] =3D {
-> >>>       NULL,
-> >>>   };
-> >>>
-> >>> +/* Devices for Surface Pro 9 5G. */
-> >>
-> >> Would be nice if you could change the comment on the SP9 node group to
-> >> "Surface Pro 9 (Intel/x86)" and the comment here to "Surface Pro 9 5G
-> >> (ARM/QCOM)" or something along those lines to make things a bit more
-> >> clear.
-> >>
-> >>> +static const struct software_node *ssam_node_group_sp9_5G[] =3D {
-> >>
-> >> (This is really just me being a bit obsessive:) It would be nice to ha=
-ve
-> >> all-lowercase variable names (regarding the 5G).
-> >=20
-> > :)
-> >=20
-> >>> +     &ssam_node_root,
-> >>> +     &ssam_node_hub_kip,
-> >>> +     &ssam_node_bat_ac,
-> >>> +     &ssam_node_bat_main,
-> >>> +     &ssam_node_tmp_sensors,
-> >>> +     &ssam_node_hid_kip_keyboard,
-> >>> +     &ssam_node_hid_kip_penstash,
-> >>> +     &ssam_node_hid_kip_touchpad,
-> >>> +     &ssam_node_hid_kip_fwupd,
-> >>> +     &ssam_node_hid_sam_sensors,
-> >>> +     &ssam_node_kip_tablet_switch,
-> >>> +     NULL,
-> >>> +};
-> >>>
-> >>>   /* -- SSAM platform/meta-hub driver. ------------------------------=
----------- */
-> >>>
-> >>> @@ -462,6 +477,8 @@ static const struct acpi_device_id ssam_platform_=
-hub_acpi_match[] =3D {
-> >>>   MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
-> >>>
-> >>>   static const struct of_device_id ssam_platform_hub_of_match[] __may=
-be_unused =3D {
-> >>> +     /* Surface Pro 9 5G */
-> >>> +     { .compatible =3D "microsoft,arcata", (void *)ssam_node_group_s=
-p9_5G },
-> >>>       /* Surface Laptop 7 */
-> >>>       { .compatible =3D "microsoft,romulus13", (void *)ssam_node_grou=
-p_sl7 },
-> >>>       { .compatible =3D "microsoft,romulus15", (void *)ssam_node_grou=
-p_sl7 },
-> >>
-> >> Thanks!
-> >>
-> >> Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
-> >=20
-> > Thanks for your review and all the work about SSAM for Surface owners!
->=20
-> FWIW I agree with Maximilian's remarks and I would really like to
-> see these applied to clearly differentiate the x86 and ARM versions.
->=20
-> Normally I would pick up a patch like this which just adds hw-ids as
-> a fix for 6.12-rc# and squash in the suggested changes.
->=20
-> But looking at the test of the series this is more 6.13 material
-> since the rest is landing in 6.13, right ?
->=20
-> Patches for linux-next / 6.13 are managed by Ilpo this cycle.
->=20
-> So I'll leave it up to Ilpo if he will squash in the suggested changes
-> or if he wants a new version (of just this patch, no need for a v3
-> of the already applied patches).
+Hi Daniel,
 
-Hi all,
+It is addressed in patch 12/15, but until then pol_upd_int will
+be used uninitialised later on in this function when this case it hit.
 
-I've now applied patch 3 to review-ilpo branch in pdx86 repo.
+Flagged by Smatch.
 
-I'd appreciate if somebody confirms I got those comment edits right.
+>  	default:
+>  		dev_err(sparx5->dev, "Target (%#04x) not supported\n",
+>  			sparx5->target_ct);
 
---=20
- i.
-
---8323328-1015361985-1729587409=:969--
+...
 
