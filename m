@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-376928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132EC9AB7A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:32:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05399AB7B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8EC01F238C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4171C22FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E788B1CC16E;
-	Tue, 22 Oct 2024 20:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6291CC16E;
+	Tue, 22 Oct 2024 20:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgK3n1Ss"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ywSIYnVb"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162E1474A9;
-	Tue, 22 Oct 2024 20:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BCE1CB30C;
+	Tue, 22 Oct 2024 20:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729629165; cv=none; b=o08NU+j70m3+SsCyllbetuileEjck4PIcp0oNIVpvTCS6rr3F+9o6IehIBhPZsK+0tIatAzVdQEplvsZreqVN5adqbvAW2TxU+Z5I3yxoOvzl1Z6oNx5innLr+gP9zX6ERQU1+LeH9kXbW8BcXtFqutJM3OGDC4tP2pSo7UhFuU=
+	t=1729629304; cv=none; b=QIC0nJxh0nZI+kKKET9tHQvdgzi2EwxSB5HhS3Y4o6AWYCwREckFEyV/n3o5GR+I93yRiP7vjrF9VWXk1+p5VxpGevFYhCW4SRchdltINwnOzb2bwRRrQKko7r7RokB7t9thuQ6w9Kh2FWcAum8B/Mg4ycPgzuB1OmbUNo6MC1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729629165; c=relaxed/simple;
-	bh=UeVT67coF+dsRLgWQ++/Sjd/zmllkbNnFB/WlVA+bKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H+ffbn7qHxQ9zBUw7lXh9QA5RnBaK0NClxJtZDXbXb0lQCa4lMvUZo97rngegLcVjKZSUmwYYkgwihNieNu/M5T+yHhZijvIQEBKnETDxTVml1NSpjfQd7HbCR2df65p3TlnUDRN2xJKtHbKMZIGIXYYil80impx+98cJpmFIzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgK3n1Ss; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c805a0753so52819045ad.0;
-        Tue, 22 Oct 2024 13:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729629163; x=1730233963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZ+4PADPN2uTECD/Dh3GFRRtK+3UQEC1z/LtDuogd5I=;
-        b=QgK3n1SsJQsTLL53RLXW34D3mQo6915opstUdRkPMYT10Gld1SKKqVN2hTZKJ+WmMF
-         YtlmrOqANZa2Iddw6DAoMkJnyR7FqJCMx3AXIDeIg6qkYtEzkypg4v1Y0yKVAWxZSlD4
-         CfybZ034Rp1RuhJRWMevXskJJhWmQCv9xHBslV1K07QGV+r0CqM5QKeu3MHJHjH0vjvF
-         q5ZAD/THVkwed0bvQm4d1gfdEtTImcAwmNPVhdhx3Dst0bvuUDPs5icTxvcMT4zDRXL6
-         /UOHbFVMSGjAwE8V4XDt5/8tZ4WgqRqt596jUKENzyLkizWikOdXugFnQHThqKMgv6lL
-         j1+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729629163; x=1730233963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GZ+4PADPN2uTECD/Dh3GFRRtK+3UQEC1z/LtDuogd5I=;
-        b=LAZBKwI0VaTMpeTuGaknkv2ebxyctp/CwA464E/jJcGYT1tZZ4qgL/69eNIOukD1A9
-         yV0awBLr02UmhbI+MAEk2paZ9igOVwXxsVU1C61ZRQ1Gz4NvltiNPQxZeD/R/B/JKBpU
-         86ywHY/4jkdXrCaT5/bkhIe2cIwHmOOVMLqf6UXFTORlVAue8mimPbJbVuLvsGhk3Dve
-         cvDGPTHy6tLAcNhhBRLWGMbv6YB7neKfTkB9tIvniEJjpl45DtfNUgIkQ27KBrJOr+DH
-         MsWlbtsBEyPrHJmIJWIX1ZqPR3myB5rM1ze9v+PFFVS6KR1YytILq37oiBoEjsqpmhER
-         +Lrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNp+K/uuyk7tkyf9InKZzOmMyCPeq6CsDuQhACNF8SoHQdHBIrlHP+jhqCLxhSL52qY7R/sTt4X2EtFZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrda9Kh3+uQhKExxV1ubi50w3rHIzoFyFayNpHHymhVHxNux5W
-	D1VfWCLcQvC4pNrwCQSTo6ucl2qKWaF1JzsRdsWhNpa/OLZqWLMFoGglzdbY
-X-Google-Smtp-Source: AGHT+IGcDqy20KPoabg7ESPBAC5OmxPOAcjQtMj/wH5Mv0MFuAdhMh+A6qVzGB2rUcn/bbgjEQMb9A==
-X-Received: by 2002:a17:902:c945:b0:20c:da66:3875 with SMTP id d9443c01a7336-20fa9e5405cmr3800315ad.24.1729629163038;
-        Tue, 22 Oct 2024 13:32:43 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0dd53esm46521235ad.222.2024.10.22.13.32.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:32:42 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Haren Myneni <haren@linux.ibm.com>,
-	Rick Lindsley <ricklind@linux.ibm.com>,
-	Nick Child <nnac123@linux.ibm.com>,
-	Thomas Falcon <tlfalcon@linux.ibm.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] ibmvnic: use ethtool string helpers
-Date: Tue, 22 Oct 2024 13:32:40 -0700
-Message-ID: <20241022203240.391648-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729629304; c=relaxed/simple;
+	bh=OiUWg3Pn95PdkrUBQ5T6WGMbu1yA2LaiJIgmYPzXOjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UzYsXciMnZSfjArC25ToBuG8OlIAWrdCAINOrxzxYO+CxNFBZ8OzZhSbtexRYWG4fChQ/7mv3M65VftOf0qWloljKMvEt70S3mIKc56v1jaevNs22bSyioQkm3xxwyD51aRKNu5qWT5JGWgIQyMkGoJceDH6IupmS11edT/UYDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ywSIYnVb; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=m0Gs6f86g6ugZlujb8KQk26o9qJc7j+Ro8eH92L7lo4=; b=ywSIYnVbFesb3ZAfUBmu30D8wn
+	bPBG20T5dToSMGDFIObyWgTvmJ5EAMI/nTuBC7bsNrH3IIQc/tcr/niYGrZj6NmV5ad6oZfeMLIsJ
+	tt0coaYoWX6XrgDxYNGeLtGIPdZcelCU33f5SfR+5bOh/kt7HUXD41t1S5t5kZEkgwxceWXKakdjN
+	iMCChOYObEtBWt/JzKWY+IJ6s7NiWfoCEBUNN5A0zifxOenqhC/AoxYZ3fnQDj+mOR2QACy5n7+vC
+	mLhdbozP/vVX13scrrLPG/H25REIxB/iRqgOyspT+vAmErH2BVhI0LMpyiwrYV5QWRM0YWbssH1Gd
+	sWyJCXTw==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t3LaX-0001tt-BZ; Tue, 22 Oct 2024 22:34:45 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Tianling Shen <cnsztl@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Jagan Teki <jagan@edgeble.ai>, Rob Herring <robh@kernel.org>,
+ Andy Yan <andyshrk@163.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Chris Morgan <macromorgan@hotmail.com>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH 1/2] dt-bindings: arm: rockchip: Add FriendlyARM NanoPi R3S
+Date: Tue, 22 Oct 2024 22:34:45 +0200
+Message-ID: <2629917.Lt9SDvczpP@diego>
+In-Reply-To: <8684a5a3-48d0-4acf-9ed7-a035fca15119@kwiboo.se>
+References:
+ <20241020173946.225960-1-cnsztl@gmail.com>
+ <172960632903.1476617.9941592027677995572.b4-ty@sntech.de>
+ <8684a5a3-48d0-4acf-9ed7-a035fca15119@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-They are the prefered way to copy ethtool strings.
+Am Dienstag, 22. Oktober 2024, 19:07:43 CEST schrieb Jonas Karlman:
+> Hi Heiko,
+> 
+> On 2024-10-22 16:12, Heiko Stuebner wrote:
+> > On Mon, 21 Oct 2024 01:39:45 +0800, Tianling Shen wrote:
+> >> Add devicetree binding for FriendlyARM NanoPi R3S.
+> >>
+> >>
+> > 
+> > Applied, thanks!
+> > 
+> > [1/2] dt-bindings: arm: rockchip: Add FriendlyARM NanoPi R3S
+> >       commit: 1e94bfea52bee081c42ab922c19156dd3d2bade8
+> > [2/2] arm64: dts: rockchip: Add FriendlyARM NanoPi R3S board
+> >       commit: 50decd493c8394c52d04561fe4ede34df27a46ba
+> 
+> I just sent out a review on this patch [1], please leave more then a day
+> or two to finish up a review ;-)
 
-Avoids manually incrementing the data pointer.
+Hehe, yeah might be better ... somehow that small board dts looked so
+innocent though - aka what could go wrong ;-) ... obviously something.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/ibmvnic.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
+> [1] https://lore.kernel.org/r/13bb8657-f048-4f79-a2c1-3680445f2bef@kwiboo.se/
+> 
+> Regards,
+> Jonas
+> 
+> > 
+> > Best regards,
+> 
+> 
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index cca2ed6ad289..e95ae0d39948 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -3808,32 +3808,20 @@ static void ibmvnic_get_strings(struct net_device *dev, u32 stringset, u8 *data)
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(ibmvnic_stats); i++, data += ETH_GSTRING_LEN)
--		memcpy(data, ibmvnic_stats[i].name, ETH_GSTRING_LEN);
-+	for (i = 0; i < ARRAY_SIZE(ibmvnic_stats); i++)
-+		ethtool_puts(&data, ibmvnic_stats[i].name);
- 
- 	for (i = 0; i < adapter->req_tx_queues; i++) {
--		snprintf(data, ETH_GSTRING_LEN, "tx%d_batched_packets", i);
--		data += ETH_GSTRING_LEN;
--
--		snprintf(data, ETH_GSTRING_LEN, "tx%d_direct_packets", i);
--		data += ETH_GSTRING_LEN;
--
--		snprintf(data, ETH_GSTRING_LEN, "tx%d_bytes", i);
--		data += ETH_GSTRING_LEN;
--
--		snprintf(data, ETH_GSTRING_LEN, "tx%d_dropped_packets", i);
--		data += ETH_GSTRING_LEN;
-+		ethtool_sprintf(&data, "tx%d_batched_packets", i);
-+		ethtool_sprintf(&data, "tx%d_direct_packets", i);
-+		ethtool_sprintf(&data, "tx%d_bytes", i);
-+		ethtool_sprintf(&data, "tx%d_dropped_packets", i);
- 	}
- 
- 	for (i = 0; i < adapter->req_rx_queues; i++) {
--		snprintf(data, ETH_GSTRING_LEN, "rx%d_packets", i);
--		data += ETH_GSTRING_LEN;
--
--		snprintf(data, ETH_GSTRING_LEN, "rx%d_bytes", i);
--		data += ETH_GSTRING_LEN;
--
--		snprintf(data, ETH_GSTRING_LEN, "rx%d_interrupts", i);
--		data += ETH_GSTRING_LEN;
-+		ethtool_sprintf(&data, "rx%d_packets", i);
-+		ethtool_sprintf(&data, "rx%d_bytes", i);
-+		ethtool_sprintf(&data, "rx%d_interrupts", i);
- 	}
- }
- 
--- 
-2.47.0
+
+
 
 
