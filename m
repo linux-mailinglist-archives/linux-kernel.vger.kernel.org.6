@@ -1,194 +1,147 @@
-Return-Path: <linux-kernel+bounces-376306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEDE9AA2EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A98A9AA2FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A139EB2280E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CD6B219D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B3F19DF99;
-	Tue, 22 Oct 2024 13:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF1119EED7;
+	Tue, 22 Oct 2024 13:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FhMlQxln"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ej/602ZD"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B11C27
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ACE19E7E0
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729603284; cv=none; b=iuJlOZiO2bCFhEdYdSh80jz/97/9gv5jo97wZR2skKCC52lGrM3pmALOfkuVRdXuC1OS6I/hFOli3QeRJm9IiGC78lH6kZ9o92v0MU2NPGu3X5hjnvPJZdha9CFxbkY5KFzE/FZ20WCf9yebmRrnkkoXcpwTLTSSvAfO1HexvXQ=
+	t=1729603365; cv=none; b=R0ivyBHPwmWWESgIHmDhDfAgunp7Dbo0GbHp69KZE+oSj0Cj3mufmHhDnBrFSq5qWry6TE95kMzVrzRekSokeF8qafKwj6h/MfxGCG5uvAMSKqpAnJ6Nnp6s/zyK/hXtRrvzsPE2wejqdxUWxeyfogkRAV7WSa1PA/Jz63z9/Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729603284; c=relaxed/simple;
-	bh=ystE7XvCDr5nP3P92mePG0w996TUqGPmg0Xj4sfkCME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkDUkV0MTJh9Xl5x4ucjMwekbgtDDLwzFmvDp0cztRtugxFilM8mKLGrMwEC3ffm3hHBQ5910HmDc2Fn9cczDWwxPvg4b/hTMd1O9QbPGGzRgAjR0avY4VJbOlUZh5TZWgORMzyaIdK7nEaB3m0fLWKFBP3cTEkMq7abm6X96f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FhMlQxln; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E756540E01A5;
-	Tue, 22 Oct 2024 13:21:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iDRJxERt-Cka; Tue, 22 Oct 2024 13:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729603274; bh=kXFX/HNtWsHwMvtY26MKEC4FQQNuuTolu8A7vDJViI8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FhMlQxlnr8Jw5MVT3cm4lzfGQOJGOtJ5LorhiJ6HPoBO4BGBN0FfcQjUyu3JxQmle
-	 KU/z4kfXN/C6t8MhePJMmcdMnim2R3E7rsxeK8vmVMv734/olvLC0qoSpMrKhqnNq3
-	 zfKB+zVoYNHO55YRQxvhdyXunjlpDmFL+ZFDuF/I3ZHbdxIeDB7RYeWpUyyws6v5gV
-	 glQrcIlu8rNJNlDUwjnnLOmVmO4WuTeNnnZpxGImh2abyeYiyjtnUTPhzJcdBqVQq6
-	 gzAxhDGbQpr+TYgY2xwA4y5DnbKNs6N9ZE575dd3g3HAKJ7oPvg/aj2QtYlJxK+AT+
-	 fXxlZx6leUVGHGjdZeSInFE/gYzKcwqIOVD2K9XUdWjGz+1WUjfyIUpONIH3rH/TlJ
-	 4PxENTeXeS6ZzSLIku8J3UvDG2aDU8tPktbNXHGJFqAs0IJrq4ec/6KPqF68FIu+PC
-	 G4ZSRczaKT+rjICbLdShgphVCWXhBIumCtQbsyFtCtQzzjCDMcTzv9H8rpfUxCZbCQ
-	 MUOhkI+z31aKLge/xb/pMCRG/WIjmDxw2XwHbNk6wJx9Osrick0BC88wmEG9rne1Z8
-	 b0ObxSOl2+bnBAasNLlWI92I8o29LcGrewNMc/8SpWB+bFQ+RzEosyOR5Mfs33sn9N
-	 OWX5BQg3wDLD4XlrjguFwsrQ=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DB1BF40E0198;
-	Tue, 22 Oct 2024 13:20:55 +0000 (UTC)
-Date: Tue, 22 Oct 2024 15:20:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] x86/cacheinfo: Delete global num_cache_leaves
-Message-ID: <20241022132050.GHZxemsmJSLg8Q_7U7@fat_crate.local>
-References: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
- <20240913083155.9783-3-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1729603365; c=relaxed/simple;
+	bh=8ZXY++sczqiX9uMbT4vUgqAb6YUuuxo60CIRxsXCS5Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IDpdCTWoCaYQ+lzOgLMl965qFAXpT2hMirJAK4UqAghQz7//iN6hyMb1zkedRSQMOjo75fHR2XbzI2+Zhgg9fiPpGWpuUqrhLDjrIUME4S2OGPNChiPgA7B8CsCMXIpz+PL2VhCNHfej0sgb6sJgrSJ+u9HTM0VfY/6Xphzabtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ej/602ZD; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so79287821fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729603360; x=1730208160; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfqSeJ9XLIfUJ11D1pRhbSM/QaFSnTxK9h/wuyBvkLQ=;
+        b=Ej/602ZDeWAVt2b8F4oHW8Nduy8YagTmo2KN97rJPCzf56fn1A1eiQtUiBL38R0/54
+         Mxo42basLZvoQ6JFrwMsx8qw1V83Zq7W+XP0IH/voq/hYSK8ptkHzMJtNlVW08bU6X7w
+         cGUvrrJcbNdxp0iApgJDZUv+cIshq3ekPJV/r68oNs9cvKV3pf3zC4L22W5EIUU4KSjB
+         6o7yF7ZbxTn4L1mymahiHXCr6R+lUbzkWhmNpsTehecvVjVTv78oHtBXCSRz2MjkjW5y
+         uedAO2XpD8Ovq+IyuDDb6NbUYcBPJSbbWpgrERMHbfeQo4ylE8PJjaTeIcJ1CBBHdYWC
+         pHgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729603360; x=1730208160;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UfqSeJ9XLIfUJ11D1pRhbSM/QaFSnTxK9h/wuyBvkLQ=;
+        b=OI1PBA7Kd7ash9lIByzGn3G7Za1JTwMhCu63k2eP7+UkWHP0G2vg0Mzr53DsKLRzvw
+         wbejq++JUihDQq38n0ul+9t5CiOY9ctAVqzLHeCLFapsibbXKXIEIvnbHpAPuceTiU0K
+         GJNthfaY5uyVDsMd3a/AQ4YQMHpbj2F7mUvWCAah7QGdNSeagwbkXYqcBPQ/RHWVbhHr
+         ayhH9qqnwQxD7QCuwaY7TBypF8L9feMqnb73sY58DeksC3rrhZ9YR4dnth4z5lRhuWtY
+         BuyAzujwRiwe5p+NqYTNWxEIBzviojabqnag6MeDY1gjLwZi1Rtb1NL0moFtwr+jhlUd
+         YSDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSJtxySX6RINGMU4lgIpjhg0d3XZk75xPKQWQvZvemgIGZKPoFYL8Y1+qqJewxNCdFfa4rY7UeNXMqAeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2FV1ryQjRibDvgEd/O7chpSvpdujflXewYIwPIZpNV4xZDYBK
+	R2EFz80ofrfWtDpvu/oWGRCiKLZHM1ABCripYROJ/ehieT/hKtp/0yUGIRsEIKI=
+X-Google-Smtp-Source: AGHT+IGF20MNQnrfkIa6RUxQDdxll7fwLfR/qIaL9fRFIM4On88xwZNFbh3IKY4n74ZANHygrXqjsQ==
+X-Received: by 2002:a2e:9fca:0:b0:2fb:5bd:8ff2 with SMTP id 38308e7fff4ca-2fb82ea1dcdmr85657021fa.16.1729603360433;
+        Tue, 22 Oct 2024 06:22:40 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c737c4sm3109496a12.96.2024.10.22.06.22.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 06:22:40 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v3 0/5] iio: adc: ad7380: fix several supplies issues
+Date: Tue, 22 Oct 2024 15:22:35 +0200
+Message-Id: <20241022-ad7380-fix-supplies-v3-0-f0cefe1b7fa6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913083155.9783-3-ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABunF2cC/23NTQqDMBAF4KtI1k3JjzHqqvcoXUxirAGrkrShI
+ t69o1AoxeV7w/tmIdEF7yKps4UEl3z044BBnjJiOxjujvoGMxFM5JyxnEKjZclo6980vqapxzG
+ VhdayULYtAQgup+DwvqvXG+bOx+cY5v1J4lv79fShlzhl1ECDIJe2MtXFwNx7E9zZjg+ykUn8M
+ IIfMwIZYUEpbqRUAv6YdV0/AgZ60wABAAA=
+X-Change-ID: 20241004-ad7380-fix-supplies-3677365cf8aa
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On Fri, Sep 13, 2024 at 01:31:54AM -0700, Ricardo Neri wrote:
-> diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-> index 392d09c936d6..182cacd772b8 100644
-> --- a/arch/x86/kernel/cpu/cacheinfo.c
-> +++ b/arch/x86/kernel/cpu/cacheinfo.c
-> @@ -178,7 +178,16 @@ struct _cpuid4_info_regs {
->  	struct amd_northbridge *nb;
->  };
->  
-> -static unsigned short num_cache_leaves;
-> +static inline unsigned int get_num_cache_leaves(unsigned int cpu)
-> +{
-> +	return get_cpu_cacheinfo(cpu)->num_leaves;
-> +}
+Hello,
 
-There already is
+This series tries to fix several issues found on the ad7380 driver about
+supplies:
 
-#define cache_leaves(cpu)       (ci_cacheinfo(cpu)->num_leaves)
+- vcc and vlogic are required, but are not retrieved and enabled in the
+probe function
+- ad7380-4 is the only device from the family that does not have internal
+reference and uses REFIN instead of REFIO for external reference.
 
-And there's also get_cpu_cacheinfo().
+driver, bindings, and doc are fixed accordingly
 
-And now you're adding more silly wrappers. Yuck.
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v3:
+- Use fsleep instead of msleep
+- Add all trailers from review
+- Link to v2: https://lore.kernel.org/r/20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com
 
-Can we pls use *one* of those things and work with it everywhere?
+Changes in v2:
+- Fix kernel test robot warning about variable uninitialized when used [1]
+- drop commit removing supply description in bindings
+- after discussion on [2] we decided to add refin supply here, as it
+  will be needed in the futur
 
-> @@ -742,19 +753,19 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
->  	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
->  
->  	if (c->cpuid_level > 3) {
-> -		static int is_initialized;
-> -
-> -		if (is_initialized == 0) {
-> -			/* Init num_cache_leaves from boot CPU */
-> -			num_cache_leaves = find_num_cache_leaves(c);
-> -			is_initialized++;
-> -		}
-> +		/*
-> +		 * There should be at least one leaf. A non-zero value means
-> +		 * that the number of leaves has been initialized.
-> +		 */
-> +		if (!get_num_cache_leaves(c->cpu_index))
-> +			set_num_cache_leaves(c->cpu_index,
-> +					     find_num_cache_leaves(c));
+- Link to v1: https://lore.kernel.org/r/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com
 
-Ugly linebreak.
+[1] https://lore.kernel.org/oe-kbuild-all/202410081608.ZxEPPZ0u-lkp@intel.com/
+[2] https://lore.kernel.org/all/20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com/:warning
 
->  
->  		/*
->  		 * Whenever possible use cpuid(4), deterministic cache
->  		 * parameters cpuid leaf to find the cache details
->  		 */
-> -		for (i = 0; i < num_cache_leaves; i++) {
-> +		for (i = 0; i < get_num_cache_leaves(c->cpu_index); i++) {
->  			struct _cpuid4_info_regs this_leaf = {};
->  			int retval;
->  
-> @@ -790,14 +801,14 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
->  	 * Don't use cpuid2 if cpuid4 is supported. For P4, we use cpuid2 for
->  	 * trace cache
->  	 */
-> -	if ((num_cache_leaves == 0 || c->x86 == 15) && c->cpuid_level > 1) {
-> +	if ((!get_num_cache_leaves(c->cpu_index) || c->x86 == 15) && c->cpuid_level > 1) {
->  		/* supports eax=2  call */
->  		int j, n;
->  		unsigned int regs[4];
->  		unsigned char *dp = (unsigned char *)regs;
->  		int only_trace = 0;
->  
-> -		if (num_cache_leaves != 0 && c->x86 == 15)
-> +		if (get_num_cache_leaves(c->cpu_index) && c->x86 == 15)
->  			only_trace = 1;
->  
->  		/* Number of times to iterate */
-> @@ -993,12 +1004,9 @@ int init_cache_level(unsigned int cpu)
->  {
->  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
->  
-> -	if (!num_cache_leaves)
-> -		return -ENOENT;
+---
+Julien Stephan (5):
+      dt-bindings: iio: adc: ad7380: fix ad7380-4 reference supply
+      iio: adc: ad7380: use devm_regulator_get_enable_read_voltage()
+      iio: adc: ad7380: add missing supplies
+      iio: adc: ad7380: fix supplies for ad7380-4
+      docs: iio: ad7380: fix supply for ad7380-4
 
-Why not
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    |  21 ++++
+ Documentation/iio/ad7380.rst                       |  13 +-
+ drivers/iio/adc/ad7380.c                           | 136 ++++++++++++---------
+ 3 files changed, 110 insertions(+), 60 deletions(-)
+---
+base-commit: 1a8b58362f6a6fef975032f7fceb7c4b80d20d60
+change-id: 20241004-ad7380-fix-supplies-3677365cf8aa
 
-	if (!cache_leaves(cpu))
-		return -ENOENT;
-
-?
-
->  	if (!this_cpu_ci)
->  		return -EINVAL;
->  	this_cpu_ci->num_levels = 3;
-> -	this_cpu_ci->num_leaves = num_cache_leaves;
->  	return 0;
->  }
->  
-> -- 
-> 2.34.1
-> 
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Julien Stephan <jstephan@baylibre.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
