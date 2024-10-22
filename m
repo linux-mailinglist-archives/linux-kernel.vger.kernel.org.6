@@ -1,246 +1,160 @@
-Return-Path: <linux-kernel+bounces-376035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE2E9A9F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:47:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5939A9F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33AEE1C22B6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC0E284386
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2FE1991AB;
-	Tue, 22 Oct 2024 09:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967E915B102;
+	Tue, 22 Oct 2024 09:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="od643V/0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="nH1wjtTA"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5873722083;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9209618E02D;
 	Tue, 22 Oct 2024 09:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590436; cv=none; b=c4JRH/9euGnhc4tTgZK/vuaURuK/R3GjamjPRT0nws3u6xRtZ1tJcG18RVFj7JU3Y5s4MZ07hKyNBdYJtV9iyN1w7l9SfDU88E+S0bbnx7DvOSSj3tG5CjqY5x9f+AcZV/6/KNihWJhVzo2T7mQ+76xeZ+3SaQ/L2va1VRXl9GA=
+	t=1729590440; cv=none; b=Jde0+LXy9Sgh1RwoQ9e7yBy6Oh6mKeepf+xGLhggT58sZYNc+9eRZdNxLr8gQ3SFVVDlk2elV0ztUoB8gQamS1i++a3aANmr1++Zc29OeioIVxKgYe6m+qUGEt/cTjmDtVIaetDMb8BOyL7BcyN0cty7Xt1VykY241wCPCjNgQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590436; c=relaxed/simple;
-	bh=72aL44PRxxj8ZA9z2U3Q1aVQqTnF88Q2zuOTxBxM5Yo=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AuJRo7WmLl79Abs4V818eL0JTANEXTazy+yoo/8W2mHGho5MIWMxj1/uq0rY1jADPqkht+vvBQ3z6jhgVBFPes+woko1jI75xPWABB4rLNFK2YlvVpTdAaBZoDUcfnJzDRif92tVffHJ7SbOYK2Vf5EhGMGqdQnrH7fhvm/6Bgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=od643V/0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F400C4CEC3;
-	Tue, 22 Oct 2024 09:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729590435;
-	bh=72aL44PRxxj8ZA9z2U3Q1aVQqTnF88Q2zuOTxBxM5Yo=;
-	h=Date:From:To:Subject:From;
-	b=od643V/0dvKWlHeu9B7Pbqp4/CJvU9zV1WZVqp6cB/J6v/5CljZPXz/BEm/55RKn0
-	 86/JPgeUx/w2eS8HlxETHNYPJL/DKhoBQWzhOUOHRC1rnOb/GWVccZuV4sXUyuE++d
-	 N82RD9FNB4xCwf/OxD2AxvvChcDU893Jf3fQM9M4=
-Date: Tue, 22 Oct 2024 11:47:13 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: usbutils 018 release
-Message-ID: <Zxd0oZefuehqhA7z@kroah.com>
+	s=arc-20240116; t=1729590440; c=relaxed/simple;
+	bh=y3d+vpZ5OIL31Ye8Fi+k/NP/hj+C+n9jcuCpILHGGag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ss5i+1a7ku+foSuPpAadLgP4c4dbv0KwFWbs1xFIsnsXjwC84VK8ccBrqdTmxmozT2sKjduRqlhjBbzcWYXYfKM3OMEB30BmvF7XQ8+EVI4+wyArO3tr4lj4sQaVZlaBK92ah/3o64Mn6+0jeI3DKqNq/exh6gdac4mezN+8r6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=nH1wjtTA; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 77B1F1C006B; Tue, 22 Oct 2024 11:47:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1729590434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dSDlBFL2PfLrCn7v33SNOWjYPKjIXUgPATj3s3TfkA4=;
+	b=nH1wjtTAj8yQYgCeyr1tt1HHFMgJGRTOPK0nYBPoQDvGWRsmWzZ+LatoIuhPpo7mXgbwMQ
+	gWnEHoCWc9Bcj289IQUTt0vyHVQnOPGpn+WzPEP7UHJ5NUru96PIJHKMt9UwjpxPMgEeAB
+	PB0MZmQIqC/FibFK/knAgmvJy76HwoU=
+Date: Tue, 22 Oct 2024 11:47:14 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Werner Sembach <wse@tuxedocomputers.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+References: <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
+ <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0Pa0djRm5uaNF5vn"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VyjLwRGdYiDTANtH"
 Content-Disposition: inline
+In-Reply-To: <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
 
 
---0Pa0djRm5uaNF5vn
-Content-Type: text/plain; charset=utf-8
+--VyjLwRGdYiDTANtH
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-It's been another year, and there have been a number of updates and
-fixes for the usbutils programs and build system, so it's time for a new
-release.
+Hi!
 
-I'd like to announce the usbutils 018 release.
+> > Sorry for taking a bit long to respond.
+> >=20
+> > This "illumination" subsystem would (from my perspective) act like some=
+ sort of LED subsystem
+> > for devices with a high count of LEDs, like some RGB keyboards.
+> >=20
+> > This would allow us too:
+> > - provide an abstract interface for userspace applications like OpenRGB
+> > - provide an generic LED subsystem emulation on top of the illumination=
+ device (optional)
+> > - support future RGB controllers in a generic way
+> >=20
+> > Advanced features like RGB effects, etc can be added later should the n=
+eed arise.
+> >=20
+> > I would suggest that we model it after the HID LampArray interface:
+> >=20
+> > - interface for querying:
+> > =A0- number of LEDs
+> > =A0- supported colors, etc of those LEDs
+> > =A0- position of those LEDs if available
+> > =A0- kind (keyboard, ...)
+> > =A0- latency, etc
+> > - interface for setting multiple LEDs at once
+> > - interface for setting a range of LEDs at once
 
-The largest change here that will only be visable to packagers is that
-the build system has now moved to meson.  That way only the files in git
-are in the tarballs so everyone can verify the providence of all files
-in the repository (i.e. not relying on random binaries on my local
-machine which is what autotools does...)
+How are LEDs ordered? I don't believe range makes much sense.
 
-For users, the largest change will be that the '-v' option to lsusb will
-now show the negoitated speed of the device on the bus, not just what
-the descriptor says the device can run at, and there is better handling
-for new device descriptor fields and information in the '-v' output as
-well.
+> > I do not know if mixing sysfs (for controller attributes like number of=
+ LEDs, etc) and IOCTL
+> > (for setting/getting LED colors) is a good idea, any thoughts?
+>=20
+> I wonder what the advantage of this approach is over simply using HID Lam=
+pArray
+> (emulation), openRGB is already going to support HID LampArray and since =
+Microsoft
+> is pushing this we will likely see it getting used more and more.
 
-Full details of the changes in this are found below in the shortlog.
+There's nothing simple about "HID LampArray". Specification is long
+ang ugly... and we don't want to be stuck with with OpenRGB (links to QT!).
 
-Tarballs can be found on kernel.org here:
-	https://www.kernel.org/pub/linux/utils/usb/usbutils/
+> Using HID LampArray also has the advantage that work has landed and is la=
+nding
+> to allow safely handing over raw HID access to userspace programs or even
+> individual graphical apps with the option to revoke that access when it is
+> no longer desired for the app to have access.
 
-Or you can pull from the following git locations as well:
-	https://git.sr.ht/~gregkh/usbutils
-	https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usbutils.git
-	https://github.com/gregkh/usbutils
-	https://github.com/linux-usb/usbutils
+HID raw is not suitable kernel interface.=20
 
-Many thanks to Emil for help with the meson build changes, and for
-integrating the project into the github build/testing infrastructure to
-give people who like using github, feedback if their changes break the
-build.
+> Personally I really like the idea to just emulate a HID LampArray device
+> for this instead or rolling our own API.  I believe there need to be
+> strong arguments to go with some alternative NIH API and I have not
+> heard such arguments yet.
 
+If you don't want "some alternative API", we already have perfectly
+working API for 2D arrays of LEDs. I believe I mentioned it before
+:-). Senzrohssre.
 
-thanks,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-greg k-h
-
-------------
-
-usbutils 018
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Aurelien Jarno (3):
-      Add a manpage for lsusb.py
-      Add lsusb.py.1 to DISTCLEANFILES
-      Add a manpage for usbreset
-
-Dominique Leuenberger (1):
-      usb-devices: fix bashism
-
-Emil Velikov (50):
-      autogen.sh: use valid email for 2024 copyright
-      README: list libudev as a requirement
-      meson: bump to libusb-1.0.22, reinstate libusb_set_option()
-      meson: set project details
-      meson: always include config.h first, use -include
-      meson: add compiler warnings to the build
-      meson: add all* CFLAGS from travis-autogen.sh
-      meson: temporary disable extra noisy warning
-      man: remove version from the manual pages
-      lsusb.py: remove inline lsusb-VERSION.py note
-      lsusb.py: remove @DATADIR@ instance
-      README: add Contributing section
-      lsusb.py: mention both usb.ids paths
-      Rename .in files to their final state
-      Update .gitignore files
-      meson: convert Wswitch-enum to Wswitch and enable
-      meson: enable commented out warnings
-      meson: add a bunch more warnings to the mix
-      travis: remove travis-ci files
-      ci: add build ci (Alpline) based on kmod's
-      ci: add Arch permutation
-      ci: add Debian permutation
-      ci: add Fedora permutation
-      ci: add Ubuntu permutation
-      ci: add codeql (static analysis) based on main.yml
-      ci: add SPDX copyright/licence identifiers
-      README: fix link, add DCO and SPDX details
-      lsusb: make internal API const-aware
-      lsusb: const annotate most data, re-enable -Wdiscarded-qualifiers
-      ci: run monthly checks by dependabot
-      meson: fold usbhid-dump/meson.build in
-      .gitmodules: remove no longer needed file
-      ci: add/update the final SPDX identifiers
-      man: move manual pages in designated sub-folder
-      ci: add reuse lint stage
-      lsusb: drop the audioterminal hash table
-      lsusb: drop the videoterminal hash table
-      lsusb: drop the genericstrtable hash tables
-      meson: re-enable some warnings
-      editorconfig: add initial config file
-      .clang-format: import from Linux kernel as of v6.11.-rc6
-      .clang-format: update for_each pattern and list
-      ci: add clang-format action
-      clang-format: bump column limit to 120
-      ci: directly use archlinux:multilib-devel
-      ci: drop the mkdir && cd dance
-      ci: add clang permutation, for 64bit only
-      lsusb: reformat and add trailing commas for multi-line arrays
-      usb-spec: move the opening curly brackets to end of line
-      ci: add codespell action, fix all typos
-
-Fabien Sanglard (1):
-      Include "negotiated speed" in device dump
-
-Greg Kroah-Hartman (31):
-      lsusb: remove autotools checks for iconv
-      lsusb: remove byteswap.h check
-      lsusb: always include config.h
-      usbutils: remove usbutils.pc
-      usbutils: convert build system to use meson
-      usbutils.spdx: update file based on recent file movements
-      lsusb: fix memory leak in libusb
-      lsusb: billboard alternate mode is in little endian format
-      README: update based on build tool changes
-      lsusb: add support to show superspeed++
-      usbhid-dump: clean up meson.build a bit
-      justfile: add one
-      meson: disable -Wswitch-enum
-      usbutils.spdx: update the SPDX file
-      README.md: update the SPDX wording a bit
-      README.md: add the linux-usb mailing list to the README.
-      LICENSE: add LGPL-2.1 license text
-      usbutils.spdx: update the data
-      update usbutils.spdx file
-      editorconfig: make the line length 120
-      clang-format: add proper copyright information
-      clang-format: fix SPDX license
-      lsusb-t: get rid of custom list.h logic
-      LICENSES: add CC0 and MIT licenses
-      lsusb-t: fix memory leak
-      justfile: add some more targets
-      usbutils.spdx: update based on file additions
-      usbutils.spdx: update due to new file and checksums
-      usbreset: replace some unbounded strcpy() calls
-      sysfs.c: fix an theoretical issue with snprintf()
-      usbutils.spdx: update checksums
-
-Kirill Furman (1):
-      usbmisc: fix possible stack-buffer-overflow Running lsusb with -D arg=
-ument and path, which len is more than PATH_MAX + 1, cause stack-buffer-ove=
-rflow because of copy to the buf a string without null-terminator Force set=
-ting 0 byte to the end of the buf fixes this error Fix #190
-
-Ronald (3):
-      update ccid descriptor dumping to V1.1 spec
-      V1.1 is actually V1.10..
-      remove one space
-
-Teresa Remmet (1):
-      usb-devices: Fix usb-devices with busybox
-
-Tomasz Mo=C5=84 (1):
-      Do not warn about missing LPM bit when not required
-
-Torleiv Sundre (1):
-      lsusb: add VideoControl Endpoint Descriptor
-
-dependabot[bot] (2):
-      ci: bump github/codeql-action in the all-actions group
-      ci: bump the all-actions group with 2 updates
-
---0Pa0djRm5uaNF5vn
+--VyjLwRGdYiDTANtH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAmcXdJwACgkQONu9yGCS
-aT7HbA/+K5Gf96VpsIjS+oE6reeK78l7vi3LidxCUNOM03f5jM9y+jXbFjZIuv5l
-0BCJNW3VbLihvQL1KEJ2TSuBkmy3r8rvyB4sw9Z4WDrEmTwnCRKyUswZhTGH32gL
-97P4NggeNgYpI0lQivAi5WWQDqoEAxj21g/LzjuznFX5HfjfZ3kyzInswBwRUK7G
-Uy+Kj0RbkSaYUSgiX8mKxy0NAAuT7lJZn6lYydZb82j7HwapA2LU6os/AYiq/hYp
-ia+kUhI1UsBbYjfEGYC7EpgyLNkDe+QpZtiUzsD76vlfxZju/ByZ5xEDjNg6tg6b
-5LIGwWjSSbjwS5lHsEjpGOw9oQvHzGc1/Re9srm47IoWDkHqdUishI9nDboNGpuR
-Y52h7OHgHTyQxRHjWkj+niwz/Pk03YUANUpEzPMf5ijU0lxVBV/TBdZYN8IL1KwW
-sKYCzpKIM17AHdnI9NJmKwuQb0dKsHrZhwoZ0MJa8E0MEq8eUlu9y5Ob2pfImgeB
-yiNhtY7BfmSCHB2Hy/QsAh9sdfEQq5YkwvToXll9RR1GeXMrZLG9zri5oirUiIJs
-hpslHxKdOjMsYOj32kZVm1XR+3cSfFe/LDKxWHA2Fneoi+eeYiQaW9w5rBjSWKBx
-zYuhEKgztfBd47ABhBH8Va5GpsDk2Qo+O0+ILeFFhS3o14R2wFg=
-=Xc57
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZxd0ogAKCRAw5/Bqldv6
+8m6sAJ0YT3KbWDAvOAdjM55GB5oXYxhp9ACdEtOhCVRhzSDt8MHjQdKfqxkRBy8=
+=9vbl
 -----END PGP SIGNATURE-----
 
---0Pa0djRm5uaNF5vn--
+--VyjLwRGdYiDTANtH--
 
