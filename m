@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-377071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C0B9AB97F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAE79AB984
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EBD1F23C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96BBF1C2279B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1871CEAA6;
-	Tue, 22 Oct 2024 22:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4EE1CDA31;
+	Tue, 22 Oct 2024 22:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BDLf7UPk"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgSt4Lny"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A901A0BCF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0EC19E810;
+	Tue, 22 Oct 2024 22:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636262; cv=none; b=cD3MzGUyMBKP7u1LCvuwWFoum+DP+ZB0nPXzhmegsrEiCcb7hXZoTD5jtrCHp+5MZyczGIjP2n4tkhJsR9Gy4N+8t5MQifJDL+cCyYNYDXi6ZwAiDz39ohVfEP/QOdUkdojnxqrcP1rlXtKIbLCJgWvVa9uJhy1nA5m1ABIXTKo=
+	t=1729636296; cv=none; b=ewmyxMUQxjYyxWcheYhs5ffukrP7G5Fp9LADHF8ZOmSYVdBsEkuWaK0NM14o0AGoUSU0s+CQnc/HpOa14YWG92WD2xJWZJOp0gsDNPf0s4NDT1Pz+PA2w7jRNdCbFCZrauT8QchiWK60YXTQYxWCh8OlAS+pVmUdSJf1fD981Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636262; c=relaxed/simple;
-	bh=GbpHqXO70UymoofiYbfPzNeoxpUmCo/eXHSBvHQo9Us=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sYnWetw8TevOgJvzutScMWuiyjW+y99tKvRBeF+4wcCgEbemAHdBvJVXWNXe0weeLVP3L3YQBhUluJ3wsHkFZPWjIMmLGjbx4wX3aqTRdJpmR1+axhuXpNKJA7sb5hFPvntnpnsDhwBmBXVq6uYj/nRkRX7aTdl+WwXFUb8ZEHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BDLf7UPk; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e389169f92so109921277b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729636259; x=1730241059; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOqBWZrZXtWTTpPGYoMu4m/4ZnTX0L7qg4xRYMuF1qk=;
-        b=BDLf7UPk7OtTKkXNIkxKUumrI8NqSiSLJYBMmASrd70UQ+qZeNd5/0Aa2zx3EjqiCX
-         wTX0mtJUuQGb4tvkG/N+5U5WecFmkAYs9/KQUHDv8DpD05cPKUa8hzF9na2SZSU/vA9K
-         1BS9f5gHj9RVhiby/LVW026pdMVMV/UXcVEZtburigCzlrRwDGDkAbRWJ5yQArobUAl3
-         rxRX3nL7bNwSkz3S1rDdD1O5QnrXzBcVQnEWNHJeurBqOUNGwYUR3+WNui24WLpNKdhJ
-         drOIKwEG5nw05m9O/HWfochZdKWiJ8OEz4icl3Blm+PEy+0A8qDTS8z9YM97umD0M86N
-         YkRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729636259; x=1730241059;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOqBWZrZXtWTTpPGYoMu4m/4ZnTX0L7qg4xRYMuF1qk=;
-        b=omaDljRWmwO5JNJ2T4jdIo49t4I01UmLBo5mDIQaxI6UIhTwPNw3to2xXnbBPFafrh
-         1Z3K2KLaIcnHzojb4ml47RCX1HDDgZ5/NQc+4cS/x45cWKaZd/IZB04B4nr8nXwHStBU
-         zucdZ8DaN8X0vtBS/FQSoQ6Bt/3H2JKzBcOKLceaAjJqUapN7LPN0c0KPkE7w4hRW9Kj
-         PBgZaDHoaR5ekrmYDhIeJOi6AaXx7iP8YSzZf1d11XMn6t6bhp8teKxkb5JxIGEMKgfg
-         HZNH+GCV3+pOoqupM8FgrvfQ0pfWHhDlDCHrI8jq7k9Q6gEwGMvsN4ELZp8iIlL9U5he
-         W/8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWEPu7qessyZDlzwyFxIIyZtmtl2voLr9e2UR+CwE2gGAHyuDuGazwRr11diTMpbu3GZOwSH0GwpAJjx/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNWoSFtDPRDK3a/onW1Yoeo7KcIlEEDoUaORKOmonZ13y4VLIN
-	6UHhFnu4wXUE8t3wsn1TLJH30lchm/F+2yIFHeueJSrq0XmKd3kwULa6EyKOXZdYcOyG+jbNhUx
-	dpw==
-X-Google-Smtp-Source: AGHT+IGcqbY82rYWFSyzU4sD78yuqoJ/yG31UhWaIGXmch+HUW0FApvVNi4wRoSd0uA0A0VOd4tLZ9MP+V4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6485:b0:6e3:da91:3e17 with SMTP id
- 00721157ae682-6e7f0db3b18mr232037b3.2.1729636259303; Tue, 22 Oct 2024
- 15:30:59 -0700 (PDT)
-Date: Tue, 22 Oct 2024 15:30:57 -0700
-In-Reply-To: <2a8e6f2c-4284-4218-9b91-af6a4d65e982@intel.com>
+	s=arc-20240116; t=1729636296; c=relaxed/simple;
+	bh=jb6n/Hf6W94zrY5Vg/sXsWIEdSYA1Ugqf2Bk4yWaXq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqm8lFmDEe0mn/0MU/O3Q+ZQzyCobVjpaHHJxWKo4+ncvSAG0SX8K7+3u6KhJy9qlr8LaeXoAvyhZXOpmYDjfHpkhZamh/Panmp1R19J0mckBbO3XcCnA7O0Qxv7JGvh+qoWo4y1/NtirvQ5Cy2pkPN/aIVGDsrwcs/DDyqaICA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgSt4Lny; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE82DC4CEC3;
+	Tue, 22 Oct 2024 22:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729636295;
+	bh=jb6n/Hf6W94zrY5Vg/sXsWIEdSYA1Ugqf2Bk4yWaXq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RgSt4LnyX6ZooatLF4ZAEURWQWgCQf0R+SvHp2Rkcqk4a0j68XMOUjAvaUu3YrxyN
+	 LqyGtQL+njuQpS//gqf3UUF2f+CTcECRgrqb4TB+WQK35ctE1yYEp+9MJnwp3Ro0pI
+	 mpwSRdNrCRWsm2DXxBGRaHZ1KiNI4JNxvTxil+FprUMEqL3ftZYkj7jZJaRVIYQzMA
+	 8QSkoJIvulcFR06R3AZIbDfVzQs5Mdwgd0/kVbRMyvL48GokmUmG0qllP6WTkMk/hN
+	 Ib3i1a7YJGsIucYVM1J4KHP2SJ8+VCA+gPPGoph8YbLh9jOwoYtZWZxkTSb8MwwUii
+	 1FIN1+sBvU/ag==
+Date: Tue, 22 Oct 2024 17:31:32 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: Update sleep_clk frequency to
+ 32000 on SA8775P
+Message-ID: <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
+References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
+ <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241014105124.24473-1-adrian.hunter@intel.com>
- <20241014105124.24473-4-adrian.hunter@intel.com> <Zw1iCMNSI4Lc0mSG@google.com>
- <b29e8ba4-5893-4ca0-b2cc-55d95f2fc968@intel.com> <ZxfTOQzcXTBEiXMG@google.com>
- <2a8e6f2c-4284-4218-9b91-af6a4d65e982@intel.com>
-Message-ID: <ZxgnoTKt2IBnBBJ2@google.com>
-Subject: Re: [PATCH V13 03/14] KVM: x86: Fix Intel PT Host/Guest mode when
- host tracing also
-From: Sean Christopherson <seanjc@google.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Hendrik Brueckner <brueckner@linux.ibm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@arm.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, Yicong Yang <yangyicong@hisilicon.com>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon <will@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, H Peter Anvin <hpa@zytor.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, mizhang@google.com, 
-	kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
 
-On Tue, Oct 22, 2024, Adrian Hunter wrote:
-> On 22/10/24 19:30, Sean Christopherson wrote:
-> >>> LOL, yeah, this needs to be burned with fire.  It's wildly broken.  So for stable@,
-> >>
-> >> It doesn't seem wildly broken.  Just the VMM passing invalid CPUID
-> >> and KVM not validating it.
-> > 
-> > Heh, I agree with "just", but unfortunately "just ... not validating" a large
-> > swath of userspace inputs is pretty widly broken.  More importantly, it's not
-> > easy to fix.  E.g. KVM could require the inputs to exactly match hardware, but
-> > that creates an ABI that I'm not entirely sure is desirable in the long term.
+On Fri, Oct 11, 2024 at 12:28:37AM GMT, Taniya Das wrote:
+> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+> update the sleep_clk frequency with the correct value on SA8775P.
 > 
-> Although the CPUID ABI does not really change.  KVM does not support
-> emulating Intel PT, so accepting CPUID that the hardware cannot support
-> seems like a bit of a lie.
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 
-But it's not all or nothing, e.g. KVM should support exposing fewer address ranges
-than are supported by hardware, so that the same virtual CPU model can be run on
-different generations of hardware.
+It's generally expected that bug fixes are sent first in patch series,
+but perhaps it's fine as this is the first DT-patch in the series.
 
-> Aren't there other features that KVM does not support if the hardware support
-> is not there?
+That said, the only relationship between this patch and the rest of this
+series is...you. There's no reason for sending this together with the
+multimedia clock drivers.
 
-Many.  But either features are one-off things without configurable properties,
-or KVM does the right thing (usually).  E.g. nested virtualization heavily relies
-on hardware, and has a plethora of knobs, but KVM (usually) honors and validates
-the configuration provided by userspace.
 
-> To some degree, a testing and debugging feature does not have to be
-> available in 100% of cases because it can still be useful when it is
-> available.
+Further, the patch subject doesn't match the expected format. It's too
+long (not a summary) and it doesn't have the expected subject prefix for
+changes to this file.
 
-I don't disagree, but "works on my machine" is how KVM has gotten into so many
-messes with such features.  I also don't necessarily disagree with supporting a
-very limited subset of use cases, but I want such support to come as well-defined
-package with proper guard rails, docs, and ideally tests.
+Please correct this.
 
-> >>> I'll post a patch to hide the module param if CONFIG_BROKEN=n (and will omit
-> >>> stable@ for the previous patch).
-> >>>
-> >>> Going forward, if someone actually cares about virtualizing PT enough to want to
-> >>> fix KVM's mess, then they can put in the effort to fix all the bugs, write all
-> >>> the tests, and in general clean up the implementation to meet KVM's current
-> >>> standards.  E.g. KVM usage of intel_pt_validate_cap() instead of KVM's guest CPUID
-> >>> and capabilities infrastructure needs to go.
-> >>
-> >> The problem below seems to be caused by not validating against the *host*
-> >> CPUID.  KVM's CPUID information seems to be invalid.
-> > 
-> > Yes.
-> > 
-> >>> My vote is to queue the current code for removal, and revisit support after the
-> >>> mediated PMU has landed.  Because I don't see any point in supporting Intel PT
-> >>> without a mediated PMU, as host/guest mode really only makes sense if the entire
-> >>> PMU is being handed over to the guest.
-> >>
-> >> Why?
-> > 
-> > To simplify the implementation, and because I don't see how virtualizing Intel PT
-> > without also enabling the mediated PMU makes any sense.
-> > 
-> > Conceptually, KVM's PT implementation is very, very similar to the mediated PMU.
-> > They both effectively give the guest control of hardware when the vCPU starts
-> > running, and take back control when the vCPU stops running.
-> > 
-> > If KVM allows Intel PT without the mediated PMU, then KVM and perf have to support
-> > two separate implementations for the same model.  If virtualizing Intel PT is
-> > allowed if and only if the mediated PMU is enabled, then .handle_intel_pt_intr()
-> > goes away.  And on the flip side, it becomes super obvious that host usage of
-> > Intel PT needs to be mutually exclusive with the mediated PMU.
+Regards,
+Bjorn
+
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> And forgo being able to trace mediated passthough with Intel PT ;-)
-
-It can't work, generally.  Anything that generates a ToPA PMI will go sideways.
-In the worst case scenario, the spurious PMI could crash the guest.
-
-And when the mediated PMU supports PEBS, that would likely break too.
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 0c1b21def4b62cc65a693552983ec0bc7eec697d..adb71aeff339b564eb3acc42a38bba2f03507508 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -517,7 +517,7 @@ &serdes1 {
+>  };
+>  
+>  &sleep_clk {
+> -	clock-frequency = <32764>;
+> +	clock-frequency = <32000>;
+>  };
+>  
+>  &spi16 {
+> 
+> -- 
+> 2.45.2
+> 
 
