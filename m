@@ -1,177 +1,252 @@
-Return-Path: <linux-kernel+bounces-376867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588AC9AB6DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BB79AB6DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1581B284438
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98F62846E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759AA1CBE84;
-	Tue, 22 Oct 2024 19:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136A31CCB4F;
+	Tue, 22 Oct 2024 19:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIx8QETA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SW6jM7Ol"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53B71CB534;
-	Tue, 22 Oct 2024 19:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5BF19EED0;
+	Tue, 22 Oct 2024 19:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729625468; cv=none; b=QPLEh8YVHFjWrPn2qFezDuDEbivtcg+oJte9yr+RjZx8JhgCuMYweCb0MAR1BLtgBcTmEbb3WAwCDlC1SShES4WS0r/R5RH4VvpP7f3hULacwhTD+4df6dQGyFuz6Aao+/x1xPTgpp8lkv4ehwKqvnPTlRRdYLDjcaPYM1fWr9I=
+	t=1729625482; cv=none; b=tBKHg1gT0xsmcyHNpDOW8bEioNXyAdrO3JCRaXeDG9JYx6WG3HVM6/OrXCqAdFjKvZgWmMYHkPGdUFU/IZOyNsAgVUXWkClSCyxnb05j1m1SyB4XrzwDRkv995DOf8c0/BFMcqpDMf76ygdXGnPtBG8w7CjVHBiUgEmCTCEiGaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729625468; c=relaxed/simple;
-	bh=I96gy9L2CueZ1inOdskqZYTcTAN8yiQLuBuZyuhO8bU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fH7fozmksIrrgvKaJ5E7d5fhV++RBCNEq6D81HK39c14hX0izFXBX9guG2iD+K36rIKjbMCbycEbJfpdpi617WdLlZTBS9208zL5JIJ/d/m9/xoPq9nmhIF8pfBFCOI6XMU5ego8ThTAEe6x4dm/5I0WSCS6SQXp6/Umf7HXTHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIx8QETA; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1729625482; c=relaxed/simple;
+	bh=1dT2jJaCjhu9+xr53oY4OlmfMB8jPqfWipDC5gxKAtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dd7jebuJqUPfHKLKSLjicsMd/VvH5htluJ+4cjLtjkbgIiI4w5H76RD7Sl5wPgVBLY3HaHGHSC8Du6MGcSukbYcjCcLyWWu7sQYAYo0vBHpKa91vqyFzilCFqCSeqr7aiwT4De20ePoVaQ9FHEEiKDvE+F0InI5GpQKQFydF7yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SW6jM7Ol; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729625466; x=1761161466;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I96gy9L2CueZ1inOdskqZYTcTAN8yiQLuBuZyuhO8bU=;
-  b=CIx8QETAh1ixsce63wTxkx7dgsD1NQycVzTx9FaSPt9UyhE34Dd9YzNT
-   EWNxhXOAnbVMpjSulNFLRVAMmjFQN8etgbbFvc5UrczuQlTc5mY5qmLwx
-   fJuDqJug2BRPJt85plb20puR1+lzj4cG86vOgGM4KACDPusoHmxejb3ap
-   p5zCUtUg3imODz5Wfnwhbq+f1b+W/SH9QtkaA1bV4MeaTIbKxcVSGI/6t
-   NXCIsBA/cz+edwiNwud2izxqD5N+l6nC+zTqL7bwO8Jhgpkvy1cxkkeou
-   wk6qa0hlPAbm6UpkVN9aYw1qDEZaNg2q+dvB5VvGDS7fg78bIzgAp/TA7
+  t=1729625481; x=1761161481;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1dT2jJaCjhu9+xr53oY4OlmfMB8jPqfWipDC5gxKAtI=;
+  b=SW6jM7Ol0cbPyX5pleBFFI8MVeodSXVb2Cx6JY9msG1LHuUfAn+sFjQv
+   RDah+32KJb88grEphEIZY+AiZeOAJXvN2NALpcNA/cSdZt+Enb8in6bHu
+   oxkqs3pwNhqT+7EGl1wahcF0phYaUlSu7U8LLQ63Zy0MN8aXHdhTKE5ge
+   9uRQct+DTngtdLLHtgP26esp8mO8kK2LwoohfcCalEFcbyg7ZBT1RsVkw
+   SlHfKhY9f3H/uQsiiclnwelXzKqk/LdAu1JAYCTysWSXyFCTqogIAONHx
+   WEGoew7isWA+hhayZdhLVSwvfUu7tWcsbfgtUan0QlElT5DD6LmSnQ1cb
    w==;
-X-CSE-ConnectionGUID: LUY8dnnsTsGF5vXTbHTv8Q==
-X-CSE-MsgGUID: HM9BVib4TJ+U+YoagLXqCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29077405"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="29077405"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 12:31:06 -0700
-X-CSE-ConnectionGUID: K93RX3e4SKSLbeqw2r8gJA==
-X-CSE-MsgGUID: l+lO5qg7TimnUo6kutzWnw==
+X-CSE-ConnectionGUID: i8qiTTMWRaOSpQuR8WaKlA==
+X-CSE-MsgGUID: mbyOPUQsSHOPt9LGeBxZyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40307870"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40307870"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 12:31:18 -0700
+X-CSE-ConnectionGUID: gJ2/MQknTLC8VZHvb2HBYg==
+X-CSE-MsgGUID: AvRxGY7XQAqoUWQ6JunKCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="84759781"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 22 Oct 2024 12:30:59 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3Kan-000U0a-2E;
-	Tue, 22 Oct 2024 19:30:57 +0000
-Date: Wed, 23 Oct 2024 03:30:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 1/4] PCI: dwc: ep: Add bus_addr_base for outbound
- window
-Message-ID: <202410230325.DxAdrnbW-lkp@intel.com>
-References: <20241021-pcie_ep_range-v3-1-b13526eb0089@nxp.com>
+   d="scan'208";a="80148851"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 12:31:07 -0700
+Message-ID: <2a8e6f2c-4284-4218-9b91-af6a4d65e982@intel.com>
+Date: Tue, 22 Oct 2024 22:31:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-pcie_ep_range-v3-1-b13526eb0089@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V13 03/14] KVM: x86: Fix Intel PT Host/Guest mode when
+ host tracing also
+To: Sean Christopherson <seanjc@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini
+ <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Hendrik Brueckner <brueckner@linux.ibm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
+ <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ H Peter Anvin <hpa@zytor.com>, Kan Liang <kan.liang@linux.intel.com>,
+ Zhenyu Wang <zhenyuw@linux.intel.com>, mizhang@google.com,
+ kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20241014105124.24473-1-adrian.hunter@intel.com>
+ <20241014105124.24473-4-adrian.hunter@intel.com>
+ <Zw1iCMNSI4Lc0mSG@google.com>
+ <b29e8ba4-5893-4ca0-b2cc-55d95f2fc968@intel.com>
+ <ZxfTOQzcXTBEiXMG@google.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <ZxfTOQzcXTBEiXMG@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Frank,
+On 22/10/24 19:30, Sean Christopherson wrote:
+> On Tue, Oct 22, 2024, Adrian Hunter wrote:
+>> On 14/10/24 21:25, Sean Christopherson wrote:
+>>>> Fixes: 2ef444f1600b ("KVM: x86: Add Intel PT context switch for each vcpu")
+>>>> Cc: stable@vger.kernel.org
+>>>
+>>> This is way, way too big for stable@.  Given that host/guest mode is disabled by
+>>> default and that no one has complained about this, I think it's safe to say that
+>>> unless we can provide a minimal patch, fixing this in LTS kernels isn't a priority.
+>>>
+>>> Alternatively, I'm tempted to simply drop support for host/guest mode.  It clearly
+>>> hasn't been well tested, and given the lack of bug reports, likely doesn't have
+>>> many, if any, users.  And I'm guessing the overhead needed to context switch all
+>>> the RTIT MSRs makes tracing in the guest relatively useless.
+>>
+>> As a control flow trace, it is not affected by context switch overhead.
+> 
+> Out of curiosity, how much is Intel PT used purely for control flow tracing, i.e.
+> without caring _at all_ about perceived execution time?
 
-kernel test robot noticed the following build errors:
+It can be used to try to understand how code went wrong.
 
-[auto build test ERROR on afb15ca28055352101286046c1f9f01fdaa1ace1]
+But timestamps would still indicate what was happening on different VCPUs
+at about the same time.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/PCI-dwc-ep-Add-bus_addr_base-for-outbound-window/20241022-041043
-base:   afb15ca28055352101286046c1f9f01fdaa1ace1
-patch link:    https://lore.kernel.org/r/20241021-pcie_ep_range-v3-1-b13526eb0089%40nxp.com
-patch subject: [PATCH v3 1/4] PCI: dwc: ep: Add bus_addr_base for outbound window
-config: i386-buildonly-randconfig-002-20241023 (https://download.01.org/0day-ci/archive/20241023/202410230325.DxAdrnbW-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241023/202410230325.DxAdrnbW-lkp@intel.com/reproduce)
+> 
+>> Intel PT timestamps are also not affected by that.
+> 
+> Timestamps are affected because the guest will see inexplicable jumps in time.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410230325.DxAdrnbW-lkp@intel.com/
+Tracing a task on the host sees jumps in time for scheduler
+context switches anyway.
 
-All errors (new ones prefixed by >>):
+> Those gaps are unavoidable to some degree, but context switching on every entry
+> and exit is 
+> 
+>> This patch reduces the MSR switching.
+> 
+> To be clear, I'm not objecting to any of the ideas in this patch, I'm "objecting"
+> to trying to put band-aids on KVM's existing implementation, which is clearly
+> buggy and, like far too many PMU-ish features in KVM, was probably developed
+> without any thought as to how it would affect use cases beyond the host admin
+> and the VM owner being a single person.  And I'm also objecting, vehemently, to
+> sending anything of this magnitude and complexity to LTS kernels.
 
->> drivers/pci/controller/dwc/pcie-designware-ep.c:885:35: error: incompatible pointer types passing 'phys_addr_t *' (aka 'unsigned int *') to parameter of type 'u64 *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
-     885 |                 of_property_read_reg(np, index, &ep->bus_addr_base, NULL);
-         |                                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/of_address.h:75:64: note: passing argument to parameter 'addr' here
-      75 | int of_property_read_reg(struct device_node *np, int idx, u64 *addr, u64 *size);
-         |                                                                ^
-   1 error generated.
+That's your call for sure.
 
+> 
+>>> /me fiddles around
+>>>
+>>> LOL, yeah, this needs to be burned with fire.  It's wildly broken.  So for stable@,
+>>
+>> It doesn't seem wildly broken.  Just the VMM passing invalid CPUID
+>> and KVM not validating it.
+> 
+> Heh, I agree with "just", but unfortunately "just ... not validating" a large
+> swath of userspace inputs is pretty widly broken.  More importantly, it's not
+> easy to fix.  E.g. KVM could require the inputs to exactly match hardware, but
+> that creates an ABI that I'm not entirely sure is desirable in the long term.
 
-vim +885 drivers/pci/controller/dwc/pcie-designware-ep.c
+Although the CPUID ABI does not really change.  KVM does not support
+emulating Intel PT, so accepting CPUID that the hardware cannot support
+seems like a bit of a lie.  Aren't there other features that KVM does not
+support if the hardware support is not there?
 
-   846	
-   847	/**
-   848	 * dw_pcie_ep_init - Initialize the endpoint device
-   849	 * @ep: DWC EP device
-   850	 *
-   851	 * Initialize the endpoint device. Allocate resources and create the EPC
-   852	 * device with the endpoint framework.
-   853	 *
-   854	 * Return: 0 if success, errno otherwise.
-   855	 */
-   856	int dw_pcie_ep_init(struct dw_pcie_ep *ep)
-   857	{
-   858		int ret;
-   859		struct resource *res;
-   860		struct pci_epc *epc;
-   861		struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-   862		struct device *dev = pci->dev;
-   863		struct platform_device *pdev = to_platform_device(dev);
-   864		struct device_node *np = dev->of_node;
-   865		int index;
-   866	
-   867		INIT_LIST_HEAD(&ep->func_list);
-   868	
-   869		ret = dw_pcie_get_resources(pci);
-   870		if (ret)
-   871			return ret;
-   872	
-   873		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-   874		if (!res)
-   875			return -EINVAL;
-   876	
-   877		ep->phys_base = res->start;
-   878		ep->bus_addr_base = ep->phys_base;
-   879	
-   880		if (pci->using_dtbus_info) {
-   881			index = of_property_match_string(np, "reg-names", "addr_space");
-   882			if (index < 0)
-   883				return -EINVAL;
-   884	
- > 885			of_property_read_reg(np, index, &ep->bus_addr_base, NULL);
+To some degree, a testing and debugging feature does not have to be
+available in 100% of cases because it can still be useful when it is
+available.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>>> I'll post a patch to hide the module param if CONFIG_BROKEN=n (and will omit
+>>> stable@ for the previous patch).
+>>>
+>>> Going forward, if someone actually cares about virtualizing PT enough to want to
+>>> fix KVM's mess, then they can put in the effort to fix all the bugs, write all
+>>> the tests, and in general clean up the implementation to meet KVM's current
+>>> standards.  E.g. KVM usage of intel_pt_validate_cap() instead of KVM's guest CPUID
+>>> and capabilities infrastructure needs to go.
+>>
+>> The problem below seems to be caused by not validating against the *host*
+>> CPUID.  KVM's CPUID information seems to be invalid.
+> 
+> Yes.
+> 
+>>> My vote is to queue the current code for removal, and revisit support after the
+>>> mediated PMU has landed.  Because I don't see any point in supporting Intel PT
+>>> without a mediated PMU, as host/guest mode really only makes sense if the entire
+>>> PMU is being handed over to the guest.
+>>
+>> Why?
+> 
+> To simplify the implementation, and because I don't see how virtualizing Intel PT
+> without also enabling the mediated PMU makes any sense.
+> 
+> Conceptually, KVM's PT implementation is very, very similar to the mediated PMU.
+> They both effectively give the guest control of hardware when the vCPU starts
+> running, and take back control when the vCPU stops running.
+> 
+> If KVM allows Intel PT without the mediated PMU, then KVM and perf have to support
+> two separate implementations for the same model.  If virtualizing Intel PT is
+> allowed if and only if the mediated PMU is enabled, then .handle_intel_pt_intr()
+> goes away.  And on the flip side, it becomes super obvious that host usage of
+> Intel PT needs to be mutually exclusive with the mediated PMU.
+
+And forgo being able to trace mediated passthough with Intel PT ;-)
+
+> 
+>> Intel PT PMU is programmed separately from the x86 PMU.
+> 
+> Except for the minor detail that Intel PT generates PMIs, and that PEBS can log
+> to PT buffers.  Oh, and giving the guest control of the PMU means host usage of
+> Intel PT will break the host *and* guest.  The host won't get PMIs, while the
+> guest will see spurious PMIs.
+
+Yes the PMI is in conflict if it is not also a VM-Exit
+
+Note that Intel PT does have a snapshot mode that doesn't use a PMI.
+Trace data continuously overwrites the ring buffer until the user asks
+for a snapshot.
+
+> 
+> So I don't see any reason to try to separate the two.
+
+OK
+
+> 
+>>> [ 1458.686107] ------------[ cut here ]------------
+>>> [ 1458.690766] Invalid MSR 588, please adapt vmx_possible_passthrough_msrs[]
+>>
+>> VMM is trying to set a non-existent MSR.  Looks like it has
+>> decided there are more PT address filter MSRs that are architecturally
+>> possible.
+>>
+>> I had no idea QEMU was so broken.  
+> 
+> It's not QEMU that's broken, it's KVM that's broken.  
+> 
+>> I always just use -cpu host.
+> 
+> Yes, and that's exactly the problem.  The only people that have ever touched this
+> likely only ever use `-cpu host`, and so KVM's flaws have gone unnoticed.
+> 
+>> What were you setting?
+> 
+> I tweaked your selftest to feed KVM garbage.
+
 
