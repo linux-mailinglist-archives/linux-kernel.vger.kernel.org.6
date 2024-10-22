@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-377136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036269ABA43
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1239ABA46
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88ED9B22D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BABE1C229FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998BE1CEEA7;
-	Tue, 22 Oct 2024 23:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F0E1CEEAB;
+	Tue, 22 Oct 2024 23:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcP08QOd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpIho9le"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7291CDFC8;
-	Tue, 22 Oct 2024 23:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F91BD50D;
+	Tue, 22 Oct 2024 23:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729641279; cv=none; b=m0mhCk4B+5VGymUUL4fhJslfZ6x0JDzhTPNRZ0r8vCHXqQ1xuUx6JijSlMQChIAVwv+IU06AeW0OBKr1bWvrUrQPkNzE4JOnxANoojnAvXUQMwLUtIPK6n7GdaG5Gt8xFi1QrdRWdNvot18sB+xdLB3ZGMoveuGbO3qyf7X5j08=
+	t=1729641375; cv=none; b=B/n2dBwd77L8BNCG6oyrIxpI8AbVGi/kx3dPZ9j/tSU6+gbYu0B+zUYkaDKT6B/h3bFkaEr6A/JeSvC+PbhHlgHXj5uYKv3F6Esdg+IgKvPE+JkjddQkpT7sVYU6GAeWXS0BacIXsKf4y/QGRldMCWIxulEkryslvWdVUjd8XTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729641279; c=relaxed/simple;
-	bh=oaIE2+YTrWvXAsSPmtB6UaYr/m5HRh9uVimWLPJIWbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgMt8m6EQRMfVOKFvz/nluoVxyv+47TNlXLL2lk7OjLHDoyCM1Pzjf0s1Q5ARc0g0SqithFQOMcxr8RQXo+DhUqaGb7MTmSpgmCK52r56FceZEQuOcSIG6806MMgY/eDJ8DRksmoCbRJDT+2S6eutgEFAeH6XOBdS13NjsDsOQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcP08QOd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE47C4CEC3;
-	Tue, 22 Oct 2024 23:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729641278;
-	bh=oaIE2+YTrWvXAsSPmtB6UaYr/m5HRh9uVimWLPJIWbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OcP08QOd87Jy4tqgzPcNQocfXaI6m5TKxJNdb5sUJEs2hBqci6oE7PC37bJtiGHBf
-	 4lny/crMdrWIc4rqRi6Il59V9bleDxhAguDXyxBWPdzW6gCgTPocjKxeTVpTUkeUjA
-	 /sTNYStvRk5Zz0f2BAUmvyxNml+Y5gmSJQyb6Pqccfz3eitEPDmJaiSA5con76HtKe
-	 lDzmWouRZit3+xkszrnRVC6nBK+Oyy0vnEfJblWq7UiGzp5A5fcyFQiPoIxHaao4ZW
-	 Kd6X2dVd6TxxWGtGpyq0dbA0fH2ifRkzu4QEcrPfaa2w0+0hyWNtBoRA9MtwTfPlia
-	 zr02eR09wWRWQ==
-Date: Tue, 22 Oct 2024 18:54:35 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
-Cc: krzk+dt@kernel.org, quic_krichai@quicinc.com, 
-	quic_vbadigan@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: qcom: sa8775p: Update iommu-map entry
-Message-ID: <ndu3y3dk2zvezqqhczry24arai5gk6rqlghznxru3zcxevnmrc@jjrff25gzjq3>
-References: <20241008121755.1174730-1-quic_skananth@quicinc.com>
- <70c2e4c0-aa5a-4d61-9b12-ee7cc5106ead@quicinc.com>
+	s=arc-20240116; t=1729641375; c=relaxed/simple;
+	bh=e2hAaQM0XX6PjQAwxGQKXiU/PpBnZNCFNDfx+tjBkCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qswZhvgXwFx06Ph9HQlLOtyM+Ip+HOxWYzgY8sKjFnKrQWa/0A3ToB8+5YVBW57dq9nOh9L8t6TF3Ivu9yl60AEffBp0JGgj2jdgVce7ecafhJoGNZTd3JhFZhd+D8tp3ftGok4v/4o0jYYtSEyjwTufzc5bD5eR+SyF7yBL2z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpIho9le; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e5e5c43497so28148027b3.3;
+        Tue, 22 Oct 2024 16:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729641373; x=1730246173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nCQfmesisgkdQENbkAFngac7Vdn97CRauegzzavyEn8=;
+        b=dpIho9leI2pjNcIR83t/jrAG4pVphsu4tnRrzOs/aPWak5ztg06X22JV6+JStVS74o
+         zllTXbp+tizGVZWnWCd3/yxZaICN9oxHjRay3keRiGNv4vykiHkggbPP/QUBla9KbDwi
+         Y436Sg8dtH4fukk3nujDV1Ijfwv8Tqy+pHG6T+P3oQQ1VxsoZJA31Bt4PLrBqqNr0Mk+
+         eArRSH4zYYSYz8xiPHzvcNSyWU/LDUm5vVQ4UQHs8H4nduFBK05lSA1uFZ6wS6LkRjh1
+         c1F2PQEZjeOUOJkxpXEWyYlTqLS6j/hQi5ff7Pw3gy4zP9OajLZYC7tOHZS9QaCyV41K
+         Mmiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729641373; x=1730246173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nCQfmesisgkdQENbkAFngac7Vdn97CRauegzzavyEn8=;
+        b=i9siBJmU0MvouNZm9yj2hNeTO+K3+tmZcBj+GBcEU6Hydm2K/xFBA6e92BvLrk2RqS
+         Sq2itO5+442SBYXpvSjYLg+cXani+N+NmMuMmwuhyAGVb9KpyOCBu3k7gDhevXl/MYpB
+         kuVNNFThlmcVfvWQtcr6/MzRYSpkgou0C1Lu1NcToICp8wHhN6J/fAQXeXB4LUi5pQ0r
+         CxYjJGj+oD6g/b6UcnjNuvUPaDBpRFBDBBU9rksvu/5BTB1vZwQetF8abZq2kcUSpwla
+         AAVNol2HnIfa9b6q/JdGVF9HCvIo6r4pJHZBDO9IJ+EvWWmMt6H5SA/20daW8C4p0FTS
+         GEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH+w7bbK0jcOFwVTUzmBvuXyGaf/vleAauw2wZJX09kFp5TMd3zrvkgqs7GxURWNaA0FSOeeWdOIRxmYfR@vger.kernel.org, AJvYcCW8qWRjqtWVa2WRnv1NioCQ01tI/N3exaHFt4Hd0AB4d12uprThZyRqFgB556U2fHCpFIck8H2S+qEXTc4y0ER359kxI4WC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE9fl+7oyOa1kyII7siO6vYZE0OsnYHwo9+J9lvDIzzxUt1SNK
+	UmTJKCGDG8qDmLbGuj5BfEafi956YizDSP7DAt5JvcjX30XdNs54VLcA1zecnu+AMSsoMasoOwV
+	W+d6b6em/r5RNzvaqUbzVtFXXmjs=
+X-Google-Smtp-Source: AGHT+IEN/G2bT/7jBH2AxNMZ5hUtZocZ3uvl5liobuvYVI5bWSIKgcmMHAlkt5rev48ra2x7D2iMq8QnP7XCqnvIoxk=
+X-Received: by 2002:a05:690c:62c5:b0:6e5:aaf7:68d0 with SMTP id
+ 00721157ae682-6e7f0e3fffamr9118637b3.18.1729641372712; Tue, 22 Oct 2024
+ 16:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70c2e4c0-aa5a-4d61-9b12-ee7cc5106ead@quicinc.com>
+References: <20241002142516.110567-1-luca.boccassi@gmail.com>
+ <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
+ <CAMw=ZnSkm1U-gBEy9MBbjo2gP2+WHV2LyCsKmwYu2cUJqSUeXg@mail.gmail.com>
+ <CAHC9VhRY81Wp-=jC6-G=6y4e=TSe-dznO=j87i-i+t6GVq4m3w@mail.gmail.com> <5fe2d1fea417a2b0a28193d5641ab8144a4df9a5.camel@gmail.com>
+In-Reply-To: <5fe2d1fea417a2b0a28193d5641ab8144a4df9a5.camel@gmail.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Wed, 23 Oct 2024 00:56:01 +0100
+Message-ID: <CAMw=ZnSz8irtte09duVxGjmWRJq-cp=VYSzt6YHgYrvbSEzVDw@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 05:55:27PM GMT, Subramanian Ananthanarayanan wrote:
-> 
-> On 10/8/2024 5:47 PM, Subramanian Ananthanarayanan wrote:
-> > SA8775P has only support for SMMU v2, due to this PCIe has limited
-> > SID entries to enable dynamic IOMMU mapping in the driver, hence
-> > we are updating static entries.
-> > 
-> > iommu-map entries are added to support more PCIe device like switch
-> > attach, SRIOV capable devices. These entries are specific to this
-> > board as topology of PCIe devices can vary based on the end usecase
-> > connected via PCIe. For other board files, these entries may
-> > not be directly applicable.
-> > 
-> > Signed-off-by: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
-> > ---
-> > Changes in V2:
-> > 	- Updated commit message.
-> 
-> forgot to add link to v1 : https://lore.kernel.org/lkml/20241001114601.1097618-1-quic_skananth@quicinc.com/
-> 
+On Wed, 23 Oct 2024 at 00:45, <luca.boccassi@gmail.com> wrote:
+>
+> On Sat, 5 Oct 2024 at 17:06, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Fri, Oct 4, 2024 at 2:48=E2=80=AFPM Luca Boccassi <luca.boccassi@gma=
+il.com> wrote:
+> > > On Wed, 2 Oct 2024 at 15:48, Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Wed, Oct 2, 2024 at 10:25=E2=80=AFAM <luca.boccassi@gmail.com> w=
+rote:
+> >
+> > ...
+> >
+> > > > [NOTE: please CC the LSM list on changes like this]
+> > > >
+> > > > Thanks Luca :)
+> > > >
+> > > > With the addition of the LSM syscalls we've created a lsm_ctx struc=
+t
+> > > > (see include/uapi/linux/lsm.h) that properly supports multiple LSMs=
+.
+> > > > The original char ptr "secctx" approach worked back when only a sin=
+gle
+> > > > LSM was supported at any given time, but now that multiple LSMs are
+> > > > supported we need something richer, and it would be good to use thi=
+s
+> > > > new struct in any new userspace API.
+> > > >
+> > > > See the lsm_get_self_attr(2) syscall for an example (defined in
+> > > > security/lsm_syscalls.c but effectively implemented via
+> > > > security_getselfattr() in security/security.c).
+> > >
+> > > Thanks for the review, makes sense to me - I had a look at those
+> > > examples but unfortunately it is getting a bit beyond my (very low)
+> > > kernel skills, so I've dropped the string-based security_context from
+> > > v2 but without adding something else, is there someone more familiar
+> > > with the LSM world that could help implementing that side?
+> >
+> > We are running a little short on devs/time in LSM land right now so I
+> > guess I'm the only real option (not that I have any time, but you know
+> > how it goes).  If you can put together the ioctl side of things I can
+> > likely put together the LSM side fairly quickly - sound good?
+>
+> Here's a skeleton ioctl, needs lsm-specific fields to be added to the new=
+ struct, and filled in the new function:
 
-Please use b4, as described on go/upstream, and you can not forget.
-
-Regards,
-Bjorn
-
-> -Subramanian
-> 
-> > ---
-> > ---
-> >   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 62 ++++++++++++++++++++++
-> >   1 file changed, 62 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > index 0c1b21def4b6..05c9f572ae42 100644
-> > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > @@ -675,6 +675,37 @@ &pcie0 {
-> >   	pinctrl-names = "default";
-> >   	pinctrl-0 = <&pcie0_default_state>;
-> > +	iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
-> > +		    <0x100 &pcie_smmu 0x0001 0x1>,
-> > +		    <0x101 &pcie_smmu 0x0002 0x1>,
-> > +		    <0x208 &pcie_smmu 0x0003 0x1>,
-> > +		    <0x210 &pcie_smmu 0x0004 0x1>,
-> > +		    <0x218 &pcie_smmu 0x0005 0x1>,
-> > +		    <0x280 &pcie_smmu 0x0006 0x1>,
-> > +		    <0x281 &pcie_smmu 0x0007 0x1>,
-> > +		    <0x282 &pcie_smmu 0x0008 0x1>,
-> > +		    <0x283 &pcie_smmu 0x0009 0x1>,
-> > +		    <0x284 &pcie_smmu 0x000a 0x1>,
-> > +		    <0x285 &pcie_smmu 0x000b 0x1>,
-> > +		    <0x286 &pcie_smmu 0x000c 0x1>,
-> > +		    <0x287 &pcie_smmu 0x000d 0x1>,
-> > +		    <0x288 &pcie_smmu 0x000e 0x1>,
-> > +		    <0x289 &pcie_smmu 0x000f 0x1>,
-> > +		    <0x28a &pcie_smmu 0x0010 0x1>,
-> > +		    <0x28b &pcie_smmu 0x0011 0x1>,
-> > +		    <0x28c &pcie_smmu 0x0012 0x1>,
-> > +		    <0x28d &pcie_smmu 0x0013 0x1>,
-> > +		    <0x28e &pcie_smmu 0x0014 0x1>,
-> > +		    <0x28f &pcie_smmu 0x0015 0x1>,
-> > +		    <0x290 &pcie_smmu 0x0016 0x1>,
-> > +		    <0x291 &pcie_smmu 0x0017 0x1>,
-> > +		    <0x292 &pcie_smmu 0x0018 0x1>,
-> > +		    <0x293 &pcie_smmu 0x0019 0x1>,
-> > +		    <0x300 &pcie_smmu 0x001a 0x1>,
-> > +		    <0x400 &pcie_smmu 0x001b 0x1>,
-> > +		    <0x500 &pcie_smmu 0x001c 0x1>,
-> > +		    <0x501 &pcie_smmu 0x001d 0x1>;
-> > +
-> >   	status = "okay";
-> >   };
-> > @@ -685,6 +716,37 @@ &pcie1 {
-> >   	pinctrl-names = "default";
-> >   	pinctrl-0 = <&pcie1_default_state>;
-> > +	iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
-> > +		    <0x100 &pcie_smmu 0x0081 0x1>,
-> > +		    <0x101 &pcie_smmu 0x0082 0x1>,
-> > +		    <0x208 &pcie_smmu 0x0083 0x1>,
-> > +		    <0x210 &pcie_smmu 0x0084 0x1>,
-> > +		    <0x218 &pcie_smmu 0x0085 0x1>,
-> > +		    <0x280 &pcie_smmu 0x0086 0x1>,
-> > +		    <0x281 &pcie_smmu 0x0087 0x1>,
-> > +		    <0x282 &pcie_smmu 0x0088 0x1>,
-> > +		    <0x283 &pcie_smmu 0x0089 0x1>,
-> > +		    <0x284 &pcie_smmu 0x008a 0x1>,
-> > +		    <0x285 &pcie_smmu 0x008b 0x1>,
-> > +		    <0x286 &pcie_smmu 0x008c 0x1>,
-> > +		    <0x287 &pcie_smmu 0x008d 0x1>,
-> > +		    <0x288 &pcie_smmu 0x008e 0x1>,
-> > +		    <0x289 &pcie_smmu 0x008f 0x1>,
-> > +		    <0x28a &pcie_smmu 0x0090 0x1>,
-> > +		    <0x28b &pcie_smmu 0x0091 0x1>,
-> > +		    <0x28c &pcie_smmu 0x0092 0x1>,
-> > +		    <0x28d &pcie_smmu 0x0093 0x1>,
-> > +		    <0x28e &pcie_smmu 0x0094 0x1>,
-> > +		    <0x28f &pcie_smmu 0x0095 0x1>,
-> > +		    <0x290 &pcie_smmu 0x0096 0x1>,
-> > +		    <0x291 &pcie_smmu 0x0097 0x1>,
-> > +		    <0x292 &pcie_smmu 0x0098 0x1>,
-> > +		    <0x29d &pcie_smmu 0x0099 0x1>,
-> > +		    <0x300 &pcie_smmu 0x009a 0x1>,
-> > +		    <0x400 &pcie_smmu 0x009b 0x1>,
-> > +		    <0x500 &pcie_smmu 0x009c 0x1>,
-> > +		    <0x501 &pcie_smmu 0x009d 0x1>;
-> > +
-> >   	status = "okay";
-> >   };
+Forgot to mention, this is based on the vfs.pidfs branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 
