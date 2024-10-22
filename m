@@ -1,117 +1,177 @@
-Return-Path: <linux-kernel+bounces-377069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BCD99AB978
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C0B9AB97F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08B41F23F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EBD1F23C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAA31CCEE7;
-	Tue, 22 Oct 2024 22:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1871CEAA6;
+	Tue, 22 Oct 2024 22:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZyexL6t0"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BDLf7UPk"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8B14B97E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A901A0BCF
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636131; cv=none; b=JFyPOaeIRxgVvRekJIeUZmnm7upwizdinQSe32Dy82ox0bVhKuSlstU0mKKSB0+aOIZtjnFlXOpywoj1KVUG1Z/CG6LKdt/ximV98n85pFdCmuYDnUYnOVfeYIS4mDsRFGkXc7uEinfADeVStWAZgeNUTED7mMyhwVJl5Ma7FvE=
+	t=1729636262; cv=none; b=cD3MzGUyMBKP7u1LCvuwWFoum+DP+ZB0nPXzhmegsrEiCcb7hXZoTD5jtrCHp+5MZyczGIjP2n4tkhJsR9Gy4N+8t5MQifJDL+cCyYNYDXi6ZwAiDz39ohVfEP/QOdUkdojnxqrcP1rlXtKIbLCJgWvVa9uJhy1nA5m1ABIXTKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636131; c=relaxed/simple;
-	bh=iGY+RCSHBD6wL6JNcYAazeLM4Xjl5L1gAi6U9Jl6vNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7QHvDYz6GU56U6hfPV1vsv29PjLnHU29ZsfeZDBJcpx+vPNrJv/HIWzamSmex0NGZflhSl6Yt6EDxP6hgqUcC5ZPoPcehzRQFspiYYsa5yrGnbVjqYugfnzq+OeMzH/O2PmpjFsGF+19nbsZ31zdF78RVYl6QdazE6MgPAImk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZyexL6t0; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71811707775so2992516a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:28:49 -0700 (PDT)
+	s=arc-20240116; t=1729636262; c=relaxed/simple;
+	bh=GbpHqXO70UymoofiYbfPzNeoxpUmCo/eXHSBvHQo9Us=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sYnWetw8TevOgJvzutScMWuiyjW+y99tKvRBeF+4wcCgEbemAHdBvJVXWNXe0weeLVP3L3YQBhUluJ3wsHkFZPWjIMmLGjbx4wX3aqTRdJpmR1+axhuXpNKJA7sb5hFPvntnpnsDhwBmBXVq6uYj/nRkRX7aTdl+WwXFUb8ZEHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BDLf7UPk; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e389169f92so109921277b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729636129; x=1730240929; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xFCCeAvPeqUghAEXu6ImvnShl5xo3a21P+QnN+rS1kw=;
-        b=ZyexL6t0PYPLWtdnvPtD0ROowY4jZwM0Ezd7BVmOkrKpOvIVz5i1xNLdISGLiAfwaM
-         mLC9Rz7A46GhoUUuErQyFDckKWhjLwej/z+Wp1MzoCTkOa7nIcoouRvRrt972zgMmBY8
-         m+fn5PELh0AdkaYeEaDcybf7lUduArq64bU/vcfzRDsPhfbRgVenzyaW9kTGJiF7krDl
-         P20FH48Wc9yUEpAsENh3xO7Us4vUhI45phKT8GJ3GMTpDdHP/+f1KE3gqqbqk4xpvl3+
-         3OyPE+9E+loPk1/FvoFiP9yQASf9k48upRVYaua+dHuDsb+sWwhySJjFAod2ULzixynF
-         3KjA==
+        d=google.com; s=20230601; t=1729636259; x=1730241059; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XOqBWZrZXtWTTpPGYoMu4m/4ZnTX0L7qg4xRYMuF1qk=;
+        b=BDLf7UPk7OtTKkXNIkxKUumrI8NqSiSLJYBMmASrd70UQ+qZeNd5/0Aa2zx3EjqiCX
+         wTX0mtJUuQGb4tvkG/N+5U5WecFmkAYs9/KQUHDv8DpD05cPKUa8hzF9na2SZSU/vA9K
+         1BS9f5gHj9RVhiby/LVW026pdMVMV/UXcVEZtburigCzlrRwDGDkAbRWJ5yQArobUAl3
+         rxRX3nL7bNwSkz3S1rDdD1O5QnrXzBcVQnEWNHJeurBqOUNGwYUR3+WNui24WLpNKdhJ
+         drOIKwEG5nw05m9O/HWfochZdKWiJ8OEz4icl3Blm+PEy+0A8qDTS8z9YM97umD0M86N
+         YkRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729636129; x=1730240929;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xFCCeAvPeqUghAEXu6ImvnShl5xo3a21P+QnN+rS1kw=;
-        b=kZzdj49ui9x41b31z9iPO00uYNMpe39LHQjnJUhIfr250DPVT+dMBdQXsbLAhSsPmd
-         8KzCRcUo8HtwtOYTb5N0KqqcrXJyEKe2naAQ6kq5uXXuc11s9U46zT3rvGxFG2omstb8
-         036bYYiBG+iv2zSDXv9SNBwW5sYJLx9q24MFsYYzhymbbZ1QHvVcKgspKV8fiLBHNQx8
-         BOje4XJKa3l9UDcGl7EGlsyxxSxT2ZNa8It2YWQNNbwQpANtBhZcaE7lH9uLdXrSoKrH
-         quKr3Xh9P9N8oiUwTjFbOpNV1ODHZ9zuTq+NJplLGWOl9KREKbJcbOPgO1jDyUTlhG+6
-         IRBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdwssY+ClS9hI0WtNrrLJciMZJLlFk/4Zww9Z6K/pGQCBc1R+EuTwASUzUgExS7KFOgMd1UyfZRnptcEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFjrdiRkM1QuMRubnuWf+h1ylWa4Tn+1oWJNUKG+V7oQlKOC3z
-	Vgm+7cnJsojqpfJ5WMcfI1Ud16ZOxQtxIc6R3ZKhi66Ius7qiFQR2ogIEH2c+uM=
-X-Google-Smtp-Source: AGHT+IF5mcNdyQFGzKonGK31BzE89ULqNpP3zj6vhFzYDm2khTM1Kxs+zbZJgi/cGr96wp91oL9EFQ==
-X-Received: by 2002:a05:6830:6995:b0:710:f3cb:5b9d with SMTP id 46e09a7af769-7184b42bc5bmr812319a34.24.1729636129027;
-        Tue, 22 Oct 2024 15:28:49 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182eb50cd4sm1448774a34.38.2024.10.22.15.28.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 15:28:48 -0700 (PDT)
-Message-ID: <0b478ed2-dd1e-4014-8501-2e1b50b473e3@baylibre.com>
-Date: Tue, 22 Oct 2024 17:28:47 -0500
+        d=1e100.net; s=20230601; t=1729636259; x=1730241059;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XOqBWZrZXtWTTpPGYoMu4m/4ZnTX0L7qg4xRYMuF1qk=;
+        b=omaDljRWmwO5JNJ2T4jdIo49t4I01UmLBo5mDIQaxI6UIhTwPNw3to2xXnbBPFafrh
+         1Z3K2KLaIcnHzojb4ml47RCX1HDDgZ5/NQc+4cS/x45cWKaZd/IZB04B4nr8nXwHStBU
+         zucdZ8DaN8X0vtBS/FQSoQ6Bt/3H2JKzBcOKLceaAjJqUapN7LPN0c0KPkE7w4hRW9Kj
+         PBgZaDHoaR5ekrmYDhIeJOi6AaXx7iP8YSzZf1d11XMn6t6bhp8teKxkb5JxIGEMKgfg
+         HZNH+GCV3+pOoqupM8FgrvfQ0pfWHhDlDCHrI8jq7k9Q6gEwGMvsN4ELZp8iIlL9U5he
+         W/8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWEPu7qessyZDlzwyFxIIyZtmtl2voLr9e2UR+CwE2gGAHyuDuGazwRr11diTMpbu3GZOwSH0GwpAJjx/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNWoSFtDPRDK3a/onW1Yoeo7KcIlEEDoUaORKOmonZ13y4VLIN
+	6UHhFnu4wXUE8t3wsn1TLJH30lchm/F+2yIFHeueJSrq0XmKd3kwULa6EyKOXZdYcOyG+jbNhUx
+	dpw==
+X-Google-Smtp-Source: AGHT+IGcqbY82rYWFSyzU4sD78yuqoJ/yG31UhWaIGXmch+HUW0FApvVNi4wRoSd0uA0A0VOd4tLZ9MP+V4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6485:b0:6e3:da91:3e17 with SMTP id
+ 00721157ae682-6e7f0db3b18mr232037b3.2.1729636259303; Tue, 22 Oct 2024
+ 15:30:59 -0700 (PDT)
+Date: Tue, 22 Oct 2024 15:30:57 -0700
+In-Reply-To: <2a8e6f2c-4284-4218-9b91-af6a4d65e982@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] iio: adc: ad4851: add ad485x driver
-To: Jonathan Cameron <jic23@kernel.org>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, nuno.sa@analog.com,
- conor+dt@kernel.org, ukleinek@kernel.org, dragos.bogdan@analog.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241018104210.51659-1-antoniu.miclaus@analog.com>
- <20241018104210.51659-6-antoniu.miclaus@analog.com>
- <20241019144912.697d9d29@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241019144912.697d9d29@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20241014105124.24473-1-adrian.hunter@intel.com>
+ <20241014105124.24473-4-adrian.hunter@intel.com> <Zw1iCMNSI4Lc0mSG@google.com>
+ <b29e8ba4-5893-4ca0-b2cc-55d95f2fc968@intel.com> <ZxfTOQzcXTBEiXMG@google.com>
+ <2a8e6f2c-4284-4218-9b91-af6a4d65e982@intel.com>
+Message-ID: <ZxgnoTKt2IBnBBJ2@google.com>
+Subject: Re: [PATCH V13 03/14] KVM: x86: Fix Intel PT Host/Guest mode when
+ host tracing also
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Hendrik Brueckner <brueckner@linux.ibm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon <will@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, H Peter Anvin <hpa@zytor.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, mizhang@google.com, 
+	kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/19/24 8:49 AM, Jonathan Cameron wrote:
-> On Fri, 18 Oct 2024 13:42:10 +0300
-> Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+On Tue, Oct 22, 2024, Adrian Hunter wrote:
+> On 22/10/24 19:30, Sean Christopherson wrote:
+> >>> LOL, yeah, this needs to be burned with fire.  It's wildly broken.  So for stable@,
+> >>
+> >> It doesn't seem wildly broken.  Just the VMM passing invalid CPUID
+> >> and KVM not validating it.
+> > 
+> > Heh, I agree with "just", but unfortunately "just ... not validating" a large
+> > swath of userspace inputs is pretty widly broken.  More importantly, it's not
+> > easy to fix.  E.g. KVM could require the inputs to exactly match hardware, but
+> > that creates an ABI that I'm not entirely sure is desirable in the long term.
 > 
->> Add support for the AD485X a fully buffered, 8-channel simultaneous
->> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
->> differential, wide common-mode range inputs.
->>
->> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> 
-> A few minor things from me that I could fix whilst applying,
-> but David gave a much more detailed review of v3, so I'll wait
-> for his feedback on this.  I haven't dug into datasheets much and
-> may well have missed other things.
-> 
-Many of my review comments were not addressed at all. :-(
+> Although the CPUID ABI does not really change.  KVM does not support
+> emulating Intel PT, so accepting CPUID that the hardware cannot support
+> seems like a bit of a lie.
 
-Plus one addressed incorrectly (rounding PWM period down instead
-of the suggested rounding up).
+But it's not all or nothing, e.g. KVM should support exposing fewer address ranges
+than are supported by hardware, so that the same virtual CPU model can be run on
+different generations of hardware.
 
-I still have major concerns about userspace-facing things like the
-questionable use of the offset attribute and fixing how oversampling
-interacts with the scan_type.
+> Aren't there other features that KVM does not support if the hardware support
+> is not there?
+
+Many.  But either features are one-off things without configurable properties,
+or KVM does the right thing (usually).  E.g. nested virtualization heavily relies
+on hardware, and has a plethora of knobs, but KVM (usually) honors and validates
+the configuration provided by userspace.
+
+> To some degree, a testing and debugging feature does not have to be
+> available in 100% of cases because it can still be useful when it is
+> available.
+
+I don't disagree, but "works on my machine" is how KVM has gotten into so many
+messes with such features.  I also don't necessarily disagree with supporting a
+very limited subset of use cases, but I want such support to come as well-defined
+package with proper guard rails, docs, and ideally tests.
+
+> >>> I'll post a patch to hide the module param if CONFIG_BROKEN=n (and will omit
+> >>> stable@ for the previous patch).
+> >>>
+> >>> Going forward, if someone actually cares about virtualizing PT enough to want to
+> >>> fix KVM's mess, then they can put in the effort to fix all the bugs, write all
+> >>> the tests, and in general clean up the implementation to meet KVM's current
+> >>> standards.  E.g. KVM usage of intel_pt_validate_cap() instead of KVM's guest CPUID
+> >>> and capabilities infrastructure needs to go.
+> >>
+> >> The problem below seems to be caused by not validating against the *host*
+> >> CPUID.  KVM's CPUID information seems to be invalid.
+> > 
+> > Yes.
+> > 
+> >>> My vote is to queue the current code for removal, and revisit support after the
+> >>> mediated PMU has landed.  Because I don't see any point in supporting Intel PT
+> >>> without a mediated PMU, as host/guest mode really only makes sense if the entire
+> >>> PMU is being handed over to the guest.
+> >>
+> >> Why?
+> > 
+> > To simplify the implementation, and because I don't see how virtualizing Intel PT
+> > without also enabling the mediated PMU makes any sense.
+> > 
+> > Conceptually, KVM's PT implementation is very, very similar to the mediated PMU.
+> > They both effectively give the guest control of hardware when the vCPU starts
+> > running, and take back control when the vCPU stops running.
+> > 
+> > If KVM allows Intel PT without the mediated PMU, then KVM and perf have to support
+> > two separate implementations for the same model.  If virtualizing Intel PT is
+> > allowed if and only if the mediated PMU is enabled, then .handle_intel_pt_intr()
+> > goes away.  And on the flip side, it becomes super obvious that host usage of
+> > Intel PT needs to be mutually exclusive with the mediated PMU.
+> 
+> And forgo being able to trace mediated passthough with Intel PT ;-)
+
+It can't work, generally.  Anything that generates a ToPA PMI will go sideways.
+In the worst case scenario, the spurious PMI could crash the guest.
+
+And when the mediated PMU supports PEBS, that would likely break too.
 
