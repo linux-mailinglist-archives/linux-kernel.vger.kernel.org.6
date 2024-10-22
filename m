@@ -1,203 +1,214 @@
-Return-Path: <linux-kernel+bounces-375376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F379A952B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:50:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2374C9A9536
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3E32818CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:50:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E792928354B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990C774418;
-	Tue, 22 Oct 2024 00:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEA477104;
+	Tue, 22 Oct 2024 00:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b8w3Dvwz"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2046.outbound.protection.outlook.com [40.107.236.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F2bzBJTE"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2175C4A35;
-	Tue, 22 Oct 2024 00:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729558240; cv=fail; b=erwyqRqH0dXKj+HGkkT0war06OnJTLXf3ek9rPfX/vz5zO03XttRVoalPlrTdFz5o2K5CVHsEVHQW/k2tX0zWCUxZ26hO3pS91IwweMwgI/LVBsh/krGkWi+YY4P2No64zmcv4ykzGgJNYOMzKEoZBUbJc2FdrLM97xpOEw+xfY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729558240; c=relaxed/simple;
-	bh=E7gprF/J75GeAhpepkexsDCLYXrPZfQ9qg29O/AiouI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=e7uxcG4Q9q7uZ4TaEwDNQ8So1HK+JMgnl6wwaJkYbioqwoPTbcB0S9/8RFVG4zW+5t+kIq1MsuqyTQEw8ZZjpgJA+JOpO3qlBmTZGamb5GE8NZ7RYdzPPvStTBJG66+5iu8BdsYwBTgQmr1Yoj6SZyTzkTvsZRr0YiMWOMZCJ+I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b8w3Dvwz; arc=fail smtp.client-ip=40.107.236.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rzw9m4jsBMj4kZ3thDG+XkEYhtf1u38wkY2V7Wn1sPAMi0LsPxoTZjzF2g98pLsz32tQaQ9tDfjF8ndL3QfpeIjgWh7JOB/WrG6busPYspQxLhLwP1tIblFAIiD1Y2V4lCD8mjEjAJ2JkqyL0YmSv4ZUEZnDTghmEcoKtKJSQg0VsyixTkKzJWUwttxNc9H4F+BsHXGl4gWx6ELravoa9doHtZQRsLptW2f4FMC4mpJwB8foMn13lIm+d+HBwkKWuHI1+mCyOQInNNQxvhRZfOTxhm6vrnkFRfi5NDl143QUi+m2gKdgfojBAkuJU842AcHBIW3CtjpVXOQ07CoIWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FpA1eVcvPYR75TqQksvbL1U91C6hrraOw1vWGvzoxos=;
- b=Gv1F7xjg4v0CykwYU/P7yQRKumWzhavgkr0ier8CysPdoyoICPn9sxMCTdrg6M+99cIsHP/xClEw53TboHClXmvvhC1CC5KPZSmSKksqj5tXrYKlGbtM9uF+H2uAmEkbVCYK9sKiZLJ0FsUBKMNQgRBylXeIPHMXR3omadiWH3QLAIggR9DDdu13oYByzFQZCT6tznOV+YSzGZtheikMvHiPOIhAKcxF//iJqh+pH2EhcKJLxqyAT+zvYJvmOwMkmLPC1A0Suni+EtMeWlzZqFNTCXdjW0s8WeRY/ZhXjXnmpb62pTjX/ED9SDjvIOAbl6fDPN0yhk/uEkCxmLrWlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FpA1eVcvPYR75TqQksvbL1U91C6hrraOw1vWGvzoxos=;
- b=b8w3DvwzgP3zm2aNCpB8c7iEZOhzzeLCsBEATJoJYCftd4vHdTygVhovJYrBrSEHmWZh0ggU8LndD8c/db8Hlv+w5vPrqzrUeGeBCqrQoCW5JfgpBHa1ID0yCEQ0jxXK2kaalxDagFKLVuiGC/UMsmvXWr4GxyIEBCGj2I3uf64=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
- DM4PR12MB8524.namprd12.prod.outlook.com (2603:10b6:8:18d::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.28; Tue, 22 Oct 2024 00:50:34 +0000
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 00:50:34 +0000
-Message-ID: <1b807d16-2025-4c2c-9511-573e63be1d59@amd.com>
-Date: Mon, 21 Oct 2024 17:50:32 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv8 net-next 0/5] ibm: emac: more cleanups
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241022002245.843242-1-rosenp@gmail.com>
-Content-Language: en-US
-From: "Nelson, Shannon" <shannon.nelson@amd.com>
-In-Reply-To: <20241022002245.843242-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR11CA0076.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::17) To DS0PR12MB6583.namprd12.prod.outlook.com
- (2603:10b6:8:d1::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191B4C2C8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729558547; cv=none; b=VtlVMQYUAJk08lrczWxd1CQWSdwEyDupxYOygpoHgYSFPs7sSc85mD8KyRPziz5/EqKik+v8qd8G/AgJozM2gre+OmOD/KpFdWI/teNAWMB4fAAHn8ZUQIlUDPuEzFsO/JFnXOeSF3J8xia2xdTQnfgpbVrx5TsXd8AIFS3K4Kw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729558547; c=relaxed/simple;
+	bh=D91LW0u/aFo2LHxpaGxk97lhk+pdYY8G6zMOXYJ2nvs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qHSoYu3/jifWSgHMswV2CCRRUZsTlyn5oWtraxWiEUchD6VNJy9P5C3HfSQCRUUB5uCEjvtxWc+cZw5cmdknQNSmgaVN8hMAkZJ9KYWVJV0pW/KQ+RheI5YcdzSFETpM6Pub6RhQ0TYvmSmEnxC6TU7GPNBwLZWx/PjlQPphaYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F2bzBJTE; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e28edea9af6so7507855276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729558545; x=1730163345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tq3cNUO91Vvfgq5tI/z1NounXZjIn6GDS1+EJ7csv/E=;
+        b=F2bzBJTE2b1F7w/vnfVBcD4MeMsb92WkB1Uv9wv/ecRtX2U4wj9jz/IFhyziEuvgHX
+         qQSl4tOgje8WauCAVjq41w0FozuQXC37xQGAoz45Og621waLgl+O3/uZxkoDymJBqEWW
+         X0x4PE+25FPiUph2FRwzt3Xrx0pFv2dfPzyQdV43HVVOC/osRdhHVTvk7Imc90JvKSM7
+         2D8wDG6vOyDaV7DoxQBoKTay/1L6a5YhyF298+Wq988dQl+L/GcCSrIgQNzuO5ATepc5
+         SYCvG1AB24E0pWFMGogTUpOCAbYVwWgNHlrOLaset0o98zsJvTrPH+4vfRjeQz0AfCpa
+         JZVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729558545; x=1730163345;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Tq3cNUO91Vvfgq5tI/z1NounXZjIn6GDS1+EJ7csv/E=;
+        b=i17keuuJ159YZKvbd4p3ZWhMSDjP4wlIKT6qQSntoY150n6hXnArYoKdHKVOyCwvmp
+         w/xGNOUxmfww4ZPBL9c3IBQW8AT8C5XcCdq8h4Yt2fo6Hvpe914EEXQDYW9y5kouO99A
+         Sej37Q7sH48lcc9jY1vW2ZbJEy8lygupMLbzsnh3W9X714JLJplNDfAiIKzJXJExLqo9
+         66AVf4v/vVucGbTROlS0si/LTTLKsCcUASvp13ziDR+c5SNp8XLFiAiPyjmzOY9355KD
+         1y+7a1WPP6OyDJr0IxDxW5LsGjtpJNGrotrIDZop55cZGRQ0ONLsHMSocf0DLV+m2HsN
+         oX9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVR/sNvur+wpOoqeMuDN2OmnbsTl5LRl+RP8MFTnRdzkTDU1CUduocwlHWtoYxUi0liOcNGReJJNwTYJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbVmeUQjZunLlZoJdBSXHjaJ+TiEYLWZJvWwpK6pU5zGLQO/Ng
+	LnBSpC4TalkGdITvNCdZxpTCDJuFvlnG+iKV6iWH6GPM/CM0LRaKV16uaNgT8lXDv+3Eo3UOyxD
+	ptQ==
+X-Google-Smtp-Source: AGHT+IH7kfJdxNMEfZg9Xeveg6Vy9o9/9o56WmGVBFGfMm/buRcX/ZXrs9PYDx+l/JDWHiEcvXeAcDKATc4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:97c7:0:b0:e0b:af9b:fb79 with SMTP id
+ 3f1490d57ef6-e2bb12db995mr31889276.3.1729558544863; Mon, 21 Oct 2024 17:55:44
+ -0700 (PDT)
+Date: Mon, 21 Oct 2024 17:55:43 -0700
+In-Reply-To: <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|DM4PR12MB8524:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac63823b-885b-4f69-56cc-08dcf233896e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dmJXVFZxWDJMOEVvRHJFL0ZTNUF2VjMrV3ZYTDR3ckFDUU56TzhuVHJHSTd6?=
- =?utf-8?B?UFBsRUJCK3dydmFQb2lodWFiU0JJK1BXTk82ME00MmszT2x5aGpYdUxuSDFV?=
- =?utf-8?B?YkRZb0xTZXlGOExZTWxyUkpZMjUyV25ZVUtXL01lM2UxK3NJVE5KRXVXMGFy?=
- =?utf-8?B?QUt0R0xWZE94NnMwaVlsVGRnUEVVTThkbmVaNWs5cGZDcGNERHI1MkNEbjRV?=
- =?utf-8?B?eFRiQVhIUVRWbU5PUndNSjZYdnVrS29XVUhZbnhBN0F0VFRyYkxySk9BM21s?=
- =?utf-8?B?SkxabnRMUmpKWWtmWXBuOFVubGRLWUV5cWRsRkpOUDRKanlRRkorWklhOGpF?=
- =?utf-8?B?bUR6Nm5CVXVaaS9pYUZsbXRUQjZyVEtGV2RGTloycmkrdnlJN2VkM1hOQmpQ?=
- =?utf-8?B?SzVYeXpzNWJibjlMSThXZ3ZiRjB4b2tPTThxQml0V2ZzNEVvOTJNN2ZyMHFO?=
- =?utf-8?B?Rmc4ODkvVjZ4cVg5UnF1ZXI1R2dZTUpnYVQ3ak5XVy84UVpoRi9LeERScFBa?=
- =?utf-8?B?UCt6a0RoR0tmTXcxTUlFTEFTTzRLZVUxRzFjK25JVGYyaWFPOEpTWEtBQTBN?=
- =?utf-8?B?T2Q0K3JVS0pkN0htUTQ4MTl0a1oybWZhMGlteUorL2Y3Z1pvT29zZk5MOWwz?=
- =?utf-8?B?V1lRcU5mM0lkdmF1NTZVQ3U3NzV2N0JnNStVbWpLdzhRRFM3SjFRbDh5S2Y1?=
- =?utf-8?B?Y0czN0QrZ0JxTWdGT0E1MGlsaWswTWxEQ0lrSlExVTA5MnlCdnNGK1c0Qk1K?=
- =?utf-8?B?Tm81aVU1Z1ArQ1dnTDUyL3lQVWxmdFY5MUd0U05hSTZ3UHRIWVBRcytpVS83?=
- =?utf-8?B?bXNwaWlDRlRRekdlMDVzcnVzeGNpaTF4bnFZNURsMkhQN1V5V05BQWIxcDBZ?=
- =?utf-8?B?aUdScUc4b0dhUUY3bmo5ZkxBMDlINUdPajc0QkY0bjI0QmVwaXNST1YzSlo5?=
- =?utf-8?B?MUwvRXVVTHo3ZEFOdWNtQnptRzdkaHFHeTB5ODdmVktuYmJmbm0ySzBiSE5X?=
- =?utf-8?B?VE5aME9GRnpiN3graEdjRDVvOStJSVZoSU1rVjh6ck1WNlJQTUhLZmdtRjVz?=
- =?utf-8?B?QXpKUjRBY2FuUitPcjBvbFNxQmFibENKOE9SQkdyRDdGNW00MGRiMGVpY210?=
- =?utf-8?B?bG9UUlVwRDRibk54TjVLWW5iT21DVmlQclpiWGMzVnN4TUdkKzVpMTNHVkpN?=
- =?utf-8?B?VWYzY2ViQzlmZmNkMnF4NDY2czkyOGVpUzMrUHgrbmM2MkI0clF1b0ZQODdU?=
- =?utf-8?B?YjJHM2ZoN1J5MmhBb0dNaENWdW0xWXJZNEpaV04vQkhhWVpZUnNJWkpVdndK?=
- =?utf-8?B?Y1pnWER6enJ1c2xPSkloR0J5N1ZSTWZuamRXTkR5VWFKSmllT3pOdXdlUGxY?=
- =?utf-8?B?bkZmMk1NK1dMM1NGTVlNMTBtVGdKTVNJK096TE45b0FFS0srR21LSDcxZkh4?=
- =?utf-8?B?UFRFWWVPcFA0N2xoRE81cHJKbFhuUlFidXVDazJ0ejNZOVB6WlNROHIvWHFI?=
- =?utf-8?B?MzltaUhxbGlMa1FORG1FLzAyWEZzbHIzblU4V0JqcHQyQk5aVDE4V25TZTFE?=
- =?utf-8?B?WXYvQk5aTFkzYmNFU0IzNXBHZ3JmQUFadyt0QlJGaEhXUk5aaTlCb2RzRCs0?=
- =?utf-8?B?d2ZvMURxdHJFQ3cxZzVUSlFtb0J0VGVRdjN2enoyQmt1R1NqZXR1WG16dG9y?=
- =?utf-8?B?bHVoY1FmMm5SMlFPcE1wd3kyR041TXN5Q0pMSzZWa1NpSW8xL0p6ZXMwVkxN?=
- =?utf-8?Q?SNhuFXYzL3Ydkmx1PEREbMfHwKduSo3bGBHgsYp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z3A5NTFFc3RWUFhZdFNicGFZNExyajJMcTA1R3pkQWdjamllYlFxQ2d4VFk1?=
- =?utf-8?B?cFVHSHNwbWkva0pmNVlTR0JBTU9WemlwWU1Md3hNRS8wUWF3MHRiQktWaU14?=
- =?utf-8?B?d1FWeGpvcEo0MFRTMFFxaUNQYlVTZXRqYXJkU1ZXTGJjT1ZYNWl0UERhdEhO?=
- =?utf-8?B?MlBLOXZQSGNQbzFtcys4YVZsV2JtOTNHZVNUYnhkQ1NsR3JXcUk4RTUzbU1Q?=
- =?utf-8?B?V2QwejJGSjk1cm9XbUlYSzlRVlk5dWdyT2tqUy8rcFRQNk41Z3RlYkM1NU80?=
- =?utf-8?B?aWZ0V2c3dHl2OVNUWXNtZUtueTgwMUQvSWxRZkpCVUdlaGhPZDlMbW5Nd1ZO?=
- =?utf-8?B?bmJpRWt5S3FMY3lQcVdWQThxRDhGQUdOZGRsODE5RHNiRTFobUQyZkVabFhO?=
- =?utf-8?B?aXVzRW9lZlJDbzFxMlUxL1FsWmZkWE8xN25YOXpWS0l2c0Q0TEhGUDZGeDdE?=
- =?utf-8?B?dldHTUxDZFBQZlZzaFlzUktSQmNWbDRxUEpQVFhFUzN3dmFuVGJkY3AvTDNR?=
- =?utf-8?B?NnpIM0IyajRlZ0g3VWloZXhHZy9aQjZtS1Z3Tm1XSnNPUFlRTXNwcXN2RlFG?=
- =?utf-8?B?dHhLRmVhN1hNMkxTd05RS0RLZ293VS9XYjMyM3J0Vi9ZbU5uVXpzc2VNeWxP?=
- =?utf-8?B?b3VRRTJRT2dTNS9LdnNCTUFNZGw2d1J5RjkzVTY5LzRoRFBaSEdjS0pIeDJU?=
- =?utf-8?B?UUVVMVFydERqS2tqdzE4L0FEeXpoVzJXc3VPVStUdXRCRTEzeFZWQU0wVjdD?=
- =?utf-8?B?ZnJNQzY4V3NoRm51OXhXbE1mSDB6VlR6QzBmQ25zU01nUGtBR0svK3BqbklQ?=
- =?utf-8?B?ZFFLVnFBTkNpbjBmbEtWY0pNN28zRC9NWGU0Tk5jUlpvNzEySFo3WW9YQ1pI?=
- =?utf-8?B?NEpBaGc2Ujl4TlE1VjFVNDJ6V0RwREI0RUpGRlZFdzI0eDJ5cjFqNTVGeFFq?=
- =?utf-8?B?WksyUitIMk5uUnh6WEVIOE9UOU5MMnA2citySDZZNnpuYWhNbFhDV2tyQ25W?=
- =?utf-8?B?eUkvTW9ZSVNwOC9lanJjT1BnWFRiaWZiN3k2cjNmNDlRNHZYUDROZWkwM0JG?=
- =?utf-8?B?b0pyMEpMc1FGMUV2c29qQms2MjNjV0MreGpqN3NRSnlxWTFTWURkSHMwOEpM?=
- =?utf-8?B?bjJ3OWsrTmpPSDIrQURaZElHNGJEUys0Z3pQNENWRWZ6V1Q2MCtJTXorKzR0?=
- =?utf-8?B?YlpUQlFDV3lYVzNPdy8vand2cGc1Sm9YT2FjK0lMNGVrQ0MzdStoUW5lK3pD?=
- =?utf-8?B?SnRBZkh6VTEvMlVXa203dWpkcFJaUlZvZWsvdEJCWWRobVhZMGhXeFQzb1dD?=
- =?utf-8?B?YVBDZkZJRkdsT01RZkZteVgxMGRoSWorMTJabFdVZkxPUWozMGxRTUwzMXhL?=
- =?utf-8?B?N3l6UE5GKzBUTUxOY2psTDd6dDB3RHh4RlNIQ0JvUVdkb1RNbW4xbkRmcFMw?=
- =?utf-8?B?SWo0aGdmZU9qL0w3YjJCUVdQbW1uVm1TUFBUUW9BVm14MndFSnM2MzY2NkFx?=
- =?utf-8?B?cmdNdGlwamN4NFBJblp2NFRPVS94TmJiR3JSZ0RLVUxQY0cwK3FFTDdqaFBl?=
- =?utf-8?B?WFp0bmtobmFSTXlnM0phU0VTK3ovbmZrbkFCYk50Zm0zM3lrWklHNWJteCtI?=
- =?utf-8?B?emNoMXlRZEZPM3ZzY012dEVvTVUyL3hkcUtZcmowRE9BS3J5T1JIaysvZE81?=
- =?utf-8?B?TGt4RjR5ZHUyTUFWNHVXVHp4STMrdzRPRkVKZ09MSUdZdy9VeWx1cUdtL1pY?=
- =?utf-8?B?NkxuWlB2enFKeDBEK3RON2JXbEh0MDNIMUtRa1lkNXZKdnBCbEp1NDJJNGZl?=
- =?utf-8?B?VDlXcUltWmV2UDBWWXNzcVFPWUo3WXRBcGtMZk0yV2FIL2wybHVOOU1IV3Rh?=
- =?utf-8?B?dzhZZVNQZktNWjdIM3Vxc2QzMC9wL3lMeDBRaERidjZySU0zTTc2cGRJTkMy?=
- =?utf-8?B?RmJiSE9wMVNFZis3NXA3U2NhYjNpVlFVeDFkNlRzaGFWYnN2ellBdWh5SnFn?=
- =?utf-8?B?UGMyV3dHMUU1YWFRaWREUklRVDQ1OVROR0VsOXMybGZNQm4xZW5jVVlJUjJm?=
- =?utf-8?B?dTNJaklHUk1SdXFkT0VNRmRINm9Dcmx4NlFEWlBocUthaW80K3pOSDdYUWg0?=
- =?utf-8?Q?OhfK7h0ebZkM6uLfm1sdlhYs4?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac63823b-885b-4f69-56cc-08dcf233896e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 00:50:34.4242
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xBrf5klOP9UaELAl0yBxDyFWOYzq1/LJv291FyQpsspSUuxjUPk2FRJnWjrBYQhNQ8QbtMU5drhQ2Nq0z/gufA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8524
+Mime-Version: 1.0
+References: <20231002115723.175344-1-mlevitsk@redhat.com> <ZRsYNnYEEaY1gMo5@google.com>
+ <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com>
+Message-ID: <Zxb4D_JCC-L7OQDT@google.com>
+Subject: Re: [PATCH v3 0/4] Allow AVIC's IPI virtualization to be optional
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/21/2024 5:22 PM, Rosen Penev wrote:
-> 
-> Tested on Cisco MX60W.
-> 
-> v2: fixed build errors. Also added extra commits to clean the driver up
-> further.
-> v3: Added tested message. Removed bad alloc_netdev_dummy commit.
-> v4: removed modules changes from patchset. Added fix for if MAC not
-> found.
-> v5: added of_find_matching_node commit.
-> v6: resend after net-next merge.
-> v7: removed of_find_matching_node commit. Adjusted mutex_init patch.
-> v8: removed patch removing custom init/exit. Needs more work.
-> 
-> Rosen Penev (5):
->    net: ibm: emac: use netif_receive_skb_list
->    net: ibm: emac: use devm_platform_ioremap_resource
->    net: ibm: emac: use platform_get_irq
->    net: ibm: emac: use devm for mutex_init
->    net: ibm: emac: generate random MAC if not found
-> 
->   drivers/net/ethernet/ibm/emac/core.c | 42 +++++++++++++++-------------
->   1 file changed, 22 insertions(+), 20 deletions(-)
-> 
-> --
-> 2.47.0
-> 
+Finally got back to this...
 
-These look reasonable - thanks.
+On Wed, Oct 04, 2023, Maxim Levitsky wrote:
+> =D0=A3 =D0=BF=D0=BD, 2023-10-02 =D1=83 12:21 -0700, Sean Christopherson =
+=D0=BF=D0=B8=D1=88=D0=B5:
+> > On Mon, Oct 02, 2023, Maxim Levitsky wrote:
+> > > Hi!
+> > >=20
+> > > This patch allows AVIC's ICR emulation to be optional and thus allows
+> > > to workaround AVIC's errata #1235 by disabling this portion of the fe=
+ature.
+> > >=20
+> > > This is v3 of my patch series 'AVIC bugfixes and workarounds' includi=
+ng
+> > > review feedback.
+> >=20
+> > Please respond to my idea[*] instead of sending more patches.=20
+>=20
+> Hi,
+>=20
+> For the v2 of the patch I was already on the fence if to do it this way o=
+r to
+> refactor the code, and back when I posted it, I decided still to avoid th=
+e
+> refactoring.
+>=20
+> However, your idea of rewriting this patch, while it does change less lin=
+es
+> of code, is even less obvious and consequently required you to write even
+> longer comment to justify it which is not a good sign.
 
-Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+Agreed.  And FWIW, if we keep the local "entry" variables, I actually like =
+your
+version much better.
+
+> In particular I don't want someone to find out later, and in the hard way
+> that sometimes real physid table is accessed, and sometimes a fake copy o=
+f it
+> is.
+
+Note, this quirk is present in your v2 as well.  I bring that up only becau=
+se I
+prefer your v2, and rebased it (with massaging) on top of the next version =
+of the
+max vCPUs.  This is what I have currently:
+
+-       WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], entry);
++       svm->avic_physical_id_entry =3D entry;
++
++       /*
++        * If IPI virtualization is disable, don't update the actual Physic=
+al
++        * ID table, so that the CPU never sees IsRunning=3D1.
++        */
++       if (enable_ipiv)
++               WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], =
+entry);
++
+
+I have no objection to writing the "real" table, but with IsRunning=3D0.  T=
+hat's
+easy enough to do, e.g. tweak the above to:
+
+	/*
+	 * If IPI virtualization is disabled, clear IsRunning when updating the
+	 * actual Physical ID table, so that the CPU never sees IsRunning=3D1.
+	 */
+	if (!enable_ipiv)
+		entry &=3D ~AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
+
+	WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], entry);
+
+> So I decided to fix the root cause by not reading the physid table back,
+> which made the code cleaner, and even with the workaround the code IMHO i=
+s
+> still simpler than it was before.
+>=20
+> About the added 'vcpu->loaded' variable, I added it also because it is
+> something that is long overdue to be added, I remember that in IPIv code
+> there was also a need for this, and probalby more places in KVM can be
+> refactored to take advantage of it, instead of various hacks.
+
+I don't view using the information from the Physical ID table as a hack.  I=
+t very
+explicitly uses the ir_list_lock to ensure that the pCPU that's programmed =
+into
+the IRTE is the pCPU on which the vCPU is loaded, and provides rather stric=
+t
+ordering between task migration and device assignment.  It's not a super ho=
+t path,
+so I don't think lockless programming is justified.
+
+I also think we should keep IsRunning=3D1 when the vCPU is unloaded.  That =
+approach
+won't run afoul of your concern with signaling the wrong pCPU, because KVM =
+can
+still keep the ID up-to-date, e.g. if the task is migrated when a pCPU is b=
+eing
+offlined.
+
+The motiviation for keeping IsRunning=3D1 is to avoid unnecessary VM-Exits =
+and GA
+log IRQs.  E.g. if a vCPU exits to userspace, there's zero reason to force =
+IPI
+senders to exit, because KVM can't/won't notify userspace, and the pending =
+virtual
+interrupt will be processed on the next VMRUN.
+
+> I did adopt your idea of using 'enable_ipiv', although I am still not 100=
+%
+> sure that this is more readable than 'avic_zen2_workaround'.
+
+The problem with "avic_zen2_workaround" is that it becomes nonsensical if a=
+ user
+wants to disable IPI virtualization on a CPU that isn't affected by the err=
+atum.
+And I also think KVM should disallow enabling IPI virtualization if the CPU=
+ is
+affected by the erratum; even with HLT-exiting disabled on every VM, kvm_vc=
+pu_block()
+is still reachable, so I don't think it's at all reasonable to expect a use=
+r to
+be able to know when it's safe to ignore the erratum.
 
