@@ -1,101 +1,209 @@
-Return-Path: <linux-kernel+bounces-375869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0129A9C1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:12:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C7C9A9C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2A5281BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:12:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A7C0B2145A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0CF156F34;
-	Tue, 22 Oct 2024 08:12:48 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4BE1591E8;
+	Tue, 22 Oct 2024 08:13:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF81D347C7;
-	Tue, 22 Oct 2024 08:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8101547EE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729584767; cv=none; b=cMoH1LuLfVSA0umjX4k6dMNpVfiy5Ek9ty9qL3FK2ZfzkyyVhQI6/cHeerifEaZVhzrOUjtMp97Wk9/CRj6mfLfJjQgzzs8U+kTQks803HXNRr298AsRbxKkkeov9xgtFpEc5dBnkZhRPzfCFiQWKfGBjA+KRYZcP5qdCtmjl0A=
+	t=1729584802; cv=none; b=Mr9ZujPfdguEz95hZhgC/EO2tlRW2jbz+gh/glgYdRHjTiVi72KXiSomjv3nVyBtGfvGphydJZPmiFEpsTocjhX2KUY4UnPRE9mKLKbRCQ6/jVSyHtetZ3vFETjG3bJM6XekMcN/AWO5Fvd/aX5LoM487iMyeCoB8ek553P14Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729584767; c=relaxed/simple;
-	bh=Gv1pTwKuPZSBBtO0p+QP4yCkEZ6GKdVQGtuuIxNh2+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OAUCIddwYJ/ty4INhaaWY4SvdkFt6QyiutOIDHOCWG1+E30fK0E14yH/7U+zIe+myWNj9Aswg2B5mbaR9OFyUDcGF0hFMRtY03ST+RWSCstTPVED1P+evVO4rnTp7I8ru50q1ZMpXLZ4XcwyiwOt/UuLjMisJJA0485slSGuCjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB7AC4CEC3;
-	Tue, 22 Oct 2024 08:12:46 +0000 (UTC)
-Date: Tue, 22 Oct 2024 04:12:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Kees Cook <kees@kernel.org>, Sasha Levin <sashal@kernel.org>,
- torvalds@linux-foundation.org, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <20241022041243.7f2e53ad@rorschach.local.home>
-In-Reply-To: <ZxdKwtTd7LvpieLK@infradead.org>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
-	<792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
-	<ZxdKwtTd7LvpieLK@infradead.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729584802; c=relaxed/simple;
+	bh=mU5ijISLPIS6XER+dkDHOlCCs8HDVysP/I3y18vdbbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1FUbYaUnUSNzs/GaDs/P5wEw3Jf+vjUvXCIqCCglSd+ntMLF4lK3pPrmYL5WDZnrhqwhcMPIzQAbeiAC7CkMbO0e2QHjVXDEkN7h3+VMrXV7BXQVrOnn89hE6L99dHxVaO/oBUAV/Oqy9XhLXfOtlPxKhQFW54jWv3vMWhN2PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t3A0n-0001fa-0j; Tue, 22 Oct 2024 10:13:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t3A0m-000peV-1W;
+	Tue, 22 Oct 2024 10:13:04 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t3A0m-007WO0-1C;
+	Tue, 22 Oct 2024 10:13:04 +0200
+Date: Tue, 22 Oct 2024 10:13:04 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Sherry Sun <sherry.sun@nxp.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241022081304.d2tpnn4eyf3adxg2@pengutronix.de>
+References: <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+ <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <e7a1622e-6406-478f-bd3e-08a8490d4db0@kernel.org>
+ <20241022071208.lgk2rpl2c2qpytfa@pengutronix.de>
+ <66d33097-37ed-4e89-a356-285eda743a5c@kernel.org>
+ <a11cf72d-3878-4af1-89c5-c66d55794ea6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a11cf72d-3878-4af1-89c5-c66d55794ea6@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2024 23:48:34 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> > How about this, instead: no one sends -rc1 PRs to Linus that didn't go
-> > through -next. Just have a bot that replies to all PRs with a health
-> > check, and Linus can pull it if he thinks it looks good.   
-> 
-> Not just -rc1, otherwise agreed.
-
-You mean have everything go into linux-next before going to Linus after -rc1?
-
-I'm one that doesn't do this. That's because my code in linux-next
-after -rc1 is for the next merge window, and the code I send to Linus
-is only fixes for code I sent before -rc1. I tend to keep an "urgent"
-and "core" branch. My "core" branch is everything I plan to send in the
-next merge window and goes into linux-next (via being pulled into my
-for-next branch). After I send my pull request to Linus, and he pulls
-it in the merge window, that "core" branch becomes my "urgent" branch.
-
-But when I find a bug that's in Linus's tree, I put the fix on top of
-"urgent", run it through my test suite (takes 8 hours or so), then send
-a pull request to Linus. My "urgent" branch doesn't go into linux-next
-as it doesn't have changes that should affect others work, which is
-what I think linux-next is mostly for. I also find known bugs in
-Linus's tree to be high priority to be fixed (I stop what I'm doing to
-get the fix out ASAP).
-
-Now, if there was better testing from linux-next, maybe it would be
-worth the time to push my urgent branch there for a bit. But so far I
-haven't seen the benefit of doing that.
-
-> 
-> > For example, for a given PR, the bot can report:
+On 24-10-22, Krzysztof Kozlowski wrote:
+> On 22/10/2024 09:30, Krzysztof Kozlowski wrote:
+> > On 22/10/2024 09:12, Marco Felsch wrote:
+> >> On 24-10-22, Krzysztof Kozlowski wrote:
+> >>> On 21/10/2024 12:25, Marco Felsch wrote:
+> >>>> On 24-10-21, Krzysztof Kozlowski wrote:
+> >>>>> On 21/10/2024 08:41, Marco Felsch wrote:
+> >>>>>> On 24-10-07, Krzysztof Kozlowski wrote:
+> >>
+> >> ...
+> >>
+> >>>>>>> Based on earlier message:
+> >>>>>>>
+> >>>>>>> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+> >>>>>>> that both wifi and BT controller will be powered on and off at the same
+> >>>>>>> time."
+> >>>>>>>
+> >>>>>>> but maybe that's not needed. No clue, I don't know the hardware. But be
+> >>>>>>> carefully what you write in the bindings, because then it will be ABI.
+> >>>>>>
+> >>>>>> We noticed the new power-sequencing infrastructure which is part of 6.11
+> >>>>>> too but I don't think that this patch is wrong. The DT ABI won't break
+> >>>>>> if we switch to the power-sequencing later on since the "reset-gpios"
+> >>>>>> are not marked as required. So it is up to the driver to handle it
+> >>>>>> either via a separate power-sequence driver or via "power-supply" and
+> >>>>>> "reset-gpios" directly.
+> >>>>>
+> >>>>> That's not the point. We expect correct hardware description. If you say
+> >>>>> now it has "reset-gpios" but later say "actually no, because it has
+> >>>>> PMU", I respond: no. Describe the hardware, not current Linux.
+> >>>>
+> >>>> I know that DT abstracts the HW. That said I don't see the problem with
+> >>>> this patch. The HW is abstracted just fine:
+> >>>>
+> >>>> shared PDn          -> reset-gpios
+> >>>> shared power-supply -> vcc-supply
+> >>>>
+> >>>> Right now the DT ABI for the BT part is incomplete since it assume a
+> >>>> running WLAN part or some hog-gpios to pull the device out-of-reset
+> >>>> which is addressed by this patchset.
+> >>>>
+> >>>> Making use of the new power-sequencing fw is a Linux detail and I don't
+> >>>> see why the DT can't be extended later on. We always extend the DT if
+> >>>> something is missing or if we found a better way to handle devices.
+> >>>
+> >>> Sure, although I am not really confident that you understand the
+> >>> implications - you will not be able to switch to proper power-sequencing
+> >>> with above bindings, because it will not be just possible without
+> >>> breaking the ABI or changing hardware description (which you say it is
+> >>> "fine", so complete/done). I am fine with it, just mind the implications.
+> >>
+> >> Sorry can you please share your concerns? I don't get the point yet why
+> >> we do break the DT ABI if we are going from
 > > 
-> > - Were the patches CCed to a mailing list?
-> > - A histogram of how long the patches were in next (to show bake times)
-> > - Are any patches associated with test failures? (0day and many other
-> > CIs are already running tests against -next; parse those reports)
+> > Not necessarily breaking ABI, but changing the description.
+> >>
+> >> bt {
+> >> 	reset-gpios = <&gpio 4 0>;
+> >> 	vcc-supply = <&supply>;
+> >> };
+> >>
+> >> to
+> >>
+> >> bt {
+> >> 	vcc-supply = <&pmu_supply>;
 > > 
-> > We could have a real pre-submit checker! :)  
+> > ...because you just removed reset-gpios which is a property of this device.
+
+An optional property. That beeing said, dropping the *-gpios was the
+solution for the Qualcomm DTS as well:
+
+bd37ce2eeb84 ("arm64: dts: qcom: qrb5165-rb5: add the Wifi node")
+
+> >> };
+> >>
+> >> or:
+> >>
+> >> bt {
+> >> 	pmu = <&pmu>;
 > 
-> That would be very useful.  Items 1 and 2 should be trivial, 3 would
-> require a bit of work but would still be very useful.
+> Ah, and I forgot here: this also might not be correct, because if you
+> have PMU, then the PMU consumes VCC, not the Bluetooth. Therefore both
+> of above two solutions might be inaccurate description if you decide to
+> go with PMU.
+> 
+> >> };
+> >>
+> >> Of course the driver need to support all 2/3 cases due to backward
+> >> compatibility but from DT pov I don't see any breakage since we already
+> >> need to define the power handling properties (gpio & supply) as
+> >> optional.
+> > 
+> > Either existing binding is complete or not. Not half-done.
 
-If there was more feedback to going into linux-next, that would be good.
+As I remember DT ABI must be backward compatible. I understand this as
+followed: In our current use-case the dt-bindings don't describe any
+required hw resource so we need to mark them as optional to be backward
+compatible.
 
--- Steve
+Regarding your above comment: "complete or not. Not half-done". Do you
+see the current dt-bindings for this particular device as complete or
+not? In other words can we mark the reset-gpios and vcc-supply
+properties as required albeit this would break the DT ABI since all
+current users don't specify it?
+
+> >> That beeing said I don't see the need for a PMU driver for this WLAN/BT
+> >> combi chip which is way simpler than the Qualcomm one from Bartosz. Also
+> >> there is physically no PMU device which powers the chip unlike the
+> >> Qualcomm one. I'm not sure if you would accept virtual PMU devices.
+> > 
+> > Virtual PMU, of course not. I would like to have complete hardware
+> > description, not something which matches your current driver model.
+
+Okay so PMU is no option and we don't have to consider this idea any
+longer. So reset-gpios and vcc-supply it is :) and I don't expect this
+to change.
+
+Regards,
+  Marco
 
