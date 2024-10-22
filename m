@@ -1,140 +1,138 @@
-Return-Path: <linux-kernel+bounces-376682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A48D9AB4D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF749AB4CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F71A1C2275D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2101F245BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA84B1BD01D;
-	Tue, 22 Oct 2024 17:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978E44438B;
+	Tue, 22 Oct 2024 17:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q1kmPONG"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FnzOozB0"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF98256D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BDF28373
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617460; cv=none; b=jOk9t8jciyGtRH2A5QD/4Zf3sJ7/lLHVxn71eFpJyjnSvVrWR3nLSs6ek7DgZU6H2p0sYQ5d7jLjkqOhOemsovkDN5Ej2HDST0W9SO+YXHwcX2ggqHssMieobLv0N61qGxwHtcUYe0I7Bh8vpVwm33k6fs8AXuk8OLWNll+JO/k=
+	t=1729617354; cv=none; b=BIKU+NAegKs4SiFSGdPO/dEnn02MfRLQdv/ZI/5DYQrftuGElTA6RcuWnNbJaF3H+Xaev+yr8OATd3JNM8M2en+y4Tyu+GyIM2bVf/BRhNHxNNoGFi8pzxtlrHvqhfuyt0n/xettfKJ20AIn+mMtLsdrcMnDJAaeTx0O7JKccBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617460; c=relaxed/simple;
-	bh=4f40dfBoHxEpPr6RULcDzDS5/7/zM+/MBm/SCblIAUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oOc5XSSFzMx9Denh5YfQMaSV3YdXSL+IBDFEJDC0ORqiXlpGYGFp1WWULFy99D6kR+F4W/UQrPHFxdK1f/mqmKC/03gOExw4TeXgsnJUt/tySLrvzFkIKxqQy+gjOm7KeiXrifwfRjktkdznNzZhaZUbSZbY9k8MWK3siPpt51Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q1kmPONG; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d462c91a9so4244984f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:17:36 -0700 (PDT)
+	s=arc-20240116; t=1729617354; c=relaxed/simple;
+	bh=z2ipP4my5QnyVNvAfHRwu9o0oRXT4HEUJ/+g6IV1ubU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hf+uC72KSIYN9P31ZLSkqrY7XU1QTRzSqoTQK9E6vtsjLXrFrAiw2b42iMFVRFy0Y8MlC+32vZgNstSO21h1gokSzbBt0ufIabYc8L8wC3TzBvqbXMlkx1lmlMvpYu6nYyrwqVXn47q/PnTUL78xMW+MaMTrUEDE/uN/DLT2hOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FnzOozB0; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3b3f4b2afso12105ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729617455; x=1730222255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729617351; x=1730222151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bnlqVZ4BO/KcWRbWj4X5jgmlgSPyqQsEw0oozV3PjCg=;
-        b=Q1kmPONGUltIFv5UnUQSPTJGSMqyWAEQXqocG5vXrPPdK3IR3u94L8cerM1wILwHds
-         0X3NcrdMvFY2JShFYBrh0fwVNX10ZuPYF/y30Xpy6fwJgfPnTaj6xdigYPUONqnICTf/
-         Gmml5DoTninZ/irJTm1vyq/mrICSx0RDrcsDIiYeyFjvOjB1Mbaz9n7p/gRJvcpbYIL6
-         0FVoQl1F5zVbLyjdGbN7Yhf8Gxolq6vaTVQwn0SoDabCN1FygKhu9unPk+dxmF5jeD2G
-         LAc8PSpSbH281M6QsyJT5c2sZRZfOAQiTAwmKQ113EWosoQvtWWEpA8NYj4vybrHCEbN
-         opoA==
+        bh=UaXzMvAYvUxlUCWeHAnHy7Ln3CXIQTuXNPgjIoy8xAk=;
+        b=FnzOozB01z9Qpepj9QiuDDEkO3Jhb82YPgMQGWpL1pmJ6f0vf0ZzqO90N9v0vkrVbR
+         glyHUEiRfYRZWSEEEV7k1EA4PUEr5DLhtuxNmLghKMaWkiNBwIJ/pBNv6kskteBeLVCF
+         21so9r4O7UNZyzYuPCfi9efNO4cUVFVtFD9YUULwMD3ofq7b4dk6Q6UekJGxVQAyr8Xk
+         uqeDLgmVKED3+i97lCATOlvcwdPlIpaI/zmXsG8POEuamdsnVXSFC87pgGt2lR8YuFlt
+         cXzplSjc9JnUYNT7Ez4+eR5L+xSdAEiVtcD41LS1Zssf8y+wGppuUGguKqwCNG/3pJrj
+         gUqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729617455; x=1730222255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729617351; x=1730222151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bnlqVZ4BO/KcWRbWj4X5jgmlgSPyqQsEw0oozV3PjCg=;
-        b=pLpe7difvqo81aSO//f/Z5oOCbnjq2FlqALulZJ/+HYrtm3QG/+6CorajyEvSiX3Df
-         kfnKWjw6EL+hPYTWNyQ91DkQxbegoz5MpT5GAbx8bnsDFCzav2xyCRLUrHxdurMWojbx
-         Wal9vhQWMMHdQ6lttQASNbyEbgFOdXp65SwwIS4sv/b/PJu20BcM17WdrS4w4Nts7N+A
-         M9LqytS07RBzKsG//kXYRjNeA4mJ1NtkDToxtdM54XvAkN6DNSOup85FmVm+1tSjz58S
-         JNfMWpDH4JmbNbEUULJM3bYodEXK9AX7f1aT5IHEbP3mVdNTSt1sOMYXrriUlmLnnj2T
-         sCPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyFkTQo1uEEgkE4eANH/MXQ/X4YkxGdW55Lb0i0Ma605sPzJ7E8jH3uIyzdWcVfrT9jedm/q43GiMfbz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywLxZbgk+rIS7KcGE/WT5N2N/2UM0I7fWlgqPLvaB2Qi9/dRoV
-	U9kItuECHl2VYXSbN6UgBp4vVhbVGbxgvAOezhWoneEETn/AF9n2Mz0RpPVYcx4=
-X-Google-Smtp-Source: AGHT+IFPUocm/4nviahA9kVMkkKDFQ5l6iajdVlX1sr2xtvR0ubt2qGXvimvsdW1+ViSPBkb4GzA0Q==
-X-Received: by 2002:adf:fa45:0:b0:377:6073:48df with SMTP id ffacd0b85a97d-37ef0c05405mr2619872f8f.58.1729617455376;
-        Tue, 22 Oct 2024 10:17:35 -0700 (PDT)
-Received: from localhost.localdomain ([2804:7f0:bc02:9a54:2a00:afff:fe18:d85c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407f4asm4944538b3a.207.2024.10.22.10.17.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 10:17:34 -0700 (PDT)
-From: Henrique Carvalho <henrique.carvalho@suse.com>
-To: markus.elfring@web.de
-Cc: bharathsm@microsoft.com,
-	kernel-janitors@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	make24@iscas.ac.cn,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	samba-technical@lists.samba.org,
-	sfrench@samba.org,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	ematsumiya@suse.de,
-	Henrique Carvalho <henrique.carvalho@suse.com>
-Subject: [PATCH v2] fs_context.c: smb3_reconfigure: Handle kstrdup failures for passwords
-Date: Tue, 22 Oct 2024 14:15:15 -0300
-Message-ID: <20241022171515.3330183-1-henrique.carvalho@suse.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <5fecc08a-c3b7-4745-abc9-0f5b4de03c22@web.de>
-References: <5fecc08a-c3b7-4745-abc9-0f5b4de03c22@web.de>
+        bh=UaXzMvAYvUxlUCWeHAnHy7Ln3CXIQTuXNPgjIoy8xAk=;
+        b=hpYFJjk4CLFZlEKB760EBdV0bMjxhCuoc3/b4l0HIoZXiPBqaXq30xg1dG+7M5jjb+
+         j1jmekISqQA3RZBl+4pqWNd0HA89Q72a3FsrDMMw2yiuADPB0h0iMpIOXE0ZU8oCldce
+         0VaD7dg/nTsCNqcDw9pLx+uJqpSHROp+3ndzHvdR0iPiV0A9lMhBCON+ymYnBTd16Ort
+         fGywoFXwsjkj4qMg5JCWcT2lDxHOKIZlNTbXkjYuubhQ0ekWBPHgZ5Np1vOUMfXxOSAU
+         cGMQcOnQq0zJTVabWPkyoyso6ogYKN5qGApG9f8QaZT9AM8wuT1p3JJM7rb+IqJ3SMHr
+         72BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Je/itM6Oh0gPllQf8DLiOY1TVkRAN05pj4Jx9vjAPBsbTeGdXh/G8g5Ba4lAo6WfTniOhDyJjW6w2Ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww0QXOvPrkFLxXyqgFRL6ntZnovI2iOetWmfb7fvAlLUFzHoFg
+	xSNsnrnFiLZurXwGYLcPwTa1s4fzEQ+ltU0L/AFHX9PUZljQ+VB4dZhPDmrNOolx5OMeXA1dTiO
+	bYiKHDNXmBeBd9HgAEMdG2TcT8wVucnvaA5b8
+X-Google-Smtp-Source: AGHT+IEVy5VyzazC8qQI5OZ8jkSTr1uF7DIcZre/POs3/p26eCu/ktnn4YnUyuyzRspoVg/9iqbEOoec2ztXipcoSMk=
+X-Received: by 2002:a05:6e02:1381:b0:3a0:9b7c:7885 with SMTP id
+ e9e14a558f8ab-3a4cca013f9mr5069435ab.22.1729617351393; Tue, 22 Oct 2024
+ 10:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241016042415.7552-1-irogers@google.com> <20241016042415.7552-14-irogers@google.com>
+ <ZxdJyRpCv7dmmin9@google.com>
+In-Reply-To: <ZxdJyRpCv7dmmin9@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Oct 2024 10:15:37 -0700
+Message-ID: <CAP-5=fU7n6iumZuNaUcS7VjsG9uF3ib-mP_6cvUGExKaY-CNQw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] perf bench: Remove reference to cmd_inject
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In smb3_reconfigure(), after duplicating ctx->password and
-ctx->password2 with kstrdup(), we need to check for allocation
-failures.
+On Mon, Oct 21, 2024 at 11:44=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Tue, Oct 15, 2024 at 09:24:12PM -0700, Ian Rogers wrote:
+> > Avoid `perf bench internals inject-build-id` referencing the
+> > cmd_inject sub-command that requires perf-bench to backward reference
+> > internals of builtins. Replace the reference to cmd_inject with a call
+> > to main. To avoid python.c needing to link with something providing
+> > main, drop the libperf-bench library from the python shared object.
+>
+> Looks like a clever trick!  But I guess by removing libperf-bench from
+> the python object, you can remove the reference to cmd_inject, right?
 
-If ses->password allocation fails, return -ENOMEM.
-If ses->password2 allocation fails, free ses->password, set it
-to NULL, and return -ENOMEM.
+So this change is looking to clean up cmd_inject yes, an alternative
+thing to do is to remove libperf-bench.a as a python dependency but
+that would use an unused stub. I'm looking to remove all the stubs.
+Once you start cleaning up the cmd_inject stub then you get where this
+patch is.
 
-Fixes: c1eb537bf456 ("cifs: allow changing password during remount")
-Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-Signed-off-by: Henrique Carvalho <henrique.carvalho@suse.com>
----
-V1 -> V2: Decoupled checks for ses->password and ses->password2. Ensured
-ses->password is freed and set to NULL if ses->password2 allocation
-fails. Corrected return value. Improved commit message.
+Wrt cmd_inject have 4 choices:
+1) status quo - have libperf-bench.a be depended on by builtin-bench
+but have a cycle where libperf-bench.a depends on builtin-inject. This
+can yield build issues I've wrestled with in the past and in general
+this shouldn't be done.
+2) this patch - have a dependency from libperf-bench.a to main in
+perf.c, which is less of an internal dependency on the perf.c/builtin
+code but is still an annoying cycle. It's not much better than (1) but
+at least it shouldn't require a #include "../builtin.h" which is
+obviously bad. That #include isn't in the bench code as it re-declares
+the function, again bad. The patch here declares main which isn't
+great, but at least the declaration of main should not be subject to
+change whereas the builtins could be.
+3) move perf inject into util or some other 3rd library. Out of scope
+for this change, but also not something I think we want.
+4) have `perf bench internals inject-build-id` fork/exec the perf
+command. My preference but out of scope here.
 
- fs/smb/client/fs_context.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+So I went with 2 to improve things but without doing some larger
+rewrite. The cleanups all relate to removing cyclic dependencies to
+cmd_inject hence 1 patch.
 
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 28c4e576d460a..5c5a52019efad 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -920,8 +920,15 @@ static int smb3_reconfigure(struct fs_context *fc)
- 	else  {
- 		kfree_sensitive(ses->password);
- 		ses->password = kstrdup(ctx->password, GFP_KERNEL);
-+		if (!ses->password)
-+			return -ENOMEM;
- 		kfree_sensitive(ses->password2);
- 		ses->password2 = kstrdup(ctx->password2, GFP_KERNEL);
-+		if (!ses->password2) {
-+			kfree_sensitive(ses->password);
-+			ses->password = NULL;
-+			return -ENOMEM;
-+		}
- 	}
- 	STEAL_STRING(cifs_sb, ctx, domainname);
- 	STEAL_STRING(cifs_sb, ctx, nodename);
--- 
-2.46.0
-
+Thanks,
+Ian
 
