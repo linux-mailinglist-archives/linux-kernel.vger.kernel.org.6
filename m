@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-376787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840BC9AB5DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120679AB5E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45131C2322C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17551F23E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF0E1BD50A;
-	Tue, 22 Oct 2024 18:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963A61BD01A;
+	Tue, 22 Oct 2024 18:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nm8V9wJR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBRu9kRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864C17E0E4;
-	Tue, 22 Oct 2024 18:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005347E0E4;
+	Tue, 22 Oct 2024 18:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729620937; cv=none; b=G7U4asONNrTi+8Oh2YqJ/+MEoY5iTaLaxdZeSniHq5ZDxeEiDBfNWs1754pnECoizrkM0vOGT4gbGSFdZ0K6AE+1CTUmhqFOaIzX2+qgqRHDYgiBVw9c4V/WpDsGkeghCNK5KhlzMyZIP/WdtGI0QecLliFobpjbKzfJfKUE8MY=
+	t=1729621033; cv=none; b=pJm6Zi/2MNm1QEeQohrdbW7Q3iEgRfo6qOS/2Af+eEei4Rh206PSfSIXzA1bHfsbdpCfCQ/y06MClXHg8ExbdQPmBbmEwsZEldedwuClfwy5iu3dI3qvSZzjWc6oRzIc28MQ6Nz/yf8chLWLXLKPgNkGLuvEO+nh9WTg8lHI3UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729620937; c=relaxed/simple;
-	bh=1wbsMhC82AHn/OmKtlVfqJCI19GE9EO2XAraNnxxr3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=TLaPPv2ncP6wDp+WAI/pLWJX4h5yK/GMnTIqairJTdwAD98+6nFusDDKl2DwgDIimXKcx6plRmfnsim3YlIwr25LOEUGSj0uDb8S0F16E/D6hTDJPUrgGbpCyds6kFOtDxveHaZGVFwNMa8bRmhA64q7B4QIdfSMw+lljEIJyo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nm8V9wJR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MDForX026250;
-	Tue, 22 Oct 2024 18:15:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sPjL0Bd03vYG+Oil5C4bIJBAekQWDxctWzWTvL/rTe0=; b=Nm8V9wJR1J+P4hkU
-	tOrjWqfkiirjJLcQrcCca5Yvs8BklJDAXo9R4ZxixQef4kTMGwMm5qm3GQcXcXxN
-	+GT0UPGrjtneAuCua/m9zZrB0aqdS+sJQOETZyvSwwJSdg0h7S5amc7hHC/paC0z
-	S0fJmRASVgiOlBd0j0B+QCF6Kl77MmMi377JoTI7mL1ETAo21DUHzhLznLSHKbVv
-	EW4y78x576sYZ2JGPQeNeDUD4+qtwAKy3DS1jIAFWqtUQCl/4q7CCl5Vz+1sKnJn
-	UdEnSIw/v2go49QtgWDH2iTzgWiBPdwKNzVtoQzFdbqdkxoLOnC+5zqQf0tBB/i5
-	IwyVXw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ecse0y5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 18:15:28 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MIFRxZ014717
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 18:15:27 GMT
-Received: from [10.216.8.66] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 11:15:24 -0700
-Message-ID: <39b71082-731b-4a49-a999-0684f30dd79b@quicinc.com>
-Date: Tue, 22 Oct 2024 23:45:21 +0530
+	s=arc-20240116; t=1729621033; c=relaxed/simple;
+	bh=JMgdeQnGRehG99SRHtxuoUhtRAJRg6fbbjqiwoh9kEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HwGR6YIGbl++16PdHBYZd3w59xQIMcpOfxr30slpaJRPGF8ptngge8ZL0QwJ7xJHQqUuYlDEk8UoeI8mQspP/WbhkF8VqWsDyUCZ1X9k97AH+6dMsJSpsS93vPhqK0KNVWUZGdjM32vgpGBflA1qSAWrmZEZY9WviRiuWXkeqGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBRu9kRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E625C4CEC3;
+	Tue, 22 Oct 2024 18:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729621032;
+	bh=JMgdeQnGRehG99SRHtxuoUhtRAJRg6fbbjqiwoh9kEs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nBRu9kRake9fewgSVPXm+8NtGEFhgLvPKAlPCrofyzhzgKBCj2ifwBf8ZxlFf+hgO
+	 TGZPQQ0qjQ+YfMSan1TfIeyULdEQKgaortO0i5eL1nuucRtL8GQPHXAQ4L8CWA/AHs
+	 1bgBfQE1FnycSlh+5jOWzzFlnYCXdmFFt0ozdOxGa3HNzsWZpBYWw4TBTNyfRviSiB
+	 YVFvCIDr2BXIWG0C9mnb4G6T6rQuTD1eErQefB0c0YUDg6kkmlx/WylBqvy+Pq5uA3
+	 UYh1PfbZr9MyPjA66xgkdfziuN09delxLSekX8MeIo1mGbqBdfknBtu+Jq+kCFcrs+
+	 ZpdBd1gWG1rIQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: Ben Hutchings <benh@debian.org>,
+	Ron Economos <re@w6rz.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kbuild: rpm-pkg: disable kernel-devel package when cross-compiling
+Date: Wed, 23 Oct 2024 03:16:57 +0900
+Message-ID: <20241022181703.1710116-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Qingqing
- Zhou" <quic_qqzhou@quicinc.com>
-References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
- <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 35f-_mluyBD34_uhSEZ2S8CC8J7NvIR2
-X-Proofpoint-ORIG-GUID: 35f-_mluyBD34_uhSEZ2S8CC8J7NvIR2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 adultscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220117
+Content-Transfer-Encoding: 8bit
 
+Since commit f1d87664b82a ("kbuild: cross-compile linux-headers package
+when possible"), 'make binrpm-pkg' may attempt to cross-compile the
+kernel-devel package, but it fails under certain circumstances.
 
+For example, when CONFIG_MODULE_SIG_FORMAT is enabled on openSUSE
+Tumbleweed, the following command fails:
 
-On 10/14/2024 4:45 PM, Kuldeep Singh wrote:
-> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> 
-> When enabling SHM bridge, QTEE returns 0 and sets error 4 in result to
-> qcom_scm for unsupported platforms. Currently, tzmem interprets this as
-> an unknown error rather than recognizing it as an unsupported platform.
-> 
-> Error log:
-> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
-> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
-> 
-> To address this, modify the function call qcom_scm_shm_bridge_enable()
-> to remap result to indicate an unsupported error. This way, tzmem will
-> correctly identify it as an unsupported platform case instead of
-> reporting it as an error.
-> 
-> Fixes: 178e19c0df1b ("firmware: qcom: scm: add support for SHM bridge operations")
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-suse-linux- binrpm-pkg
+      [ snip ]
+  Rebuilding host programs with aarch64-suse-linux-gcc...
+    HOSTCC  /home/masahiro/ref/linux/rpmbuild/BUILDROOT/kernel-6.12.0_rc4-1.aarch64/usr/src/kernels/6.12.0-rc4/scripts/kallsyms
+    HOSTCC  /home/masahiro/ref/linux/rpmbuild/BUILDROOT/kernel-6.12.0_rc4-1.aarch64/usr/src/kernels/6.12.0-rc4/scripts/sorttable
+    HOSTCC  /home/masahiro/ref/linux/rpmbuild/BUILDROOT/kernel-6.12.0_rc4-1.aarch64/usr/src/kernels/6.12.0-rc4/scripts/asn1_compiler
+    HOSTCC  /home/masahiro/ref/linux/rpmbuild/BUILDROOT/kernel-6.12.0_rc4-1.aarch64/usr/src/kernels/6.12.0-rc4/scripts/sign-file
+  /home/masahiro/ref/linux/rpmbuild/BUILDROOT/kernel-6.12.0_rc4-1.aarch64/usr/src/kernels/6.12.0-rc4/scripts/sign-file.c:25:10: fatal error: openssl/opensslv.h: No such file or directory
+     25 | #include <openssl/opensslv.h>
+        |          ^~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
 
-Hi Bjorn,
+I believe this issue is less common on Fedora because cross-compiling
+user-space programs is not possible, even if the gcc-aarch64-linux-gnu
+package is installed. In other words, CONFIG_CC_CAN_LINK is unset.
 
-Can you please apply this fix I'll split this one and send separately.
-This fixes qcom_scm probe failure and is needed for other patches to
-build upon. Thank you.
+On Fedora 40, the package information explains this limitation clearly:
 
+  $ dnf info gcc-aarch64-linux-gnu
+      [ snip ]
+  Description  : Cross-build GNU C compiler.
+               :
+               : Only building kernels is currently supported.  Support for cross-building
+               : user space programs is not currently provided as that would massively multiply
+               : the number of packages.
+
+This commit disables the kernel-devel package when cross-compiling
+because cross-compiling RPM packages is somewhat challenging, and I
+did not come up with a better solution.
+
+Fixes: f1d87664b82a ("kbuild: cross-compile linux-headers package when possible")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/Makefile.package | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index 11d53f240a2b..b9a4b0c8b8a0 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -72,7 +72,8 @@ rpm-pkg srcrpm-pkg binrpm-pkg: rpmbuild/SPECS/kernel.spec
+ 	--define='_topdir $(abspath rpmbuild)' \
+ 	$(if $(filter a b, $(build-type)), \
+ 		--target $(UTS_MACHINE)-linux --build-in-place --noprep --define='_smp_mflags %{nil}' \
+-		$$(rpm -q rpm >/dev/null 2>&1 || echo --nodeps)) \
++		$$(rpm -q rpm >/dev/null 2>&1 || echo --nodeps) \
++		$(if $(cross_compiling), --without=devel)) \
+ 	$(RPMOPTS))
+ 
+ # deb-pkg srcdeb-pkg bindeb-pkg
 -- 
-Regards
-Kuldeep
+2.43.0
+
 
