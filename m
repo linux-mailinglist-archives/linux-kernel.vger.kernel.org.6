@@ -1,304 +1,812 @@
-Return-Path: <linux-kernel+bounces-376009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CB89A9E89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:30:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2849A9E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6AEB1C21C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:30:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B7ADB21447
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E656A198E91;
-	Tue, 22 Oct 2024 09:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UMWL9zCo"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A73F195F17;
+	Tue, 22 Oct 2024 09:33:57 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F13138DF9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C179E154C19
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729589441; cv=none; b=EAkcd7YT6SXueQoi2+EUXN6hF8u+BU275ND2iNYdgJnfc5TgTcF7zghjj3rx10gJyGH6YQ9IMabNRpxGkdy7t1kcsHIWoVarUsfnLPr8JJb2O2/OGPoPrs6AfO3EmcIXG6NYJI6m2WAdvCkbC+4DaOZINMs1OVDZNEe8T0jB2+o=
+	t=1729589635; cv=none; b=XlEfWguMyBRZ/gDn8koKQ9EnBl5lj05ODVrcaISODjd9YurlFiuff5ij6cDNRVGpJA5WFWNtdubCYKzZtYKAq1zMOgL71C+9d5GNh7Cubd3n09bASa9Xm2SZkyGS/6IKLU58oMurfkm/q2AE7iSa7UikhqCuyJihgAO3PXZC2yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729589441; c=relaxed/simple;
-	bh=04uqPll08TndRHT1JewWFv7oA5E7wVeGMCcmQpsjSaA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnQj4yhUZBRtiZ245YxDPcNfktpQqX9Z7q7MJ6nTl/pc6pytVlorilq6Pra63GGoO6Oipf3PuoS3jP9rieZxJyo6EIH0Ft/oYmxWHOqUEEWh5TUQwKR9w+hUWArah++awmVU3aVKSxuXMQYCwk70incPiONrpAgyM4EGA0RY0Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UMWL9zCo; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso781951966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729589437; x=1730194237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwMxl0HS+/hroXw7dMiyhKlhruRtZ/PIjrJLLm0t+HQ=;
-        b=UMWL9zCo2RnoxbQaGuZgieJtcicQqNNVkam3LR42AZF8gGGtkkrhBRMsSjw/t6QkvJ
-         ICn4rfdzfpJX5Drn7FIdmPGX4eubadJxQyMPGR+yHR9tqr9ieGr6kuZZPdpiZYftrlqf
-         /w9gWEUx+sqewVS6yn032zRa3CL0+hH/TtsWWPnP5ljW/durjEP4ZTVckLTyOCji6ym/
-         K7yCRbMYo9f5xn/2Jc0kWvJHRo+/bMRbEJBuJoY7JPvgkGD4dXStxoMLjux7zwePZcHu
-         yofUo5cjjvDKpA990224yMXWO2mc9KSUPMD1fvDtQnuoWifoCJelQCNtbfoK2j7k2LY2
-         vHng==
+	s=arc-20240116; t=1729589635; c=relaxed/simple;
+	bh=JoeNxVK0mkPRFWihiaz1fS1jz3vOIjuMotJvEDxcbIQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FcolLUvSFo5D/z4ZOoD4GpgRXcf4kmN3j7I31f7dDPXmUFaJg8g5D22sUbPNRY/qcR7LN8vYOhIsVzNyl/kuDozmMFhgK10Fh8B9D9tZj1Y61rfDy+d7MRLTbgj5kEm5BeiEyihGQzDGBBFANcNvQMrijTiBajlx+AC8fXGY/Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99c0beaaa2so893760466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:33:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729589437; x=1730194237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwMxl0HS+/hroXw7dMiyhKlhruRtZ/PIjrJLLm0t+HQ=;
-        b=boHc9+uovXug1f0lXfuzfkTwBaqsuuMgMl/8nCHQve3Sh1cmrDzXQySpq/BSbUBGSK
-         W7dCjepqtLDibgSA3bJjeWK/mH68CEnfOeMLY7bBa72I6pZZbUc4cdCyHLKHtJQ8YIEi
-         VNbGd8Fx2Et2WR3lMHo29TQoFc82j2frKvjd6HE9AAN+/C2hnd2L8SU5LeKxR8k8GnIi
-         +A3APfRc9E/8PIZPPIs0wzLsMICk0B9mPpa/fOZFSeVhPDF7tmJAnWo9bQ2ivbA0JcY0
-         HWzG9ThMgGbspw+KABKnXpy1zcvlB1j6k8zRY+wF0pGe+ceUsuesODlmsDvRA4FubHRJ
-         LrGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjPC0dZBHysYYlSrZo7m1vS2yxtV5sHE7e1JPSBH4haFTrcaWVAzXA+1SMqAkJmCLtRsGuO4XYz3o3LZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyviq+5eCheT5//1I1YYKb4aiK3qxyDBxRyRJWeAmCCJhoNb390
-	U7vJqwR4Fu7b/7cgXvTGjZaE0sj8N+HdNeJRkSnHfYCiLVECupxEh1mZw6gXlqg=
-X-Google-Smtp-Source: AGHT+IEGyEQRCYQDtCFWizlbuy0GBX1uROrJVtmMFsgIeXcmwJ6NJZHdXYYpYRzJfgP5yt6o3uI6gA==
-X-Received: by 2002:a17:907:2d8c:b0:a80:f840:9004 with SMTP id a640c23a62f3a-a9a69a63c0fmr1587260866b.12.1729589436425;
-        Tue, 22 Oct 2024 02:30:36 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6234sm312304466b.24.2024.10.22.02.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:30:36 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 22 Oct 2024 11:30:57 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
- for RaspberryPi RP1
-Message-ID: <Zxdw0X2S1-4ciBMc@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
- <20241010025244.GB978628-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1729589630; x=1730194430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YDnCU5uV7X3XxlntBsD6cvm5xA5ulNN8qAE5+TteYHA=;
+        b=OgHkMqPiOTrm0g9qWtl+c024LA2o7mrTGA9Dy63ZogQyS1eix1w/qdYQXy3zjxDyqU
+         C4q0ulnwIHqa6M1+Ar1Kk0kEpJHc0+5tYLhuYevlIIJUECs4PfiH/Xjw6BoxqJ6A3ED1
+         l/Rdt3ZZfWp0lC4lO5wYBuz00d5Ng1rRowvjEP46zKiIFu3GOMsliU19ImeuiCK6Hpf0
+         ZtJ0Pl39qzraXa3gv2MGTR+/PHuS9M+6/mfGCBD8v+3PbofRyradTuXIQudKktwJtMkL
+         NAw4NrNfAblj1suAp74o5hwEevzXDrFU+Of3wnaz/u1DLwY0gjKP+iF7MV40bUTH9iqQ
+         5wBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvkquyR8z5ru47FYAKD3B8kUs9KauJ9oGJKS51JoYl3Hyx+5NkODdvATOtN7EGzV4m+w5ustF0wTWGHdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGJsmco+TZpyi3C9y+JYzcak0y84dVa2xgCgJ+LU64WGc1NGZd
+	AL+GDSEX5rmNpoT5qIu31ow7muzAdG3yG1nyZjpWJ0tEBVednKTn+FyRcSNhgzi6SA==
+X-Google-Smtp-Source: AGHT+IFYCtSVR5ItrWYL2hkuADvSfRwzAan2WcNYMie57S7EtXMtFdS8r+X07MdHZaA/cZonBZdfuw==
+X-Received: by 2002:a17:907:7d9e:b0:a99:f8e2:edec with SMTP id a640c23a62f3a-a9a69a7dc95mr1653834566b.21.1729589630050;
+        Tue, 22 Oct 2024 02:33:50 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ee077sm313297166b.65.2024.10.22.02.33.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 02:33:49 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99c0beaaa2so893757366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:33:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcsuoxqLsc2E1Ge4Ar4pRHwLkCjwCXvAk+1nrIXG3Gl8QMMIcFIyAM9zlWkkKP+rQt6acccZMmMWbq6Q8=@vger.kernel.org
+X-Received: by 2002:a17:907:3ea8:b0:a9a:8a4:e079 with SMTP id
+ a640c23a62f3a-a9a69bad3c8mr1494093966b.31.1729589629074; Tue, 22 Oct 2024
+ 02:33:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010025244.GB978628-robh@kernel.org>
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <4623805.lGaqSPkdTl@skuld-framework> <09e480d7-3ef6-4352-a484-91733ad7d231@arm.com>
+ <CAOgh=FwEv3LjA7bfcOvWK7kZEcKRyLpQmTqWn5WDsSsYwGqu+A@mail.gmail.com>
+ <649d7aa6-4163-4969-ba14-777f0e9cddb1@arm.com> <CAEg-Je9phqMqXCVAEjtXKadKGUmZcuSnFLDn=7C4+MaUu9KpYw@mail.gmail.com>
+ <872f1c9c-9fb2-4372-810d-abe5419c4bd8@arm.com>
+In-Reply-To: <872f1c9c-9fb2-4372-810d-abe5419c4bd8@arm.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Tue, 22 Oct 2024 05:33:12 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je9RpGGmw_pto7seYj_JGNUjSTKtcjLToQ8Mbp2_zrLGoQ@mail.gmail.com>
+Message-ID: <CAEg-Je9RpGGmw_pto7seYj_JGNUjSTKtcjLToQ8Mbp2_zrLGoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Eric Curtin <ecurtin@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
+	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>, Hector Martin <marcan@marcan.st>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
-
-On 21:52 Wed 09 Oct     , Rob Herring wrote:
-> On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
-> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> > schema is intended as minimal support for the clock generator and
-> > gpio controller peripherals which are accessible through BAR1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
-> >  MAINTAINERS                                   |   1 +
-> >  2 files changed, 111 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > new file mode 100644
-> > index 000000000000..3f099b16e672
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 MFD PCI device
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RaspberryPi RP1 is a PCI multi function device containing
-> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > +  and others.
-> > +  The peripherals are accessed by addressing the PCI BAR1 region.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    additionalItems: true
-> > +    maxItems: 3
-> > +    items:
-> > +      - const: pci1de4,1
-> > +
-> > +patternProperties:
-> > +  "^pci-ep-bus@[0-2]$":
-> > +    $ref: '#/$defs/bar-bus'
-> > +    description:
-> > +      The bus on which the peripherals are attached, which is addressable
-> > +      through the BAR.
-> 
-> No need for this because pci-ep-bus.yaml already has a schema for the 
-> child nodes.
-
-Hmmm... my intention here was to constrain the BARs from 0 to 2, since there are
-only 3 BARs on RP1 (of which only 1 is currently interesting for peripherals).
-Also, that bus should have the peripherals on it, hence I've added the clock,
-ethernet and pinctrl nodes. Do you think it's not reasonable to define
-all the peripherals on it, or if it's reasonable, is there any other way to
-accomplish this in a more elegant way than what I proposed in this patch? See also
-below.
-
-> 
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +$defs:
-> > +  bar-bus:
-> > +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
-> > +    unevaluatedProperties: false
-> > +
-> > +    properties:
-> > +      "#interrupt-cells":
-> > +        const: 2
-> > +        description:
-> > +          Specifies respectively the interrupt number and flags as defined
-> > +          in include/dt-bindings/interrupt-controller/irq.h.
-> > +
-> > +      interrupt-controller: true
-> > +
-> > +      interrupt-parent:
-> > +        description:
-> > +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
-> > +          PCI interrupts on behalf of peripheral generated interrupts.
-> 
-> 
-> Do you have an interrupt controller per bus? These should be in the 
-> parent node I think.
-
-Ack.
-
-> 
-> 
-> > +
-> > +    patternProperties:
-> > +      "^clocks(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/clock/raspberrypi,rp1-clocks.yaml
-> > +
-> > +      "^ethernet(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/net/cdns,macb.yaml
-> > +
-> > +      "^pinctrl(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/pinctrl/raspberrypi,rp1-gpio.yaml
-> 
-> IMO, these child nodes can be omitted. We generally don't define all the 
-> child nodes in an SoC.
-> 
-> If you do want to define them, then just do:
-> 
-> additionalProperties: true
-> properties:
->   compatible:
->     contains: the-child-compatible
+On Mon, Oct 21, 2024 at 11:02=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com=
+> wrote:
+>
+> On 21/10/2024 14:49, Neal Gompa wrote:
+> > On Mon, Oct 21, 2024 at 7:51=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.=
+com> wrote:
+> >>
+> >> On 21/10/2024 12:32, Eric Curtin wrote:
+> >>> On Mon, 21 Oct 2024 at 12:09, Ryan Roberts <ryan.roberts@arm.com> wro=
+te:
+> >>>>
+> >>>> On 19/10/2024 16:47, Neal Gompa wrote:
+> >>>>> On Monday, October 14, 2024 6:55:11=E2=80=AFAM EDT Ryan Roberts wro=
+te:
+> >>>>>> Hi All,
+> >>>>>>
+> >>>>>> Patch bomb incoming... This covers many subsystems, so I've includ=
+ed a core
+> >>>>>> set of people on the full series and additionally included maintai=
+ners on
+> >>>>>> relevant patches. I haven't included those maintainers on this cov=
+er letter
+> >>>>>> since the numbers were far too big for it to work. But I've includ=
+ed a link
+> >>>>>> to this cover letter on each patch, so they can hopefully find the=
+ir way
+> >>>>>> here. For follow up submissions I'll break it up by subsystem, but=
+ for now
+> >>>>>> thought it was important to show the full picture.
+> >>>>>>
+> >>>>>> This RFC series implements support for boot-time page size selecti=
+on within
+> >>>>>> the arm64 kernel. arm64 supports 3 base page sizes (4K, 16K, 64K),=
+ but to
+> >>>>>> date, page size has been selected at compile-time, meaning the siz=
+e is
+> >>>>>> baked into a given kernel image. As use of larger-than-4K page siz=
+es become
+> >>>>>> more prevalent this starts to present a problem for distributions.
+> >>>>>> Boot-time page size selection enables the creation of a single ker=
+nel
+> >>>>>> image, which can be told which page size to use on the kernel comm=
+and line.
+> >>>>>>
+> >>>>>> Why is having an image-per-page size problematic?
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> >>>>>>
+> >>>>>> Many traditional distros are now supporting both 4K and 64K. And t=
+his means
+> >>>>>> managing 2 kernel packages, along with drivers for each. For some,=
+ it means
+> >>>>>> multiple installer flavours and multiple ISOs. All of this adds up=
+ to a
+> >>>>>> less-than-ideal level of complexity. Additionally, Android now sup=
+ports 4K
+> >>>>>> and 16K kernels. I'm told having to explicitly manage their KABI f=
+or each
+> >>>>>> kernel is painful, and the extra flash space required for both ker=
+nel
+> >>>>>> images and the duplicated modules has been problematic. Boot-time =
+page size
+> >>>>>> selection solves all of this.
+> >>>>>>
+> >>>>>> Additionally, in starting to think about the longer term deploymen=
+t story
+> >>>>>> for D128 page tables, which Arm architecture now supports, a lot o=
+f the
+> >>>>>> same problems need to be solved, so this work sets us up nicely fo=
+r that.
+> >>>>>>
+> >>>>>> So what's the down side?
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> >>>>>>
+> >>>>>> Well nothing's free; Various static allocations in the kernel imag=
+e must be
+> >>>>>> sized for the worst case (largest supported page size), so image s=
+ize is in
+> >>>>>> line with size of 64K compile-time image. So if you're interested =
+in 4K or
+> >>>>>> 16K, there is a slight increase to the image size. But I expect th=
+at
+> >>>>>> problem goes away if you're compressing the image - its just some =
+extra
+> >>>>>> zeros. At boot-time, I expect we could free the unused static stor=
+age once
+> >>>>>> we know the page size - although that would be a follow up enhance=
+ment.
+> >>>>>>
+> >>>>>> And then there is performance. Since PAGE_SIZE and friends are no =
+longer
+> >>>>>> compile-time constants, we must look up their values and do arithm=
+etic at
+> >>>>>> runtime instead of compile-time. My early perf testing suggests th=
+is is
+> >>>>>> inperceptible for real-world workloads, and only has small impact =
+on
+> >>>>>> microbenchmarks - more on this below.
+> >>>>>>
+> >>>>>> Approach
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> The basic idea is to rid the source of any assumptions that PAGE_S=
+IZE and
+> >>>>>> friends are compile-time constant, but in a way that allows the co=
+mpiler to
+> >>>>>> perform the same optimizations as was previously being done if the=
+y do turn
+> >>>>>> out to be compile-time constant. Where constants are required, we =
+use
+> >>>>>> limits; PAGE_SIZE_MIN and PAGE_SIZE_MAX. See commit log in patch 1=
+ for full
+> >>>>>> description of all the classes of problems to solve.
+> >>>>>>
+> >>>>>> By default PAGE_SIZE_MIN=3DPAGE_SIZE_MAX=3DPAGE_SIZE. But an arch =
+may opt-in to
+> >>>>>> boot-time page size selection by defining PAGE_SIZE_MIN & PAGE_SIZ=
+E_MAX.
+> >>>>>> arm64 does this if the user selects the CONFIG_ARM64_BOOT_TIME_PAG=
+E_SIZE
+> >>>>>> Kconfig, which is an alternative to selecting a compile-time page =
+size.
+> >>>>>>
+> >>>>>> When boot-time page size is active, the arch pgtable geometry macr=
+o
+> >>>>>> definitions resolve to something that can be configured at boot. T=
+he arm64
+> >>>>>> implementation in this series mainly uses global, __ro_after_init
+> >>>>>> variables. I've tried using alternatives patching, but that perfor=
+ms worse
+> >>>>>> than loading from memory; I think due to code size bloat.
+> >>>>>>
+> >>>>>> Status
+> >>>>>> =3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> When CONFIG_ARM64_BOOT_TIME_PAGE_SIZE is selected, I've only imple=
+mented
+> >>>>>> enough to compile the kernel image itself with defconfig (and a fe=
+w other
+> >>>>>> bits and pieces). This is enough to build a kernel that can boot u=
+nder QEMU
+> >>>>>> or FVP. I'll happily do the rest of the work to enable all the ext=
+ra
+> >>>>>> drivers, but wanted to get feedback on the shape of this effort fi=
+rst. If
+> >>>>>> anyone wants to do any testing, and has a must-have config, let me=
+ know and
+> >>>>>> I'll prioritize enabling it first.
+> >>>>>>
+> >>>>>> The series is arranged as follows:
+> >>>>>>
+> >>>>>>   - patch 1:    Add macros required for converting non-arch code t=
+o support
+> >>>>>>                 boot-time page size selection
+> >>>>>>   - patches 2-36:  Remove PAGE_SIZE compile-time constant assumpti=
+on from
+> >>>>>> all non-arch code
+> >>>>>>   - patches 37-38: Some arm64 tidy ups
+> >>>>>>   - patch 39:           Add macros required for converting arm64 c=
+ode to
+> >>>>> support
+> >>>>>>                 boot-time page size selection
+> >>>>>>   - patches 40-56: arm64 changes to support boot-time page size se=
+lection
+> >>>>>>   - patch 57:           Add arm64 Kconfig option to enable boot-ti=
+me page
+> >>>>> size
+> >>>>>>                 selection
+> >>>>>>
+> >>>>>> Ideally, I'd like to get the basics merged (something like this se=
+ries),
+> >>>>>> then incrementally improve it over a handful of kernel releases un=
+til we
+> >>>>>> can demonstrate that we have feature parity with the compile-time =
+build and
+> >>>>>> no performance blockers. Once at that point, ideally the compile-t=
+ime build
+> >>>>>> options would be removed and the code could be cleaned up further.
+> >>>>>>
+> >>>>>> One of the bigger peices that I'd propose to add as a follow up, i=
+s to make
+> >>>>>> va-size boot-time selectable too. That will greatly simplify LPA2 =
+fallback
+> >>>>>> handling.
+> >>>>>>
+> >>>>>> Assuming people are ammenable to the rough shape, how would I go a=
+bout
+> >>>>>> getting the non-arch changes merged? Since they cover many subsyst=
+ems, will
+> >>>>>> each piece need to go independently to each relevant maintainer or=
+ could it
+> >>>>>> all be merged together through the arm64 tree?
+> >>>>>>
+> >>>>>> Image Size
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> The below shows the size of a defconfig (+ xfs, squashfs, ftrace, =
+kprobes)
+> >>>>>> kernel image on disk for base (before any changes applied), compil=
+e (with
+> >>>>>> changes, configured for compile-time page size) and boot (with cha=
+nges,
+> >>>>>> configured for boot-time page size).
+> >>>>>>
+> >>>>>> You can see the that compile-16k and 64k configs are actually slig=
+htly
+> >>>>>> smaller than the baselines; that's due to optimizing some buffer s=
+izes
+> >>>>>> which didn't need to depend on page size during the series. The bo=
+ot-time
+> >>>>>> image is ~1% bigger than the 64k compile-time image. I believe the=
+re is
+> >>>>>> scope to improve this to make it
+> >>>>>> equal to compile-64k if required:
+> >>>>>> | config      | size/KB | diff/KB |  diff/% |
+> >>>>>> |
+> >>>>>> |-------------|---------|---------|---------|
+> >>>>>> |
+> >>>>>> | base-4k     |   54895 |       0 |    0.0% |
+> >>>>>> | base-16k    |   55161 |     266 |    0.5% |
+> >>>>>> | base-64k    |   56775 |    1880 |    3.4% |
+> >>>>>> | compile-4k  |   54895 |       0 |    0.0% |
+> >>>>>> | compile-16k |   55097 |     202 |    0.4% |
+> >>>>>> | compile-64k |   56391 |    1496 |    2.7% |
+> >>>>>> | boot-4K     |   57045 |    2150 |    3.9% |
+> >>>>>>
+> >>>>>> And below shows the size of the image in memory at run-time, separ=
+ated for
+> >>>>>> text and data costs. The boot image has ~1% text cost; most likely=
+ due to
+> >>>>>> the fact that PAGE_SIZE and friends are not compile-time constants=
+ so need
+> >>>>>> instructions to load the values and do arithmetic. I believe we co=
+uld
+> >>>>>> eventually get the data cost to match the cost for the compile ima=
+ge for
+> >>>>>> the chosen page size by freeing
+> >>>>>> the ends of the static buffers not needed for the selected page si=
+ze:
+> >>>>>> |             |    text |    text |    text |    data |    data | =
+   data |
+> >>>>>> |
+> >>>>>> | config      | size/KB | diff/KB |  diff/% | size/KB | diff/KB | =
+ diff/% |
+> >>>>>> |
+> >>>>>> |-------------|---------|---------|---------|---------|---------|-=
+--------|
+> >>>>>> |
+> >>>>>> | base-4k     |   20561 |       0 |    0.0% |   14314 |       0 | =
+   0.0% |
+> >>>>>> | base-16k    |   20439 |    -122 |   -0.6% |   14625 |     311 | =
+   2.2% |
+> >>>>>> | base-64k    |   20435 |    -126 |   -0.6% |   15673 |    1359 | =
+   9.5% |
+> >>>>>> | compile-4k  |   20565 |       4 |    0.0% |   14315 |       1 | =
+   0.0% |
+> >>>>>> | compile-16k |   20443 |    -118 |   -0.6% |   14517 |     204 | =
+   1.4% |
+> >>>>>> | compile-64k |   20439 |    -122 |   -0.6% |   15134 |     820 | =
+   5.7% |
+> >>>>>> | boot-4K     |   20811 |     250 |    1.2% |   15287 |     973 | =
+   6.8% |
+> >>>>>>
+> >>>>>> Functional Testing
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> I've build-tested defconfig for all arches supported by tuxmake (w=
+hich is
+> >>>>>> most) without issue.
+> >>>>>>
+> >>>>>> I've boot-tested arm64 with CONFIG_ARM64_BOOT_TIME_PAGE_SIZE for a=
+ll page
+> >>>>>> sizes and a few va-sizes, and additionally have run all the mm-sel=
+ftests,
+> >>>>>> with no regressions observed vs the equivalent compile-time page s=
+ize build
+> >>>>>> (although the mm-selftests have a few existing failures when run a=
+gainst
+> >>>>>> 16K and 64K kernels - those should really be investigated and fixe=
+d
+> >>>>>> independently).
+> >>>>>>
+> >>>>>> Test coverage is lacking for many of the drivers that I've touched=
+, but in
+> >>>>>> many cases, I'm hoping the changes are simple enough that review m=
+ight
+> >>>>>> suffice?
+> >>>>>>
+> >>>>>> Performance Testing
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> I've run some limited performance benchmarks:
+> >>>>>>
+> >>>>>> First, a real-world benchmark that causes a lot of page table mani=
+pulation
+> >>>>>> (and therefore we would expect to see regression here if we are go=
+ing to
+> >>>>>> see it anywhere); kernel compilation. It barely registers a change=
+. Values
+> >>>>>> are times,
+> >>>>>> so smaller is better. All relative to base-4k:
+> >>>>>> |             |    kern |    kern |    user |    user |    real | =
+   real |
+> >>>>>> |
+> >>>>>> | config      |    mean |   stdev |    mean |   stdev |    mean | =
+  stdev |
+> >>>>>> |
+> >>>>>> |-------------|---------|---------|---------|---------|---------|-=
+--------|
+> >>>>>> |
+> >>>>>> | base-4k     |    0.0% |    1.1% |    0.0% |    0.3% |    0.0% | =
+   0.3% |
+> >>>>>> | compile-4k  |   -0.2% |    1.1% |   -0.2% |    0.3% |   -0.1% | =
+   0.3% |
+> >>>>>> | boot-4k     |    0.1% |    1.0% |   -0.3% |    0.2% |   -0.2% | =
+   0.2% |
+> >>>>>>
+> >>>>>> The Speedometer JavaScript benchmark also shows no change. Values =
+are runs
+> >>>>>> per
+> >>>>>> min, so bigger is better. All relative to base-4k:
+> >>>>>> | config      |    mean |   stdev |
+> >>>>>> |
+> >>>>>> |-------------|---------|---------|
+> >>>>>> |
+> >>>>>> | base-4k     |    0.0% |    0.8% |
+> >>>>>> | compile-4k  |    0.4% |    0.8% |
+> >>>>>> | boot-4k     |    0.0% |    0.9% |
+> >>>>>>
+> >>>>>> Finally, I've run some microbenchmarks known to stress page table
+> >>>>>> manipulations (originally from David Hildenbrand). The fork test
+> >>>>>> maps/allocs 1G of anon memory, then measures the cost of fork(). T=
+he munmap
+> >>>>>> test maps/allocs 1G of anon memory then measures the cost of munma=
+p()ing
+> >>>>>> it. The fork test is known to be extremely sensitive to any change=
+s that
+> >>>>>> cause instructions to be aligned differently in cachelines. When u=
+sing this
+> >>>>>> test for other changes, I've seen double digit regressions for the
+> >>>>>> slightest thing, so 12% regression on this test is actually fairly=
+ good.
+> >>>>>> This likely represents the extreme worst case for regressions that=
+ will be
+> >>>>>> observed across other microbenchmarks (famous last
+> >>>>>> words). Values are times, so smaller is better. All relative to ba=
+se-4k:
+> >>>>>> |             |    fork |    fork |  munmap |  munmap |
+> >>>>>> |
+> >>>>>> | config      |    mean |   stdev |   stdev |   stdev |
+> >>>>>> |
+> >>>>>> |-------------|---------|---------|---------|---------|
+> >>>>>> |
+> >>>>>> | base-4k     |    0.0% |    1.3% |    0.0% |    0.3% |
+> >>>>>> | compile-4k  |    0.1% |    1.3% |   -0.9% |    0.1% |
+> >>>>>> | boot-4k     |   12.8% |    1.2% |    3.8% |    1.0% |
+> >>>>>>
+> >>>>>> NOTE: The series applies on top of v6.11.
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>> Ryan
+> >>>>>>
+> >>>>>>
+> >>>>>> Ryan Roberts (57):
+> >>>>>>   mm: Add macros ahead of supporting boot-time page size selection
+> >>>>>>   vmlinux: Align to PAGE_SIZE_MAX
+> >>>>>>   mm/memcontrol: Fix seq_buf size to save memory when PAGE_SIZE is=
+ large
+> >>>>>>   mm/page_alloc: Make page_frag_cache boot-time page size compatib=
+le
+> >>>>>>   mm: Avoid split pmd ptl if pmd level is run-time folded
+> >>>>>>   mm: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   fs: Introduce MAX_BUF_PER_PAGE_SIZE_MAX for array sizing
+> >>>>>>   fs: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   fs/nfs: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   fs/ext4: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   fork: Permit boot-time THREAD_SIZE determination
+> >>>>>>   cgroup: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   bpf: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   pm/hibernate: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   stackdepot: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   perf: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   kvm: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   trace: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   crash: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   crypto: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   sunrpc: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   sound: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: fec: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: marvell: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: hns3: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: e1000: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: igbvf: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   net: igb: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   drivers/base: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   edac: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   optee: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   random: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   sata_sil24: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   virtio: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   xen: Remove PAGE_SIZE compile-time constant assumption
+> >>>>>>   arm64: Fix macros to work in C code in addition to the linker sc=
+ript
+> >>>>>>   arm64: Track early pgtable allocation limit
+> >>>>>>   arm64: Introduce macros required for boot-time page selection
+> >>>>>>   arm64: Refactor early pgtable size calculation macros
+> >>>>>>   arm64: Pass desired page size on command line
+> >>>>>>   arm64: Divorce early init from PAGE_SIZE
+> >>>>>>   arm64: Clean up simple cases of CONFIG_ARM64_*K_PAGES
+> >>>>>>   arm64: Align sections to PAGE_SIZE_MAX
+> >>>>>>   arm64: Rework trampoline rodata mapping
+> >>>>>>   arm64: Generalize fixmap for boot-time page size
+> >>>>>>   arm64: Statically allocate and align for worst-case page size
+> >>>>>>   arm64: Convert switch to if for non-const comparison values
+> >>>>>>   arm64: Convert BUILD_BUG_ON to VM_BUG_ON
+> >>>>>>   arm64: Remove PAGE_SZ asm-offset
+> >>>>>>   arm64: Introduce cpu features for page sizes
+> >>>>>>   arm64: Remove PAGE_SIZE from assembly code
+> >>>>>>   arm64: Runtime-fold pmd level
+> >>>>>>   arm64: Support runtime folding in idmap_kpti_install_ng_mappings
+> >>>>>>   arm64: TRAMP_VALIAS is no longer compile-time constant
+> >>>>>>   arm64: Determine THREAD_SIZE at boot-time
+> >>>>>>   arm64: Enable boot-time page size selection
+> >>>>>>
+> >>>>>>  arch/alpha/include/asm/page.h                 |   1 +
+> >>>>>>  arch/arc/include/asm/page.h                   |   1 +
+> >>>>>>  arch/arm/include/asm/page.h                   |   1 +
+> >>>>>>  arch/arm64/Kconfig                            |  26 ++-
+> >>>>>>  arch/arm64/include/asm/assembler.h            |  78 ++++++-
+> >>>>>>  arch/arm64/include/asm/cpufeature.h           |  44 +++-
+> >>>>>>  arch/arm64/include/asm/efi.h                  |   2 +-
+> >>>>>>  arch/arm64/include/asm/fixmap.h               |  28 ++-
+> >>>>>>  arch/arm64/include/asm/kernel-pgtable.h       | 150 +++++++++----
+> >>>>>>  arch/arm64/include/asm/kvm_arm.h              |  21 +-
+> >>>>>>  arch/arm64/include/asm/kvm_hyp.h              |  11 +
+> >>>>>>  arch/arm64/include/asm/kvm_pgtable.h          |   6 +-
+> >>>>>>  arch/arm64/include/asm/memory.h               |  62 ++++--
+> >>>>>>  arch/arm64/include/asm/page-def.h             |   3 +-
+> >>>>>>  arch/arm64/include/asm/pgalloc.h              |  16 +-
+> >>>>>>  arch/arm64/include/asm/pgtable-geometry.h     |  46 ++++
+> >>>>>>  arch/arm64/include/asm/pgtable-hwdef.h        |  28 ++-
+> >>>>>>  arch/arm64/include/asm/pgtable-prot.h         |   2 +-
+> >>>>>>  arch/arm64/include/asm/pgtable.h              | 133 +++++++++---
+> >>>>>>  arch/arm64/include/asm/processor.h            |  10 +-
+> >>>>>>  arch/arm64/include/asm/sections.h             |   1 +
+> >>>>>>  arch/arm64/include/asm/smp.h                  |   1 +
+> >>>>>>  arch/arm64/include/asm/sparsemem.h            |  15 +-
+> >>>>>>  arch/arm64/include/asm/sysreg.h               |  54 +++--
+> >>>>>>  arch/arm64/include/asm/tlb.h                  |   3 +
+> >>>>>>  arch/arm64/kernel/asm-offsets.c               |   4 +-
+> >>>>>>  arch/arm64/kernel/cpufeature.c                |  93 ++++++--
+> >>>>>>  arch/arm64/kernel/efi.c                       |   2 +-
+> >>>>>>  arch/arm64/kernel/entry.S                     |  60 +++++-
+> >>>>>>  arch/arm64/kernel/head.S                      |  46 +++-
+> >>>>>>  arch/arm64/kernel/hibernate-asm.S             |   6 +-
+> >>>>>>  arch/arm64/kernel/image-vars.h                |  14 ++
+> >>>>>>  arch/arm64/kernel/image.h                     |   4 +
+> >>>>>>  arch/arm64/kernel/pi/idreg-override.c         |  68 +++++-
+> >>>>>>  arch/arm64/kernel/pi/map_kernel.c             | 165 ++++++++++---=
+-
+> >>>>>>  arch/arm64/kernel/pi/map_range.c              | 201 +++++++++++++=
++++--
+> >>>>>>  arch/arm64/kernel/pi/pi.h                     |  63 +++++-
+> >>>>>>  arch/arm64/kernel/relocate_kernel.S           |  10 +-
+> >>>>>>  arch/arm64/kernel/vdso-wrap.S                 |   4 +-
+> >>>>>>  arch/arm64/kernel/vdso.c                      |   7 +-
+> >>>>>>  arch/arm64/kernel/vdso/vdso.lds.S             |   4 +-
+> >>>>>>  arch/arm64/kernel/vdso32-wrap.S               |   4 +-
+> >>>>>>  arch/arm64/kernel/vdso32/vdso.lds.S           |   4 +-
+> >>>>>>  arch/arm64/kernel/vmlinux.lds.S               |  48 +++--
+> >>>>>>  arch/arm64/kvm/arm.c                          |  10 +
+> >>>>>>  arch/arm64/kvm/hyp/nvhe/Makefile              |   1 +
+> >>>>>>  arch/arm64/kvm/hyp/nvhe/host.S                |  10 +-
+> >>>>>>  arch/arm64/kvm/hyp/nvhe/hyp.lds.S             |   4 +-
+> >>>>>>  arch/arm64/kvm/hyp/nvhe/pgtable-geometry.c    |  16 ++
+> >>>>>>  arch/arm64/kvm/mmu.c                          |  39 ++--
+> >>>>>>  arch/arm64/lib/clear_page.S                   |   7 +-
+> >>>>>>  arch/arm64/lib/copy_page.S                    |  33 ++-
+> >>>>>>  arch/arm64/lib/mte.S                          |  27 ++-
+> >>>>>>  arch/arm64/mm/Makefile                        |   1 +
+> >>>>>>  arch/arm64/mm/fixmap.c                        |  38 ++--
+> >>>>>>  arch/arm64/mm/hugetlbpage.c                   |  40 +---
+> >>>>>>  arch/arm64/mm/init.c                          |  26 +--
+> >>>>>>  arch/arm64/mm/kasan_init.c                    |   8 +-
+> >>>>>>  arch/arm64/mm/mmu.c                           |  53 +++--
+> >>>>>>  arch/arm64/mm/pgd.c                           |  12 +-
+> >>>>>>  arch/arm64/mm/pgtable-geometry.c              |  24 +++
+> >>>>>>  arch/arm64/mm/proc.S                          | 128 ++++++++---
+> >>>>>>  arch/arm64/mm/ptdump.c                        |   3 +-
+> >>>>>>  arch/arm64/tools/cpucaps                      |   3 +
+> >>>>>>  arch/csky/include/asm/page.h                  |   3 +
+> >>>>>>  arch/hexagon/include/asm/page.h               |   2 +
+> >>>>>>  arch/loongarch/include/asm/page.h             |   2 +
+> >>>>>>  arch/m68k/include/asm/page.h                  |   1 +
+> >>>>>>  arch/microblaze/include/asm/page.h            |   1 +
+> >>>>>>  arch/mips/include/asm/page.h                  |   1 +
+> >>>>>>  arch/nios2/include/asm/page.h                 |   2 +
+> >>>>>>  arch/openrisc/include/asm/page.h              |   1 +
+> >>>>>>  arch/parisc/include/asm/page.h                |   1 +
+> >>>>>>  arch/powerpc/include/asm/page.h               |   2 +
+> >>>>>>  arch/riscv/include/asm/page.h                 |   1 +
+> >>>>>>  arch/s390/include/asm/page.h                  |   1 +
+> >>>>>>  arch/sh/include/asm/page.h                    |   1 +
+> >>>>>>  arch/sparc/include/asm/page.h                 |   3 +
+> >>>>>>  arch/um/include/asm/page.h                    |   2 +
+> >>>>>>  arch/x86/include/asm/page_types.h             |   2 +
+> >>>>>>  arch/xtensa/include/asm/page.h                |   1 +
+> >>>>>>  crypto/lskcipher.c                            |   4 +-
+> >>>>>>  drivers/ata/sata_sil24.c                      |  46 ++--
+> >>>>>>  drivers/base/node.c                           |   6 +-
+> >>>>>>  drivers/base/topology.c                       |  32 +--
+> >>>>>>  drivers/block/virtio_blk.c                    |   2 +-
+> >>>>>>  drivers/char/random.c                         |   4 +-
+> >>>>>>  drivers/edac/edac_mc.h                        |  13 +-
+> >>>>>>  drivers/firmware/efi/libstub/arm64.c          |   3 +-
+> >>>>>>  drivers/irqchip/irq-gic-v3-its.c              |   2 +-
+> >>>>>>  drivers/mtd/mtdswap.c                         |   4 +-
+> >>>>>>  drivers/net/ethernet/freescale/fec.h          |   3 +-
+> >>>>>>  drivers/net/ethernet/freescale/fec_main.c     |   5 +-
+> >>>>>>  .../net/ethernet/hisilicon/hns3/hns3_enet.h   |   4 +-
+> >>>>>>  drivers/net/ethernet/intel/e1000/e1000_main.c |   6 +-
+> >>>>>>  drivers/net/ethernet/intel/igb/igb.h          |  25 +--
+> >>>>>>  drivers/net/ethernet/intel/igb/igb_main.c     | 149 +++++++------
+> >>>>>>  drivers/net/ethernet/intel/igbvf/netdev.c     |   6 +-
+> >>>>>>  drivers/net/ethernet/marvell/mvneta.c         |   9 +-
+> >>>>>>  drivers/net/ethernet/marvell/sky2.h           |   2 +-
+> >>>>>>  drivers/tee/optee/call.c                      |   7 +-
+> >>>>>>  drivers/tee/optee/smc_abi.c                   |   2 +-
+> >>>>>>  drivers/virtio/virtio_balloon.c               |  10 +-
+> >>>>>>  drivers/xen/balloon.c                         |  11 +-
+> >>>>>>  drivers/xen/biomerge.c                        |  12 +-
+> >>>>>>  drivers/xen/privcmd.c                         |   2 +-
+> >>>>>>  drivers/xen/xenbus/xenbus_client.c            |   5 +-
+> >>>>>>  drivers/xen/xlate_mmu.c                       |   6 +-
+> >>>>>>  fs/binfmt_elf.c                               |  11 +-
+> >>>>>>  fs/buffer.c                                   |   2 +-
+> >>>>>>  fs/coredump.c                                 |   8 +-
+> >>>>>>  fs/ext4/ext4.h                                |  36 ++--
+> >>>>>>  fs/ext4/move_extent.c                         |   2 +-
+> >>>>>>  fs/ext4/readpage.c                            |   2 +-
+> >>>>>>  fs/fat/dir.c                                  |   4 +-
+> >>>>>>  fs/fat/fatent.c                               |   4 +-
+> >>>>>>  fs/nfs/nfs42proc.c                            |   2 +-
+> >>>>>>  fs/nfs/nfs42xattr.c                           |   2 +-
+> >>>>>>  fs/nfs/nfs4proc.c                             |   2 +-
+> >>>>>>  include/asm-generic/pgtable-geometry.h        |  71 +++++++
+> >>>>>>  include/asm-generic/vmlinux.lds.h             |  38 ++--
+> >>>>>>  include/linux/buffer_head.h                   |   1 +
+> >>>>>>  include/linux/cpumask.h                       |   5 +
+> >>>>>>  include/linux/linkage.h                       |   4 +-
+> >>>>>>  include/linux/mm.h                            |  17 +-
+> >>>>>>  include/linux/mm_types.h                      |  15 +-
+> >>>>>>  include/linux/mm_types_task.h                 |   2 +-
+> >>>>>>  include/linux/mmzone.h                        |   3 +-
+> >>>>>>  include/linux/netlink.h                       |   6 +-
+> >>>>>>  include/linux/percpu-defs.h                   |   4 +-
+> >>>>>>  include/linux/perf_event.h                    |   2 +-
+> >>>>>>  include/linux/sched.h                         |   4 +-
+> >>>>>>  include/linux/slab.h                          |   7 +-
+> >>>>>>  include/linux/stackdepot.h                    |   6 +-
+> >>>>>>  include/linux/sunrpc/svc.h                    |   8 +-
+> >>>>>>  include/linux/sunrpc/svc_rdma.h               |   4 +-
+> >>>>>>  include/linux/sunrpc/svcsock.h                |   2 +-
+> >>>>>>  include/linux/swap.h                          |  17 +-
+> >>>>>>  include/linux/swapops.h                       |   6 +-
+> >>>>>>  include/linux/thread_info.h                   |  10 +-
+> >>>>>>  include/xen/page.h                            |   2 +
+> >>>>>>  init/main.c                                   |   7 +-
+> >>>>>>  kernel/bpf/core.c                             |   9 +-
+> >>>>>>  kernel/bpf/ringbuf.c                          |  54 ++---
+> >>>>>>  kernel/cgroup/cgroup.c                        |   8 +-
+> >>>>>>  kernel/crash_core.c                           |   2 +-
+> >>>>>>  kernel/events/core.c                          |   2 +-
+> >>>>>>  kernel/fork.c                                 |  71 +++----
+> >>>>>>  kernel/power/power.h                          |   2 +-
+> >>>>>>  kernel/power/snapshot.c                       |   2 +-
+> >>>>>>  kernel/power/swap.c                           | 129 +++++++++--
+> >>>>>>  kernel/trace/fgraph.c                         |   2 +-
+> >>>>>>  kernel/trace/trace.c                          |   2 +-
+> >>>>>>  lib/stackdepot.c                              |   6 +-
+> >>>>>>  mm/kasan/report.c                             |   3 +-
+> >>>>>>  mm/memcontrol.c                               |  11 +-
+> >>>>>>  mm/memory.c                                   |   4 +-
+> >>>>>>  mm/mmap.c                                     |   2 +-
+> >>>>>>  mm/page-writeback.c                           |   2 +-
+> >>>>>>  mm/page_alloc.c                               |  31 +--
+> >>>>>>  mm/slub.c                                     |   2 +-
+> >>>>>>  mm/sparse.c                                   |   2 +-
+> >>>>>>  mm/swapfile.c                                 |   2 +-
+> >>>>>>  mm/vmalloc.c                                  |   7 +-
+> >>>>>>  net/9p/trans_virtio.c                         |   4 +-
+> >>>>>>  net/core/hotdata.c                            |   4 +-
+> >>>>>>  net/core/skbuff.c                             |   4 +-
+> >>>>>>  net/core/sysctl_net_core.c                    |   2 +-
+> >>>>>>  net/sunrpc/cache.c                            |   3 +-
+> >>>>>>  net/unix/af_unix.c                            |   2 +-
+> >>>>>>  sound/soc/soc-utils.c                         |   4 +-
+> >>>>>>  virt/kvm/kvm_main.c                           |   2 +-
+> >>>>>>  172 files changed, 2185 insertions(+), 951 deletions(-)
+> >>>>>>  create mode 100644 arch/arm64/include/asm/pgtable-geometry.h
+> >>>>>>  create mode 100644 arch/arm64/kvm/hyp/nvhe/pgtable-geometry.c
+> >>>>>>  create mode 100644 arch/arm64/mm/pgtable-geometry.c
+> >>>>>>  create mode 100644 include/asm-generic/pgtable-geometry.h
+> >>>>>>
+> >>>>>> --
+> >>>>>> 2.43.0
+> >>>>>
+> >>>>> This is a generally very exciting patch set! I'm looking forward to=
+ seeing it
+> >>>>> land so I can take advantage of it for Fedora ARM and Fedora Asahi =
+Remix.
+> >>>>>
+> >>>>> That said, I have a couple of questions:
+> >>>>>
+> >>>>> * Going forward, how would we handle drivers/modules that require a=
+ particular
+> >>>>> page size? For example, the Apple Silicon IOMMU driver code require=
+s the
+> >>>>> kernel to operate in 16k page size mode, and it would need to be di=
+sabled in
+> >>>>> other page sizes.
+> >>>>
+> >>>> I think these drivers would want to check PAGE_SIZE at probe time an=
+d fail if an
+> >>>> unsupported page size is in use. Do you see any issue with that?
+> >>>>
+> >>>>>
+> >>>>> * How would we handle an invalid selection at boot?
+> >>>>
+> >>>> What do you mean by invalid here? The current policy validates that =
+the
+> >>>> requested page size is supported by the HW by checking mmfr0. If no =
+page size is
+> >>>> passed on the command line, or the passed value is not supported by =
+the HW, then
+> >>>> the we default to the largest page size supported by the HW (so for =
+Apple
+> >>>> Silicon that would be 16k since the HW doesn't support 64k). Althoug=
+h I think it
+> >>>> may be better to change that policy to use the smallest page size in=
+ this case;
+> >>>> 4k is the safer bet for compat and will waste much less memory than =
+64k.
+> >>>>
+> >>>>> Can we program in a
+> >>>>> fallback when the "wrong" mode is selected for a chip or something =
+similar?
+> >>>>
+> >>>> Do you mean effectively add a machanism to force 16k if the detected=
+ HW is Apple
+> >>>> Silicon? The trouble is that we need to select the page size, very e=
+arly in
+> >>>> boot, before start_kernel() is called, so we really only have generi=
+c arch code
+> >>>> and the command line with which to make the decision.
+> >>>
+> >>> Yes... I think a build-time CONFIG for default page size, which can b=
+e
+> >>> overridden by a karg makes sense... Even on platforms like Apple
+> >>> Silicon you may want to test very specific things in 4k by overriding
+> >>> with a karg.
+> >>
+> >> Ahh, yes, that would certainly work. I'll work it into the next versio=
+n.
+> >>
+> >
+> > Could we maybe extend to have some kind of way to include a table of
+> > SoC IDs that certain modes are disabled (e.g. 64k on Apple Silicon)
+>
+> 64k is already disabled on Apple Silicon because mmfr0 reports that 64k i=
+s not
+> supported.
+>
+> > and preferred modes when no arg is set (16k for Apple Silicon)? That
+>
+> And it's not obvious that we should hard-code a page size preference to a=
+ SoC
+> ID. If the CPU can support multiple page sizes, it should be up to the SW=
+ stack
+> to decide, not the SoC.
+>
+> I'm guessing your desire is to have a single kernel build that will boot =
+16k by
+> default on Apple Silicon and 4k by default on other systems, all without =
+needing
+> to modify the command line? Personally I think it's cleaner to just requi=
+re
+> setting the page size on the command line in these cases.
+>
+> > way it'd work something like this:
+> >
+> > 1. Table identification of 4/16/64 depending on identified SoC
+> So I'd prefer not to have this
+>
+> > 2. Unidentified ones follow build-time default
+> > 3. karg forces a mode regardless
+> But keep these 2.
 >
 
-Right, but since you proposed above to get rid of the pci-ep-bus redeclaration
-(being it alredy defined in pci-ep-bus.yaml) I'm not sure where to place this.
-Should I just get rid af it all as you suggest?
+I think it makes sense to have it, because it's not just Apple Silicon
+where such a preference/requirement may be necessary. Apple Silicon
+technically works at 4k, but is completely broken at 4k because Linux
+cannot do 16k IOMMU with 4k everything else, so being able to at least
+prefer 16k out of the box is important. And SoCs like the NVIDIA Grace
+Hopper platform prefer 64k over other options (though I am unaware of
+a gross incompatibility that effectively requires it like Apple
+Silicon has).
+
+When we're trying to get to "single generic image that works
+everywhere", stuff like this matters and I would really like you to
+consider it from the lens of "we want things to work as automagic as
+they do on x86".
 
 
-Many thanks,
-Andrea
- 
-> > +
-> > +    required:
-> > +      - interrupt-parent
-> > +      - interrupt-controller
-> > +
-> > +examples:
-> > +  - |
-> > +    pci {
-> > +        #address-cells = <3>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1@0,0 {
-> > +            compatible = "pci1de4,1";
-> > +            ranges = <0x01 0x00 0x00000000
-> > +                      0x82010000 0x00 0x00
-> > +                      0x00 0x400000>;
-> > +            #address-cells = <3>;
-> > +            #size-cells = <2>;
-> > +
-> > +            pci_ep_bus: pci-ep-bus@1 {
-> > +                compatible = "simple-bus";
-> > +                ranges = <0xc0 0x40000000
-> > +                          0x01 0x00 0x00000000
-> > +                          0x00 0x00400000>;
-> > +                dma-ranges = <0x10 0x00000000
-> > +                              0x43000000 0x10 0x00000000
-> > +                              0x10 0x00000000>;
-> > +                #address-cells = <2>;
-> > +                #size-cells = <2>;
-> > +                interrupt-controller;
-> > +                interrupt-parent = <&pci_ep_bus>;
-> > +                #interrupt-cells = <2>;
-> > +
-> > +                rp1_clocks: clocks@c040018000 {
-> > +                    compatible = "raspberrypi,rp1-clocks";
-> > +                    reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +                    #clock-cells = <1>;
-> > +                    clocks = <&clk_rp1_xosc>;
-> > +                    clock-names =  "rp1-xosc";
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ccf123b805c8..2aea5a6166bd 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19384,6 +19384,7 @@ RASPBERRY PI RP1 PCI DRIVER
-> >  M:	Andrea della Porta <andrea.porta@suse.com>
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >  F:	include/dt-bindings/clock/rp1.h
-> > -- 
-> > 2.35.3
-> > 
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
