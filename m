@@ -1,172 +1,112 @@
-Return-Path: <linux-kernel+bounces-375415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869C49A95A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:45:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE4E9A95AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99EA2284612
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171501C21E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3021135A79;
-	Tue, 22 Oct 2024 01:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE4412D773;
+	Tue, 22 Oct 2024 01:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1LXHf3y"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoKdlqyA"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B81912FF72;
-	Tue, 22 Oct 2024 01:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A335126C04;
+	Tue, 22 Oct 2024 01:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729561504; cv=none; b=Xoq7JbH5RA5sbsFjUY3U/PflZ4Uk6ezu9N+X9eTiO2RJfg6N9j1aHYWsxkXxgtFMcmNFW51v5tW/mD4/Y68kOdJ/FW78TqXsSg5XLhmvk+lW0vZfho7VbRLDGjr/pBHFSqzb+7/mVckDj0EgI7ZCMOnCEGrbGLs0h+UnbB5SDBU=
+	t=1729561720; cv=none; b=hPkTDaOq3915gfBD0+llUbBQOr+ugZRSxc1zBKlx04c/T3tmr0EL74nkMbRKUJWKAfIR7d9JsIkBS0eI7LGQ2Wyd85kUQaNERAdfdwGypozlEDYp09/hWA4zZz0xtstAJmFJ/AI8gdeInbEb1Zi63j3LSM+nZlzz5qf3gxHiuFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729561504; c=relaxed/simple;
-	bh=ill1wOd5pl/H7TInSe3gdvnN8TKaEBaWDvfkOrO/ulM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iIlA2+W7uKeMZQ1A+jE70xA8k+IBLZ89Ifs1p7mrGGvDGXySvUa9XwO+90aYsy8cj6M0UWTCvFaROro0N1CvEhLQmAY/ZL9uchXPJjJ5FP4nOysOdQbDDOlZZTP3Yhe3gxH4MlGgEah9lhQIasU+wNGpuNjqdKqZHRLPjmQ5Hpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1LXHf3y; arc=none smtp.client-ip=209.85.128.179
+	s=arc-20240116; t=1729561720; c=relaxed/simple;
+	bh=8BxbvwcBJ/putwiaVZPe/BQPdiOescYvnhGJTjeJAvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jbJveDMoLCCVaG6JFOeX3zEV4teAwkmslj6UTpHlFL/7YRzIKrgLcWvm3qm187750SEQVXM4Zvek0NgHztjIAQEW3ha7HKxOya8sVkKOjqkHJGUumOPXkbsDX+9UNI0wguHXw70WVrpWxJBsthICYs6gK74b4vyf2UygrtSqxRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoKdlqyA; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e4237da4so46613797b3.1;
-        Mon, 21 Oct 2024 18:45:02 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e5f968230bso1834984b6e.3;
+        Mon, 21 Oct 2024 18:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729561501; x=1730166301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1729561717; x=1730166517; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VuKRGQ3bFUStWQPbkXvW339pz3J6NqBpg8n3124Xq6c=;
-        b=k1LXHf3y/FaMiZJhg+hwizUpGKBaLnxnMj3Uqosxl7eG+Klr+M86ZGObcVkQxYeLbz
-         HEkMsW0JyYRW2ztY5DXoO6V+jzeuWqwuhJM2GIcQDx/YyH2v4nNsMYtTpTBMLv3uzPXy
-         E3JO+18EhYY35PIS0DN6hEEDhA8SlyxS3cIo/13UNSpseMRbZ0BtQDBeDKcLSMqo17LC
-         cR8RMLyzYamTlqpxlLq4aofnBxUO+isSnj5bVkjXJJQw8Rku3jO7lGonE6QoqtBgJsBU
-         2BbQVMl/+eyQtyysnRXQS7AClfumXwEOqf6sW2yLWmSN3K5jtKD0l5+eg0vVLDBgbUkz
-         u2ug==
+        bh=FaAv5oQRgd9cX9nyDn360NOTdyHG7mviKBCjVi9eqrk=;
+        b=XoKdlqyA50n1GLqGoOe99av8J5FZ4esmtyCLZvrQWcuCkOSi7aadHMq1o70DcITpNz
+         fsHzJlgWFUHMYKMwBQeZVU4NrbJ/WnIPRHwet5c2i8d6LfgqlawhjrdW1MZWZMnlhagk
+         efu6sebk1YeDNHo739jpGUrG5nsZSxJCN/jeb/zlpz4HaHklVyhA83J5zjRhvYqtgycY
+         LlWXB6upIMrytrlZ8OLn0lPMaFfQwHNWm84uPfgZm0kUNwUD8xOCSln9cKxMgo0LPtbU
+         9u+99TfoBWcWTRDi3Zn6F/FEOfG8Hd62uURvZkzhUQXrKx+25svoHZqmR2mum5ad/w2B
+         1zug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729561501; x=1730166301;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729561717; x=1730166517;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VuKRGQ3bFUStWQPbkXvW339pz3J6NqBpg8n3124Xq6c=;
-        b=b/aTfvI2gzd8+dif0kD4C4G1H3ddp83rlD3BQfWvQQW6Kjod+L2d0BrvBpQy3Y+ITs
-         Ls23ucB2Y/fA1QXbvcW3WLziEVXKaOEBCGYapAukXqSkUjMq8rjqxVTU7bAYURosrA83
-         PSa2GGoI9/UVgtXPzI8GMS27nhzYd0Ey6hFrKfwqSdc6/6KGRzhPIITuhswXVxIluo4b
-         H3ErB6euay7SBMUhEuaAitV1z1/k9xD6MzkOYLl2M9iVktX4mY5RnCxmApIBekWzT5Ly
-         4FI63dS+JlZjVrG5kJ8AJavM5U/XTELX6XT+Umo4Ucb7ifOofZxXkfHgsbWVOhmBfBLc
-         z2lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdwwmzvfStLHQ2hF3/X/6LIKpWlNnNiE6iMgPUyIS4RfOVe5x9BWImryTbSZaBU2LovbpIPA6RPQE=@vger.kernel.org, AJvYcCXTHnmKegV0DsTkeq3C+SgqLcniKlmfX99mRHvqqBaotyH68/lsHodOKlVVy+aiuK/XicMyMZbQ5jZn2zYo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjVGFl+WEgzLYF9+RU5XbkRm3Rag7P6tHWdTRdVU2cLWPAdIFQ
-	Ql0eqE+Wd7PU3B6ysNtikTD04zEEadvdvsYa1nwQTQTfjIMwEKWO
-X-Google-Smtp-Source: AGHT+IH4p0mpvdNz9xkFkZ3gA87yXt0dFCWnZq15lfitywdFFV62DAQpS5rYQLIwuzJbTQB+pcDygQ==
-X-Received: by 2002:a05:690c:9693:b0:6e5:cb46:4641 with SMTP id 00721157ae682-6e7d3acdbafmr21227017b3.13.1729561501306;
-        Mon, 21 Oct 2024 18:45:01 -0700 (PDT)
-Received: from [192.168.2.226] ([107.175.133.150])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5a489d1sm9094977b3.33.2024.10.21.18.44.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 18:45:00 -0700 (PDT)
-Message-ID: <289e0ccf-2671-46b4-aec9-0123e9a8eacb@gmail.com>
-Date: Tue, 22 Oct 2024 09:44:53 +0800
+        bh=FaAv5oQRgd9cX9nyDn360NOTdyHG7mviKBCjVi9eqrk=;
+        b=c8T8qLqIfPyUJ7X5WDhkWhk06P7a6N6kpk5rGl5w42oXmXe+r5LlSOYTomYrKsKoS+
+         TwGot/GaHRW8o3vTIbg0sBH+9PRqjsXLu3Fg/f7bZNjwfgQqgjuQ0f+V733UxfE70Qda
+         ieRlOlxUuLd/CX4nNPZUIUmoKZYCXQ6z/k9nXhVnGxZOqvnbtIwSGHwWNEMk4tR+cfvX
+         rFv6x8hYcHUxsgbp3WaaruE1eOVEvwSRRE/f9x9UtHJoXwacq2immZgx2MuxcUQgKZ3t
+         2eD5srCdEGpOfZTIWCOFoYS3Lev52F5IdXPjKS2NuhUu+7NBYBDmM3sSlnJVq8YcdWrf
+         Iq5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1I7xUtb9EORS7h4CUYsD9tKbq7BOHWrY5L6Lf7dB27/u0m1WvqOgV+C3aBXiwAS4TSjMdbFfvwQdpjbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9nCDBNPTbIFMNrTtmR1m7uA0iLwH/QFO4M1YcGfhSke9NgayE
+	MBnPd5PKefdsmmbv4GCdhbdn/X7H0Zdb9FugzK5odetrbZ+9HSal
+X-Google-Smtp-Source: AGHT+IE5TBUcFhT+nAKE7if14Xqz2LZbC/N7w+f7KNMHBv7U9j66vBQEtCNlktDGfO3wsticRZakwA==
+X-Received: by 2002:a05:6808:2e8d:b0:3e6:143a:fadc with SMTP id 5614622812f47-3e6143afcc9mr6574705b6e.3.1729561717572;
+        Mon, 21 Oct 2024 18:48:37 -0700 (PDT)
+Received: from localhost.localdomain ([210.205.14.5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabda178sm3254598a12.87.2024.10.21.18.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 18:48:37 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:45:49 +0900
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+	Yonghong Song <yonghong.song@linux.dev>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
+Message-ID: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] docs/zh_CN: update the translation of
- mm/page_owner.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, alexs@kernel.org,
- corbet@lwn.net, Yanteng Si <siyanteng@loongson.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1729327831.git.dzm91@hust.edu.cn>
- <38a9d8868e0f98dc5d2a08fb865313cc4db943a3.1729327831.git.dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <38a9d8868e0f98dc5d2a08fb865313cc4db943a3.1729327831.git.dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Alex Shi <alexs@kernel.org>
+trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
+while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
+full paths from the root to leaves. For example, consider a trie with
+max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
+0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
+.prefixlen = 8 make 9 nodes be written on the node stack with size 8.
 
-On 10/19/24 16:54, Dongliang Mu wrote:
-> Update to commit f5c12105c15f ("mm,page_owner: fix refcount imbalance")
-> 
-> Documentation/translations/zh_CN/mm/page_owner.rst
-> commit f5c12105c15f ("mm,page_owner: fix refcount imbalance")
-> commit ba6fe5377244 ("mm,page_owner: update Documentation regarding
-> page_owner_stacks")
-> 2 commits needs resolving in total
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  .../translations/zh_CN/mm/page_owner.rst      | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/Documentation/translations/zh_CN/mm/page_owner.rst b/Documentation/translations/zh_CN/mm/page_owner.rst
-> index b72a972271d9..c0d1ca4b9695 100644
-> --- a/Documentation/translations/zh_CN/mm/page_owner.rst
-> +++ b/Documentation/translations/zh_CN/mm/page_owner.rst
-> @@ -26,6 +26,9 @@ page owner是用来追踪谁分配的每一个页面。它可以用来调试内
->  页面所有者也可以用于各种目的。例如，可以通过每个页面的gfp标志信息获得精确的碎片
->  统计。如果启用了page owner，它就已经实现并激活了。我们非常欢迎其他用途。
->  
-> +它也可以用来显示所有的栈以及它们当前分配的基础页面数，这让我们能够快速了解内存的
-> +使用情况，而无需浏览所有页面并匹配分配和释放操作。
-> +
->  page owner在默认情况下是禁用的。所以，如果你想使用它，你需要在你的启动cmdline
->  中加入"page_owner=on"。如果内核是用page owner构建的，并且由于没有启用启动
->  选项而在运行时禁用page owner，那么运行时的开销是很小的。如果在运行时禁用，它不
-> @@ -60,6 +63,49 @@ page owner在默认情况下是禁用的。所以，如果你想使用它，你
->  
->  4) 分析来自页面所有者的信息::
->  
-> +	cat /sys/kernel/debug/page_owner_stacks/show_stacks > stacks.txt
-> +	cat stacks.txt
-> +	 post_alloc_hook+0x177/0x1a0
-> +	 get_page_from_freelist+0xd01/0xd80
-> +	 __alloc_pages+0x39e/0x7e0
-> +	 allocate_slab+0xbc/0x3f0
-> +	 ___slab_alloc+0x528/0x8a0
-> +	 kmem_cache_alloc+0x224/0x3b0
-> +	 sk_prot_alloc+0x58/0x1a0
-> +	 sk_alloc+0x32/0x4f0
-> +	 inet_create+0x427/0xb50
-> +	 __sock_create+0x2e4/0x650
-> +	 inet_ctl_sock_create+0x30/0x180
-> +	 igmp_net_init+0xc1/0x130
-> +	 ops_init+0x167/0x410
-> +	 setup_net+0x304/0xa60
-> +	 copy_net_ns+0x29b/0x4a0
-> +	 create_new_namespaces+0x4a1/0x820
-> +	nr_base_pages: 16
-> +	...
-> +	...
-> +	echo 7000 > /sys/kernel/debug/page_owner_stacks/count_threshold
-> +	cat /sys/kernel/debug/page_owner_stacks/show_stacks> stacks_7000.txt
-> +	cat stacks_7000.txt
-> +	 post_alloc_hook+0x177/0x1a0
-> +	 get_page_from_freelist+0xd01/0xd80
-> +	 __alloc_pages+0x39e/0x7e0
-> +	 alloc_pages_mpol+0x22e/0x490
-> +	 folio_alloc+0xd5/0x110
-> +	 filemap_alloc_folio+0x78/0x230
-> +	 page_cache_ra_order+0x287/0x6f0
-> +	 filemap_get_pages+0x517/0x1160
-> +	 filemap_read+0x304/0x9f0
-> +	 xfs_file_buffered_read+0xe6/0x1d0 [xfs]
-> +	 xfs_file_read_iter+0x1f0/0x380 [xfs]
-> +	 __kernel_read+0x3b9/0x730
-> +	 kernel_read_file+0x309/0x4d0
-> +	 __do_sys_finit_module+0x381/0x730
-> +	 do_syscall_64+0x8d/0x150
-> +	 entry_SYSCALL_64_after_hwframe+0x62/0x6a
-> +	nr_base_pages: 20824
-> +	...
-> +
->  	cat /sys/kernel/debug/page_owner > page_owner_full.txt
->  	./page_owner_sort page_owner_full.txt sorted_page_owner.txt
->  
+Fixes: b471f2f1de8b ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE map")
+Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
+---
+ kernel/bpf/lpm_trie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+index 0218a5132ab5..9b60eda0f727 100644
+--- a/kernel/bpf/lpm_trie.c
++++ b/kernel/bpf/lpm_trie.c
+@@ -655,7 +655,7 @@ static int trie_get_next_key(struct bpf_map *map, void *_key, void *_next_key)
+ 	if (!key || key->prefixlen > trie->max_prefixlen)
+ 		goto find_leftmost;
+ 
+-	node_stack = kmalloc_array(trie->max_prefixlen,
++	node_stack = kmalloc_array(trie->max_prefixlen + 1,
+ 				   sizeof(struct lpm_trie_node *),
+ 				   GFP_ATOMIC | __GFP_NOWARN);
+ 	if (!node_stack)
+-- 
+2.43.5
+
 
