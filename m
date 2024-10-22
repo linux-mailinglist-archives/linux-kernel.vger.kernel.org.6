@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-376175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7089AA128
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF13E9AA12C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491FD1F2142C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C46283427
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF5119C543;
-	Tue, 22 Oct 2024 11:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B219ADB0;
+	Tue, 22 Oct 2024 11:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="knh1Tm8R"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K+Miy2N8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4E6F066;
-	Tue, 22 Oct 2024 11:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8887513D516;
+	Tue, 22 Oct 2024 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729596589; cv=none; b=BQgOGt7/n+58FV4AwjJ8CIzlsyY6M1Tjr27Z4jHrVahy9zvwQW6Jc/G3C9Rh56aLlHBS53fpHPkDUg7i66fJDbgnIYrn1V30QnIsTNKASI2gq9vyRZIR7x75RnhYrbXCNGh+m4Uq1/mZlcJb7saG4u1o9AP696MwO7QUMmiaxcQ=
+	t=1729596698; cv=none; b=JBK3cdCCzqk9f23Lv5U7XYmregvm298I4DUFXrBqEGFV95oBGIpukwopsWqhG8stRpvHPhMz9Howm6D+yPj8X3ValiS3C35P5u2Xfrvi2FGX/TmE/s4ncAIJNl/fBJG+2g6uXisW19IXkzrVf0/wc+n8VnlBSBA1yr50W+rSjLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729596589; c=relaxed/simple;
-	bh=AvRcr1OuM53X9PR/zID+/yywEkwEKsNy6ow7SbV2GUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=l8EONi64pc2vE8V203fhV+ygZ8HYaeOfMSv51+lI13p2BaYQ06+sjArfddC2xoL02G3nLHWq/7IrqB7NbSHqxXrD5boz3mIJgyyifhMD+6wyihhje8Q64u/M4ZN+HQ2P8bpVytEVh637uDT0ZMrXIm9g0OwKYCFR/+8nRxJZwM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=knh1Tm8R; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729596579;
-	bh=yRSI65zZHzYMUTqH1Kk9yL4lXnKknG8Nhg42hp0r/u4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=knh1Tm8RWeVxL5bwB7JDHoRjMMZZ6PzVDzOIyCrPMcM8phDlif4wUM9e5nPsWNBfk
-	 sEpfE+ppcM4snwvfxRdd60DfVPT9H5lt/mfNeDmrLZsVfv27YJdkgUTaN47faqL/05
-	 Hp3yS0uiCkSpmf2iWnqlQEQS8OH+izdIA2Sa22BEfBVeFd/s1UK5xKbUkZG0eu5XDl
-	 Ox5a/eiA2tKFtOMmYvcOhoa+4C+5qZUlUHtBnVL7Hd9K9FPp7sOo7S63bcdqV1Vqt9
-	 Q1qlrMnhpcTcyzHMYOgR3aAubwe2sIaF1V3wBfWvt55RwiWhTNFwQvzDi7KnKcLF9C
-	 z2VRJRG1ebXMw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XXqhf698wz4w2F;
-	Tue, 22 Oct 2024 22:29:38 +1100 (AEDT)
-Date: Tue, 22 Oct 2024 22:29:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, "kernelci.org bot"
- <bot@kernelci.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sched-ext tree
-Message-ID: <20241022222938.46a90386@canb.auug.org.au>
+	s=arc-20240116; t=1729596698; c=relaxed/simple;
+	bh=K0ZAIC0ih1OgAYGkxb/Y7IwopoPqXD+tHGWSN4/6UDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCw44adRY8C1NsPDziFQT2Dedb0GE5ROwIYPgd5TODvHN/pMNLJETnA1LNQpGmIeJcGiFDsPeEErBReKBNdRpuPGOwO3w/R3/z2qojJNmx2XaAS0XN3Cs+2tqCoXh6o3wbqKr/W/AdUJ8lm1PEFEC5KDcGySV65cpsBnfJtoTKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K+Miy2N8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=45VhlSmrcqHM0fJmLndR/+hMewp2TUptqFBD/F7XlaY=; b=K+Miy2N87uFDpEv6MRafnX6rlO
+	/+ijhGjh2TF5iRGIAGPTmcdyy7bt8miAd6I15KttI8Ec4Jv/z8duNmDoImt4VicB5Rx6SH1+jFITP
+	vN2vei599XxcZi3g+d8D9JpLGzsirkMlE2GZZCjQ8eX561DTZ65ovA7W/R14Zix+EaOQlaw22/T/g
+	R0el4fAEMQPB0LqlLbKli6+R+hOHc5lYqpnGz2ju/u4VYu6UwsZBbIhU3+T2CkovA1rqwPiyHyZEi
+	IvhBelCyZBMtJwCtMf+izNYQDiSHrvQWb8G0sUmMtynguCAqCa9fbnrnNo6oaXGPIopc2r2psS9ml
+	nm2H/0ZQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3D6p-00000001ZcL-19AU;
+	Tue, 22 Oct 2024 11:31:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7CF8B30073F; Tue, 22 Oct 2024 13:31:31 +0200 (CEST)
+Date: Tue, 22 Oct 2024 13:31:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>,
+	audit@vger.kernel.org, eparis@redhat.com,
+	linux-kernel@vger.kernel.org, paul@paul-moore.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
+Message-ID: <20241022113131.GD16066@noisy.programming.kicks-ass.net>
+References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com>
+ <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QLcGEWY/wM9vZfUU_WKxlNO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
 
---Sig_/QLcGEWY/wM9vZfUU_WKxlNO
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 22, 2024 at 10:06:23AM +0200, Alexander Potapenko wrote:
+> On Fri, Sep 27, 2024 at 4:57 PM syzbot
+> <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15f07a80580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=86254f9e0a8f2c98
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=0ec1e96c2cdf5c0e512a
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/1be80941df60/disk-075dbe9f.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/494a9ac89c09/vmlinux-075dbe9f.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/919788d8c731/bzImage-075dbe9f.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com
+> >
+> > audit: type=1400 audit(6022412112.141:243086): avc:  denied  { read } for  pid=2950 comm="syslogd" name="log" dev="sda1" ino=1915 scontext=system_u:system_r:syslogd_t tcontext=system_u:object_r:var_t tclass=lnk_file permissive=0
+> > audit: type=1400 audit(6022412112.181:243087): avc:  denied  { read } for  pid=2950 comm="syslogd" name="log" dev="sda1" ino=1915 scontext=system_u:system_r:syslogd_t tcontext=system_u:object_r:var_t tclass=lnk_file permissive=0
+> > ==================================================================
+> > BUG: KCSAN: assert: race in __block_task kernel/sched/sched.h:2770 [inline]
+> > BUG: KCSAN: assert: race in dequeue_entities+0x6df/0x760 kernel/sched/fair.c:7177
+> >
+> > race at unknown origin, with assert no writes to 0xffff888101764268 of 4 bytes by task 29 on cpu 1:
+> >  __block_task kernel/sched/sched.h:2770 [inline]
+> >  dequeue_entities+0x6df/0x760 kernel/sched/fair.c:7177
+> >  pick_next_entity kernel/sched/fair.c:5627 [inline]
+> >  pick_task_fair kernel/sched/fair.c:8856 [inline]
+> >  pick_next_task_fair+0x7d/0x410 kernel/sched/fair.c:8876
+> >  __pick_next_task kernel/sched/core.c:5955 [inline]
+> >  pick_next_task kernel/sched/core.c:6477 [inline]
+> >  __schedule+0x284/0x940 kernel/sched/core.c:6629
+> >  __schedule_loop kernel/sched/core.c:6752 [inline]
+> >  schedule+0x55/0xc0 kernel/sched/core.c:6767
+> >  kauditd_thread+0x56b/0x650 kernel/audit.c:911
+> >  kthread+0x1d1/0x210 kernel/kthread.c:389
+> >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> >
+> > value changed: 0x00000000 -> 0x00000001
+> >
+> > Reported by Kernel Concurrency Sanitizer on:
+> > CPU: 1 UID: 0 PID: 29 Comm: kauditd Not tainted 6.11.0-syzkaller-11558-g075dbe9f6e3c #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> > ==================================================================
+> 
+> +PeterZ, who added the KCSAN assertion.
 
-Hi all,
+Well, PaulMck did in d6111cf45c57 ("sched: Use WRITE_ONCE() for
+p->on_rq"), I just moved it around in e8901061ca0c ("sched: Split
+DEQUEUE_SLEEP from deactivate_task()").
 
-After merging the sched-ext tree, today's linux-next build (i386
-i386_defconfig+kselftest) failed like this:
+I'm not at all sure I have any inkling as to what the annotation does
+nor what KCSAN is trying to tell us above.
 
-kernel/sched/ext.c:6788:45: error: =E2=80=98fmt=E2=80=99 undeclared (first =
-use in this function)
-kernel/sched/ext.c:6809:45: error: =E2=80=98fmt=E2=80=99 undeclared (first =
-use in this function)
-kernel/sched/ext.c:6841:61: error: =E2=80=98fmt=E2=80=99 undeclared (first =
-use in this function)
+Can someone please translate?
 
-Caused by commit
 
-  3e99aee7ce48 ("sched-ext: Use correct annotation for strings in kfuncs")
-
-=46rom the kernel-ci.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QLcGEWY/wM9vZfUU_WKxlNO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcXjKIACgkQAVBC80lX
-0Gz7ggf/WzLKi+/W6FBy/PwqhoyFr0t6hqWVJ8NSZnCOU9/qfUyNkmNZdw5C4VFG
-RaA8XwpbfiV2TMOLIr+X9CXYSSBoZ3bJnTsBXphEnVqPG14A5n7WiAWSoVIpuqGW
-yXzg+0hhY546FDP/MEQ0aQ0p8monF/CRw8wu8Ekus21qdS5BNV8PrSzd6vb9CjD9
-hKW8sVFmFd6iwfftS4FK/agnOJAeawF8xheNfmh/oPNTMiMRfm3iKfCRbB+t/bNa
-TYBc0BfXbeIPxWOtZQf/Er3bFOKmXfMsZCAjlLHCdMYAHQy5B8kWz2RE7zkRWnBs
-lVJBzg0ZWw0Y3RKorXJHFzbl7QmIgQ==
-=1Ezn
------END PGP SIGNATURE-----
-
---Sig_/QLcGEWY/wM9vZfUU_WKxlNO--
 
