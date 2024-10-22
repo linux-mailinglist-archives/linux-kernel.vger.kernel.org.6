@@ -1,184 +1,162 @@
-Return-Path: <linux-kernel+bounces-376289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356B29AA2BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AD29AA2C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8381C2211F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:04:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130271C21D7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81F719DF52;
-	Tue, 22 Oct 2024 13:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8A019DF9E;
+	Tue, 22 Oct 2024 13:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EF5yIK1c"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4agJvba"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD58194ADB;
-	Tue, 22 Oct 2024 13:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483A19C560;
+	Tue, 22 Oct 2024 13:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602285; cv=none; b=dJpcjzHl5C+xoNv+eY3X1LCXPrDCvc4GeQxAVld1fM1+lL8/4S/Edvc0NT8W3/73q9u5Brc+g6SvjT42wO27JRDAeEqcvEceowALBxpu6cMS4Xg3yZQbVG9CFKRvnoJTGB1JbQ0bB0rCeYbruhdJbFS1gOfQKlWczDApRdlhb6o=
+	t=1729602334; cv=none; b=rzYhrqCz5FRM6YJy4uOjMqclsct8ZMw+Vn4kjh0/3YnwURiDw3iKablBURkvCDMk5E/rCkGrohIfu6bVUAjRxym9X4nJ5YudqgHeOrKM+So7uRV+WmqnAOyeiyhiGzfN8FMiq1UisYy5k2f7tCxOblLNJV+WP2WsbRcbnfs6NjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602285; c=relaxed/simple;
-	bh=cbH0B8zscu4imBTHxG+Lvc8tuZdEhL0wvzGmBSkhDRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5aRkwilMoSNewW2r81HMNOt7jgEg9jEuyzXjLZVY25KMiH+uRRtA8zCpBIY1iDlKqKqmRE0Y+TUOtqwOCfXsQf7UDraBnWnCXD1bEBAOU/wgRrgwNqHfDXYDtwLIcZDeIJAlgLSsQ2xXaUsnH0TZrGHA8bGPuFk+YdtBj0A0+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EF5yIK1c; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1729602334; c=relaxed/simple;
+	bh=GYElO7fLQ9SXczKd6rFScTpF4TePCHkBpeClolvf+Xs=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=WfNUhnC1LX+osCr1uC0dCoYSIUyEMQb0SDPKlS9Ke23RP7GaeeGFhBcrL4Zq7VwmGdgAsMfz37BRgWa1Gx1Fr7pGm0WnSVq4ySXRYhYobVy3E5nwV9nE8SnDO+lgQ+pL+tMSeyRaXI6qxLCLF3W3eiXuXO0rNEgy/Fut901GhNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4agJvba; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso1094934a91.2;
-        Tue, 22 Oct 2024 06:04:43 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so5399489f8f.2;
+        Tue, 22 Oct 2024 06:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729602282; x=1730207082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pWDeRgm8AjTmhY393T7IKu9ZeB7eJOW+Adot/DNWsok=;
-        b=EF5yIK1cxKpcCdaFY9vdGXPUSsoTAdMbO/piR5a3PRRBGhkXH2R4hrsO2+48fOq/I+
-         q9GJeFG1Ox8NyrRC6yuSyxeLoNkDZ9ixgucb1LhYPHk2ivvhp4vuS5+Y3E/nzaXvSddo
-         d69RY0Q+UTqQlagrzNNmW135l7CxjWCTUyHAZrHeH1ihYmrgl6TwzU1MYsvnHqpYW5Nw
-         ThtRcG8dpgZPK3PLbO8tby/mayYPg5676CBWZWyRg7sEMQvSKsD+c1hZzmp43QVYGEgT
-         WILVOv9Vw1IlII93UdMHVPh3qHqv9NvP15WgJlv7gCXYt3MMQ8G/RjN237RaprKTb0Lf
-         oU7A==
+        d=gmail.com; s=20230601; t=1729602331; x=1730207131; darn=vger.kernel.org;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CTtGwP6N4/w3oaR99NStC9Ft9FOAVIQw0MsHn1koshE=;
+        b=E4agJvba8ZLSyyCPsWqiEnUCeRlGXYHLt9d3EiKGj0pOtzAehKxUdmZ8nkUApgtmry
+         kv32n+ZnrG4XTh51kKV/Vu26QfmZYcnypj/LsgoHWBJ9zWV2F2mwUP2p2VjmTUgf3H8Y
+         TzSoiGlRTaqKMMh1sseEXTqCwTnNdalR6T8YvGPYZfk2fHyFhqB8FUZP2OS/7sLQbg/9
+         e9uklbvsMBD7/1naAQr9KRDhEj1NBuFucakWrQBGeIm2XCpH/TlMqdVJmxuSOw5Qz7zX
+         UdSN6fu6m2/KYXd3zF9bLrrYir2Sxc1Gvo4D+zyfvIu+RCGRB73lS2oBW5aW6DGyKkdJ
+         T/ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729602282; x=1730207082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pWDeRgm8AjTmhY393T7IKu9ZeB7eJOW+Adot/DNWsok=;
-        b=CVdYEqBVtgE/PHRwdF+N660VNdbsgRQCpC2JghC0dkvr8sC/MKAlyQM87Itjp+C5+g
-         4ii/dogI+4rddwQV+DNx/M3Caw5xt/b8eVFZw4fffQNAjaXZBzBnIe2Sa93qdr7FFBzW
-         9/IXsnl2FZd9Dr2Gf9QZziJh1AUY1fMkf6hv2xOxCsEO0FLTXctW/jqkoVyzO/oZ9VDA
-         spRpOfV6P6O4DdId1sWJeT/hGyHtjSa7y6v1t8yYdsRVSmkNPoscTmx8aihy9r10gkr/
-         QpxfFbzGg2Uzw5dQCo4KnLFiM1wg7IzDeTKUubbrS1jsfJ93puPHJJ+hK2eFPa9W5JIR
-         3REw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsfpsUdYkXp5tYTA/deiSl4exq/FiLEV8Z37rryD3BPhkD/5GMpDjyW893ScW5iZS+8uQIaO4XQWrRbes=@vger.kernel.org, AJvYcCWlbK5r8lxUgvlEepBDt6cyFvDpiFu9WjDsZGPoI5a1cP+j3E1AONq+CQAVrbOWxJd2apTUQbBxcyYb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw18JFZDHtqZTFKoDVE8hB8n559h7Xf/GDEsFR5CY5b4aiXA0ug
-	QDHjBHymqYpVW9demUWhLtktSOhczpjV5Sg1I1KBcfcjwoAK/O/OX/5G6qM/jZt9Sli5H1ihAZb
-	LSscmMkdiPlPZuM1zZZgYVSFBQkh3FQ==
-X-Google-Smtp-Source: AGHT+IH52G7hhVJzsWn9Mn7Q9OsulLJoDWAxP7UAnkiQV5yHiISOtioTuU80uizG3qQb9Fr754ZF0erA82kY5KLwkoo=
-X-Received: by 2002:a17:90a:e296:b0:2e2:de92:2d52 with SMTP id
- 98e67ed59e1d1-2e561a58096mr7189173a91.9.1729602282458; Tue, 22 Oct 2024
- 06:04:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729602331; x=1730207131;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CTtGwP6N4/w3oaR99NStC9Ft9FOAVIQw0MsHn1koshE=;
+        b=sg0jId0qjoE+4HvIxeb+r5YW7pDctNdes6I5Naodus0gTmX40yltNfWQzxoJEa9qkv
+         1GHPreUOqHC7LGTi4m6BmPJquShtN6HkbX6qPpIU+qfjbBVcdo+S3pxE0m94FnN6I4hH
+         BCGIB5Ezpg+H1cKFbZanKuYmvyB0V+CDALHsczSk/SgA18AIKN19bSR/5eLlFA2z3hnX
+         VtiU70qFyp+4LQFoHQ6WnEwIL0dvCYu9+pqQhAHerFSb6Ni+4KyBl8t7FJAS9xqAWsiR
+         ugl6TFly+kuAdCwj1HA6d5us+RL3TglFQAuPjN0iC/KKm7FlMQyRRnYE2pdXU5CHvjcQ
+         eMwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUettmBnsD4lfCqMqi/C2Ahf7HI4dwaudqKRF5kGieaSRCv53S6m+0AU9twRrkCN3zYC8ye7Sw1jxH7CY45@vger.kernel.org, AJvYcCUpdIsRDRxVptaSKfmGGbrCozvZ8ytKVjFhKruzSI6bvJF+cadv4I3HHcyIUu1kMMYOAjxKr7Vj3CZ2XwAF@vger.kernel.org, AJvYcCWz4nv820ITgTEduyJ51u+8kketD/Rfnlb6udDVMGfWQ5IIR7vfRRiNmkErL/bviNblVt6GcwE3dJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWIs9xvQNFoISC097F9UUHvYTK1ee/wWnYuRCoboY9maVC3bEO
+	0DTer+1noEoIRV6wlDMajslf8hGngj11214zlxuC1LzpR4NhTOT8w635Mg==
+X-Google-Smtp-Source: AGHT+IFMNt1FAG23KL5PRAg+Fcc9lV8eLt2m4nerG4ZP6nNLVnj86k2lC4zHLqPdcrU2IJB8Djtl6A==
+X-Received: by 2002:adf:ffc9:0:b0:37d:3e6d:6a00 with SMTP id ffacd0b85a97d-37eab75555emr13573649f8f.47.1729602330805;
+        Tue, 22 Oct 2024 06:05:30 -0700 (PDT)
+Received: from localhost ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b94346sm6624211f8f.86.2024.10.22.06.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 06:05:29 -0700 (PDT)
+Message-ID: <6717a319.df0a0220.9b810.4bc5@mx.google.com>
+X-Google-Original-Message-ID: <87ed48thif.fsf@>
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mikisabate@gmail.com>
+To: rafael@kernel.org
+Cc: daniel.lezcano@linaro.org,  linux-arm-msm@vger.kernel.org,
+  linux-pm@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: Fix reference count on CPU node
+In-Reply-To: <66fc57ef.050a0220.27e956.af8d@mx.google.com> ("Miquel
+ =?utf-8?Q?Sabat=C3=A9=09Sol=C3=A0=22's?= message of "Tue, 01 Oct 2024
+ 22:13:33 +0200")
+Organization: Linux Private Site
+References: <20240917211325.639765-1-mikisabate@gmail.com>
+	<66fc57ef.050a0220.27e956.af8d@mx.google.com>
+Date: Tue, 22 Oct 2024 15:05:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014152502.1477809-1-superm1@kernel.org> <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
- <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
-In-Reply-To: <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 22 Oct 2024 09:04:30 -0400
-Message-ID: <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
- VGA device
-To: Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, 
-	Mario Limonciello <mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 2:31=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidia.com>=
- wrote:
->
-> Hi Luke,
->
-> On 2024/10/15 4:04 PM, Luke Jones wrote:
-> > On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
-> >> From: Mario Limonciello <mario.limonciello@amd.com>
-> >>
-> >> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display dev=
-ice.
-> >>
-> >> ```
-> >> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce
-> >> RTX 4070 Max-Q / Mobile] (rev a1)
-> >> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
-> >> Strix [Radeon 880M / 890M] (rev c1)
-> >> ```
-> >>
-> >> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as th=
-e
-> >> boot VGA device, but really the eDP is connected to the AMD PCI displa=
-y
-> >> device.
-> >>
-> >> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device=
-.
-> >>
-> >> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-> >> Reported-by: Luke D. Jones <luke@ljones.dev>
-> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
-> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >> ---
-> >>   drivers/pci/vgaarb.c | 7 -------
-> >>   1 file changed, 7 deletions(-)
-> >>
-> >> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-> >> index 78748e8d2dba..05ac2b672d4b 100644
-> >> --- a/drivers/pci/vgaarb.c
-> >> +++ b/drivers/pci/vgaarb.c
-> >> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device =
-*vgadev)
-> >>              return true;
-> >>      }
-> >>
-> >> -    /*
-> >> -     * Vgadev has neither IO nor MEM enabled.  If we haven't found an=
-y
-> >> -     * other VGA devices, it is the best candidate so far.
-> >> -     */
-> >> -    if (!boot_vga)
-> >> -            return true;
-> >> -
-> >>      return false;
-> >>   }
-> >>
-> >> --
-> >> 2.43.0
-> >
-> > Hi Mario,
-> >
-> > I can verify that this does leave the `boot_vga` attribute set as 0 for=
- the NVIDIA device.
->
-> Does the following diff work for you?
-> This variant should be less risky for most systems.
->
-> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-> index 78748e8d2dba..3fb734cb9c1b 100644
-> --- a/drivers/pci/vgaarb.c
-> +++ b/drivers/pci/vgaarb.c
-> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device *vga=
-dev)
->                  return true;
->          }
->
-> +       if (vga_arb_integrated_gpu(&pdev->dev))
-> +               return true;
-> +
+On dt., d=E2=80=99oct. 01 2024, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
 
-The problem is that the integrated graphics does not support VGA.
+> On dt., de set. 17 2024, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
+>
+>> For the qcom-spm driver, an early return was not calling the proper
+>> of_node_put call for a previously acquired device node.
+>>
+>> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mikisabate@gmail.com>
+>> ---
+>>  drivers/cpuidle/cpuidle-qcom-spm.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpuidle/cpuidle-qcom-spm.c b/drivers/cpuidle/cpuidl=
+e-qcom-spm.c
+>> index 1fc9968eae19..d3608f47d02b 100644
+>> --- a/drivers/cpuidle/cpuidle-qcom-spm.c
+>> +++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+>> @@ -96,8 +96,10 @@ static int spm_cpuidle_register(struct device *cpuidl=
+e_dev, int cpu)
+>>  		return -ENODEV;
+>>=20=20
+>>  	saw_node =3D of_parse_phandle(cpu_node, "qcom,saw", 0);
+>> -	if (!saw_node)
+>> +	if (!saw_node) {
+>> +		of_node_put(cpu_node);
+>>  		return -ENODEV;
+>> +	}
+>>=20=20
+>>  	pdev =3D of_find_device_by_node(saw_node);
+>>  	of_node_put(saw_node);
+>
+> Gently ping for a fix in the same spirit as [1].
+>
+> Could you take a look whenever you have some time?
+>
+> Thanks!
+> Miquel
+>
+> [1] https://lore.kernel.org/all/20240917134246.584026-1-mikisabate@gmail.=
+com/
 
-Alex
+Gently ping. Could someone take a look at this fix?
 
->          /*
->           * Vgadev has neither IO nor MEM enabled.  If we haven't found a=
-ny
->           * other VGA devices, it is the best candidate so far.
->
->
-> Kai-Heng
->
-> >
-> > Tested-by: Luke D. Jones <luke@ljones.dev>
->
+Thanks,
+Miquel
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJJBAEBCgAzFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmcXoxgVHG1pa2lzYWJh
+dGVAZ21haWwuY29tAAoJEJa+jG/YnWVl3B8QAKCIccWGVrbRZXgOT2VsW2G6ONcX
+6XUtziowTvDcQJUcdRjkgXBiQHa4UpcZpOTIu7HS5/cYHfSK9U6jylcTafDNVbYr
+Ry0bwgrzRzi7oLPo9cPE0Dp7YouK1dRZ70m9dOQlmaI3P7nIVOY/VxyxhKAn3q96
+cfIAPXJ6nxGHa/AiSHBoCsIumJk5GshJkF4fvfVUWtBLcbtFZIOtiwWKPE7o53e5
+SB4M1/RFd7U7BONpjx/a1sy54LT7tBwe+syb7qhSluNOpQDtd8JFHQu9wUv8aVgQ
+N7MyWbjgHsAm/754PmbG+Tzvjovd1b827NLZPuo9F4Me2noXWF2FsE6rgTbBKCbk
+cs8p1yy61m4JVJjakNC9UkobqXHHrakJ01agClVF8P/AIpGN2S+oueyeKvNa1NiF
+hKKioymcUwvOYl9XHGgM9vtwbkj1EazsANAg4/21hxwDwZ6LZ+mKptVW1NwVfRKb
+hm3dwiI1mStJJv7D92ZHLHZfs6SNZASnSSm4K4MSpeDyVAf5+9np4VDzSQzA79Fm
+vA3GI0yEahyUiD74YG6HCOrAf7uOffWvI7JDwgye6Hoqfi3S+gwOHGwniyr54BoB
+fDNRFi1alOuskUQ9m6F1z71G4IPiEVMOQY4WUFx+FHkyFi24MUiGbdDbrJWKB/Ye
+3h6gl6oKry7NOzNn
+=Vt1S
+-----END PGP SIGNATURE-----
+--=-=-=--
 
