@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-376321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1C09AA328
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D879AA32A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19BF1C22365
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6269E1C2228D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C1D19E999;
-	Tue, 22 Oct 2024 13:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A3B19F406;
+	Tue, 22 Oct 2024 13:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="mSE0IYx9"
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="VLGCSs1W"
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D07A10A3E;
-	Tue, 22 Oct 2024 13:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA69C199238;
+	Tue, 22 Oct 2024 13:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729603860; cv=none; b=IZGqVpqGqn3XhTH08Pqs9BC8EFt7HBxr57HHGy1E5tB1QdIUvD+6izl58uHx775hCynjCfqootVbnUunF0WGaHuLPu+v+RhnLlmAzzgob7fFH735kgyGbPof64xiiq0qN4zckaGk9Hpx5WP5u58cEeIO3qIUR7gg84bduNMs5D8=
+	t=1729603861; cv=none; b=BCLxiqqsbLG7a2PXe3cJxk3H4CK6YZ3v1SVZdpANg1hs9ELFS9pKIQDAna+7gPOCi35/hKuBtXh9cJPBRKPuLa55DH/lQbTi/AFcalfCcLwds/t1ClZ3LuE8S8g54n1RpYY1xh/rO6Z/nDCAUboMMrD3Cfjq6dLyG2FHwOI4qm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729603860; c=relaxed/simple;
-	bh=CxMzTLwNEreVUwuYl3nsdWHIncFsQbNXm2cUyJR10xw=;
+	s=arc-20240116; t=1729603861; c=relaxed/simple;
+	bh=bo2zSEnLxRUd8cXvWxm+2fGoXpZEaSTMnZlREMzd/TM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NndqRvVaT3pJTq6TaPGqUVLVb1rGMKzGtDOKY0EbzZQDseK2+OR/fvqNMMN5NolvR5ZrmKlhCfPa6znISZaz4mdqOYQU+ugrnipxky/GG21/niCqJCro5ZLERcDRPHM7aLK42lJyVt3TTyO0eKS5XmhXvRZSLT72ytiTlw0CG8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=mSE0IYx9; arc=none smtp.client-ip=85.214.62.61
+	 MIME-Version; b=lSAPyvfqwlyBLqOHl6YHcTpyKCh3fMn6XMIXSzfHQzc+SONN5RLNb0bdc0FCVWpKpg4g2NnJVIWbNXhPP2s3g9ODkxZdvNyxGnd0KmCXikhzdTqDnSjMZNWSfDYebWw6N3zm7UjCwnMFrf+coQGfPta8Q/3q0EuP+SSPih63Ezg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=VLGCSs1W; arc=none smtp.client-ip=85.214.62.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
 	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 22D3D88F31;
+	by phobos.denx.de (Postfix) with ESMTPSA id 0BE5588F4D;
 	Tue, 22 Oct 2024 15:30:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729603856;
-	bh=ADgS1btn5VB1rPhyycx+bV2RpkrIr6nyI4uIsfq95tM=;
+	s=phobos-20191101; t=1729603857;
+	bh=/8jLXotQrE7fuRlDFjaApw4iVJpE2qFGjJxOo9h6Ezc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mSE0IYx9zSW23As5d55GIc6lj9HI7ACG7XosuFahfAPnFOEPV5uqhJqCeVJWUQzRq
-	 KfcN1zc8+t9SJVWNVrzc1pIEtXKo9IRjLJkhVBZMWqNULi25mG3fBBMLS6ectMxkN6
-	 eL/TZHPiAPrHzsvG/OkKxqbvRQHfet5gCKuw6JH9Ftmu1M5MccmztFnvdhPyejjwtP
-	 CzGXfkQi4ctSNsoYdoOMqfnola9ONclCCC0qfzrIIc+qNYxc7mm/fUgSmniRt4zAVs
-	 r7dxSid34PDvhYARcEwbccs9KIzfNMZUcfLW8hurczzdhrbEKxHwZiwxxWjPLMkJTy
-	 H+mxKEQvfT3Rw==
+	b=VLGCSs1WAzfpt4VW1ex4TEp4xM4xUQrNyvu1lrpqiFuOQ0rncsx2qcjonum5MD1iv
+	 Usz97IHzsIi4MLpqhWdxuhLhz9NzmbO0Ifa0svAuGc7iI4VEYNweG/9yh1Dk4JzpJv
+	 Bie95TxVkDaEeDoXfvFk3tis7GpBuLWEE8/5edTgK4LyuhWGNmpW0r3x/JiVo6oGGg
+	 2ygkVb39II6Tm0yQzvLBLJICRRyaWmbXN9c7tYzZFFdjtIas0dfOFnzHVVP7y/IA5v
+	 6P0dL6bQq/GI4kuFUhunNc6oVNQUWRRMkxDA3cKsACh+gwwn+fmCA/cKsW0tCL01NU
+	 CNKb6cmyYSGVw==
 From: Lukasz Majewski <lukma@denx.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -59,10 +59,11 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Stefan Wahren <wahrenst@gmx.net>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v10 2/4] dt-bindings: display: Add powertip,hx8238a as DT Schema description
-Date: Tue, 22 Oct 2024 15:30:38 +0200
-Message-Id: <20241022133040.686562-2-lukma@denx.de>
+	Lukasz Majewski <lukma@denx.de>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v10 3/4] dt-bindings: arm: Document the btt3 i.MX28 based board
+Date: Tue, 22 Oct 2024 15:30:39 +0200
+Message-Id: <20241022133040.686562-3-lukma@denx.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241022133040.686562-1-lukma@denx.de>
 References: <20241022133040.686562-1-lukma@denx.de>
@@ -76,57 +77,37 @@ Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
 X-Virus-Status: Clean
 
-This patch provides the DT Schema description of powertip,hx8238a
-320 x 240 LCD display.
+The imx287 based btt3 board is very similar to xea in terms of used SOM
+module.
 
 Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
 ---
+Changes for v8:
+- None
 
 Changes for v9:
-- New patch
+- None
 
 Changes for v10:
 - None
 ---
- .../display/panel/powertip,hx8238a.yaml       | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml b/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
-new file mode 100644
-index 000000000000..7b4557ef6b74
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
-@@ -0,0 +1,29 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/powertip,hx8238a.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Powertip Electronic Technology Co."320 x 240 LCD panel"
-+
-+maintainers:
-+  - Lukasz Majewski <lukma@denx.de>
-+
-+allOf:
-+  - $ref: panel-dpi.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: powertip,hx8238a
-+      - {} # panel-dpi, but not listed here to avoid false select
-+
-+  height-mm: true
-+  panel-timing: true
-+  port: true
-+  power-supply: true
-+  width-mm: true
-+
-+additionalProperties: false
-+
-+...
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 014cab2a0cde..f865b2d44a65 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -97,6 +97,7 @@ properties:
+               - i2se,duckbill
+               - i2se,duckbill-2
+               - karo,tx28                 # Ka-Ro electronics TX28 module
++              - lwn,imx28-btt3
+               - lwn,imx28-xea
+               - msr,m28cu3                # M28 SoM with custom base board
+               - schulercontrol,imx28-sps1
 -- 
 2.39.5
 
