@@ -1,232 +1,172 @@
-Return-Path: <linux-kernel+bounces-376691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DAE9AB4EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3DE9AB4F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BF01F2458F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD701F24597
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17D71BD4E2;
-	Tue, 22 Oct 2024 17:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F901BDA8A;
+	Tue, 22 Oct 2024 17:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMmzlyXd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KknlVEBa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5616EB7C;
-	Tue, 22 Oct 2024 17:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A155A1BD03E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617762; cv=none; b=Q3lVR0i0omtE8RNmoyj/mNm7UzpOKpQgYuCTnoYSBXnTAzROZBBj92yj6ynhQZz6L45o2EsU9F2x3ynPiTeys468rZk8ARmkJVTnXIIO+aPgeHlZ3/6BNIffL4lw3v+BrUlT9KkLNCrFygme4WabEFORxL4E/foSauSoyB3JkyE=
+	t=1729617839; cv=none; b=DTbUGi2nuKvkgzKT0d/b82xbmb3MaHUKbchpnuFUSIuen3e+BhRFa7S5uvomAblL7p5SwE0vAgLrmS7+reWNWpZuHI4fIB+oTaXFnOcB02mb/bRJgz1wbynRkCAI3V/RreyEtvkeN5teKWBrQBvm6m5Q2VTGTofe2FDOdh09mAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617762; c=relaxed/simple;
-	bh=ky5NuXLBXkFS61V1YLSFtI5CbHssuX6MIidt+OAZbIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPgqi85YBsGxWXzs9V1OAbd6kmZqgf3qGMk436gR/BFpNi3SG8201wezDc+W4eCt4wTlHYSlwapfHjfV/3TbJCGqk0kHRWk7Wsy/S/YKHOcUjxQNPTilOYPNv8hxSEWn+XGfkqEasadFj2OxoF+W5L7o/stS5LepoxjztbYfssc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMmzlyXd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E3CC4CEC3;
-	Tue, 22 Oct 2024 17:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729617761;
-	bh=ky5NuXLBXkFS61V1YLSFtI5CbHssuX6MIidt+OAZbIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NMmzlyXdm9iUN/REp1M4Dpv5ecgn3SASXlKaHDY/EplI6Qi5Du3D9wGeg5xgoC+RE
-	 SK/J1+qthurVxghTypeRnfdVFDf7OBsYsdtxKdxqZsguQKbWVzn35jELh4Q6qtaeQG
-	 TzhcXVtgf/u7/v/7lmPNTv2d4gLIgrF+hyswdA0PXW4YRnERrj4xKjd4Uc+1MCFpAn
-	 MLHcAMhYZa3hqsgSI94hASWHEOdvNlxaEwNTBzLKbXcaKOd0laRkqIacIFrvjhJrnW
-	 3aAIVFWt0Np8LlVLW8noxSYNTK3W45DGW73C6yer6B1eHTtDX0aeYhlP2i+z6RQCUf
-	 GySMU4HsWFcIQ==
-Date: Tue, 22 Oct 2024 18:22:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dlechner@baylibre.com,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-Message-ID: <20241022-flagpole-subject-51e68e81e948@spud>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
- <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-2-969694f53c5d@baylibre.com>
+	s=arc-20240116; t=1729617839; c=relaxed/simple;
+	bh=sY2vbTh/eZ9KnvBd5Lw6fPEODBWK6BLyWj3gbw/wgOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sMB2WYYz3E8S/54uJGmHxJ4Mrg+f9rxFhYEl6fYAX1KJyLkPi+yuXJieExBPU9Ut0LEyO2CSl6JcMborSr5UjBUAlSlg7DhVxfgxRck1nhdROpJZs3JDjZl46YsQhwm7FiUI9RFMWkWROiQ4Lu/sqwJD9FkENMJaQeZubtRUkGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KknlVEBa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729617836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cLZNgIcQoAI1N7/lb6Yy9l6fSFwjbIQtrNd/TiZvpeU=;
+	b=KknlVEBa5tYRXJO6tmGq/GOiYLEjT/5nCdvcAtljVOvQvgwlYkgGRKdAutAK19uCgF9N/G
+	bIh1ueX+6RjKKOuvyM8Hrp33UZ0uq7nbUhRHuRKmxKey/MpJtEcGK5Aefw17ZZOfxHKpRz
+	d3a0qrQBoljaH3enFR5ORnzb9HO70PI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-INjmng9aPja70izeb94u2Q-1; Tue,
+ 22 Oct 2024 13:23:50 -0400
+X-MC-Unique: INjmng9aPja70izeb94u2Q-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F1661955EAA;
+	Tue, 22 Oct 2024 17:23:47 +0000 (UTC)
+Received: from f39.redhat.com (unknown [10.39.192.92])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 70E0E19560A2;
+	Tue, 22 Oct 2024 17:23:42 +0000 (UTC)
+From: Eder Zulian <ezulian@redhat.com>
+To: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	acme@redhat.com,
+	vmalik@redhat.com,
+	williams@redhat.com
+Subject: [PATCH v2 0/3] Fix -Wmaybe-uninitialized warnings/errors
+Date: Tue, 22 Oct 2024 19:23:26 +0200
+Message-ID: <20241022172329.3871958-1-ezulian@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MJ8JfCsAMbIqFwFl"
-Content-Disposition: inline
-In-Reply-To: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-2-969694f53c5d@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Hello!
 
---MJ8JfCsAMbIqFwFl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This v2 series initializes the variables 'set' and 'set8' in sets_patch to
+NULL, along with the variables 'new_off' and 'pad_bits' and 'pad_type' in
+btf_dump_emit_bit_padding to zero or NULL according to their types and the
+variable 'o' in options__order to NULL to prevent compiler warnings/errors
+which are observed when compiling with non-default compilation options, but
+are not emitted by the compiler with the current default compilation
+options.
 
-On Mon, Oct 21, 2024 at 02:40:12PM +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Add a new compatible and related bindigns for the fpga-based
-> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
->=20
-> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> mainly to reach high speed transfer rates using a QSPI DDR
-> (dobule-data-rate) interface.
->=20
-> The ad3552r device is defined as a child of the AXI DAC, that in
-> this case is acting as an SPI controller.
->=20
-> Note, #io-backend is present because it is possible (in theory anyway)
-> to use a separate controller for the control path than that used
-> for the datapath.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 69 ++++++++++++++++=
-+++++-
->  1 file changed, 66 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b=
-/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> index a55e9bfc66d7..0aabb210f26d 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> @@ -19,11 +19,13 @@ description: |
->    memory via DMA into the DAC.
-> =20
->    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-> +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-> =20
->  properties:
->    compatible:
->      enum:
->        - adi,axi-dac-9.1.b
-> +      - adi,axi-ad3552r
-> =20
->    reg:
->      maxItems: 1
-> @@ -36,7 +38,12 @@ properties:
->        - const: tx
-> =20
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
-> =20
->    '#io-backend-cells':
->      const: 0
-> @@ -47,7 +54,31 @@ required:
->    - reg
->    - clocks
-> =20
-> -additionalProperties: false
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: adi,axi-ad3552r
-> +    then:
-> +      $ref: /schemas/spi/spi-controller.yaml#
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
+- tools/bpf/resolve_btfids/main.c: Initialize the variables 'set' and
+  'set8' in sets_patch to NULL.
 
-Is this maxItems required? It matches the outer maximum.
+- tools/lib/bpf/btf_dump.c: Initialize the variables 'new_off' and
+  'pad_bits' and 'pad_type' in btf_dump_emit_bit_padding to zero/NULL
 
-> +        clock-names:
-> +          items:
-> +            - const: s_axi_aclk
-> +            - const: dac_clk
+- tools/lib/subcmd/parse-options.c: Initialize the variable 'o' in
+  options__order to NULL.
+  Sam James mentioned that Michael Weiß had previously sent an alternative
+  patch as
+  https://lore.kernel.org/all/20240731085217.94928-1-michael.weiss@aisec.fraunhofer.de/
 
-The names are the same in both cases, you can move the definitions
-outside of the if/then/else stuff and only constrain it here.
+Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
 
-> +    else:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +        clock-names:
-> +          items:
-> +            - const: s_axi_aclk
-> +
-> +unevaluatedProperties: false
-> =20
->  examples:
->    - |
-> @@ -57,6 +88,38 @@ examples:
->          dmas =3D <&tx_dma 0>;
->          dma-names =3D "tx";
->          #io-backend-cells =3D <0>;
-> -        clocks =3D <&axi_clk>;
-> +        clocks =3D <&clkc 15>;
-> +        clock-names =3D "s_axi_aclk";
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    axi_dac: spi@44a70000 {
-> +        compatible =3D "adi,axi-ad3552r";
-> +        reg =3D <0x44a70000 0x1000>;
-> +        dmas =3D <&dac_tx_dma 0>;
-> +        dma-names =3D "tx";
-> +        #io-backend-cells =3D <0>;
-> +        clocks =3D <&clkc 15>, <&ref_clk>;
-> +        clock-names =3D "s_axi_aclk", "dac_clk";
-> +
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        dac@0 {
-> +            compatible =3D "adi,ad3552r";
-> +            reg =3D <0>;
-> +            reset-gpios =3D <&gpio0 92 GPIO_ACTIVE_HIGH>;
-> +            io-backends =3D <&axi_dac>;
-> +            spi-max-frequency =3D <20000000>;
-> +
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +
-> +            channel@0 {
-> +                reg =3D <0>;
-> +                adi,output-range-microvolt =3D <(-10000000) (10000000)>;
-> +            };
-> +        };
->      };
->  ...
->=20
-> --=20
-> 2.45.0.rc1
->=20
+  $ for c in gcc clang; do for o in fast g s z $(seq 0 3); do make -C \
+  tools/bpf/resolve_btfids/ HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" \
+  clean all 2>&1 | tee ${c}-O${o}.out; done; done && \
+  grep 'warning:\|error:' *.out
 
---MJ8JfCsAMbIqFwFl
-Content-Type: application/pgp-signature; name="signature.asc"
+  [...]
+  clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+  clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+  clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+  clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+  clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+  gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+  gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+  gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+  gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+  gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+  gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
 
------BEGIN PGP SIGNATURE-----
+The above warnings and/or errors are fixed. However, they are observed with
+current default compilation options.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxffXAAKCRB4tDGHoIJi
-0lYXAP4qWF+5usb9GM3yIpXbgIa/+PcPuM+Vd2kfP4v63wVL2AD/euPMQtDB2L6T
-WN/LfMdAMctnoR3zuwSeR+V/TzGrgAs=
-=kwA/
------END PGP SIGNATURE-----
+Updates since v1:
 
---MJ8JfCsAMbIqFwFl--
+- Incorporate feedback from reviewers. Add a comment about an alternative
+  patch for parse-options.c sent before (based on comments from Sam James.)
+  Split in multiple patches creating this series and a typo was fixed
+  "Initiazlide" -> "Initialize" (suggested by Viktor Malik). State more
+  clearly that the -Wmaybe-uninitialized issues only happen when compiling
+  with non-default compilation options (based on comments from Yonghong
+  Song.)
+
+Thanks,
+
+Eder Zulian (3):
+  resolve_btfids: Fix compiler warnings
+  libbpf: Prevent compiler warnings/errors
+  libsubcmd: Silence compiler warning
+
+ tools/bpf/resolve_btfids/main.c  | 4 ++--
+ tools/lib/bpf/btf_dump.c         | 4 ++--
+ tools/lib/subcmd/parse-options.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+-- 
+2.46.2
+
 
