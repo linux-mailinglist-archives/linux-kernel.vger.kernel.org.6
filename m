@@ -1,253 +1,168 @@
-Return-Path: <linux-kernel+bounces-376255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4439AA23C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 337A39AA241
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DA71F235A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06E51F234AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F43D19DF44;
-	Tue, 22 Oct 2024 12:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AB019D8A4;
+	Tue, 22 Oct 2024 12:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cgbNgDpO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOZWLu0z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CD519D8BC;
-	Tue, 22 Oct 2024 12:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECECD19CC32;
+	Tue, 22 Oct 2024 12:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729600695; cv=none; b=LtAgJccmoKPSQAvQKuPvK0zqXf+KEWcmYxLoHtaVqQ7BSsTvAe2nCUEYmPFvOOTY2i+3e7DXSz1eGasGf17zwvV2AzHyNIHSD+9VCaPYWHLzY+mZZk5RF6LRVg2rPr44n8iCmVTYpgcTFNocqT4IYTqurJ7+cgRmp28aIurgUiE=
+	t=1729600721; cv=none; b=fLyqKxYiimB0mpZXWvvQFRGiYb31sQRkao+UGR49ASg9OdDq+NAPP4Omfy3Gi1xKU6Dd8Q+Bq0AgsId2mh/93Gw3nBuLJspn0jOT79VR+Yb9Up6rhH/hpcZI2J76PCvaZkXkBkJLvcyoq508AYqY92iDxb/9QREEIk7jmpWYqBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729600695; c=relaxed/simple;
-	bh=DLgB0RyK7HecqWHWaSWB1KTGQ554aUd6uSiDOmYkCe0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rjV0dV7yZinP0HPfzjJEg7s1MzxxIrL4P9C4Z52HBPf0zfwUJHG9AuRBcg/12/P7DRBliBluKrK2L3jwiCnowQnesx6AKl4XH3hBS5ZNLn4T+rgR6VdYvuLdL+2oMdXgNKbZEQ16VyNrY6OvKBocWbd4IkcVQcRJUmf3jh6swf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cgbNgDpO; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729600694; x=1761136694;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=DLgB0RyK7HecqWHWaSWB1KTGQ554aUd6uSiDOmYkCe0=;
-  b=cgbNgDpOHra8yBzY/KVO35hnHC2CvN8Vv7OhvSjeUyI9L0qPeprN03te
-   CqWyqW5fRb7Lcty78WuB/63elGgKYehkCKGazK7sazjXWv363HB69T3bA
-   4l/6nFuCwg4+n1F7D7dPNwdzLZqVY3A3cRI6S8PygBlTkLUWFSp9rafC4
-   zEa9n68+pFAj8MFaYZBF/s2Dg0YvmN9S6O1U+8RnszVxvxkjwH3TLA96b
-   EdcsBQcs/wRKZBRxTIOgS2dl0xkbjcjnZe5C8999R8ehPvBU60x1zM4H9
-   oWT3C8jZa566h2f1H8GhQvmMvx9HuApDSOLHCGIg4AHhk8/cWXg7M9svN
-   Q==;
-X-CSE-ConnectionGUID: tRIQhaxpRWi/VlN38cX+aw==
-X-CSE-MsgGUID: dAwMMA+ETuWJLP1ZW4H7Vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="39750065"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="39750065"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:38:13 -0700
-X-CSE-ConnectionGUID: O9Tb6A5AR5W9iUWUW6VQPQ==
-X-CSE-MsgGUID: uVZBeJNwSIiZgxEq7MrWaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="79922838"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.4])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 05:38:09 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/i915/display: Remove kstrdup_const() and
- kfree_const() usage
-In-Reply-To: <6673435f-250a-4fb7-9843-20f050e85c7c@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
- <87h69srz1q.fsf@intel.com>
- <6673435f-250a-4fb7-9843-20f050e85c7c@wanadoo.fr>
-Date: Tue, 22 Oct 2024 15:38:06 +0300
-Message-ID: <87iktkuxch.fsf@intel.com>
+	s=arc-20240116; t=1729600721; c=relaxed/simple;
+	bh=ATv2SPKcd4fh964chY+L+cl4Ml8G1NUG4M/QOY04ocE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KDZ1W5loI2ccEmJlBALEigiNvxA0TFJ6+qb8jHNwIezfK38BwYg0VJLvclEjPDGDuSycXybQwnhYbzGDD3U3aJsqUe50sxwbLA0+I4ItvjI27uv+mxJgzyK5nNRN/zqpuzhDasUoRRXp9bIl6tiltUpbb+xU1IoWMS4UXuwinWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOZWLu0z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335ECC4CEC3;
+	Tue, 22 Oct 2024 12:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729600720;
+	bh=ATv2SPKcd4fh964chY+L+cl4Ml8G1NUG4M/QOY04ocE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MOZWLu0zz+zSSVYLqJmjWyZfmExzA20J/ftuw3P2diHk+whFBkajuflu6AisPB78x
+	 MOZQgktonMbWZRUxnLaat8dWIGhqGJtputFHD/R4h14/qaXYRki69mDnLUkki9JWUn
+	 ueE6V/oZcubiUhJCbkHwvpxNa+SZaKoYIq6Rf22nr5pQ2bz37QHKIUMqjrVRJnPH5r
+	 oA3/hvHHsB/aEQel1LKG/LjFLjzMam/Dve2YkB7+kZTn13pY48fuYBLQu2TflvS6AF
+	 PkCv3/PVz3kyVih8v4TJcQFwaO6YO1helEPmu4+A/NdUUBeObRWWaIsIZN6dkJmXya
+	 UhyXuUXVqGbxQ==
+Message-ID: <a92e9d88-622a-4f08-b4d4-6f28d6a91598@kernel.org>
+Date: Tue, 22 Oct 2024 14:38:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
+ QCS8300
+To: Imran Shaik <quic_imrashai@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
+ <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
+ <o5v3fch5oxol4t7j4xlqswk6m6uo4tleck2cnfk6whpfqsrvjc@s2yrjumgvw6j>
+ <34216857-170c-45d4-8f6d-987573269215@kernel.org>
+ <36bfe493-8a85-4add-93e3-650b002636df@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <36bfe493-8a85-4add-93e3-650b002636df@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 04 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wro=
-te:
-> Le 04/10/2024 =C3=A0 11:35, Jani Nikula a =C3=A9crit=C2=A0:
->> On Thu, 03 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> =
-wrote:
->>> kstrdup_const() and kfree_const() can be confusing in code built as a
->>> module. In such a case, it does not do what one could expect from the n=
-ame
->>> of the functions.
+On 22/10/2024 08:34, Imran Shaik wrote:
+> 
+> 
+> On 10/21/2024 8:41 PM, Krzysztof Kozlowski wrote:
+>> On 21/10/2024 12:56, Dmitry Baryshkov wrote:
+>>>>>   	{ }
+>>>>>   };
+>>>>> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
+>>>>>   	if (IS_ERR(regmap))
+>>>>>   		return PTR_ERR(regmap);
+>>>>>   
+>>>>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
+>>>>
+>>>> Why we cannot use match data? Seeing compatibles in the code is
+>>>> unexpected and does not scale.
 >>>
->>> The code is not wrong by itself, but in such a case, it is equivalent to
->>> kstrdup() and kfree().
+>>> Because using match data doesn't scale in such cases. We have been using
+>>
+>> I don't understand how it could not scale. That's the entire point of
+>> match data - scaling.
+>>
+>>> compatibles to patch clock trees for the platforms for quite a while.
+>>> You can see that each of the "tunings" is slightly different. From my
+>>
+>>
+>> You have one driver, where are these tunings which are supposed to be
+>> different? You need here only enum or define, in the simplest choice.
+>>
+>>> point of view, this approach provides a nice balance between having a
+>>> completely duplicate driver and having a driver which self-patches the
+>>> tree.
+>>
+>> How duplicate driver got into this? I don't think we talk about the
+>> same. I meant ID table match data.
 >>>
->>> So, keep thinks simple and straightforward.
->>>
->>> This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
->>> memory in intel_backlight_device_register()")
->>=20
->> Sorry, I guess I'm confused here. Or I just didn't read the commit
->> message to [1] properly. Or both.
->>=20
->> So the whole point of [1] was that the _const versions can be confusing
->> if i915 is builtin? But not wrong?
->
-> I'll try to explain the whole story and (try to) be clearer.
+> 
+> I agree with Dmitry. If I understand correctly, to add match data 
+> support, we need to define the gpu_cc_qcs8300_clocks struct by 
+> duplicating the entries from gpu_cc_sa8775p_clocks and then adding the 
+> additional qcs8300 clocks. The compatible approach is simpler and used 
+> across most existing platforms.
+> 
 
-Thanks for the thorough explanations, pushed to drm-intel-next.
+You don't have to define any structs. You pass enum and retrieve it...
 
-BR,
-Jani.
+Best regards,
+Krzysztof
 
->
->
-> [2] the intent of this initial patch was a micro-optimization which was=20
-> expected to save a few bytes of memory. The naming of the function=20
-> looked promising. However kstrdup_const() only saves the allocation=20
-> within the rodata section of the kernel [5,6]. The mechanism does not=20
-> work for code built as module.
->
-> This patch *is not* broken by itself, it is just pointless most of the=20
-> time. So keeping it as-is is just fine, from my point of view.
->
-> If built as a module, kstrdup_const() is just a plain kstrdup() and=20
-> kfree_const() is just kfree().
->
->
->
-> [3] was a variation that tried to avoid the allocation in all cases,=20
-> should it be built as a module or not.
-> Being a micro-optimization of a slow path, your argument of keeping=20
-> things simple is just fine for me.
->
->
->
-> [4] just revert [2].
-> [2] was not broken, so [4] does not fix anything. It just makes things=20
-> simpler and as before.
->
->
-> So the whole point of [1,3] was that the _const versions can be=20
-> confusing if i915 is *NOT* builtin.
-> But it *is* not wrong, just likely useless in such a case.
->
-> So, from my point of view, keeping [2] as is, or applying [3] or [4] on=20
-> top of it does not change things much, and each solution is correct.
->
->
->
-> The idea behind removing some usage of _const() function in modules is=20
-> related to the patch proposal [7] and more precisely the response of=20
-> Christoph Hellwig [8]. The patch [7] will not be applied because it=20
-> breaks things.
-> So, should this API be removed one day, or at least removed for modules,=
-=20
-> the more preparation work is already done (up to now: 4,9,10] the better=
-=20
-> it is.
->
-> CJ
->
->
->
-> [2]: 379b63e7e682 ("drm/i915/display: Save a few bytes of memory in=20
-> intel_backlight_device_register()")
->
-> [3]:=20
-> https://lore.kernel.org/all/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727=
-533674.git.christophe.jaillet@wanadoo.fr/
->
-> [4]:=20
-> https://lore.kernel.org/all/f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727=
-977199.git.christophe.jaillet@wanadoo.fr/
->
-> [5]: https://elixir.bootlin.com/linux/v6.12-rc1/source/mm/util.c#L84
-> [6]:=20
-> https://elixir.bootlin.com/linux/v6.12-rc1/source/include/asm-generic/sec=
-tions.h#L177
->
-> [7]:=20
-> https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.=
-org/
-> [8]: https://lore.kernel.org/all/ZvJfhDrv-eArtU8Y@infradead.org/
->
-> [9]:=20
-> https://lore.kernel.org/all/63ac20f64234b7c9ea87a7fa9baf41e8255852f7.1727=
-374631.git.christophe.jaillet@wanadoo.fr/
-> [10]:=20
-> https://lore.kernel.org/all/06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727=
-375615.git.christophe.jaillet@wanadoo.fr/
->
->>=20
->> BR,
->> Jani.
->>=20
->>=20
->> [1] https://lore.kernel.org/r/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1=
-727533674.git.christophe.jaillet@wanadoo.fr
->>=20
->>=20
->>=20
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/g=
-pu/drm/i915/display/intel_backlight.c
->>> index 9e05745d797d..3f81a726cc7d 100644
->>> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
->>> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
->>> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_co=
-nnector *connector)
->>>   	else
->>>   		props.power =3D BACKLIGHT_POWER_OFF;
->>>=20=20=20
->>> -	name =3D kstrdup_const("intel_backlight", GFP_KERNEL);
->>> +	name =3D kstrdup("intel_backlight", GFP_KERNEL);
->>>   	if (!name)
->>>   		return -ENOMEM;
->>>=20=20=20
->>> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_co=
-nnector *connector)
->>>   		 * compatibility. Use unique names for subsequent backlight devices=
- as a
->>>   		 * fallback when the default name already exists.
->>>   		 */
->>> -		kfree_const(name);
->>> +		kfree(name);
->>>   		name =3D kasprintf(GFP_KERNEL, "card%d-%s-backlight",
->>>   				 i915->drm.primary->index, connector->base.name);
->>>   		if (!name)
->>> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_co=
-nnector *connector)
->>>   		    connector->base.base.id, connector->base.name, name);
->>>=20=20=20
->>>   out:
->>> -	kfree_const(name);
->>> +	kfree(name);
->>>=20=20=20
->>>   	return ret;
->>>   }
->>=20
->
-
---=20
-Jani Nikula, Intel
 
