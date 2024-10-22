@@ -1,193 +1,203 @@
-Return-Path: <linux-kernel+bounces-375563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37259A9759
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:58:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F9B9A975D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470E12830B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C065281CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CAD347C7;
-	Tue, 22 Oct 2024 03:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDC3823C3;
+	Tue, 22 Oct 2024 04:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JuP6I6RA"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jj+trqXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E54F256D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4642819;
+	Tue, 22 Oct 2024 04:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729569522; cv=none; b=F0yMYKNA5J57GFt18rsksai5YrE/hU3JNTZ5EafQzNIi6saDSdTzkWmQ85M4XTPZD3SNvFE3JjliXqxPQEovNhkiV61OVJQQAh9heZ8i4WBOV1829389ZBPBXV5HE45z0igK39A9QG9gKZxuvzOanpBQ1dKca28drNzOy/TUthE=
+	t=1729569667; cv=none; b=bfP6JlrA/Rfg6+u+WHHG0VvhdWstlIcG5k6t9l0jaqIf/B0usQoBSgb5h1l0Kj+gR5DvYG4WIlQBIIYydjsJnvVDZPNtEwA0y1oSSCFgzu0KTocYfTfonz0Uws+S8M0z5vmBSkqn3awwQjdFJt+oH4p3g8PJnNlA/3BrPH44hX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729569522; c=relaxed/simple;
-	bh=TiMQ7lkL1xNr+uvD19954tJMEprwzK6hHSvWx8JjLCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lfvo4S5XB3I3Ld9HvluJ5l5MQV/QnCOvR+bkrvOJTDPg25LGbbO7+aGTAXwD4LhKe8D4JoqN+SekGVtUgshmN9/Idn8rHXsreKse4HADOAyCymaCw9R10MLZz8LgirNqTXEXLWZzNqt7+aydijr+GTB1f24TyoqqorFqd6XI1HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JuP6I6RA; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so49317421fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729569518; x=1730174318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26QZsdFfjNaf2R0pL13dD/w4NeLPSwhQ9nw1ajQqK40=;
-        b=JuP6I6RAWMzIyT/DT8//Od0BNDiiT1AblZFdPDbHPaykOgMZs+t1rq+aroMxQgkykJ
-         z4tRL4oQ4ctsmzdRRNascoyU+ejebJgNppCJpMrSkQMwCDBhIb//sbmNtQenoIBDDYWs
-         rNs5Or6UfostgTC46m+txRhMoaAJdZJkHb9C4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729569518; x=1730174318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=26QZsdFfjNaf2R0pL13dD/w4NeLPSwhQ9nw1ajQqK40=;
-        b=LYS681RwMo+F0hDqkAbJAd1lHlCodUt2vBTGnKUhDRGHUYP9XRn24vuOPq7c8tbRWz
-         Bg+Vh/pEfGN07+oD5lzARes1+O2vF3Np5Mg5nIGCBeuJRXEDuB8vSgEugeXk65ybQT02
-         CC6lFGEZM9Wg2tMVcJLveyGCxlLRjuqMg0y0BBIT4MaAnk/xu+BYQGB7OHfIs2CdvifQ
-         vgZlQg6GfdHuWNokWTwnewamIyZ4CXIH89CLP5dblmGSNH9eZOqD+dDzkKxCVKRxz90Q
-         l3/K6+Ac+PSs5ZV3/XHLPVsVbM0581BzOH+aDGdyfEVlrepuAYa3ginHXidn4ZGgl25/
-         RCoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUR/LWhwstViI4ktPJjolYhy+FcF5CefQArDVOiHO6+u5jKjUHYjYPjOiZEhCLkp8dfEoIqEsHBC38t4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj9KoYSFGwY3CgWaVN1YlQTtQOL8VEiH8mz5BYE5HSsp/oggBr
-	8wiRHvRlDft+37tRsAM4yWuM1tDsUiTilvrWphPw7w5cQXdADuAQLFgewfBrmVc6AmCJyr8Rc0u
-	BvVsnGqrMkMJzErAX91aR0ow4eCSpFH9sQwxv
-X-Google-Smtp-Source: AGHT+IFqMhHSx8Ip59Ca3lTQjk0rTWzLpRf1LICtZkUGARVmXCcNDbvtoO7vAUrk/aZyUBhNLkQE7MFo/l8i4R5X7hA=
-X-Received: by 2002:a2e:bc08:0:b0:2fb:51e0:91b with SMTP id
- 38308e7fff4ca-2fb832285d4mr68651001fa.43.1729569517643; Mon, 21 Oct 2024
- 20:58:37 -0700 (PDT)
+	s=arc-20240116; t=1729569667; c=relaxed/simple;
+	bh=cylGaKVJ5EYP32hqk0FO8aOWFqrcSmcvUWJ+G08AGm0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hPfYXy+GgVHNsfJwKRdU8AEUp2KpIBbW1fWablv79CW4bBCYBt2F5ji4i+CZ9XT1YI+8QFAcJyUcuszNBbidZizfx7tumyIKSlnl9lwAihX7L8xNdIYTSMZya7VT0NE6IgRNTjltLsmaye1JwqDi6C1MIY4Y6P4bMoFgl7woptI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jj+trqXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C261C4CEC3;
+	Tue, 22 Oct 2024 04:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729569667;
+	bh=cylGaKVJ5EYP32hqk0FO8aOWFqrcSmcvUWJ+G08AGm0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Jj+trqXihJ1WZmMPZBUUxNdiSqHi6C1St3+gct7Xx7HR7aiAlhNmxIMNyV84l60vF
+	 W+PTagEGI6wKw2gL3mp3kPOZ24P1WvN/1Zanhp4HvsvqAaboas6mzQ5IihQcnl8Ydo
+	 jCIQG9ldv1BgNKHrzu/yDqM2Cse3UmS3QwNXA0AtZ96PpOajDiURKu9+BegchkMu9Q
+	 jBaHbuzYGApcxnbXa8iraloCylo6gmnDLjucPBOvlaeao31FfDa17RsFkBuEXShwzq
+	 nXHL0lY7hMGVXmiGHsUHnqLUExhF5EImsCSQ9iZVsxXYSsDjvXyB9oNCBq+xT9Uw9I
+	 L767bg/XxiDlw==
+Date: Tue, 22 Oct 2024 13:01:03 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: <oleg@redhat.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+ <acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+ <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+ <irogers@google.com>, <adrian.hunter@intel.com>,
+ <kan.liang@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+ <bpf@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] uprobes: Remove the spinlock within
+ handle_singlestep()
+Message-Id: <20241022130103.3509201a2a26c4be5de1a852@kernel.org>
+In-Reply-To: <20240815014629.2685155-3-liaochang1@huawei.com>
+References: <20240815014629.2685155-1-liaochang1@huawei.com>
+	<20240815014629.2685155-3-liaochang1@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241016034927.8181-1-yunfei.dong@mediatek.com> <20241016034927.8181-2-yunfei.dong@mediatek.com>
-In-Reply-To: <20241016034927.8181-2-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 22 Oct 2024 11:58:26 +0800
-Message-ID: <CAGXv+5GMisONhxu5nnRdLvkav4ttwtrupft26-J01P8ACDx=9A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] media: mediatek: vcodec: remove vsi operation in
- common interface
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 11:49=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.=
-com> wrote:
->
-> Remove vsi related operation in common interface to make sure the
-> interface can be called by different architecture at the same time.
+Hi Liao,
 
-Nit: it would be nice to provide more context here. You could mention
-that a new extended interface with a different shared memory layout (vsi)
-will be introduced in later patches.
+On Thu, 15 Aug 2024 01:46:29 +0000
+Liao Chang <liaochang1@huawei.com> wrote:
 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> This patch introduces a flag to track TIF_SIGPENDING is suppress
+> temporarily during the uprobe single-step. Upon uprobe singlestep is
+> handled and the flag is confirmed, it could resume the TIF_SIGPENDING
+> directly without acquiring the siglock in most case, then reducing
+> contention and improving overall performance.
+> 
+> I've use the script developed by Andrii in [1] to run benchmark. The CPU
+> used was Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@2.4GHz running the
+> kernel on next tree + the optimization for get_xol_insn_slot() [2].
+> 
+> before-opt
+> ----------
+> uprobe-nop      ( 1 cpus):    0.907 ± 0.003M/s  (  0.907M/s/cpu)
+> uprobe-nop      ( 2 cpus):    1.676 ± 0.008M/s  (  0.838M/s/cpu)
+> uprobe-nop      ( 4 cpus):    3.210 ± 0.003M/s  (  0.802M/s/cpu)
+> uprobe-nop      ( 8 cpus):    4.457 ± 0.003M/s  (  0.557M/s/cpu)
+> uprobe-nop      (16 cpus):    3.724 ± 0.011M/s  (  0.233M/s/cpu)
+> uprobe-nop      (32 cpus):    2.761 ± 0.003M/s  (  0.086M/s/cpu)
+> uprobe-nop      (64 cpus):    1.293 ± 0.015M/s  (  0.020M/s/cpu)
+> 
+> uprobe-push     ( 1 cpus):    0.883 ± 0.001M/s  (  0.883M/s/cpu)
+> uprobe-push     ( 2 cpus):    1.642 ± 0.005M/s  (  0.821M/s/cpu)
+> uprobe-push     ( 4 cpus):    3.086 ± 0.002M/s  (  0.771M/s/cpu)
+> uprobe-push     ( 8 cpus):    3.390 ± 0.003M/s  (  0.424M/s/cpu)
+> uprobe-push     (16 cpus):    2.652 ± 0.005M/s  (  0.166M/s/cpu)
+> uprobe-push     (32 cpus):    2.713 ± 0.005M/s  (  0.085M/s/cpu)
+> uprobe-push     (64 cpus):    1.313 ± 0.009M/s  (  0.021M/s/cpu)
+> 
+> uprobe-ret      ( 1 cpus):    1.774 ± 0.000M/s  (  1.774M/s/cpu)
+> uprobe-ret      ( 2 cpus):    3.350 ± 0.001M/s  (  1.675M/s/cpu)
+> uprobe-ret      ( 4 cpus):    6.604 ± 0.000M/s  (  1.651M/s/cpu)
+> uprobe-ret      ( 8 cpus):    6.706 ± 0.005M/s  (  0.838M/s/cpu)
+> uprobe-ret      (16 cpus):    5.231 ± 0.001M/s  (  0.327M/s/cpu)
+> uprobe-ret      (32 cpus):    5.743 ± 0.003M/s  (  0.179M/s/cpu)
+> uprobe-ret      (64 cpus):    4.726 ± 0.016M/s  (  0.074M/s/cpu)
+> 
+> after-opt
+> ---------
+> uprobe-nop      ( 1 cpus):    0.985 ± 0.002M/s  (  0.985M/s/cpu)
+> uprobe-nop      ( 2 cpus):    1.773 ± 0.005M/s  (  0.887M/s/cpu)
+> uprobe-nop      ( 4 cpus):    3.304 ± 0.001M/s  (  0.826M/s/cpu)
+> uprobe-nop      ( 8 cpus):    5.328 ± 0.002M/s  (  0.666M/s/cpu)
+> uprobe-nop      (16 cpus):    6.475 ± 0.002M/s  (  0.405M/s/cpu)
+> uprobe-nop      (32 cpus):    4.831 ± 0.082M/s  (  0.151M/s/cpu)
+> uprobe-nop      (64 cpus):    2.564 ± 0.053M/s  (  0.040M/s/cpu)
+> 
+> uprobe-push     ( 1 cpus):    0.964 ± 0.001M/s  (  0.964M/s/cpu)
+> uprobe-push     ( 2 cpus):    1.766 ± 0.002M/s  (  0.883M/s/cpu)
+> uprobe-push     ( 4 cpus):    3.290 ± 0.009M/s  (  0.823M/s/cpu)
+> uprobe-push     ( 8 cpus):    4.670 ± 0.002M/s  (  0.584M/s/cpu)
+> uprobe-push     (16 cpus):    5.197 ± 0.004M/s  (  0.325M/s/cpu)
+> uprobe-push     (32 cpus):    5.068 ± 0.161M/s  (  0.158M/s/cpu)
+> uprobe-push     (64 cpus):    2.605 ± 0.026M/s  (  0.041M/s/cpu)
+> 
+> uprobe-ret      ( 1 cpus):    1.833 ± 0.001M/s  (  1.833M/s/cpu)
+> uprobe-ret      ( 2 cpus):    3.384 ± 0.003M/s  (  1.692M/s/cpu)
+> uprobe-ret      ( 4 cpus):    6.677 ± 0.004M/s  (  1.669M/s/cpu)
+> uprobe-ret      ( 8 cpus):    6.854 ± 0.005M/s  (  0.857M/s/cpu)
+> uprobe-ret      (16 cpus):    6.508 ± 0.006M/s  (  0.407M/s/cpu)
+> uprobe-ret      (32 cpus):    5.793 ± 0.009M/s  (  0.181M/s/cpu)
+> uprobe-ret      (64 cpus):    4.743 ± 0.016M/s  (  0.074M/s/cpu)
+> 
+> Above benchmark results demonstrates a obivious improvement in the
+> scalability of trig-uprobe-nop and trig-uprobe-push, the peak throughput
+> of which are from 4.5M/s to 6.4M/s and 3.3M/s to 5.1M/s individually.
+> 
+> [1] https://lore.kernel.org/all/20240731214256.3588718-1-andrii@kernel.org
+> [2] https://lore.kernel.org/all/20240727094405.1362496-1-liaochang1@huawei.com
+> 
+
+This looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
 > ---
->  .../decoder/vdec/vdec_h264_req_multi_if.c     | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h26=
-4_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec=
-_h264_req_multi_if.c
-> index 732d78f63e5a..57c85af5ffb4 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
-ulti_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
-ulti_if.c
-> @@ -171,9 +171,9 @@ struct vdec_h264_slice_inst {
->  };
->
->  static int vdec_h264_slice_fill_decode_parameters(struct vdec_h264_slice=
-_inst *inst,
-> -                                                 struct vdec_h264_slice_=
-share_info *share_info)
-> +                                                 struct vdec_h264_slice_=
-share_info *share_info,
-> +                                                 struct vdec_h264_slice_=
-lat_dec_param *slice_data)
+>  include/linux/uprobes.h | 1 +
+>  kernel/events/uprobes.c | 8 +++++---
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index b503fafb7fb3..e4f57117d9c3 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -75,6 +75,7 @@ struct uprobe_task {
+>  
+>  	struct uprobe			*active_uprobe;
+>  	unsigned long			xol_vaddr;
+> +	bool				signal_denied;
+>  
+>  	struct return_instance		*return_instances;
+>  	unsigned int			depth;
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 76a51a1f51e2..589aa2af1a99 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1979,6 +1979,7 @@ bool uprobe_deny_signal(void)
+>  	WARN_ON_ONCE(utask->state != UTASK_SSTEP);
+>  
+>  	if (task_sigpending(t)) {
+> +		utask->signal_denied = true;
+>  		clear_tsk_thread_flag(t, TIF_SIGPENDING);
+>  
+>  		if (__fatal_signal_pending(t) || arch_uprobe_xol_was_trapped(t)) {
+> @@ -2288,9 +2289,10 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+>  	utask->state = UTASK_RUNNING;
+>  	xol_free_insn_slot(current);
+>  
+> -	spin_lock_irq(&current->sighand->siglock);
+> -	recalc_sigpending(); /* see uprobe_deny_signal() */
+> -	spin_unlock_irq(&current->sighand->siglock);
+> +	if (utask->signal_denied) {
+> +		set_thread_flag(TIF_SIGPENDING);
+> +		utask->signal_denied = false;
+> +	}
+>  
+>  	if (unlikely(err)) {
+>  		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
+> -- 
+> 2.34.1
+> 
+> 
 
-Nit: you could just name this new parameter |slice_param| and avoid the
-changes in the next bit.
 
->  {
-> -       struct vdec_h264_slice_lat_dec_param *slice_param =3D &inst->vsi-=
->h264_slice_params;
->         const struct v4l2_ctrl_h264_decode_params *dec_params;
->         const struct v4l2_ctrl_h264_scaling_matrix *src_matrix;
->         const struct v4l2_ctrl_h264_sps *sps;
-> @@ -203,9 +203,9 @@ static int vdec_h264_slice_fill_decode_parameters(str=
-uct vdec_h264_slice_inst *i
->                 return -EINVAL;
->         }
->
-> -       mtk_vdec_h264_copy_sps_params(&slice_param->sps, sps);
-> -       mtk_vdec_h264_copy_pps_params(&slice_param->pps, pps);
-> -       mtk_vdec_h264_copy_scaling_matrix(&slice_param->scaling_matrix, s=
-rc_matrix);
-> +       mtk_vdec_h264_copy_sps_params(&slice_data->sps, sps);
-> +       mtk_vdec_h264_copy_pps_params(&slice_data->pps, pps);
-> +       mtk_vdec_h264_copy_scaling_matrix(&slice_data->scaling_matrix, sr=
-c_matrix);
->
->         memcpy(&share_info->sps, sps, sizeof(*sps));
->         memcpy(&share_info->dec_params, dec_params, sizeof(*dec_params));
-> @@ -266,9 +266,6 @@ static int get_vdec_sig_decode_parameters(struct vdec=
-_h264_slice_inst *inst)
->         mtk_vdec_h264_get_ref_list(b0_reflist, v4l2_b0_reflist, reflist_b=
-uilder.num_valid);
->         mtk_vdec_h264_get_ref_list(b1_reflist, v4l2_b1_reflist, reflist_b=
-uilder.num_valid);
->
-> -       memcpy(&inst->vsi_ctx.h264_slice_params, slice_param,
-> -              sizeof(inst->vsi_ctx.h264_slice_params));
-> -
->         return 0;
->  }
->
-> @@ -608,7 +605,8 @@ static int vdec_h264_slice_lat_decode(void *h_vdec, s=
-truct mtk_vcodec_mem *bs,
->         lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
->         v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &lat_buf->t=
-s_info, true);
->
-> -       err =3D vdec_h264_slice_fill_decode_parameters(inst, share_info);
-> +       err =3D vdec_h264_slice_fill_decode_parameters(inst, share_info,
-> +                                                    &inst->vsi->h264_sli=
-ce_params);
->         if (err)
->                 goto err_free_fb_out;
->
-> @@ -749,6 +747,9 @@ static int vdec_h264_slice_single_decode(void *h_vdec=
-, struct mtk_vcodec_mem *bs
->         if (err)
->                 goto err_free_fb_out;
->
-> +       memcpy(&inst->vsi_ctx.h264_slice_params, &inst->h264_slice_param,
-> +              sizeof(inst->vsi_ctx.h264_slice_params));
-> +
->         buf =3D (unsigned char *)bs->va;
->         nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
->         if (nal_start_idx < 0) {
-
-Code wise this patch seems fine.
-
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
