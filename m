@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-376684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304509AB4DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3C79AB4E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32591F23862
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32FB11C2279B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE0F1BCA14;
-	Tue, 22 Oct 2024 17:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3871BDA9C;
+	Tue, 22 Oct 2024 17:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EaAQh3rj"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVpD6zsT"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC14B6EB7C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EFA1BD4EB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617617; cv=none; b=O4KXZOlRZ8aZqDjGbsjUivpshftrLcsKO5nznGGAlJaAL1Hg03BBk9nYQyqmMdAAmXnPTfGnXZ6Fc6sa1QXVVbiu4KYhnlMxLQxjgnQr+YvbROYK2ocS5ub1g5yRGHHOjPgpz+M76A9jxqpFwzFd8HCi5KGia565gZKZyCZUGjw=
+	t=1729617668; cv=none; b=LdA+mOxIuS151B3T4A7O51xxuvphW+aCUDIWmdTXfxjZqcSW/hRjButJjlPsu2Z5njYRncFbufkZa6a8B1HUHVcXLxVEdDDIuM0OKg4DWItCD4h8zXRj9d1Xut5gnlPZvQG/Tu0wFh0wjIoW2A8kM6tg5wKp8kjTrA+aKQyhmv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617617; c=relaxed/simple;
-	bh=Y0iHcEc+JpFplDSCgGWF+anlXV+gBAQWb2XpaleqjGI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SJzPuXgjhifXmX6Swpp74c9TzLJpiidw17Fllxr6IZjIikWgpu5zYcbc8dpcvrjst0XhNRDILxL16hbd9YewWq6pIh5rrGP7866VaD2KyjkMRZG8vkV19nPi2pyGtFQGPYeALSvOR9y28mMKFbbj9SGnbTQ7aqRaG3A1DgYoU5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EaAQh3rj; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <84f6fe15-a1e8-4219-9b14-7d6c2a165890@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729617612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FmOdIY0cSAiBlqXkHUrcDk1nQ2vkHpftSfWWemsmT1E=;
-	b=EaAQh3rj8mdCldBGEZ1KCTqQX1x1BklkHeiTWdX92FiR/S36q5gsKlYWFkxvTdgRafUrl5
-	fk3IANL02FtNzahMorYnvHeM4dVhCsuPJvlAnD536zp9GAGcAgEeCl82Dk984u9oxwtAkj
-	JTKTvPRol4acO6J4XMk8RB0PepAJM6s=
-Date: Tue, 22 Oct 2024 22:49:40 +0530
+	s=arc-20240116; t=1729617668; c=relaxed/simple;
+	bh=ROz6wyxkN00RlAqx/HywNHHOFDd4bvEy70xBiafp8II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4qxiVbEuAfnTV/SeU79HD8ZPa9U6D6myeUPO4oahI9L8ISA8V29nzcI5F2N+0G7Lzb0ACDLVqx3UVoRHqalWGz9UVmtbV3RZbcrRG8WDVH9CsLdKtR3B60xVSjKW06/lh5zJVC/guvXsH3tzZCCNkqoLRhH/VMGLslADz04LvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jVpD6zsT; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20bb39d97d1so55074495ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729617666; x=1730222466; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EYyTRaKGn0PVJQtdVRYtFHSxQ4TFBsfP/i6X4tjAirc=;
+        b=jVpD6zsT5sIRfE+LsqQR3PG94TPbxqKODIw1x40UNimrCAjYq1XGAmGQnXfY6NCJMk
+         WrvleReAbyQeQd3+qnEQPS8to6NrzgOJrAWNsJE/OCRdjatoIdguxmTV1UAyTyHArmaX
+         oAXUbk3Qj9GMZgSbR5Bov1KqdU7uNqiPBr3tsxgqDb8tFqq2TThaMb6sRmzAmnIj9HAW
+         M7oxfMsnjyjVXV4FBis876K5tH+Iy9fQzA/9Zrc3VhBZUhQs7gUBWzefL7Gz5CRQMF/Y
+         BGaSW03sBAqAnbp0BGFWgHvuKCqxiWEn/57ejEwaDalcBqKhUD7Pqtv0CFOQLukK9Jkk
+         qaOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729617666; x=1730222466;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EYyTRaKGn0PVJQtdVRYtFHSxQ4TFBsfP/i6X4tjAirc=;
+        b=TwuE3P81ZQbtfUR40aZdIOrMj5W1Urqpq8t7cz5+DYQzXw731h3ZtzjVVO6DfSSMNl
+         D0mq4RQz+C4a4GHYJ/7SwgzI8aLUuQT2Rpj3J5kE6rFK9ca87rnvEnis9RA8Rm3Yuy2j
+         mjzJKO184iUF1fDZB4sihl4S4PSz4/E5bLKmBQBLsKOO2Ox4eVmhiF+rCsxXvSP3BY3/
+         Kw54SzYmDED9J7fsyICFhhVewIyeozynf4QYA8+oFn0x5zcSpwLoR2v+DLJExVbffScz
+         SEuMKmjsb9ygsVaHsjYpcF99AUVE3IYnNbd3jiKJZZ+aGQ7U3/703uiYYjxT7y6vKe91
+         VAdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAUE5OihyYEclmQKTLfIukHDk4Z7Big/HuBIdEsiQBTbPQk4V2F83DeK6VequOPFf9YgAQPeYM8wYJRJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMAg/a5yTRHJnoZHyGErwEHNctDGIqy28BcPZa+1Wp9Iz0kLki
+	ogrIwm6nYajmybqFENWcyp0/KCjvtfC3LMPmFs4XibbPn/w2oZRqehoPoaZeWQ==
+X-Google-Smtp-Source: AGHT+IEFhMlMl+SifAdPrVg99u83uazLX/A9KcHRvv7Tuv35akUo2976i/YilQVOuBqYd19nUmnDHQ==
+X-Received: by 2002:a17:902:da85:b0:20b:6f04:486f with SMTP id d9443c01a7336-20e9489afa8mr44178795ad.18.1729617666017;
+        Tue, 22 Oct 2024 10:21:06 -0700 (PDT)
+Received: from thinkpad ([36.255.17.224])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eeef535sm45591245ad.44.2024.10.22.10.21.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 10:21:05 -0700 (PDT)
+Date: Tue, 22 Oct 2024 22:50:59 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: kw@linux.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	frank.li@nxp.com, l.stach@pengutronix.de, robh+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v4 9/9] arm64: dts: imx95: Add ref clock for i.MX95 PCIe
+Message-ID: <20241022172059.wuw5xel7m4vobarq@thinkpad>
+References: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
+ <1728981213-8771-10-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: Re: [PATCH v5 13/13] drm/bridge: cdns-dsi: Use
- pre_enable/post_disable to enable/disable
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>
-References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
- <20241019200530.270738-1-aradhya.bhatia@linux.dev>
- <20241019200530.270738-6-aradhya.bhatia@linux.dev>
- <m7t4hsa3lcszjbipxlypf655uspoxw3xfyy5jo3n3bnmqaiqcf@6wti5f477gve>
- <c8a42d96-c02e-4ce0-acd8-3fdc5eecd208@linux.dev>
- <CAA8EJprWwKyyh5JvsmXnJC7QbybxEmwnAceMBgUr96uGzEJMtQ@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAA8EJprWwKyyh5JvsmXnJC7QbybxEmwnAceMBgUr96uGzEJMtQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1728981213-8771-10-git-send-email-hongxing.zhu@nxp.com>
 
-
-
-On 10/22/24 00:09, Dmitry Baryshkov wrote:
-> On Mon, 21 Oct 2024 at 20:07, Aradhya Bhatia <aradhya.bhatia@linux.dev> wrote:
->>
->> Hi Dmitry,
->>
->> Thank you for reviewing the patches!
->>
->> On 10/20/24 17:27, Dmitry Baryshkov wrote:
->>> On Sun, Oct 20, 2024 at 01:35:30AM +0530, Aradhya Bhatia wrote:
->>>> From: Aradhya Bhatia <a-bhatia1@ti.com>
->>>>
->>>> The cdns-dsi controller requires that it be turned on completely before
->>>> the input DPI's source has begun streaming[0]. Not having that, allows
->>>> for a small window before cdns-dsi enable and after cdns-dsi disable
->>>> where the previous entity (in this case tidss's videoport) to continue
->>>> streaming DPI video signals. This small window where cdns-dsi is
->>>> disabled but is still receiving signals causes the input FIFO of
->>>> cdns-dsi to get corrupted. This causes the colors to shift on the output
->>>> display. The colors can either shift by one color component (R->G, G->B,
->>>> B->R), or by two color components (R->B, G->R, B->G).
->>>>
->>>> Since tidss's videoport starts streaming via crtc enable hooks, we need
->>>> cdns-dsi to be up and running before that. Now that the bridges are
->>>> pre_enabled before crtc is enabled, and post_disabled after crtc is
->>>> disabled, use the pre_enable and post_disable hooks to get cdns-dsi
->>>> ready and running before the tidss videoport to get pass the color shift
->>>> issues.
->>>>
->>>
->>> Not being an expert in the TI DSS driver, would it be more proper to
->>> handle that in the TI driver instead? I mean, sending out DPI signals
->>> isn't a part of the CRTC setup, it's a job of the encoder.
->>
->> I haven't done a feasibility analysis of moving the CRTC bits of TIDSS
->> into the encoder, but even if it were possible, it wouldn't solve the
->> issue.
->>
->> The bridge_enable() sequence gets called _after_ the encoder has been
->> enabled - causing the TIDSS's DPI (enabled from encoder) to still be
->> up and running before the DSI has had a chance to be ready.
+On Tue, Oct 15, 2024 at 04:33:33PM +0800, Richard Zhu wrote:
+> Add ref clock for i.MX95 PCIe.
 > 
-> But then you can move CDSI setup to pre_enable, so that all setup
-> happens before encoder's (= DPI) being enabled.
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx95.dtsi | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> index 03661e76550f..5cb504b5f851 100644
+> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> @@ -1473,6 +1473,14 @@ smmu: iommu@490d0000 {
+>  			};
+>  		};
+>  
+> +		hsio_blk_ctl: syscon@4c0100c0 {
+> +			compatible = "nxp,imx95-hsio-blk-ctl", "syscon";
+> +			reg = <0x0 0x4c0100c0 0x0 0x4>;
+> +			#clock-cells = <1>;
+> +			clocks = <&dummy>;
+> +			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
+> +		};
+
+This is an internal reference clock, right? Please mention it in patch
+description since the controller supports external reference clock also.
+
+- Mani
+
+> +
+>  		pcie0: pcie@4c300000 {
+>  			compatible = "fsl,imx95-pcie";
+>  			reg = <0 0x4c300000 0 0x10000>,
+> @@ -1500,8 +1508,9 @@ pcie0: pcie@4c300000 {
+>  			clocks = <&scmi_clk IMX95_CLK_HSIO>,
+>  				 <&scmi_clk IMX95_CLK_HSIOPLL>,
+>  				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
+> -				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
+> -			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
+> +				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
+> +				 <&hsio_blk_ctl 0>;
+> +			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
+>  			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
+>  					 <&scmi_clk IMX95_CLK_HSIOPLL>,
+>  					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
+> @@ -1528,8 +1537,9 @@ pcie0_ep: pcie-ep@4c300000 {
+>  			clocks = <&scmi_clk IMX95_CLK_HSIO>,
+>  				 <&scmi_clk IMX95_CLK_HSIOPLL>,
+>  				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
+> -				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
+> -			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
+> +				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
+> +				 <&hsio_blk_ctl 0>;
+> +			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
+>  			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
+>  					 <&scmi_clk IMX95_CLK_HSIOPLL>,
+>  					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
+> -- 
+> 2.37.1
 > 
 
-Ah! I did not realize that you were suggesting against moving
-_bridge_pre_enable() to before crtc_enable().
-
-I think, despite its initial complexity, it is a good idea to move the
-_bridge_pre_enable() before the crtc_enable().
-
-The boundary between an encoder and a CRTC in the modern display
-hardware seems to have blurred a bit. Maybe the tidss / cdns-dsi is a
-unique case (only for now), but of course, tidss is not
-the only one generating the DPI signal from the CRTC.
-
-And bridges should be allowed an option to get _some_ configuration done
-before the CRTC and encoder are up and running, and I think that's where
-the re-ordering is of the essence.
-
-My initial version did suggest creating a new API[0], "_early_enable()"
-that allowed _pre_enable() to remain where it is, all the while allowing
-the bridges to have the option of configuring before the signals start
-getting generated in the pipeline. That idea was then translated into
-the current one.
-
-
-Regards
-Aradhya
-
-
-[0]: https://lore.kernel.org/all/20240511153051.1355825-7-a-bhatia1@ti.com/
+-- 
+மணிவண்ணன் சதாசிவம்
 
