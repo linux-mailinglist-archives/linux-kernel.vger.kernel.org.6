@@ -1,163 +1,232 @@
-Return-Path: <linux-kernel+bounces-376690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA979AB4EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DAE9AB4EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7ACB22584
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BF01F2458F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAC41BD4F1;
-	Tue, 22 Oct 2024 17:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17D71BD4E2;
+	Tue, 22 Oct 2024 17:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aIE8mCG9"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMmzlyXd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AEB1BCA1B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5616EB7C;
+	Tue, 22 Oct 2024 17:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617742; cv=none; b=M3BPGaMoiYUZcLxt7jUCyysVLsGAf6SVfSUXngnxDTNat7YnOhZOpldstmaJl3trnPDPCWTOI44NHe8AXwO3cS45e6lfGUBfEp3TJxcn5SzrrlXOLlR1d0PwUus4YBklGTv9tdqOrzb2fQeQtYVoQp+77abtm2G3YAaQ0TFU1Cw=
+	t=1729617762; cv=none; b=Q3lVR0i0omtE8RNmoyj/mNm7UzpOKpQgYuCTnoYSBXnTAzROZBBj92yj6ynhQZz6L45o2EsU9F2x3ynPiTeys468rZk8ARmkJVTnXIIO+aPgeHlZ3/6BNIffL4lw3v+BrUlT9KkLNCrFygme4WabEFORxL4E/foSauSoyB3JkyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617742; c=relaxed/simple;
-	bh=hXTF6XvFBzImgE6eYsm8hMCOJHEX9FzG4MTyq9sjgFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9EWJ35qR3xrlD30+nW+RxVe+RrIFkyGnUHfNYvMLi1VmTsTwuNZJLiV9i4dOvUPzgfBIInyDRs+UNCzF7YLQSKFa4fygFwF7YZAg1mr//wmI+NBJFQz787kdTHjVBueX6bchoeY9rVvnECYvjC+VUW1gXzkCAfO1nxA/K0TDCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aIE8mCG9; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e5e5c43497so25532877b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729617739; x=1730222539; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3Cz3yuO/5QEEGytqutmYOKW+Pac+2T0WZ1b7xHRYgA=;
-        b=aIE8mCG9oB3rkhTNvOsU4O43vSB/AW8mSh5bK8A3s38VaIHIW3fVncl+ry9qQV/Vxl
-         qLR3iB7CBBEeBKZPBvkwqMhiQdiSjF7bJ8oKo6hvQDm9f7uH6toN59nPHnwGcpafLiPp
-         E6qE5TZirMf7nVMtZNvaqFaLyPXFU5N4RX3YGxKjSdkMT8Y/5a/1Wuw0LKo5EG+P1t2N
-         xVX/RmoTtvcrCBcdN2vmXxwOvv14OQaeibtrVGwOqhVOdWPd8B4vzqZq4MLEGFNFCmJn
-         QGLokQqrfncg4OoP49xGw+THQEYjZqACZ4IdaNwketkARcZB7Wo5Y9NbSU5dqDVlSh1l
-         xWXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729617739; x=1730222539;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u3Cz3yuO/5QEEGytqutmYOKW+Pac+2T0WZ1b7xHRYgA=;
-        b=w7bf2DQ91iB4zudMS7o3qihUn5W5v0fNBiqa6hQ0wnHOnT0t/drY4JbS2GbT9sj1tk
-         l/gPOq8dA7lo++ButfZPOldJHWgSi/r1nRSVpb+FB9or3JmXkPkpL6k4eUzJAw7Ef6vl
-         HT/AKsd7UvItC5jkRnPgiwV+Vepv5NuqLlY5p18JMgPCPjUcnD+714HNZ1SNC6u+P9Vh
-         zIQIMB4tcC+rvzwvt/mVsWpygEjrvFJFHQOOu8uczerFywD2Gp4BYtUHQgxxEf9hzoFs
-         bYn6zCmvewMs9DGVvtzVmZdyT0MoC+IXxc9GlMZoyendxl5WtHqOfYiAyG3IpoUvzCSR
-         fa+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWaet+zJtlfBNZoYCF/zaEfxbRpdhFJBvoE16U6OzOwYnj2FNGzbs1EH0XsG3bVg306Rt61sleFOlUikD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfmd+XOUQtqnj3WQ2TS90PjbGH5QwaI9nRDsD+WQALwl5ljND2
-	/g+5MlyZyH8jbJ5irscb8dhExmjspi9k+y1hTYdeUYjaMxsp1Et5wQl/Yapt8Hm584CP6I6OYEI
-	UcJlizpdvE9pjs1yAxWnDIhk6Z35i/q8+s3Y9Zw==
-X-Google-Smtp-Source: AGHT+IEhD70BJGJX/rdaEE2IpcmjyH6Pzf5WTuQWFOxBcec1CbgF6aGfwLQofAK8+AOYeZfOPc7jurckohcbbI3BO30=
-X-Received: by 2002:a05:690c:6c0f:b0:6e3:351f:d757 with SMTP id
- 00721157ae682-6e7d82529femr40893047b3.24.1729617738864; Tue, 22 Oct 2024
- 10:22:18 -0700 (PDT)
+	s=arc-20240116; t=1729617762; c=relaxed/simple;
+	bh=ky5NuXLBXkFS61V1YLSFtI5CbHssuX6MIidt+OAZbIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPgqi85YBsGxWXzs9V1OAbd6kmZqgf3qGMk436gR/BFpNi3SG8201wezDc+W4eCt4wTlHYSlwapfHjfV/3TbJCGqk0kHRWk7Wsy/S/YKHOcUjxQNPTilOYPNv8hxSEWn+XGfkqEasadFj2OxoF+W5L7o/stS5LepoxjztbYfssc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMmzlyXd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E3CC4CEC3;
+	Tue, 22 Oct 2024 17:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729617761;
+	bh=ky5NuXLBXkFS61V1YLSFtI5CbHssuX6MIidt+OAZbIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NMmzlyXdm9iUN/REp1M4Dpv5ecgn3SASXlKaHDY/EplI6Qi5Du3D9wGeg5xgoC+RE
+	 SK/J1+qthurVxghTypeRnfdVFDf7OBsYsdtxKdxqZsguQKbWVzn35jELh4Q6qtaeQG
+	 TzhcXVtgf/u7/v/7lmPNTv2d4gLIgrF+hyswdA0PXW4YRnERrj4xKjd4Uc+1MCFpAn
+	 MLHcAMhYZa3hqsgSI94hASWHEOdvNlxaEwNTBzLKbXcaKOd0laRkqIacIFrvjhJrnW
+	 3aAIVFWt0Np8LlVLW8noxSYNTK3W45DGW73C6yer6B1eHTtDX0aeYhlP2i+z6RQCUf
+	 GySMU4HsWFcIQ==
+Date: Tue, 22 Oct 2024 18:22:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dlechner@baylibre.com,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
+ axi variant
+Message-ID: <20241022-flagpole-subject-51e68e81e948@spud>
+References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
+ <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-2-969694f53c5d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
- <20241001101622.ys36slymgjbaz26q@thinkpad> <8459161B-87B8-481F-AE71-3D5156B1CA56@linaro.org>
- <20241001141948.g74rn6777ywvtcmx@thinkpad> <CFF89D4D-8131-47C2-95B8-A0E130A16E46@linaro.org>
- <9c24ba5d-431a-c45e-ce1c-3541eac7d017@quicinc.com> <20241012124334.4gsspgtuud4uudop@thinkpad>
- <7yzjgqitjvfwricftcpelktwjbgwkjuibwkpodjd6x4gwkjkw3@wkeqp6lqwfqv>
- <bbc900f7-eb8f-2664-2144-50a9a6ad8453@quicinc.com> <qevhitaa47fd77jrrs4viv6mctkhedoz5jy33ruqvv62qrb44y@owzfxnxrapvf>
- <20241022151005.g36xnr7lf46p32ha@thinkpad>
-In-Reply-To: <20241022151005.g36xnr7lf46p32ha@thinkpad>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 22 Oct 2024 20:22:07 +0300
-Message-ID: <CAA8EJppbY+YCesE4R4zV83CpCryyZNzvuzoNpgk+8a8h7mCzqw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com, quic_skananth@quicinc.com, 
-	quic_parass@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MJ8JfCsAMbIqFwFl"
+Content-Disposition: inline
+In-Reply-To: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-2-969694f53c5d@baylibre.com>
 
-On Tue, 22 Oct 2024 at 18:10, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Thu, Oct 17, 2024 at 02:12:00PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Oct 16, 2024 at 10:43:19AM +0530, Krishna Chaitanya Chundru wrote:
-> > >
-> > >
-> > > On 10/14/2024 4:55 AM, Dmitry Baryshkov wrote:
-> > > > On Sat, Oct 12, 2024 at 06:13:34PM +0530, Manivannan Sadhasivam wrote:
-> > > > > On Fri, Oct 11, 2024 at 05:24:29PM +0530, Krishna Chaitanya Chundru wrote:
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > > > The logic here is that the fixed endpoints in the switch will get an unique SID
-> > > > > > > > and the devices getting attached to slots will share the same SID of the bus
-> > > > > > > > (this is the usual case with all Qcom SoCs).
-> > > > > > > >
-> > > > > > > > But I guess we would need 'iommu-map-mask' as well. Hope this addresses your
-> > > > > > > > concern.
-> > > > > > >
-> > > > > > > Yes, thank you!
-> > > > > > >
-> > > > > > Hi dimitry & mani,
-> > > > > >
-> > > > > > This particular board variant doesn't expose any open slots to connect
-> > > > > > a different endpoints like another switch(which might have BDF unknown
-> > > > > > to us) so static table should be fine for this board variant.
-> > > > > >
-> > > > > > I tries to add iommu-map-mask property, the issue with that property is
-> > > > > > that the driver is applying the mask to the bdf before searching for the
-> > > > > > entry in the table. If I use a mask value which satisfies all the
-> > > > > > entries in the table ( mask as 0x718) and if a new bdf is enumerated
-> > > > > > lets say 0x600 due to mask 0x718 its value is again 0x600 only.
-> > > > > >
-> > > > > > Can we skip iommu-map-mask property and use only static table for this
-> > > > > > board as we know this board doesn't expose any open slots.
-> > > > > >
-> > > > >
-> > > > > Hmm, I was not aware that it doesn't have open slots. Fine with me then.
-> > > >
-> > > > It doesn't feature open slots, but it has two PCIe connections on HS2 /
-> > > > HS3. Users might attach external PCIe devices.
-> > > >
-> > > > Krishna, could you please clarify, how those two connections are routed?
-> > > >
-> > > For this qps615 board to one of the downstream port (pcie to usb) usb
-> > > hub is connected and to the other downstream port NVMe will be
-> > > connected.
-> >
-> > The board has two PCIe links routed to the HS2 and HS3 connectors. Are
-> > they routed to the PCIe switch?
-> >
-> > Yes, they are not standard slots, but still the board is expandable and
-> > it is possible to connect external PCIe devices. As such it is not
-> > possible to have static SID mapping.
-> >
->
-> Sorry, I think the conversation got deviated. We have concluded that the
-> endpoints fixed (soldered) in the board will get a fixed SID (because we know
-> what they are) and all other devices going to get connected to HS/LS connectors
-> will get shared SID (because we don't know what they are).
->
-> Any concern with that?
 
-This is perfectly fine with me.
+--MJ8JfCsAMbIqFwFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With best wishes
-Dmitry
+On Mon, Oct 21, 2024 at 02:40:12PM +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add a new compatible and related bindigns for the fpga-based
+> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+>=20
+> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> mainly to reach high speed transfer rates using a QSPI DDR
+> (dobule-data-rate) interface.
+>=20
+> The ad3552r device is defined as a child of the AXI DAC, that in
+> this case is acting as an SPI controller.
+>=20
+> Note, #io-backend is present because it is possible (in theory anyway)
+> to use a separate controller for the control path than that used
+> for the datapath.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 69 ++++++++++++++++=
++++++-
+>  1 file changed, 66 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b=
+/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> index a55e9bfc66d7..0aabb210f26d 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> @@ -19,11 +19,13 @@ description: |
+>    memory via DMA into the DAC.
+> =20
+>    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+> +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+> =20
+>  properties:
+>    compatible:
+>      enum:
+>        - adi,axi-dac-9.1.b
+> +      - adi,axi-ad3552r
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -36,7 +38,12 @@ properties:
+>        - const: tx
+> =20
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 2
+> =20
+>    '#io-backend-cells':
+>      const: 0
+> @@ -47,7 +54,31 @@ required:
+>    - reg
+>    - clocks
+> =20
+> -additionalProperties: false
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: adi,axi-ad3552r
+> +    then:
+> +      $ref: /schemas/spi/spi-controller.yaml#
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+
+Is this maxItems required? It matches the outer maximum.
+
+> +        clock-names:
+> +          items:
+> +            - const: s_axi_aclk
+> +            - const: dac_clk
+
+The names are the same in both cases, you can move the definitions
+outside of the if/then/else stuff and only constrain it here.
+
+> +    else:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +        clock-names:
+> +          items:
+> +            - const: s_axi_aclk
+> +
+> +unevaluatedProperties: false
+> =20
+>  examples:
+>    - |
+> @@ -57,6 +88,38 @@ examples:
+>          dmas =3D <&tx_dma 0>;
+>          dma-names =3D "tx";
+>          #io-backend-cells =3D <0>;
+> -        clocks =3D <&axi_clk>;
+> +        clocks =3D <&clkc 15>;
+> +        clock-names =3D "s_axi_aclk";
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    axi_dac: spi@44a70000 {
+> +        compatible =3D "adi,axi-ad3552r";
+> +        reg =3D <0x44a70000 0x1000>;
+> +        dmas =3D <&dac_tx_dma 0>;
+> +        dma-names =3D "tx";
+> +        #io-backend-cells =3D <0>;
+> +        clocks =3D <&clkc 15>, <&ref_clk>;
+> +        clock-names =3D "s_axi_aclk", "dac_clk";
+> +
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        dac@0 {
+> +            compatible =3D "adi,ad3552r";
+> +            reg =3D <0>;
+> +            reset-gpios =3D <&gpio0 92 GPIO_ACTIVE_HIGH>;
+> +            io-backends =3D <&axi_dac>;
+> +            spi-max-frequency =3D <20000000>;
+> +
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +
+> +            channel@0 {
+> +                reg =3D <0>;
+> +                adi,output-range-microvolt =3D <(-10000000) (10000000)>;
+> +            };
+> +        };
+>      };
+>  ...
+>=20
+> --=20
+> 2.45.0.rc1
+>=20
+
+--MJ8JfCsAMbIqFwFl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxffXAAKCRB4tDGHoIJi
+0lYXAP4qWF+5usb9GM3yIpXbgIa/+PcPuM+Vd2kfP4v63wVL2AD/euPMQtDB2L6T
+WN/LfMdAMctnoR3zuwSeR+V/TzGrgAs=
+=kwA/
+-----END PGP SIGNATURE-----
+
+--MJ8JfCsAMbIqFwFl--
 
