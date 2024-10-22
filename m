@@ -1,160 +1,159 @@
-Return-Path: <linux-kernel+bounces-376687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4189AB4E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487039AB4E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCE21F24461
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:21:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347AEB22AD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0551BD01D;
-	Tue, 22 Oct 2024 17:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0451BD01D;
+	Tue, 22 Oct 2024 17:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrPDLUmL"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="lYMHoZpt"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA51BCA19
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D941BC091
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617678; cv=none; b=ioMj7RHqpj+rEP+MksbNvGunhlRgxtXgt2FeX0LB5uPq/HTdVEN367nOJf0X1i5OCOITwnGFKf3ELtDqJYaAxjrDbb8wcCxjUxLdzr7klGbUxL3vSHWmn51zik5xlBd+MhS0kIA3iCRpcZx4Vx/5DwQlvUKNz0lSXKM6I+L1dkg=
+	t=1729617727; cv=none; b=Ub/RPaeCpOsTEDSNUwBxe5m5hJsPf+2eVkF8qrIlvjHgJw2MIwTgeoQZ9ueoTxcPir09zh68xUs/Kb6ckAxwe78ZM6vXQF1nmfnD9drrZvp6p4vhJ03IC6M7LQmnFdEIOrmCNnTrDR4E85uiMXZsklob1wJaV0LaB2B4+JDCxns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617678; c=relaxed/simple;
-	bh=E3+kC2Fpl3HvRHihxub5c1TmhJtK7A93CHUeJh8cIm0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QhbBgTofbkMXWBOI3RrFvjivIdesMuQJH72hUCKcB+9lwXs2Q/lNH7c5RriOqdriisdB6G1NAu3Ic59Q/Yeou92IjVo1ymTFzUHZdlIdySMXChKGmGJSSaiWRYtgJ0hXeruMGdDB/RjvkOPHK8PVXtaT3RjmXcWYEmUNuz8i5dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrPDLUmL; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso784976066b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:21:16 -0700 (PDT)
+	s=arc-20240116; t=1729617727; c=relaxed/simple;
+	bh=OiDDIHpT2Xdh0k+qmCrDwsd569OKflkV8nkSlrYvHiM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d2RwFl+4IiiRNjau8oR1bSAAwtXru7mXfwXqAuViYDtwAaEuhSNqtgw0jfTZiksjTVbaFFTCMOtA76ZBLRlcaNz3hOFWRB6lEV/fKETIdjTJVw87mHVJ8sC3G2H/QSNNDeYx39tSaXETTrM1KKpZ/yDRrR/nr7YpLFqHvFqM7VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=lYMHoZpt; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db908c9c83so3773281a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:22:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729617675; x=1730222475; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fVTv/ksHummE97FnDYtFliWHAfZzUexk/HaH8jn7z+I=;
-        b=mrPDLUmLRmU4diDXJZ0a3XGVV9wU3TTX7/4QLkykGxK2caUg8knsGCIIefyFXz1eAN
-         7+T3b369ph76NO+jN2nk36TCkFEZIbnSfo2yH+BSDFhJ9moXA4NMkyoUtKQzwF1XDEtS
-         FI/WMYLMD4AR6w3q4qOoZGsQcx3RkZwelKbLJruDniNog3BgBf5MxQdchRQCDuIjKVM2
-         vj8H/KhUzmS2vvNHt820WYDMtAIEGVVBR8bi0CTKCUHuM+U6m1oQCc5h9BKPGgZD62wj
-         Wcdq7ls0eKpCuy4hlclKtL3ly5bOGdCKbOuXZw23QY5divmZvREKhoOrQasj6/evsXvV
-         iDKQ==
+        d=fastly.com; s=google; t=1729617725; x=1730222525; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/yu90JKxIvYVAES8/y9aMQqFtx/G5adkU7FKzvOKDI=;
+        b=lYMHoZptjaSB93GcW6nskzz/RcHPxSfVtN2rmUuQepcr3C3B5nJyZYkc3Nm5Jb7+H7
+         tqC6ikRs8pWGP54jJki/c0bFA5G8y06JM1hID4RsgBnDAL7+unDJjea6BBcU/3sEBvVg
+         uJDVHLjRVP3kHm4+j19KE/NUrifcBWpCMnp8A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729617675; x=1730222475;
-        h=content-transfer-encoding:subject:from:cc:to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fVTv/ksHummE97FnDYtFliWHAfZzUexk/HaH8jn7z+I=;
-        b=LYQVK+NQishvDiYNUD8icgUs610h1Vu4JUPj82CoXFPOGE3f+V/O2AzbxUovASKtsO
-         DdlZhaM+br/h1230U/1v41BrqOD8tq3YGrsNHX0ewcxAz8nCFJtWXoxIhxoWid7INbzu
-         WqyViHZT/HTrSfSZTB4dUrx5qLeAyu34QkOGDtzhGruCrojg2t1pKpigmlWWdMltATDC
-         J8P1CThWmBs/y2MPzA3HoHAvcI8M97PB5lqETlEdFeUSgGmjEzMnjn5wqsBui4p/eJ9e
-         Din6ZJcx2PjTvuh5NgZ9Hpn7uIrHA5Xq43r9XUsedVhfkoJGZthF1nl6iGSBDlcIExTn
-         Ekpg==
-X-Gm-Message-State: AOJu0Yy5aDf6wOlc7/WyXlz2OPTf984RQbMuMM5cV7JVjHVrUea4OMb9
-	mt2MXwBNtggSivtom422GPBenLnbbmTviTbqYKdiklHXzuJJ8iXw
-X-Google-Smtp-Source: AGHT+IGhAOPZp6xrjMIPt+5jU8/59Zal3osEA6sx6csLQQdOmUbXnGm6ypF56Te4f3ZV5guHeWVdWg==
-X-Received: by 2002:a17:907:1c9e:b0:a9a:188f:efd9 with SMTP id a640c23a62f3a-a9a69bad2a2mr1517764666b.29.1729617674288;
-        Tue, 22 Oct 2024 10:21:14 -0700 (PDT)
-Received: from [192.168.2.39] (ip-109-192-223-157.um38.pools.vodafone-ip.de. [109.192.223.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91598f11sm364897866b.193.2024.10.22.10.21.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 10:21:13 -0700 (PDT)
-Message-ID: <c1ceb507-94bc-461c-934d-c19b77edd825@gmail.com>
-Date: Tue, 22 Oct 2024 19:21:13 +0200
+        d=1e100.net; s=20230601; t=1729617725; x=1730222525;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D/yu90JKxIvYVAES8/y9aMQqFtx/G5adkU7FKzvOKDI=;
+        b=Uyk1QEB7zjt+8JOTJxUz1QYsTxgoWCYHNE7AD70Eccq0bJxL2/B25Hy+xaAvkWF+YO
+         bNRnYxnC8BrV9yATh25oO3HQ0WA4VT9hg+qbMf9Yav1XZ8i/UzZD6KJpkHCH3j96NqXF
+         RzHP6py+zFYFtg8tezG4+cefYBPaRJ7qBiTP2M8YXpUVYDr0xyWiAGD9cg8ewB0yh3Hb
+         wCN1GEzKGjKfNggn8EH0cFyO1FWg8QeR+HeSmY0EI+YFdD8ALV00vTyGSUZWTPr7MZqt
+         3u5DyJR24eLMXkicxPQ68+oWfVKWYPtq40bZOypbT+mXDxZoa20KZcE5Rcaa69OEIKXt
+         D3vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWudwc+1jwCzdG1n84xp68D5DYy1siteyVTYDqobu2sIeR00lWp3aKKr4q6eigCmaHMRpxXyhprTJwNtes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/vpo3DbdhD7KJ89ppx2kxlrKit/nSFJzNtHBa+ml4GE+355zb
+	MLj18FSpssVYlzHZd8dsBYFGJq2G1zKiWnYh+b3JyoN34TVDGxxw8Ow4yr5g/wmDd/d7tOGKsvS
+	y
+X-Google-Smtp-Source: AGHT+IFoscgRZXyWJoFNIakBUIwR0JZ7fFN+IsSWlUCwVl6IWGkO6L9ICGQVPDsONQX1Dqx4Xkvvlw==
+X-Received: by 2002:a05:6a20:e687:b0:1d9:1d2b:f1e with SMTP id adf61e73a8af0-1d9775d0a49mr343690637.14.1729617724690;
+        Tue, 22 Oct 2024 10:22:04 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13128c2sm5017974b3a.33.2024.10.22.10.22.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 10:22:04 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: dmantipov@yandex.ru,
+	Joe Damato <jdamato@fastly.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC iwl-net] e1000: Hold RTNL when e1000_down can be called
+Date: Tue, 22 Oct 2024 17:21:53 +0000
+Message-Id: <20241022172153.217890-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: akpm@linux-foundation.org, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, wladislav.kw@gmail.com
-From: Wladislav Wiebe <wladislav.kw@gmail.com>
-Subject: [PATCH] tools/mm: -Werror fixes in page-types/slabinfo
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit e6d2c436ff693 ("tools/mm: allow users to provide
-additional cflags/ldflags") passes now CFLAGS to Makefile.
-With this, build systems with default -Werror enabled found:
+e1000_down calls netif_queue_set_napi, which assumes that RTNL is held.
 
-slabinfo.c:1300:25: error: ignoring return value of 'chdir'
-declared with attribute 'warn_unused_result' [-Werror=unused-result]
-                         chdir("..");
-                         ^~~~~~~~~~~
-page-types.c:397:35: error: format '%lu' expects argument of type
-'long unsigned int', but argument 2 has type 'uint64_t'
-{aka 'long long unsigned int'} [-Werror=format=]
-                         printf("%lu\t", mapcnt0);
-                                 ~~^     ~~~~~~~
-..
+There are a few paths for e1000_down to be called in e1000 where RTNL is
+not currently being held:
+  - e1000_shutdown (pci shutdown)
+  - e1000_suspend (power management)
+  - e1000_reinit_locked (via e1000_reset_task delayed work)
 
-Fix page-types by using PRIu64 for uint64_t prints and check
-in slabinfo for return code on chdir("..").
+Hold RTNL in two places to fix this issue:
+  - e1000_reset_task
+  - __e1000_shutdown (which is called from both e1000_shutdown and
+    e1000_suspend).
 
-Signed-off-by: Wladislav Wiebe <wladislav.kw@gmail.com>
+The other paths which call e1000_down seemingly hold RTNL and are OK:
+  - e1000_close (ndo_stop)
+  - e1000_change_mtu (ndo_change_mtu)
+
+I'm submitting this is as an RFC because:
+  - the e1000_reinit_locked issue appears very similar to commit
+    21f857f0321d ("e1000e: add rtnl_lock() to e1000_reset_task"), which
+    fixes a similar issue in e1000e
+
+however
+
+  - adding rtnl to e1000_reinit_locked seemingly conflicts with an
+    earlier e1000 commit b2f963bfaeba ("e1000: fix lockdep warning in
+    e1000_reset_task").
+
+Hopefully Intel can weigh in and shed some light on the correct way to
+go.
+
+Fixes: 8f7ff18a5ec7 ("e1000: Link NAPI instances to queues and IRQs")
+Reported-by: Dmitry Antipov <dmantipov@yandex.ru>
+Closes: https://lore.kernel.org/netdev/8cf62307-1965-46a0-a411-ff0080090ff9@yandex.ru/
+Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- tools/mm/page-types.c | 9 +++++----
- tools/mm/slabinfo.c   | 3 ++-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/mm/page-types.c b/tools/mm/page-types.c
-index 8d5595b6c59f8..69f00eab1b8c7 100644
---- a/tools/mm/page-types.c
-+++ b/tools/mm/page-types.c
-@@ -22,6 +22,7 @@
- #include <time.h>
- #include <setjmp.h>
- #include <signal.h>
-+#include <inttypes.h>
- #include <sys/types.h>
- #include <sys/errno.h>
- #include <sys/fcntl.h>
-@@ -392,9 +393,9 @@ static void show_page_range(unsigned long voffset, unsigned long offset,
-         if (opt_file)
-             printf("%lx\t", voff);
-         if (opt_list_cgroup)
--            printf("@%llu\t", (unsigned long long)cgroup0);
-+            printf("@%" PRIu64 "\t", cgroup0);
-         if (opt_list_mapcnt)
--            printf("%lu\t", mapcnt0);
-+            printf("%" PRIu64 "\t", mapcnt0);
-         printf("%lx\t%lx\t%s\n",
-                 index, count, page_flag_name(flags0));
-     }
-@@ -420,9 +421,9 @@ static void show_page(unsigned long voffset, unsigned long offset,
-     if (opt_file)
-         printf("%lx\t", voffset);
-     if (opt_list_cgroup)
--        printf("@%llu\t", (unsigned long long)cgroup);
-+        printf("@%" PRIu64 "\t", cgroup);
-     if (opt_list_mapcnt)
--        printf("%lu\t", mapcnt);
-+        printf("%" PRIu64 "\t", mapcnt);
- 
-     printf("%lx\t%s\n", offset, page_flag_name(flags));
- }
-diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
-index cfaeaea71042e..643fd9558e09a 100644
---- a/tools/mm/slabinfo.c
-+++ b/tools/mm/slabinfo.c
-@@ -1297,7 +1297,8 @@ static void read_slab_dir(void)
-             slab->cpu_partial_free = get_obj("cpu_partial_free");
-             slab->alloc_node_mismatch = get_obj("alloc_node_mismatch");
-             slab->deactivate_bypass = get_obj("deactivate_bypass");
--            chdir("..");
-+            if (chdir(".."))
-+                fatal("Unable to chdir from slab ../%s\n", slab->name);
-             if (slab->name[0] == ':')
-                 alias_targets++;
-             slab++;
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 4de9b156b2be..9ed99c75d59e 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -3509,7 +3509,9 @@ static void e1000_reset_task(struct work_struct *work)
+ 		container_of(work, struct e1000_adapter, reset_task);
+ 
+ 	e_err(drv, "Reset adapter\n");
++	rtnl_lock();
+ 	e1000_reinit_locked(adapter);
++	rtnl_unlock();
+ }
+ 
+ /**
+@@ -5074,7 +5076,9 @@ static int __e1000_shutdown(struct pci_dev *pdev, bool *enable_wake)
+ 			usleep_range(10000, 20000);
+ 
+ 		WARN_ON(test_bit(__E1000_RESETTING, &adapter->flags));
++		rtnl_lock();
+ 		e1000_down(adapter);
++		rtnl_unlock();
+ 	}
+ 
+ 	status = er32(STATUS);
+
+base-commit: d811ac148f0afd2f3f7e1cd7f54de8da973ec5e3
 -- 
-2.39.3.dirty
+2.25.1
 
 
