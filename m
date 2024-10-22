@@ -1,182 +1,196 @@
-Return-Path: <linux-kernel+bounces-376756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6089AB58B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C639AB58E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED7881C2311D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41352869B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0231C7B83;
-	Tue, 22 Oct 2024 17:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5701C8FC7;
+	Tue, 22 Oct 2024 17:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="F205EJ2v"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EN8+w534"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78591C8FA2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619790; cv=none; b=GQR/0+6Scbc96/1JRUzm1JDxG2gCwRqbjZuNSk4ya06Snvo1nCqUhJDUY3LT4tteTmwHoZ1/Pfwm+HBz/ref0Xgc8/nh15v7vuhU54CkHliXO1yeYGl/nqtqSGKLtIhFlefPS+VI4d1psHjHkgqOnGq+QDr8AMUmQEkE5eItjDo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619790; c=relaxed/simple;
-	bh=pf9vSfqRBsjSd2TM5I2xo/gtg+4SY8vPL8CeXA3BrA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jiYJX/Z4m9K5D9WYGHJTiclNG/wZk3oP/NGx1qUUzhrS00aFGlBEhvl5ttZBtgP6CRz0IaX73lp33Fm7rsNC+hQZ+uQmEtsVnQ3plQaG+OM5AdJrEdF88qzx7u2PS1ldMaCvCDQ3XYJDQgN0kLgetAgltY2AVq5Dbypa9juuRxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=F205EJ2v; arc=none smtp.client-ip=207.246.76.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1729619774;
- bh=YGvLjOzdMUUNlRyiBCim3QXE0H0tSBA3xLQ6miTXyIw=;
- b=F205EJ2vCko4LMsf5gAXQje2kuR34Xeuuz1iVeTEbP5ZB7nDURVWbZzeVHLj3/1FlsMJ53VKB
- aWaV/IcDXE0YcFqzFNEzJmr6D87bruShq1Y8EkyaatQuNfNQlt6OTJXod1esN4eRccTOxGz3duB
- X78Oy/dzRVmV0Z7HsL93poR6RS4dLdlS5rKWmi6ZFJvaT6a/trtvR7pbDCGrkXG2IxkWc3FhhAC
- oldXeQ2Q1RkRKu87LqLi9WsxWTi8NwOr1jyfkxL2BUiZ7o0KIPklf4Gn0HvZDDYfP8JH0zvWNHf
- Kh19IuRBKkf1lKa2P3iVFgejQWW2KJIbFKZ5ceBUGwkA==
-Message-ID: <c2a4e8a8-9466-41c4-83b3-57210fdf5a5c@kwiboo.se>
-Date: Tue, 22 Oct 2024 19:56:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B711C7B93;
+	Tue, 22 Oct 2024 17:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729619797; cv=fail; b=ANno/Oj1YDEgh/XwSC2ZeRt5E0o5P4hCA48GU3zFLrb0eTa6h7CxnHXsci26TrBZxEmWqMhA4Jf1oy5yjaGEixDHjf1RrD0iCnZGxsIqRyN3saGg0lV0uvo1PpKdFOqlO8BBx7UMjvAErECSdsNnM9OlVcby0nsEgjxn2INk/nA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729619797; c=relaxed/simple;
+	bh=kHh1cw+Y8ejZapwsxkeeUkDs28ZvE4UXcB1KsDJbYiI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=YzAayPdam6SolwveLiMqrWpIKnrnzAZSOEvuYdWyGZkaI6kre0U2nlNFwUYvvLoFmjpYGUH6wcOvfVSHQLl1X3MTuX3V8ITdul/y5Ucl0FGSli4Wwas6dv1IFvv75sxQz+vhUyuUnsxOqmwm2ox5TbYLREI0SfMiRGD5IZGsD68=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EN8+w534; arc=fail smtp.client-ip=40.107.243.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pvxzpoP+TMmvjDtPRLgQwsKSiYrpoHLIbRVaXmuxXj8EcHqaE22wWPWipIl+bmGxKfRqnDdI88OSq2wrP2fEt1198PHC29BdQ5vFUR3lWr83xCDG75JtssRBDQQqPsK86v5EBzSw1MAF2be/WNkAA7CkQulY0HJr/IU8V7AiWkb9FkbQcV51qsoAqjdtsdHJWSxNZ0S+o6AFDWr8fyYfQQHqFGcExuHHp36tOQWFHBpwsiHrZsI2qEa46wC1Cbl8JeM+Jsn+LdK4EEVC7rK4znDWvjOEf5Jw03yQ6l9pznXWUt2wa3hPJn7crMS40PtMq9w3rkBihMOwQmK5Ultc+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SU2QxV/TJqXZGrRHJw3D/IDYmiUB62s1wIcb/d6l5d0=;
+ b=N2cJuKOkrVyeRrNKhbpfFdezR4E6QoWrxp00UxXA3c4ODb9H+8OyfptuhEfDsUoqisLGaIGZ8Q/GCq4T4Hqgd6mnQK8FbN3mt2BNecv3X6kOEX6oOLpBpK2y6neXkoK86/KKes4LJEyKWN7D0O/X9tLrECeZ66UoTu3y92Xrm79+/y4qsvbnmBioQcRaz1+diQR88QkNbxjOT3Ul5focyupRgKvMZ5Im7/7Ir9OOsJDNx5SiyrPMpItqDHWtCHTBD9WtpwSO+u/7oIm1XLToxJ2zzs+b/oOvKU64LGs35CjOXWLcDQseDGM2FfaCuTACfm1P3oBUNo4jkyaJjAkbhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SU2QxV/TJqXZGrRHJw3D/IDYmiUB62s1wIcb/d6l5d0=;
+ b=EN8+w534v/DH4pv0rcebd9W9yp5FAm/TAxEdetwhhLRHvdzEX4lFx3GZCthBwawfz8bsLT+c9y3vFdoaJVwzNAXRzDKkYM9nq9QLUtBGwDw5ge0Who94yMG9dv2az9JE5RXG11aORYsiuE/rUAvPBGjLOeGKXe43Nfl93hmqFZRlMxWKtF2vLD4M2pQdyP8FZFUrusrstzS7QRaxg3vskZaV6DiRiOVHbNZMpOMgYD7MF9c5Waa1xMrb2bpTza/4sUxgvw8yY7WqFgXirnII15e7mokoTcyGo1UIXh+vKar6QMK3nbWosKdYdkbiapkqxqobZguo9ycaTR8ekUnm/Q==
+Received: from CH5P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1f2::20)
+ by SJ2PR12MB7962.namprd12.prod.outlook.com (2603:10b6:a03:4c2::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 17:56:31 +0000
+Received: from CH1PEPF0000AD82.namprd04.prod.outlook.com
+ (2603:10b6:610:1f2:cafe::82) by CH5P221CA0004.outlook.office365.com
+ (2603:10b6:610:1f2::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16 via Frontend
+ Transport; Tue, 22 Oct 2024 17:56:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD82.mail.protection.outlook.com (10.167.244.91) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Tue, 22 Oct 2024 17:56:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:56:12 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:56:12 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Oct 2024 10:56:11 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/82] 5.15.169-rc1 review
+In-Reply-To: <20241021102247.209765070@linuxfoundation.org>
+References: <20241021102247.209765070@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add FriendlyARM NanoPi R3S
- board
-To: Tianling Shen <cnsztl@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Chris Morgan <macromorgan@hotmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <13bb8657-f048-4f79-a2c1-3680445f2bef@kwiboo.se>
- <20241022173901.892190-1-cnsztl@gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20241022173901.892190-1-cnsztl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 207.246.76.47
-X-ForwardEmail-ID: 6717e73d289888ca1b5a4034
+Message-ID: <ee0afe9c-3c05-4d79-a0e7-38d00fe30fcd@rnnvmail203.nvidia.com>
+Date: Tue, 22 Oct 2024 10:56:11 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD82:EE_|SJ2PR12MB7962:EE_
+X-MS-Office365-Filtering-Correlation-Id: 180a982c-fb7d-454c-be78-08dcf2c2dc35
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TFRyaHovZ2RGZWFtZStES2NDZTNxRmsvdS9ZTytBWmFUN1QzdFplSjEwRUVW?=
+ =?utf-8?B?ZGc5cWtTcUJ0R09sNCtHL1krb3dTUXFXaS9CRDdvK2ZsaWFyY2FpOGJJcVNW?=
+ =?utf-8?B?bmRWbDlscGNOMDUzZlJjYjkwWVFtQUdVZnE0S2lqN1lQM2dQUGlNamluMk5R?=
+ =?utf-8?B?UGJKOEdlZHVSZmZrWHpjejJ3WTVqRUE4YzRWV3k2dnVHTXU2Wm1OdTJiTEkz?=
+ =?utf-8?B?UnJQQlZZTnY5OVJWNTR5UENXM25SQjFpd3ltRndYajZtdDlnRHNNdGg4L1R0?=
+ =?utf-8?B?cUFGdUhHV3kraHNFbXdTNVZoNmx2YURWZVVDWGh0RWtYZjdjUEdteHJWL01y?=
+ =?utf-8?B?aEVuVThrQWM1YUFoVmpuMVA0YVJiY0FKVS9GQUY1RkxaS2x1MFFxVEkxeFZP?=
+ =?utf-8?B?T2RjcHBTWTB5RVExWmNCVE5TTjJSOVc3RWRScDVZdjY3ajNhV0p5TjFzNFZX?=
+ =?utf-8?B?WWREdERZanY1VjFHV2cyZEQwemhvZWt6OHBkYzFDcnRTNTlXSWpkWk1rbGMr?=
+ =?utf-8?B?ZWxobzF3UitnSE9kekxIYm53TXdIS29OMVFUajJIOFpQejVIeXNRZXZBenFJ?=
+ =?utf-8?B?U2tRMlVGUTN6UDJJMTRWdmhLTUs1NFJBT0d0M2xVTkRwR2FpclRiTFBUOTZa?=
+ =?utf-8?B?alFzK0NvRTBIUFdxOUwvdkZrbVduVlpJdHl1SUJ0UVFCaVpZUkZLdmVYRjRY?=
+ =?utf-8?B?NDVRb08xWDZKS2g0NHlNSFJZVFhVTjZ6Wk05bHNqWXJFVW1PTVpUdkFJS1A3?=
+ =?utf-8?B?WmtkWUtCdTB2dXY0ZXU5T1RBdXhpcmdLMVJROUJ6NW5pM3NDTk9DUzQ4TXlQ?=
+ =?utf-8?B?Z1BoWi9RRGt0N2pCYzlrVUk4OC96aEJ5dTc4aHN2L3BPM1J6czJVQ3pwbEp4?=
+ =?utf-8?B?SDV4K3VLTmZzcy9rQkk4Y1BLMkRBL3RDWUxieWxkdWdUM0prOUQ5VUIyTklp?=
+ =?utf-8?B?TjhsMXdVMDdqaVBGVjFnVlY1Nkk2Y0gyYjVDWG5vVnRDbmpaNFVBQjd6c1hR?=
+ =?utf-8?B?RWNCeDVUcHlTd0czZHZLQWlrNGVySkd2REJzeVY0VXk2eHlVbWU3S3Fsekgw?=
+ =?utf-8?B?NXI3WXA1RzJVMEhNRFROY2xaTVNKalEvNHBxbXJhYXdEZEpDaXJzZG5aeGZ0?=
+ =?utf-8?B?M0dKSGg3VStsZkdLZVRxZjJsR3BTdUpoV0JJRWhDdVlHYjhFMjB2cDMwcVo0?=
+ =?utf-8?B?alhTRzNiSVhuV3hoUWlXMS9zSG1scDU0Qk41Y3BLZFNlWTV5NTBHc1g1N20x?=
+ =?utf-8?B?N3czZjF0WlN0Tm56SnlRWnI2OUx1UVBKUCtpUzdwOE5zWGNxeVV4NVo4VHF4?=
+ =?utf-8?B?akxTbk92dmRVQm9WQ0hMZkhBVjgxYXpoNXM4aUlZcmU5NC9talpTMUJnWWwr?=
+ =?utf-8?B?TUQxMllFOURtSDRvQWI0SU1lbUFiUDZjVHllRVY5cXRwTFdpdVNVaWZseWJC?=
+ =?utf-8?B?U3pLcjZhVDFCT281NG5XUEoxNDF6UDhrNFhDdEF2ZXBudVB2eVk4MVliakJq?=
+ =?utf-8?B?Yy83c05zejQ3YVlReGh2WHdadWs4Y1k3bjUzc0RiZXdkekd3UnNnVmlKVEgx?=
+ =?utf-8?B?c1doZFBSSGk1bXhwcENpR2hkSStjOE1pWVFTM2ttN0F3aytnUDJlaDNXQzli?=
+ =?utf-8?B?ZU5BbU8wN3hIOHByUE1ZOHlaTUZvYzFEQ0k3dGFMbFUvaTdqaWpScVdJQUMx?=
+ =?utf-8?B?TEFrWG5qQS92RktUcTJBZjJNcEkzK3REcWlndXM0RllHRUxvMUtQUjFxNUhw?=
+ =?utf-8?B?S1NPTWJ6ZzVYRDE1SVNsdHdnVnd4QU1qVnAwbnJXVmlOZllVK1JqQmppdTFk?=
+ =?utf-8?B?RVA5R1RISWZpSHVmcVQzc3RNSFVGQnpsY1UrZWdnVWFYVERaSlRINy9IcDRn?=
+ =?utf-8?B?SkUvY3ZsN3JkOUZmSnBYT0NDZnJIV1IzamhpamsveXVlMGc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 17:56:31.0135
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 180a982c-fb7d-454c-be78-08dcf2c2dc35
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD82.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7962
 
-Hi Tianling,
-
-On 2024-10-22 19:38, Tianling Shen wrote:
-> Hi Jonas,
+On Mon, 21 Oct 2024 12:24:41 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.169 release.
+> There are 82 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Wed, Oct 23, 2024 at 12:49â€¯AM Jonas Karlman <jonas@kwiboo.se> wrote:
->>
->> Hi Tianling,
->>
->> On 2024-10-20 19:39, Tianling Shen wrote:
->>> The NanoPi R3S(as "R3S") is an open source platform with dual-Gbps
->>> Ethernet ports designed and developed by FriendlyElec for IoT
->>> applications.
->>>
->>> Specification:
->>> - Rockchip RK3566
->>> - 2GB LPDDR4X RAM
->>> - optional 32GB eMMC module
->>> - SD card slot
->>> - 2x 1000 Base-T
->>> - 3x LEDs (POWER, LAN, WAN)
->>> - 2x Buttons (Reset, MaskROM)
->>> - 1x USB 3.0 Port
->>> - Type-C 5V 2A Power
->>>
->>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
->>> ---
->>> Â arch/arm64/boot/dts/rockchip/Makefile Â  Â  Â  Â  | Â  1 +
->>> Â .../boot/dts/rockchip/rk3566-nanopi-r3s.dts Â  | 554 ++++++++++++++++++
->>> Â 2 files changed, 555 insertions(+)
->>> Â create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
->>> index 8e1025cb5d20..e641033d23d1 100644
->>> --- a/arch/arm64/boot/dts/rockchip/Makefile
->>> +++ b/arch/arm64/boot/dts/rockchip/Makefile
->>> @@ -109,6 +109,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-soquartz-model-a.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lckfb-tspi.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lubancat-1.dtb
->>> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-nanopi-r3s.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
->>> Â dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts b/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
->>> new file mode 100644
->>> index 000000000000..951dd9bcb4b0
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts
->>> @@ -0,0 +1,554 @@
->>> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
->>> +/*
->>> + * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
->>> + *
->>> + * Copyright (c) 2024 FriendlyElec Computer Tech. Co., Ltd.
->>> + * (http://www.friendlyarm.com/
-
-This could probably be updated to use https://www.friendlyelec.com/
-
->>> + *
->>> + * Copyright (c) 2024 Tianling Shen <cnsztl@gmail.com>
->>> + */
->>> +
->>> +/dts-v1/;
->>> +#include <dt-bindings/gpio/gpio.h>
->>> +#include <dt-bindings/input/input.h>
->>> +#include <dt-bindings/leds/common.h>
->>> +#include <dt-bindings/pinctrl/rockchip.h>
->>> +#include <dt-bindings/soc/rockchip,vop2.h>
->>> +#include "rk3566.dtsi"
->>> +
->>> +/ {
->>> + Â  Â  model = "FriendlyARM NanoPi R3S";
->>
->> Please use the marketing name, and the name added in binding:
->>
->> Â  Â FriendlyElec NanoPi R3S
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Sorry for the copy & paste error, will fix it in new patch.
-
-The commit subject could probably also be updated :-)
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.169-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
->>
->>> + Â  Â  compatible = "friendlyarm,nanopi-r3s", "rockchip,rk3566";
->>> +
->>> + Â  Â  aliases {
->>> + Â  Â  Â  Â  Â  Â  ethernet0 = &gmac1;
->>> + Â  Â  Â  Â  Â  Â  mmc0 = &sdmmc0;
->>> + Â  Â  Â  Â  Â  Â  mmc1 = &sdhci;
->>
->> This board comes with on-board eMMC this please use mmc0 as alias for
->> &sdhci; and mmc1 for sd-card.
+> thanks,
 > 
-> Is using mmc0 for sdhci a common practice for eMMC boards?
-> The eMMC module on R3S is optional and users may get boards without it.
+> greg k-h
 
-Typically any non-removable storage (emmc) is listed before removable
-storage (sd-card) options. Also U-Boot will try to override and use
-mmc0=sdhci and mmc1=sdmmc0 for all rk356x boards, so for EFI booing
-using control FDT the alias may be different.
+All tests passing for Tegra ...
 
-Regards,
-Jonas
+Test results for stable-v5.15:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    101 tests:	101 pass, 0 fail
 
-[snip]
+Linux version:	5.15.169-rc1-g4d74f086d8cf
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
