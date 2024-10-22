@@ -1,215 +1,157 @@
-Return-Path: <linux-kernel+bounces-376291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4079AA2C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:06:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDEA9AA2C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0141FB231C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE7E1F247AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907CA19DF81;
-	Tue, 22 Oct 2024 13:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="U/Z4sZ2A"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8219DF40
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA55A19DF6A;
+	Tue, 22 Oct 2024 13:08:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB912BCF8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602365; cv=none; b=m+rV73IwHPppvi5q2pIJ+AWU92JVzhBWYSDF8DzEcu5G8amUWJSr5O7TaF9UZDviMcUyOefuDNlfFkQoYGVIyNgKHJF0xhNW5NwT4AYAwvl00Leygu4vGz4dphTttVAChMl/aYbkibuqOOROykmN+wezOdWOoPK0PNkcQGk72cw=
+	t=1729602510; cv=none; b=GWFytjbMRVdXF4igRpPlcadBMjmoF2LBu7B/JkMOrG6jJx8V9bug1Y8iZ5nhHuWYbSq5kD4kqyFWcwMwxFi8wT5yZEIY6h2LCJy+IoDhUX3P0LDXpmexEUJJvgu5IkFkIAdmndOb5f16misWrI9jUA8oZZjaIYxIx3dgz20KiMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602365; c=relaxed/simple;
-	bh=eY7mpQBbU1G0VReE9nekoD13SERU82VMupF3O+8zGHQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mbh0oDvBDCeT+Ue2aYFPVUGVQquVjxzt9H15V1YTRVryf3xF/lz3ZeDX0mrZA6iLVIAcG1/bNVsl3oMbBfnykdbI6JbWUlu9e+Awly0lI+ronlleenFuVbQGl+es8v7IIdNeeDFjEMCerRB3N+rcD01S/wRX19RuGz5wKtOxssY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=U/Z4sZ2A; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EA60C3F201
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1729602354;
-	bh=0O0WVESJ/gBslREDRe+kHvdq3pwvvgnmmFBLBmZkHXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=U/Z4sZ2ApOTcuVp921bZ2gPikn0YI+EOS1Jh1N94+W80Wxn2RTR74gT7FxY18F6NZ
-	 H57DvZsCch+eD7pQjzyNRfNO8gHaK3taBRUuVy+IfFtyluZL8s9j8Cz+SVrh/fzlL8
-	 EWpugca6ZMQ2RvYHo2Os6QVfkX2AzK/+k5Lt4+i/V5cQ9+KzrR8BdEdKbc3UKsas7A
-	 0leQ06Q2iPo1RMxoGFE1B/irkLWZiPeoGVZiusBtBmGWMeD32Qdwp2NF010ACXgpRG
-	 mBg6YLqP85+s6UnFGxvwjRy8BfB2T4cINumYWLup/RDU9/GuDgDnxiswsGiGsdhOKj
-	 bUFELfj7Opd+A==
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6e376aa4586so105929267b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:05:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729602354; x=1730207154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0O0WVESJ/gBslREDRe+kHvdq3pwvvgnmmFBLBmZkHXY=;
-        b=C64veFcs0qitL7OgnERpPpDuAag7RGprl39us/Ab0Ohflfn8+gYCDZvDwcSz+rqZMl
-         QPyibDxPFhVi7M0c1nYOFLg3n+aluh+GqZ5E2DIyCfDk7CnFcAFm0DY7/+m4vAk3quts
-         QWVkHiqc40GdQvrf+T73V9lsfrjfzTiQf/RYuILDwIQ2mxjrNNh4lctyTCr57RvxqKuh
-         Wmb/sw6lCz2Z0uxwFYaNAXQFqW26YAUoLeJBb2TlfLiAL8v28/mXNncOsAGpi3lhoTWD
-         5aWPuagXf4g09oxn2EJ73kOyHvqiXG+i6nXGN3xtrQdb36SkIQGd0CG90sW+WHT6k766
-         DA1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNdX7//tuIQa9JEDbEV6yktomV35d6bFjas42ZfZ7FHKQHMHYn2DcHTixF4g57joIzAWyKbX61ZNBPy2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZiT5HMK74R3RjhuEMRe18pTB+HaXesURfZ2U70J1o5VOWcJbT
-	XXo4/VELZrXOu4phRMITcaeWtwL3/dvwf3Nm4wSakeg1a9ChkVeQpdX+b60aThZyt7cv6BpuYTy
-	wYCoVsxPm5CvVEEmcHbvhCTBtCiXXYXjj4DmxjBlb6Bekb63Yr1vZXCQ2n+G3gfc5ITAnIifU3D
-	Cg2XKZGPfeNDgVAzSTKC3w3ugNjDStKjmPBh2jFMtrVjTCkjT0UuXF
-X-Received: by 2002:a05:690c:6488:b0:6e2:12e5:35a2 with SMTP id 00721157ae682-6e7d3a9d0efmr35481627b3.4.1729602352383;
-        Tue, 22 Oct 2024 06:05:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxFH7L0Og3HjEiO0RR0AgMsyb3zr7MHcHrL6a+rQzlQXdmftWvF+5p4i1HxLWocDDzf5rvoAZPVYX7v9rfOlw=
-X-Received: by 2002:a05:690c:6488:b0:6e2:12e5:35a2 with SMTP id
- 00721157ae682-6e7d3a9d0efmr35479837b3.4.1729602350449; Tue, 22 Oct 2024
- 06:05:50 -0700 (PDT)
+	s=arc-20240116; t=1729602510; c=relaxed/simple;
+	bh=Lvf3VCdj0oePEPLd9OgAk9/9XtNuaMN0oAVLHjHdHvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atfosaF5M/Q2SBXd1tl8Od/0md+braKfStoXy1neBgvnSmcS5xfRZk1IL9j1vZLFQRHSk4uCCFpAJMk4wytLsYOXa6HovlRTd3qDZbGIJXZUsJC3S6LL0vzEUWj6+yNZEchCNCGf0XuPNT4GQRE8DQm6auY1T6EfLpupoKvlSa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C506497;
+	Tue, 22 Oct 2024 06:08:56 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3104B3F73B;
+	Tue, 22 Oct 2024 06:08:24 -0700 (PDT)
+Date: Tue, 22 Oct 2024 14:08:12 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
+	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+	kees@kernel.org, wad@chromium.org, rostedt@goodmis.org,
+	arnd@arndb.de, ardb@kernel.org, broonie@kernel.org,
+	rick.p.edgecombe@intel.com, leobras@redhat.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Message-ID: <ZxejvAmccYMTa4P1@J2N7QTR9R3>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
+ <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926125909.2362244-1-acelan.kao@canonical.com>
- <ZvVgTGVSco0Kg7H5@wunner.de> <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
- <ZvZ61srt3QAca2AI@wunner.de> <Zvf7xYEA32VgLRJ6@wunner.de> <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
- <ZvvW1ua2UjwHIOEN@wunner.de> <ZvvXDQSBRZMEI2EX@wunner.de> <CAFv23Q=4O5czQaNw2mEnwkb9LQfODfQDeW+qQD14rfdeVEwjwA@mail.gmail.com>
- <CAFv23QmAOAobFC=4tkKBM4NQPR_b3Nsji5xa+TczUbAJ1dxhvg@mail.gmail.com>
-In-Reply-To: <CAFv23QmAOAobFC=4tkKBM4NQPR_b3Nsji5xa+TczUbAJ1dxhvg@mail.gmail.com>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Tue, 22 Oct 2024 21:05:39 +0800
-Message-ID: <CAFv23Q=HqyL4EGjG0VdsQH9rP0_DbRdpExbeJy6DAoKQ0OMbkA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
- during suspend
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
 
-AceLan Kao <acelan.kao@canonical.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=8817=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8810:40=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> AceLan Kao <acelan.kao@canonical.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=887=
-=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8812:34=E5=AF=AB=E9=81=93=EF=
-=BC=9A
-> >
-> > Lukas Wunner <lukas@wunner.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=881=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:03=E5=AF=AB=E9=81=93=EF=BC=9A
-> > >
-> > > On Tue, Oct 01, 2024 at 01:02:46PM +0200, Lukas Wunner wrote:
-> > > > On Mon, Sep 30, 2024 at 09:31:53AM +0800, AceLan Kao wrote:
-> > > > > Lukas Wunner <lukas@wunner.de> 2024 9 28 8:51:
-> > > > > > -       if (pci_get_dsn(pdev) !=3D ctrl->dsn)
-> > > > > > +       dsn =3D pci_get_dsn(pdev);
-> > > > > > +       if (!PCI_POSSIBLE_ERROR(dsn) &&
-> > > > > > +           dsn !=3D ctrl->dsn)
-> > > > > >                 return true;
-> > > > >
-> > > > > In my case, the pciehp_device_replaced() returns true from this f=
-inal check.
-> > > > > And these are the values I got
-> > > > > dsn =3D 0x00000000, ctrl->dsn =3D 0x7800AA00
-> > > > > dsn =3D 0x00000000, ctrl->dsn =3D 0x21B7D000
-> > > >
-> > > > Ah because pci_get_dsn() returns 0 if the device is gone.
-> > > > Below is a modified patch which returns false in that case.
-> > >
-> > > Sorry, forgot to include the patch:
-> > >
-> > > -- >8 --
-> > >
-> > > diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/=
-pciehp_core.c
-> > > index ff458e6..957c320 100644
-> > > --- a/drivers/pci/hotplug/pciehp_core.c
-> > > +++ b/drivers/pci/hotplug/pciehp_core.c
-> > > @@ -287,24 +287,32 @@ static int pciehp_suspend(struct pcie_device *d=
-ev)
-> > >  static bool pciehp_device_replaced(struct controller *ctrl)
-> > >  {
-> > >         struct pci_dev *pdev __free(pci_dev_put);
-> > > +       u64 dsn;
-> > >         u32 reg;
-> > >
-> > >         pdev =3D pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVF=
-N(0, 0));
-> > >         if (!pdev)
-> > > +               return false;
-> > > +
-> > > +       if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) =3D=3D 0=
- &&
-> > > +           !PCI_POSSIBLE_ERROR(reg) &&
-> > > +           reg !=3D (pdev->vendor | (pdev->device << 16)))
-> > >                 return true;
-> > >
-> > > -       if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
-> > > -           reg !=3D (pdev->vendor | (pdev->device << 16)) ||
-> > > -           pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
-> > > +       if (pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) =3D=
-=3D 0 &&
-> > > +           !PCI_POSSIBLE_ERROR(reg) &&
-> > >             reg !=3D (pdev->revision | (pdev->class << 8)))
-> > >                 return true;
-> > >
-> > >         if (pdev->hdr_type =3D=3D PCI_HEADER_TYPE_NORMAL &&
-> > > -           (pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &re=
-g) ||
-> > > -            reg !=3D (pdev->subsystem_vendor | (pdev->subsystem_devi=
-ce << 16))))
-> > > +           pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg=
-) =3D=3D 0 &&
-> > > +           !PCI_POSSIBLE_ERROR(reg) &&
-> > > +           reg !=3D (pdev->subsystem_vendor | (pdev->subsystem_devic=
-e << 16)))
-> > >                 return true;
-> > >
-> > > -       if (pci_get_dsn(pdev) !=3D ctrl->dsn)
-> > > +       if ((dsn =3D pci_get_dsn(pdev)) &&
-> > > +           !PCI_POSSIBLE_ERROR(dsn) &&
-> > > +           dsn !=3D ctrl->dsn)
-> > >                 return true;
-> > >
-> > >         return false;
-> > Hi Lukas,
-> >
-> > Sorry for the late reply, just encountered a strong typhoon in my area
-> > last week and can't check this in our lab.
-> >
-> > The patched pciehp_device_replaced() returns false at the end of the
-> > function in my case.
-> > Unplug the dock which is connected with a tbt storage won't be
-> > considered as a replacement.
-> >
-> > But when I tried to replace the dock with the tbt storage during
-> > suspend, it still returned false at the end of the function like
-> > unplugged.
-> >
-> > BTW, it's a new model, so I think the ICM is used. And the reg is
-> > 0xffffffff when unplugged.
-> Hi Lukas,
->
-> PCI_POSSIBLE_ERROR() always returns true no matter the device is
-> replaced or unplugged
-> It seems difficult to distinguish between when a device is replaced
-> and when it's unplugged.
->
-> Do you have any ideas to fix the issue?
-> This issue is severe to me, because the system hangs almost everytime
-> when daisy chain tbt devices are unplugged when suspended.
-> Thanks.
-Hi Lukas,
+On Tue, Oct 22, 2024 at 08:07:54PM +0800, Jinjie Ruan wrote:
+> On 2024/10/17 23:25, Mark Rutland wrote:
+> > There's also some indirection that I don't think is necessary *and*
+> > hides important ordering concerns and results in mistakes. In
+> > particular, note that before this series, enter_from_kernel_mode() calls
+> > the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
+> > management is performed by __enter_from_kernel_mode():
+> > 
+> > 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
+> > 	{
+> > 	        __enter_from_kernel_mode(regs);
+> > 		mte_check_tfsr_entry();
+> > 		mte_disable_tco_entry(current);
+> > 	}
+> > 
+> > ... whereas after this series is applied, those MTE checks are placed in
+> > arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
+> > necessary lockdep+RCU management. That is broken.
+> > 
+> > It would be better to keep that explicit in the arm64 entry code with
+> > arm64-specific wrappers, e.g.
+> > 
+> > 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+> > 	{
+> > 		irqentry_state_t state = irqentry_enter(regs);
+> > 		mte_check_tfsr_entry();
+> > 		mte_disable_tco_entry(current);
+> > 
+> > 		return state;
+> > 	}
+> 
+> Hi, Mark, It seems that there is a problem for
+> arm64_preempt_schedule_irq() when wrap irqentry_exit() with
+> exit_to_kernel_mode().
+> 
+> The arm64_preempt_schedule_irq() is about PREEMPT_DYNAMIC and preempt
+> irq which is the raw_irqentry_exit_cond_resched() in generic code called
+> by irqentry_exit().
+> 
+> Only __el1_irq() call arm64_preempt_schedule_irq(), but when we switch
+> all exit_to_kernel_mode() to arm64-specific one that wrap
+> irqentry_exit(), not only __el1_irq() but also el1_abort(), el1_pc(),
+> el1_undef() etc. will try to reschedule by calling
+> arm64_preempt_schedule_irq() similar logic.
 
-I just submitted the v2, please help to review, thanks.
-https://lore.kernel.org/linux-kernel/20241022130243.263737-1-acelan.kao@can=
-onical.com/T/#u
+Yes, the generic entry code will preempt any context where an interrupt
+*could* have been taken from.
+
+I'm not sure it actually matters either way; I believe that the generic
+entry code was written this way because that's what x86 did, and
+checking for whether interrupts are enabled in the interrupted context
+is cheap.
+
+I's suggest you first write a patch to align arm64's entry code with the
+generic code, by removing the call to arm64_preempt_schedule_irq() from
+__el1_irq(), and adding a call to arm64_preempt_schedule_irq() in
+__exit_to_kernel_mode(), e.g.
+
+| static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs)
+| {
+| 	...
+| 	if (interrupts_enabled(regs)) {
+| 		...
+| 		if (regs->exit_rcu) {
+| 			...
+| 		}
+| 		...
+| 		arm64_preempt_schedule_irq();
+| 		...
+| 	} else {
+| 		...
+| 	}
+| }
+
+That way the behaviour and structure will be more aligned with the
+generic code, and with that as an independent patch it will be easier to
+review/test/bisect/etc.
+
+This change will have at least two key impacts:
+
+(1) We'll preempt even without taking a "real" interrupt. That
+    shouldn't result in preemption that wasn't possible before, 
+    but it does change the probability of preempting at certain points,
+    and might have a performance impact, so probably warrants a
+    benchmark.
+
+(2) We will not preempt when taking interrupts from a region of kernel
+    code where IRQs are enabled but RCU is not watching, matching the
+    behaviour of the generic entry code.
+
+    This has the potential to introduce livelock if we can ever have a
+    screaming interrupt in such a region, so we'll need to go figure out
+    whether that's actually a problem.
+
+    Having this as a separate patch will make it easier to test/bisect
+    for that specifically.
+
+Mark.
 
