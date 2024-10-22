@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-375958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C38E9A9DC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 665929A9DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B4A283721
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D5F283EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9511F194ADB;
-	Tue, 22 Oct 2024 09:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13056191F65;
+	Tue, 22 Oct 2024 09:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M+JzADzm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AR2vwOoV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4uhoV0eW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AR2vwOoV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4uhoV0eW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A34186E3A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9511313A87E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587679; cv=none; b=AjuD4q2isDnCpMSyGPxbT2aItZusrYowBca2HSFWnGA3egZi2n9eBtH7GDBOPjOlAGMCBLdbKNnHb5SnxjWoU97GvIuTwSRvASvavlJVRCGPiY/iO79zTzWkBqxJB2Q/B2RLuVA7doxZwnooSgMMnktr3ThWT7xjtTtFrn4Z/Yk=
+	t=1729587746; cv=none; b=X1qMrSwoFr6/T5zmaMLWP4i7/GuYSkF1eJ26taxBQmmpJEAI9E3XzzADed/Wcai8rR/VHMmSFgL0woUREEttUfifZ0b/Is0TBWiDrfDpX2g3EesCkGPrKuSqWqW9btQFzq0H048kcvrJlQyLmJnt6vIgKV/NUHvoKhVL1mrGixk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587679; c=relaxed/simple;
-	bh=YHNeQy+Gb09kRog+hJNRWpW815XE2iQrmhqT0ezNi08=;
+	s=arc-20240116; t=1729587746; c=relaxed/simple;
+	bh=hemfWZ0/5Lavp/NbEbcD6PJFzXhvn4kRS5kDGyp379E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJY9PyDW80Z9R1yvgkSeLgAp9yO94eU+immZraXnCE2jsKUCiSBal3GgCP/s0w86HG3f5ISc4RxNVruLmUzv9k1fMJMMp6kI0+tE5Wewyx9c1qO708wvfjcGDg5KNsa9XsnPby11wl5tmsAJuFHAQ5teYy5f6DjAsYRBzu3jmSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M+JzADzm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so27595755e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729587676; x=1730192476; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/0uwFU7QS3ULtUk30D33huoCZ8wSxBsNaZesrFmH4Y=;
-        b=M+JzADzmDy2kAnnpswLitxMSSeerj8rJ6C24+9jOc5ruTMEcEzk+H3FVTWvp218Bc+
-         6hgyhenJ8FvYE6MoOtgroGRPV76BaeqU2mOA8UhcJMmIDH6YJTwvcTHG7GKdEnm3GqNT
-         VodKBJX/CiU2mU5kX9ANojWdmL1OUTrKlh78H9/avyUbn+ctpru5fPjLAGNZd0Nl5K4s
-         UPfbWb/MAw5VQP2kgo83KveozzOxwu43HPdp/QYQAIZjAVoMyLS9/jNgm1itfIwcarj5
-         YPu7yyzgv9U1fAFlKHEGyHrf9++Bx/93sbGMZz5ZVXJYsqXaOMwChFp4O0MmxjD9L+e8
-         srJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729587676; x=1730192476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/0uwFU7QS3ULtUk30D33huoCZ8wSxBsNaZesrFmH4Y=;
-        b=qOgquF6XnrLJsEytNk7+LIrZ0oZ40OaSB7iLB2XLCJBvEKBoHMRJKrf01BmHaXNdDI
-         Ra1hoCpINzWvSxURIOIhID6ZFDpduNNvkj5lh+zjLWUuFBjKmRk9Ovb4y9NJX3wnT1pc
-         +SYzPVpNFK3+m8KBUZtdiSA9qiONF1igwLlE2BR77JwDp5QAkv7c4CGFsq3aV56aOL12
-         hWlbOjSYAXmQQ3dfbzAGoJjvrBgwS1T/25i5E+VxnoTRynn8VemhvgHetXd/6ktfu2Iz
-         kz81Ishkq1jfK9bzbG5ZTl3ra33Wspt2keOJDATDM9w8WZb2ypYcmWzEXSxKxmmPzpnO
-         WMkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXt1PMbBSRG7pAdikI6AidKdIzM0TgbNyCkTod2jQ3LKUdNkx4qbDqPVEg/SRwF8egaShapKe7+55z5GnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6AMDS6eQEm/FZKIfUz9t1VM+Ty9Y4yNeY+3TOr65gs1pc8ZHh
-	u7UfXXMiu9ICHC6h7G8Mt5HwM4D90+nA8EZqhELhX99ZnMs2LlB+hobflJHxH9tWOku/b98/4yY
-	g
-X-Google-Smtp-Source: AGHT+IG9nn8Y+opUXK/jzmtyqOYnvXx/g5R4ITP+6pKF3OzW0Yk5PYNV4zNyh5rh+oEJ4F1hZ59ooA==
-X-Received: by 2002:a05:600c:1e28:b0:42c:b750:1a1e with SMTP id 5b1f17b1804b1-431615991f4mr115572795e9.0.1729587676087;
-        Tue, 22 Oct 2024 02:01:16 -0700 (PDT)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570b99sm83040255e9.2.2024.10.22.02.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:01:15 -0700 (PDT)
-Date: Tue, 22 Oct 2024 12:01:14 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <Zxdp2vHzREJAFkwj@linaro.org>
-References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
- <20241004-x1e80100-ps8830-v2-2-5cd8008c8c40@linaro.org>
- <Zw5oEyMj6cPGFDEI@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMZ53RKyhbpih+yxJzFPWFd0SDUXQXgCO2ugsu36cNnCK/mc7BRVYPl37dmEc7LcJwQLQAMG2gD2pYOYtnljVikJ04JxDISx5FnrbJgato/YjcuFQdnZqiSy0Lyuc+HSLY4BYvREao8teWDVZpeaBGFxAi5Yk18AejGcjsjVYTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AR2vwOoV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4uhoV0eW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AR2vwOoV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4uhoV0eW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A6D1021EA9;
+	Tue, 22 Oct 2024 09:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729587742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=15bNPfrZW1x1Sm/gwxvv4cpA/BRcDjhyJ0pFjAnb5u8=;
+	b=AR2vwOoVygG1qN4w3QSnj412plCw3aYWCYMy6pz7+ZGcxUUMkXW3VS2BH3pfY9t0ah7xot
+	lpsyuMz/cirhN+YO7jrxXI2U6aBtHEbdZTi5ODkcyS5pGvjhuHRv6kWnFdnuIF/4sTOS8o
+	66AZjzzvjq0wHeNqWH4Ndhlbgj1Fn5o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729587742;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=15bNPfrZW1x1Sm/gwxvv4cpA/BRcDjhyJ0pFjAnb5u8=;
+	b=4uhoV0eWo2OKSPENQcr8sjnHE9HGRPDOTD2QN7A90rDWeCdGzZZkNiKl9GmvNB+PHr2v9z
+	3FFZzuNAy7LaTXDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729587742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=15bNPfrZW1x1Sm/gwxvv4cpA/BRcDjhyJ0pFjAnb5u8=;
+	b=AR2vwOoVygG1qN4w3QSnj412plCw3aYWCYMy6pz7+ZGcxUUMkXW3VS2BH3pfY9t0ah7xot
+	lpsyuMz/cirhN+YO7jrxXI2U6aBtHEbdZTi5ODkcyS5pGvjhuHRv6kWnFdnuIF/4sTOS8o
+	66AZjzzvjq0wHeNqWH4Ndhlbgj1Fn5o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729587742;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=15bNPfrZW1x1Sm/gwxvv4cpA/BRcDjhyJ0pFjAnb5u8=;
+	b=4uhoV0eWo2OKSPENQcr8sjnHE9HGRPDOTD2QN7A90rDWeCdGzZZkNiKl9GmvNB+PHr2v9z
+	3FFZzuNAy7LaTXDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9BE6C13AC9;
+	Tue, 22 Oct 2024 09:02:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2AgKJh5qF2d4BwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 22 Oct 2024 09:02:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4B298A086F; Tue, 22 Oct 2024 11:02:22 +0200 (CEST)
+Date: Tue, 22 Oct 2024 11:02:22 +0200
+From: Jan Kara <jack@suse.cz>
+To: Gianfranco Trad <gianf.trad@gmail.com>
+Cc: jan Kara <jack@suse.com>,
+	syzbot <syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [udf?] general protection fault in udf_read_folio
+Message-ID: <20241022090222.tndd3zqlgtohjnce@quack3>
+References: <6716ebf5.050a0220.10f4f4.00db.GAE@google.com>
+ <2ae7d2b0-0053-4cff-9352-d180c243ded4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,226 +103,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zw5oEyMj6cPGFDEI@hovoldconsulting.com>
+In-Reply-To: <2ae7d2b0-0053-4cff-9352-d180c243ded4@gmail.com>
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[ddf8715339c89280b6fc];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 24-10-15 15:03:15, Johan Hovold wrote:
-> On Fri, Oct 04, 2024 at 04:57:38PM +0300, Abel Vesa wrote:
+On Tue 22-10-24 02:19:19, Gianfranco Trad wrote:
+> On 22/10/24 02:04, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > 
+> > Reported-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
+> > Tested-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
+> > 
+> > Tested on:
+> > 
+> > commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12684640580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=ddf8715339c89280b6fc
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > 
+> > Note: no patches were applied.
+> > Note: testing is done by a robot and is best-effort only.
 > 
-> > +static int ps8830_enable_vregs(struct ps8830_retimer *retimer)
-> > +{
+> Hi Jan,
 > 
-> > +	return 0;
-> > +
-> > +err_vddat_disable:
-> > +	regulator_disable(retimer->vddat_supply);
-> > +
+> syzbot reported a null-ptr-deref in udf_read_folio a month ago [1].
 > 
-> Nit: I'd drop the empty lines between the errors cases here.
+> This bug was marked as still open on syzbot, so I retested the reproducer
+> (no patch applied) to check if the bug was still valid upstream, seems not
+> (as reported up).
+> Wondering if syzbot will now try to find another reproducer, since after
+> this check the reproducer was crossed away on the syzbot web UI, or if the
+> bug can be considered closed.
+> I hope this might help.
 
-Will drop.
+I believe syzbot tries to bisect back to the fix and reports it. Then
+either you can ack it (which closes the bug) or the bug will auto-close
+after some time if there's no reproducer.
 
-> 
-> > +err_vddar_disable:
-> > +	regulator_disable(retimer->vddar_supply);
-> > +
-> > +err_vdd_disable:
-> > +	regulator_disable(retimer->vdd_supply);
-> > +
-> > +err_vdd33_cap_disable:
-> > +	regulator_disable(retimer->vdd33_cap_supply);
-> > +
-> > +err_vdd33_disable:
-> > +	regulator_disable(retimer->vdd33_supply);
-> > +
-> > +	return ret;
-> > +}
-> 
-> > +static int ps8830_retimer_probe(struct i2c_client *client)
-> > +{
-> > +	struct device *dev = &client->dev;
-> > +	struct typec_switch_desc sw_desc = { };
-> > +	struct typec_retimer_desc rtmr_desc = { };
-> > +	struct ps8830_retimer *retimer;
-> > +	int ret;
-> > +
-> > +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
-> > +	if (!retimer)
-> > +		return -ENOMEM;
-> > +
-> > +	retimer->client = client;
-> > +
-> > +	mutex_init(&retimer->lock);
-> > +
-> > +	retimer->regmap = devm_regmap_init_i2c(client, &ps8830_retimer_regmap);
-> > +	if (IS_ERR(retimer->regmap)) {
-> > +		dev_err(dev, "failed to allocate register map\n");
-> 
-> Please make sure to log the errno as well here and below.
-
-Will add.
-
-> 
-> > +		return PTR_ERR(retimer->regmap);
-> > +	}
-> > +
-> > +	ret = ps8830_get_vregs(retimer);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	retimer->xo_clk = devm_clk_get(dev, "xo");
-> > +	if (IS_ERR(retimer->xo_clk))
-> > +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
-> > +				     "failed to get xo clock\n");
-> > +
-> > +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> 
-> The reset line is active low and should be described as such in DT. So
-> here you want to request it as logically low if you want to deassert
-> reset.
-
-This is being reworked in v3 as we need to support cases where the
-retimer has been left enabled and initialized by bootloader and we want
-to keep that state until unplug event for the cold-plug orientation
-to work properly.
-
-On top of that, we don't want to deassert the reset here. We do that
-via gpiod_set_value() call below, after the clocks and regulators have
-been enabled.
-
-> 
-> Is there now timing requirements on when you deassert reset after
-> enabling the supplies?
-
-So based on my comment above, this is actually asserting the reset.
-No timing requirements for that.
-
-> 
-> > +	if (IS_ERR(retimer->reset_gpio))
-> > +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
-> > +				     "failed to get reset gpio\n");
-> > +
-> > +	retimer->typec_switch = fwnode_typec_switch_get(dev->fwnode);
-> > +	if (IS_ERR(retimer->typec_switch)) {
-> > +		dev_err(dev, "failed to acquire orientation-switch\n");
-> 
-> I saw the driver fail here once, but not sure what the errno was since
-> it was not printed. Presumably it was a probe deferral and then this
-> should be a dev_err_probe() as well:
-> 
-> 	ps8830_retimer 2-0008: failed to acquire orientation-switch
-
-Will use dev_err_probe.
-
-> 
-> > +		return PTR_ERR(retimer->typec_switch);
-> > +	}
-> > +
-> > +	retimer->typec_mux = fwnode_typec_mux_get(dev->fwnode);
-> > +	if (IS_ERR(retimer->typec_mux)) {
-> > +		dev_err(dev, "failed to acquire mode-mux\n");
-> 
-> Similar here perhaps?
-
-Same.
-
-> 
-> > +		goto err_switch_put;
-> > +	}
-> > +
-> > +	sw_desc.drvdata = retimer;
-> > +	sw_desc.fwnode = dev_fwnode(dev);
-> > +	sw_desc.set = ps8830_sw_set;
-> > +
-> > +	ret = drm_aux_bridge_register(dev);
-> > +	if (ret)
-> > +		goto err_mux_put;
-> > +
-> > +	retimer->sw = typec_switch_register(dev, &sw_desc);
-> > +	if (IS_ERR(retimer->sw)) {
-> > +		dev_err(dev, "failed to register typec switch\n");
-> > +		goto err_aux_bridge_unregister;
-> > +	}
-> > +
-> > +	rtmr_desc.drvdata = retimer;
-> > +	rtmr_desc.fwnode = dev_fwnode(dev);
-> > +	rtmr_desc.set = ps8830_retimer_set;
-> > +
-> > +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
-> > +	if (IS_ERR(retimer->retimer)) {
-> > +		dev_err(dev, "failed to register typec retimer\n");
-> > +		goto err_switch_unregister;
-> > +	}
-> > +
-> > +	ret = clk_prepare_enable(retimer->xo_clk);
-> > +	if (ret) {
-> > +		dev_err(dev, "failed to enable XO: %d\n", ret);
-> > +		goto err_retimer_unregister;
-> > +	}
-> 
-> Should you really enable the clock before the regulators?
-
-So maybe in this case it might not really matter. But in principle,
-the HW might be affected by clock glitches and such when IP block
-is powered up but unclocked. Even more so if the clock enabling
-(prepare, to be more exact) involves switching to a new PLL.
-
-So clock first, then power up. At least that's my understanding of HW
-in general.
-
-> 
-> > +
-> > +	ret = ps8830_enable_vregs(retimer);
-> > +	if (ret)
-> > +		goto err_clk_disable;
-> > +
-> > +	/* delay needed as per datasheet */
-> > +	usleep_range(4000, 14000);
-> > +
-> > +	gpiod_set_value(retimer->reset_gpio, 1);
-> 
-> Here you only deassert reset in case the line is incorrectly described
-> as active high in DT.
-
-Yes, this needs to be 0 instead of 1. And in v3 it will depend on
-a DT property called ps8830,boot-on, meaning if we want to keep it
-enabled and configured as left by bootloader, by using that property
-we will skip the resetting altogether.
-
-> 
-> > +	return 0;
-> > +
-> > +err_clk_disable:
-> > +	clk_disable_unprepare(retimer->xo_clk);
-> > +
-> > +err_retimer_unregister:
-> > +	typec_retimer_unregister(retimer->retimer);
-> > +
-> > +err_switch_unregister:
-> > +	typec_switch_unregister(retimer->sw);
-> > +
-> > +err_aux_bridge_unregister:
-> > +	gpiod_set_value(retimer->reset_gpio, 0);
-> > +	clk_disable_unprepare(retimer->xo_clk);
-> > +
-> > +err_mux_put:
-> > +	typec_mux_put(retimer->typec_mux);
-> > +
-> > +err_switch_put:
-> > +	typec_switch_put(retimer->typec_switch);
-> 
-> Drop newlines before labels?
-
-Will do.
-
-> 
-> > +
-> > +	return ret;
-> > +}
-> 
-> Johan
-
-Thanks for reviewing.
-
-Abel
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
