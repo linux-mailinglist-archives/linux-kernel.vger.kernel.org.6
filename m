@@ -1,137 +1,225 @@
-Return-Path: <linux-kernel+bounces-376071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96D79A9F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:06:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD30D9A9FA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E942D1C23F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4790F1F22258
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBB2198E91;
-	Tue, 22 Oct 2024 10:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="kBiS6gJM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aENQevxc"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A4D1991CC;
+	Tue, 22 Oct 2024 10:07:32 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABED145B24
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23079161302
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591596; cv=none; b=u/BGjqAp7pZBba5PK2IIxQjeYe7iwxIP/UZ/c2vUj/6hvo9Liy7N9/sGqXjgrHoQ0/X51/KmfvmGIChlSJX4cZ4gWmGRCWFKBh/jRvXmSQaA6cOSlB4wkdPS2zAhtGBk4Eq2zvZxviJYb5N+V0ssDUW0+FEYgLU5rTNOSYah1xc=
+	t=1729591651; cv=none; b=JmdHAFcFa+fArfG0E1FvP2r/3zeMM6elZ/7jRHbOtxX85fPRo69vuP2TomCt4sahPXwE1x2KAei02+1BiYOwJeOMqbeDYUhP9sxSr99rTFDNzbLkJCu4HPo/yABJOCsXT7+9tDcBmQl5pqGh48pRNH4UioWtCPdYTU87lL5/Phw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591596; c=relaxed/simple;
-	bh=HTDy0LNESDiKQUdE7xjEV63uP8unleccTkzReT0fYXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Do0TgRgT6rMZotkBScollE2AeXSv+3s70N/1gWwbvWL4bzYwy2BbYLKLh/3awwb0qKRq6JZb+8GPrHkedSIYY/K5ojfnlNe/S+M7QKkGrxy3MIQBPO2ABaz4WZ37RyUFlIW5pDtxXGrCKB0niO6hMw42EXBLrtRuJvrLKSboqfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=kBiS6gJM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aENQevxc; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D7ED425400F6;
-	Tue, 22 Oct 2024 06:06:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 22 Oct 2024 06:06:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729591592; x=
-	1729677992; bh=5QWoIbdMUqDbjfUSfA9GFg2c/tcYnvOouZVnzt0I38I=; b=k
-	BiS6gJMzvS4e8Y6Dwjs/IAMkDNFJQXUxUITG/1C6JibfcmLIecws4cjc9jaK9frr
-	6OwJODHCIZFWM8ggPmDHbYj2hTus13Zhn0j2ayURLRd5CXVJSmPxk1HU9TmSXV0n
-	s9kt+2FI7dMuv9MTRV4W8Nh4HNLUr9EiEZe+vulfCnloKcwCTIJzC6PivT6N4HMy
-	rieg/Iy87NYnt+vv6ao0ARdzFQbhlFXC/SPv3j8pgKhmEUQo4IVlnS8nvTMDy4Ws
-	M2QWxIPQw4TDMS4P2UpOw1pxzwWo2SZDfw2LplPkDQDj+ss7R1rHsQRdnGVyvX06
-	ncREE3Pz0JLs190vvUWEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729591592; x=1729677992; bh=5QWoIbdMUqDbjfUSfA9GFg2c/tcY
-	nvOouZVnzt0I38I=; b=aENQevxca3/ONAanmj3EZj2shX2gKjZJx4EEiXMaOFtL
-	d+9IjUi+qyggpNm9TldOBIysVqWxEvF93X94+/1Zc9MwwjGt5EuL+pLi9xPc/8Kb
-	Si6Zqc91J41FQaNpTb6EqBqzhACre1sfo2qwt08uq/tVLTEii6jQxBroXIHyA6Eh
-	2m0WSx0p9GVp588ctFcE47tenDqKFdRVbG48FUKx6a21DuC2cp9T5oJZFFXZ+FBu
-	fy01MHbb3Pej2v0nUdOCtCY53XTycqqM2xiee2qeJXtadBCOga/Dkglq6T5VJkfM
-	o3yTYBlM+yb5eWeTFOreYXpZNcV386Z5RLTjYi/sUw==
-X-ME-Sender: <xms:J3kXZ_SpByc3Bcn0XhRbnixpJvADLmHACaym-pVxlDC2niEid-Apqg>
-    <xme:J3kXZwyx2g0Cu005b9Wu5gJ6QXtLTfxOf1WCQ48lIMPedLVasrY5KlCH5Pgh7RzXe
-    Xr17oBEDRDZtIpU7-Q>
-X-ME-Received: <xmr:J3kXZ02Cnvcs4wxLmcsJRRFFPfAQr3J6cF9WZwQxIv2OuPs7GrutECWFvLVX3Yd3GoYYzA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegsrgholhhinhdrfigrnhhgsehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhr
-    tghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrkh
-    hpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohephhhughhh
-    ugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepfigrnhhgkhgvfhgvnhhgrdifrghngheshhhurgifvghirdgtohhm
-    pdhrtghpthhtohepvddutghnsggrohesghhmrghilhdrtghomhdprhgtphhtthhopehrhi
-    grnhdrrhhosggvrhhtshesrghrmhdrtghomhdprhgtphhtthhopehiohifohhrkhgvrhdt
-    sehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:J3kXZ_AUbgEU1KZlwMk-CAuN7PSHwhlKrqdhYzyKVGCqJQROdho0qw>
-    <xmx:J3kXZ4hOMizXPv-5wpSZ1oqSXrIbj72rTfwEIfVpUTnoRA6EDG1-hg>
-    <xmx:J3kXZzo8QNrzOp5KdfKyM5Lt7aUzvBYs6S8rKQQnqld6nF2Kv_yw3g>
-    <xmx:J3kXZzhSi-chehrtmWGpQs2vMw4Z3R1Ei8EIkUKMuFnS0uIKvx3S4w>
-    <xmx:KHkXZ3SPAg0AgtwR2iaWpF_LVPag-FFa0QpcKEKw4IFiWp37zxhiV6t1>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Oct 2024 06:06:27 -0400 (EDT)
-Date: Tue, 22 Oct 2024 13:06:22 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, 
-	hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com, 
-	ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-Message-ID: <5p22lehyjjzxvohppdmt2vkkplrrd6ss6tev2px6troxyii4ab@eaphjvxiwrfc>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <Zw_IT136rxW_KuhU@casper.infradead.org>
- <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
- <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
- <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
- <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
- <2c6b7456-8846-44b0-8e58-158c480aaead@linux.alibaba.com>
+	s=arc-20240116; t=1729591651; c=relaxed/simple;
+	bh=TH/pFB4OX02AV8pIKa7KxCMott5NL6jdzHG23eePHiU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FFbB01PkdpuLQkkyNGw8eyfa0b4fF5nP96+L1o+vAJrQm/hBIAtZhAXpuXJgnOU3R4AsXKPzO8jGPh9WIs+UuXnBs5iNDXcsfvdGL2chn19tTWkcLwd6FqauX5oBxrvq1q/34OCXCS8gqU8aHW5bkNwqrTo9jVx20PdQL0eka0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ab3d46472so503814939f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:07:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729591649; x=1730196449;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9gBPkPXkPepVY/ibei8o+EXVX3iYI5mKC2OJ9oOAALI=;
+        b=CAzkgHae6Hp4fBArEtZH7xjs843m1lPDEq2p3BWpWPexg1AlzqSFAIOUusIcMxco9h
+         5H8D9hpOylRSkP7KV0wIpD7vR88oJH1rajvBbRAi4Ig3whxVaY5658VOKhP5M2hSj8O3
+         sTvxDJgoVpMoB5MpCVmNhs6ibMfHtQBu6ktdlyB6PU2LlPlM3UPbD0AoMmPEdfZurYuZ
+         tX4duHBHsxesXCx07zC0FyVVcSiMirvUTFaQ4lpD919gwqjU9Vq2zrfZnnmnCcaWHpPv
+         IuDwhHRMm+POADb/jNXoywaxidQZos9AX3bd2qP3VEvGj8/O62sCxF+TDp1HelRZmL5E
+         s3Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPw0ceRVxmGWS7UiDUUckqobCW+cCrjpAJosWrji76+trL8ja6EBN12z1uK8eIdPwvt7ACJpt1Q0Oguyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfOTNabIpOiZ+89ek/LApPAOe7zb5cxRtFgG7aEW3yKHvqLtbI
+	zZTtry+BCIz24mo5atYvO0yiw3smpCUtwlWt1jPeEw1LmOAVQ2+DtAODKOl3IlEHwOjOvwYPz3u
+	Zw5pMIEISSz0P3o15ShyR0yaw4rmLenwpQQ1ROKdntYIDHuc4j9Z1AgA=
+X-Google-Smtp-Source: AGHT+IF1YcYvWS2xuePCjwkI0PyK72qNk/SBP16dG0bq2Fzl6rNS80RMXgSySPv/c4cR4jQcI42/YcNfyIuGl3C8H2BTNxLO8wh9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c6b7456-8846-44b0-8e58-158c480aaead@linux.alibaba.com>
+X-Received: by 2002:a05:6602:2b8c:b0:83a:c384:ea2a with SMTP id
+ ca18e2360f4ac-83ae8aaae55mr412311839f.6.1729591649236; Tue, 22 Oct 2024
+ 03:07:29 -0700 (PDT)
+Date: Tue, 22 Oct 2024 03:07:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67177961.050a0220.1e4b4d.0073.GAE@google.com>
+Subject: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
+ virtqueue_disable_cb (5)
+From: syzbot <syzbot+9d46c74b27b961b244a9@syzkaller.appspotmail.com>
+To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 22, 2024 at 11:34:14AM +0800, Baolin Wang wrote:
-> IIUC, most file systems use method similar to iomap buffered IO (see
-> iomap_get_folio()) to allocate huge pages. What I mean is that, it would be
-> better to have a real use case to add a hint for allocating THP (other than
-> tmpfs).
+Hello,
 
-I would be nice to hear from folks who works with production what the
-actual needs are.
+syzbot found the following issue on:
 
-But I find asymmetry between MADV_ hints and FADV_ hints wrt huge pages
-not justified. I think it would be easy to find use-cases for
-FADV_HUGEPAGE/FADV_NOHUGEPAGE.
+HEAD commit:    3d5ad2d4eca3 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=154b7487980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fd83253b74c9c570
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d46c74b27b961b244a9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Furthermore I think it would be useful to have some kind of mechanism to
-make these hints persistent: any open of a file would have these hints set
-by default based on inode metadata on backing storage. Although, I am not
-sure what the right way to archive that. xattrs?
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9d112e37e26b/disk-3d5ad2d4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d8f036bdcdb7/vmlinux-3d5ad2d4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/61727d52db48/bzImage-3d5ad2d4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d46c74b27b961b244a9@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in virtqueue_disable_cb / virtqueue_disable_cb
+
+read to 0xffff888102c18178 of 2 bytes by interrupt on cpu 1:
+ virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:885 [inline]
+ virtqueue_disable_cb+0x63/0x180 drivers/virtio/virtio_ring.c:2446
+ skb_xmit_done+0x5f/0x140 drivers/net/virtio_net.c:715
+ vring_interrupt+0x161/0x190 drivers/virtio/virtio_ring.c:2595
+ __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
+ handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x58/0xe0 arch/x86/kernel/irq.c:285
+ common_interrupt+0x7c/0x90 arch/x86/kernel/irq.c:278
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+ kcsan_setup_watchpoint+0x404/0x410 kernel/kcsan/core.c:705
+ format_decode+0x1d1/0x8a0 lib/vsprintf.c:2554
+ vsnprintf+0xc6/0xe30 lib/vsprintf.c:2755
+ sprintf+0x89/0xb0 lib/vsprintf.c:3007
+ print_caller kernel/printk/printk.c:1373 [inline]
+ info_print_prefix+0x142/0x1a0 kernel/printk/printk.c:1390
+ record_print_text kernel/printk/printk.c:1437 [inline]
+ printk_get_next_message+0x446/0x6f0 kernel/printk/printk.c:2978
+ console_emit_next_record kernel/printk/printk.c:3046 [inline]
+ console_flush_all+0x28a/0x770 kernel/printk/printk.c:3180
+ __console_flush_and_unlock kernel/printk/printk.c:3239 [inline]
+ console_unlock+0xab/0x330 kernel/printk/printk.c:3279
+ vprintk_emit+0x3f4/0x680 kernel/printk/printk.c:2407
+ vprintk_default+0x26/0x30 kernel/printk/printk.c:2422
+ vprintk+0x75/0x80 kernel/printk/printk_safe.c:68
+ _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+ batadv_check_known_mac_addr+0x153/0x180 net/batman-adv/hard-interface.c:528
+ batadv_hard_if_event+0x4b0/0x1010 net/batman-adv/hard-interface.c:998
+ notifier_call_chain kernel/notifier.c:93 [inline]
+ raw_notifier_call_chain+0x6f/0x1d0 kernel/notifier.c:461
+ call_netdevice_notifiers_info+0xae/0x100 net/core/dev.c:1996
+ call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
+ call_netdevice_notifiers net/core/dev.c:2048 [inline]
+ dev_set_mac_address+0x1ff/0x260 net/core/dev.c:9104
+ dev_set_mac_address_user+0x31/0x50 net/core/dev.c:9118
+ do_setlink+0x513/0x2490 net/core/rtnetlink.c:2884
+ __rtnl_newlink net/core/rtnetlink.c:3725 [inline]
+ rtnl_newlink+0x11a3/0x1690 net/core/rtnetlink.c:3772
+ rtnetlink_rcv_msg+0x6aa/0x710 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2551
+ rtnetlink_rcv+0x1c/0x30 net/core/rtnetlink.c:6693
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x599/0x670 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x5cc/0x6e0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x140/0x180 net/socket.c:744
+ __sys_sendto+0x1d6/0x260 net/socket.c:2214
+ __do_sys_sendto net/socket.c:2226 [inline]
+ __se_sys_sendto net/socket.c:2222 [inline]
+ __x64_sys_sendto+0x78/0x90 net/socket.c:2222
+ x64_sys_call+0x2959/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+write to 0xffff888102c18178 of 2 bytes by task 3255 on cpu 0:
+ virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:886 [inline]
+ virtqueue_disable_cb+0x85/0x180 drivers/virtio/virtio_ring.c:2446
+ start_xmit+0x14b/0x1260 drivers/net/virtio_net.c:3067
+ __netdev_start_xmit include/linux/netdevice.h:4916 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4925 [inline]
+ xmit_one net/core/dev.c:3588 [inline]
+ dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3604
+ sch_direct_xmit+0x1a9/0x580 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3821 [inline]
+ __dev_queue_xmit+0xf1a/0x2040 net/core/dev.c:4394
+ dev_queue_xmit include/linux/netdevice.h:3094 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0x73d/0x8b0 net/ipv4/ip_output.c:236
+ ip_finish_output+0x11a/0x2a0 net/ipv4/ip_output.c:324
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0xab/0x170 net/ipv4/ip_output.c:434
+ dst_output include/net/dst.h:450 [inline]
+ ip_local_out net/ipv4/ip_output.c:130 [inline]
+ __ip_queue_xmit+0xbcc/0xbf0 net/ipv4/ip_output.c:536
+ ip_queue_xmit+0x38/0x50 net/ipv4/ip_output.c:550
+ __tcp_transmit_skb+0x15b0/0x1970 net/ipv4/tcp_output.c:1466
+ __tcp_send_ack+0x1de/0x2e0 net/ipv4/tcp_output.c:4268
+ tcp_send_ack+0x27/0x30 net/ipv4/tcp_output.c:4274
+ __tcp_cleanup_rbuf+0x149/0x280 net/ipv4/tcp.c:1505
+ tcp_cleanup_rbuf net/ipv4/tcp.c:1516 [inline]
+ tcp_recvmsg_locked+0x1be3/0x2100 net/ipv4/tcp.c:2821
+ tcp_recvmsg+0x13c/0x490 net/ipv4/tcp.c:2851
+ inet_recvmsg+0xbd/0x290 net/ipv4/af_inet.c:885
+ sock_recvmsg_nosec net/socket.c:1051 [inline]
+ sock_recvmsg+0xfe/0x170 net/socket.c:1073
+ sock_read_iter+0x14c/0x1a0 net/socket.c:1143
+ new_sync_read fs/read_write.c:488 [inline]
+ vfs_read+0x5f6/0x720 fs/read_write.c:569
+ ksys_read+0xeb/0x1b0 fs/read_write.c:712
+ __do_sys_read fs/read_write.c:722 [inline]
+ __se_sys_read fs/read_write.c:720 [inline]
+ __x64_sys_read+0x42/0x50 fs/read_write.c:720
+ x64_sys_call+0x27d3/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x0000 -> 0x0001
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 3255 Comm: syz-executor Not tainted 6.12.0-rc3-syzkaller-00389-g3d5ad2d4eca3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
