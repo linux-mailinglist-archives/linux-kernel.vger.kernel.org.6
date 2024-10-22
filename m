@@ -1,209 +1,176 @@
-Return-Path: <linux-kernel+bounces-376379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282A69AB09A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1719AB0A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759F2B23146
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA9B1F240A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D581A072A;
-	Tue, 22 Oct 2024 14:15:34 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BD1A08B2;
+	Tue, 22 Oct 2024 14:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+Emv4yE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA63619E96A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1319D88F;
+	Tue, 22 Oct 2024 14:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606533; cv=none; b=Ie9K2ZXVo/KR1/vAgrNFykLz4Qi4zWe0SVei7Ic2+UIgAXESx50+dzXXtnGBdnX1lwJAhLCSxwqAwSP043Bp0+rpcgz2p3i4tAJk/K5VKay/LLe2SE/HX585np6rmq1k232zkPdAhf8ZjvDFGPZ2t/vtVeOLKIUXHD7mPXB3sMQ=
+	t=1729606649; cv=none; b=thy6SDTIxoufl92lniL1DZD2+v0MXXdVPjw+62iicVr+v/3SdRpS9dN/Fq1oKiKAA8ddV3fzm2jI0mdwJwINhhpCLPLcGquRIcySqJV00HBjiN+qrGRJhpVSiwrB0oddxBflBnkVGroPUJeTQNNjtzkwXmKXnAzA6fMwnC7E/tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606533; c=relaxed/simple;
-	bh=9k2AIoLKTW2VmIGMT+A1LSrMU73kJvdOVYZKEGMgTM0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cxEv8M+92y0k6NCAKlcluYqldPmGuuCAK29d12316JZ6RdKqVxKdwDEoOUImg/n/IO+45Xo86txS0Uhb8EXz8xZSi3qWFtjCW0eZDUCnfrTqObqaA39tjv5VRa9whwO474bHoGZFd2dvXzxu6aOAuwzCg/5TYq5jwAHi72AtYpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so51608835ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:15:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729606530; x=1730211330;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E7B4v+GWQAvstfNn3v39eXXCk1aLsKTiXwFVxWjaIiA=;
-        b=jOqHzKQ8KDSfWP0mOysIiLNk8dk7ptFkWy5s6qJcNBeNXNN/09lM4c42vXbDUAaQrX
-         Ttz1fRcT2Fz+C8EOuNmXA8AJukytEMftcSICMWDAy+qoG1KA21o1i9Jwjz9zGeWZBpQk
-         hYOWhifaGkYw82VvfbKhIJqUJIBT+Vly4v5WNQBH1xJvcvyUToKJb3ZH5ec23rS65aqA
-         iCnhYV0lh5N0ZRqXoe9aOkcTO0zRUow2D1UXoLqFG658JHgFNGr8pTR+Zz9L4CFsALjI
-         p4s8VqLIrN3UXaOKYRyr9Yvky5Vu/XRvS2QgzlsJQWDv6q33TQDQQPzE+98FnAUnquTy
-         eamQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSPmwqk8qH6xdlHCAV/kYn5WHwpGN0JWpXa0zlcGigSzz+df1Bfd4YhpjjTov/fnyzIPG3TJpf4aHODfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbpNAFC4JE/sr9l8Sxb3QcXY+CibEUdq9PoRRFUUA2znLd9Ot0
-	3t9tq4jmh6N6aHZXl3KK9IBPHbVcxelHn/tEoSXE0JKkx1BiIMFf7k8wRxRm0rmijQe1+NIII63
-	k8qYwTubFCIj3ATawTnD3lrSGEdNfXDvdEkevS1i4pm4xg8D+6gznQAI=
-X-Google-Smtp-Source: AGHT+IEW6IjdFMeN5kY5LX2hqcuxN1ExJJgRzxNoF35sk953Eog98bSovoyuAtqMVSGLSejqJd1fDcFXbDMWXUQhGZFrU1XWg/Pg
+	s=arc-20240116; t=1729606649; c=relaxed/simple;
+	bh=ekA/emXkLZ5tc9Burp4oozETaIzuCtLOps/vxN+0/7s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UlE5Ki7p/63Olq252T4x38mwUa2j5VuN/Qg+mGiX6w7eeI6a2Sr3oTQi1xZFl2fL2VJTj8I7xBFHxwoFRWz8+giVIBa92BN0w5PmTQEwm1WjTsUHl22eNuiJUI1lXNz2RMKcYWrdCc7YQDOZBCTFQQH4ZYWQxGYH+aAJr34LYFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+Emv4yE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBpE6K029670;
+	Tue, 22 Oct 2024 14:17:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=LT/CYtCU7giMPvIvEl+vKtN0/5DN9R4S77AiJrAMNkA=; b=H+
+	Emv4yE7eRAj1xdA3VOEEhHrsgDwGwX4bKEVD5TOxRm2SCXx28UTTA2ncqU+FdRP+
+	EqR3aBvOGsIf//sxXjgE336T3iMLmDVglCKsCrG6QOVnWXJytryqpltc27j+zJTU
+	+srWMvtIQRm4tex8phQm23/rz9pDhQxlh8Wkx+PavTBvzdXs4TzTR7HQZgmLN4VZ
+	2TUaCDUADCz8msbIWdOTIm7jWx7cIcBEkRxH4WX7RferUA3TlVcOb12i7K3pfpZf
+	j6xmuinyRFFTGkwgP6qqQFqsdubwLb02PDcRm7KkuSkf8fVdpFN5sKzOMUk7BSI1
+	wm2olNceFt2Pc6gIwB7A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ebhercvf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 14:17:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MEHJpv004743
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 14:17:19 GMT
+Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Oct 2024 07:17:15 -0700
+From: Sachin Gupta <quic_sachgupt@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
+Subject: [PATCH] mmc: sdhci-msm: Add sysfs attribute for error state in SDHCI MSM driver
+Date: Tue, 22 Oct 2024 19:46:59 +0530
+Message-ID: <20241022141659.18764-1-quic_sachgupt@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c565:0:b0:3a0:9d2c:b079 with SMTP id
- e9e14a558f8ab-3a3f409fcf4mr122240195ab.19.1729606529736; Tue, 22 Oct 2024
- 07:15:29 -0700 (PDT)
-Date: Tue, 22 Oct 2024 07:15:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6717b381.050a0220.1e4b4d.0076.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_free_reserved_data_space_noquota (3)
-From: syzbot <syzbot+9064acebb06685edb243@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LhSU-FRjPHf8gKyKUccTkfTVQ1mFhdQP
+X-Proofpoint-ORIG-GUID: LhSU-FRjPHf8gKyKUccTkfTVQ1mFhdQP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220091
 
-Hello,
+Introduce a new sysfs attribute err_state to the SDHCI MSM driver.
+The attribute allows users to query the error state of the SDHCI host controller.
 
-syzbot found the following issue on:
-
-HEAD commit:    4d939780b705 Merge tag 'mm-hotfixes-stable-2024-10-17-16-0..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ca4c5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=9064acebb06685edb243
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4d939780.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/12c327c1ad70/vmlinux-4d939780.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c7596a960357/bzImage-4d939780.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9064acebb06685edb243@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 262144
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-BTRFS: device fsid 7e32c2af-f87a-45a1-bcba-64dea7c56a53 devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5106)
-BTRFS info (device loop0): first mount of filesystem 7e32c2af-f87a-45a1-bcba-64dea7c56a53
-BTRFS info (device loop0): using xxhash64 (xxhash64-generic) checksum algorithm
-BTRFS info (device loop0): using free-space-tree
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5106 Comm: syz.0.0 Not tainted 6.12.0-rc3-syzkaller-00217-g4d939780b705 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:53 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
- should_failslab+0xac/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4038 [inline]
- slab_alloc_node mm/slub.c:4114 [inline]
- kmem_cache_alloc_noprof+0x6c/0x2a0 mm/slub.c:4141
- alloc_ordered_extent+0x13b/0x5d0 fs/btrfs/ordered-data.c:172
- btrfs_alloc_ordered_extent+0x1e4/0xa70
- btrfs_create_dio_extent+0x79/0x160 fs/btrfs/direct-io.c:153
- btrfs_new_extent_direct fs/btrfs/direct-io.c:203 [inline]
- btrfs_get_blocks_direct_write+0x972/0xfa0 fs/btrfs/direct-io.c:321
- btrfs_dio_iomap_begin+0xbb7/0x1180 fs/btrfs/direct-io.c:525
- iomap_iter+0x691/0xf60 fs/iomap/iter.c:91
- __iomap_dio_rw+0xdea/0x2370 fs/iomap/direct-io.c:677
- btrfs_dio_write fs/btrfs/direct-io.c:775 [inline]
- btrfs_direct_write+0x61b/0xa70 fs/btrfs/direct-io.c:880
- btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
- aio_write+0x56b/0x7c0 fs/aio.c:1633
- io_submit_one+0x8a7/0x18a0 fs/aio.c:2052
- __do_sys_io_submit fs/aio.c:2111 [inline]
- __se_sys_io_submit+0x179/0x2f0 fs/aio.c:2081
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4756d7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4757b3f038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007f4756f35f80 RCX: 00007f4756d7dff9
-RDX: 0000000020000540 RSI: 000000000000003b RDI: 00007f4757af5000
-RBP: 00007f4757b3f090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f4756f35f80 R15: 00007ffc4b13df48
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5106 at fs/btrfs/space-info.h:250 btrfs_space_info_update_bytes_may_use fs/btrfs/space-info.h:250 [inline]
-WARNING: CPU: 0 PID: 5106 at fs/btrfs/space-info.h:250 btrfs_space_info_free_bytes_may_use fs/btrfs/space-info.h:283 [inline]
-WARNING: CPU: 0 PID: 5106 at fs/btrfs/space-info.h:250 btrfs_free_reserved_data_space_noquota+0x287/0x4f0 fs/btrfs/delalloc-space.c:179
-Modules linked in:
-CPU: 0 UID: 0 PID: 5106 Comm: syz.0.0 Not tainted 6.12.0-rc3-syzkaller-00217-g4d939780b705 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_space_info_update_bytes_may_use fs/btrfs/space-info.h:250 [inline]
-RIP: 0010:btrfs_space_info_free_bytes_may_use fs/btrfs/space-info.h:283 [inline]
-RIP: 0010:btrfs_free_reserved_data_space_noquota+0x287/0x4f0 fs/btrfs/delalloc-space.c:179
-Code: 00 74 08 4c 89 e7 e8 68 e1 23 fe 4d 8b 2c 24 4c 89 ef 48 8b 5c 24 20 48 89 de e8 34 2e ba fd 49 39 dd 73 19 e8 ca 2b ba fd 90 <0f> 0b 90 31 db 4c 8b 6c 24 10 41 80 3c 2f 00 75 2b eb 31 e8 b1 2b
-RSP: 0018:ffffc9000b2df200 EFLAGS: 00010293
-RAX: ffffffff83dabc36 RBX: 0000000000004000 RCX: ffff88801cd1c880
-RDX: 0000000000000000 RSI: 0000000000004000 RDI: 0000000000003000
-RBP: dffffc0000000000 R08: ffffffff83dabc2c R09: 1ffffffff2039ff5
-R10: dffffc0000000000 R11: fffffbfff2039ff6 R12: ffff888040b7a068
-R13: 0000000000003000 R14: ffff88804c94c000 R15: 1ffff1100816f40d
-FS:  00007f4757b3f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d4b4513e88 CR3: 000000003e504000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_free_reserved_data_space+0xa2/0xe0 fs/btrfs/delalloc-space.c:199
- btrfs_dio_iomap_begin+0x7c6/0x1180 fs/btrfs/direct-io.c:598
- iomap_iter+0x691/0xf60 fs/iomap/iter.c:91
- __iomap_dio_rw+0xdea/0x2370 fs/iomap/direct-io.c:677
- btrfs_dio_write fs/btrfs/direct-io.c:775 [inline]
- btrfs_direct_write+0x61b/0xa70 fs/btrfs/direct-io.c:880
- btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
- aio_write+0x56b/0x7c0 fs/aio.c:1633
- io_submit_one+0x8a7/0x18a0 fs/aio.c:2052
- __do_sys_io_submit fs/aio.c:2111 [inline]
- __se_sys_io_submit+0x179/0x2f0 fs/aio.c:2081
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4756d7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4757b3f038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007f4756f35f80 RCX: 00007f4756d7dff9
-RDX: 0000000020000540 RSI: 000000000000003b RDI: 00007f4757af5000
-RBP: 00007f4757b3f090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f4756f35f80 R15: 00007ffc4b13df48
- </TASK>
-
-
+Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/mmc/host/sdhci-msm.c | 40 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e113b99a3eab..a256e3569a92 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -290,6 +290,7 @@ struct sdhci_msm_host {
+ 	u32 dll_config;
+ 	u32 ddr_config;
+ 	bool vqmmc_enabled;
++	bool err_occurred;
+ };
+ 
+ static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+@@ -2255,6 +2256,8 @@ static void sdhci_msm_dump_vendor_regs(struct sdhci_host *host)
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
+ 
++	msm_host->err_occurred = true;
++
+ 	SDHCI_MSM_DUMP("----------- VENDOR REGISTER DUMP -----------\n");
+ 
+ 	SDHCI_MSM_DUMP(
+@@ -2398,6 +2401,41 @@ static int sdhci_msm_gcc_reset(struct device *dev, struct sdhci_host *host)
+ 	return ret;
+ }
+ 
++static ssize_t err_state_show(struct device *dev,
++			struct device_attribute *attr, char *buf)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++
++	if (!host || !host->mmc)
++		return -EINVAL;
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", !!msm_host->err_occurred);
++}
++
++static DEVICE_ATTR_RO(err_state);
++
++static struct attribute *sdhci_msm_sysfs_attrs[] = {
++	&dev_attr_err_state.attr,
++	NULL
++};
++
++static const struct attribute_group sdhci_msm_sysfs_group = {
++	.name = "qcom",
++	.attrs = sdhci_msm_sysfs_attrs,
++};
++
++static void sdhci_msm_init_sysfs(struct device *dev)
++{
++	int ret;
++
++	ret = sysfs_create_group(&dev->kobj, &sdhci_msm_sysfs_group);
++	if (ret)
++		dev_err(dev, "%s: Failed to create qcom sysfs group (err = %d)\n",
++				__func__, ret);
++}
++
+ static int sdhci_msm_probe(struct platform_device *pdev)
+ {
+ 	struct sdhci_host *host;
+@@ -2442,6 +2480,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	sdhci_get_of_property(pdev);
+ 	sdhci_msm_get_of_property(pdev, host);
+ 
++	sdhci_msm_init_sysfs(&pdev->dev);
++
+ 	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
+ 
+ 	ret = sdhci_msm_gcc_reset(&pdev->dev, host);
+-- 
+2.17.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
