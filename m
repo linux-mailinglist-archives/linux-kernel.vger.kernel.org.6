@@ -1,120 +1,149 @@
-Return-Path: <linux-kernel+bounces-376259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C3B9AA253
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A86BB9AA25B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1D51C21CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:42:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A3E1C2115C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE74419D8A8;
-	Tue, 22 Oct 2024 12:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F3419D89B;
+	Tue, 22 Oct 2024 12:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XzP8g4hS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgwRdPxM"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FF51537D9;
-	Tue, 22 Oct 2024 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFAC19D89D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729600943; cv=none; b=YPd2bMduKA3FtHAuy25dMlzHqTYG35cixJaJCXSdfV0HT5Rd0XvB9Hbwfr6Qtp9pbySwRWKybK36ElHE77Iryj9yvpy46MFQz8n6wCAs191WlNFOGnHsCcwVyVcYwYiDhGZ4qGvLoMDCi5OCBlD9/o1s33BkVYp2G+gnVNNyAU8=
+	t=1729600998; cv=none; b=RrA1bzmWlOAVtw6S2ob9BIbYZO4iD221kUtcJfbRGCsfTqQRAMkOEmCC3S9sFB3gGehFdIQ0RKJ1oRf/PH9NpHcbzLGDb4czF4yoWXTaUzzzWQHRe29mPzxoLuwIs7DTGmi3LKpcRRquLLL/gbigSH8v285P/MApNQLwOSA2Smk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729600943; c=relaxed/simple;
-	bh=1kQcfUKxnnRlmnXvyy6slBbu3vdl2jGdNZ3GxflNNj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlHnCkodf5JVXauATxhUSKQoC/NqyehqMCtQWzn2zsWfkn+J5THcUlgG0boptWm6hu2+t/f1OmtT3PKnKGUu8vhDQE7oBc4y+j5394UyHbA5C+Sl1GV5UCLWUS/uQsdZnkwJP20Rry1+3wqj7Sr769/MsHJBo5t3ZC7GBbBvfYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XzP8g4hS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1AC1440E01A5;
-	Tue, 22 Oct 2024 12:42:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Fi1L2bCWqXrK; Tue, 22 Oct 2024 12:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729600934; bh=uJxSCGPq7YQbdE9Mu+T0q3ngzH3IdmXGlttiNKCmW8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XzP8g4hSMY1EmnKgb9ZZeetJc2ihXoFpzd73W7opMH+3l4zvYJ6I3kGQ++KKmXSeQ
-	 ruT21Kf2LwziCkVW8lB3jdVo9tQueJFHPwMLZdbhWWZCSeSXJRojFMqT71HwJfRrUE
-	 Qb7MdLhzkjPdqh9wnx+3FgTHoNXWYVT8hJDV6pubpyfK2cx7DkEAUIuFjmVtZ1VC9s
-	 UZtlehVA9DXgU5J2i9DfDX8QzDCaGhrEhy33yAts3KvJaHaTw7VjBm8b0So+ostCvm
-	 Hh6HZgOhyza+BJ0/IvpUm23vAQZwt0wZY1/0TPjMg4sgghgaTu2Owi0C9o2rR5KROX
-	 oylOIqozOGtq3CfjUTJAgxS8l9XqAZuugmXnykrh7bMn4C1iDytx6YEoEWFxJ3luTA
-	 vKLPapd7IFxmodLt1IA5gIMYbiXygliKDCH4TthDemIAiyYb5IBz1wp2ZmFZqTg21g
-	 HDSAr7XHL7Foqs3DcxvTZvGgKVx5GNnTOmAkrc/VeEIif0Of1Er3lVHEZbAa9a3rUZ
-	 HM4mABNujdYR1VhAOVs0DOLkJsdb6NKFP1RkEZfYSFP+KDoll/HKRmP5qaxv/D6bUx
-	 yJZkYDN66vjZ1ihKEDTkIzX409qfGp7n+k1tHtFntl//BzUHY7mtti8zq3pcX54uJF
-	 4OKQj91xkXdlDWO0DzGaYM+k=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2D47140E0198;
-	Tue, 22 Oct 2024 12:42:03 +0000 (UTC)
-Date: Tue, 22 Oct 2024 14:42:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v3 03/14] x86/cpufeatures: add X86_FEATURE_WORKLOAD_CLASS
- feature bit
-Message-ID: <20241022124202.GHZxedmqPeFd5F3sL3@fat_crate.local>
-References: <20241015213645.1476-1-mario.limonciello@amd.com>
- <20241015213645.1476-4-mario.limonciello@amd.com>
+	s=arc-20240116; t=1729600998; c=relaxed/simple;
+	bh=n182y8nWJul8CKXkhxxnsz1hFzVx0xF9GJjauPoJ5as=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sfl/WA+n8JwHTGkEfVtD0DkEiLrECdqiZ55dutw5/8vuG/U+xUH6FF/Qgx+sx+fAFzXVzfHYdSjU3Taru9+sFb8QbjTD6D/vj70I08eu6eFRnD5h4avR1FRzHQ+SOc6mWPgUg7F45oPwFWW5x2wlsIIefNuM4BBj3WtNMVc5ZUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dgwRdPxM; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e2908e8d45eso5018084276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729600996; x=1730205796; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SaOXu7NaxTVENXCsAQaNxc71DXxVkPqm5aNi9pXqVVY=;
+        b=dgwRdPxMombofqsZb5d7UNsV2tbwQvJuk66jsYSu+UkTzjetWtMxL7LevusVaVY9IS
+         ux10hyFMNHQhSDR32s05IXiK50Ear8qiQOwEnJCvWJ7n+g6Z0ZC92ItvoGuB8DoXT72O
+         fpDLK+REbDvvSRJOA2iqOIMVn9N8NbDTjkYnsqAt/l0vd561mxoI43n0z78vYwqnTNMZ
+         OzC+v8Wmgw3N+KeFd9cpMZgKrnULiZZdQj4Z4cmlLU53k7izpWIWUtg+6oi6zBIwvtUm
+         29RCsCofH8EdyYGtzNLTn9cGYWGMNnAOV82G2Bo+nKomMEmgfzMxbBV8T6hqolWcVjEM
+         oD6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729600996; x=1730205796;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SaOXu7NaxTVENXCsAQaNxc71DXxVkPqm5aNi9pXqVVY=;
+        b=d0rtW55s3Mc4h8WLFAIJo90S6/ChwO52hYZSSPNcz2OYQP1nMSDTwjGUCy9kc2Fm5m
+         RFb4+jXSm/xF4dMMCn0Se7u5PbPgZ5EM+RxU3NLffpEIRTQexPe276m0f7UVE7VWBwbz
+         o4dnyRHQsnQNSvUpUz26GCWiH3F7UOTLXALCA0wmcN3c32Owpev6rlA9Et5EaEn30Jdq
+         pVFGbn44OJ9MwzTCiW1UJTkcnNWh+p+CCAA+fROqiDMdyyky7JcFoYM30wi4Ta8hzpRy
+         zZ7Ji6SlIhEHFTqhvjpOsmIfbgOJJZ1t0CtFtBl9dzJq47Xp14qxNZxIh9fPXnlHEop6
+         Bhuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoBWuFNfzv3JnETMRPTiDuzpOsVPy1EVlC2kHaemkjhIYYn/dM2dlLCqWFTzaEXyF47H8MTExB5/ig8TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh6JsFZentS8NRbhr5F4rsSXIm9iat9Gz+fTFiDr/v5Lq7dpRA
+	nTTBlzWYWXv83AbXbVWj0kJwzIkimQlmd+qw0aeHXd8rJKGLQ5CtdJwwwN0WZ9bdr7h9zEPyMSU
+	M/liULkcSpSE3e2S0RK/PlxSkFlTxaUGA54lKxsJCr43Oqi2dBSs=
+X-Google-Smtp-Source: AGHT+IEjUOeNvCGfPmX5CA7E6xqtR1WdLOVX8tlGLznwKB3j619LMDAn9ejkibYgLTVRmf3S4wJdL9yK3QWSPiysYzw=
+X-Received: by 2002:a25:8545:0:b0:e2b:d0b8:576b with SMTP id
+ 3f1490d57ef6-e2bd0b858f9mr7059774276.17.1729600996120; Tue, 22 Oct 2024
+ 05:43:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241015213645.1476-4-mario.limonciello@amd.com>
+References: <20241020142931.138277-1-aurelien@aurel32.net>
+In-Reply-To: <20241020142931.138277-1-aurelien@aurel32.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 Oct 2024 14:42:39 +0200
+Message-ID: <CAPDyKFoQsf89NeX28ms7FtM0QWNqYQ5xtt2=+G1JNCVi2z9=dg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: take SWIOTLB memory size limitation into account
+To: Aurelien Jarno <aurelien@aurel32.net>
+Cc: William Qiu <william.qiu@starfivetech.com>, 
+	"open list:RISC-V MISC SOC SUPPORT" <linux-riscv@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, 
+	"open list:SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER" <linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Ron Economos <re@w6rz.net>, Jing Luo <jing@jing.rocks>, stable@vger.kernel.org, 
+	Adam Green <greena88@gmail.com>, Shawn Lin <shawn.lin@rock-chips.com>, sydarn@proton.me, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 04:36:34PM -0500, Mario Limonciello wrote:
-> From: Perry Yuan <perry.yuan@amd.com>
-> 
-> Add new feature bit that indicates support for workload based
-> heuristic feedback to OS for scheduling decisions.
-> When the bit set, threads are classified during runtime into
-> enumerated classes. The classes represent thread performance/power
-> characteristics that may benefit from special scheduling behaviors.
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
++ Adam, Arnd, Shawn-Lin, sydarn
+
+
+On Sun, 20 Oct 2024 at 16:30, Aurelien Jarno <aurelien@aurel32.net> wrote:
+>
+> The Synopsys DesignWare mmc controller on the JH7110 SoC
+> (dw_mmc-starfive.c driver) is using a 32-bit IDMAC address bus width,
+> and thus requires the use of SWIOTLB.
+>
+> The commit 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages
+> bigger than 4K") increased the max_seq_size, even for 4K pages, causing
+> "swiotlb buffer is full" to happen because swiotlb can only handle a
+> memory size up to 256kB only.
+>
+> Fix the issue, by making sure the dw_mmc driver doesn't use segments
+> bigger than what SWIOTLB can handle.
+>
+> Reported-by: Ron Economos <re@w6rz.net>
+> Reported-by: Jing Luo <jing@jing.rocks>
+> Fixes: 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+
+Thanks for working on this! Looks like we have managed to mess things
+up. Besides the issue that you have been working on to fix, apparently
+there seems to be another one too [1].
+
+Unfortunately, $subject patch doesn't seem to fix the problem in [1],
+as has been reported by Adam.
+
+I have looped in some more people to this thread, hopefully we agree
+on how this should be fixed properly. Otherwise, I tend to say that we
+should simply revert the offending commit and start over.
+
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com/
+
 > ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  arch/x86/kernel/cpu/scattered.c    | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index cea1ed82aeb4..3e8e67b8ec7a 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -474,6 +474,7 @@
->  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
->  #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
->  #define X86_FEATURE_HETERO_CORE_TOPOLOGY	(21*32 + 6) /* Heterogeneous Core Topology */
-> +#define X86_FEATURE_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
-
-As already discussed: X86_FEATURE_AMD_WORKLOAD_CLASS
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>  drivers/mmc/host/dw_mmc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 41e451235f637..dc0d6201f7b73 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -2958,7 +2958,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
+>                 mmc->max_segs = host->ring_size;
+>                 mmc->max_blk_size = 65535;
+>                 mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
+> -               mmc->max_seg_size = mmc->max_req_size;
+> +               mmc->max_seg_size =
+> +                   min_t(size_t, mmc->max_req_size, dma_max_mapping_size(host->dev));
+>                 mmc->max_blk_count = mmc->max_req_size / 512;
+>         } else if (host->use_dma == TRANS_MODE_EDMAC) {
+>                 mmc->max_segs = 64;
+> --
+> 2.45.2
+>
 
