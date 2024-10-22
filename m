@@ -1,167 +1,97 @@
-Return-Path: <linux-kernel+bounces-376277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8329AA292
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A869AA293
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7FD01F23070
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1E41F235D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8246E19DF48;
-	Tue, 22 Oct 2024 12:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3F819DF4C;
+	Tue, 22 Oct 2024 12:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hD22HcbC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lovQ70u2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68219B3C5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C319B3C5;
+	Tue, 22 Oct 2024 12:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601863; cv=none; b=dfbzcYWOEUJAQtfl/EAEPMqAV/JgCTr9UCdAWjeKUBczEZOSNN1PpBDVn286HPk3z7r7dsA7z2AOr2nuhtGVXSXaw8E/eL5zCttvjlyMeltcGXRhCZUcGlSGHdnIafWrz8wf0Fc8wJbRJVPvLXd2lxP8+D4K9AqGG54VX2KBLNE=
+	t=1729601902; cv=none; b=uifLaUWQBSZpMFvzikVaeSPBTuzv3pO7T8YP/RU9vOpROGmYBn+8CmHMwm6ETPLHvbPBLuLtrqnZPs8SFxXoFySJikNjrhVDE/anDl6AB7lOHFpu4O9v5jxuaiouTka2B1EMIUGglAxzlEgmQ96oIpyfhk+yh1YNMzE4ICWPww8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601863; c=relaxed/simple;
-	bh=GhYhjo2Z9FXBqZLMmzftfla/w2fS4jR3pdlc1PSB8Es=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I/tx1XN2HTivSDRqObukiWlkiqidqgAS715BNk/bDVNsQg3O94p60AnQlUOVB6CsXv7rv3K00k0EijOtDJc0irRUXNGtphmamQ9SnAd29XUZ5NVGDr7fiX2gZh6oMsvnmght5Edp1lcuuywJOQdf+q+1NJ/48Z7Wz+pPTtLIfQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hD22HcbC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BF2C4CEE9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:57:43 +0000 (UTC)
+	s=arc-20240116; t=1729601902; c=relaxed/simple;
+	bh=gzn4IEXSajhwhtGek7uMizTqEY+fU+WOBbbTf1SeaZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AorTTu85lr96AycO/qtA/ey5+rAEasDfgf1TDvzAhgElz/lTAZTSSlnnQvBSITatNqXe5Mqw6p2CfjWKjnuoqpHEgY4RXSAQoBaihEw5X/n62w2yzAjUKCI/jRrZ2bh6i9dMCxvfMhwF1uKKKVYyc1UCzgEa2yUqOKRShRMcV0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lovQ70u2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E32BC4CEC3;
+	Tue, 22 Oct 2024 12:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729601863;
-	bh=GhYhjo2Z9FXBqZLMmzftfla/w2fS4jR3pdlc1PSB8Es=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hD22HcbCWYrNyjFqSykKO/nQN74Fjac40Zf+8kuy7rOWNtkb/jtjRbMHwEMoOGuFc
-	 FhX2+GLUFrjEDxK2/vOBzAfa1hPa8PLEvmutycNrffhgCrkmes/+30m2KYxzR32E1V
-	 Y/kNhRs2yGx9qGuGNjfmhA/uPBsA5bynDhgsaWpMJYob+SxBPeo2uJzk4FbhMCoEF3
-	 W29Fi36i0zW3heIsmrxraC2HVXOpyrWPzR03zt+yF0pBX7Kk7pOvX056xxriEcVsXp
-	 QdpamNnBKZo7mzYNsTMoQRSTvkejgQHfVlYB43tvHVW8sd0MjJ1nCFEG0csOhLmnHn
-	 +HVdT+1FRaHRA==
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c6f492d2dso64364595ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:57:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5BUP/uxVJnxyzZjgt/QeBRtLFMbdFX42kfG/YRSck02W8AQq8lBOkScygtoCDGuPCaWjeB5Zw4zJ+AJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMt3JyVUh8UJaRgs08Xlp08CzdKB0I8xsnU9sK452cwFjS7mAe
-	91AcBWn3r9/AVD3hVgnROozbWgLMeEN8PHlnP1u5rdeBkwyMp2FoTHPnyMQU/alUkZSMunv2Dg+
-	dMpls7kAfGq/ByV7rU2au4xukhw==
-X-Google-Smtp-Source: AGHT+IHDPBVccyietVt0eoOPH++rNW8m28x85sMWW+Dmxt+0VFr1aS34/bDRGwrVWPxtoil8Pjk3sREsZd5vx2UMbic=
-X-Received: by 2002:a17:90b:1649:b0:2e2:a2f0:e199 with SMTP id
- 98e67ed59e1d1-2e5616c543cmr16488894a91.8.1729601862855; Tue, 22 Oct 2024
- 05:57:42 -0700 (PDT)
+	s=k20201202; t=1729601902;
+	bh=gzn4IEXSajhwhtGek7uMizTqEY+fU+WOBbbTf1SeaZ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lovQ70u2br0ZYsv3zN5oHC57Fw2skI5MiEKe9dvw5Zt542MPzYwtp2h7FR1tTcLNg
+	 qXGW4NaYwQBkLJSO+pQF2T6YHU2V7sq8UAJv0PqhL3Iqn4kdPuwD0SbMcgzr+5cmjv
+	 5yKrQFvtdoAZjOtPpaythfmIF1KJdBZnB5/+FJ8hMRFDNdDckVRa5zCkjgKWdV2Se6
+	 1ve6q88QdD3oKJWTCf1hkM0tuUlSSfpIwd4Op3aMUeGeLEkAMhv4d4zlh/H0mNzLdh
+	 +U3f+iF42rQ7hMG5lUEw2nLZY+VsYlG5rWWbW34zYwfFwjZr0CDGgkO5oSZPWCuG/8
+	 tc4/AlfmF+fEQ==
+Date: Tue, 22 Oct 2024 13:58:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
+Message-ID: <cd66f6e8-637a-43e3-9cea-6d2cbe76b065@sirena.org.uk>
+References: <20241021102259.324175287@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009034646.13143-1-jason-jh.lin@mediatek.com>
-In-Reply-To: <20241009034646.13143-1-jason-jh.lin@mediatek.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Tue, 22 Oct 2024 20:58:03 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__fuUpvFeFXZrmvmFAM+92a-UJ9-ye6hQZHS_BHXpbAUA@mail.gmail.com>
-Message-ID: <CAAOTY__fuUpvFeFXZrmvmFAM+92a-UJ9-ye6hQZHS_BHXpbAUA@mail.gmail.com>
-Subject: Re: [PATCH v11 0/5] Fix degradation problem of alpha blending series
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: Adam Thiede <me@adamthiede.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Shawn Sung <shawn.sung@mediatek.com>, Alper Nebi Yasak <alpernebiyasak@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gfUhzPpWCCshUa+5"
+Content-Disposition: inline
+In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
+X-Cookie: Surprise due today.  Also the rent.
 
-Hi, Jason:
 
-Jason-JH.Lin <jason-jh.lin@mediatek.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=88=
-9=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8811:46=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Some SoCs do not support the ignore_pixl_alpha flag, which breaks the
-> XRGB8888 format. Some SoCs do not support pre-multiplied pixel formats
-> and extending configuration of OVL pre-multiplied color formats,
-> such as MT8173.
->
-> Fix the SoC degradation problem by this series.
+--gfUhzPpWCCshUa+5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For this series, applied to mediatek-drm-fixes [1], thanks.
+On Mon, Oct 21, 2024 at 12:22:36PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.5 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Regards,
-Chun-Kuang.
+--gfUhzPpWCCshUa+5
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> Tested-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->
-> Change in v11:
-> Fix typo in commit message.
->
-> Change in v10:
-> 1. Fix the commit message and comment for OVL_CON_AEN
->
-> Change in v9:
-> 1. Add the fix patch for the XRGB8888 downgrade issue of MT8173
-> 2. Add the refine patch for ignore_pixel_alpha statement
->
-> Change in v8:
-> Remove blend_modes for not supported pre-multiplied SoCs to fix the
-> return error from drm_plane_create_blend_mode_property().
->
-> Change in v7:
-> 1. Add the remove color format comment patch for OVL
-> 2. Fix warning: 'const' type qualifier on return type has no effect
->
-> Chnage in v6:
-> 1. Use blend_modes instead of function pointer in OVL
-> 2. Use ethdr instead of mdp_rdma to get blend_modes
-> 3. Add 0 checking for adding blend_mode property for mtk_plane
->
-> Change in v5:
-> Add fix patch for mtk_plane
->
-> Change in v4:
-> Add lost cases of mtk_ovl_fmt_convert_with_blend
->
-> Change in v3:
-> Change MACRO approach to function pointer in driver data
->
-> Change in v2:
-> Fix build error and typo
->
-> Change in v1:
-> Add fix patch for OVL unsupport color format settings by driver data
->
-> ---
->
-> Jason-JH.Lin (5):
->   drm/mediatek: ovl: Fix XRGB format breakage for blend_modes
->     unsupported SoCs
->   drm/mediatek: ovl: Refine ignore_pixel_alpha comment and placement
->   drm/mediatek: ovl: Remove the color format comment for
->     ovl_fmt_convert()
->   drm/mediatek: ovl: Add blend_modes to driver data
->   drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
->
->  drivers/gpu/drm/mediatek/mtk_crtc.c           |  1 +
->  drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  2 +
->  drivers/gpu/drm/mediatek/mtk_ddp_comp.h       | 10 +++
->  drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  2 +
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 70 ++++++++++++++-----
->  .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  7 ++
->  drivers/gpu/drm/mediatek/mtk_ethdr.c          |  7 ++
->  drivers/gpu/drm/mediatek/mtk_ethdr.h          |  1 +
->  drivers/gpu/drm/mediatek/mtk_plane.c          | 15 ++--
->  drivers/gpu/drm/mediatek/mtk_plane.h          |  4 +-
->  10 files changed, 92 insertions(+), 27 deletions(-)
->
-> --
-> 2.43.0
->
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcXoWYACgkQJNaLcl1U
+h9BOewf9Ehjy2yPDVfv8swuPSBgb63LhmeVEXYZMCMn70t1GT4993RFW3nt4UkEI
+XkctgxWyzn4t9DdHFCUZcdIX1enpZnHW/8oDJs8aJYrwsN2jKofVVUYWiDGy1H1L
+Wga1Wo60NDlyMTqkCRjXYVEKhap66TdzRu8FoUNQkbDVQ7cM0DFEg87oIXwWi06Z
+sIExG+HSQpj5qtdmQuiMMzUThd63wNlRZMAsendqdbYPwa3czywWzlVxooFfnpWk
+NDWgSX/eLPs/PqV+yZxEZ6Jkux8Mo2Uxuf25NaJegFC41sK3inDMt+aaicM19OBf
+RMDnf93S6cET1Noz8NeJNUCYfjc6fQ==
+=Lhkb
+-----END PGP SIGNATURE-----
+
+--gfUhzPpWCCshUa+5--
 
