@@ -1,57 +1,87 @@
-Return-Path: <linux-kernel+bounces-376025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644329A9ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFE19A9EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8FF1F23673
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428D31F23688
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562531991AD;
-	Tue, 22 Oct 2024 09:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A63119925F;
+	Tue, 22 Oct 2024 09:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXEaFHEL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dZT4i07S"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B9C157487;
-	Tue, 22 Oct 2024 09:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D158145B22;
+	Tue, 22 Oct 2024 09:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590224; cv=none; b=HAuRLYPmdNKpttfJ7oTJe14vBRhqecRo/fuuZLuyDEHpGRdROKqxATTS+K6hAK8cZrQ7ONCcDw4yGXE7YfUi/ehot+Naj0AvXzYbGQ5qP4yfOr9HjZdnur+i7b+EAUUOnI1Pc231I9RqwvtPAQiU+sgG/tqMbEn5NXX/ZyIGSPc=
+	t=1729590307; cv=none; b=nkB1XX6aIUSAbS0yd0GhLPIPybtvvy9VdTbpUKg/kmYiwyy5fQiEg1yCnCtzdH9bwWA76169yH7aC15sMHUNzh6s5KqL9LYCgzNmVCX21QxNxSrQyLBsd1CyzLteL1lek1YoT4Gwl9N4wlr8qGqFSg9TFMzm8MR1FXSXpHvUVJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590224; c=relaxed/simple;
-	bh=zeeVl7APGlbH3uWRJJBJkixFlhu2fnjZ1tXyVT6k3/s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=trVxihIk/eCj6ruSYe+F7yAS34RcQzKmWXRhRkVbisll5XNpNcjFL3KJ1lU3NwNgPuFmtxa5i5OGAyk1birrJSFjmLHiJoO9T2LLsIUjzu8AFB4fF0XsQCPmFChD0l1ntYw4XjUJaokybDScjOKeqMQSyIeSbSUtfZQ5bJuqlNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXEaFHEL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A85CC4CEC3;
-	Tue, 22 Oct 2024 09:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729590224;
-	bh=zeeVl7APGlbH3uWRJJBJkixFlhu2fnjZ1tXyVT6k3/s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GXEaFHEL1YOD5j88cBLPwpH3AI/i0JaVBzDsxTaXEGhLvIjURcUnr2PUvoC32s6ZZ
-	 vtg16rXEzHayIMSOCpgw2HuC0aAsbApMUsZ7iffbRCvi/vZwWV3KWXJ/2tQgK32Vzs
-	 r13Y4TVZJawGK2S5Ew4qs2tKJ9faFemZJDQOjiEbnNIYeP7SpBUZCBZ2qy6+YS7YeZ
-	 DUPIlyuYG5DFDhcUlYlwsFK8klkPXmDYD+EeVnvfeindTYfC2OrDhwmrpU83/IToCf
-	 vhNOKvP6m/dfWVg+52jEYkFjszM6gl6F/IArJrFzhrt9cxt9nKQFGCXKpDpXGY1xv7
-	 5nXR+YBmg2fcw==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id A3249160B2CA; Tue, 22 Oct 2024 11:43:41 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
-To: Byeonguk Jeong <jungbu2855@gmail.com>, Daniel Borkmann
- <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
-In-Reply-To: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
-References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 22 Oct 2024 11:43:41 +0200
-Message-ID: <87a5ewiib6.fsf@toke.dk>
+	s=arc-20240116; t=1729590307; c=relaxed/simple;
+	bh=GlLoCR43om/v9r9E86LKKa/FKLNVx5CmjA/L9r7EudA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAjKdOUVkl8UiH+tStsRdEFqwzUb3ptdjO8aEDK4Wqqaz4oia7W270K/s8Qbl23PpfmgLoCrMO2uVLDZuBKLiGL5OGp0OMS5+sReUgY9+8lIi1fmxbrsm3ppaqRSwQKVM6az7ikJCwNhTLolSM8c6meIRB+UVp5ua2rucVrmzJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dZT4i07S; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CE43640E0219;
+	Tue, 22 Oct 2024 09:45:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id llMr0-Ydhu4W; Tue, 22 Oct 2024 09:44:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729590298; bh=rDNfhvCyWnIJtBt/cVyjCF1IKMrba30fvxrKzlQyRNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dZT4i07Sd+NwwdlM4Axx/COyVdbGqXuEhvR6he0hLYxXRFe0FIaYuiMD7NRITkFBW
+	 N97SKZCxFfkoD5+2izcSf4d4x7g+JKQNhA4kiw+Ro50bMczvm7S3XiMLp2n83pUvPI
+	 1AOTD523p78tUkdxbO9KdoL35Q0F2og8hsDmzYCanCmsKgVUmASpio0wMn8C0fDhIi
+	 LN/OD3IpSO1gOtRYUFKc1Sdl1WM0vcRZbOranUmqvxz01pXPmtC3h56Grso7sYfX5w
+	 HH8FBLE9ppoiq0yQHQPNHdXfsQ1o4U2Jd220koiACcuP0bchUe4iszoI81ugsclF+k
+	 QW4jKmfjCnGfws8gCIBjuEUzu1VSppMzSggiigf/1gD3kVGIUHfBe0IlcViVUGUnYh
+	 iFlnm0Lm0z12q8OD7TeCX8thTlzh5hmcXPE4N23uCAopTBXIGZdR9A8BCG81qKC0eC
+	 on39IgcW8yzdN6hcZkeDldE1/DzOx8/d/Ifzism909UUEsMqu5+NG1ieCUlAR11IDU
+	 XvHRjlP3NWKhvsepBCPKUwwumeY8neN8LPfJAB9jop8dfbWPp0nEYRATRQmb3DZ5IG
+	 KkgcKcavZ1Yx9vn24jymDLwIHszHC4Ies1z1CWWV6Qsda/rzVUDoVMoq2SN9yA3hmF
+	 Rw2YyJhryeh2WiIZVZ5KDEPk=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3E4940E015F;
+	Tue, 22 Oct 2024 09:44:34 +0000 (UTC)
+Date: Tue, 22 Oct 2024 11:44:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Subject: Re: [PATCH v3 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
+Message-ID: <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+References: <20241016-imx95_edac-v3-0-86ae6fc2756a@nxp.com>
+ <20241016-imx95_edac-v3-3-86ae6fc2756a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,22 +89,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20241016-imx95_edac-v3-3-86ae6fc2756a@nxp.com>
 
-Byeonguk Jeong <jungbu2855@gmail.com> writes:
+On Wed, Oct 16, 2024 at 04:31:11PM -0400, Frank Li wrote:
+> From: Priyanka Singh <priyanka.singh@nxp.com>
+> 
+> Fix undefined behavior caused by left-shifting a negative value in the
+> expression:
+> 
+>     cap_high ^ (1 << (bad_data_bit - 32))
+> 
+> The variable 'bad_data_bit' ranges from 0 to 63. When 'bad_data_bit' is
+> less than 32, 'bad_data_bit - 32' becomes negative, and left-shifting by a
+> negative value in C is undefined behavior.
+> 
+> Fix this by combining 'cap_high' and 'cap_low' into a 64-bit variable.
+> 
+> Fixes: ea2eb9a8b620 ("EDAC, fsl-ddr: Separate FSL DDR driver from MPC85xx")
+> Signed-off-by: Priyanka Singh <priyanka.singh@nxp.com>
+> Reviewed-by: Sherry Sun <sherry.sun@nxp.com>
 
-> trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
-> while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
-> full paths from the root to leaves. For example, consider a trie with
-> max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
-> 0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
-> .prefixlen =3D 8 make 9 nodes be written on the node stack with size 8.
->
-> Fixes: b471f2f1de8b ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRI=
-E map")
-> Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
+You can't keep Reviewed-by tags when you change a patch considerably: Documentation/process/submitting-patches.rst
 
-Makes sense!
+> Signed-off-by: Li Yang <leoyang.li@nxp.com>
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@kernel.org>
+What does that SOB tag mean?
+
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/edac/fsl_ddr_edac.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index 7a9fb1202f1a0..846a4ba25342a 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -328,6 +328,9 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  	 * TODO: Add support for 32-bit wide buses
+>  	 */
+>  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> +		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> +		u32 s = syndrome;
+> +
+>  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+>  				&bad_data_bit, &bad_ecc_bit);
+>  
+> @@ -338,11 +341,15 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  			fsl_mc_printk(mci, KERN_ERR,
+>  				"Faulty ECC bit: %d\n", bad_ecc_bit);
+>  
+> +		if (bad_data_bit >= 0)
+
+>= 0 implies != -1, right?
+
+IOW?
+
+diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+index 846a4ba25342..fe822cb9b562 100644
+--- a/drivers/edac/fsl_ddr_edac.c
++++ b/drivers/edac/fsl_ddr_edac.c
+@@ -328,24 +328,21 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+ 	 * TODO: Add support for 32-bit wide buses
+ 	 */
+ 	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+-		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
++		u64 cap = (u64)cap_high << 32 | cap_low;
+ 		u32 s = syndrome;
+ 
+ 		sbe_ecc_decode(cap_high, cap_low, syndrome,
+ 				&bad_data_bit, &bad_ecc_bit);
+ 
+-		if (bad_data_bit != -1)
+-			fsl_mc_printk(mci, KERN_ERR,
+-				"Faulty Data bit: %d\n", bad_data_bit);
+-		if (bad_ecc_bit != -1)
+-			fsl_mc_printk(mci, KERN_ERR,
+-				"Faulty ECC bit: %d\n", bad_ecc_bit);
+-
+-		if (bad_data_bit >= 0)
++		if (bad_data_bit >= 0) {
++			fsl_mc_printk(mci, KERN_ERR, "Faulty Data bit: %d\n", bad_data_bit);
+ 			cap ^= 1ULL << bad_data_bit;
++		}
+ 
+-		if (bad_ecc_bit >= 0)
++		if (bad_ecc_bit >= 0) {
++			fsl_mc_printk(mci, KERN_ERR, "Faulty ECC bit: %d\n", bad_ecc_bit);
+ 			s ^= 1 << bad_ecc_bit;
++		}
+ 
+ 		fsl_mc_printk(mci, KERN_ERR,
+ 			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
