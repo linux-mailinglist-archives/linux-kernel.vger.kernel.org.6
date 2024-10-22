@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-375908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E219A9CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BBF9A9D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504E11F22F13
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA47C1C2125D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA87176242;
-	Tue, 22 Oct 2024 08:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DEPCOMPl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A9D184540;
+	Tue, 22 Oct 2024 08:39:32 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B315140E38
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD47155A53
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586326; cv=none; b=Fj+LntCqboK5+DXcRjOogNfVdcuBwJ/3ZiJIZFStezfB8cYoAf4ryXQInH73zqa6ZCMhO9kHWFoKo4jj2ffBLAbztlphMCEaWH48Zi+zIE7DskAo+VpZvhsxCzdsN/HI8oO58RPVH/av7SOK8I0+2ToDUFRG401gbyT9QDgOpRI=
+	t=1729586371; cv=none; b=qkFoqFEly7OTYHvrDqq0SZ3V8Fg35OoX2tfW9sWHUqvuUAbRZ1ESIt08qgytMY3QWJZq15/7pDDvUX1geoBxlu//jVgy5Xqh+k+0UrOshhUctk+kPgLe3IlxHe2ijVh/gjyAeqGNkkjw9fCYy59oinxSCuWJeb6a+yjD29RmBxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586326; c=relaxed/simple;
-	bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aFWkTnFx5Begqaw42iSYMXSvbsoVagSPu1NWVTXpqlCVSb4N+scbQKXfEB/QBSWHZxIIgeKga0P+oofDIIkUHFmLsx2HolhC4aA80JmnwGcl8KiERiUdEss5tzGoLG3ZjJuBSbECIy6YrvjvOF+kCTEjytqZ5T1uWitV+wB/TNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DEPCOMPl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729586324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
-	b=DEPCOMPlmCv4vNp/Zk1wHemcjD2K3S2uEcIL2DHqlefIOc8EbdVuiNHU/wslgp3PAwrtcW
-	mbvan7Qz5mkv4hc6D9lfCWdGW63oscvoCi/WTQKUWc3nrBmVvq+zZy6g+i/pvmiSI3psjh
-	iPMZrUVoLSz5hD9eYw11/pEyJf6oWcE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-4Srd3YvTNW273sDAd6GFnA-1; Tue, 22 Oct 2024 04:38:42 -0400
-X-MC-Unique: 4Srd3YvTNW273sDAd6GFnA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso44434835e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:38:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729586321; x=1730191121;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
-        b=GtamwB6ZULdGZoElKPryW93/hGV+QhzXO8Tc9EoENPUrBrO1vzLAhXhzvJg8wm2ydL
-         bSPF2BjAotvoW2Dp5IT81LE3Dp6SWphCsP4BkKa7cst2YYfBgKUeyU+YFTEaYAC6v41K
-         SKu2bMWnEPFZhf2ma5gnwDgtteY/HG2ZtZk9cMVgP3cELWXlACUn5UHzHlkVz9oDLiSt
-         RI0zTUDvlcVj270pjRg+fSS+XSE/FrUmmvICT9njgtM++xukgUz8nV2gwt+GgtgEf1Ro
-         7zpudWYPHRLBm0nNbHXcSajoLfH88jpfv+ljTsAYycMTBfvaIsct2n2+JyyFppLP0It2
-         7IMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlK+XYhzckXdUDKCxGgj6hQpWK3CCHNeUryCRYMxHwloxacmUJJck9sc+NCr65LqWu5U6p6fhzrG2kmiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSdYRMnhP+GLEtZPcqwdV/W+6YKxTVl1cl6kBlvxx/WPs7zYwN
-	4bBcT99j3BxJTc4lsDIz/pj8MXff32nA+wEhmFfMrtsCqSrTzD5C0v4wj0T58z3ntDlPUYRH3ri
-	xCTjlMFIfBi8qIpZSF4+9pUiE05yfk8kKJPvTmvczX2+bOYaS8KRfnxkiHiHong==
-X-Received: by 2002:a05:600c:4e12:b0:431:4a5a:f08f with SMTP id 5b1f17b1804b1-4316161ee27mr124495605e9.4.1729586321177;
-        Tue, 22 Oct 2024 01:38:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbBWOU2Nx4vFSYQiZrLPFEBJcR3dEePc/jhzMJIAF2UjsfwsYkjsK7i1T0LhglK0o3pCuU0w==
-X-Received: by 2002:a05:600c:4e12:b0:431:4a5a:f08f with SMTP id 5b1f17b1804b1-4316161ee27mr124495345e9.4.1729586320618;
-        Tue, 22 Oct 2024 01:38:40 -0700 (PDT)
-Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58f0efsm82150545e9.26.2024.10.22.01.38.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 01:38:40 -0700 (PDT)
-Date: Tue, 22 Oct 2024 10:38:39 +0200
-From: Maxime Ripard <mripard@redhat.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org
-Subject: Requirements to merge new heaps in the kernel
-Message-ID: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
+	s=arc-20240116; t=1729586371; c=relaxed/simple;
+	bh=/39Qe/P5cSaW5cZYrOZN1mnYWBJfyx9L3y74EOD7STQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I9YqGD8NBbN5wm1L2BctyZr7AXIFIrQkPQ+i8aqZZLerZOOjWw0dVaxhjqtJx4Kaj5jXC/5Pmnsy/h3c3dtKt1Hi+/UC6HNoWwR1SHxm8mcsQCV4BYuklsjTdg+PHFXeiWlohFBiGj3fphV8Rl2z4ZlFADlcXQKJzf/4HBtZpEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXlvt73TSz4f3m7G
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:39:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 307D71A018D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:39:25 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.67.175.61])
+	by APP3 (Coremail) with SMTP id _Ch0CgCnRoO3ZBdndQiQEg--.6910S2;
+	Tue, 22 Oct 2024 16:39:24 +0800 (CST)
+From: Zheng Yejian <zhengyejian@huaweicloud.com>
+To: sj@kernel.org
+Cc: akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	foersleo@amazon.de,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	shakeel.butt@linux.dev,
+	sieberf@amazon.com,
+	yeweihua4@huawei.com,
+	zhengyejian@huaweicloud.com
+Subject: [PATCH v2 0/2] mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
+Date: Tue, 22 Oct 2024 16:39:25 +0800
+Message-Id: <20241022083927.3592237-1-zhengyejian@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241021163316.12443-1-sj@kernel.org>
+References: <20241021163316.12443-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="hsjf2vnvcet2h2ku"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCnRoO3ZBdndQiQEg--.6910S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZryUKr4kKF4rWF4fCF45ZFb_yoW8Jw43p3
+	WfWr45GF4vkryav3Z3u3WYvwn0yrW8Jr1DGry3JF1Yka4vga4YyFy7tr90yFyUCFWfJ34S
+	93W8XrW3CF93uaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
 
+According to the logic of damon_va_evenly_split_region(), currently
+following split case would not meet the expectation:
 
---hsjf2vnvcet2h2ku
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Requirements to merge new heaps in the kernel
-MIME-Version: 1.0
+  Suppose DAMON_MIN_REGION=0x1000,
+  Case: Split [0x0, 0x3000) into 2 pieces, then the result would be
+        acutually 3 regions:
+          [0x0, 0x1000), [0x1000, 0x2000), [0x2000, 0x3000)
+        but NOT the expected 2 regions:
+          [0x0, 0x1000), [0x1000, 0x3000) !!!
 
-Hi Sumit,
+The root cause is that when calculating size of each split piece in
+damon_va_evenly_split_region():
 
-I wanted to follow-up on the discussion we had at Plumbers with John and
-T.J. about (among other things) adding new heaps to the kernel.
+  `sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);`
 
-I'm still interested in merging a carve-out driver[1], since it seems to be
-in every vendor BSP and got asked again last week.
+both the dividing and the ALIGN_DOWN may cause loss of precision,
+then each time split one piece of size 'sz_piece' from origin 'start' to
+'end' would cause more pieces are split out than expected!!!
 
-I remember from our discussion that for new heap types to be merged, we
-needed a kernel use-case. Looking back, I'm not entirely sure how one
-can provide that given that heaps are essentially facilities for
-user-space.
+To fix it, count for each piece split and make sure no more than
+'nr_pieces'. In addition, add above case into damon_test_split_evenly().
 
-Am I misremembering or missing something? What are the requirements for
-you to consider adding a new heap driver?
+And add 'nr_piece == 1' check in damon_va_evenly_split_region()
+for better code readability and add a corresponding kunit testcase.
 
-Thanks!
-Maxime
+Zheng Yejian (2):
+  mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
+  mm/damon/vaddr: Check 'nr_piece == 1' case in
+    damon_va_evenly_split_region()
 
-1: https://lore.kernel.org/dri-devel/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511@kernel.org/
+ mm/damon/tests/vaddr-kunit.h | 2 ++
+ mm/damon/vaddr.c             | 7 +++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---hsjf2vnvcet2h2ku
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxdkjwAKCRAnX84Zoj2+
-djCtAYC0rCU2tqFwwMRRkdC0+X4UkE+T1TaC7DwuQMpeIzJA4HKzDz2v6n9TItr0
-LTH6SysBgI3OFvgyXDR/NxKo6lihPc9mfEb0LLL+suXmLUnK3QO9N/TS9HFxj7JH
-hI9UPHPo0A==
-=ZRbj
------END PGP SIGNATURE-----
-
---hsjf2vnvcet2h2ku--
+-- 
+2.25.1
 
 
