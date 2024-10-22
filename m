@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-375656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645059A98CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9779A98D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFF31F23BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060C0284367
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20AD13A87C;
-	Tue, 22 Oct 2024 05:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924E013B58E;
+	Tue, 22 Oct 2024 05:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDKsibgb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVQzIT3Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E51E4BE;
-	Tue, 22 Oct 2024 05:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ABB3D994;
+	Tue, 22 Oct 2024 05:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575812; cv=none; b=NMqGKAvbVSvbwYqbyi514g+SAzmDn9zFKq/LjcL4+kQn23sQ5fAt0/xp8DP24x2YPkWJcVlvniV6x6JaSMklfbYlE3g5Ho4W0Fdkb2o9NJdezsTecHBCQHwIBs0dIm8nlM09hmome9dfie6aL1jkHyWTyWlD3NV9n01ySQ4NyxU=
+	t=1729575831; cv=none; b=vDG8zJNuRn6fQuwNY2xc7ZVzWT+ZWq3pGuczmiyUgyKcQnqATwOKkUxX/g6vCyT4NVBhpTLALnTRXopDljczpihJ2dBaguYhH/EM10Mn3FpBL8JemEJOaJ3M4U1FCwe72d7ihQ4XbvNZmVoDPnMxTgItRVJ69Bl7mYMgebdlZ5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575812; c=relaxed/simple;
-	bh=+tgEFzOiGB/X1K/inNjx4X+zCiG9JwpQTBPGx2P1THg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=k58YSCXEFB8XtR9y1vmv+ixV0EI0Gs5Z+lgm0x4RZFVc7mYazo0Q/I1N1b5OakuUBnSAdt/s1tQzPysxdVPWHUqSP0ln6AN5OM4gKpazkZrHbuYEhSwiYpdKdTiq2wLkOzqOxcZ+UAWyzGg3a62kK7PzhY8EITyAZGL/jupcY5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDKsibgb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJtmPi016339;
-	Tue, 22 Oct 2024 05:43:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kq+QHhxooHdq8lD5/mJnkE7tP6DLk6t6/J7Was3bh6w=; b=dDKsibgbslCdXzrv
-	cWnHi8I4YafuR2s1k5oXKF/WtCFMo/XBB/I63DA3PDnKUcVGSZFNEixiL8ZHJ5/9
-	MSLkbNC+ztNN6osWl4Ah1IaeR71Rq4B44grAjCdY4DdoWfxKZAYtjQ/Ow4upCaFZ
-	TKO4lkaUHOUzd1FfrB17dkSwnUhXe/u7DuJd9rB84M/4zfaGVTEjkLd5/qsk1BFb
-	Cm1VWp7v3/OYUrdmXL3cZSaeHNqrEwbswJIfMKaXFt42ZOsVQTyC7qYrdfyXjA8t
-	nIJyyImf4IUICJzin0vVVUHU/vdjU5tkONQjNPpXhrIzGZRIV8nKCcAbf3aeY1Ny
-	flWsOg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj709r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 05:43:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M5hOtC012986
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 05:43:24 GMT
-Received: from [10.218.44.178] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
- 2024 22:43:21 -0700
-Message-ID: <21630547-552b-43e0-906f-840610327876@quicinc.com>
-Date: Tue, 22 Oct 2024 11:13:19 +0530
+	s=arc-20240116; t=1729575831; c=relaxed/simple;
+	bh=GwxDxDoeyBK62Hochtj/t2RR/Cl82p6Om5xIRuyQs0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dnq1AUTRtPdFQ4WaJ4/F8IXYwoOOfWxUkMOAoN5K7sEAfN3ychkUt/yHVCYnsS4p2tdlA4PtQk98y0nj6wINq9i65C4PEPG1/ZvOgjlnGsisuGdZGMkPE0XDcgurq57RSCnJ7LWZwK2I+hPcWG/mVYEIH0ngEpmoAyR3UHBZzLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVQzIT3Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1A1C4CEC3;
+	Tue, 22 Oct 2024 05:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729575831;
+	bh=GwxDxDoeyBK62Hochtj/t2RR/Cl82p6Om5xIRuyQs0s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CVQzIT3Qp8oOeEpx5K1XZO7DkJkuUMZ4X+vkYJFS9LTFWGUA9VVm8nsNQBviwNrzi
+	 LtiPlGQ7Mip/sXrlr6vYg1BGmG2lnNadQI2SzvH6662qFdMPJYnfol8nKI03O2LT0u
+	 DEL1sdN0ZtsXfaiRq/u/gW8/fMR9JZl8gONjFAcesiQJe3yMCUALB3hjfxsJJv9jR2
+	 ud30fWXMjZIW3R2NDfj4PbRrXF/Zm+X6HUuelRMUNOHmzL/ZfTPj4xaGLttiabxJjf
+	 Nd1xp9wAQyxiWChqgesdv54lBwrbAYQ1y4hrL8Z125aUzgAgnFfITeb1Ob7mUkRNPE
+	 yrJi04ZvtPstQ==
+Message-ID: <3fe52ed8-aeb2-49d9-9b81-b6cd53b83425@kernel.org>
+Date: Tue, 22 Oct 2024 07:43:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,89 +49,345 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: qcom: qcom_tzmem: Implement sanity
- checks
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
- <20241014111527.2272428-3-quic_kuldsing@quicinc.com>
- <CAMRc=MfR8rK3EnZx3_9rxkwgv6f8jA4X0u0cGBkpJ89d5i1MKw@mail.gmail.com>
- <f46a9180-ca71-458e-9693-ed9badc85e72@quicinc.com>
+Subject: Re: [PATCH v1 04/10] media: platform: mediatek: add isp_7x cam-raw
+ unit
+To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian Konig <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
+ teddy.chen@mediatek.com, hidenorik@chromium.org, yunkec@chromium.org,
+ shun-yi.wang@mediatek.com
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+ <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <f46a9180-ca71-458e-9693-ed9badc85e72@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: d7MX-jmdXmSX8xMu7If1g32ahpQaQe6F
-X-Proofpoint-ORIG-GUID: d7MX-jmdXmSX8xMu7If1g32ahpQaQe6F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410220036
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/16/2024 2:31 PM, Kuldeep Singh wrote:
+On 09/10/2024 13:15, Shu-hsiang Yang wrote:
+> Introduces the ISP pipeline driver for the MediaTek ISP raw and yuv
+> modules. Key functionalities include data processing, V4L2 integration,
+> resource management, debug support, and various control operations.
+> Additionally, IRQ handling, platform device management, and MediaTek
+> ISP DMA format support are also included.
 > 
-> On 10/14/2024 6:38 PM, Bartosz Golaszewski wrote:
->> On Mon, Oct 14, 2024 at 1:19 PM Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
->>>
->>> The qcom_tzmem driver currently has exposed APIs that lack validations
->>> on required input parameters. This oversight can lead to unexpected null
->>> pointer dereference crashes.
->>>
->>
->> The commit message is not true. None of the things you changed below
->> can lead to a NULL-pointer dereference.>
->>> To address this issue, add sanity for required input parameters.
->>>
->>> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
->>> ---
->>>  drivers/firmware/qcom/qcom_tzmem.c | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
->>> index 92b365178235..977e48fec32f 100644
->>> --- a/drivers/firmware/qcom/qcom_tzmem.c
->>> +++ b/drivers/firmware/qcom/qcom_tzmem.c
->>> @@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
->>>
->>>         might_sleep();
->>>
->>> +       if (!config->policy)
->>> +               return ERR_PTR(-EINVAL);
->>
->> This is already handled by the default case of the switch.
-> 
-> Ack. Need to drop.
-> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L218
-> 
-> While examining qcom_tzmem_pool_free under the same principle, it
-> appears the following check is unnecessary.
-> https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
-> 
+> Signed-off-by: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>
 
-Bartosz,
-I am thinking to remove below check in next rev like mentioned above.
-https://elixir.bootlin.com/linux/v6.12-rc3/source/drivers/firmware/qcom/qcom_tzmem.c#L268
+...
 
-Do you have any other opinion here?
-Please let me know.
+> +
+> +static int mtk_yuv_of_probe(struct platform_device *pdev,
+> +			    struct mtk_yuv_device *drvdata)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	int irq, ret;
+> +	int n_clks;
+> +
+> +	ret = of_property_read_u32(dev->of_node, "mediatek,cam-id",
+> +				   &drvdata->id);
+> +	if (ret) {
+> +		dev_dbg(dev, "missing camid property\n");
 
--- 
-Regards
-Kuldeep
+Debug? Or error?
+
+> +		return ret;
+> +	}
+> +
+> +	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(34))) {
+> +		dev_err(dev, "%s: No suitable DMA available\n", __func__);
+> +		return -EIO;
+> +	}
+> +
+> +	if (!dev->dma_parms) {
+> +		dev->dma_parms =
+> +			devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP_KERNEL);
+> +		if (!dev->dma_parms)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	dma_set_max_seg_size(dev, UINT_MAX);
+> +
+> +	/* base outer register */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "base");
+> +	if (!res) {
+> +		dev_err(dev, "failed to get mem\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	drvdata->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(drvdata->base)) {
+> +		dev_dbg(dev, "failed to map register base\n");
+
+Dbg? What?
+
+> +		return PTR_ERR(drvdata->base);
+> +	}
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(dev, "failed to get irq\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = devm_request_irq(dev, irq, mtk_irq_yuv, 0,
+> +			       dev_name(dev), drvdata);
+> +	if (ret) {
+> +		dev_err(dev, "failed to request irq=%d\n", irq);
+> +		return ret;
+> +	}
+> +	dev_dbg(dev, "registered irq=%d\n", irq);
+
+Drop
+
+> +
+> +	n_clks = devm_clk_bulk_get_all(dev, &drvdata->clk_b);
+> +	if (n_clks < 0) {
+> +		dev_err(dev, "failed to devm_clk_bulk_get_all=%d\n", n_clks);
+
+Syntax is: return dev_err_probe()
+
+> +		return n_clks;
+> +	}
+> +
+> +	drvdata->num_clks = n_clks;
+> +	dev_info(dev, "clk_num:%d\n", drvdata->num_clks);
+
+Drop
+
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +	drvdata->pm_notifier.notifier_call = yuv_pm_notifier;
+> +	ret = register_pm_notifier(&drvdata->pm_notifier);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register notifier block.\n");
+> +		return ret;
+> +	}
+> +#endif
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_yuv_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_yuv_device *drvdata;
+> +	struct v4l2_subdev *sd;
+> +	int ret;
+> +
+> +	dev_dbg(dev, "camsys | start %s\n", __func__);
+
+NAK
+
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+> +
+> +	drvdata->dev = dev;
+> +	dev_set_drvdata(dev, drvdata);
+> +
+> +	ret = mtk_yuv_of_probe(pdev, drvdata);
+> +	if (ret) {
+> +		dev_info(dev, "mtk_yuv_of_probe failed\n");
+
+NAK. Neither info nor proper for memory allocation errors. Drop.
+
+> +		return ret;
+> +	}
+> +
+> +	/* register yuv as mtk_cam async child */
+> +	sd = &drvdata->subdev;
+> +	v4l2_subdev_init(sd, &mtk_raw_subdev_ops);
+> +	sd->internal_ops = &mtk_raw_subdev_internal_ops;
+> +	snprintf(sd->name, sizeof(sd->name), "%s",
+> +		 of_node_full_name(dev->of_node));
+> +	sd->dev = dev;
+> +	sd->owner = THIS_MODULE;
+> +
+> +	ret = v4l2_async_register_subdev(sd);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed on async_register_subdev\n", __func__);
+> +		return ret;
+> +	}
+> +
+> +	pm_runtime_enable(dev);
+> +
+> +	dev_info(dev, "camsys | [%s] success\n", __func__);
+
+NAK
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void mtk_yuv_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_yuv_device *yuv_dev = dev_get_drvdata(dev);
+> +	struct v4l2_subdev *sd = &yuv_dev->subdev;
+> +
+> +	dev_dbg(dev, "camsys | start %s\n", __func__);
+
+NAK
+
+> +
+> +	unregister_pm_notifier(&yuv_dev->pm_notifier);
+> +
+> +	pm_runtime_disable(dev);
+> +
+> +	v4l2_async_unregister_subdev(sd);
+> +}
+> +
+> +/* driver for yuv part */
+> +static int mtk_yuv_runtime_suspend(struct device *dev)
+> +{
+> +	struct mtk_yuv_device *drvdata = dev_get_drvdata(dev);
+> +
+> +	dev_info(dev, "%s:disable clock\n", __func__);
+
+NAK
+
+> +
+> +	clk_bulk_disable_unprepare(drvdata->num_clks, drvdata->clk_b);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_yuv_runtime_resume(struct device *dev)
+> +{
+> +	struct mtk_yuv_device *drvdata = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	dev_info(dev, "%s:enable clock\n", __func__);
+
+NAK. Not even dev_dbg. Please don't ever post such code.
+
+
+> +
+> +	ret = clk_bulk_prepare_enable(drvdata->num_clks, drvdata->clk_b);
+> +	if (ret) {
+> +		dev_info(dev, "failed at clk_bulk_prepare_enable, ret = %d\n", ret);
+> +		clk_bulk_disable_unprepare(drvdata->num_clks, drvdata->clk_b);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops mtk_yuv_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(mtk_yuv_runtime_suspend, mtk_yuv_runtime_resume,
+> +			   NULL)
+> +};
+> +
+> +static const struct of_device_id mtk_yuv_of_ids[] = {
+> +	{.compatible = "mediatek,cam-yuv",},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, mtk_yuv_of_ids);
+> +
+> +struct platform_driver mtk_cam_yuv_driver = {
+> +	.probe   = mtk_yuv_probe,
+> +	.remove  = mtk_yuv_remove,
+> +	.driver  = {
+> +		.name  = "mtk-cam yuv",
+> +		.of_match_table = of_match_ptr(mtk_yuv_of_ids),
+
+Drop of_match_ptr(), you will have here warnings.
+
+> +		.pm     = &mtk_yuv_pm_ops,
+> +	}
+> +};
+
+...
+
+
+
+> diff --git a/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h
+> new file mode 100644
+> index 000000000000..b775e6c30aa1
+> --- /dev/null
+> +++ b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h
+> @@ -0,0 +1,65 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2022 MediaTek Inc.
+> + */
+> +
+> +#ifndef __MTK_CAMERA_V4l2_CONTROLS_H
+> +#define __MTK_CAMERA_V4l2_CONTROLS_H
+> +
+> +#include <linux/videodev2.h>
+> +#include <linux/v4l2-controls.h>
+> +#include <linux/mtkisp_camsys.h>
+
+How these headers are used here? I don't see. Don't include unrelated
+stuff in your files.
+
+> +
+> +/* Allowed value of V4L2_CID_MTK_CAM_RAW_PATH_SELECT */
+> +#define V4L2_MTK_CAM_RAW_PATH_SELECT_BPC	1
+> +#define V4L2_MTK_CAM_RAW_PATH_SELECT_FUS	3
+> +#define V4L2_MTK_CAM_RAW_PATH_SELECT_DGN	4
+> +#define V4L2_MTK_CAM_RAW_PATH_SELECT_LSC	5
+> +#define V4L2_MTK_CAM_RAW_PATH_SELECT_LTM	7
+> +
+> +#define V4L2_MBUS_FRAMEFMT_PAD_ENABLE  BIT(1)
+
+
+Best regards,
+Krzysztof
+
 
