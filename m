@@ -1,77 +1,52 @@
-Return-Path: <linux-kernel+bounces-376331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9970F9AA358
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:38:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DB39AA353
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 461041F2395F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A64F28428E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A0C19F416;
-	Tue, 22 Oct 2024 13:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="k9sNs1yk"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D94019E99E;
-	Tue, 22 Oct 2024 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899519DFA2;
+	Tue, 22 Oct 2024 13:37:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681171C27
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729604274; cv=none; b=m2RZV0BiVBqws681e9+dibY4ttY5lnrJ7c530NTY+ytWYHkK9vSS3bd8cnPj8rIcPpcatvieZ2I4PiMUg/2uXqtz1aDDw8NuZWJRHwiAjxorbAh6OFv2WOeKcC1vZqwo0GkL9ig7Xh25eRm4XyOJuQcILoKM1OxuCHRLUj64src=
+	t=1729604271; cv=none; b=e4ZlrkCYFUkXGp04DzUkemOj6P8CbDxBDr3i/MObrBw5E/vOIs3INTTU67EYO44SlQ+jhg+Ae8ZghL+FB01oDjyZOL0EboPFyDUFqglDd1zhp0IMg288S9d8Gbo5/nyDeiZbNm0icGV5Jk/PnZToknWRCQ5av46r8za+lscq830=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729604274; c=relaxed/simple;
-	bh=9g88+vo+w3pHcZYFTHanutEy/cUSfaKP7KjUnZfdDCw=;
+	s=arc-20240116; t=1729604271; c=relaxed/simple;
+	bh=zsljSX+ReEHiwevouw+xqoLHzpP22pzX2BcC7uRcizE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRwlD1js5xFeVLTFOCqPM6TzFg6PbEPe0YXymw2hjhuS179Z9esNQMhrTmxCaAHfo06Oh4FzObK59MWjSC06t2HIzJUd+kHQ9hZNUeNHTBTUPngc022cTZCBhNBDDnE3rFMGmnMvmqqVDzc1U4EojI+MUuYLxVZpep2qzMiYcaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=k9sNs1yk; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2lLWUy23eHb4MgFna+aBGyb7zbgEcHoFz1AAK36qYiQ=; b=k9sNs1ykHFkSe7oZVo7n1QwwwI
-	qkDWA7xTVJdC83jRqnoXHQGP2QQoeEL94aUL9RFKWalZtLdpEjqOLeg0PrHfvYkaivPJxzFfUCZSX
-	VJuRKHmdypK5r5oG5p26eCmTQ4lCCFdmCt1rQ+8JPGDNEZj/vj+O16+Ro/ESmMHWHVnw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t3F4q-00AqUR-33; Tue, 22 Oct 2024 15:37:36 +0200
-Date: Tue, 22 Oct 2024 15:37:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
- <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
- <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cG18u6vHoJz0JRrPDA1EDrjcRvGn1sb49UOZAGGU2MGS+uvjg8c8v6D8rwyatXmUhPMCD4j4/+ZLUQgIXTTolJM1KoxEOY1/wKl11WztnsYfggWaVgvnZNblckaJVshauWCoqZHAExZr7R7fZf6Hex6zyW89uR4f+ykWLZUse/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B248497;
+	Tue, 22 Oct 2024 06:38:17 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87FCF3F73B;
+	Tue, 22 Oct 2024 06:37:44 -0700 (PDT)
+Date: Tue, 22 Oct 2024 14:37:41 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
+	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+	kees@kernel.org, wad@chromium.org, rostedt@goodmis.org,
+	arnd@arndb.de, ardb@kernel.org, broonie@kernel.org,
+	rick.p.edgecombe@intel.com, leobras@redhat.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Message-ID: <Zxeqpa7n1r03KV7t@J2N7QTR9R3>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
+ <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
+ <ZxejvAmccYMTa4P1@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,75 +55,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
+In-Reply-To: <ZxejvAmccYMTa4P1@J2N7QTR9R3>
 
-> Apologies for the delay in response. I understand that the PCS<->PHY
-> clocks may be out of the scope of PCS DT due to the reasons you mention.
-> However would like to clarify that the MII clocks referred to here, are
-> part of the connection between the MAC and PCS and not between PCS and PHY.
+On Tue, Oct 22, 2024 at 02:08:12PM +0100, Mark Rutland wrote:
+> On Tue, Oct 22, 2024 at 08:07:54PM +0800, Jinjie Ruan wrote:
+> > On 2024/10/17 23:25, Mark Rutland wrote:
+> > > There's also some indirection that I don't think is necessary *and*
+> > > hides important ordering concerns and results in mistakes. In
+> > > particular, note that before this series, enter_from_kernel_mode() calls
+> > > the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
+> > > management is performed by __enter_from_kernel_mode():
+> > > 
+> > > 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
+> > > 	{
+> > > 	        __enter_from_kernel_mode(regs);
+> > > 		mte_check_tfsr_entry();
+> > > 		mte_disable_tco_entry(current);
+> > > 	}
+> > > 
+> > > ... whereas after this series is applied, those MTE checks are placed in
+> > > arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
+> > > necessary lockdep+RCU management. That is broken.
+> > > 
+> > > It would be better to keep that explicit in the arm64 entry code with
+> > > arm64-specific wrappers, e.g.
+> > > 
+> > > 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+> > > 	{
+> > > 		irqentry_state_t state = irqentry_enter(regs);
+> > > 		mte_check_tfsr_entry();
+> > > 		mte_disable_tco_entry(current);
+> > > 
+> > > 		return state;
+> > > 	}
+> > 
+> > Hi, Mark, It seems that there is a problem for
+> > arm64_preempt_schedule_irq() when wrap irqentry_exit() with
+> > exit_to_kernel_mode().
+> > 
+> > The arm64_preempt_schedule_irq() is about PREEMPT_DYNAMIC and preempt
+> > irq which is the raw_irqentry_exit_cond_resched() in generic code called
+> > by irqentry_exit().
+> > 
+> > Only __el1_irq() call arm64_preempt_schedule_irq(), but when we switch
+> > all exit_to_kernel_mode() to arm64-specific one that wrap
+> > irqentry_exit(), not only __el1_irq() but also el1_abort(), el1_pc(),
+> > el1_undef() etc. will try to reschedule by calling
+> > arm64_preempt_schedule_irq() similar logic.
 > 
-> Below is a diagram that shows the sub-blocks inside the 'UNIPHY' block
-> of IPQ9574 which houses the PCS and the serdes, along with the clock
-> connectivity. The MII Rx/Tx clocks are supplied from the NSS CC, to the
-> GMII channels between PCS and MAC. So, it seemed appropriate to have
-> these clocks described as part of the PCS DT node.
+> Yes, the generic entry code will preempt any context where an interrupt
+> *could* have been taken from.
 > 
->               +-------+ +---------+  +-------------------------+
->    -----------|CMN PLL| |  GCC    |  |   NSSCC (Divider)       |
->    |25/50mhz  +----+--+ +----+----+  +--+-------+--------------+
->    |clk            |         |          ^       |
->    |       31.25M  |  SYS/AHB|clk  RX/TX|clk    +------------+
->    |       ref clk |         |          |       |            |
->    |               |         v          | MII RX|TX clk   MAC| RX/TX clk
->    |            +--+---------+----------+-------+---+      +-+---------+
->    |            |  |   +----------------+       |   |      | |     PPE |
->    v            |  |   |     UNIPHY0            V   |      | V         |
->   +-------+     |  v   |       +-----------+ (X)GMII|      |           |
->   |       |     |  +---+---+   |           |--------|------|-- MAC0    |
->   |       |     |  |       |   |           | (X)GMII|      |           |
->   |  Quad |     |  |SerDes |   |  (X)PCS   |--------|------|-- MAC1    |
->   |       +<----+  |       |   |           | (X)GMII|      |           |
->   |(X)GPHY|     |  |       |   |           |--------|------|-- MAC2    |
->   |       |     |  |       |   |           | (X)GMII|      |           |
->   |       |     |  +-------+   |           |--------|------|-- MAC3    |
->   +-------+     |              |           |        |      |           |
->                 |              +-----------+        |      |           |
->                 +-----------------------------------+      |           |
-
-Thanks for the detailed diagram. That always helps get things
-straight.
-
-Im i correct in says that MII RX|TX is identical to MAC RX|TX? These
-two clocks are used by the MAC and XPCS to clock data from one to the
-other? If they are the exact same clocks, i would suggest you use the
-same name, just to avoid confusion.
-
-Both XPCS and PPE are clock consumers, so both will have a phandle
-pointing to the NSSCC clock provider?
-
-> We had one other question on the approach used in the driver for PCS
-> clocks, could you please provide your comments.
+> I'm not sure it actually matters either way; I believe that the generic
+> entry code was written this way because that's what x86 did, and
+> checking for whether interrupts are enabled in the interrupted context
+> is cheap.
 > 
-> As we can see from the above diagram, each serdes in the UNIPHY block
-> provides the clocks to the NSSCC, and the PCS block consumes the MII
-> Rx/Tx clocks. In our current design, the PCS/UNIPHY driver registers a
-> provider driver for the clocks that the serdes supplies to the NSS CC.
+> I's suggest you first write a patch to align arm64's entry code with the
+> generic code, by removing the call to arm64_preempt_schedule_irq() from
+> __el1_irq(), and adding a call to arm64_preempt_schedule_irq() in
+> __exit_to_kernel_mode(), e.g.
+> 
+> | static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs)
+> | {
+> | 	...
+> | 	if (interrupts_enabled(regs)) {
+> | 		...
+> | 		if (regs->exit_rcu) {
+> | 			...
+> | 		}
+> | 		...
+> | 		arm64_preempt_schedule_irq();
+> | 		...
+> | 	} else {
+> | 		...
+> | 	}
+> | }
+> 
+> That way the behaviour and structure will be more aligned with the
+> generic code, and with that as an independent patch it will be easier to
+> review/test/bisect/etc.
+> 
+> This change will have at least two key impacts:
+> 
+> (1) We'll preempt even without taking a "real" interrupt. That
+>     shouldn't result in preemption that wasn't possible before, 
+>     but it does change the probability of preempting at certain points,
+>     and might have a performance impact, so probably warrants a
+>     benchmark.
+> 
+> (2) We will not preempt when taking interrupts from a region of kernel
+>     code where IRQs are enabled but RCU is not watching, matching the
+>     behaviour of the generic entry code.
+> 
+>     This has the potential to introduce livelock if we can ever have a
+>     screaming interrupt in such a region, so we'll need to go figure out
+>     whether that's actually a problem.
+> 
+>     Having this as a separate patch will make it easier to test/bisect
+>     for that specifically.
 
-That sounds reasonable.
+Looking some more, the pseudo-NMI DAIF check in
+arm64_preempt_schedule_irq() is going to be a problem, becuase the
+IRQ/NMI path manages DAIF distinctly from all other exception handlers.
 
-> It also enables the MII Rx/Tx clocks which are supplied to the PCS from
-> the NSS CC. Would this be an acceptable design to have the PCS driver
-> register the clock provider driver and also consume the MII Rx/Tx
-> clocks? It may be worth noting that the serdes and PCS are part of the
-> same UNIPHY block and also share same register region.
+I suspect we'll need to factor that out more in the generic entry code.
 
-Does the SERDES consume the MII Rx/Tx? Your diagram indicates it does
-not. I'm just wondering if you have circular dependencies at runtime?
-
-Where you will need to be careful is probe time vs runtime. Since you
-have circular phandles you need to first create all the clock
-providers, and only then start the clock consumers. Otherwise you
-might get into an endless EPROBE_DEFER loop.
-
-	Andrew
+Mark.
 
