@@ -1,225 +1,149 @@
-Return-Path: <linux-kernel+bounces-376073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD30D9A9FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345709A9FA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4790F1F22258
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948A7284046
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A4D1991CC;
-	Tue, 22 Oct 2024 10:07:32 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83C4199236;
+	Tue, 22 Oct 2024 10:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="J+DCi0ow";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="J+DCi0ow"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23079161302
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53498145B24;
+	Tue, 22 Oct 2024 10:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591651; cv=none; b=JmdHAFcFa+fArfG0E1FvP2r/3zeMM6elZ/7jRHbOtxX85fPRo69vuP2TomCt4sahPXwE1x2KAei02+1BiYOwJeOMqbeDYUhP9sxSr99rTFDNzbLkJCu4HPo/yABJOCsXT7+9tDcBmQl5pqGh48pRNH4UioWtCPdYTU87lL5/Phw=
+	t=1729591698; cv=none; b=M4OWV5IdoS3iZWy0V83Qf1s8peaxDkM7xLKRMRf6X4LoE39Pxf0HJFNgS3PsG8MOr6fXJ4VkEEALJ4jPVImiZVBLribECvfTrGQRpfDWZcA+rXtUXYygwcF0vw70Be9nCDIeZOT3UmhfHWB7w/G2RfGBSJePflsdlEcBErSQBSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591651; c=relaxed/simple;
-	bh=TH/pFB4OX02AV8pIKa7KxCMott5NL6jdzHG23eePHiU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FFbB01PkdpuLQkkyNGw8eyfa0b4fF5nP96+L1o+vAJrQm/hBIAtZhAXpuXJgnOU3R4AsXKPzO8jGPh9WIs+UuXnBs5iNDXcsfvdGL2chn19tTWkcLwd6FqauX5oBxrvq1q/34OCXCS8gqU8aHW5bkNwqrTo9jVx20PdQL0eka0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ab3d46472so503814939f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:07:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729591649; x=1730196449;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9gBPkPXkPepVY/ibei8o+EXVX3iYI5mKC2OJ9oOAALI=;
-        b=CAzkgHae6Hp4fBArEtZH7xjs843m1lPDEq2p3BWpWPexg1AlzqSFAIOUusIcMxco9h
-         5H8D9hpOylRSkP7KV0wIpD7vR88oJH1rajvBbRAi4Ig3whxVaY5658VOKhP5M2hSj8O3
-         sTvxDJgoVpMoB5MpCVmNhs6ibMfHtQBu6ktdlyB6PU2LlPlM3UPbD0AoMmPEdfZurYuZ
-         tX4duHBHsxesXCx07zC0FyVVcSiMirvUTFaQ4lpD919gwqjU9Vq2zrfZnnmnCcaWHpPv
-         IuDwhHRMm+POADb/jNXoywaxidQZos9AX3bd2qP3VEvGj8/O62sCxF+TDp1HelRZmL5E
-         s3Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPw0ceRVxmGWS7UiDUUckqobCW+cCrjpAJosWrji76+trL8ja6EBN12z1uK8eIdPwvt7ACJpt1Q0Oguyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfOTNabIpOiZ+89ek/LApPAOe7zb5cxRtFgG7aEW3yKHvqLtbI
-	zZTtry+BCIz24mo5atYvO0yiw3smpCUtwlWt1jPeEw1LmOAVQ2+DtAODKOl3IlEHwOjOvwYPz3u
-	Zw5pMIEISSz0P3o15ShyR0yaw4rmLenwpQQ1ROKdntYIDHuc4j9Z1AgA=
-X-Google-Smtp-Source: AGHT+IF1YcYvWS2xuePCjwkI0PyK72qNk/SBP16dG0bq2Fzl6rNS80RMXgSySPv/c4cR4jQcI42/YcNfyIuGl3C8H2BTNxLO8wh9
+	s=arc-20240116; t=1729591698; c=relaxed/simple;
+	bh=t6th0mob8gstI1rzG1JnaZ2g9CAZoZsgyiKifgrHybI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mOglSmJjPsCNFqB+JXDEY+YZLvR5D1+OyF5/VzzLMOLIGMvwp8iTtbPBbu45ag+8zRadqeFWiOt35HnQ4pUIoRiaxcdBnDEMpLvUzlEIZn7Nqn0Ul0r6HlAeJhmXzGQbD9YeKuabwNNfZAo75dJ7BhdU7ZQrtBVpwai7mX3mMZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=J+DCi0ow; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=J+DCi0ow; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7118E1FBAB;
+	Tue, 22 Oct 2024 10:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1729591694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=WtxN72IlcYz/BWCQ0zqCtJ3Z0vWTVDAayPutpwTk1jo=;
+	b=J+DCi0owGnFbR9TWiddOWl3YUiMSGZs9wAdPlpyx22QlhUze6CtwYP5rTa2caDhuYWdfcs
+	zYyK9+egFjH+cP597y1+baOKwDXFyukhUEd2WCqgfX+Hv7eHa62qzxQa9cKfeKDo9/26NF
+	PYheBobFhIPgfzGFQXoPqQw+UzrYqhk=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=J+DCi0ow
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1729591694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=WtxN72IlcYz/BWCQ0zqCtJ3Z0vWTVDAayPutpwTk1jo=;
+	b=J+DCi0owGnFbR9TWiddOWl3YUiMSGZs9wAdPlpyx22QlhUze6CtwYP5rTa2caDhuYWdfcs
+	zYyK9+egFjH+cP597y1+baOKwDXFyukhUEd2WCqgfX+Hv7eHa62qzxQa9cKfeKDo9/26NF
+	PYheBobFhIPgfzGFQXoPqQw+UzrYqhk=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A97C13894;
+	Tue, 22 Oct 2024 10:08:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lse5BI55F2f4HAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 22 Oct 2024 10:08:14 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	kvm@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] kvm/x86: simplify kvm_mmu_do_page_fault() a little bit
+Date: Tue, 22 Oct 2024 12:08:12 +0200
+Message-ID: <20241022100812.4955-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b8c:b0:83a:c384:ea2a with SMTP id
- ca18e2360f4ac-83ae8aaae55mr412311839f.6.1729591649236; Tue, 22 Oct 2024
- 03:07:29 -0700 (PDT)
-Date: Tue, 22 Oct 2024 03:07:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67177961.050a0220.1e4b4d.0073.GAE@google.com>
-Subject: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
- virtqueue_disable_cb (5)
-From: syzbot <syzbot+9d46c74b27b961b244a9@syzkaller.appspotmail.com>
-To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
-	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 7118E1FBAB
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hello,
+Testing whether to call kvm_tdp_page_fault() or
+vcpu->arch.mmu->page_fault() doesn't make sense, as kvm_tdp_page_fault()
+is selected only if vcpu->arch.mmu->page_fault == kvm_tdp_page_fault.
 
-syzbot found the following issue on:
-
-HEAD commit:    3d5ad2d4eca3 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=154b7487980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fd83253b74c9c570
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d46c74b27b961b244a9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9d112e37e26b/disk-3d5ad2d4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d8f036bdcdb7/vmlinux-3d5ad2d4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/61727d52db48/bzImage-3d5ad2d4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9d46c74b27b961b244a9@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in virtqueue_disable_cb / virtqueue_disable_cb
-
-read to 0xffff888102c18178 of 2 bytes by interrupt on cpu 1:
- virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:885 [inline]
- virtqueue_disable_cb+0x63/0x180 drivers/virtio/virtio_ring.c:2446
- skb_xmit_done+0x5f/0x140 drivers/net/virtio_net.c:715
- vring_interrupt+0x161/0x190 drivers/virtio/virtio_ring.c:2595
- __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
- handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
- handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
- handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq arch/x86/kernel/irq.c:247 [inline]
- call_irq_handler arch/x86/kernel/irq.c:259 [inline]
- __common_interrupt+0x58/0xe0 arch/x86/kernel/irq.c:285
- common_interrupt+0x7c/0x90 arch/x86/kernel/irq.c:278
- asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
- kcsan_setup_watchpoint+0x404/0x410 kernel/kcsan/core.c:705
- format_decode+0x1d1/0x8a0 lib/vsprintf.c:2554
- vsnprintf+0xc6/0xe30 lib/vsprintf.c:2755
- sprintf+0x89/0xb0 lib/vsprintf.c:3007
- print_caller kernel/printk/printk.c:1373 [inline]
- info_print_prefix+0x142/0x1a0 kernel/printk/printk.c:1390
- record_print_text kernel/printk/printk.c:1437 [inline]
- printk_get_next_message+0x446/0x6f0 kernel/printk/printk.c:2978
- console_emit_next_record kernel/printk/printk.c:3046 [inline]
- console_flush_all+0x28a/0x770 kernel/printk/printk.c:3180
- __console_flush_and_unlock kernel/printk/printk.c:3239 [inline]
- console_unlock+0xab/0x330 kernel/printk/printk.c:3279
- vprintk_emit+0x3f4/0x680 kernel/printk/printk.c:2407
- vprintk_default+0x26/0x30 kernel/printk/printk.c:2422
- vprintk+0x75/0x80 kernel/printk/printk_safe.c:68
- _printk+0x7a/0xa0 kernel/printk/printk.c:2432
- batadv_check_known_mac_addr+0x153/0x180 net/batman-adv/hard-interface.c:528
- batadv_hard_if_event+0x4b0/0x1010 net/batman-adv/hard-interface.c:998
- notifier_call_chain kernel/notifier.c:93 [inline]
- raw_notifier_call_chain+0x6f/0x1d0 kernel/notifier.c:461
- call_netdevice_notifiers_info+0xae/0x100 net/core/dev.c:1996
- call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
- call_netdevice_notifiers net/core/dev.c:2048 [inline]
- dev_set_mac_address+0x1ff/0x260 net/core/dev.c:9104
- dev_set_mac_address_user+0x31/0x50 net/core/dev.c:9118
- do_setlink+0x513/0x2490 net/core/rtnetlink.c:2884
- __rtnl_newlink net/core/rtnetlink.c:3725 [inline]
- rtnl_newlink+0x11a3/0x1690 net/core/rtnetlink.c:3772
- rtnetlink_rcv_msg+0x6aa/0x710 net/core/rtnetlink.c:6675
- netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2551
- rtnetlink_rcv+0x1c/0x30 net/core/rtnetlink.c:6693
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x599/0x670 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x5cc/0x6e0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x140/0x180 net/socket.c:744
- __sys_sendto+0x1d6/0x260 net/socket.c:2214
- __do_sys_sendto net/socket.c:2226 [inline]
- __se_sys_sendto net/socket.c:2222 [inline]
- __x64_sys_sendto+0x78/0x90 net/socket.c:2222
- x64_sys_call+0x2959/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-write to 0xffff888102c18178 of 2 bytes by task 3255 on cpu 0:
- virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:886 [inline]
- virtqueue_disable_cb+0x85/0x180 drivers/virtio/virtio_ring.c:2446
- start_xmit+0x14b/0x1260 drivers/net/virtio_net.c:3067
- __netdev_start_xmit include/linux/netdevice.h:4916 [inline]
- netdev_start_xmit include/linux/netdevice.h:4925 [inline]
- xmit_one net/core/dev.c:3588 [inline]
- dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3604
- sch_direct_xmit+0x1a9/0x580 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3821 [inline]
- __dev_queue_xmit+0xf1a/0x2040 net/core/dev.c:4394
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- neigh_hh_output include/net/neighbour.h:526 [inline]
- neigh_output include/net/neighbour.h:540 [inline]
- ip_finish_output2+0x73d/0x8b0 net/ipv4/ip_output.c:236
- ip_finish_output+0x11a/0x2a0 net/ipv4/ip_output.c:324
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip_output+0xab/0x170 net/ipv4/ip_output.c:434
- dst_output include/net/dst.h:450 [inline]
- ip_local_out net/ipv4/ip_output.c:130 [inline]
- __ip_queue_xmit+0xbcc/0xbf0 net/ipv4/ip_output.c:536
- ip_queue_xmit+0x38/0x50 net/ipv4/ip_output.c:550
- __tcp_transmit_skb+0x15b0/0x1970 net/ipv4/tcp_output.c:1466
- __tcp_send_ack+0x1de/0x2e0 net/ipv4/tcp_output.c:4268
- tcp_send_ack+0x27/0x30 net/ipv4/tcp_output.c:4274
- __tcp_cleanup_rbuf+0x149/0x280 net/ipv4/tcp.c:1505
- tcp_cleanup_rbuf net/ipv4/tcp.c:1516 [inline]
- tcp_recvmsg_locked+0x1be3/0x2100 net/ipv4/tcp.c:2821
- tcp_recvmsg+0x13c/0x490 net/ipv4/tcp.c:2851
- inet_recvmsg+0xbd/0x290 net/ipv4/af_inet.c:885
- sock_recvmsg_nosec net/socket.c:1051 [inline]
- sock_recvmsg+0xfe/0x170 net/socket.c:1073
- sock_read_iter+0x14c/0x1a0 net/socket.c:1143
- new_sync_read fs/read_write.c:488 [inline]
- vfs_read+0x5f6/0x720 fs/read_write.c:569
- ksys_read+0xeb/0x1b0 fs/read_write.c:712
- __do_sys_read fs/read_write.c:722 [inline]
- __se_sys_read fs/read_write.c:720 [inline]
- __x64_sys_read+0x42/0x50 fs/read_write.c:720
- x64_sys_call+0x27d3/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x0000 -> 0x0001
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3255 Comm: syz-executor Not tainted 6.12.0-rc3-syzkaller-00389-g3d5ad2d4eca3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-==================================================================
-
-
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/kvm/mmu/mmu_internal.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+index c98827840e07..6eae54aa1160 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -322,10 +322,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 		fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) && fault.is_tdp)
+-		r = kvm_tdp_page_fault(vcpu, &fault);
+-	else
+-		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
++	r = vcpu->arch.mmu->page_fault(vcpu, &fault);
+ 
+ 	/*
+ 	 * Not sure what's happening, but punt to userspace and hope that
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
