@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-376030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 262819A9EEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD789A9F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 559DC1C22442
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4831F234F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B901991C2;
-	Tue, 22 Oct 2024 09:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F64B19ABC4;
+	Tue, 22 Oct 2024 09:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTZqzY+8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axzX5GmI"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFA7194125;
-	Tue, 22 Oct 2024 09:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537BD19A281;
+	Tue, 22 Oct 2024 09:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590349; cv=none; b=GLp6zTMR6esL8dRn8nKt7s1qN9Vl0FYo3BbNOvRFgLzbAIUP2PuwFxRcMw6NrwP/tuKaSzrHquEvv2Qj+n0OXMXqxfYAcpO+K7OF2Xf1zjP0/+ViTVwYfjqNlc0cXIQ2pf69MTOj/SDNEaP2ovZJOhkWOYuTcDapQYuC6EGOz5Y=
+	t=1729590369; cv=none; b=I7EbZEO3IDNd6J9AfnX/Wk5uortDsmHZX5ODUU111wIHVxzN9Sh25AoWDNrhF3INKh1us7hYHL9k8QrNtGsuNVjcL/7DkZZsr4WnDHV1vlwMuAoEmWu0U9arwAIPYyzbp2ddOT8uXUch2HiDrj2ffRtQbAkokYoI4NqdLVOkhO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590349; c=relaxed/simple;
-	bh=/EM5Wlnzp5qyIo+gkuTwuN/TfFFLXBMYaQ36Rg6KXbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dPCr09Mh1YvRq7GmREXAv5ybsgVL5/TJIGYDTeHh11vHi58g3j68RTMZlbcj1TK0uYKmxUCdhItQNxformhGmzpeAvV99lc8xrFBMjpfTMORnn/9OJV6v3XxKLkWjGTUO7kfG8nMSg/1L3cuT4J7zbOd2atsOjdCi3Y7wUuC5DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTZqzY+8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EFCC4CEE8;
-	Tue, 22 Oct 2024 09:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729590349;
-	bh=/EM5Wlnzp5qyIo+gkuTwuN/TfFFLXBMYaQ36Rg6KXbw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CTZqzY+8JHzK1mlUk7ymZpOglyOzo3/3W7eCay3Woe50NBiaTV18cAfVNxbSNAQ5r
-	 wdE4cJPJ+nOC6/QvnDXE5/AhZ93s0qajjeclZJpSG4uZBMRVmFeZjeIUSwvLKGq2tu
-	 Z/V8gaa449+HZZf7EB4PhWUZwMOmZ0YBwbm6hfM0j4eREbE1FkczszbATjc98lDL3Y
-	 t8zhuXM8o73kanz1TiagjbtskmuTJOAWNDYIMG4eh7jkgS5exowywh3NYMstBFnwzh
-	 BGW9RkOMRlAFyVKoV2wVOhDzORNys+0loK1RqQGi+CSNUdA/QpTcCu06etkvo9y7pG
-	 a5b+RjAQHrNLw==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso1894807a12.3;
-        Tue, 22 Oct 2024 02:45:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmhPZO1xrOU6zcZ8G+Nzb67EKkKAp207AGhugJeAD5OCQXfqgK9Op7gGNJ0TWyTnozr94NYnB+qnTWKaqB@vger.kernel.org, AJvYcCX/PodsKg2oUpT5NbkFrmc8jY3pYybQsYth2PEEvV4n12R9hTj6y+R51bRgId7055aMlxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/JSYWnaWasxr/nMpw89P6J/KjA0WEQe1ZpHCjpbbvuNbceqWu
-	k6ysrgDvTX/loWcFd3ZkRrGbxFhxyfM9lDOdst5HwnksEpxTpnEzmW9DuFRrPhNK+YEqGTt3NCp
-	OUNS2i8HOAhZubTlypY3YeUcUXsg=
-X-Google-Smtp-Source: AGHT+IGV+67ot6l201z6JTI0YHqTnxyfX0J6auFooUvHxusqUOfc7MNkh7L9q1Bt+vbb4ZHLs8A/xAHMIvaz8U6SOy4=
-X-Received: by 2002:a17:907:96a1:b0:a9a:67a8:4c0b with SMTP id
- a640c23a62f3a-a9aad3dc7d3mr188856866b.60.1729590347646; Tue, 22 Oct 2024
- 02:45:47 -0700 (PDT)
+	s=arc-20240116; t=1729590369; c=relaxed/simple;
+	bh=I3A80qnRg/24foK1MGb4E+l8Yi0cv2nSf3OCJrtqpF8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T6ArPpDSQg2RjEu+w4PIPm58x2Z38pqt1pTJ7vzYcR3fslwP9InGtH7SW+PyhCTWUJILbbuiVRehcMJu+NY16t3wd4VUO27xNUdLZjaLV8ShwUUrTPYxfNltvOVkBRwwHpVHNsq8L5OsvQfHsK7OUUr4bDXtsn3MSe7Jpg6Xh6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axzX5GmI; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so2140313a12.0;
+        Tue, 22 Oct 2024 02:46:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729590366; x=1730195166; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wa/NW0XNcXewHOtopIil9gZAv+Os9ZksCyFaYiqCPFY=;
+        b=axzX5GmIKPwe3Dvoa/X5ZW2a1IrSbvBPWWCB28fUhHwne5TfH4G5drLa/F5vvDyDdD
+         +J29P+qjeyDeIg/ijmbBHNUCOQJV1Bjjsm7BHm8XJGhM9PO36VTmQY2SRoveqQ96/V/l
+         B4LhI6aD1c/nyvsxPNOthm45RK2qTGC+wRmWPdqRNvpwm9+aHWFxHpLC2BK4TU2aif9o
+         SlGfOz+3/peRiYnMVpaDAYZ3H/UHy64FpaZlkaz3M0Oo1JnNLCd1nZb7iHbW8W3x1GFq
+         aUqyDC/9KA4b5iwVdIRU908J6V5CdR6yBXA06yTCdEd6hS9wKrI3vOdfy5+AbrTN47rh
+         JY+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729590366; x=1730195166;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wa/NW0XNcXewHOtopIil9gZAv+Os9ZksCyFaYiqCPFY=;
+        b=LTYpQ16fiwS+q5ig3KB7hNtKzTvOTFz1L1XpcBfZcpsygyHir3DQTSIDK1gT0q39EE
+         n2RhYc6usXeEXIKFA5p5VaHEWp0HaiWn4tBcHmphEgfno8SXIyOnsQOuRxgt5dS49/ha
+         ZmeWv92bwxNMgiRcvGJyG+PJS9PB3EFR9OBhTzy5kcpDrX345ZhjgfKyuTKRYoFyqf7K
+         8fv3nQbQJBetTmafue9L40QcvbL1UdEeZcahbE39G4wutQyUdPToBT8AUMRNkMnqa5+r
+         ZVBnsYaYW992boXWWnVZc3emx5Z/sIFcnaXQvOSBI5lIXf95MytC2+gduuummSWvNSlK
+         e+Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDe6qVpag0X2F5YQPVNR0Ro02tL8dCoPOyG5bLuo9dEhS2N+rUj88oL3+LzhrlqQkr+FUrFqbFPV3@vger.kernel.org, AJvYcCW14WJnFYBn7c1BpL9AFkDSn3q9Te5mVHdvVE5MUCOD7swcwhNpDH3fQyHktqakdD+k/Ftzv9Xl@vger.kernel.org, AJvYcCWtIxDj8I18xvOr/H3x1W0VWbC2za5nAMsqp/+XtBvzgAUZ2STwonTIpqSdG0fPEu6F15eY6HJexKbo0UNj@vger.kernel.org, AJvYcCXqkES16LY99JGMZ38U3eFvQwIzI7/qN7D8y14jyBRBSArupmwSuBy8zyOIdx4Ps/SRgRPD+DZ6XqoOjY7P@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx+xixkWco1BcbYKkzS+v7iHbqN6z97NWqXpaNW85oU68kg4jc
+	FMsjwTx+ksOfhpz6K16CZzRPcIlIdzCpAycRs26ZQAwLSo7l0wK2
+X-Google-Smtp-Source: AGHT+IE/PSXZdNZMTrnXKZL8iufhEBfDpd9zUhvLIUHtTkYQu4PTZakuYQfLZ8wrjxiXwh0xPI1HRA==
+X-Received: by 2002:a17:907:969e:b0:a99:fb10:1285 with SMTP id a640c23a62f3a-a9aa890ab77mr276977766b.20.1729590365280;
+        Tue, 22 Oct 2024 02:46:05 -0700 (PDT)
+Received: from redchief.local (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9a912edb6asm313237666b.49.2024.10.22.02.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 02:46:04 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Tue, 22 Oct 2024 11:45:56 +0200
+Subject: [PATCH] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830093229.4088354-1-maobibo@loongson.cn> <20240830093229.4088354-4-maobibo@loongson.cn>
- <CAAhV-H4W4LwL3U2HT+-r+6nH5ZSBBbPYL2wdZJqQF7WNkhOgMw@mail.gmail.com>
- <878qv6y631.ffs@tglx> <2fb27579-5a4d-8bcc-db08-8942960dc07e@loongson.cn>
-In-Reply-To: <2fb27579-5a4d-8bcc-db08-8942960dc07e@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 22 Oct 2024 17:45:34 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H52kC_-ehzxmT5ye+XVNm5Lm=psSfAv6xqnQpkOHTMFdA@mail.gmail.com>
-Message-ID: <CAAhV-H52kC_-ehzxmT5ye+XVNm5Lm=psSfAv6xqnQpkOHTMFdA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/3] irqchip/loongson-eiointc: Add extioi virt
- extension support
-To: maobibo <maobibo@loongson.cn>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org, 
-	Song Gao <gaosong@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFN0F2cC/yWMSwrDMAwFrxK0roplu6XkKiWLVJVdQb52Egohd
+ 69plvN4MztkSSoZ6mqHJJtmHYcCdKmAP+0QBfVdGKyxnowlDPrFyIwzZ288xqnrHAZH3rkbP4Q
+ DFHVKUn7/7LM5Ocm8lvpyjvBqsyCPfa9LXW33K1lMTNAcxw+yY9yfkwAAAA==
+X-Change-ID: 20241021-fix-gcc-qcs404-gpll3-f314335c8ecf
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Oct 22, 2024 at 5:17=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
-:
->
-> Hi Huacai/Thomas,
->
-> Sorry for the ping message :(
->
-> Can this patch be applied int next RC version?
-Queued for the next release.
+The comment before the config of the GPLL3 PLL says that the
+PLL should run at 930 MHz. In contrary to this, calculating
+the frequency from the current configuration values by using
+19.2 MHz as input frequency defined in 'qcs404.dtsi', it gives
+921.6 MHz:
 
-Huacai
+  $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x0
+  $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
+  921600000.00000000000000000000
 
->
-> Regards
-> Bibo Mao
->
-> On 2024/10/2 =E4=B8=8B=E5=8D=889:42, Thomas Gleixner wrote:
-> > On Wed, Sep 11 2024 at 17:11, Huacai Chen wrote:
-> >> Hi, Thomas,
-> >>
-> >> On Fri, Aug 30, 2024 at 5:32=E2=80=AFPM Bibo Mao <maobibo@loongson.cn>=
- wrote:
-> >>>
-> >>> Interrupts can be routed to maximal four virtual CPUs with one HW
-> >>> EIOINTC interrupt controller model, since interrupt routing is encode=
-d with
-> >>> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC vir=
-t
-> >>> extension support so that interrupts can be routed to 256 vCPUs on
-> >>> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOI=
-NTC
-> >>> node type is removed, so there are 8 bits for cpu selection, at most =
-256
-> >>> vCPUs are supported for interrupt routing.
-> >> This patch is OK for me now, but seems it depends on the first two,
-> >> and the first two will get upstream via loongarch-kvm tree. So is that
-> >> possible to also apply this one to loongarch-kvm with your Acked-by?
-> >
-> > Go ahead.
-> >
-> > Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> >
->
+Set 'alpha_hi' in the configuration to a value used in downstream
+kernels [1][2] in order to get the correct output rate:
+
+  $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x70
+  $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
+  930000000.00000000000000000000
+
+The change is based on static code analysis, compile tested only.
+
+[1] https://git.codelinaro.org/clo/la/kernel/msm-5.4/-/blob/kernel.lnx.5.4.r56-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L335
+[2} https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/blob/kernel.lnx.5.15.r49-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L127
+
+Cc: stable@vger.kernel.org
+Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Note: due to a bug in the clk_alpha_pll_configure() function, the following
+patch is also needed in order for this fix to take effect:
+
+https://lore.kernel.org/all/20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com/
+---
+ drivers/clk/qcom/gcc-qcs404.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index c3cfd572e7c1e0a987519be2cb2050c9bc7992c7..5ca003c9bfba89bee2e626b3c35936452cc02765 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -131,6 +131,7 @@ static struct clk_alpha_pll gpll1_out_main = {
+ /* 930MHz configuration */
+ static const struct alpha_pll_config gpll3_config = {
+ 	.l = 48,
++	.alpha_hi = 0x70,
+ 	.alpha = 0x0,
+ 	.alpha_en_mask = BIT(24),
+ 	.post_div_mask = 0xf << 8,
+
+---
+base-commit: 03dc72319cee7d0dfefee9ae7041b67732f6b8cd
+change-id: 20241021-fix-gcc-qcs404-gpll3-f314335c8ecf
+
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
+
 
