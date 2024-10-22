@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-377117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F69ABA15
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:30:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA6B9ABA16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE231C22E6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:30:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C5CB229ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CCC1CEEAE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B121CEEB3;
 	Tue, 22 Oct 2024 23:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="U+FJoJOH"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="miiCJCUh"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82F51CEADF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E651CEAD4
 	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729639790; cv=none; b=SGtEI8X0Bzj7Lvf4rEJhtppwkSMWnuacHTXiGHCFU48Za1X2KLEXpB3bvTBXqqDcE25AnB1RfCJYZz/OnPAhSslRba+y3MZXO2oP1l+LJ1ew4tDBQ71dU/cVqY68Sw3OSWupsjlXUAniTs7t35MVUJ2k+Z0+kyhqGJBwq+k7ogw=
+	t=1729639790; cv=none; b=BNV57oXhpePtYCFStX3l9Ydv3Frswu7QnaDgqIBbVAMIwkFcxD7+DjISWlOTS9il0bJe5jW6aV3QD+HpEMBW3uqUwAecCYCdVCAYMgXBPjXV9UrmqRw83qacPYNiR3YJ9lfe1imFJP0QTaw1l0EKRWnL3L11d7tRLYszjb4igMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729639790; c=relaxed/simple;
-	bh=mJJP4NFMgpUIHLmDof5C/WQkxSL1vtNV830l4pHYEAk=;
+	bh=UwRkCv/pdCmbbrU8lfOOknKM8Kkd/1K6UQrMyfcArRc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BxOWlKd9VkAsdjvYXuzAR4fanzZahHRV0rmsXfWmRjJALpwrMqohi43FT0Y8XIGhBghfcdbM2J1fZ5Up+Sp01iuLc6TBoJE+vK6qklBAHycB1Mvsh9CmHATNkzZOe/8AMPPxJqWYK/CQkdd1xEYFDOqo+gUOXkDL4FdUMGjcrw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=U+FJoJOH; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=o1ZRiwsKi5I/Wiw5P4r1XRrkpGbwLe6QM1wrYqD2uIA+iy5PiRpFQaBJ9HhfzMlerER4SCz9Aume424+FcT83h33y8cerCtlFw0yqbDIcgnVnch7M8ZPGV2MDIw5JALvB+gQbKO2TSzLVzXKT00lofC0mwn7rkrByPVOuNmUvdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=miiCJCUh; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=a+8B/W4nG6OVt83hHSuwJrLKhvYzazktOCgXNngg1nM=; b=U+FJoJOHQBa9nRMK
-	DzALhTBUhFAFmpvg8P8B236pJJ8rU3jux/O+0G33KHQFZJbnhlPOC1SJATJt6+95U6QVKUJwfGSKo
-	nxh0QS4W7C/ize28lIduJPBFLybQV9er78QYrVvkUEShf3ycFd9Wl5/UOw0+RgkRlUCfTHgpKct+C
-	oUWHAjxIN45F8h+c8B+bUPNqzEMj23r9NVP3hhGchh/9IURou9DXbVdRA9jGDAcecbjijNsXO0F/w
-	2/kM4PW8W3+NhPz/1UJ8T44CIFZaQpJoPhNEvWR54eHwc7QZSVCvz7SupukWTOk1SMFx6U/2ogLn3
-	92dDz5R6A4FYt+qOuw==;
+	:Subject; bh=7tqnPkF2BTUcYbffZanA7zfXObwjUDobXcZGkQ4od/8=; b=miiCJCUhKGG/Ek0G
+	WjNqQ78qCseA8+bWR4xRZsPFkTkPLUTitts/v6Sw+BaGwkIzk6anjII5irleL9WmskoNOS9U+p+u5
+	jhQ22tVqbiizvsMvFByh6ulMj/COw9BgpAtsdbvlF4FcajK4Jpl0SnxPvqR+QigUT9VANiKwY0ywC
+	bJOqnxSU9yHk05TTEjqTfsZeQg+Djnuz6NgVz5i1kFQnqNnypbx//hWvUTWgIkRnUUVtKe5aAjRTl
+	IbvL62sPERJHyZm3w3Fimlvc8wsGcKKS3vevJlvt4marKPeTxi2/VIOQdx9rT/mf6cd4REiXpnH9e
+	RQdnRtMZCS32+VU5IQ==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1t3OJm-00CtGr-2D;
-	Tue, 22 Oct 2024 23:29:38 +0000
+	id 1t3OJn-00CtGr-1c;
+	Tue, 22 Oct 2024 23:29:39 +0000
 From: linux@treblig.org
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -52,9 +52,9 @@ To: maarten.lankhorst@linux.intel.com,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/5] drm/sysfs: Remove unused drm_class_device_(un)register
-Date: Wed, 23 Oct 2024 00:29:31 +0100
-Message-ID: <20241022232934.238124-3-linux@treblig.org>
+Subject: [PATCH 3/5] drm/vblank: Remove unused drm_crtc_vblank_count_and_time
+Date: Wed, 23 Oct 2024 00:29:32 +0100
+Message-ID: <20241022232934.238124-4-linux@treblig.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241022232934.238124-1-linux@treblig.org>
 References: <20241022232934.238124-1-linux@treblig.org>
@@ -68,76 +68,122 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-drm_class_device_register() and drm_class_device_unregister() have been
-unused since
-commit ed89fff97382 ("drm/ttm: drop sysfs directory")
+drm_crtc_vblank_count_and_time() was explicitly added by
+commit cf6483050e9b ("drm/irq: Add drm_crtc_vblank_count_and_time()")
+in 2015, but never used.
 
-Remove them.
+Remove it, and rework comments that reference it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/gpu/drm/drm_sysfs.c | 32 --------------------------------
- include/drm/drm_sysfs.h     |  4 ----
- 2 files changed, 36 deletions(-)
+ drivers/gpu/drm/drm_vblank.c | 44 +++++++-----------------------------
+ include/drm/drm_vblank.h     | 10 ++++----
+ 2 files changed, 12 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-index fb3bbb6adcd1..3bc90fe5cea3 100644
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -548,35 +548,3 @@ struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
- 	put_device(kdev);
- 	return ERR_PTR(r);
+diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+index 94e45ed6869d..67d6367e9f4b 100644
+--- a/drivers/gpu/drm/drm_vblank.c
++++ b/drivers/gpu/drm/drm_vblank.c
+@@ -908,10 +908,10 @@ drm_get_last_vbltimestamp(struct drm_device *dev, unsigned int pipe,
+  * drm_crtc_accurate_vblank_count() for such use-cases.
+  *
+  * Note that for a given vblank counter value drm_crtc_handle_vblank()
+- * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+- * provide a barrier: Any writes done before calling
+- * drm_crtc_handle_vblank() will be visible to callers of the later
+- * functions, if the vblank count is the same or a later one.
++ * and drm_crtc_vblank_count() provide a barrier:
++ * Any writes done before calling drm_crtc_handle_vblank() will be
++ * visible to callers of the later functions, if the vblank count is
++ * the same or a later one.
+  *
+  * See also &drm_vblank_crtc.count.
+  *
+@@ -936,7 +936,6 @@ EXPORT_SYMBOL(drm_crtc_vblank_count);
+  * modesetting activity. Returns corresponding system timestamp of the time
+  * of the vblank interval that corresponds to the current vblank counter value.
+  *
+- * This is the legacy version of drm_crtc_vblank_count_and_time().
+  */
+ static u64 drm_vblank_count_and_time(struct drm_device *dev, unsigned int pipe,
+ 				     ktime_t *vblanktime)
+@@ -959,33 +958,6 @@ static u64 drm_vblank_count_and_time(struct drm_device *dev, unsigned int pipe,
+ 	return vblank_count;
  }
--
--/**
-- * drm_class_device_register - register new device with the DRM sysfs class
-- * @dev: device to register
-- *
-- * Registers a new &struct device within the DRM sysfs class. Essentially only
-- * used by ttm to have a place for its global settings. Drivers should never use
-- * this.
-- */
--int drm_class_device_register(struct device *dev)
--{
--	if (!drm_class || IS_ERR(drm_class))
--		return -ENOENT;
--
--	dev->class = drm_class;
--	return device_register(dev);
--}
--EXPORT_SYMBOL_GPL(drm_class_device_register);
--
--/**
-- * drm_class_device_unregister - unregister device with the DRM sysfs class
-- * @dev: device to unregister
-- *
-- * Unregisters a &struct device from the DRM sysfs class. Essentially only used
-- * by ttm to have a place for its global settings. Drivers should never use
-- * this.
-- */
--void drm_class_device_unregister(struct device *dev)
--{
--	return device_unregister(dev);
--}
--EXPORT_SYMBOL_GPL(drm_class_device_unregister);
-diff --git a/include/drm/drm_sysfs.h b/include/drm/drm_sysfs.h
-index 96a5d858404b..7695873a9456 100644
---- a/include/drm/drm_sysfs.h
-+++ b/include/drm/drm_sysfs.h
-@@ -3,13 +3,9 @@
- #define _DRM_SYSFS_H_
  
- struct drm_device;
--struct device;
- struct drm_connector;
- struct drm_property;
- 
--int drm_class_device_register(struct device *dev);
--void drm_class_device_unregister(struct device *dev);
+-/**
+- * drm_crtc_vblank_count_and_time - retrieve "cooked" vblank counter value
+- *     and the system timestamp corresponding to that vblank counter value
+- * @crtc: which counter to retrieve
+- * @vblanktime: Pointer to time to receive the vblank timestamp.
+- *
+- * Fetches the "cooked" vblank count value that represents the number of
+- * vblank events since the system was booted, including lost events due to
+- * modesetting activity. Returns corresponding system timestamp of the time
+- * of the vblank interval that corresponds to the current vblank counter value.
+- *
+- * Note that for a given vblank counter value drm_crtc_handle_vblank()
+- * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+- * provide a barrier: Any writes done before calling
+- * drm_crtc_handle_vblank() will be visible to callers of the later
+- * functions, if the vblank count is the same or a later one.
+- *
+- * See also &drm_vblank_crtc.count.
+- */
+-u64 drm_crtc_vblank_count_and_time(struct drm_crtc *crtc,
+-				   ktime_t *vblanktime)
+-{
+-	return drm_vblank_count_and_time(crtc->dev, drm_crtc_index(crtc),
+-					 vblanktime);
+-}
+-EXPORT_SYMBOL(drm_crtc_vblank_count_and_time);
 -
- void drm_sysfs_hotplug_event(struct drm_device *dev);
- void drm_sysfs_connector_hotplug_event(struct drm_connector *connector);
- void drm_sysfs_connector_property_event(struct drm_connector *connector,
+ /**
+  * drm_crtc_next_vblank_start - calculate the time of the next vblank
+  * @crtc: the crtc for which to calculate next vblank time
+@@ -1978,10 +1950,10 @@ EXPORT_SYMBOL(drm_handle_vblank);
+  * This is the native KMS version of drm_handle_vblank().
+  *
+  * Note that for a given vblank counter value drm_crtc_handle_vblank()
+- * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+- * provide a barrier: Any writes done before calling
+- * drm_crtc_handle_vblank() will be visible to callers of the later
+- * functions, if the vblank count is the same or a later one.
++ * and drm_crtc_vblank_count() * provide a barrier:
++ * Any writes done before calling * drm_crtc_handle_vblank() will be
++ * visible to callers of the later functions, if the vblank count is
++ * the same or a later one.
+  *
+  * See also &drm_vblank_crtc.count.
+  *
+diff --git a/include/drm/drm_vblank.h b/include/drm/drm_vblank.h
+index 151ab1e85b1b..572e54425970 100644
+--- a/include/drm/drm_vblank.h
++++ b/include/drm/drm_vblank.h
+@@ -141,10 +141,10 @@ struct drm_vblank_crtc {
+ 	 * Current software vblank counter.
+ 	 *
+ 	 * Note that for a given vblank counter value drm_crtc_handle_vblank()
+-	 * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+-	 * provide a barrier: Any writes done before calling
+-	 * drm_crtc_handle_vblank() will be visible to callers of the later
+-	 * functions, iff the vblank count is the same or a later one.
++	 * and drm_crtc_vblank_count() provide a barrier:
++	 * Any writes done before calling drm_crtc_handle_vblank() will be
++	 * visible to callers of the later functions, iff the vblank count is
++	 * the same or a later one.
+ 	 *
+ 	 * IMPORTANT: This guarantee requires barriers, therefor never access
+ 	 * this field directly. Use drm_crtc_vblank_count() instead.
+@@ -260,8 +260,6 @@ struct drm_vblank_crtc *drm_crtc_vblank_crtc(struct drm_crtc *crtc);
+ int drm_vblank_init(struct drm_device *dev, unsigned int num_crtcs);
+ bool drm_dev_has_vblank(const struct drm_device *dev);
+ u64 drm_crtc_vblank_count(struct drm_crtc *crtc);
+-u64 drm_crtc_vblank_count_and_time(struct drm_crtc *crtc,
+-				   ktime_t *vblanktime);
+ int drm_crtc_next_vblank_start(struct drm_crtc *crtc, ktime_t *vblanktime);
+ void drm_crtc_send_vblank_event(struct drm_crtc *crtc,
+ 			       struct drm_pending_vblank_event *e);
 -- 
 2.47.0
 
