@@ -1,56 +1,39 @@
-Return-Path: <linux-kernel+bounces-377089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF0D9AB9B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:52:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093019AB9AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A875B22D71
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E6E284770
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237A01CDFC8;
-	Tue, 22 Oct 2024 22:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="BoaNCIs5"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271511CCEE9;
-	Tue, 22 Oct 2024 22:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FFD1CDFC3;
+	Tue, 22 Oct 2024 22:51:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8629E1CDFCB;
+	Tue, 22 Oct 2024 22:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637543; cv=none; b=r9MisWzM217L04JgWxpe9fBn6OScQDOMxTyLv7pqRYrccIbmMtEMWYcdD/37tldC4bCsT0hR4B2lCdCNuDezKQ+HIxByLQP9ogE9phtcBjC7rDfSI4ljFhfzFilzKibVsvK0zFppNMj5y25HHHK8Sb+vICVg+iraOejTzG++Nss=
+	t=1729637471; cv=none; b=lBqddHZLnbPvsiHGAiIaOT3+guwuSpSwwVuZGCTvcm3lkm+7GuyCsaW1YPCDt1fk2/MAqymwegnwG0Nsv2fx9/06Pq6NZl9EIWbaTpu2+uyWWS48dsp6tOHPXHRLYCuyLV8kRDE9c2y4EfAtolKTKByhxZSSACdmLg8ZmcFzlAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637543; c=relaxed/simple;
-	bh=VQrpKREvli+uQgQBCCF3h70saTVIC9tipcVecmoLowE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YdPKh8B8oFrUE2eC5dljoaft+vQFsDbkVUYRN9ZdUML8EM2yMkB8kPgW1U+UugVQn5x6PM70/Kh8zVtbQJKrg/8MV1nAhCiwSQTr2/uOlv4Xgz9XKNnQfIbFoyym/tkb0bqIGSpKBsqR3AKNXZKTuJ61MD8n+TxpMPGJktWiQxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=BoaNCIs5; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 29A1FA041A;
-	Wed, 23 Oct 2024 00:52:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=o+6vI2iAgKwV5VmRn04r
-	SP3ACb8gAm2vQTCmx1chAik=; b=BoaNCIs57WLzSNjaN7xZCnp7eLPFowP0lhHI
-	gpCRAKZXPRuckip+Zd4PAOqzwHsmqjtG4H2fFD2qav4fmhRq7dVSyH5dDCSk4/8x
-	aJ9kIcbDy3znhJMP6pMZFId4VXiN0rpfruigA1QFFacwvzgZ5bpRXPPU9cxEAhrB
-	erbkMLR+41QoxlXhJymEReKtienr8fO1WZHxq9Fg3oYnTuSbrsuqKIkOPHB6eRaR
-	wr04IJ5gI8R0wXXT4d+fyzeKPk05uDwnoXl3rF6GAwhKExRrnb85gAcmq1kfU2ct
-	LxLrDauM3hvmYzxvux3g3rwVBNd5YG2muq8dyI2pJYnaWgPl15tiIDpRomvI1AMd
-	9b7N3fqxU03kaQfaMVzzedeRCf7fNgpOP2UQkIiA2NjVE/nJJ4GPDOkkOysMV+ch
-	jLe1YHJrLYSKNFL21LMPB8vr9aU5RHIVVLjAmT6d7BNHgH9i+oecT/05ceATdC2N
-	HWWlTrNeFbQh4L/IqKWB64zzTu3okcNkMVCBfAjUBufsyfhb8h6I/Trj3Ph0LdW+
-	h7X7nbo6RDyTFON0mb5gv7ALxMDWPsW76ZEQGO9AHJosIQLpOitrFyUAHh6VNmfU
-	wZHMSUGzr7sCoeRPsLIyEr7jDXrqVlPqO4jGmXTOlaizEli8yOaPnYiocONuQR7e
-	ZWnI2YI=
-Message-ID: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
-Date: Wed, 23 Oct 2024 00:52:06 +0200
+	s=arc-20240116; t=1729637471; c=relaxed/simple;
+	bh=phcC3h+yzGKjMLzr4Wapgaq+8TfqvWpOxD6rLamedsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N9b6bm2Aqjm+kirhLS0eqDm+h/h0fJV6Ip1UZLH+5ZT/5KLoN9n+VNpeN9M1zaM+a38KPEnhDSRyDEnNuBRDvDVBMOdpbnK/Dn8NmDjyN2JKiqxt2+y4s4prGhscMxLmt3NCCH0WizlZ1pgHnjVXxHxtdc/OPRsRITgqxzYYZYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A32E497;
+	Tue, 22 Oct 2024 15:51:38 -0700 (PDT)
+Received: from [10.57.56.252] (unknown [10.57.56.252])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD6373F73B;
+	Tue, 22 Oct 2024 15:51:07 -0700 (PDT)
+Message-ID: <b6b42279-bc08-49aa-ac1e-98fe816bf342@arm.com>
+Date: Tue, 22 Oct 2024 23:52:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,87 +41,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/10] Add support for DMA and audio codec of F1C100s
-To: Mesih Kilinc <mesihkilinc@gmail.com>, <dmaengine@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-	<linux-sunxi@googlegroups.com>
-CC: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>, "Mark
- Rutland" <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>
-References: <cover.1543782328.git.mesihkilinc@gmail.com>
+Subject: Re: [PATCH v1 00/10] thermal: core: Use lists of trips for trip
+ crossing detection and handling
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <4958885.31r3eYUQgx@rjwysocki.net>
+ <CAJZ5v0g_ALycyT7Y2GwebF_ON-EMP_WGoTn4+1V0ZisK1vwROg@mail.gmail.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <cover.1543782328.git.mesihkilinc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855677163
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0g_ALycyT7Y2GwebF_ON-EMP_WGoTn4+1V0ZisK1vwROg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
-I was trying to get audio on the F1C200s, but so far had no luck, and I 
-came across this series.
+Hi Rafael,
 
-On 2018. 12. 02. 22:23, Mesih Kilinc wrote:
-> This is RFC patchset for Allwinner suniv F1C100s to support DMA and
-> audio codec.
+On 10/21/24 12:16, Rafael J. Wysocki wrote:
+> On Wed, Oct 16, 2024 at 1:37 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>
+>> Hi Everyone,
+>>
+>> This is a continuation of
+>>
+>> https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
+>>
+>> derived from patches [3-7/8] in the following patch series:
+>>
+>> https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
+>>
+>> but mostly rewritten.
+>>
+>> It is based on the observation that putting trip points on sorted lists
+>> allows to reduce overhead related to the handling of them in some cases.
+>> Namely, it avoids the need to walk all trips in a thermal zone every
+>> time the zone temperature is updated (including invalid ones) and
+>> generally leads to cleaner code.
+>>
+>> Patches [01-08/10] are preliminary, patch [09/10] makes the key changes,
+>> and patch [10/10] is a super-cosmetic cleanup on top of the rest.
+>>
+>> Please refer to the individual patch changelogs for details.
 > 
-> Allwinner F1C100s has a audio codec that has necessary digital and
-> analog parts. It has r-l headphone output and microphone, line, r-l
-> FM inputs. ADC can capture any inputs and also output channels via mux.
-> Any input channels or DAC samples can feed output channels.
+> This material is on the thermal-core-experimental branch in
+> linux-pm.git along with
 > 
-> Add support for this audio codec.
+> https://lore.kernel.org/linux-pm/2215082.irdbgypaU6@rjwysocki.net/
 > 
-> F1C100s utilizes DMA channels to send and receive ADC-DAC samples. So
-> DMA support needed. Patch 1~5 adds support for DMA. Suniv F1C100s has
-> very similar DMA to sun4i. But there is some dissimilarities also.
-> Suniv features a DMA reset bit in clock  control unit. It has smaller
-> number of DMA channels. Several registers has different addresses.
-> It's max burst size is 4 instead of 8. Also DMA endpoint numbers are
-> different.
+> and
 > 
-> Patch 6 adds DMA max burst option to sun4i-codec.
+> https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
 > 
-> Patch 7~8 Add support for suniv F1C100s audio codec.
-> 
-> Patch 9 adds audio codec to suniv-f1c100s.dtsi
-> 
-> Patch 10 adds audio codec support to Lichee Pi Nano board.
->   
-> Thanks!
-> 
-> Mesih Kilinc (10):
->    dma-engine: sun4i: Add a quirk to support different chips
->    dma-engine: sun4i: Add has_reset option to quirk
->    dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
->    dma-engine: sun4i: Add support for Allwinner suniv F1C100s
->    ARM: dts: suniv: f1c100s: Add support for DMA
->    ASoC: sun4i-codec: Add DMA Max Burst field
->    dt-bindigs: sound: Add Allwinner suniv F1C100s Audio Codec
->    ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
->    ARM: dts: suniv: f1c100s: Add support for Audio Codec
->    ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
-> 
->   .../devicetree/bindings/dma/sun4i-dma.txt          |   4 +-
->   .../devicetree/bindings/sound/sun4i-codec.txt      |   5 +
->   arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |   8 +
->   arch/arm/boot/dts/suniv-f1c100s.dtsi               |  25 ++
->   drivers/dma/Kconfig                                |   4 +-
->   drivers/dma/sun4i-dma.c                            | 221 ++++++++++--
->   sound/soc/sunxi/sun4i-codec.c                      | 371 ++++++++++++++++++++-
->   7 files changed, 601 insertions(+), 37 deletions(-)
+> which are also present in the thermal-core-testing branch.
 
-What's the status of this series? I see that it was not merged, despite 
-getting a few ACKs and only a few minor comments. Ripard's comments make 
-me believe that the sun4i DMA driver should be able to handle the suniv 
-family with minimal adjustments, have those not been added? Or is it 
-that the DMA support is ready but the ALSA/ASoC support is missing?
 
-Bence
+If it's not too late, I can review that stuff tomorrow for you.
 
+Regards,
+Lukasz
 
