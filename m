@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-376078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D6A9A9FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D066B9A9FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C241283DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91298284157
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4DE1993B8;
-	Tue, 22 Oct 2024 10:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F4119A281;
+	Tue, 22 Oct 2024 10:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="WQAeDcOb"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=crawford.emu.id.au header.i=@crawford.emu.id.au header.b="Xy87yng0"
+Received: from bits.crawford.emu.id.au (bits.crawford.emu.id.au [116.255.43.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7B9145B24
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FCB18E02D;
+	Tue, 22 Oct 2024 10:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.255.43.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591956; cv=none; b=rXIvIUSINXvmRYpYgbQo3IoZMISo59olF6h1fUb3r9Dm7pU7Qvs96gY4/9wEDff0T+dEmjGc+HBZkO7nkPWE1KnXLVvsjtSTmLDAzM1IZ5uyyOaUSs14fWJUnezNmjDORL35X3wtSnEotOGvFrDXsS+Dy7KraLZS4gb7V1zj/UE=
+	t=1729592638; cv=none; b=LCtLKV/Y05coCQ+SbbbL2WrCxw/2aLojWqIYS5QqaFwA5w1e90j6kl5fPVvRI0boB1n7i/PqRPlawMzBnIupJZoIhsVIix7UqOgFDVIe6Efrcw6NuhtoZ9GoEUs1n1pKPaJ+PVhK6BEGwilJSSi0CD/RHsm6wcxNu5RpEJZONHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591956; c=relaxed/simple;
-	bh=xL1HCYi+zrts8RXAQUVfhEIWRIYuKy3PpcBr1bQH/HU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oKna7HFi+DKebosxY4M1B0Wz/fEAvDrPK0mnBiGb+RifelIO6nr7vq8ySEDb/gU6PgR1uR/NsFBrCZU2D4+DGniNlV2bQyN/e2ZYo3SqKMc+5pDc8adfhk2MtjPQ722pO6s89XiXinYd5KyB5Sis/4rNBjZyjNAsBW44PLVHes8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=WQAeDcOb; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=m9A8NsFBAFTswSqlww6Y4t2F/qBPyrFIIj2x1KFfI8E=;
-	t=1729591955; x=1730801555; b=WQAeDcObNPBxqQSeMS2PVLtBxz9iUE+qkazS2bHCWqv2azj
-	ME/gNOTJ9YiibI8sgp3aHO4LoS527Slp86uUjPfpwJnWbkCjZxCNCdgTmoeJVSP3u2olgpK2uo1XU
-	NAaVk/zcGP3QDLHl8SekH8W5DdxHedL1mSWvebSQHONrNsMRKU2sGRsu3x+lL/DhHMvO48vJ7dtG0
-	bQa4fh440u4Y5LJQqO6NpxLVcEC3iO0m0RRb/X+WNcW4UgXM3CkjqLx/F/Mn3Jhcrz8pH/l9pVL0k
-	KxBA8Ltydui7ODfrisdLGH2+ezCkBEfZikUZfyf4kXX0+JwKvoQUAhy4t0XScNCg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1t3BsN-00000001fw4-1Pnq;
-	Tue, 22 Oct 2024 12:12:31 +0200
-Message-ID: <242801ccf39e42dfc8305c248649cd3a5a3bee10.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] um: Fix misaligned stack in stub_exe
-From: Johannes Berg <johannes@sipsolutions.net>
-To: David Gow <davidgow@google.com>, Benjamin Berg <benjamin.berg@intel.com>
-Cc: linux-um@lists.infradead.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 22 Oct 2024 12:12:30 +0200
-In-Reply-To: <20241022101016.2565249-2-davidgow@google.com>
-References: <20241022101016.2565249-2-davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	s=arc-20240116; t=1729592638; c=relaxed/simple;
+	bh=SRqzvbaoKeZkrjxlkdfsxvkrPl82yGUEMUAs26nt2sg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eASd/NUDR4n9sHWAWdj7/up22t2q+IR6urcTZGEidwStg+E6IL2s3w1f84kW1xz0BGM3xonqVtdIypEhmB+v2UwxZ2D3Le7hD8XwFwGjPAwfGVaaovMkz5HnF/7A1xHQ638Tbg5lhu7SXqaxlKP114PJriDdsYBgEZAUZaoi+sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crawford.emu.id.au; spf=pass smtp.mailfrom=crawford.emu.id.au; dkim=pass (2048-bit key) header.d=crawford.emu.id.au header.i=@crawford.emu.id.au header.b=Xy87yng0; arc=none smtp.client-ip=116.255.43.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crawford.emu.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crawford.emu.id.au
+Received: from agc.crawford.emu.id.au (agc.crawford.emu.id.au [IPv6:fdd2:7aad:d478:1:0:0:cb10:cc07])
+	(authenticated bits=0)
+	by bits.crawford.emu.id.au (8.18.1/8.17.2) with ESMTPSA id 49MADgsv3932404
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Tue, 22 Oct 2024 21:13:42 +1100
+Authentication-Results: bits.crawford.emu.id.au; arc=none smtp.remote-ip=fdd2:7aad:d478:1::cb10:cc07
+DKIM-Filter: OpenDKIM Filter v2.11.0 bits.crawford.emu.id.au 49MADgsv3932404
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crawford.emu.id.au;
+	s=s1; t=1729592022; bh=o7T3ggDWd/F5kuHCX1ncp7Ta/8DpEI2p5RILtO4r0ng=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=Xy87yng0Uz7jalo2f6F+D5NxY//edtgRdctpwbYtg3cMsAsBk+HluLYwAZQ1lN1kG
+	 N7vQJlq5rBIW/swBjC4WiRG+yG0dGtfIgRoq7Zc17KDEug85a9LfotFZBRxJVeeA/A
+	 S91fw9vJ0hP3+m9uktPOkOUu+cCPwhqYJu7X1uGCkZGfX0rVtGPPOdi+GJMGnzZsy3
+	 7K/WW/S5z7e4KzpRU3GB3XqA67/HdQ3JCVO7fseqeWDPl+JoGb0N3KwumDoGoPWpbS
+	 o9JfrPNZPnEd7vhm30tHhClZpNAfvQJEVCpCyqyiklmo98WIeIzgnr0+lKiv5M9J3/
+	 EH7Tmnkur5tgw==
+Message-ID: <6cab565f05820eb2e1a1c55644be057427ecdf2e.camel@crawford.emu.id.au>
+Subject: Re: [PATCH v2] hwmon: (it87) Add support for IT8625E
+From: Frank Crawford <frank@crawford.emu.id.au>
+To: Ai Chao <aichao@kylinos.cn>, jdelvare@suse.com, linux@roeck-us.net,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 22 Oct 2024 21:13:42 +1100
+In-Reply-To: <20241022091319.82503-1-aichao@kylinos.cn>
+References: <20241022091319.82503-1-aichao@kylinos.cn>
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
@@ -63,100 +63,70 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (bits.crawford.emu.id.au [IPv6:fdd2:7aad:d478:1:0:0:cb10:cc01]); Tue, 22 Oct 2024 21:13:42 +1100 (AEDT)
+X-Virus-Scanned: clamav-milter 1.0.7 at bits.crawford.emu.id.au
+X-Virus-Status: Clean
 
-Thanks :)
+On Tue, 2024-10-22 at 17:13 +0800, Ai Chao wrote:
+> Add support for IT8625E on Centerm P410.
 >=20
-> Changes since v1:
-> https://lore.kernel.org/linux-um/20241017231007.1500497-2-davidgow@google=
-.com/
-> - Use force_arg_align_pointer on real_init() instead of naked on
->   __start, which works with clang.
+> Signed-off-by: Ai Chao <aichao@kylinos.cn>
+> ---
+> change for v2
+> =A0- Move IT8625E_DEVID after IT8623E_DEVID
+> ---
+> =A0drivers/hwmon/it87.c | 3 +++
+> =A01 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/hwmon/it87.c b/drivers/hwmon/it87.c
+> index e233aafa8856..4aeb09f3bfdf 100644
+> --- a/drivers/hwmon/it87.c
+> +++ b/drivers/hwmon/it87.c
+> @@ -15,6 +15,7 @@
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8620E=A0 Super I/O chip w/LPC in=
+terface
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8622E=A0 Super I/O chip w/LPC in=
+terface
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8623E=A0 Super I/O chip w/LPC in=
+terface
+> + *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8625E=A0 Super I/O chip w/LPC inte=
+rface
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8628E=A0 Super I/O chip w/LPC in=
+terface
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8705F=A0 Super I/O chip w/LPC in=
+terface
+> =A0 *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 IT8712F=A0 Super I/O chip w/LPC in=
+terface
+> @@ -161,6 +162,7 @@ static inline void superio_exit(int ioreg, bool noexi=
+t)
+> =A0#define IT8620E_DEVID 0x8620
+> =A0#define IT8622E_DEVID 0x8622
+> =A0#define IT8623E_DEVID 0x8623
+> +#define IT8625E_DEVID 0x8625
+> =A0#define IT8628E_DEVID 0x8628
+> =A0#define IT87952E_DEVID 0x8695
+> =A0
+> @@ -2782,6 +2784,7 @@ static int __init it87_find(int sioaddr, unsigned s=
+hort *address,
+> =A0 case IT8622E_DEVID:
+> =A0 sio_data->type =3D it8622;
+> =A0 break;
+> + case IT8625E_DEVID:
+> =A0 case IT8628E_DEVID:
+> =A0 sio_data->type =3D it8628;
+> =A0 break;
 
-I already applied it, so need to fix on top of it now, not replace it.
+Can I just add that it isn't a good idea to use the same type for
+different chips.  There are some specific differences between the
+chips, which mean that it should have its own entry in
 
-However I was just playing with the below - was just looking at the size
-though, but what do you think?
+static const struct it87_devices it87_devices[]
 
-johannes
+even if currently they are very similar.
 
+Even one of the most basic items is that it will report the wrong
+chipID in the logs.
 
-From 57c5a80a4db2de33a11a5a20fcbea8f3643844f5 Mon Sep 17 00:00:00 2001
-From: Johannes Berg <johannes.berg@intel.com>
-Date: Tue, 22 Oct 2024 11:48:21 +0200
-Subject: [PATCH] um: make stub_exe _start() pure inline asm
-
-Since __attribute__((naked)) cannot be used with functions
-containing C statements, just generate the few instructions
-it needs in assembly directly.
-
-Fixes: 8508a5e0e9db ("um: Fix misaligned stack in stub_exe")
-Link: https://lore.kernel.org/linux-um/CABVgOSntH-uoOFMP5HwMXjx_f1osMnVdhgK=
-RKm4uz6DFm2Lb8Q@mail.gmail.com/
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- arch/um/kernel/skas/stub_exe.c      | 8 +-------
- arch/x86/um/shared/sysdep/stub_32.h | 8 ++++++++
- arch/x86/um/shared/sysdep/stub_64.h | 8 ++++++++
- 3 files changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/arch/um/kernel/skas/stub_exe.c b/arch/um/kernel/skas/stub_exe.=
-c
-index 722ce6267476..a61f9c008233 100644
---- a/arch/um/kernel/skas/stub_exe.c
-+++ b/arch/um/kernel/skas/stub_exe.c
-@@ -81,11 +81,5 @@ noinline static void real_init(void)
-=20
- __attribute__((naked)) void _start(void)
- {
--	char *alloc;
--
--	/* Make enough space for the stub (including space for alignment) */
--	alloc =3D __builtin_alloca((1 + 2 * STUB_DATA_PAGES - 1) * UM_KERN_PAGE_S=
-IZE);
--	asm volatile("" : "+r,m"(alloc) : : "memory");
--
--	real_init();
-+	stub_start(real_init);
- }
-diff --git a/arch/x86/um/shared/sysdep/stub_32.h b/arch/x86/um/shared/sysde=
-p/stub_32.h
-index 631a18d0ff44..760e8ce8093f 100644
---- a/arch/x86/um/shared/sysdep/stub_32.h
-+++ b/arch/x86/um/shared/sysdep/stub_32.h
-@@ -123,4 +123,12 @@ static __always_inline void *get_stub_data(void)
-=20
- 	return (void *)ret;
- }
-+
-+#define stub_start(fn)							\
-+	asm volatile (							\
-+		"subl %0,%%esp ;"					\
-+		"movl %1, %%eax ; "					\
-+		"call *%%eax ;"						\
-+		:: "i" ((STUB_DATA_PAGES + 1) * UM_KERN_PAGE_SIZE),	\
-+		   "i" (&fn))
- #endif
-diff --git a/arch/x86/um/shared/sysdep/stub_64.h b/arch/x86/um/shared/sysde=
-p/stub_64.h
-index 17153dfd780a..148bf423289e 100644
---- a/arch/x86/um/shared/sysdep/stub_64.h
-+++ b/arch/x86/um/shared/sysdep/stub_64.h
-@@ -126,4 +126,12 @@ static __always_inline void *get_stub_data(void)
-=20
- 	return (void *)ret;
- }
-+
-+#define stub_start(fn)							\
-+	asm volatile (							\
-+		"subq %0,%%rsp ;"					\
-+		"movq %1,%%rax ;"					\
-+		"call *%%rax ;"						\
-+		:: "i" ((STUB_DATA_PAGES + 1) * UM_KERN_PAGE_SIZE),	\
-+		   "i" (&fn))
- #endif
---=20
-2.47.0
-
-
+Regards
+Frank
 
