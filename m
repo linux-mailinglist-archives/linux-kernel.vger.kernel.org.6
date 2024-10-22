@@ -1,179 +1,214 @@
-Return-Path: <linux-kernel+bounces-375934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B5E9A9D75
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114919A9D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B915283229
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0A292818E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE6818E02D;
-	Tue, 22 Oct 2024 08:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC2A198E69;
+	Tue, 22 Oct 2024 08:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwqCG5zN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j1pnK98g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB2D14EC4E;
-	Tue, 22 Oct 2024 08:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B81198842;
+	Tue, 22 Oct 2024 08:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587099; cv=none; b=rws0qHrh4qKovx3n2r8ixXKPcQhsaH/vUNikeJpNizbpYMiJlFugYme/wpKe7rRmmC9kSgloPxKt3iK1Y2vd52QRyf/ySdBP5ieCP3183VUZHTpi1qHWGjCyxce5/s7+LFRfHfI6zGwKvpsl4qMSldttnsn7BHYDnQTsjDZVCUY=
+	t=1729587315; cv=none; b=MqJb/JcVigp+us667RsD06fDfnBYj7Bm9dYf+2M3C3w/I9QZLnYk1wC54TPLK74nfDOI9G8EcE9WX2+tOGpNrr2R3pfnZoJZSBYFXaCXfWkxeqIoTJsmnk3oMaiqp4SKxLl5ekkVtqwAul0zA7l1ZYSmAXVIZKBTIvCg00W1wcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587099; c=relaxed/simple;
-	bh=qqV0Cw4G1rGc92pDeHBVr7u8eN+MvnuOQbCULxR7YYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aN/fPvvgioiBKg3fEmwlxEl5yvojjy9F0A2T4GSUk6yOXe1mQJVVKM/XU7MgQ8C+rWHxJzrF4JFAUUynVehxWUiMt5KBI/7ZsNVmwMDK21c+50EpSbHI/N5LuE3P4k61WeZfixinSTjw21mSKiE/cxm5jQ4KjZdnwG36PfbYVdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwqCG5zN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EA6C4CEC3;
-	Tue, 22 Oct 2024 08:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729587098;
-	bh=qqV0Cw4G1rGc92pDeHBVr7u8eN+MvnuOQbCULxR7YYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GwqCG5zNGfobP04GollHwemOFiANjht8MfZD3gxpn6uaLoUFbUbYSTiaPR4Wt3laM
-	 t07Y8I07CLJh1SAAZ0QP4iwPUk5eMpI/pQfu7tJkPDEJKel5WyRt485nf0jItrY/Bw
-	 5+Wl1O5ruAySb/iltex/+2c52o5dPeejaTP4YF1utDh27taZx0TZBPPp3KD//DFz9Q
-	 A0T1OTMxxSkNixYaeV820T4xhY/xr5ttvfqMx6v0KWPfqemzYgL07bPO/15SrFSSzB
-	 58zoVib349eXauKxN1a0iDAPNm3QkKrOVckmrTab5kf4mrKmtIsc2H8up/cs3wVWuq
-	 ef5wX85Bd77Fg==
-Date: Tue, 22 Oct 2024 10:51:33 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
-	Werner Sembach <wse@tuxedocomputers.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <kywhqw5ef6hioemoydwub57dcmfuu3bwqpz3vjur4pkabboydo@2hrqj3zy4txv>
-References: <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
- <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
- <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
- <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
- <ZwlDpCPhieF3tezX@duo.ucw.cz>
- <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
- <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+	s=arc-20240116; t=1729587315; c=relaxed/simple;
+	bh=GtdwHkMu5Vu+ITk+uiwWQIn/+rp0fZ195H106kR+b9E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RpwuQ6EDZ7EhmVXYkGIAnn+FIXkjXdeTNuvyC7qPv84nwKmnjgIBtCGDYNqCDA25QiDsRNK6N1aPkjpF1tJiYzKMQ5aQgMEKI8LvN0w2TSJiEWUska84dbgp+nFMT1nfBRG/h36uDB8a4ZpwLecBIDC84k/GahmxBsK4Xu04iDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j1pnK98g; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729587314; x=1761123314;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GtdwHkMu5Vu+ITk+uiwWQIn/+rp0fZ195H106kR+b9E=;
+  b=j1pnK98g88CLG2wSH033bl/B473ZcEmABBgrNymRVBdPxwwuJawiOOoE
+   fSqVq3HdpMCZtpCAp4/xfo8q7UA8e0bHlCSlh7bQZ45NdzN7UqRBDVN2a
+   RvUseBn9+cS26NTN2iCNoGg1UMkXugQGJSMUXEhcwrKdPqnvSS4vb3kUl
+   YxjLLUHnOKFJ1SceAV65m6XaGJ2njGkkcpDySaO2UqYODYtGQpB/6GkGd
+   JeeYIVp/Fl6xN0LF/8grDwZ3pSvAZg2UQy06Cq+WGPSxOZs10I9oLso/v
+   eYCkMM1zbeexcy8ff6f8Xzg2+ku2gWWjzgVokTQK52GuV1lv8OkedMsVk
+   Q==;
+X-CSE-ConnectionGUID: u/Uen02rRFKLqFVav3/qFg==
+X-CSE-MsgGUID: OLQBuGggQY2xPvPx5kEo3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="40493963"
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="40493963"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:55:09 -0700
+X-CSE-ConnectionGUID: PP3K5ywuSq2E1stjpXA46w==
+X-CSE-MsgGUID: jQKWzKU/ScOdfm5tdnWGFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
+   d="scan'208";a="80154060"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:55:06 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  David
+ Hildenbrand <david@redhat.com>,  Davidlohr Bueso <dave@stgolabs.net>,
+  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
+ <apopple@nvidia.com>,  Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
+  Baoquan He <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison
+ Schofield <alison.schofield@intel.com>
+Subject: Re: [PATCH] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+In-Reply-To: <6717600289c1e_2312294ab@dwillia2-xfh.jf.intel.com.notmuch> (Dan
+	Williams's message of "Tue, 22 Oct 2024 01:19:14 -0700")
+References: <20241022053835.217703-1-ying.huang@intel.com>
+	<6717600289c1e_2312294ab@dwillia2-xfh.jf.intel.com.notmuch>
+Date: Tue, 22 Oct 2024 16:51:33 +0800
+Message-ID: <87msiw4j1m.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+Content-Type: text/plain; charset=ascii
 
-On Oct 22 2024, Hans de Goede wrote:
-> Hi Armin,
-> 
-> On 21-Oct-24 10:26 PM, Armin Wolf wrote:
-> > Am 11.10.24 um 17:26 schrieb Pavel Machek:
-> > 
-> >> Hi!
-> >>
-> >>>> 1.
-> >>>> https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
-> >>>> -> Should be no problem? Because this is not generally exposing wmi
-> >>>> calls, just mapping two explicitly with sanitized input (whitelisting
-> >>>> basically).
-> >>> It would be OK to expose a selected set of WMI calls to userspace and sanitizing the input of protect potentially buggy firmware from userspace.
-> >>>
-> >> I don't believe this is good idea. Passthrough interfaces where
-> >> userland talks directly to hardware are very tricky.
-> >>
-> >>> Regarding the basic idea of having a virtual HID interface: i would prefer to create a illumination subsystem instead, but i have to agree that we should be doing this
-> >>> only after enough drivers are inside the kernel, so we can design a
-> >>> suitable interface for them. For now, creating a virtual HID
-> >>> interface seems to be good enough.
-> >> I have an RGB keyboard, and would like to get it supported. I already
-> >> have kernel driver for LEDs (which breaks input functionality). I'd
-> >> like to cooperate on "illumination" subsystem.
-> >>
-> >> Best regards,
-> >>                                 Pavel
-> > 
-> > Sorry for taking a bit long to respond.
-> > 
-> > This "illumination" subsystem would (from my perspective) act like some sort of LED subsystem
-> > for devices with a high count of LEDs, like some RGB keyboards.
-> > 
-> > This would allow us too:
-> > - provide an abstract interface for userspace applications like OpenRGB
-> > - provide an generic LED subsystem emulation on top of the illumination device (optional)
-> > - support future RGB controllers in a generic way
-> > 
-> > Advanced features like RGB effects, etc can be added later should the need arise.
-> > 
-> > I would suggest that we model it after the HID LampArray interface:
-> > 
-> > - interface for querying:
-> >  - number of LEDs
-> >  - supported colors, etc of those LEDs
-> >  - position of those LEDs if available
-> >  - kind (keyboard, ...)
-> >  - latency, etc
-> > - interface for setting multiple LEDs at once
-> > - interface for setting a range of LEDs at once
-> > - interface for getting the current LED colors
-> > 
-> > Since sysfs has a "one value per file" rule, i suggest that we use a chardev interface
-> > for querying per-LED data and for setting/getting LED colors.
-> > 
-> > I do not know if mixing sysfs (for controller attributes like number of LEDs, etc) and IOCTL
-> > (for setting/getting LED colors) is a good idea, any thoughts?
-> 
-> I wonder what the advantage of this approach is over simply using HID LampArray
-> (emulation), openRGB is already going to support HID LampArray and since Microsoft
-> is pushing this we will likely see it getting used more and more.
-> 
-> Using HID LampArray also has the advantage that work has landed and is landing
-> to allow safely handing over raw HID access to userspace programs or even
-> individual graphical apps with the option to revoke that access when it is
-> no longer desired for the app to have access.
-> 
-> HID LampArray gives us a well designed API + a safe way to give direct access
-> to e.g. games to control the lighting. I really don't see the advantage of
-> inventing our own API here only to then also have to design + code some way to
-> safely give access to sandboxed apps.
-> 
-> Note that giving access to sandboxed apps is a lot of work, it is not just
-> kernel API it also requires designing a portal interface + implementing
-> that portal for at least GNOME, KDE and wlroots.
-> 
-> Personally I really like the idea to just emulate a HID LampArray device
-> for this instead or rolling our own API.  I believe there need to be
-> strong arguments to go with some alternative NIH API and I have not
-> heard such arguments yet.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Agreed on everything Hans said.
+> Huang Ying wrote:
+> [..]
+>> For the example resource tree as follows,
+>> 
+>>   X
+>>   |
+>>   A----D----E
+>>   |
+>>   B--C
+>> 
+>> if 'A' is the overlapped but unmatched resource, original kernel
+>> iterates 'B', 'C', 'D', 'E' when it walks the descendant tree.  While
+>> the patched kernel iterates only 'B', 'C'.
+>> 
+>> It appears even better to revise for_each_resource() to traverse the
+>> resource subtree under "_root" only.  But that will cause "_root" to
+>> be evaluated twice, which I don't find a good way to eliminate.
+>> 
+>> Thanks David Hildenbrand for providing a good resource tree example.
+>
+> Should this have a Reported-by: and a Closes: tags for that report?
+> Seems useful to capture that in the history.
 
-I'll personnaly fight against any new "illumination" API as long as we
-don't have committed users. This is the same policy the DRM folks are
-applying and it makes a lot of sense:
-We can devise a lot about this new API, but if we don't have users for
-it, it's energy wasted.
+IIUC, David didn't reported an issue.  He just provided an example to
+explain the different traversal behavior.
 
-When I mean users, I'm not talking about an example in the kernel tree
-or some quick prototype. I mean talking to the existing folks already
-doing that and getting their stamp of approval and have an actual
-integrated prototype.
+>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Dave Jiang <dave.jiang@intel.com>
+>> Cc: Alison Schofield <alison.schofield@intel.com>
+>> ---
+>> 
+>> Changes:
+>> 
+>> RFC->v1:
+>> 
+>> - Revised patch description and comments, Thanks David and Andy!
+>> 
+>> - Link to RFC: https://lore.kernel.org/linux-mm/20241010065558.1347018-1-ying.huang@intel.com/
+>> 
+>> ---
+>>  kernel/resource.c | 26 +++++++++++++++++++++++---
+>>  1 file changed, 23 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/kernel/resource.c b/kernel/resource.c
+>> index b730bd28b422..bd217d57fb09 100644
+>> --- a/kernel/resource.c
+>> +++ b/kernel/resource.c
+>> @@ -50,15 +50,34 @@ EXPORT_SYMBOL(iomem_resource);
+>>  
+>>  static DEFINE_RWLOCK(resource_lock);
+>>  
+>> -static struct resource *next_resource(struct resource *p, bool skip_children)
+>> +/*
+>> + * Return the next node of @p in pre-order tree traversal.  If
+>> + * @skip_children is true, skip the descendant nodes of @p in
+>> + * traversal.  If @p is a descendant of @subtree_root, only traverse
+>> + * the subtree under @subtree_root.
+>> + */
+>> +static struct resource *__next_resource(struct resource *p, bool skip_children,
+>> +					struct resource *subtree_root)
+>>  {
+>>  	if (!skip_children && p->child)
+>>  		return p->child;
+>> -	while (!p->sibling && p->parent)
+>> +	while (!p->sibling && p->parent) {
+>>  		p = p->parent;
+>> +		if (p == subtree_root)
+>> +			return NULL;
+>> +	}
+>>  	return p->sibling;
+>>  }
+>>  
+>> +static struct resource *next_resource(struct resource *p, bool skip_children)
+>> +{
+>> +	return __next_resource(p, skip_children, NULL);
+>> +}
+>> +
+>> +/*
+>> + * Traverse the whole resource tree with @_root as root in pre-order.
+>> + * NOTE: @_root should be the topmost node, that is, @_root->parent == NULL.
+>> + */
+>>  #define for_each_resource(_root, _p, _skip_children) \
+>>  	for ((_p) = (_root)->child; (_p); (_p) = next_resource(_p, _skip_children))
+>>  
+>> @@ -572,7 +591,8 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
+>>  		covered = false;
+>>  		ostart = max(res.start, p->start);
+>>  		oend = min(res.end, p->end);
+>> -		for_each_resource(p, dp, false) {
+>> +		/* Traverse the subtree under 'p'. */
+>> +		for (dp = p->child; dp; dp = __next_resource(dp, false, p)) {
+>
+> Perhaps a new for_each_resource_descendant() to clarify this new
+> iterator from for_each_resource()?
 
-We know that OpenRGB and probably others will implement LampArray, if
-not for Linux, at least for Mac and Windows. So we will have users for
-this protocol. A new Linux specific protocol should be discussed with
-them, but I doubt that they'll be happy writing an entirely new
-abstraction layer because of Linux.
+Yes.  That's a good idea.  The problem is that it's hard to avoid double
+evaluation in an elegant way.  We have discussed this in
 
-Cheers,
-Benjamin
+https://lore.kernel.org/linux-mm/ZwkCt_ip5VOGWp4u@smile.fi.intel.com/
+
+I have proposed something like,
+
+#define for_each_resource_descendant(_root, _p)                            \
+	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
+	     __p && (_p); (_p) = __next_resource(_p, false, __root))
+
+But this doesn't look elegant.
+
+> Otherwise looks good to me:
+>
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+
+Thanks!
+
+--
+Best Regards,
+Huang, Ying
 
