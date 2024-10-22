@@ -1,140 +1,159 @@
-Return-Path: <linux-kernel+bounces-376534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D419AB2DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB319AB2E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D67282604
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CDAC1F24EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4904E1B86D5;
-	Tue, 22 Oct 2024 15:56:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AA81B5ED2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C333F1A42A5;
+	Tue, 22 Oct 2024 15:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fWQt4ge7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB019F10A;
+	Tue, 22 Oct 2024 15:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612570; cv=none; b=NtpmHOuhUMQKxL8kB/0YnSxWJarySd43d/gGZgqkdzsLR7esm+Nbl9Xfuwb9LD707GTMt8GlOkiueQNQHhCAiNu4WJHSUbM/7BSh59LuhXmgNPAaIlBbJ+t8TGldpzCDcon/EQ99P47a0nAAG7/5pr8Uj7uh2qgNzzMTcAfewmU=
+	t=1729612612; cv=none; b=Ah/B0DmNT33A7UJXcAhYcRUXKibmhonVhXcqqUheL9atw0l5Pax9TrsCLl0QFf1IvPV7r6Jfo0RuGyG0lSeIsRZzp3udt7dBQqzNafTZs7qN/ZPvqFCTU21JZshvVVfyqLyBW1YuHOhyMBTaJXzFRfJThG38ZUec43XvLOi5yXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612570; c=relaxed/simple;
-	bh=GsxhDVnSwwbJhz9Z4aWQKeAoNkCIeYe/rBrBW158ieA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxsxKWy//bgLk0hHEZz6MoeQSC7eyoc3+qePUXypE3Pm20Xn7a9rpNgJ2VbzRnu96TnPLGzc5LRkGhxS+FmBSj3esZDgewB+sk1EiAUouaWUVkITBL1ObatWbnR0tR/2iHzUpoC3H9F+yKPpVdlEXlNn/tDjHBSXd01wLd93EBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A24E497;
-	Tue, 22 Oct 2024 08:56:37 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AB353F73B;
-	Tue, 22 Oct 2024 08:56:05 -0700 (PDT)
-Date: Tue, 22 Oct 2024 16:56:02 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 1/3] arm64/cpufeature: Add field details for
- ID_AA64DFR1_EL1 register
-Message-ID: <ZxfLEqlbGLnK15sf@J2N7QTR9R3>
-References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
- <20241001043602.1116991-2-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1729612612; c=relaxed/simple;
+	bh=z13NicMcF9ZVpeE1GItwW03x9gDbBSHe3X3Sx9kV7Io=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vEsD3+1HuyNMbLs8fwTMIh+r5Q9XsVk6UqGbyYS3l8mHb9OSJSas79dNLhEoDqNYPPjHN6T49ojouWblVRBqJ5r8UMSVaOFeBPpLDbwwEASq/mOZRyhdJjL+hcyEjyZaPg+ux/goffLOMWis/507qcnqvhUQ8pYvTDitVVkyFrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fWQt4ge7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M9amGJ005187;
+	Tue, 22 Oct 2024 15:56:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=+HbAaa1q9bAdAu7D05Pl04/COhM7iX9rJ+WJMiME4Fw=; b=fW
+	Qt4ge7LMYp790WOogpb8YXokhcmpLis/b4Dz3L5RLOiuLwad9Tc7KTAlah6BZQDP
+	KldtQMI3OgeuQDLBfWRArJaiTLop3xvGM1vAwpRbvOryJZtsPes1luw1CFXzg1xw
+	yGJ9BYITV8s1G10fHfoCpZ9ALzCpY6oVEwf/C+TSZEgXpBvPNBBfT/PuGsSBlj3M
+	KAqmWfo/W8ZbCCCqXoauk0gyXqR899qRWE9gYnDK60udjfCM5IOu23iPzvT+fmBR
+	I/5x6krrXkON0ujjaexfeBAY8MxheKrialzbNxMSZaG6x+hn+fsUyeVvleKl/Cy+
+	V9xMuhF4ge5nBc/4EdLw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rbgwfg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 15:56:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MFuhR6030859
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 15:56:43 GMT
+Received: from hu-faisalh-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Oct 2024 08:56:41 -0700
+From: Faisal Hassan <quic_faisalh@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman
+	<mathias.nyman@intel.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Faisal Hassan
+	<quic_faisalh@quicinc.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3] xhci: Fix Link TRB DMA in command ring stopped completion event
+Date: Tue, 22 Oct 2024 21:26:31 +0530
+Message-ID: <20241022155631.1185-1-quic_faisalh@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001043602.1116991-2-anshuman.khandual@arm.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XTd4BBODkolSvOCLlI_s99UZf9GHG1Xk
+X-Proofpoint-GUID: XTd4BBODkolSvOCLlI_s99UZf9GHG1Xk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=966 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220102
 
-On Tue, Oct 01, 2024 at 10:06:00AM +0530, Anshuman Khandual wrote:
-> This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
-> ftr_raz[] array which is now redundant. These register fields will be used
-> to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
-> later.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> cc: Mark Brown <broonie@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/arm64/kernel/cpufeature.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 718728a85430..bd4d85f5dd92 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -530,6 +530,21 @@ static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
->  	ARM64_FTR_END,
->  };
->  
-> +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
-> +	ARM64_FTR_END,
-> +};
-> +
+During the aborting of a command, the software receives a command
+completion event for the command ring stopped, with the TRB pointing
+to the next TRB after the aborted command.
 
-Is there some general principle that has been applied here? e.g. is this
-STRICT unless we know of variation in practice?
+If the command we abort is located just before the Link TRB in the
+command ring, then during the 'command ring stopped' completion event,
+the xHC gives the Link TRB in the event's cmd DMA, which causes a
+mismatch in handling command completion event.
 
-e.g. it seems a bit odd that ABLE cannot vary while the number of
-breakpoints can...
+To address this situation, move the 'command ring stopped' completion
+event check slightly earlier, since the specific command it stopped
+on isn't of significant concern.
 
-I suspect we will see systems with mismatched EBEP too, but maybe I'm
-wrong.
+Fixes: 7f84eef0dafb ("USB: xhci: No-op command queueing and irq handler.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
+---
 
-Mark.
+Changes in v3:
+- Skip dma check for the cmd ring stopped event
+- v2 link:
+https://lore.kernel.org/all/20241021131904.20678-1-quic_faisalh@quicinc.com
 
->  static const struct arm64_ftr_bits ftr_mvfr0[] = {
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPRound_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPShVec_SHIFT, 4, 0),
-> @@ -708,10 +723,6 @@ static const struct arm64_ftr_bits ftr_single32[] = {
->  	ARM64_FTR_END,
->  };
->  
-> -static const struct arm64_ftr_bits ftr_raz[] = {
-> -	ARM64_FTR_END,
-> -};
-> -
->  #define __ARM64_FTR_REG_OVERRIDE(id_str, id, table, ovr) {	\
->  		.sys_id = id,					\
->  		.reg = 	&(struct arm64_ftr_reg){		\
-> @@ -784,7 +795,7 @@ static const struct __ftr_reg_entry {
->  
->  	/* Op1 = 0, CRn = 0, CRm = 5 */
->  	ARM64_FTR_REG(SYS_ID_AA64DFR0_EL1, ftr_id_aa64dfr0),
-> -	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_raz),
-> +	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_id_aa64dfr1),
->  
->  	/* Op1 = 0, CRn = 0, CRm = 6 */
->  	ARM64_FTR_REG(SYS_ID_AA64ISAR0_EL1, ftr_id_aa64isar0),
-> -- 
-> 2.25.1
-> 
+Changes in v2:
+- Added Fixes tag
+- Removed traversing of TRBs with in_range() API.
+- Simplified the if condition check.
+- v1 link:
+https://lore.kernel.org/all/20241018195953.12315-1-quic_faisalh@quicinc.com
+
+ drivers/usb/host/xhci-ring.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index b2950c35c740..1ffc69c48eac 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1718,6 +1718,14 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 
+ 	trace_xhci_handle_command(xhci->cmd_ring, &cmd_trb->generic);
+ 
++	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
++
++	/* If CMD ring stopped we own the trbs between enqueue and dequeue */
++	if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
++		complete_all(&xhci->cmd_ring_stop_completion);
++		return;
++	}
++
+ 	cmd_dequeue_dma = xhci_trb_virt_to_dma(xhci->cmd_ring->deq_seg,
+ 			cmd_trb);
+ 	/*
+@@ -1734,14 +1742,6 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 
+ 	cancel_delayed_work(&xhci->cmd_timer);
+ 
+-	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
+-
+-	/* If CMD ring stopped we own the trbs between enqueue and dequeue */
+-	if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
+-		complete_all(&xhci->cmd_ring_stop_completion);
+-		return;
+-	}
+-
+ 	if (cmd->command_trb != xhci->cmd_ring->dequeue) {
+ 		xhci_err(xhci,
+ 			 "Command completion event does not match command\n");
+-- 
+2.17.1
+
 
