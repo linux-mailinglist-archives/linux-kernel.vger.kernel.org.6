@@ -1,161 +1,402 @@
-Return-Path: <linux-kernel+bounces-375406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BC79A958D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:41:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B039A959D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868791F23D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:41:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBA9B22EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970D6139563;
-	Tue, 22 Oct 2024 01:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lGocdDBy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2263131BDD;
+	Tue, 22 Oct 2024 01:44:21 +0000 (UTC)
+Received: from trager.us (trager.us [52.5.81.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0DC25760;
-	Tue, 22 Oct 2024 01:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFB284D29;
+	Tue, 22 Oct 2024 01:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729561250; cv=none; b=pFTDN3ggz/mw2IGIKEClgjRUQHL+e9iPNKyxr1VeYFeIfi2w5mtRgTFf9zvbgynUSvCb3hj3WsC4RDGT8LJjCoM6oar+zIryltEl34AlXLCF9aoQ5AB0hVjB5i0925R/wxJ7+eBoPIkSVAWZZvMWF5tnrz5z8vLMnClNM190HFo=
+	t=1729561461; cv=none; b=c3ehO7sPzDvKFDk3BOLL50DYnu4upwWGrQznB6cypMbRZw1MBBBJ2KEUmzjY3jwvX2C1q2AKkDNrheyaRE/nEiH4h4UsO67rZZHsvK9ff7+ZeiVuEml59yZWCtYYrWXzljSBQECNcxAOF6X7IgJtHLo+QiDWT+hH9YYFHnQlg5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729561250; c=relaxed/simple;
-	bh=Gt/PVUYQV6El5J261GXUty1BMmEhHEOaIC9LhPGHzqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVfLCiX6uhmt93fvn0yYPsEalXqw59dn+RNaWrCYcTq/soKAuG5BrYRwzPl2wT+768wsU/oX2uT+5oWkX0hzyEosz3b4324uupm+OYflsfMkWmHKYvUcmm9o/qGzDNaLuhxDoO8ahFVXvb5C6pNx/d8l7ouyCp8yZBPckfDflr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lGocdDBy; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729561249; x=1761097249;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gt/PVUYQV6El5J261GXUty1BMmEhHEOaIC9LhPGHzqE=;
-  b=lGocdDByzxcPfYUtvyGW1Sk7Fu1P3xcxx5EGmbImsnqasOf5amaypGBc
-   lgwvDfdIiMngAZafLd986N++AQq81ycoUvzZ9ao/oZ/hIOGwtpAkzzQ0X
-   tD8a8/0H2uSf9Kw1IM+3WIfU0teIgk4f2arhpoHVhTErX6B6AfAT2fv9V
-   GGUGIjelKNZyeiAU0NZA7UiXfkpeVG68sQq5e66QEQ1nfH6Di/s9fF4yy
-   ZW/0S5+AiDWOUo8voN+0Y3ipBJp0Yctf3sqfFvX5eE3Dm26DGeUHkpcc2
-   xxGsr9Q61j81tryGDBxwDEtOj8SDS/oXudLKFGQgifo7yLZdRpDplv9Ue
-   A==;
-X-CSE-ConnectionGUID: W43EMA1WQCO7DOg3BVq4vg==
-X-CSE-MsgGUID: Fa4pKtEpSlGWRjzSpW/eLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39614924"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39614924"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 18:40:48 -0700
-X-CSE-ConnectionGUID: Ov7jbqTHRKKh7fWxhpNGLQ==
-X-CSE-MsgGUID: z6t+j8m+Q32GhMOy8xLdTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="84517902"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.129])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 18:40:47 -0700
-Date: Mon, 21 Oct 2024 18:40:45 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	s=arc-20240116; t=1729561461; c=relaxed/simple;
+	bh=6Z+AxkKR9zlrGHBwt2JjK+ih49DyBUV8ksoi07TJ5Tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r0OR8zkeqtOUqJF8PSn1+40qzBSSXnmfXVkWgDt585jl+2ASKmroQTdum1NRovBLs65z5VyXFKzkDsO9Lc5FW2M1l+zT1j5KTzfAHMQ4GZTx8iSSj6/Tq5YmHM9zql/zIijlL6eWdsy9cYEtuEmmgGxtLjH66O7kHT8pcC7GCQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
+Received: from [163.114.132.6] (helo=localhost)
+	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92.3)
+	(envelope-from <lee@trager.us>)
+	id 1t33wQ-0003yc-CK; Tue, 22 Oct 2024 01:44:10 +0000
+From: Lee Trager <lee@trager.us>
+To: Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	kernel-team@meta.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Jonathan Corbet <corbet@lwn.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Subject: Re: [PATCH 3/3] cxl/cdat: Use %pra for dpa range outputs
-Message-ID: <ZxcCnbV8fsSbTeGf@aschofie-mobl2.lan>
-References: <20241018-cxl-pra-v1-0-7f49ba58208b@intel.com>
- <20241018-cxl-pra-v1-3-7f49ba58208b@intel.com>
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Lee Trager <lee@trager.us>,
+	Sanman Pradhan <sanmanpradhan@meta.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 2/2] eth: fbnic: Add devlink dev flash support
+Date: Mon, 21 Oct 2024 18:42:24 -0700
+Message-ID: <20241022014319.3791797-1-lee@trager.us>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20241012023646.3124717-1-lee@trager.us>
+References: <20241012023646.3124717-1-lee@trager.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-cxl-pra-v1-3-7f49ba58208b@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 02:46:26PM -0500, Ira Weiny wrote:
-> Now that there is a printf specifier for struct range use it to enhance
-> the debug output of CDAT data.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  drivers/cxl/core/cdat.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/cdat.c b/drivers/cxl/core/cdat.c
-> index ef1621d40f05..438869df241a 100644
-> --- a/drivers/cxl/core/cdat.c
-> +++ b/drivers/cxl/core/cdat.c
-> @@ -247,8 +247,8 @@ static void update_perf_entry(struct device *dev, struct dsmas_entry *dent,
->  	dpa_perf->dpa_range = dent->dpa_range;
->  	dpa_perf->qos_class = dent->qos_class;
->  	dev_dbg(dev,
-> -		"DSMAS: dpa: %#llx qos: %d read_bw: %d write_bw %d read_lat: %d write_lat: %d\n",
-> -		dent->dpa_range.start, dpa_perf->qos_class,
-> +		"DSMAS: dpa: %pra qos: %d read_bw: %d write_bw %d read_lat: %d write_lat: %d\n",
-> +		&dent->dpa_range, dpa_perf->qos_class,
->  		dent->coord[ACCESS_COORDINATE_CPU].read_bandwidth,
->  		dent->coord[ACCESS_COORDINATE_CPU].write_bandwidth,
->  		dent->coord[ACCESS_COORDINATE_CPU].read_latency,
-> @@ -279,8 +279,8 @@ static void cxl_memdev_set_qos_class(struct cxl_dev_state *cxlds,
->  			 range_contains(&pmem_range, &dent->dpa_range))
->  			update_perf_entry(dev, dent, &mds->pmem_perf);
->  		else
-> -			dev_dbg(dev, "no partition for dsmas dpa: %#llx\n",
-> -				dent->dpa_range.start);
-> +			dev_dbg(dev, "no partition for dsmas dpa: %pra\n",
-> +				&dent->dpa_range);
->  	}
->  }
+fbnic supports updating firmware using a PLDM image signed and distributed
+by Meta. PLDM images are written into stored flashed. Flashing does not
+interrupt operation.
 
-This is a bit different than what I expected to find as the initial use case
-because it wasn't printing a range. With this change we go from printing only
-the .start to printing the range. Seems the wording of the dev_ message could
-change too since 'dpa' has been replaced with a 'dpa range'.
+On host reboot the newly flashed UEFI driver will be used. To run new
+control or cmrt firmware the NIC must be power cycled.
 
-There are a few places that print the range now and can be cleaned up w this
-specifier. Those are the real 'uglies' like this:
+Signed-off-by: Lee Trager <lee@trager.us>
+---
+ .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
+ drivers/net/ethernet/meta/Kconfig             |   1 +
+ .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 269 +++++++++++++++++-
+ 3 files changed, 280 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-index 223c273c0cd1..85a121b7b2b5 100644
---- a/drivers/cxl/core/hdm.c
-+++ b/drivers/cxl/core/hdm.c
-@@ -941,8 +941,8 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
-                return rc;
-        }
+diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
+index 32ff114f5c26..d6726c254818 100644
+--- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
++++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
+@@ -27,3 +27,14 @@ driver takes over.
+ devlink dev info provides version information for all three components. In
+ addition to the version the hg commit hash of the build is included as a
+ separate entry.
++
++Upgrading Firmware
++------------------
++
++fbnic supports upgrading firmware using devlink dev flash. Firmware images
++are signed and distributed by Meta. All firmware is bundled into a single
++PLDM image which is written into stored flash. Flashing firmware does not
++interrupt operation.
++
++On host reboot the newly flashed UEFI driver will be used. To run new control
++or cmrt firmware the NIC must be power cycled.
+diff --git a/drivers/net/ethernet/meta/Kconfig b/drivers/net/ethernet/meta/Kconfig
+index 831921b9d4d5..3ba527514f1e 100644
+--- a/drivers/net/ethernet/meta/Kconfig
++++ b/drivers/net/ethernet/meta/Kconfig
+@@ -27,6 +27,7 @@ config FBNIC
+ 	select NET_DEVLINK
+ 	select PAGE_POOL
+ 	select PHYLINK
++	select PLDMFW
+ 	help
+ 	  This driver supports Meta Platforms Host Network Interface.
 
--       dev_dbg(&port->dev, "decoder%d.%d: range: %#llx-%#llx iw: %d ig: %d\n",
--               port->id, cxld->id, cxld->hpa_range.start, cxld->hpa_range.end,
-+       dev_dbg(&port->dev, "decoder%d.%d: range: %pra iw: %d ig: %d\n",
-+               port->id, cxld->id, &cxld->hpa_range,
-                cxld->interleave_ways, cxld->interleave_granularity);
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+index 0072d612215e..bd718b3e314b 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+@@ -3,6 +3,7 @@
 
+ #include <linux/unaligned.h>
+ #include <linux/pci.h>
++#include <linux/pldmfw.h>
+ #include <linux/types.h>
+ #include <net/devlink.h>
 
-I guess you could (ducks) pick them all up here, or we can leave it
-for a future cleanup, or we can just say no cleanups and we'll use
-%pra going forward only.
+@@ -109,8 +110,274 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
+ 	return 0;
+ }
 
--- Alison
++/**
++ * fbnic_send_package_data - Send record package data to firmware
++ * @context: PLDM FW update structure
++ * @data: pointer to the package data
++ * @length: length of the package data
++ *
++ * Send a copy of the package data associated with the PLDM record matching
++ * this device to the firmware.
++ *
++ * Return: zero on success
++ *	    negative error code on failure
++ */
++static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
++				   u16 length)
++{
++	struct device *dev = context->dev;
++
++	/* Temp placeholder required by devlink */
++	dev_info(dev,
++		 "Sending %u bytes of PLDM record package data to firmware\n",
++		 length);
++
++	return 0;
++}
++
++/**
++ * fbnic_send_component_table - Send PLDM component table to the firmware
++ * @context: PLDM FW update structure
++ * @component: The component to send
++ * @transfer_flag: Flag indication location in component tables
++ *
++ * Read relevant data from component table and forward it to the firmware.
++ * Check response to verify if the firmware indicates that it wishes to
++ * proceed with the update.
++ *
++ * Return: zero on success
++ *	    negative error code on failure
++ */
++static int fbnic_send_component_table(struct pldmfw *context,
++				      struct pldmfw_component *component,
++				      u8 transfer_flag)
++{
++	struct device *dev = context->dev;
++	u16 id = component->identifier;
++	u8 test_string[80];
++
++	switch (id) {
++	case QSPI_SECTION_CMRT:
++	case QSPI_SECTION_CONTROL_FW:
++	case QSPI_SECTION_OPTION_ROM:
++		break;
++	default:
++		dev_err(dev, "Unknown component ID %u\n", id);
++		return -EINVAL;
++	}
++
++	dev_dbg(dev, "Sending PLDM component table to firmware\n");
++
++	/* Temp placeholder */
++	strscpy(test_string, component->version_string,
++		min_t(u8, component->version_len, 79));
++	dev_info(dev, "PLDMFW: Component ID: %u version %s\n",
++		 id, test_string);
++
++	return 0;
++}
++
++/**
++ * fbnic_flash_component - Flash a component of the QSPI
++ * @context: PLDM FW update structure
++ * @component: The component table to send to FW
++ *
++ * Map contents of component and make it available for FW to download
++ * so that it can update the contents of the QSPI Flash.
++ *
++ * Return: zero on success
++ *	    negative error code on failure
++ */
++static int fbnic_flash_component(struct pldmfw *context,
++				 struct pldmfw_component *component)
++{
++	const u8 *data = component->component_data;
++	u32 size = component->component_size;
++	struct fbnic_fw_completion *fw_cmpl;
++	struct device *dev = context->dev;
++	struct pci_dev *pdev = to_pci_dev(dev);
++	u16 id = component->identifier;
++	const char *component_name;
++	int retries = 2;
++	int err;
++
++	struct devlink *devlink;
++	struct fbnic_dev *fbd;
++
++	switch (id) {
++	case QSPI_SECTION_CMRT:
++		component_name = "boot1";
++		break;
++	case QSPI_SECTION_CONTROL_FW:
++		component_name = "boot2";
++		break;
++	case QSPI_SECTION_OPTION_ROM:
++		component_name = "option-rom";
++		break;
++	default:
++		dev_err(dev, "Unknown component ID %u\n", id);
++		return -EINVAL;
++	}
++
++	fw_cmpl = kzalloc(sizeof(*fw_cmpl), GFP_KERNEL);
++	if (!fw_cmpl)
++		return -ENOMEM;
++
++	pdev = to_pci_dev(dev);
++	fbd = pci_get_drvdata(pdev);
++	devlink = priv_to_devlink(fbd);
++
++	/* Initialize completion and queue it for FW to process */
++	fw_cmpl->msg_type = FBNIC_TLV_MSG_ID_FW_WRITE_CHUNK_REQ;
++	init_completion(&fw_cmpl->done);
++
++	fw_cmpl->fw_update.last_offset = 0;
++	fw_cmpl->fw_update.data = data;
++	fw_cmpl->fw_update.size = size;
++
++	err = fbnic_fw_xmit_fw_start_upgrade(fbd, fw_cmpl, id, size);
++	if (err)
++		goto cmpl_free;
++
++	/* Monitor completions and report status of update */
++	while (fw_cmpl->fw_update.data) {
++		u32 offset = fw_cmpl->fw_update.last_offset;
++
++		devlink_flash_update_status_notify(devlink, "Flashing",
++						   component_name, offset,
++						   size);
++
++		/* Allow 5 seconds for reply, resend and try up to 2 times */
++		if (wait_for_completion_timeout(&fw_cmpl->done, 5 * HZ)) {
++			reinit_completion(&fw_cmpl->done);
++			/* If we receive a reply, reinit our retry counter */
++			retries = 2;
++		} else if (--retries == 0) {
++			dev_err(fbd->dev, "Timed out waiting on update\n");
++			err = -ETIMEDOUT;
++			goto cmpl_cleanup;
++		}
++	}
++
++	err = fw_cmpl->result;
++	if (err)
++		goto cmpl_cleanup;
++
++	devlink_flash_update_status_notify(devlink, "Flashing",
++					   component_name, size, size);
++
++cmpl_cleanup:
++	fbd->cmpl_data = NULL;
++cmpl_free:
++	kfree(fw_cmpl);
++
++	return err;
++}
++
++/**
++ * fbnic_finalize_update - Perform last steps to complete device update
++ * @context: PLDM FW update structure
++ *
++ * Notify FW that update is complete and that it can take any actions
++ * needed to finalize the FW update.
++ *
++ * Return: zero on success
++ *	    negative error code on failure
++ */
++static int fbnic_finalize_update(struct pldmfw *context)
++{
++	struct device *dev = context->dev;
++
++	/* Temp placeholder required by devlink */
++	dev_info(dev, "PLDMFW: Finalize update\n");
++
++	return 0;
++}
++
++static const struct pldmfw_ops fbnic_pldmfw_ops = {
++	.match_record = pldmfw_op_pci_match_record,
++	.send_package_data = fbnic_send_package_data,
++	.send_component_table = fbnic_send_component_table,
++	.flash_component = fbnic_flash_component,
++	.finalize_update = fbnic_finalize_update,
++};
++
++static void fbnic_devlink_flash_update_report_err(struct fbnic_dev *fbd,
++						  struct devlink *devlink,
++						  const char *err_msg,
++						  int err)
++{
++	char err_str[128];
++
++	snprintf(err_str, sizeof(err_str),
++		 "Failed to flash PLDM Image: %s (error: %d)",
++		 err_msg, err);
++	devlink_flash_update_status_notify(devlink, err_str, NULL, 0, 0);
++	dev_err(fbd->dev, "%s\n", err_str);
++}
++
++static int
++fbnic_devlink_flash_update(struct devlink *devlink,
++			   struct devlink_flash_update_params *params,
++			   struct netlink_ext_ack *extack)
++{
++	struct fbnic_dev *fbd = devlink_priv(devlink);
++	const struct firmware *fw = params->fw;
++	struct device *dev = fbd->dev;
++	struct pldmfw context;
++	char *err_msg;
++	int err;
++
++	if (!fw || !fw->data || !fw->size)
++		return -EINVAL;
++
++	devlink_flash_update_status_notify(devlink, "Preparing to flash",
++					   NULL, 0, 0);
++
++	context.ops = &fbnic_pldmfw_ops;
++	context.dev = dev;
++
++	err = pldmfw_flash_image(&context, fw);
++	if (err) {
++		switch (err) {
++		case -EINVAL:
++			err_msg = "Invalid image";
++			break;
++		case -EOPNOTSUPP:
++			err_msg = "Unsupported image";
++			break;
++		case -ENOMEM:
++			err_msg = "Out of memory";
++			break;
++		case -EFAULT:
++			err_msg = "Invalid header";
++			break;
++		case -ENOENT:
++			err_msg = "No matching record";
++			break;
++		case -ENODEV:
++			err_msg = "No matching device";
++			break;
++		case -ETIMEDOUT:
++			err_msg = "Timed out waiting for reply";
++			break;
++		default:
++			err_msg = "Unknown error";
++			break;
++		}
++		fbnic_devlink_flash_update_report_err(fbd, devlink,
++						      err_msg, err);
++	} else {
++		devlink_flash_update_status_notify(devlink, "Flashing done",
++						   NULL, 0, 0);
++	}
++
++	return err;
++}
++
+ static const struct devlink_ops fbnic_devlink_ops = {
+-	.info_get = fbnic_devlink_info_get,
++	.info_get	= fbnic_devlink_info_get,
++	.flash_update	= fbnic_devlink_flash_update,
+ };
 
->  
-> 
-> -- 
-> 2.47.0
-> 
+ void fbnic_devlink_free(struct fbnic_dev *fbd)
+--
+2.43.5
 
