@@ -1,206 +1,170 @@
-Return-Path: <linux-kernel+bounces-375965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B0E9A9DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:08:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E0D9A9DF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55553B234B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322CE28426F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BED195809;
-	Tue, 22 Oct 2024 09:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0515D1957FC;
+	Tue, 22 Oct 2024 09:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O5KBmYDS"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09AC22083
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KjwYwEjV"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9858922083;
+	Tue, 22 Oct 2024 09:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588081; cv=none; b=jc+saWvX34BmKUMPGK7EkXwHrl3eOrhiJk0BjwL0csfleMCLOEaD7WtEuNgkHyedvy+mL37+jOoSCNDYdIVFQxR/Eeemr2letEWaEnflwen3970wxBDn4Oltge7mz9yZH9CfgLJ12b/6YIDMcjbuuul99HWBQ1Zia1HxrrMP9OA=
+	t=1729588165; cv=none; b=ms9CBk7BKbMyDuGfp2BnU8zRIh4fWsCGNMmIBUeUDH/c8ETg8O/r/F2bCi/VsZBpfFCj1dQE/dTHOMf1LiVxnnZDGtJgc0z5I6o8WitKCqbXAJ6w1LZVSwNYIrVFoyGbJRBEaIgG/P/FXpnPbx/w8Q4dy7pIp93UbPyBNZh3cU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588081; c=relaxed/simple;
-	bh=pysn6nWm7VH7Da+e1O+B858W3dG1ImyoY2oZIhE1dqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b7Ugk9o7aWvf1rzb1r8fI86AplftEaxYp3GFTvA1eLdDqsCl9B4pUh0kNIwnPJbylOLMlpwqg4rxQCYUXOfdv1su+KSxPoe1lNE+IZBdGj3GKwFdOuefKBsRQXlN85tSaqliqH3blN66CEcnmC5GS9KHMlSCKMd2eLbyzJBX7zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O5KBmYDS; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a850270e2so489621166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729588078; x=1730192878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sqANacwu59WVDubToPeLNd0ZLGqiBFI013WHEtWvuoY=;
-        b=O5KBmYDS0Stfg84yUL2nST6Zvalu4l4l6bLQT5TA216sumVAH4lu22MqfhgU1h5Pon
-         gUDvOIvhfo3JOL+R2sIjQrqMz2rgudqBbzBx6CDtiZeFLR1ECXtpm1jBnrRIt0ZfFR+u
-         Z5DeBN1NVNVYls5QRcO0TLNBX2+tZ2Dq+n7gJZM5zU4bNjfA/5GVUewDb94tVP68c1tS
-         A3wGWpuYJ38l/9sh8k0oRu5iEddG8gCM1wvUdv7VvLENkmi/svsN97cTG60IY5osdhP6
-         BOQnSLQqKD+lzlnWKvTdjVEs5td5dVG1rie6/hx3WZe7j11gwCZbFEluguyVx6ALhkks
-         qk2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729588078; x=1730192878;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sqANacwu59WVDubToPeLNd0ZLGqiBFI013WHEtWvuoY=;
-        b=tcH4ddoS0KD/oRxyzpM6sBbbxHLInUsZF6PcrIEPSBJJ5yf7Ua3KLWiKLA1ex0z5SW
-         61z3x0tXa096J2I8xcPW36dHhsDxyW3rAjdjtFxOCYW/C3++0ll76Rj3IxX+6R0PGcp5
-         FuNigtsWhKOfXVCpEs+d/I4blVvvdaDCK48uuOWobKZfv31QZa6TR829x7XwSxm7u4XF
-         KYlPMlm3pdr+faQFrpA0B6XuX3JAtq68+EkfCeuwnp1/rnqLoLEVeNoz+efnuUS7kgO9
-         Nx/5A18pjUf3zfgmKF/FY2bZ963HCsYs53M4jZVE50eZNwMAueca0CplEAGrQ/0Py/o0
-         wyYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Liu6UC3aC0cnVG/508g60kwWpT4Jux15YgBRUsRdcVn+sI2qGqVPIso4sfjt+t4EKDhHLHnH7rW0wpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpEZ9Cha6c3hD1aqP+ntXCxxWoBn/XTE5dZ4J5tO3IFKzq1XiR
-	LuLB5Yx2WUgUhW+WJ0yvbnjJsZj8knXi1/S4oL61OWGulkWTd1DW5JFBdjOzXSw=
-X-Google-Smtp-Source: AGHT+IGoE+jrhGDPxvzS+WZimT/uQDCBFmA0e0z1M8EFELzXgykeI+0Jev6cLL5gP+5Bp6fGDKWWLg==
-X-Received: by 2002:a17:907:3e12:b0:a9a:4fd3:c35f with SMTP id a640c23a62f3a-a9a69a63db8mr1206244266b.9.1729588077786;
-        Tue, 22 Oct 2024 02:07:57 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6267sm311979566b.32.2024.10.22.02.07.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 02:07:57 -0700 (PDT)
-Message-ID: <3ee7a1c9-2d6d-4fd5-982e-d86151e45662@linaro.org>
-Date: Tue, 22 Oct 2024 10:07:55 +0100
+	s=arc-20240116; t=1729588165; c=relaxed/simple;
+	bh=fG7n/rClPSyVCFZ9BkdrIS04RymnXShn9QUy9/w9ib0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=nR+aJqiINwPNwUM4/htkOroOSVQ5C/dazWGpxx0kHPT8ShyxL5o2uRU1N8JoQi3TGFL38EQinpOZiD6+UQHuAOcBttnO5fIhzkIAg09KfopPl7nd4OHX8draL86DrKOQ98fMN9MmO0LwF0u0kxwNKxNl7/AaftI36DIoOHMD2qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KjwYwEjV; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=/zKgrV2wVhIQZ7vubU
+	9nP6A/zQIVoNr8bUD3sblRl1U=; b=KjwYwEjV3D5ogLDDw6aCnyAa3P7/4rqkzN
+	AS9tMbzxsz2o/lXBL0/cj/DgmG8qFJXNjS9WldHOxmOSxDrjiu+5NlNFlmcCa/PZ
+	AuAjgoLsXPtSzBReogdSOzWj5KEE3jztbvoOFzzej2+r1hj3AeAFtvbXHz3vSxTN
+	RI1RdHmlY=
+Received: from localhost.localdomain (unknown [111.48.58.10])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgC3Zp2zaxdnQgSMAA--.40749S2;
+	Tue, 22 Oct 2024 17:09:08 +0800 (CST)
+From: huanglei814 <huanglei814@163.com>
+To: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huanglei <huanglei@kylinos.cn>
+Subject: [PATCH v3] usb: core: adds support for PM control of specific USB dev skip suspend.
+Date: Tue, 22 Oct 2024 17:09:05 +0800
+Message-Id: <20241022090905.9806-1-huanglei814@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:PSgvCgC3Zp2zaxdnQgSMAA--.40749S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1DJFy5JFW3tr1kKFyrCrg_yoWrJFW5pF
+	4qyFWFkrsxGr1Iq34aya18uF1rWanYkayjk3sakw1Ygw17Ja95Gr1jyFy5Xwnxur9xAFyU
+	tFsrG3yUCrW7GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9a9fUUUUU=
+X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbi7g6A9mcXZAG6bQAAsU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] drm/msm/adreno: Add support for ACD
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
- <20241021-gpu-acd-v2-1-9c25a62803bc@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241021-gpu-acd-v2-1-9c25a62803bc@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 21/10/2024 12:53, Akhil P Oommen wrote:
-> ACD a.k.a Adaptive Clock Distribution is a feature which helps to reduce
-> the power consumption. In some chipsets, it is also a requirement to
-> support higher GPU frequencies. This patch adds support for GPU ACD by
-> sending necessary data to GMU and AOSS. The feature support for the
-> chipset is detected based on devicetree data.
-> 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
->   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 81 ++++++++++++++++++++++++++++-------
->   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
->   drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 36 ++++++++++++++++
->   drivers/gpu/drm/msm/adreno/a6xx_hfi.h | 21 +++++++++
->   4 files changed, 124 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 37927bdd6fbe..09fb3f397dbb 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -1021,14 +1021,6 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
->   
->   	gmu->hung = false;
->   
-> -	/* Notify AOSS about the ACD state (unimplemented for now => disable it) */
-> -	if (!IS_ERR(gmu->qmp)) {
-> -		ret = qmp_send(gmu->qmp, "{class: gpu, res: acd, val: %d}",
-> -			       0 /* Hardcode ACD to be disabled for now */);
-> -		if (ret)
-> -			dev_err(gmu->dev, "failed to send GPU ACD state\n");
-> -	}
-> -
->   	/* Turn on the resources */
->   	pm_runtime_get_sync(gmu->dev);
->   
-> @@ -1476,6 +1468,64 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
->   	return a6xx_gmu_rpmh_votes_init(gmu);
->   }
->   
-> +static int a6xx_gmu_acd_probe(struct a6xx_gmu *gmu)
-> +{
-> +	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-> +	struct a6xx_hfi_acd_table *cmd = &gmu->acd_table;
-> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
-> +	int ret, i, cmd_idx = 0;
-> +
-> +	cmd->version = 1;
-> +	cmd->stride = 1;
-> +	cmd->enable_by_level = 0;
-> +
-> +	/* Skip freq = 0 and parse acd-level for rest of the OPPs */
-> +	for (i = 1; i < gmu->nr_gpu_freqs; i++) {
-> +		struct dev_pm_opp *opp;
-> +		struct device_node *np;
-> +		unsigned long freq;
-> +		u32 val;
-> +
-> +		freq = gmu->gpu_freqs[i];
-> +		opp = dev_pm_opp_find_freq_exact(&gpu->pdev->dev, freq, true);
-> +		np = dev_pm_opp_get_of_node(opp);
-> +
-> +		ret = of_property_read_u32(np, "qcom,opp-acd-level", &val);
-> +		of_node_put(np);
-> +		dev_pm_opp_put(opp);
-> +		if (ret == -EINVAL)
-> +			continue;
-> +		else if (ret) {
-> +			DRM_DEV_ERROR(gmu->dev, "Unable to read acd level for freq %lu\n", freq);
-> +			return ret;
-> +		}
-> +
-> +		cmd->enable_by_level |= BIT(i);
-> +		cmd->data[cmd_idx++] = val;
+From: huanglei <huanglei@kylinos.cn>
 
-How do you know that cmd_idx is always < sizeof(cmd->data); ?
+All USB devices are brought into suspend power state after system suspend.
+It is desirable for some specific manufacturers buses to keep their devices
+in normal state even after system suspend.
 
-> +	}
-> +
-> +	cmd->num_levels = cmd_idx;
-> +
-> +	/* We are done here if ACD is not required for any of the OPPs */
-> +	if (!cmd->enable_by_level)
-> +		return 0;
-> +
-> +	/* Initialize qmp node to talk to AOSS */
-> +	gmu->qmp = qmp_get(gmu->dev);
-> +	if (IS_ERR(gmu->qmp)) {
-> +		cmd->enable_by_level = 0;
-> +		return dev_err_probe(gmu->dev, PTR_ERR(gmu->qmp), "Failed to initialize qmp\n");
-> +	}
-> +
-> +	/* Notify AOSS about the ACD state */
-> +	ret = qmp_send(gmu->qmp, "{class: gpu, res: acd, val: %d}", 1);
-> +	if (ret)
-> +		DRM_DEV_ERROR(gmu->dev, "failed to send GPU ACD state\n");
-> +
-> +	return 0;
+v2: Change to bool type for skip_suspend.
+v3: Rebase and update commit message.
 
-Shouldn't the ret from gmp_send() get propogated in the return of this 
-function ?
-
-i.e. how can your probe be successful if the notification failed ?
-
+Signed-off-by: huanglei <huanglei@kylinos.cn>
 ---
-bod
+ drivers/usb/core/Kconfig     | 11 +++++++++++
+ drivers/usb/core/driver.c    | 14 ++++++++++++++
+ drivers/usb/host/xhci-plat.c |  7 +++++++
+ include/linux/usb.h          |  9 +++++++++
+ 4 files changed, 41 insertions(+)
+
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index 58e3ca7e4793..69778aa7b913 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -143,3 +143,14 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+ 	  ACPI selecting value 2 is analogous to selecting value 0.
+ 
+ 	  If unsure, keep the default value.
++
++config USB_SKIP_SUSPEND
++	bool "Vendor USB support skip suspend"
++	depends on USB
++	help
++	  Select this the associate USB devices will skip suspend when pm control.
++
++	  This option adds support skip suspend for PM control of USB devices
++	  in specific manufacturers platforms.
++
++	  If unsure, keep the default value.
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 0c3f12daac79..05fe921f8297 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1583,6 +1583,15 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+ 	struct usb_device	*udev = to_usb_device(dev);
+ 	int r;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_SUSPEND)) {
++		if (udev->state != USB_STATE_SUSPENDED)
++			dev_err(dev, "abort suspend\n");
++
++		return 0;
++	}
++#endif
++
+ 	unbind_no_pm_drivers_interfaces(udev);
+ 
+ 	/* From now on we are sure all drivers support suspend/resume
+@@ -1619,6 +1628,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
+ 	struct usb_device	*udev = to_usb_device(dev);
+ 	int			status;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_RESUME))
++		return 0;
++#endif
++
+ 	/* For all calls, take the device back to full power and
+ 	 * tell the PM core in case it was autosuspended previously.
+ 	 * Unbind the interfaces that will need rebinding later,
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index ecaa75718e59..8cbc666ab5c6 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -265,6 +265,13 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+ 			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++		if (device_property_read_bool(tmpdev, "usb-skip-suspend")) {
++			hcd_to_bus(hcd)->skip_suspend = true;
++			hcd_to_bus(xhci->shared_hcd)->skip_suspend = true;
++		}
++#endif
++
+ 		device_property_read_u32(tmpdev, "imod-interval-ns",
+ 					 &xhci->imod_interval);
+ 	}
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index 672d8fc2abdb..3074c89ed921 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -487,6 +487,15 @@ struct usb_bus {
+ 	struct mon_bus *mon_bus;	/* non-null when associated */
+ 	int monitored;			/* non-zero when monitored */
+ #endif
++
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	bool skip_suspend;		/* All USB devices are brought into suspend
++					 * power state after system suspend. It is
++					 * desirable for some specific manufacturers
++					 * buses to keep their devices in normal
++					 * state even after system suspend.
++					 */
++#endif
+ };
+ 
+ struct usb_dev_state;
+-- 
+2.17.1
+
 
