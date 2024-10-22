@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-376371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125B59AB082
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E9D9AB08D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36121C222EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8DC11C22348
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77FB1A01AB;
-	Tue, 22 Oct 2024 14:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6E1A2567;
+	Tue, 22 Oct 2024 14:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7s1WI6/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="sdAfroUk"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16167126BF2;
-	Tue, 22 Oct 2024 14:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A2F1A0BF3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606356; cv=none; b=EVOhfWX93AxXAaPF4pJ6kpf7gJbOt8P6Pdx7CJtfJEEXcyakNPzd59lNL1LuDq3X41WF8mloOL/QUiX2qiLKWbIvfB6Rr5aj18mlZambgJnY2zlTk5kY9Cx5IMSX8i7mneTmset/6i9k/AzjKWBCEAeO9rlJ5QGpzdU6ZnTmRmE=
+	t=1729606368; cv=none; b=NGZU0mMEopNuQwpMsqzxb9gdmdBEEdmJOZBUTxim5+aRhCjf/yGNLwQXKOksmjrhXfqaROWQMwOKrOYNOVpDLLMJ6J7RttfhH7EQV21x+BNxoT89i4odbpA7zZHvYHyypD6V1kSYEtrHVVDfNJu9tKpnCoZfjhnecpMLUAzaqz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606356; c=relaxed/simple;
-	bh=aJ/CtBVx6FFfVFXY/A0bO7mFfyBTFpF5st9zugN4EtI=;
+	s=arc-20240116; t=1729606368; c=relaxed/simple;
+	bh=e4NMuosVLVoXUYeYUj1Huc2tRuEwEa4DeJkVYNLMYZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qawRNf+CAzhux745/03p7PpOxNrul/ZfVT6OR774zSPeY5rsgw/kGtZH/MIJR6ypdLuLxUMCq2djnYDIy6ua0hhRczlqwny4+EGzJXKh1GyqApZtAmbUYn7p+AJQQuZ8D3VE+BQIImLsQ8O9Fe9Q+A1cdrFSAm0NhtLZmuMuRPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7s1WI6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A687C4CEC3;
-	Tue, 22 Oct 2024 14:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729606355;
-	bh=aJ/CtBVx6FFfVFXY/A0bO7mFfyBTFpF5st9zugN4EtI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxYE4BrUQpvk/C5qMnRXx8ZdiqaFzMKQpn9Zfcqmhe6EPBETE6JJrGXSWzNck8cFEoZcWzPn0mWfqhZPvy5k+iDGgjIS4qLoqjhtnwSaKW6nvu88nT/J+U6cHe4yZ/mHY9o0s7LPqb2i827tw9sCUAE3TCxUDYFX2fB3Z7HoVcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=sdAfroUk; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1729606358; bh=e4NMuosVLVoXUYeYUj1Huc2tRuEwEa4DeJkVYNLMYZ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O7s1WI6/WFEJgromr3RO8VlD+oxUWVWahu3qcL0mvBft3iY3ZekXK2wia2xjrprNV
-	 +m3vQJzJElv7nUU9Wjz5Z8CMSfXCBL5sjIzOcgMFS8Dk09l9Nkkbb795fh+h4rc0HG
-	 l+SbicRYLgcehwSt2FCKYz5Lw4SQ/gJ6Vx2O6mq3ev7r8w6qz00/y1BADtOxtbN5yi
-	 l2UY5CmE1dxaLFrPqyLyy78UD6Vo7fwWITRtFOsHFNokG6kf/VeznBBUFWQsfGAm8z
-	 SGfFbOVfSqnOgAsL2TsrfGtv/6x9YIzoaDnTjNcotiRA4XVI6HhCXN8x/XIBE//uRD
-	 1hdoAz1WxAg3A==
-Date: Tue, 22 Oct 2024 09:12:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Message-ID: <20241022141234.GA450009-robh@kernel.org>
-References: <20241022060157.36372-1-himanshu.bhavani@siliconsignals.io>
- <172958190288.3294457.18338479078694309889.robh@kernel.org>
- <PN0P287MB201901C383FDC879CA7A61A89A4C2@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
+	b=sdAfroUkGv2sIqEcSl8Yr6liFTbOB8J+o0p5QMnHKF/dOBmgvRpSu4MjErySl8dqX
+	 l6N3s/KhbsnJfYkM+KdSZBY+7qw0yYCY7CC53WqbUVIOed38tPb2BfJulfz6vjU1JV
+	 sYZT8M5PuJyDHrLzE0/YsFrecE1LLoXbr8cMN8VxFbiZ2svqKVX6pZaE7f3bChUt4E
+	 7cil6ot9I46naR6lPkqSkWHNNZRWUl//8GWPPBn9Sdl2hsav1uBrpWcMC8VoGfxmcF
+	 aVEaAwWCJJW9ICKRXjjNi9dQw8+17OtOu64gftAzU1kzzJSW/kbuDgVwszLuPNwHEP
+	 GUQsUUaUknuCg==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id 3D2371000E1; Tue, 22 Oct 2024 15:12:38 +0100 (BST)
+Date: Tue, 22 Oct 2024 15:12:38 +0100
+From: Sean Young <sean@mess.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, andrii@kernel.org, yhs@fb.com,
+	linux-kernel@vger.kernel.org, daniel@iogearbox.net
+Subject: Re: perf_event_detach_bpf_prog() broken?
+Message-ID: <Zxey1hxhnp9_BebL@gofer.mess.org>
+References: <20241022111638.GC16066@noisy.programming.kicks-ass.net>
+ <ZxewvPQX7bq40PK3@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,32 +58,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PN0P287MB201901C383FDC879CA7A61A89A4C2@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <ZxewvPQX7bq40PK3@krava>
 
-On Tue, Oct 22, 2024 at 09:22:52AM +0000, Himanshu Bhavani wrote:
-> Hi Rob,
+On Tue, Oct 22, 2024 at 04:03:40PM +0200, Jiri Olsa wrote:
+> On Tue, Oct 22, 2024 at 01:16:38PM +0200, Peter Zijlstra wrote:
+> > Hi guys,
+> > 
+> > Per commit 170a7e3ea070 ("bpf: bpf_prog_array_copy() should return
+> > -ENOENT if exclude_prog not found") perf_event_detach_bpf_prog() can now
+> > return without doing bpf_prog_put() and leaving event->prog set.
+> > 
+> > This is very 'unexpected' behaviour.
+> > 
+> > I'm not sure what's sane from the BPF side of things here, but leaving
+> > event->prog set is really rather unexpected.
+> > 
+> > Help?
 > 
-> Command  :  
->                  make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
->  
-> Output : 
->                  DTEX    Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dts
->                  DTC [C] Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dtb
->  
-> I am not getting any error or warnings 
+> IIUC the ENOENT should never happen in perf event context, so not
+> sure why we have that check.. also does not seem to be used from
+> lirc code, Sean?
 
-Try applying the patch you sent. The applied patch truncates the file. 
-It looks to me like the line count in the diff chunk is wrong. It says 
-153 which is the length of the truncated file.
+You can deattach a lirc program using the bpf syscall with command 
+BPF_PROG_DETACH, and if you pass an incorrect (as in, not attached) program,
+then this commit ensures you get ENOENT rather than success.
 
->  
-> I checked dtschema is up to date 
-> dtschema Version: 2024.5
 
-Not the latest version, but that doesn't matter here.
+Sean
 
-> yamllint 1.33.0
+> perf_event_detach_bpf_prog is called when the event is being freed
+> so I think we should always put and clear the event->prog
 > 
-> Regards,
-> Himanshu
+> jirka
 
