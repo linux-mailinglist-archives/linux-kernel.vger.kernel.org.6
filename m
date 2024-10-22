@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-375946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1C49A9D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:57:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5838C9A9DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533162831A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:57:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E82283028
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE4E191F75;
-	Tue, 22 Oct 2024 08:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DADF18D640;
+	Tue, 22 Oct 2024 08:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJx1qx8q"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AQXpsH9f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC2E18D640;
-	Tue, 22 Oct 2024 08:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FBC19538D;
+	Tue, 22 Oct 2024 08:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587394; cv=none; b=OH3oNOvubtiOzlJkfTtFA/CnvaKLl0vvholyZblWZGH6vU2eRgdVMVRU4ZNSzQiHEsDnD1Zi2MmkKOJ4YrvVuHaaoYXFrTpUT3hPowtDoF68jTOx2dNxJKNzW6kYPcdIqHQKzkBGm96kqEYt0N2JjsTdD+Vwb2BHpXz0wvkImLE=
+	t=1729587398; cv=none; b=KnE3vOYPLkm9G+fgznA/aTPCPwX4Zb6WGGzywNELHFEAneAmiWm7ruUncVEOXU1Kvqw7sBtfIzzQIiF4bvEJvodumXxhkVLJs/lGL9ZMr8KE/MM2FlmpMUis5Nuk0JPSvWCN68cvqJbHOztFpvqbleUwlmMV3vMGK7oRkhAxrKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587394; c=relaxed/simple;
-	bh=ZLw6gFMY4Cb5+zhRGaODfl7DZxpfc0P3QjxHnCkbGog=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PiU9RXojRmIp0VzOrhq2/s6ll2YBN4FuPMQ/RMOsTfrhZmZWT+Q89iqbRJ+coR+3UfTLnZtOwMIYctOpmkuF64nLXMfiff/ci2PUFDJ+gx8JbYIFPL/d+IUqan2Zoc7wu/JVZkPA6zV09ybRtqtpuoOSrPrTunHHFHhguqOxnNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJx1qx8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AA5C4CEC3;
-	Tue, 22 Oct 2024 08:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729587393;
-	bh=ZLw6gFMY4Cb5+zhRGaODfl7DZxpfc0P3QjxHnCkbGog=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hJx1qx8q9qbI2wT3QhNsJuy7pnqYbqI2l6G6BZ5o96XW4mUKeLEr0hbN36HdLrQUi
-	 EVja1gB531feRBK88y49PG3ayOYRLh1PlEd7lQGha2bHcWlvVJY5h3ZX75wH1eUfeJ
-	 tXPy3oi3/TQgIoBd291lB5pp0MaXpo2NqLYNaqp/xQ+eP5gkAOu8DC3pkNWWg1xyeu
-	 VItFX5qHeSr/egEjP+qlBdFq23xgwQAf01CnO1ITrYPYgiSe5ZK0gFzrnRtNGU3Xfh
-	 WsVP/FR9TlZV/CdBn3bxizeQdfM7AwszXsnq7pRzP66PdqVzCydOCAEHC1byxkidn6
-	 vOQrRP9yvh91w==
-From: Christian Brauner <brauner@kernel.org>
-To: Antony Antony <antony@phenome.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Sedat Dilek <sedat.dilek@gmail.com>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] 9p: Don't revert the I/O iterator after reading
-Date: Tue, 22 Oct 2024 10:56:24 +0200
-Message-ID: <20241022-weinreben-womit-68c97935ae32@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2299159.1729543103@warthog.procyon.org.uk>
-References: <ZxFQw4OI9rrc7UYc@Antony2201.local> <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me> <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info> <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me> <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com> <2299159.1729543103@warthog.procyon.org.uk>
+	s=arc-20240116; t=1729587398; c=relaxed/simple;
+	bh=zB0+4Vy0VmPNc0+MJ6brmbAywsozm+5gHvzdG4soTVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3xsQjuSwrWm/NPuU2amQgZ6qH7sxMA3wZYJzlw2NcrjOlhmGXzaMBfWba93C2InpANWS/o+R0r+yxg9WbZecjzeoUODJbNokM8pEtRc8BRQyZW5jV6sWl/S4NVqoiVjcvcRPKqdnN/YOPFHZ07svekPA58baWfr4KTrKrVzIjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AQXpsH9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19D5C4CEC3;
+	Tue, 22 Oct 2024 08:56:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729587398;
+	bh=zB0+4Vy0VmPNc0+MJ6brmbAywsozm+5gHvzdG4soTVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AQXpsH9fe6uN9eY7nE9LhZL2MZH/GmAJIwtUM4QPj842ESYWAcDEdILIqsdC/V4QO
+	 ezdwQcYCwqQdIXZJWv5kTeL3axPfAZW6GGkHpUp3ri+ct2KEdjZqb+VfpEeUDeBQCe
+	 jd1DgVFE2X3wWb0SXAcQ67JkhifCXHBtq9Qw+z7I=
+Date: Tue, 22 Oct 2024 10:56:34 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 6.1 00/91] 6.1.114-rc1 review
+Message-ID: <2024102216-buckskin-swimmable-a99d@gregkh>
+References: <20241021102249.791942892@linuxfoundation.org>
+ <CA+G9fYtXZfLYbFFpj25GqFRbX5mVQvLSoafM1pT7Xff6HRMeaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=ZLw6gFMY4Cb5+zhRGaODfl7DZxpfc0P3QjxHnCkbGog=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLZ+y6HXLwh/UDjeR73X5rNvXclNxg23fi+gwfk/22j 9w+fJv2rKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiHzgZ/go4CfPZuk9+d6jt qu6MN/1JAWfXlz6epa/8rG7tcdGTfo2MDJ8lWzYvupin8usF9w2PI4enml7++KL3+iv1vytfOng Vz+YEAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtXZfLYbFFpj25GqFRbX5mVQvLSoafM1pT7Xff6HRMeaA@mail.gmail.com>
 
-On Mon, 21 Oct 2024 21:38:23 +0100, David Howells wrote:
-> I think I may have a fix already lurking on my netfs-writeback branch for the
-> next merge window.  Can you try the attached?
+On Tue, Oct 22, 2024 at 01:38:59AM +0530, Naresh Kamboju wrote:
+> On Mon, 21 Oct 2024 at 16:11, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.1.114 release.
+> > There are 91 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.114-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> David
+> The arm allmodconfig build failed due to following warnings / errors with
+> toolchain clang-19.
+> For all other 32-bit arch builds it is noticed as a warning.
 > 
+> * arm, build
+>   - clang-19-allmodconfig
 > 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Build warning / error:
+> -----------
+> fs/udf/namei.c:747:12: error: stack frame size (1560) exceeds limit
+> (1280) in 'udf_rename' [-Werror,-Wframe-larger-than]
+>   747 | static int udf_rename(struct user_namespace *mnt_userns,
+> struct inode *old_dir,
+>       |            ^
+> 1 error generated.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Odd that this isn't seen in newer kernels, any chance you can bisect?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+thanks,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] 9p: Don't revert the I/O iterator after reading
-      https://git.kernel.org/vfs/vfs/c/09c729da3283
+greg k-h
 
