@@ -1,49 +1,46 @@
-Return-Path: <linux-kernel+bounces-376180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779A99AA137
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9199AA138
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D342D283C3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B5C1F247EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E7F19B5B4;
-	Tue, 22 Oct 2024 11:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4DF19B5B4;
+	Tue, 22 Oct 2024 11:37:09 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858EC13D516;
-	Tue, 22 Oct 2024 11:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5513D516;
+	Tue, 22 Oct 2024 11:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597014; cv=none; b=cxfkxJQPWJ2fuvIhuFLKT/RiW+U62kGgrKtk7Ggtv/ibz/zMPfEMwPMj0S0OYprIAjSUtxEk66WulbpruiuQohSPsno3W3VJIQ0Vy2h5KO3ePuAfpJvYsMmF7HGTHrGCLYVQkcnLH+oqRfV4smIEGlhW+8UqIn/nbaBRfdXSB8Q=
+	t=1729597029; cv=none; b=X8ZNpAt+hJEkkZItP9lxDBzG+V4umQCPYOtWu0JoGjYzEqPy6VvKhvXyAaIt1LaPxXP8W8aemvI9BD1F6HCVNvG5x6V/8aPyBi6Ueg2AbWSQl6B7+oz68OMeVt1pli4e18C7Vd3ajBR7pmLGrQHEMpQl8aeUTIYshH03SlNKVdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597014; c=relaxed/simple;
-	bh=cm0SwPu02Nx0TC7GgZmJeNCTIvcDdLtItHobUdKSxAA=;
+	s=arc-20240116; t=1729597029; c=relaxed/simple;
+	bh=AtZ/+dMaS/nQkAbuUhC70d+sLdjqItoaSsbPIpHiquQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TS+HulIR3u72eOxZ9OzPBag5Q87P+ISuOHear4O0o6gFUO5HDC464V3ZS/8WNYprQdUEoyFMI7DLqFzK3QtXHfDR/zy5qLTbyZcosb5tw5LrrOCKa/etEH9gha1qRYWqwA0dl0CdUx1NpvS16cr3Cc8YCUiRRXSPIib0ugNar/U=
+	 MIME-Version:Content-Type; b=Zdr0uHCpt8aRmzbkUeUgrb3whcWp38LXG4ypwnHCogqCt0w9dFWF6lC5wJ5cRqHYxp0uy4UEWR6DCdDn3K1iCR6x56ygoTRvT/NhOLJxmxaT3z4NYBTi+2fPHqN/aocKgJolqq6tHpS4uVEFKmZBOOmkoAUs+I4hLCIArtBSfBk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B9BC4CECD;
-	Tue, 22 Oct 2024 11:36:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26A7C4CEC3;
+	Tue, 22 Oct 2024 11:37:07 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb+git@google.com>
-Cc: Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v4 0/3] arm64: Speed up CRC-32 using PMULL instructions
-Date: Tue, 22 Oct 2024 12:36:49 +0100
-Message-Id: <172959700464.951219.12544487122968669454.b4-ty@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm64: Fail the overall fp-stress test if any test fails
+Date: Tue, 22 Oct 2024 12:37:05 +0100
+Message-Id: <172959701881.951357.12349097859376316498.b4-ty@arm.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241018075347.2821102-5-ardb+git@google.com>
-References: <20241018075347.2821102-5-ardb+git@google.com>
+In-Reply-To: <20241017-arm64-fp-stress-exit-code-v1-1-f528e53a2321@kernel.org>
+References: <20241017-arm64-fp-stress-exit-code-v1-1-f528e53a2321@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,26 +50,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 18 Oct 2024 09:53:48 +0200, Ard Biesheuvel wrote:
-> The CRC-32 code is library code, and is not part of the crypto
-> subsystem. This means that callers may not generally be aware of the
-> kind of implementation that backs it, and so we've refrained from using
-> FP/SIMD code in the past, as it disables preemption, and this may incur
-> scheduling latencies that the caller did not anticipate.
+On Thu, 17 Oct 2024 18:43:31 +0100, Mark Brown wrote:
+> Currently fp-stress does not report a top level test result if it runs to
+> completion, it always exits with a return code 0. Use the ksft_finished()
+> helper to ensure that the exit code for the top level program reports a
+> failure if any of the individual tests has failed.
 > 
-> This was solved a while ago, and on arm64, kernel mode FP/SIMD no longer
-> disables preemption.
 > 
-> [...]
 
-Applied to arm64 (for-next/crc32), thanks!
+Applied to arm64 (for-next/kselftest), thanks!
 
-[1/3] arm64/lib: Handle CRC-32 alternative in C code
-      https://git.kernel.org/arm64/c/fc7454107d1b
-[2/3] arm64/crc32: Reorganize bit/byte ordering macros
-      https://git.kernel.org/arm64/c/b98b23e19492
-[3/3] arm64/crc32: Implement 4-way interleave using PMULL
-      https://git.kernel.org/arm64/c/a6478d69cf56
+[1/1] kselftest/arm64: Fail the overall fp-stress test if any test fails
+      https://git.kernel.org/arm64/c/7a08cb9b4bb9
 
 -- 
 Catalin
