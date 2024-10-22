@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-375614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BDA9A9831
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:15:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76949A9837
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 392F0282679
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:15:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68FA3283686
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC305A79B;
-	Tue, 22 Oct 2024 05:15:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A70D2E401
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEAD126BE0;
+	Tue, 22 Oct 2024 05:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x6kjNyBk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AC91DDF5;
+	Tue, 22 Oct 2024 05:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729574128; cv=none; b=kPLOhkhK5q3TdSJEqQJ5nypbWVFnYn8qt3NLA8TZeVkq+R9WsHUYGmDhuemw6nGksmGBipBmJbveMX6n7Vyzv7T4a3zq7mTVhyJEXdmRzt9vuLH/SN5NI0VSx0neU7HXSNeS5urd9v291pdCBVC8R+rAN8d9fi9gd4/bdGrDQBc=
+	t=1729574335; cv=none; b=isYd5S7ev6H+hnQr+ORl6J0ZL5BZ3pdHaM+qLZiBVWuByRP/Mfk24lxl0SShBx3mudi9r0X6qqN0M20CcRXiewDTs7uYV/rXyUB3Gktw9jGw7dB7bXtAQn7McRLOBFCsmEjFEWnwK6SPXE7BKLgl1NCa5jInY+gQn1f0DU8haKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729574128; c=relaxed/simple;
-	bh=k2YS0m28wtU4KXAWBjIbkRWgGrmUiPzW1MXjhUtEUkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFgLPVOWEGJVniI4Li1FtZ2U+XLEZLzLXOqH2mSqHJWw0zb/T1t1jHR1+zj5U+6t27t2jR3KneLGF0ZRWauI5e+DXSUKBG675MJUv/xLDUeFSugawS36qM41dhxdaeXlEE9S9wyMajQzVMaXUPZUFn9wcNATMtKH0qMvQRwkZHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10973497;
-	Mon, 21 Oct 2024 22:15:55 -0700 (PDT)
-Received: from [10.163.41.149] (unknown [10.163.41.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B79CA3F528;
-	Mon, 21 Oct 2024 22:15:23 -0700 (PDT)
-Message-ID: <985895a4-04c3-49a4-88f6-25e2fc18a71e@arm.com>
-Date: Tue, 22 Oct 2024 10:45:21 +0530
+	s=arc-20240116; t=1729574335; c=relaxed/simple;
+	bh=RAhRQrMU/Jtdv6RJGp290Zy6A86u4CQL3hSzqxzV+MY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rk/jPFk5Tw0wf1dCGdQbI1jHKv6Ma8dXFzI5gUtA7URn3l1Dfgs7zvA7zbcUG7whPlYMiOfdYLC4KHI4SrYsDNaEEo6WUrjHFoL0+do0cIAGV+1wRWq7oIWsD8JW5s0/nK9yKhRpzl2e6JJicMmCEmdugCtqPaFMwPrVz5PJzLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x6kjNyBk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACB3C4CEC3;
+	Tue, 22 Oct 2024 05:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729574334;
+	bh=RAhRQrMU/Jtdv6RJGp290Zy6A86u4CQL3hSzqxzV+MY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x6kjNyBkmkyAsInHuER1P5sOUfn+u2m10/9gK4m8d0gjLRYI0B569eNzxqqDLFSuZ
+	 pUfFJpsgSJ2G9YmDhNrIDygUG7uP0l5x9MSTtMZSObE8d5OqUDH21GSvG4ITKTYzet
+	 0V4KEORQl6P5yJIaZ5AjGaw9qLNF56gk30pCwzOE=
+Date: Tue, 22 Oct 2024 07:18:44 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yuanchu Xie <yuanchu@google.com>
+Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	virtualization@lists.linux.dev, dev@lists.cloudhypervisor.org
+Subject: Re: [PATCH v4 1/2] virt: pvmemcontrol: control guest physical memory
+ properties
+Message-ID: <2024102220-creed-darkening-aac0@gregkh>
+References: <20241021204849.1580384-1-yuanchu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Use str_on_off() helper function in report_meminit()
-To: Mike Rapoport <rppt@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20241018103150.96824-2-thorsten.blum@linux.dev>
- <172926766252.1788036.5825981783630801187.b4-ty@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <172926766252.1788036.5825981783630801187.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021204849.1580384-1-yuanchu@google.com>
 
+On Mon, Oct 21, 2024 at 01:48:48PM -0700, Yuanchu Xie wrote:
+> +static DEFINE_RWLOCK(pvmemcontrol_lock);
 
+What does this lock control?
 
-On 10/18/24 21:38, Mike Rapoport wrote:
-> On Fri, 18 Oct 2024 12:31:51 +0200, Thorsten Blum wrote:
->> Remove hard-coded strings by using the helper function str_on_off().
->>
->>
-> 
-> Applied to for-next branch of memblock.git tree, thanks!
-> 
-> [1/1] mm: Use str_on_off() helper function in report_meminit()
->       commit: 4bb21dbb6728fbe6cb7e2f7dc7e5388962c4125b
-> 
-> tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
-> branch: for-next
+> +static struct pvmemcontrol *pvmemcontrol __read_mostly;
 
-Actually there are multiple such instances which could be converted using these
-helpers at once in a single patch rather doing in a piecemeal manner.
+Having a single static device should not be needed, please tie this
+properly to the pci device that the driver core gives you.  With this
+design, you have limited yourself to a fixed number of devices in the
+system at once (i.e. 1).  This isn't the 1990's anymore, drivers should
+be able to handle any number of devices at once.
 
-https://lore.kernel.org/linux-mm/a11f46f7-29bc-4242-bd8b-d316065607e2@arm.com/
+thanks,
+
+greg k-h
 
