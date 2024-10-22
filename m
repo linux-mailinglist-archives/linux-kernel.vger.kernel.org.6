@@ -1,140 +1,100 @@
-Return-Path: <linux-kernel+bounces-376634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE4C9AB43D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:40:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F999AB442
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990341F24D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:40:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6701C22DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18101BC088;
-	Tue, 22 Oct 2024 16:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7F01BC9F5;
+	Tue, 22 Oct 2024 16:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qya/+fTR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mheeIFrW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D581474C9;
-	Tue, 22 Oct 2024 16:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C270A1BC07E;
+	Tue, 22 Oct 2024 16:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615220; cv=none; b=tl0vTYit0NabNu1Qg3ecmn/o1rad9QNKJj1C2BED9I3R/HX/Uf3bdqNp1KSjzAYshywl9Wi7wGRZPW908ipbrYwga/ObXYerrkj7eEsrksoeKvVj6xxok3VSs16Y1TuiTKSh9AfBbIgSDEglCZhJaLO1lebDlDGyvLahTGYGwnw=
+	t=1729615310; cv=none; b=AhIbLsmPAeKOkp9q4/Gn/2iHjU8oCPe9p1szCqsVMyAk4qgSRm/GjxjhFlAauCX/v2RBIZecsVwqRkDDF0L7l7xAfBBxfuPk2hSHxZnqRoR2YpY9aQ5msEdahbTOPqrXItBzxjViROQddlAbm2GMjnB3GA7dJyD90oCuHb3/DcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615220; c=relaxed/simple;
-	bh=dzLcXD+156SYMA3WB6A3WMf+G11daZvhn9a/x7sleuw=;
+	s=arc-20240116; t=1729615310; c=relaxed/simple;
+	bh=EoHMsRQGMuLx+P7zRHzX1qTnz0At3UXNDcHYzQo11LA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVbY4E1yTwea59b9omFgi52q29gO23SoxzQn86uVhh4HmE6783Tmj5+O8xj0qgvdt8baJwxNLROImSV/MhpfukWGSYlUjviEC5N/13ZRqX3RRZKS0Bq2hUt5RnqmLrOkc68oSGFvqg/fwNrfoEAMABkNnpUFnsmVyiX5tvD5n0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qya/+fTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4339C4CEE3;
-	Tue, 22 Oct 2024 16:40:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=neFPiey8kwCizCvRet/2eNG6ta9rGvZwFiGKpSdHVMtPrNVNA6pItPHEJw8N3aaLbjgfeScABPxRVf8V7H9xJ+NxTAbiFLMR0VTTJZBn0VphmZli9kvvuoseljj62FRY9RMqvViNLfqKPAV9X4x98yBizQL0wXunN/pnEJb95YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mheeIFrW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDA7C4CEC3;
+	Tue, 22 Oct 2024 16:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729615218;
-	bh=dzLcXD+156SYMA3WB6A3WMf+G11daZvhn9a/x7sleuw=;
+	s=k20201202; t=1729615310;
+	bh=EoHMsRQGMuLx+P7zRHzX1qTnz0At3UXNDcHYzQo11LA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qya/+fTRh7iRS0fsWNpvNM4fOZ9LEm97jSTasjbGio+K0xA9SHfTW2zGT+kMVIzUP
-	 BdfIwCsJL54BhfdrJRzgB4j8pS1X/n/5alm850QyNO4HeMAhgJqSRcWqU0tkUQugzq
-	 Clse6h50LyituelUmqyAjyyv5yIkPpegtIyXxd1piO1Ly3v2le//1T3MLllSir4d4n
-	 /Wp3smiVKNdUUKIvjKz0q90TmEzjAoqa14PtnXHuBDb/FgO3Aoe4rRaqfQ4XCFwCrC
-	 GLqERWKqEkTFNd6/39D57n2/i0Ow7P3LP4T+trFPvP7oYRLMt7XttHI15VYz3gN2F6
-	 wN3bx7QpOcJtA==
-Date: Tue, 22 Oct 2024 17:40:13 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	zhangkun09@huawei.com, fanghaiqing@huawei.com,
-	liuyonglong@huawei.com, Robin Murphy <robin.murphy@arm.com>,
-	Alexander Duyck <alexander.duyck@gmail.com>,
-	IOMMU <iommu@lists.linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-Message-ID: <20241022164013.GI402847@kernel.org>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
+	b=mheeIFrWDVR6zmPu0VxTdfTU066+am26va4z7qSRWIwYCxL1Ju1pY+feu1JqItBri
+	 OQjuVtqZKV0JnHWd14mLckTWO9g6x5LupHnBFWIfBSOMMKtVEp+OBKCiRVz0Ahx/tu
+	 ku4+UawUcLC12gH6Qs28lUYrc0kra27LFEYX2Fwv42mqos4hZvJyiUvTE+txNrMDlH
+	 /7NWRvRkWjk7/CEoyTRuyRQUjYKUvheJF+Khb+krEKvhFAsrRCkeS7/N9P+FznIJR7
+	 Rzk6zGvnhXjIAuh+xWsOLWcIiOMhI2wFEBU+kJcyGX5DqrVT2jKcmz1DUBHUzOA5Q7
+	 DQA0nT7UXk+zQ==
+Date: Tue, 22 Oct 2024 17:41:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: E Shattow <e@freeshell.de>
+Cc: Henry Bell <dmoo_dv@protonmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: starfive: Update ethernet phy0 delay
+ parameter values for Star64
+Message-ID: <20241022-amusement-overreach-c5d1d7fd797b@spud>
+References: <20241022061004.62812-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5v1eMG7g4H4NB0I9"
+Content-Disposition: inline
+In-Reply-To: <20241022061004.62812-1-e@freeshell.de>
+
+
+--5v1eMG7g4H4NB0I9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022032214.3915232-4-linyunsheng@huawei.com>
 
-On Tue, Oct 22, 2024 at 11:22:13AM +0800, Yunsheng Lin wrote:
-> Networking driver with page_pool support may hand over page
-> still with dma mapping to network stack and try to reuse that
-> page after network stack is done with it and passes it back
-> to page_pool to avoid the penalty of dma mapping/unmapping.
-> With all the caching in the network stack, some pages may be
-> held in the network stack without returning to the page_pool
-> soon enough, and with VF disable causing the driver unbound,
-> the page_pool does not stop the driver from doing it's
-> unbounding work, instead page_pool uses workqueue to check
-> if there is some pages coming back from the network stack
-> periodically, if there is any, it will do the dma unmmapping
-> related cleanup work.
-> 
-> As mentioned in [1], attempting DMA unmaps after the driver
-> has already unbound may leak resources or at worst corrupt
-> memory. Fundamentally, the page pool code cannot allow DMA
-> mappings to outlive the driver they belong to.
-> 
-> Currently it seems there are at least two cases that the page
-> is not released fast enough causing dma unmmapping done after
-> driver has already unbound:
-> 1. ipv4 packet defragmentation timeout: this seems to cause
->    delay up to 30 secs.
-> 2. skb_defer_free_flush(): this may cause infinite delay if
->    there is no triggering for net_rx_action().
-> 
-> In order not to do the dma unmmapping after driver has already
-> unbound and stall the unloading of the networking driver, add
-> the pool->items array to record all the pages including the ones
-> which are handed over to network stack, so the page_pool can
-> do the dma unmmapping for those pages when page_pool_destroy()
-> is called. As the pool->items need to be large enough to avoid
-> performance degradation, add a 'item_full' stat to indicate the
-> allocation failure due to unavailability of pool->items.
-> 
-> Note, the devmem patchset seems to make the bug harder to fix,
-> and may make backporting harder too. As there is no actual user
-> for the devmem and the fixing for devmem is unclear for now,
-> this patch does not consider fixing the case for devmem yet.
-> 
-> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
-> 
-> Fixes: f71fec47c2df ("page_pool: make sure struct device is stable")
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Tested-by: Yonglong Liu <liuyonglong@huawei.com>
-> CC: Robin Murphy <robin.murphy@arm.com>
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> CC: IOMMU <iommu@lists.linux.dev>
+On Mon, Oct 21, 2024 at 11:09:51PM -0700, E Shattow wrote:
+> Improve function of Star64 bottom network port phy0 with updated delay values.
+> Initial upstream patches supporting Star64 use the same vendor board support
+> package parameters known to result in an unreliable bottom network port.
 
-...
+Should I add:
+Fixes: 2606bf583b962 ("riscv: dts: starfive: add Star64 board devicetree")
+CC: stable@vger.kernel.org
+?
 
-> diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
-> index c022c410abe3..194006d2930f 100644
-> --- a/include/net/page_pool/types.h
-> +++ b/include/net/page_pool/types.h
-> @@ -102,6 +102,7 @@ struct page_pool_params {
->   * @refill:	an allocation which triggered a refill of the cache
->   * @waive:	pages obtained from the ptr ring that cannot be added to
->   *		the cache due to a NUMA mismatch
-> + * @item_full	items array is full
+"unreliable" sounds to me like something that is worthy of going to
+fixes/stable
 
-No need to block progress because of this, but the correct syntax is:
+--5v1eMG7g4H4NB0I9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  * @item_full: ...
+-----BEGIN PGP SIGNATURE-----
 
-Flagged by ./scripts/kernel-doc -none
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfVyQAKCRB4tDGHoIJi
+0mXyAP4hE8X6wR9mN1YBx29ScBPlWDTvKS+zXqMNQTvwHnCExgEAmFDWhu4p3Ljj
+9iV7Tk8QmQBu2ixOzU6EvXethK5Y3A4=
+=ZbHC
+-----END PGP SIGNATURE-----
 
-...
+--5v1eMG7g4H4NB0I9--
 
