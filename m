@@ -1,199 +1,250 @@
-Return-Path: <linux-kernel+bounces-375847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B099A9BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 499639A9BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE63283CE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3E32841AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D9316F8E7;
-	Tue, 22 Oct 2024 07:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EB5186E40;
+	Tue, 22 Oct 2024 07:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GweyATkd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvI+eLVa"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77753155333
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6EF176AA9;
+	Tue, 22 Oct 2024 07:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583937; cv=none; b=gXTKhDlh1FyGssCrV8iUv+DC24+ujGjmMDWIMv/GZrtAH5FhDUr3lq3lVNaFlcwc4W431jAtU6Mbj9PnDSynghFxtaPz0X47i0x8XN9JDKopg9Q4iFzYmi/9ZOH+6VwaD2/iGPhr6fEG1tKelj+qTzTSWebqmh4UYx+IxzMk9Kw=
+	t=1729583941; cv=none; b=h65B1+LCRZNNYZfJBYld8663A+bMQwhBgKmluBMiCjlGFWNGYa2T5ckqWlDjk8bgQsoc7DEqZVbIan8S+JqfsD2p3B6clIMA0wyidXdfaWK5tdFJNX1/mmSwnAn76H4XxcbOjfEhWhXdPgbWyt71L3pRsLaP8ps6k7vCOgTo9d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583937; c=relaxed/simple;
-	bh=lASjZqRy8DWUdG/x3b3JyJoeoS2+o+iWUvtizrQ9F9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRijzWmmbUcmNK2SC3XZgJg93g5ag1qCxWHC7477aSUaD2kqzuNA3WeUnJtI+x0HjKgdox54/kD0Jn3MMUiqMEDGCPQ8NYrhUSO7LU+3tE5s9/yz4x5YsYWMGCZ/5VK/Z10cyOQYXOVH5IzqOVZ4wQ7wr1U6wzu9zChl+x/fTGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GweyATkd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729583934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/toOIhDFxtm2KiH53yytgdrHcc4/hOCbQgrRu1IsbBM=;
-	b=GweyATkdPlz0anyMzAz6zXPcWMA27iYEuO3M3LQ6iQb/kjW6uw99NsXwpEZMhqsDCBItwW
-	A8vjzzuLMXG0Fgahfefy2hD9sCOtugivyRKBCVH4FLc8A4HJRgC7KweOah9jIZAdgFOFLb
-	pBihlF67nq8Dy/vnrzV7TzqDvOEKbCA=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-138-gZ39yAP-Nu2SZgBT83pT5w-1; Tue, 22 Oct 2024 03:58:53 -0400
-X-MC-Unique: gZ39yAP-Nu2SZgBT83pT5w-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-53a0b48e8d4so4950981e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:58:52 -0700 (PDT)
+	s=arc-20240116; t=1729583941; c=relaxed/simple;
+	bh=v6GoBW4x1zQKBQSgQfnDERVvLEH6IHtSS+CwLXRVWpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2au8AsVufEsU50eou5qxo4g6JIsxtANjeuWrjOpgLkgkPB/2C+pIsh2wJGoeW1e5zXPTd12gvl3MfJijUaJAeehrErXwXUg+Y1HKgcpK8U/MlBi9pcbH7tgBVYQajG8L74qwgTIRFWyMvF0vJ/02P/oySEEvdVWl0HvZ2RkzqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvI+eLVa; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so3560597b3a.0;
+        Tue, 22 Oct 2024 00:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729583939; x=1730188739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zr9U5UefwWfBs0yg88gF6SYD9KhJ5/0kT72k1JCKjiw=;
+        b=jvI+eLVafxxj1oCdt5KpLUJv3Or/nRLgajn8GIDzy0mJpwEOfgAlWl/ODOomNIxII7
+         l1hgNmkSvIuTdDksDE/n6RlXz1IMEepzM5tRvehcFOSzVj2ibb0hqTfYIwqF44fDmrw6
+         aaJJuKpQlgARa4WvtYve5pj1YyEM/MnCXj3OmWwJ1B5bkVJclru8DP1BQ4iUu52kzhNh
+         a3V1lUj/SUKXP/Lv1/GOGGTOa8qcnMY3Zo+z4bRZYNEzBJQAewtjRHtVPc2W5wJa78JT
+         ojyXNP8K8Di/d19ADPmqD/djHtff88OfJlGIJp1U60jdDBNmPbD1ds1bQs9F28+ozlyw
+         kxAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729583932; x=1730188732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/toOIhDFxtm2KiH53yytgdrHcc4/hOCbQgrRu1IsbBM=;
-        b=W3E2IkCVGmIaBlKZF5SJdj5v0ASs3WUlHUgS7ciUtca2z5In51KoTtUGQxtQIIkWJ6
-         Badjos3JeVpD8bg/eBAMzZpE4b15gMseIZm21c5zSQHsqC5taL2jMHCYAx5/I2jDGQEX
-         okS5K7AVYngC/qnKqs74TJ2h5jL0D6kI8tOX85kAQmVgr6s045mosWtHb9Ptt4v0Y65F
-         Dv1R241Spl9O3HSmjhthbqDQND119AaZbCQrLghrtBgfDRBrnsVv9/+rkjdwACh1EV6h
-         XZNY9ZKui46KBSr63UbEXv/rwIctbxxsTC1sH6greyv1Ui/qtlPVql1j5jCnbWm9Ci0s
-         Ye4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXLpi42dxfNIivfjLhNMnsw1834xufh3ovyF5iQkXc3koUyiC+ttK7FfgLB1xuo0oVkxdHObTzKlPJsoos=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMGNPM9Vf5XMa908Z6Q58d64hvsKcF3QlT1LII6Qe86Qy+STTg
-	K+Jw0JBSJ2UtOAeCMGR5pyTLg7tjBxv2x7qVaxq3WoiWkVLN3QOjdt6GNUMkUF7EEbdYE4swJ+9
-	4TvW1trLQESUgnPCWGJVfB2O6GgH6VNpGA2wrHj1lEk9mSzxdERCa4mUTP7G9BA==
-X-Received: by 2002:a05:6512:1396:b0:539:e873:6e6 with SMTP id 2adb3069b0e04-53a15445fbbmr6176905e87.43.1729583931491;
-        Tue, 22 Oct 2024 00:58:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHZkuY2o29BsH2nW9fSeox5DGzjxId3xF7ANCRMftKPLZng9BBjKBjW/HI8QrQjL7hrhqDkQ==
-X-Received: by 2002:a05:6512:1396:b0:539:e873:6e6 with SMTP id 2adb3069b0e04-53a15445fbbmr6176880e87.43.1729583930939;
-        Tue, 22 Oct 2024 00:58:50 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6a729sm2841670a12.54.2024.10.22.00.58.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 00:58:50 -0700 (PDT)
-Message-ID: <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
-Date: Tue, 22 Oct 2024 09:58:48 +0200
+        d=1e100.net; s=20230601; t=1729583939; x=1730188739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zr9U5UefwWfBs0yg88gF6SYD9KhJ5/0kT72k1JCKjiw=;
+        b=dg4uvRs0SIBsuk2/nh8r4lzs4xmO9jXLmZIEzt/vuznRyALoocE5OKC2jaMDuJauJ3
+         Pz227PMv2l5yLQL+hUhNBrjpcboVteISN9p4w3slSQEKzylt4NUZgqTuGnQTgRwu24Yo
+         +9UYsZjjji++03E+vAaYtqPjm5byT8XCkHWQU1rhDyAdQkihf46jRXrAa6O8zLjO3Vk7
+         teCVjTCE9hsW7tCEx7vL/SeyY4ciSBUdCVInngDfirAJ2mt9yHX6ehxi2jMkWgMZOu6v
+         PQZUyf+R0nOgMeHod89FG/AoXbg/pc7YuUQuhkvIMzGUeVhK7StkVI68jI4EyiEXSXpz
+         9cpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5nqbu5ay+SL76YVdrtDqJU3fkWZnWlvdfq6Ys+6zqcGlyXTMcMaPrg5Z2cYsSc90L8gbtaWAPxYE0YaM=@vger.kernel.org, AJvYcCWrXJsV5hGqD0VO45QG5zeIrIUKmvL8uTw8CGAb8IGRDn6XhUO1BSSqf09hslZ5oDbsVDw8PnE1OHo3wW6J2cwxDxQ46w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ERqTqGl/omDSrEronOzIplWHzH9lGnLlOBFtyBgQ+EJ3Tzsi
+	GGENKFQee111uEFUafqasoXWvM4NKbK5Yb8KFo1CjcxENp7ENIFk
+X-Google-Smtp-Source: AGHT+IG7FHJc4l1kz3cncuyLwXYNQzPOhwfOC3yX1clvoK25mcuZp8tISjf3pSVWruW1/Wm2i3FBHg==
+X-Received: by 2002:a05:6a00:3e20:b0:71e:7b8a:5953 with SMTP id d2e1a72fcca58-71ea339776dmr21081544b3a.24.1729583938502;
+        Tue, 22 Oct 2024 00:58:58 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1356b7fsm4250039b3a.94.2024.10.22.00.58.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 00:58:57 -0700 (PDT)
+Date: Tue, 22 Oct 2024 04:58:49 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] alienware-wmi: added autodetect_thermal_profile
+ for devices with quirk_unknown
+Message-ID: <lzdkadbm2mjf7n73lrw7ha3buhyhheqlxmuavhqbm3prtrjwws@jr3q2dec3e7y>
+References: <20241017081211.126214-2-kuurtb@gmail.com>
+ <20241017081631.127333-3-kuurtb@gmail.com>
+ <9d30b2ce-68e4-4080-9068-d1c0b5a59284@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
- Benjamin Tissoires <bentiss@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
- <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
- <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
- <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
- <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
- <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
- <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
- <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d30b2ce-68e4-4080-9068-d1c0b5a59284@gmx.de>
 
-Hi Armin,
-
-On 21-Oct-24 10:26 PM, Armin Wolf wrote:
-> Am 11.10.24 um 17:26 schrieb Pavel Machek:
+On Sun, Oct 20, 2024 at 10:39:09PM +0200, Armin Wolf wrote:
+> Am 17.10.24 um 10:16 schrieb Kurt Borja:
 > 
->> Hi!
->>
->>>> 1.
->>>> https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
->>>> -> Should be no problem? Because this is not generally exposing wmi
->>>> calls, just mapping two explicitly with sanitized input (whitelisting
->>>> basically).
->>> It would be OK to expose a selected set of WMI calls to userspace and sanitizing the input of protect potentially buggy firmware from userspace.
->>>
->> I don't believe this is good idea. Passthrough interfaces where
->> userland talks directly to hardware are very tricky.
->>
->>> Regarding the basic idea of having a virtual HID interface: i would prefer to create a illumination subsystem instead, but i have to agree that we should be doing this
->>> only after enough drivers are inside the kernel, so we can design a
->>> suitable interface for them. For now, creating a virtual HID
->>> interface seems to be good enough.
->> I have an RGB keyboard, and would like to get it supported. I already
->> have kernel driver for LEDs (which breaks input functionality). I'd
->> like to cooperate on "illumination" subsystem.
->>
->> Best regards,
->>                                 Pavel
+> > Added autodetect_thermal_profile for devices with quirk_unknown.
+> > Autodetection is done through basic conditions most devices with WMAX's
+> > thermal interface meet. Function exits returning 0 in case of errors.
+> > 
+> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > 
+> > ---
+> > I apologize for the late inclusion. This feature can extend support to
+> > many devices without having to list them in alienware_quirks.
+> > 
+> > The conditions for selecting the automatic thermal profile are based on
+> > observations on a lot of *issues* in AWCC open source alternatives.
+> > 
+> > I observed only Dell's G-Series laptops have WMAX_THERMAL_BALANCED
+> > avaliable and when it's present none of the other profiles are
+> > avaliable, except for GMODE. When a model has USTT profiles avaliable
+> > usually they have all USTT profiles avaliable, except for cool on mostly
+> > Alienware devices.
+> > 
+> > I made another implementation of this function, brute-forcing operation
+> > 0x03 of Thermal_Information, which is the operation that varies the most
+> > across models. I found the implementation too cumbersome to include in
+> > this series, but it could potentially extend support of this driver to
+> > all posible devices with this interface automatically.
 > 
-> Sorry for taking a bit long to respond.
+> I like this patch, automatic configuration is always a nice feature.
 > 
-> This "illumination" subsystem would (from my perspective) act like some sort of LED subsystem
-> for devices with a high count of LEDs, like some RGB keyboards.
+> Please add support for operation 0x03, this way the driver can work automatically
+> without users having to submit patches adding quirks for their machines.
 > 
-> This would allow us too:
-> - provide an abstract interface for userspace applications like OpenRGB
-> - provide an generic LED subsystem emulation on top of the illumination device (optional)
-> - support future RGB controllers in a generic way
+> Maybe you can use an array for storing the supported thermal mode ids, like this:
 > 
-> Advanced features like RGB effects, etc can be added later should the need arise.
+> enum thermal_modes = {
+> 	THERMAL_MODE_QUIET,
+> 	...
+> 	THERMAL_MODE_LOW_POWER,
+> 	THERMAL_MODE_MAX
+> };
 > 
-> I would suggest that we model it after the HID LampArray interface:
+> const enumplatform_profile_option  thermal_mode_to_platform_profile[THERMAL_MODE_MAX] = {
+> 	[THERMAL_MODE_QUIET] =PLATFORM_PROFILE_QUIET, ...
+> };
 > 
-> - interface for querying:
->  - number of LEDs
->  - supported colors, etc of those LEDs
->  - position of those LEDs if available
->  - kind (keyboard, ...)
->  - latency, etc
-> - interface for setting multiple LEDs at once
-> - interface for setting a range of LEDs at once
-> - interface for getting the current LED colors
+> const enumthermal_modes platform_profile_to_thermal_mode[PLATFORM_PROFILE_LAST] = {
+> 	[PLATFORM_PROFILE_LOW_POWER] = THERMAL_MODE_LOW_POWER, ...
+> };
 > 
-> Since sysfs has a "one value per file" rule, i suggest that we use a chardev interface
-> for querying per-LED data and for setting/getting LED colors.
 > 
-> I do not know if mixing sysfs (for controller attributes like number of LEDs, etc) and IOCTL
-> (for setting/getting LED colors) is a good idea, any thoughts?
+> u8 thermal_modes[THERMAL_MODE_MAX] = {};
+> 
+> for (int i = 0; i < THERMAL_MODE_MAX; i++) {
+> 	thermal_modes[i] = call_operation_3(0x06 + i);
+> 	// TODO: Error handling
+> 	if (thermal_modes[i] == 0xFFFFFFFF)
+> 		continue;
+> 
+> 	set_bit(supported_profiles, thermal_mode_to_platform_profile[i]);
+> }
+> 
+> then you can use platform_profile_to_thermal_mode[] when setting the platform profile
+> and thermal_mode_to_platform_profile[] when getting the platform profile.
+> I will leave it up to you on how to handle the existence of GMode.
+> 
+> This of course is only a rough idea, you can change anything you want in the above pseudo-code.
 
-I wonder what the advantage of this approach is over simply using HID LampArray
-(emulation), openRGB is already going to support HID LampArray and since Microsoft
-is pushing this we will likely see it getting used more and more.
+Thank you. I successfully added support for operation 0x03 with this
+pattern. I'll comment on details on v7. 
 
-Using HID LampArray also has the advantage that work has landed and is landing
-to allow safely handing over raw HID access to userspace programs or even
-individual graphical apps with the option to revoke that access when it is
-no longer desired for the app to have access.
+Now that we have automatic detection, I think we should do automatic
+detection on all models, meaning that 3/5 and 4/5 should be squashed
+together, because code corresponding to quirk profile configuration now
+seems unnecesary.
 
-HID LampArray gives us a well designed API + a safe way to give direct access
-to e.g. games to control the lighting. I really don't see the advantage of
-inventing our own API here only to then also have to design + code some way to
-safely give access to sandboxed apps.
+I'll wait for your advice before submitting v7.
 
-Note that giving access to sandboxed apps is a lot of work, it is not just
-kernel API it also requires designing a portal interface + implementing
-that portal for at least GNOME, KDE and wlroots.
+Thank you, 
+Kurt
 
-Personally I really like the idea to just emulate a HID LampArray device
-for this instead or rolling our own API.  I believe there need to be
-strong arguments to go with some alternative NIH API and I have not
-heard such arguments yet.
-
-Regards,
-
-Hans
-
-
-
-
+> 
+> Thanks,
+> Armin Wolf
+> 
+> > 
+> > Another possibility is just including every device I observed into
+> > alienware_quirks, which I can do but I want to know your opinion first.
+> > ---
+> >   drivers/platform/x86/dell/alienware-wmi.c | 42 +++++++++++++++++++++++
+> >   1 file changed, 42 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+> > index 37a898273..a11ff4851 100644
+> > --- a/drivers/platform/x86/dell/alienware-wmi.c
+> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> > @@ -30,8 +30,11 @@
+> >   #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
+> >   #define WMAX_METHOD_THERMAL_INFORMATION	0x14
+> >   #define WMAX_METHOD_THERMAL_CONTROL	0x15
+> > +#define WMAX_METHOD_GMODE_STATUS	0x25
+> > 
+> > +#define WMAX_ARG_GET_DEFAULT_PROF	0x0A
+> >   #define WMAX_ARG_GET_CURRENT_PROF	0x0B
+> > +#define WMAX_ARG_GET_GMODE_STATUS	0x02
+> > 
+> >   #define WMAX_FAILURE_CODE		0xFFFFFFFF
+> > 
+> > @@ -968,6 +971,42 @@ static int thermal_profile_set_ustt(struct platform_profile_handler *pprof,
+> >   	return 0;
+> >   }
+> > 
+> > +static int autodetect_thermal_profile(void)
+> > +{
+> > +	acpi_status status;
+> > +	u32 in_args;
+> > +	u32 default_profile;
+> > +	u32 gmode;
+> > +
+> > +	in_args = WMAX_ARG_GET_DEFAULT_PROF;
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_THERMAL_INFORMATION, &default_profile);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return 0;
+> > +
+> > +	in_args = WMAX_ARG_GET_GMODE_STATUS;
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_GMODE_STATUS, &gmode);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return 0;
+> > +
+> > +	if (default_profile == WMAX_THERMAL_BALANCED && gmode == 1) {
+> > +		quirks->thermal = WMAX_THERMAL_TABLE_SIMPLE;
+> > +		quirks->gmode = 1;
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (default_profile == WMAX_THERMAL_USTT_BALANCED)
+> > +		quirks->thermal = WMAX_THERMAL_TABLE_USTT;
+> > +
+> > +	if (gmode == 0 || gmode == 1)
+> > +		quirks->gmode = 1;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static int create_thermal_profile(void)
+> >   {
+> >   	pp_handler.profile_get = thermal_profile_get;
+> > @@ -1050,6 +1089,9 @@ static int __init alienware_wmi_init(void)
+> >   			goto fail_prep_deepsleep;
+> >   	}
+> > 
+> > +	if (interface == WMAX && quirks == &quirk_unknown)
+> > +		autodetect_thermal_profile();
+> > +
+> >   	if (quirks->thermal > 0) {
+> >   		ret = create_thermal_profile();
+> >   		if (ret)
 
