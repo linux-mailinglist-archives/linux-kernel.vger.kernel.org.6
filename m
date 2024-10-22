@@ -1,174 +1,137 @@
-Return-Path: <linux-kernel+bounces-376022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588159A9EBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:41:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023899A9EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123DA282347
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A240C1F22937
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BC01990C7;
-	Tue, 22 Oct 2024 09:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB73A198E7F;
+	Tue, 22 Oct 2024 09:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g6BFGtgC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P9WBJG16"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7870112D75C;
-	Tue, 22 Oct 2024 09:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF32198E6F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590095; cv=none; b=ouubt2TkMZEnMy4NcwEca3ZInA5+7oqdNJW0r4u0JlYlLQfDCuzrvxBTfXa9ArocsIZhMahNpS8AsVDLMcbUwwRC+7tNKW9oomEQiwv+u0nIGo5d2pQhB1qkDTllqax6DBArVCyQutrStMDJZavIh7evHNDn+Lgg6g2sHUD/G3Q=
+	t=1729590152; cv=none; b=vAG7ceY8Oo90wCfieMNuRZjL12sOm3IfVaSKO130RSEZo6by5eEmYRXBHwFYHoeasZJBl1lobQyNh9Ct9R6WqX+YY5S5+NyzWNCFYg3YtreMYHSuxMUIWcgOT9YV1AaK0eaCVYxOGPVokZ2npqwYg9yiHck2KmiWcOa85keNU1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590095; c=relaxed/simple;
-	bh=kPVRiPC9TYHCWiC2pBOneIy2rUZwZM1FlOA2gTuQRoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdaDZ9SW0nFm/4NM1r7Rln9SKpFDk8dmGPBE4TUie36n+xZka92CRgxabNuaY3/eICh1XnsAxKnUGDZ4xyAVB1lzSVqC/TthnxgM+gRariUGXPk5nIW/EszJfbUo0P2dPZWvMShRhxbe2UNNQj1VP/bUiUupMOFve1bzYkfJftc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g6BFGtgC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6thVadB+XojYdUKZxZ9UGvHdWNgMOLYyvruHcIkUskE=; b=g6BFGtgC1/NivGXVN0d0BOrHBt
-	1Ll8LBLuPQszY/cehw48BCMQk1E9/n3Ury0q7gyw/MI38iPHNDnRjYguG8VJdqAJuSFgONrn3ojlc
-	8xl5LI5quIYUowLW4Y3AeTjP5ZSYX6fF2XUhCDrQfSvgIIUxo2cg5KgmUI3W39pgc9QLLaJpVPuB7
-	ERnspYUF7ySHCt8LxxW11+e8r52JBKs241EfsoABekdaAIOVMuA8M7rijolnn9U3MadFgZein9KJb
-	fVcQMEIyjpxCbYVcWy2Ea+KgXWzAfD4XiKXEedex6k7uSyRZdjOlLQMCTWs8LnRfWbJrJF7I3eF7c
-	5knNZ3uA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3BOO-0000000AOCf-2aky;
-	Tue, 22 Oct 2024 09:41:32 +0000
-Date: Tue, 22 Oct 2024 02:41:32 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: syzbot <syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com>
-Cc: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in
- xfs_filestream_select_ag (2)
-Message-ID: <ZxdzTL4UYZtgsIiK@infradead.org>
-References: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
+	s=arc-20240116; t=1729590152; c=relaxed/simple;
+	bh=HuAY5n51adJLfl9SSuBb/Ym7ySTk+KcEs66eV3O0sS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pne56zHiWLQvTZt6cxr9uCxxZfiA6Yeh/sL56GeSxBN6j4st0gCVEpJHlk1lJFUcYEs/Ly1JeD5PBdMaSbrPThFVpjhMAmADSkKzo/RGLBlkkQF82BP/DO1hjLOXnsRa26gGcGD6Npv9XPi8CChl4uJSaMFrfK4LMs7NWxf7qhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P9WBJG16; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e34339d41bso47770057b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:42:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729590149; x=1730194949; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kvPBUHYcPgoJ7bNqomFz1zo5qrkinbCt2cqO1I0haao=;
+        b=P9WBJG16tHg3sgEqDGLKt9d/WZ3O73vb9cwzPSlAKfocAfwoXBzDahBPzNn1t8kLLT
+         q8raHH+CuZoqVnrT9331XdK9KaWcMGdTOf8b9F8wVp+6Ml486yUjFkceuhrzekJU/nR8
+         cudsvoalMNCxXXa1myQz1Kb63nS/XtlDTM/KvsIqYXrBVCAVrONwFdL4olO6+NZaDUVu
+         T/7JA2Ult4cmG6HZBz+Rw2v73l54fU7wRKD2lTRMT/kTx1zJqG9wuOXcr+NX4uah5kmz
+         ssGtx+An8ERlA5thYlaqo9dgRcvEGB5rHgnQFI2+HMOAi0IXC3vHVsr/tvoKNx2aIEgQ
+         8uQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729590149; x=1730194949;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kvPBUHYcPgoJ7bNqomFz1zo5qrkinbCt2cqO1I0haao=;
+        b=LtgUiVUHADumlrAV+hvoT/hgLEnaafGynGOaNJfThFcgap55jgLJ8DL3iA/3BEo2Bf
+         FAHDBA7MaEkJyCyo2O5d+UCnnpd8HEfvzhKJL0DQlHapgMABARByJYjGBDt4QF/zia2n
+         DHXfgjuz9gx8SzFaHuuqOHnVh8xWAzVmMicvWaPVAlrypUkF/2tGXa2VNH7gHVmls1b4
+         QdX5mIe20Y0x+RnBB+9pyQr4LlVpix00/81l4mmYu9ru6rFJWh5AqcXZkcK8PO4KHo1g
+         hFlLKrwgXOTtKlM5h7yJY6JGfmDiYK3MSDZU8Wed6RSk9OAGxMPUrQzJVOsMyrhZRyVR
+         cqrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEj/VBWwQO+jkZkAcq2Lz2a22f3oKUcoM1bCH+2/zeI7rOROdZia2I+xrElclkftXSjF+dsQj28zUKcRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN5qMcSr5vfz5uHp7IXWk1a+iMu6I+7qJEsLghqIIlktjPW4sP
+	q3QVkuujTHFj63k69tfLCg8FhWQNxnxuUOxBsO7uR8dvZZcvEQ5e61/4sqCoqi2JPHEVb/MRgSj
+	OKGvdtbK24AKUKo2dfpLtzDVIyTc5W4WK7D+uTA==
+X-Google-Smtp-Source: AGHT+IGnUOtYmX5ZH6+sexWWxd3fc/JZBgGGYU1bAhBppjpfROT2I4TY5FJU9HPUqqv2SGgdLdfvXK6BIRqS07uaRk8=
+X-Received: by 2002:a05:690c:4b01:b0:6e2:1062:9b90 with SMTP id
+ 00721157ae682-6e5bfd89b4dmr148306427b3.44.1729590149614; Tue, 22 Oct 2024
+ 02:42:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+ <20241021-sar2130p-clocks-v2-7-383e5eb123a2@linaro.org> <73abe2b9-ad72-449f-b3e3-a96128cf75a4@quicinc.com>
+In-Reply-To: <73abe2b9-ad72-449f-b3e3-a96128cf75a4@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 22 Oct 2024 12:42:18 +0300
+Message-ID: <CAA8EJprmVyzyWJaE_rsH84Z4uDK1kvQgAzEScV3mdONv4qXAsg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] clk: qcom: rpmh: add support for SAR2130P
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test git://git.infradead.org/users/hch/misc.git xfs-filesystems-pick-fix
+On Tue, 22 Oct 2024 at 09:34, Taniya Das <quic_tdas@quicinc.com> wrote:
+>
+>
+>
+> On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
+> > Define clocks as supported by the RPMh on the SAR2130P platform. It
+> > seems that on this platform RPMh models only CXO clock.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/clk/qcom/clk-rpmh.c | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> > index 4acde937114af3d7fdc15f3d125a72d42d0fde21..8cb15430d0171a8ed6b05e51d1901af63a4564c4 100644
+> > --- a/drivers/clk/qcom/clk-rpmh.c
+> > +++ b/drivers/clk/qcom/clk-rpmh.c
+> > @@ -389,6 +389,16 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+> >   DEFINE_CLK_RPMH_BCM(pka, "PKA0");
+> >   DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
+> >
+> > +static struct clk_hw *sar2130p_rpmh_clocks[] = {
+> > +     [RPMH_CXO_CLK]          = &clk_rpmh_bi_tcxo_div1.hw,
+> > +     [RPMH_CXO_CLK_A]        = &clk_rpmh_bi_tcxo_div1_ao.hw,
+> > +};
+> > +
+>
+> Dimtry, could you please add these clocks as well?
+>
+> DEFINE_CLK_RPMH_VRM-- > rf_clk1, rf_clk1_ao, "clka1", 1
+> DEFINE_CLK_RPMH_VRM --> ln_bb_clk7, ln_bb_clk7_ao, "clka7", 2
+> DEFINE_CLK_RPMH_VRM --> ln_bb_clk8, ln_bb_clk8_ao, "clka8", 4
+> DEFINE_CLK_RPMH_VRM --> ln_bb_clk9, ln_bb_clk9_ao, "clka9", 2
 
-On Fri, Oct 18, 2024 at 12:00:34PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4d939780b705 Merge tag 'mm-hotfixes-stable-2024-10-17-16-0..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=169f4c5f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4125a3c514e3436a02e6
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1374d830580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cbc7a4f0dff1/disk-4d939780.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/21165b36b232/vmlinux-4d939780.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8e42c5595828/bzImage-4d939780.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/9171ce715585/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/faf0b43468d6/mount_2.gz
-> mounted in repro #3: https://storage.googleapis.com/syzbot-assets/12ac0c5a53d1/mount_14.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_inc include/linux/atomic/atomic-instrumented.h:435 [inline]
-> BUG: KASAN: null-ptr-deref in xfs_filestream_create_association fs/xfs/xfs_filestream.c:320 [inline]
-> BUG: KASAN: null-ptr-deref in xfs_filestream_select_ag+0x13ed/0x1d80 fs/xfs/xfs_filestream.c:371
-> Write of size 4 at addr 0000000000000010 by task syz.1.56/5898
-> 
-> CPU: 0 UID: 0 PID: 5898 Comm: syz.1.56 Not tainted 6.12.0-rc3-syzkaller-00217-g4d939780b705 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_report+0xe8/0x550 mm/kasan/report.c:491
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->  atomic_inc include/linux/atomic/atomic-instrumented.h:435 [inline]
->  xfs_filestream_create_association fs/xfs/xfs_filestream.c:320 [inline]
->  xfs_filestream_select_ag+0x13ed/0x1d80 fs/xfs/xfs_filestream.c:371
->  xfs_bmap_btalloc_filestreams fs/xfs/libxfs/xfs_bmap.c:3657 [inline]
->  xfs_bmap_btalloc fs/xfs/libxfs/xfs_bmap.c:3774 [inline]
->  xfs_bmapi_allocate+0x162d/0x3450 fs/xfs/libxfs/xfs_bmap.c:4189
->  xfs_bmapi_convert_one_delalloc fs/xfs/libxfs/xfs_bmap.c:4697 [inline]
->  xfs_bmapi_convert_delalloc+0x9a0/0x1970 fs/xfs/libxfs/xfs_bmap.c:4752
->  xfs_map_blocks+0x7b7/0x1050 fs/xfs/xfs_aops.c:363
->  iomap_writepage_map_blocks fs/iomap/buffered-io.c:1855 [inline]
->  iomap_writepage_map fs/iomap/buffered-io.c:2003 [inline]
->  iomap_writepages+0xd49/0x2ac0 fs/iomap/buffered-io.c:2057
->  xfs_vm_writepages+0xfc/0x150 fs/xfs/xfs_aops.c:477
->  do_writepages+0x35d/0x870 mm/page-writeback.c:2683
->  filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:398
->  __filemap_fdatawrite_range mm/filemap.c:431 [inline]
->  file_write_and_wait_range+0x195/0x280 mm/filemap.c:788
->  xfs_file_fsync+0x1d3/0xa80 fs/xfs/xfs_file.c:138
->  generic_write_sync include/linux/fs.h:2871 [inline]
->  xfs_file_buffered_write+0x9a8/0xac0 fs/xfs/xfs_file.c:799
->  new_sync_write fs/read_write.c:590 [inline]
->  vfs_write+0xa6d/0xc90 fs/read_write.c:683
->  ksys_write+0x183/0x2b0 fs/read_write.c:736
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f11d7b7dff9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f11d75de038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f11d7d36208 RCX: 00007f11d7b7dff9
-> RDX: 0000000000000048 RSI: 0000000020020cc0 RDI: 0000000000000004
-> RBP: 00007f11d7bf0296 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007f11d7d36208 R15: 00007ffcddfd4a88
->  </TASK>
-> ==================================================================
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
----end quoted text---
+Just to check, I don't see these clocks being defined in msm-5.10 for
+the corresponding platform. Am I missing something?
+
+>
+> > +static const struct clk_rpmh_desc clk_rpmh_sar2130p = {
+> > +     .clks = sar2130p_rpmh_clocks,
+> > +     .num_clks = ARRAY_SIZE(sar2130p_rpmh_clocks),
+> > +};
+> > +
+
+
+-- 
+With best wishes
+Dmitry
 
