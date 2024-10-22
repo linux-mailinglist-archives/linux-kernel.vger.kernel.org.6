@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-375518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FBA9A96F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:23:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87D59A96F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D991C23774
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228F91F26EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462221494AB;
-	Tue, 22 Oct 2024 03:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2742E175D26;
+	Tue, 22 Oct 2024 03:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J23c6E17"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="GB3p+UWw"
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9DF28E8
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729566998; cv=none; b=Jas7q5B655XXVUHhHdfkg4/Brf8au3jlXWHbrYMGqjjbrhbCM06TK21g0pf/FM47fVP3zEMgR9ftKA+OkJRkiOJK6JJDjze+qSa/cf2FTWAbo++XQChE/Ivlbu+3gvs4kl7GHMZmI6E6qJUYIDozUYi9RJKT4TgKGN9IPjbBW30=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729566998; c=relaxed/simple;
-	bh=bQdV+XzKxQ2Hh1fY5VAZ1Mbooe2HuKxWZhyVjFc4NTg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f2FRf0XkvbK6OYWNEFQ/JbPnlKTGULPi5S2CUesB1VA5KftsJ16SLEiFZG5ZJfoTpCtWcWmPNr3zuyj31Zxs1OuU6mW76UMctaZCKq+/flMgS9Kh6bcSxRrreK+Yuhp76DQsFcN9q8qjo3D7WHQvQCJowMa3Fra114eW0xir0VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J23c6E17; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729566996; x=1761102996;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bQdV+XzKxQ2Hh1fY5VAZ1Mbooe2HuKxWZhyVjFc4NTg=;
-  b=J23c6E17EOcLC1lbh46LCfvFn//SV0Z6QikgWapQE4xvaGm5CrE6sOw8
-   DjBT/ezivmtnnknl+MgpdY/m2OeCHzAJCsL1FvwfvxEJHRTsQb3ZKZ6bz
-   we463J9fZoCsvPvb7wGHViBixATpFmRsz8kN41vW+9se3k2+ZBajHUj8s
-   o4zZxGct3brWHLZ0eGsxhFExn7pRYZRO/zXRcXKsac5tj23HttlPvfg8+
-   v0skjorTzFgPJVOYPH9ERKGWYn58VSpwDswWbSc0Pi9i5qsKuQ0jQRLzd
-   yRxZc0z8RxhwtwujKKqqO0UQT8DPc6Oh4rz6+aJKdMN6ZXwzPbjxN3421
-   A==;
-X-CSE-ConnectionGUID: vM2kVm27Rt6YZHCDpJYCTA==
-X-CSE-MsgGUID: dyR0DWpARPOMzZrz1Nze0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39620641"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39620641"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 20:16:35 -0700
-X-CSE-ConnectionGUID: 2FW1ViuoS3ymUKnnhkggtA==
-X-CSE-MsgGUID: KRCtzBIcRfyCfi2vckcBXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="117148584"
-Received: from yhuang6-mobl2.sh.intel.com ([10.238.3.32])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 20:16:31 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: x86@kernel.org,
-	linux-coco@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH -V3] x86/tdx, memory hotplug: Check whole hot-adding memory range for TDX
-Date: Tue, 22 Oct 2024 11:16:17 +0800
-Message-Id: <20241022031617.159969-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6213B5B7;
+	Tue, 22 Oct 2024 03:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729567277; cv=pass; b=jABZ2PUbfucoAIxcP4WJopuPjokgcGICgoLpWXqlZf5IWuU3XfriHgIl6e8+Pr+zZ7LauMpvlXTmp31B16qhkSv+1jGmCOWy4LjXyKfMkiyDK85vyi5SdaUvj+s/YXZd/ebAxhisyqmPPsu5CYlDPEibx2mBG/MNXs86rlX7Wrw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729567277; c=relaxed/simple;
+	bh=ZFZfYC/XXlhzEGIBsCfpGwi2AGcTgaqrdpCXupX8wmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OP/0hIeiLN17SJoaZryBGV6ncSLxxghVhR8dg3EqzgdJv8JkIP341TRQ1iemCsvJOUi3IgPbbWUyc+8r/Uw/vQ6p8O4cZdnJoMmJxfHPYLVLAWie26Ulctsf2vf+pp/sVGbwG5ffVXApjzTvSRPrmVNUouZaoZDylAcLJmnEPJk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=GB3p+UWw; arc=pass smtp.client-ip=23.83.212.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 6CAC02C2C6F;
+	Tue, 22 Oct 2024 03:21:14 +0000 (UTC)
+Received: from pdx1-sub0-mail-a259.dreamhost.com (100-99-188-116.trex-nlb.outbound.svc.cluster.local [100.99.188.116])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id D70A52C2D4B;
+	Tue, 22 Oct 2024 03:21:13 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729567274; a=rsa-sha256;
+	cv=none;
+	b=d3ITU+jB2QskEFg/4SaF4XSRIv7xTZgr1jbEAm1wVhdwlCcdnRHDGhfgl7+HyvKXdfolbJ
+	B0nMdbrbSsF84MaH7/IcOO+HUjsPM66nB05DfnycxNxayDDZHhOrg5Di7rgEUBlXQCd25C
+	/RBk7RF3k3CaitAKUWdKZsyqQRReRVxUek+nL4QEOa+zJjc2XNkGHaH5z3PGZ8f5HQ5buT
+	IiCkspZ8WWL9ejL7FzWjL2IbrftnM48JjkFSegdN0uHi5p7OP1fuRsFyEANq/4YlmV2fKA
+	NQXqE4qK7je+pdt2O/c/4Pg3u9zdVyW+KvfhzoWlJVbxbgD7aZqexfO0bVq3WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1729567274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=68EwBF3cXE1JHXLb2ovYMt6cAN5GFh2afO+CWcHSCgw=;
+	b=4Kd8MJKJAiVgiyypr86ZU4IUQ8H9V6MBbAQxR2eVfIJcapb8R39/khdliM1OqEU3hlLicV
+	svFma8x2A8dzvUtlJgjAhtap52IHkG6k0qEWi/BWP2sExb3aDFCM8Y/i3aWpkfEf8R2hUG
+	aV3ZDPmkTCSlI7GzEFENFTauSvAAYRXZ4+vltif9c0XCXDVhPX/EsZGBlFjbZCwXQ3VS4y
+	L0Pg9wsOvCllmLF1N8lBdBKXEjehqbD2ipM32AFPe5EPzaMDslsVJYUoeOalMgdEv0ZUy+
+	JmsG3VnApS3ZM9y5h7+Xa0n75efM/QBDj/GmmtVPg1wum62iObmgekRRMuCc/w==
+ARC-Authentication-Results: i=1;
+	rspamd-75d86777c9-mm5qb;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Cure-Eyes: 295dd4665ea49200_1729567274226_2911567491
+X-MC-Loop-Signature: 1729567274226:1604051089
+X-MC-Ingress-Time: 1729567274226
+Received: from pdx1-sub0-mail-a259.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.99.188.116 (trex/7.0.2);
+	Tue, 22 Oct 2024 03:21:14 +0000
+Received: from localhost.localdomain (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a259.dreamhost.com (Postfix) with ESMTPSA id 4XXcs44nfwz9g;
+	Mon, 21 Oct 2024 20:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1729567273;
+	bh=68EwBF3cXE1JHXLb2ovYMt6cAN5GFh2afO+CWcHSCgw=;
+	h=From:To:Cc:Subject:Date:Content-Transfer-Encoding;
+	b=GB3p+UWw8xVZQmbSIXTZ9wIEvkJz8sYuEIEI+iFn0VUAFMBvopm4fVAEXOVIL4Emr
+	 /wIkdESR5HF0POS3U3ib9nmGRD+m1zaRN71IlrhjKFpdW7tSdRLu6U6tlsBghmWgmV
+	 K9RbiqyMpawnw0l9ASHzhoKoH/ieofCDYJMIt3qLgUsIuYpcfPfhV4kJ9uI7dEFfh/
+	 D5yeZ8fN6ijKGtur0TRSzIXjooMIylbZupYCMyTQ9DYhXPcTnQwiUXAuIKu1Ca0J4f
+	 ZnIuRQ5raEEzoMQMfxouTTmCEsVIzLl9DOwuttsrvYHht5626ErN/pXoq/MSed6Xh5
+	 p8S9wL68m2HAg==
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: dan.j.williams@intel.com,
+	dave.jiang@intel.com
+Cc: jonathan.cameron@huawei.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	fan.ni@samsung.com,
+	a.manzanares@samsung.com,
+	sthanneeru.opensrc@micron.com,
+	emirakhur@micron.com,
+	ajayjoshi@micron.com,
+	Ravis.OpenSrc@micron.com,
+	sthanneeru@micron.com,
+	dave@stgolabs.net,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] cxl/mbox: support background operation abort requests
+Date: Mon, 21 Oct 2024 20:18:06 -0700
+Message-ID: <20241022031809.242591-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,240 +117,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On systems with TDX (Trust Domain eXtensions) enabled, current kernel
-checks the TDX compatibility of the hot-added memory ranges through a
-memory hotplug notifier for each memory_block.  If a memory range
-which isn't TDX compatible is hot-added, for example, some CXL memory,
-the command line as follows,
+Hello,
 
-  $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
+This series implements the abortable capabilities for mailbox background
+operations, introduced in CXL 3.1.
 
-will report something like,
+Details in each patch, but patch 1 moves non-sanitize background command
+polling out of the mbox_mutex, such that patch 2 can add the machinery
+to request aborting the on going command. Patch 3 simply renames a call.
 
-  bash: echo: write error: Operation not permitted
+While an overal policy could include command-priorities (which could
+be trivially added); the current policy is that, if there is an on going
+background operation, a new incoming bg-capable command will blindly
+request it to be cancelled, if capable.
 
-If pr_debug() is enabled, current kernel will show the error message
-like below in the kernel log,
+Considering the interest of this for Logs[0], perhaps Micron folks could
+this? Does this work along the lines of what that discussion concluded?
 
-  online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
+Applies against Linus' latest tree.
 
-Both are too general to root cause the problem.  This may confuse
-users.  One solution is to print some error messages in the TDX memory
-hotplug notifier.  However, kernel calls memory hotplug notifiers for
-each memory block, so this may lead to a large volume of messages in
-the kernel log if a large number of memory blocks are onlined with a
-script or automatically.  For example, the typical size of memory
-block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
-will be logged.
+[0]: https://lore.kernel.org/all/20240313071218.729-1-sthanneeru.opensrc@micron.com/
 
-Therefore, this patch checks the TDX compatibility of the whole
-hot-adding memory range through a newly added architecture specific
-function (arch_check_hotplug_memory_range()).  If this patch rejects
-the memory hot-adding for TDX compatibility, it will output a kernel
-log message like below,
+Testing:
 
-  virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
+lockdep enabled kernel + the qemu counterpart patches:
+	https://lore.kernel.org/linux-cxl/20240813221255.179200-1-dave@stgolabs.net/
 
-The target use case is to support CXL memory on TDX enabled systems.
-If the CXL memory isn't compatible with TDX, the kernel will reject
-the whole CXL memory range.  While the CXL memory can still be used
-via devdax interface.
+#> echo 1 > /sys/bus/cxl/devices/mem1/security/sanitize && sleep 3 && echo 1 > /sys/bus/cxl/devices/mem1/security/sanitize
+[  185.928276] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0d:00.0: Sending command: 0x4400cxl/devices/mem1/security/sanitize
+[  185.930024] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0d:00.0: Doorbell wait took 0ms
+[  185.931608] cxl_pci:__cxl_pci_mbox_send_cmd:306: cxl_pci 0000:0d:00.0: Sanitization operation started
+[  188.936583] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0d:00.0: Sending command: 0x0005
+[  188.943956] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0d:00.0: Doorbell wait took 0ms
+[  188.951786] cxl_pci:cxl_try_to_cancel_background:376: cxl_pci 0000:0d:00.0: Sanitization operation aborted
+[  188.957762] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0d:00.0: Sending command: 0x4400
+[  188.959886] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0d:00.0: Doorbell wait took 0ms
+[  188.962325] cxl_pci:__cxl_pci_mbox_send_cmd:306: cxl_pci 0000:0d:00.0: Sanitization operation started
+[  197.034644] cxl_pci:cxl_mbox_sanitize_work:164: cxl_pci 0000:0d:00.0: Sanitization operation ended
 
-This also makes the original TDX memory hotplug notifier useless, so
-this patch deletes it.
+#> cxl update-firmware -F img.fw mem1 && sleep 3 && echo 1 > /sys/bus/cxl/devices/mem1/security/sanitize
+[   14.443484] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0e:00.0: Sending command: 0x0200
+[   14.445884] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0e:00.0: Doorbell wait took 0ms
+[   14.448744] cxl_core:cxl_query_cmd:539: cxl_mem mem1: Query IOCTL
+[   14.450458] cxl_core:cxl_query_cmd:539: cxl_mem mem1: Query IOCTL
+[   14.452307] cxl_core:cxl_send_cmd:644: cxl_mem mem1: Send IOCTL
+[   14.453686] cxl_core:handle_mailbox_cmd_from_user:602: cxl_pci 0000:0e:00.0: Submitting Get FW Info command for user
+[   14.453686] 	opcode: 200
+[   14.453686] 	size: 0
+[   14.460453] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0e:00.0: Sending command: 0x0201
+[   14.462313] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0e:00.0: Doorbell wait took 0ms
+[   14.464166] cxl_pci:__cxl_pci_mbox_send_cmd:310: cxl_pci 0000:0e:00.0: Mailbox background operation (0x0201) started
+[   14.466536] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0e:00.0: Sending command: 0x0200
+[   14.468380] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0e:00.0: Doorbell wait took 0ms
+{
+  "memdev":"mem1",
+  "pmem_size":"1024.00 MiB (1073.74 MB)",
+  "serial":"0",
+  "host":"0000:0e:00.0",
+  "firmware":{
+    "num_slots":2,
+    "active_slot":1,
+    "online_activate_capable":true,
+    "slot_1_version":"BWFW VERSION 0",
+    "fw_update_in_progress":true,
+    "remaining_size":"48.83 MiB (51.20 MB)"
+  }
+}
+cxl memdev: cmd_update_fw: firmware update started on 1 mem device
+[   17.484680] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0e:00.0: Sending command: 0x0005
+[   17.486993] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0e:00.0: Doorbell wait took 0ms
+[   17.489510] cxl_pci:cxl_pci_mbox_send:451: cxl_pci 0000:0e:00.0: Mailbox background operation (0x0201) aborted
+[   17.492476] cxl_pci:__cxl_pci_mbox_send_cmd:262: cxl_pci 0000:0e:00.0: Sending command: 0x4400
+[   17.494937] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0e:00.0: Doorbell wait took 0ms
+[   17.497598] cxl_pci:__cxl_pci_mbox_send_cmd:306: cxl_pci 0000:0e:00.0: Sanitization operation started
+[   25.682631] cxl_pci:cxl_mbox_sanitize_work:164: cxl_pci 0000:0e:00.0: Sanitization operation ended
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Oscar Salvador <osalvador@suse.de>
----
+Thanks!
 
-Changes:
+Davidlohr Bueso (3):
+  cxl/pci: lockless background synchronous polling
+  cxl/mbox: support aborting the current background operation
+  cxl/pci: rename cxl_mbox_background_complete()
 
-v3:
+ drivers/cxl/core/mbox.c |   1 +
+ drivers/cxl/cxlmem.h    |  14 +++
+ drivers/cxl/pci.c       | 189 ++++++++++++++++++++++++++++------------
+ include/cxl/mailbox.h   |   2 +
+ 4 files changed, 152 insertions(+), 54 deletions(-)
 
-- Rebased on v6.12-rc4
-
-- Revise the patch description.
-
-- Link to v2: https://lore.kernel.org/linux-mm/20241010074726.1397820-1-ying.huang@intel.com/
-
-v2:
-
-- Collected reviewed-by and acked-by.
-
-- Added comments for tdx_check_hotplug_memory_range(), Thanks David!
-
-- Link to v1: https://lore.kernel.org/lkml/20240930055112.344206-1-ying.huang@intel.com/
----
- arch/x86/include/asm/tdx.h     |  2 ++
- arch/x86/mm/init_64.c          |  6 +++++
- arch/x86/virt/vmx/tdx/tdx.c    | 40 +++++++++++++++-------------------
- include/linux/memory_hotplug.h |  3 +++
- mm/memory_hotplug.c            |  7 +++++-
- 5 files changed, 34 insertions(+), 24 deletions(-)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index eba178996d84..6db5da34e4ba 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -116,11 +116,13 @@ static inline u64 sc_retry(sc_func_t func, u64 fn,
- int tdx_cpu_enable(void);
- int tdx_enable(void);
- const char *tdx_dump_mce_info(struct mce *m);
-+int tdx_check_hotplug_memory_range(u64 start, u64 size);
- #else
- static inline void tdx_init(void) { }
- static inline int tdx_cpu_enable(void) { return -ENODEV; }
- static inline int tdx_enable(void)  { return -ENODEV; }
- static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
-+static inline int tdx_check_hotplug_memory_range(u64 start, u64 size) { return 0; }
- #endif	/* CONFIG_INTEL_TDX_HOST */
- 
- #endif /* !__ASSEMBLY__ */
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index ff253648706f..30a4ad4272ce 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -55,6 +55,7 @@
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
- #include <asm/ftrace.h>
-+#include <asm/tdx.h>
- 
- #include "mm_internal.h"
- 
-@@ -974,6 +975,11 @@ int add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
- 	return ret;
- }
- 
-+int arch_check_hotplug_memory_range(u64 start, u64 size)
-+{
-+	return tdx_check_hotplug_memory_range(start, size);
-+}
-+
- int arch_add_memory(int nid, u64 start, u64 size,
- 		    struct mhp_params *params)
- {
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 4e2b2e2ac9f9..f70b4ebe7cc5 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1388,36 +1388,37 @@ static bool is_tdx_memory(unsigned long start_pfn, unsigned long end_pfn)
- 	return false;
- }
- 
--static int tdx_memory_notifier(struct notifier_block *nb, unsigned long action,
--			       void *v)
-+/*
-+ * We don't allow mixture of TDX and !TDX memory in the buddy so we
-+ * won't run into trouble when launching encrypted VMs that really
-+ * need TDX-capable memory.
-+ */
-+int tdx_check_hotplug_memory_range(u64 start, u64 size)
- {
--	struct memory_notify *mn = v;
--
--	if (action != MEM_GOING_ONLINE)
--		return NOTIFY_OK;
-+	u64 start_pfn = PHYS_PFN(start);
-+	u64 end_pfn = PHYS_PFN(start + size);
- 
- 	/*
- 	 * Empty list means TDX isn't enabled.  Allow any memory
--	 * to go online.
-+	 * to be hot-added.
- 	 */
- 	if (list_empty(&tdx_memlist))
--		return NOTIFY_OK;
-+		return 0;
- 
- 	/*
- 	 * The TDX memory configuration is static and can not be
--	 * changed.  Reject onlining any memory which is outside of
-+	 * changed.  Reject hot-adding any memory which is outside of
- 	 * the static configuration whether it supports TDX or not.
- 	 */
--	if (is_tdx_memory(mn->start_pfn, mn->start_pfn + mn->nr_pages))
--		return NOTIFY_OK;
-+	if (is_tdx_memory(start_pfn, end_pfn))
-+		return 0;
- 
--	return NOTIFY_BAD;
-+	pr_info("Reject hot-adding memory range: %#llx-%#llx for TDX compatibility.\n",
-+		start, start + size);
-+
-+	return -EINVAL;
- }
- 
--static struct notifier_block tdx_memory_nb = {
--	.notifier_call = tdx_memory_notifier,
--};
--
- static void __init check_tdx_erratum(void)
- {
- 	/*
-@@ -1465,13 +1466,6 @@ void __init tdx_init(void)
- 		return;
- 	}
- 
--	err = register_memory_notifier(&tdx_memory_nb);
--	if (err) {
--		pr_err("initialization failed: register_memory_notifier() failed (%d)\n",
--				err);
--		return;
--	}
--
- #if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
- 	pr_info("Disable ACPI S3. Turn off TDX in the BIOS to use ACPI S3.\n");
- 	acpi_suspend_lowlevel = NULL;
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index b27ddce5d324..c5ba7b909bb4 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -140,6 +140,9 @@ extern int try_online_node(int nid);
- 
- extern int arch_add_memory(int nid, u64 start, u64 size,
- 			   struct mhp_params *params);
-+
-+extern int arch_check_hotplug_memory_range(u64 start, u64 size);
-+
- extern u64 max_mem_size;
- 
- extern int mhp_online_type_from_str(const char *str);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 621ae1015106..c4769f24b1e2 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1305,6 +1305,11 @@ int try_online_node(int nid)
- 	return ret;
- }
- 
-+int __weak arch_check_hotplug_memory_range(u64 start, u64 size)
-+{
-+	return 0;
-+}
-+
- static int check_hotplug_memory_range(u64 start, u64 size)
- {
- 	/* memory range must be block size aligned */
-@@ -1315,7 +1320,7 @@ static int check_hotplug_memory_range(u64 start, u64 size)
- 		return -EINVAL;
- 	}
- 
--	return 0;
-+	return arch_check_hotplug_memory_range(start, size);
- }
- 
- static int online_memory_block(struct memory_block *mem, void *arg)
--- 
-2.39.2
+--
+2.46.1
 
 
