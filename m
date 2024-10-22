@@ -1,121 +1,183 @@
-Return-Path: <linux-kernel+bounces-375792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B889A9AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:22:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112FF9A9ADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855B1282413
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7C51C21434
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743D14A08E;
-	Tue, 22 Oct 2024 07:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bqV8K0xF"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9293814A4F3;
+	Tue, 22 Oct 2024 07:23:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609F31465BB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E4584A22
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581715; cv=none; b=YMHxQIW6x06aaiMaL8C4sQqls43+chhd7cLUXRpVVcPuHRj2Z7wY7CD7NqRgLrFXTRE1m5T7TUJwyMHAKMKrc9GMDoq1wqmpp8hzXkFZpXLw5AHsy2l4Ofm2P2OAe0lNCchIzqpdFg3FdiAb2oDmWag4SWUSs6Dj7mYsoqlq1Nw=
+	t=1729581800; cv=none; b=Nm24Lj+S8SCeev+x63uF1QzPK1YyGWghqncz90vfoGziAFY8sqvzzqmf96fJ1POtBTutdW5sl1ruURcpR2/gWf1BYdhPs3Aonm1zCQz7NRJPoJm89/mZmgBz76VWc7Gb8oiOKyTISNr5IsTq8dXCCLeBMdDjmW5o38V9JA0iwU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581715; c=relaxed/simple;
-	bh=9CBkz29mLVQAbEQ7wTV/BYgGmzmw+enhQtCpmG1QYj0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d4A2Nt+p0NDCzZWeo5pDEDHfiMpHb+kIF8GVVeO9jrwr3N2TcG0vpTsNpvQ4/VdQvB3KOEwjwTDi3u/GBe7bmvbQdvjm7TUqnxIKJCGo4k8LE91ORL+1kkHO8vcP1RCD+jmNeV+11z9UeH8gSjtv8/1xXBJUHwn8Wj9mYewlg6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bqV8K0xF; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4316cce103dso36928265e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:21:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729581713; x=1730186513; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=15zyfNYj2lwLq+Kn4fS2pz0ncB6EnSFkoCeZ2Tc6ozE=;
-        b=bqV8K0xFP41y4EjM0llVRYXRX9RhDrA0G8fVqrkYH2kElsH0Vs2ns0/xL2fQrH8FKG
-         /AONMC7VnrwCgGyml6qArZWA+lRUfWfndls+ShTJTqeyG1zjPgjkmoKthkGPxAInS4m/
-         ltIMekjwQFBOeLlY6+w1QhB4aA6/UjqFo0eZU3EFCW/z+o/YUNfMOYwYTEsS0ry0Z086
-         /DVBTnBCzN2Wnp/66gZ/1hDY5gO78Wut2PBHOPypo1+TE3rLNbWCwj8d1WmCGo9rOZOh
-         Q0+1ZP9zzxgwFFbCfD8cVvW8UqLeG1u6lLBrE8OmUc7x1LOu/OOpQwUiTUwj2NYYvkjp
-         ZmQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729581713; x=1730186513;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=15zyfNYj2lwLq+Kn4fS2pz0ncB6EnSFkoCeZ2Tc6ozE=;
-        b=FoYvQ62oDQFbN20/p8UyqpeUCgqc9kj/XBz130hQKtLb4uXSheqL5cQKgSMFIzSsP2
-         nwHMLusnw5Qd45JmKp47W/680vq/g0RU8moxy5+k5HI3Jf9CpomMxsvS0lQblbIiK2nz
-         zWIQ3KXABt3GZt9QxjUrUzfiU8Ca4twbB7OqKKBbjeh7/pHuZBJiKo5aH1vw9Ovi++pk
-         FnEwQMBg6FhlizE/6k3GXIm9Yr+WUaUNrl38On0msBAK/0PYoo433/nBszw1AuID/4b+
-         Ex4L6MI5ESXDe7yaMrBbbBtg+b/NjSrTYRTQ0btP8HRz8a8vDxtZoSYx75HdlLlzZhOQ
-         iWUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/E1T7YnPgRXWwP3Xl++bEx4J4JRREJfksKXGxm1h1DfI5mG+XAyFQn2bSkJmGY7ftDWNXF5VOvzImGCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5kpK4/qx521qzz8QewRbt+3hTdUYyJf3i1iVr3eiTz7OqR985
-	7cJE7WXXdEC2CLDJ2nosxLditLvWZ1pF/w3zlQZesk7SrGma3ysRjCfyE+HPdEk=
-X-Google-Smtp-Source: AGHT+IGU5znKna/XKNfNduII0UxhuAkgFg6uSzzlOrY7l/bLkNmn3Z2D5poXLeR85ec/ufvJ7/bL+w==
-X-Received: by 2002:a05:600c:350a:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-43161627098mr143475305e9.8.1729581712581;
-        Tue, 22 Oct 2024 00:21:52 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9c8b:c7e5:66f5:b8f1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47b74sm5942453f8f.27.2024.10.22.00.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 00:21:52 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 0/4] gpio: xgene-sb: Improve ACPI and property related code
-Date: Tue, 22 Oct 2024 09:21:51 +0200
-Message-ID: <172958170915.19451.9656518623046632221.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241018134550.2071101-1-andriy.shevchenko@linux.intel.com>
-References: <20241018134550.2071101-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729581800; c=relaxed/simple;
+	bh=hOKrI3GQqLEYrRGRQ4W1xaNqTzfZ590TisBLQIuIizQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=quU/zyND3Yl+6ebHBQDMFVK0jIHcPgMDZyE8yvRwUpYGcSK+nUBZN6EDqppeTzFvIkUoTZMZRurayuDOw58y2YL4aMXpiQfr9dA9lFogToKfqkTm051Vaj1xxgMIrkc5VzUb/AafDuhWdMh7pVJfGQ0VGzcZf5S90XSDMpysyjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t39EW-0003v3-2i; Tue, 22 Oct 2024 09:23:12 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t39EV-000pEO-1c;
+	Tue, 22 Oct 2024 09:23:11 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t39EV-007Vcd-1H;
+	Tue, 22 Oct 2024 09:23:11 +0200
+Date: Tue, 22 Oct 2024 09:23:11 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241022072311.ubh2sia5lwgvebsg@pengutronix.de>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+ <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Fri, 18 Oct 2024 16:44:59 +0300, Andy Shevchenko wrote:
-> Improve ACPI and property related code in the driver.
+On 24-10-22, Sherry Sun wrote:
+> > On 24-10-21, Krzysztof Kozlowski wrote:
+> > > On 21/10/2024 08:41, Marco Felsch wrote:
+> > > > On 24-10-07, Krzysztof Kozlowski wrote:
+> > > >> On 07/10/2024 14:58, POPESCU Catalin wrote:
+> > > >>>>>>
+> > > >>>>>> +  vcc-supply:
+> > > >>>>>> +    description:
+> > > >>>>>> +      phandle of the regulator that provides the supply voltage.
+> > > >>>>>> +
+> > > >>>>>> +  reset-gpios:
+> > > >>>>>> +    description:
+> > > >>>>>> +      Chip powerdown/reset signal (PDn).
+> > > >>>>>> +
+> > > >>>>> Hi Catalin,
+> > > >>>>>
+> > > >>>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
+> > means that both wifi and BT controller will be powered on and off at the
+> > same time.
+> > > >>>>> Taking the M.2 NXP WIFI/BT module as an example,
+> > pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already
+> > controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
+> > > >>>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios
+> > you describing here. Can you help understand the corresponding pins on M.2
+> > interface as an example? Thanks.
+> > > >>>
+> > > >>> Hi Sherry,
+> > > >>>
+> > > >>> Regulators and reset controls being refcounted, we can then
+> > > >>> implement powerup sequence in both bluetooth/wlan drivers and have
+> > > >>> the drivers operate independently. This way bluetooth driver would
+> > > >>> has no dependance on the wlan driver for :
+> > > >>>
+> > > >>> - its power supply
+> > > >>>
+> > > >>> - its reset pin (PDn)
+> > > >>>
+> > > >>> - its firmware (being downloaded as part of the combo firmware)
+> > > >>>
+> > > >>> For the wlan driver we use mmc power sequence to drive the chip
+> > > >>> reset pin and there's another patchset that adds support for reset
+> > > >>> control into the mmc pwrseq simple driver.
+> > > >>>
+> > > >>>> Please wrap your replies.
+> > > >>>>
+> > > >>>> It seems you need power sequencing just like Bartosz did for
+> > Qualcomm WCN.
+> > > >>>
+> > > >>> Hi Krzysztof,
+> > > >>>
+> > > >>> I'm not familiar with power sequencing, but looks like way more
+> > > >>> complicated than reset controls. So, why power sequencing is
+> > > >>> recommended here ? Is it b/c a supply is involved ?
+> > > >>
+> > > >> Based on earlier message:
+> > > >>
+> > > >> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which
+> > > >> means that both wifi and BT controller will be powered on and off
+> > > >> at the same time."
+> > > >>
+> > > >> but maybe that's not needed. No clue, I don't know the hardware.
+> > > >> But be carefully what you write in the bindings, because then it will be
+> > ABI.
+> > > >
+> > > > We noticed the new power-sequencing infrastructure which is part of
+> > > > 6.11 too but I don't think that this patch is wrong. The DT ABI
+> > > > won't break if we switch to the power-sequencing later on since the
+> > "reset-gpios"
+> > > > are not marked as required. So it is up to the driver to handle it
+> > > > either via a separate power-sequence driver or via "power-supply"
+> > > > and "reset-gpios" directly.
+> > >
+> > > That's not the point. We expect correct hardware description. If you
+> > > say now it has "reset-gpios" but later say "actually no, because it
+> > > has PMU", I respond: no. Describe the hardware, not current Linux.
+> > 
+> > I know that DT abstracts the HW. That said I don't see the problem with this
+> > patch. The HW is abstracted just fine:
+> > 
+> > shared PDn          -> reset-gpios
+> > shared power-supply -> vcc-supply
 > 
-> v2: reorder the patchs so we want be sure ACPI_PTR() is defined.
-> 
-> Andy Shevchenko (4):
->   gpio: xgene-sb: Remove unneeded definitions for properties
->   gpio: xgene-sb: Drop ACPI_PTR() and CONFIG_ACPI guards
->   gpio: xgene-sb: Tidy up ACPI and OF ID tables
->   gpio: xgene-sb: don't use "proxy" headers
-> 
-> [...]
+> Actually we should use vcc-supply to control the PDn pin, this is the
+> power supply for NXP wifi/BT.
 
-Applied, thanks!
+Please don't since this is regular pin on the wlan/bt device not the
+regulator. People often do that for GPIOs if the driver is missing the
+support to pull the reset/pdn/enable gpio but the enable-gpio on the
+regulator is to enable the regulator and _not_ the bt/wlan device.
 
-[1/4] gpio: xgene-sb: Remove unneeded definitions for properties
-      commit: 8b26b8e8be3eac0a3beacf1f07bf2dfb4d679d37
-[2/4] gpio: xgene-sb: Drop ACPI_PTR() and CONFIG_ACPI guards
-      commit: 33319f6d3416fa00e87e9abf41d9ac98a5d5185c
-[3/4] gpio: xgene-sb: Tidy up ACPI and OF ID tables
-      commit: 6ebbe789fe7a65205f77289d1ace46d52f1089a3
-[4/4] gpio: xgene-sb: don't use "proxy" headers
-      commit: 101b259bce5cb7c74c4f96712ecdc4d204d49360
+Therefore the implementation Catalin provided is the correct one.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Regards,
+  Marco
 
