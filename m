@@ -1,202 +1,312 @@
-Return-Path: <linux-kernel+bounces-375997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893F59A9E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980099A9E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431502810CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1161F20ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CDB198846;
-	Tue, 22 Oct 2024 09:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C4F195F28;
+	Tue, 22 Oct 2024 09:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QntxSMF9"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7q5I0iX"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AEB12D75C;
-	Tue, 22 Oct 2024 09:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588870; cv=fail; b=dAR/yK2+wx03vPdeyza4yuHfi/SOul8FMY9z3sqhU+ZAhz5npGHk1QheCdDIIm0rgG3FcvuJSD0NLt6Ak1zPZslGXI9W2nI/e+gKuAqj7EyxCwHamJuQNBX+3i21/EguS+oVrl++Ds6A0CdCmZzcqZ0nRKAE9hnu0L7dHZb/54E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588870; c=relaxed/simple;
-	bh=TCZiT3dwjROijwdfrNZF1gSdl/HP3Hcizl0UfFf2rG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=M7X12Jh1iDxxDZGLGrXqK+7IMRfGBt8rw6sl/uKUPjGNpi3jcl4d4ACVEl4EVQUMJ+16PoAb1bfBPi/8CnSpaOblGVz/TO06/tE6KTRbYc4PnVtA0pIXRlyQJUHEu0QnYVKXMUtTpRLZWP4opVOIllkzWSAIT9WEruamrv3a5EQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QntxSMF9; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mm9nt5XbYfM1ftBRtxdQHBNs5mzPOMMPlQhVKx3RZxdjGzOAW7HdA8Vmm1CakhGFYMdCkdOtoZH8XuHHSrf55d5Vi5uMsyszodXk52G+JVHBYt370SRu/Gc2dy0fjv5R2OjbzrGbuFnt0ZHjWMqZK+1+EAykK+9ZOv/2Nun53beq5qqcb+FxHGsgW642GHaLTA9qDOwOHYfIi4wY20bgp9gosVElHKcs32o/ezDpCJcm9shkkmdJpYpDv8Wl/R65umYn/0rMumAvYIMTl+rnpmRzUdM3Rr4XphkyYjZnH39VakPKu5tqenkMSjmNsKjOosHfONOAkfJF0WjUzixVbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sxLwhBLIxYbDMZlxsJd5SWIRCzwgPT3Jt1Buwt9VCAA=;
- b=hPoJTz0FkLNrdD6a7mczWoIjrfc2EVpYu+PRIFJK1XH2crkaAoMo1XhUEHrzHIt5OtVH6j8qd9GfyFrBHQ/XiidePiQmKWq4uVIIgUwMqPkwBWxiMaC/fBtIS7TA0/H9dWjo5E3h6hoc3h9KQ6Jb5/X4W7cYblPV5+5AMU2irlnb5xu2F4QmvnlmCGyYW5iTBzj/P2+9d/hGqumY62jc3gPpTofhM5ve+JlKIhhKu71s0lS7Fc7lKjjv6j2AosolfDApqSDGjSxhbujwaPDQFN7yNKDI7LQqaQS6WRifOPbyEr5HOZy315RzoHWvHZ856LhSGY5G7Yqvt2SoVwaZ5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sxLwhBLIxYbDMZlxsJd5SWIRCzwgPT3Jt1Buwt9VCAA=;
- b=QntxSMF9Ed1ZDEV3Uq8xXMcltjvAczl/g9IlYA3zHDtk55kAYA5HI+c1LK1OzniOGQqKDen3cxqHIHDyw3y2bkFjBAjxKjrrWzyVRGyBxn+jJnzn7KglWcz20STG+kbtAQKTyLdfMnR8VT/GuEb8V3hMFF+4oreKB9yQyK5tNJA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- CH3PR12MB8933.namprd12.prod.outlook.com (2603:10b6:610:17a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Tue, 22 Oct
- 2024 09:21:05 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 09:21:04 +0000
-Date: Tue, 22 Oct 2024 14:50:54 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: Re: [PATCH v2 3/5] x86/cpu: Enable SD_ASYM_PACKING for PKG Domain on
- AMD Processors
-Message-ID: <Zxdudu1tpCbNvm1d@BLRRASHENOY1.amd.com>
-References: <20241022034608.32396-1-mario.limonciello@amd.com>
- <20241022034608.32396-4-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022034608.32396-4-mario.limonciello@amd.com>
-X-ClientProxiedBy: PN2PR01CA0242.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:21a::8) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A674212D75C;
+	Tue, 22 Oct 2024 09:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729588888; cv=none; b=OnyX1SfCp6xsjoCalM4vvxJ+vY/pf0yahDm9pTONdTSAo6hfcsCUohbS/LZDoEWHwtLRCLUUbqha8MbtA5Pum9eITwp1uwz7pBNmzZVj0TFqlhimBJoxAsHldYVgKLB8pfmxKOsRgCzXOCgay7sme9cI8f5BuiAkpptn8gi7Sck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729588888; c=relaxed/simple;
+	bh=BDpZ/RdCY6Cv1FhdXCDoj5Fqvl2hcsJf2HPMstMIOEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PoLvVwCf4JkHqQyZIqiYL7geESRa6uCWok5r4xI1jilnGG1gkjl3E6oTNVlUgp9CflbQYRXX8nQuNSWzwa7pEGLwOoB9G3K1dF/R5JNkfafo320V25Ntre76Zsbk0Zb/FLnoBs6KF1MSfUGwL6DxcUpdIZRzfVUmakBgSTSW/7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7q5I0iX; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso83507321fa.3;
+        Tue, 22 Oct 2024 02:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729588885; x=1730193685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MnIFIX+6xraPlAS1iyzSKgBzODyPlZ10mxzOTitsig=;
+        b=A7q5I0iXc9M9k8EtuwAus9lNyMyaJ2slzLH7W29FEr9xUpKxxCcGo+A7cAXKPspzIy
+         b1C1fBtj/bSwgn5jQgMkGebeKb0iq+ng6xbziWnEyFUIzyQHoG4nhnC4XtlIlSuR7eZU
+         Birg7i/w1ez0DSfou/M0odDetxKGWCUKke1g+A5noSpb8P1yoxmky5ozR3t+WO0+YJK6
+         SELIqCtFVP1iHxaVEUKy2KSV8BBW3flfnGdsT4il9RUaULnM//F5k6NEC3wBezi/0jES
+         yEQghr7YYOLx78+hkVXzS6FXf6EYR5vg4HPnSkfEVlWw5R2T7llQ2ZruYtj3PmuXmsDm
+         bt1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729588885; x=1730193685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MnIFIX+6xraPlAS1iyzSKgBzODyPlZ10mxzOTitsig=;
+        b=tmEdXwQOEtlFSSXUP57h/r5LsO9Lzz7jknPy6/HjoKN8C0uh3yfytXuGYUHaoMUkf/
+         sJo1xKK47cwpXjsQOIl8qARFUql8a7AAxQL5nicENFPwoGyQyWUN7QHgqJ+a4LHveeiB
+         TKZI0vzNZ+m9T2y7IUYLgSh+rvf0/6XRFiAe1JsiRqHGlBTLDRXudhRpY9i/8BuM9bel
+         emBdrk0VJzk5I+h7/2aCZ3J6q2y2y07YM/K0LZDck3bZcaR4W8fqIuo1f6yjJ1oyJ1Ox
+         /Jg/rZta2+fDsjTufomSWlQ1ot+B3wwYIW8ac4pC2iFu6hUtrDOM3PZaah6WJZzEzKZu
+         soUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu7wr1u8keqtSUFRWPZ/9KbdWKeYgf9ieo1lL29HcgGbjbSv0sz+tEOG2c6l0vglpgtOAbXaPQqsywNE8=@vger.kernel.org, AJvYcCX2CpTtHOJf8mTDLo4BhMC8JzHVn4JWFhpDI/pp6natg/g5e6cvbAlHO340uzAJktciuEtGYxPh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWRGkn+ix8Ym7/7r+N9aGsxl3L9u/OXkm94uktlUxLOoeRv1e3
+	CYAH2mtCWixi83EsLNepHiBvQKMmYJBAqNefyLC3IfYU6YtnoH6A1WjWOxN2Jq7Nt0nrNEM4xNl
+	OjIrKivzILL3bcXL0EBFGrS/R/t4=
+X-Google-Smtp-Source: AGHT+IEpRJOnGVCrLd3D1lgbc5zQRynFC+x2WBiNT3XYfjMNbJXyJtpREncJbqfP/fAYIk1eF9Tmxp1CFLlb149Ah50=
+X-Received: by 2002:a05:651c:2124:b0:2fa:d7ea:a219 with SMTP id
+ 38308e7fff4ca-2fb8320f101mr106955081fa.37.1729588884388; Tue, 22 Oct 2024
+ 02:21:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CH3PR12MB8933:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17646253-b054-4d9b-b09b-08dcf27ada6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fNsbSt8ZJa3M5doHQeU/bto5ttiRSrWuScfxnExprWvBMda/9ayYQHxoTA5z?=
- =?us-ascii?Q?thW90xR9PibvgFkdNkPJ06UZq+KVITpTK9tWNBv4z6l0f394dDOB2+qV0Vw3?=
- =?us-ascii?Q?u3d2cbg0oZ/r7bZxWBQfmW2Gi0c3wXuWi29xQNFTib1CVo8KhLAUukc/DSN/?=
- =?us-ascii?Q?qdpV1FMFl5VGmfkvRvtN2N75MmRMWQt4k8cRdykKv/29VPoKWKk1XIUAU829?=
- =?us-ascii?Q?l32wDPge5Pr4GjIWoS6WY3OVZKPKs2lq1oIVW3vxRe66k3jNUXOL9+/gUQOa?=
- =?us-ascii?Q?D4AiMxF1bciDOFMdcQpRDMuzCKRieIa2C4X3yyQn6oQFUPHulJWqxs/hEMeL?=
- =?us-ascii?Q?2NlmXWYp+ZTZ69phooUdAmdztDeOqGCBZd6PQP4tUHSG4DjywCGZl1HPi7kc?=
- =?us-ascii?Q?4Jxy2E7a+GMLSRTvTWYpdA8KqVbUjsbL/+tj2EknVQ+tkZCVS7WremzC+lZo?=
- =?us-ascii?Q?OJkqdCyn8QrYHHUEawEWbNQeCCD/hagcIWxzQY5iC2+lHpn3jpez8iQ8vGrP?=
- =?us-ascii?Q?iHfOsPmglS9GwQMaOsNHtfjY8l/oyxxexhM3bKQpc7s4K2BuqKi5eReqw+ai?=
- =?us-ascii?Q?IwDXdUsWUhUy2tP1jz8PIqYcBW0gF6FXB1AEMPNPVHh9eyIQRDb4ivM/3UB+?=
- =?us-ascii?Q?oDTqChdh2/dwabXDWawmZFvm67dS8vOUVa0hHxhRqIIE8bdEAZwZMt1++z8+?=
- =?us-ascii?Q?XKcau50vYlt9k6rCfMMg9d+0F/BsSC20+SYKoi7LfvFCtgAhG9q+HYLd2KQV?=
- =?us-ascii?Q?o9lap5Ni7bXBOnTLEf3stTJ5MmWPb60condzlAULijPOQK+vmBnayX9ePmwc?=
- =?us-ascii?Q?pmkvc0QVz1l7qmJ/IVb9xFJUOiHMMQmNhlJ9aENNPDF5Tf0QwJetMd803EG1?=
- =?us-ascii?Q?SV/2rRl6hsUIxm6abJVF7koSngTBfeLUAECGWjUEKy5jVoaPARVd8EPCaZB0?=
- =?us-ascii?Q?aaJOTjhutX2SJhHWArYD3R888xijWTdMUpiZCfSdM4e4hFsN44fEkJgHNz16?=
- =?us-ascii?Q?Yoqh1V/OZtQ8yHPNWYfzp5AF9nyfxDBT0O4A1YKi1M8B7cgmOEm6vefsm3Tw?=
- =?us-ascii?Q?STBwF/q5fHIvPon8nv8Ln45D5a1TPVKILGvWrbDQZAAcNYVE0WGIRKP9hMve?=
- =?us-ascii?Q?QHhvxLC/x3scSC6A+bILci9awrvi7Xa5WBR6lYVqeOqNr5QuqCjlIpJyMU9K?=
- =?us-ascii?Q?tK+yJmcGJjQTnGnJ7+rHXN3+9R76mth8QEAfdzyw7mJuvZij8X22BLNT0ofi?=
- =?us-ascii?Q?WfDmXujnbUdNdRP59DiX5asp+fawrUPlJIRcrlVvJvFqYQIhbViIf+ArNzsq?=
- =?us-ascii?Q?GdICTgbAudkrbiOiRGNjhSGN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rfrZzJ3ewgy6rseXKM6OexeHg6pY5tjPGwVaDGY6lZ2Xn6+BNDJvv8N2Wyf1?=
- =?us-ascii?Q?2RJO5RTZoBMwexEKyw4nZfWIXmEO97gQ2e+Yxd+m/c0eyRT6TKKnAU7m5W0P?=
- =?us-ascii?Q?6sDfFVhllpskZY1io96DyPCPTg4lFS249wNKrPYeZGoGL7mGbLxFt+BxIPap?=
- =?us-ascii?Q?OagKK1Sqavbss9iOE1hA7Bx9nvpXPsc0Er1QAjplYA1KVomKkI6MFjRwzyyj?=
- =?us-ascii?Q?idcFfS6VpXf7043Wh+iwpP1kw8Za9C2VI9AsquWOHK555IWIlXPRRAaPryyn?=
- =?us-ascii?Q?Xfpr10+5mFrQomZYZ4kq7rVWs8hDc2bn0AxO7O+S+XtwV+a8fzSCEwC92rMX?=
- =?us-ascii?Q?fq53s+F3NTSnUtph7QfdXN21NZvmU9YQBRZt4pqNXtR2AFLMQxvxYlnHECUx?=
- =?us-ascii?Q?VV8+gdWxvSbA93//DZ4ETBGXEybpI4CCb1O5+YMBCAAPyb/B6B6lU1D9x3F0?=
- =?us-ascii?Q?UuT3mAPI/qIADqiO9gz0mZ/g3vyksTznFQ3MQqypqFsCSOvmFKcbtJn5nuMV?=
- =?us-ascii?Q?YHJbUVZoS7iF643krJCa0NS5WOJQYTtx/Cyd9A5KhtHKJ1X1cjKWn+palxeO?=
- =?us-ascii?Q?NtxFzHQPYioP+UUbMHIH17voqfrgHOrn4NuUOUUwY/zITIkso1NqJDBJKFeI?=
- =?us-ascii?Q?eJKRamPS2quJzvaqkZMPwLcYtNMEAvWmY1ps/NH5pUMoyUkxlqTjUAA1SFlA?=
- =?us-ascii?Q?BZTURZaRIM0kfHF7N27DtHacUMJ2gOTjSBo1Unf12Fgvj2bvKFTS0bqtzxXd?=
- =?us-ascii?Q?C+ttgaMHKoyfloxU1SAZu/7xP/q7pbHHNyON0zNcVXYyOsBCe3/+sg+8o5b7?=
- =?us-ascii?Q?KN4S28osdyO+LAopAsa5mdlexZ3TveBZ/8i/Ki+DlY8Nz54SbQM/NVoYVTtU?=
- =?us-ascii?Q?XsRuvRZ6BqZR+AvWvIKxuH90dMvjz+xsFh3jozuEwPnTnQC+wRChkZyliFvn?=
- =?us-ascii?Q?zJbt5EqodvQnt9s4tIeK/ATo//r9qBmOl1X372wP4Zq+vCrOUSB+2kI3KLbx?=
- =?us-ascii?Q?pcuOSWEV4aaUQYV6bY9vsg0ooNtqVDWi6OM7Mzpg0l06BzKxHoXbMopt8E/B?=
- =?us-ascii?Q?iAoP4+bazYH3kw3Se5BbggIt0FOtAGh8hI6UavfbDTQTG8mH84LbQPgubOkb?=
- =?us-ascii?Q?lfMH+xu4bIOugYddDevDtCq4U1GtXG8XBHMb9IXuBWBKnaLBjmA1WFOsdDpc?=
- =?us-ascii?Q?XPN9V1Bq/wqAHr7KLWjTYWlYLBWHkurKpVQAoKteylJTpxlblFx3Kb8lzCru?=
- =?us-ascii?Q?VH56FqpgE/SIbFFLzCWsXv9PPmcM2OqfWjkitEF8CC7hv2yj5WcNmI/Vd4ZQ?=
- =?us-ascii?Q?UjUiSdOpGohP3rrUuep0hxxlLEAYqAIIZiaG6jpVZqIzhC+ENK0o+7iDvLre?=
- =?us-ascii?Q?v5umcweUfDgBKYyc1noCasoXhUndoiCeZplQvGq3rkcyygbVpwJgq35/dLxr?=
- =?us-ascii?Q?KL6VCGkUZfzydMwfDzXpcQrx/JbAi9WlvmJ3gOCPS2cja3zrGz6QQb7yRLb0?=
- =?us-ascii?Q?hbf9yyQ3Ue/263F5f5zCQ/Vf0VHbQqkWQMCbnBAOyZqPSMAgS6SKbVSEd2C6?=
- =?us-ascii?Q?aWmudZ+SN+UvqH2DvIwRIN51mD0sALuohDDIsqFg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17646253-b054-4d9b-b09b-08dcf27ada6e
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 09:21:04.8784
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BMHCl+nFrhCazSSmrWku8drdmGP9Hty9oaPtTvt+ShUEPweY/l9rGw0bAanuEcrmbmAxm+QQ1xidaFxcYgnPHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8933
+References: <87ikuani1f.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20241008130807.40833-1-21cnbao@gmail.com> <87set6m73u.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87set6m73u.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 22 Oct 2024 17:21:07 +0800
+Message-ID: <CAMgjq7D6Ku4-0mfJUexB9ARxY5eHwJjMS_M9qqXrvR=ScW0jtA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
+ swapcache_prepare fails
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, liyangouwen1@oppo.com, 
+	mhocko@suse.com, minchan@kernel.org, sj@kernel.org, stable@vger.kernel.org, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	yosryahmed@google.com, yuzhao@google.com, Barry Song <21cnbao@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 10:46:06PM -0500, Mario Limonciello wrote:
-> From: Perry Yuan <perry.yuan@amd.com>
-> 
-> Enable the SD_ASYM_PACKING domain flag for the PKG domain on AMD
-> heterogeneous processors.
-> This flag is beneficial for processors with one or more CCDs and
-> relies on x86_sched_itmt_flags().
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Wed, Oct 9, 2024 at 8:55=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > On Thu, Oct 3, 2024 at 8:35=E2=80=AFAM Huang, Ying <ying.huang@intel.co=
+m> wrote:
+> >>
+> >> Barry Song <21cnbao@gmail.com> writes:
+> >>
+> >> > On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel=
+.com> wrote:
+> >> >>
+> >> >> Barry Song <21cnbao@gmail.com> writes:
+> >> >>
+> >> >> > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@in=
+tel.com> wrote:
+> >> >> >>
+> >> >> >> Barry Song <21cnbao@gmail.com> writes:
+> >> >> >>
+> >> >> >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huan=
+g@intel.com> wrote:
+> >> >> >> >>
+> >> >> >> >> Hi, Barry,
+> >> >> >> >>
+> >> >> >> >> Barry Song <21cnbao@gmail.com> writes:
+> >> >> >> >>
+> >> >> >> >> > From: Barry Song <v-songbaohua@oppo.com>
+> >> >> >> >> >
+> >> >> >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapc=
+ache")
+> >> >> >> >> > introduced an unconditional one-tick sleep when `swapcache_=
+prepare()`
+> >> >> >> >> > fails, which has led to reports of UI stuttering on latency=
+-sensitive
+> >> >> >> >> > Android devices. To address this, we can use a waitqueue to=
+ wake up
+> >> >> >> >> > tasks that fail `swapcache_prepare()` sooner, instead of al=
+ways
+> >> >> >> >> > sleeping for a full tick. While tasks may occasionally be w=
+oken by an
+> >> >> >> >> > unrelated `do_swap_page()`, this method is preferable to tw=
+o scenarios:
+> >> >> >> >> > rapid re-entry into page faults, which can cause livelocks,=
+ and
+> >> >> >> >> > multiple millisecond sleeps, which visibly degrade user exp=
+erience.
+> >> >> >> >>
+> >> >> >> >> In general, I think that this works.  Why not extend the solu=
+tion to
+> >> >> >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache=
+_async()
+> >> >> >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To=
+ avoid
+> >> >> >> >
+> >> >> >> > Hi Ying,
+> >> >> >> > Thanks for your comments.
+> >> >> >> > I feel extending the solution to __read_swap_cache_async() sho=
+uld be done
+> >> >> >> > in a separate patch. On phones, I've never encountered any iss=
+ues reported
+> >> >> >> > on that path, so it might be better suited for an optimization=
+ rather than a
+> >> >> >> > hotfix?
+> >> >> >>
+> >> >> >> Yes.  It's fine to do that in another patch as optimization.
+> >> >> >
+> >> >> > Ok. I'll prepare a separate patch for optimizing that path.
+> >> >>
+> >> >> Thanks!
+> >> >>
+> >> >> >>
+> >> >> >> >> overhead to call wake_up() when there's no task waiting, we c=
+an use an
+> >> >> >> >> atomic to count waiting tasks.
+> >> >> >> >
+> >> >> >> > I'm not sure it's worth adding the complexity, as wake_up() on=
+ an empty
+> >> >> >> > waitqueue should have a very low cost on its own?
+> >> >> >>
+> >> >> >> wake_up() needs to call spin_lock_irqsave() unconditionally on a=
+ global
+> >> >> >> shared lock.  On systems with many CPUs (such servers), this may=
+ cause
+> >> >> >> severe lock contention.  Even the cache ping-pong may hurt perfo=
+rmance
+> >> >> >> much.
+> >> >> >
+> >> >> > I understand that cache synchronization was a significant issue b=
+efore
+> >> >> > qspinlock, but it seems to be less of a concern after its impleme=
+ntation.
+> >> >>
+> >> >> Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
+> >> >> discussed in the following thread.
+> >> >>
+> >> >> https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.program=
+ming.kicks-ass.net/
+> >> >>
+> >> >> > However, using a global atomic variable would still trigger cache=
+ broadcasts,
+> >> >> > correct?
+> >> >>
+> >> >> We can only change the atomic variable to non-zero when
+> >> >> swapcache_prepare() returns non-zero, and call wake_up() when the a=
+tomic
+> >> >> variable is non-zero.  Because swapcache_prepare() returns 0 most t=
+imes,
+> >> >> the atomic variable is 0 most times.  If we don't change the value =
+of
+> >> >> atomic variable, cache ping-pong will not be triggered.
+> >> >
+> >> > yes. this can be implemented by adding another atomic variable.
+> >>
+> >> Just realized that we don't need another atomic variable for this, jus=
+t
+> >> use waitqueue_active() before wake_up() should be enough.
+> >>
+> >> >>
+> >> >> Hi, Kairui,
+> >> >>
+> >> >> Do you have some test cases to test parallel zram swap-in?  If so, =
+that
+> >> >> can be used to verify whether cache ping-pong is an issue and wheth=
+er it
+> >> >> can be fixed via a global atomic variable.
+> >> >>
+> >> >
+> >> > Yes, Kairui please run a test on your machine with lots of cores bef=
+ore
+> >> > and after adding a global atomic variable as suggested by Ying. I am
+> >> > sorry I don't have a server machine.
+> >> >
+> >> > if it turns out you find cache ping-pong can be an issue, another
+> >> > approach would be a waitqueue hash:
+> >>
+> >> Yes.  waitqueue hash may help reduce lock contention.  And, we can hav=
+e
+> >> both waitqueue_active() and waitqueue hash if necessary.  As the first
+> >> step, waitqueue_active() appears simpler.
+> >
+> > Hi Andrew,
+> > If there are no objections, can you please squash the below change? Ove=
+n
+> > has already tested the change and the original issue was still fixed wi=
+th
+> > it. If you want me to send v2 instead, please let me know.
+> >
+> > From a5ca401da89f3b628c3a0147e54541d0968654b2 Mon Sep 17 00:00:00 2001
+> > From: Barry Song <v-songbaohua@oppo.com>
+> > Date: Tue, 8 Oct 2024 20:18:27 +0800
+> > Subject: [PATCH] mm: wake_up only when swapcache_wq waitqueue is active
+> >
+> > wake_up() will acquire spinlock even waitqueue is empty. This might
+> > involve cache sync overhead. Let's only call wake_up() when waitqueue
+> > is active.
+> >
+> > Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >  mm/memory.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index fe21bd3beff5..4adb2d0bcc7a 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4623,7 +4623,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       /* Clear the swap cache pin for direct swapin after PTL unlock */
+> >       if (need_clear_cache) {
+> >               swapcache_clear(si, entry, nr_pages);
+> > -             wake_up(&swapcache_wq);
+> > +             if (waitqueue_active(&swapcache_wq))
+> > +                     wake_up(&swapcache_wq);
+> >       }
+> >       if (si)
+> >               put_swap_device(si);
+> > @@ -4641,7 +4642,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       }
+> >       if (need_clear_cache) {
+> >               swapcache_clear(si, entry, nr_pages);
+> > -             wake_up(&swapcache_wq);
+> > +             if (waitqueue_active(&swapcache_wq))
+> > +                     wake_up(&swapcache_wq);
+> >       }
+> >       if (si)
+> >               put_swap_device(si);
+>
+> Hi, Kairui,
+>
+> Do you have time to give this patch (combined with the previous patch
+> from Barry) a test to check whether the overhead introduced in the
+> previous patch has been eliminated?
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+Hi Ying, Barry
 
-> ---
->  arch/x86/kernel/smpboot.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 766f092dab80b..b5a8f0891135b 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -497,8 +497,9 @@ static int x86_cluster_flags(void)
->  
->  static int x86_die_flags(void)
->  {
-> -	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
-> -	       return x86_sched_itmt_flags();
-> +	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU) ||
-> +	    cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
-> +		return x86_sched_itmt_flags();
->  
->  	return 0;
->  }
-> -- 
-> 2.43.0
-> 
+I did a rebase on mm tree and run more tests with the latest patch:
+
+Before the two patches:
+make -j96 (64k): 33814.45 35061.25 35667.54 36618.30 37381.60 37678.75
+make -j96: 20456.03 20460.36 20511.55 20584.76 20751.07 20780.79
+make -j64:7490.83 7515.55 7535.30 7544.81 7564.77 7583.41
+
+After adding workqueue:
+make -j96 (64k): 33190.60 35049.57 35732.01 36263.81 37154.05 37815.50
+make -j96: 20373.27 20382.96 20428.78 20459.73 20534.59 20548.48
+make -j64: 7469.18 7522.57 7527.38 7532.69 7543.36 7546.28
+
+After adding workqueue with workqueue_active() check:
+make -j96 (64k): 33321.03 35039.68 35552.86 36474.95 37502.76 37549.04
+make -j96: 20601.39 20639.08 20692.81 20693.91 20701.35 20740.71
+make -j64: 7538.63 7542.27 7564.86 7567.36 7594.14 7600.96
+
+So I think it's just noise level performance change, it should be OK
+in either way.
+
+>
+> --
+> Best Regards,
+> Huang, Ying
+>
 
