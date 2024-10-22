@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-376869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9B59AB6DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:33:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579A39AB6E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA36E1C222F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:33:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9336B245E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED041CCEDD;
-	Tue, 22 Oct 2024 19:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9957F1CBEBB;
+	Tue, 22 Oct 2024 19:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsGAjcGE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAL+lD6a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6121CB503;
-	Tue, 22 Oct 2024 19:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE09C1CB523;
+	Tue, 22 Oct 2024 19:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729625494; cv=none; b=elNPqoqkChSktBICuA4tHB53ChFoBZbzTZ3Ab0Xq5wrUAMV1PDEmAbfGFfqt21mDuvRIt6JBsbEvzdyybM3hVrDrywk7H3P21xkUKnKyoxpGNDE7wZOzTlASNC+GeOWlxu/FnkeKJTWC2WGtiYe0820zNeS3AFOJsdSu3bdMHHA=
+	t=1729625585; cv=none; b=fUbjbqw7NBB7KNbSKSSCGT10po3G7XFuDbsYN7czNasWFYxImeX6JnVjyZxaNRRHY8VvsPlQUKGmkjStAMraDzJGH7kgdJ5YF0NdWggbgFVeQsD6Ada27voC5Fcy3Wa5MDArqzoMyqtstef4uDK7KSPEHcFMay0ZRUx0IgvUwjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729625494; c=relaxed/simple;
-	bh=GGNhwfUzomB5c7pGZnSajU+DPtArbMMXDbU2WQFJAPE=;
+	s=arc-20240116; t=1729625585; c=relaxed/simple;
+	bh=a4DgBiIqe9Fs7Zr5cW4NA4hQC4B2qUq17gqU8pINsjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/WSr4xfpieAsZdGzil6SSY737onxaNnkkIK1mIsn6bopIE9eTxIbqotJ+8O6AhBgbDUU8xS4oci2fev90FQWqQXlkzwjqBpIxP3SJAhhOlFU1AjKoA1PIb4NwdX2lJZbxrMg3dBEh0I4Vc2QKJx0rjHIHANTq9/GxthzRuEfNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsGAjcGE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802D1C4CECD;
-	Tue, 22 Oct 2024 19:31:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRJ4KgTJDL5NLB1RBNYObyzP/a3CjmSprLUYg98wO0pU905he8vxZQUi0a9ACzetOP7oCe/s3CXwpIYoCL05K8E7Rl/p4IvR1xSTIJS8i2sTQSgjaJ651duEYnb1nGZx4AEeKx/UQ7zIs9/8wNy7LnYsxhP3CSH9aJOdEOnnaQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAL+lD6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DE7C4CEC3;
+	Tue, 22 Oct 2024 19:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729625493;
-	bh=GGNhwfUzomB5c7pGZnSajU+DPtArbMMXDbU2WQFJAPE=;
+	s=k20201202; t=1729625584;
+	bh=a4DgBiIqe9Fs7Zr5cW4NA4hQC4B2qUq17gqU8pINsjI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RsGAjcGEWjVmbDuPRLTGWixM/V+AZwp2sRPkU6TqCPHVSD3TlpNU0UCY2JrLnKwQc
-	 Y8Zd8KXmpd/J+B1iB00ohZSWU3O0iFIaXAsd8nceOd0B8umiAoA/1ihl39uG4qYTYr
-	 q484G3EGV55gso3g4Q7ooU4UD2XfUHGI3Kj7kK3LXS3TpjiorOf46Vbkd4hPB9v0mF
-	 qaT6lFd0UKbTQRh7+s4MFE6EAmI8WS438bz3EpC1CddM6AgYPThqrDTo/iEYTDim4d
-	 B2/ImIUiKrIlj6PH5t4WIhMMRZbpvV/cIqGfLxQFjX+ewrPBUQ6EKvkob35bUwDwz/
-	 qFEiVTnLF8vyQ==
-Date: Tue, 22 Oct 2024 21:31:11 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, kernel-janitors@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/35] sysctl: Reorganize kerneldoc parameter names
-Message-ID: <nnbmui2ix23wjmfvxo2t3zd3tgymk77h765kyoc3pxu6wkhqxx@6qis4yyszkec>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-10-Julia.Lawall@inria.fr>
+	b=vAL+lD6aCu6tPVamnUvDC0bW1LK6h3ab+Ung2Y2YWTvMUnlLUZq1YRhBTCifBM6/b
+	 bcWpKUYLKirT46Cy5joqmkgMs94tl5oQhCiJOyYUgLUv2hkUuGYBt3Z4JEZUuSI3Is
+	 +ha/EbuWWcR26A+jxDZbYlGlB25o09qYFlx/pLni5cxkhbzs9LJeXb1N/p72WJqNgN
+	 wplW2Eruq3ADmWg9h3g6e6Qv5r2FvfkU8Zq8OtLCfQ/1ewjGvBkS8lkFFl6gTdLwvN
+	 7IOoELsEE2g5c0SxgtyeYqpfeFSTV7/pRscr2TNGfTpnECM49qvAJamVf3Y0pWYRSi
+	 QLD9fSPVE8j5g==
+Date: Tue, 22 Oct 2024 12:33:00 -0700
+From: Kees Cook <kees@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Sasha Levin <sashal@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <202410221231.55C03584@keescook>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <20241022041243.7f2e53ad@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +61,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930112121.95324-10-Julia.Lawall@inria.fr>
+In-Reply-To: <20241022041243.7f2e53ad@rorschach.local.home>
 
-On Mon, Sep 30, 2024 at 01:20:55PM +0200, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
+On Tue, Oct 22, 2024 at 04:12:43AM -0400, Steven Rostedt wrote:
+> On Mon, 21 Oct 2024 23:48:34 -0700
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
-> Problems identified using Coccinelle.
+> > > How about this, instead: no one sends -rc1 PRs to Linus that didn't go
+> > > through -next. Just have a bot that replies to all PRs with a health
+> > > check, and Linus can pull it if he thinks it looks good.   
+> > 
+> > Not just -rc1, otherwise agreed.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  kernel/sysctl.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 79e6cb1d5c48..5c9202cb8f59 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1305,7 +1305,6 @@ int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int write,
->   * @write: %TRUE if this is a write to the sysctl file
->   * @buffer: the user buffer
->   * @lenp: the size of the user buffer
-> - * @ppos: file position
->   * @ppos: the current position in the file
->   *
->   * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-> 
-This looks good to me. Is it going to go into main line together with
-the other 35 or should I take this one through sysctl subsystem?
+> You mean have everything go into linux-next before going to Linus after -rc1?
 
-Best
-
-Signed-off-by: Joel Granados <joel.granados@kernel.com>
+It seems like the most useful signal would be for the initial PR for the
+merge window. After that it becomes a lot of fixes that didn't get tons
+of soak time in -next, etc.
 
 -- 
-
-Joel Granados
+Kees Cook
 
