@@ -1,212 +1,136 @@
-Return-Path: <linux-kernel+bounces-376231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3139AA1E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2859AA1E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1BB283160
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF947282C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AC019E7EB;
-	Tue, 22 Oct 2024 12:08:02 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B562219EEC0;
+	Tue, 22 Oct 2024 12:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mcaosis7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yWekv5ho";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MVKfW3fT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aThTYqFM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD27199938
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6CA199938;
+	Tue, 22 Oct 2024 12:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729598881; cv=none; b=ETDgAGh//ne6c44ZynwIqBQ8uN6svzdCyh9BYgzuWtBsqabTI9r5j7NV+TeAGuxRsoRlb90SnaZDrCc8+m2lT99UR3T6j5SMTdPVcINoA6zVgzK8auF7GsgEDYIStBSHjoy3g2kd6ZnzpMhl/o2LNhoYi+WLInI2t1cOhmyCWW0=
+	t=1729598896; cv=none; b=hJ7Nzjv5VVDD1ottPknqqeOEGUDJMSWqK2l8zj8uuFHmxKmLIoiy5mems42cqLQs58WImEIzeisSjSoEhozTKESA7u0xutYH5DIzFvwU9IjPH27xQ8CEHup6FJOFFCOoI8hebYavpb6Piruy4FP7/VXfZhNZ0gZjczXlp23QJIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729598881; c=relaxed/simple;
-	bh=su60vmc+u8hJulSAsiny0wMAAlibdpwxrlWj7/iF8s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mt7cg3ElLEFX3JK1huBAUt8H6GivqevAtOpVjB0U1+P34G8167k38Ie7+FvlMbxSynaaReyIiAn5TX9q7Vg7mxHr6neYhBl/+P8/FGfrd1XaHdBS/S81s5R09oqDcGQ7mBCIHL8prAqG8FEHvUfaolH9olPU2IjuZOmgihSqIx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XXrXz01YXz1ynKk;
-	Tue, 22 Oct 2024 20:08:02 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id DDC1014037D;
-	Tue, 22 Oct 2024 20:07:55 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Oct 2024 20:07:55 +0800
-Message-ID: <2cc049fe-8f1a-0829-d879-d89278027be6@huawei.com>
-Date: Tue, 22 Oct 2024 20:07:54 +0800
+	s=arc-20240116; t=1729598896; c=relaxed/simple;
+	bh=BfHArBpJ/UL1oHni/v8tgLqXZHg75cxklG7eWDDiEOc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EpmnI81r+2fIjo85iVs0DCbiPbWFYJ1R9Szel0h+Gc8LohhG017A1JkByRlRpRzKPSQue/i/1k2iFIZTGOzgQdoNiS/qTiPdhTOCACj3dBTZ3OIvq4XnQPvctox5fUomFWmajrCsu3+My3np2n9vYeoCYLLT37ayTNI+L+mSwC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mcaosis7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yWekv5ho; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MVKfW3fT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aThTYqFM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3939221C4F;
+	Tue, 22 Oct 2024 12:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729598892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsJ9+dT9qkqoIKboYtB7qSQeBE29M2adWLR8m1oaY+0=;
+	b=mcaosis72jjgqGQMUHABqZen8b76vSpVUrjN3FzuLptjeOGTWRZkNuF2ny85AViJVux4D+
+	YtCX4beJFLhppaPXIDaVrgACsGXGgu5GtnTq9q1QqOGW8M8BXhaRwCiRYe8dZAEUvSbnlj
+	TJ0z370a9lSSSdtbp0cyzHMLqskiThc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729598892;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsJ9+dT9qkqoIKboYtB7qSQeBE29M2adWLR8m1oaY+0=;
+	b=yWekv5ho8n7TKEjYBY9sIkmadcmbCGpU+Nm77X6lmbVsPhJR1h5vR1Uw4aJNC4TEQKBjLm
+	s7JopXRslF/xdECQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729598891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsJ9+dT9qkqoIKboYtB7qSQeBE29M2adWLR8m1oaY+0=;
+	b=MVKfW3fTwuRaPx5hwxsWodlHLAe0aBoOmsZJ3Jw/wkxtkOW8whSQSnofBt4CsCHRvmEOKb
+	juaBuk7LfiXypjUvQ+Tjgiw5Q2KpI9k9jJ8OtxNOsG4xhWYxq7JYLssnDBm+3yDjY1PrSB
+	NmXtf2qAX+SL+8IwUqa9OoP25brR5k4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729598891;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsJ9+dT9qkqoIKboYtB7qSQeBE29M2adWLR8m1oaY+0=;
+	b=aThTYqFMYn3lwZdo8Y17iZIx5fW/kpWnVOOhe9rRU1HOizvcR0iHZFyMc4FNX9W6efMF3w
+	NKN9R/prWJ+ugoBA==
+Date: Tue, 22 Oct 2024 14:08:11 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Michael Vetter <mvetter@suse.com>
+cc: linux-kselftest@vger.kernel.org, live-patching@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] selftests: livepatch: test livepatching a kprobed
+ function
+In-Reply-To: <20241017200132.21946-4-mvetter@suse.com>
+Message-ID: <alpine.LSU.2.21.2410221407430.13912@pobox.suse.cz>
+References: <20241017200132.21946-1-mvetter@suse.com> <20241017200132.21946-4-mvetter@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<kees@kernel.org>, <wad@chromium.org>, <rostedt@goodmis.org>,
-	<arnd@arndb.de>, <ardb@kernel.org>, <broonie@kernel.org>,
-	<rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240629085601.470241-1-ruanjinjie@huawei.com>
- <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,pobox.suse.cz:helo,pobox.suse.cz:mid,suse.com:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+On Thu, 17 Oct 2024, Michael Vetter wrote:
 
+> The test proves that a function that is being kprobed and uses a
+> post_handler cannot be livepatched.
+> 
+> Only one ftrace_ops with FTRACE_OPS_FL_IPMODIFY set may be registered
+> to any given function at a time.
+> 
+> Note that the conflicting kprobe could not be created using the
+> tracefs interface, see Documentation/trace/kprobetrace.rst.
+> This interface uses only the pre_handler(), see alloc_trace_kprobe().
+> But FTRACE_OPS_FL_IPMODIFY is used only when the kprobe is using a
+> post_handler, see arm_kprobe_ftrace().
+> 
+> Signed-off-by: Michael Vetter <mvetter@suse.com>
 
-On 2024/10/17 23:25, Mark Rutland wrote:
-> Hi,
-> 
-> On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
->> Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
->> to use the generic entry infrastructure from kernel/entry/*. The generic
->> entry makes maintainers' work easier and codes more elegant, which aslo
->> removed a lot of duplicate code.
-> 
->>  arch/arm64/Kconfig                    |   1 +
->>  arch/arm64/include/asm/entry-common.h | 172 ++++++++++++
->>  arch/arm64/include/asm/ptrace.h       |   5 +
->>  arch/arm64/include/asm/stacktrace.h   |   5 +-
->>  arch/arm64/include/asm/syscall.h      |   6 +-
->>  arch/arm64/include/asm/thread_info.h  |  23 +-
->>  arch/arm64/kernel/entry-common.c      | 368 +++++---------------------
->>  arch/arm64/kernel/ptrace.c            |  90 -------
->>  arch/arm64/kernel/signal.c            |   3 +-
->>  arch/arm64/kernel/syscall.c           |  18 +-
->>  include/linux/entry-common.h          |  90 +++++++
->>  include/linux/thread_info.h           |  13 +
->>  kernel/entry/common.c                 |  37 +--
->>  13 files changed, 395 insertions(+), 436 deletions(-)
->>  create mode 100644 arch/arm64/include/asm/entry-common.h
-> 
-> Looking at this I have a few concerns, which I've tried to explain
-> below.
-> 
-> Firstly, this is difficult to review (and will be difficult to test,
-> queue. and debug in future) because lots of independent changes are made
-> all at once. I think that needs to be split out more.
-> 
-> It would be good if preparatory rework/cleanup could be split into a few
-> patches that we could consider queueing before the rest of the series,
-> or even if we decide to not pick the rest of the series. For example,
-> patch 2 should be split into:
-> 
-> * One patch that replaces arm64's interrupts_enabled() with
->   regs_irqs_disabled(), removing interrupts_enabled() entirely rather
->   than implementing regs_irqs_disabled() using interrupts_enabled().
-> 
->   That'll require updating existing users, but the end result will be
->   more consistent and have fewer lines of code.
-> 
-> * One patch that changes on_thread_stack() from a macro to a function.
->   The commit message for patch 2 currently says:
-> 
->   >  Make on_thread_stack() compatible with generic entry.   
->  
->   ... but it's not clear to me *what* that incompatibility is, and that
->   should be explained in the commit message.
-> 
-> * One patch that splits report_syscall() into report_syscall_enter() and
->   report_syscall_exit(). This should have no functional change.
-> 
-> Patch 3 in particular is very hard to follow because several unrelated
-> complex systems are updated simultaneously. It would be really nice if
-> we could move to the generic sycall code separately from moving the rest
-> of the entry code, as the sycall handling code is a particularly
-> important ABI concern, and it's difficult to see whether we're making
-> ABI changes (accidentaly or knowingly).
-> 
-> Can we split that up (e.g. splitting the generic code first into
-> separate entry and syscall files), or are those too tightly coupled for
-> that to be possible?
-> 
-> At the end of the series, pt_regs::{lockdep_hardirqs,exit_rcu} still
-> exist, though they're unused. It would be nicer if we could get rid of
-> those in a preparatory patch, e.g. have enter_from_kernel_mode() and
-> exit_to_kernel_mode() use an irqentry_state_t (or a temporary
-> arm64-specific version). That would make the subsequent changes clearer
-> since we'd already have the same structure.
-> 
-> In the end result, there's a lot of bouncing between noinstr functions
-> where things are inlined today. For example, el0_da() calls
-> irqentry_enter_from_user_mode(), which is an out-of-line noinstr wrapper
-> for enter_from_user_mode(), which is an __always_inline function in a
-> header. It would be nice to avoid unnecessary bouncing through
-> out-of-line functions. I see s390 and x86 use enter_from_user_mode()
-> directly.
-> 
-> There's also some indirection that I don't think is necessary *and*
-> hides important ordering concerns and results in mistakes. In
-> particular, note that before this series, enter_from_kernel_mode() calls
-> the (instrumentable) MTE checks *after* all the necessary lockdep+RCU
-> management is performed by __enter_from_kernel_mode():
-> 
-> 	static void noinstr enter_from_kernel_mode(struct pt_regs *regs)
-> 	{
-> 	        __enter_from_kernel_mode(regs);
-> 		mte_check_tfsr_entry();
-> 		mte_disable_tco_entry(current);
-> 	}
-> 
-> ... whereas after this series is applied, those MTE checks are placed in
-> arch_enter_from_kernel_mode(), which irqentry_enter() calls *before* the
-> necessary lockdep+RCU management. That is broken.
-> 
-> It would be better to keep that explicit in the arm64 entry code with
-> arm64-specific wrappers, e.g.
-> 
-> 	static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
-> 	{
-> 		irqentry_state_t state = irqentry_enter(regs);
-> 		mte_check_tfsr_entry();
-> 		mte_disable_tco_entry(current);
-> 
-> 		return state;
-> 	}
+Nice test.
 
-Hi, Mark, It seems that there is a problem for
-arm64_preempt_schedule_irq() when wrap irqentry_exit() with
-exit_to_kernel_mode().
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
-The arm64_preempt_schedule_irq() is about PREEMPT_DYNAMIC and preempt
-irq which is the raw_irqentry_exit_cond_resched() in generic code called
-by irqentry_exit().
-
-Only __el1_irq() call arm64_preempt_schedule_irq(), but when we switch
-all exit_to_kernel_mode() to arm64-specific one that wrap
-irqentry_exit(), not only __el1_irq() but also el1_abort(), el1_pc(),
-el1_undef() etc. will try to reschedule by calling
-arm64_preempt_schedule_irq() similar logic.
-
-
-
-> 
-> ... which would avoid the need for arch_enter_from_kernel_mode(), make
-> that ordering obvious, and would remove the need to modify all the
-> callers.
-> 
-> Likewise for the user entry/exit paths, which would avoid the visual
-> imbalance of:
-> 	
-> 	irqentry_enter_from_user_mode();
-> 	...
-> 	exit_to_user_mode_wrapper()
-> 
-> Thanks,
-> Mark.
-> 
+Thank you,
+Miroslav
 
