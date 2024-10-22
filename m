@@ -1,94 +1,141 @@
-Return-Path: <linux-kernel+bounces-375702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2363A9A99B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F1C9A99BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9D681F22B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898C71C21034
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A213D244;
-	Tue, 22 Oct 2024 06:18:11 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3B7145B1D;
+	Tue, 22 Oct 2024 06:19:02 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCD71E495;
-	Tue, 22 Oct 2024 06:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE821E495;
+	Tue, 22 Oct 2024 06:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729577891; cv=none; b=uTWgbM6MriHNW94I+tYcF0rOquLv0Kv4E0mBAaiiLo6r/zLzUmrsn78IniS6mJxMc0iKPhEuqq5J9pnc/lJjE3BxmCmubIKi3Vc26j8/aZARe1dpH7fYQUoZBptUHaX8dmSO8MeK/g4gmJF6KrxLY68Y4f/LOwTPxmBftBUkm8I=
+	t=1729577942; cv=none; b=bCJZIHCzR/89jL2QPXW/vo+STiB3ODI/Y4W73rTh5B2lnOb+uJyEKtgPWnMczxTKCYDHeglhPUiQ0DM8kmJs4A5IV6bQ/gTvF/lWhCKbvoA3aDHpM35WDwJ9aCsqqgHp4VTYavaG5etBETIx6Rxvnuu4TwlrRb6sqBVIrY52yZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729577891; c=relaxed/simple;
-	bh=jnNdPRp+iOBTESphayrxI0LVZxX6Hz9FgwN3dhnFQ/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CtpL6/Kx4Z5qEOIrtWMx8jLOTvnZHexbw1Kziy784KF6sK61abp6xIcHzO9FUgDXJqRwejNRlXS2+8Es6FvNnwIp3P3i91OE+343rjQNk/gDCY5CK4GrhDrtR4GqStUD8Pa1GJv35OePV8ier4p+9Cx4SkLPx7CmOiGBXb6Xm5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2892F227AA8; Tue, 22 Oct 2024 08:18:06 +0200 (CEST)
-Date: Tue, 22 Oct 2024 08:18:05 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: model freeze & enter queue as rwsem for
- supporting lockdep
-Message-ID: <20241022061805.GA10573@lst.de>
-References: <20241018013542.3013963-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1729577942; c=relaxed/simple;
+	bh=tLiAn0BeLFoim24NopHHPe7F7XmfCPa+lJJMTWGqkMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=piqLs/HJjdMZ59EUKWw8geKvJBI4b1zd6gzjioxN6R/wk48hkB+0AzN+cSM5WMUa/Et6FItpoB7VALh8CNaXem5LF44c7E5K4+9AM/bZLw3zFqZlxWArAhavEsW315i/OBtD7D0yRFbqNfgmW1zt3LFui0f30pDn1jhvknaZpVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XXhmX0DYXz1jBJk;
+	Tue, 22 Oct 2024 14:17:32 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C7B11A016C;
+	Tue, 22 Oct 2024 14:18:53 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 22 Oct 2024 14:18:52 +0800
+Message-ID: <04cecf07-85c0-4830-9f98-ffe96923d440@huawei.com>
+Date: Tue, 22 Oct 2024 14:18:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018013542.3013963-1-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
+ contention on siglock
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+CC: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+	<peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<bpf@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov
+	<oleg@redhat.com>
+References: <20240815014629.2685155-1-liaochang1@huawei.com>
+ <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
+ <20240915151803.GD27726@redhat.com>
+ <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com>
+ <CAEf4BzbWLf3K4C7GT58nXZ0FJfnoeCdLeRvKtwA76oM9Jdm7jg@mail.gmail.com>
+ <e62dbebc-d366-453a-b305-67f50baeff05@huawei.com>
+ <CAEf4BzYUdPJrgy1Dqinxk5ATPxA8WCTzQW3QcWobZpXjiYDZNw@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4BzYUdPJrgy1Dqinxk5ATPxA8WCTzQW3QcWobZpXjiYDZNw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Fri, Oct 18, 2024 at 09:35:42AM +0800, Ming Lei wrote:
-> Recently we got several deadlock report[1][2][3] caused by blk_mq_freeze_queue
-> and blk_enter_queue().
+
+
+在 2024/10/22 1:18, Andrii Nakryiko 写道:
+> On Mon, Oct 21, 2024 at 3:43 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>
+>>
+>>
+>> 在 2024/10/12 3:34, Andrii Nakryiko 写道:
+>>> On Tue, Sep 17, 2024 at 7:05 PM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>> Hi, Peter and Masami
+>>>>
+>>>> I look forward to your inputs on these series. Andrii has proven they are
+>>>> hepful for uprobe scalability.
+>>>>
+>>>> Thanks.
+>>>>
+>>>> 在 2024/9/15 23:18, Oleg Nesterov 写道:
+>>>>> Hi Liao,
+>>>>>
+>>>>> On 09/14, Liao, Chang wrote:
+>>>>>>
+>>>>>> Hi, Oleg
+>>>>>>
+>>>>>> Kindly ping.
+>>>>>>
+>>>>>> This series have been pending for a month. Is thre any issue I overlook?
+>>>>>
+>>>>> Well, I have already acked both patches.
+>>>>>
+>>>>> Please resend them to Peter/Masami, with my acks included.
+>>>>>
+>>>
+>>> Hey Liao,
+>>>
+>>> I didn't see v4 from you for this patch set with Oleg's acks. Did you
+>>> get a chance to rebase, add acks, and send the latest version?
+>>
+>> Andrii,
+>>
+>> I am ready to send v4 based on the latest kernel from next tree. Otherwise,
+>> I haven't heard back from any of maintainers except Oleg, so I'm a bit unsure
+>> if I should make further changes to this series.
+>>
 > 
-> Turns out the two are just like one rwsem, so model them as rwsem for
-> supporting lockdep:
-> 
-> 1) model blk_mq_freeze_queue() as down_write_trylock()
-> - it is exclusive lock, so dependency with blk_enter_queue() is covered
-> - it is trylock because blk_mq_freeze_queue() are allowed to run concurrently
+> Let's just rebase to the latest tip/perf/core and resend with Oleg's
+> ack. Hopefully this should be enough.
 
-Is this using the right terminology?  down_write and other locking
-primitives obviously can run concurrently, the whole point is to
-synchronize the code run inside the criticial section.
-
-I think what you mean here is blk_mq_freeze_queue can be called more
-than once due to a global recursion counter.
-
-Not sure modelling it as a trylock is the right approach here,
-I've added the lockdep maintainers if they have an idea.
+OK, the v4 is on the way with Masami's Acked-by.
 
 > 
-> 2) model blk_enter_queue() as down_read()
-> - it is shared lock, so concurrent blk_enter_queue() are allowed
-> - it is read lock, so dependency with blk_mq_freeze_queue() is modeled
-> - blk_queue_exit() is often called from other contexts(such as irq), and
-> it can't be annotated as rwsem_release(), so simply do it in
-> blk_enter_queue(), this way still covered cases as many as possible
-> 
-> NVMe is the only subsystem which may call blk_mq_freeze_queue() and
-> blk_mq_unfreeze_queue() from different context, so it is the only
-> exception for the modeling. Add one tagset flag to exclude it from
-> the lockdep support.
+>>>
+>>>>> Oleg.
+>>>>>
+>>>>>
+>>>>
+>>>> --
+>>>> BR
+>>>> Liao, Chang
+>>
+>> --
+>> BR
+>> Liao, Chang
+>>
 
-rwsems have a non_owner variant for these kinds of uses cases,
-we should do the same for blk_mq_freeze_queue to annoate the callsite
-instead of a global flag.
+-- 
+BR
+Liao, Chang
 
 
