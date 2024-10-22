@@ -1,149 +1,275 @@
-Return-Path: <linux-kernel+bounces-376480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590879AB233
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:33:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BCD9AB20E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1001C220F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:33:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5067B2230F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875321A01DD;
-	Tue, 22 Oct 2024 15:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B96B1A3047;
+	Tue, 22 Oct 2024 15:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="su8s0RHB"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LCQDaeIv"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2072.outbound.protection.outlook.com [40.107.247.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15DA2E406
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611212; cv=none; b=OF2laNGHDh7H0rzMLCAJNUeJPc819DPRLbxKdEACcIQ3j0+HPyq1rmzSj3PqqxhrJChAYYS5+74yGOTXY9dqiWTeH3jL5Qy1mxmyO+UOsZ4cCjxLNpx4RnDhBIK41WnPWHnsZuleBt3nV3lUDGunnPLaG51ZIuLTtzrJ77Q3qkI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611212; c=relaxed/simple;
-	bh=cGj65xZ9ShfA/LKSalGymoQpuHqs+4hgwqbMe3QrFMA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Brx8XhQnwvELpkYg1564g0arNLwHqN119ylxpni8gKXyxs1pitE126Z+7tqLlBw8xruHvKvr0lTH1XSRZXPFMZk/qbyfb52hxAw5zs3aoRw9xdvytn5S51hzwjZ0YLV0Uk8grsFGkapSedN6C4dN7hye+7uADRZV9ZKil+ok33k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=su8s0RHB; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1729610902; bh=g6+dwhEkZN0C25ovd76j+GcYPC568U79rzgvztMe/6Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=su8s0RHBtg4yWxAi6+n4o+Kpl/dcqHJMbBIAqGwhachOMFjaJ59Ccmu/JBafJVSxE
-	 ZB3zrPO1oN9+lSgRwDvEW+OoZv1nvKpkaRrys1e/IHRzYGZfavpVOsUXQJymlgG/0k
-	 dKg9Qm2N9KJ2VQCI9y1w1cAmZe8OKSOgA8Pd3sOc=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 7131ACDC; Tue, 22 Oct 2024 23:28:19 +0800
-X-QQ-mid: xmsmtpt1729610899t6479w7vf
-Message-ID: <tencent_AB5DCD99304FB68D9CA5E58DDE12185D8C07@qq.com>
-X-QQ-XMAILINFO: NvKyM24IHTKSRwfinymltxLX/Kp4R028G0FBOhjjiWQADTJdMDvoPRVA4FFChi
-	 8QwYwXJh2x5LgA3+WSWgPgdBXa92swaPZUQzCsdwnZjVj0OMoSt3y5j5PzHszYqMsE94YmiVst0q
-	 H7kiJAabpail/5OTEkqhAByugL0m3mwc4PeloeynyFiDMO8cR/y9XjiYP1CTvviNjcy96IHrOnqS
-	 qHmzJX8iHh/bpUTcFv6yk7SKn6LSGxqVOneuCcNvg4WsBi70m1AHHD+wNQPUCtTXS6lHq9vDX7zR
-	 wzaat9jKXJ3I3RDgkzRRLReOgStpiUwRUzdmer0PidZRVcCtIOv6el70wDwvJvE752zikuL3crd5
-	 /4mcbsnPO4gmlon0wntOg80Uyc6coNd81ZEO5buh+VcMct77ZVXsRuIud4CURt7gKPp+UWolfmlE
-	 nHzoYj21ZVDMoIgNWn430BrYKRIMH5PYlJ6msa8AQfvbAAcNboGMF/Fxo/X6XmqvNfTSwUAkxiG7
-	 LYJYGLdNDMAwQI4IiKGAgU6k29BfS+0MNkJDYh86dBg/zT+1ONqYrJcgTZxpOVGri/SRwf76h+kq
-	 UFSYgKm/pM6vxr7M+8aR5VVzrpkds8/8WcEoSDlGW6U0ExkT3bB6DFBpWbZ4dZ9IF+VJtM6yqcQz
-	 n3pDjFaNFBlKB9JYJHgSqlro7kn29MJQDCwYLw7AdP0JcH6uznjDOb+6aQ2/8pu3m2fb8Xr0w8wr
-	 wf5B59OHmf63eskGnlll6QJMlmUdKW0xOjA3omHy7kjuDOBx07w56tXte3uJow1MwFQ7JDL1S+nV
-	 +ih4p9A2MXS+PS6byPv4x9NsOYCMc9LLSUmUtqKhhetZxC++JABxVf64QYMOa5LuILwsDmzuDtcM
-	 YHsHcLIFTxDAe9fgjuYAnPpdHB9LDiNVkxQ1av2OdP9Hc7rTkUIsV/qmMEXi1Iwnmz4te2oYvkBT
-	 W+pG1pFjSaJSLmpULbVw==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: willy@infradead.org
-Cc: brauner@kernel.org,
-	eadavis@qq.com,
-	guohui.study@gmail.com,
-	jack@suse.cz,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	lizhi.xu@windriver.com,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] jfs: Fix null-ptr-deref in write_special_inodes
-Date: Tue, 22 Oct 2024 23:28:14 +0800
-X-OQ-MSGID: <20241022152813.3896117-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <ZxeXBwLCsIwNYmlP@casper.infradead.org>
-References: <ZxeXBwLCsIwNYmlP@casper.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F4413B2A4;
+	Tue, 22 Oct 2024 15:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729610959; cv=fail; b=VEiD6U80CleP5zgftgI8Y2qAN8pW1ZmuIad9FQLyqbTfVPD3w5HL2CB6FnQOs6dy7knziYF72QqERJHsCayG7MBdg2ztEYBqylxly1p/ugY3HQ02Oslb57+NRzAbHac0HH5t11T9hGoS9SQfl6Zxglxm4pw8ekk8ZQv6KMfRxaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729610959; c=relaxed/simple;
+	bh=imtxbc5fVFSkmWu4RQ9+ccXMQB2+QYfzmMagW/rA/M8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NV8Et7yAXKHO/HlPoTYeMHnJdoMSS6Pd6lF13rKnkrwemsesLocSfR6IAR5QXGF0e97Nblri8T4eX7DM1gT5CsQaFFXZoybS9d6GNUB36l/9dYR2WBhd7JdSgTTYC+7Hvs3520TQEgBQf4INavKthvz92lYMRjxUAjs+af+JBPM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LCQDaeIv; arc=fail smtp.client-ip=40.107.247.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fW2bhrfAJAgI97rFFldrifMWaubK51mHnz0SnTf8CrtqIcMxAieJi+RW0CIPGwhmyFjD5nCr/TE2p8MneGaZXbZNwRQ+GJdTmGjk0CIp40Ph7VJ9DvLjBBe00ixPUj/go4kq4kv87HTTRNZTpS9khP2VhsHkLY1Ia8EhYDICn+V1gWC7FO8CGmuKlUXluUIscBixrzzvBJIh8InErd/Tofnh4OMkMsj1l/vqivSTZanA1w8Dz12Yak1rxqIehkhyQ2L4TMzhnil7IFvypBJvywuVbPjr1uvKZFQ8+cRgNPAGyghRwcshWmEbP+MVQRYxDnZ+Y2YSDHV9M4O9Krzr0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rtdvelxfG9kLytdRHIJf3+DjsKfgRCLy1bO0ked5bnA=;
+ b=KUgJZvISTDJg3Ky25f81XK7jyzj6g0BZoMEwo4Ht7qAspBzgFm1PlsWYHKdl2yes/t/PDPAzKMlKW4a/IL+gPZEsoO1vGA4YMG9ARBXEcOYF+15Mx733RqkA/YnC3C4UwaxIWrfrEVk396++JuJ2XqcGxqauSoKLFyducpjY1oa+AffdpJ50D7ZCCcU/RmAer39t+xvtUMfuwFTdjSJAgMA2n8imbtUKx64foIr4jZ9XbFwgqPUHArfIKPxjFvl3znpc5nWTh/QqN4Hi3exWU0UnXwZguvy4+cwau0F19Lk9+qK3DNbxKY272Ks7u9eUv/vf85xIyZ2pmj4o1Uy8NQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rtdvelxfG9kLytdRHIJf3+DjsKfgRCLy1bO0ked5bnA=;
+ b=LCQDaeIvLc7atTVXv8LTTqs3jIVOYYoCyXf0FF3o8MGZw8pQVITteB3p4SRtjH33uspR06yenni+er+B9F3KhS7h5soR/8iHBIJLVolwz/TMTBVxrY2K1OFhcSFmVSzr2Yi0nEiQySovm0gWzNUOSwiY2IO2qFK14V1nRWld0cFv0TwT+I0hYqlT6/GitCLoIUt84SUOc85oQlnqHHBRoQwGdbYOaRcqkSVyJPcfiETMI47xQg+CD8OrWVNf6DJerd/GGYRc54oWQ2omM4pSC3GJHGYVYnTa9MRaHFlLBzjoojS1yR92bcn8HN4X5/v1hm5D7MU2AR6lSWNva5SiHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU2PR04MB8808.eurprd04.prod.outlook.com (2603:10a6:10:2e3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 15:29:13 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
+ 15:29:13 +0000
+Date: Tue, 22 Oct 2024 11:29:03 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Subject: Re: [PATCH v3 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
+Message-ID: <ZxfEvxA+0iMKBZh4@lizhi-Precision-Tower-5810>
+References: <20241016-imx95_edac-v3-0-86ae6fc2756a@nxp.com>
+ <20241016-imx95_edac-v3-3-86ae6fc2756a@nxp.com>
+ <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+X-ClientProxiedBy: SJ0PR13CA0118.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0622c39c-ac23-47d7-9e36-08dcf2ae4867
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gsSsCAaNDoRPOdhAOBfuwJq1janP13sbbviCqGZ7Z4Gtn/hNGa2lyhfnTlC/?=
+ =?us-ascii?Q?8NCybOzIaBXt3bTuU/gw8ke+tWHvYrBkQLM8HKHL4gP4LOBULDFvZKnHy3jD?=
+ =?us-ascii?Q?Fm5iKjTPNHfxhCe5+7lnp3JKp5dup/S7sQqOeLJF7qUD/rlu5orSkCpZO3Kt?=
+ =?us-ascii?Q?e3ut9RSg8TXTjExcFoys4tX9TXrbjlf2gGtZkyj6rTHZcFFjyVFVZiIdrWbB?=
+ =?us-ascii?Q?GSkPGddkHEsspKTxtQWZzE8QMSkBaQd1dUJD1stuB84Ta25zHkED/D07uVYM?=
+ =?us-ascii?Q?KmP7cYNVGvG1PUdtm42tj9sucjZPQ7mjxoG1sr4ZUJ7oZRAY575mk4sd/Zfo?=
+ =?us-ascii?Q?nyYoJuYhcaU4nMqU/XcFog6zFgeqmSF/3LUYWjqph+nhbCa42phV/UtPGbhi?=
+ =?us-ascii?Q?kM8ejLGzgaicPtoptvQynGiHle0LF9ERIob9J0u0dHNXY3qp6OlyxmlAvRcN?=
+ =?us-ascii?Q?JqODrYEDtaO5UmjE0dZEpUzM/R2Cr3/0TBQirAf+USKxj3DaSViiGR1Gcd7d?=
+ =?us-ascii?Q?xxfpve6bzob3xYLTqEDlaP4ohk63IJRBEbTXwyk7aIIviEroBlazYrAY+RZh?=
+ =?us-ascii?Q?W4x8pxbsBVGESh48shG8ZnhHXo256JKm6u1CN7kVuRPcYvJqMdmyeHcXSGKL?=
+ =?us-ascii?Q?Co8heOlbQlKnJpsv8c0M/86xK+uSGBJa1U+tfkSlHP8pbiCl/XPXW1pEruyi?=
+ =?us-ascii?Q?zlsN4D9O4cliR4AgTk3cv60ClNgqwI4hBqRvD9gfgyCK3o81LSB3N68AeHsT?=
+ =?us-ascii?Q?G+SazSsNoJUk9N405OaODCt0E5PcIYGFtmHMzIEUBWRSvok/FjQ1IjYXMXLt?=
+ =?us-ascii?Q?eIKNik1kJZDKx8h0byHqNCg8T/LzTZnmUG+jFPcfK766zokiu+VsAMJ/mKJW?=
+ =?us-ascii?Q?WbihfkLhz5pfaVrRwPpsd3mQ4zSEp6Gbm6xX4JuAJGiawgYBJKmRK+vmPSl3?=
+ =?us-ascii?Q?ot/jbSfopydR1KMrdZRvhF4eK0NFiPHS8bedLL6136WdE8S+I8SwCXXWn2Qk?=
+ =?us-ascii?Q?zqP1nMS5a1ioacRH4mSNZWmJIlOeJO/vg7I6vKGykD5IcehraPe5tbbMea31?=
+ =?us-ascii?Q?PAi7RLnyfBp1qSWI1PCmBrwBttSGKXBo804jbZ1Byyxif7Ji+TMMNhDc1cZG?=
+ =?us-ascii?Q?iEj51SFbWLisMDppw9AES6QqS429qQjy2WfrTDuXotoYtYT25dTpR/C1+jEf?=
+ =?us-ascii?Q?UPiuzOkKfOaxD62YyxjDKw4W05P7Fm5l8lECNEW4a9Z7eoRmuQ1EjXCE9Qmg?=
+ =?us-ascii?Q?s41GPCqixRsdoClNN2sLqE/SfIWZiou/ubVMoLPmybcoQr97MJbpDIdkuiIg?=
+ =?us-ascii?Q?tigLr1J6YMbx9kg8e0tGd39zYSMISE/dAGABBqXelGk3m7fR3vEvKZ1ijpp7?=
+ =?us-ascii?Q?V2HgyU3Gvn2OHI4vckwf0yv2umhL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1sl0pdvUSEKseJFx+pBurEHL7jEXF3qtAb/1eW5ZNJpA22JIKwx1LK4f9w7y?=
+ =?us-ascii?Q?bGWA9fU+j9hGg25t9FLl/icnxDoWw1r3rxWIZMfqZx4ajUyPRw2DUcWtG+w4?=
+ =?us-ascii?Q?PQdt4leJrlU+IwmYd4pn2aqzIlQB6QcZCV200V0YclgcisHYNiwQrgJ5DamR?=
+ =?us-ascii?Q?2PBP95rKEPDszkBLAu2kCtFQuQsJmJhqqxKcnQSWkqwIvINiUiRlRfNMHxYJ?=
+ =?us-ascii?Q?WHytiNbXgzxeEsScOgpmd+dw28Qut3tm2l0lyTtjmkXn44B+YXJ/U483KO0e?=
+ =?us-ascii?Q?aHPth1+VdbL5U5cv/QB2+QlWspUJhkJDWCVJDw1IAcVuHFsxwwyTtTNuy9TF?=
+ =?us-ascii?Q?LzTtXrgFCJ8n6LBCsR+2lnCeyEvItJ/84Y9fq4BAMPRNTJMVrR+nzQfKi9Jc?=
+ =?us-ascii?Q?j8BRyrjKY7uABv3G+95vKDK69hVnhfrnxcUiPjNFoSiADy9iHlFn91XAfRMf?=
+ =?us-ascii?Q?mhdVTOdD97w9bs2PfuVe6JuPEsbMUtKZ+Xl/OXd9RpMI9x6b5rpg6vWbJtQ/?=
+ =?us-ascii?Q?yyPh0uetMv795iUG1rpkf8uFodhYUWErvu7ZZdsRxTktjuLLLrFr3FJA6x49?=
+ =?us-ascii?Q?0EIT9X6ZRRXofDGakhxf22ewT8VIaufGN1KBUIOopPGeBAPKJSnLcpkPx1EO?=
+ =?us-ascii?Q?a9kwadMtwABpFXpSP568P6yGTnKEv8I5Yd2cwu0lXzzL8vCo/gZJaSozNtiT?=
+ =?us-ascii?Q?qKgt+hb7zz6/8iJmrNoR6X5190p1yU42bjGjiDPJD1Qh3HzYC5F2OuP53p2i?=
+ =?us-ascii?Q?ALjV/dDKp2NBPyiAuLDsbWSXPQL1mVgqhmmOQBOKA3T8sDbO+4TzKMX1WVbg?=
+ =?us-ascii?Q?jOsHpwUutzK5ySUIhzc0Ij3XwG9rUGiW/6hfAK9VrdEV7R4Sz+ygERSuCCkQ?=
+ =?us-ascii?Q?ZB7DI6kjMCKgaCjcXDUlvNInjSkK7BHZ1RlhMc56Z0+tsEDhBtRSaTxWyiUH?=
+ =?us-ascii?Q?bDFQ7jTrAvl5Gplm22QHrpKnKZ4UWnijQCAYq+V4vxnh0uwZYFLydKLo3G4L?=
+ =?us-ascii?Q?Yr1kenJSVwUZknexUQI8idIgFy+w+yJriZJupvZYIoreeSODDGY2r3I3QEg8?=
+ =?us-ascii?Q?56xQkUlg6XVixSUjm9UgbSw2oHBGfH6tX2M1A7ro82BcQugptLPDUNlbeU4d?=
+ =?us-ascii?Q?lficJCu1Ail2Ht4IlPhZSfCGjNjFjgn8BteNDfHeLUr0F9yq5yY2t96Lv20J?=
+ =?us-ascii?Q?2/Wvb3/I4NquJ4fX8S6aiTof2Ew2c1UoIvtQJf/9ozx2ax1/Ly90oC2201sQ?=
+ =?us-ascii?Q?JX/tQA7BgI8Yr0KPTlZyqmZO9uVH2BebYb3efWxUVWRc/VsB3mnpQF5CtV/7?=
+ =?us-ascii?Q?qeSGx6sDhpUMnR1hBtl6ItN2OS0asp6S65YJUvrqX9lWnr6Rhs2krDCr61yE?=
+ =?us-ascii?Q?OvZ40FN5w0ZbmOh1qBA1yHBMp9drmuv80p00g4EGfMHL5W5En9wheFzfirZa?=
+ =?us-ascii?Q?Q3nZQKpH/O3JkB191Npfha1Y/gsiL4d4EMmLzWnEtnzKcsb2YvYLihzcYN2v?=
+ =?us-ascii?Q?5dSrbDycEzAjaEz48LCiXEmTKQElTO2zM1NQES+iIQXEfpavrbPo6IyfpKR0?=
+ =?us-ascii?Q?bg8grlOoTEZTUno8c92AhR1Bq95FQkH9UaODSNwW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0622c39c-ac23-47d7-9e36-08dcf2ae4867
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 15:29:13.5424
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rg1JbYpvNCHl2bG/wZGvdeedIQgd3NSSNA4Sq3uvRPtcbVh9n1761rJfl3Y+wocdOLYKjaG1YQ1Xwd46cy0rvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8808
 
-On Tue, 22 Oct 2024 13:13:59 +0100, Matthew Wilcox wrote:
-> On Tue, Oct 15, 2024 at 12:50:05PM +0800, Edward Adam Davis wrote:
-> > There is a race condition when accessing ipimap and ipbmap.
-> > 
-> >         CPU1                              CPU2
-> > 	====                              ====
-> > 	jfs_umount
-> > 	sbi->ipimap = NULL;               lmLogSync
-> 
-> how are we unmounting the filesystem while still writing to it?
-Based on the test logs when I reproduced the problem,
-[   77.691713][ T7747] jfs sbi: ffff88801d8b0000, jfs_umount
-[   77.706091][ T7749] jfs sbi: ffff88801d8b0000, write_special_inodes
-[   77.706976][ T7749] jfs ipbmap: 0000000000000000, ipimap: 0000000000000000, write_special_inodes
-[   77.708233][ T7749] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
-[   77.709985][ T7749] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-[   77.711133][ T7749] CPU: 2 PID: 7749 Comm: rpeml Not tainted 6.10.3-yocto-standard-00118-g7bc0a34d8159 #1
-[   77.712466][ T7749] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-[   77.712614][ T7765] loop4: detected capacity change from 0 to 32768
-[   77.713219][ T7749] RIP: 0010:write_special_inodes+0x126/0x203
-[   77.715528][ T7749] Code: 48 c1 e0 2a 80 3c 02 00 74 08 4c 89 f7 e8 72 02 c3 f7 4c 8b 73 10 b8 ff ff 37 00 48 c1 e0 2a 49 8d 7e 30 48 89 fa 48 c1 ea 03 <80> 3c 02 00 74 05 e8 4f 02 c3 f7 49 8b 7e 30 c
-[   77.718177][ T7749] RSP: 0018:ffffc9001229fbe8 EFLAGS: 00010206
-[   77.719011][ T7749] RAX: dffffc0000000000 RBX: ffff88801d8b0000 RCX: 0000000000000000
-[   77.720088][ T7749] RDX: 0000000000000006 RSI: ffffffff816ef99b RDI: 0000000000000030
-[   77.721187][ T7749] RBP: ffff88810a012000 R08: 0000000000000005 R09: 0000000000000000
-[   77.722284][ T7749] R10: 0000000080000000 R11: 0000000000000001 R12: ffffffff81c2be90
-[   77.723383][ T7749] R13: ffff88801d8b0028 R14: 0000000000000000 R15: ffff88801d8b0038
-[   77.724474][ T7749] FS:  00007f8e58b94740(0000) GS:ffff888063680000(0000) knlGS:0000000000000000
-[   77.725712][ T7749] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   77.726621][ T7749] CR2: 00007fffc26cc6e8 CR3: 0000000108778000 CR4: 00000000000006f0
-[   77.727715][ T7749] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   77.728813][ T7749] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   77.729901][ T7749] Call Trace:
-[   77.730354][ T7749]  <TASK>
-[   77.730764][ T7749]  ? die_addr.cold+0xd/0x12
-[   77.731400][ T7749]  ? exc_general_protection+0x147/0x240
-[   77.732177][ T7749]  ? asm_exc_general_protection+0x26/0x30
-[   77.732992][ T7749]  ? __pfx_filemap_flush+0x10/0x10
-[   77.733712][ T7749]  ? vprintk+0x8b/0xa0
-[   77.734286][ T7749]  ? write_special_inodes+0x126/0x203
-[   77.735036][ T7749]  ? write_special_inodes+0xf0/0x203
-[   77.735775][ T7749]  lmLogSync+0xe8/0x71e
-[   77.736360][ T7749]  ? __pfx_lmLogSync+0x10/0x10
-[   77.737032][ T7749]  ? dquot_writeback_dquots+0x24f/0xb40
-[   77.737810][ T7749]  ? __pfx_dquot_writeback_dquots+0x10/0x10
-[   77.738631][ T7749]  jfs_syncpt.cold+0x10/0x15
-[   77.739277][ T7749]  jfs_sync_fs+0x88/0xb0
-[   77.739884][ T7749]  ? __pfx_jfs_sync_fs+0x10/0x10
-[   77.740582][ T7749]  sync_filesystem+0x115/0x290
-[   77.741255][ T7749]  generic_shutdown_super+0x83/0x360
-[   77.741998][ T7749]  kill_block_super+0x40/0xa0
-[   77.742652][ T7749]  deactivate_locked_super+0xc6/0x1b0
-[   77.743405][ T7749]  deactivate_super+0xec/0x110
-[   77.744080][ T7749]  cleanup_mnt+0x224/0x450
-[   77.744707][ T7749]  task_work_run+0x156/0x250
+On Tue, Oct 22, 2024 at 11:44:29AM +0200, Borislav Petkov wrote:
+> On Wed, Oct 16, 2024 at 04:31:11PM -0400, Frank Li wrote:
+> > From: Priyanka Singh <priyanka.singh@nxp.com>
+> >
+> > Fix undefined behavior caused by left-shifting a negative value in the
+> > expression:
+> >
+> >     cap_high ^ (1 << (bad_data_bit - 32))
+> >
+> > The variable 'bad_data_bit' ranges from 0 to 63. When 'bad_data_bit' is
+> > less than 32, 'bad_data_bit - 32' becomes negative, and left-shifting by a
+> > negative value in C is undefined behavior.
+> >
+> > Fix this by combining 'cap_high' and 'cap_low' into a 64-bit variable.
+> >
+> > Fixes: ea2eb9a8b620 ("EDAC, fsl-ddr: Separate FSL DDR driver from MPC85xx")
+> > Signed-off-by: Priyanka Singh <priyanka.singh@nxp.com>
+> > Reviewed-by: Sherry Sun <sherry.sun@nxp.com>
+>
+> You can't keep Reviewed-by tags when you change a patch considerably: Documentation/process/submitting-patches.rst
 
-As long as the test runs for a long time, there may be situations where sbi
-uses the same address (of course, on two different CPUs), at this point,
-the null pointer dereference issue will be triggered.
-Based on the tests I conducted later, both T7747 and T7749 triggered the
-same path when running cleanup_mnt.
+Sorry, I omitted it since it is nxp internal reviewer. Do I need repost
+it?
 
-BR,
-Edward
+>
+> > Signed-off-by: Li Yang <leoyang.li@nxp.com>
+>
+> What does that SOB tag mean?
 
+It is original nxp layerscape platform maintainer. He leave NXP recently
+and some item in MAINTANERS already been removed. It intents to fix
+layerscape platform problem at beginning. And orginal patch have his SOB.
+So I kept as original one.
+
+>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/edac/fsl_ddr_edac.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> > index 7a9fb1202f1a0..846a4ba25342a 100644
+> > --- a/drivers/edac/fsl_ddr_edac.c
+> > +++ b/drivers/edac/fsl_ddr_edac.c
+> > @@ -328,6 +328,9 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+> >  	 * TODO: Add support for 32-bit wide buses
+> >  	 */
+> >  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> > +		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> > +		u32 s = syndrome;
+> > +
+> >  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+> >  				&bad_data_bit, &bad_ecc_bit);
+> >
+> > @@ -338,11 +341,15 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+> >  			fsl_mc_printk(mci, KERN_ERR,
+> >  				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> >
+> > +		if (bad_data_bit >= 0)
+>
+> >= 0 implies != -1, right?
+>
+> IOW?
+>
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index 846a4ba25342..fe822cb9b562 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -328,24 +328,21 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  	 * TODO: Add support for 32-bit wide buses
+>  	 */
+>  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> -		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> +		u64 cap = (u64)cap_high << 32 | cap_low;
+>  		u32 s = syndrome;
+>
+>  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+>  				&bad_data_bit, &bad_ecc_bit);
+>
+> -		if (bad_data_bit != -1)
+> -			fsl_mc_printk(mci, KERN_ERR,
+> -				"Faulty Data bit: %d\n", bad_data_bit);
+> -		if (bad_ecc_bit != -1)
+> -			fsl_mc_printk(mci, KERN_ERR,
+> -				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> -
+> -		if (bad_data_bit >= 0)
+> +		if (bad_data_bit >= 0) {
+> +			fsl_mc_printk(mci, KERN_ERR, "Faulty Data bit: %d\n", bad_data_bit);
+>  			cap ^= 1ULL << bad_data_bit;
+> +		}
+>
+> -		if (bad_ecc_bit >= 0)
+> +		if (bad_ecc_bit >= 0) {
+> +			fsl_mc_printk(mci, KERN_ERR, "Faulty ECC bit: %d\n", bad_ecc_bit);
+>  			s ^= 1 << bad_ecc_bit;
+> +		}
+>
+>  		fsl_mc_printk(mci, KERN_ERR,
+>  			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
