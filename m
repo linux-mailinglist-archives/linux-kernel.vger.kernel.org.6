@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-376438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C089AB18F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B459AB192
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479151C225FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E23B23058
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0031A0AF7;
-	Tue, 22 Oct 2024 15:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8771A2544;
+	Tue, 22 Oct 2024 15:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRgoLqoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XveL2wVQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F5A85C5E;
-	Tue, 22 Oct 2024 15:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBF5199939;
+	Tue, 22 Oct 2024 15:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729609317; cv=none; b=u/UBIFXya22IdZzj6njAHShxJ78wZNgaoyBG9caUPkWCy8tqMJjbXdBtj4MBw7qYoQXjbnkeFFYnk1rOdtzYUuWJk+fv7ckajfbYvlMdpCFblttgvBnoYSqf10w9FmTJbLvumFbivdQ1I/Ahcx2WrpL66q3zfIU7WOVy5dZgh50=
+	t=1729609335; cv=none; b=rhqP5KEdfZqKMJyVYtj0fmsyRniR/NS8lklgv3YlTqf1XWyH8CQM6HPfO5HGppKEE7EC9sgowxMDQCFAVdbFNW661WI6oTih1O8y5xVMHfyuVmvUnl9GngSI2iXqcJqe5AUldDmw2PrPZu1esFLoX1DAK+OpDp7193jOuMr+16A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729609317; c=relaxed/simple;
-	bh=wLqL5G1fJBdDKZdoYSyYQ6Gn8QO4wi41ipLs3UAmGBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQ4slrSe9t7y/2NOyUbq9DeSW1iMKGMHp0ZFp61AWHR3BvzfOMQCC7fDnMaA5h731ftEOOyv/hK8EWC5SrhgBpSaXwHYWA6YLi+/8WjmqtuPahNKopx7XeEg+Ra2pjrQF9ulYvzPeTjgmAUFrRQanhaos5RUH+JiuwHEYuneaOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRgoLqoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6F5C4CEC3;
-	Tue, 22 Oct 2024 15:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729609316;
-	bh=wLqL5G1fJBdDKZdoYSyYQ6Gn8QO4wi41ipLs3UAmGBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jRgoLqoLkCtpHyliTt/1PQ8RP5Q4lwET601tPX3cyOlCHlt0t9C3GrTfTgA2dcD5G
-	 8xOzMum+13B0yZpnqyFF9CJ7rNQJAsvtXTIIt0iwkKq5CSNtIvDWZPW+accC06iup+
-	 KWlI05rk/rZuz0G+1vDBOhttOWhEK9BVlu6aiLQTZryFZzxMicjdCr3/cqhvSka/0d
-	 Fnvj0A/lWw1vyHH6zcCP3oY/UWOk3fmp+H48env2qqZvirSWV0PA+d29HGD6Pjc77T
-	 4xm2L6lTb9sAvDA4Ru70TtmB4QQDPuZP9dfEVU8kAX+NFkzLLPPJi4Ip/tLGZyD2g/
-	 Rn9GBJZrzjXbQ==
-Date: Tue, 22 Oct 2024 16:01:49 +0100
-From: Will Deacon <will@kernel.org>
-To: asmadeus@codewreck.org
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, ericvh@kernel.org,
-	lucho@ionkov.net, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
-	keirf@google.com, regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <20241022150149.GA27397@willie-the-truck>
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
- <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
- <Zw-J0DdrCFLYpT5y@codewreck.org>
+	s=arc-20240116; t=1729609335; c=relaxed/simple;
+	bh=dk9GVXBzMcljhw5qoxyb0/4o0TGxVOKtLeB4U0yWriM=;
+	h=From:To:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Er7Q6V8GfNqv9PGzlyA3TV1nnZ06eKLud3DUQaMaZNkxSCPjsyFl6LGMTCxt9JDPjAnJd+EUGe8wRabth6PF2rqWtKJPNei1+VKl/KXD3QpuPToFeGTbfgT2QgfZXhnjEHOYEHliFDjpbGa4eagHiI9UuhrA0KQTec3d1jdOgU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XveL2wVQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBpanH023780;
+	Tue, 22 Oct 2024 15:01:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4j0TSrcG4+GrKDdFhSudIfWhVj2QOoPGryroBU7BN2c=; b=XveL2wVQGWVvDPvc
+	byij4+QOMdto+5SsR2HsbnHIxPUFV6JZKintrjw6Z9AHPV5mofyGRQZCaYl1J6cO
+	j5JGKuPLIPhGw9XctqyhwFRUgPudXX8tJXzvuHIaaYsUIi3SkaPe9KBO/mPsW3K0
+	OItknDCyfFUmgZq16txtpdMZld42tu3/zy6pcCEWDiULZGxYMkbAzdE1ZKmcNqbv
+	zEFuWakkBVExT+MtLNeRtWkPEMqvkg73WrCDFZ6/l1WqWontnkBeF894dH23U8G0
+	gYaH2RBKaM686aHvfM5G7jVZAY4wEQ4olh+vCqW+U4BaDp4cxgamN6Pj+fUw6kTx
+	BZAyqA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42e3cgj24t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 15:01:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MF1t3R019415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 15:01:55 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 08:01:55 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+To: <kvalo@kernel.org>, <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jose Ignacio Tornos Martinez
+	<jtornosm@redhat.com>
+In-Reply-To: <20241017181004.199589-1-jtornosm@redhat.com>
+References: <20241017181004.199589-1-jtornosm@redhat.com>
+Subject: Re: [PATCH v4 0/2] wifi: ath12k: fix issues when unbinding
+Message-ID: <172960931548.3037585.16411259457657952070.b4-ty@quicinc.com>
+Date: Tue, 22 Oct 2024 08:01:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw-J0DdrCFLYpT5y@codewreck.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ukR6yyaYn5pRdcw48nrbrIDbsGSgoGCJ
+X-Proofpoint-ORIG-GUID: ukR6yyaYn5pRdcw48nrbrIDbsGSgoGCJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=479
+ spamscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220096
 
-Hi Dominique,
 
-On Wed, Oct 16, 2024 at 06:39:28PM +0900, asmadeus@codewreck.org wrote:
-> Thorsten Leemhuis wrote on Tue, Oct 15, 2024 at 08:07:10PM +0200:
-> > Thx for bringing this to my attention. I had hoped that Eric might reply
-> > and waited a bit, but that did not happen. I kind of expected that, as
-> > he seems to be  somewhat afk, as the last mail from him on lore is from
-> > mid-September; and in the weeks before that he did not post much either.
-> > Hmmm. :-/
+On Thu, 17 Oct 2024 20:07:30 +0200, Jose Ignacio Tornos Martinez wrote:
+> wifi: ath12k: fix issues when unbinding
 > 
-> Right, I had hoped he'd find time to look further into this and kept my
-> head in the ground, but it looks like we'll have to handle this somehow...
+> Currently, ath12k driver is not working from VMs but it cannot be unbinded
+> either from there. I would like to send these patches to fix the issues that
+> I have found in order to get the unbind operation working there, at least to
+> fix the errors found during the process when the initial error is detected.
 > 
-> One note though he did sent a patch that seems related and wasn't sent
-> for merge:
-> https://lore.kernel.org/all/CAFkjPTn7JAbmKYASaeBNVpumOncPaReiPbc4Ph6ik3nNf8UTNg@mail.gmail.com/T/#u
->
-> Will, perhaps you can try it? I'm pretty sure the setup to reproduce
-> this is easy enough that I'll be able to reproduce in less than an hour
-> (export two tmpfs [sequential inode number fs] wthin the same 9p mount
-> in qemu without 'multidevs=remap'), but I don't even have that time
-> right now.
-> 
-> (I didn't even read the patch properly and it might not help at all,
-> sorry in this case)
+> [...]
 
-I think this patch landed upsteam as d05dcfdf5e16 (" fs/9p: mitigate
-inode collisions") and so I can confirm that it doesn't help with the
-issue.
+Applied, thanks!
 
-> > CCed Christian and Al, maybe they might be able to help directly or
-> > indirectly somehow. If not, we likely need to get Linus involved to
-> > decide if we want to at least temporarily revert the changes you mentioned.
-> 
-> I'm not sure this really needs to get Linus involved - it's breaking a
-> server that used to work even if qemu has been printing a warning about
-> these duplicate qid.path for a while, and the server really is the
-> better place to remap these inodes as we have no idea of the underlying
-> device id as far as I know...
+[1/2] wifi: ath12k: fix crash when unbinding
+      commit: 1304446f67863385dc4c914b6e0194f6664ee764
+[2/2] wifi: ath12k: fix warning when unbinding
+      commit: ca68ce0d9f4bcd032fd1334441175ae399642a06
 
-FWIW, I'm not using QEMU at all. This is with kvmtool which, for better
-or worse, prints no such diagnostic and used to be reliable enough with
-whatever magic the kernel had prior to v6.9.
+Best regards,
+-- 
+Jeff Johnson <quic_jjohnson@quicinc.com>
 
-> So the question really just is do we have or can we build a workable, so
-> the question is can we resonable do any better, or do we just want to
-> live wth the old behaviour.
-> (Note that as far as I understand the old code isn't 100% "loop" proof
-> either anyway, a open(O_CREAT)/mkdir/mknod could happen to get identical
-> inode numbers as well, it's just less likely so folks haven't been
-> hitting it)
-
-I'm happy to test patches if there's anything available, but otherwise
-the reverts at least get us back to the old behaviour if nobody has time
-to come up with something better.
-
-Cheers,
-
-Will
 
