@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-376390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2879C9AB0C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ED19AB0C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD50B22C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B241D1C2261A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7A31A08D7;
-	Tue, 22 Oct 2024 14:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852B1A08CC;
+	Tue, 22 Oct 2024 14:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gfd2uqTc"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EKxB/gqR"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17411A08AF;
-	Tue, 22 Oct 2024 14:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B4F83CC7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729607090; cv=none; b=eqZ8h1p5W22/B76Xl9/I/Eos7DsKKEYlsiMINjHD8ISRuF3R228BGXx1vEYlm4LnUIQ27oOPxp32/imDl7ZnQpOV8kzons3X2btJitBTaBUWwpySOCSIq8CC/zBxSVmb4d6ppsYmY4Nx9cn92SNZlyonrJwNWl/ZSBC9pX/XQf4=
+	t=1729607130; cv=none; b=uyAvGRG7TMUJ/DZMNd0SH5wkF7KzNLGHU7RjGcJyuFxK589Rvk3bSTQDc9SMkk0t31rnhUqBn3h177C8ydYuuNQmzUn9g/0QU8qqQE1EpERtOSBh7Qf63/TMO49QzGHkED+9eoL7qWEyAD2HtmO+prS2SErgaIf+H9+xLfHI2K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729607090; c=relaxed/simple;
-	bh=bH8AScHKkC5OhCJcRvjzRxT4CTA/QwfI8QAZFJvDjg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gH4ITA7DgLOeRDA9lf5p7w+2oKzqvsK96bft/mpSS/CN4P203j0WU0XaKUEvuiOZ19IzU7uekJpBek1NAYE9EVYusNM2uc1uh1wP9Zlp76tKwKtMpuPi05rZ76X8Si5agHGi9M0+e0Q3eUoGQLsEGuD5FGvN/xv9A4NzirOGtbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gfd2uqTc; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7180bd5b79dso1786768a34.2;
-        Tue, 22 Oct 2024 07:24:48 -0700 (PDT)
+	s=arc-20240116; t=1729607130; c=relaxed/simple;
+	bh=37Iqmo+qy+WFGzsf6uya3SA3tdIscHLZylxDIyGXIns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C74Gr7o3kqeckXEy5afhlgqZJJT+qVNymz6tNvqxmx4lejXTEVx7qvE5+9Xy44zAbxVsztdVA3DFFk+uOTZkX4swOaPTMQwDg5qEjSMDWhScpcLsDLTk7MD8w0YmJ/BeIVSvvaeE3WeccX6PPWTsIUIQIiV75pQMurSRrQwRMiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EKxB/gqR; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314a26002bso63074665e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729607088; x=1730211888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kyq6T+RQjWDXfC+J6A046VuE0Fc2qX2pfO+GzSgAMSA=;
-        b=Gfd2uqTcj8MiIHFOeo8464wGOVJgHUA/rN5a6JbCCucUMIwaUUOVyKEvwgvkbECU6H
-         vr8nvc/jrYO1MDSAY9ug+kn3/OVLI+EMNJx14LL/zhOJe0Ce3/kj06qx4EcNXrXOW6Uf
-         VIImw5DZMCEYdNMQ+5N3r6OIE/uRrU+IF6gC+aKyK9FIWw3cDfHeWcfuTmryO3AaE34i
-         ZFD0maMWk1JxsJZF5mfKvK5uc+C/X1aHIzek9KKwrwt5jTJ3RdT7ci5hGbShIk01xLeA
-         pjm36Y/8bSeHF7oqa5wgiQ5gPCRURdu2p69iebflPOw9drbN6ExV/7vc80PVRaXOb030
-         J5PA==
+        d=linaro.org; s=google; t=1729607127; x=1730211927; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wehu+MEAsSEQ19L7grgHaXBLH+E5c19oiwcAV7y0Jvs=;
+        b=EKxB/gqRXY0QGZvCH3Y7XpP9rB+0yAvGxgiOjb5I4coSXdhBbJHeojYE9grevnv0C+
+         uLh2hBd+nGljQ7LPfybrJxOVk10l6UeniR5N4X6F+CfOTLuL2/Rjsxhz4OddXdlMD+LD
+         jkOYqnFZmK+WNsOiNg/K50of5Z2Rjv01hZH0QXuZEzELa8W60V/PJaylFh3kvhGAHRPO
+         XFvAmg3Iu014bfGu4v7x3o1JJpARQs5ptX28qokUMc6BXUcaReKwTLt9CeXKST0e+hx7
+         sezP5mMitepLzX1chBHJOs+eDWqpwNF0Jjh4Et/p8lfneu4I2vOC6VhDCJwuPHONmFNB
+         NWJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729607088; x=1730211888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kyq6T+RQjWDXfC+J6A046VuE0Fc2qX2pfO+GzSgAMSA=;
-        b=YFCvt5Ub4zKR7MSLpxY9+kKCZxfQ8st2N1wSMGX7D1z/WaPrab8HAv3ANXE2SbxLlv
-         kW/bzZM42G9YfV/fB8QDCuxjL78rP9sGUFz0B78dXmD+5Dbf4OVhVAKdowrs0bFL/cDk
-         DGX1NfvVOoO5EjHG9rkqzLhyt9V3ce+SOxEw1T6HB+Fy7c65zE5MDx0z8MPXdj7VY0+1
-         hdbUt7TPKLpYQSWPJgAXiHKqg52iuvFwZJe+eJ92g2ltaTsomGI0DnqbRUtNIHzoizPD
-         eaFsPpdErKE22qS8vd+4O+EWzGvwBnCj3I9azvidHprWa68sUvAi+ZTkbE6M4wM9YSGM
-         3+7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk7vPlL8HsR8i4Bsk2QsL0QFqcLeXOrLJZSdkIiyxorybCaJzPHDkLJbwZJ8Y+6/WTrpWrPc7bBwpGCvpR@vger.kernel.org, AJvYcCXzvZG6WTpetrL5X9yVHI7mAZbd5Zpio3U2EP9tQKqx4Lhgq+PCxzdpWZ1tN0wNMNI9W2YcYY5FQdtTn1iw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw28IyBH+upRO8cnxq+EoBb5lRPNHyZe4u4m6axqdtd1nlo1ky7
-	Xqxqn0WWr9ecNbSnE+mahI0Buf3Gee6yQYqIZnHh8SGfo6MH27mU
-X-Google-Smtp-Source: AGHT+IHRmIJV3qzYhapOYn5RJwqs6YcNmoU5GgzrL8pNigS0UQp95SaFaHGfvapeu75B0p936Eo3Mw==
-X-Received: by 2002:a05:6830:3c09:b0:710:f926:709c with SMTP id 46e09a7af769-7181a89f3e6mr17055888a34.25.1729607087733;
-        Tue, 22 Oct 2024 07:24:47 -0700 (PDT)
-Received: from [192.168.1.22] (syn-070-114-247-242.res.spectrum.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-7182ec02842sm1249190a34.73.2024.10.22.07.24.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 07:24:47 -0700 (PDT)
-Message-ID: <07b83d38-defd-446e-ab25-e4007566e293@gmail.com>
-Date: Tue, 22 Oct 2024 09:24:46 -0500
+        d=1e100.net; s=20230601; t=1729607127; x=1730211927;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wehu+MEAsSEQ19L7grgHaXBLH+E5c19oiwcAV7y0Jvs=;
+        b=jKxmgjoNXjGzmkxj3MPNO6uu/rq/5XcLgXCU/XEfbKIuK9HWnwVbQDWDUVpkDv9KU0
+         8eXyyTBM7nNQaDlsd5uNGqxSlVJSqdL9zVcUaXTfbIQLp7UR3EZGuVPhQNq+d/uTmRpL
+         pHyHjsQbRbjzYggCO4IyO1PTT/ifB4qcpjowCqt+u/vYLTZ1eE1SZa70voIcQa3N088J
+         KiU5u3YelME/3fiZWItQopDPyBaw3LLHJSbPBx0MrGrmNK1lcl5lVhvNwf0jQksCCryZ
+         WDIBD/3qNKmatufWknqD+OO0bvyjYDdCbp4IE/WSONO86tXYK2S7gvCg/PuVqzZo0Gu6
+         Ay7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7683seFz+Ls67TNC1iGogpd5oG6188Czd4b4tsVZopEHxdZgZPaglygBu6YgKAOc5hBXUGeHJ+Dla3o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8oT+IRMa5eimD04qwv81oADX8Q2MTdkXqK87TsjfH/i940QZ8
+	scEkLG4P9YfdI3i1jCO/ctnJXxqrU6QxDxVSDptITcrHIDp4yVAKrrP7CuMG8g0=
+X-Google-Smtp-Source: AGHT+IG2iYYYcddme4KeFQF/W/N4hRK2Bm7CBf1vGlQL3CKnzTF08HVGCHmo4z335CAe2+S+n9JU6Q==
+X-Received: by 2002:a05:600c:1c8d:b0:431:12a8:7f1a with SMTP id 5b1f17b1804b1-4316165d3acmr142075275e9.16.1729607126945;
+        Tue, 22 Oct 2024 07:25:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58c125sm89054125e9.26.2024.10.22.07.25.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 07:25:25 -0700 (PDT)
+Date: Tue, 22 Oct 2024 17:25:21 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zicheng Qu <quzicheng@huawei.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	tanghui20@huawei.com, zhangqiao22@huawei.com,
+	judy.chenhui@huawei.com
+Subject: Re: [PATCH] drivers/staging/iio/frequency/ad9832.c: fix division by
+ zero in ad9832_calc_freqreg()
+Message-ID: <6c896172-d372-442a-a61e-6b3e46b9cbb0@stanley.mountain>
+References: <20241022134354.574614-1-quzicheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 03/10] net: qrtr: support identical node ids
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
- Andy Gross <agross@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241018181842.1368394-1-denkenz@gmail.com>
- <20241018181842.1368394-4-denkenz@gmail.com>
- <20241019091817.GR1697@kernel.org>
-Content-Language: en-US
-From: Denis Kenzior <denkenz@gmail.com>
-In-Reply-To: <20241019091817.GR1697@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022134354.574614-1-quzicheng@huawei.com>
 
-Hi Simon,
+It would be better if the subject prefix were "staging: iio: ad9832:"
 
+[PATCH] staging: iio: ad9832: fix division by zero in ad9832_calc_freqreg()
+
+On Tue, Oct 22, 2024 at 01:43:54PM +0000, Zicheng Qu wrote:
+> In the ad9832_write_frequency() function, clk_get_rate() might return 0.
+> This can lead to a division by zero when calling ad9832_calc_freqreg().
+> The check if (fout > (clk_get_rate(st->mclk) / 2)) does not protect
+> against the case when fout is 0. The ad9832_write_frequency() function
+> is called from ad9832_write(), and fout is derived from a text buffer,
+> which can contain any value.
 > 
-> On systems with 32-bit longs, such as ARM, this will overflow.
+> Link: https://lore.kernel.org/all/2024100904-CVE-2024-47663-9bdc@gregkh/
+> Fixes: ea707584bac1 ("Staging: IIO: DDS: AD9832 / AD9835 driver")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
 
-Indeed.  I mentioned this in the cover letter.
+Otherwise it looks good.
 
-Regards,
--Denis
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
