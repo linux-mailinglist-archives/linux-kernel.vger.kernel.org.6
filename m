@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-376060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AF89A9F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A919A9F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2190C1F23D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A8B2830CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057D11991CC;
-	Tue, 22 Oct 2024 09:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EABB19923F;
+	Tue, 22 Oct 2024 09:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cf0qjZCA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="wuQpykK3"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD2A199236
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93F41494C2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591072; cv=none; b=tYN2Z2ABOOzPlkLrL13knVmTbw7uTlkonu4Uw8VUdp5cB+ibKXpkXTQ8hdmi8GKQNA4efY7OYepE4tU9+hALF0hzWnFxg1N5DgL2rOtspU//aZaDPJzAJ4t6Bo5FbCqeXitAe5pbQJbAdAx62j6matA0fDVkb3EBpIqBeaPUr/c=
+	t=1729591138; cv=none; b=nXHT7OZz2LUSdgGyYB6cnAcCC5gRDPTlc+mrSL1nTjMksxSjdP/oQyCrYRkewOo84Jea5tf5WIgWxGOiLdjZqDwroRBAviADNrOK73CcOnAjPkYQDsRdlrv/ANBw9wpA6gIdALyVgKVhe0PqaFJCRmeJIR3O28KBayL3LKDqC2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591072; c=relaxed/simple;
-	bh=Z6dKNwVETYKa4690g17q5VlS/mmQvHhfpIjCFuk8s2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryMXQDM0Cp9imP9PijL53MEJraHnaO3mQ/fZzDCPBEPiEjs3Mps1fn++J9ldzwOFD1cOAzI+OTjG9GNV4zahKvfSVrnFYIUxsBjvZu04LphuwiLpMnOZcqwe273ZSxLKNxe41pDUHpP3jICCtkgcxDnz6R4QyRjX7fDwmlIupnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cf0qjZCA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so7202044e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729591068; x=1730195868; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HvTNyLNGAHIQ6cpxYTM3zWA6pjUJiTbrO2qEq3VuoYw=;
-        b=cf0qjZCA0KSByW+TG9sIpgT8hhcKYEcg58y34rv7GLwquMdsHLBJIzm+2nYqY4aGRg
-         PvtGF6QrGspqES7yQY5N+gIxZMK1KcfMwr4clar2OPCOIPB7X4hxVUfFsabQEiUe/Nkh
-         1BMf4IRyvGTLbeN8ufihN+d/+sUem9KVZ2zH8jOUIy5TjacS7Y5c7Yg9lzum+1hwPvI2
-         RhAdubp8vXEsZ+21Seukv0eai1g/PB5Lj/nyNinwqQLEB6rjn8mN3YS0RNUuW+n5Zw9e
-         d+PLTVR6MZZxcZ2vrdHuG6L3UF2e1IEP8JaL6768JTj1+ZPWMBoiWl1UQ1hRZjkzn+Pp
-         sf+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729591068; x=1730195868;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HvTNyLNGAHIQ6cpxYTM3zWA6pjUJiTbrO2qEq3VuoYw=;
-        b=TUIWhzKzl8ZcX9hRwggg40JCpPgQ+DS+iP1FJnhJpkXnX4WWkN5jw/ruTNiAHANB13
-         LhHWPLMPv/VCL+vLJ2WYKxM1pzZTfCKaivdQuyxyGLrNG6LUr8P5LhcEp8ZVNbjpFy6k
-         GnMANfFNNlWZTDk5lQvMK5tkXrOiaQTTi9tTDnjHCejHcpLPV14RCFwYDlZ6A9MhkTMP
-         M83aXUENTuYGz1Z7K490vGQazA7UWS6ZbMj31F0dNfXWv7VkP2A4q5TADxDmWKeC5KBo
-         GY7RLgnT9MMPA4nTdty3NIC/PZQmysawmopHVbMsCjhE6yIr/a5HSEzg2B/HStvDMgbs
-         SFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnfjPNaMLKdjjrFS2dDojNf8cQwoCCrNHshJAMxxq9i/MpqixgUlkxUJRMQbit02wD3DrBviy39o2tmNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfRiXOlONf0qDeBbOq2pkxmDMlndLmVzihSw/uHdk2GN55HGec
-	wsiecYxx32z9vRPW+eT3JM7Ra+QFWARR8sTrYb+hdJ8B/0k4gyTqRhV3FR+KlSuVpzhbFaYDpF0
-	9
-X-Google-Smtp-Source: AGHT+IHVu91T26e5E//xB6XfjAMTT+PWPADj71F+BMcbekDOXThdc77eC6SbwTZMrGx5Pm1w5zcDNg==
-X-Received: by 2002:a05:6512:220a:b0:539:da76:c77e with SMTP id 2adb3069b0e04-53a1520bd15mr6361012e87.5.1729591067825;
-        Tue, 22 Oct 2024 02:57:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a223efbcesm728504e87.72.2024.10.22.02.57.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:57:47 -0700 (PDT)
-Date: Tue, 22 Oct 2024 12:57:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: kvalo@kernel.org, quic_jjohnson@quicinc.com, 
-	ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] wifi: ath11k: add firmware-name device tree property
-Message-ID: <smgbishqbin4kcpshqvue3ivvfko2l6rj2w4ikwydosbkq6kde@pdbzhklj7znm>
-References: <20241001033053.2084360-1-quic_miaoqing@quicinc.com>
- <20241001033053.2084360-3-quic_miaoqing@quicinc.com>
+	s=arc-20240116; t=1729591138; c=relaxed/simple;
+	bh=Q0HMbM1aX886VzXJ5A0zngK0Ddgofzi5Z2OGqB7/aKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ErhPiKFruouClaPQJZpq/rMrA8LdLdTXk4u27wiI2sxyjD36a/xxnJLkHzok62TKCBGoazvw/6F7RiZkuqhJpE6ov3cZfh7vc6lS/VvCNZRTx/XxT/0Vh/zCpCD/7oXTQ5IUN8uA6dkoXAHq6OvzHXQA2DIUl/ooMst71xst1gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=wuQpykK3; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=EiHoJDbY96WgcNRprbMxcUCtTyof9mm5pnP2b48dHYM=; t=1729591137;
+	x=1730023137; b=wuQpykK3C2JkdyXofzJnI8jAUvfRthgU9J54+Ls/DvQitMJeIB7VEDV+Rju2N
+	JXIh/thD5to+Q/w2CTXnB0rubFsbOhBMP8WnePXk8jF6GlbjihEs9As3ULRQjRHtzI8kWDB7HIYhl
+	QChakRcdeWPWfgIruxc6Fp8hxfs71/yjVXmYHTqnjvkiKGgz92ULxqbR4I4R3hrs9YT6lDUNLMbzd
+	6E3ZgCrGyM1+/8JrBu/yQ7qvvegKKN/OwsGk6d+sOjlm8KICZ9s1g/wJYY9tvMclpvq8K1HUYY9Fc
+	TUsN3Zp7SEeTf4q+DdnIkZf1bO8s3sMS1Y06yOvqMlyXofupdg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t3BfB-0000I3-KV; Tue, 22 Oct 2024 11:58:53 +0200
+Message-ID: <e5225d97-115a-4a0f-8ba3-1279407a7002@leemhuis.info>
+Date: Tue, 22 Oct 2024 11:58:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001033053.2084360-3-quic_miaoqing@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-6.12-fixes] sched_ext: fix fmt__str variables in
+ kfuncs
+To: Andrea Righi <andrea.righi@linux.dev>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-kernel@vger.kernel.org
+References: <20241022074035.139897-1-andrea.righi@linux.dev>
+Content-Language: en-US, de-DE
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCX31PIwUJFmtPkwAKCRBytubv
+ TFg9LWsyD/4t3g4i2YVp8RoKAcOut0AZ7/uLSqlm8Jcbb+LeeuzjY9T3mQ4ZX8cybc1jRlsL
+ JMYL8GD3a53/+bXCDdk2HhQKUwBJ9PUDbfWa2E/pnqeJeX6naLn1LtMJ78G9gPeG81dX5Yq+
+ g/2bLXyWefpejlaefaM0GviCt00kG4R/mJJpHPKIPxPbOPY2REzWPoHXJpi7vTOA2R8HrFg/
+ QJbnA25W55DzoxlRb/nGZYG4iQ+2Eplkweq3s3tN88MxzNpsxZp475RmzgcmQpUtKND7Pw+8
+ zTDPmEzkHcUChMEmrhgWc2OCuAu3/ezsw7RnWV0k9Pl5AGROaDqvARUtopQ3yEDAdV6eil2z
+ TvbrokZQca2808v2rYO3TtvtRMtmW/M/yyR233G/JSNos4lODkCwd16GKjERYj+sJsW4/hoZ
+ RQiJQBxjnYr+p26JEvghLE1BMnTK24i88Oo8v+AngR6JBxwH7wFuEIIuLCB9Aagb+TKsf+0c
+ HbQaHZj+wSY5FwgKi6psJxvMxpRpLqPsgl+awFPHARktdPtMzSa+kWMhXC4rJahBC5eEjNmP
+ i23DaFWm8BE9LNjdG8Yl5hl7Zx0mwtnQas7+z6XymGuhNXCOevXVEqm1E42fptYMNiANmrpA
+ OKRF+BHOreakveezlpOz8OtUhsew9b/BsAHXBCEEOuuUg87BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJffU8wBQkWa0+jAAoJEHK25u9MWD0tv+0P/A47x8r+hekpuF2KvPpGi3M6rFpdPfeO
+ RpIGkjQWk5M+oF0YH3vtb0+92J7LKfJwv7GIy2PZO2svVnIeCOvXzEM/7G1n5zmNMYGZkSyf
+ x9dnNCjNl10CmuTYud7zsd3cXDku0T+Ow5Dhnk6l4bbJSYzFEbz3B8zMZGrs9EhqNzTLTZ8S
+ Mznmtkxcbb3f/o5SW9NhH60mQ23bB3bBbX1wUQAmMjaDQ/Nt5oHWHN0/6wLyF4lStBGCKN9a
+ TLp6E3100BuTCUCrQf9F3kB7BC92VHvobqYmvLTCTcbxFS4JNuT+ZyV+xR5JiV+2g2HwhxWW
+ uC88BtriqL4atyvtuybQT+56IiiU2gszQ+oxR/1Aq+VZHdUeC6lijFiQblqV6EjenJu+pR9A
+ 7EElGPPmYdO1WQbBrmuOrFuO6wQrbo0TbUiaxYWyoM9cA7v7eFyaxgwXBSWKbo/bcAAViqLW
+ ysaCIZqWxrlhHWWmJMvowVMkB92uPVkxs5IMhSxHS4c2PfZ6D5kvrs3URvIc6zyOrgIaHNzR
+ 8AF4PXWPAuZu1oaG/XKwzMqN/Y/AoxWrCFZNHE27E1RrMhDgmyzIzWQTffJsVPDMQqDfLBhV
+ ic3b8Yec+Kn+ExIF5IuLfHkUgIUs83kDGGbV+wM8NtlGmCXmatyavUwNCXMsuI24HPl7gV2h n7RI
+In-Reply-To: <20241022074035.139897-1-andrea.righi@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1729591137;e49bb72d;
+X-HE-SMSGID: 1t3BfB-0000I3-KV
 
-On Tue, Oct 01, 2024 at 11:30:52AM +0800, Miaoqing Pan wrote:
-> QCA6698AQ uses different firmware/bdf/regdb with existing WCN6855
-> firmware, which is customized for IoE platforms. And the 'pci-device-id +
-> soc-hw-version + soc-hw-sub-version' may not be enough to identify the
-> correct firmware directory path.
-
-Why is it so? What makes it so different from the existing platforms
-that you can not use WCN6855 firmware?
-
+On 22.10.24 09:40, Andrea Righi wrote:
+> Commit 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in
+> kfuncs") renamed some parameters without updating the body of the
+> functions, triggering build errors like this:
 > 
-> The device tree allows "firmware-name" to define the firmware path,
->     wifi@c000000 {
-
-You are describing platform node, while the commit message talks about
-the PCIe devices. Could you please clarify, whether it is a PCIe device
-or an AHB device?
-
->         firmware-name = "QCA6698AQ";
-
-Could we please follow the approach that has been defined in the commit
-5abf259772df ("wifi: ath10k: support board-specific firmware
-overrides")? In other words, instead of creating another directory under
-ath11k, create a subdir under the WCN6855/hwN.M/ which contains your
-device-specific data.
-
->         status = "okay";
->     };
+> kernel/sched/ext.c:6881:45: error: ‘fmt’ undeclared (first use in this function)
+> 6881 |       if (bstr_format(&scx_exit_bstr_buf, fmt, data, data__sz) >= 0)
+>      |                                             ^~~
 > 
-> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04402-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> Fix by renaming also the varibles in the affected kfuncs.
 > 
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> Fixes: 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in kfuncs")
 
-P.S. please CC linux-arm-msm for future respins of this series or for
-all other submissions that concern board-specific DT data on MSM
-platforms.
+Thx for this: ran into a build error with my daily -next builds earlier
+today[1] and this fixes things (it's still compiling, but I'm past the
+point where this happened afaics).
 
-> ---
->  drivers/net/wireless/ath/ath11k/core.c | 12 ++++++++++++
->  drivers/net/wireless/ath/ath11k/core.h | 11 +++--------
->  2 files changed, 15 insertions(+), 8 deletions(-)
-> 
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
 
--- 
-With best wishes
-Dmitry
+Ciao, Thorsten
+
+[1]
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-41-x86_64/08165136-next-next-all/builder-live.log.gz
 
