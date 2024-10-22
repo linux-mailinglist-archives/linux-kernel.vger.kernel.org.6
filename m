@@ -1,126 +1,125 @@
-Return-Path: <linux-kernel+bounces-376041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419929A9F26
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5060B9A9F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6229B1C244EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7F81C2484A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873B3196DA2;
-	Tue, 22 Oct 2024 09:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5DE19ABBF;
+	Tue, 22 Oct 2024 09:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJkm1B1t"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c0ccslYX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882461991B6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16621991CC
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590596; cv=none; b=EtRSrGs3TmI+YfM1bxuYmBiOZx5rqkjK1Ic7t2Jmm17VAyr5gwYR13davPLiOoFI9A/mrM7qGa0B9C4Zcse/Q4UfXW8fsJ3BVLvl7eomxovK2Fxl5q1yIBazSYz8KvQttsdwQTxFiih7kl0dY+gJfULK0AvmWkg7KrrL2YNICE4=
+	t=1729590597; cv=none; b=KoCSo5b5LKyZK4unfoU/L8twaOgiridjX2/Qnsp9pjr0/f4YyyomkOuzk+0SD6P/lY/qEjZrBw+WdxqWSTsAyK32Cyfu4ccrQZlX4szrlSmWOMQiEx/BVXc/jrb7etSYv8UCmseowlt7Iw3AYKpNDkARLZq6jYQsQM0jLa4urMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590596; c=relaxed/simple;
-	bh=ucPxv8v8063nhyvHkY26XrVe11xBeay7vWd4UaefvoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AW8Hh9kH+XKMZQIT5W0CqRNszkwl/OU27qDjugPi8LFOSAfkOaCd9g7ctrCHc79n/yHbE9N3WSR8Gg7tYTi7/zrVSwGLMnQokyRac6an20/bMamzgcz5PZKZQsGXyuFEz98kSBP66JqWEuIvuVX+XziKvuJeFbZymt++2lCfZiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJkm1B1t; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea16c7759cso2883637a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729590594; x=1730195394; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fRj9OXTql8TyVlExpaWtvY5+P9nZhBqC5DIwNAggGns=;
-        b=HJkm1B1tsymwVAQmxgMlGelN6XZuRiwaq/KxTjg8qKenZr7B98Ltv0GmFjS9K0lND9
-         y2dgc6AefLHtWasbrcPf+cG6+XotSdXV2kKIhJYryUBj2zYuu9TcV3DRh6+3jD0p6yEs
-         QS8GF/oI4wIQoUvtFkJWRNtjoBsqpXnZvKeEa+2s6uPOOyGVWsxTcQXo1QABdJijMH5y
-         fqoUPgw8ASxPufJ2S0nfs6uWm4I1IDooKG5DYuf1/hbxnJle0yNLk+PczRtaXa4jdInN
-         7R4lq6TEFdCaL7BeIJdayFeG7ls9TqRubknDETG23ZmpG4ZdBpJttq3xVlPZLE+ay/uR
-         pgBA==
+	s=arc-20240116; t=1729590597; c=relaxed/simple;
+	bh=FHDMCQSj4bOSnFGm64uWhd8NfaqRwIffME40ECj3VBk=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C2YjWjLixHIe4aXQhH+m5au1RZwvoAHdlQDafhmMxoJ/qqOXt4XTtlLQx58F9Cy9uCuk4uOkGUeJrvm6+2roHwftQwABIMC/jDulLgpsqxXIrYIgA5KLZUNf/vR4dqHfiZJvdgtDBRlCk6ufDveiAchb7eOf36nzEDYNTgMJAko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c0ccslYX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729590594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FHDMCQSj4bOSnFGm64uWhd8NfaqRwIffME40ECj3VBk=;
+	b=c0ccslYXT1Jvr5bfvIpZnLGgoYJXQt8jyPMqYh/lOVn9mdHEp9iAR0diAnVPYqR+TNq+Nf
+	XyAhSrHk5BMwI9Mbkt0NMHTZyo/dX5j4AFfFM+L8igqIm2LwM3BR+iL9weRObJ4/05/Xi1
+	a5MwUBsH6c0QpY1qHdlhnYY4tPy+4Js=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-h7QSOEdNP_SByxoQxCbutA-1; Tue, 22 Oct 2024 05:49:53 -0400
+X-MC-Unique: h7QSOEdNP_SByxoQxCbutA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d5ca192b8so2956302f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 02:49:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729590594; x=1730195394;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fRj9OXTql8TyVlExpaWtvY5+P9nZhBqC5DIwNAggGns=;
-        b=oFJGk+wD/fUiAwYEMfCVhaa5CVmGzdQViPrgW0CJsZDbWA+mjVUCJFGYrf4KPKqNEH
-         QX/sIVXCUaDeaZ8GQAY0ynCETLx9m7vw4TWQzOKRGUfKq1wmiN2+BPTf7YcWQX77ryGO
-         08+ZD1Hi2yjvSSdBD7l5hriM4LM3jARECKPjDXf5ELT8nhmV5SDc8COf/rE0Mn1duS4p
-         FKrfbB9R1oPNgcN7qKn+M/cCKyHAQsDRV6Hr3HdOugz4k1EE3ylLwDY81q2VL8NcgjvZ
-         fmPQcxlyFKWwazMOgwUdMjDxBXRoEcont4+wwxAFbtbw4Elr/eMYqNathBKTTBRB2znN
-         S6dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMoMkMyS4KMg3hIz16TkhPdhcl1YQYtwbx6c209mmaWiTA5DtT1wtIjnVCILvFF94yMBOE+1rnC45nUmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAgjQ0JxQI37VQD27EidXXb3J3Q/kOvlaaelFFznNvOdeuGXgJ
-	XiVZQbWjLSjzzuNbA3q9wL+5pTS3QFq4mF/FLpgNzK5OYNKmGjTYPj0AtjrP+1yz8jCy28QRWm2
-	ltl3VALBOTIeJdWLr2tClMDbaed0C6suiqxDieA==
-X-Google-Smtp-Source: AGHT+IEPl8TvCF4WHMkzmV6+C+089KSglwEosAUtKdVvP3kM20qYnQAdlYOhAKr/lEnlRi0DAeAxzTVKxy3L2gEvDpE=
-X-Received: by 2002:a05:6a21:e88:b0:1c4:9f31:ac9e with SMTP id
- adf61e73a8af0-1d96df3bf9bmr1994876637.42.1729590593804; Tue, 22 Oct 2024
- 02:49:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729590592; x=1730195392;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FHDMCQSj4bOSnFGm64uWhd8NfaqRwIffME40ECj3VBk=;
+        b=v5XgWK6aLs7N/vuy4QIpPrhlkm9cYNTzinhpNjJ3dt+0u/HYwR6+ROlQUyyHCumYeE
+         4WBJNYWI239SitznmUaoXLjTeD5AW/6vGy7Q4agCwrsL2QzKFyZI84KUJf63Elp9ivul
+         DX6nEnreKyCCTo7jgodnjKfXYIolWXTDrWNtZ9NYsnuFc6fPobUAGM003+w4A4A4g1VD
+         h8F4w0MAr4/Jlrhoqschy8nTTLom5KRDMagyUltzXrZmgtoCuhec9hnFmO9dhOiXyW03
+         QMteKVQoHabC8YIjJi/0qbfyKcjwUZkV15RkfQgQpzRlgGd/3j9v/wLD6cVLF8P12ETu
+         k7WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1JhMbAMQOyrrXq+SnW511qvKuITpeKcbG5fhk/beG/fAP6Dx2LReciX7oVd+4VCz3ww21fc5WhKmGbhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyREsADrmTRXsJWNI/5xrMGE4YRxsCN3P6NKfJylqRACy85qh0m
+	9Ah8WqMJdVNaUXt2oHq/MEuWm+DJg61vzmJybnkIfZNPNMR1UWrLnToYUObMl84INwHvKWHZhrg
+	MSn1YUYE1qZRQ9oQDwNYcbS6QR5z//YUGv7t3EmA/hCcFIdMZsiA6jgZNx3BymA==
+X-Received: by 2002:adf:b186:0:b0:376:dbb5:10c2 with SMTP id ffacd0b85a97d-37ef13cd752mr1751572f8f.29.1729590592137;
+        Tue, 22 Oct 2024 02:49:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIEHKao3U/XFI7bzq9Kj6t6RyZxy0cnLw5nrYDT+Cbr6tQg8AZS6TySYFQBcdNzKRVWndUxQ==
+X-Received: by 2002:adf:b186:0:b0:376:dbb5:10c2 with SMTP id ffacd0b85a97d-37ef13cd752mr1751544f8f.29.1729590591777;
+        Tue, 22 Oct 2024 02:49:51 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bcc8sm6205364f8f.107.2024.10.22.02.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 02:49:51 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 84B08160B2CF; Tue, 22 Oct 2024 11:49:50 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>,
+ bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, "David S.
+ Miller" <davem@davemloft.net>, Eduard Zingerman <eddyz87@gmail.com>, Eric
+ Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>, Helge Deller
+ <deller@gmx.de>, Jakub Kicinski <kuba@kernel.org>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Jiri Olsa <jolsa@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Martin KaFai Lau <martin.lau@linux.dev>,
+ Mykola Lysenko <mykolal@fb.com>, netdev@vger.kernel.org, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Puranjay Mohan <puranjay12@gmail.com>,
+ Puranjay Mohan <puranjay@kernel.org>, Shuah Khan <shuah@kernel.org>, Song
+ Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song
+ <yonghong.song@linux.dev>
+Subject: Re: [PATCH bpf-next 1/5] net: checksum: move from32to16() to
+ generic header
+In-Reply-To: <20241021122112.101513-2-puranjay@kernel.org>
+References: <20241021122112.101513-1-puranjay@kernel.org>
+ <20241021122112.101513-2-puranjay@kernel.org>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 22 Oct 2024 11:49:50 +0200
+Message-ID: <877ca0ii0x.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018032217.39728-1-quic_jinlmao@quicinc.com> <20241018032217.39728-2-quic_jinlmao@quicinc.com>
-In-Reply-To: <20241018032217.39728-2-quic_jinlmao@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 22 Oct 2024 10:49:41 +0100
-Message-ID: <CAJ9a7VhkGrr10hT8-5r6Zp8SZj5hJjos8ZdPeOhuPqenMht_xw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: arm: Add arm,static-trace-id for
- coresight dummy source
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Oct 2024 at 04:22, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
->
-> Some dummy source HW has static trace id which cannot be changed via
-> software programming. Add arm,static-trace-id for static id support to
-> coresight dummy source.
->
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> index 04a8c37b4aff..742dc4e25d3b 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> @@ -38,6 +38,12 @@ properties:
->      enum:
->        - arm,coresight-dummy-source
->
-> +  arm,static-trace-id:
-> +    description: If dummy source needs static id support, use this to set trace id.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 111
-> +
->    out-ports:
->      $ref: /schemas/graph.yaml#/properties/ports
->
-> --
-> 2.17.1
->
+Puranjay Mohan <puranjay@kernel.org> writes:
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
+> from32to16() is used by lib/checksum.c and also by
+> arch/parisc/lib/checksum.c. The next patch will use it in the
+> bpf_csum_diff helper.
+>
+> Move from32to16() to the include/net/checksum.h as csum_from32to16() and
+> remove other implementations.
+>
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
 
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+
 
