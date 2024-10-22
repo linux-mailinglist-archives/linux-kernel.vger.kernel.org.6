@@ -1,196 +1,174 @@
-Return-Path: <linux-kernel+bounces-375771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DFB9A9A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:11:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362A39A9A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A2F11C223D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:11:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A26B3B23D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43414D433;
-	Tue, 22 Oct 2024 07:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k4yE85XR"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9381494A6;
+	Tue, 22 Oct 2024 07:12:28 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82071494AD
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA39811EB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581074; cv=none; b=jsRrfrJ4mYhWSvourcsg+nZFolVMbcq9+4uCv3LegkjhBMplaHCiuvkN5nH7cc3dCFnYdzU+S8/egMura3GqXVZdjaB5CCIPlqwW0/rJeZv79l2J9hYIaOZmkZABZKQs+mCM5Xs4+oDWTQ2jEegkilSPwmpuDV9+Gypr6qBQaWI=
+	t=1729581147; cv=none; b=HbjEpm1Vb46M+en+g3xD0lrDdBR4IqnheNqPkidCkhUt/5IXEtnNKqE+O5tjeC2GOu6KCFfo21/0ek65DSQ3z0yd8HoIiu5rXwUg1IRHkjSDaKOYJGcyJMEirJPsmkxmWlQYjarTBBLUJ5wWgDsZ/8r1kNreuUJGH9b0Lu+RRVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581074; c=relaxed/simple;
-	bh=9/H0GURHnCFEBdAl6G8M/xjUafjIGq7AtO5/Lg0KgpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W10eIDbk2YhkySYOxH5JnwJU5L7NCG3BDQqmpxi/mSKcB1ybejFUIAaU06A7ZxDew2AoSwZkmDquCiwS5gwo7TyUDHLzm30pT52tYIXhTH2rmz0jKdjrUlIx8AZh/xqjKrI3e1M5qFh2uuEpCTqKlSB8hHyuVogopo11gtRCU7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k4yE85XR; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso6120499e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729581071; x=1730185871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IuZG9TjFhS0J3cabCqnpd26zyrTahESHkPMMm0tbHo8=;
-        b=k4yE85XReJyy7rWM4ZUpwxcXNqOoXnOth6s8w1+xj2q1ugsIsaUxiZpTu6hXBlYSyZ
-         GsnmGXWNwwx/wLAiojOT6UqAOcoz3xJGxnb533ir9BL7EMXPtJBFy3XahPzF2qZ1E9JO
-         WV2JNoL0t4fGKKVBxP0z2EvrvVhWC2gau9fII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729581071; x=1730185871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IuZG9TjFhS0J3cabCqnpd26zyrTahESHkPMMm0tbHo8=;
-        b=s/SciiFeqOWgRxHob+Sa5/72YTgEe27qSmeg0AR1AuEziaXSNdGO7LpCpDtLnrkUIJ
-         8v/Hn+5w8at98jh63Cm7fICXrSLlK+2pCB9UApQ7DRme1B8Oxa9BUsof94x2MaBZozo7
-         s7i1NfCDp4yHM3FyaehckD8UQcafWCkqb3XdSSfDdIF2H+fYo2OZ/J+5kv9fKBtDCAVC
-         DM6Faq+KYIbnA0isMYtL7D8ZoT4flOY6fE5fPdQDq7/yhxcM/0qscyZBm2QtRhip5ZvJ
-         LNgdz0awyAuF7013i1dKE1LzqG3fNgZ6EazxBPeN6ckvOPkAoDc4/fffMDB2k1aMvKSH
-         qcfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvZsBhfxlod/aAMcU0rPUE2G7t4yXAj+MqpBdbHw9HLFoC0hcEuuZLlrbtUDsGiqYBuVmRAwtih8vJerU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3uoc9pfn9DJBiAYYKL6jzT25/vFLZtjE/0G3ydpIMNoyfbGV6
-	BR7IUbGExmRGVCaxSDraxk0GEamCeGUOEAhs8f9A/Y73CZXBzIBHyMTa1xWgxwVquASMyV9rFGt
-	4Haun/F1WLIzZkvWA2N6nWtWIDQEnJI2SbUYU
-X-Google-Smtp-Source: AGHT+IF+1EcCcjdprpZUxHQiyLOSW34mZjTqf2CtGDmKqLDG4nbcEgmNJg/VHulKiMJv5nQCszElvS5awGTY6T21MgA=
-X-Received: by 2002:a05:6512:304f:b0:539:fb6f:cb8d with SMTP id
- 2adb3069b0e04-53a15229db8mr7057177e87.27.1729581070757; Tue, 22 Oct 2024
- 00:11:10 -0700 (PDT)
+	s=arc-20240116; t=1729581147; c=relaxed/simple;
+	bh=0ll3gPv7b5EnxMpQXjTWBZqajMHhngE0X2+8q2/Aamo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tau9dDB8qT2bNo9MTE0HNbZBEujxVgKnL0uJX/mr1+6apYwsW/2P7ZJRBKr9LWh10hzE65utonoYhDkrMuXXmRW3UjL2bl8324CJDbOIdw4+ztuG5vW+2GWROaStglWDy6cPc1k8YITdAxR9t8MQEX230FJ4c1/LMWCPN2EgYIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t393p-0003Is-ET; Tue, 22 Oct 2024 09:12:09 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t393o-000pD5-34;
+	Tue, 22 Oct 2024 09:12:08 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t393o-007VXc-2i;
+	Tue, 22 Oct 2024 09:12:08 +0200
+Date: Tue, 22 Oct 2024 09:12:08 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Sherry Sun <sherry.sun@nxp.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241022071208.lgk2rpl2c2qpytfa@pengutronix.de>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+ <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <e7a1622e-6406-478f-bd3e-08a8490d4db0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016034927.8181-1-yunfei.dong@mediatek.com> <20241016034927.8181-5-yunfei.dong@mediatek.com>
-In-Reply-To: <20241016034927.8181-5-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 22 Oct 2024 15:10:59 +0800
-Message-ID: <CAGXv+5H4BfUcDL1Rp+-CVefxdPtxxf63Bj+Ay9daMdy6127F3A@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] media: mediatek: vcodec: remove parse nal info in kernel
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7a1622e-6406-478f-bd3e-08a8490d4db0@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2024 at 11:49=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.=
-com> wrote:
->
-> Hardware can parse the slice syntax to get nal information in
-> scp for extend architecture, needn't to parse it again in
-> kernel.
+On 24-10-22, Krzysztof Kozlowski wrote:
+> On 21/10/2024 12:25, Marco Felsch wrote:
+> > On 24-10-21, Krzysztof Kozlowski wrote:
+> >> On 21/10/2024 08:41, Marco Felsch wrote:
+> >>> On 24-10-07, Krzysztof Kozlowski wrote:
 
-Squash this in with the other "add extended architecture" patches.
-You are removing code that you just added. So why add it in the
-first place?
+...
 
-You can just mention in the commit message that the new architecture
-can parse the slice syntax directly.
+> >>>> Based on earlier message:
+> >>>>
+> >>>> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+> >>>> that both wifi and BT controller will be powered on and off at the same
+> >>>> time."
+> >>>>
+> >>>> but maybe that's not needed. No clue, I don't know the hardware. But be
+> >>>> carefully what you write in the bindings, because then it will be ABI.
+> >>>
+> >>> We noticed the new power-sequencing infrastructure which is part of 6.11
+> >>> too but I don't think that this patch is wrong. The DT ABI won't break
+> >>> if we switch to the power-sequencing later on since the "reset-gpios"
+> >>> are not marked as required. So it is up to the driver to handle it
+> >>> either via a separate power-sequence driver or via "power-supply" and
+> >>> "reset-gpios" directly.
+> >>
+> >> That's not the point. We expect correct hardware description. If you say
+> >> now it has "reset-gpios" but later say "actually no, because it has
+> >> PMU", I respond: no. Describe the hardware, not current Linux.
+> > 
+> > I know that DT abstracts the HW. That said I don't see the problem with
+> > this patch. The HW is abstracted just fine:
+> > 
+> > shared PDn          -> reset-gpios
+> > shared power-supply -> vcc-supply
+> > 
+> > Right now the DT ABI for the BT part is incomplete since it assume a
+> > running WLAN part or some hog-gpios to pull the device out-of-reset
+> > which is addressed by this patchset.
+> > 
+> > Making use of the new power-sequencing fw is a Linux detail and I don't
+> > see why the DT can't be extended later on. We always extend the DT if
+> > something is missing or if we found a better way to handle devices.
+> 
+> Sure, although I am not really confident that you understand the
+> implications - you will not be able to switch to proper power-sequencing
+> with above bindings, because it will not be just possible without
+> breaking the ABI or changing hardware description (which you say it is
+> "fine", so complete/done). I am fine with it, just mind the implications.
 
-ChenYu
+Sorry can you please share your concerns? I don't get the point yet why
+we do break the DT ABI if we are going from
 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> ---
->  .../decoder/vdec/vdec_h264_req_multi_if.c     | 24 +++----------------
->  1 file changed, 3 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h26=
-4_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec=
-_h264_req_multi_if.c
-> index 69ca775bb3f1..c99a64384edf 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
-ulti_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
-ulti_if.c
-> @@ -802,11 +802,10 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vd=
-ec, struct mtk_vcodec_mem *bs
->         struct vdec_h264_slice_inst *inst =3D h_vdec;
->         struct vdec_vpu_inst *vpu =3D &inst->vpu;
->         struct mtk_video_dec_buf *src_buf_info;
-> -       int nal_start_idx, err, timeout =3D 0;
-> +       int err, timeout =3D 0;
->         unsigned int data[2];
->         struct vdec_lat_buf *lat_buf;
->         struct vdec_h264_slice_share_info *share_info;
-> -       unsigned char *buf;
->
->         if (vdec_msg_queue_init(&inst->ctx->msg_queue, inst->ctx,
->                                 vdec_h264_slice_core_decode_ex,
-> @@ -830,14 +829,6 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vde=
-c, struct mtk_vcodec_mem *bs
->         share_info =3D lat_buf->private_data;
->         src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
-ffer);
->
-> -       buf =3D (unsigned char *)bs->va;
-> -       nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
-> -       if (nal_start_idx < 0) {
-> -               err =3D -EINVAL;
-> -               goto err_free_fb_out;
-> -       }
-> -
-> -       inst->vsi->dec.nal_info =3D buf[nal_start_idx];
->         lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
->         v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &lat_buf->t=
-s_info, true);
->
-> @@ -846,7 +837,7 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vdec=
-, struct mtk_vcodec_mem *bs
->         if (err)
->                 goto err_free_fb_out;
->
-> -       vdec_h264_insert_startcode(inst->ctx->dev, buf, &bs->size,
-> +       vdec_h264_insert_startcode(inst->ctx->dev, bs->va, &bs->size,
->                                    &share_info->h264_slice_params.pps);
->
->         *res_chg =3D inst->resolution_changed;
-> @@ -1078,11 +1069,10 @@ static int vdec_h264_slice_single_decode_ex(void =
-*h_vdec, struct mtk_vcodec_mem
->         struct vdec_vpu_inst *vpu =3D &inst->vpu;
->         struct mtk_video_dec_buf *src_buf_info, *dst_buf_info;
->         struct vdec_fb *fb;
-> -       unsigned char *buf;
->         unsigned int data[2], i;
->         u64 y_fb_dma, c_fb_dma;
->         struct mtk_vcodec_mem *mem;
-> -       int err, nal_start_idx;
-> +       int err;
->
->         /* bs NULL means flush decoder */
->         if (!bs)
-> @@ -1117,14 +1107,6 @@ static int vdec_h264_slice_single_decode_ex(void *=
-h_vdec, struct mtk_vcodec_mem
->         memcpy(&inst->vsi_ctx_ex.h264_slice_params, &inst->h264_slice_par=
-am,
->                sizeof(inst->vsi_ctx_ex.h264_slice_params));
->
-> -       buf =3D (unsigned char *)bs->va;
-> -       nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
-> -       if (nal_start_idx < 0) {
-> -               err =3D -EINVAL;
-> -               goto err_free_fb_out;
-> -       }
-> -       inst->vsi_ctx_ex.dec.nal_info =3D buf[nal_start_idx];
-> -
->         *res_chg =3D inst->resolution_changed;
->         if (inst->resolution_changed) {
->                 mtk_vdec_debug(inst->ctx, "- resolution changed -");
-> --
-> 2.46.0
->
+bt {
+	reset-gpios = <&gpio 4 0>;
+	vcc-supply = <&supply>;
+};
+
+to
+
+bt {
+	vcc-supply = <&pmu_supply>;
+};
+
+or:
+
+bt {
+	pmu = <&pmu>;
+};
+
+Of course the driver need to support all 2/3 cases due to backward
+compatibility but from DT pov I don't see any breakage since we already
+need to define the power handling properties (gpio & supply) as
+optional.
+
+That beeing said I don't see the need for a PMU driver for this WLAN/BT
+combi chip which is way simpler than the Qualcomm one from Bartosz. Also
+there is physically no PMU device which powers the chip unlike the
+Qualcomm one. I'm not sure if you would accept virtual PMU devices.
+
+Regards,
+  Marco
+
+> Best regards,
+> Krzysztof
+> 
+> 
 
