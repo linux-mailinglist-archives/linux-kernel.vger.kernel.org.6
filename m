@@ -1,140 +1,157 @@
-Return-Path: <linux-kernel+bounces-375355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572849A94F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC29A94F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFC1281836
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3DE1F23A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4AE14883F;
-	Tue, 22 Oct 2024 00:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3099F14A4F3;
+	Tue, 22 Oct 2024 00:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MnB+tgdG"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TuXXxyim"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9D1BDE6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BF71BDE6;
+	Tue, 22 Oct 2024 00:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556729; cv=none; b=lFAoS3CdNCd8OmOYoApsFvkRrU0WzKMpSYBptaB+ukLOZH1JOktvuozAw8RB+Ghk3s7GI0iEo3LdaeJ3QSj7BadzmUM0n5zAKZhrOhUHB9ygW0iJ8OU2viEhic6b5IhPuW4buY8x8KFaVQ/YQeRqPFCkxSZO5Atv7TO6f7TPD/g=
+	t=1729556752; cv=none; b=Nn1S4NMREB2iUaTSatMMT27qiZA7tTk0yAiwppnedkSDQypEBhPnxN79/+ehVY6TccQyBXSk+PpMrj3KAb99saeJSjsSn/bopfYkPvfqccGAnTFEoYM2R4m/ti1o8UToGiT6fEIFNfktXZRab54Z3VYCzbF8H9UKc3jj0XbtzdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556729; c=relaxed/simple;
-	bh=Wwk9dyFtDwuEQQqz0hmWJyU/DQRTYfyP+Ipucu+Wmy8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H5+wpWyRpbTa/plp7GFTWxemKPToMEen2MyRZZaXqxmd9S55rCuV9Rvh3TQd1IPf2qHkrHzoa3d7DOi4s/h/d7ooGB7d8XpWyub7fS9w/sVmueJb7BLyM6dKfwbXTETM/3MjgD2FiXin8xSA8Urk+1IeeTj9AbT3X8MrJd/5uKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MnB+tgdG; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e292dbfd834so7658574276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729556727; x=1730161527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MsmHAIiTKT1PsAHJrcn3wc4lWOtEN6U6cuZlArYcGvA=;
-        b=MnB+tgdGLReNlA4KEjpVCLIj6z8w8awI0i9a3sx6+jZblv+50MQgjAouTqZ2aPZc05
-         Tj8MaMnAzVDds9kIB3by6YraN1PiaDEqXQhfu1knp56VmW2qHZ4pNOt1wvkNHAF1H1vM
-         15Oh12H+8GxJlu/UFODeS16wIlUfyxpnlPoR+NPMHFoTTRePnpuwweVXeIsD7ETmEC+Q
-         m6I2RFDuOz4ve6Akcb4YZbiabtw5ROaEvgX3aQFCf91BH+Cj5vnaN7RIiB/KHsnDjvVA
-         ZHSigZtjSwnwLGUp5kIE5DJqbAN2fjOdNIQI6E6G28BG7CYWXkBnVEtECNQ2AZzAZNU+
-         znmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729556727; x=1730161527;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MsmHAIiTKT1PsAHJrcn3wc4lWOtEN6U6cuZlArYcGvA=;
-        b=tunSq+TYG032DlRhtHHqYN26KZKNOScSlyuDwHO1cammcgwmtKaXQ4NqJodjf9FyUI
-         L9ft3jXWYHOiGYoLLo7QD0emmZdxqa+eC94GV2fqOPMu+IgijFxvB/CHobL8BYO9N3n3
-         dLXrIKS3utaa2tIAeCDFgkmpIaXWDKPucx0WGTTZw4oV5SgrEfOmqeLiQDML2oY6lhWg
-         yRZ5WmTbbvwKdtKgFoimaSwgm/4z6vK/+SxRvElEZfz7/uS/w+krqRmctAcXhBSiEVyA
-         Boa7a8MZv/WiR60qAv9c8ttDBX2COexlpF72M1KdqZPigQpebrzp/2yczB23O2JhN0TR
-         2FYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/dNANwcT5hTPA/o+3lh4lDzf/jbYNKmEGSHM/OAT2T/R925r6ZryqMsunDxuNrJ0rAriJ8w2aq9wmK1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfPs3OkuDlWKS1JyV6NORfvXj5Yy8s1w5lx7eG3z0FI+yePZaH
-	Xx8zEAwy5yqR0TbP5AKhlrNbOnVF2fOxZwhsELbHJJ4Mj3LQa7HoQOJgG0PrVEwlZP4BTgnKpGn
-	tqg==
-X-Google-Smtp-Source: AGHT+IFt751p/7pq+BSWT0h/wj8dy6pof7dpapFjoV1RFsMPc4iJ6WxDdC7RwTVAow0VYtv4igk8p4vJkHM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:aae9:0:b0:e29:1893:f461 with SMTP id
- 3f1490d57ef6-e2bb0feddc7mr22594276.0.1729556726690; Mon, 21 Oct 2024 17:25:26
- -0700 (PDT)
-Date: Mon, 21 Oct 2024 17:25:25 -0700
-In-Reply-To: <CABgObfbQW-3vp=mNcR4giUGZ_gxhuRykvKj8gzBDY7pOg6xdBQ@mail.gmail.com>
+	s=arc-20240116; t=1729556752; c=relaxed/simple;
+	bh=+dQEqyR1FwmTFvq/RxzO/cnLV1+2Py1q3UpkJBRDW+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pWi/8gshG8Tn8MEhTh03YuBoOsNoWzaNQOMJnu3pdCdv+KGXWy+gfKMYwWX40muuzOXykrYx0nAMUxKE+NfNXBTomDZI8FEH9BJTv0VInXc0+KlVlbYZ0cq7K2c6m0k4pO0dLLPJA0/fyAAeM8pUh4cNSbyWtv6GJfszh7wMtcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TuXXxyim; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Dtc7LdzxqLP/AAZKaGDFqbUfwMnenAfL2h3IaUrggsY=; b=TuXXxyimsJ8g6/sN
+	MDYAvzntpb4A6j9S7rXcoEC7S1YzvRjEneesBdjI6CROncqZGMK0/NbsugZkfItdbZyYcXD1Yl+bw
+	z2C1/b2L1QdiyQLl3eCchYAr/w7mqR+GG4Nd2kmbX64ucI/4Nz5/P+1eX+mCA3fmvNTDfR1Mv4+jk
+	slqXP7gKvNfC4qZrppjNF5r34EW2qoOjXNpZf1xGDFphOH2hG8o1qwous/Qd4eKH5p91hT32uz85P
+	UUiI0P2TwswvIjJOC1+jHXfpyRqIfDD8YSif4RcBUj7pXab2KUTCeOt8Qoe2XpOh97a9rIkOnk6Wt
+	TrrdC8cYuBLwXLHWFw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t32iV-00CeIJ-2l;
+	Tue, 22 Oct 2024 00:25:43 +0000
+From: linux@treblig.org
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] ocfs2: Remove unused errmsg function and table
+Date: Tue, 22 Oct 2024 01:25:43 +0100
+Message-ID: <20241022002543.302606-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010182427.1434605-1-seanjc@google.com> <CABgObfbQW-3vp=mNcR4giUGZ_gxhuRykvKj8gzBDY7pOg6xdBQ@mail.gmail.com>
-Message-ID: <Zxbw9XcFCHYR1Ald@google.com>
-Subject: Re: [PATCH v13 00/85] KVM: Stop grabbing references to PFNMAP'd pages
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>, Yan Zhao <yan.y.zhao@intel.com>, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
-	Andrew Jones <ajones@ventanamicro.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024, Paolo Bonzini wrote:
-> On Thu, Oct 10, 2024 at 8:24=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > v13:
-> >  - Rebased onto v6.12-rc2
-> >  - Collect reviews. [Alex and others]
-> >  - Fix a transient bug in arm64 and RISC-V where KVM would leak a page
-> >    refcount. [Oliver]
-> >  - Fix a dangling comment. [Alex]
-> >  - Drop kvm_lookup_pfn(), as the x86 that "needed" it was stupid and is=
- (was?)
-> >    eliminated in v6.12.
-> >  - Drop check_user_page_hwpoison(). [Paolo]
-> >  - Drop the arm64 MTE fixes that went into 6.12.
-> >  - Slightly redo the guest_memfd interaction to account for 6.12 change=
-s.
->=20
-> Here is my own summary of the changes:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Yep, looks right to me.
+dlm_errmsg() has been unused since 2010's
+commit 0016eedc4185 ("ocfs2_dlmfs: Use the stackglue.")
 
-> patches removed from v12:
-> 01/02 - already upstream
-> 09 - moved to separate A/D series [1]
-> 34 - not needed due to new patch 36
-> 35 - gone after 620525739521376a65a690df899e1596d56791f8
->=20
-> patches added or substantially changed in v13:
-> 05/06/07 - new, suggested by Yan Zhao
-> 08 - code was folded from mmu_spte_age into kvm_rmap_age_gfn_range
-> 14 - new, suggested by me in reply to 84/84 (yuck)
-> 15 - new, suggested by me in reply to 84/84
-> 19 - somewhat rewritten for new follow_pfnmap API
-> 27 - smaller changes due to new follow_pfnmap API
-> 36 - rewritten, suggested by me
-> 45 - new, cleanup
-> 46 - much simplified due to new patch 45
->=20
-> Looks good to me, thanks and congratulations!! Should we merge it in
-> kvm/next asap?
+Remove dlm_errmsg() and the message table it indexes.
 
-That has my vote, though I'm obvious extremely biased :-)
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ fs/ocfs2/dlm/dlmapi.h   |  2 --
+ fs/ocfs2/dlm/dlmdebug.c | 53 -----------------------------------------
+ 2 files changed, 55 deletions(-)
+
+diff --git a/fs/ocfs2/dlm/dlmapi.h b/fs/ocfs2/dlm/dlmapi.h
+index bae60ca2672a..847a52dcbe7d 100644
+--- a/fs/ocfs2/dlm/dlmapi.h
++++ b/fs/ocfs2/dlm/dlmapi.h
+@@ -62,8 +62,6 @@ enum dlm_status {
+ 	DLM_MAXSTATS,             /* 41: upper limit for return code validation */
+ };
+ 
+-/* for pretty-printing dlm_status error messages */
+-const char *dlm_errmsg(enum dlm_status err);
+ /* for pretty-printing dlm_status error names */
+ const char *dlm_errname(enum dlm_status err);
+ 
+diff --git a/fs/ocfs2/dlm/dlmdebug.c b/fs/ocfs2/dlm/dlmdebug.c
+index be5e9ed7da8d..e9ef4e2b0e75 100644
+--- a/fs/ocfs2/dlm/dlmdebug.c
++++ b/fs/ocfs2/dlm/dlmdebug.c
+@@ -164,59 +164,6 @@ static const char *dlm_errnames[] = {
+ 	[DLM_MAXSTATS] =		"DLM_MAXSTATS",
+ };
+ 
+-static const char *dlm_errmsgs[] = {
+-	[DLM_NORMAL] = 			"request in progress",
+-	[DLM_GRANTED] = 		"request granted",
+-	[DLM_DENIED] = 			"request denied",
+-	[DLM_DENIED_NOLOCKS] = 		"request denied, out of system resources",
+-	[DLM_WORKING] = 		"async request in progress",
+-	[DLM_BLOCKED] = 		"lock request blocked",
+-	[DLM_BLOCKED_ORPHAN] = 		"lock request blocked by a orphan lock",
+-	[DLM_DENIED_GRACE_PERIOD] = 	"topological change in progress",
+-	[DLM_SYSERR] = 			"system error",
+-	[DLM_NOSUPPORT] = 		"unsupported",
+-	[DLM_CANCELGRANT] = 		"can't cancel convert: already granted",
+-	[DLM_IVLOCKID] = 		"bad lockid",
+-	[DLM_SYNC] = 			"synchronous request granted",
+-	[DLM_BADTYPE] = 		"bad resource type",
+-	[DLM_BADRESOURCE] = 		"bad resource handle",
+-	[DLM_MAXHANDLES] = 		"no more resource handles",
+-	[DLM_NOCLINFO] = 		"can't contact cluster manager",
+-	[DLM_NOLOCKMGR] = 		"can't contact lock manager",
+-	[DLM_NOPURGED] = 		"can't contact purge daemon",
+-	[DLM_BADARGS] = 		"bad api args",
+-	[DLM_VOID] = 			"no status",
+-	[DLM_NOTQUEUED] = 		"NOQUEUE was specified and request failed",
+-	[DLM_IVBUFLEN] = 		"invalid resource name length",
+-	[DLM_CVTUNGRANT] = 		"attempted to convert ungranted lock",
+-	[DLM_BADPARAM] = 		"invalid lock mode specified",
+-	[DLM_VALNOTVALID] = 		"value block has been invalidated",
+-	[DLM_REJECTED] = 		"request rejected, unrecognized client",
+-	[DLM_ABORT] = 			"blocked lock request cancelled",
+-	[DLM_CANCEL] = 			"conversion request cancelled",
+-	[DLM_IVRESHANDLE] = 		"invalid resource handle",
+-	[DLM_DEADLOCK] = 		"deadlock recovery refused this request",
+-	[DLM_DENIED_NOASTS] = 		"failed to allocate AST",
+-	[DLM_FORWARD] = 		"request must wait for primary's response",
+-	[DLM_TIMEOUT] = 		"timeout value for lock has expired",
+-	[DLM_IVGROUPID] = 		"invalid group specification",
+-	[DLM_VERS_CONFLICT] = 		"version conflicts prevent request handling",
+-	[DLM_BAD_DEVICE_PATH] = 	"Locks device does not exist or path wrong",
+-	[DLM_NO_DEVICE_PERMISSION] = 	"Client has insufficient perms for device",
+-	[DLM_NO_CONTROL_DEVICE] = 	"Cannot set options on opened device ",
+-	[DLM_RECOVERING] = 		"lock resource being recovered",
+-	[DLM_MIGRATING] = 		"lock resource being migrated",
+-	[DLM_MAXSTATS] = 		"invalid error number",
+-};
+-
+-const char *dlm_errmsg(enum dlm_status err)
+-{
+-	if (err >= DLM_MAXSTATS || err < 0)
+-		return dlm_errmsgs[DLM_MAXSTATS];
+-	return dlm_errmsgs[err];
+-}
+-EXPORT_SYMBOL_GPL(dlm_errmsg);
+-
+ const char *dlm_errname(enum dlm_status err)
+ {
+ 	if (err >= DLM_MAXSTATS || err < 0)
+-- 
+2.47.0
+
 
