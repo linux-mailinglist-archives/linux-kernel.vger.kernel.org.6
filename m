@@ -1,103 +1,155 @@
-Return-Path: <linux-kernel+bounces-376214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152819AA1B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:05:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5689AA1B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D092837B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:05:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781341C20E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5605719CC33;
-	Tue, 22 Oct 2024 12:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8995819D898;
+	Tue, 22 Oct 2024 12:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kT7DRTwH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="buiYH2y8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B31C19C553
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D35B19D097;
+	Tue, 22 Oct 2024 12:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729598744; cv=none; b=BbkWsHo1w/jyJracGadm2gaa9eQqdVgziABX5gc26Z3V3gp6M7YeShMgxJ1vyaOoPar8tynQGyTv7edcVNd7EsqRfL3x/DFgEKx+WA5cBpfUgrtApL3cYzWUrHoCRhReJa9y45NyPBiODeFqsNWEC0gnANynbgbj4Y2byv3ugds=
+	t=1729598772; cv=none; b=Hfcnc9/WZ4ezdI97EN4onTYkNDVbmSYnv6T/ZSJlH91MwD21vGWfV1L84EwAnfvfIfoHg4UtqbNsy0atj7uWIwLbLN7eFTalSrXlmS7PhQcUQ242yYZSmAYsJ9A21T6/yXosShso6/LP/VwaXj2b/OJDmlYxea/lkq/CgjFuVxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729598744; c=relaxed/simple;
-	bh=zQ8xCol0b2IXw3GbbRNG9lcP4g/Bl1vyDfYyIBQ4hoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rorw2XuZHm+sqzaRiVq8GC1PVn7e7BBA42XCCh5J+PVVK4NqoQiov1VFghWduRw3PENXDyyWrGSBb8F+q86/VljE5bnsbzZ3S5qzq7JOc7N3ROuLL/e/tijpkiJz90i8y5GS9muffXNXFsPR+xcgCLwtfGLu3XI9FYqVSSWCaNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kT7DRTwH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C56040E0198;
-	Tue, 22 Oct 2024 12:05:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aX4vhu4VESL5; Tue, 22 Oct 2024 12:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729598737; bh=7F9OrfklmLQw/JAMPlpkXiPsZiBMIQSI/Oh6TvZHq3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kT7DRTwHPDj3hWkoypqgqX+Iuyk/Hu0CLUK+Vtimk41mjJnQ1bFVfY76wPTi8C/gK
-	 irGXTI0j0weT2+bjwbjx9D3k3jkk9nS6Yn6/FiCcGXyUGIwH6LzmKqyO9XLqY3/dvD
-	 xVDXz+kFtZ7n2Yb9GDc/akKYl6VtDFjIK9uaCIVIxtxYxwoLGyN9eWvWU034xSYHAw
-	 JCZFuBP6gbWA8bgeCh6MumtrY12vuBdgyONry3tgC8rHlzlry+TJp9cLGSU9Ihbcbx
-	 gZc1D/gOrt5JgsGdrMOCJhskeZqKHHZIyG5Uc099ezTWhd4bHj9mrXRjG7DHLi5RAT
-	 emPzaS07GrUUXNxwS18F3OALIjQbA7CmjL8pKSIaSt/w8K9Z2SVKCL4peW2RlDte/K
-	 IziS0ZamemFdKhSfbdfnW0whxngM3j1imSxu7eUZpQOg8XoE+3qmNVJ2AXc8EjOiPD
-	 N98b4+rZWff8te9n3pu2Ll/yhuRcGVT47gfFSUJXlvBQIgLAj1//oP4PJs/y2QZdFn
-	 RXMI2RsBBGe9W77GYvAHxjOfCJ98kA5DyfjbwC7jS8YVADgLpt5amkU29oAgFNwl4G
-	 JTWZurltdR0M/3tjf3YNvmFZrDsai5b2AP6pGqFoU8y4XRSWTf9/QmnnStFAfDYkpL
-	 bLIiB1rvnXaZI1a2oljdOsVo=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 64ED440E015F;
-	Tue, 22 Oct 2024 12:05:32 +0000 (UTC)
-Date: Tue, 22 Oct 2024 14:05:31 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: AMD zen microcode updates breaks boot
-Message-ID: <20241022120531.GDZxeVC0WeUPhInkYh@fat_crate.local>
-References: <016ecb00-2331-472c-88e4-66b1dbecfc99@kernel.dk>
- <1bb5dd7f-15b5-4d9d-97ef-75ebdc24e7d9@kernel.dk>
- <20241019093748.GAZxN97LS_dJ3DNrpd@fat_crate.local>
- <436b4fc7-6369-40d9-8e88-556cbf5a5687@kernel.dk>
- <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
- <b2fd70bb-9414-49e0-bdb8-5c538f247dea@kernel.dk>
- <20241020121819.GAZxT1CyR_5vLLZ5e6@fat_crate.local>
- <df217737-6e2c-41fe-b558-3e2ab6dc0d9e@kernel.dk>
- <20241021073140.GAZxYDXCk02lSrG3-T@fat_crate.local>
- <daa98312-cc66-4c2f-8e64-01358ee99305@kernel.dk>
+	s=arc-20240116; t=1729598772; c=relaxed/simple;
+	bh=r/Q462VXgRCMsAMAdvuuyCcpqHiwqOBdNlJgLv/L26M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZDC3C98SSGhSlgGDoEtzjo1TiItmCi5+Y1bxUYoKW3aRJ2I/vTIh0cCx35hnyqH0S+yzZGpIhZwzc1JxaM5y4bKeW2py45Jr4iRXDP64do4latqbXQs8UWkdEp2Y14ZRMjMeOyU7Bd1IpWav+z3C4+WXhy4n+6X5xUpT7JAK+Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=buiYH2y8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M2HkPp023799;
+	Tue, 22 Oct 2024 12:06:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=PCOFGNBpImMiPTSTFk3sc6w+6MuPJjF2VtGlxuQJw
+	8E=; b=buiYH2y8EybdC5yltxohibOckqncGhtXXoyIuw65a+YM2kRnHn9d5PEmg
+	43x3L4RtGkmcHYx9PMLrmgICljOFbnhLTEqA07gjC0wu0y7sKEKhYMJpZLycYG5o
+	AHdzblreruXkYlo/hbD/VEA4HNM2pTpS9OpahBzfjYJ4atOo2yci61uEwJy0Vzsn
+	VrTmSO8mLiU2Ny/ZB13SQBY2T1x5B6R4Ysig1VjG2wddoEUmXQkcwAj6x7Riw90g
+	31xR/8Up/Kjls1/a5DIV4x72FMQzGPtrvldiBisAKQABZwz7cjm782HXN+Em3asF
+	CWbAK9J+oBJ2pBQURJ2mhfL8LvKtA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5h36chw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:06:07 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49M90l4O028879;
+	Tue, 22 Oct 2024 12:06:06 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42cqfxk764-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:06:06 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49MC622R29950266
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Oct 2024 12:06:02 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94A3720043;
+	Tue, 22 Oct 2024 12:06:02 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 771E820040;
+	Tue, 22 Oct 2024 12:06:01 +0000 (GMT)
+Received: from p-imbrenda.ibmuc.com (unknown [9.171.37.93])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 22 Oct 2024 12:06:01 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
+        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, david@redhat.com
+Subject: [PATCH v4 00/11] s390/kvm: Handle guest-related program interrupts in KVM
+Date: Tue, 22 Oct 2024 14:05:50 +0200
+Message-ID: <20241022120601.167009-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <daa98312-cc66-4c2f-8e64-01358ee99305@kernel.dk>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hULiXhbtx108RH0gg2u2ng-7gZf4p3oI
+X-Proofpoint-ORIG-GUID: hULiXhbtx108RH0gg2u2ng-7gZf4p3oI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=479
+ adultscore=0 clxscore=1015 phishscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220074
 
-On Mon, Oct 21, 2024 at 11:00:26AM -0600, Jens Axboe wrote:
-> Sounds good, I'll give them a spin once posted.
+This patchseries moves the handling of host program interrupts that
+happen while a KVM guest is running into KVM itself.
 
-Coming up as replies to this message.
+All program interrupts that happen in the host while a KVM guest is
+running are due to DAT exceptions. It is cleaner and more maintainable
+to have KVM handle those.
 
-Thx.
+As a side effect, some more cleanups is also possible.
+
+Moreover, this series serves as a foundation for an upcoming series
+that will further move as much s390 KVM memory managament as possible
+into KVM itself, and away from the rest of the kernel.
+
+
+v3->v4:
+* patch 5: move check for primary ASCE from the interrupt handler to
+  the handlers of the specific faults where we expect the ASCE
+  indication to be meaningful.
+* patch 6: remove enabled_gmap from struct kvm_cpu_arch, since it is
+  now unused.
+* picked up some R-Bs from Heiko
+
+Claudio Imbrenda (8):
+  s390/entry: Remove __GMAP_ASCE and use _PIF_GUEST_FAULT again
+  s390/kvm: Remove kvm_arch_fault_in_page()
+  s390/mm/gmap: Refactor gmap_fault() and add support for pfault
+  s390/mm/gmap: Fix __gmap_fault() return code
+  s390/mm/fault: Handle guest-related program interrupts in KVM
+  s390/kvm: Stop using gmap_{en,dis}able()
+  s390/mm/gmap: Remove gmap_{en,dis}able()
+  s390: Remove gmap pointer from lowcore
+
+Heiko Carstens (3):
+  s390/mm: Simplify get_fault_type()
+  s390/mm: Get rid of fault type switch statements
+  s390/mm: Convert to LOCK_MM_AND_FIND_VMA
+
+ arch/s390/Kconfig                 |   1 +
+ arch/s390/include/asm/gmap.h      |   3 -
+ arch/s390/include/asm/kvm_host.h  |   5 +-
+ arch/s390/include/asm/lowcore.h   |   3 +-
+ arch/s390/include/asm/processor.h |   5 +-
+ arch/s390/include/asm/ptrace.h    |   2 +
+ arch/s390/kernel/asm-offsets.c    |   3 -
+ arch/s390/kernel/entry.S          |  44 ++-----
+ arch/s390/kernel/traps.c          |  23 +++-
+ arch/s390/kvm/intercept.c         |   4 +-
+ arch/s390/kvm/kvm-s390.c          | 142 +++++++++++++++-------
+ arch/s390/kvm/kvm-s390.h          |   8 +-
+ arch/s390/kvm/vsie.c              |  17 ++-
+ arch/s390/mm/fault.c              | 195 +++++-------------------------
+ arch/s390/mm/gmap.c               | 151 +++++++++++++++--------
+ 15 files changed, 281 insertions(+), 325 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.47.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
