@@ -1,139 +1,285 @@
-Return-Path: <linux-kernel+bounces-376242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C4D9AA204
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD229AA207
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2322821CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D065281FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9342819C56C;
-	Tue, 22 Oct 2024 12:21:27 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C172B19CCEC;
+	Tue, 22 Oct 2024 12:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jy8Wb+a6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E09146D78
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CB7146D78;
+	Tue, 22 Oct 2024 12:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729599687; cv=none; b=lh3Bn1W+2qeTRMYNr+QGxs1zphYcsjBLosM6cOPyxe1PdXeg1YWDPR8pX/pNx6Fs4vgGZxZeEGOxzPqyarIuDbGlPflhcYHMD3wbm6s/vhOy5ZdsmNfPOA59Sv6A5/t06LbNUZi2Y7sm/fmtKp18XKe7Gu2ByjC35JbIPu1Q0/g=
+	t=1729599771; cv=none; b=RsqqbvABqEvx9JO4xH/MnR+lwhkFgbYm2dTWcXcNQAwcXFD1apn1/2HIiQri9CSadbYIpLelbYRFt1Sq3XgSXk4RHinAKH8GKSsTcq7iU/MDwmnUrMrv7bnMaZNn3fmeL0GHUmqDsLTciRQjOw5cxN5hS82pNOfVsH3MXcTaHyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729599687; c=relaxed/simple;
-	bh=qiwrh4paZdZOhvzfnyjIhPiCK11Yls/d0o/bwPwYjKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eaPSQ8n74PV5s5XFqZn9cCiMrDD1lVrVQS68jQkvbYYIgBiRpJgoc1lw3N124aJaEdBOxz6B43lePYGgh/4w68BfTz4Fc/Ucj034tTSooZmqM9kFU5xLfOJs8DYbHqzcEaWJR0lnqFqW7KoT0ddpmHwYjgH4LqpveWxgCAH1iRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XXrp44BWNzpX8V;
-	Tue, 22 Oct 2024 20:19:24 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id B97D018010F;
-	Tue, 22 Oct 2024 20:21:21 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+	s=arc-20240116; t=1729599771; c=relaxed/simple;
+	bh=rJbleJQxI6miYx1TXF/6W93DeB7LRmc2OcUVp6DzVyM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VfvvWIB54zAqL9zFJxvmqFXxa21JE6/lterJxqu5IuZKxRIj4bVam9NC0ggLRT6wFTmW8lZImXHAjCBWMuzqlPLRIDNKK/SrFNvnbl+gbRlMYvrxKoWInEabrHctGI6tRzk4m+3yo9Ty6R63fF7sczWBjSlBt40Ozu+4z5qaI2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jy8Wb+a6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MC9x8C025868;
+	Tue, 22 Oct 2024 12:22:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=cOI8qm3Kv36No/LbxhZZ0t2OrkaIE9xcy4eQD81YBUQ=; b=jy
+	8Wb+a6Gv+nb3nG7w47zjBSdX1qBczDALPd47Us+sIV2eCmOZdesgz0yRG817+wqZ
+	Pdmc2fZCk3jIl1HeCvGXr/yldWT6ln7r/dA990Rvo25qIsXmWktQOZNt01tInr3E
+	fD6DNAb10ZegQxADcwZfHfO2QTWePsTxsMD90mmaa/aHShFD3etwV0JHBpQ6xoqn
+	kQlAuFXXtjnAqAesFigm4qfR9l3r/hqKLTlwLB7iX1rAW2KBzG69cN33A36hlmSv
+	YNvMm5/YklgasZn2Jak90aGKgCAtGbht1W9ux7TVMBARTUBbuXTKiyv7g5je1Pub
+	ILkqLTVEVMRIvcGyn/Yg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ebtm8124-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:22:36 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MCMZSd015860
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:22:35 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 22 Oct 2024 20:21:20 +0800
-Message-ID: <0ba91907-d3f5-4665-9a63-0b10b5d03f38@huawei.com>
-Date: Tue, 22 Oct 2024 20:21:19 +0800
+ 15.2.1544.9; Tue, 22 Oct 2024 05:22:32 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <shuah@kernel.org>, <hannes@cmpxchg.org>, <surenb@google.com>,
+        <quic_pintu@quicinc.com>, <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>
+Subject: [PATCH] selftests/sched: add basic test for psi
+Date: Tue, 22 Oct 2024 17:51:58 +0530
+Message-ID: <20241022122158.2136-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
- <20240930100610.782363-5-shiyongbang@huawei.com>
- <xeemxeld4cqpx47kzb5qqsawk7mu5kje6r7n335dhe2s7ynw6m@eaiowriiilgr>
- <277b126d-e17c-4ef9-a6fe-56f36061606e@huawei.com>
- <CAA8EJpontTXUd0TzvwJZ4gCZ2i6vdB8+PqE+W3ChCuBH3WkfaA@mail.gmail.com>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <CAA8EJpontTXUd0TzvwJZ4gCZ2i6vdB8+PqE+W3ChCuBH3WkfaA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: L9znsB6kpUeXQlLomLTQu1eW2ZQPOqLw
+X-Proofpoint-GUID: L9znsB6kpUeXQlLomLTQu1eW2ZQPOqLw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=969 adultscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220079
 
-Okay, I'll fix them.
-Thanks,
-Baihan
+There is a psi module that exists under kernel/sched/psi.
+Add a basic test to test the psi.
+This test just add the basic support to check cpu/memory/io interface.
+Further test will be added on top of this.
 
-> On Mon, 21 Oct 2024 at 14:54, s00452708 <shiyongbang@huawei.com> wrote:
->> Thanks, I will modify codes according to your comments, and I also
->> replied some questions or reasons why I did it below.
->>
->>> On Mon, Sep 30, 2024 at 06:06:10PM +0800, shiyongbang wrote:
->>>> From: baihan li <libaihan@huawei.com>
->>>>
->>>> To support DP interface displaying in hibmc driver. Add
->>>> a encoder and connector for DP modual.
->>>>
->>>> Signed-off-by: baihan li <libaihan@huawei.com>
->>>> ---
->>>>    drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
->>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
->>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
->>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
->>>>    4 files changed, 217 insertions(+), 2 deletions(-)
->>>>    create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>>>
-> [...]
->
->>>> +
->>>> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>>> +{
->>>> +    int count;
->>>> +
->>>> +    count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
->>>> +                                 connector->dev->mode_config.max_height);
->>>> +    drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
->>> What? Please parse EDID instead.
->>> I'll add aux over i2c r/w and get edid functions in next patch.
-> At least please mention that it's a temporal stub which will be changed later.
->
->>>> +
->>>> +    return count;
->>>> +}
->>>> +
-> [...]
->
->>>> @@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
->>>>               return ret;
->>>>       }
->>>>
->>>> +    /* if DP existed, init DP */
->>>> +    if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
->>>> +         DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
->>>> +            ret = hibmc_dp_init(priv);
->>>> +            if (ret)
->>>> +                    drm_err(dev, "failed to init dp: %d\n", ret);
->>>> +    }
->>>> +
->>>>       ret = hibmc_vdac_init(priv);
->>>>       if (ret) {
->>>>               drm_err(dev, "failed to init vdac: %d\n", ret);
->>>> -            return ret;
->>> Why?
->>> We have two display cables, if VGA cannot work, this change makes DP
->>> still work.
-> But that has nothing to do with init errors. If initialising (aka
-> probing) VGA fails, then the driver init should fail. At the runtime
-> the VGA and DP should be independent and it should be possible to
-> drive just one output, that's true.
->
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+---
+ MAINTAINERS                              |  2 +
+ tools/testing/selftests/sched/.gitignore |  1 +
+ tools/testing/selftests/sched/Makefile   |  4 +-
+ tools/testing/selftests/sched/config     |  1 +
+ tools/testing/selftests/sched/psi_test.c | 85 ++++++++++++++++++++++++
+ tools/testing/selftests/sched/run_psi.sh | 36 ++++++++++
+ 6 files changed, 127 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/sched/psi_test.c
+ create mode 100755 tools/testing/selftests/sched/run_psi.sh
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 84a73e90cfe8..d84ff9ca36a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18548,10 +18548,12 @@ F:	include/uapi/linux/pps.h
+ PRESSURE STALL INFORMATION (PSI)
+ M:	Johannes Weiner <hannes@cmpxchg.org>
+ M:	Suren Baghdasaryan <surenb@google.com>
++M:	Pintu Kumar <quic_pintu@quicinc.com>
+ R:	Peter Ziljstra <peterz@infradead.org>
+ S:	Maintained
+ F:	include/linux/psi*
+ F:	kernel/sched/psi.c
++F:	tools/testing/selftests/sched/psi_test.c
+ 
+ PRINTK
+ M:	Petr Mladek <pmladek@suse.com>
+diff --git a/tools/testing/selftests/sched/.gitignore b/tools/testing/selftests/sched/.gitignore
+index 6996d4654d92..2b15c11b93e6 100644
+--- a/tools/testing/selftests/sched/.gitignore
++++ b/tools/testing/selftests/sched/.gitignore
+@@ -1 +1,2 @@
+ cs_prctl_test
++psi_test
+diff --git a/tools/testing/selftests/sched/Makefile b/tools/testing/selftests/sched/Makefile
+index 099ee9213557..795f6613eb2c 100644
+--- a/tools/testing/selftests/sched/Makefile
++++ b/tools/testing/selftests/sched/Makefile
+@@ -8,7 +8,7 @@ CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -Wl,-rpath=./ \
+ 	  $(CLANG_FLAGS)
+ LDLIBS += -lpthread
+ 
+-TEST_GEN_FILES := cs_prctl_test
+-TEST_PROGS := cs_prctl_test
++TEST_GEN_FILES := cs_prctl_test psi_test
++TEST_PROGS := cs_prctl_test run_psi.sh
+ 
+ include ../lib.mk
+diff --git a/tools/testing/selftests/sched/config b/tools/testing/selftests/sched/config
+index e8b09aa7c0c4..287cccd434fd 100644
+--- a/tools/testing/selftests/sched/config
++++ b/tools/testing/selftests/sched/config
+@@ -1 +1,2 @@
+ CONFIG_SCHED_DEBUG=y
++CONFIG_PSI=y
+diff --git a/tools/testing/selftests/sched/psi_test.c b/tools/testing/selftests/sched/psi_test.c
+new file mode 100644
+index 000000000000..eeba138d2b39
+--- /dev/null
++++ b/tools/testing/selftests/sched/psi_test.c
+@@ -0,0 +1,85 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <stdio.h>
++#include <string.h>
++#include <fcntl.h>
++
++
++struct load_avg {
++	float avg10;
++	float avg60;
++	float avg300;
++	unsigned long long total;
++};
++
++struct pressure {
++	struct load_avg some;
++	struct load_avg full;
++};
++
++
++int psi_get_data_from_proc_pressure(const char *path, struct pressure *p)
++{
++	FILE *fp;
++	int rc = -1;
++	int ret = 0;
++
++	if (path == NULL || p == NULL)
++		return -1;
++
++	fp = fopen(path, "r");
++	if (fp == NULL)
++		return -1;
++
++	while (!feof(fp)) {
++		rc = fscanf(fp, "some avg10=%f avg60=%f avg300=%f total=%llu\n",
++			&p->some.avg10, &p->some.avg60, &p->some.avg300, &p->some.total);
++		if (rc < 1) {
++			ret = -1;
++			break;
++		}
++
++		/* Note: In some cases (cpu) full may not exists */
++		rc = fscanf(fp, "full avg10=%f avg60=%f avg300=%f total=%llu\n",
++			&p->full.avg10, &p->full.avg60, &p->full.avg300, &p->full.total);
++		/* We don't care about full case. This is needed to avoid warnings */
++		rc = 0;
++	}
++
++	fclose(fp);
++
++	return ret;
++}
++
++int main(int argc, char *argv[])
++{
++	int ret;
++	struct pressure rs = {0,};
++	char path[32];
++
++	if (argc < 2) {
++		fprintf(stderr, "usage: %s <path>\n", argv[0]);
++		return -1;
++	}
++
++	memset(&rs, 0, sizeof(rs));
++	printf("Pressure data: %s\n", argv[1]);
++	snprintf(path, sizeof(path)-1, "/proc/pressure/%s", argv[1]);
++
++	ret = psi_get_data_from_proc_pressure(path, &rs);
++	if (ret < 0) {
++		printf("PSI <%s>: FAIL\n", argv[1]);
++		return -1;
++	}
++	printf("Some Avg10   = %5.2f\n", rs.some.avg10);
++	printf("Some Avg60   = %5.2f\n", rs.some.avg60);
++	printf("Some Avg300  = %5.2f\n", rs.some.avg300);
++	printf("Some Total  = %llu\n", rs.some.total);
++	printf("Full Avg10  = %5.2f\n", rs.full.avg10);
++	printf("Full Avg60  = %5.2f\n", rs.full.avg60);
++	printf("Full Avg300 = %5.2f\n", rs.full.avg300);
++	printf("Full Total  = %llu\n", rs.full.total);
++
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/sched/run_psi.sh b/tools/testing/selftests/sched/run_psi.sh
+new file mode 100755
+index 000000000000..d0b1c7ae3736
+--- /dev/null
++++ b/tools/testing/selftests/sched/run_psi.sh
+@@ -0,0 +1,36 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++
++
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++# Just one node check is enough to detect psi
++if [ ! -e /proc/pressure/cpu ]; then
++	echo "PSI not present..."
++	exit $ksft_skip
++fi
++
++echo ""
++./psi_test cpu
++if [ $? -ne 0 ]; then
++	echo "CPU - [FAIL]"
++else
++	echo "CPU - [PASS]"
++fi
++
++echo ""
++./psi_test memory
++if [ $? -ne 0 ]; then
++	echo "MEMORY - [FAIL]"
++else
++	echo "MEMORY - [PASS]"
++fi
++
++echo ""
++./psi_test io
++if [ $? -ne 0 ]; then
++	echo "IO - [FAIL]"
++else
++	echo "IO - [PASS]"
++fi
+-- 
+2.17.1
+
 
