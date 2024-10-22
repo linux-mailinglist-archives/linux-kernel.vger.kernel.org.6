@@ -1,117 +1,229 @@
-Return-Path: <linux-kernel+bounces-376545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840599AB319
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339ED9AB32F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AD21F26223
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:01:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19332851DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6F1BCA01;
-	Tue, 22 Oct 2024 15:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A11A1A2C04;
+	Tue, 22 Oct 2024 16:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqlf9Fe/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Zl++sZGc"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4981BC077;
-	Tue, 22 Oct 2024 15:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082C11BDAA1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612792; cv=none; b=ZwpJBMcAgSZHEwFmIGXzIZIZpRw06X7wv7Sv4mm7pdkQ5400A+N7GVl633lpg13TcSK4REmdJMl8hvgJryFuZKpKplnABHErUVHeUWuHnjM1C/uki68fgEuvO0tXPvf2U0xb90Wgvao3DggtMZ788p88pvEm7PZYqfJvfnSv+es=
+	t=1729612801; cv=none; b=t+liBLjGdzsMcGQEo0L10nFfqna5+bIw92abfoedlkMVaF16rYJfQ8I7hYDXgmO0l70toFfwohPZqUVrPZDMG1Cov48Gn2jXDlFhREewMWdhJem33G4It8bCP9qRygVkEEdqUy8ju1/ZXNHJXR9rYY7a4HqymOUmUGXxrEKdB8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612792; c=relaxed/simple;
-	bh=b82FuBLPKP3F01X5HLQYV4L/cPxtWxQfdRBNQm1O/+0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W70dA1kTjosfOmLyQZYNPLmg5/SG6DVp+tWpuIg8+O88tL7Y6rSPIsE1un65ZAZ+pBeCDGo0XkVo3v7erpTu3Z05dmjbVzY4IV4jI9+M5b5PHGk4OAA42jm8Ewzn3wDO8bF7sNpqjOB9ShsA30Wqrsjd7B90y61utt5V1wckbTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqlf9Fe/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8DBC4CEC7;
-	Tue, 22 Oct 2024 15:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729612792;
-	bh=b82FuBLPKP3F01X5HLQYV4L/cPxtWxQfdRBNQm1O/+0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=kqlf9Fe/9Ma+6jqXO3MzRI9Pcl5eI09XfwgcYUygNYtEfihHCH49Ieu6S8unqY+ft
-	 lBpcVyuPXQ5k4VI6c0AC7g3Ox7wR8vtOd5llcvgCRcjcPnKXcWjpYSUcDqLN7MvL54
-	 u3laCiL3LpiUlm3mNWQPYhK2WBN1UA2swSNFlg3D+E4PqcSunz6HLwZy5YaUWDHlUW
-	 1k5bJsE8+tsgboZHca176mm90X3GGQpMPenEw7UawR4Suz9LuYZ0pbxlP803aXnEjv
-	 bDX/b8U7eQZraK/qy41P3IZBnUxc4I2Ex1ZtMWtwpiGR3BMeNp7pTaF3BKVOTlrod+
-	 MHMN0clORn4+Q==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 22 Oct 2024 16:59:41 +0100
-Subject: [PATCH] docs: bug-bisect: Add a note about bisecting -next
+	s=arc-20240116; t=1729612801; c=relaxed/simple;
+	bh=Y/LX8W9dqrr6ALxZ8wGr5EDNPV1IjW1SCOSfcQnQQtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ilj/UbUtqtEk+AHtYca3huvhdLZ6X6JPqA3fjpqOtUBPuW5t071f+cSl68yDywedTD1C+NqzrvOLHycj/HNU9sY2d5xzyN6K6CypJUH+X3Xgk+2RB3rfHo90PiW86axOvLM9mq4Qm18rSLxEv94kXt2i+F2Fp4QjohUrf4IZzRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Zl++sZGc; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4a47c20b162so1557978137.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1729612798; x=1730217598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJnNbaojXN4c6BbsBJATwMXWi0Si+n6hGv93cDOPn88=;
+        b=Zl++sZGc5TMYLcfzlIxpz5ouqF9usNMwCNTLVbm3Zt0hjeaLe5V2QbIkUndMQW3Yy6
+         2tPQGzOKvwZ2M9jKYHa5dSLQsMg/VUuNbwacWArUC8CD6AbR8N7kiY9MZtTXTDl8Gfgb
+         ZQlLooFyWWSPqCxO05DvFizqeEMCZBBB47xIN+r2QraOaCB6CZxm7X4HU3mMAtXcd4CN
+         /VT9tOEwnpPbz56m0rOW0t3mY4ZcDH7FzrIG4TvxoQeyC2J+DVP6p9OFH7l2D7F0s6bZ
+         T7iwQvRBr8xPg6bWPxJ0WOBZPxj0TsWPZypMEActggkK08uUOB6lhZrtYBD7sNIh7eLl
+         VUGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729612798; x=1730217598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RJnNbaojXN4c6BbsBJATwMXWi0Si+n6hGv93cDOPn88=;
+        b=phuHrStVlc/LE+379Dg2YaQeiUAIHQoeeiWFPlkkuwdujjmxE89iJVR8roGuioXYDI
+         mCYw3VkXSER/QKRax5dF4Qdi2zIuvpDczaKxRTq8XM0sCNj6GUOCGJmGDTItEj8UwWbY
+         9OylRKGP7eILrEeCQktThydRO5VZJQ+imX0aGweuLT0I2XeQ8Ae0dTXWUMCb5luoFwj4
+         //88V3zuCtiIfx+Rrhu6T9PiHmOOg3PwwlMQcpBMP52K6uZNTLYfKuDq4v/RcAiPSRmk
+         skDWs26Zuvdf9Z2GfRClWUK7sqslj5NhoP65dw/IgOUByzsXAclu+QcuVa8rIeWgzUQX
+         o2aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXm24/0XlYbfQ23h135Y2oTFhpga8EnCnNx5fnDoq+PvcSi84WpmQ+ZAz1p9n+ivzoPx/BMjzpEv3LiAP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyuou+4NsHzafFKwdvbrMCjUWdoyI/jPXj9yAFcyJI+bayzPK8
+	ywg7rAtj0ejAeHqQnLzZWqEVwQy6zOWMf/3MfJ7D92oQpJBzBgLRtOspiot++A==
+X-Google-Smtp-Source: AGHT+IHz/1R5EH1N0X+mlRH1neLqyF7ZpErCrujYzG9Gm9PrcwwIZC6JljjI4sApXWeBIzcjrW5OWQ==
+X-Received: by 2002:a05:6102:3710:b0:4a4:6ec4:7d31 with SMTP id ada2fe7eead31-4a5d6bb234cmr13851852137.20.1729612797824;
+        Tue, 22 Oct 2024 08:59:57 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::35fc])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c7248fsm30729551cf.36.2024.10.22.08.59.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 08:59:57 -0700 (PDT)
+Date: Tue, 22 Oct 2024 11:59:54 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: huanglei814 <huanglei814@163.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	huanglei <huanglei@kylinos.cn>
+Subject: Re: [PATCH v3] usb: core: adds support for PM control of specific
+ USB dev skip suspend.
+Message-ID: <bcd902e0-3744-47f6-9d19-3d712ba3fece@rowland.harvard.edu>
+References: <20241022090905.9806-1-huanglei814@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOzLF2cC/x3MTQqAIBBA4avIrBtIsd+rRAsbp5qNhUYE4d2Tl
- t/ivRcSR+EEo3oh8i1JjlCgKwW0u7Axii8GUxura2PQH4SLJKYLAz8XettR64h7NzRQqjPyKs9
- /nOacP+OQR1FhAAAA
-X-Change-ID: 20241022-doc-bisect-next-d47c6ace8a95
-To: Thorsten Leemhuis <linux@leemhuis.info>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1571; i=broonie@kernel.org;
- h=from:subject:message-id; bh=b82FuBLPKP3F01X5HLQYV4L/cPxtWxQfdRBNQm1O/+0=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnF8v2hrtl0MvUB2SWMg8hJALTDZRpJsxn8eV+VQoF
- GL/ZWqKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZxfL9gAKCRAk1otyXVSH0GffB/
- 4wZKnxPSOH5xzPYQO4WpZy7gaN70nlIYPfOL8LTWJiPt6CJMrNiUPOlJ2j5aFyzGH/H6HX4EySiJtR
- Kccr8fOGZicySAMoMFhc0v/LfQpqo2TEI3RXs944vDZ1xonfZUqgQjH4FoLNqv3d10TYkZANA9NvWL
- 9Hd0KYsrzLMDQfKsr6NQBFy1WN15zn7HhtWB4RdHQvSyse4VbwkyzdPX4c7GBaKsRp9QPNN129fJQx
- Sp3cQCOH9zk35Fu28IM5keiuuSBPzn3TQh3XdUYoeNGM4aUhyLnClgLs7SuwssLzw9UnL1TqpZy5Dy
- fB1NQXinOMrDLLV0GUBN+16/zJyyF5
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022090905.9806-1-huanglei814@163.com>
 
-We don't explicitly mention anywhere in the kernel tree that bisects
-between -next versions won't work well and it's better to bisect between
-mainline and -next. Let's add a note about that to try to help people avoid
-this particular gotcha.
+On Tue, Oct 22, 2024 at 05:09:05PM +0800, huanglei814 wrote:
+> From: huanglei <huanglei@kylinos.cn>
+> 
+> All USB devices are brought into suspend power state after system suspend.
+> It is desirable for some specific manufacturers buses to keep their devices
+> in normal state even after system suspend.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/admin-guide/bug-bisect.rst | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Why is it desirable for devices on these buses to remain at full power 
+during system suspend?
 
-diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
-index 585630d14581c7e0bdf9dd3b66d427793d41925b..eef6921a9542ef276c097e5861ca4efe5812ea0d 100644
---- a/Documentation/admin-guide/bug-bisect.rst
-+++ b/Documentation/admin-guide/bug-bisect.rst
-@@ -109,6 +109,18 @@ With that the process is complete. Now report the regression as described by
- Documentation/admin-guide/reporting-issues.rst.
- 
- 
-+Bisecting linux-next
-+--------------------
-+
-+Since linux-next is a series of merges rebuilt every day starting from
-+Linus' tree there is no commmon history between multiple versions of
-+-next. This means that the history of a given -next release won't
-+include prior -next releases which confuses bisect if you try to
-+bisect between them. Bisects will run much better if performed between
-+-next and the commit in Linus' tree which that version of -next is
-+based on instead.
-+
-+
- Additional reading material
- ---------------------------
- 
+What about wakeup requests?  If the device isn't suspended, it won't be 
+able to send a wakeup request if it needs to tell the system to return 
+to full power.
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241022-doc-bisect-next-d47c6ace8a95
+What about runtime suspend?  Are the devices on these buses supposed to 
+remain at full power all the time, or only during system suspend?
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> v2: Change to bool type for skip_suspend.
+> v3: Rebase and update commit message.
+> 
+> Signed-off-by: huanglei <huanglei@kylinos.cn>
+> ---
+>  drivers/usb/core/Kconfig     | 11 +++++++++++
+>  drivers/usb/core/driver.c    | 14 ++++++++++++++
+>  drivers/usb/host/xhci-plat.c |  7 +++++++
+>  include/linux/usb.h          |  9 +++++++++
+>  4 files changed, 41 insertions(+)
+> 
+> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+> index 58e3ca7e4793..69778aa7b913 100644
+> --- a/drivers/usb/core/Kconfig
+> +++ b/drivers/usb/core/Kconfig
+> @@ -143,3 +143,14 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+>  	  ACPI selecting value 2 is analogous to selecting value 0.
+>  
+>  	  If unsure, keep the default value.
+> +
+> +config USB_SKIP_SUSPEND
+> +	bool "Vendor USB support skip suspend"
+> +	depends on USB
+> +	help
+> +	  Select this the associate USB devices will skip suspend when pm control.
+> +
+> +	  This option adds support skip suspend for PM control of USB devices
+> +	  in specific manufacturers platforms.
+> +
+> +	  If unsure, keep the default value.
 
+Why does this need to be a Kconfig option?  Why can't it be enabled 
+all the time?
+
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index 0c3f12daac79..05fe921f8297 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -1583,6 +1583,15 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int r;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_SUSPEND)) {
+> +		if (udev->state != USB_STATE_SUSPENDED)
+> +			dev_err(dev, "abort suspend\n");
+
+You should not use dev_err() because this isn't an error.  It is the 
+expected behavior.
+
+Why do you test for PM_EVENT_SUSPEND?  Don't you want the device to 
+remain at full power during other sorts of PM events also?
+
+Why do you test udev->state?  Don't you already know that udev is not 
+going to be in the SUSPENDED state?
+
+> +
+> +		return 0;
+> +	}
+> +#endif
+> +
+>  	unbind_no_pm_drivers_interfaces(udev);
+>  
+>  	/* From now on we are sure all drivers support suspend/resume
+> @@ -1619,6 +1628,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int			status;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_RESUME))
+> +		return 0;
+> +#endif
+> +
+>  	/* For all calls, take the device back to full power and
+>  	 * tell the PM core in case it was autosuspended previously.
+>  	 * Unbind the interfaces that will need rebinding later,
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index ecaa75718e59..8cbc666ab5c6 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -265,6 +265,13 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+>  		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+>  			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+>  
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +		if (device_property_read_bool(tmpdev, "usb-skip-suspend")) {
+> +			hcd_to_bus(hcd)->skip_suspend = true;
+> +			hcd_to_bus(xhci->shared_hcd)->skip_suspend = true;
+> +		}
+> +#endif
+
+"usb-skip-suspend" is an odd name for this.  "usb-never-suspend" 
+would be better, in my opinion.
+
+> +
+>  		device_property_read_u32(tmpdev, "imod-interval-ns",
+>  					 &xhci->imod_interval);
+>  	}
+> diff --git a/include/linux/usb.h b/include/linux/usb.h
+> index 672d8fc2abdb..3074c89ed921 100644
+> --- a/include/linux/usb.h
+> +++ b/include/linux/usb.h
+> @@ -487,6 +487,15 @@ struct usb_bus {
+>  	struct mon_bus *mon_bus;	/* non-null when associated */
+>  	int monitored;			/* non-zero when monitored */
+>  #endif
+> +
+> +#ifdef CONFIG_USB_SKIP_SUSPEND
+> +	bool skip_suspend;		/* All USB devices are brought into suspend
+> +					 * power state after system suspend. It is
+> +					 * desirable for some specific manufacturers
+> +					 * buses to keep their devices in normal
+> +					 * state even after system suspend.
+> +					 */
+> +#endif
+>  };
+
+This patch will prevent the USB devices on the bus from being suspended.  
+But what about the host controller?  Don't you need to prevent it from 
+suspending?  After all, a USB-2 device will go into low-power suspend 
+mode whenever the host controller stops sending packets -- even if it's 
+connected to a USB-3 host controller.
+
+Alan Stern
 
