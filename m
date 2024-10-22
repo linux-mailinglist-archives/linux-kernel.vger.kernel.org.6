@@ -1,225 +1,217 @@
-Return-Path: <linux-kernel+bounces-376317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F48C9AA31D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E329AA321
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B66AB211F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:29:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C03D2B22756
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F67A19E833;
-	Tue, 22 Oct 2024 13:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6179819E96B;
+	Tue, 22 Oct 2024 13:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSf9I5Tk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="urP4GamE"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2056.outbound.protection.outlook.com [40.107.94.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3EE1537D9;
-	Tue, 22 Oct 2024 13:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729603740; cv=none; b=Ejx+nmdsWlNars7eHEBRaAX3ovNHFQXhvFJa7YWCPCgCRaPyj6wAFTtHEEVMobtOHfmvvX1ygyRSVXLHDIWT/U1v+Y/iaKoBmEvjUzx6vhD0y+gLsNfPPdZQXb+JAvgB79/X4XR+oN1bSKTbH0ApGXGEJPwXJdCuBikVdW0m7ro=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729603740; c=relaxed/simple;
-	bh=8nd1c4//eMXRbs/k0wkH44JygPUzZ9W7NiVGYqdCGxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QB0i5MF0jrgIT0EWc+s3u+VR7nSkI7jOPLuwZ+i3D4bOK9WsZt36z8a37eOI8dD9hnwbGTHiHS/9qnxEhkzCmhSjG1m52dmSSKdbqsv4HvyFPyrRPJd37SgYtbQk9pJJEDT3cCZhjJK9Hw7q9MdXuTxhExh5NfaqyzYvmlMDc2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSf9I5Tk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F69AC4CEC3;
-	Tue, 22 Oct 2024 13:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729603739;
-	bh=8nd1c4//eMXRbs/k0wkH44JygPUzZ9W7NiVGYqdCGxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSf9I5TkHcJr4WiGwZV4Xmq8BtBnE+j17nvX6qn4EO0JYq17RN7+ppcp81J4fJtUU
-	 267NhGEFuq2gFRu61VQeV39IWJ2wGno8KAe1LpLDT//IVaroCpVb8A1uWymRri4LX6
-	 +bn9ZJQbWlU9Y4Zhs/VzPeIg7n/KmNs8UXpy9rFjn9BKiOIeq6c4bhaP6bWvOnbkFH
-	 ePZu9DzeYSXz4qv/+Ab6pHQopB4uoZ782rygXWrH9JMSRQBsncVtdN2qBPaGK/3Bhy
-	 9iTnaCSlpV+BLaiEbQfGRvY6a3jNEF8W3yAuywpauTm/kIKY7DkcAanWxoJBzbb94d
-	 s17+qRyQPFkcg==
-Date: Tue, 22 Oct 2024 15:28:56 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
- PREEMPT_RT.
-Message-ID: <ZxeomPnsi6oGHKPT@localhost.localdomain>
-References: <20241004103842.131014-1-bigeasy@linutronix.de>
- <20241004103842.131014-2-bigeasy@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84C13B2A4;
+	Tue, 22 Oct 2024 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729603790; cv=fail; b=XXVKT+fuIofZO+dqjLl495djRpPTM8s7zS35QVt668JkeW/+hUxrov1M5eKWyCyeaYyBjO6DSG5GWsBa0dBAgtyJ4T1+8ce5pxnjf4eAHObJjumC8qCYysPWoulB+M/r5xH8k8IY+ajMvFTHzhqv6mbPEXm3gn2MuXdA9qgzhFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729603790; c=relaxed/simple;
+	bh=YvrwEJ2rbSLeM5qQxcsCXlhrWARrCEv/DEsekNJkAr8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=unlnCp5ZWGxYOkqJXGE4OeCJK5D/6Uhz3uX2snu3vh7qdn5uP0n1CfI34r0NQV8mTjJZk5ZhH5BBzs1F/65lOTbOfaj/yoUe0elD6nIuerZhFCs4kshaAZa30rNaJyrosLO61AkhMIXWKQVXHCJdz2jeDEHLIYXDAnq2KonB5/k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=urP4GamE; arc=fail smtp.client-ip=40.107.94.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ioizTDmKnkccifQc3fz/aCrQ44zw2t6pGmbUGRRGkoQ/QI7x/NPSj8/rOT+cxARbvPnr5MXyhbj+K8fUPRaptOZMiCEdfGSWu1cW3iG6mk9UqkLqdsvY5PECz2HgQVBc8SDGhDlRl23QTAzZ0C1SH5na/8jqsR1Vl3lLyWr0VU8CcV50aoeZFYdIwE15eF/c9dbmRojyaNXqZoAHUNwMKPUGIrNE52rc3kSuB6dOvyNctw5IE0USDvov0iKaVdzeg/uz/EGEbK3ME96T6hwiptbpwhK+PjkQ1hevIRBwbe0gAWLQSeneKgaawLZ3x14OPvwQ1pOfyaw3DRnxxsll3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bs0NPTuhjq+rZTVnHkahNkFStuzYPFWVR4sMrSOfVb4=;
+ b=MUEOtvA9TfvRPypJe8GBsnzKdo2mZO8ulLNTMdS5OVUwM5ONAQxBGVKuvwKyjqlwnDg2spiD77FuAd/SM0N9c8LnTsg0IwX8raZNnDLHIVzj2nCoCpmtWRvll2yoYu0O8VomnJc24H/2Nk3hyoJI9zSOr9YEdFSq9L9mxH/nOIv5Z4qgSHCRkA3kxnWAoMLoeECbCfznTH4ABv6R4D1aZ8CtMOElJ4f0u6l2Tb2Utv8TF7nJj7FcHc2DOdzXoFSxMG34sQ6+oZrH4MMtBDwvqknOHG+df/7eyDkHq8xBV55jBoQS/KdJnTn2k4zQjF6WQIMu0/MEoGGQw0jr2oB5oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bs0NPTuhjq+rZTVnHkahNkFStuzYPFWVR4sMrSOfVb4=;
+ b=urP4GamEvA3cuZCl2ut8FlY94uC+f8N3Bzc34vrkk8OizhWOIjVv+NDdrXwJTNNUJICE+Y8/u7bOAoaYKJ4xecu/32OR2WqDgVdFZgmnUr7e1rb+gGObrrSjP7AMnNryKf9FuviPlcOPcNzOoZJZDIcbH27oReU9Xz5aEkY+ga8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ MW5PR12MB5597.namprd12.prod.outlook.com (2603:10b6:303:192::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.16; Tue, 22 Oct 2024 13:29:45 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%6]) with mapi id 15.20.8093.014; Tue, 22 Oct 2024
+ 13:29:45 +0000
+Message-ID: <aaec3243-afb3-4021-a91a-a868595ffa69@amd.com>
+Date: Tue, 22 Oct 2024 08:29:43 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
+ logging
+Content-Language: en-US
+To: Dan Williams <dan.j.williams@intel.com>, ming4.li@intel.com,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
+ bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
+ Benjamin.Cheatham@amd.com, rrichter@amd.com, nathan.fontenot@amd.com,
+ smita.koralahallichannabasappa@amd.com
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+ <671703521fd1f_2312294e3@dwillia2-xfh.jf.intel.com.notmuch>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <671703521fd1f_2312294e3@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR18CA0017.namprd18.prod.outlook.com
+ (2603:10b6:806:f3::34) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004103842.131014-2-bigeasy@linutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|MW5PR12MB5597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1de912e1-bd64-4809-0394-08dcf29d9804
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NmtCM3VsUE9uVHNYeG9MUGh1azFSNG9YWjh6L3FSUVREc2FWN0FBbEJDWFh6?=
+ =?utf-8?B?WnU5OHlzQTVJZUI5YzlxZCt4QWxRUFJQVHNjWE5kblNhcFN5U1g4MG9IN1pQ?=
+ =?utf-8?B?aStKZEJPaitQUGtqUWRLUlRSRk82bWxxWVBlbWE0cWNMVVEvNmdaZlBCRTNH?=
+ =?utf-8?B?UkhtYUU4ME1xcmJVeWVodkk2VmErWUlFbjRxZFNLeWRPN2p1SzRGTmVLTEQy?=
+ =?utf-8?B?ZlRnNE1vaWhNUXMzdzBicnhBK2ZGS2hweWwxa3JSWGJqTTRYUmdkZ2Q5QTZh?=
+ =?utf-8?B?dGFWT1A4VEVLTmtPSi9ic3pTL1F5M2RIWWJJYnVwSmdpYjJsTi9MVjJhdnV5?=
+ =?utf-8?B?dXR1QWxwNmJhTHdVVU04dVhSWGppNmhNbW5wMkdlZEdaMURaSE9scWlNUXlB?=
+ =?utf-8?B?Nk5URldMRm95V0lGeFM2V3hxMUJldmxHT0c4OVI3WHExaThEVU5pazNHSGxh?=
+ =?utf-8?B?K1hKN3RhZVJudGpKcDI5TndYZHVHM0xVZnZxaTAzNC92YlNuSnp5am9PMGxD?=
+ =?utf-8?B?MSs3TkxQNEdLVktCQ1NQZzMxeWoyZUl2bE1vYXhQT1J3bGNaeDh2enh0azdy?=
+ =?utf-8?B?eXY4alhTaFFDSVh1YklGWjk5U3RvWnplT0F6aFN0blVtczZYeFFtbVVRc0hM?=
+ =?utf-8?B?a3MyWHE1bHhhQWw2Um05OGxlbXJuUDJONzNJVm1hRUtEUmlpMGtyekhZa2Vn?=
+ =?utf-8?B?WGpBNW1BSURQeDQxZDRpWEZLYW80WWRvcWJqTENjZEJ2bHkzWjhFOCswTHZO?=
+ =?utf-8?B?UEl0aENiTVk4c0hRc2pHVVNSb0VkMjg4cDdTZ3pKM1JUZ3VQV0RKMjVldWhK?=
+ =?utf-8?B?VkpLN1ZodFBiWi9zd2NGVUw5U1p6dGlzQTR4SWZHTFhjbWNlYTQvR3FRZ0o5?=
+ =?utf-8?B?Z3pRR2g4ekkrTUQ5SVFDKzdpZXJRZ3ltN0NBakt0NnFaeVR1cSs1ZEZYQ3Ax?=
+ =?utf-8?B?ZXVGbXZvZVluWS82UlVuMHRTOXRXai9EWkhKV04xT05SeVFkSkdCblh3cExu?=
+ =?utf-8?B?R25lOG1IdDdyazFwS2NXR2puUk5JUnNNazMyYmJOZGdneno3NFZJOWxTOWVn?=
+ =?utf-8?B?a2tLdGJyUjV4R2pqMkRtS0Rxcjl2bXdidXo1UWMxcGNGcnYvOUFHT0pmVjM2?=
+ =?utf-8?B?UmZmK0hLamhYd1ZNN3ZpN1NQQnAyTmhHUE1PWjhQaDZHWlY5RmtzUi9vSEJt?=
+ =?utf-8?B?b0tHQmNvbklkbmRjUThXZUNZbHJ3elpBS3lFajJyN1J3ODRxRzcwRmN1MkJJ?=
+ =?utf-8?B?V1FVelEwWnpPODFpOXZyaXBldlhyeVJ5YmtBRDhtVVdLQkxweHRBbGl6UlYw?=
+ =?utf-8?B?UjI2cEFVZGk2ZnZFQ0J5TEVma0RRVWVEbHpQUHBxTm9HN2J2YVNjVzFPVVZJ?=
+ =?utf-8?B?ckFOZ0o4WmMybWdtZTZJbFl3YU5iYVM0V3BJVU9kbFI1U2tsRUlkSTI5QURx?=
+ =?utf-8?B?MUIzektHODBybFJYeUZBREp2c0h3bzZNY240YVFHQmczd2FzUGpWYVhlNlh2?=
+ =?utf-8?B?dlpRZTlhQkdOL3QzMVI3ME53amRwQ05rdHo2SC9kUEloVGFUM2M4VDIvVU5K?=
+ =?utf-8?B?SlA5RmEzOHFQL0tZSVpwQ0dsRktEOUlJWG9VV1RpdzFTS2djbG4wWnladWdt?=
+ =?utf-8?B?dHVSNmRheFplT0JYdVdWWkdNWm1SbkFRNW55MTlYUXJNR092VVVrRjg1c0VZ?=
+ =?utf-8?B?enRUV24xOEltQ3ZUNWFVY0YwL0lqblV5TnJnbmhqeTZkUUJnU3dlYys3NWxT?=
+ =?utf-8?B?SXFnbDZtSG10MlpKVnM2R0RUM2hjVG9DL0d6Sy9DWndTUXVNeDFNUENBcWZB?=
+ =?utf-8?Q?aIAItwV+Z/GYLNE8LaPcvj5SqlmSDS0c6RbJU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VG9WbzYra3E0N3htV1NTRFoxN0N3WmswOUEyME9BUnRQam96a2ZrTVJMM2Zp?=
+ =?utf-8?B?VjV6Sk9zbEE2NWszUmNqVDA2LzZQMmFITjF4MGxxTElWNGNXMGJSMFh6NGRn?=
+ =?utf-8?B?b0ZrbzdTQWlLRDdwQTJNSXZjVDBYaHVzY1d1dkY3VHVxZzdrK2psNHl5d2dO?=
+ =?utf-8?B?WEkzaFhoaGlFMkU0VnlubGttRU9YNDhqTStsM2tvandncHQxNUxmRnVwZGxB?=
+ =?utf-8?B?VTJSSXJCZC8weGFiL05JbzhHU2RXNDM3VWl5T1FuZlVYdmE0ZVhyUzBzeUJl?=
+ =?utf-8?B?YnRJS1VLNWRHVzFlcFgxUVJ0ZmpOeGFqS0pKcjlpdFNuMlNsQmloNkk5OHlP?=
+ =?utf-8?B?ZHVwUkpnOWpoWHJHdVFCbnYrMlJBUUE0KzF6cVlMaUNSZmE3RmhmNjd4cU5Z?=
+ =?utf-8?B?eW1aZHZ1OEdCNC81RDdtSHpRTjdnbjF5d1pBQ0VlalhiNi84MFgwUzc3Z2xy?=
+ =?utf-8?B?RGI3UFNSSXdZUHlOME1OMzUwWjgxaEJxZ0dlbDdsRTU5TjFtZDRrK0tkWXEx?=
+ =?utf-8?B?bWoxUlRQSkZDcG8vcm5MMk1hNTY3dTByVXJhY09lWWM2TnE4Yzcwa3JvZHVi?=
+ =?utf-8?B?aTVEMmtuZ0pwQ0RUczhjYXZpR0R4SHhGS3grc0xWWGRmdWlkOXFSdUN0Qjdo?=
+ =?utf-8?B?ZlY1TUxEblpsMEJxVGZlY2xiZUQzZjBDay9VUytSbXlaOFNpY0hHZDJpNXNZ?=
+ =?utf-8?B?RUpweUVtMm5YWTQ0bnZNUmYvS0dZc1RGL0cwdS9lR0tiS2I5c0V2MVBMOTIw?=
+ =?utf-8?B?K1lxU1p2ZzcvaVdIaU1yUS9qaVVsMDdubmZoUmtObmhhMHZRb0ZEQzJiZXEv?=
+ =?utf-8?B?WDB3YWsrT2FxWWRmaHMweFgzSURwZlJ5ODh4ZTIrUlJTQkt2U0kzb2xFUVZ1?=
+ =?utf-8?B?RzRwR2QxRUo5NlB2VkV0b2FyMkYyejdBNVcrcDlIZ0t6d0V3Vk1XcFdkalVa?=
+ =?utf-8?B?QWh1bUpLU1E4ZHR2RDFoZHowTCttQy9KVDQ5a0xTcDRhUm0vM2J0dE1OWVQ5?=
+ =?utf-8?B?eUV3T2tvZWxxS3hmem00UHZrenQ2MWZQZ1ArVjBROW9qekxSaDFxeGpLZ1Rv?=
+ =?utf-8?B?YW5ZY1UzZUx1ZmVhQVh0LzhodC9TVmEvbTJUaG1zb3d2OEZENlFUREo3WWg2?=
+ =?utf-8?B?S09LdVQ1KzBqR1hDOFZWZkNhdGF5eWFnZHVmTWZ1MmQ2ekpOZmJ2MjlFcnIx?=
+ =?utf-8?B?aWNMelZqeGcwbmpIcHNRTXpaYjF2K21CcEhXb0JmTThDWE1GSS94WFhlRzBL?=
+ =?utf-8?B?UUx3aWo1eGJUcHFmaExoQ0prUjB5QXliOS9ZZVJKYytTcTZlY3JmTjhaZ0RO?=
+ =?utf-8?B?M0xoZVNkTStPQ0JPMU43RXVxNEl3eFVUTjFic1BvazFIeVU2UjRhaThuL29r?=
+ =?utf-8?B?dlJOOTdJUEluNWxNYWhLL1BKLzFoZEFNbW42SnJzaHlWNjBzTk5UUHFEN1Yv?=
+ =?utf-8?B?eGlGa1lnSFg0NVR3UnVaVFFnenZ3ODU5Ukw0QzdKTStyRUk4N2tsc3NEeS9N?=
+ =?utf-8?B?WXduYXRQMllWUVB5dThvbVNOOFhGTmUxYXhyUHlYankwaXB1Q213d2hGRjda?=
+ =?utf-8?B?ZWFiUTdwTEJ0aFN6enhFUEphditzcmxOSGNMZDBVQ0hpNmNtVjM2aldYM25B?=
+ =?utf-8?B?N0Uyc1RYTkh0bk8xcTNpNDVqQVJUMzc2Y1R4cmx4NE9HRk00UDRCSEtYYzd0?=
+ =?utf-8?B?cGd2aUo2NWlpdlYyNU8vK2RRb2diRDBmc3M2Q3prNWlDRTBUWGlsbTJCVW5w?=
+ =?utf-8?B?TTRCRmZaWi8yUGxtSXdCNjJxNTFjOTZ3TUFDOG9PUnMrVXJ6R2Mxd3VhSi9v?=
+ =?utf-8?B?d3kzZU9MZmMzYkR6V0ZnR1ExVUNlWnMybUFaRFVKem1OVThKTUVYT1BjYlJW?=
+ =?utf-8?B?OUE4SWh0V0RyN2RhU01FcUpkdjFzbVlOd2V2bWNpYzV0OXB4aS9ucC9qYWM5?=
+ =?utf-8?B?S3h1OUg2L0REMHJsZ1h5eGkrcVpxNDhBODIxaEZodGlLa3hEK1hWTEpkMlgv?=
+ =?utf-8?B?K3hIOTZReVdNRXN2MDBJZlg3aGlwU2hvZXpUOUxRWG05S215UzhzVk1VVCtF?=
+ =?utf-8?B?UTRBL2NsbzNrOTdib2cxTklQWUdwM0RPbzg3SFVteFEyTW9WdEs0RkpaN29V?=
+ =?utf-8?Q?bxbpjN2t++vkaiArX9KBy82HW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1de912e1-bd64-4809-0394-08dcf29d9804
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 13:29:45.6152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /SQxZJBXWyTjXi2t5Ix9NYveqhs3Z45htdewxbE7qFoOpwwSfAsfJ9q5vyaU2kgN6e3MF/+9U9s+UdvOhCu8dg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5597
 
-Le Fri, Oct 04, 2024 at 12:17:04PM +0200, Sebastian Andrzej Siewior a écrit :
-> A timer/ hrtimer softirq is raised in-IRQ context. With threaded
-> interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
-> for the processing of the softirq.
+Hi Dan,
 
-It took me some time to understand the actual problem (yeah I know...)
-
-Can this be rephrased as: "Timer and hrtimer softirq vectors are special
-in that they are always raised in-IRQ context whereas other vectors are
-more likely to be raised from threaded interrupts or any regular tasks
-when threaded interrupts or PREEMPT_RT are enabled. This leads to
-waking ksoftirqd for the processing of the softirqs whenever timer
-vectors are involved.
-
->
-> Once the ksoftirqd is marked as pending (or is running) it will collect
-> all raised softirqs. This in turn means that a softirq which would have
-> been processed at the end of the threaded interrupt, which runs at an
-> elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
-> priority and competes with every regular task for CPU resources.
-
-But for ksoftirqd to collect other non-timers softirqs, those vectors must
-have been raised before from a threaded interrupt, right? So why those
-vectors didn't get a chance to execute at the end of that threaded interrupt?
-
-OTOH one problem I can imagine is a threaded interrupt preempting ksoftirqd
-which must wait for ksoftirqd to complete due to the local_bh_disable()
-in the beginning of irq_forced_thread_fn(). But then isn't there some
-PI involved on the local lock?
-
-Sorry I'm probably missing something...
-
->
-> This introduces long delays on heavy loaded systems and is not desired
-> especially if the system is not overloaded by the softirqs.
+On 10/21/24 20:43, Dan Williams wrote:
+> Terry Bowman wrote:
+> [..]
+>> Testing:
+>>
+>> Below are test results for this patchset. This is using Qemu with a root
+>> port (0c:00.0), upstream switch port (0d:00.0),and downstream switch port
+>> (0e:00.0).
+>>
+>> This was tested using aer-inject updated to support CE and UCE internal
+>> error injection. CXL RAS was set using a test patch (not upstreamed).
 > 
-> Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
-> timers thread and let it run at the lowest SCHED_FIFO priority.
-> Wake-ups for RT tasks happen from hardirq context so only timer_list timers
-> and hrtimers for "regular" tasks are processed here.
-
-That last sentence confuses me. How are timers for non regular task processed
-elsewhere? Ah you mean RT tasks rely on hard hrtimers?
-
-> The higher priority
-> ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
+> Thanks for these test outputs!
 > 
-> Using a dedicated variable to store the pending softirq bits values
-> ensure that the timer are not accidentally picked up by ksoftirqd and
-> other threaded interrupts.
-> It shouldn't be picked up by ksoftirqd since it runs at lower priority.
-> However if ksoftirqd is already running while a timer fires, then
-> ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
-> Ideally we try to avoid having ksoftirqd running.
+>>
+>>     Root port UCE:
+>>     root@tbowman-cxl:~/aer-inject# ./root-uce-inject.sh
+>>     [   27.318920] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+>>     [   27.320164] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+>>     [   27.321518] pcieport 0000:0c:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>>     [   27.322483] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/02000000
+>>     [   27.323243] pcieport 0000:0c:00.0:    [22] UncorrIntErr
+>>     [   27.325584] aer_event: 0000:0c:00.0 PCIe Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
 > 
-> The timer thread can pick up pending softirqs from ksoftirqd but only
-> if the softirq load is high. It is not be desired that the picked up
-> softirqs are processed at SCHED_FIFO priority under high softirq load
-> but this can already happen by a PI-boost by a force-threaded interrupt.
+> It strikes that by this point the code knows that it is a "CXL Bus"
+> error and no longer a "PCIe Bus" error. Given the divergent  responses
+> to Fatal errors based on bus I think it would help to clarify that the
+> kernel is panicking due to "CXL Bus", not "PCIe Bus" errors.
 > 
-> [ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
->   local_pending_timers() for tick_nohz_next_event() ]
+>>     [   27.325584]
+>>     [   27.327171] cxl_port_aer_uncorrectable_error: device=0000:0c:00.0 host=pci0000:0c status: 'Memory Address Parity Error'
 > 
-> [ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
->   softirq is currently served. ]
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  include/linux/interrupt.h | 29 ++++++++++++++
->  kernel/rcu/rcutorture.c   |  6 +++
->  kernel/softirq.c          | 82 ++++++++++++++++++++++++++++++++++++++-
->  kernel/time/hrtimer.c     |  4 +-
->  kernel/time/tick-sched.c  |  2 +-
->  kernel/time/timer.c       |  2 +-
->  6 files changed, 120 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 457151f9f263d..4a4f367cd6864 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -616,6 +616,35 @@ extern void __raise_softirq_irqoff(unsigned int nr);
->  extern void raise_softirq_irqoff(unsigned int nr);
->  extern void raise_softirq(unsigned int nr);
->  
-> +#ifdef CONFIG_PREEMPT_RT
+> ...i.e. someone may not notice that this is "cxl" reference in the
+> backtrace.
 
-This needs a comment section to explain why a dedicated
-timers processing is needed.
+Good idea. I'll add logic to print 'CXL' bus in the case of a CXL erroring device.
 
-> +DECLARE_PER_CPU(struct task_struct *, timersd);
-> +DECLARE_PER_CPU(unsigned long, pending_timer_softirq);
-> +
-> +extern void raise_timer_softirq(void);
-> +extern void raise_hrtimer_softirq(void);
-> +
-> +static inline unsigned int local_pending_timers(void)
-
-Let's align with local_softirq_pending() naming and rather
-have local_timers_pending() ?
-
-> +{
-> +	return __this_cpu_read(pending_timer_softirq);
-> +}
-> +
-> +#ifdef CONFIG_PREEMPT_RT
-> +static void timersd_setup(unsigned int cpu)
-> +{
-
-That also needs a comment.
-
-> +	sched_set_fifo_low(current);
-> +}
-> +
-> +static int timersd_should_run(unsigned int cpu)
-> +{
-> +	return local_pending_timers();
-> +}
-> +
-> +static void run_timersd(unsigned int cpu)
-> +{
-> +	unsigned int timer_si;
-> +
-> +	ksoftirqd_run_begin();
-> +
-> +	timer_si = local_pending_timers();
-> +	__this_cpu_write(pending_timer_softirq, 0);
-> +	or_softirq_pending(timer_si);
-> +
-> +	__do_softirq();
-> +
-> +	ksoftirqd_run_end();
-> +}
-> +
-> +static void raise_ktimers_thread(unsigned int nr)
-> +{
-> +	trace_softirq_raise(nr);
-> +	__this_cpu_or(pending_timer_softirq, 1 << nr);
-> +}
-> +
-> +void raise_hrtimer_softirq(void)
-> +{
-> +	raise_ktimers_thread(HRTIMER_SOFTIRQ);
-> +}
-> +
-> +void raise_timer_softirq(void)
-> +{
-> +	unsigned long flags;
-> +
-> +	local_irq_save(flags);
-> +	raise_ktimers_thread(TIMER_SOFTIRQ);
-> +	wake_timersd();
-
-This is supposed to be called from hardirq only, right?
-Can't irq_exit_rcu() take care of it? Why is it different
-from HRTIMER_SOFTIRQ ?
-
-Thanks.
+Regards,
+Terry
 
