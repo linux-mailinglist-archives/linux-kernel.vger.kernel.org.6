@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-376578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D7C9AB371
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFB49AB376
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0F8B1C2292B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB93280FAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042111AA78A;
-	Tue, 22 Oct 2024 16:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BEE1BBBF7;
+	Tue, 22 Oct 2024 16:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sLFPhCpu"
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="d85gjLzQ"
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0375119B5B4
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37FB1B14FA
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613428; cv=none; b=CY22mZl4V5WTxAA3vP8fdzvgdHy50EqCCPHnrpRwmLqidNw2x37oWu3TRo3aDsUMGO876+HDMzmJgp/O0GK37dLB8lAazPTXhVIJ9tsXfG/lJFsG5kpYn3AQudDenMEB1Y3FwfCD1ytQWWPiGe4syILQNskfN1TyNGsWK2lw4CQ=
+	t=1729613433; cv=none; b=S0p4FUdjrTPrRWmwbJrO1F3CJIRo8pKE+IkUpJAdAJGloGz46AAprm5PLF78DjwuVBpvnXQH3tEF+CtfYnrDFSm2oLt0GsLcXjF97PkbJk0lI8j5LAQh6QAtR7NKhNKTzI6bKlilob3xYlOiT5sT3kGZZDSZ7AtSb0HzphrK02s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613428; c=relaxed/simple;
-	bh=JLUuaMewNefalK0VF7geq/iG13bGuquVBIL13UiR/ow=;
+	s=arc-20240116; t=1729613433; c=relaxed/simple;
+	bh=gKRPBSv5tRdn0WhX8XTWlq6SJW7sHsXoiZHnw6l3YeE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=klivc5Icqr8QMuoLx9l4ZDfhJs3TPH9GmRUIq+PrnN3WWxItWVUl23DBsdBkxMCSgTR2NHg4+T4VuBTFZRKhby3qz3Qyn+f3bXnilB3ASji9YwzqmWE36MyTQEbPOajJNApIorH6+im298sS1eScPC0s5vBBhu0L3EZzIQdXo/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sLFPhCpu; arc=none smtp.client-ip=83.166.143.173
+	 MIME-Version:Content-Type; b=APcCkIBptxZdTMBnj8cNLYiuGX5/2nteWC4/VXvTCAFHImJHRfMZfVHeboWReQEANxeZXVZ+zfQZh9QAJ1GVtCMeHmoiEuA1wPE5vIpkjjnfx2baztksTqOljGohWyEji1ribdjn6+7CIYC+0Ji0BwzYNHqHl/DQB9pNiT/oqe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=d85gjLzQ; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XXxwY6VfPz18vj;
-	Tue, 22 Oct 2024 18:10:21 +0200 (CEST)
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XXxwb27ngzMZV;
+	Tue, 22 Oct 2024 18:10:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729613421;
-	bh=0FnFFgSmLbIus3/9DTzYDbEac7m8xkhy5oAVYFXhDE0=;
+	s=20191114; t=1729613423;
+	bh=KiJAI6pzo/lR1j3ha++zSLq7VEjNzvmIBz7wSSyQs+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sLFPhCpuX34CUItsBRCSErx9d/sbZ90+YPrqznbkbqVEXlrVDKjywt9ugRu/5bmtS
-	 79eBV2vS7ps0tiMRWP7CjMJ9ZNdXvEzdWaOwHW7QikYALNZCLQBwGADeWMXbPDGoxV
-	 L6tHO6WQOADXTs86wRH9YBUfjT55dUiwC0p9lWIM=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XXxwX6vClzxbv;
-	Tue, 22 Oct 2024 18:10:20 +0200 (CEST)
+	b=d85gjLzQ0Yh9evyPoI84SlDBOBY24w/2YvFinONBukFG9wcckRuUv2a63QyteCogX
+	 je+JU/UDduA4izmDb5d6bl4AT81L9hzvuz4iPyuhSPBuKifqTrhwEkjqM2+Wye6H2f
+	 S7Xgx1fOfRNz3a7AZ1ULRVIlDlboGLvaTLSa5i9c=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XXxwZ35zvzn8l;
+	Tue, 22 Oct 2024 18:10:22 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -67,9 +67,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v2 02/14] lsm: Add audit_log_lsm_data() helper
-Date: Tue, 22 Oct 2024 18:09:57 +0200
-Message-ID: <20241022161009.982584-3-mic@digikod.net>
+Subject: [RFC PATCH v2 03/14] landlock: Factor out check_access_path()
+Date: Tue, 22 Oct 2024 18:09:58 +0200
+Message-ID: <20241022161009.982584-4-mic@digikod.net>
 In-Reply-To: <20241022161009.982584-1-mic@digikod.net>
 References: <20241022161009.982584-1-mic@digikod.net>
 Precedence: bulk
@@ -82,110 +82,77 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Extract code from dump_common_audit_data() into the audit_log_lsm_data()
-helper. This helps reuse common LSM audit data while not abusing
-AUDIT_AVC records because of the common_lsm_audit() helper.
+Merge check_access_path() into current_check_access_path() and make
+hook_path_mknod() use it.
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Günther Noack <gnoack@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241022161009.982584-3-mic@digikod.net
+Link: https://lore.kernel.org/r/20241022161009.982584-4-mic@digikod.net
 ---
 
 Changes since v1:
-* Fix commit message (spotted by Paul).
-* Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
-  argument.
-* Fix build without CONFIG_NET: see previous patch.
+* Rebased on the TCP patch series.
+* Remove inlining removal which was merged.
 ---
- include/linux/lsm_audit.h |  8 ++++++++
- security/lsm_audit.c      | 27 ++++++++++++++++++---------
- 2 files changed, 26 insertions(+), 9 deletions(-)
+ security/landlock/fs.c | 32 +++++++++++---------------------
+ 1 file changed, 11 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index c2b01380262c..b62769a7c5fa 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -130,6 +130,9 @@ void common_lsm_audit(struct common_audit_data *a,
- 	void (*pre_audit)(struct audit_buffer *, void *),
- 	void (*post_audit)(struct audit_buffer *, void *));
- 
-+void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a);
-+
- #else /* CONFIG_AUDIT */
- 
- static inline void common_lsm_audit(struct common_audit_data *a,
-@@ -138,6 +141,11 @@ static inline void common_lsm_audit(struct common_audit_data *a,
- {
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index dd9a7297ea4e..698a623a8184 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -907,28 +907,22 @@ static bool is_access_to_paths_allowed(
+ 	return allowed_parent1 && allowed_parent2;
  }
  
-+static inline void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a)
-+{
-+}
-+
- #endif /* CONFIG_AUDIT */
- 
- #endif
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 849e832719e2..de29ce8ff708 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -189,16 +189,13 @@ static inline void print_ipv4_addr(struct audit_buffer *ab, __be32 addr,
- }
- 
- /**
-- * dump_common_audit_data - helper to dump common audit data
-+ * audit_log_lsm_data - helper to log common LSM audit data
-  * @ab : the audit buffer
-  * @a : common audit data
-- *
-  */
--static void dump_common_audit_data(struct audit_buffer *ab,
--				   struct common_audit_data *a)
-+void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a)
- {
--	char comm[sizeof(current->comm)];
+-static int check_access_path(const struct landlock_ruleset *const domain,
+-			     const struct path *const path,
+-			     access_mask_t access_request)
+-{
+-	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
 -
- 	/*
- 	 * To keep stack sizes in check force programmers to notice if they
- 	 * start making this union too large!  See struct lsm_network_audit
-@@ -206,9 +203,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	 */
- 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
- 
--	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
--	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
+-	access_request = landlock_init_layer_masks(
+-		domain, access_request, &layer_masks, LANDLOCK_KEY_INODE);
+-	if (is_access_to_paths_allowed(domain, path, access_request,
+-				       &layer_masks, NULL, 0, NULL, NULL))
+-		return 0;
+-	return -EACCES;
+-}
 -
- 	switch (a->type) {
- 	case LSM_AUDIT_DATA_NONE:
- 		return;
-@@ -428,6 +422,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	} /* switch (a->type) */
+ static int current_check_access_path(const struct path *const path,
+-				     const access_mask_t access_request)
++				     access_mask_t access_request)
+ {
+ 	const struct landlock_ruleset *const dom = get_current_fs_domain();
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+ 
+ 	if (!dom)
+ 		return 0;
+-	return check_access_path(dom, path, access_request);
++
++	access_request = landlock_init_layer_masks(
++		dom, access_request, &layer_masks, LANDLOCK_KEY_INODE);
++	if (is_access_to_paths_allowed(dom, path, access_request, &layer_masks,
++				       NULL, 0, NULL, NULL))
++		return 0;
++
++	return -EACCES;
  }
  
-+/**
-+ * dump_common_audit_data - helper to dump common audit data
-+ * @ab : the audit buffer
-+ * @a : common audit data
-+ */
-+static void dump_common_audit_data(struct audit_buffer *ab,
-+				   const struct common_audit_data *a)
-+{
-+	char comm[sizeof(current->comm)];
-+
-+	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
-+	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
-+	audit_log_lsm_data(ab, a);
-+}
-+
- /**
-  * common_lsm_audit - generic LSM auditing function
-  * @a:  auxiliary audit data
+ static access_mask_t get_mode_access(const umode_t mode)
+@@ -1413,11 +1407,7 @@ static int hook_path_mknod(const struct path *const dir,
+ 			   struct dentry *const dentry, const umode_t mode,
+ 			   const unsigned int dev)
+ {
+-	const struct landlock_ruleset *const dom = get_current_fs_domain();
+-
+-	if (!dom)
+-		return 0;
+-	return check_access_path(dom, dir, get_mode_access(mode));
++	return current_check_access_path(dir, get_mode_access(mode));
+ }
+ 
+ static int hook_path_symlink(const struct path *const dir,
 -- 
 2.47.0
 
