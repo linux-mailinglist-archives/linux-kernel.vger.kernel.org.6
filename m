@@ -1,113 +1,92 @@
-Return-Path: <linux-kernel+bounces-376645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6114A9AB464
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:51:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CE19AB467
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676E81C22FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:51:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A90FB21A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2471BC067;
-	Tue, 22 Oct 2024 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0130E1B654C;
+	Tue, 22 Oct 2024 16:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ygRywrc8"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHIC81dB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AF4256D;
-	Tue, 22 Oct 2024 16:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3471A3AB8;
+	Tue, 22 Oct 2024 16:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615895; cv=none; b=PenGVA3qAteJAnVXE9lZt/Qgftb4bEsICOHJINnQfCeM2swTroO4M8hwQE5tJZP0IDpmqXD2JXSBP8IJ0cg8VNBL1qm6UIJ1VAXsD/N79SohYRB1TxJxfe34GfTNxproHtrzZFbVEUh0vvsh0Cg/uW6iOrmFxgHeQnaUrOrBwFQ=
+	t=1729615910; cv=none; b=EKP5Yyr0l+oBxXW5QWdSHVlolrTniQBlAsLyKuBT8h+uKvN9niibH7+BKMwek/mMkCVbWg+ttKijkzpLKFSd4LirWoFyNugNhVuA7g6TlF3ECtMJsB46Pm4I2YaIA40L18cu/3mIhsQT08BcunbwJ2+prQRedxVLErpwOF/AbIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615895; c=relaxed/simple;
-	bh=i9FeUVlAuL54Xbxnr1rNje3DaQohcv8791Fl6+DC13Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ku1SKGCCpUbm/CM68A5ib9zbxwcSz+q7cd+MlsQ1pgP2tGYVPLvryaEwl081KeIx6CN9SWCO400RA9UwLrFVDSQ32ZNufTNn5V5lfv4LpirT3NRjU08Ygz8vw6xLLPgNwGMH/T7PSoXozxyU0jmKSjKHeetvNnLS/LDnsbLzS+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ygRywrc8; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XXyr33fngzlgTWQ;
-	Tue, 22 Oct 2024 16:51:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729615889; x=1732207890; bh=sF7wyG3xG9g1bvC77ctWmfky
-	A1B6Phef3AGYEAmwYis=; b=ygRywrc8PEjPFunfhdVHLTuRm7sAWDC5spKwJlMy
-	CACEDKm1QlqtzXjmovfEC1NeK6AnknjpSk0mlLKHDq4v+inWTP49T7qiI6ZKnScd
-	955Ck3jcbMBK+wGMPW+UuujvecGJ/AhTdJ2FygN5cqFooh7lEt2xcHyQtFEJip9W
-	iLTAHEcqJxOE0tMJ8dKmWiwv+Z9/1vXe7jc+vnIlMbixGS8Igk70E9tsYEg24tnK
-	95d99oPQ3zFt/+I7oiOQfrS5IzIP3euZv8cjq7uSsgAh2ttPIelVPSF9Y9zLk4i5
-	fQ/aFzbXW/GbyS29KbAlrSbpzrtw50zI0oHiOtUH2yvJrQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id pSh_95VhZEWF; Tue, 22 Oct 2024 16:51:29 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XXyr046y6zlgTWP;
-	Tue, 22 Oct 2024 16:51:28 +0000 (UTC)
-Message-ID: <8e1ec6a0-38db-414e-90da-4d04ea8d6be2@acm.org>
-Date: Tue, 22 Oct 2024 09:51:26 -0700
+	s=arc-20240116; t=1729615910; c=relaxed/simple;
+	bh=G+lVpa+HnPdLU2XGwcAvTF5ynzGYq9w6uSs7iS+poiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4CwRnLNL2mXfGzLfLTaCM5/Ev8+gLTsKVrC/4DkTIWfPjbEEp2WLKQSRYUmiTKZO3XQbt+fjStv4cTxwazmxrAo7bRGygSEwmkRhlP9iTuM4tpDIvBQpvEAdN+83FiFdUXO9rYBvDWmnxW9N3wzPo9FwH1IxTowxV6wuADCILs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHIC81dB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59311C4CEC3;
+	Tue, 22 Oct 2024 16:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729615909;
+	bh=G+lVpa+HnPdLU2XGwcAvTF5ynzGYq9w6uSs7iS+poiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rHIC81dBP9ugP/4tCZ8LXztynVpyHDmlQDRf1SqH02QlVBi73aXTrcEd1Ya1jfdIm
+	 dkTRdc31gQW6eiaTi3qmX6iCf6c7GUpSdSLueYyyq3bwP6uzC0GqmQmYeJljzTQgJQ
+	 UntfusMGk/vzWjxLqQN87jgNrOPxXzxCbBuFch5Q1gG8TT8NGVHv96p5Z57PsrVBx+
+	 SchaGgBEBrF4tr3UWQW2zxwZXjOEv5v6/RiOmijniM6r1aaUqf5Oug9Qh7I5ZKP0u4
+	 4ggcgVFh7Lyb0XXeT5r9YF2Dqjd5nV3B+uHyQpjFEt3VX9hPvUxAMDnBkQ/NCE9CcV
+	 ov2TFuVQDVevw==
+Date: Tue, 22 Oct 2024 17:51:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jason-Hsu <jasonhell19@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au, patrick@stwcx.xyz,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	yang.chen@quantatw.com, jerry.lin@quantatw.com
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: ventura: add Meta Ventura BMC
+Message-ID: <20241022-clean-rebate-e986d6a82a05@spud>
+References: <20241022021724.2322506-1-jasonhell19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] scsi: ufs: core: Remove redundant host_lock calls
- around UTMRLDBR.
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241022074319.512127-1-avri.altman@wdc.com>
- <20241022074319.512127-2-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241022074319.512127-2-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="o2l81eJhq7XAs0r5"
+Content-Disposition: inline
+In-Reply-To: <20241022021724.2322506-1-jasonhell19@gmail.com>
 
-On 10/22/24 12:43 AM, Avri Altman wrote:
-> @@ -6877,13 +6874,13 @@ static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba, u32 intr_status)
->    */
->   static irqreturn_t ufshcd_tmc_handler(struct ufs_hba *hba)
->   {
-> -	unsigned long flags, pending, issued;
-> +	unsigned long flags;
-> +	unsigned long pending = ufshcd_readl(hba, REG_UTP_TASK_REQ_DOOR_BELL);
-> +	unsigned long issued = hba->outstanding_tasks & ~pending;
->   	irqreturn_t ret = IRQ_NONE;
->   	int tag;
->   
->   	spin_lock_irqsave(hba->host->host_lock, flags);
-> -	pending = ufshcd_readl(hba, REG_UTP_TASK_REQ_DOOR_BELL);
-> -	issued = hba->outstanding_tasks & ~pending;
 
-Please keep the 'pending' and 'issued' assignments in the function body. 
-Initializing variables in the declaration block is fine but adding code 
-in the declaration block that has side effects is a bit controversial.
+--o2l81eJhq7XAs0r5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->   	for_each_set_bit(tag, &issued, hba->nutmrs) {
->   		struct request *req = hba->tmf_rqs[tag];
->   		struct completion *c = req->end_io_data;
+On Tue, Oct 22, 2024 at 10:17:24AM +0800, Jason-Hsu wrote:
+> Add Linux device tree related to Meta(Facebook) Ventura specific devices =
+connected to BMC(AST2600) SoC.
+> Add subject prefix for the patch.
+>=20
+> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
 
-Would it be sufficient to hold the SCSI host lock around the 
-hba->outstanding_tasks read only? I don't think that the
-for_each_set_bit() loop needs to be protected with the SCSI host lock.
+The indentation in here is very inconsistent. Please fix that.
 
-Otherwise this patch looks good to me.
+--o2l81eJhq7XAs0r5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Bart.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfYIQAKCRB4tDGHoIJi
+0iUgAQDUmHPH4stEsqpdhMw9XHmJe8bKOJjTaat6ZehhyI3fNgD+J4CDQVPiHtlr
+y+45Gh+Rxio1Oy/A586b7BrY+pdXeAQ=
+=sZs2
+-----END PGP SIGNATURE-----
+
+--o2l81eJhq7XAs0r5--
 
