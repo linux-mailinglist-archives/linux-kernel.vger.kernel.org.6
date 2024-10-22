@@ -1,135 +1,267 @@
-Return-Path: <linux-kernel+bounces-376528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EFA9AB2C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:55:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896389AB2CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC48E282094
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:55:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA4EAB24FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3941BC9E3;
-	Tue, 22 Oct 2024 15:52:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE44E1BD4E1;
+	Tue, 22 Oct 2024 15:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="md+rt+yX"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C611BC9FC
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BD11BD00C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612327; cv=none; b=rLOl+mA+zhjU7LndFLLx0FcNy8VHLraPRsvvyhjXs6+uoL3YNXO554tlAWOL44Ij0JAja8D0MAC8ThTBtcCEjqb0zxIiChGJIAxz9qfC7pm95Mo+RjCWWJVVJ634uAxY8OeUyu6x9ipvYSWlorBAYIVNKnoxmy/FLERnfGWH1x8=
+	t=1729612335; cv=none; b=bvGrhichYX58tKpLMqN7dQ6ClKRunIeA3wEGrpKoVIuCYH2cO4YVWP/ZcZEx+lrNWMN+9fx82G6KsS57KGBFekRavyiId0/L8vGr9lXvZ0cmVQm95a/q9KhInPhqJ4DNmF52gFYRua+2rZyc4RGrIWP8phsyFo80i8UJdmApaLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612327; c=relaxed/simple;
-	bh=H0/tKRWeAU994gVsRPfmkHQFMbgtyI6+o5ZSOL8khug=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jq5BFTUoj7vQAnYFQuCq6oPSURcGPetvyNGjLDWNlN4v8KcXMB9krMDpK5CZJ+lliO1tgOwR+svR1jIQ2xM5z0lThlwYqYrBGntF9OV5xKLNr6s7aTOxwIi1w7AnVMYbaGmKo/Iot3pXrjC4C5/7DYDA8sB1LSSEOPeyvKpzueo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so46372495ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:52:05 -0700 (PDT)
+	s=arc-20240116; t=1729612335; c=relaxed/simple;
+	bh=kHo8sIuxFbLHSYOFK7SARA0PAdoM4GLl0qg3icRE4OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FNr6t+1eEw59qeP35HW+haFmwWVlPJHFjY2WEwFvEsaZN/oau+j/OBW/0LTy6HJE4ItbJM79ZyxF5b+IXEtd5lYrkyhEfFz43mWlh+RSrBYpT1PI637LJosK4rx0RWKns2LEjf7HKp9J5Fjy+o0Gg+qhxnFBsfoiP5nELG3OgKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=md+rt+yX; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cd76c513cso48789765ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729612333; x=1730217133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8AkVLCCPZxZ1fApkqmTMKj62SttuuqmnYfplcOKZMck=;
+        b=md+rt+yXSRHE2x4e3VUG7e+34RmZf8f5VlTgsj8Mrv8EZEwy7u1RA98q1jbLSlnll4
+         i/EuMWD1qcQ6YMPXGRVMLtSHKUC1FPGqME4CaIL3U+LpqRtCiophIrOmBXQ9QNk1Jn83
+         71ZPGfxN4tX66DCDVRM5eVWWpxrvY/j/XvUxO1SL2r1LlYQAQSaLOMVrZYDgjtIzhyEt
+         JBVAs2P454crlDW4RHhMpncYBJ3y9zCYp77MAUs+hHPoNfJ+4f7WEyPkoMJcSeBU/xLy
+         UU8ziMSSy/jWawz8i5GkAKnHlQk+TLr0M49xyIL1e32y/r11Yha/ZUsqA6GITxJIgd1p
+         6xjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729612324; x=1730217124;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zq1pAU7oprruu95sKFmcha2t872wgPryLWnGrzIGSbg=;
-        b=uLTgpYuTRw3ZiqylKGh+fgB9tCK+dK6dEZs5DOA4vzBoJz+6xeGWb8VQpjv8dQ69kR
-         /sXkN0aMV1+Qav1DhSjo+S8pBY69JIyVxg9CZHq73ckCFfsxLmFmRSIMraUiyd8GDVMV
-         /4W4mxlr9rlobbomrhNddGQ/BvxwvC8V/SOe7g34pKb5RzFrNFx5ZYhzQ4wTV7ocO/K1
-         XbMH5Ee5RQ2XScrOIq7p0k20AHXwNNlimn3g58L6f38c/obrHr2BmLGmYAPTjZ6vfuZe
-         N4AlJCNyqtptdpVfTHQT5x+qw01gBN8S1yy8rLlYu9LljMcECq/HyLw3ITRHWTKXKBY8
-         1qcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV67AILkDZyjr+CBApP/rPGE7aPOJIIpu1Sy3W1kt+fndTmlW07NO5lGO2kQQNflz57SNt1bXfeKDE3N+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybw5CSdDafJJx77n4r8b6V44LLxbwMrchJ8mwFhFxCyErWJUXb
-	7JDvy7QZSFCC65JMu5zEar/u9MWNecffNuIqz2C//U0iD98cHv0gT07tzhmmzDQaR40pm3DMMXi
-	DuprFtRSlFhLYEV+RVLs5eiZVC5IVfMjSE9B54fD/cOXoXD8oHsrI9NA=
-X-Google-Smtp-Source: AGHT+IGxD1nP66OE3u5+gOcrHOOQMHjtDkI6riaHGc6u5z4DeWBPXAM5JT/IbO5kmLQlAjWUJKjnPdOf932MolhYJeCYtc+Kz29o
+        d=1e100.net; s=20230601; t=1729612333; x=1730217133;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8AkVLCCPZxZ1fApkqmTMKj62SttuuqmnYfplcOKZMck=;
+        b=rgjZ1x2e5UdfzeULqlI7E9hsVqwHM4nbEM1EcElQvll1avt04hgUYGdUFvHBmrmqAH
+         6riDvY5TE0ibZ5O31MCSgWCWck8KVDzVkGyfqtdgka1nBeTvMmnJBHPWid516EQ2Bc/l
+         94MqpGDc+8WajZcV1ewfelLTkYVINAjwy1DIW6M6tzlzNx7JEMBisnQ70UIhqcpgfNjd
+         uqN5MCQkpGmcsO4KNNhHi5TXynCDt5ESFGWZYBBSe1K351q/MuxOkCTyGnkuFC8pJ2zQ
+         VCUh8Rf9vyLfgGJ0ddA3dpdV+ISV8Jey38erto21+eOCUHgErjXeqzNNNVRqsn/UxJPX
+         FgCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcN8AEugOULhiIAH99qitYSMd+IgsxRlke/DsSE+av7Z6wJLP/Id0AwZZaJSLi8Wm3D7oXpUgpuu+CKK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygs03VuZBzvL1RIeMilsbMz4JsISXMOG4rSutxbDYRgfc2SjZm
+	GJX8cUeGyr4ELvJw3s4HNMBH7I0LGNtMiPhggRHeBpuIEwwwLB/QSHR74YKTHUQ=
+X-Google-Smtp-Source: AGHT+IEsN3+xGI76q2s1diRf4iXLrreaf3Jeckwsh5L0/TmOy3pREL6E0A6kjoW8nKAID3UtRLL8+w==
+X-Received: by 2002:a17:903:1cc:b0:20c:c880:c3b0 with SMTP id d9443c01a7336-20e948aefd1mr44835425ad.21.1729612332913;
+        Tue, 22 Oct 2024 08:52:12 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:567b:4c87:a9aa:a404])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0c5e4sm44510525ad.97.2024.10.22.08.52.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 08:52:12 -0700 (PDT)
+Date: Tue, 22 Oct 2024 09:52:09 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v11 7/7] remoteproc: stm32: Add support of an OP-TEE TA
+ to load the firmware
+Message-ID: <ZxfKKe5C/O16x+J4@p14s>
+References: <20241009080108.4170320-1-arnaud.pouliquen@foss.st.com>
+ <20241009080108.4170320-8-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1706:b0:3a0:bc39:2d72 with SMTP id
- e9e14a558f8ab-3a3f406fdcdmr140338295ab.12.1729612324524; Tue, 22 Oct 2024
- 08:52:04 -0700 (PDT)
-Date: Tue, 22 Oct 2024 08:52:04 -0700
-In-Reply-To: <3b0be684-0b50-4151-a275-0751715d1be8@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6717ca24.050a0220.10f4f4.0150.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009080108.4170320-8-arnaud.pouliquen@foss.st.com>
 
-Hello,
+On Wed, Oct 09, 2024 at 10:01:08AM +0200, Arnaud Pouliquen wrote:
+> The new TEE remoteproc driver is used to manage remote firmware in a
+> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+> introduced to delegate the loading of the firmware to the trusted
+> execution context. In such cases, the firmware should be signed and
+> adhere to the image format defined by the TEE.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> updates vs v9 revision:
+> - rename tee_interface to tee_rproc_itf
+> - in stm32_rproc_probe(), test and use rproc->tee_rproc_itf instead of
+>   trproc in the tee_rproc_unregister() call
+> - initialize release_fw ops
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 63 ++++++++++++++++++++++++++++++--
+>  1 file changed, 60 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 288bd70c7861..cb7093de41df 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/pm_wakeirq.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/remoteproc_tee.h>
+>  #include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+> @@ -255,6 +256,19 @@ static int stm32_rproc_release(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> +static int stm32_rproc_tee_stop(struct rproc *rproc)
+> +{
+> +	int err;
+> +
+> +	stm32_rproc_request_shutdown(rproc);
+> +
+> +	err = tee_rproc_stop(rproc);
+> +	if (err)
+> +		return err;
+> +
+> +	return stm32_rproc_release(rproc);
+> +}
+> +
+>  static int stm32_rproc_prepare(struct rproc *rproc)
+>  {
+>  	struct device *dev = rproc->dev.parent;
+> @@ -691,8 +705,20 @@ static const struct rproc_ops st_rproc_ops = {
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  };
+>  
+> +static const struct rproc_ops st_rproc_tee_ops = {
+> +	.prepare	= stm32_rproc_prepare,
+> +	.start		= tee_rproc_start,
+> +	.stop		= stm32_rproc_tee_stop,
+> +	.kick		= stm32_rproc_kick,
+> +	.load		= tee_rproc_load_fw,
+> +	.parse_fw	= tee_rproc_parse_fw,
+> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
+> +	.release_fw	= tee_rproc_release_fw,
+> +};
+> +
+>  static const struct of_device_id stm32_rproc_match[] = {
+>  	{ .compatible = "st,stm32mp1-m4" },
+> +	{ .compatible = "st,stm32mp1-m4-tee" },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+> @@ -851,17 +877,42 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct stm32_rproc *ddata;
+>  	struct device_node *np = dev->of_node;
+> +	struct tee_rproc *trproc = NULL;
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in hfs_write_inode
+The cleaner this patchset get, the more obvious it is (at least to me) that
+struct tee_rproc needs to be changed to struct rproc_tee.  Otherwise I keep
+wondering if this is coming from the TEE subsystem or the remoteproc subsystem.
 
-------------[ cut here ]------------
-kernel BUG at fs/hfs/inode.c:444!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
-CPU: 0 UID: 0 PID: 4551 Comm: kworker/u8:26 Not tainted 6.12.0-rc4-syzkaller-gc2ee9f594da8-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:hfs_write_inode+0xe81/0xe90 fs/hfs/inode.c:444
-Code: e9 f4 fd ff ff 8b 3a e8 dd 6c 31 ff e9 02 fe ff ff 49 89 d6 8b 7d c8 e8 8d 68 31 ff 41 89 06 e9 26 fe ff ff e8 30 73 98 fe 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffff888115ccb5c0 EFLAGS: 00010293
-RAX: ffffffff831c8500 RBX: 0000000000000000 RCX: ffff8881151c8000
-RDX: 0000000000000000 RSI: ffffffff91870ec0 RDI: 0000000000000000
-RBP: ffff888115ccb6a8 R08: 0000000000000007 R09: ffffffff831c77bc
-R10: 0000000000000003 R11: ffff8881151c8000 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888012a7ca70 R15: ffff8881151c8b38
-FS:  0000000000000000(0000) GS:ffff88813fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcdb4e446a8 CR3: 000000004484a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- write_inode fs/fs-writeback.c:1503 [inline]
- __writeback_single_inode+0x8da/0x1290 fs/fs-writeback.c:1723
- writeback_sb_inodes+0xa34/0x1c20 fs/fs-writeback.c:1954
- wb_writeback+0x4df/0xcb0 fs/fs-writeback.c:2134
- wb_do_writeback fs/fs-writeback.c:2281 [inline]
- wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2321
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_write_inode+0xe81/0xe90 fs/hfs/inode.c:444
-Code: e9 f4 fd ff ff 8b 3a e8 dd 6c 31 ff e9 02 fe ff ff 49 89 d6 8b 7d c8 e8 8d 68 31 ff 41 89 06 e9 26 fe ff ff e8 30 73 98 fe 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffff888115ccb5c0 EFLAGS: 00010293
-RAX: ffffffff831c8500 RBX: 0000000000000000 RCX: ffff8881151c8000
-RDX: 0000000000000000 RSI: ffffffff91870ec0 RDI: 0000000000000000
-RBP: ffff888115ccb6a8 R08: 0000000000000007 R09: ffffffff831c77bc
-R10: 0000000000000003 R11: ffff8881151c8000 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888012a7ca70 R15: ffff8881151c8b38
-FS:  0000000000000000(0000) GS:ffff88813fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcdb4e446a8 CR3: 000000004484a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>  	struct rproc *rproc;
+>  	unsigned int state;
+> +	u32 proc_id;
+>  	int ret;
+>  
+>  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+>  	if (ret)
+>  		return ret;
+>  
+> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+> -	if (!rproc)
+> -		return -ENOMEM;
+> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+> +		/*
+> +		 * Delegate the firmware management to the secure context.
+> +		 * The firmware loaded has to be signed.
+> +		 */
+> +		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
+> +		if (ret) {
+> +			dev_err(dev, "failed to read st,rproc-id property\n");
+> +			return ret;
+> +		}
+> +
+> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
+> +		if (!rproc)
+> +			return -ENOMEM;
+> +
+> +		trproc = tee_rproc_register(dev, rproc, proc_id);
 
+This should return an integer rather than a struct tee_rproc * since the latter
+is available through rproc->tee_rproc_itf.
 
-Tested on:
+In line with my comment above, this should be changed to rproc_tee_register()
+since it belongs to the remoteproc subsystem.  Before when I asked for
+tee_remoteproc.c to be changed to remoteproc_tee.c, I thought we could get by
+without changing the inside but now I think it is clear that we can't - this
+needs to be addressed.  
 
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14922640580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0a45c444eedcbdb
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=164c4a5f980000
+> +		if (IS_ERR(trproc)) {
+> +			dev_err_probe(dev, PTR_ERR(trproc),
+> +				      "signed firmware not supported by TEE\n");
+> +			return PTR_ERR(trproc);
 
+                        return dev_err_probe(...);
+> +		}
+> +	} else {
+> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+> +		if (!rproc)
+> +			return -ENOMEM;
+> +	}
+>  
+>  	ddata = rproc->priv;
+>  
+> @@ -913,6 +964,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  		dev_pm_clear_wake_irq(dev);
+>  		device_init_wakeup(dev, false);
+>  	}
+> +	if (rproc->tee_rproc_itf)
+> +		tee_rproc_unregister(rproc->tee_rproc_itf);
+> +
+
+If I read Bjorn's comment properly, this should probably be:
+
+                rproc_tee_unregister(rproc);
+
+with the if() inside the function.
+
+>  	return ret;
+>  }
+>  
+> @@ -933,6 +987,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+>  		dev_pm_clear_wake_irq(dev);
+>  		device_init_wakeup(dev, false);
+>  	}
+> +	if (rproc->tee_rproc_itf)
+> +		tee_rproc_unregister(rproc->tee_rproc_itf);
+> +
+
+Same here.
+
+I am done reviewing this set.
+
+Thanks,
+Mathieu
+
+>  }
+>  
+>  static int stm32_rproc_suspend(struct device *dev)
+> -- 
+> 2.25.1
+> 
 
