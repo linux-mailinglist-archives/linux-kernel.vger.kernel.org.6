@@ -1,495 +1,261 @@
-Return-Path: <linux-kernel+bounces-376038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDF59A9F13
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:47:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6D99A9F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF1C2843E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE285284251
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CD019939E;
-	Tue, 22 Oct 2024 09:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JH2EdeBE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c6xXT0dh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JH2EdeBE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c6xXT0dh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E671991B9;
-	Tue, 22 Oct 2024 09:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF831991AD;
+	Tue, 22 Oct 2024 09:48:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9388198E65;
+	Tue, 22 Oct 2024 09:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590458; cv=none; b=l+9CaNULZoeFaaHEKEhmE8U+ntpCZdCl/MDb5k2jp76zLpSZzNnA8zwEcj3+dE20WqkmNpoXdHn+EZlQipmhvf7eHTY5TTUtARcomX17zlPpFFiKPW0iPGLZEflvq/Lt04ZzgxZ7DPrjPUeM6hpMrxPQ+YS3qKQEp50LBRjyt90=
+	t=1729590496; cv=none; b=DUWraph5r9UVUOUSu4aCsSWATfORv23UfCaV8oF4j3uBihYeg+aNes0slz1Ei0dOmxjNi3jw3hLhl+IEm/H+m5NIWKB/8ueCZ8yf0db5uJLCXKIWMKu/m5OSS9DxuWyNWJQWsK0n4KB2kzbOPrgDi62pWSgZubpi5qY0Q9fW0gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590458; c=relaxed/simple;
-	bh=My+YrkLVVsT8EkUEUy6mzj/J7s59eJHeNDTpiwibzco=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g7nk0sWMLBbcK7tsnNZnHD5GjhANAzdbiY+/KQgeY+UCzqPKA/C6YTFWyWXUcSe0zDztb13KaJV8UN6e9M6hw+S9zXy5YV/gjGQyiyMmaPL5bNXynZ823bSb9bZ+lhr5e7Q++y/3pfQ7JRQZxv/LkQlY/rhmH+tuuI+MFvNrjwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JH2EdeBE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c6xXT0dh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JH2EdeBE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c6xXT0dh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 69DBD1F8D9;
-	Tue, 22 Oct 2024 09:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729590453; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=64SDeF50SuG3oSBjT7Kq1HXlFV5nyOqGo3psR3iL3Ug=;
-	b=JH2EdeBEeoT8mjedlx94Mi/IlnQOdggVxlNPZXhk8ZV1Bq0SHY6TlcSZEVVXqG+OhEhJEd
-	l7b2DrxrKZa3UkhCeBreLyoKLNNQ1FCJZbNTVTV3R/+lqsamSJo/6AGpocvDpg6MoKUuoS
-	/4nHtRkqx8xzoWvUbsD0k2mq+hYmuyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729590453;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=64SDeF50SuG3oSBjT7Kq1HXlFV5nyOqGo3psR3iL3Ug=;
-	b=c6xXT0dhIb6Iyn9xn0AIl53v0w7mHpQv7M7Umjf+m1JLzj0kE9YLYjVULBRA780r8MDIWE
-	kmt0MPe2IYhJRIAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JH2EdeBE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=c6xXT0dh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729590453; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=64SDeF50SuG3oSBjT7Kq1HXlFV5nyOqGo3psR3iL3Ug=;
-	b=JH2EdeBEeoT8mjedlx94Mi/IlnQOdggVxlNPZXhk8ZV1Bq0SHY6TlcSZEVVXqG+OhEhJEd
-	l7b2DrxrKZa3UkhCeBreLyoKLNNQ1FCJZbNTVTV3R/+lqsamSJo/6AGpocvDpg6MoKUuoS
-	/4nHtRkqx8xzoWvUbsD0k2mq+hYmuyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729590453;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=64SDeF50SuG3oSBjT7Kq1HXlFV5nyOqGo3psR3iL3Ug=;
-	b=c6xXT0dhIb6Iyn9xn0AIl53v0w7mHpQv7M7Umjf+m1JLzj0kE9YLYjVULBRA780r8MDIWE
-	kmt0MPe2IYhJRIAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A16013AC9;
-	Tue, 22 Oct 2024 09:47:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id amFJCLV0F2dWFgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Tue, 22 Oct 2024 09:47:33 +0000
-Date: Tue, 22 Oct 2024 11:47:31 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: linux-watchdog@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck 
- <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] watchdog: Delete the cpu5wdt driver
-Message-ID: <20241022114731.31f69c94@endymion.delvare>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1729590496; c=relaxed/simple;
+	bh=0suzZ39Hj4+KJXxSetbK6Oe2wAkfyYT4JnhGHgvo9lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R/IpGvK0z9iEGFMP2IJ+TXbIisBwvuMQ9TJa0p5KVTh8u2NmoOp4YNI+OcmKLpEqcnEruW08F3Th9hnN0l3hXfmICKn89fPGmcosPLIZRZ6x4p31tSbFgaXlVzKzqu4kQjArq4+kSyiJ4gF9JV8pz72TTOOm8RuMz+84h3bYXUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1BD1497;
+	Tue, 22 Oct 2024 02:48:43 -0700 (PDT)
+Received: from [10.1.35.72] (Suzukis-MBP.cambridge.arm.com [10.1.35.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 474B33F73B;
+	Tue, 22 Oct 2024 02:48:12 -0700 (PDT)
+Message-ID: <2f928199-3190-4c44-9e0b-d02c8b140f9c@arm.com>
+Date: Tue, 22 Oct 2024 10:48:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] coresight: Add support to get static id for system
+ trace sources
+Content-Language: en-GB
+To: Mike Leach <mike.leach@linaro.org>
+Cc: Mao Jinlong <quic_jinlmao@quicinc.com>, James Clark
+ <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241018032217.39728-1-quic_jinlmao@quicinc.com>
+ <20241018032217.39728-3-quic_jinlmao@quicinc.com>
+ <67ff561d-cc24-47d7-b983-3cd20bdf289b@arm.com>
+ <CAJ9a7VgQX0ZGxLyVDtBrymi0tpqS_r1TKx3k4Wo1Ea35j9k+dA@mail.gmail.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <CAJ9a7VgQX0ZGxLyVDtBrymi0tpqS_r1TKx3k4Wo1Ea35j9k+dA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 69DBD1F8D9
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	HAS_ORG_HEADER(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-This driver has a number of issues (accesses arbitrary I/O ports
-without identifying the hardware, doesn't document what hardware it
-supports, suspiciously inconsistent locking model, doesn't implement
-WDIOC_SETTIMEOUT, potential integer overflow...)
+On 22/10/2024 10:42, Mike Leach wrote:
+> On Mon, 21 Oct 2024 at 13:09, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> On 18/10/2024 04:22, Mao Jinlong wrote:
+>>> Dynamic trace id was introduced in coresight subsystem, so trace id is
+>>> allocated dynamically. However, some hardware ATB source has static trace
+>>> id and it cannot be changed via software programming. For such source,
+>>> it can call coresight_get_static_trace_id to get the fixed trace id from
+>>> device node and pass id to coresight_trace_id_get_static_system_id to
+>>> reserve the id.
+>>>
+>>> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+>>> ---
+>>>    .../hwtracing/coresight/coresight-platform.c  |  9 +++++
+>>>    .../hwtracing/coresight/coresight-trace-id.c  | 38 ++++++++++++++-----
+>>>    .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++
+>>>    include/linux/coresight.h                     |  1 +
+>>>    4 files changed, 47 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+>>> index 64e171eaad82..b03aa43d3cba 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-platform.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+>>> @@ -796,6 +796,15 @@ int coresight_get_cpu(struct device *dev)
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(coresight_get_cpu);
+>>>
+>>> +int coresight_get_static_trace_id(struct device *dev, u32 *id)
+>>> +{
+>>> +     if (!is_of_node(dev->fwnode))
+>>> +             return -EINVAL;
+>>> +
+>>
+>> You don't need this check, with the fwnode_property_read(). Rest looks
+>> fine to me.
+>>
+>> Suzuki
+>>
+>>
+>>
+>>> +     return fwnode_property_read_u32(dev_fwnode(dev), "arm,static-trace-id", id);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(coresight_get_static_trace_id);
+>>> +
+>>>    struct coresight_platform_data *
+>>>    coresight_get_platform_data(struct device *dev)
+>>>    {
+>>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+>>> index d98e12cb30ec..269a5f7b279f 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+>>> @@ -12,6 +12,12 @@
+>>>
+>>>    #include "coresight-trace-id.h"
+>>>
+>>> +enum trace_id_flags {
+>>> +     TRACE_ID_ANY = 0x0,
+>>> +     TRACE_ID_PREFER_ODD = 0x1,
+>>> +     TRACE_ID_REQ_STATIC = 0x2,
+>>> +};
+>>> +
+>>>    /* Default trace ID map. Used in sysfs mode and for system sources */
+>>>    static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
+>>>    static struct coresight_trace_id_map id_map_default = {
+>>> @@ -74,16 +80,19 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>>>     * Otherwise allocate next available ID.
+>>>     */
+>>>    static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
+>>> -                                        int preferred_id, bool prefer_odd_id)
+>>> +                                        int preferred_id, unsigned int flags)
+>>>    {
+>>>        int id = 0;
+>>>
+>>>        /* for backwards compatibility, cpu IDs may use preferred value */
+>>> -     if (IS_VALID_CS_TRACE_ID(preferred_id) &&
+>>> -         !test_bit(preferred_id, id_map->used_ids)) {
+>>> -             id = preferred_id;
+>>> -             goto trace_id_allocated;
+>>> -     } else if (prefer_odd_id) {
+>>> +     if (IS_VALID_CS_TRACE_ID(preferred_id)) {
+>>> +             if (!test_bit(preferred_id, id_map->used_ids)) {
+>>> +                     id = preferred_id;
+>>> +                     goto trace_id_allocated;
+>>> +             } else if (WARN((flags & TRACE_ID_REQ_STATIC), "Trace ID %d is used.\n",
+> 
+> If another version of this set is done, then consider making this
+> message more specific - e.g.  "Requested Static Trace ID %d is not
+> available"
 
-The driver was added in 2003 and there's no evidence that it has any
-recent user, all changes seem to be tree-wide, subsystem-wide, or the
-result of static code analysis. So I believe we should simply drop
-this legacy piece of code.
+Actually this reminds me, we shouldn't WARN() here, and that too for
+such minor error case. WARN() could result in panic() and as such the 
+system is functional with this error and should be avoided.
+We should leave it to the user of the call to log the error, so that
+it is easier to understand which device failed to probe and why.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Message-ID: <20241011170710.484a257a@endymion.delvare>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-Changes in v2:
- * Rebased on top of v6.12-rc4.
+Agree with the rest of the comments from Mike
 
- Documentation/watchdog/watchdog-parameters.rst |   10 
- drivers/watchdog/Kconfig                       |    8 
- drivers/watchdog/Makefile                      |    1 
- drivers/watchdog/cpu5wdt.c                     |  284 -------------------------
- 4 files changed, 303 deletions(-)
-
---- linux-6.12-rc4.orig/Documentation/watchdog/watchdog-parameters.rst
-+++ linux-6.12-rc4/Documentation/watchdog/watchdog-parameters.rst
-@@ -120,16 +120,6 @@ modules.
- 
- -------------------------------------------------
- 
--cpu5wdt:
--    port:
--	base address of watchdog card, default is 0x91
--    verbose:
--	be verbose, default is 0 (no)
--    ticks:
--	count down ticks, default is 10000
--
---------------------------------------------------
--
- cpwd:
-     wd0_timeout:
- 	Default watchdog0 timeout in 1/10secs
---- linux-6.12-rc4.orig/drivers/watchdog/Kconfig
-+++ linux-6.12-rc4/drivers/watchdog/Kconfig
-@@ -1533,14 +1533,6 @@ config SBC7240_WDT
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called sbc7240_wdt.
- 
--config CPU5_WDT
--	tristate "SMA CPU5 Watchdog"
--	depends on (X86 || COMPILE_TEST) && HAS_IOPORT
--	help
--	  TBD.
--	  To compile this driver as a module, choose M here: the
--	  module will be called cpu5wdt.
--
- config SMSC_SCH311X_WDT
- 	tristate "SMSC SCH311X Watchdog Timer"
- 	depends on (X86 || COMPILE_TEST) && HAS_IOPORT
---- linux-6.12-rc4.orig/drivers/watchdog/Makefile
-+++ linux-6.12-rc4/drivers/watchdog/Makefile
-@@ -137,7 +137,6 @@ obj-$(CONFIG_RDC321X_WDT) += rdc321x_wdt
- obj-$(CONFIG_60XX_WDT) += sbc60xxwdt.o
- obj-$(CONFIG_SBC8360_WDT) += sbc8360.o
- obj-$(CONFIG_SBC7240_WDT) += sbc7240_wdt.o
--obj-$(CONFIG_CPU5_WDT) += cpu5wdt.o
- obj-$(CONFIG_SMSC_SCH311X_WDT) += sch311x_wdt.o
- obj-$(CONFIG_SMSC37B787_WDT) += smsc37b787_wdt.o
- obj-$(CONFIG_TQMX86_WDT) += tqmx86_wdt.o
---- linux-6.12-rc4.orig/drivers/watchdog/cpu5wdt.c
-+++ /dev/null
-@@ -1,284 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * sma cpu5 watchdog driver
-- *
-- * Copyright (C) 2003 Heiko Ronsdorf <hero@ihg.uni-duisburg.de>
-- */
--
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/moduleparam.h>
--#include <linux/types.h>
--#include <linux/errno.h>
--#include <linux/miscdevice.h>
--#include <linux/fs.h>
--#include <linux/ioport.h>
--#include <linux/timer.h>
--#include <linux/completion.h>
--#include <linux/jiffies.h>
--#include <linux/io.h>
--#include <linux/uaccess.h>
--#include <linux/watchdog.h>
--
--/* adjustable parameters */
--
--static int verbose;
--static int port = 0x91;
--static int ticks = 10000;
--static DEFINE_SPINLOCK(cpu5wdt_lock);
--
--#define PFX			"cpu5wdt: "
--
--#define CPU5WDT_EXTENT          0x0A
--
--#define CPU5WDT_STATUS_REG      0x00
--#define CPU5WDT_TIME_A_REG      0x02
--#define CPU5WDT_TIME_B_REG      0x03
--#define CPU5WDT_MODE_REG        0x04
--#define CPU5WDT_TRIGGER_REG     0x07
--#define CPU5WDT_ENABLE_REG      0x08
--#define CPU5WDT_RESET_REG       0x09
--
--#define CPU5WDT_INTERVAL	(HZ/10+1)
--
--/* some device data */
--
--static struct {
--	struct completion stop;
--	int running;
--	struct timer_list timer;
--	int queue;
--	int default_ticks;
--	unsigned long inuse;
--} cpu5wdt_device;
--
--/* generic helper functions */
--
--static void cpu5wdt_trigger(struct timer_list *unused)
--{
--	if (verbose > 2)
--		pr_debug("trigger at %i ticks\n", ticks);
--
--	if (cpu5wdt_device.running)
--		ticks--;
--
--	spin_lock(&cpu5wdt_lock);
--	/* keep watchdog alive */
--	outb(1, port + CPU5WDT_TRIGGER_REG);
--
--	/* requeue?? */
--	if (cpu5wdt_device.queue && ticks)
--		mod_timer(&cpu5wdt_device.timer, jiffies + CPU5WDT_INTERVAL);
--	else {
--		/* ticks doesn't matter anyway */
--		complete(&cpu5wdt_device.stop);
--	}
--	spin_unlock(&cpu5wdt_lock);
--
--}
--
--static void cpu5wdt_reset(void)
--{
--	ticks = cpu5wdt_device.default_ticks;
--
--	if (verbose)
--		pr_debug("reset (%i ticks)\n", (int) ticks);
--
--}
--
--static void cpu5wdt_start(void)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&cpu5wdt_lock, flags);
--	if (!cpu5wdt_device.queue) {
--		cpu5wdt_device.queue = 1;
--		outb(0, port + CPU5WDT_TIME_A_REG);
--		outb(0, port + CPU5WDT_TIME_B_REG);
--		outb(1, port + CPU5WDT_MODE_REG);
--		outb(0, port + CPU5WDT_RESET_REG);
--		outb(0, port + CPU5WDT_ENABLE_REG);
--		mod_timer(&cpu5wdt_device.timer, jiffies + CPU5WDT_INTERVAL);
--	}
--	/* if process dies, counter is not decremented */
--	cpu5wdt_device.running++;
--	spin_unlock_irqrestore(&cpu5wdt_lock, flags);
--}
--
--static int cpu5wdt_stop(void)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&cpu5wdt_lock, flags);
--	if (cpu5wdt_device.running)
--		cpu5wdt_device.running = 0;
--	ticks = cpu5wdt_device.default_ticks;
--	spin_unlock_irqrestore(&cpu5wdt_lock, flags);
--	if (verbose)
--		pr_crit("stop not possible\n");
--	return -EIO;
--}
--
--/* filesystem operations */
--
--static int cpu5wdt_open(struct inode *inode, struct file *file)
--{
--	if (test_and_set_bit(0, &cpu5wdt_device.inuse))
--		return -EBUSY;
--	return stream_open(inode, file);
--}
--
--static int cpu5wdt_release(struct inode *inode, struct file *file)
--{
--	clear_bit(0, &cpu5wdt_device.inuse);
--	return 0;
--}
--
--static long cpu5wdt_ioctl(struct file *file, unsigned int cmd,
--						unsigned long arg)
--{
--	void __user *argp = (void __user *)arg;
--	int __user *p = argp;
--	unsigned int value;
--	static const struct watchdog_info ident = {
--		.options = WDIOF_CARDRESET,
--		.identity = "CPU5 WDT",
--	};
--
--	switch (cmd) {
--	case WDIOC_GETSUPPORT:
--		if (copy_to_user(argp, &ident, sizeof(ident)))
--			return -EFAULT;
--		break;
--	case WDIOC_GETSTATUS:
--		value = inb(port + CPU5WDT_STATUS_REG);
--		value = (value >> 2) & 1;
--		return put_user(value, p);
--	case WDIOC_GETBOOTSTATUS:
--		return put_user(0, p);
--	case WDIOC_SETOPTIONS:
--		if (get_user(value, p))
--			return -EFAULT;
--		if (value & WDIOS_ENABLECARD)
--			cpu5wdt_start();
--		if (value & WDIOS_DISABLECARD)
--			cpu5wdt_stop();
--		break;
--	case WDIOC_KEEPALIVE:
--		cpu5wdt_reset();
--		break;
--	default:
--		return -ENOTTY;
--	}
--	return 0;
--}
--
--static ssize_t cpu5wdt_write(struct file *file, const char __user *buf,
--						size_t count, loff_t *ppos)
--{
--	if (!count)
--		return -EIO;
--	cpu5wdt_reset();
--	return count;
--}
--
--static const struct file_operations cpu5wdt_fops = {
--	.owner		= THIS_MODULE,
--	.unlocked_ioctl	= cpu5wdt_ioctl,
--	.compat_ioctl	= compat_ptr_ioctl,
--	.open		= cpu5wdt_open,
--	.write		= cpu5wdt_write,
--	.release	= cpu5wdt_release,
--};
--
--static struct miscdevice cpu5wdt_misc = {
--	.minor	= WATCHDOG_MINOR,
--	.name	= "watchdog",
--	.fops	= &cpu5wdt_fops,
--};
--
--/* init/exit function */
--
--static int cpu5wdt_init(void)
--{
--	unsigned int val;
--	int err;
--
--	if (verbose)
--		pr_debug("port=0x%x, verbose=%i\n", port, verbose);
--
--	init_completion(&cpu5wdt_device.stop);
--	cpu5wdt_device.queue = 0;
--	timer_setup(&cpu5wdt_device.timer, cpu5wdt_trigger, 0);
--	cpu5wdt_device.default_ticks = ticks;
--
--	if (!request_region(port, CPU5WDT_EXTENT, PFX)) {
--		pr_err("request_region failed\n");
--		err = -EBUSY;
--		goto no_port;
--	}
--
--	/* watchdog reboot? */
--	val = inb(port + CPU5WDT_STATUS_REG);
--	val = (val >> 2) & 1;
--	if (!val)
--		pr_info("sorry, was my fault\n");
--
--	err = misc_register(&cpu5wdt_misc);
--	if (err < 0) {
--		pr_err("misc_register failed\n");
--		goto no_misc;
--	}
--
--
--	pr_info("init success\n");
--	return 0;
--
--no_misc:
--	release_region(port, CPU5WDT_EXTENT);
--no_port:
--	return err;
--}
--
--static int cpu5wdt_init_module(void)
--{
--	return cpu5wdt_init();
--}
--
--static void cpu5wdt_exit(void)
--{
--	if (cpu5wdt_device.queue) {
--		cpu5wdt_device.queue = 0;
--		wait_for_completion(&cpu5wdt_device.stop);
--		timer_shutdown_sync(&cpu5wdt_device.timer);
--	}
--
--	misc_deregister(&cpu5wdt_misc);
--
--	release_region(port, CPU5WDT_EXTENT);
--
--}
--
--static void cpu5wdt_exit_module(void)
--{
--	cpu5wdt_exit();
--}
--
--/* module entry points */
--
--module_init(cpu5wdt_init_module);
--module_exit(cpu5wdt_exit_module);
--
--MODULE_AUTHOR("Heiko Ronsdorf <hero@ihg.uni-duisburg.de>");
--MODULE_DESCRIPTION("sma cpu5 watchdog driver");
--MODULE_LICENSE("GPL");
--
--module_param_hw(port, int, ioport, 0);
--MODULE_PARM_DESC(port, "base address of watchdog card, default is 0x91");
--
--module_param(verbose, int, 0);
--MODULE_PARM_DESC(verbose, "be verbose, default is 0 (no)");
--
--module_param(ticks, int, 0);
--MODULE_PARM_DESC(ticks, "count down ticks, default is 10000");
+Suzuki
 
 
--- 
-Jean Delvare
-SUSE L3 Support
+> 
+>>> +                                     preferred_id))
+>>> +                     return -EINVAL;
+>>> +     } else if (flags & TRACE_ID_PREFER_ODD) {
+>>>        /* may use odd ids to avoid preferred legacy cpu IDs */
+>>>                id = coresight_trace_id_find_odd_id(id_map);
+>>>                if (id)
+>>> @@ -153,7 +162,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
+>>>         */
+>>>        id = coresight_trace_id_alloc_new_id(id_map,
+>>>                                             CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
+>>> -                                          false);
+>>> +                                          TRACE_ID_ANY);
+>>>        if (!IS_VALID_CS_TRACE_ID(id))
+>>>                goto get_cpu_id_out_unlock;
+>>>
+>>> @@ -188,14 +197,15 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
+>>>        DUMP_ID_MAP(id_map);
+>>>    }
+>>>
+>>> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+>>> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
+>>> +                                     int preferred_id, unsigned int traceid_flags)
+>>>    {
+>>>        unsigned long flags;
+>>>        int id;
+>>>
+>>>        spin_lock_irqsave(&id_map->lock, flags);
+>>>        /* prefer odd IDs for system components to avoid legacy CPU IDS */
+> 
+> This comment now belongs in coresight_trace_id_get_system_id()
+> 
+>>> -     id = coresight_trace_id_alloc_new_id(id_map, 0, true);
+>>> +     id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
+>>>        spin_unlock_irqrestore(&id_map->lock, flags);
+>>>
+>>>        DUMP_ID(id);
+>>> @@ -255,10 +265,18 @@ EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
+>>>
+>>>    int coresight_trace_id_get_system_id(void)
+>>>    {
+>>> -     return coresight_trace_id_map_get_system_id(&id_map_default);
+>>> +     return coresight_trace_id_map_get_system_id(&id_map_default, 0,
+>>> +                     TRACE_ID_PREFER_ODD);
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
+>>>
+>>> +int coresight_trace_id_get_static_system_id(int trace_id)
+>>> +{
+>>> +     return coresight_trace_id_map_get_system_id(&id_map_default,
+>>> +                     trace_id, TRACE_ID_REQ_STATIC);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_static_system_id);
+>>> +
+>>>    void coresight_trace_id_put_system_id(int id)
+>>>    {
+>>>        coresight_trace_id_map_put_system_id(&id_map_default, id);
+>>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+>>> index 9aae50a553ca..db68e1ec56b6 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+>>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+>>> @@ -116,6 +116,15 @@ int coresight_trace_id_read_cpu_id_map(int cpu, struct coresight_trace_id_map *i
+>>>     */
+>>>    int coresight_trace_id_get_system_id(void);
+>>>
+>>> +/**
+>>> + * Allocate a CoreSight static trace ID for a system component.
+>>> + *
+>>> + * Used to allocate static IDs for system trace sources such as dummy source.
+>>> + *
+>>> + * return: Trace ID or -EINVAL if allocation is impossible.
+>>> + */
+>>> +int coresight_trace_id_get_static_system_id(int id);
+>>> +
+>>>    /**
+>>>     * Release an allocated system trace ID.
+>>>     *
+>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>>> index c13342594278..129795873072 100644
+>>> --- a/include/linux/coresight.h
+>>> +++ b/include/linux/coresight.h
+>>> @@ -662,6 +662,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
+>>>    void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
+>>>
+>>>    extern int coresight_get_cpu(struct device *dev);
+>>> +extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
+>>>
+>>>    struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
+>>>    struct coresight_connection *
+>>
+> 
+> Other than minor issues above...
+> 
+> Reviewed-by: Mike Leach <mike.leach@linaro.org>
+> 
+
 
