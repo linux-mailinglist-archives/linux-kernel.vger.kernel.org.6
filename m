@@ -1,140 +1,92 @@
-Return-Path: <linux-kernel+bounces-376384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695F19AB0B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:19:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D08A9AB0AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99715283AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1DA1C21FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB0D1A08DC;
-	Tue, 22 Oct 2024 14:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B91A08B5;
+	Tue, 22 Oct 2024 14:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Il0BWlQq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUMAtAOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CDC1A08B2;
-	Tue, 22 Oct 2024 14:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D1D199EA2;
+	Tue, 22 Oct 2024 14:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606745; cv=none; b=FMrnNXgHTJxmwdrCy37GtqrxEqfdNBYnPRarUpyuWqxjhyRkZ+/fIjr5zo/PL2bUcuF0coffLG5XfeU85blQ8gPqcFssuDbgThxJE5oHXnKuy51gelDP9XAr0FcGfPnMyVugoPP0E9XYaTY3FRIPBzkMSm3th8pEw/qcxi8nLQU=
+	t=1729606731; cv=none; b=K3e6Xk8HCujnBXVRSQN9o3f4ElqTVaMLUa4MR59KgNhdoRmH5VFF70IIYwCDyaZCqVDqaxStzmmR2Uee6Y2WzWlTGwpVq6CgNiJQU9JTojdXXZpKzgexecuRqdbmyinBu7HengL9hbx4hYPfRZxZo9qkp8O+Lst1Jk3W7fw1XYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606745; c=relaxed/simple;
-	bh=hnVKgy3Ku36lhkN6qCdjhYKqO5Z25ILOzofbc2dpWB8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FElC+bD7fesN5E42r52/NDX9tF6fr+wwmqD4ybhbWoSkvfAJ1JFlYKRZnqmZ1m140VjmyQGNX4/HTkD1o4SVjqFWXi5MfnwAyk1pmlG5lE5fZFMjs+TUH4LX7DTvIBZXndlSdunMeMnbHYXMp372nOqY/OXXuDQf8PU1lwPhFD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Il0BWlQq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MDFljH026200;
-	Tue, 22 Oct 2024 14:18:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=1wg0oRf9Aw11F8KaSVBrgct06rRtIeTeHSKXgbq4gPE=; b=Il
-	0BWlQqu+kftrNQOx0HOB3eJUAgWHE1XwBQwL5Gw8Mrptn1Ns2wJ5saeAo48BXFhZ
-	qKP5+bPOMpYtlfePL0beoe2aZK7R/TEov24ECD390wz1OwBkFE9jKLb4rpIbBZbq
-	HGe3QxW81Cd9W2iUv0aK2PzVUlmmNhokFxdsiV7epL2CJxF1HnwaE8bBatVzScM6
-	GjFecazau47Qa3gLjLCCNLPmJ/S4dUOPzAr2D8/VoaRja2BBqP2/nMSJZx1DyE2x
-	R+6VaoiUmZ5qURWpD0RWsRZvVryrhmpx577lMoa9ZnZNfHi4v8TNmH9059wMIL9j
-	wH4jk16qN+N0hHbtwQFA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ecse05u5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 14:18:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MEIpZX023136
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 14:18:51 GMT
-Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 22 Oct 2024 07:18:47 -0700
-From: Sachin Gupta <quic_sachgupt@quicinc.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
-        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
-Subject: [PATCH] mmc: sdhci-msm: Slot indexing for distinguishing multiple SDCC instances
-Date: Tue, 22 Oct 2024 19:48:28 +0530
-Message-ID: <20241022141828.618-1-quic_sachgupt@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1729606731; c=relaxed/simple;
+	bh=kSy/v9zsfg+uchR+oZgQGS8E9s2D6ymYvJFZLCaTfa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1eP1qZBjX0nsF29M75DsTKN2nlf64ifUIT1w8eRf9XpE56H0cgUNR8xQ36Bpkvsy3ady/OvtYf+pc7lsmWsd8YTe9mdoyXZHnYhiAB763IphQofQPLjPZPM+KMnRbLDfSSeBVXhJgNnqEQ3z/zP2KSqjFYRgq3mHPwxss/dXTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUMAtAOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4C9C4CEC3;
+	Tue, 22 Oct 2024 14:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729606730;
+	bh=kSy/v9zsfg+uchR+oZgQGS8E9s2D6ymYvJFZLCaTfa8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UUMAtAOe/7jErEnEwy4C5P8AzfM8Jm+XyKKU479VR9/+EIPyEfTRzYa1Vdpusj3PF
+	 U/2LaeLFCoAfnZFw2JswMx9NVFrFidCEJGbSg5ToVhV8qm6Xbizr+HoQAWBgREcDlK
+	 NqZEVJ9S0XG7KdK+LXB6A50eATww+OSZZGOyz92juzuNZ9SAJvwqzlttivja+WBlRJ
+	 v2NTMImDteJ643cXx8/89wWAppyClzovyOjvkbIQIywu8RZkzI5tmbDBbLt+oJu4Yk
+	 WTHTqs7Op5riRXT79yie5gAVHm2j3BqIKR0YuCMqm69TadsGM+RGns+44Hwg+alIuD
+	 XPOUpqXUCHIpQ==
+Date: Tue, 22 Oct 2024 15:18:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Matt Johnston <matt@codeconstruct.com.au>
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Wolfram Sang <wsa@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Dung Cao <dung@os.amperecomputing.com>
+Subject: Re: [PATCH net v3] mctp i2c: handle NULL header address
+Message-ID: <20241022141845.GV402847@kernel.org>
+References: <20241022-mctp-i2c-null-dest-v3-1-e929709956c5@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: x4wMfrx8KFrcbAJDfpLeTYg-XHDwKOlb
-X-Proofpoint-ORIG-GUID: x4wMfrx8KFrcbAJDfpLeTYg-XHDwKOlb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 adultscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022-mctp-i2c-null-dest-v3-1-e929709956c5@codeconstruct.com.au>
 
-This update addresses the requirement for accurate slot indexing
-in the sdhci-msm driver to differentiate between multiple SDCC
-(Secure Digital Card Controller) instances, such as eMMC, SD card,
-and SDIO.
+On Tue, Oct 22, 2024 at 06:25:14PM +0800, Matt Johnston wrote:
+> daddr can be NULL if there is no neighbour table entry present,
+> in that case the tx packet should be dropped.
+> 
+> saddr will usually be set by MCTP core, but check for NULL in case a
+> packet is transmitted by a different protocol.
+> 
+> Fixes: f5b8abf9fc3d ("mctp i2c: MCTP I2C binding driver")
+> Cc: stable@vger.kernel.org
+> Reported-by: Dung Cao <dung@os.amperecomputing.com>
+> Signed-off-by: Matt Johnston <matt@codeconstruct.com.au>
+> ---
+> Changes in v3:
+> - Revert to simpler saddr check of v1, mention in commit message
+> - Revert whitespace change from v2
+> - Link to v2: https://lore.kernel.org/r/20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au
+> 
+> Changes in v2:
+> - Set saddr to device address if NULL, mention in commit message
+> - Fix patch prefix formatting
+> - Link to v1: https://lore.kernel.org/r/20241018-mctp-i2c-null-dest-v1-1-ba1ab52966e9@codeconstruct.com.au
 
-Additionally, it revises the slot indexing logic to comply with
-the new device tree (DT) specifications.
+Thanks for the updates Matt.
 
-Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-Signed-off-by: Maramaina Naresh <quic_mnaresh@quicinc.com>
-Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
----
- drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e113b99a3eab..3cb79117916f 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -292,6 +292,8 @@ struct sdhci_msm_host {
- 	bool vqmmc_enabled;
- };
- 
-+static struct sdhci_msm_host *sdhci_slot[3];
-+
- static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -2426,6 +2428,14 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto pltfm_free;
- 
-+	if (node) {
-+		ret = of_alias_get_id(pdev->dev.of_node, "mmc");
-+		if (ret < 0)
-+			dev_err(&pdev->dev, "get slot index failed %d\n", ret);
-+		else
-+			sdhci_slot[ret] = msm_host;
-+	}
-+
- 	/*
- 	 * Based on the compatible string, load the required msm host info from
- 	 * the data associated with the version info.
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
