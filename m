@@ -1,160 +1,225 @@
-Return-Path: <linux-kernel+bounces-376369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0C29AB070
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:09:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60619AB07F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26BADB21B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:09:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E841B2210B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980EB19F423;
-	Tue, 22 Oct 2024 14:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906471A01CC;
+	Tue, 22 Oct 2024 14:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mWklX2JK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RHX/qFf+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faZ/P8XJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001AF19F110
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE0C19E96A;
+	Tue, 22 Oct 2024 14:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729606182; cv=none; b=AVwNjyBB8dO/QbP44iELuIyw22oXmyX95PDSO1/HB2Y4V54GtZtLOo86oijoQWCzXntsrbLxm4rzcka/1qO8L+5LSZSgthY0QS812snb65pAbHU3C+PV3fTJSZzA7UYxtKsre3V9uVXME/Hsz3fViPmy3O8IRD2YV6eyggR7EIo=
+	t=1729606313; cv=none; b=sTFID2yP+1LBacYvpeUdZYTIn2kmVGr6Jvqdvf5E5OcxjFqq/+VYR0jo2MVu981uxh41VxjTnVudQXrRYR8d8k3APXmE73EwBGZXypWJ+D4oAQAMOFN9MtsVaDP+j6C/i4GLmYJACSNU2sVEHLxsMcM4iFc82k37Qfr7O7GaTXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729606182; c=relaxed/simple;
-	bh=KePtIfKvz7t5CZSOBjyvIQxNGXZeKIYCh7cY8nEbcUk=;
+	s=arc-20240116; t=1729606313; c=relaxed/simple;
+	bh=98iJScxQ5+xWTfcAyb0DIQja42BOHYt0I6p6JMozmpY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9vZWa4xiwrSwMD3LEmlwltFUwxG/mkPxBxvDpsdxyadQcYtR+I+8GFCWukhRyP4XssHfqrg0dXFV1EzCAzP3RsPUP7VeVe9t45DK6eNYnl/0sQ2U1UDC9iw+exdzY0mup121J2KNdMlhDjkztKWazPweZEjnm9YABq6q34sviY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mWklX2JK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RHX/qFf+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Oct 2024 16:09:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729606176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bjASl/u1BgwU2fmiInGolhgL0iePlqLpC0D1haqbAsw=;
-	b=mWklX2JKCBvCdxhnY36hcmGS8ElztkGx7sfl0NR82aIes2D2v2obsDZSZBHfmpzpDmhGjC
-	JLCjNJARpEXc7jD3BVRBW/FP2x1/4zPGmkB2GeVxkVHGbAzU0AARoUNZGJv5nxd4z30yEA
-	0uF6ShU7ZtVdHNrHSwhUsyDE3ZP9nZN+hXsOahwO8UQ/TaNUKaJpkFlMbY73053tXSh02O
-	PAmLeFfesTL6amFvz1RP1Pl7p9aQUUDx6uzYQl/sVrbO8pXOPoVwwAMk/n57/TQ0J8KkVT
-	Db8YSfhYjDsNsuiJuna4+ytv8R3gL5OdqZoH2Hr7TZMXCqrxuowTxOq6kxs3MA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729606176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bjASl/u1BgwU2fmiInGolhgL0iePlqLpC0D1haqbAsw=;
-	b=RHX/qFf+u4qIOZu/H0KKQCs1g/iB/rhFlXpOAngAFhHo9aMY4kcrVkA0N3fzD0koSks0uV
-	65nIgqB2fpa/dSCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <20241022140933.XfxSIpDu@linutronix.de>
-References: <20241011081847.r2x73XIr@linutronix.de>
- <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
- <20241011144341.mQKXkGkm@linutronix.de>
- <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
- <20241015112224.KdvzKo80@linutronix.de>
- <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
- <20241017070710.U9bTJFMS@linutronix.de>
- <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
- <20241021112755.m7dWNbc0@linutronix.de>
- <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXepJhRrClyiGuWlNpuczFStxWiDpXZVww7ON3OmomtrnPts8o/hdmONkmWt+HDFjEDrFHT9WeGZIRJVBtOtgP8VxPhxCnR8crh1u51CQilUZ378Gp5aIivJiXAQhBHahpMPE8KfnykpFPlmkm1/91AxxoNnk9KFKp9w85of7VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faZ/P8XJ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729606311; x=1761142311;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=98iJScxQ5+xWTfcAyb0DIQja42BOHYt0I6p6JMozmpY=;
+  b=faZ/P8XJdXXwnVi7jihDA5t4IlXPjzCIif2FpZrlUIxWGfGo7AxZtcCJ
+   Mc00Q9kCJBWnuU1i/Cb/IIKziGOZUsWcrWouLLaiZ0RCe2waICP7Yq4G0
+   dHwLlfOftT1RP0+0knfuCIElKrK+xgZ2TUXRN2WUDFAF5qidf/5ojIn3o
+   npaYAAz1OsyvKyOwFqm7Z+OjCUxcwlK4gA0dC2OcnFYBgFxb6IjCCJr5s
+   xxvs8AwTpAcr5ZUqYzra7+ITvDq+1ytHg7GYJyVD7kNFVYhyRVK0CUYm4
+   pw5nWEg8uiYy745A8pYHZ1xgPDyc3PDp8mVdjSzODQFiQyrzQBVQE9HqK
+   w==;
+X-CSE-ConnectionGUID: JoENZd9GSHWWaie42rLh0w==
+X-CSE-MsgGUID: RGxeN4xOQNKixWEFm+VDrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="39761579"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="39761579"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 07:11:50 -0700
+X-CSE-ConnectionGUID: La+zPVeBSeOmWFkXwGEz8Q==
+X-CSE-MsgGUID: EGreTNpuRkiixkh4YmEXrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="83862597"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa003.fm.intel.com with SMTP; 22 Oct 2024 07:11:46 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 22 Oct 2024 17:11:45 +0300
+Date: Tue, 22 Oct 2024 17:11:45 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <ZxeyoRYPZP3Feg6T@kuha.fi.intel.com>
+References: <20241022-x1e80100-ps8830-v3-0-68a95f351e99@linaro.org>
+ <20241022-x1e80100-ps8830-v3-2-68a95f351e99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
+In-Reply-To: <20241022-x1e80100-ps8830-v3-2-68a95f351e99@linaro.org>
 
-On 2024-10-21 09:48:03 [-0700], Paul E. McKenney wrote:
-> > We have now NONE, VOLUNTARY, PREEMPT, PREEMPT_RT (as in choose one).
-> > 
-> > This series changes it to NONE, VOLUNTARY, PREEMPT, LAZY, LAZIEST.
-> > Ignore LAZIEST. PREEMPT_RT is a on/ off bool.
-> 
-> In terms of preemptibility, isn't the order from least to most preemptible
-> NONE, VOLUNTARY, LAZIEST, LAZY, PREEMPT, and PREEMPT_RT?  After all,
-> PREEMPT will preempt more aggressively than will LAZY which in turn
-> preempts more aggressively than LAZIEST.
-> 
-> And I finally do see the later patch in Peter's series that removes
-> PREEMPT_RT from the choice.  Plus I need to look more at LAZIEST in
-> order to work out whether Peter's suckage is our robustness.  ;-)
+Hi,
 
-For LAZIEST PeterZ added "do we want this?". I haven't tested this but
-since there is no forced preemption at all, it should be what is NONE
-without cond_resched() & friends. So I don't know if it stays, I don't
-think so.
+Couple of nitpicks.
 
-> > Based on my understanding so far, you have nothing to worry about.
-> > 
-> > With NONE + VOLUNTARY removed in favor of LAZY or without the removal
-> > (yet)  you ask yourself what happens to those using NONE, go to LAZY and
-> > want to stay with !PREEMPT_RCU, right?
-> > With LAZY and !PREEMPT_DYNAMIC there is still PREEMPT_RCU as of now.
-> > And you say people using !PREEMPT_DYNAMIC + LAZY are the old NONE/
-> > VOLUNTARY users and want !PREEMPT_RCU.
-> 
-> Yes.
-> 
-> > This could be true but it could also attract people from PREEMPT which
-> > expect additional performance gain due to LAZY and the same "preemption"
-> > level. Additionally if PREEMPT gets removed because LAZY turns out to be
-> > superior then PREEMPT_DYNAMIC makes probably no sense since there is
-> > nothing to switch from/ to.
-> 
-> We definitely have users that would migrate from NONE to LAZY.  Shouldn't
-> their needs outweigh the possible future users that might (or might not)
-> find that (1) LAZY might be preferable to PREEMPT for some users and
-> (2) That those users would prefer that RCU be preemptible?
+On Tue, Oct 22, 2024 at 01:26:55PM +0300, Abel Vesa wrote:
+> +static int ps8830_retimer_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct typec_switch_desc sw_desc = { };
+> +	struct typec_retimer_desc rtmr_desc = { };
+> +	struct ps8830_retimer *retimer;
+> +	bool skip_reset = false;
+> +	int ret;
+> +
+> +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
+> +	if (!retimer)
+> +		return -ENOMEM;
+> +
+> +	retimer->client = client;
+> +
+> +	mutex_init(&retimer->lock);
+> +
+> +	if (of_property_read_bool(dev->of_node, "ps8830,boot-on"))
+> +		skip_reset = true;
 
-Yes. I have no idea which of those two (PREEMPT_RCU vs !PREEMPT_RCU) is
-to be preferred. Therefore I'm suggesting to make configurable here.
+        skip_reset = device_property_present(dev, "ps8830,boot-on");
 
-If you have a benchmark for memory consumption or anything else of
-interest, I could throw it a box or two to get some numbers. I've been
-looking at free memory at boot and this was almost the same (+- noise).
+> +	retimer->regmap = devm_regmap_init_i2c(client, &ps8830_retimer_regmap);
+> +	if (IS_ERR(retimer->regmap)) {
+> +		ret = PTR_ERR(retimer->regmap);
+> +		dev_err(dev, "failed to allocate register map: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = ps8830_get_vregs(retimer);
+> +	if (ret)
+> +		return ret;
+> +
+> +	retimer->xo_clk = devm_clk_get(dev, "xo");
+> +	if (IS_ERR(retimer->xo_clk))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
+> +				     "failed to get xo clock\n");
+> +
+> +	retimer->reset_gpio = devm_gpiod_get(dev, "reset",
+> +					     skip_reset ? GPIOD_OUT_LOW : GPIOD_OUT_HIGH);
+> +	if (IS_ERR(retimer->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
+> +				     "failed to get reset gpio\n");
+> +
+> +	retimer->typec_switch = fwnode_typec_switch_get(dev->fwnode);
 
-> > Therefore I would suggest to make PREEMPT_RCU 
-> > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> > - selected for LAZY && PREEMPT_DYNAMIC
-> > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-> >   !PREEMPT_DYNAMIC)
-> > 
-> > Does this make sense to you?
-> 
-> Not really.  At the very least, default no.
-> 
-> Unless LAZIEST makes the most sense for us (which will take time to
-> figure out), in which case make PREMPT_RCU:
-> 
-> - hard-defined =n for LAZIEST.
-> - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> - selected for LAZY && PREEMPT_DYNAMIC
-> - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
->   !PREEMPT_DYNAMIC)
-> 
-> Or am I still missing some aspect of this series?
+	retimer->typec_switch = typec_switch_get(dev);
 
-no, that is perfect.
+> +	if (IS_ERR(retimer->typec_switch))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
+> +				     "failed to acquire orientation-switch\n");
+> +
+> +	retimer->typec_mux = fwnode_typec_mux_get(dev->fwnode);
 
-> 							Thanx, Paul
+	retimer->typec_mux = typec_mux_get(dev);
 
-Sebastian
+> +	if (IS_ERR(retimer->typec_mux)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
+> +				    "failed to acquire mode-mux\n");
+> +		goto err_switch_put;
+> +	}
+> +
+> +	sw_desc.drvdata = retimer;
+> +	sw_desc.fwnode = dev_fwnode(dev);
+> +	sw_desc.set = ps8830_sw_set;
+> +
+> +	ret = drm_aux_bridge_register(dev);
+> +	if (ret)
+> +		goto err_mux_put;
+> +
+> +	retimer->sw = typec_switch_register(dev, &sw_desc);
+> +	if (IS_ERR(retimer->sw)) {
+> +		ret = PTR_ERR(retimer->sw);
+> +		dev_err(dev, "failed to register typec switch: %d\n", ret);
+> +		goto err_aux_bridge_unregister;
+> +	}
+> +
+> +	rtmr_desc.drvdata = retimer;
+> +	rtmr_desc.fwnode = dev_fwnode(dev);
+> +	rtmr_desc.set = ps8830_retimer_set;
+> +
+> +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
+> +	if (IS_ERR(retimer->retimer)) {
+> +		ret = PTR_ERR(retimer->retimer);
+> +		dev_err(dev, "failed to register typec retimer: %d\n", ret);
+> +		goto err_switch_unregister;
+> +	}
+> +
+> +	ret = clk_prepare_enable(retimer->xo_clk);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable XO: %d\n", ret);
+> +		goto err_retimer_unregister;
+> +	}
+> +
+> +	ret = ps8830_enable_vregs(retimer);
+> +	if (ret)
+> +		goto err_clk_disable;
+> +
+> +	/* delay needed as per datasheet */
+> +	usleep_range(4000, 14000);
+> +
+> +	if (!skip_reset)
+> +		gpiod_set_value(retimer->reset_gpio, 0);
+> +
+> +	return 0;
+> +
+> +err_clk_disable:
+> +	clk_disable_unprepare(retimer->xo_clk);
+> +err_retimer_unregister:
+> +	typec_retimer_unregister(retimer->retimer);
+> +err_switch_unregister:
+> +	typec_switch_unregister(retimer->sw);
+> +err_aux_bridge_unregister:
+> +	if (!skip_reset)
+> +		gpiod_set_value(retimer->reset_gpio, 1);
+> +
+> +	clk_disable_unprepare(retimer->xo_clk);
+> +err_mux_put:
+> +	typec_mux_put(retimer->typec_mux);
+> +err_switch_put:
+> +	typec_switch_put(retimer->typec_switch);
+> +
+> +	return ret;
+> +}
+
+thanks,
+
+-- 
+heikki
 
