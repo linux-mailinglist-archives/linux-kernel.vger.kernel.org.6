@@ -1,348 +1,288 @@
-Return-Path: <linux-kernel+bounces-375668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2139A9905
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4919A9910
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740E7284BE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69DA7280FB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6578913B297;
-	Tue, 22 Oct 2024 05:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505A213BC12;
+	Tue, 22 Oct 2024 05:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQDzxAE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EVlCzZLR"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C75128370;
-	Tue, 22 Oct 2024 05:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729576558; cv=none; b=k6ALsz5PcAxYFQrJdXhXTpfCT07yumvtV59ssp5F1pYlg+MLNZNazpwm2Pz+IF0PV5AL05gTcYsPCSMpGvUp69xuniynmdStfOfSNxOZNT0ef1YoYlY6jeoIKoS7+mRegqHBIStShrxfL9lZk6Y72s77viyqzdgtRkrcGht1kic=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729576558; c=relaxed/simple;
-	bh=UoxLF1eIVDaRn+C3P85KUXBa3dHyYo8hW3sgoyrvTe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJnWPL7MGiX9f20SxtTEvmLVqKrreGKElWDeKsLUZUQucXp2/BbnWGJtmCWQ3h2FVRE+09UCPet99FkAheVZ6lRX+cq+WkPsDcde+zTZAZLsZuWzf7Gdm/eqKbZrmpH7DV9BOdFEik0WMcYasgPAIOVUAB26N20MhRebFlCeeRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQDzxAE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9D1C4CEC3;
-	Tue, 22 Oct 2024 05:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729576558;
-	bh=UoxLF1eIVDaRn+C3P85KUXBa3dHyYo8hW3sgoyrvTe8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQDzxAE8ciaWwQuwRUXzshTY+eXTIZaeCd/mhg0bGtyLnUpwgqYAGlSPBMPjyxwum
-	 rkoqFNY2pU2ILm8yWlPNKr93M7hY8wgHq/WETEWvXD41Je2hLO02Oe0E52SJgJxy6h
-	 KPD/DPEoswKkgpBAr179lu+b0Zf/fYJTwvocNJ/P8Q19oDCXP3388if4ErY0n6XTP3
-	 7MZIWc2Qccc2R5Dc7nr4HInJUiGlfOivwSy0hflDLC5N+gWd/0X4tPnzCU5tkEvDbe
-	 YD3WaNLMVtN+vpHAWOJitzF1rV2zC08+R0ZsztZqdu7pKlEbLosqeGVAdIl9PFUpNp
-	 +A8rw2sV54YpQ==
-Date: Mon, 21 Oct 2024 22:55:56 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 07/16] perf stat: Move stat_config into config.c
-Message-ID: <Zxc-bFLNAh7nrVQC@google.com>
-References: <20241016042415.7552-1-irogers@google.com>
- <20241016042415.7552-8-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0A135A79;
+	Tue, 22 Oct 2024 05:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729576770; cv=fail; b=GGfXeq/ngXJYb04aGULeZRl65T1ZyWOTXNxHD1ZgocdB9hh5CdILDpx7yYlLmRpI4gZ0uMcJt5fVI2n0IYDKM+q258UqnS+mhQw9pmVgXYvgTYdk2+lgn0h7UKf+S2CvxCtosvDC92xpcwu+hl4Z51IEP7z8iNJsUp/VOXeiB40=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729576770; c=relaxed/simple;
+	bh=6Z3Ow94PThh4JWBT9Yj66+wl5Y83g2EJFXDhHsiYJ+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ux0guNIjnA6DAlxABTzLNf2GOCfPMBeagKK7CQoUa9zQRWbVZHDy+C8WIzGnUXKlT71X0KbkVQGZbM23qAniQXORzkxL58gILopjHla9iSeNNmPPfIyf9UU3nJkzlKHFUChVtvOj1hzBLpGM73pzQMuu4X6xvCY7cy5IFhbiEl4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EVlCzZLR; arc=fail smtp.client-ip=40.107.223.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YVVV2BGqk8cJaic1PukHFH/2dkGSr0MJfBVcc4+b6D6VVMrfzULwluHWxZG092l7bVGDGhBAN/WLfJgO4y85pQYw384gZyEYa3vJcVaue6ygzQKjHL66MCa2yyodvnkl/1U68jlg1FiGBlkYUsFynlZrPYMqcCPImmjcKephtG0KTU3KXBhyV/vdUW52NpaqwU6q750NGjWSnB8fAsvNqF45dRSKaEmuLYDESjMf26pADHcSVbaFDf6GTuxaxz9/w9BMh2EaS+YrihYx9si09hTrRR4/Y5YB4d3YOJN+kMgwURysb4906mn6G86iDF3nZKBjbSwG/o8RKHFH8Y4OUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a5XMRnKMJnvF5o8V4p0HMkERNM6E+FLeRnA03h3IgiY=;
+ b=EQJmm8htw2bHUbhKioAbAAaXHBEMzIB2J1kvux//6/n1fPTIn8aUJimo4w0vZJ6EFuAkQaQZbjl7P6LQhP7ct4ipwryCS7YnLBSicY8wXFg56K402PqRAzgMEkF5uK1TFTEg62BvciD329syULNIOAE9fVByZB+lAiunqMrv7d/AH14g8wUueDbQIjc7Afj6Tnlrze2EyH9+E5tqG4a6/Y7FByCRquMvqs0NT7DKYeFsC/yI6NgmI7V9UEM1hQ2lV5BlkzFErMQyWKBMKYXYN9kgb4ehHMs76NN66tJCADH4NOMeIRUqEtrC3vlSnKWwLjoNb0uLnaBRp2mYAPE4JQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a5XMRnKMJnvF5o8V4p0HMkERNM6E+FLeRnA03h3IgiY=;
+ b=EVlCzZLRnW61Q+aoJwYZXymn3OTD7izC/8bOot0mWdo+HKvOrcDZaNVqmQFMv36xUH4RYh8se/A9lVBj1/sgwlIAdLQyPPcg5ohu7BO18JTox1Ss3W71K0ItIcbcguh8seIKqHeO4OvaKZKDMf2MiHbVnCCF1LXBxaT6wYZIixQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ PH8PR12MB6988.namprd12.prod.outlook.com (2603:10b6:510:1bf::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 05:59:25 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 05:59:25 +0000
+Date: Tue, 22 Oct 2024 11:29:12 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	x86@kernel.org, Perry Yuan <perry.yuan@amd.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v4 08/13] platform/x86: hfi: add online and offline
+ callback support
+Message-ID: <Zxc/MHYdFR/kTlbp@BLRRASHENOY1.amd.com>
+References: <20241021180252.3531-1-mario.limonciello@amd.com>
+ <20241021180252.3531-9-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021180252.3531-9-mario.limonciello@amd.com>
+X-ClientProxiedBy: PN2PR01CA0171.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26::26) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016042415.7552-8-irogers@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH8PR12MB6988:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9eebe01-a10b-4831-c642-08dcf25eaeb5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uCUgqc7QzyLgPXMUdXIaEIXn0UniLAeUDUYYQFcef/WrRKPgRkNpmAA3oFXd?=
+ =?us-ascii?Q?UlWMyxfES9GvEpxNg5HLrMIQTfRyoy/pXC91pewwIDJw2DopDHqMO2uxnPPe?=
+ =?us-ascii?Q?jB6BYxIx4yNvN+dJaYT3el/I+c/PpuEgneGiWLrdMoc4SrkPU8rDrJdViv6h?=
+ =?us-ascii?Q?6wCfgxn3BTeyvCcNH+2dZ62Kr2r0xGsGDllYy1AWhCbQ75sDe8NHO/LWjDxp?=
+ =?us-ascii?Q?X4NLdlnRRov57HmWKIUAtXRhpZsJWg+j+SX82+A814hrL2ceCK1KNjTTDcIb?=
+ =?us-ascii?Q?tn7z4QUwYl321cVmJEcY6KGHS0yuqjlZii45k8QbLeXh1M0S/wpAMsrHADTW?=
+ =?us-ascii?Q?VRz1cnb7c0wL28w/+P2/JgOkzD+RZszqEVWNERw0ORCT+94AeiMrqynYTjoE?=
+ =?us-ascii?Q?Ozd01v40LWpP/KgLUv5kSLgBrt0pH8mSNeJSxG3OxpVBf/DlP+7XWaThXUSI?=
+ =?us-ascii?Q?Vq4qB1atZNCQs7XTc2Tseq/NJE2jnBMGKMinBRUY1NDE6z+jwRhdzk+QCjHR?=
+ =?us-ascii?Q?LagmnibptlhOAK80oppjum647yf5zn61GwvrqYPrunIgsBvkzMpCsMuLzBcb?=
+ =?us-ascii?Q?Im2h/EAWWoduKm5DFShEusGHqV8L421V7/k+SZh328CzyjTjeX24yJ2MFQij?=
+ =?us-ascii?Q?0wxDvgyLr1+NpXCqvd6EKJ7a7mUjAfaCIJCyMFd5zAA4e2NZuA+BBl1PIRlX?=
+ =?us-ascii?Q?JG5YFUZPfh79svePbrB0BjSMip4ZAbqIxhELEYH0ADA5O/KQhYc1+fTj4pbz?=
+ =?us-ascii?Q?kEXIL3C2KLKPn4nzRHcmT5svnH8cxrDwrLFJbs1nJFN9OaHulQFbQANZbqLG?=
+ =?us-ascii?Q?jdY4cHzp7ybdzjJgDpPFpc8ZYyqGfghdg5JN8k6NKL3Z5/ESM2ve5fJzXQ9s?=
+ =?us-ascii?Q?9TZdywat/Y4TZasJRqOl/ABcndx6KkATP5tAUogm7KYuLyu/lGb6OTzd6p1f?=
+ =?us-ascii?Q?WV7wNOGdKGxgqAHDQmvg/7tKJrFNwMN2KRUwDnQU7of6Gr01OCoxu+Aq4rNV?=
+ =?us-ascii?Q?04FeGMm/yk7XF1/NcO0U4rHtH5b020LHKC5UTasn/Q2/rUMvL/4m3mk4WzRN?=
+ =?us-ascii?Q?iUbIRByUqRHbj52X7mzBCaIf3XjQsovtQSRsNeTvPitPitC9z99E+wcGGX6U?=
+ =?us-ascii?Q?EHecPVJeYTC9iw+vxkjVI2Udi28cNtSBpEqRzhfSQ1ciAoCxCRCWvOrAGAIY?=
+ =?us-ascii?Q?Gao+P8IkgRfqku+teLwjgwSupUtD2S5BAVcNkTxAbN8OGfdAYxyI9oP4pqCj?=
+ =?us-ascii?Q?VX+3ufldSPitnS83yQWmCrJrqy3qbdAR5E6eNlqb7lBdcN6+85D8O+Fk3jff?=
+ =?us-ascii?Q?elu8C7sdYrtysWVmIDoWqmCr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QnheZaOuLk9sEeqFyk74qkB9A6rQwrgp1uXgy+8Nb7wuyxe6uytx0TsmWQre?=
+ =?us-ascii?Q?Zcgql27Bv+X7z2JFsj35R75w9SZQfjd0PJgJ7QXFvGz+89Si7PnN9glXIEGW?=
+ =?us-ascii?Q?xnaVL4ega+f2VfH8BGsubFQKKOyxWz7F0uvqOxcHmBBOI99khbu6em2kEljp?=
+ =?us-ascii?Q?0G59vf+pnwppNTRsCxtEJYKtZQS+Y8KSAgMKx7Inv4YW41lnx1nTU/cZz15D?=
+ =?us-ascii?Q?O9Ze1Iok1EAAiluMtjDyYQscsmJln8oS43c3al9dNaay1sanA7GSGjrCLtlH?=
+ =?us-ascii?Q?yk+jvjuFKOx751gMrYLmDSZKpR1N91fX2pzj52nLG1JpgVhvXuHTFtQHq3lu?=
+ =?us-ascii?Q?m4fWOKpuoGl3Fuv1nCkBy1ki1I2s7bLPOYWBOLkg/ceNSPfa/BZgcNY7PvxI?=
+ =?us-ascii?Q?oq5RC2qq0xX2RygApKEuw9sUKikki+6ITddkcr1zwW/0nusHg74TucpzQDnl?=
+ =?us-ascii?Q?PfxtzLfxBp7ixXJBKador2rtdkFUczmLWDos9Li1LsHVH2FwmChnnEO0LC5q?=
+ =?us-ascii?Q?1ayoDSNWXin8wqk1mf+s6lGL0/5PJjlnDFVB+5YEuh10yqvWuWTFbMafEO61?=
+ =?us-ascii?Q?eUQI02jbDSw82vg8eJ6d0+6e4LM3VTm2wyTMnbsIf9WH7uCS0cnbBRS3e2l5?=
+ =?us-ascii?Q?QrRJt3Oi3Ab+wbs9hvoUuFap25HBGadNyFS2+UbvKLQfmd4O/subfn+RPZz2?=
+ =?us-ascii?Q?UKMS9zieukVTjktliq8M2jVkmtm0OxYC0E1Ec4RrP0MvgON4CTQfduXWB53v?=
+ =?us-ascii?Q?UDS+27a10EpYB6crxieE7FXH1b23weDJnEQtlG8iuUAG78nceQHo2nFshhxU?=
+ =?us-ascii?Q?o+yisbXt11hLwwMECQlNkykRUsPQs/sqGdHX2KkHf5a7uZrn0fI3NriaPdjV?=
+ =?us-ascii?Q?lgbQZblEW5vgxFNwP+dfPMv/Vj1X0RKtuBeQ2xH2cyht9so1t663dCG+/HkZ?=
+ =?us-ascii?Q?bNuFApr1NEJk57shU0Hxb6xPkk9tzPV0+PAsE1MQZ290yH2VSHzIuwtSZODP?=
+ =?us-ascii?Q?NMndwiIa+NwlgaXUgG+Mfxd6yBmFQZgwjU1xMqipvKbBN2IVI611der+8qJj?=
+ =?us-ascii?Q?aunUirfAabKH45vc4PSkPB2eaE8ID9SlI3NcEPEQ6SXkaK9WcG8AxL+5eD1A?=
+ =?us-ascii?Q?8T5iuQGXKxCjpxZgLQx32q83gTB57tRsaBm6oRE5OCpdK8QA5dtGZ05XjbPc?=
+ =?us-ascii?Q?R/grDUCtlTM3TR6IzeOSsKK4KlJAie2zXVOlrPy/pJfFeGJTLvaAQS1Wvigx?=
+ =?us-ascii?Q?2dUu83bIHmpQOKhpJhMs/SpEnIy/mbtLCsKOK0xpdD5MN5Go+7S0g3Qvn27o?=
+ =?us-ascii?Q?JkBcoXDhPJBZSKIxNL9lPb84oYd7HOcSh0pqaOGduMCL8fVhDWC6LvZ3TOap?=
+ =?us-ascii?Q?YxBggN5IY5dwlevfHhIdSWr3YvasnEyoa3POJYug0dEDopa1GGylOC2lX/eP?=
+ =?us-ascii?Q?7TaaOiTRHs8zbPnGV3iHdJEFVI74EDGUBydE9IT1fsoPAyGq0083pay3PSwG?=
+ =?us-ascii?Q?87vdtLGJReUGyJCprPmVYFp9R9AlPw0fzzB1zWJb80iN0A2IH3NOSzKr0XeZ?=
+ =?us-ascii?Q?KTVucDD9Tb9NvaYm5MNXwGXQpX09wUg1QiuEnZfq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9eebe01-a10b-4831-c642-08dcf25eaeb5
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 05:59:25.5562
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4b2WLQKcafhMLFHt3m18DX9tbhWBnUjmZ/l44wnbCwQN8fBK7bSe+AdAZ5eHLx5mfUzsnQyNLdIrHM96Swm0RA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6988
 
-On Tue, Oct 15, 2024 at 09:24:06PM -0700, Ian Rogers wrote:
-> stat_config is accessed by config.c via helper functions, but declared
-> in builtin-stat. Move to util/config.c so that stub functions aren't
-> needed in python.c which doesn't link against the builtin files.
+On Mon, Oct 21, 2024 at 01:02:47PM -0500, Mario Limonciello wrote:
+> From: Perry Yuan <Perry.Yuan@amd.com>
 > 
-> To avoid name conflicts change builtin-script to use the same
-> stat_config as builtin-stat. Rename local variables in tests to avoid
-> shadow declaration warnings.
+> There are some firmware parameters that need to be configured
+> when a CPU core is brought online or offline.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> when CPU is online, it will initialize the workload classification
+> parameters to CPU firmware which will trigger the workload class ID
+> updating function.
+> 
+> Once the CPU is going to offline, it will need to disable the workload
+> classification function and clear the history.
+> 
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  tools/perf/builtin-script.c |  1 -
->  tools/perf/builtin-stat.c   | 27 ---------------------------
->  tools/perf/tests/stat.c     | 16 +++++++++-------
->  tools/perf/util/config.c    | 27 +++++++++++++++++++++++++++
->  tools/perf/util/path.c      | 10 ++++++++++
->  tools/perf/util/path.h      |  1 +
->  tools/perf/util/python.c    |  9 ---------
->  tools/perf/util/stat.h      |  3 ++-
->  8 files changed, 49 insertions(+), 45 deletions(-)
+> v3->v4:
+>  * cpu -> CPU (Ilpo)
+> v2->v3:
+>  * Use guard() (Ilpo)
+>  * Whitespace changes (Ilpo)
+>  * Remove labels for unwind (Ilpo)
+> ---
+>  drivers/platform/x86/amd/hfi/hfi.c | 79 ++++++++++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 > 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 27b2fb08ad67..1ce7b71f1f46 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -85,7 +85,6 @@ static bool			system_wide;
->  static bool			print_flags;
->  static const char		*cpu_list;
->  static DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-> -static struct perf_stat_config	stat_config;
->  static int			max_blocks;
->  static bool			native_arch;
->  static struct dlfilter		*dlfilter;
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index b5e18853982c..7c7424824b0e 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -112,8 +112,6 @@ static struct target target = {
->  	.uid	= UINT_MAX,
->  };
->  
-> -#define METRIC_ONLY_LEN 20
-> -
->  static volatile sig_atomic_t	child_pid			= -1;
->  static int			detailed_run			=  0;
->  static bool			transaction_run;
-> @@ -151,21 +149,6 @@ static struct perf_stat		perf_stat;
->  
->  static volatile sig_atomic_t done = 0;
->  
-> -static struct perf_stat_config stat_config = {
-> -	.aggr_mode		= AGGR_GLOBAL,
-> -	.aggr_level		= MAX_CACHE_LVL + 1,
-> -	.scale			= true,
-> -	.unit_width		= 4, /* strlen("unit") */
-> -	.run_count		= 1,
-> -	.metric_only_len	= METRIC_ONLY_LEN,
-> -	.walltime_nsecs_stats	= &walltime_nsecs_stats,
-> -	.ru_stats		= &ru_stats,
-> -	.big_num		= true,
-> -	.ctl_fd			= -1,
-> -	.ctl_fd_ack		= -1,
-> -	.iostat_run		= false,
-> -};
-> -
->  /* Options set from the command line. */
->  struct opt_aggr_mode {
->  	bool node, socket, die, cluster, cache, core, thread, no_aggr;
-> @@ -1059,16 +1042,6 @@ static void sig_atexit(void)
->  	kill(getpid(), signr);
->  }
->  
-> -void perf_stat__set_big_num(int set)
-> -{
-> -	stat_config.big_num = (set != 0);
-> -}
-> -
-> -void perf_stat__set_no_csv_summary(int set)
-> -{
-> -	stat_config.no_csv_summary = (set != 0);
-> -}
-> -
->  static int stat__set_big_num(const struct option *opt __maybe_unused,
->  			     const char *s __maybe_unused, int unset)
->  {
-> diff --git a/tools/perf/tests/stat.c b/tools/perf/tests/stat.c
-> index 6468cc0d0204..d60983657bad 100644
-> --- a/tools/perf/tests/stat.c
-> +++ b/tools/perf/tests/stat.c
-> @@ -27,7 +27,7 @@ static int process_stat_config_event(const struct perf_tool *tool __maybe_unused
->  				     struct machine *machine __maybe_unused)
->  {
->  	struct perf_record_stat_config *config = &event->stat_config;
-> -	struct perf_stat_config stat_config = {};
-> +	struct perf_stat_config test_stat_config = {};
->  
->  #define HAS(term, val) \
->  	has_term(config, PERF_STAT_CONFIG_TERM__##term, val)
-> @@ -39,25 +39,27 @@ static int process_stat_config_event(const struct perf_tool *tool __maybe_unused
->  
->  #undef HAS
->  
-> -	perf_event__read_stat_config(&stat_config, config);
-> +	perf_event__read_stat_config(&test_stat_config, config);
->  
-> -	TEST_ASSERT_VAL("wrong aggr_mode", stat_config.aggr_mode == AGGR_CORE);
-> -	TEST_ASSERT_VAL("wrong scale",     stat_config.scale == 1);
-> -	TEST_ASSERT_VAL("wrong interval",  stat_config.interval == 1);
-> +	TEST_ASSERT_VAL("wrong aggr_mode", test_stat_config.aggr_mode == AGGR_CORE);
-> +	TEST_ASSERT_VAL("wrong scale",     test_stat_config.scale == 1);
-> +	TEST_ASSERT_VAL("wrong interval",  test_stat_config.interval == 1);
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> index 986ea056fa022..70ddde37f283f 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -245,6 +245,80 @@ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
 >  	return 0;
 >  }
 >  
->  static int test__synthesize_stat_config(struct test_suite *test __maybe_unused,
->  					int subtest __maybe_unused)
+> +static int amd_hfi_set_state(unsigned int cpu, bool state)
+> +{
+> +	int ret;
+> +
+> +	ret = wrmsrl_on_cpu(cpu, AMD_WORKLOAD_CLASS_CONFIG, state);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return wrmsrl_on_cpu(cpu, AMD_WORKLOAD_HRST, 0x1);
+> +}
+> +
+> +/**
+> + * amd_hfi_online() - Enable workload classification on @cpu
+> + * @cpu: CPU in which the workload classification will be enabled
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int amd_hfi_online(unsigned int cpu)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
+> +	struct amd_hfi_classes *hfi_classes;
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(!hfi_info))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Check if @cpu as an associated, initialized and ranking data must be filled
+> +	 */
+> +	hfi_classes = hfi_info->amd_hfi_classes;
+> +	if (!hfi_classes)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&hfi_cpuinfo_lock);
+> +
+> +	if (!zalloc_cpumask_var(&hfi_info->cpus, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	cpumask_set_cpu(cpu, hfi_info->cpus);
+> +
+> +	ret = amd_hfi_set_state(cpu, true);
+> +	if (ret)
+> +		pr_err("WCT enable failed for CPU %d\n", cpu);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * amd_hfi_offline() - Disable workload classification on @cpu
+> + * @cpu: CPU in which the workload classification will be disabled
+> + *
+> + * Remove @cpu from those covered by its HFI instance.
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int amd_hfi_offline(unsigned int cpu)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_info = &per_cpu(amd_hfi_cpuinfo, cpu);
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(!hfi_info))
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&hfi_cpuinfo_lock);
+> +
+> +	ret = amd_hfi_set_state(cpu, false);
+> +	if (ret)
+> +		pr_err("WCT disable failed for CPU %d\n", cpu);
+> +
+> +	free_cpumask_var(hfi_info->cpus);
+> +
+> +	return ret;
+> +}
+> +
+>  static int update_hfi_ipcc_scores(void)
 >  {
-> -	struct perf_stat_config stat_config = {
-> +	struct perf_stat_config test_stat_config = {
->  		.aggr_mode	= AGGR_CORE,
->  		.scale		= 1,
->  		.interval	= 1,
->  	};
+>  	int cpu;
+> @@ -348,6 +422,11 @@ static int amd_hfi_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
 >  
->  	TEST_ASSERT_VAL("failed to synthesize stat_config",
-> -		!perf_event__synthesize_stat_config(NULL, &stat_config, process_stat_config_event, NULL));
-> +		!perf_event__synthesize_stat_config(NULL, &test_stat_config,
-> +						    process_stat_config_event,
-> +						    NULL));
->  
+> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/amd_hfi:online",
+> +				amd_hfi_online, amd_hfi_offline);
+> +	if (ret < 0)
+> +		return ret;
+> +
 >  	return 0;
->  }
-> diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
-> index 68f9407ca74b..2d07c9257a1a 100644
-> --- a/tools/perf/util/config.c
-> +++ b/tools/perf/util/config.c
-> @@ -13,6 +13,7 @@
->  #include <sys/param.h>
->  #include "cache.h"
->  #include "callchain.h"
-> +#include "header.h"
->  #include <subcmd/exec-cmd.h>
->  #include "util/event.h"  /* proc_map_timeout */
->  #include "util/hist.h"  /* perf_hist_config */
-> @@ -34,6 +35,22 @@
->  
->  #define DEBUG_CACHE_DIR ".debug"
->  
-> +#define METRIC_ONLY_LEN 20
-> +
-> +struct perf_stat_config stat_config = {
-> +	.aggr_mode		= AGGR_GLOBAL,
-> +	.aggr_level		= MAX_CACHE_LVL + 1,
-> +	.scale			= true,
-> +	.unit_width		= 4, /* strlen("unit") */
-> +	.run_count		= 1,
-> +	.metric_only_len	= METRIC_ONLY_LEN,
-> +	.walltime_nsecs_stats	= &walltime_nsecs_stats,
-> +	.ru_stats		= &ru_stats,
-> +	.big_num		= true,
-> +	.ctl_fd			= -1,
-> +	.ctl_fd_ack		= -1,
-> +	.iostat_run		= false,
-> +};
->  
->  char buildid_dir[MAXPATHLEN]; /* root dir for buildid, binary cache */
->  
-> @@ -455,6 +472,16 @@ static int perf_ui_config(const char *var, const char *value)
->  	return 0;
->  }
->  
-> +void perf_stat__set_big_num(int set)
-> +{
-> +	stat_config.big_num = (set != 0);
-> +}
-> +
-> +static void perf_stat__set_no_csv_summary(int set)
-> +{
-> +	stat_config.no_csv_summary = (set != 0);
-> +}
-> +
->  static int perf_stat_config(const char *var, const char *value)
->  {
->  	if (!strcmp(var, "stat.big-num"))
-> diff --git a/tools/perf/util/path.c b/tools/perf/util/path.c
-> index 00adf872bf00..9712466c51e2 100644
-> --- a/tools/perf/util/path.c
-> +++ b/tools/perf/util/path.c
-> @@ -68,6 +68,16 @@ bool is_directory(const char *base_path, const struct dirent *dent)
->  	return S_ISDIR(st.st_mode);
->  }
->  
-> +bool is_directory_at(int dir_fd, const char *path)
-> +{
-> +	struct stat st;
-> +
-> +	if (fstatat(dir_fd, path, &st, /*flags=*/0))
-> +		return false;
-> +
-> +	return S_ISDIR(st.st_mode);
-> +}
-> +
 
-It looks like an unrelated change.
+Looks good to me.
 
-Thanks,
-Namhyung
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
 
->  bool is_executable_file(const char *base_path, const struct dirent *dent)
->  {
->  	char path[PATH_MAX];
-> diff --git a/tools/perf/util/path.h b/tools/perf/util/path.h
-> index d94902c22222..fbafbe7015dd 100644
-> --- a/tools/perf/util/path.h
-> +++ b/tools/perf/util/path.h
-> @@ -12,6 +12,7 @@ int path__join3(char *bf, size_t size, const char *path1, const char *path2, con
->  
->  bool is_regular_file(const char *file);
->  bool is_directory(const char *base_path, const struct dirent *dent);
-> +bool is_directory_at(int dir_fd, const char *path);
->  bool is_executable_file(const char *base_path, const struct dirent *dent);
->  
->  #endif /* _PERF_PATH_H */
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 5f11ae88943d..0fa8e27769be 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -17,7 +17,6 @@
->  #include "trace-event.h"
->  #include "mmap.h"
->  #include "util/env.h"
-> -#include "util/kvm-stat.h"
->  #include "util/kwork.h"
->  #include "util/sample.h"
->  #include "util/lock-contention.h"
-> @@ -1306,14 +1305,6 @@ PyMODINIT_FUNC PyInit_perf(void)
->  /* The following are stubs to avoid dragging in builtin-* objects. */
->  /* TODO: move the code out of the builtin-* file into util. */
->  
-> -void perf_stat__set_no_csv_summary(int set __maybe_unused)
-> -{
-> -}
-> -
-> -void perf_stat__set_big_num(int set __maybe_unused)
-> -{
-> -}
-> -
->  int script_spec_register(const char *spec __maybe_unused, struct scripting_ops *ops __maybe_unused)
->  {
->  	return -1;
-> diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-> index fd7a187551bd..78ddc14507b7 100644
-> --- a/tools/perf/util/stat.h
-> +++ b/tools/perf/util/stat.h
-> @@ -117,8 +117,9 @@ struct perf_stat_config {
->  	unsigned int		topdown_level;
->  };
->  
-> +extern struct perf_stat_config stat_config;
-> +
->  void perf_stat__set_big_num(int set);
-> -void perf_stat__set_no_csv_summary(int set);
->  
->  void update_stats(struct stats *stats, u64 val);
->  double avg_stats(struct stats *stats);
-> -- 
-> 2.47.0.rc1.288.g06298d1525-goog
-> 
+--
+Thanks and Regards
+gautham.
 
