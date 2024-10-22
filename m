@@ -1,211 +1,92 @@
-Return-Path: <linux-kernel+bounces-377075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472149AB98D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0259D9AB98F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7BFB21EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD901C226DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5F71CDA15;
-	Tue, 22 Oct 2024 22:34:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50214A08E;
-	Tue, 22 Oct 2024 22:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463231CDA25;
+	Tue, 22 Oct 2024 22:39:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACE81CCEFA
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636444; cv=none; b=claCqVVzRS2T3Y1KWodIYbNtQnBbRcEW6+d9ZC4UAr5N1ij0jI4RjVCFvN7Wn5YqsOKl6xtjR+VHVhOze+loKigjiwnJJVKtiDK7hGiMwpk4fR9UAdE2hiNqJPHZ4VjsEGqgOIoBb+wQqFZttRe6N9LZJoaGkoruP2AUzdWRUFk=
+	t=1729636746; cv=none; b=HMwiujaZzEi0Oo/oTJvkIiRQ721XBdHY85I5A5xINaPqdxJUUOi9pxG4EUo3kUhxxtgGR8QslSNqdpTJP7IAj7pLpl3CDHQDFQPiSUyo6PZR8LNespt/3GSVBssxSbRXvtbd2rxVtXDDimUtWaAs1cq0G7rKxOnxI17cAzCmIPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636444; c=relaxed/simple;
-	bh=3oE3lqFNk172Q6GEYBjnJ/UNf/ZeJZyAr/qQuZMwGXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZS69r1Po2Ye6NzLlDBo8ToTA3Vz3t045tVWQVaJdB2KDec3qHz81ZETWqz+0avYB3dYCjHL1jLTcX6i4kXVIqvq0Aoyky0+gc1S30c9Va2l9rDE6q7oVJb+Th+VecSouWqOvUY+ZKLuM/kLcocHSNaI1nj08PYqgVedU/DDNXKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2122497;
-	Tue, 22 Oct 2024 15:34:31 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE1413F528;
-	Tue, 22 Oct 2024 15:34:00 -0700 (PDT)
-Message-ID: <106f9c12-e598-4d09-993c-afcfad67b73f@arm.com>
-Date: Tue, 22 Oct 2024 23:35:10 +0100
+	s=arc-20240116; t=1729636746; c=relaxed/simple;
+	bh=qluEbLL/61JnFJJ+1HrJtCML4J7G6Oi0jEbUGJwD6O0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rVk+6UcKaPDjYieght2Yu4GVgr+bwcOBtiIZu1DTqDV2MEWbWMNkbYxnpWD9xnTUIrYVWZEUC9Jd574MUxvLnOkjcMBZxWtEKlhF04okjXrcuIVS8akPE96RCvuCieNllLHxT8eSW+mQNN81UTMrAKbOAT8NjU8dooqKd94/GHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so56643125ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:39:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729636744; x=1730241544;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ou3ZSS8VXdcc2i16wGFKqFwy4n6TY8ZsZEapadHZyfM=;
+        b=K5uQkxcpJ7OvzGD7eBJtfuqgnYKfDsISJt1eDiFnEof1IXRVgnlwxSlYk0SHlKZUPl
+         r4Sg/sNZMwT8R3undO4CSHt5Je/ttTCzQ2XmYO9PeYuvaEinS8JLzJLpeNYC4PUlJnBa
+         6Hy/4ct9ak7bEVPQLoJABLExxdv9RnBkVQesDB2QIJLKn29yMjWvmwJ7S6ZARye0p1ts
+         V+4XqeBystbZwe9yG8yfnhtdPLRxvtZ9c7dY+CA2BoPFH+nKGhfwWn/V4OZ+qW7jYJGT
+         qGaMlkGtXbsxmedmRaA9ldd74OH3/cAvKx3AfghPlgLx0zxfQWKiKrY35NwqpUbJdSva
+         vLFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVU9e9O4xSng/ppUtiznxB9jl8pkEaQ6+24Ea3zeTgvp4XvdsOHwzPqrzOPdV5lJmuJqOJcWwaM908O7vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQXmAVwYsisY5MRaG++3YK9VGgQWl0inZNv/JZ3do6xW6Vn5WH
+	Z1aEpmHQ2LEAUmkIOtclee541V4t0oxicQM2YlcfiDtaQe1QAtMJj4DzCaccfM/39qkMbK8NlOA
+	YTqZ/AMbBud5Chtm1xxLuqaWU6upyUnStsFZ8l2nwHJTAIPh8gxJR6WQ=
+X-Google-Smtp-Source: AGHT+IFOQm2zWuPY/iTsaUu2kI12hYW4zsOaIt6XeZET0rc7gdHnow318GkCuavuJN36Cgl7ruV9Pe5MyCWkd6+Iedn36f9J4nLR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] thermal: core: Manage thermal_governor_lock
- using a mutex guard
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <3679429.R56niFO833@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3679429.R56niFO833@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1446:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3a4d59d179bmr7359755ab.24.1729636744550; Tue, 22 Oct 2024
+ 15:39:04 -0700 (PDT)
+Date: Tue, 22 Oct 2024 15:39:04 -0700
+In-Reply-To: <6717a66e.050a0220.10f4f4.0127.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67182988.050a0220.1e4b4d.007c.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] INFO: task hung in __closure_sync_timeout
+From: syzbot <syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-On 10/10/24 23:22, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Switch over the thermal core to using a mutex guard for
-> thermal_governor_lock management.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/863177860.0ifERbkFSE@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   40 +++++++++++++---------------------------
->   1 file changed, 13 insertions(+), 27 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -124,7 +124,7 @@ int thermal_register_governor(struct the
->   	if (!governor)
->   		return -EINVAL;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> +	guard(mutex)(&thermal_governor_lock);
->   
->   	err = -EBUSY;
->   	if (!__find_governor(governor->name)) {
-> @@ -163,8 +163,6 @@ int thermal_register_governor(struct the
->   		}
->   	}
->   
-> -	mutex_unlock(&thermal_governor_lock);
-> -
->   	return err;
->   }
->   
-> @@ -175,10 +173,10 @@ void thermal_unregister_governor(struct
->   	if (!governor)
->   		return;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> +	guard(mutex)(&thermal_governor_lock);
->   
->   	if (!__find_governor(governor->name))
-> -		goto exit;
-> +		return;
->   
->   	list_del(&governor->governor_list);
->   
-> @@ -189,9 +187,6 @@ void thermal_unregister_governor(struct
->   				 THERMAL_NAME_LENGTH))
->   			thermal_set_governor(pos, NULL);
->   	}
-> -
-> -exit:
-> -	mutex_unlock(&thermal_governor_lock);
->   }
->   
->   int thermal_zone_device_set_policy(struct thermal_zone_device *tz,
-> @@ -200,16 +195,13 @@ int thermal_zone_device_set_policy(struc
->   	struct thermal_governor *gov;
->   	int ret = -EINVAL;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> -
-> +	guard(mutex)(&thermal_governor_lock);
->   	guard(thermal_zone)(tz);
->   
->   	gov = __find_governor(strim(policy));
->   	if (gov)
->   		ret = thermal_set_governor(tz, gov);
->   
-> -	mutex_unlock(&thermal_governor_lock);
-> -
->   	thermal_notify_tz_gov_change(tz, policy);
->   
->   	return ret;
-> @@ -220,15 +212,13 @@ int thermal_build_list_of_policies(char
->   	struct thermal_governor *pos;
->   	ssize_t count = 0;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> +	guard(mutex)(&thermal_governor_lock);
->   
->   	list_for_each_entry(pos, &thermal_governor_list, governor_list) {
->   		count += sysfs_emit_at(buf, count, "%s ", pos->name);
->   	}
->   	count += sysfs_emit_at(buf, count, "\n");
->   
-> -	mutex_unlock(&thermal_governor_lock);
-> -
->   	return count;
->   }
->   
-> @@ -668,17 +658,18 @@ int for_each_thermal_governor(int (*cb)(
->   			      void *data)
->   {
->   	struct thermal_governor *gov;
-> -	int ret = 0;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> +	guard(mutex)(&thermal_governor_lock);
-> +
->   	list_for_each_entry(gov, &thermal_governor_list, governor_list) {
-> +		int ret;
-> +
->   		ret = cb(gov, data);
->   		if (ret)
-> -			break;
-> +			return ret;
->   	}
-> -	mutex_unlock(&thermal_governor_lock);
->   
-> -	return ret;
-> +	return 0;
->   }
->   
->   int for_each_thermal_cooling_device(int (*cb)(struct thermal_cooling_device *,
-> @@ -1346,20 +1337,15 @@ EXPORT_SYMBOL_GPL(thermal_zone_get_crit_
->   static int thermal_zone_init_governor(struct thermal_zone_device *tz)
->   {
->   	struct thermal_governor *governor;
-> -	int ret;
->   
-> -	mutex_lock(&thermal_governor_lock);
-> +	guard(mutex)(&thermal_governor_lock);
->   
->   	if (tz->tzp)
->   		governor = __find_governor(tz->tzp->governor_name);
->   	else
->   		governor = def_governor;
->   
-> -	ret = thermal_set_governor(tz, governor);
-> -
-> -	mutex_unlock(&thermal_governor_lock);
-> -
-> -	return ret;
-> +	return thermal_set_governor(tz, governor);
->   }
->   
->   static void thermal_zone_init_complete(struct thermal_zone_device *tz)
-> 
-> 
-> 
+    bcachefs: make btree read errors silent during scan
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1374a640580000
+start commit:   c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10f4a640580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1774a640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=43d0c6eb00a26a41ec60
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12265430580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1105c640580000
+
+Reported-by: syzbot+43d0c6eb00a26a41ec60@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
