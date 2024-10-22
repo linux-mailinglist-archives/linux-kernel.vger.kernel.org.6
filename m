@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-375314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A2A9A949D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:17:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACF49A94A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A419D1F23845
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27815B223F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDBDEEBB;
-	Tue, 22 Oct 2024 00:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE4EDDC5;
+	Tue, 22 Oct 2024 00:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GlZ18t27"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqX0/edn"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C0D81E;
-	Tue, 22 Oct 2024 00:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A13C4A18
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729556257; cv=none; b=Kyx/dxR5JxGvhZzcjl7sSHYqCZRXwL25hY0bS499ZXzKvMxaOy73LUO4fiHhR37Jx0YRILGmzS105hZCZm1OiXAJIRVkt+FaipgBynnVjsdcPkMhqq0GEQsvxDalM9hpeH6x9dq/r1nzdo+FWmngatRAhDxeDD4yIVomwx3RE0c=
+	t=1729556370; cv=none; b=qsvh8eLybrVk83fuioEyrLTEczwRkmXw2UPhW4UHz1y4iaYvII7sb7DHGXStSfyFVPppePe7tLFWwM9DMzhvhAZ8U/ur/wFBDHSf5437L5m3BikbCVJRl49a4fOrGWgqYWcFxJ7DBVZWk0BLQLDJhHdtg51hrX8JDzMKPuZrARg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729556257; c=relaxed/simple;
-	bh=wqfHdyxb/kjiHcZmQPqoNSZPVIR84oe8ss6HVFUOwzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvYwr7gU9eN+4tQHJy1OffX5N6a3fSRLyFAmFzPeG1G9ACvxL8bxoYjlQyFNcfN4sq8dxm3Ws8a9vDJONn4LaksGD9pEsX2nGCv76xcIHRyRaYBtpCZ+QIKY73l+KRpPUFolsjcGYOM0hSDw03NrV4yU/kfWwKguqWfMVf5gwrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GlZ18t27; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729556256; x=1761092256;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wqfHdyxb/kjiHcZmQPqoNSZPVIR84oe8ss6HVFUOwzg=;
-  b=GlZ18t27pZvRrpXRBfy44tIm9JBL6c8FTQvevuifjU5seeNfPn44LQba
-   a9pzg+Gamz+yGWKpEXF0pXcXd0a6F5A0STmYRrVcRvPDk+6hAx+npTv3U
-   JgpbqXQiD5L8+4BYjLRUsoukaUfM3xmAwBjx6A7djYvncaC3QT4zWIUUd
-   Ng61FKp0/Y+r6ZqSEa/KIwntlXQDv42i3q/UC2D9uPa99W8xii4Rvjlz8
-   guUkWvq2i2m2Bt03fW/3bcZLiGtVaTShY71fQhbcmjsuZVPcWoKu6yQZ8
-   koxfHAr37U7vTrQ57mXWQpxvO34WcZ2ItmBs5w4Bjve1u0NwhYUqduY48
-   w==;
-X-CSE-ConnectionGUID: Aep2jQ6bSjOr3q5HiB6gMA==
-X-CSE-MsgGUID: azezhFMWQau628RE5Zx11A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="54472250"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="54472250"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:35 -0700
-X-CSE-ConnectionGUID: MnR38BX4RmCrpfgk41urDg==
-X-CSE-MsgGUID: K1ZSWeElSoKympaffv36Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="79621338"
-Received: from gargmani-mobl1.amr.corp.intel.com (HELO [10.124.223.237]) ([10.124.223.237])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:17:34 -0700
-Message-ID: <8489127b-1292-475d-b67a-b0fc868d8a4b@intel.com>
-Date: Mon, 21 Oct 2024 17:17:33 -0700
+	s=arc-20240116; t=1729556370; c=relaxed/simple;
+	bh=SoVuOE6rW8yVtT/CmcaGAvYOfAukDqA0XOMOkBmpE1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=pcGgH/6B1rqRD9HvW4h3GunQ2VFoODz+dWAyoIS5bg2V4TKl8wPIXnBzwIdQCcmhtn3VMKVveXeU46sO8gJzKJEpTVX4lT9oO+Y0eVOlyjERpS1T3gioygrvq9d9zqr6+MgejzCQCjsjT/PRI0THFkzjYQFQNN/we5UVXPC+GvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqX0/edn; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99fa009adcso279149966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729556365; x=1730161165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3L++Tq78Z4wLx8KKrPfxsW5qjVZVQchtRSIeHcPRpVo=;
+        b=FqX0/ednc772fZva/EDdhz4IItdpMwgGft0K2IyPR1eYNEkacIuRJiZuQOvjE2F6ce
+         3QRL1W/At+sFHmBeSkiBSvhCwKhRKfDuXdXNzqCcQm6jkBpr+mgrxcNRCoTVotfjM3V0
+         5L26EDuZHTJ7G5xbM/+9yR2k/XY1uH2lhAizMqDVYQW7v8QeFpBiJb9lli1ThQOBKR7l
+         J3udu5dwV4OTYygdGXew7oi1lVjmWmKrOa75m5GkLhFRUIiT5r00P02P65jgkLMfX6et
+         /oI4yqNjthsgEpTYiRsIAVmugLj+YrgHKaqBmqs3T2tfNnV8qF0ntuf/TEf51CsWmbds
+         /1sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729556365; x=1730161165;
+        h=content-transfer-encoding:in-reply-to:cc:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3L++Tq78Z4wLx8KKrPfxsW5qjVZVQchtRSIeHcPRpVo=;
+        b=ixkYmHw9puOIgHVGbIUer9rBGb02NYu1LJ56mx7AF5BZiZ/dUmZJffi0AmA5/y3T98
+         7vpYHEdm9CGOAmxx4U1xkBM5xYNJuWpAfnq0QNr24lCWMDjtK/GN2u1eVlTECQoJRm6T
+         uaxPAiofrC0y+B+BcCT90CIoXl+TZOZlGjOezu0n7KeXqwSU1mUJAuzGaQuoO83R3spB
+         iw1G+7M6nnaoYL3qy81cFKJNsTPBmL6v8pLGUzU1vV336h0GRezHGEtnrldoVbA3nCXQ
+         2rI56k+ZR3VH0UzF6pDPLegyy/qW5E2w6iXy95g2di3L5LFz8o4fZdCyXmeNkCL/SmD3
+         b2Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrwNt4BTBbs01BIXlaIKFF05ldalnOTapbaduCFGNHuepXcDm5hjMAbO4K//c95V2hAv/dZHx4tDzjUfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKnL/ormHgX9/FDP93K38ioXNaI4/uES+PpE42ZYoXLlWoLdva
+	gJxiqa4qH2UJs3PoYpyNtbgf2eSWyj3OlWpZ3QjxgdTLRmeH98KN
+X-Google-Smtp-Source: AGHT+IFj7pq/yq+jiJswm+jO2v52hlglkuHibUJxDLd94JRztGQT8Nkez5SDkhfGonYAsyvidyx6rw==
+X-Received: by 2002:a05:6402:210e:b0:5ca:1598:15ad with SMTP id 4fb4d7f45d1cf-5ca1598179cmr9519877a12.3.1729556365331;
+        Mon, 21 Oct 2024 17:19:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e11:5400:7400:ff60:75e8:cc8e:6028? ([2a01:e11:5400:7400:ff60:75e8:cc8e:6028])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b556sm2479577a12.63.2024.10.21.17.19.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 17:19:24 -0700 (PDT)
+Message-ID: <2ae7d2b0-0053-4cff-9352-d180c243ded4@gmail.com>
+Date: Tue, 22 Oct 2024 02:19:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,129 +75,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
- a switch() statement
-To: Sohil Mehta <sohil.mehta@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
- "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-7-qiuxu.zhuo@intel.com>
- <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
- <ZxLBwO4HkkJG4WYn@agluck-desk3.sc.intel.com>
- <2d011a77-a46e-4589-ae91-80d8d29e4124@intel.com>
- <CY8PR11MB71348AA655274E611CFFFE6C89412@CY8PR11MB7134.namprd11.prod.outlook.com>
- <SJ1PR11MB6083262976EDEC69FFF449FAFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <88e77a00-ad62-4670-9d4e-a146bd8b420c@intel.com>
- <SJ1PR11MB60832636201CA40AD13C02C1FC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <7a902c13-bfdf-4319-9e31-81c199ecf65c@intel.com>
- <SJ1PR11MB6083E463572AC9E110A7199FFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <42d59ea5-5b36-49cd-b04a-4480064fff02@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <42d59ea5-5b36-49cd-b04a-4480064fff02@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [syzbot] [udf?] general protection fault in udf_read_folio
+To: jan Kara <jack@suse.com>
+References: <6716ebf5.050a0220.10f4f4.00db.GAE@google.com>
+From: Gianfranco Trad <gianf.trad@gmail.com>
+Content-Language: en-US, it
+Cc: syzbot <syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <6716ebf5.050a0220.10f4f4.00db.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/21/24 15:57, Sohil Mehta wrote:
-> On 10/21/2024 11:40 AM, Luck, Tony wrote:
->>>> Intel model number allocation policies aren't necessarily sequential.
->>> Model numbers are assumed to be sequential at least within family 6.
->> Assumption can only be applied retroactively to simpler times.  Looking
->> at the timelines and model numbers for pure-Atom, pure-Core, Hybrid,
->> and Xeon, they are somewhat jumbled.
->>
-> Agreed. Using range checks within a family with extreme care and
-> avoiding cross-family ones seems like the saner thing to do.
+On 22/10/24 02:04, syzbot wrote:
+> Hello,
 > 
-> Maybe everything in the future is enumerated and VFM checks would not be
-> needed 🙂
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 > 
-> Trying to understand more, I have more questions than answers. With the
-> introduction of Family 0x19, do we need to reevaluate some of the
-> existing model checks?
+> Reported-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
+> Tested-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
 > 
-> early_init_intel():
-> if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
->     (c->x86 == 0x6 && c->x86_model >= 0x0e))
-> 	set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+> Tested on:
 > 
-> It seems "constant_tsc" wouldn't show on Diamond rapids. Do we need it to?
+> commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12684640580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ddf8715339c89280b6fc
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Note: no patches were applied.
+> Note: testing is done by a robot and is best-effort only.
 
-We only have a handful of these and they're mostly for early family 6
-things.  I bet there's less than half a dozen.
+Hi Jan,
 
-Let's just list them in one of our match structures:
+syzbot reported a null-ptr-deref in udf_read_folio a month ago [1].
 
-const u32 NOT_SUPPORTED = UINT_MAX; // or another special, invalid VFM
-const u32 ALL_SUPPORTED = 0;
+This bug was marked as still open on syzbot, so I retested the 
+reproducer (no patch applied) to check if the bug was still valid 
+upstream, seems not (as reported up).
+Wondering if syzbot will now try to find another reproducer, since after 
+this check the reproducer was crossed away on the syzbot web UI, or if 
+the bug can be considered closed.
+I hope this might help.
 
-static const struct x86_cpu_id table[] __initconst = {
-	X86_MATCH_FAM(INTEL,   3, NOT_SUPPORTED),
-	X86_MATCH_FAM(INTEL,   4, NOT_SUPPORTED),
-	X86_MATCH_FAM(INTEL,   5, NOT_SUPPORTED),
-	X86_MATCH_FAM(INTEL,   6, INTEL_CORE_YONAH),
-	X86_MATCH_FAM(INTEL, 0xf, INTEL_P4_WHATEVER),
-	X86_MATCH_VEN(INTEL,      ALL_SUPPORTED),
-};
+[1] https://syzkaller.appspot.com/bug?extid=ddf8715339c89280b6fc
 
-... and then use it like this:
+Thanks for your time,
 
-	m = x86_match_cpu(table);
-	// Non-Intel lands here:
-	if (!m)
-		return false;
-
-	if (VFM_MODEL(c->x86_vfm) >= m->driver_data)
-		return true;
-
-	return false;
+--Gian
 
