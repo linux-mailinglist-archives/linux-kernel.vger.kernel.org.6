@@ -1,158 +1,250 @@
-Return-Path: <linux-kernel+bounces-375887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9109A9C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4111D9A9C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C261F234DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A9E283BFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244F5171066;
-	Tue, 22 Oct 2024 08:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579C16F8E7;
+	Tue, 22 Oct 2024 08:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c17O3H6A"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDn73JS1"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD64158D7B;
-	Tue, 22 Oct 2024 08:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325CE186E2F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585466; cv=none; b=re2hixvB/fhpYG3RRPP18zT/5U2jj5IKIbipy4Yk+tzwxpgXNalTidBAyzITv1/h3mgD0st8+2RFvDjcU0CNYUok35Ms8xi/MTcNUeJpzQqPXrpPElNFHJI8s0lgd01D8DjOjPY13hEmY5VyrMzHW4IC82yu9LGbn9gvsaPQTAQ=
+	t=1729585770; cv=none; b=ekseuc0yJ/qg+PimhZVWbZFG0Lbp1hWaAJYxKRnQfIlQn/WHOm7N/wmfJq4F6YJiF7/WzfPG1tK8EWmNPdlZLyBVj1W5DQlAMr65s/BFNnGH5uyWbUchttJAa5SGBNWDSVzJ70XFM+gq2ajnp+D4CFRfdBoCkTF0K4WKVPoEXe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585466; c=relaxed/simple;
-	bh=ukPEnMSX5kbqTfKI6FalbDRRnwjbTnVhFzN7tzRJ8Fw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TVtj390UES4sBsEJfTu2f6n5+0cKsdrO1vq2OxlvArV0GWfTcJRcsn48VG4bPBy2nTR6VvzFAN7iEioWrm0idlPYOIKbd+6yazDOfOkNMV5MYFh7Ve4RieIj+lwfhQ9o9DVHfS3iM9zko+mNqhT3aYAJPv1eZc3+P7aB9V96gek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c17O3H6A; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so40527725e9.2;
-        Tue, 22 Oct 2024 01:24:24 -0700 (PDT)
+	s=arc-20240116; t=1729585770; c=relaxed/simple;
+	bh=91JYyvnl+Fdi6fkf5FSlb8LxDeQ2IrQc7l6lvJQCgto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NyknxxS07s5CgSgM/p3dctIKB7C5SjRbVew4SNV5759tl5zfn/3cO/+cpvzU7nSpohe9QpDulUZpYaxv1kZX563x7khyiaWSQodShfE5xRrD1PCimIbKANuyBvXsbFs1GsKfiAo75gX7pj1O+yFljJXwKM+EoaZQh5bcP9MT5hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDn73JS1; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2e3e4f65dso58446857b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729585463; x=1730190263; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ukPEnMSX5kbqTfKI6FalbDRRnwjbTnVhFzN7tzRJ8Fw=;
-        b=c17O3H6AbGnLYtDjJ8LN/KV8chyfI81Z+LZJFS5q6T45WX3x8E+yvYLGW/scr1pCDR
-         LRhTMZ7gEetNLe9A1Mc7b/EhwyhuhsbM6eDyl9mdQvLSTjXoN7U2CxjCuG/cQxbbBKy7
-         A6D9Eh8vKDW54PjEwj0Jm3ZQUT6P8tUNyuVi/z61TeyahPzYmyP0HmPUlzQClHhosItK
-         BVwQbmePz4kDvu25FumaIIqKjebuPFEoe8mES01YR6KWsGCHaKOg1SRKgqRJ5XRFdW1W
-         tcx/64SmYAlxqUvAEDQ+K6dnOgtKprK5aRR/bdETUPkBjD2hkXCPtR4z9Rd2qUM6YMVT
-         pK0w==
+        d=linaro.org; s=google; t=1729585767; x=1730190567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kLQbdGQU/v5ri2hhQLOr8G4Wt+hC9tXpUHCmYp6zu9E=;
+        b=bDn73JS1EtBKgzlJeBQy5CCN1c7t6L/wCYlPyyKORbtRp0mwbvBstkNX0ZFt6BHf65
+         1xPZ/ZFKGnE/ijpOuHdNyNoTuMLjxw3iC3jjaIh4AC9HCgGyrqWias73WeIKaTb/VDxm
+         RH0paKJaPmdWH32FlRpOBhparSZhaenb3EVxJLT0L8zuMspRdV0SUdeQw6OfjrNjvUfe
+         n7iemOKlWt6BZtbvT8bFigZrOEUfGbNS48zkLjuk0RPidimy0pBZRt3jEAFgwfeIr50f
+         0LdHnaLhxRnubMLl8vAGty/0T71JKl5LR/lRXt9E6cNhAXf/0QYxOaZTGTZHrPTAbaYM
+         9+4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729585463; x=1730190263;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ukPEnMSX5kbqTfKI6FalbDRRnwjbTnVhFzN7tzRJ8Fw=;
-        b=AYkquIpEmyu43LCor5mznI8ZXwu77c95eomjVgLOSY4OOZfZAXSr9CHXvR+0PY8XLp
-         j7nZU0WPXDIxP5v1pBCVKib7fR3SLTik2grbNZrdqGgThfSUWzQ5HOgs8leW+5P9uOdl
-         kxYRHrT2kTG45ZNNqtCDXIUJPPmK5asklVjFhlau19cmeqDrSDKIUgDtdgVJE1QgiZj0
-         UXPyZPzMYAr+yN9dRqggJjqQNjIImztiZijJWeXoY3sWyLSqLuRA4b2bIPP1s+Jb5bHm
-         qjAQxsHCWTyiKBYMM4zJppptZbe8nvrELZqNIwaKqUawG2CoVBIwR4ws0ES3MBx1arF4
-         i1lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmX+cjrEwbSkcx9S9dHnmTnbrX1R2j7bAhSF1GkQ50hrFplGziTzHhkmJgIEweB5j0G3tEYL6JZZD+@vger.kernel.org, AJvYcCWQKQozdWLQepCrbw/tq5fOs9CHzfsZW8A1+1GJMU1Gzg87LEV9WOdnYHZPRkUMeNjcTlLx//RrIgcw6EOy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdhQGcZsFi+e+lq5chf/S0D8UKu04HBIhAAOVhRVUfQpx/QJhp
-	KRjDu/MNrc1fSiQ3/GkQM6DAjOyEyGgVe62b0G3HbCFI67E8b4L0
-X-Google-Smtp-Source: AGHT+IGepLLb+O1n6mDqgL9Oop1ZhSrzptoKk9PYdaWutmvWNcfopSTKd5E6TrNqjp7YUqpfVXB/zg==
-X-Received: by 2002:a05:600c:1c8d:b0:431:5044:e388 with SMTP id 5b1f17b1804b1-4317b90e37bmr19705365e9.22.1729585462328;
-        Tue, 22 Oct 2024 01:24:22 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c2d39sm82037085e9.37.2024.10.22.01.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 01:24:22 -0700 (PDT)
-Message-ID: <9083e7ff5471e9f8c478a10a67a7c606b81c6287.camel@gmail.com>
-Subject: Re: [PATCH 4/6] iio: adc: ad7606: rework scale-available to be
- static
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Alexandru Ardelean <aardelean@baylibre.com>, David Lechner
-	 <dlechner@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org,
- robh@kernel.org, 	lars@metafoo.de, michael.hennerich@analog.com,
- gstols@baylibre.com
-Date: Tue, 22 Oct 2024 10:28:40 +0200
-In-Reply-To: <CA+GgBR_tT5J8Lq7DmSw9GdETiRScXzPzcf5UkDk32GLP8tSrQw@mail.gmail.com>
-References: <20241021130221.1469099-1-aardelean@baylibre.com>
-	 <20241021130221.1469099-5-aardelean@baylibre.com>
-	 <0a7c5305-b4f7-4166-8a8a-05cf6e3273cc@baylibre.com>
-	 <CA+GgBR_tT5J8Lq7DmSw9GdETiRScXzPzcf5UkDk32GLP8tSrQw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.54.0 
+        d=1e100.net; s=20230601; t=1729585767; x=1730190567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kLQbdGQU/v5ri2hhQLOr8G4Wt+hC9tXpUHCmYp6zu9E=;
+        b=qcl21veN/Mt14g20WrmdJHpw3GHt8Op8+6FTRI5gO/MB+RafksuavwWNk38aLGj/oL
+         9xCqHgPzDy0mqmI+BRVwVSLRXAHYKsNXQYBGBjnX53NA+pk4Jt7qhotn6RjcHCMybGj4
+         2JFNRyWFAlSoRxw2LQeJ26/iSI+yj/nuMi9GwhcDCnhG3F3trmVYcWPho2/T3sfzjZN8
+         YsppBxANhCOTo+4e6la+keygia5E5TvXtMrAr/oSYAWqIRhKzwdzbomO7yG8ewYtPIym
+         i+ySZeYvonFGGGz26P/5w4EwP7lsOX3I7C1Olnm/knxAxS6Tns7ISYg1ZZeu7FGcEh9T
+         BhQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViJMp+MZT78OQzx4ixbTP3weE6k6BYWulXIW8vmnQOLus7UqbKWNUXZ94Ab485V82JhNZrjgZB8uQWnz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJwvl7R0HG9b4iE+J1VDkXkfZm3XN0aSquJ8pD3dZjQT97iOqe
+	/up34cRGeHmlP2YAIz7ZM+lXTY5rp/+tH2JdDwTg08uP5VGI5q91C1JmLCd2RhAkSfglXE3dtRj
+	6VLheRiEr2Vhbidn+Pz+Vd9+aqRgmQOM7+vXbt1wnjE972O87SoQ=
+X-Google-Smtp-Source: AGHT+IG9Q3YEuJr8VKnJyP4ALVy/0ok/SYBCMzoi2I9bl8cdDzUPuqepo05ucF6AILKeMjf8mXd/KxO/YrS7ZIa3T0w=
+X-Received: by 2002:a05:690c:4907:b0:6e5:de2d:39e0 with SMTP id
+ 00721157ae682-6e5de2d5659mr108655877b3.42.1729585767136; Tue, 22 Oct 2024
+ 01:29:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241014060130.1162629-1-haibo.chen@nxp.com> <20241014060130.1162629-3-haibo.chen@nxp.com>
+ <CAPDyKFr37wLYxdFJ-Lgbq7PbWyiQz+CuwMxwgeeP3QpMvdyjqg@mail.gmail.com>
+ <DU0PR04MB949604108991809742E83E5D90402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+ <DU0PR04MB9496801A4571142F914BBF4990402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB9496801A4571142F914BBF4990402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 Oct 2024 10:28:49 +0200
+Message-ID: <CAPDyKFpectKosHEU7cm7uNCNwHZaT0XCSn674dGtu8Y+hmf_Pw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the system PM logic
+To: Bough Chen <haibo.chen@nxp.com>
+Cc: "adrian.hunter@intel.com" <adrian.hunter@intel.com>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, dl-S32 <S32@nxp.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCAyMDI0LTEwLTIyIGF0IDA5OjU5ICswMzAwLCBBbGV4YW5kcnUgQXJkZWxlYW4gd3Jv
-dGU6Cj4gT24gTW9uLCBPY3QgMjEsIDIwMjQgYXQgOToxN+KAr1BNIERhdmlkIExlY2huZXIgPGRs
-ZWNobmVyQGJheWxpYnJlLmNvbT4gd3JvdGU6Cj4gPiAKPiA+IE9uIDEwLzIxLzI0IDg6MDIgQU0s
-IEFsZXhhbmRydSBBcmRlbGVhbiB3cm90ZToKPiA+ID4gVGhlIG1haW4gZHJpdmVyIGZvciB0aGlz
-IGNoYW5nZSBpcyB0aGUgQUQ3NjA3IHBhcnQsIHdoaWNoIGhhcyBhIHNjYWxlIG9mCj4gPiA+ICIx
-LjIyMDcwMyIgZm9yIHRoZSDCsTEwViByYW5nZS4gVGhlIEFENzYwNyBoYXMgYSByZXNvbHV0aW9u
-IG9mIDE0LWJpdHMuCj4gPiA+IAo+ID4gPiBTbywganVzdCBhZGRpbmcgdGhlIHNjYWxlLWF2YWls
-YWJsZSBsaXN0IGZvciB0aGF0IHBhcnQgd291bGQgcmVxdWlyZSBzb21lCj4gPiA+IHF1aXJrcyB0
-byBoYW5kbGUganVzdCB0aGF0IHNjYWxlIHZhbHVlLgo+ID4gPiBCdXQgdG8gZG8gaXQgbW9yZSBu
-ZWF0bHksIHRoZSBiZXN0IGFwcHJvYWNoIGlzIHRvIHJld29yayB0aGUgc2NhbGUKPiA+ID4gYXZh
-aWxhYmxlIGxpc3RzIHRvIGhhdmUgdGhlIHNhbWUgZm9ybWF0IGFzIGl0IGlzIHJldHVybmVkIHRv
-IHVzZXJzcGFjZS4KPiA+ID4gVGhhdCB3YXksIHdlIGNhbiBhbHNvIGdldCByaWQgb2YgdGhlIGFs
-bG9jYXRpb24gZm9yIHRoZSAnc2NhbGVfYXZhaWxfc2hvdycKPiA+ID4gYXJyYXkuCj4gPiA+IAo+
-ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUgQXJkZWxlYW4gPGFhcmRlbGVhbkBiYXlsaWJy
-ZS5jb20+Cj4gPiA+IC0tLQo+ID4gCj4gPiAuLi4KPiA+IAo+ID4gCj4gPiA+IMKgc3RhdGljIHNz
-aXplX3QgaW5fdm9sdGFnZV9zY2FsZV9hdmFpbGFibGVfc2hvdyhzdHJ1Y3QgZGV2aWNlICpkZXYs
-Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGRldmljZV9hdHRy
-aWJ1dGUKPiA+ID4gKmF0dHIsCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-Y2hhciAqYnVmKQo+ID4gPiBAQCAtNzAzLDggKzY5MCwxNiBAQCBzdGF0aWMgc3NpemVfdCBpbl92
-b2x0YWdlX3NjYWxlX2F2YWlsYWJsZV9zaG93KHN0cnVjdAo+ID4gPiBkZXZpY2UgKmRldiwKPiA+
-ID4gwqDCoMKgwqDCoCBzdHJ1Y3QgaWlvX2RldiAqaW5kaW9fZGV2ID0gZGV2X3RvX2lpb19kZXYo
-ZGV2KTsKPiA+ID4gwqDCoMKgwqDCoCBzdHJ1Y3QgYWQ3NjA2X3N0YXRlICpzdCA9IGlpb19wcml2
-KGluZGlvX2Rldik7Cj4gPiA+IMKgwqDCoMKgwqAgc3RydWN0IGFkNzYwNl9jaGFuX3NjYWxlICpj
-cyA9ICZzdC0+Y2hhbl9zY2FsZXNbMF07Cj4gPiA+ICvCoMKgwqDCoCBjb25zdCB1bnNpZ25lZCBp
-bnQgKCp2YWxzKVsyXSA9IGNzLT5zY2FsZV9hdmFpbDsKPiA+ID4gK8KgwqDCoMKgIHVuc2lnbmVk
-IGludCBpOwo+ID4gPiArwqDCoMKgwqAgc2l6ZV90IGxlbiA9IDA7Cj4gPiA+IAo+ID4gPiAtwqDC
-oMKgwqAgcmV0dXJuIGFkNzYwNl9zaG93X2F2YWlsKGJ1ZiwgY3MtPnNjYWxlX2F2YWlsLCBjcy0+
-bnVtX3NjYWxlcywKPiA+ID4gdHJ1ZSk7Cj4gPiA+ICvCoMKgwqDCoCBmb3IgKGkgPSAwOyBpIDwg
-Y3MtPm51bV9zY2FsZXM7IGkrKykKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBsZW4g
-Kz0gc2NucHJpbnRmKGJ1ZiArIGxlbiwgUEFHRV9TSVpFIC0gbGVuLCAiJXUuJTA2dSAiLAo+ID4g
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB2YWxzW2ldWzBdLCB2YWxzW2ldWzFdKTsKPiA+ID4gK8KgwqDCoMKgIGJ1ZltsZW4gLSAx
-XSA9ICdcbic7Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgIHJldHVybiBsZW47Cj4gPiA+IMKgfQo+
-ID4gPiAKPiA+ID4gwqBzdGF0aWMgSUlPX0RFVklDRV9BVFRSX1JPKGluX3ZvbHRhZ2Vfc2NhbGVf
-YXZhaWxhYmxlLCAwKTsKPiA+IAo+ID4gUHJvYmFibHkgYSByZWFzb24gZm9yIHRoaXMgdGhhdCBJ
-IGZvcmdvdCwgYnV0IHdoeSBpcyB0aGlzIGhhbmRsZWQgaW4gYQo+ID4gY3VzdG9tIGF0dHJpYnV0
-ZSBpbnN0ZWFkIG9mIGFkNzYwNl9yZWFkX2F2YWlsKCk/Cj4gCj4gWzFdCj4gU28sIHRoaXMgaXMg
-YSBxdWlyayBvZiB0aGlzIGRyaXZlciB0aGF0IHdvdWxkIHJlcXVpcmUgYSBiaWdnZXIgY2xlYW51
-cC4KPiBJdCBjb3VsZCBiZSBkb25lIGFzIGEgZGlmZmVyZW50IHNlcmllcy4KPiBPciAob3RoZXJ3
-aXNlIHNhaWQpIEkgd291bGQgZG8gaXQgaW4gYSBkaWZmZXJlbnQgc2VyaWVzICh1bmxlc3MKPiBy
-ZXF1ZXN0ZWQgb3RoZXJ3aXNlKS4KCkFncmVlZC4uLgoKPiAKPiBUaGVzZSBkZXZpY2UtbGV2ZWwg
-YXR0cmlidXRlcyBhcmUgYXR0YWNoZWQgaW4gdGhlIHByb2JlKCkgb2YgdGhpcwo+IGRyaXZlciwg
-YmFzZWQgb24gdGhlIEdQSU8gY29uZmlndXJhdGlvbnMgcHJvdmlkZWQgdmlhIERULgo+IFRoZXJl
-J3MgdGhhdCBiaXQgb2YgY29kZQo+IAo+IMKgwqDCoMKgwqDCoMKgIGlmIChzdC0+Z3Bpb19vcykg
-ewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoc3QtPmdwaW9fcmFuZ2UpCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbmRpb19kZXYt
-PmluZm8gPSAmYWQ3NjA2X2luZm9fb3NfYW5kX3JhbmdlOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBlbHNlCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBpbmRpb19kZXYtPmluZm8gPSAmYWQ3NjA2X2luZm9fb3M7Cj4gwqDCoMKgwqDCoMKg
-wqAgfSBlbHNlIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKHN0LT5ncGlv
-X3JhbmdlKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-aW5kaW9fZGV2LT5pbmZvID0gJmFkNzYwNl9pbmZvX3JhbmdlOwo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBlbHNlCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBpbmRpb19kZXYtPmluZm8gPSAmYWQ3NjA2X2luZm9fbm9fb3Nfb3JfcmFuZ2U7
-Cj4gwqDCoMKgwqDCoMKgwqAgfQo+IAo+IFRoZSAicmFuZ2UiIHRoZXJlIHJlZmVycyB0byAic2Nh
-bGVfYXZhaWxhYmxlIiwgd2hpY2ggaXMgb25seSBhdHRhY2hlZAo+IGxpa2UgdGhpcywgZm9yIEhX
-IG1vZGUuCj4gQSByZXdvcmsgb2YgSFctbW9kZSB3b3VsZCBiZSBhIGdvb2QgaWRlYS4KPiAKCk1h
-eWJlIGl0J3MgYWxzbyBkdWUgdG8gLnJlYWRfYXZhaWwoKSBub3QgYmVpbmcgYXJvdW5kIHdoZW4g
-dGhlIGRyaXZlciB3YXMgZmlyc3QKYWRkZWQgKGJ1dCBub3Qgc3VyZSBhYm91dCB0aGF0KS4KCi0g
-TnVubyBTw6EKCj4gCg==
+On Fri, 18 Oct 2024 at 05:20, Bough Chen <haibo.chen@nxp.com> wrote:
+>
+> > -----Original Message-----
+> > From: Bough Chen
+> > Sent: 2024=E5=B9=B410=E6=9C=8818=E6=97=A5 9:23
+> > To: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: adrian.hunter@intel.com; linux-mmc@vger.kernel.org; imx@lists.linux=
+.dev;
+> > shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
+> > festevam@gmail.com; dl-S32 <S32@nxp.com>;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: RE: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the syste=
+m PM
+> > logic
+> >
+> > > -----Original Message-----
+> > > From: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Sent: 2024=E5=B9=B410=E6=9C=8817=E6=97=A5 21:07
+> > > To: Bough Chen <haibo.chen@nxp.com>
+> > > Cc: adrian.hunter@intel.com; linux-mmc@vger.kernel.org;
+> > > imx@lists.linux.dev; shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > > kernel@pengutronix.de; festevam@gmail.com; dl-S32 <S32@nxp.com>;
+> > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the
+> > > system PM logic
+> > >
+> > > On Mon, 14 Oct 2024 at 08:00, <haibo.chen@nxp.com> wrote:
+> > > >
+> > > > From: Haibo Chen <haibo.chen@nxp.com>
+> > > >
+> > > > Current suspend/resume logic has one issue. in suspend, will config
+> > > > register when call sdhci_suspend_host(), but at this time, can't
+> > > > guarantee host in runtime resume state. if not, the per clock is
+> > > > gate off, access register will hung.
+> > > >
+> > > > Now use pm_runtime_force_suspend/resume() in
+> > NOIRQ_SYSTEM_SLEEP_PM,
+> > > > add in NOIRQ stage can cover SDIO wakeup feature, because in
+> > > > interrupt handler, there is register access, need the per clock on.
+> > > >
+> > > > In sdhci_esdhc_suspend/sdhci_esdhc_resume, remove
+> > > > sdhci_suspend_host() and sdhci_resume_host(), all are handled in
+> > > > runtime PM callbacks except the wakeup irq setting.
+> > > >
+> > > > Remove pinctrl_pm_select_default_state() in sdhci_esdhc_resume,
+> > > > because
+> > > > pm_runtime_force_resume() already config the pinctrl state accordin=
+g
+> > > > to ios timing, and here config the default pinctrl state again is
+> > > > wrong for
+> > > > SDIO3.0 device if it keep power in suspend.
+> > >
+> > > I had a look at the code - and yes, there are certainly several
+> > > problems with PM support in this driver.
+> > >
+> > > >
+> > > > Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> > > > ---
+> > > >  drivers/mmc/host/sdhci-esdhc-imx.c | 39
+> > > > +++++++++++++++---------------
+> > > >  1 file changed, 19 insertions(+), 20 deletions(-)
+> > > >
+> > > > diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
+> > > > b/drivers/mmc/host/sdhci-esdhc-imx.c
+> > > > index c7582ad45123..18febfeb60cf 100644
+> > > > --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> > > > +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> > > > @@ -1871,11 +1871,13 @@ static int sdhci_esdhc_suspend(struct devic=
+e
+> > > *dev)
+> > > >         struct pltfm_imx_data *imx_data =3D sdhci_pltfm_priv(pltfm_=
+host);
+> > > >         int ret;
+> > > >
+> > > > -       if (host->mmc->caps2 & MMC_CAP2_CQE) {
+> > > > -               ret =3D cqhci_suspend(host->mmc);
+> > > > -               if (ret)
+> > > > -                       return ret;
+> > > > -       }
+> > > > +       /*
+> > > > +        * Switch to runtime resume for two reasons:
+> > > > +        * 1, there is register access, so need to make sure gate o=
+n ipg
+> > clock.
+> > >
+> > > You are right that we need to call pm_runtime_get_sync() for this rea=
+son.
+> > >
+> > > However, the real question is rather; Under what circumstances do we
+> > > really need to make a register access beyond this point?
+> > >
+> > > If the device is already runtime suspended, I am sure we could just
+> > > leave it in that state without having to touch any of its registers.
+> > >
+> > > As I understand it, there are mainly two reasons why the device may b=
+e
+> > > runtime resumed at this point:
+> > > *) The runtime PM usage count has been bumped in
+> > > sdhci_enable_sdio_irq(), since the SDIO irqs are enabled and it's
+> > > likely that we will configure them for system wakeup too.
+> > > *) The device has been used, but nothing really prevents it from bein=
+g
+> > > put into a low power state via the ->runtime_suspend() callback.
+> > >
+> > > > +        * 2, make sure the pm_runtime_force_suspend() in NOIRQ
+> > > > + stage
+> > > really
+> > > > +        *    invoke its ->runtime_suspend callback.
+> > > > +        */
+> > >
+> > > Rather than using the *noirq-callbacks, we should be able to call
+> > > pm_runtime_force_suspend() from sdhci_esdhc_suspend(). And vice versa
+> > > for sdhci_esdhc_resume().
+> > >
+> > > Although, according to my earlier comment above, we also need to take
+> > > into account the SDIO irq. If it's being enabled for system wakeup, w=
+e
+> > > must not put the controller into low power mode by calling
+> > > pm_runtime_force_suspend(), otherwise we will not be able to deliver =
+the
+> > wakeup, right?
+> >
+> > Thanks for your careful review!
+> > Yes, I agree.
+>
+> Hi Ulf,
+>
+> Sorry, I maybe give the wrong answer.
+>
+> I double check the IP, usdhc can support sdio irq wakeup even when usdhc =
+clock gate off.
 
+Okay, so there is some out-band logic that can manage the SDIO irq,
+even when the controller has been runtime suspended?
+
+In these cases, we use dev_pm_set_dedicated_wake_irq* to manage that
+wake-irq. There are other mmc host drivers that implement support for
+this too.
+
+If you are referring to solely clock gating, that is not going to
+work. A runtime suspended controller is not supposed to deliver
+in-band irqs.
+
+> So to save power, need to call pm_runtime_force_suspend() to gate off the=
+ clock when enable sdio irq for system wakeup.
+> This is the main reason I involve pm_runtime_force_suspend in noirq stage=
+, because in sdhci_irq, there is register access, need gate on clock.
+
+In summary, to support the out-band irq as a wakeup for runtime and
+system suspend, dev_pm_set_dedicated_wake_irq* should be used.
+
+To move things forward, I suggest you start simple and add support for
+the out-band irq as a step on top.
+
+[...]
+
+Kind regards
+Uffe
 
