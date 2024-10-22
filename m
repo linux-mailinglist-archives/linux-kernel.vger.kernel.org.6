@@ -1,66 +1,77 @@
-Return-Path: <linux-kernel+bounces-375543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18B99A9728
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7482E9A972A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512C51F22278
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:36:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9E31F21D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B68113A3FF;
-	Tue, 22 Oct 2024 03:36:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E339C12E1CA;
-	Tue, 22 Oct 2024 03:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877EC13A87C;
+	Tue, 22 Oct 2024 03:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="iyaj3Soq"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13A6256D;
+	Tue, 22 Oct 2024 03:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729568159; cv=none; b=CJ0HtXCIPlkpP7KEOFuSNnmbJPhASU0DlPKNmm/JDt2P4/XKtEYh1mVfkQyjT2JUH+8EQkcjhFjqNBFu4yro69vgbFHxvXSpmQVPiKT8BMExcOMF7meW17kINvFrBSW3/hg6h07+IgbQUzBPr/NqZQ3pdhggTRT9L8HCxutd1gk=
+	t=1729568202; cv=none; b=kjriErWMke45MkDEif5/Bf6Ekc0LoqywhH8UYY/jPryUd02/5KHL5S8ZzrdXJVRrdOAMKciEnAeUSxlP+fOugIo4owjan9tJvn/7Dy3feRZrbYhecJCGfEt7szGnhJHgv+FKtMV/ssmpUXLEgOi5K+BRUAiLF4p3vzhTZkZ9kRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729568159; c=relaxed/simple;
-	bh=K+vjaqwAPjLf9VJ3/xPLj8PYjIGgIDJyTnutxu/NoAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W+Fqno62Xwkkd5M3lTj+5d33A5GkOjVukKuQKjPSh/YhmeL/T59lNc+uASsau3P0Zx9pe6IrFkSndMvQcuk6RlsHR2kB3ghsNVvoPQuh2bjIDrJCe2Bp2oUrgeNM1I4fxT+pv0KOKfAFZRPFyC7cL3YUeB23aKZyeQMTO0ixKMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADA6C4CEC3;
-	Tue, 22 Oct 2024 03:35:58 +0000 (UTC)
-Date: Mon, 21 Oct 2024 23:35:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] fgraph: Use CPU hotplug mechanism to initialize idle
- shadow stacks
-Message-ID: <20241021233555.47001ddd@rorschach.local.home>
-In-Reply-To: <20241021145810.9a9daec35cb83a04fe10208a@kernel.org>
-References: <20241018214300.6df82178@rorschach>
-	<20241021145810.9a9daec35cb83a04fe10208a@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729568202; c=relaxed/simple;
+	bh=aDWM3Tsm/QnlSB4T1eEAl53wu1sl3BOYUKQW+rM+Dho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qT1HfXt7eKS2dQtaKJtYVwyKQ2naK5L373y13Y5IteHXgdmtFMkbENgB2UlSXbAVlSJClgNvkWyvU2i+UB6J7/QTsMBA/sj+lsgyEanbCvJmUlLERR6TTeBLOWDtX+NBuoaa0oi+0phvbtkQuVf1XL18tG8Czc3bSIbnnQ3QqGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=iyaj3Soq; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=thn0AY0PIXWYmip1+zVuTvIXO66qKJV0eJxybGA31Cg=;
+	b=iyaj3Soqwf93MEBn23OahSPitJyKJkrUWibScwUsGhCEpph17cJ0PmkAMylhuv
+	k9ASoVrcwuhXTxceoF0Xv1rPEh5YNsbROyeW8G572iQ6ZlqJCghmpesoLBEKM36s
+	jh1+7ewO2ncUZdlHMlRU36cjPjdMkPczHAMwByUAt2Bso=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBnb9erHRdnk9aUAA--.5381S3;
+	Tue, 22 Oct 2024 11:36:13 +0800 (CST)
+Date: Tue, 22 Oct 2024 11:36:11 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+	imx@lists.linux.dev, kernel@pengutronix.de, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Subject: Re: [PATCH v3 1/4] arm64: dts: imx8-ss-hsio: Add PCIe and SATA
+ support
+Message-ID: <Zxcdq6HN8n7Ri8xv@dragon>
+References: <20241021190602.1056492-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021190602.1056492-1-Frank.Li@nxp.com>
+X-CM-TRANSID:Mc8vCgBnb9erHRdnk9aUAA--.5381S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVOzVUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQqAZWcXARRp3wAAst
 
-On Mon, 21 Oct 2024 14:58:10 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> > +	if (!fgraph_initialized) {
-> > +		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",  
+On Mon, Oct 21, 2024 at 03:05:59PM -0400, Frank Li wrote:
+> From: Richard Zhu <hongxing.zhu@nxp.com>
 > 
-> Nit: Maybe it is better to call it as "tracing/fgraph:online" ?
+> Add PCIe support for i.MX8QXP, i.MX8QM and i.MX8DXL.
+> Add SATA support for i.MX8QM, which is in hsio subsystem and is shared with
+> PCIe PHY.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Ah this already went upstream. But yeah, I can rename it for the merge
-window.
+Applied all, thanks!
 
--- Steve
 
