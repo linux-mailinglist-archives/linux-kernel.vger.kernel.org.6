@@ -1,121 +1,178 @@
-Return-Path: <linux-kernel+bounces-375439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604889A95E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:03:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009E89A95E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 04:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3633EB22D6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF771C21519
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FE6143C63;
-	Tue, 22 Oct 2024 02:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FEB13D8AC;
+	Tue, 22 Oct 2024 02:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oq2pT0t7"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQ08WxWt"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A880141987;
-	Tue, 22 Oct 2024 02:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202EA83CD6;
+	Tue, 22 Oct 2024 02:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729562484; cv=none; b=bVuoHPRBVPK5MLql/QrziqdMjRsGunyqgWZ9MFA1CB1w80qjmkouMh68wxd72JJkI52uWuD69+i+152aTj5xUIi53oKAo4jyLYSkmyWcpKdL/4CT9hTu+syCD0wX9nLZR1kXM8uGaeE12AiulCrBh9Nz/8mBe1s7DDJyvp8E4xw=
+	t=1729562477; cv=none; b=GQ0byrKnWwEvez68t+Vt4UvtuWw2ZRwMyG0YGCSSWhLsR++ZkD03vb0k1uhe9gzwLLovQhU9USIbOgMq0u49FbGBVjzBdtFsKSV1DU9JKT577PqK39CKUndg49I3oZGNE+2f0o+ynWgK+gtVwWb+AGvj881/bS2PK4Y23GFUWD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729562484; c=relaxed/simple;
-	bh=ZRiqAHnP27cfBP/NQQBM0XoZ8/zdK0SbvS6GfSDV+Tw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AA/de4nuZfckYF5hwoniCgSYIxVA5Br5Kh+f0+ilH1WXQ2Y7ANg7BUE/mHMdTHrZV7d8drhJhYH3PsfxJ5abZ1uAH27JT4YVmI1qTGz+VnI/E3kMDpAdgDtOpPcvpzjvly82u7CuyKN/fZYfgF4ek7X2en7Fqvu6DmXqMl5LKks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oq2pT0t7; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1729562477; c=relaxed/simple;
+	bh=o6Un0vRMRUqycL4MmnrAjs1Ms4xRyK/xfz+CckTV5pI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rU5eEgxwSX28UaA5oK0FCG1pn01acnaTaMOZxDlw0kDqoQ7mts9LAzHagRGeowF0uBDuW+0y/b3i04Ehr6yG9sXFhLZjiwSZHmfIwXSZ2OUpRpjfkkUuTOflNdBreR4ocq7xMQek+uf3+bqQM3sPRZAAD8liJ1WzM0+2ywTeFBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQ08WxWt; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20caea61132so40278925ad.2;
-        Mon, 21 Oct 2024 19:01:22 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso4048159a12.2;
+        Mon, 21 Oct 2024 19:01:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729562482; x=1730167282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729562475; x=1730167275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aPNabAA00UhSLiwzu+RL1RxmJwr1aDxxDCGsIyPJfSQ=;
-        b=Oq2pT0t7Mudf2Sy3UDbw99FMxOxCaWjC7SIvDImtFlDwdfPLuVxWB/JB1p7fN4LVGS
-         2cE0XX/eFMe4g+LVSAEa88r0yRAXN5nK8ji/RwMTPYByGIGvb8aYrU7i6tKdsKMDxSc7
-         iC3T3Q4ovOEl6xxTaqDXtZvDmkLFk7j7If25T2Fh7zCQgEgZWIg0OTMyDyybLFhXzZcu
-         iGG3Ts5EsHJ2Ty1g6POTJbsqFUkkpIvk+hMqfmTgjqlI8uj2tr1VcVyXhArS/7TgsML2
-         jMDZXGELcBzD8L5ff4OGIqlvCezXZoGSeLIJT822uSFuA96CazbiUWZR+GUsL1A+Pk7Q
-         jLEw==
+        bh=xqWSsJAT5CNspq5A+SSkQskz+lBebgcxEADf0JhvbYs=;
+        b=HQ08WxWtJ862AwgLuLeJHLBmflc0+shUefs2J+AJLA0etZoF9+nhFD6zc5K9GJYaAl
+         /sXCWET6Y/nzG9CT5/mjKhcKNBR3xmcfV7gRGswS8s2QWxP+XjO/CDZZaOcWptbHX/zR
+         SwM42O7f78z2l3Z44OetRoRMAk4ODI/fBVzu5+LwJmM282w5WtHsDQBfxFuZrNwHe2DY
+         7H3WLn6yHojn2ADCn+qG5leRcK9CuptFZQlKRYwcNDTKNBCDBWr2Vy+Wkduqct2ssLYW
+         Q2VI3d2MkB3E9qzi8ON3dn+M7ar2Rf3z87PxAyhmkclobvWIDN05R8GrA0oztO5fvLEP
+         UUzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729562482; x=1730167282;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729562475; x=1730167275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aPNabAA00UhSLiwzu+RL1RxmJwr1aDxxDCGsIyPJfSQ=;
-        b=wJutzgRe7Jz7W90Iv1L8RhpteLjkctTbx7PxIf7WKxPs5WXrbnabdtlJXef+AziIsx
-         GWJrXWYJvNpFv7MtP6nAFpwN8HiADvfYqRA4fJv/b4LLTMB2Rz9/iMgqhLihRyr2Ra3G
-         CLtpMk39CwtcO7IFFKPcqz5gzPBojuCddwjlnZ60NH1yHeyu0kW/IW4I7aIm0kcADerU
-         oV3RsQWJ96UCdT4T/QriXBFTofKFaK+yNHN0u8Ap7DHWmEk5TQc40xopi1+vTrCjxDtB
-         1pkcxv77XkB7M/1VmnUXgGX8hbR/EjD4KJIVn2e437uy+JMRq44felPi2rlvYVRke447
-         7y0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU9RlrOuCIQYRr1FqcdacON39NmYv13aZIj89brslF8XfvO/ZhNIVQt5iWjbEZWF2cY5oOXoVWU2fL7YKnM@vger.kernel.org, AJvYcCXIsvwjfN0oPmB+BXZNhqvGhsQUXI+tJ295zKfuIjaxZFezH1HSIrvLZoADFzmBkmREUxSt2aOJ/65g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8D05dvnx0Ns/iWE/owPsjSBnice6Q6Qg4mq354Ddygww2nKhI
-	+Qa/f8QXqLyYbwAEBG2yHH2ZJHjPgIKj0YT2QBRImlJJm31ZWVsp
-X-Google-Smtp-Source: AGHT+IGzuILj1RsrFZjoJ4dXI5tDh7XMcKK2Bx+k0YFTR77UD8om/JwzukAtT+4x7q3vK/f91G9AFw==
-X-Received: by 2002:a17:903:2448:b0:20b:58f2:e1a0 with SMTP id d9443c01a7336-20e5a76137fmr161321345ad.18.1729562482111;
-        Mon, 21 Oct 2024 19:01:22 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f355csm32435915ad.265.2024.10.21.19.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 19:01:21 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: aou@eecs.berkeley.edu,
-	unicorn_wang@outlook.com,
-	conor+dt@kernel.org,
-	guoren@kernel.org,
-	inochiama@outlook.com,
-	krzk+dt@kernel.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	chunzhi.lin@sophgo.com,
-	Chen Wang <unicornxw@gmail.com>
-Cc: Inochi Amaoto <inochiama@gmail.com>
-Subject: Re: [PATCH 0/1] Add power key for pioneer box
-Date: Tue, 22 Oct 2024 10:01:01 +0800
-Message-ID: <172956244972.305559.6733343990944223670.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1728350655.git.unicorn_wang@outlook.com>
-References: <cover.1728350655.git.unicorn_wang@outlook.com>
+        bh=xqWSsJAT5CNspq5A+SSkQskz+lBebgcxEADf0JhvbYs=;
+        b=gP7IW8BVnubHh2CBIn9UOt4oB5HOBJvLksaYO1v/MFLqlPSUgS991zTe1Twrb48jGH
+         eAeoWT1cM37bm/cCboW51IoXu0fQCXSI3UaYjPRp9iSznFYz4THI0fXDRd3eaE6G1b+1
+         SINCfAJ6VKf7Vwfd/yy/LBfZyAahq+z4b3VD38jriFVEcPSS7z+eD0GAZ+QCxnbTpvn5
+         DfBdZ3S7ONmyVD7Vz5R6duYNYpjXetj8dRZTxr2Y8ZU9zD3dJmQHHiNQ8dQrgjwN2UBW
+         Y/8OrriV2msYZcGO82jEhZ02Rpn6/eS3DFqmfxakxIROOANUYANsCI7zqf9JdfC7qSoY
+         +pmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLwgew3pLWn7JpTHpLSn7JlglvPGiN11YlCEmlrj14TYjV4stUcH6hdCUdZhcX8Yv9aLzofaHLeaKT5b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqZckIVTZH6MhC0O88VfaKMdaduZxMXmPwtMRaet8y4BB5uk9a
+	DoXLb6/m1wDttFzU9W4tijFWR6FRMJ5d0W0y92j5hoWtm+L8gTwtTEtGJKl1w4XvffaC6O38P+0
+	I4RK+ldtDlde9bMjmBFcuDCPTOeg=
+X-Google-Smtp-Source: AGHT+IFhP5j6y7ZS2yWSDvsNSQHVT7qtvC2GPgYS0LHkoG4Lp6+eIf2B85lDKyS+N+sFDohAxpridyp2S11du1hxG3U=
+X-Received: by 2002:a05:6a21:458a:b0:1d7:2249:689 with SMTP id
+ adf61e73a8af0-1d92c5729c2mr20355759637.33.1729562475143; Mon, 21 Oct 2024
+ 19:01:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+ <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com> <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
+In-Reply-To: <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 21 Oct 2024 19:01:02 -0700
+Message-ID: <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from srcu_read_lock()
+To: paulmck@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 08 Oct 2024 09:43:32 +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Add power key for pioneer box.
-> 
-> Thanks,
-> Chen
-> 
-> [...]
+On Mon, Oct 21, 2024 at 5:21=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
+> > On Mon, Oct 21, 2024 at 3:13=E2=80=AFPM Paul E. McKenney <paulmck@kerne=
+l.org> wrote:
+> > >
+> > > For almost 20 years, the int return value from srcu_read_lock() has
+> > > been always either zero or one.  This commit therefore documents the
+> > > fact that it will be non-negative.
+> > >
+> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Andrii Nakryiko <andrii@kernel.org
+> > >
+> > > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > > index bab1dae3f69e6..512a8c54ba5ba 100644
+> > > --- a/include/linux/srcu.h
+> > > +++ b/include/linux/srcu.h
+> > > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct =
+*ssp, int read_flavor);
+> > >   * a mutex that is held elsewhere while calling synchronize_srcu() o=
+r
+> > >   * synchronize_srcu_expedited().
+> > >   *
+> > > - * The return value from srcu_read_lock() must be passed unaltered
+> > > - * to the matching srcu_read_unlock().  Note that srcu_read_lock() a=
+nd
+> > > - * the matching srcu_read_unlock() must occur in the same context, f=
+or
+> > > - * example, it is illegal to invoke srcu_read_unlock() in an irq han=
+dler
+> > > - * if the matching srcu_read_lock() was invoked in process context. =
+ Or,
+> > > - * for that matter to invoke srcu_read_unlock() from one task and th=
+e
+> > > - * matching srcu_read_lock() from another.
+> > > + * The return value from srcu_read_lock() is guaranteed to be
+> > > + * non-negative.  This value must be passed unaltered to the matchin=
+g
+> > > + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
+> > > + * srcu_read_unlock() must occur in the same context, for example, i=
+t is
+> > > + * illegal to invoke srcu_read_unlock() in an irq handler if the mat=
+ching
+> > > + * srcu_read_lock() was invoked in process context.  Or, for that ma=
+tter to
+> > > + * invoke srcu_read_unlock() from one task and the matching srcu_rea=
+d_lock()
+> > > + * from another.
+> >
+> > For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
+> > Presumably the same non-negative index will be returned/consumed there
+> > as well, right? Can we add a blurb to that effect for them as well?
+>
+> Does the change shown below cover it?
 
-Applied to for-next, thanks!
+Yep, looks good, thank you! You might want to fix
+s/srcu_read_unlock/__srcu_read_unlock/, while at it, but that's
+orthogonal.
 
-[1/1] riscv: sophgo: dts: add power key for pioneer box
-      https://github.com/sophgo/linux/commit/128bded4bc5253b94c66acd63bef03f16148ae4f
-
-Thanks,
-Inochi
-
+>
+> > Otherwise LGTM, thanks!
+> >
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> Thank you -- I will apply on my next rebase.
+>
+>                                                 Thanx, Paul
+>
+> > >   */
+> > >  static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires=
+(ssp)
+> > >  {
+>
+> ------------------------------------------------------------------------
+>
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 07147efcb64d3..3d587bf2b2c12 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
+>  /*
+>   * Counts the new reader in the appropriate per-CPU element of the
+>   * srcu_struct.
+> - * Returns an index that must be passed to the matching srcu_read_unlock=
+().
+> + * Returns a guaranteed non-negative index that must be passed to the
+> + * matching srcu_read_unlock().
+>   */
+>  int __srcu_read_lock(struct srcu_struct *ssp)
+>  {
 
