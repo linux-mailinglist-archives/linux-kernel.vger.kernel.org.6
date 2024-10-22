@@ -1,191 +1,99 @@
-Return-Path: <linux-kernel+bounces-376651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBD89AB474
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:54:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1110F9AB477
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4366E1C22D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C492A285BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605111BC9E2;
-	Tue, 22 Oct 2024 16:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2261BC099;
+	Tue, 22 Oct 2024 16:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJSooZUE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJny844q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91EF256D;
-	Tue, 22 Oct 2024 16:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DF1256D;
+	Tue, 22 Oct 2024 16:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616051; cv=none; b=FSManAzXfl5xcBIlewrZsxW0+6KH3x84p7uG757soA2EdYhZPU12KNuqFVuQnMSf1ALFg9WPmW8YmN1u+Qxs+PxRBeXFjK8MNhiwUOyeYCiqMWIQOUMWNZucDekkqXp7SSKvrN4p22GF/hUZqmZmZXmIVKUBYAwhB6WS4M0Nj08=
+	t=1729616106; cv=none; b=uhIO2ExmsDHQYpgcgLyj7wKZYStXp2ngLyhUh/IXlU/Tf26t+3We1fY/F9jLyBpO3nIfpBAyCVheCTZeeHUNnaRVxvLYq/4YjeMSZm5e9acXX6C8SfoAwgFYkWMXOyVeTn8R9TsmRavu9KTHkszoPcbxHQB9o2rt4O9bAjR07oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616051; c=relaxed/simple;
-	bh=21FGDlkDZDMyZ5GJ6BJz6Gt8X4VrzWOYX6AaQwHE7IY=;
+	s=arc-20240116; t=1729616106; c=relaxed/simple;
+	bh=dFIIm5rhxs9qT/MajtS4EYkcanyHeA4sGE0hYbhvTFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OE/kvF2zDE530RqBNzQOi1j2xvvun0Sn04i0CPQB3oy67w4gqG//5NIx69a5yXignVuYg59jNsh3ZrZkRGM4y5XOkUHxWgQGFnfNIi6t69xoyzFe/Bs3F9ZR2Voe0ieniNpIkDDQS7grxQRbXGHfkrcdqTLUySQv7RDmHn077l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJSooZUE; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729616050; x=1761152050;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=21FGDlkDZDMyZ5GJ6BJz6Gt8X4VrzWOYX6AaQwHE7IY=;
-  b=LJSooZUECVCZNtwLe94I02NTTQyeuqOb1FFrpGcUBJwbSPwVGCwvArMF
-   QMjccfbQ4qPY9k31Cs1geASWfVljjE79eNUF7Uk8y4Z62b3e950UjGk7L
-   7HgbeNu16XDb4wSDqzBPyXXrYeVu8pprrndTmt4bSCpky9d4oYaOVSkQx
-   BfYhPgA91n7ftRoNwIuSHEsxdTS5zQY2AXNKOXc0HrXYXwlUMMWyoCI8X
-   f01S6sNha6MSjBWDSxGOmoqFmI5V/1UHJyldPVJLA9eivNYWQl8reJROm
-   JvSwYnlqr2g3VCyRgjck9NpvP164h56+JOs9QKUQUjs43aF3z6f09CyPK
-   g==;
-X-CSE-ConnectionGUID: QJKsr1GoQiahiMjtaq/nsw==
-X-CSE-MsgGUID: o+UFr4bNQGetv/GVgNzuag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="33092301"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="33092301"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:54:09 -0700
-X-CSE-ConnectionGUID: eEdBCSfSRS2QY5tcIcJjHw==
-X-CSE-MsgGUID: wDFEbFreQGieR2D1CE4V0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="110751317"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:54:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t3I8x-00000005vZC-1mSW;
-	Tue, 22 Oct 2024 19:54:03 +0300
-Date: Tue, 22 Oct 2024 19:54:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	Philip =?iso-8859-1?Q?M=FCller?= <philm@manjaro.org>,
-	Alex Lanzano <lanzano.alex@gmail.com>
-Subject: Re: [PATCH v3 4/6] iio: imu: bmi270: Add support for BMI260
-Message-ID: <ZxfYq1Eo2xhVhIei@smile.fi.intel.com>
-References: <20241020220011.212395-1-justin@justinweiss.com>
- <20241020220011.212395-5-justin@justinweiss.com>
- <87msiwm90s.fsf@justinweiss.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjcJlXoZeD7yyu76XD5qhe4er8jIHhCh+N29AobRtBqm+mD0FJQYhe+swcwws7D6PZGIwJsr1DvRViTv96C7OvGiyiI7OxOWQcmtHnqwoblsZC39at77Bge+ZvVp/3nP1/81m/63Qm1mKZxRzLNGfAJKot6wEv6LvhPo+asN6Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJny844q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72B2C4CEC3;
+	Tue, 22 Oct 2024 16:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729616104;
+	bh=dFIIm5rhxs9qT/MajtS4EYkcanyHeA4sGE0hYbhvTFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EJny844qGoatCql5qUU/Q4fh8DIy6u3lc7JLAMq5mILuxu7Qg4uY1+ZFPCeHdARm5
+	 1jify6tlyKKhXrW1Fy7cpaX3pbshaDsAsHui7wnQMneSf2VvkNq+Nvv4/cWDIWW383
+	 bAeLYW8zFI+RNYM8AoBn+ZB/yVXHH6WjJCUw2gQ4PFCmj/jOkMmQ84133NxzSTA7l+
+	 QJfelq4HrbwvM+TQqngohC8q5DESZysL8jAPvDEZi9hoAqvsC8XG8K7RaQF2pi9IxM
+	 nb8ZL48xzl3BibX88siWOQMGJweVkFS6ZA4L1MWRglx7R/5LkyZ/kbQ64myclut72a
+	 1hEdOsDtKdV5Q==
+Date: Tue, 22 Oct 2024 17:54:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jason-Hsu <jasonhell19@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au, patrick@stwcx.xyz,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	yang.chen@quantatw.com, jerry.lin@quantatw.com
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: ventura: add Meta Ventura BMC
+Message-ID: <20241022-prayer-unmanaged-86ea24caf242@spud>
+References: <20241022021724.2322506-1-jasonhell19@gmail.com>
+ <20241022-clean-rebate-e986d6a82a05@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fGRR7GdKJMsqfzS2"
+Content-Disposition: inline
+In-Reply-To: <20241022-clean-rebate-e986d6a82a05@spud>
+
+
+--fGRR7GdKJMsqfzS2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87msiwm90s.fsf@justinweiss.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 08:50:43AM -0700, Justin Weiss wrote:
-> Justin Weiss <justin@justinweiss.com> writes:
+On Tue, Oct 22, 2024 at 05:51:45PM +0100, Conor Dooley wrote:
+> On Tue, Oct 22, 2024 at 10:17:24AM +0800, Jason-Hsu wrote:
+> > Add Linux device tree related to Meta(Facebook) Ventura specific device=
+s connected to BMC(AST2600) SoC.
+> > Add subject prefix for the patch.
+> >=20
+> > Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
+>=20
+> The indentation in here is very inconsistent. Please fix that.
 
-...
-
-> The ACPI IDs with device pointers are here:
-> 
-> > +static const struct acpi_device_id bmi270_acpi_match[] = {
-> > +	/* OrangePi NEO */
-> > +	{ "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
-> > +	/* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
-> > +	{ "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
-> > +	/* GPD Win Max 2 */
-> > +	{ "10EC5280", (kernel_ulong_t)&bmi260_chip_info },
-> > +	{ }
-
-Cool! But please, keep them alphabetically ordered by ID.
-
-Can we push OrangePI NED to go and fix ACPI IDs eventually?
-
-> > +};
-> 
-> I pulled DSDT device excerpts for the GPD Win Mini (which uses the
-> BMI0160 ACPI ID, even though it has a bmi260) and the OrangePi NEO
-> (which uses the BMI0260 ACPI ID).
-> 
-> I couldn't find a shipping device with a bmi260 using the 10EC5280 ACPI
-> ID. Some prototype devices with the bmi260 may have used them:
-> https://lore.kernel.org/all/CAFqHKTm2WRNkcSoBEE=oNbfu_9d9RagQHLydmv6q1=snO_MXyA@mail.gmail.com/
-> 
-> I can remove that ID from this changeset for now.
-
-Yes, please do not add anything that has no evidence of existence in the wild
-or approved vendor allocated ID.
-
-> GPD Win Mini:
-
-Add short parts of these to the commit message, or better split these to two
-patches each of them adding a new ID to the table.
-
-See below what I do want to see there (no need to have everything),
-i.e. I removed unneeded lines:
-
-> Device (BMI2)
-> {
->     Name (_ADR, Zero)  // _ADR: Address
-
-My gosh, can this be fixed (seems rhetorical)? The _ADR must NOT be present
-together with _HID.  It's against the ACPI specifications.
-
->     Name (_HID, "BMI0160")  // _HID: Hardware ID
->     Name (_CID, "BMI0160")  // _CID: Compatible ID
->     Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
->     Name (_UID, One)  // _UID: Unique ID
->     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
->     {
->         Name (RBUF, ResourceTemplate ()
->         {
->             I2cSerialBusV2 (0x0068, ControllerInitiated, 0x00061A80,
->                 AddressingMode7Bit, "\\_SB.I2CB",
->                 0x00, ResourceConsumer, , Exclusive,
->                 )
->             GpioInt (Edge, ActiveLow, Exclusive, PullDefault, 0x0000,
->                 "\\_SB.GPIO", 0x00, ResourceConsumer, ,
->                 )
->                 {   // Pin list
->                     0x008B
->                 }
->         })
->         Return (RBUF) /* \_SB_.I2CB.BMI2._CRS.RBUF */
->     }
-      ...
-> }
-> 
-
-> OrangePi NEO:
-
-Same comments for this device.
-
-...
-
-> > +static const struct acpi_device_id bmi270_acpi_match[] = {
-> > +	{ "BOSC0260",  (kernel_ulong_t)&bmi260_chip_info },
-> > +	{ }
-> > +};
-> 
-> I can't find any evidence of BOSC0260 being used, besides existing in
-> the Windows driver. As suggested in an earlier review, I added it here
-> to encourage people looking at this driver in the future to use the
-> correct ACPI ID.
-
-Are you official representative of Bosch or do you have a proof by the vendor
-that they allocated this ID? Otherwise we may NOT allocate IDs on their behalf
-and has not to be added.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Also, I don't know what the coding style in aspeed in particular is, but
+the node ordering seems very random here. Could you sort nodes in the
+dts alphanumerically as the dts coding style suggests?
 
 
+--fGRR7GdKJMsqfzS2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfY4wAKCRB4tDGHoIJi
+0g9lAP43/yhfmMpPGE/UTpJbFPS2SOc0ZEN/nLtKSvc25ObaswD+LyRMqnsq87TE
+r6zdEguM3482DqDtUmYg4SQEYytUVgE=
+=GZrq
+-----END PGP SIGNATURE-----
+
+--fGRR7GdKJMsqfzS2--
 
