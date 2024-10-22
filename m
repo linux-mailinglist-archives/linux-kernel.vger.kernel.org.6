@@ -1,159 +1,268 @@
-Return-Path: <linux-kernel+bounces-376897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2B59AB72D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427189AB733
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC011C23453
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:52:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B69B1C234E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672591CB311;
-	Tue, 22 Oct 2024 19:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84E81CC14D;
+	Tue, 22 Oct 2024 19:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JtlWFGJ9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QD1ze/Nt"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2068.outbound.protection.outlook.com [40.107.103.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F8414A08E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729626727; cv=none; b=YgDDK671p3nDwHFJ4Qc39xj9yen23gf7dMtzgsBkM/MeKoo875d6iZ6celKRzocC6PLDcyhwejkkORtT+aNix3FMjfWXhgqSHUbFuEMaj19r3bLfUeinTqcIxKHQuXnkAl1nRK6RYXLhp1ploi+4uN2maa4kECIwSJ14lpiVmMI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729626727; c=relaxed/simple;
-	bh=UlSzvYSwUTwKszAfPfGtBb/1Wy2hu7cv8ILTCepA7tU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJJ4ZCfCFc+ZCFo43oBw89bit7VZzSktbZaEfI5EtcrDvVuy9/wtgK3pXhL7Cv/kR73yuSIaqShJaM8aRcZZowPd08jNffiIGfP1C6II+xAlFYw0lBgFClJGWbOysU3NXpCVaYbPCVmGIs6nWZvu8l0DsiKDSqs6tC9uKyr2Qdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JtlWFGJ9; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729626726; x=1761162726;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UlSzvYSwUTwKszAfPfGtBb/1Wy2hu7cv8ILTCepA7tU=;
-  b=JtlWFGJ9nWJ0EcgIti86rNaRYRbOUALBUtnpc/+mfzxt/HNVY6ThkxCx
-   lnWhZC0SbZtLTrd0V5xqvU0JwVwCBW8hCU6riQEf9aCwKTn1c7wPy4c6d
-   ULF8vji1qQ+CJhEfgwB/kBCFK8sB0J7wH8AIViMsT5/ZGjz3Sv4TiUrO+
-   hs8Dw3rQoOqo3PwyPyyRn9fZs1I8DzIIX3q457bWkR+ztETf+28VYSbJ0
-   AKB+PsMIKkv5MZdiQPzqq57ndVpapFl5MtzLwIWg+tkTG1BFLZjO48CYq
-   jEEAL/HElzyjXWS0otcdujp5jbHIkP8c4kbTpKpqCeYwx3xPwLZjZxXq5
-   Q==;
-X-CSE-ConnectionGUID: m46uCsvVQG6uXC11qUpBNQ==
-X-CSE-MsgGUID: 9pZ8OhrWQI6TqCR3Oj8Qew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28965267"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28965267"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 12:52:05 -0700
-X-CSE-ConnectionGUID: Hd7C0uazSJyFDhVm50mY0g==
-X-CSE-MsgGUID: 5xrvzvoTRWWzZR0ykl21Mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="79538027"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 22 Oct 2024 12:52:01 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3Kv9-000U2M-0D;
-	Tue, 22 Oct 2024 19:51:59 +0000
-Date: Wed, 23 Oct 2024 03:51:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Will Deacon <will@kernel.org>,
-	Evgenii Stepanov <eugenis@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCF914A08E;
+	Tue, 22 Oct 2024 19:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729626782; cv=fail; b=pM9YuJb54VJN29jUMlPUc+n85orvHneYJSgMkFsWIHNly5IV0pYKt/AazAtaalfS9SlMAv770Dqa0WgwXrx2FKRH7s7V3yuDn6ecZ7Dr1RmKr9yNgdafFpjBx+6S0bJ3E4f/g/4fSN7Z4tNDk5oyLLE3KkwTCW7yXffSxH3TZeQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729626782; c=relaxed/simple;
+	bh=Lz1RvAREQ+JC805+PV+r2KBzVyqF7y+magYPyMmEj5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q3QQQxnsEH5T9b56zqCvgdj9Qm/uYFGduESQuPZpCExRQ3pqD+DThDyOa0oMftXrm2SOSR41ihnwVPZjlAhcAE0rRx5mKzubOteJzM25E1HJ2yXAVi8KtbDfDcziI9uzyMDIutkUdqODwOEORxQBS0IpvJlwa1ub1z8tvNKGflw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QD1ze/Nt; arc=fail smtp.client-ip=40.107.103.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ySbDq5xdTND23d8gJAAxvPqqDXPxYNX6stG6wSHx5NQrXyJLlDlGOEpvXdzGtjKEkwAbB86NrndehIYGHf/xgVlLfUSsqNT9J97uJBi+ZQJFciDUYGNr6hXenHRGBXstRID2Tlxsy5K7OYcoBhIpdS91HoB/UZpV5YY+s88StlYrUhOoLG3AMFMP93HjC5f4lS8qUCY223xNfZ7N0AoK4wP/O78pppxyZVwdRCZ8wdd505mp+2jtvF/6E4MoBJPMA26FkNvhwcY47EMetbC3SZfgKZgd3SftQo9fe/mqxowTccanCl3B8FNwweWWDlp9c8fhu41ia96lfjqAz9Uv9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yNR7WnWn5dV0RYlNtIvp54N2a7IZ5Oiw0DLpsTHSUuQ=;
+ b=ClvJBxIWoBuXyFp/mvOBu/nAFd3IuaBWfshxQpelDAJGKgepPRDde6e4Cd5v2SqtryeZkRsOEUkk2Z7F1pq7JzXV7viA+Mq3sVtKn9IU138wGtU1jgfUidHcWSzzm7LuBCK0mtpIvvmHX947AreYvZJbIqM0NtoebNArW/OvdIy0G9Ijak8M0oxPmRwTCM9M6SMzqrZ8X25ll65i+K33j2W5/8JwDq5U+l0bBFR8tVloONqBDv7HmOljqqprklA7Ui773eGLvkf5Tt0/vElnaQaD1Sh22dQ8fXereutN6J/404m4iMtAp66EVzJWm0TNLo5E7NhEmKudFeR5YCMq1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yNR7WnWn5dV0RYlNtIvp54N2a7IZ5Oiw0DLpsTHSUuQ=;
+ b=QD1ze/Ntb1fMnMBItVkpSiCi9AgDPrEx/nGFqi0crFUl64NFZ+DkjqI7MHDMl9CaMWQ3jlBuWHYCVooWEpZaBIkJ1VW0pK0+hYTETjDk+WQLvOYMf4sAIEhuev8q+aoK5x38Vc4w8zDbyriNVegSb0Jy9sTxZoTeJPGbg/z/5FOqqJGEzQwdn9XyPte0Dleo5oyapRxJRKVjwHbMgrt5wzzK5s+INlIrWJlThRu6x5u+AcfXKm7II+o3FEKP21kpk7T0oyP0dQR6aNvTIbYIW1N24YxPdaoleT9lcmd8qM6oG0jwAyIb4iv76Rd1uXRLm/6xjIH6F2i9EpGhfng/uw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10998.eurprd04.prod.outlook.com (2603:10a6:800:262::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Tue, 22 Oct
+ 2024 19:52:56 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
+ 19:52:56 +0000
+Date: Tue, 22 Oct 2024 15:52:46 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v2 4/9] kasan: sw_tags: Support tag widths less than 8
- bits
-Message-ID: <202410230319.eQozBGh7-lkp@intel.com>
-References: <20241022015913.3524425-5-samuel.holland@sifive.com>
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Subject: Re: [PATCH v3 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
+Message-ID: <ZxgCjuxbeaMe8WpT@lizhi-Precision-Tower-5810>
+References: <20241016-imx95_edac-v3-0-86ae6fc2756a@nxp.com>
+ <20241016-imx95_edac-v3-3-86ae6fc2756a@nxp.com>
+ <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022094429.GFZxdz_QNHHr_DCPp3@fat_crate.local>
+X-ClientProxiedBy: BYAPR02CA0059.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::36) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022015913.3524425-5-samuel.holland@sifive.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10998:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6334b3c5-0ea8-4841-4a3d-08dcf2d31f5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?itXQ+YR4c5SSpNdE6Jer/m2PxxGZKFHFSTGIPjPogs8tGRYg9kylTdbikkwl?=
+ =?us-ascii?Q?8yE1b5YRx5WUrRz8bY1Q6hCf/I6FjmvZTHlyJZWqoi6NNXkZsbbzyTdGa/6K?=
+ =?us-ascii?Q?08Uw6eSZF7Iy4rehZA6VxahHMK8FolPTxO5W3PU2j4nFRX144NACiyQ6zITj?=
+ =?us-ascii?Q?UE/5t+6HDSbCc1oozohDhwYSyRXYrP4T0oQlalCkeIj9Z/TrdF2NORu+FW9A?=
+ =?us-ascii?Q?PjRC6XJ+4lipfEbO/Rtr4mydptTspytsQh7FkW4K0du7+CnOET9jcmB3OnAV?=
+ =?us-ascii?Q?IwLPIxnRgHOAkhRFlhsKueXBFYXc5NFfMkzEzVXLP4UEozHY7n/CfVtwZ5Zv?=
+ =?us-ascii?Q?l1jKBM6zRlzv4+Me1jhswQZo4hJIElsbCUg/M5kRtOWsUzPRubconcWLuTTV?=
+ =?us-ascii?Q?Z2LLMpbJxP6NNiN7xMrhlhtcsiiC9KLQXdYN5V3KozerMfNwmmMgsc+NkmCB?=
+ =?us-ascii?Q?x9v7c/tHTAc7ED7XuFGdC4WpIAQIt1GSgFTZ2ezvBB2LH0pvfSAqKzHBKk3o?=
+ =?us-ascii?Q?IGSbbyZxqaL4QtMMxQAtlMi1gpuYY+Pxcab8gGjmLTSUyZNHWDLV4UQLJOJF?=
+ =?us-ascii?Q?DZUqfqsw2YBb5eJS+J1yTNC5vUR4q9GvkE9iIxWgXs8y47qQri47d3F4H3V1?=
+ =?us-ascii?Q?H685XPTKGpcQapG6Nfy4sKSWeG8lOZCfUBEru3w/vIPPGJv/0yyQ5JFIHU6a?=
+ =?us-ascii?Q?l8sqom21DwzPofMWXCG7v9BBv4vKmyHVTNqEgEGAqyki1Ma55ysDVSOGJndC?=
+ =?us-ascii?Q?g2EcQcMJ7wrEBW7gkI/GXx+rn4rkfEPCkHUNAJ+CCuXZcuox2QgV0HPBk01c?=
+ =?us-ascii?Q?uJUlwCOGLjOlF1gwYY4CJMtM6PLxqMy2mZvXAfognUpnJwcNY/cIDNhgm6Bx?=
+ =?us-ascii?Q?3QnRXpLiN7FVY8DdIaDKemm1aG1b1CfDIVlCOXNgqqkIwe/ytUjQFK00qIgM?=
+ =?us-ascii?Q?q1cT4l2mn0E9RHY0gtGQzUc4yM2z27y8vsIJyJyAI6l1Exrg45/WfxRSXoy3?=
+ =?us-ascii?Q?bu7bwxYnoRTEEYCc1KO0U2rAUAD3tMocvwW0MVn9wkdS0b/fz1GB/D9sLfcp?=
+ =?us-ascii?Q?Sik94N5gjI1/1rVGH0USLuoFw/0DBLjXx58yZ6/bwRGruTFKx1HqCJN1ZUzU?=
+ =?us-ascii?Q?DdzI13DMOrZT+YEbY4Un9oI6inPZKtkAip1M0joAoxbelK2LBJ5HbZd5Tocn?=
+ =?us-ascii?Q?/phkXMh0aE2P1A+jpAROlMrBiElnPu4dMAvkgpiO5gJvMzh2Brvzz9xnmkh9?=
+ =?us-ascii?Q?sKU1pK0mDOePSxjYc8Hl/uzGJwurLAkcPPV8QElMBJcE7NkIb2vtoVkLyTA4?=
+ =?us-ascii?Q?EM6iVE5Wh8WmoOy+X+Dcb7Ya5G19wnwgfzgw+BOniVEnTu40DP7uHJK3ngry?=
+ =?us-ascii?Q?b2dZKUl1JK3VjtMZr2pEOuxM5eQN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?dF084j94R48AtqcWfH5okLWPbYDjNvTnGml5XXnyMaP6OUrZvwPefeHNwXOj?=
+ =?us-ascii?Q?M/ryGzEssn4O2U/yfTES9IJKDJ4AL9vsAEUX23eaelpn9A+PHg3XDGkOAVA/?=
+ =?us-ascii?Q?3pwlS0GMth394PP7sY0f1RZcWpXPjvgl4B2cAJyKrbT26C/fTJ/D8TFRcl9z?=
+ =?us-ascii?Q?gRG2d2Jof+rxiIZcJvXkTYx/aAG3Oevvoj1dhYk2mHdoOgtgiA/rXE2ekikf?=
+ =?us-ascii?Q?HezEAUdfGZITz2dgclV8dO3CQ+YizCMZu+31PlDaASniuzqcTMeNVsjwmAgo?=
+ =?us-ascii?Q?J+CHOETFusEIYIy7f38gTY8SJE85pKP8t0Cfo/jXwkWknCZ6zPxSbQ2flEHx?=
+ =?us-ascii?Q?nQ/3c/Ya08b7zIHWQ/L4UuFyFAkeow5TrrXT5Ttspeyd32PHDcQP/FUTVZHl?=
+ =?us-ascii?Q?jdl+xIm8S3npEBpmzOG5gUC2F9buGCc8ml9s45KvQMre4ZRNHwQeFeQP5737?=
+ =?us-ascii?Q?QMEQGBxuei6Bhq7ICS5WOx6Wgn1D6pS8ZaQscfZ7xie2hCdSkKuzeUIbf4mQ?=
+ =?us-ascii?Q?z5MXO9OaZPNFgJFm2zTW6jxmWW31uS7PGnMjZswTiXtgULmjsakkS7O82j16?=
+ =?us-ascii?Q?4cnFcJWs+a4W5WRGQvmGKFI0Bp+Q6MphSGdt4haadz7FJ0VwlgxREnephobM?=
+ =?us-ascii?Q?UwD+qagrm8/acdc8A8hQJ2PvHcYdZl2DjPAW5J5EEmR1TvNwd/UEXb3oS9Tv?=
+ =?us-ascii?Q?11HVMWBSXoq1RsAUSjta1mC0u0Z7RHE3yHlY86yFXNKD4i5lE1HbqTtTJalA?=
+ =?us-ascii?Q?Gnkv0Hhx2slLkR3o1mnVLe446R0ZeDIQ7Rga+lcYHFvPWYdAgsa3EIY4X9Yj?=
+ =?us-ascii?Q?X8tZYmyBJADNZ3LtHziJI4pjDX/GH62MuMggMIlvk1n4esPNgzF9/2ufyXqk?=
+ =?us-ascii?Q?ukfyytEecFlvQXKgItwbCcuwB1D0bviF0ie54l2VErB2zgR8bWqnvVYOrF6W?=
+ =?us-ascii?Q?krgr/m6kcwEdgepML8J7xwqUt0ZhEma1xf0QspVZX44MjloynERfjtQfJjr1?=
+ =?us-ascii?Q?siSjYAQIAr66DvJKKABi+VIyhvO2hLthGmkENKz3N6cdONpJ71S/E87ROuia?=
+ =?us-ascii?Q?T05n6CHAkJ2RYm56WOOgfS5w8HKI/mh7e/9OthxScBabntNKnzD0JX5WxmPT?=
+ =?us-ascii?Q?Mmaz+3JbNhm5czGsPOT4QREIyNTFKq33qDaLZY0R+UQNIRVs80xE+Zomc0Ax?=
+ =?us-ascii?Q?xt+BXDZr+TjzbxVdkJNboo68ze58aGL72WDbJEpqclhBhANVef5IxLf+1xxe?=
+ =?us-ascii?Q?RQZ4BKQi4p/dAeKvPQShqsfGTXQAg8e8gYiRbQoP8OZe2zRURVKn/rTG1nJk?=
+ =?us-ascii?Q?IYXZvr1zhSvSSjEJ7mSMdkPPjmCUyu/0//HsH3mCm6T4fPxANWv/4cYaFRlW?=
+ =?us-ascii?Q?t9TePg84az49dwFpdxpvRzjvQDrq0yIKYha1mI88Kx27MZjG9W4KpBU/PbKl?=
+ =?us-ascii?Q?eRAKkpmOdKVyUvxjnFX5f3hyzAIVlCLjsICK2iN68ljYqQ2BsZ0eT+UcUcPk?=
+ =?us-ascii?Q?6G2mzmeEMrBl+MOoT0xbFQDOgft7fs6Xn85DfixpxStl5n4LyFXVBPwAhJVr?=
+ =?us-ascii?Q?/1FI2tX+Bs0JWe+FlU68jvO3pCj6wv3Tv04lZ4im?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6334b3c5-0ea8-4841-4a3d-08dcf2d31f5b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 19:52:56.0065
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2j/XaRQnrJm/Zr5/cNMjjZtPUwMwJyT1Kc4i0dngiMOKCnF0ji6pPHujgAgOXJkVAvWNvyjH/gxUi4cBzcZ8Jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10998
 
-Hi Samuel,
+On Tue, Oct 22, 2024 at 11:44:29AM +0200, Borislav Petkov wrote:
+> On Wed, Oct 16, 2024 at 04:31:11PM -0400, Frank Li wrote:
+> > From: Priyanka Singh <priyanka.singh@nxp.com>
+> >
+> > Fix undefined behavior caused by left-shifting a negative value in the
+> > expression:
+> >
+> >     cap_high ^ (1 << (bad_data_bit - 32))
+> >
+> > The variable 'bad_data_bit' ranges from 0 to 63. When 'bad_data_bit' is
+> > less than 32, 'bad_data_bit - 32' becomes negative, and left-shifting by a
+> > negative value in C is undefined behavior.
+> >
+> > Fix this by combining 'cap_high' and 'cap_low' into a 64-bit variable.
+> >
+> > Fixes: ea2eb9a8b620 ("EDAC, fsl-ddr: Separate FSL DDR driver from MPC85xx")
+> > Signed-off-by: Priyanka Singh <priyanka.singh@nxp.com>
+> > Reviewed-by: Sherry Sun <sherry.sun@nxp.com>
+>
+> You can't keep Reviewed-by tags when you change a patch considerably: Documentation/process/submitting-patches.rst
+>
+> > Signed-off-by: Li Yang <leoyang.li@nxp.com>
+>
+> What does that SOB tag mean?
+>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/edac/fsl_ddr_edac.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> > index 7a9fb1202f1a0..846a4ba25342a 100644
+> > --- a/drivers/edac/fsl_ddr_edac.c
+> > +++ b/drivers/edac/fsl_ddr_edac.c
+> > @@ -328,6 +328,9 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+> >  	 * TODO: Add support for 32-bit wide buses
+> >  	 */
+> >  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> > +		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> > +		u32 s = syndrome;
+> > +
+> >  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+> >  				&bad_data_bit, &bad_ecc_bit);
+> >
+> > @@ -338,11 +341,15 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+> >  			fsl_mc_printk(mci, KERN_ERR,
+> >  				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> >
+> > +		if (bad_data_bit >= 0)
+>
+> >= 0 implies != -1, right?
+>
+> IOW?
 
-kernel test robot noticed the following build errors:
+Yes, Your code is better.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on arm64/for-next/core masahiroy-kbuild/for-next masahiroy-kbuild/fixes linus/master v6.12-rc4 next-20241022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/kasan-sw_tags-Use-arithmetic-shift-for-shadow-computation/20241022-100129
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241022015913.3524425-5-samuel.holland%40sifive.com
-patch subject: [PATCH v2 4/9] kasan: sw_tags: Support tag widths less than 8 bits
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20241023/202410230319.eQozBGh7-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241023/202410230319.eQozBGh7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410230319.eQozBGh7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:5:
-   In file included from include/linux/crypto.h:17:
-   In file included from include/linux/slab.h:234:
-   In file included from include/linux/kasan.h:7:
-   In file included from include/linux/kasan-tags.h:5:
->> arch/um/include/asm/kasan.h:19:2: error: "KASAN_SHADOW_SIZE is not defined for this sub-architecture"
-      19 | #error "KASAN_SHADOW_SIZE is not defined for this sub-architecture"
-         |  ^
-   1 error generated.
-   make[3]: *** [scripts/Makefile.build:102: arch/um/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +19 arch/um/include/asm/kasan.h
-
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  12  
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  13  #ifdef CONFIG_X86_64
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  14  #define KASAN_HOST_USER_SPACE_END_ADDR 0x00007fffffffffffUL
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  15  /* KASAN_SHADOW_SIZE is the size of total address space divided by 8 */
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  16  #define KASAN_SHADOW_SIZE ((KASAN_HOST_USER_SPACE_END_ADDR + 1) >> \
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  17  			KASAN_SHADOW_SCALE_SHIFT)
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  18  #else
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01 @19  #error "KASAN_SHADOW_SIZE is not defined for this sub-architecture"
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  20  #endif /* CONFIG_X86_64 */
-5b301409e8bc5d7 Patricia Alfonso 2022-07-01  21  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index 846a4ba25342..fe822cb9b562 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -328,24 +328,21 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  	 * TODO: Add support for 32-bit wide buses
+>  	 */
+>  	if ((err_detect & DDR_EDE_SBE) && (bus_width == 64)) {
+> -		u64 cap = (u64)cap_high << 32 | (u64)cap_low;
+> +		u64 cap = (u64)cap_high << 32 | cap_low;
+>  		u32 s = syndrome;
+>
+>  		sbe_ecc_decode(cap_high, cap_low, syndrome,
+>  				&bad_data_bit, &bad_ecc_bit);
+>
+> -		if (bad_data_bit != -1)
+> -			fsl_mc_printk(mci, KERN_ERR,
+> -				"Faulty Data bit: %d\n", bad_data_bit);
+> -		if (bad_ecc_bit != -1)
+> -			fsl_mc_printk(mci, KERN_ERR,
+> -				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> -
+> -		if (bad_data_bit >= 0)
+> +		if (bad_data_bit >= 0) {
+> +			fsl_mc_printk(mci, KERN_ERR, "Faulty Data bit: %d\n", bad_data_bit);
+>  			cap ^= 1ULL << bad_data_bit;
+> +		}
+>
+> -		if (bad_ecc_bit >= 0)
+> +		if (bad_ecc_bit >= 0) {
+> +			fsl_mc_printk(mci, KERN_ERR, "Faulty ECC bit: %d\n", bad_ecc_bit);
+>  			s ^= 1 << bad_ecc_bit;
+> +		}
+>
+>  		fsl_mc_printk(mci, KERN_ERR,
+>  			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
