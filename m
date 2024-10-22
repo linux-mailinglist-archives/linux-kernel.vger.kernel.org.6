@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-376664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA899AB499
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F009AB49C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B559285D88
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF321F24469
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04BA126C00;
-	Tue, 22 Oct 2024 17:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrApnhmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0281BCA07;
+	Tue, 22 Oct 2024 17:01:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14847483;
-	Tue, 22 Oct 2024 17:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E117483;
+	Tue, 22 Oct 2024 17:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616475; cv=none; b=ncBWldkGp+OYO7EalIc/gIJtE+tUZyVcDoK2Jl+BnEePE9CwkFUu4vzVyQU1l1sYZ8Opo4ImQLt/F++dOfRtVC0d2qBPuCCilK+JGFeXzLESthA/YAlRmUP5netaIOy30xGtWP5bKHzMTNxH+o6BdxfOL7NmEN3Fsl1gb6VA+dA=
+	t=1729616490; cv=none; b=KBrFrlkbvYQQ1peRTDNXO3jrcijLWJEL0/8lRI+V93k0lOElJ3zONBqH5s3lPg0NhrSNTqG4qh8eZimppT//ATB8xdZTK05Aw+aXtcB4bkvSMdM4QtncKn/FNmo/nbFWQnvTuO/pkMfdW9SxthwTkJY3OJWPJ4IZ6b2PDkTll8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616475; c=relaxed/simple;
-	bh=SkxruN3qyASLBSy7ziFG5BSa8nKG0zYL2UVq2sfpF60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXj5s7XqsbJ1gp6eBizMzbaNahu8GfENlBnkuf2jgTh6l8EkL305tbSJZRpv4YW8TN8WyJl3aiCsPc9oj5Tvz1dfxCwnznwIdI+CRg2Qu+ge5bu+IzD+hheH24IKbFG60mhfsKB9zOy2WF6KGqKYEP69bJL8IgCIG89PlmWOlIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrApnhmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1A4C4CEC7;
-	Tue, 22 Oct 2024 17:01:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729616474;
-	bh=SkxruN3qyASLBSy7ziFG5BSa8nKG0zYL2UVq2sfpF60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qrApnhmZAXDdZ4SSpggax2im4eSKHuqpnqC9KwoGZB/aRpyGHLEjvH+EmdQypkKux
-	 7PI5+FW3O0VLQVJxBsYG8W4p6lheqxCoB8WnZzxtV9bFCEB2Dr6NElYULTkFDqVL3+
-	 prxeH2uePahI5PJi1yKoAU1pQusy3/BZuOPcKf2+GtbKmYT8xFlSf/vJUFN2WPvF35
-	 xtNWGPIJoRF+phpOkrSsDLkJT4yqQ7RM/cNBJHK/V8kWKHVSwkYDMc+cRBGUsh995z
-	 BoHAyxw/C3LovbDIOeEpsEBXylrsyskt3Ma8lKBpFbDLnxSHrlq223m1U1gRBl8DWN
-	 6dV7HTrtJiXwA==
-Date: Tue, 22 Oct 2024 18:01:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Richard van Schagen <vschagen@icloud.com>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [RFC PATCH v3 2/3] dt-bindings: crypto: Add Inside Secure
- SafeXcel EIP-93 crypto engine
-Message-ID: <20241022-frozen-dinginess-c9b71213e11a@spud>
-References: <20241021145642.16368-1-ansuelsmth@gmail.com>
- <20241021145642.16368-2-ansuelsmth@gmail.com>
- <20241021-extenuate-glue-fa98a4c7f695@spud>
- <6716883e.050a0220.3afab9.2304@mx.google.com>
+	s=arc-20240116; t=1729616490; c=relaxed/simple;
+	bh=PPNSYZKPWMLanxucQDtSVxv8/bs3/sUN4XUPU8RmAq4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iZWj7lHJs2dVZwgyfnB7WFfrl3Xl1hc0dJ9Wwp1kPjneS4J4qoqrsoRT0wJtp/wzAleRJeOE82LcbusENR1jEvJwtVMAK6Pnc+o3MXxo9B0dkrJ9HxX8CZVeyzYF6Df5+W6WAIRH+P6fjmbpDDtnIXtuXm6cMKYQ2ekAU2rdvBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XXyy56sgYz6LD5g;
+	Wed, 23 Oct 2024 00:56:45 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1E2DD140B55;
+	Wed, 23 Oct 2024 01:01:25 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Oct
+ 2024 19:01:24 +0200
+Date: Tue, 22 Oct 2024 18:01:22 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 21/28] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <20241022180122.00006074@Huawei.com>
+In-Reply-To: <6716a165823b7_8cb1729437@iweiny-mobl.notmuch>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-21-c261ee6eeded@intel.com>
+	<20241010155821.00005079@Huawei.com>
+	<6711842d88fa_2cee2946a@iweiny-mobl.notmuch>
+	<20241018100909.00001ec2@Huawei.com>
+	<6716a165823b7_8cb1729437@iweiny-mobl.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WarKaUJK5icuKqW0"
-Content-Disposition: inline
-In-Reply-To: <6716883e.050a0220.3afab9.2304@mx.google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Mon, 21 Oct 2024 13:45:57 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
 
---WarKaUJK5icuKqW0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Jonathan Cameron wrote:
+> > On Thu, 17 Oct 2024 16:39:57 -0500
+> > Ira Weiny <ira.weiny@intel.com> wrote:
+> >   
+> > > Jonathan Cameron wrote:  
+> > > > On Mon, 07 Oct 2024 18:16:27 -0500
+> > > > ira.weiny@intel.com wrote:
+> > > >     
+> 
+> [snip]
+> 
+> > > > > Simplify extent tracking with the following restrictions.
+> > > > > 
+> > > > > 	1) Flag for removal any extent which overlaps a requested
+> > > > > 	   release range.
+> > > > > 	2) Refuse the offer of extents which overlap already accepted
+> > > > > 	   memory ranges.
+> > > > > 	3) Accept again a range which has already been accepted by the
+> > > > > 	   host.  Eating duplicates serves three purposes.  First, this
+> > > > > 	   simplifies the code if the device should get out of sync with
+> > > > > 	   the host.     
+> > > > 
+> > > > Maybe scream about this a little.  AFAIK that happening is a device
+> > > > bug.    
+> > > 
+> > > Agreed but because of the 2nd purpose this is difficult to scream about because
+> > > this situation can come up in normal operation.  Here is the scenario:
+> > > 
+> > > 1) Device has 2 DCD partitions active, A and B
+> > > 2) Host crashes
+> > > 3) Region X is created on A
+> > > 4) Region Y is created on B
+> > > 5) Region Y scans for extents
+> > > 6) Region X surfaces a new extent while Y is scanning
+> > > 7) Gen number changes due to new extent in X
+> > > 8) Region Y rescans for existing extents and sees duplicates.
+> > > 
+> > > These duplicates need to be ignored without signaling an error.  
+> > Hmm. If we can know that path is the trigger (should be able to
+> > as it's a scan after a gen number change), can we just muffle the
+> > screams on that path? (Halloween is close, the analogies will get
+> > ever worse :)  
+> 
+> Ok yea since this would be a device error we should do something here.  But the
+> code is going to be somewhat convoluted to print an error whenever this
+> happens.
+> 
+> What if we make this a warning and change the rescan debug message to a warning
+> as well?  This would allow enough bread crumbs to determine if a device is
+> failing without a lot of extra code to alter print messages on the fly?
 
-On Mon, Oct 21, 2024 at 06:58:35PM +0200, Christian Marangi wrote:
-> On Mon, Oct 21, 2024 at 05:50:25PM +0100, Conor Dooley wrote:
-> > On Mon, Oct 21, 2024 at 04:56:38PM +0200, Christian Marangi wrote:
-> > > Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
-> > >=20
-> > > The IP is present on Airoha SoC and on various Mediatek devices and
-> > > other SoC under different names like mtk-eip93 or PKTE.
-> > >=20
-> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > ---
-> > > Changes v3:
-> > > - Add SoC compatible with generic one
-> > > Changes v2:
-> > > - Change to better compatible
-> > > - Add description for EIP93 models
-> >=20
-> > RFC v3, but I don't see any comments explaining what you're seeking
-> > comments on.
->=20
-> I feel comments for the DT part are finished, if Rob is ok with the
-> following compatibles.
->=20
-> The RFC is more for the driver part and this is patch part of the series.
+Sounds ok to me.
 
-I didn't see anything there either, that pointed out what made it an
-RFC. Please be more explicit in the future - possibly in your cover
-letter.
+Jonathan
 
---WarKaUJK5icuKqW0
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Ira
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfaVAAKCRB4tDGHoIJi
-0j2oAQCPnM+xlAU21uykbD2R+qVH/1NCqFKMuxtkcErWXY+k6AEA9XEkpZ423S/Y
-8/3Yk49clCSUaEY9pZS4S0HEdrSKqQ0=
-=1OeI
------END PGP SIGNATURE-----
-
---WarKaUJK5icuKqW0--
 
