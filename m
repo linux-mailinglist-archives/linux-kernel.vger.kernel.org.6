@@ -1,144 +1,164 @@
-Return-Path: <linux-kernel+bounces-376911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548419AB75D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:02:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773CC9AB763
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8BD284C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DCE01F23BBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD311CB539;
-	Tue, 22 Oct 2024 20:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817A01CB306;
+	Tue, 22 Oct 2024 20:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7GlvJWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnV6PnIy"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B757148314;
-	Tue, 22 Oct 2024 20:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4376E1BDA89;
+	Tue, 22 Oct 2024 20:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729627370; cv=none; b=aRmssdBOdWUIeqErv8qWKXXgtN08wAP9c/kL653qahb6tl83QfGCXXx1Gaa7T2J22Hwu0ojIHwIPNGLscnzqVgolEmZUbHLdXzoxx/XWBdc9/LQ1DZJ45M/aGaeP1qHcYF0FLb3EAQhXJDL6LzxesP5GWoqyDgZ0Fqnn38BMGkY=
+	t=1729627458; cv=none; b=We/posloJl+suU9H4V1sZrfoMSO0x+25SxZdMWevnE1J0e8WmV8m4vv7PbCu0UXUuSKHm83A9cnohEifEFMxdfZIGKxekQvhUKa6JCb6Fq0lIrcGc5Bj/TOOX6A1SJtpqbv+vjbY4mdmpvJ7eZqbg5G5ZSsn04UHqSrgDWPCO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729627370; c=relaxed/simple;
-	bh=K/0cq2A2Zdsoq/7MCZkWP3DN95N87xlLtfL7UuCOg4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ihLpIDMdIFKCT4XVoh6OMUUOtq9Jk7K/insZzLPuAx6G1L4LQ41QGz4o3RvN7e71fUtHgeLALvVVFbCeLZC+b3Qen8w+Q/3puqo5bPhrPBHxFDdVFJtH1vd2LmvSuLzPp0+vRlRg0Ahqx/m0Vb+AXJT2zTfEldetImsXHFZydP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7GlvJWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A41C4CEC3;
-	Tue, 22 Oct 2024 20:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729627370;
-	bh=K/0cq2A2Zdsoq/7MCZkWP3DN95N87xlLtfL7UuCOg4A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b7GlvJWYjr8bIddB7tqBqkp5AqF82AxFaYWAV3PpHqkrv986qs30K4kl2nDrjhSCW
-	 TSxjbTBpVIEAnjqSiarEjXSb8d4d6ZaVicNmpNSkU6LfK6Y0oUoOFhCcVedqPWZxfB
-	 N2vkts0FvZn3S1SMrDpldwk4WFZZbu9mwcKUcUVAtLh0xogLQ6q2OD1xmxtikCU0FG
-	 oJONsQBt2jH9N1q/9bQ5mMH4pgwZfiQd7Rabyf/LmICB79hBCmFVW0hJnsBGFOML7m
-	 BrJc7Q/Y/N0XdVer1YQ3uilgcALJ/Um5Vlw63d+O6hEXF34UERM4uiIR8i6hx2s6KK
-	 Y9mFb9wXEXBhA==
-Date: Tue, 22 Oct 2024 21:02:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] iio: adc: ad7380: fix several supplies issues
-Message-ID: <20241022210239.6a61b32f@jic23-huawei>
-In-Reply-To: <20241022-ad7380-fix-supplies-v3-0-f0cefe1b7fa6@baylibre.com>
-References: <20241022-ad7380-fix-supplies-v3-0-f0cefe1b7fa6@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729627458; c=relaxed/simple;
+	bh=T/LpGdAqbCENOzb45jhG1O4Oa7I14+ESSEV89GZTlmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=juUBK8lH2mpXO1GToe3bfmIE3w35I0cRbabE9B5JP7ptKReTO1vGxF3dbQ7Frk+kQYshvkoPFWTOI1bwSpo0wXIVrObxj1WJDuUcjn6KeMN/pvZ33WFYabQVK0fYOIXDdOWZSBvJiU4qs1yUfIZDeJnuurk7ve8Yqn2eV1aloLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnV6PnIy; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso953933566b.1;
+        Tue, 22 Oct 2024 13:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729627455; x=1730232255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hatEP+Fej9bXOQWJZd5WckT7eSEdtgm4yaQHG/Q8RoE=;
+        b=LnV6PnIycdS/SG2UkLBUa99t7J3AZjqG8FMcW0CCF7wyNQJQDMYH6p82h7eCgD63Gu
+         DW5Y/OvsrVOD5K90wb276CDL3YkEcDrbnoxJAO68QbRUfXD6pR/X6v/KcLlo6BqbV4zb
+         8y1fhbPHwWcgXqKF81Wp9DQs7vAFTRKDaSpEayH2p8eNsqMhhGUxpGsCiXGOxIada44y
+         Yi1c/LlS1W3qDM7S1Yz2MELUKHOGu2PLMa+wbZkT56+Y23B5vg3aUDUcjNpue8mFAYG5
+         sI0zxCdnxMOsXetBnAVjZpy9CRwOsjWhyt5BvAHT3N6aY7cYhAK9wSq8hTwQlDxZLuZc
+         AdYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729627455; x=1730232255;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hatEP+Fej9bXOQWJZd5WckT7eSEdtgm4yaQHG/Q8RoE=;
+        b=ieCWXLIQP+OApxMYFCUuGk2WEqhlXO2vkkN7ror51GLOjTFZBTdbbPoCo0kMZ81SGV
+         0gNqfF0KzVvbJIbGD91EZqmYhasTcIYomNgCWalANnrgLiT0DQIW4/kYsfqT84JrRa3p
+         iuXZZPyK/RcvqZKRojEbA9xTB+SKef1bKiz4eykcXHTZrMfoDoKGM1i5JC2OiAvkVLeL
+         r3IiAXrF+1rNudriDuZnGws5zKqp5L058gI48MLfjVvVHZxOAUAb7BpeHBeTe9Lbxt33
+         ElfcNjIFbuBFyiZ9uvXJF05XE+WZ4CT/3qsUpaEwFp6QPbRO4rqnoM9N7iQ7Rd/2W7Sg
+         MdzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6wGITxU+VH/Re4r05d+mQzq6rHrA9Wh8fMQh4mtv9nhakjcZjiHDKeakQ8QC40SsbLi3+b0R0Mtc8KMU=@vger.kernel.org, AJvYcCXsa7osZovmDTpLfzDQnOBMdALmYYcY7XO3eWweJRBn3n3tslMvHkFQCmj4W9uDcmKeoZ1X1UToptlzeyjtl5/W@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoEsGdPRTpV4AyE3FuXkAyF1F0pq3bPDe/OQSvzYE/bjUmilbY
+	sYocJqPM1WFLc3lda0PgxqUlBlkWfcmY7UUydnJaQ+2XgmQ5ZOFG
+X-Google-Smtp-Source: AGHT+IHr+KbkteF3BQofMieMcUIXOEO1bsHJWGnErLq5b38VoEbRlh5y6ihcPUNLSk4HTXJbnLeFSA==
+X-Received: by 2002:a17:907:97d6:b0:a9a:3fd8:9c95 with SMTP id a640c23a62f3a-a9abf92ccfdmr17351166b.47.1729627455316;
+        Tue, 22 Oct 2024 13:04:15 -0700 (PDT)
+Received: from alessandro-pc.station (net-93-66-158-115.cust.vodafonedsl.it. [93.66.158.115])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6383sm381045466b.6.2024.10.22.13.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 13:04:13 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: shuah@kernel.org
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com
+Subject: [PATCH 1/2] selftests/intel_pstate: fix operand expected
+Date: Tue, 22 Oct 2024 22:03:44 +0200
+Message-ID: <20241022200346.5610-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 22 Oct 2024 15:22:35 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
+Running "make kselftest TARGETS=intel_pstate" results in
+the following errors:
+- ./run.sh: line 90: / 1000: syntax error: operand expected
+(error token is "/ 1000")
+- ./run.sh: line 92: / 1000: syntax error: operand expected
+(error token is "/ 1000")
 
-> Hello,
-> 
-> This series tries to fix several issues found on the ad7380 driver about
-> supplies:
-> 
-> - vcc and vlogic are required, but are not retrieved and enabled in the
-> probe function
-> - ad7380-4 is the only device from the family that does not have internal
-> reference and uses REFIN instead of REFIO for external reference.
-> 
-> driver, bindings, and doc are fixed accordingly
+This fix allows to have cross-platform compatibility when
+using arithmetic expression with command substitutions.
 
-I considered a few responses to this series.
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-1) Asking you to pull the fixes to the front even though it would be painful.
-2) Asking if the missing supplies patch should really be tagged as a fix.
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index e7008f614ad7..0c1b6c1308a4 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -87,9 +87,9 @@ mkt_freq=${_mkt_freq}0
+ 
+ # Get the ranges from cpupower
+ _min_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $1 } ')
+-min_freq=$(($_min_freq / 1000))
++min_freq=$((_min_freq / 1000))
+ _max_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $2 } ')
+-max_freq=$(($_max_freq / 1000))
++max_freq=$((_max_freq / 1000))
+ 
+ 
+ [ $EVALUATE_ONLY -eq 0 ] && for freq in `seq $max_freq -100 $min_freq`
+-- 
+2.43.0
 
-In the end I opted for the variant that may just confuse the stable folk
-the most and just took it as is + added stable to the 3 fixes.  Hopefully
-it will be obvious they should just pick up all 5 (or maybe not the docs).
 
-You are correct that the refactors make it easier to review the fixes
-and this is a fairly new driver so I'm not that worried by pushing back the fix
-as it's only to 6.11.
+From d6500cf7c800bd39ae3ef2930cece5b3be460c0b Mon Sep 17 00:00:00 2001
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Date: Tue, 22 Oct 2024 17:22:13 +0200
+Subject: [PATCH 2/2] selftests/intel_pstate: cpupower command not found
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+    linux-kernel@vger.kernel.org,
+    skhan@linuxfoundation.org,
+    anupnewsmail@gmail.com
 
-Applied to the fixes-togreg branch of iio.git.
+Running "make kselftest TARGETS=intel_pstate" results in the following errors:
+- ./run.sh: line 89: cpupower: command not found
+- ./run.sh: line 91: cpupower: command not found
 
-Note the side effect of this is timing is tight for having this available
-in the char-misc-next branch, so it may push back additional device
-support until next cycle.
+if the cpupower is not installed.
 
-Thanks,
+Since the test depends on cpupower, this patch stops the test if the cpupower
+is not installed.
 
-Jonathan
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
-> Changes in v3:
-> - Use fsleep instead of msleep
-> - Add all trailers from review
-> - Link to v2: https://lore.kernel.org/r/20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com
-> 
-> Changes in v2:
-> - Fix kernel test robot warning about variable uninitialized when used [1]
-> - drop commit removing supply description in bindings
-> - after discussion on [2] we decided to add refin supply here, as it
->   will be needed in the futur
-> 
-> - Link to v1: https://lore.kernel.org/r/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com
-> 
-> [1] https://lore.kernel.org/oe-kbuild-all/202410081608.ZxEPPZ0u-lkp@intel.com/
-> [2] https://lore.kernel.org/all/20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com/:warning
-> 
-> ---
-> Julien Stephan (5):
->       dt-bindings: iio: adc: ad7380: fix ad7380-4 reference supply
->       iio: adc: ad7380: use devm_regulator_get_enable_read_voltage()
->       iio: adc: ad7380: add missing supplies
->       iio: adc: ad7380: fix supplies for ad7380-4
->       docs: iio: ad7380: fix supply for ad7380-4
-> 
->  .../devicetree/bindings/iio/adc/adi,ad7380.yaml    |  21 ++++
->  Documentation/iio/ad7380.rst                       |  13 +-
->  drivers/iio/adc/ad7380.c                           | 136 ++++++++++++---------
->  3 files changed, 110 insertions(+), 60 deletions(-)
-> ---
-> base-commit: 1a8b58362f6a6fef975032f7fceb7c4b80d20d60
-> change-id: 20241004-ad7380-fix-supplies-3677365cf8aa
-> 
-> Best regards,
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index 0c1b6c1308a4..6a3b8503264e 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -44,6 +44,11 @@ if [ $UID != 0 ] && [ $EVALUATE_ONLY == 0 ]; then
+     exit $ksft_skip
+ fi
+ 
++if ! command -v cpupower &> /dev/null; then
++	echo $msg cpupower could not be found, please install it >&2
++	exit $ksft_skip
++fi
++
+ max_cpus=$(($(nproc)-1))
+ 
+ function run_test () {
+-- 
+2.43.0
 
 
