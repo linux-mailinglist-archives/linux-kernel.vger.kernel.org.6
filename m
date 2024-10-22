@@ -1,86 +1,140 @@
-Return-Path: <linux-kernel+bounces-376533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81ED9AB2DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:57:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D419AB2DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289C2B238E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D67282604
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1661B5ED8;
-	Tue, 22 Oct 2024 15:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OrEH2eJo"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805DC1B5325;
-	Tue, 22 Oct 2024 15:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4904E1B86D5;
+	Tue, 22 Oct 2024 15:56:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AA81B5ED2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612568; cv=none; b=T7l7dLJt3pdzeyfaquos1yeQZJzIHg4RFeYEFJYgLql260v6L0X/WT3HnPhd/lh0OtxcVuxYTznPnI8X/A7y6BVfHDprImefM0OK2L91+jb9cRc7piEY4twdYsW6PGnpJOxr0x2HYqJqHv+QApnby8t8VitqJkk4XQZBDCR1MGo=
+	t=1729612570; cv=none; b=NtpmHOuhUMQKxL8kB/0YnSxWJarySd43d/gGZgqkdzsLR7esm+Nbl9Xfuwb9LD707GTMt8GlOkiueQNQHhCAiNu4WJHSUbM/7BSh59LuhXmgNPAaIlBbJ+t8TGldpzCDcon/EQ99P47a0nAAG7/5pr8Uj7uh2qgNzzMTcAfewmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612568; c=relaxed/simple;
-	bh=0zMhEFYUlJtMFyxQdZN5BV4hydU/hnXmDWl8xY9n790=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mnwYvLG/L9g6IQs/r8BOWubm929Rnj7iUZ2nCodLXWKkEkZczTjGFDBWsUE9Y5RNFrxNS+Bpqu2tdHCzaydJ83WRGVr1Yk1WgixcvMpFjbjefqJ6bVIi4Xi5Xu9WNXN0b9+9OCkQaFHKWoQ1K6y7JGT7OtPnTCNiOuBi8il8lbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OrEH2eJo; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4D9EE40008;
-	Tue, 22 Oct 2024 15:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729612564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0zMhEFYUlJtMFyxQdZN5BV4hydU/hnXmDWl8xY9n790=;
-	b=OrEH2eJocZc8osyxdc/7D8Dc6IsdqjX5pb0PytGovP172ZhAaJRb4XhTkUcdastaBq01YE
-	G6oIk9TIFWpaDu5/LLIs9tkRlRSn20VQQm9NOXxiO3ny02Wgz50B+oHzU6vSomJ4T2Wh9H
-	GJ2qV2XR8fhxxzn+9YYhIu9Abnw9lFH1IDDVQM73JZOHS8WSKbKVb+wKODCHynFXhIz2yT
-	HqRR4tbTxmC3zZZC8EhlCn991ph+wzygxSeqqcKuvoBVkXw2/fvFG9lg7pb+LvbHta5oWQ
-	BonaQ8cIoKRkXa1KO7hc9o+LPrvxPJhNc9BdDQ90e393SWXWYKfFR89N7ua+mA==
-Date: Tue, 22 Oct 2024 17:56:02 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>
-Subject: Re: [PATCH net-next] netlink: specs: Add missing phy-ntf command to
- ethtool spec
-Message-ID: <20241022175602.32c246d5@device-21.home>
-In-Reply-To: <20241022151418.875424-1-kory.maincent@bootlin.com>
-References: <20241022151418.875424-1-kory.maincent@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729612570; c=relaxed/simple;
+	bh=GsxhDVnSwwbJhz9Z4aWQKeAoNkCIeYe/rBrBW158ieA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxsxKWy//bgLk0hHEZz6MoeQSC7eyoc3+qePUXypE3Pm20Xn7a9rpNgJ2VbzRnu96TnPLGzc5LRkGhxS+FmBSj3esZDgewB+sk1EiAUouaWUVkITBL1ObatWbnR0tR/2iHzUpoC3H9F+yKPpVdlEXlNn/tDjHBSXd01wLd93EBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A24E497;
+	Tue, 22 Oct 2024 08:56:37 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AB353F73B;
+	Tue, 22 Oct 2024 08:56:05 -0700 (PDT)
+Date: Tue, 22 Oct 2024 16:56:02 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH 1/3] arm64/cpufeature: Add field details for
+ ID_AA64DFR1_EL1 register
+Message-ID: <ZxfLEqlbGLnK15sf@J2N7QTR9R3>
+References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
+ <20241001043602.1116991-2-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001043602.1116991-2-anshuman.khandual@arm.com>
 
-Hello K=C3=B6ry,
+On Tue, Oct 01, 2024 at 10:06:00AM +0530, Anshuman Khandual wrote:
+> This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
+> ftr_raz[] array which is now redundant. These register fields will be used
+> to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
+> later.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> cc: Mark Brown <broonie@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/kernel/cpufeature.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 718728a85430..bd4d85f5dd92 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -530,6 +530,21 @@ static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+>  	ARM64_FTR_END,
+>  };
+>  
+> +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
+> +	ARM64_FTR_END,
+> +};
+> +
 
-On Tue, 22 Oct 2024 17:14:18 +0200
-Kory Maincent <kory.maincent@bootlin.com> wrote:
+Is there some general principle that has been applied here? e.g. is this
+STRICT unless we know of variation in practice?
 
-> ETHTOOL_MSG_PHY_NTF description is missing in the ethtool netlink spec.
-> Add it to the spec.
->=20
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+e.g. it seems a bit odd that ABLE cannot vary while the number of
+breakpoints can...
 
-Nice catch, sorry about that.
+I suspect we will see systems with mismatched EBEP too, but maybe I'm
+wrong.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Mark.
 
-Maxime
+>  static const struct arm64_ftr_bits ftr_mvfr0[] = {
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPRound_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPShVec_SHIFT, 4, 0),
+> @@ -708,10 +723,6 @@ static const struct arm64_ftr_bits ftr_single32[] = {
+>  	ARM64_FTR_END,
+>  };
+>  
+> -static const struct arm64_ftr_bits ftr_raz[] = {
+> -	ARM64_FTR_END,
+> -};
+> -
+>  #define __ARM64_FTR_REG_OVERRIDE(id_str, id, table, ovr) {	\
+>  		.sys_id = id,					\
+>  		.reg = 	&(struct arm64_ftr_reg){		\
+> @@ -784,7 +795,7 @@ static const struct __ftr_reg_entry {
+>  
+>  	/* Op1 = 0, CRn = 0, CRm = 5 */
+>  	ARM64_FTR_REG(SYS_ID_AA64DFR0_EL1, ftr_id_aa64dfr0),
+> -	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_raz),
+> +	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_id_aa64dfr1),
+>  
+>  	/* Op1 = 0, CRn = 0, CRm = 6 */
+>  	ARM64_FTR_REG(SYS_ID_AA64ISAR0_EL1, ftr_id_aa64isar0),
+> -- 
+> 2.25.1
+> 
 
