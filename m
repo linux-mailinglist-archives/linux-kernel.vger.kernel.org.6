@@ -1,151 +1,166 @@
-Return-Path: <linux-kernel+bounces-376235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD999AA1E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:12:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293AE9AA1F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C239282AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:12:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D27B218FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEEF19D090;
-	Tue, 22 Oct 2024 12:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RrThVlAN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDAF19D087;
+	Tue, 22 Oct 2024 12:14:04 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907AB154434
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE2D19CD08
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729599032; cv=none; b=g5Ob/u/mFK5dlnj8YEoP7j1HVBEY8x3mZmqHvbPQsaQxTIK8k8NodxQct3tZ+cRtw6Z1dXpmXCmTXIyoeRIE3rEQWS4S7PZ/bSjcskn5CUAq2RPT26N3gIOarkCI+xJ0TmiSObmNcauTZbjLI1HBlnwrfZZwK0W0gVbx2LgciCY=
+	t=1729599243; cv=none; b=ahplKBQ3F/oH0tcbniA4dsT22KzBWwSXseiXc7exeYhCGL0pBEUsREzC9LJghSAZeewBYeCkNMhPKtcDeNdGpoi+7uBbCEBPGWSnW1dz/qIQOIDf5EEW1D2R1a1PLYb0AGbLSFbrBXpJXbAGsStljIbL2A50VTCG5bBbCYDeHa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729599032; c=relaxed/simple;
-	bh=rkEM2LEKQaYY17K5UvDKFkrqBzMmTrnyQdSd0lWR/0I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mYLfJTEtV5H75gztWpOAoiM7NDP83jjVx1DLqtEW9fOc63EuB2DHIzLfW6psoSFHgKTWaH+qlY4sWuVULgIfKa+CUNrv4nIqOoGVJF2s+LGXQ/RHJg90hmC4eNk7fC5zXKwm8YfPY7WGzhMF/ngXuQi6OXHluN7uKPNqrvEbMc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RrThVlAN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729599029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JlZj3gYulImDNcPsctHRReteO7wMtRodjn9n2tXEDiM=;
-	b=RrThVlANrYTIqUVyqnNcTssFMk7kbz9Jf1i7hwHWPICNV8wAb4YIZApWzO12cX98QDfX2S
-	zzBe9pftGhNyPE6rhE6n06WeJpTW9tA1kxcke8BlHBNwNK1n8Y8h3vzMenBlo4+20rt8KQ
-	yQ/CRSm0/+AC8M1d7N56MqrgKS/qrnQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-538-b2EW6pqyMG6TFIEBBgmEtg-1; Tue, 22 Oct 2024 08:10:28 -0400
-X-MC-Unique: b2EW6pqyMG6TFIEBBgmEtg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d609ef9f7so2702934f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:10:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729599027; x=1730203827;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JlZj3gYulImDNcPsctHRReteO7wMtRodjn9n2tXEDiM=;
-        b=S/H/AIvNb2PIVoxifsFBRZyQSpLAsdHmvBuFSNxAafswE1rte7ISKCkJWc8QN/J2ML
-         AZZ68DUNpXB/fwTTCS/bF9N5qUIEtquYsXIbXfqpwHeuaz+iGowkw8Pjlr6Mbs1vfHK7
-         /b4svGhhPJwzpdfMCxLRkHae1xPglXjKI11HGmzerobneHK6JRMduvzBsq7g09ltck63
-         F7sfjIl6GY7ad5ygh2N0U9rORQ/IHVAtja1Kei4DTkx7JjM4RZsk/T41eCRJ3SsJjZ97
-         Q6nFp7clz3qpvS//fW+peRBjY1C5Ka8YXHi5lXs9TKxhAE66+m5BEyFlSBLGjpVSs0vl
-         hJrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXasEGqfujuWBDhpt2jaF6qU0slRNIwq4h663TLAN82lem6Vrm0ltKa/OyT7C9Lc771CdKE+Qx9eJTbAs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxieVq42UPJMe8m56kYBPBVCxZ7m6rB8Mw5jVUVLR58mCo7w4am
-	VOBLntFuT9HRcviSkz1UEYW1fkuiLFftl6oijzwPkwYLQowspV5RkVueTm1qlsK59/02JfRg4Rw
-	PwsheyY7acP8eENuxm/0k9MxjWZv6k2IxpFXxaKsWJxeHa/HId7rmRy3p976siNNLR7/zVQ==
-X-Received: by 2002:adf:f2c6:0:b0:37d:4afe:8c98 with SMTP id ffacd0b85a97d-37ef2169dd9mr1768370f8f.26.1729599027089;
-        Tue, 22 Oct 2024 05:10:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IED2FwISsMS71RBCGO/niVCIqDBAj3+5LFK2ahqHe+l8fm/8jy8UTt1bgGQW98rnQRzbkpnUg==
-X-Received: by 2002:adf:f2c6:0:b0:37d:4afe:8c98 with SMTP id ffacd0b85a97d-37ef2169dd9mr1768345f8f.26.1729599026629;
-        Tue, 22 Oct 2024 05:10:26 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37b5asm6477896f8f.10.2024.10.22.05.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 05:10:26 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Shuah
- Khan <shuah@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] KVM: selftests: Fix build on on non-x86 architectures
-In-Reply-To: <20241021-kvm-build-break-v1-1-625ea60ed7df@kernel.org>
-References: <20241021-kvm-build-break-v1-1-625ea60ed7df@kernel.org>
-Date: Tue, 22 Oct 2024 14:10:25 +0200
-Message-ID: <87ttd4tk26.fsf@redhat.com>
+	s=arc-20240116; t=1729599243; c=relaxed/simple;
+	bh=5bju6qBlTxqLZyfbC4o7FNcj1lGw86tFWloZEU58fN4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=WGWupou9VRFmRliJ+VWoiU7BOIepcndvycA4NJBUh13u4CpgkaS4Hmhf1eXSJYSx2zF7cdyXudwLxjWXNEu6E/jPS2+pK98YKus7RFfEymd9+cQ1wFWnKmmLoQ3lVH6cIBogQj/bOfmYw2zBJMlEHnD343590djdAve1D3uRqWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-165-CJp6vUT7NZWM2ETRfMy7Bw-1; Tue, 22 Oct 2024 13:13:58 +0100
+X-MC-Unique: CJp6vUT7NZWM2ETRfMy7Bw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 22 Oct
+ 2024 13:13:56 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Tue, 22 Oct 2024 13:13:56 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Gustavo A. R. Silva'" <gustavoars@kernel.org>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, Johannes Berg <johannes@sipsolutions.net>, "David
+ Ahern" <dsahern@kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Kees Cook
+	<kees@kernel.org>
+Subject: RE: [PATCH 1/5][next] net: dev: Introduce struct sockaddr_legacy
+Thread-Topic: [PATCH 1/5][next] net: dev: Introduce struct sockaddr_legacy
+Thread-Index: AQHbH2IwMvcQvMRBxU2MfSVMnAk5o7KStdew
+Date: Tue, 22 Oct 2024 12:13:56 +0000
+Message-ID: <9e6a2efa17b94522ad2274332f608c38@AcuMS.aculab.com>
+References: <cover.1729037131.git.gustavoars@kernel.org>
+ <1c12601bea3e9c18da6adc106bfcf5b7569e5dfb.1729037131.git.gustavoars@kernel.org>
+In-Reply-To: <1c12601bea3e9c18da6adc106bfcf5b7569e5dfb.1729037131.git.gustavoars@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Mark Brown <broonie@kernel.org> writes:
-
-> Commit 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX
-> instructions") unconditionally added -march=3Dx86-64-v2 to the CFLAGS used
-> to build the KVM selftests which does not work on non-x86 architectures:
->
->   cc1: error: unknown value =E2=80=98x86-64-v2=E2=80=99 for =E2=80=98-mar=
-ch=E2=80=99
->
-> Fix this by making the addition of this x86 specific command line flag
-> conditional on building for x86.
->
-> Fixes: 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX instructio=
-ns")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+From: Gustavo A. R. Silva
+> Sent: 16 October 2024 01:27
+>=20
+> We are currently working on enabling the -Wflex-array-member-not-at-end
+> compiler option. This option has helped us detect several objects of
+> the type `struct sockaddr` that appear in the middle of composite
+> structures like `struct rtentry`, `struct compat_rtentry`, and others:
+>=20
+...
+>=20
+> In order to fix the warnings above, we introduce `struct sockaddr_legacy`=
+.
+> The intention is to use it to replace the type of several struct members
+> in the middle of composite structures, currently of type `struct sockaddr=
+`.
+>=20
+> These middle struct members are currently causing thousands of warnings
+> because `struct sockaddr` contains a flexible-array member, introduced
+> by commit b5f0de6df6dce ("net: dev: Convert sa_data to flexible array in
+> struct sockaddr").
+>=20
+> The new `struct sockaddr_legacy` doesn't include a flexible-array
+> member, making it suitable for use as the type of middle members
+> in composite structs that don't really require the flexible-array
+> member in `struct sockaddr`, thus avoiding -Wflex-array-member-not-at-end
+> warnings.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 > ---
->  tools/testing/selftests/kvm/Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftes=
-ts/kvm/Makefile
-> index e6b7e01d57080b304b21120f0d47bda260ba6c43..156fbfae940feac649f933dc6=
-e048a2e2926542a 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -244,11 +244,13 @@ CFLAGS +=3D -Wall -Wstrict-prototypes -Wuninitializ=
-ed -O2 -g -std=3Dgnu99 \
->  	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
->  	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
->  	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
-> -	-march=3Dx86-64-v2 \
->  	$(KHDR_INCLUDES)
->  ifeq ($(ARCH),s390)
->  	CFLAGS +=3D -march=3Dz10
->  endif
-> +ifeq ($(ARCH),x86)
-> +	CFLAGS +=3D -march=3Dx86-64-v2
-> +endif
->  ifeq ($(ARCH),arm64)
->  tools_dir :=3D $(top_srcdir)/tools
->  arm64_tools_dir :=3D $(tools_dir)/arch/arm64/tools/
->
-> ---
-> base-commit: d129377639907fce7e0a27990e590e4661d3ee02
-> change-id: 20241021-kvm-build-break-495abedc51e0
->
-> Best regards,
+>  include/linux/socket.h | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/include/linux/socket.h b/include/linux/socket.h
+> index d18cc47e89bd..f370ae0e6c82 100644
+> --- a/include/linux/socket.h
+> +++ b/include/linux/socket.h
+> @@ -40,6 +40,25 @@ struct sockaddr {
+>  =09};
+>  };
+>=20
+> +/*
+> + * This is the legacy form of `struct sockaddr`. The original `struct so=
+ckaddr`
+> + * was modified in commit b5f0de6df6dce ("net: dev: Convert sa_data to f=
+lexible
+> + * array in struct sockaddR") due to the fact that "One of the worst off=
+enders
+> + * of "fake flexible arrays" is struct sockaddr". This means that the or=
+iginal
+> + * `char sa_data[14]` behaved as a flexible array at runtime, so a prope=
+r
+> + * flexible-array member was introduced.
+> + *
+> + * This caused several flexible-array-in-the-middle issues:
+> + * https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wflex-a=
+rray-member-not-at-end
 
-I see this patch is already in Linus' tree, but anyway
+I'd bet that the code even indexed the array?
+So it is all worse that just a compiler warning/
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> + *
+> + * `struct sockaddr_legacy` replaces `struct sockaddr` in all instances =
+where
+> + * objects of this type do not appear at the end of composite structures=
+.
+> + */
+> +struct sockaddr_legacy {
+> +=09sa_family_t=09sa_family;=09/* address family, AF_xxx=09*/
+> +=09char =09=09sa_data[14];=09/* 14 bytes of protocol address=09*/
+> +};
+> +
 
-Thanks for the quick fixup!
+I'm not sure that is a very good name.
+Reading it you don't know when it is 'legacy' from.
+It's size is clearly that of the original IPv4 sockaddr.
+(I'm not sure there was ever an earlier one.)
 
---=20
-Vitaly
+Perhaps 'strict sockaddr_16' would be better?
+Or, looking at the actual failures, sockaddr_ipv4?
+
+Alternatively revert b5f0de6df6dce and add a new type that has the char[]
+field??
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
