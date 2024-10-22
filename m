@@ -1,486 +1,120 @@
-Return-Path: <linux-kernel+bounces-376270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87479AA276
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:47:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C3B9AA253
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649AE283492
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:47:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1D51C21CF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E566119D8B4;
-	Tue, 22 Oct 2024 12:47:13 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE74419D8A8;
+	Tue, 22 Oct 2024 12:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XzP8g4hS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F092617BB3F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FF51537D9;
+	Tue, 22 Oct 2024 12:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601233; cv=none; b=lYgGlq1nzbdu7+ruMoZyEHip+hpO3w8rbnRrPkA2oOsWg+nK/mVEiI3FFwYg/jqjdPF/zHHGrsVhqi8y3AdpHypZv6f6fXHzVBXBDvJLr6Onk4rgYnFQIC/prqBfOGyoYXXapY77RtCKxZo7ovBpJSwU1fNcQXrSeibDg889EZI=
+	t=1729600943; cv=none; b=YPd2bMduKA3FtHAuy25dMlzHqTYG35cixJaJCXSdfV0HT5Rd0XvB9Hbwfr6Qtp9pbySwRWKybK36ElHE77Iryj9yvpy46MFQz8n6wCAs191WlNFOGnHsCcwVyVcYwYiDhGZ4qGvLoMDCi5OCBlD9/o1s33BkVYp2G+gnVNNyAU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601233; c=relaxed/simple;
-	bh=m5ns4byN44Y0yRGxft25znmPDxD0ttumTNyO+TJ3sAI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nPCU+DmJcp1AltmRGXt9KrwoEOY61wt9y1mtC1kghiGf0VvtgcuqyiuLKgYKhBXNxjZOZnBe3GGpOeaJL9jEi6ZCu/4alQq4oZpMiKSs1UrJyLmXoqkENwug+lOjVz8yX1ztDYQ3fld1k21PvVAuhFSIWsDw0d3NhIii+412HKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XXsMf1FKlz1T90j;
-	Tue, 22 Oct 2024 20:45:02 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9AE35140390;
-	Tue, 22 Oct 2024 20:47:02 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 22 Oct 2024 20:47:01 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
-Date: Tue, 22 Oct 2024 20:41:48 +0800
-Message-ID: <20241022124148.1952761-5-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241022124148.1952761-1-shiyongbang@huawei.com>
-References: <20241022124148.1952761-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1729600943; c=relaxed/simple;
+	bh=1kQcfUKxnnRlmnXvyy6slBbu3vdl2jGdNZ3GxflNNj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZlHnCkodf5JVXauATxhUSKQoC/NqyehqMCtQWzn2zsWfkn+J5THcUlgG0boptWm6hu2+t/f1OmtT3PKnKGUu8vhDQE7oBc4y+j5394UyHbA5C+Sl1GV5UCLWUS/uQsdZnkwJP20Rry1+3wqj7Sr769/MsHJBo5t3ZC7GBbBvfYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XzP8g4hS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1AC1440E01A5;
+	Tue, 22 Oct 2024 12:42:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Fi1L2bCWqXrK; Tue, 22 Oct 2024 12:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729600934; bh=uJxSCGPq7YQbdE9Mu+T0q3ngzH3IdmXGlttiNKCmW8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XzP8g4hSMY1EmnKgb9ZZeetJc2ihXoFpzd73W7opMH+3l4zvYJ6I3kGQ++KKmXSeQ
+	 ruT21Kf2LwziCkVW8lB3jdVo9tQueJFHPwMLZdbhWWZCSeSXJRojFMqT71HwJfRrUE
+	 Qb7MdLhzkjPdqh9wnx+3FgTHoNXWYVT8hJDV6pubpyfK2cx7DkEAUIuFjmVtZ1VC9s
+	 UZtlehVA9DXgU5J2i9DfDX8QzDCaGhrEhy33yAts3KvJaHaTw7VjBm8b0So+ostCvm
+	 Hh6HZgOhyza+BJ0/IvpUm23vAQZwt0wZY1/0TPjMg4sgghgaTu2Owi0C9o2rR5KROX
+	 oylOIqozOGtq3CfjUTJAgxS8l9XqAZuugmXnykrh7bMn4C1iDytx6YEoEWFxJ3luTA
+	 vKLPapd7IFxmodLt1IA5gIMYbiXygliKDCH4TthDemIAiyYb5IBz1wp2ZmFZqTg21g
+	 HDSAr7XHL7Foqs3DcxvTZvGgKVx5GNnTOmAkrc/VeEIif0Of1Er3lVHEZbAa9a3rUZ
+	 HM4mABNujdYR1VhAOVs0DOLkJsdb6NKFP1RkEZfYSFP+KDoll/HKRmP5qaxv/D6bUx
+	 yJZkYDN66vjZ1ihKEDTkIzX409qfGp7n+k1tHtFntl//BzUHY7mtti8zq3pcX54uJF
+	 4OKQj91xkXdlDWO0DzGaYM+k=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2D47140E0198;
+	Tue, 22 Oct 2024 12:42:03 +0000 (UTC)
+Date: Tue, 22 Oct 2024 14:42:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v3 03/14] x86/cpufeatures: add X86_FEATURE_WORKLOAD_CLASS
+ feature bit
+Message-ID: <20241022124202.GHZxedmqPeFd5F3sL3@fat_crate.local>
+References: <20241015213645.1476-1-mario.limonciello@amd.com>
+ <20241015213645.1476-4-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241015213645.1476-4-mario.limonciello@amd.com>
 
-From: baihan li <libaihan@huawei.com>
+On Tue, Oct 15, 2024 at 04:36:34PM -0500, Mario Limonciello wrote:
+> From: Perry Yuan <perry.yuan@amd.com>
+> 
+> Add new feature bit that indicates support for workload based
+> heuristic feedback to OS for scheduling decisions.
+> When the bit set, threads are classified during runtime into
+> enumerated classes. The classes represent thread performance/power
+> characteristics that may benefit from special scheduling behaviors.
+> 
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index cea1ed82aeb4..3e8e67b8ec7a 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -474,6 +474,7 @@
+>  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
+>  #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
+>  #define X86_FEATURE_HETERO_CORE_TOPOLOGY	(21*32 + 6) /* Heterogeneous Core Topology */
+> +#define X86_FEATURE_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
 
-To support DP interface displaying in hibmc driver. Add
-a encoder and connector for DP modual.
+As already discussed: X86_FEATURE_AMD_WORKLOAD_CLASS
 
-Signed-off-by: baihan li <libaihan@huawei.com>
----
-ChangeLog:
-v1 -> v2:
-  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
-  - modifying drm_simple_encoder_init function, suggested by Dmitry Baryshkov.
-  - refactoring struct hibmc_connector, suggested by Dmitry Baryshkov.
-  - withdrawing the modification in hibmc_kms_init, suggested by Dmitry Baryshkov.
-  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 148 ++++++++++++++++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  16 ++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  21 ++-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  41 +++--
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  20 +--
- 6 files changed, 208 insertions(+), 40 deletions(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index 214228052ccf..95a4ed599d98 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
--	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o
-+	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o hibmc_drm_dp.o
- 
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-new file mode 100644
-index 000000000000..5d896dc56346
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/io.h>
-+
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_edid.h>
-+
-+#include "hibmc_drm_drv.h"
-+#include "dp/dp_hw.h"
-+
-+static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
-+{
-+	int count;
-+
-+	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
-+				     connector->dev->mode_config.max_height);
-+	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
-+
-+	return count;
-+}
-+
-+static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
-+	.get_modes = hibmc_dp_connector_get_modes,
-+};
-+
-+static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
-+	.reset = drm_atomic_helper_connector_reset,
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_connector_cleanup,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+{
-+	int ret;
-+
-+	dp_display_en(dp, false);
-+
-+	ret = dp_mode_set(dp, mode);
-+	if (ret)
-+		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void hibmc_dp_enable(struct hibmc_dp *dp)
-+{
-+	dp_display_en(dp, true);
-+}
-+
-+static void hibmc_dp_disable(struct hibmc_dp *dp)
-+{
-+	dp_display_en(dp, false);
-+}
-+
-+static int hibmc_dp_hw_init(struct hibmc_drm_private *priv)
-+{
-+	int ret;
-+
-+	ret = dp_hw_init(&priv->dp);
-+	if (ret)
-+		return ret;
-+
-+	dp_display_en(&priv->dp, false);
-+
-+	return 0;
-+}
-+
-+static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
-+				    struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
-+
-+	if (hibmc_dp_prepare(dp, mode))
-+		return;
-+
-+	hibmc_dp_enable(dp);
-+}
-+
-+static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
-+				     struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+
-+	hibmc_dp_disable(dp);
-+}
-+
-+static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
-+	.atomic_enable = hibmc_dp_encoder_enable,
-+	.atomic_disable = hibmc_dp_encoder_disable,
-+};
-+
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv)
-+{
-+	dp_hw_uninit(&priv->dp);
-+}
-+
-+int hibmc_dp_init(struct hibmc_drm_private *priv)
-+{
-+	struct drm_device *dev = &priv->dev;
-+	struct drm_crtc *crtc = &priv->crtc;
-+	struct hibmc_dp *dp = &priv->dp;
-+	struct drm_connector *connector = &dp->connector;
-+	struct drm_encoder *encoder = &dp->encoder;
-+	int ret;
-+
-+	dp->mmio = priv->mmio;
-+	dp->drm_dev = dev;
-+
-+	ret = hibmc_dp_hw_init(priv);
-+	if (ret) {
-+		drm_err(dev, "hibmc dp hw init failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
-+	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
-+	if (ret) {
-+		drm_err(dev, "init dp encoder failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
-+
-+	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
-+				 DRM_MODE_CONNECTOR_DisplayPort);
-+	if (ret) {
-+		drm_err(dev, "init dp connector failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
-+
-+	drm_connector_attach_encoder(connector, encoder);
-+
-+	return 0;
-+
-+err_init:
-+	dp_hw_uninit(&priv->dp);
-+
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 9f9b19ea0587..f98ac94a18b9 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -27,6 +27,10 @@
- #include "hibmc_drm_drv.h"
- #include "hibmc_drm_regs.h"
- 
-+#define DP_HOST_SERDES_CTRL		0x1f001c
-+#define DP_HOST_SERDES_CTRL_VAL		0x8A00
-+#define DP_HOST_SERDES_CTRL_MASK	0x7FFFE
-+
- DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
- static irqreturn_t hibmc_interrupt(int irq, void *arg)
-@@ -116,6 +120,14 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
- 		return ret;
- 	}
- 
-+	/* if DP existed, init DP */
-+	if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
-+	     DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
-+		ret = hibmc_dp_init(priv);
-+		if (ret)
-+			drm_err(dev, "failed to init dp: %d\n", ret);
-+	}
-+
- 	ret = hibmc_vdac_init(priv);
- 	if (ret) {
- 		drm_err(dev, "failed to init vdac: %d\n", ret);
-@@ -239,6 +251,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
- 
- static int hibmc_unload(struct drm_device *dev)
- {
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 
- 	drm_atomic_helper_shutdown(dev);
-@@ -247,6 +260,9 @@ static int hibmc_unload(struct drm_device *dev)
- 
- 	pci_disable_msi(to_pci_dev(dev->dev));
- 
-+	if (priv->dp.encoder.possible_crtcs)
-+		hibmc_dp_uninit(priv);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-index 6b566f3aeecb..1b78d313a6c2 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-@@ -19,10 +19,12 @@
- #include <linux/i2c.h>
- 
- #include <drm/drm_framebuffer.h>
-+#include "dp/dp_hw.h"
- 
--struct hibmc_connector {
--	struct drm_connector base;
--
-+struct hibmc_vdac {
-+	struct drm_device *dev;
-+	struct drm_encoder encoder;
-+	struct drm_connector connector;
- 	struct i2c_adapter adapter;
- 	struct i2c_algo_bit_data bit_data;
- };
-@@ -35,13 +37,13 @@ struct hibmc_drm_private {
- 	struct drm_device dev;
- 	struct drm_plane primary_plane;
- 	struct drm_crtc crtc;
--	struct drm_encoder encoder;
--	struct hibmc_connector connector;
-+	struct hibmc_dp dp;
-+	struct hibmc_vdac vdac;
- };
- 
--static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
-+static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
- {
--	return container_of(connector, struct hibmc_connector, base);
-+	return container_of(connector, struct hibmc_vdac, connector);
- }
- 
- static inline struct hibmc_drm_private *to_hibmc_drm_private(struct drm_device *dev)
-@@ -57,6 +59,9 @@ void hibmc_set_current_gate(struct hibmc_drm_private *priv,
- int hibmc_de_init(struct hibmc_drm_private *priv);
- int hibmc_vdac_init(struct hibmc_drm_private *priv);
- 
--int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
-+int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *connector);
-+
-+int hibmc_dp_init(struct hibmc_drm_private *priv);
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv);
- 
- #endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-index e6e48651c15c..99b3b77b5445 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-@@ -25,8 +25,8 @@
- 
- static void hibmc_set_i2c_signal(void *data, u32 mask, int value)
- {
--	struct hibmc_connector *hibmc_connector = data;
--	struct hibmc_drm_private *priv = to_hibmc_drm_private(hibmc_connector->base.dev);
-+	struct hibmc_vdac *vdac = data;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(vdac->connector.dev);
- 	u32 tmp_dir = readl(priv->mmio + GPIO_DATA_DIRECTION);
- 
- 	if (value) {
-@@ -45,8 +45,8 @@ static void hibmc_set_i2c_signal(void *data, u32 mask, int value)
- 
- static int hibmc_get_i2c_signal(void *data, u32 mask)
- {
--	struct hibmc_connector *hibmc_connector = data;
--	struct hibmc_drm_private *priv = to_hibmc_drm_private(hibmc_connector->base.dev);
-+	struct hibmc_vdac *vdac = data;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(vdac->connector.dev);
- 	u32 tmp_dir = readl(priv->mmio + GPIO_DATA_DIRECTION);
- 
- 	if ((tmp_dir & mask) != mask) {
-@@ -77,22 +77,21 @@ static int hibmc_ddc_getscl(void *data)
- 	return hibmc_get_i2c_signal(data, I2C_SCL_MASK);
- }
- 
--int hibmc_ddc_create(struct drm_device *drm_dev,
--		     struct hibmc_connector *connector)
-+int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *vdac)
- {
--	connector->adapter.owner = THIS_MODULE;
--	snprintf(connector->adapter.name, I2C_NAME_SIZE, "HIS i2c bit bus");
--	connector->adapter.dev.parent = drm_dev->dev;
--	i2c_set_adapdata(&connector->adapter, connector);
--	connector->adapter.algo_data = &connector->bit_data;
--
--	connector->bit_data.udelay = 20;
--	connector->bit_data.timeout = usecs_to_jiffies(2000);
--	connector->bit_data.data = connector;
--	connector->bit_data.setsda = hibmc_ddc_setsda;
--	connector->bit_data.setscl = hibmc_ddc_setscl;
--	connector->bit_data.getsda = hibmc_ddc_getsda;
--	connector->bit_data.getscl = hibmc_ddc_getscl;
--
--	return i2c_bit_add_bus(&connector->adapter);
-+	vdac->adapter.owner = THIS_MODULE;
-+	snprintf(vdac->adapter.name, I2C_NAME_SIZE, "HIS i2c bit bus");
-+	vdac->adapter.dev.parent = drm_dev->dev;
-+	i2c_set_adapdata(&vdac->adapter, vdac);
-+	vdac->adapter.algo_data = &vdac->bit_data;
-+
-+	vdac->bit_data.udelay = 20;
-+	vdac->bit_data.timeout = usecs_to_jiffies(2000);
-+	vdac->bit_data.data = vdac;
-+	vdac->bit_data.setsda = hibmc_ddc_setsda;
-+	vdac->bit_data.setscl = hibmc_ddc_setscl;
-+	vdac->bit_data.getsda = hibmc_ddc_getsda;
-+	vdac->bit_data.getscl = hibmc_ddc_getscl;
-+
-+	return i2c_bit_add_bus(&vdac->adapter);
- }
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-index 409c551c92af..05e19ea4c9f9 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-@@ -24,11 +24,11 @@
- 
- static int hibmc_connector_get_modes(struct drm_connector *connector)
- {
--	struct hibmc_connector *hibmc_connector = to_hibmc_connector(connector);
-+	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
- 	const struct drm_edid *drm_edid;
- 	int count;
- 
--	drm_edid = drm_edid_read_ddc(connector, &hibmc_connector->adapter);
-+	drm_edid = drm_edid_read_ddc(connector, &vdac->adapter);
- 
- 	drm_edid_connector_update(connector, drm_edid);
- 
-@@ -51,9 +51,9 @@ static int hibmc_connector_get_modes(struct drm_connector *connector)
- 
- static void hibmc_connector_destroy(struct drm_connector *connector)
- {
--	struct hibmc_connector *hibmc_connector = to_hibmc_connector(connector);
-+	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
- 
--	i2c_del_adapter(&hibmc_connector->adapter);
-+	i2c_del_adapter(&vdac->adapter);
- 	drm_connector_cleanup(connector);
- }
- 
-@@ -93,20 +93,20 @@ static const struct drm_encoder_helper_funcs hibmc_encoder_helper_funcs = {
- int hibmc_vdac_init(struct hibmc_drm_private *priv)
- {
- 	struct drm_device *dev = &priv->dev;
--	struct hibmc_connector *hibmc_connector = &priv->connector;
--	struct drm_encoder *encoder = &priv->encoder;
-+	struct hibmc_vdac *vdac = &priv->vdac;
-+	struct drm_encoder *encoder = &vdac->encoder;
- 	struct drm_crtc *crtc = &priv->crtc;
--	struct drm_connector *connector = &hibmc_connector->base;
-+	struct drm_connector *connector = &vdac->connector;
- 	int ret;
- 
--	ret = hibmc_ddc_create(dev, hibmc_connector);
-+	ret = hibmc_ddc_create(dev, vdac);
- 	if (ret) {
- 		drm_err(dev, "failed to create ddc: %d\n", ret);
- 		return ret;
- 	}
- 
- 	encoder->possible_crtcs = drm_crtc_mask(crtc);
--	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_DAC);
-+	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_DAC, NULL);
- 	if (ret) {
- 		drm_err(dev, "failed to init encoder: %d\n", ret);
- 		return ret;
-@@ -117,7 +117,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv)
- 	ret = drm_connector_init_with_ddc(dev, connector,
- 					  &hibmc_connector_funcs,
- 					  DRM_MODE_CONNECTOR_VGA,
--					  &hibmc_connector->adapter);
-+					  &vdac->adapter);
- 	if (ret) {
- 		drm_err(dev, "failed to init connector: %d\n", ret);
- 		return ret;
 -- 
-2.33.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
