@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-377107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04C69AB9E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E24A9AB9E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D5FB228C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A18628481E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9AF1CEAAC;
-	Tue, 22 Oct 2024 23:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C99F1CCEEF;
+	Tue, 22 Oct 2024 23:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fshk/KL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QLT2qyqR"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B04C130AF6;
-	Tue, 22 Oct 2024 23:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA4818593C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729638946; cv=none; b=aRHjgUEYRPOFtOK3o4fI10alzkSdvBW7DoDNpGalacd46R5hpBG9eW48cb+nqUvDDIFt2mkKgaj0qgCj7nx1piUa6QjLruyXMgu8zHnD9YSsFrB0yts7g5h74ETgHVDEPqXLvlAFYN3o9EjlXmFgCVKB8nMi+tXTwoOGlB3XA2k=
+	t=1729639012; cv=none; b=VHJFGVrL/AeAFJ70ZhCaNyZHSXu4O/mSRmRom2i1dieBoJrs8BJOcCOFNE0mFg/zJRow29xh+BWg5mTs/7bKz1TF7YQDlUOumHK0QGlTrFaL8cOalh37E9k17/XbLSFzYnPq8HrQdvWiYwTDb7xmmcIvNfEaHRTWdxdAZPDIo4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729638946; c=relaxed/simple;
-	bh=eIOJlPjE4CtOTt1MXDUhDT+O5xXsoiSWn8H7fZVwGxQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HS+hO+SK/wNulJFWK2cg3AWVvGaE1PC/8UdrUDRWN8GeV5/0sAz41OkQqgAvFlz1tiPVSGQ6WA/wO3GMj7nAAtH//JQ4sWgCMdnpm46nWrvsRycqXjyIlvf6KpP4KUCUVfOVlFPVDgY3ha1O0zF/PVbcTBIBdZ/hBiL8Mwtmdpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fshk/KL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77E2C4CEC3;
-	Tue, 22 Oct 2024 23:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729638946;
-	bh=eIOJlPjE4CtOTt1MXDUhDT+O5xXsoiSWn8H7fZVwGxQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Fshk/KL0wmHyB3KInp62gSM/+XziHiUxrBWxqQ8BgECtuedldbuc3PfLKA0JK+QB/
-	 5FN9F1ls+12KhWizTA448YzpgtOS9r9vUq/UAx67rKJpXZB1I3XSiaSqFNaBgdK59w
-	 v3VEXnmbmlZ8KtJXHzP6Tz35mE+JWM3uor31O3sck+sdjt47KfAs2htjPS47wmZdvf
-	 NAzasc+iDfoki5el1su+dR91indjxrgCb3rfZ/v8z0N9b5RIDek27p33bMkdAZ0uBa
-	 Wck+QTtUR+TfsMNRtdQccbqLkqOgoySG7ph4U2HlbN+Rog5OEOnhY+oyREf8gMRLGU
-	 4dZrSb4S8huVA==
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: stable@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>, 
- Steev Klimaszewski <steev@kali.org>
-In-Reply-To: <20241012101108.129476-1-krzysztof.kozlowski@linaro.org>
-References: <20241012101108.129476-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] ASoC: qcom: sc7280: Fix missing Soundwire runtime
- stream alloc
-Message-Id: <172963894347.334190.2415888818283876880.b4-ty@kernel.org>
-Date: Wed, 23 Oct 2024 00:15:43 +0100
+	s=arc-20240116; t=1729639012; c=relaxed/simple;
+	bh=OrdoYE0Q6ccQ44C/5I5oLyobBWb5jRhLx3nEH7xAUMA=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=K8/U76DjhKHu38GH8YWNRGlBvwNhQx4Ymbgi16xuLxuW/rbci7vCy//hKeMu8Rl2kqdYDej/JmpM64+iIIsvLFII1PdO/nN3siXHnN4odNvHS7m8dcaGkwchRtWSNYFnv9I7PfJnGmdHFVipYoWTlcBt3H/CanxYikoufZPZXHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QLT2qyqR; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4609c96b2e5so36987171cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:16:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729639010; x=1730243810; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VdRK3yhTYghtJWmdnw+e7xLJLXdLknBEqJe/TDxy7I0=;
+        b=QLT2qyqRlnLc1udGb/GgyXkMYbCGuaktvcNdSGJffZUg5jwk30sqCZlxF3tFa090Tv
+         kjFyGiZMn5uL61oXUarJsACH8ihIIXYx+3qmEyzNWQzAtPc6z851GOyo1drCmeGJgNHd
+         W6U3FF6YRwA6D5sBusLZU+ISbyhSFVKylnuxQaoLXSOIEKAcL/5/V9pvUWxV1i04fGnB
+         jrcsgsS+Vnd3Zcx44zI2VlLj/aaYcDZ7qmYRHrM7v+q4/RXM0wZiVH46tST+ZxL7Zm5a
+         KqGYDSKho7CaBDSvAoZ5W9uQIqH272ZCYhSZ0mjA6GgcG7+4uMqKh2hmRO0JdTkPgWFy
+         cuDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729639010; x=1730243810;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VdRK3yhTYghtJWmdnw+e7xLJLXdLknBEqJe/TDxy7I0=;
+        b=eSzA+DcTaHz8xiGLhqJ8t3dola8/yzv4hYT8L3Yn/v0lPjaJhgaKhIKfha7pXC22SC
+         jJi4xXUoWvTUMlQ9NB/9LZ1N+zsueqoAGPkpwbPihoX7byMCmyvXV0dmDx/pM3FclSRn
+         LUIa7G1+VtyqBkh05Y52WNOHg6lVGBbk4SC23dgqOV9pLHKT4yQJpTuc1Zn9RSIyqRE5
+         L3Dj151U8gC2mF/YdECC7YgqWAErIz4fs+cZUMVCwNRcIKJSRVR9lhKZJrbYsnuUHXHM
+         hSoaKCZmWV34k9Itj2d8YNSmftVmc2HI2NOh19MWHq4az/hovTKmFEmbp6qm+e8jfMWp
+         hP8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFucwWieBU07A0+uZ3VKuWYwmDlKzHyEPa0FS+BUg0an00xkO/7O3bSTwq3BoZxG/9sehgIY8peZBIJ0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgUPP2lL2L7A2qCxxQSvKweGcTPMHeCmLSV6hcP032gdMGbtLe
+	elw+8p083c3ZbuCsM+TYfqbSPSpPLowuU53Mi7kWAESYVYvXn9Sas7jzbLOa+Q==
+X-Google-Smtp-Source: AGHT+IHude/EQvEBYN74MFczuaEQlg2V7f2joS40qCBs1gJ13F8yauj8PlOv2uTO8PItNO8JHZluzg==
+X-Received: by 2002:ac8:5987:0:b0:460:b165:2e04 with SMTP id d75a77b69052e-461145a91cemr8312401cf.4.1729639009793;
+        Tue, 22 Oct 2024 16:16:49 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-461167a39acsm767531cf.32.2024.10.22.16.16.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 16:16:49 -0700 (PDT)
+Date: Tue, 22 Oct 2024 19:16:48 -0400
+Message-ID: <83794297935bea8af10384deaa9c5986@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20241022_1912/pstg-lib:20241022_1830/pstg-pwork:20241022_1912
+From: Paul Moore <paul@paul-moore.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH] audit: Use str_yes_no() helper function
+References: <20241018110945.111842-3-thorsten.blum@linux.dev>
+In-Reply-To: <20241018110945.111842-3-thorsten.blum@linux.dev>
 
-On Sat, 12 Oct 2024 12:11:08 +0200, Krzysztof Kozlowski wrote:
-> Commit 15c7fab0e047 ("ASoC: qcom: Move Soundwire runtime stream alloc to
-> soundcards") moved the allocation of Soundwire stream runtime from the
-> Qualcomm Soundwire driver to each individual machine sound card driver,
-> except that it forgot to update SC7280 card.
+On Oct 18, 2024 Thorsten Blum <thorsten.blum@linux.dev> wrote:
 > 
-> Just like for other Qualcomm sound cards using Soundwire, the card
-> driver should allocate and release the runtime.  Otherwise sound
-> playback will result in a NULL pointer dereference or other effect of
-> uninitialized memory accesses (which was confirmed on SDM845 having
-> similar issue).
+> Remove hard-coded strings by using the helper function str_yes_no().
 > 
-> [...]
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  kernel/auditsc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Applied to
+Merged into audit/dev, thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: qcom: sc7280: Fix missing Soundwire runtime stream alloc
-      commit: db7e59e6a39a4d3d54ca8197c796557e6d480b0d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--
+paul-moore.com
 
