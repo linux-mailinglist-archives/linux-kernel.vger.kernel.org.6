@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-376740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4799AB557
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDDA9AB55A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06B851C23108
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346462817C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15BD1BE853;
-	Tue, 22 Oct 2024 17:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DEE1C0DC5;
+	Tue, 22 Oct 2024 17:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="WrCJ8CIS"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="L8MbITeD"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733A80C13;
-	Tue, 22 Oct 2024 17:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E511BE23F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729618957; cv=none; b=jWOXSkNBs4jidSXq3i8Pt1EQhdISh3NdKdDXB+/BrFetmPcXI1YrxRAhrVcC4Oy9AjDS8A7lYE2p3h3V4f4/Cy5TnYIrhdoqZeh/+I/oo6bzoWmUYMc7Fh2q+D9KPEUx8i5pbDQDXk0W9Y8JmPC5Rb5a+cLCLvsAYpRmcmlI8UM=
+	t=1729619018; cv=none; b=PSGPfwfg9CCKtVbHKp7NqxYe3+Q8UFuOjGDQjh2ta97/pUbVXjT5K4MOfecumjFhYoSdSVF1mM3cWhfMqcu2mb/qoJb/3gSdJDnvln5K8j+uNAYiWtBgHpnzTRdoSYnLu7KsBQNqFPUr7DbNQtncXs6VT86He+Ux0yYGBjjq1nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729618957; c=relaxed/simple;
-	bh=v9o+diiWPAzNW6fcahbOqHdppyHhmJ37GjMy4tZPO6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OO2dhZ4zguLOeTMU3BL9CiwBQSGuyHsd8EBM/Rhbpn49cvNlFA0JchvnNcI8MGTMvgOfdewmgbMK3Tz/boZUxve94yfuD9fqsp4mbGfFx7qElRbPJrnKSwn1eK5dcAEqdJuF2/4douW4diTReoWotgWhtMrhbLXxiJb8ypZJBG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=WrCJ8CIS; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=YzXiqSqg0aayLyb7AVqmSvNxO5PvD8+CWdeuiriR2g4=; b=WrCJ8CISZzKR5F2k23TGKepHhJ
-	AmOqL5WWVvwpujLtGGbInXiQsofKfQ6xN1HBHTd9jnbuwTeNXRBElnzZyGaIVU//dsb9pSgVGfxO1
-	9mrqlMaxDHWr8adQivIIl97piVyPc1u2LWwQ0T6EVfzBbc/90bbi59QNJrZFjavcFgZXwmsVdBgBx
-	zG40HCAtTJF9I5Q1y1MLf0bULCuOQ1Kvyy8UhRyQ388bxkJLGfSoproLFmGXNM1HNBPa8G9P6J37S
-	njkI06N7B57rT3mh29Ggx9+YxeavFAhS1AgfiZpKvUOeZiNOUJVpwGKmzYEIGACNTbgqa/qZUjQAJ
-	es6L8phw==;
-Date: Tue, 22 Oct 2024 19:42:21 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Conor Dooley <conor@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Alexander Stein <alexander.stein@ew.tq-group.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Fabio
- Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org, Rob Herring
- <robh@kernel.org>
-Subject: Re: [PATCH 2/3] ARM: dts: imx: Add devicetree for Kobo Clara 2E
-Message-ID: <20241022194221.43b9073b@akair>
-In-Reply-To: <20241022-refurbish-laborious-e7cc067966dc@spud>
-References: <20241021173631.299143-1-andreas@kemnade.info>
-	<20241021173631.299143-3-andreas@kemnade.info>
-	<20241022-refurbish-laborious-e7cc067966dc@spud>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729619018; c=relaxed/simple;
+	bh=Cko+J094pa09qis/IPFfAwUwxH+yIqcbrXJUtNYDkrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nfyrqN+9B5658Smc/fw5DunnA1epBb338GqK7Q+3ffZq8he7v02KsHCknbYQdTBb6Stt7nybTSziqp2DFd+0KogJ8GJISdPh/GNTNcRz/rATNnAta05mSnWffOlinf/TBz8alU9BGI4AQaDIKNOgq2YvkX+PGhX2sRzGfQO2FGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=L8MbITeD; arc=none smtp.client-ip=207.246.76.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1729619012;
+ bh=Cko+J094pa09qis/IPFfAwUwxH+yIqcbrXJUtNYDkrI=;
+ b=L8MbITeDqddiEA+pMLC3OVOGmmIRppHVucktO/a0kfhKBWnGGXnn6zDbi0iKnZPNvZEp/ym/5
+ OhUHXf+6qWcRnSYltA+GVDnd4PM8LVXowO5mk+5ECxmFyWM7cs3la9a2RyBn1JfI9p10o9c9ugG
+ 7Quvu3rBo+9IcM7FgAgRTjtEjDD0Nev24m+JaArCdtQj1/qNP5MHRRyrQHigF8TLEfe7ZjQ20sr
+ 0U0qrlaC64gJrNbIYbci6QF1SbAwoNpTsk629/t6eUxnG2HQXNt32/M/F05AiJTaXaV1yPoyjqM
+ nZ+jncs8I10RqwG3jQMqHw3D7n+2aVJQKPyfsPN4vzvw==
+Message-ID: <04e2e389-ba45-4d77-a152-6705b0d92ba1@kwiboo.se>
+Date: Tue, 22 Oct 2024 19:43:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: Thinking about firmware and hardware description for latest
+ Rockchip platforms
+To: Shimrra Shai <shimrrashai@gmail.com>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241022165413.2156-1-shimrrashai@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20241022165413.2156-1-shimrrashai@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 207.246.76.47
+X-ForwardEmail-ID: 6717e442289888ca1b5a3b18
 
-Am Tue, 22 Oct 2024 17:59:10 +0100
-schrieb Conor Dooley <conor@kernel.org>:
+Hi,
 
-> On Mon, Oct 21, 2024 at 07:36:30PM +0200, Andreas Kemnade wrote:
-> > Adds a devicetree for the Kobo Clara 2E Ebook reader. It is based
-> > on boards marked with "37NB-E60K2M+4A2" or "37NB-E60K2M+4B0". It is
-> > equipped with an i.MX6SLL SoC.
-> > 
-> > Expected to work:
-> >   - Buttons
-> >   - Wifi
-> >   - Bluetooth
-> >     (if Wifi is initialized first, driver does not handle regulators
-> >      yet)
-> >   - LED
-> >   - uSD
-> >   - USB
-> >   - RTC
+On 2024-10-22 18:53, Shimrra Shai wrote:
 
-and also touchscreen.
-> > 
+[snip]
 
+> However, because
+> of the need to have a specific device tree blob file for each board
+> along with the kernel, one cannot just use the typical USB stick and
+> install process at least with the commonly used bootloaders assuming
+> a PC architecture.
 
+U-Boot now use latest Linux device tree for all RK35xx boards (and older
+Rockchip aarch64 SoCs). With the EFI feature of U-Boot you can already
+boot any distro raw aarch64 image, as long as the kernel is new enough.
 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
-> >  .../dts/nxp/imx/imx6sll-kobo-clara2e-a.dts    |  23 +
-> >  .../dts/nxp/imx/imx6sll-kobo-clara2e-b.dts    |  23 +
-> >  .../nxp/imx/imx6sll-kobo-clara2e-common.dtsi  | 514
-> > ++++++++++++++++++ 4 files changed, 562 insertions(+)
-> >  create mode 100644
-> > arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts create mode
-> > 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dts create
-> > mode 100644
-> > arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-common.dtsi
-> > 
-> > diff --git a/arch/arm/boot/dts/nxp/imx/Makefile
-> > b/arch/arm/boot/dts/nxp/imx/Makefile index
-> > 92e291603ea13..58db45352b666 100644 ---
-> > a/arch/arm/boot/dts/nxp/imx/Makefile +++
-> > b/arch/arm/boot/dts/nxp/imx/Makefile @@ -290,6 +290,8 @@
-> > dtb-$(CONFIG_SOC_IMX6SL) += \ dtb-$(CONFIG_SOC_IMX6SLL) += \
-> >  	imx6sll-evk.dtb \
-> >  	imx6sll-kobo-clarahd.dtb \
-> > +	imx6sll-kobo-clara2e-a.dtb \
-> > +	imx6sll-kobo-clara2e-b.dtb \
-> >  	imx6sll-kobo-librah2o.dtb
-> >  dtb-$(CONFIG_SOC_IMX6SX) += \
-> >  	imx6sx-nitrogen6sx.dtb \
-> > diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts
-> > b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts new file
-> > mode 100644 index 0000000000000..33756d6de7aa0
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts
-> > @@ -0,0 +1,23 @@
-> > +// SPDX-License-Identifier: (GPL-2.0)
-> > +/*
-> > + * Device tree for the Kobo Clara 2E rev A ebook reader
-> > + *
-> > + * Name on mainboard is: 37NB-E60K2M+4A2
-> > + * Serials start with: E60K2M (a number also seen in
-> > + * vendor kernel sources)
-> > + *
-> > + * Copyright 2024 Andreas Kemnade
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "imx6sll-kobo-clara2e-common.dtsi"
-> > +
-> > +/ {
-> > +	model = "Kobo Clara 2E";
-> > +	compatible = "kobo,clara2e-b", "kobo,clara2e",
-> > "fsl,imx6sll"; +};
-> > +
-> > +&i2c2 {
-> > +	/* EPD PMIC SY7636 at 0x62 */  
-> 
-> Could you explain what you're doing here, please?
->
-I am not sure what you are really after with this question...
-So I am guessing a bit.
-I describe the hardware as good as possible. The sy7636a (apparently
-=sy7636) driver could probably be used here but the driver and its
-bindings needs to be extended to specify an input supply and some gpios.
-So at the moment I could not use a machine-readable way of fully
-describe the stuff here. But I want to put a human-readable mark here
-so if someone extends the driver, he/she might be aware that there are
-some possible users and candidates for a Tested-by here.
-For the JD9930 it is even worse. No driver in kernel. I have a pretty
-dirty one requiring some rounds with the brush before sending it.
-So the mark is good for information what is missing and for teaming up.
+E.g. for RK356x you can use latest debian, ubuntu, opensuse and freebsd
+aarch64 raw/uefi image and boot into the installer from a USB stick.
+
+However, there is no display support in U-Boot for RK35xx so you will
+have to use serial console to do the installation, and be sure to leave
+around 16 MiB of space on SD-card/eMMC before first partition to not
+overwrite any existing bootloader.
+
+Btw, regarding the EDK2 RK35xx port, please consider to update to use
+mainline U-Boot SPL and not a vendor SPL blob, you could also benefit
+from using binman to generate the final firmware image, bundling the
+ddr init blob, U-Boot SPL and EDK2 in a firmware package.
 
 Regards,
-Andreas
+Jonas
+
+[snip]
 
