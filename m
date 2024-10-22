@@ -1,100 +1,143 @@
-Return-Path: <linux-kernel+bounces-377108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E24A9AB9E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:16:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC4A9AB9EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A18628481E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:16:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C3B22BB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C99F1CCEEF;
-	Tue, 22 Oct 2024 23:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8931CDFDC;
+	Tue, 22 Oct 2024 23:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QLT2qyqR"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1hEZcPN"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA4818593C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369A3130AF6;
+	Tue, 22 Oct 2024 23:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729639012; cv=none; b=VHJFGVrL/AeAFJ70ZhCaNyZHSXu4O/mSRmRom2i1dieBoJrs8BJOcCOFNE0mFg/zJRow29xh+BWg5mTs/7bKz1TF7YQDlUOumHK0QGlTrFaL8cOalh37E9k17/XbLSFzYnPq8HrQdvWiYwTDb7xmmcIvNfEaHRTWdxdAZPDIo4c=
+	t=1729639110; cv=none; b=a51FIELc8XkcMQb+2R0riYW/zLR+KxkjB4b7d0l5p3mdHb/Yl/3eBUoKrLAp6gozmIRaVgozPMIupkkMuSc1HN7d6XLlLw1cRQ6K4cP8r7t9AS5fxAJHOh+0EpgHWSbL9bH72mBiW5nqK+yF9ZP3PGGZO7ARFH0EFKncpuoQtF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729639012; c=relaxed/simple;
-	bh=OrdoYE0Q6ccQ44C/5I5oLyobBWb5jRhLx3nEH7xAUMA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=K8/U76DjhKHu38GH8YWNRGlBvwNhQx4Ymbgi16xuLxuW/rbci7vCy//hKeMu8Rl2kqdYDej/JmpM64+iIIsvLFII1PdO/nN3siXHnN4odNvHS7m8dcaGkwchRtWSNYFnv9I7PfJnGmdHFVipYoWTlcBt3H/CanxYikoufZPZXHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QLT2qyqR; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4609c96b2e5so36987171cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:16:50 -0700 (PDT)
+	s=arc-20240116; t=1729639110; c=relaxed/simple;
+	bh=iAcKPyuEyoAkuvh+EjwfcP4+vnkgpQ+2hEaApd6BQSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QrwG4c1kcC2jCLEAuC41zuPFbLCp4V9Hc00qznNwPgNmfIecGYnDvR+MopDFgfSs7kAVFDVwgxR7OleSrj56yL9vdRXjFmjFuhMm3aatdl+nMc1wycCzL3S6rwFhiLttMdbZivwu5VdGIm8om/T6If4SasFU7UBAYd8kiTAElSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1hEZcPN; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5130832aso4311330b3a.0;
+        Tue, 22 Oct 2024 16:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729639010; x=1730243810; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VdRK3yhTYghtJWmdnw+e7xLJLXdLknBEqJe/TDxy7I0=;
-        b=QLT2qyqRlnLc1udGb/GgyXkMYbCGuaktvcNdSGJffZUg5jwk30sqCZlxF3tFa090Tv
-         kjFyGiZMn5uL61oXUarJsACH8ihIIXYx+3qmEyzNWQzAtPc6z851GOyo1drCmeGJgNHd
-         W6U3FF6YRwA6D5sBusLZU+ISbyhSFVKylnuxQaoLXSOIEKAcL/5/V9pvUWxV1i04fGnB
-         jrcsgsS+Vnd3Zcx44zI2VlLj/aaYcDZ7qmYRHrM7v+q4/RXM0wZiVH46tST+ZxL7Zm5a
-         KqGYDSKho7CaBDSvAoZ5W9uQIqH272ZCYhSZ0mjA6GgcG7+4uMqKh2hmRO0JdTkPgWFy
-         cuDQ==
+        d=gmail.com; s=20230601; t=1729639108; x=1730243908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ysViSwG1BhA6tHoLHBPKsSO3Yt9U7S8ZCuGDUMv5I5s=;
+        b=E1hEZcPN7bh1H/OO4U+HDvqzJYteaPUUxC3RwtSDs1i7YholreO7TRIDJqgz/uHulJ
+         wED1Efef38oRszdL+c3mlQg3hpQVSgTTU7dkfkUyrueO8JHdLc8wnIWcNE+JFbrIpOQm
+         B27jBRzzhYM7kIogxXCenA12ahbEO1y8urhFmP0luC1BXjgx6BUuPljNX5iS30BcKVzh
+         Jp8+la8AEy52jZM7zlNH4TrXbrG4Bi+MqUTGL9C+cXBm80AFG1JnCX5rmp7/NeTEQSOa
+         K0e82+LYkYG62miXsEif3D15oyNCDKdWOU72LywGe0Ibp9o8vMMz+AUY4x/rNlDhsPfQ
+         cw6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729639010; x=1730243810;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VdRK3yhTYghtJWmdnw+e7xLJLXdLknBEqJe/TDxy7I0=;
-        b=eSzA+DcTaHz8xiGLhqJ8t3dola8/yzv4hYT8L3Yn/v0lPjaJhgaKhIKfha7pXC22SC
-         jJi4xXUoWvTUMlQ9NB/9LZ1N+zsueqoAGPkpwbPihoX7byMCmyvXV0dmDx/pM3FclSRn
-         LUIa7G1+VtyqBkh05Y52WNOHg6lVGBbk4SC23dgqOV9pLHKT4yQJpTuc1Zn9RSIyqRE5
-         L3Dj151U8gC2mF/YdECC7YgqWAErIz4fs+cZUMVCwNRcIKJSRVR9lhKZJrbYsnuUHXHM
-         hSoaKCZmWV34k9Itj2d8YNSmftVmc2HI2NOh19MWHq4az/hovTKmFEmbp6qm+e8jfMWp
-         hP8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFucwWieBU07A0+uZ3VKuWYwmDlKzHyEPa0FS+BUg0an00xkO/7O3bSTwq3BoZxG/9sehgIY8peZBIJ0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgUPP2lL2L7A2qCxxQSvKweGcTPMHeCmLSV6hcP032gdMGbtLe
-	elw+8p083c3ZbuCsM+TYfqbSPSpPLowuU53Mi7kWAESYVYvXn9Sas7jzbLOa+Q==
-X-Google-Smtp-Source: AGHT+IHude/EQvEBYN74MFczuaEQlg2V7f2joS40qCBs1gJ13F8yauj8PlOv2uTO8PItNO8JHZluzg==
-X-Received: by 2002:ac8:5987:0:b0:460:b165:2e04 with SMTP id d75a77b69052e-461145a91cemr8312401cf.4.1729639009793;
-        Tue, 22 Oct 2024 16:16:49 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-461167a39acsm767531cf.32.2024.10.22.16.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 16:16:49 -0700 (PDT)
-Date: Tue, 22 Oct 2024 19:16:48 -0400
-Message-ID: <83794297935bea8af10384deaa9c5986@paul-moore.com>
+        d=1e100.net; s=20230601; t=1729639108; x=1730243908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ysViSwG1BhA6tHoLHBPKsSO3Yt9U7S8ZCuGDUMv5I5s=;
+        b=v9UxA0AwSduXe+4ShBRLlhGuClyhDzRRG8pXssxn5TnjR2xU4+DMweHhNszQBa4THn
+         0atxWC636DhpTXyHhgud68qubh/E//pJiq6M+pi6ebOPQMrm9DM4WpXic9NLWzwORJ3j
+         7xB7OPvWxcX63sAlxfnwvEjvNmmP0gaRWLM3umNmo8bQDU5WISp0SFsohN4s9616wXA/
+         NK1ih8j1i5j3ufYXVtCyWLZWch9o5Nu2Q7f4/TCEiYlvUl4hutvP9ScbyjCBE/fTOBOx
+         Ve12xQNjwtN5e2/tU40ZOT09A8zWIl5JgiVod3PsylRbq5rD4aj+TFojjgNI1ZLp9de/
+         nGug==
+X-Forwarded-Encrypted: i=1; AJvYcCVDA+77jE/GuiaaO306fxtmzI3rRgH6bEe3iqKCXpE4sLoOMU8QLXk58AZDSvAbB3ytVPoS9KZ6DbGA+xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy4rh+WSiS4ZuKBNAyRrh437p1s/xb+R9QeHi/6g7blc2wFu/i
+	OB/B/VRX9RYUesT3n7b9ZAsNM4F/auIQTk+XYy4CNr3DFu/qDFnkoyep6N1P7Sy09jnDMvkDtas
+	2jT9V4c7JsVtcelB5YAeJrUAblSM=
+X-Google-Smtp-Source: AGHT+IHTGcZZxn3WDi1KmnRIfvMWHYAVEdFjzO8xlGcoBIU5v7KElLEPzrbMfbdit7ZKBc30F38wY+EvRiZ91pt0Bqo=
+X-Received: by 2002:a05:6a00:4f90:b0:71d:f64d:ec60 with SMTP id
+ d2e1a72fcca58-72030babcb0mr1243329b3a.7.1729639108262; Tue, 22 Oct 2024
+ 16:18:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20241022_1912/pstg-lib:20241022_1830/pstg-pwork:20241022_1912
-From: Paul Moore <paul@paul-moore.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH] audit: Use str_yes_no() helper function
-References: <20241018110945.111842-3-thorsten.blum@linux.dev>
-In-Reply-To: <20241018110945.111842-3-thorsten.blum@linux.dev>
+MIME-Version: 1.0
+References: <20241022172329.3871958-1-ezulian@redhat.com> <20241022172329.3871958-4-ezulian@redhat.com>
+In-Reply-To: <20241022172329.3871958-4-ezulian@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 22 Oct 2024 16:18:15 -0700
+Message-ID: <CAEf4BzbOMhw2yRTbN-n65TsDu+Zi8c-A6uVLN4SP7_Xpruttvg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] libsubcmd: Silence compiler warning
+To: Eder Zulian <ezulian@redhat.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, acme@redhat.com, vmalik@redhat.com, 
+	williams@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Oct 18, 2024 Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> 
-> Remove hard-coded strings by using the helper function str_yes_no().
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Tue, Oct 22, 2024 at 10:24=E2=80=AFAM Eder Zulian <ezulian@redhat.com> w=
+rote:
+>
+> Initialize the pointer 'o' in options__order to NULL to prevent a
+> compiler warning/error which is observed when compiling with the '-Og'
+> option, but is not emitted by the compiler with the current default
+> compilation options.
+>
+> For example, when compiling libsubcmd with
+>
+>  $ make "EXTRA_CFLAGS=3D-Og" -C tools/lib/subcmd/ clean all
+>
+> Clang version 17.0.6 and GCC 13.3.1 fail to compile parse-options.c due
+> to following error:
+>
+>   parse-options.c: In function =E2=80=98options__order=E2=80=99:
+>   parse-options.c:832:9: error: =E2=80=98o=E2=80=99 may be used uninitial=
+ized [-Werror=3Dmaybe-uninitialized]
+>     832 |         memcpy(&ordered[nr_opts], o, sizeof(*o));
+>         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   parse-options.c:810:30: note: =E2=80=98o=E2=80=99 was declared here
+>     810 |         const struct option *o, *p =3D opts;
+>         |                              ^
+>   cc1: all warnings being treated as errors
+>
+> Signed-off-by: Eder Zulian <ezulian@redhat.com>
 > ---
->  kernel/auditsc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  tools/lib/subcmd/parse-options.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Merged into audit/dev, thanks.
+First two patches look good, we can take them through bpf-next. What
+do we do with this one? Arnaldo, would you like us to take it through
+bpf-next as well (if yes, please give your ack), or you'd like to take
+it through your tree?
 
---
-paul-moore.com
+> diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-op=
+tions.c
+> index eb896d30545b..555d617c1f50 100644
+> --- a/tools/lib/subcmd/parse-options.c
+> +++ b/tools/lib/subcmd/parse-options.c
+> @@ -807,7 +807,7 @@ static int option__cmp(const void *va, const void *vb=
+)
+>  static struct option *options__order(const struct option *opts)
+>  {
+>         int nr_opts =3D 0, nr_group =3D 0, nr_parent =3D 0, len;
+> -       const struct option *o, *p =3D opts;
+> +       const struct option *o =3D NULL, *p =3D opts;
+>         struct option *opt, *ordered =3D NULL, *group;
+>
+>         /* flatten the options that have parents */
+> --
+> 2.46.2
+>
 
