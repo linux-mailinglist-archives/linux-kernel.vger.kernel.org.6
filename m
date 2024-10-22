@@ -1,70 +1,57 @@
-Return-Path: <linux-kernel+bounces-377135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949819ABA40
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036269ABA43
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60E41C22B3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88ED9B22D5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08841CEE9D;
-	Tue, 22 Oct 2024 23:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998BE1CEEA7;
+	Tue, 22 Oct 2024 23:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRhkBJjS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcP08QOd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2055D126C05
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7291CDFC8;
+	Tue, 22 Oct 2024 23:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729641252; cv=none; b=fr9ZfmLYD+XoyZwWLEB1vC4IKk6BK5VOvR+Y0Z1drSV6yvfl9W819ZZEooNkImXPJCbIH11QMPmGcJZn+dM8Doz1/w+l9+lb47XHaR+XvN0PW7gNSUjGelGjxxzquniD1dZDAVWyTtXBKHj2ttJZRdzDVsu1oKC7q+JnoiyDcTM=
+	t=1729641279; cv=none; b=m0mhCk4B+5VGymUUL4fhJslfZ6x0JDzhTPNRZ0r8vCHXqQ1xuUx6JijSlMQChIAVwv+IU06AeW0OBKr1bWvrUrQPkNzE4JOnxANoojnAvXUQMwLUtIPK6n7GdaG5Gt8xFi1QrdRWdNvot18sB+xdLB3ZGMoveuGbO3qyf7X5j08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729641252; c=relaxed/simple;
-	bh=tb4eDPBX3jqdSdEcLPI9dm8xCPevHbtQmzIMqJwNgec=;
+	s=arc-20240116; t=1729641279; c=relaxed/simple;
+	bh=oaIE2+YTrWvXAsSPmtB6UaYr/m5HRh9uVimWLPJIWbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQjIa0vHrk5R9yQ7L3Qm2uB6SoA4xLRmP0Xz44q5km1eiFF6M4QjEC1PdwThWioDVLaHSewhDkC9Q4ASdAZcjLTbK6Ob4ORiHV/fnzNRb6F9RoV8D4fpaZtwzn/X5BIPMRPSN+6t8oZ378j3KELwglV09YL47aVwbuHyBxXsHDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRhkBJjS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2F1C4CEC3;
-	Tue, 22 Oct 2024 23:54:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgMt8m6EQRMfVOKFvz/nluoVxyv+47TNlXLL2lk7OjLHDoyCM1Pzjf0s1Q5ARc0g0SqithFQOMcxr8RQXo+DhUqaGb7MTmSpgmCK52r56FceZEQuOcSIG6806MMgY/eDJ8DRksmoCbRJDT+2S6eutgEFAeH6XOBdS13NjsDsOQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcP08QOd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE47C4CEC3;
+	Tue, 22 Oct 2024 23:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729641251;
-	bh=tb4eDPBX3jqdSdEcLPI9dm8xCPevHbtQmzIMqJwNgec=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=BRhkBJjSQKsHAyxOmdM2Q41zaKjktt2irjwrHmuEphpJ7t16a0ZTRUpnl4rzPWrjj
-	 5p7XNIberV7h4WoIpkKGBY94UxLfuULfhtJUw7rcFOH/UKHTuLoUTsHD05wNsV/ktR
-	 jxjnsIjewGnBmz5WFuGAZWt2cshjibxzY01dnMoqaqHbd+bgye/rHUbExYHXbqE5rz
-	 EfzUjmFx3aCTMpcIx1pq3MlEQyYTLln/1AMnWQbjnxFwMmr2Lp7e+A50ZwfbsiXnjG
-	 p9GtwrFDJ4j1LDHOElTyMMHj6WoIYBJ2SkxZHUlH5Vw/0aL6B8EjSWWNdkdI/5ALjZ
-	 goZrk1ZyH7+Rw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3D3F7CE0A48; Tue, 22 Oct 2024 16:54:11 -0700 (PDT)
-Date: Tue, 22 Oct 2024 16:54:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <88b90ca8-9d73-4691-b391-43891a057c77@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
- <20241011144341.mQKXkGkm@linutronix.de>
- <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
- <20241015112224.KdvzKo80@linutronix.de>
- <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
- <20241017070710.U9bTJFMS@linutronix.de>
- <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
- <20241021112755.m7dWNbc0@linutronix.de>
- <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
- <20241022140933.XfxSIpDu@linutronix.de>
+	s=k20201202; t=1729641278;
+	bh=oaIE2+YTrWvXAsSPmtB6UaYr/m5HRh9uVimWLPJIWbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OcP08QOd87Jy4tqgzPcNQocfXaI6m5TKxJNdb5sUJEs2hBqci6oE7PC37bJtiGHBf
+	 4lny/crMdrWIc4rqRi6Il59V9bleDxhAguDXyxBWPdzW6gCgTPocjKxeTVpTUkeUjA
+	 /sTNYStvRk5Zz0f2BAUmvyxNml+Y5gmSJQyb6Pqccfz3eitEPDmJaiSA5con76HtKe
+	 lDzmWouRZit3+xkszrnRVC6nBK+Oyy0vnEfJblWq7UiGzp5A5fcyFQiPoIxHaao4ZW
+	 Kd6X2dVd6TxxWGtGpyq0dbA0fH2ifRkzu4QEcrPfaa2w0+0hyWNtBoRA9MtwTfPlia
+	 zr02eR09wWRWQ==
+Date: Tue, 22 Oct 2024 18:54:35 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
+Cc: krzk+dt@kernel.org, quic_krichai@quicinc.com, 
+	quic_vbadigan@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sa8775p: Update iommu-map entry
+Message-ID: <ndu3y3dk2zvezqqhczry24arai5gk6rqlghznxru3zcxevnmrc@jjrff25gzjq3>
+References: <20241008121755.1174730-1-quic_skananth@quicinc.com>
+ <70c2e4c0-aa5a-4d61-9b12-ee7cc5106ead@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,102 +60,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022140933.XfxSIpDu@linutronix.de>
+In-Reply-To: <70c2e4c0-aa5a-4d61-9b12-ee7cc5106ead@quicinc.com>
 
-On Tue, Oct 22, 2024 at 04:09:33PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-10-21 09:48:03 [-0700], Paul E. McKenney wrote:
-> > > We have now NONE, VOLUNTARY, PREEMPT, PREEMPT_RT (as in choose one).
-> > > 
-> > > This series changes it to NONE, VOLUNTARY, PREEMPT, LAZY, LAZIEST.
-> > > Ignore LAZIEST. PREEMPT_RT is a on/ off bool.
-> > 
-> > In terms of preemptibility, isn't the order from least to most preemptible
-> > NONE, VOLUNTARY, LAZIEST, LAZY, PREEMPT, and PREEMPT_RT?  After all,
-> > PREEMPT will preempt more aggressively than will LAZY which in turn
-> > preempts more aggressively than LAZIEST.
-> > 
-> > And I finally do see the later patch in Peter's series that removes
-> > PREEMPT_RT from the choice.  Plus I need to look more at LAZIEST in
-> > order to work out whether Peter's suckage is our robustness.  ;-)
+On Tue, Oct 08, 2024 at 05:55:27PM GMT, Subramanian Ananthanarayanan wrote:
 > 
-> For LAZIEST PeterZ added "do we want this?". I haven't tested this but
-> since there is no forced preemption at all, it should be what is NONE
-> without cond_resched() & friends. So I don't know if it stays, I don't
-> think so.
-
-I don't know of a compelling reason for it to.
-
-> > > Based on my understanding so far, you have nothing to worry about.
-> > > 
-> > > With NONE + VOLUNTARY removed in favor of LAZY or without the removal
-> > > (yet)  you ask yourself what happens to those using NONE, go to LAZY and
-> > > want to stay with !PREEMPT_RCU, right?
-> > > With LAZY and !PREEMPT_DYNAMIC there is still PREEMPT_RCU as of now.
-> > > And you say people using !PREEMPT_DYNAMIC + LAZY are the old NONE/
-> > > VOLUNTARY users and want !PREEMPT_RCU.
+> On 10/8/2024 5:47 PM, Subramanian Ananthanarayanan wrote:
+> > SA8775P has only support for SMMU v2, due to this PCIe has limited
+> > SID entries to enable dynamic IOMMU mapping in the driver, hence
+> > we are updating static entries.
 > > 
-> > Yes.
+> > iommu-map entries are added to support more PCIe device like switch
+> > attach, SRIOV capable devices. These entries are specific to this
+> > board as topology of PCIe devices can vary based on the end usecase
+> > connected via PCIe. For other board files, these entries may
+> > not be directly applicable.
 > > 
-> > > This could be true but it could also attract people from PREEMPT which
-> > > expect additional performance gain due to LAZY and the same "preemption"
-> > > level. Additionally if PREEMPT gets removed because LAZY turns out to be
-> > > superior then PREEMPT_DYNAMIC makes probably no sense since there is
-> > > nothing to switch from/ to.
-> > 
-> > We definitely have users that would migrate from NONE to LAZY.  Shouldn't
-> > their needs outweigh the possible future users that might (or might not)
-> > find that (1) LAZY might be preferable to PREEMPT for some users and
-> > (2) That those users would prefer that RCU be preemptible?
+> > Signed-off-by: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
+> > ---
+> > Changes in V2:
+> > 	- Updated commit message.
 > 
-> Yes. I have no idea which of those two (PREEMPT_RCU vs !PREEMPT_RCU) is
-> to be preferred. Therefore I'm suggesting to make configurable here.
-
-As Ankur noted, the original intent was to move people from both
-PREEMPT_NONE and PREEMPT_VOLUNTARY to lazy preemption.  This strongly
-suggests setting the value of PREEMPT_RCU to n.  Not just the default,
-but the value.  We need to have a definite non-speculative case for
-forcing people to once again worry about RCU preemptibility, and I know
-of no such case.
-
-> If you have a benchmark for memory consumption or anything else of
-> interest, I could throw it a box or two to get some numbers. I've been
-> looking at free memory at boot and this was almost the same (+- noise).
-
-Unfortunately, the benchmark is the fleet and all of the various
-non-public applications that run on it.  :-(
-
-> > > Therefore I would suggest to make PREEMPT_RCU 
-> > > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> > > - selected for LAZY && PREEMPT_DYNAMIC
-> > > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-> > >   !PREEMPT_DYNAMIC)
-> > > 
-> > > Does this make sense to you?
-> > 
-> > Not really.  At the very least, default no.
-> > 
-> > Unless LAZIEST makes the most sense for us (which will take time to
-> > figure out), in which case make PREMPT_RCU:
-> > 
-> > - hard-defined =n for LAZIEST.
-> > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> > - selected for LAZY && PREEMPT_DYNAMIC
-> > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-> >   !PREEMPT_DYNAMIC)
-> > 
-> > Or am I still missing some aspect of this series?
+> forgot to add link to v1 : https://lore.kernel.org/lkml/20241001114601.1097618-1-quic_skananth@quicinc.com/
 > 
-> no, that is perfect.
 
-And assuming LAZIEST is not to be with us much longer, this becomes:
+Please use b4, as described on go/upstream, and you can not forget.
 
-- hard-defined to "no" for LAZY && !PREEMPT_DYNAMIC, just like
-  NONE or VOLUNTARY with !PREEMPT_DYNAMIC.
-- selected for LAZY && PREEMPT_DYNAMIC
-- the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-  !PREEMPT_DYNAMIC)
+Regards,
+Bjorn
 
-Fair enough?
-
-							Thanx, Paul
+> -Subramanian
+> 
+> > ---
+> > ---
+> >   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 62 ++++++++++++++++++++++
+> >   1 file changed, 62 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > index 0c1b21def4b6..05c9f572ae42 100644
+> > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > @@ -675,6 +675,37 @@ &pcie0 {
+> >   	pinctrl-names = "default";
+> >   	pinctrl-0 = <&pcie0_default_state>;
+> > +	iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
+> > +		    <0x100 &pcie_smmu 0x0001 0x1>,
+> > +		    <0x101 &pcie_smmu 0x0002 0x1>,
+> > +		    <0x208 &pcie_smmu 0x0003 0x1>,
+> > +		    <0x210 &pcie_smmu 0x0004 0x1>,
+> > +		    <0x218 &pcie_smmu 0x0005 0x1>,
+> > +		    <0x280 &pcie_smmu 0x0006 0x1>,
+> > +		    <0x281 &pcie_smmu 0x0007 0x1>,
+> > +		    <0x282 &pcie_smmu 0x0008 0x1>,
+> > +		    <0x283 &pcie_smmu 0x0009 0x1>,
+> > +		    <0x284 &pcie_smmu 0x000a 0x1>,
+> > +		    <0x285 &pcie_smmu 0x000b 0x1>,
+> > +		    <0x286 &pcie_smmu 0x000c 0x1>,
+> > +		    <0x287 &pcie_smmu 0x000d 0x1>,
+> > +		    <0x288 &pcie_smmu 0x000e 0x1>,
+> > +		    <0x289 &pcie_smmu 0x000f 0x1>,
+> > +		    <0x28a &pcie_smmu 0x0010 0x1>,
+> > +		    <0x28b &pcie_smmu 0x0011 0x1>,
+> > +		    <0x28c &pcie_smmu 0x0012 0x1>,
+> > +		    <0x28d &pcie_smmu 0x0013 0x1>,
+> > +		    <0x28e &pcie_smmu 0x0014 0x1>,
+> > +		    <0x28f &pcie_smmu 0x0015 0x1>,
+> > +		    <0x290 &pcie_smmu 0x0016 0x1>,
+> > +		    <0x291 &pcie_smmu 0x0017 0x1>,
+> > +		    <0x292 &pcie_smmu 0x0018 0x1>,
+> > +		    <0x293 &pcie_smmu 0x0019 0x1>,
+> > +		    <0x300 &pcie_smmu 0x001a 0x1>,
+> > +		    <0x400 &pcie_smmu 0x001b 0x1>,
+> > +		    <0x500 &pcie_smmu 0x001c 0x1>,
+> > +		    <0x501 &pcie_smmu 0x001d 0x1>;
+> > +
+> >   	status = "okay";
+> >   };
+> > @@ -685,6 +716,37 @@ &pcie1 {
+> >   	pinctrl-names = "default";
+> >   	pinctrl-0 = <&pcie1_default_state>;
+> > +	iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
+> > +		    <0x100 &pcie_smmu 0x0081 0x1>,
+> > +		    <0x101 &pcie_smmu 0x0082 0x1>,
+> > +		    <0x208 &pcie_smmu 0x0083 0x1>,
+> > +		    <0x210 &pcie_smmu 0x0084 0x1>,
+> > +		    <0x218 &pcie_smmu 0x0085 0x1>,
+> > +		    <0x280 &pcie_smmu 0x0086 0x1>,
+> > +		    <0x281 &pcie_smmu 0x0087 0x1>,
+> > +		    <0x282 &pcie_smmu 0x0088 0x1>,
+> > +		    <0x283 &pcie_smmu 0x0089 0x1>,
+> > +		    <0x284 &pcie_smmu 0x008a 0x1>,
+> > +		    <0x285 &pcie_smmu 0x008b 0x1>,
+> > +		    <0x286 &pcie_smmu 0x008c 0x1>,
+> > +		    <0x287 &pcie_smmu 0x008d 0x1>,
+> > +		    <0x288 &pcie_smmu 0x008e 0x1>,
+> > +		    <0x289 &pcie_smmu 0x008f 0x1>,
+> > +		    <0x28a &pcie_smmu 0x0090 0x1>,
+> > +		    <0x28b &pcie_smmu 0x0091 0x1>,
+> > +		    <0x28c &pcie_smmu 0x0092 0x1>,
+> > +		    <0x28d &pcie_smmu 0x0093 0x1>,
+> > +		    <0x28e &pcie_smmu 0x0094 0x1>,
+> > +		    <0x28f &pcie_smmu 0x0095 0x1>,
+> > +		    <0x290 &pcie_smmu 0x0096 0x1>,
+> > +		    <0x291 &pcie_smmu 0x0097 0x1>,
+> > +		    <0x292 &pcie_smmu 0x0098 0x1>,
+> > +		    <0x29d &pcie_smmu 0x0099 0x1>,
+> > +		    <0x300 &pcie_smmu 0x009a 0x1>,
+> > +		    <0x400 &pcie_smmu 0x009b 0x1>,
+> > +		    <0x500 &pcie_smmu 0x009c 0x1>,
+> > +		    <0x501 &pcie_smmu 0x009d 0x1>;
+> > +
+> >   	status = "okay";
+> >   };
 
