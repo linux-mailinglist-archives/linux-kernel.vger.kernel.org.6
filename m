@@ -1,358 +1,110 @@
-Return-Path: <linux-kernel+bounces-375835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CE19A9B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:51:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BC89A9B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F7C2824D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F8C1F22FCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CA31547C0;
-	Tue, 22 Oct 2024 07:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEDA156871;
+	Tue, 22 Oct 2024 07:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="e/tRKJqL"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sQMtidzE"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123E2127E37
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA650153BF0
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583495; cv=none; b=h6mimMwWDXIDULVqFzkDPrI6WHnynOT5XUZvDYcB3vUKxUBtxDaPcRlJEVy404i0apfNj9W1EBuznRZcTR9DF6iomovJeVXXBanEm28sg75GdkvMUk7t2YowcF6jh502XI+82eAb9RHNDxhO3NriqftaP1FnE/fe8pVyCfqb9mU=
+	t=1729583643; cv=none; b=aBqrhC77Tbp1cR6sQAUq4gbSiSHXOF8K1+o1hmvaDAUL0SWzC8QGCC8NQUugotnM6Ahz7GqDsJeSEn5SuI+0UWvubuAw4Qk6fud72nhvjzWHbJHvNSzeBm/iQBXj1pucCXq6OwPagD6msljsO/UGxxy7Fi5ynBC4wmHY037o94w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583495; c=relaxed/simple;
-	bh=r0CoE8FwPMvdIcoU6xj671xyo7U+T9r3UXKzQdwkclc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdeymtwOrGDtYBIajDB8b8cecY6o62YtZq2x3y9VlBUjftYQ2lyFxy4ATBl/hnN0IKMBhiyxQ1d4tSEOgQ/mHDZ4XaFLNXU1RfTtWXTzjNe2mg2IIB+ssTtK0frtXylfOA+qLG3Ajsqr2AOyAHJ2atuyHQOlLa+omQ58oyuiLv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=e/tRKJqL; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 22E50D49;
-	Tue, 22 Oct 2024 09:49:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729583385;
-	bh=r0CoE8FwPMvdIcoU6xj671xyo7U+T9r3UXKzQdwkclc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e/tRKJqLs8q3kpkwIeYAMhbdpVbXxby6LFvaN96TQ/S48CrW7ZZlQWRcDMjqwLEp0
-	 2XPTlZ+ZGo/XvgJIMkS8lU696cJiWHwJNUkRInjNIpDhJkkapzHFeadsR/Ss+bc4n8
-	 Poog0tTcWUcXWCiQvai6+wTvgtJ1vTC7ya8ypi3M=
-Message-ID: <4a25cd50-06be-4e95-b29e-4f5eb23d8bca@ideasonboard.com>
-Date: Tue, 22 Oct 2024 10:51:28 +0300
+	s=arc-20240116; t=1729583643; c=relaxed/simple;
+	bh=iIIvTHgFWcs4L02/4PWh5iLiyHx6s9FXGG4F2p+omkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j1CBL3CVpqmpgUUux0O7pH6KIPIILqM86B47uAyyAPc+4uOAAkG2tnyFXNU0GYbBxqdxQykpb6mIln5Tv17LBZPBu2D5rgHkSg8lr4WhkOh2Cy22Ki15fdOZULwjWeeRfOlskzteC8bvYSrJla2IoVf0kikQAqZP9asL7Gvbc6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sQMtidzE; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729583638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eN7/9lTFH3drC1NWRnwey0aE0NlX+JngFZv69nq9QD4=;
+	b=sQMtidzEIgmJgfB4MOqXPEDgbF8UHLgWB4G8GKBRRafgQsNnE9DFDOoR/EmH5sgV4MHSxC
+	mUpY9pJMvcXI1PxVTF6j3qnl3cT5T7SGgJH4ec8W+VrxdHvvJUiPQiECVntIGD0AUfa+Eg
+	W84vVGkgTwPWsyd5qyHI6GFiKQJ9oF4=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Jan Kara <jack@suse.cz>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [RESEND PATCH] ext4: Annotate struct fname with __counted_by()
+Date: Tue, 22 Oct 2024 09:52:53 +0200
+Message-ID: <20241022075252.34308-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fw_devlinks preventing a panel driver from probing
-To: Saravana Kannan <saravanak@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Devarsh Thakkar <devarsht@ti.com>
-References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
- <CAGETcx-LtuMJM1205FwMy0U-fetAKhFdon65qAxHKV3Q2cUOGQ@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAGETcx-LtuMJM1205FwMy0U-fetAKhFdon65qAxHKV3Q2cUOGQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Add the __counted_by compiler attribute to the flexible array member
+name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-On 22/10/2024 02:29, Saravana Kannan wrote:
-> Hi Tomi,
-> 
-> Sorry it took a while to get back.
-> 
-> On Mon, Sep 16, 2024 at 4:52 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->>
->> Hi,
->>
->> We have an issue where two devices have dependencies to each other,
->> according to drivers/base/core.c's fw_devlinks, and this prevents them
->> from probing. I've been adding debugging to the core.c, but so far I
->> don't quite grasp the issue, so I thought to ask. Maybe someone can
->> instantly say that this just won't work...
->>
->> So, we have two devices, DSS (display subsystem) and an LVDS panel. The
->> DSS normally outputs parallel video from its video ports (VP), but it
->> has an integrated LVDS block (OLDI, Open LVDS Display Interface). The
->> OLDI block takes input from DSS's parallel outputs. The OLDI is not
->> modeled as a separate device (neither in the DT nor in the Linux device
->> model) as it has no register space, and is controlled fully by the DSS.
->>
->> To support dual-link LVDS, the DSS has two OLDI instances. They both
->> take their input from the same parallel video port, but each OLDI sends
->> alternate lines forward. So for a dual-link setup the connections would
->> be like this:
->>
->> +-----+-----+         +-------+         +----------+
->> |     |     |         |       |         |          |
->> |     | VP1 +----+--->| OLDI0 +-------->|          |
->> |     |     |    |    |       |         |          |
->> | DSS +-----+    |    +-------+         |  Panel   |
->> |     |     |    |    |       |         |          |
->> |     | VP2 |    +--->| OLDI1 +-------->|          |
->> |     |     |         |       |         |          |
->> +-----+-----+         +-------+         +----------+
->>
->> As the OLDI is not a separate device, it also does not have an
->> independent device tree node, but rather it's inside DSS's node. The DSS
->> parallel outputs are under a normal "ports" node, but OLDI ports are
->> under "oldi-txes/ports" (see below for dts to clarify this).
->>
->> And I think (guess...) this is the root of the issue we're seeing, as it
->> means the following, one or both of which might be the reason for this
->> issue:
->>
->> - OLDI fwnodes don't have an associated struct device *. I think the
->> reason is that the OLDI media graph ports are one level too deep in the
->> hierarchy. So while the DSS ports are associated with the DSS device,
->> OLDI ports are not.
-> 
-> This is the root cause of the issue in some sense. fw_devlink doesn't
-> know that DSS depends on the VP. In the current DT, it only appears as
-> if the OLDI depends on VP. See further below for the fix.
-> 
->>
->> - The VP ports inside the DSS point to OLDI ports, which are also inside
->> DSS. So ports from a device point to ports in the same device (and back).
->>
->> If I understand the fw_devlink code correctly, in a normal case the
->> links formed with media graphs are marked as a cycle
->> (FWLINK_FLAG_CYCLE), and then ignored as far as probing goes.
->>
->> What we see here is that when using a single-link OLDI panel, the panel
->> driver's probe never gets called, as it depends on the OLDI, and the
->> link between the panel and the OLDI is not a cycle.
->>
->> The DSS driver probes, but the probe fails as it requires all the panel
->> devices to have been probed (and thus registered to the DRM framework)
->> before it can finish its setup.
->>
->> With dual-link, probing does happen and the drivers work. But I believe
->> this is essentially an accident, in the sense that the first link
->> between the panel and the OLDI still blocks the probing, but the second
->> links allows the driver core to traverse the devlinks further, causing
->> it to mark the links to the panel as FWLINK_FLAG_CYCLE (or maybe it only
->> marks one of those links, and that's enough).
->>
->> If I set fw_devlink=off as a kernel parameter, the probing proceeds
->> successfully in both single- and dual-link cases.
->>
->> Now, my questions is, is this a bug in the driver core, a bug in the DT
->> bindings, or something in between (DT is fine-ish, but the structure is
->> something that won't be supported by the driver core).
->>
->> And a follow-up question, regardless of the answer to the first one:
->> which direction should I go from here =).
->>
->> The device tree data (simplified) for this is as follows, first the
->> dual-link case, then the single-link case:
->>
->> /* Dual-link */
->>
->> dss: dss@30200000 {
->>          compatible = "ti,am625-dss";
->>
->>          oldi-txes {
->>                  oldi0: oldi@0 {
->>                          oldi0_ports: ports {
->>                                  port@0 {
->>                                          oldi_0_in: endpoint {
->>                                                  remote-endpoint = <&dpi0_out0>;
->>                                          };
->>                                  };
->>
->>                                  port@1 {
->>                                          oldi_0_out: endpoint {
->>                                                  remote-endpoint = <&lcd_in0>;
->>                                          };
->>                                  };
->>                          };
->>                  };
->>
->>                  oldi1: oldi@1 {
->>                          oldi1_ports: ports {
->>                                  port@0 {
->>                                          oldi_1_in: endpoint {
->>                                                  remote-endpoint = <&dpi0_out1>;
->>                                          };
->>                                  };
->>
->>                                  port@1 {
->>                                          oldi_1_out: endpoint {
->>                                                  remote-endpoint = <&lcd_in1>;
->>                                          };
->>                                  };
->>                          };
->>                  };
->>          };
->>
->>          dss_ports: ports {
->>                  port@0 {
->>                          dpi0_out0: endpoint@0 {
->>                                  remote-endpoint = <&oldi_0_in>;
->>                          };
->>                          dpi0_out1: endpoint@1 {
->>                                  remote-endpoint = <&oldi_1_in>;
->>                          };
->>                  };
->>          };
->> };
->>
->> display {
->>          compatible = "microtips,mf-101hiebcaf0", "panel-simple";
-> 
-> In here, add this new property that I added some time back.
-> 
-> post-init-providers = <&oldi-txes>;
+Inline and use struct_size() to calculate the number of bytes to
+allocate for new_fn and remove the local variable len.
 
-Thanks! This helps:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ fs/ext4/dir.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-post-init-providers = <&oldi0>;
-
-or for dual-link:
-
-post-init-providers = <&oldi0>, <&oldi1>;
-
-> This tells fw_devlink that VP doesn't depend on this node for
-> initialization/probing. This property is basically available to break
-> cycles in DT and mark one of the edges of the cycles as "not a real
-> init dependency".
-> 
-> You should do the same for the single link case too.
-
-While this helps, it's not very nice... Every new DT overlay that uses 
-OLDI display needs to have these.
-
-I'm still confused about why this is needed. OF graphs are _always_ 
-two-way links. Doesn't that mean that OF graphs never can be used for 
-dependencies, as they go both ways? If so, shouldn't we just always 
-ignore all OF graphs for dependency checking?
-
-  Tomi
-
-> 
-> Hope that helps. Let me know.
-> 
-> Thanks,
-> Saravana
-> 
->>
->>          ports {
->>                  port@0 {
->>                          lcd_in0: endpoint {
->>                                  remote-endpoint = <&oldi_0_out>;
->>                          };
->>                  };
->>
->>                  port@1 {
->>                          lcd_in1: endpoint {
->>                                  remote-endpoint = <&oldi_1_out>;
->>                          };
->>                  };
->>          };
->> };
->>
->>
->> /* Single-link */
->>
->> dss: dss@30200000 {
->>          compatible = "ti,am625-dss";
->>
->>          oldi-txes {
->>                  oldi0: oldi@0 {
->>                          oldi0_ports: ports {
->>                                  port@0 {
->>                                          oldi_0_in: endpoint {
->>                                                  remote-endpoint = <&dpi0_out0>;
->>                                          };
->>                                  };
->>
->>                                  port@1 {
->>                                          oldi_0_out: endpoint {
->>                                                  remote-endpoint = <&lcd_in0>;
->>                                          };
->>                                  };
->>                          };
->>                  };
->>          };
->>
->>          dss_ports: ports {
->>                  port@0 {
->>                          dpi0_out0: endpoint@0 {
->>                                  remote-endpoint = <&oldi_0_in>;
->>                          };
->>                  };
->>          };
->> };
->>
->> display {
->>          compatible = "microtips,mf-101hiebcaf0", "panel-simple";
->>
->>          ports {
->>                  port@0 {
->>                          lcd_in0: endpoint {
->>                                  remote-endpoint = <&oldi_0_out>;
->>                          };
->>                  };
->>          };
->> };
->>
->>    Tomi
->>
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index ef6a3c8f3a9a..02d47a64e8d1 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -418,7 +418,7 @@ struct fname {
+ 	__u32		inode;
+ 	__u8		name_len;
+ 	__u8		file_type;
+-	char		name[];
++	char		name[] __counted_by(name_len);
+ };
+ 
+ /*
+@@ -471,14 +471,13 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
+ 	struct rb_node **p, *parent = NULL;
+ 	struct fname *fname, *new_fn;
+ 	struct dir_private_info *info;
+-	int len;
+ 
+ 	info = dir_file->private_data;
+ 	p = &info->root.rb_node;
+ 
+ 	/* Create and allocate the fname structure */
+-	len = sizeof(struct fname) + ent_name->len + 1;
+-	new_fn = kzalloc(len, GFP_KERNEL);
++	new_fn = kzalloc(struct_size(new_fn, name, ent_name->len + 1),
++			 GFP_KERNEL);
+ 	if (!new_fn)
+ 		return -ENOMEM;
+ 	new_fn->hash = hash;
+-- 
+2.47.0
 
 
