@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-375907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6EA9A9CF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E219A9CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 416E4B211C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504E11F22F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF7D1891B2;
-	Tue, 22 Oct 2024 08:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA87176242;
+	Tue, 22 Oct 2024 08:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEqFll4F"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DEPCOMPl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D312B157487;
-	Tue, 22 Oct 2024 08:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B315140E38
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586266; cv=none; b=OKv6H8Oh/rrNzUozpyGdzn+/VV/nWQLsJfo2KL5CcbPl3YcujGp0PRX2+qbd5GLUnU1u12gXqK0uZ8PSf3zIm2YP6vP7YW6J66oj94yUsTxOeHaCvXT/JahdejKudhOkDtBrKCV1zb+QyUuP653Mdgaqr6UY5oOze3YXCYR2Awo=
+	t=1729586326; cv=none; b=Fj+LntCqboK5+DXcRjOogNfVdcuBwJ/3ZiJIZFStezfB8cYoAf4ryXQInH73zqa6ZCMhO9kHWFoKo4jj2ffBLAbztlphMCEaWH48Zi+zIE7DskAo+VpZvhsxCzdsN/HI8oO58RPVH/av7SOK8I0+2ToDUFRG401gbyT9QDgOpRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586266; c=relaxed/simple;
-	bh=hqESUoeCOtAgPVeowsanTRwsfMFY5c1n3Vj5MXcewyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mkVUR49qPj30j63zz7c0byCIsGj+onrp4kcGGL7+kTvDSF5XCFtTfMjpYONYKBSO0hs3UKhhJ/Wg14LCUp1gemYgZpj1ZJ9OyxB/jfeeTS+hAVpBt9NCVREaiX+C2p6uLFaUbfxOnMCaUygkugi0iVoMu+wE6C/knEOLnxsrz/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEqFll4F; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4a479773730so1221244137.2;
-        Tue, 22 Oct 2024 01:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729586264; x=1730191064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/O4MGPxvsvh3KaI++oWEtd2LMAnjDvHPtuX1tYTzn8o=;
-        b=hEqFll4FbOdFoZxPyKuGzO4fGvRhUzJ7N/MFdrkiSbFIZccojp33EyVUPeK8lgO4Vb
-         LXnYKY3phXroIeBjhLUj0q4GW7tS7IfTdpTxh3XzZ/R0hBc6CQVmOgt/vrsx1azvei88
-         76QAAcnXEV8MDJIjRDotYQiyZtJNqiMyuJMQx7g06Dv6ujzkNkV4PWLK3G0F1ihW7sWn
-         xeIiwxDqq5azx8499l++Tdj0IOv83RWVoQ5AIsQjJSwGe9yaKZlVfOzQWaioVPbKk3sp
-         wuVVVkV0bjYRDhZ6EvLto/pqMEebKbRJCHS1+pSqvNFJkjujVQfSHgR0PgqoEkSfuWiy
-         GxZw==
+	s=arc-20240116; t=1729586326; c=relaxed/simple;
+	bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aFWkTnFx5Begqaw42iSYMXSvbsoVagSPu1NWVTXpqlCVSb4N+scbQKXfEB/QBSWHZxIIgeKga0P+oofDIIkUHFmLsx2HolhC4aA80JmnwGcl8KiERiUdEss5tzGoLG3ZjJuBSbECIy6YrvjvOF+kCTEjytqZ5T1uWitV+wB/TNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DEPCOMPl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729586324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
+	b=DEPCOMPlmCv4vNp/Zk1wHemcjD2K3S2uEcIL2DHqlefIOc8EbdVuiNHU/wslgp3PAwrtcW
+	mbvan7Qz5mkv4hc6D9lfCWdGW63oscvoCi/WTQKUWc3nrBmVvq+zZy6g+i/pvmiSI3psjh
+	iPMZrUVoLSz5hD9eYw11/pEyJf6oWcE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-4Srd3YvTNW273sDAd6GFnA-1; Tue, 22 Oct 2024 04:38:42 -0400
+X-MC-Unique: 4Srd3YvTNW273sDAd6GFnA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso44434835e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:38:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729586264; x=1730191064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/O4MGPxvsvh3KaI++oWEtd2LMAnjDvHPtuX1tYTzn8o=;
-        b=k3WxjzKb/tJGeTiyIhi65vojZJ5M1WjUdxuxijb5TZMUptM60/Sredzdi9lGTSTBtm
-         rH7t18ZOpiU/wk4CagODHPqum1N03+nT+A7oYx4yAbanuC3Jhd6mpmcQC3bOgexILvnL
-         /YyYUAU4deSu0CkV+lqR99+1PVvd7mzMaY58hGfVvfvQ8ggpk07dCaf1wF7Fb8RVhTOC
-         cuEOmAho14XzAoXh1bxgoPNbHF+N5Bbi+/zp7x9al4BPd5hKCe4OtwNtmWel2XSowL/H
-         akLfgNQB9c5tMt0nIiORO2vLttQAvlA8lUy/CQ12zGUYisW0RBG6CnCkiSon+vnDXTHC
-         UbXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+XZciSD0d9B7k+IC6H7DDTji2mFK+OsTAFQYpblk16J+HW/Ust7ujGptZJNxzgwtdA3wWZevhJWpgOLVD@vger.kernel.org, AJvYcCUCf1jWD+mgN3EVUQp2+V869znrub45ZKO56twoUgTayYO5vwRefKW/BXUQnGxZ/2TmnIlEJzQQ8aA=@vger.kernel.org, AJvYcCUG8plWlzCYIeR4U4RE0sIm+EITgUGJn8PQ0XX87nW7XBT5tfoFoiWlZtcw5MMVJzSXr68/kCnax0Lo@vger.kernel.org, AJvYcCUTg2mc/FUMKVy+Gtrg/nBU9r3ACpt8sgCdoXsWIXg8VX441eBI8cMW40IXfVYcoyXgulBbw2iteQZJnmc=@vger.kernel.org, AJvYcCUl7oRyWRdsB1D9ZceRYIacZfvu8gapwARfcdWE1UI9N1pFnR7soFYst1sU4djKbY6/RRlzZsmN/YXn3A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4GPCbCT25FtCPln8ATbzeiKGJxqWov8w5uwQnNjGH54KX1ylU
-	e+HrC+cBFOsseVXXb+7wNyne9DVnlPGtTANUrkpDjBZvBXm/3dbJYHSTl/SgqpJZ2NTAPzrWrBO
-	jMQUP/LnerrY00L0WHkhzDtgc440=
-X-Google-Smtp-Source: AGHT+IE+cqda+uQBNaMUBayVyYnL2hd8JWUNI/WpzZQ5XAIlV+fvhML5xaeQ8JrQbL8UGyVS29+gz6jO0CHGrVeFWpQ=
-X-Received: by 2002:a05:6102:3f02:b0:4a3:ad8f:4fd9 with SMTP id
- ada2fe7eead31-4a5d6bfc9ccmr12481047137.29.1729586263778; Tue, 22 Oct 2024
- 01:37:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729586321; x=1730191121;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCXXwPDjBusbhR6au45ZUYnylB504NYSSRvZEaxUgj4=;
+        b=GtamwB6ZULdGZoElKPryW93/hGV+QhzXO8Tc9EoENPUrBrO1vzLAhXhzvJg8wm2ydL
+         bSPF2BjAotvoW2Dp5IT81LE3Dp6SWphCsP4BkKa7cst2YYfBgKUeyU+YFTEaYAC6v41K
+         SKu2bMWnEPFZhf2ma5gnwDgtteY/HG2ZtZk9cMVgP3cELWXlACUn5UHzHlkVz9oDLiSt
+         RI0zTUDvlcVj270pjRg+fSS+XSE/FrUmmvICT9njgtM++xukgUz8nV2gwt+GgtgEf1Ro
+         7zpudWYPHRLBm0nNbHXcSajoLfH88jpfv+ljTsAYycMTBfvaIsct2n2+JyyFppLP0It2
+         7IMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlK+XYhzckXdUDKCxGgj6hQpWK3CCHNeUryCRYMxHwloxacmUJJck9sc+NCr65LqWu5U6p6fhzrG2kmiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSdYRMnhP+GLEtZPcqwdV/W+6YKxTVl1cl6kBlvxx/WPs7zYwN
+	4bBcT99j3BxJTc4lsDIz/pj8MXff32nA+wEhmFfMrtsCqSrTzD5C0v4wj0T58z3ntDlPUYRH3ri
+	xCTjlMFIfBi8qIpZSF4+9pUiE05yfk8kKJPvTmvczX2+bOYaS8KRfnxkiHiHong==
+X-Received: by 2002:a05:600c:4e12:b0:431:4a5a:f08f with SMTP id 5b1f17b1804b1-4316161ee27mr124495605e9.4.1729586321177;
+        Tue, 22 Oct 2024 01:38:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbBWOU2Nx4vFSYQiZrLPFEBJcR3dEePc/jhzMJIAF2UjsfwsYkjsK7i1T0LhglK0o3pCuU0w==
+X-Received: by 2002:a05:600c:4e12:b0:431:4a5a:f08f with SMTP id 5b1f17b1804b1-4316161ee27mr124495345e9.4.1729586320618;
+        Tue, 22 Oct 2024 01:38:40 -0700 (PDT)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58f0efsm82150545e9.26.2024.10.22.01.38.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 01:38:40 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:38:39 +0200
+From: Maxime Ripard <mripard@redhat.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org
+Subject: Requirements to merge new heaps in the kernel
+Message-ID: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007-starqltechn_integration_upstream-v6-0-0d38b5090c57@gmail.com>
- <20241007-starqltechn_integration_upstream-v6-3-0d38b5090c57@gmail.com> <20241015140224.GI8348@google.com>
-In-Reply-To: <20241015140224.GI8348@google.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Tue, 22 Oct 2024 11:37:33 +0300
-Message-ID: <CABTCjFDEEcuJtiK0d8gVM3Zf7vWL-rpsqH5AndeAuPbBMT=Www@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] mfd: Add new driver for MAX77705 PMIC
-To: Lee Jones <lee@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="hsjf2vnvcet2h2ku"
+Content-Disposition: inline
 
-> > +     /* Unmask interrupts from all blocks in interrupt source register=
- */
-> > +     ret =3D regmap_update_bits(max77705->regmap,
-> > +                              MAX77705_PMIC_REG_INTSRC_MASK,
-> > +                              MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX=
-77705_SRC_IRQ_ALL);
->
-> Why the cast?
->
 
-BIT macro creates a 64 bit constant value. When inverted,
-it overruns 32 bit value, causing compiler to warn on conversion like
-`warning: conversion from =E2=80=98long unsigned int=E2=80=99 to =E2=80=98u=
-nsigned int=E2=80=99`.
+--hsjf2vnvcet2h2ku
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Requirements to merge new heaps in the kernel
+MIME-Version: 1.0
 
---=20
+Hi Sumit,
 
-Best regards,
-Dzmitry
+I wanted to follow-up on the discussion we had at Plumbers with John and
+T.J. about (among other things) adding new heaps to the kernel.
+
+I'm still interested in merging a carve-out driver[1], since it seems to be
+in every vendor BSP and got asked again last week.
+
+I remember from our discussion that for new heap types to be merged, we
+needed a kernel use-case. Looking back, I'm not entirely sure how one
+can provide that given that heaps are essentially facilities for
+user-space.
+
+Am I misremembering or missing something? What are the requirements for
+you to consider adding a new heap driver?
+
+Thanks!
+Maxime
+
+1: https://lore.kernel.org/dri-devel/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511@kernel.org/
+
+--hsjf2vnvcet2h2ku
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxdkjwAKCRAnX84Zoj2+
+djCtAYC0rCU2tqFwwMRRkdC0+X4UkE+T1TaC7DwuQMpeIzJA4HKzDz2v6n9TItr0
+LTH6SysBgI3OFvgyXDR/NxKo6lihPc9mfEb0LLL+suXmLUnK3QO9N/TS9HFxj7JH
+hI9UPHPo0A==
+=ZRbj
+-----END PGP SIGNATURE-----
+
+--hsjf2vnvcet2h2ku--
+
 
