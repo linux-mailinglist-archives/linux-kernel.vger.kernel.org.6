@@ -1,71 +1,196 @@
-Return-Path: <linux-kernel+bounces-375769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25F69A9A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DFB9A9A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5CC1F22C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A2F11C223D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4FD148FE6;
-	Tue, 22 Oct 2024 07:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43414D433;
+	Tue, 22 Oct 2024 07:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rPXSACyq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k4yE85XR"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD0E13AD0;
-	Tue, 22 Oct 2024 07:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82071494AD
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581061; cv=none; b=CilL0/vb/Si5+/F0OtJaoFDoWd91VZirVV9qT5JLcKFQkQVoYSUQtnVH/lZK5NnzUKnGfBWG0D3oT5sMto3lNzW0DClFYOlcATuvV5EyPkc8cP6JiJPxYbBwPazuAwVaCZ8s9PkwdHW6hGSpBn0/QuHtaRZulJo9sYSiCGHENo8=
+	t=1729581074; cv=none; b=jsRrfrJ4mYhWSvourcsg+nZFolVMbcq9+4uCv3LegkjhBMplaHCiuvkN5nH7cc3dCFnYdzU+S8/egMura3GqXVZdjaB5CCIPlqwW0/rJeZv79l2J9hYIaOZmkZABZKQs+mCM5Xs4+oDWTQ2jEegkilSPwmpuDV9+Gypr6qBQaWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581061; c=relaxed/simple;
-	bh=vb+cU60c7MdvWOBp8UCzVJYuxWyGW719y/z+ys8ZW+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubbxkPJJqMhgsZo4hWPWaQJVxVMMycTPNf0ya9ZPgQxOr+DcQJWJuDxMjBX3CuWCxGvL6pmP2KsyXgYEYYpu8cPyXEOoC5Ifj+KWLvk5rhoW60L1aT3rI9F8C7GnW4j63oX3pJ3bi1CSoLo9j8GkVCAfm4Bdb6S9GXSxjDKYhHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rPXSACyq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167A6C4CEC3;
-	Tue, 22 Oct 2024 07:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729581060;
-	bh=vb+cU60c7MdvWOBp8UCzVJYuxWyGW719y/z+ys8ZW+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rPXSACyqlp3+ZuaK9KrTewNpZ8QIdRylwtVUo5kKRIYICqxO+REQKw0jepd+WpKw0
-	 ltxuNU4l8YWMoAIf9oDvahADt86JwWzJFikUpm1N2EC/Fas3wx5bw6+OFIus0w2lBH
-	 1foZI7UKIM6sXu1S7S5yRh7b8vhBgpJrWticwWso=
-Date: Tue, 22 Oct 2024 09:10:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tony Chung <tony467913@gmail.com>
-Cc: johan@kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: serial: mos7840: Add more kinds of baud rate
-Message-ID: <2024102207-unmixed-caregiver-b9eb@gregkh>
-References: <20241022070127.66083-1-tony467913@gmail.com>
+	s=arc-20240116; t=1729581074; c=relaxed/simple;
+	bh=9/H0GURHnCFEBdAl6G8M/xjUafjIGq7AtO5/Lg0KgpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W10eIDbk2YhkySYOxH5JnwJU5L7NCG3BDQqmpxi/mSKcB1ybejFUIAaU06A7ZxDew2AoSwZkmDquCiwS5gwo7TyUDHLzm30pT52tYIXhTH2rmz0jKdjrUlIx8AZh/xqjKrI3e1M5qFh2uuEpCTqKlSB8hHyuVogopo11gtRCU7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k4yE85XR; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso6120499e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729581071; x=1730185871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IuZG9TjFhS0J3cabCqnpd26zyrTahESHkPMMm0tbHo8=;
+        b=k4yE85XReJyy7rWM4ZUpwxcXNqOoXnOth6s8w1+xj2q1ugsIsaUxiZpTu6hXBlYSyZ
+         GsnmGXWNwwx/wLAiojOT6UqAOcoz3xJGxnb533ir9BL7EMXPtJBFy3XahPzF2qZ1E9JO
+         WV2JNoL0t4fGKKVBxP0z2EvrvVhWC2gau9fII=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729581071; x=1730185871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IuZG9TjFhS0J3cabCqnpd26zyrTahESHkPMMm0tbHo8=;
+        b=s/SciiFeqOWgRxHob+Sa5/72YTgEe27qSmeg0AR1AuEziaXSNdGO7LpCpDtLnrkUIJ
+         8v/Hn+5w8at98jh63Cm7fICXrSLlK+2pCB9UApQ7DRme1B8Oxa9BUsof94x2MaBZozo7
+         s7i1NfCDp4yHM3FyaehckD8UQcafWCkqb3XdSSfDdIF2H+fYo2OZ/J+5kv9fKBtDCAVC
+         DM6Faq+KYIbnA0isMYtL7D8ZoT4flOY6fE5fPdQDq7/yhxcM/0qscyZBm2QtRhip5ZvJ
+         LNgdz0awyAuF7013i1dKE1LzqG3fNgZ6EazxBPeN6ckvOPkAoDc4/fffMDB2k1aMvKSH
+         qcfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvZsBhfxlod/aAMcU0rPUE2G7t4yXAj+MqpBdbHw9HLFoC0hcEuuZLlrbtUDsGiqYBuVmRAwtih8vJerU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3uoc9pfn9DJBiAYYKL6jzT25/vFLZtjE/0G3ydpIMNoyfbGV6
+	BR7IUbGExmRGVCaxSDraxk0GEamCeGUOEAhs8f9A/Y73CZXBzIBHyMTa1xWgxwVquASMyV9rFGt
+	4Haun/F1WLIzZkvWA2N6nWtWIDQEnJI2SbUYU
+X-Google-Smtp-Source: AGHT+IF+1EcCcjdprpZUxHQiyLOSW34mZjTqf2CtGDmKqLDG4nbcEgmNJg/VHulKiMJv5nQCszElvS5awGTY6T21MgA=
+X-Received: by 2002:a05:6512:304f:b0:539:fb6f:cb8d with SMTP id
+ 2adb3069b0e04-53a15229db8mr7057177e87.27.1729581070757; Tue, 22 Oct 2024
+ 00:11:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022070127.66083-1-tony467913@gmail.com>
+References: <20241016034927.8181-1-yunfei.dong@mediatek.com> <20241016034927.8181-5-yunfei.dong@mediatek.com>
+In-Reply-To: <20241016034927.8181-5-yunfei.dong@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 22 Oct 2024 15:10:59 +0800
+Message-ID: <CAGXv+5H4BfUcDL1Rp+-CVefxdPtxxf63Bj+Ay9daMdy6127F3A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] media: mediatek: vcodec: remove parse nal info in kernel
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 03:01:28PM +0800, Tony Chung wrote:
-> This patch adds more kinds of baud rate support.
-> also fix all the coding style errors & warnings shown by /scripts/checkpatch.pl
+On Wed, Oct 16, 2024 at 11:49=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.=
+com> wrote:
+>
+> Hardware can parse the slice syntax to get nal information in
+> scp for extend architecture, needn't to parse it again in
+> kernel.
 
-Hint, when you say "also" in a patch changelog, that's a huge hint you
-should split this up into multiple changes.
+Squash this in with the other "add extended architecture" patches.
+You are removing code that you just added. So why add it in the
+first place?
 
-Remember, each patch should do only one logical thing.  Do not mix bug
-fixes or new features or coding style changes in the same commit.
+You can just mention in the commit message that the new architecture
+can parse the slice syntax directly.
 
-thanks,
+ChenYu
 
-greg k-h
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>  .../decoder/vdec/vdec_h264_req_multi_if.c     | 24 +++----------------
+>  1 file changed, 3 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h26=
+4_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec=
+_h264_req_multi_if.c
+> index 69ca775bb3f1..c99a64384edf 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
+ulti_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
+ulti_if.c
+> @@ -802,11 +802,10 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vd=
+ec, struct mtk_vcodec_mem *bs
+>         struct vdec_h264_slice_inst *inst =3D h_vdec;
+>         struct vdec_vpu_inst *vpu =3D &inst->vpu;
+>         struct mtk_video_dec_buf *src_buf_info;
+> -       int nal_start_idx, err, timeout =3D 0;
+> +       int err, timeout =3D 0;
+>         unsigned int data[2];
+>         struct vdec_lat_buf *lat_buf;
+>         struct vdec_h264_slice_share_info *share_info;
+> -       unsigned char *buf;
+>
+>         if (vdec_msg_queue_init(&inst->ctx->msg_queue, inst->ctx,
+>                                 vdec_h264_slice_core_decode_ex,
+> @@ -830,14 +829,6 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vde=
+c, struct mtk_vcodec_mem *bs
+>         share_info =3D lat_buf->private_data;
+>         src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+>
+> -       buf =3D (unsigned char *)bs->va;
+> -       nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
+> -       if (nal_start_idx < 0) {
+> -               err =3D -EINVAL;
+> -               goto err_free_fb_out;
+> -       }
+> -
+> -       inst->vsi->dec.nal_info =3D buf[nal_start_idx];
+>         lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>         v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &lat_buf->t=
+s_info, true);
+>
+> @@ -846,7 +837,7 @@ static int vdec_h264_slice_lat_decode_ex(void *h_vdec=
+, struct mtk_vcodec_mem *bs
+>         if (err)
+>                 goto err_free_fb_out;
+>
+> -       vdec_h264_insert_startcode(inst->ctx->dev, buf, &bs->size,
+> +       vdec_h264_insert_startcode(inst->ctx->dev, bs->va, &bs->size,
+>                                    &share_info->h264_slice_params.pps);
+>
+>         *res_chg =3D inst->resolution_changed;
+> @@ -1078,11 +1069,10 @@ static int vdec_h264_slice_single_decode_ex(void =
+*h_vdec, struct mtk_vcodec_mem
+>         struct vdec_vpu_inst *vpu =3D &inst->vpu;
+>         struct mtk_video_dec_buf *src_buf_info, *dst_buf_info;
+>         struct vdec_fb *fb;
+> -       unsigned char *buf;
+>         unsigned int data[2], i;
+>         u64 y_fb_dma, c_fb_dma;
+>         struct mtk_vcodec_mem *mem;
+> -       int err, nal_start_idx;
+> +       int err;
+>
+>         /* bs NULL means flush decoder */
+>         if (!bs)
+> @@ -1117,14 +1107,6 @@ static int vdec_h264_slice_single_decode_ex(void *=
+h_vdec, struct mtk_vcodec_mem
+>         memcpy(&inst->vsi_ctx_ex.h264_slice_params, &inst->h264_slice_par=
+am,
+>                sizeof(inst->vsi_ctx_ex.h264_slice_params));
+>
+> -       buf =3D (unsigned char *)bs->va;
+> -       nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
+> -       if (nal_start_idx < 0) {
+> -               err =3D -EINVAL;
+> -               goto err_free_fb_out;
+> -       }
+> -       inst->vsi_ctx_ex.dec.nal_info =3D buf[nal_start_idx];
+> -
+>         *res_chg =3D inst->resolution_changed;
+>         if (inst->resolution_changed) {
+>                 mtk_vdec_debug(inst->ctx, "- resolution changed -");
+> --
+> 2.46.0
+>
 
