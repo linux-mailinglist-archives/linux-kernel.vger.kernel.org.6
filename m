@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-375834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2EB9A9B7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6E19A9B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D71B1C21578
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:51:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9958282F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18C7155326;
-	Tue, 22 Oct 2024 07:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644C3154C07;
+	Tue, 22 Oct 2024 07:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mudIEwTw"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="vPVWn65+"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB4813AD2A;
-	Tue, 22 Oct 2024 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CE3132120
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583449; cv=none; b=BUrXVH7DNFoL5etm2KUccvkzGH0o/ku9AcBCaeOoaoBTeUrSflUZgJhi3i2iFUW3pvdKqdIMLyOpIdFH1zB1oweepfbf6JlKZ9LSwzz0LJupF+45gpntZDrTjGVRTCAViPltCg2bMc2NyxJ5wXthUdwIaXW9et2XGl+db72bg/8=
+	t=1729583873; cv=none; b=f+3ZWBWiOljBodKBDx4Dsq132w44nJVxXDrayjT2LHiJErnyNfpwFE5rVLrHY50WymZfb3oZV3AfqUSWc2jyRjYQPBlOuwqbu0R+aM1L92UsSuV5ks7ZegZ2JIo/vq8+3hkYdX8MwReXLKhKi7U0FrLUvOUGTbBum+cJ38QlHDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583449; c=relaxed/simple;
-	bh=FFkqX8JXSwAe5nloeMb6u4fpSIZT16b4DjZAifoQqCQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nz+xsfYuBW6vdukMd6wTFvqLR6MP/m4t9bi40pimCkRiSTyzh781qul2qDNRJT9KwhNFTLKUT7zvyL4MvYCnkoDI2jSBGUHY0yZG81gZKddktYKB1OXakj0goMBQsEL1vU+91OnhdYjuC+rfhG6fhmipsTnhOkjmUoDGqScj6rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mudIEwTw; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LI0wrf012434;
-	Tue, 22 Oct 2024 07:50:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=E3OAqgJqJplSETmxkoQm58tf
-	JNZ2u+eymO4b66DsCoM=; b=mudIEwTw6qoSU1vE1u/KUoDo0/Pa/uha++bS9Ltq
-	Fy8K+4p6tfC126fkakCd4UaucGEPXKk6v/IW+K3RZe25FUgXwD14thhwpU/xSXKz
-	JRVxMVhL6el7v36GC9vYUoh86IJTW4NPQWWcYcDS1F1/V9pafiUd0q5dfZLq+iv2
-	/uh3pgzYlVPTGpVGA7/GRVp+oQXGyCpYVoKkT5QNkvORYvPIs3nK3Q47P4p5XN6i
-	oXXNc1UenH2hvwXWmpaHvsf7lGPaPABxgXq0qd8qkuY83b4SA65c/stwpDcw5IhK
-	dzCnKUxoJahaFEnzwp5GTwxpCG2awaH+fjt8pO5iOJAXJw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vc7fv6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:50:28 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7oRTn002734
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:50:27 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 22 Oct 2024 00:50:21 -0700
-Date: Tue, 22 Oct 2024 13:20:16 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <djakov@kernel.org>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <nfraprado@collabora.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <netdev@vger.kernel.org>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: ipq5332: add support for the
- NSSCC
-Message-ID: <ZxdZONgqUag9kJ2L@hu-varada-blr.qualcomm.com>
-References: <20240829082830.56959-1-quic_varada@quicinc.com>
- <20240829082830.56959-8-quic_varada@quicinc.com>
- <hvbrd7lyf4zjhwphxiephohuoy7olmqb5hxsa4qnidmuuae45p@swezjh3lfpzi>
+	s=arc-20240116; t=1729583873; c=relaxed/simple;
+	bh=cIMuP7WCyt24tGuPML+XaNscbZ26ovd0hn6a8KtrjLE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=GFJ1ge7/PigkVRNC8NtcVlsjSrMFwPaz4DEJUlUOydinlr0G/2OFJxugSD2gn1eTN7uqCjo6Y26x4++Cb4NaGEI3CIXEpsIbUBfpB21OdZu76e0I9+ePSvdjqvHJP4rn8IuuQtPbtXi9nItf4ZngDog5HCFIsIRXvjxRmoYhoUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=vPVWn65+; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1729583861; bh=cQX4zmQ3JZpJligQAgb5LAogmr4DT45EMpZD569++A8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=vPVWn65+GONZC81ULUtk/1X9PqOj6IrEEIDHPl83cEOiCrKtyH4Px31/gZ7twHzLr
+	 tiSb0ByIxqRIWvlEztIqGm17PqbgiRCt9HpUdANlZLC1tkHZC8dg2RuskgaD2SnNSg
+	 YKeUtJ6OUlgI7nAGAdfEQfjBjQul9nEgk2EtJAcg=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id CDB068E2; Tue, 22 Oct 2024 15:51:27 +0800
+X-QQ-mid: xmsmtpt1729583487toip664ki
+Message-ID: <tencent_85E3BD8449176BF76DA6DE736BA36E097705@qq.com>
+X-QQ-XMAILINFO: MmGwrenOE7FGGUE2YaI0xVeTcxrim8uxioOhst+zM9dvyUq18NYh1nNjYmFNa1
+	 09VFw/wRY5NG7elBko1pBQvkS0qIQpgI5gzcQ03prYH6oFYhdIlx6DMUrB4gOCkz8uIeZ4EYkypW
+	 78dOv/uGBt8rcg/3IopguMlENa2LbV4rfRghX+eyWayF5DGItTgY5qLXE+TBQQXiyoWVwXNTrJas
+	 tmgcqbRWd/U+y/yCBbR26IzRbH2kPkFotLCLdBU0XlDCg+5L7xAr1gPxDqbwY0Wbm0S3I9xlVo/B
+	 gSspTYmSgiK7acz5Z1g7OGIJ0hcTEo1O7VAMaqoVOpc2AbhKlh7u+y+2vQ/oNukF9ne31vvRUL9/
+	 e7asPcM72yD2nYH5ZUqRmCXn1AIRN5K1OJ+hAwDKphSjqbnErTsoja9Y+hvwqey9hRjL8zGSd6pq
+	 I3eb4el0DCuBbPdTLsUJkGOg2EnGKHDUPxR507fpYJUr6wngclSnWlouzDB5u2vx5i3Rn3VJPSNl
+	 FEr5ne1dwxGdgCJvvZgxQ/whCzDilNVwvTkIlB3g/r0zI0bUd8chFTTJtEVABPF+nLtfol+b7VEV
+	 +VidfXZfXkiHy00PADFKSETKqqGToi87oSUv0hdblSx9DzCfwgWvs4XpStkxDp66xtebzGNi6/M2
+	 KNfaWqeZaT88wb8clcLbRhU4qKE0kMQtyQjqYEpEa+7J1ZAsKNxVUpPszKiDXuAOcjxKQMGBRXao
+	 cntiYYFQlhk0Xr7LY4PCSNwHKcgX1lawiQIEisD/zlrkIvrgqTh+qqPc+u5I/BTa9LZF5uq+2IaI
+	 t+LT7+OZVJKq2CGjabKfShSy2dn5WuZKVg55TIdziqBDnb1Qlx+F7VrtgUSgV6bOsH0DbaRoa2sW
+	 929epe3lERGrPc6v6eaEoSawcZxMl+YcLRAFlLS4M3Rlyasmbhl5I=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a234c2d63e0c171ca10e@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [serial?] BUG: soft lockup in debug_check_no_obj_freed
+Date: Tue, 22 Oct 2024 15:51:27 +0800
+X-OQ-MSGID: <20241022075126.3462235-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <6713d23a.050a0220.1e4b4d.0029.GAE@google.com>
+References: <6713d23a.050a0220.1e4b4d.0029.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <hvbrd7lyf4zjhwphxiephohuoy7olmqb5hxsa4qnidmuuae45p@swezjh3lfpzi>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Jzr-NvcTDyNsO1DpnpI8DxZ-0T4akIq3
-X-Proofpoint-ORIG-GUID: Jzr-NvcTDyNsO1DpnpI8DxZ-0T4akIq3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 phishscore=0 bulkscore=0 mlxscore=0 adultscore=0
- mlxlogscore=956 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220049
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 01:21:20PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Aug 29, 2024 at 01:58:29PM GMT, Varadarajan Narayanan wrote:
-> > From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> >
-> > Describe the NSS clock controller node and it's relevant external
-> > clocks.
->
-> Who generates these clocks? 300 MHz crystal?
+directly use the simpler _irq() lock/unlock calls instead of the more
+complex _irqsave/_irqrestore variants
 
-These two clocks are from the output clocks of CMN PLL.
-IPQ5332 CMN PLL patches similar to [1] are in the pipeline
-and should get posted soon.
+#syz test
 
-1: https://lore.kernel.org/all/20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com/
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 5ce473ad499b..936c94655e35 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -958,7 +958,7 @@ EXPORT_SYMBOL_GPL(debug_object_active_state);
+ #ifdef CONFIG_DEBUG_OBJECTS_FREE
+ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ {
+-	unsigned long flags, oaddr, saddr, eaddr, paddr, chunks;
++	unsigned long oaddr, saddr, eaddr, paddr, chunks;
+ 	int cnt, objs_checked = 0;
+ 	struct debug_obj *obj, o;
+ 	struct debug_bucket *db;
+@@ -975,7 +975,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 
+ repeat:
+ 		cnt = 0;
+-		raw_spin_lock_irqsave(&db->lock, flags);
++		raw_spin_lock_irq(&db->lock);
+ 		hlist_for_each_entry_safe(obj, tmp, &db->list, node) {
+ 			cnt++;
+ 			oaddr = (unsigned long) obj->object;
+@@ -985,7 +985,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 			switch (obj->state) {
+ 			case ODEBUG_STATE_ACTIVE:
+ 				o = *obj;
+-				raw_spin_unlock_irqrestore(&db->lock, flags);
++				raw_spin_unlock_irq(&db->lock);
+ 				debug_print_object(&o, "free");
+ 				debug_object_fixup(o.descr->fixup_free, (void *)oaddr, o.state);
+ 				goto repeat;
+@@ -995,7 +995,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 				break;
+ 			}
+ 		}
+-		raw_spin_unlock_irqrestore(&db->lock, flags);
++		raw_spin_unlock_irq(&db->lock);
+ 
+ 		if (cnt > debug_objects_maxchain)
+ 			debug_objects_maxchain = cnt;
 
-Thanks
-Varada
-
-> > Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v5: Remove #power-domain-cells
-> >     Add #interconnect-cells
-> > ---
-> >  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 28 +++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > index 71328b223531..1cc614de845c 100644
-> > --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > @@ -16,6 +16,18 @@ / {
-> >  	#size-cells = <2>;
-> >
-> >  	clocks {
-> > +		cmn_pll_nss_200m_clk: cmn-pll-nss-200m-clk {
-> > +			compatible = "fixed-clock";
-> > +			clock-frequency = <200000000>;
-> > +			#clock-cells = <0>;
-> > +		};
-> > +
-> > +		cmn_pll_nss_300m_clk: cmn-pll-nss-300m-clk {
-> > +			compatible = "fixed-clock";
-> > +			clock-frequency = <300000000>;
-> > +			#clock-cells = <0>;
-> > +		};
-> > +
-> >  		sleep_clk: sleep-clk {
-> >  			compatible = "fixed-clock";
-> >  			#clock-cells = <0>;
-> > @@ -479,6 +491,22 @@ frame@b128000 {
-> >  				status = "disabled";
-> >  			};
-> >  		};
-> > +
-> > +		nsscc: clock-controller@39b00000 {
-> > +			compatible = "qcom,ipq5332-nsscc";
-> > +			reg = <0x39b00000 0x80000>;
-> > +			clocks = <&cmn_pll_nss_200m_clk>,
-> > +				 <&cmn_pll_nss_300m_clk>,
-> > +				 <&gcc GPLL0_OUT_AUX>,
-> > +				 <0>,
-> > +				 <0>,
-> > +				 <0>,
-> > +				 <0>,
-> > +				 <&xo_board>;
-> > +			#clock-cells = <1>;
-> > +			#reset-cells = <1>;
-> > +			#interconnect-cells = <1>;
-> > +		};
-> >  	};
-> >
-> >  	timer {
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
 
