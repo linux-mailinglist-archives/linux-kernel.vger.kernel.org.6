@@ -1,502 +1,356 @@
-Return-Path: <linux-kernel+bounces-376501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952BF9AB275
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A9F9AB254
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493CC2843C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D277E283743
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9947E1BCA0E;
-	Tue, 22 Oct 2024 15:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7D41A705C;
+	Tue, 22 Oct 2024 15:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CC/m5DRh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S52lKPhH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452DB1B5EB0;
-	Tue, 22 Oct 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611917; cv=none; b=Mxqs/hEiqEMmiI7KCSzfrYD2hL54U5n46munnx/xoQhtXlfAF9tfpoHkYw6Lajt85224x7uCoC62ec2CiqoEN2LZaqvmzOd6Is+vDAeUJVskIBf/3n2+ntZFUGJxzlh3IDY8Th2JvXa4PcYWQjgw3Iccazh8cRo/4njSlio+LXw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611917; c=relaxed/simple;
-	bh=513CsyhV/ZTzfO1CeBeYxWkSG45NVUF8T+D2EZPs0oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qs0VvbHY24KVD+irQg1x7YbcygAjUN6PLWHHPXuTxxqEi6PCvhjSynq0PMtERV6ArWMMFTcWih93w72RSr2g7Gms2EyrbnJJ0AghtHpjJlMPHsJWYkCwN5VMNKlTav8ITNctGQTJDZ80TofC2VjR3vEWQnGf8MOUcut4XHF0pNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CC/m5DRh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729611910;
-	bh=513CsyhV/ZTzfO1CeBeYxWkSG45NVUF8T+D2EZPs0oA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CC/m5DRhG0iwUnMMw1PaGiD4H0BA6tRi32e/7oE9sxnKGG2bUJ5K7OKn0FVT/Y/71
-	 y7h42tCOYr/2R3R1x+TwuxoQ4aDelNOkhg1OPAgImjwFDqq5t8brUYEKxOzY5zHBuE
-	 UU1PNjAPdQDyWT+DlRVBVvczx9fAUNuVJbJk7MAYCUrCNRzuScByrTiaBA8Cwikpg9
-	 jO310doCik/ew9/OcqMj07G7Ylak2q8VX002+9AvFfBMfeTpsR6X8hGEoJEkWzIb2H
-	 eZ2++lQLjCsS/UtNHbnvXMHbMkD1msEDIRSQ7B+1ys7MAfjZ44hBSWWcm3DuFcF6pJ
-	 jp2Lx48iiAzLg==
-Received: from jupiter.universe (dyndsl-091-248-085-026.ewe-ip-backbone.de [91.248.85.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EEE9A17E3684;
-	Tue, 22 Oct 2024 17:45:09 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 71A22480100; Tue, 22 Oct 2024 17:45:09 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Mart=C3=ADnez=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v3 7/7] arm64: dts: rockchip: Add GPU power domain regulator dependency for RK3588
-Date: Tue, 22 Oct 2024 17:41:52 +0200
-Message-ID: <20241022154508.63563-8-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241022154508.63563-1-sebastian.reichel@collabora.com>
-References: <20241022154508.63563-1-sebastian.reichel@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10ED1A3A8F;
+	Tue, 22 Oct 2024 15:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729611753; cv=fail; b=ESBamJgMzGLt9KhqFgaIa47fAguKdvTf38/5EUtuQag+NuI0qa6+fdL/C8tapJbRhSdU64tdlq8UKPEGWjAlvNFXOPWIwcLmB/iyUSvVE4Uj4b6GPvsaClMVKFG/vPwf86FnDvBFgvJqYcO2u11tcb9bMsUbyxsInEWrcXw8yfY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729611753; c=relaxed/simple;
+	bh=p8znTkWCOTMsMEuq5NaDiVSXvx3tT+CA4lrCkFYdpio=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MIWM8MbslpD5FH/bNS1KsO/XTl4tgLAyC8MOeE9RjR4b3Mg5maXJwqg0psNBXtyIhBzNVPM3LiC2kiEpBESEaOeAH/8UOEDR6v7ffdWfDxdamS1SMet4ljGsyT/5qnSf1UjOkaN6QAxHRHXMF3DHx6kQxefDw202djfmWlbYZjo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S52lKPhH; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729611751; x=1761147751;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=p8znTkWCOTMsMEuq5NaDiVSXvx3tT+CA4lrCkFYdpio=;
+  b=S52lKPhHrjRbl6W+F/+hfcYGT/re/nW49skK0yj0T6cM4zCjY62KgAak
+   CRyvvdG97E/z8V9JnpBC2w6ioeqIB2XQrBTXujozMh2Yt2kSJpP9gsi/G
+   aUquYGBIC0XtsVLS0KtiYGepJfclgDwPbI/XPbevosZMM/SeRbhqsGaQq
+   NXnCTN2FSe2XDagbqWTloyrCRth5gIM2PIqx6pNXzvaghOSx1XhWZ5LMs
+   jrYx9qtmb2h3Jy+Ht/2b8G48bm6AkeowEp0/LqgxJmKO5eYlQ51rZBJwf
+   lDVTnqSu0ePLOOPPWa2+rIRlUMwzeKMj65f0Pq5kvPSYrdob/fUJqV4j1
+   w==;
+X-CSE-ConnectionGUID: hx5+9RdGQZiH8PEV0MyIFg==
+X-CSE-MsgGUID: 3m9urmScTqGHV+BLvtfXOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="28592822"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="28592822"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 08:42:31 -0700
+X-CSE-ConnectionGUID: UmZS/91VS/23PubkN403tg==
+X-CSE-MsgGUID: rZDe9wGORaq+vXeMRHpZ0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="79831450"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Oct 2024 08:42:31 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 22 Oct 2024 08:42:30 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 22 Oct 2024 08:42:30 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 08:42:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FlsjWmp+37vW8dQ5TYRc/75smWXmkTIw+e0RfvDsGzVjDP/O/5ad8f3ME6pzaZ6R8lbFJMiKahFzy3LcZNfz9cmxJl9oFyT9AKkyBGtJRofPJZ9DI9AG2StjEZBgkx1oxYlsyW9H/t8WgO1obElhbJSdGhoEmdKxPNM4kqG0M5pReoXyHETWV9M8bMsYpDdC8b7d4tQEYqBXc2+Vt2ckU86OkFzUpoddh1skqdQoxtJYq96zZO7WJL5ci6oFSvEWvm7prifefui+7qTMWiuwQDlSyRPeUKWJ5izoPN3c7sWovhfJch5YPGmiwW/NmzbRzY0jSJzgs95IoMZwSm7Wmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=65ilzUApj7HEXT8ZlLLW4eZ1tcySdfzas5MCd5DEr7k=;
+ b=XgEkZ5/9A+fLbtIVD8b3RSlCI3A6lBxpxsrIYT2ou/gGEnFz7kFkjUDC7Q8fVAuwJAntSDkbt9GisY0XZ7VGqi4rOourAmWQOJFjSCI1pQPx945lQIPpAtMYWX1udmo8k3Znq5WxaU9CMBZ5FMNLdsBFRDrrYvEWR7jkpiPVZcOCk+IRlQyxs5PPWzDKpgZgPqNJPHTOoDcuJtmeh9q7hCA3d6BIBpv5OCmRg7mDw1GYy0T+9Hpwvt13nLattbMlEew9ELMZZceaWSPsam+ijUwjUfRM0xtQBEZEiklPtky8Av1rjqOvWjzoIt2KY/NtD+ZtImfd5IBxCYMgPz3IzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
+ DM4PR11MB8092.namprd11.prod.outlook.com (2603:10b6:8:184::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.16; Tue, 22 Oct 2024 15:42:26 +0000
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca%5]) with mapi id 15.20.8093.014; Tue, 22 Oct 2024
+ 15:42:26 +0000
+Date: Tue, 22 Oct 2024 17:42:13 +0200
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?=
+	<toke@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
+ Nakryiko" <andrii@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, "Magnus
+ Karlsson" <magnus.karlsson@intel.com>,
+	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 16/18] xsk: add helper to get &xdp_desc's DMA
+ and meta pointer in one go
+Message-ID: <ZxfH1VmjcVdLeKUo@boxer>
+References: <20241015145350.4077765-1-aleksander.lobakin@intel.com>
+ <20241015145350.4077765-17-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241015145350.4077765-17-aleksander.lobakin@intel.com>
+X-ClientProxiedBy: VI1PR07CA0137.eurprd07.prod.outlook.com
+ (2603:10a6:802:16::24) To DM4PR11MB6117.namprd11.prod.outlook.com
+ (2603:10b6:8:b3::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|DM4PR11MB8092:EE_
+X-MS-Office365-Filtering-Correlation-Id: e34b68c2-9c2f-4141-a8f5-08dcf2b02142
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+c7ct68Rvn2NiQ5+7ty2GxB2F5sVrxDhEo7zkIDOaKb6y7h4Z1ExzRdYTH2E?=
+ =?us-ascii?Q?kHSX7ZxkAYIWwbxbA9aG/PLGHaVBMINPcJKk24JmtfqwgC9wI3lbH2vYAkzd?=
+ =?us-ascii?Q?S4vjzKxoj9ngy7g0RPYzEgrhR0Svl932fIAHb5MmuE3zPc3elkrlgrFCoFyb?=
+ =?us-ascii?Q?ownG/bjO22cN00K/x2Sc50tRb6X9bODA1n8UUkJ7hwog7BlLYJn+0b8eAhl3?=
+ =?us-ascii?Q?UbPl+CtGGU2CL+DhmVdhJ98cudN7Qj9gplBcV5CjgOFtaUnagvfDGfwPqNPp?=
+ =?us-ascii?Q?eBXYLu79QfPvS1LXpSRMmDVdudAExNNyJmgSFPB7DEuh/1zMy7VBDUXjD2xu?=
+ =?us-ascii?Q?leENZvATbbXrz1owuZAxWjLmKhMeE27mMPehlRPKJmArKu4x6nLXXvXDgKJZ?=
+ =?us-ascii?Q?lIjYfSxGr4cQTsuUipmu6FL10NfJY8L5ylPCehw4mjiWCS89FZp2Vjm9HwdJ?=
+ =?us-ascii?Q?zcEmToCHp/SjzEAoJraqmq1YiTiaO5AChPREjRSLt2NwKelhXFBYqaQRu1fL?=
+ =?us-ascii?Q?DGpiG+vNtlRGCEERVPRWUnGjT54Q3wGM+47pZmW5KN8r1NteYDw3PBPZ/8tg?=
+ =?us-ascii?Q?jE0EbvVmVBX/iEKfOHRgESDuL+ia7OSFmXRNqlAA/qsmYeRQODbBJqj0mygz?=
+ =?us-ascii?Q?Xjtf3WG9bbziv9+PV4Sa6YYkuvezUXjwjfRLjkz+LE0ObJ70qZ0FqSpfwHgv?=
+ =?us-ascii?Q?ZkHhIJqGnQ0oX2EV4VKrjjOdCV/YhvZcVzp3EQO8HQGWQ9Otb8Ssea7zdC0m?=
+ =?us-ascii?Q?7vuhjR5gUYAQzmFHKocnFs8yyRRdaFJbDZvbBxox4wwBXyDvGmEgmOg6KPVd?=
+ =?us-ascii?Q?pABvF8bLU1Iiw70h6AC4bDy9aqKX2sffsCDWvibMW2eSceQWeihpA/Pm2vp9?=
+ =?us-ascii?Q?nZ/zC0gJOQTM6d7OpCTpLhxcCE7GHfda0eFK4Bu7QLcLGdC5URSVO5WZkDqs?=
+ =?us-ascii?Q?4cGLxcmPQ+My8CrMK01oEOT05sQHLrzKxRcz6UzkA4//ufCM75ipl53kKqDm?=
+ =?us-ascii?Q?MSfwUiFwy691nQnNSfe+l6RQQxAeJYYwLSccQ06vX7x8xFgtBbQeDVHLbUNW?=
+ =?us-ascii?Q?+Cvnyp0FxUQSS94ZbjGIuPldhkSOiQIAtrFEv9UClWwmPmbunVAFTEc/7CIq?=
+ =?us-ascii?Q?Z8zIc3MopPC1ZJykfxrzsY4+Sv+DFF3bNWrhTAGPtlH6+2KbFYimKwk6uyNr?=
+ =?us-ascii?Q?L0ZzDwCco2p4J1zULG2nTMXQyHPTZVaQwTdNsS019TQyPo8AeRpoxZuOyrFp?=
+ =?us-ascii?Q?e67j17l+sjT7m8c6FwbUrB+WXm1lZPVz5YBIPtsRKmgX1ynLHn3iTbBVzfdu?=
+ =?us-ascii?Q?b/U=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VHIYy9p1MsGeMUBDd4dDXC7CkUfik36sOMXgrjD92l1ce6rz5Ffzg+V6JKri?=
+ =?us-ascii?Q?4/heVP7kp0QtJeLOTXMXkImhifmycVQ1EFVYDpfAwxctdAilRJITqLWKym45?=
+ =?us-ascii?Q?jG9/hl7UcBxtPIR2sGpR6WSqNfGTPcsF2eXHzfOE1t89PAALhcYubLy5/5pD?=
+ =?us-ascii?Q?tIRgsiYVKi0VZoGl7Nq8kJnUnzQ5azni76Gr+yptogt4/Lniij7VzTb0S+4r?=
+ =?us-ascii?Q?fIL9iaaedzPOJgsMfYOyu8ve+btYKWF4Pl1nRsf2rbLgNduOZnD51iAG3xRH?=
+ =?us-ascii?Q?cpYii8MhXyAILhDd+NjpHbrcDIEIpd/JNezWm7+hpO5Ef4qHaQPnbRrGJ+Iy?=
+ =?us-ascii?Q?D1CAtgfSOwuEIDFVcmIX+vfpcHts+6RSSN+XNig7iV3WtKGd52wgPTntgSMZ?=
+ =?us-ascii?Q?1DnXrzTS/SKuUu6mALJ/QS5J0+MmA1tX5M3FBqc6WJL6ybVUoY84Pl+uy4Ga?=
+ =?us-ascii?Q?DMItFU1cYVIg2pBjJHFADayt9IFPcOdk9Kjp2/f/yIyKLXE8CMKT+2/AUKip?=
+ =?us-ascii?Q?iEsC3mz3jiVash9AXY+66tRNjvii2MKfqlUx9haR3Ku9i+S8P8RkWDDtBKk8?=
+ =?us-ascii?Q?DWM1RGb4mEepCoQvJ1+TR1h9F+FwYoJnFge4hxhZb81hrYH1JsOZYrbM0RD9?=
+ =?us-ascii?Q?VygoChJDcOU9JWPQkUiTrs1lD58tgpoPH9XKhBYVr0nD5zwxF3Ovc2qqSuH5?=
+ =?us-ascii?Q?6+FopAM6yGDNMt0ztc8ebrAsQByO5bLXbD9X2M1ujyfqbl3M+bfw+q476Dzo?=
+ =?us-ascii?Q?JBuqIU0BnaEBlSn/pRzFMjZl4+2YdizBqPC2nPrh2I6sUjhE6a1cOGC6wXNF?=
+ =?us-ascii?Q?sRrGDi61fJ7Oo3x9ZatW1agQ6OWs3fs1oOQzHriQHJx6xvRLIkTDxHIM5IA0?=
+ =?us-ascii?Q?0MQYssT3FLMAIKeoY+hVXwprydjqH+sZ1Mo+wSR81NQHEnMb7AUooVDkCCVA?=
+ =?us-ascii?Q?cRFv0ly6LaAaD79j1R+TR0/q7EEy5sLJOxgBnsh11Ke859egObXcHAJMWuOs?=
+ =?us-ascii?Q?DYqz7bGXGkxG96en2U/dOQi6y1wQpO2PMcNvkEV2pHC75HN2MysFSVmrX8N/?=
+ =?us-ascii?Q?jZH0bmxd8urX72tIR5CWutkkI4GWcwgkIl2OI7s1kx/OIqgL3uZnQs+KBBy+?=
+ =?us-ascii?Q?UFGV6xunBBNflhcatDX6ORRMk9vMy4iRMPI0uMuSWXUmYK55I8Fy7uk4Lqu6?=
+ =?us-ascii?Q?SfV2dHeb8ziUGoRihgeIf0FQnGKg38eE0rBZ7HOM9VOK13/NsGtmZAcI/Kv7?=
+ =?us-ascii?Q?PfT0FzceVeEenOmGGlYmizFDj9ORT0IjWFqllI4SIR5rNbVM9dyJsaacGmXR?=
+ =?us-ascii?Q?84mx/xdk/Rru1Y8/Jddr7eAcZLVWnDLcpJTj9RD6Ub6SYjE5JRXicrqfVp1z?=
+ =?us-ascii?Q?uRX2BWpIMhardlR8AS4zE4G/6thx0sF0RXvDaaJWMJgv9RPXzu+4zzO+pVGH?=
+ =?us-ascii?Q?tjVwX4vGaKfpSVxDOuZ04sliBEC6NaFi13HyO23OAZ84EHJ5Wx5IrqM6kjyJ?=
+ =?us-ascii?Q?fE+QnhFSx66pP2lDoQ9jy/wo7jieR455duJfB4Vk3GvnxMeuu3JeMeyhF0MX?=
+ =?us-ascii?Q?8arOe/FHY9CS2hcbB8M4dn9P/2c79X29zFDcqooxhQTCCTejLbLO+FnYqblv?=
+ =?us-ascii?Q?/A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e34b68c2-9c2f-4141-a8f5-08dcf2b02142
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 15:42:26.7612
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bxfneScIiLCPV4b8ptmzvdldGLwBmTzZZ+flrIaew9V62f2EdJhH7eRJFPs2fR9N1s45jVeE7BFJOmeZCeNJx/mQ4IrBNsAl63DtdW/LjjQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8092
+X-OriginatorOrg: intel.com
 
-Enabling the GPU power domain requires that the GPU regulator is
-enabled. The regulator is enabled at boot time, but automatically
-gets disabled when there are no users.
+On Tue, Oct 15, 2024 at 04:53:48PM +0200, Alexander Lobakin wrote:
+> Currently, when you send an XSk frame without metadata, you need to do
 
-If the GPU driver is not probed at boot time or rebound while
-the system is running the system will try to enable the power
-domain before the regulator is enabled resulting in a failure
-hanging the whole system. Avoid this by adding an explicit
-dependency.
+you meant *with* metadata?
 
-Reported-by: Adrián Martínez Larumbe <adrian.larumbe@collabora.com>
-Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts          | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi                 | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts              | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-fet3588-c.dtsi            | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi  | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts                | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi            | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts              | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts       | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts            | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi                | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts            | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts        | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts      | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts         | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts            | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts              | 4 ++++
- 25 files changed, 97 insertions(+), 1 deletion(-)
+> the following:
+> 
+> * call external xsk_buff_raw_get_dma();
+> * call inline xsk_buff_get_metadata(), which calls external
+>   xsk_buff_raw_get_data() and then do some inline checks.
+> 
+> This effectively means that the following piece:
+> 
+> addr = pool->unaligned ? xp_unaligned_add_offset_to_addr(addr) : addr;
+> 
+> is done twice per frame, plus you have 2 external calls per frame, plus
+> this:
+> 
+> 	meta = pool->addrs + addr - pool->tx_metadata_len;
+> 	if (unlikely(!xsk_buff_valid_tx_metadata(meta)))
+> 
+> is always inlined, even if there's no meta or it's invalid.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-index c667704ba985..00a1cd96781d 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-@@ -286,6 +286,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 811b15064851..a6b2855cda94 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -861,7 +861,7 @@ power-domain@RK3588_PD_NPU2 {
- 				};
- 			};
- 			/* These power domains are grouped by VD_GPU */
--			power-domain@RK3588_PD_GPU {
-+			pd_gpu: power-domain@RK3588_PD_GPU {
- 				reg = <RK3588_PD_GPU>;
- 				clocks = <&cru CLK_GPU>,
- 					 <&cru CLK_GPU_COREGROUP>,
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-index fde8b228f2c7..cf9d75159ba6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-@@ -277,6 +277,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-index 03fd193be253..381242c8d6db 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-@@ -126,6 +126,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	leds {
- 		led_user_en: led_user_en {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-index 7dc3ee6e7eb4..142e685ae513 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-@@ -485,6 +485,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	audio {
- 		hp_detect: headphone-detect {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-fet3588-c.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-fet3588-c.dtsi
-index 47e64d547ea9..799a71da7157 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-fet3588-c.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-fet3588-c.dtsi
-@@ -205,6 +205,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	leds {
- 		led_rgb_b: led-rgb-b {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-index e3a9598b99fc..1af0a30866f6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-@@ -256,6 +256,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-leds {
- 		led_sys_pin: led-sys-pin {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-index 31d2f8994f85..3cefaf830229 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-@@ -403,6 +403,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	emmc {
- 		emmc_reset: emmc-reset {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-index fc131789b4c3..30a5e4e9e844 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-@@ -519,6 +519,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-leds {
- 		sys_led_pin: sys-led-pin {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-index c2a08bdf09e8..a9c1fed929fd 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-@@ -312,6 +312,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	pcie2 {
- 		pcie2_0_rst: pcie2-0-rst {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index c3a6812cc93a..62863b6b1c88 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -389,6 +389,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-index e4a20cda65ed..c8efe60e93ca 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-@@ -348,6 +348,10 @@ rgmii_phy: ethernet-phy@1 {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-index d0b922b8d67e..0eadf4fb4ba4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-@@ -530,6 +530,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		rtc_int: rtc-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index 8f7a59918db7..717504383d46 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -465,6 +465,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-index 615094bb8ba3..1b5c4a7fd5c6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-@@ -317,6 +317,10 @@ &pcie3x4 {
- 	reset-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_HIGH>;
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	emmc {
- 		emmc_reset: emmc-reset {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts b/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-index d0021524e7f9..69aadc6c8b74 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-@@ -289,6 +289,10 @@ rgmii_phy: ethernet-phy@1 {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	rtl8211f {
- 		rtl8211f_rst: rtl8211f-rst {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-index dbaa94ca69f4..83fc7ff55157 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-@@ -229,6 +229,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	fan {
- 		fan_int: fan-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-index 074c316a9a69..d938db0e2239 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-@@ -329,6 +329,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-index 467f69594089..9b02cea96cdb 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-@@ -675,6 +675,10 @@ &pcie2x1l1 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	audio-amplifier {
- 		headphone_amplifier_en: headphone-amplifier-en {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-index d8c50fdcca3b..1126fb442516 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-@@ -416,6 +416,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	bluetooth-pins {
- 		bt_reset: bt-reset {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-index dbddfc3bb464..d29d404417ee 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-@@ -233,6 +233,10 @@ hym8563: rtc@51 {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	vdd_sd {
- 		vdd_sd_en: vdd-sd-en {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-index 4fa644ae510c..3dd8372b2578 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-@@ -326,6 +326,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-key {
- 		key1_pin: key1-pin {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts
-index 63d91236ba9f..5f32a339f5c9 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts
-@@ -401,6 +401,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	lcd {
- 		lcd_pwren: lcd-pwren {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-index feea6b20a6bf..ef3a721d1fc7 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-@@ -297,6 +297,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-func {
- 		leds_gpio: leds-gpio {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-index 294b99dd50da..a61864482f1f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-@@ -317,6 +317,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	leds {
- 		io_led: io-led {
--- 
-2.45.2
+when there is no meta you bail out early in xsk_buff_get_metadata() as
+tx_metadata_len was not set, no?
 
+> 
+> Add xsk_buff_raw_get_ctx() (xp_raw_get_ctx() to be precise) to do that
+> in one go. It returns a small structure with 2 fields: DMA address,
+> filled unconditionally, and metadata pointer, valid only if it's
+> present. The address correction is performed only once and you also
+> have only 1 external call per XSk frame, which does all the calculations
+> and checks outside of your hotpath. You only need to check
+> `if (ctx.meta)` for the metadata presence.
+
+IMHO adding this might confuse future users which approach should be
+preferred.
+
+Thinking out loud...couldn't we export address correction logic and pass
+the corrected addr to xsk_buff_get_metadata and then add it to
+pool->addrs. But that would require modifying existing callsites +
+addressing xp_raw_get_dma() as well :<
+
+Standard question - any perf improvement when micro benchmarking? :P
+
+> 
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  include/net/xdp_sock_drv.h  | 23 +++++++++++++++++++++
+>  include/net/xsk_buff_pool.h |  8 ++++++++
+>  net/xdp/xsk_buff_pool.c     | 40 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 71 insertions(+)
+> 
+> diff --git a/include/net/xdp_sock_drv.h b/include/net/xdp_sock_drv.h
+> index 6aae95b83645..324a4bb04431 100644
+> --- a/include/net/xdp_sock_drv.h
+> +++ b/include/net/xdp_sock_drv.h
+> @@ -205,6 +205,23 @@ static inline void *xsk_buff_raw_get_data(struct xsk_buff_pool *pool, u64 addr)
+>  	return xp_raw_get_data(pool, addr);
+>  }
+>  
+> +/**
+> + * xsk_buff_raw_get_ctx - get &xdp_desc context
+> + * @pool: XSk buff pool desc address belongs to
+> + * @addr: desc address (from userspace)
+> + *
+> + * Wrapper for xp_raw_get_ctx() to be used in drivers, see its kdoc for
+> + * details.
+> + *
+> + * Return: new &xdp_desc_ctx struct containing desc's DMA address and metadata
+> + * pointer, if it is present and valid (initialized to %NULL otherwise).
+> + */
+> +static inline struct xdp_desc_ctx
+> +xsk_buff_raw_get_ctx(const struct xsk_buff_pool *pool, u64 addr)
+> +{
+> +	return xp_raw_get_ctx(pool, addr);
+> +}
+> +
+>  #define XDP_TXMD_FLAGS_VALID ( \
+>  		XDP_TXMD_FLAGS_TIMESTAMP | \
+>  		XDP_TXMD_FLAGS_CHECKSUM | \
+> @@ -402,6 +419,12 @@ static inline void *xsk_buff_raw_get_data(struct xsk_buff_pool *pool, u64 addr)
+>  	return NULL;
+>  }
+>  
+> +static inline struct xdp_desc_ctx
+> +xsk_buff_raw_get_ctx(const struct xsk_buff_pool *pool, u64 addr)
+> +{
+> +	return (struct xdp_desc_ctx){ };
+> +}
+> +
+>  static inline bool xsk_buff_valid_tx_metadata(struct xsk_tx_metadata *meta)
+>  {
+>  	return false;
+> diff --git a/include/net/xsk_buff_pool.h b/include/net/xsk_buff_pool.h
+> index 3832997cc605..6c540696a299 100644
+> --- a/include/net/xsk_buff_pool.h
+> +++ b/include/net/xsk_buff_pool.h
+> @@ -141,6 +141,14 @@ u32 xp_alloc_batch(struct xsk_buff_pool *pool, struct xdp_buff **xdp, u32 max);
+>  bool xp_can_alloc(struct xsk_buff_pool *pool, u32 count);
+>  void *xp_raw_get_data(struct xsk_buff_pool *pool, u64 addr);
+>  dma_addr_t xp_raw_get_dma(struct xsk_buff_pool *pool, u64 addr);
+> +
+> +struct xdp_desc_ctx {
+> +	dma_addr_t dma;
+> +	struct xsk_tx_metadata *meta;
+> +};
+> +
+> +struct xdp_desc_ctx xp_raw_get_ctx(const struct xsk_buff_pool *pool, u64 addr);
+> +
+>  static inline dma_addr_t xp_get_dma(struct xdp_buff_xsk *xskb)
+>  {
+>  	return xskb->dma;
+> diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+> index ae71da7d2cd6..02c42caec9f4 100644
+> --- a/net/xdp/xsk_buff_pool.c
+> +++ b/net/xdp/xsk_buff_pool.c
+> @@ -715,3 +715,43 @@ dma_addr_t xp_raw_get_dma(struct xsk_buff_pool *pool, u64 addr)
+>  		(addr & ~PAGE_MASK);
+>  }
+>  EXPORT_SYMBOL(xp_raw_get_dma);
+> +
+> +/**
+> + * xp_raw_get_ctx - get &xdp_desc context
+> + * @pool: XSk buff pool desc address belongs to
+> + * @addr: desc address (from userspace)
+> + *
+> + * Helper for getting desc's DMA address and metadata pointer, if present.
+> + * Saves one call on hotpath, double calculation of the actual address,
+> + * and inline checks for metadata presence and sanity.
+> + * Please use xsk_buff_raw_get_ctx() in drivers instead.
+> + *
+> + * Return: new &xdp_desc_ctx struct containing desc's DMA address and metadata
+> + * pointer, if it is present and valid (initialized to %NULL otherwise).
+> + */
+> +struct xdp_desc_ctx xp_raw_get_ctx(const struct xsk_buff_pool *pool, u64 addr)
+> +{
+> +	struct xsk_tx_metadata *meta;
+> +	struct xdp_desc_ctx ret;
+> +
+> +	addr = pool->unaligned ? xp_unaligned_add_offset_to_addr(addr) : addr;
+> +	ret = (typeof(ret)){
+> +		/* Same logic as in xp_raw_get_dma() */
+> +		.dma	= (pool->dma_pages[addr >> PAGE_SHIFT] &
+> +			   ~XSK_NEXT_PG_CONTIG_MASK) + (addr & ~PAGE_MASK),
+> +	};
+> +
+> +	if (!pool->tx_metadata_len)
+> +		goto out;
+> +
+> +	/* Same logic as in xp_raw_get_data() + xsk_buff_get_metadata() */
+> +	meta = pool->addrs + addr - pool->tx_metadata_len;
+> +	if (unlikely(!xsk_buff_valid_tx_metadata(meta)))
+> +		goto out;
+> +
+> +	ret.meta = meta;
+> +
+> +out:
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(xp_raw_get_ctx);
+> -- 
+> 2.46.2
+> 
 
