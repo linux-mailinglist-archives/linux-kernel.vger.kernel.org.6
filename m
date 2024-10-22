@@ -1,173 +1,191 @@
-Return-Path: <linux-kernel+bounces-376654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0639AB47A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:55:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBD89AB474
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE7F1C22DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4366E1C22D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0881BC091;
-	Tue, 22 Oct 2024 16:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605111BC9E2;
+	Tue, 22 Oct 2024 16:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lu8U2R7B"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJSooZUE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A827A1BBBF7
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91EF256D;
+	Tue, 22 Oct 2024 16:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616150; cv=none; b=qtkairhLjyjqGp4IT8R+9jt8WZJOuEyU+oD+qn6LDNlr6HHGDcs8xjaMnKEIyaznDGW73pDynBTL6Ky2jbIhVlUKLQNAZoKaDbb8Ut+Y8eubf1x0SWaht+LqkUsoFyName6/IfhcoEfkhqKrTEc6V7S8oaOhdFrNkcXlyCfHtq8=
+	t=1729616051; cv=none; b=FSManAzXfl5xcBIlewrZsxW0+6KH3x84p7uG757soA2EdYhZPU12KNuqFVuQnMSf1ALFg9WPmW8YmN1u+Qxs+PxRBeXFjK8MNhiwUOyeYCiqMWIQOUMWNZucDekkqXp7SSKvrN4p22GF/hUZqmZmZXmIVKUBYAwhB6WS4M0Nj08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616150; c=relaxed/simple;
-	bh=+e6q9Fhz8aSdy1Z2tIYTTgkqd5/0R5U/RO7S+4nqmqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mdQaQIIUN+Z1fYmxWWGxaCJDQp1FHhFzi1vwysvvait67zB0g+e2jyMs5wn0LKoS9LRsKRBcTw30wdAwlqBztBwyzrY5VyW0TD53QerExTOASqg6N27qOkSj3Tpq3sWJ3RMcy3wzbKBQToeB8e5R6NbaVIXK74SEBBTA/wpIwWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lu8U2R7B; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so208164539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729616146; x=1730220946; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+e6q9Fhz8aSdy1Z2tIYTTgkqd5/0R5U/RO7S+4nqmqA=;
-        b=lu8U2R7Bwi4Adgdx/U/ZVYHuTGe6rQkyY3CeAXslvEthQD6fnCcGazQeRd3KpMVq3D
-         kHxWOezZgPOh1gU4E21JKOZkY7w8mehyHqmQplBn35aORI+QoC60GkuRjsorhvRBKGMx
-         QAvvsulA5w4K+/VFby6spJNecKv9RAndJSqxHG/MSiScdOKbbQjXGUTLOh64eJuEonVL
-         MyjETp6W+2K4E4c2p5xcSRvOoOWfbzc5vbL+jat2/7h2dmVVqX/agaxAElOEaaNNKXXK
-         82gRWx+IaSX4I7EDg/hNSrZGb6mykmof34C3FOFgvrFL4QuN/x2cZVEltqFd60UpnVXA
-         6zLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729616146; x=1730220946;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+e6q9Fhz8aSdy1Z2tIYTTgkqd5/0R5U/RO7S+4nqmqA=;
-        b=hG/OcP9hqDftCBNBR2e/2lavGSnEwGIiub5Giv+lcqvfytJ0U2GXjhuBnQy4n8CpkF
-         sRA1XMLNgVzDRQBRo5JBPAWjorUhmHTI3Cu5lTZvv/6Rs4IUsjYpqviawtdhMFx42YvR
-         vjbTol33I9b4Pwtt9hiynp6tRfgmaqpl6coPq6EvOyD+W8EG97V4T08oiZwsoVcn+W2/
-         cv8cNpaAPcEZ6iP4F6iIBeFg98J1gcFrI2339XtcfxMXDl1qlXBzSVZ2bwte8kfTxHDY
-         qLXlTOsppqEiJ/6LqphChBraAULuplmnPzzTy3iAQA1CJ8OFvtMLe3EF0+aO/YbDT+S7
-         CG8Q==
-X-Gm-Message-State: AOJu0YwzhX0rtk81BVLgHku5Kg7cNwHrvvl4l5V6QLUD0nptRN3h2sEN
-	302It3xj8VINg5AtnTcNGG7+mzdqBO3Y6aecUgAZ13WYH/C9Cmx455VM7A==
-X-Google-Smtp-Source: AGHT+IGDNQ0KQznepv7zqyOItqD3rin06YqQVwyET8jIZSiFKgMxfIX8Egcb9pA38atZkogTYwzGPw==
-X-Received: by 2002:a05:6602:3f8a:b0:83a:c296:f5b0 with SMTP id ca18e2360f4ac-83ac296fd5amr1224163839f.9.1729616146011;
-        Tue, 22 Oct 2024 09:55:46 -0700 (PDT)
-Received: from localhost.localdomain (174-20-195-90.mpls.qwest.net. [174.20.195.90])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1dce110sm173957539f.40.2024.10.22.09.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 09:55:44 -0700 (PDT)
-From: Shimrra Shai <shimrrashai@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Thinking about firmware and hardware description for latest Rockchip platforms
-Date: Tue, 22 Oct 2024 11:53:46 -0500
-Message-ID: <20241022165413.2156-1-shimrrashai@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729616051; c=relaxed/simple;
+	bh=21FGDlkDZDMyZ5GJ6BJz6Gt8X4VrzWOYX6AaQwHE7IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OE/kvF2zDE530RqBNzQOi1j2xvvun0Sn04i0CPQB3oy67w4gqG//5NIx69a5yXignVuYg59jNsh3ZrZkRGM4y5XOkUHxWgQGFnfNIi6t69xoyzFe/Bs3F9ZR2Voe0ieniNpIkDDQS7grxQRbXGHfkrcdqTLUySQv7RDmHn077l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJSooZUE; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729616050; x=1761152050;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=21FGDlkDZDMyZ5GJ6BJz6Gt8X4VrzWOYX6AaQwHE7IY=;
+  b=LJSooZUECVCZNtwLe94I02NTTQyeuqOb1FFrpGcUBJwbSPwVGCwvArMF
+   QMjccfbQ4qPY9k31Cs1geASWfVljjE79eNUF7Uk8y4Z62b3e950UjGk7L
+   7HgbeNu16XDb4wSDqzBPyXXrYeVu8pprrndTmt4bSCpky9d4oYaOVSkQx
+   BfYhPgA91n7ftRoNwIuSHEsxdTS5zQY2AXNKOXc0HrXYXwlUMMWyoCI8X
+   f01S6sNha6MSjBWDSxGOmoqFmI5V/1UHJyldPVJLA9eivNYWQl8reJROm
+   JvSwYnlqr2g3VCyRgjck9NpvP164h56+JOs9QKUQUjs43aF3z6f09CyPK
+   g==;
+X-CSE-ConnectionGUID: QJKsr1GoQiahiMjtaq/nsw==
+X-CSE-MsgGUID: o+UFr4bNQGetv/GVgNzuag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="33092301"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="33092301"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:54:09 -0700
+X-CSE-ConnectionGUID: eEdBCSfSRS2QY5tcIcJjHw==
+X-CSE-MsgGUID: wDFEbFreQGieR2D1CE4V0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="110751317"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:54:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t3I8x-00000005vZC-1mSW;
+	Tue, 22 Oct 2024 19:54:03 +0300
+Date: Tue, 22 Oct 2024 19:54:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	Philip =?iso-8859-1?Q?M=FCller?= <philm@manjaro.org>,
+	Alex Lanzano <lanzano.alex@gmail.com>
+Subject: Re: [PATCH v3 4/6] iio: imu: bmi270: Add support for BMI260
+Message-ID: <ZxfYq1Eo2xhVhIei@smile.fi.intel.com>
+References: <20241020220011.212395-1-justin@justinweiss.com>
+ <20241020220011.212395-5-justin@justinweiss.com>
+ <87msiwm90s.fsf@justinweiss.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87msiwm90s.fsf@justinweiss.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi.
+On Tue, Oct 22, 2024 at 08:50:43AM -0700, Justin Weiss wrote:
+> Justin Weiss <justin@justinweiss.com> writes:
 
-I was writing this because most of my attempts to contribute to this
-site (also with older email shimmyshai00@gmail.com) have been
-motivated by the fact that newer fast ARM SoCs like the Rockchip
-RK3588 and perhaps now the even better Snapdragon X Elite are potent
-enough to be used as at least a low- to moderate-grade desktop
-machine. And because of that, my ideal has been to try and help
-coordinate the development of both the Linux kernel and a suitable
-firmware package to make it possible for a user to load a Linux
-distribution ideally from a USB stick in the "normal" way that is as
-easy to do as on a regular x86 PC, and not to be merely constrained
-to vendor-provided images.
+...
 
-Particularly, in regard to the Rockchip RK3588, I think it really
-cool how far the support has progressed and that's very good news on
-that front, but one thing I'm starting to think more about (and have
-thought of before) is the firmware/boot loader situation, in
-particular with regard to the hardware description given to the
-kernel.
+> The ACPI IDs with device pointers are here:
+> 
+> > +static const struct acpi_device_id bmi270_acpi_match[] = {
+> > +	/* OrangePi NEO */
+> > +	{ "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
+> > +	/* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
+> > +	{ "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
+> > +	/* GPD Win Max 2 */
+> > +	{ "10EC5280", (kernel_ulong_t)&bmi260_chip_info },
+> > +	{ }
 
-As you know, the kernel currently uses a separately-provided Device
-Tree Blob (DTB) file for configuration, and the kernel source code
-basically has to know every board and device that exists. From my
-reading of discussions on this topic, this is often pointed out as
-being due to the fact that ideally one would want to have "good
-firmware" on a device that delivers a clean hardware description, and
-typically one deals with "bad" vendor-provided firmware with bad
-description methods, while the kernel DTBs provide a good idea of what
-such a hypothetical good firmware "should" provide. However, because
-of the need to have a specific device tree blob file for each board
-along with the kernel, one cannot just use the typical USB stick and
-install process at least with the commonly used bootloaders assuming
-a PC architecture.
+Cool! But please, keep them alphabetically ordered by ID.
 
-But obviously, that equation changes when you DO have good firmware.
-And that's the rub. Because this puts me in a situation that it
-doesn't seem hardly ever is discussed, probably because it so rarely
-exists - having simultaneous open-source control over the development
-of both firmware AND kernel. Namely, I've also been helping maintain a
-package for some of the RK3588 boards using the EDK2 Tianocore UEFI
-framework, which can be found here:
+Can we push OrangePI NED to go and fix ACPI IDs eventually?
 
-https://github.com/edk2-porting/edk2-rk3588
+> > +};
+> 
+> I pulled DSDT device excerpts for the GPD Win Mini (which uses the
+> BMI0160 ACPI ID, even though it has a bmi260) and the OrangePi NEO
+> (which uses the BMI0260 ACPI ID).
+> 
+> I couldn't find a shipping device with a bmi260 using the 10EC5280 ACPI
+> ID. Some prototype devices with the bmi260 may have used them:
+> https://lore.kernel.org/all/CAFqHKTm2WRNkcSoBEE=oNbfu_9d9RagQHLydmv6q1=snO_MXyA@mail.gmail.com/
+> 
+> I can remove that ID from this changeset for now.
 
-This type of firmware seems close to ideal; but it puts one in now an
-awkward kind of situation because of the HW description process
-mentioned. Namely, this firmware has the option to pass either a
-Device Tree Blob (DTB) to the kernel, OR use ACPI configuration as is
-used on x86 PC machines.
+Yes, please do not add anything that has no evidence of existence in the wild
+or approved vendor allocated ID.
 
-Now it would seem, then, that the most straightforward approach would
-be to simply bake a DTB in for the hardware, but the problem is that
-it appears that DTBs are continually revised in kernel development
-even for long-supported chips (e.g. the RK3568 and earlier). And that
-creates the possibility of breaking backward compatibility, so it
-seems there's a chance that if one were to just include a mainline
-.DTB into a firmware package there is no guarantee it will remain
-compatible forever with every future kernel version. And having a
-user have to upgrade firmwares all the time just because new kernels
-came out also seems kind of to defeat the purpose of having a
-firmware-provided HW description.
+> GPD Win Mini:
 
-And to this I can think only of two options. The first would be to
-have a "political change" on the part of the kernel developer team to
-agree to "freeze" in some part the DTBs for these platforms (I also
-seek to work on firmwares for the earlier RK3568 platform and perhaps
-also other RK35xx variants) so that they remain continuously
-backwards-compatible indefinitely. But I am not sure that would be
-something that'd go over well here.
+Add short parts of these to the commit message, or better split these to two
+patches each of them adding a new ID to the table.
 
-So that gives the alternative option, which is to do like on x86
-systems and start to add some form of ACPI support to the entire
-Rockchip driver stack, because the ACPI tables are maintained on the
-firmware side. However, it likely will still require a fair bit of
-back-and-forth here to do the initial establishment of a full
-"standard" of such tables for this kind of setup viz. my discussions
-in an early attempt at this on the I2C subsystem, e.g.:
+See below what I do want to see there (no need to have everything),
+i.e. I removed unneeded lines:
 
-https://lore.kernel.org/lkml/20240321173447.15660-1-shimmyshai00@gmail.com/
-https://lore.kernel.org/linux-arm-kernel/20240414000355.10984-1-shimmyshai00@gmail.com/T/
+> Device (BMI2)
+> {
+>     Name (_ADR, Zero)  // _ADR: Address
 
-but I never really got through to fleshing it all out, though now I'd
-be definitely more interested in reviving the project if that's what
-you would be interested in.
+My gosh, can this be fixed (seems rhetorical)? The _ADR must NOT be present
+together with _HID.  It's against the ACPI specifications.
 
-So I want to ask you: how should one go about this, or is it not
-possible at all?
+>     Name (_HID, "BMI0160")  // _HID: Hardware ID
+>     Name (_CID, "BMI0160")  // _CID: Compatible ID
+>     Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
+>     Name (_UID, One)  // _UID: Unique ID
+>     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+>     {
+>         Name (RBUF, ResourceTemplate ()
+>         {
+>             I2cSerialBusV2 (0x0068, ControllerInitiated, 0x00061A80,
+>                 AddressingMode7Bit, "\\_SB.I2CB",
+>                 0x00, ResourceConsumer, , Exclusive,
+>                 )
+>             GpioInt (Edge, ActiveLow, Exclusive, PullDefault, 0x0000,
+>                 "\\_SB.GPIO", 0x00, ResourceConsumer, ,
+>                 )
+>                 {   // Pin list
+>                     0x008B
+>                 }
+>         })
+>         Return (RBUF) /* \_SB_.I2CB.BMI2._CRS.RBUF */
+>     }
+      ...
+> }
+> 
 
-Thanks,
-Shimrra SHAI.
+> OrangePi NEO:
+
+Same comments for this device.
+
+...
+
+> > +static const struct acpi_device_id bmi270_acpi_match[] = {
+> > +	{ "BOSC0260",  (kernel_ulong_t)&bmi260_chip_info },
+> > +	{ }
+> > +};
+> 
+> I can't find any evidence of BOSC0260 being used, besides existing in
+> the Windows driver. As suggested in an earlier review, I added it here
+> to encourage people looking at this driver in the future to use the
+> correct ACPI ID.
+
+Are you official representative of Bosch or do you have a proof by the vendor
+that they allocated this ID? Otherwise we may NOT allocate IDs on their behalf
+and has not to be added.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
