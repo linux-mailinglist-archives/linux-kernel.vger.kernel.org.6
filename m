@@ -1,131 +1,219 @@
-Return-Path: <linux-kernel+bounces-375806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C039A9B0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:31:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E9E9A9B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8917B249CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008E61C21CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE6314F108;
-	Tue, 22 Oct 2024 07:30:55 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66841547E7;
+	Tue, 22 Oct 2024 07:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUyQdqqT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18200142E9F;
-	Tue, 22 Oct 2024 07:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F4913AD0;
+	Tue, 22 Oct 2024 07:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729582254; cv=none; b=JMLjEXTyw/2lHtwNPTWzbYQyJPgxqNBx1hDRnItLmMPhfhMUOHGQrSrRvK59U60fHh4c0QZ7EIZUIIbKG5LTShUqVtfnBZ5+97I3fGTxsevPkPoBq/2BonmGS1ntHeqxPG1auiFDTHIjkGWNTFLMyeKXkvaqLrVydTMJM/w2EEY=
+	t=1729582266; cv=none; b=TCcqMp/p80hNSekm4VgFhOyCh820SrY4y/gr53rQ09GmIhccf5mwsyQVC9XSNcPdcU4Vk2gsz1y1Y4QeIToW+9UW6uLvoQQPwx1+HDShh8pJ91hjrNkW/nM7EtJ8QEhwvtz1kdBMdx+H4rGvknX639qfQwRAPJj0P53Jb6RBoDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729582254; c=relaxed/simple;
-	bh=LCCgvALBtVJtoQAVEBfKrxNBsvLpoL4jYbU/bNJVzKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J6RY3V8CgGmor0nYwP3tYetU4UMLEjj5SY+tswKqEZBRvwFU8g/HqSmjQPMfhu8kGF7C6CNmwgwomUL6EfIdFIXuML1ioOXZy4WieVviM9dNQ2oc/KXbJj+/aJ51Qh57aWgtje/GBw4b6I59zMynKM7L1AtxWGgmOcXvH+PDO1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso5247249276.0;
-        Tue, 22 Oct 2024 00:30:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729582251; x=1730187051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HwVqq851J3GCQKvQLMtlo3IDhb4HTESD1/H77NNSSlk=;
-        b=HaHZz6DafardEkRCKIxJ/SvzpIQwCOXonGoZ964g2USBhEQsfnMo5cz4j5UtxsccsY
-         De835jeTmT3kQg0ivMn9vpaS44A9tSeN+W8Qb9NxuzSuHd1Hk+UxgoacPg2rX2I46OS7
-         uPsVkSitqGvIqWXsq+30DHnepAFRzVW62DY0BLw/WXcrjO5ZFo6PF6SJrPHssv9WOOhe
-         4hgc/vFBEI5QsLeqaejk77hO5g/Ri3t28v9t+LCda7QeUdvZdLbg2t2iOFZOT1dGrpaH
-         9SFdbU85uYA7tjq1I7+0C65mp5okZfjNutvzJV9DfnZmL9b5gi4Zu5sF7aqeLuRWscar
-         8yzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBJdJxQ11OMKufRWqW1y8r9fk9gB2QWnaRE2O0WN1KtRlBmTOfzSrbBPcVRy4+EmXpdeNBq/3hYwAG8s21wbQB5i4=@vger.kernel.org, AJvYcCXBsJN6KbKggWJ/WayZPyhMOqMajeKYY8zPjITbQM1Ek+FuDsAlpYZswK9+VtuY1mFOeKeKs0xmWO0NPAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyc2+GOQk0NF/LB/MAJp2YnRrW14OgPnMZ2Rz/OgjD4Dh9TJ1N
-	O8Xgg/wGI/UG46ooN2IHWH71KupSwjzoKqy+lv2quVdU7w6wk7L8n8aH7KW7
-X-Google-Smtp-Source: AGHT+IGYz3TNvwFYbviUtlfL2p16+NnfVagkeM+ZAxeRFNLU607TSq/jPZCPE5umPx2aUAbaxfRQTw==
-X-Received: by 2002:a05:690c:eca:b0:6e5:d1df:af with SMTP id 00721157ae682-6e5d1df1541mr105077447b3.4.1729582250916;
-        Tue, 22 Oct 2024 00:30:50 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ccb75fsm9848627b3.90.2024.10.22.00.30.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 00:30:49 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e5a15845easo46060017b3.0;
-        Tue, 22 Oct 2024 00:30:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4rzm/TO+rzf9zGBkXw70EULjj4yKWu5Jkmmw/eWX+K+JQmfxClzLc8uD/bnTh3NGOjgApHoLnG2uzgkc=@vger.kernel.org, AJvYcCWHUxJy1aYlA5zp0Q1SaGnj3U2PMWw7bvFQlHtg9jJj763xtsrySGRBsrNgIvXZvGmBAhmPksJkhF9xd3DnAixDeIo=@vger.kernel.org
-X-Received: by 2002:a05:690c:6186:b0:6e3:3227:ec64 with SMTP id
- 00721157ae682-6e5bfc0c79dmr139997027b3.35.1729582248743; Tue, 22 Oct 2024
- 00:30:48 -0700 (PDT)
+	s=arc-20240116; t=1729582266; c=relaxed/simple;
+	bh=HCIa2AkrfDM2CEGtzVKU7MNYVqPZuefnJ8Ahx7FIIUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TDO9+zbvb8y5MX4GCHNBOsA+I8Pc3iiseOMnRx5gk0oUmK1GRkKut+4t977kfx4Wy4keWnTjmpS7G0kFW9zsJONT7TYP7o4u2XyE543xGXuxUt5ub1b/tIw+bbvbFg3Kmd4oGYcVvTIRlmnRf28vfVH/t7PYxOCUj7QoYeoKMBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUyQdqqT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 242D7C4CEE3;
+	Tue, 22 Oct 2024 07:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729582265;
+	bh=HCIa2AkrfDM2CEGtzVKU7MNYVqPZuefnJ8Ahx7FIIUM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rUyQdqqTkBWDOn0RGwPmIsXUqU71/6fpNBw6IAOpIVsBuNW1S0dasyOjjLF5AOTit
+	 mE59TEkO8GvQSSbrIp6HnVNld4u7xhOTlwsCtKu5u7JNbbgKj+ALpheqrHDdCDG2Hk
+	 MpzN2Qh9/B3Xq0Brf1pytyXazH71JLBGnmOWIidpZ8WavR2Ks5oYkvtFuBOq+MSTWW
+	 7bvZGCV0CxFBoDaEMTN/LYTvWjTB9oP8K+IjVe3yKlumMiyApbwW+q8C1bRhvvJWAd
+	 powHexKja+nLAhEFjrp9K40oytorWEMfpkoEfmHn8nu6xn4Y26+V6Rf3I2gkFDaxzo
+	 n5wKIdNpKHX2A==
+Message-ID: <66d33097-37ed-4e89-a356-285eda743a5c@kernel.org>
+Date: Tue, 22 Oct 2024 09:30:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021235535.603253-1-rosenp@gmail.com>
-In-Reply-To: <20241021235535.603253-1-rosenp@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 Oct 2024 09:30:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWgJJngTnhB8dFrEH-19br=YmQJgZNnv7S9HffMqDZfWw@mail.gmail.com>
-Message-ID: <CAMuHMdWgJJngTnhB8dFrEH-19br=YmQJgZNnv7S9HffMqDZfWw@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: dsa: use ethtool string helpers
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kurt Kanzenbach <kurt@linutronix.de>, Woojung Huh <woojung.huh@microchip.com>, 
-	"maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" <UNGLinuxDriver@microchip.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	George McCollister <george.mccollister@gmail.com>, Simon Horman <horms@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+ Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
+ <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+ "marcel@holtmann.org" <marcel@holtmann.org>,
+ "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+ <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+ <20241021064129.trchqa2oickna7pc@pengutronix.de>
+ <bb34f4ae-92b3-48b7-b0d6-5937756cdbb9@kernel.org>
+ <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <e7a1622e-6406-478f-bd3e-08a8490d4db0@kernel.org>
+ <20241022071208.lgk2rpl2c2qpytfa@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241022071208.lgk2rpl2c2qpytfa@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Rosen,
+On 22/10/2024 09:12, Marco Felsch wrote:
+> On 24-10-22, Krzysztof Kozlowski wrote:
+>> On 21/10/2024 12:25, Marco Felsch wrote:
+>>> On 24-10-21, Krzysztof Kozlowski wrote:
+>>>> On 21/10/2024 08:41, Marco Felsch wrote:
+>>>>> On 24-10-07, Krzysztof Kozlowski wrote:
+> 
+> ...
+> 
+>>>>>> Based on earlier message:
+>>>>>>
+>>>>>> "For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+>>>>>> that both wifi and BT controller will be powered on and off at the same
+>>>>>> time."
+>>>>>>
+>>>>>> but maybe that's not needed. No clue, I don't know the hardware. But be
+>>>>>> carefully what you write in the bindings, because then it will be ABI.
+>>>>>
+>>>>> We noticed the new power-sequencing infrastructure which is part of 6.11
+>>>>> too but I don't think that this patch is wrong. The DT ABI won't break
+>>>>> if we switch to the power-sequencing later on since the "reset-gpios"
+>>>>> are not marked as required. So it is up to the driver to handle it
+>>>>> either via a separate power-sequence driver or via "power-supply" and
+>>>>> "reset-gpios" directly.
+>>>>
+>>>> That's not the point. We expect correct hardware description. If you say
+>>>> now it has "reset-gpios" but later say "actually no, because it has
+>>>> PMU", I respond: no. Describe the hardware, not current Linux.
+>>>
+>>> I know that DT abstracts the HW. That said I don't see the problem with
+>>> this patch. The HW is abstracted just fine:
+>>>
+>>> shared PDn          -> reset-gpios
+>>> shared power-supply -> vcc-supply
+>>>
+>>> Right now the DT ABI for the BT part is incomplete since it assume a
+>>> running WLAN part or some hog-gpios to pull the device out-of-reset
+>>> which is addressed by this patchset.
+>>>
+>>> Making use of the new power-sequencing fw is a Linux detail and I don't
+>>> see why the DT can't be extended later on. We always extend the DT if
+>>> something is missing or if we found a better way to handle devices.
+>>
+>> Sure, although I am not really confident that you understand the
+>> implications - you will not be able to switch to proper power-sequencing
+>> with above bindings, because it will not be just possible without
+>> breaking the ABI or changing hardware description (which you say it is
+>> "fine", so complete/done). I am fine with it, just mind the implications.
+> 
+> Sorry can you please share your concerns? I don't get the point yet why
+> we do break the DT ABI if we are going from
 
-On Tue, Oct 22, 2024 at 1:55=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
-e:
-> These are the preferred way to copy ethtool strings.
->
-> Avoids incrementing pointers all over the place.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Not necessarily breaking ABI, but changing the description.
+> 
+> bt {
+> 	reset-gpios = <&gpio 4 0>;
+> 	vcc-supply = <&supply>;
+> };
+> 
+> to
+> 
+> bt {
+> 	vcc-supply = <&pmu_supply>;
 
-Thanks for your patch!
+...because you just removed reset-gpios which is a property of this device.
 
-Only looking at the Renesas RZ/N1 driver...
+> };
+> 
+> or:
+> 
+> bt {
+> 	pmu = <&pmu>;
+> };
+> 
+> Of course the driver need to support all 2/3 cases due to backward
+> compatibility but from DT pov I don't see any breakage since we already
+> need to define the power handling properties (gpio & supply) as
+> optional.
 
-> --- a/drivers/net/dsa/rzn1_a5psw.c
-> +++ b/drivers/net/dsa/rzn1_a5psw.c
-> @@ -803,8 +803,7 @@ static void a5psw_get_strings(struct dsa_switch *ds, =
-int port, u32 stringset,
->                 return;
->
->         for (u =3D 0; u < ARRAY_SIZE(a5psw_stats); u++) {
-> -               memcpy(data + u * ETH_GSTRING_LEN, a5psw_stats[u].name,
-> -                      ETH_GSTRING_LEN);
-> +               ethtool_puts(&data, a5psw_stats[u].name);
->         }
+Either existing binding is complete or not. Not half-done.
 
-Please remove the curly braces, as they are no longer needed.
+> 
+> That beeing said I don't see the need for a PMU driver for this WLAN/BT
+> combi chip which is way simpler than the Qualcomm one from Bartosz. Also
+> there is physically no PMU device which powers the chip unlike the
+> Qualcomm one. I'm not sure if you would accept virtual PMU devices.
 
->  }
+Virtual PMU, of course not. I would like to have complete hardware
+description, not something which matches your current driver model.
 
-Gr{oetje,eeting}s,
+Best regards,
+Krzysztof
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
