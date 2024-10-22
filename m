@@ -1,182 +1,235 @@
-Return-Path: <linux-kernel+bounces-375846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A31E9A9BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BFB9A9BA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29D01F22F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9971F21D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBB5158D7B;
-	Tue, 22 Oct 2024 07:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9172155326;
+	Tue, 22 Oct 2024 07:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b="E21S2UNI"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020107.outbound.protection.outlook.com [52.101.229.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/4k1Rd3"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98095155352;
-	Tue, 22 Oct 2024 07:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583926; cv=fail; b=cN8SpA1dF2BdLntqtPzu14eci2YJN5XWHr7PYosHEl+OYq/F10FG3MCEu7t5h+aty7z1kQRGuaP0O4ZP4uuXsnij0ACXqsSMFaMBPd7urJXzI+0+XIF6/77cnkzS6JtirNLrfXZRnHcOLiglY+Mqs6eC1iisuaSh9wnr2hPg//0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583926; c=relaxed/simple;
-	bh=BK0iYPHnE03FExfugIOA919P824XFaELzWnqia+U28E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LFbP6yTEzohAGdVHFCykEprmWhlBuLI0Ga06YXEYZLZnt3VnGvsh5lIphUF54K4iYaOmQ04l6n2d0FloxOPliDPQPSeDwa5xnQCKyTsQvjEp8uWDv6TDlyQAVvtDjpncypIFLep5TzrNxKJm5l0PvtocP0+ejaQn1TQs1qryxVM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me; spf=pass smtp.mailfrom=zenithal.me; dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b=E21S2UNI; arc=fail smtp.client-ip=52.101.229.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zenithal.me
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iB6d4qM+ATU22/i0BuCo12yvxXAmORLpXU49sKOebVlhP47Wyz57qAWOB1ncMLyD7xjfaPrAyZXVf+oEsJ4rmp3fsUWJPZMqsIxsL3h/g8w/6j/iBq2yZVUjLoHuVhjghi1f7suSypLDnRbrLzjFXfyfIViIUOF5tiIZaBniNwyOPJNQ/WLLqcXINoJAWcUsuT45+Hr0bCeUmQUqDwBsdXh56HlSdWD5gfdJ1WWP8n4ue/kAvM4RRrF1P4tUJ1K0eWqJA4SPfvyXc+8IYyJMWHGOAnP3opXrG7OnXuRuwjGufdF3yKl+/Z+YhPkwhHOqT923cVSy9RIOC67jj4/tVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xA9VLFi4PS2+Ewt7mGeaAgLsBfmfwdFzzwJwKP5Zr7c=;
- b=IDV/7jZn6AjVK8l0XKffPwrkppd50i8b65347VvDWdpFqEpunyFJBsrAr9MktAjQpJSRluPfF0He07OyHAEAFS2eViFN6bomQjFXv79oLhGdCxMIqhh4CNt5RjIltWDnT7//RR7OQVMK+MFVh4grYki4RGa9bMFsCsffA6kQQdM7RJ4rw0rt87q21CiM2ukMRThAKAPqXKY17FeLTqfFBzwzAwIKi7/U8+2npoUIBhq9TSb/Bm0SbWboO3tcHXNzZUZpA245VOcuFVsBZSG//Tl9PYgIjoVkKdxdtTJopXPKs27uFfnXrSGj7nkTtzhOG/us17pLeCpZD+zWICVDow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=zenithal.me; dmarc=pass action=none header.from=zenithal.me;
- dkim=pass header.d=zenithal.me; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zenithal.me;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xA9VLFi4PS2+Ewt7mGeaAgLsBfmfwdFzzwJwKP5Zr7c=;
- b=E21S2UNI6Sb/u7kWEawjnfprq/sC2IiFbPuH8cdTGwqmMbATvZ/0jqhklhQjEV1pRNDPRt5WZDp9nLEpdtTY1RXQqxzb9UwohY9WJTff/CQhbNOienU2FH6E+qqZLCSmsvEZgQHNyFxEKYLU+zFsIdGEXb4mxl5+tCyf6dj6RVc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=zenithal.me;
-Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:c0::6) by
- TY3P286MB3616.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3b4::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.29; Tue, 22 Oct 2024 07:58:37 +0000
-Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
- ([fe80::746a:424a:348:bab6]) by TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
- ([fe80::746a:424a:348:bab6%5]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 07:58:37 +0000
-Date: Tue, 22 Oct 2024 15:58:34 +0800
-From: Hongren Zheng <i@zenithal.me>
-To: Zongmin Zhou <min_halo@163.com>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zongmin Zhou <zhouzongmin@kylinos.cn>
-Subject: Re: [PATCH] usbip: tools: update return status when failed
-Message-ID: <ZxdbKiwZ1fz4kAZw@Sun>
-References: <20241022064856.4098350-1-min_halo@163.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022064856.4098350-1-min_halo@163.com>
-X-Operating-System: Linux Sun 6.6.28
-X-Mailer: Mutt 2.2.13 (2024-03-09)
-X-ClientProxiedBy: SGXP274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::19)
- To TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:c0::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3AE152166
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729583923; cv=none; b=R/iwXwtChZKDqvpB4t3FRWtBpae88UiNPekcCAmIZUyE4CcAPhQQCMvdYWGoOlqdb1h3RXiLJg3UYWB3mJd+aPU0DCrYDV8G1f5E52No1+YVP4kxv78s0DqeisFQp9ZQe3yt2bd4PnsrFTS/0JNBCiYkfYYkURHpZzNnGJAwWKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729583923; c=relaxed/simple;
+	bh=ACLE3k7ry8IhdWilfTDtU5ViRWT8EWufxOmVvqccizY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p3Gl6djR28acDx6N+AETP0HRExnKuoGBVIa5Z/NYVyanNN3mqwMvBJBiey3cFlxYXesqKNe9mOYF1PzOm8ozeQ+sJKwuIFy/7TXZLEOF4iW8sxSyoe/DFFceIgOpsQ25RJA0d9RqFgbHZ76adUTv0LBy8FmSyHRJIwwuY5tFNL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/4k1Rd3; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so5140416f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729583920; x=1730188720; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ebzEKZpU1QsVaDjvfaf3+sPH51pDYSb8RmLwVjrRqLs=;
+        b=s/4k1Rd3V8f/DNdhiOiwoUfMzGrfrRCUFCvdpqzSxkQG8ZiCPHlRJE0IzCBq8gIFeI
+         0pz1rDOPdRN4TV0zETsOkm26MlUMJROMxTNmnrpNxf0YIXI9bbeUohodirxry6WY2JEc
+         1Z5Y9QhSVTGNlyv7E8GFbrh7r8yV7u5p7CLXIfr8+0jsjWpKbhbbks7D6OtPqIpvgcVO
+         JQg7Fuv0xJj0Lgd2BlbzrwVWl2OmISl+lKbGEdWdoX4n6dLcgNGZBlNmUAs2XSodvDqR
+         PqaO18a5gwD7m3JWq6VRD/Ut72V2SKpgQiaqOOWojcyfitcgw2YhcKL5HOSzuMflScSX
+         afSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729583920; x=1730188720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ebzEKZpU1QsVaDjvfaf3+sPH51pDYSb8RmLwVjrRqLs=;
+        b=qR5PuE2I677C8vnp7ZCV5xD5KenstOOb4hn+xachcIg2cbptRgB3ZyMEFHMLQdLzIo
+         eOGvS2CSuSwqFH7qDuP5SWqorO1R7JH38eyOFWm1um8jZNyxLadYP/eof3HraTLul2S3
+         gerOpHDrmevrDRo3Tajei8dJSUIKK13DcLf04VlmQP7BXhheCgyX6GUwN99tO5QUVnms
+         Z19drgM3O4m+rGM+TcR9r5k+ym4qJbfdQr52vu7FU8PJ8+Kast7Nc3T8KlZxHMaQWSSR
+         6dkEKGIOl2n/YgtcU7gz9i/jxn3V7DLUtf33Ah1iHVQtgbpkN4uXdjFQUJjhxXv6hYyJ
+         RRtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5qjaami9dL+B9II5XA2OCdtHlk9j4rGZINiaJQoTn7FREMZzpe9b6QJWj/kwK3zM5wUZprds5p45dNto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS87+FD5a8xazwn6Z/3SYe2hJdJflN+OypSrUdMTgvrSMHI06X
+	InzGDiXJCVMfnPEuy21A/6suU/2t+0VDS1LAkf8I+KEL05LfMFcZs1M3snlHxFI=
+X-Google-Smtp-Source: AGHT+IGDhMum5PAcQ3SHhrT5Fn6wbmAs5RW+1+vVA2DjTsESyf8MTIObzirLulaDFCdUAj06MnpWgw==
+X-Received: by 2002:a5d:558b:0:b0:37d:3705:84e7 with SMTP id ffacd0b85a97d-37ea21d8f6cmr13090988f8f.17.1729583919797;
+        Tue, 22 Oct 2024 00:58:39 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:9203:6000:fdac:3c35:4719:3327? ([2a02:2f04:9203:6000:fdac:3c35:4719:3327])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47b07sm6012954f8f.25.2024.10.22.00.58.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 00:58:39 -0700 (PDT)
+Message-ID: <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
+Date: Tue, 22 Oct 2024 08:58:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB1393:EE_|TY3P286MB3616:EE_
-X-MS-Office365-Filtering-Correlation-Id: d566d5fb-a358-4cbd-6616-08dcf26f55f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|41320700013|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rKfAnkeHH9OWGjd4PpTt0UHw8wVG8y7H0TMj/i7hEOPc6mLcbS7LioyE4Z9J?=
- =?us-ascii?Q?+iw9oM+qgtetQMzxxLHBqs73wYfw5LaZO8A6pJ7413eaByDGLTYJdEh0Zd2k?=
- =?us-ascii?Q?ozhrtBbg3wBwjOwho/fMbt7/sCeJQFnrBobcEc+gl1EIsLTYQxb5pd4CRLM4?=
- =?us-ascii?Q?pbdA40Y3V9Xp5c7uid6cprQhQMcZZw0hGMwUzUE6OGW58CCYNnJx9OdwOH6b?=
- =?us-ascii?Q?Rlb1aBjgCrdgrV2oX127GmU+EAHiq/2GCBwCSducmT8Fy70+qdypCjnbOCAs?=
- =?us-ascii?Q?lo9RO+4UnVqilq/Sa+Z2reDz/cCnixxMm4tOF1MXM64+NeO8T+Igli2+3+np?=
- =?us-ascii?Q?668oblAP3kdTGbaEnzLbJqMXO7lwU4xWZIIn5pMh0W5Z2P69NprfRr+j+5cV?=
- =?us-ascii?Q?2XlWsIMLLofsjL8Ul4lCef5reXgOZSFWZcGNdTBOlZVSQed9DfOcBhGT4Rnz?=
- =?us-ascii?Q?FH19wJ0450iOrj6HisHKJxoqMUdWYQAFJzQVlpEhePbUIUWlNkNDuXa9wY1J?=
- =?us-ascii?Q?b2hT2JM/RZ8WQKPNZy/FqtI25pRTKkvG4nL6DIKHNYcBbjGOMVRL8eiXgXuU?=
- =?us-ascii?Q?7I/x4UjdgWI7J7ZK6Kxx0/pSAyENh456DqvEurZnV/bsb3Hmd6ebLkDThIFE?=
- =?us-ascii?Q?hdvfU9xnm5ol90MQVxpCS7/Pu2aLpvRXolcUIpRIk5ZnNWYOeVuyQJSKEM5H?=
- =?us-ascii?Q?1b+pPDXzwqgchrZahKgWI0KvhwItZGDJ7QbqeTZMLWxo4RHc67B5YljT+U7+?=
- =?us-ascii?Q?+YjZLOtIbJOb5Y6GnhmDYHzO8uMNxd/OfsAXI/IbQ/BNuvgCqwX5rQ5x7vR5?=
- =?us-ascii?Q?khU7nfCvBAdikkPxuUnme+P7mWpTbXc3etTHt6bsv5ex6d378qZq5rJFEwGR?=
- =?us-ascii?Q?MQ5ygTI6LqSG6PH3IIOmgSMMKWOekMyKXrBS23OT9Ffv8DP+7FU4XvhDFr08?=
- =?us-ascii?Q?tXaW8H4pHLFjHY01ci0g0RCUP+ooBuqNIAAnCSZEm8ogQVisfAxt9OGp84IB?=
- =?us-ascii?Q?3WCa95dOiT6ZwX+RmexQi9hNWYVCTfM4uUrPzxcG5zp3A0lkiRmbM1SJJDLJ?=
- =?us-ascii?Q?/84fmCegmKGdz+xpzuEvTUu8pajHq5wHALHyzVqUW1lsUnOrqHPVB7CG+hn/?=
- =?us-ascii?Q?B3M3U+68Qvmwwje/goiSBNaDPfYyO+Slp4cdR5/ZmPZJe4XRF/7JdzKVmToP?=
- =?us-ascii?Q?6bThB24FJrXNQL86dT4UbmbGC4ltOpm9TM8k4OMZOBVnWGxoY6Uaz3kk48wL?=
- =?us-ascii?Q?ybRCrmbeWFgCD6anaxuZoUwMkmcJEoMvq+LYFFp+OF92YOlCC5xHxe3f34fB?=
- =?us-ascii?Q?H4bNXVEqeutr/2IWg1JUxXq9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(41320700013)(1800799024)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FpUeJQvRfKA1Co2JPBkdGSe22lOLIAizzlowYAT3Xbqadyg36c6Iopj5ZIhu?=
- =?us-ascii?Q?3rzW3qm2FMM/K3LCD1JXkaO5PAo2WLJPYytN7WBtCj9k+Uk6IzxB9X5ajwC3?=
- =?us-ascii?Q?u77apWFDzB3zswMO34WtCuHgl5A8bEiJ+QiL+ck7hLkLWPDRzSBZPfY8BWTY?=
- =?us-ascii?Q?AvIzl+TfJG4nvx0dxf3A/0W0GXLJRcF18szDHjyyETbqNi2+rt3KYDvS6oYM?=
- =?us-ascii?Q?NWavUb8UWbGu+3NjlIgrOavh/KwvI+/A2T3y+UWPWKT7vsq3hozeiwGcZyIo?=
- =?us-ascii?Q?CjnuQUnXT8TxVl0yk7fkshXXTR6DqfmH3AyMwAi7VduqlhXgmA47L/mMoa7/?=
- =?us-ascii?Q?ClVUqWr0zGu0Dv5GI5n8bNHca9Y+/T4ytuhh/O4Ak8qxEpyi8yzcGApTtYCu?=
- =?us-ascii?Q?XM/YsJvo2/KzuYxr3P7c5ad0JyeUQtMPe742Xq01dlmiWR04cb0H7o0xWP6E?=
- =?us-ascii?Q?qa55CAp79y6L8/usct7GfF+klSACu+PV4b1iG3ryu5u1NlnpTc4vTDG9CsX6?=
- =?us-ascii?Q?Gsapwvqv/AYDC+uvAULmQ3aLHY6BV1pt/t89S/yECy5xZNcziZny3yseyByM?=
- =?us-ascii?Q?n8wOOqA4uF62ohYtnYDrrMxU1G76sr5riQELjuG+DmDR69s5+fFzFExy3Gyt?=
- =?us-ascii?Q?s0K/8d/4kIWdRhJpzLdL9SQ839nBWbhISG1aRi/lJE6dVcdqVP9TqhaooOCM?=
- =?us-ascii?Q?L3eEJNtQVgpflGJorfdYaQsgyfxJLg8YOUfa8dl38X+sr25RuZo8TgSWojIb?=
- =?us-ascii?Q?JKfTaLSmRWsX+bQT9Ax9utCaafs4XxJyd0Cad8+h/07vkN4Z+32W9P1yQxhs?=
- =?us-ascii?Q?xMKK4KGVutO+GpuO/Wpiw4es4NXpccA6pno6ifl4PGGUHNv+Bp3RPkKeKlLw?=
- =?us-ascii?Q?SA798N0Q51iSOXwTmoAmukcDY/xgLxi4Pm+Y3hP17jJhH1gJtfp0xnj1HSbA?=
- =?us-ascii?Q?QuOWbL5cnI/hHz6vooyNiqTKLpDM/kn5lfg7QSVy9khOPykdP94aOEjYO5Aa?=
- =?us-ascii?Q?b5sFI8O4vnWFnUUqkHjpr1U7UajsSO5QIkG7g8k04vEnKsWZMKFkRFa9Ez14?=
- =?us-ascii?Q?0iQMDdRp4oeHT87qnnK/vId+2yH6QUpZ/dfdyCJ0meOg827oPxScw3tu9DhT?=
- =?us-ascii?Q?7Qj93h3a9/njDwmJJFhPAFkLMPTGyEmiUIA62fZgJ2lvl1t1D2o0iPunwxEt?=
- =?us-ascii?Q?I9663CZIbX+Zy2HwcZyNywt/8vk1XihHHc+BfkP65tnLw9jfA+8C1W1oClh6?=
- =?us-ascii?Q?yMSFHc/yLXO3VMvyGR+7g9qCBI11c5+Q1MdlrGXbZWRU1LkkBJlkwpfGQo+Y?=
- =?us-ascii?Q?FWAopdqnJHAm5VnYXJedHx4hrtwb2Jd1Xy3XbGRGSKdD7UGRtzBD785sanm8?=
- =?us-ascii?Q?bTQ9EXvxNAP0eEOhdd/EzPo3zZ71UZbP94ln024bMGSOS6Xx5JHriYg85gbY?=
- =?us-ascii?Q?iGUPLk4//2LB3ywJ6q4CtH8iOrQuLXHdSDMPyIernxvfJON3gh8FsYItlWHG?=
- =?us-ascii?Q?UZCMgJHL9tRFYF47y3AbMUFBOzlSR7HjD3TrKxGBKPy1H3tY2JcRDHhkEUuG?=
- =?us-ascii?Q?j5eLoc0IUACV1ttQfUiJ6zUHuEPFmP601NJhot5I?=
-X-OriginatorOrg: zenithal.me
-X-MS-Exchange-CrossTenant-Network-Message-Id: d566d5fb-a358-4cbd-6616-08dcf26f55f6
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 07:58:37.8584
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 436d481c-43b1-4418-8d7f-84c1e4887cf0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YMFuLm93/FvYpuUe1RqiVQUfnoYk+F6mv2Hsmz/UbnXxPNwDinEtfoLQEQFD3VVA
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3P286MB3616
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
+Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
+ tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-3-tudor.ambarus@linaro.org>
+ <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+ <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
+ <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 02:48:56PM +0800, Zongmin Zhou wrote:
-> From: Zongmin Zhou <zhouzongmin@kylinos.cn>
-> 
-> Have to set "ret" before return when found a invalid port.
-> 
-> Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
+Hi, Krzysztof,
 
-Reviewed-by: Hongren Zheng <i@zenithal.me>
+On 10/22/24 5:38 AM, Krzysztof Kozlowski wrote:
 
-> ---
->  tools/usb/usbip/src/usbip_detach.c | 1 +
->  1 file changed, 1 insertion(+)
+cut
+
+>>> I skimmed through the driver and I do not understand why this is
+>>> firmware. You are implementing a mailbox provider/controller.
+>>
+>> In my case the mailbox hardware is used just to raise the interrupt to
+>> the other side. Then there's the SRAM which contains the channels
+>> configuration data and the TX/RX queues. The enqueue/deque is done
+>> in/from SRAM. This resembles a lot with drivers/firmware/arm_scmi/, see:
+>>
+>> drivers/firmware/arm_scmi/shmem.c
+>> drivers/firmware/arm_scmi/transports/mailbox.c
 > 
-> diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
-> index b29101986b5a..6b78d4a81e95 100644
-> --- a/tools/usb/usbip/src/usbip_detach.c
-> +++ b/tools/usb/usbip/src/usbip_detach.c
-> @@ -68,6 +68,7 @@ static int detach_port(char *port)
->  	}
->  
->  	if (!found) {
-> +		ret = -1;
->  		err("Invalid port %s > maxports %d",
->  			port, vhci_driver->nports);
->  		goto call_driver_close;
-> -- 
-> 2.34.1
+> Wait, SCMI is an interface. Not the case here.
 > 
+>>
+>> After the SRAM and mailbox/transport code I'll come up with two helper
+>> drivers that construct the mailbox messages in the format expected by
+>> the firmware. There are 2 types of messages recognized by the ACPM
+>> firmware: PMIC and DVFS. The client drivers will use these helper
+>> drivers to prepare a specific message. Then they will use the mailbox
+>> core to send the message and they'll wait for the answer.
+>>
+>> This layered structure and the use of SRAM resembles with arm_scmi and
+>> made me think that the ACPM driver it's better suited for
+>> drivers/firmware. I'm opened for suggestions though.
+> 
+> Sure, but then this driver cannot perform mbox_controller_register().
+> Only mailbox providers, so drivers in mailbox, use it.
+> 
+
+Okay, I can move the driver to drivers/mailbox/.
+
+cut
+
+>>>> +/**
+>>>> + * struct exynos_acpm_shmem_chan - descriptor of a shared memory channel.
+>>>> + *
+>>>> + * @id:			channel ID.
+>>>> + * @reserved:		reserved for future use.
+>>>> + * @rx_rear:		rear pointer of RX queue.
+>>>> + * @rx_front:		front pointer of RX queue.
+>>>> + * @rx_base:		base address of RX queue.
+>>>> + * @reserved1:		reserved for future use.
+>>>> + * @tx_rear:		rear pointer of TX queue.
+>>>> + * @tx_front:		front pointer of TX queue.
+>>>> + * @tx_base:		base address of TX queue.
+>>>> + * @qlen:		queue length. Applies to both TX/RX queues.
+>>>> + * @mlen:		message length. Applies to both TX/RX queues.
+>>>> + * @reserved2:		reserved for future use.
+>>>> + * @polling:		true when the channel works on polling.
+>>>> + */
+>>>> +struct exynos_acpm_shmem_chan {
+>>>> +	u32 id;
+>>>> +	u32 reserved[3];
+>>>> +	u32 rx_rear;
+>>>> +	u32 rx_front;
+>>>> +	u32 rx_base;
+>>>> +	u32 reserved1[3];
+>>>> +	u32 tx_rear;
+>>>> +	u32 tx_front;
+>>>> +	u32 tx_base;
+>>>> +	u32 qlen;
+>>>> +	u32 mlen;
+>>>> +	u32 reserved2[2];
+>>>> +	u32 polling;
+>>>
+
+cut
+
+>>>
+>>> I also cannot find any piece of code setting several of above, e.g. tx_base
+>>
+>> I'm not writing any SRAM configuration fields, these fields are used to
+>> read/retrive the channel parameters from SRAM.
+> 
+> I meany tx_base is always 0. Where is this property set? Ever?
+
+It's not zero. My assumption is it is set in the acpm firmware, but I
+don't have access to that to verify. Here are some debug prints made in
+the linux driver:
+
+[    0.069575][    T1] gs-acpm-ipc 17610000.mailbox:
+exynos_mbox_chan_init ID = 2 poll = 1, mlen = 16, qlen = 5
+[    0.069927][    T1] gs-acpm-ipc 17610000.mailbox:
+exynos_mbox_chan_init ID = 2 offsets: rx_base = 0x00038290 rx_front =
+0x0003828c, rx_rear = 0x00038288
+[    0.070449][    T1] gs-acpm-ipc 17610000.mailbox:
+exynos_mbox_chan_init ID = 2 offsets: tx_base = 0x000382f0 tx_front =
+0x000382ec, tx_rear = 0x000382e8
+
+
+tx_base contains the SRAM offset of the RX queue used in linux. The
+offset is relative to the base address of the SRAM config data.
+
+tx_base is seen/named from the firmware's point of view, thus named TX.
+I assume the same struct is defined in the acpm firmware.
+
+
+Somewhere below in the linux driver I get the RX ring base address by doing:
+
+rx->base = exynos_acpm_get_iomem_addr(base, &shmem_chan->tx_base);
+
+where base is the SRAM base address of the channels configuration data.
+
+static void __iomem *exynos_acpm_get_iomem_addr(void __iomem *base,
+
+
+                                                void __iomem *addr)
+
+
+{
+
+
+        u32 offset;
+
+
+
+
+
+        offset = readl_relaxed(addr);
+
+
+        return base + offset;
+
+
+}
+
+Hope this clarifies a bit these struct members.
+Cheers,
+ta
 
