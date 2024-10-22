@@ -1,255 +1,194 @@
-Return-Path: <linux-kernel+bounces-376335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD119AA367
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F079AA366
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D653C283EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570F4283E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2773B19EEC7;
-	Tue, 22 Oct 2024 13:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F067E19EEB4;
+	Tue, 22 Oct 2024 13:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z7uv0yoW"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AEei8IEg"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801E01E495
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CD919DF8B;
+	Tue, 22 Oct 2024 13:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729604463; cv=none; b=OE1ELsaYnW9v0i1kjGI0Gr5BCjSg+ndFk9igcIa9il9yCHX1LpkNOxzAJesozvynDw8jvyx+Ai02638LYuE8piMTQlNh+i+yrIGccdgiDBD+rvnqY4cQ9rYHS4Ha9st+GfKMmRHpzjXBuc1l/IN7ruqUej6RLihgVoar3+0MsZE=
+	t=1729604463; cv=none; b=l/miD0NaQE9ObFK0al/leYByYoeCclBoKDzUzvbhb9qoRY9B18oAwDxBXbuCUCQBV/8I9G7rfz6cXQaMeXr0f2iUgxH4+Cf7DoXLPCIBs4c+oPT1k50+gOma2nx5jfVbvIgkKlpITeylF/UpK9Dhl5m/Fp1ELrw61+EftUl+7Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729604463; c=relaxed/simple;
-	bh=ZRWBov01eXAsx1lbt69OJqscShr2hbOSTVKlgw2vq3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CM0DupZ/pma0STZdt7lEI2UNRwW8txZepLnHOnUEx9v2xCVd6bho6GB1FYnmq5szvCXRaFXR/0K+EabwO70cJjgTPXAW4t+wdIPxgtcFJWVMQblcpnPdkPsyprKOUWvjuM0dQOw5+37jqE0quBHy93IEwI5/7iEuttGKK6qJpOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z7uv0yoW; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so36964695e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:41:00 -0700 (PDT)
+	bh=4O/7KDxMFjOWDBpuAEtR0doNNDjMTMvF+Fwhzdn5MFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KGZZrcPPVK3/Wxe44Uod5zCjGxyZy/zaF/64AMjT9tEk7Ylf35Pp45cxxAhoiiUGcexdtNlFjX+LlCZQqx0AXkjy2VeZcgJwqW1SVFJB4WnbaO9v5RpDShcuFPDwva+2eSolT/gfJat1DAnnnpA2frPKiYmVFG1/+qJdv4bDfkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AEei8IEg; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7163489149eso4296446a12.1;
+        Tue, 22 Oct 2024 06:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729604459; x=1730209259; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RzVpVc2yXVYDPsIXGrEweGpMjQjnV+zz+yrzd0Tbk8=;
-        b=Z7uv0yoWD/j7UTXnGX0KbbtOQjgpvM2ZWhhqHCJP2OI6foQnYnFpbhEMI4+Y+1WF49
-         1tKqYlaWZoxlkMlixU8Nv+hghlcszNNvu62SSkjuQzpLv74BBG7+ADW0Ekwn1TXvUEcu
-         I7lH7BKV4N+xsbN20CB+IbjNQhDc9Z7KUBnI+0dFhHuNHF/42KNXRsyhFapGrTId1mbe
-         CzamjKOKcQvgg6Vycopr8H0hPcJmPklavwoFbYK2RBNh0AjarE+XToR4Si6FlbxbzzU1
-         Gg7tdOTj9Qaw3dNb51tZbQ8iusmuFll/ARsm84dyjhLDc3HFEyr74nF3IY+tijJIpk1L
-         qWRQ==
+        d=gmail.com; s=20230601; t=1729604460; x=1730209260; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=SfKItWQUZx73+PacVcMxGJfBO/K3tCWg/hGLlJ6Cx/E=;
+        b=AEei8IEghpHSBteTG+VFyEE7ZDEWkVOqCx3e8s2HipNwJF706ABuRgecz0wlvAsvM1
+         9kbManEo9Fyzy32ghoKrrc050rLzxSj3/6hvchTRmTSOSuIMfKAntIiWEfxnVodQd4O2
+         MtmHtdFoSrnEGJ3x5TUicq7A5g1qkNEbk7DKBHRXaL52oRF1Cd8pvKl8WT/1zwpHkCog
+         2dnhhNWA2/wGjlC4u08vgtP3E+FRPEqZHP8W9cAy2W4wdwwvPrrKqfHzihiehGtZYBuI
+         dozPaoMZHVcCQJjy17PglrcmN4fioba/UuFjupqV69twLrFWRr5zUv0K3VAi2x+lXbFy
+         bkZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729604459; x=1730209259;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+RzVpVc2yXVYDPsIXGrEweGpMjQjnV+zz+yrzd0Tbk8=;
-        b=arxqbD7B3oXS5vYm1R5bxpaI8Btm5dyHxuIYQpZFcIklpM/xrM3ZRhMJLOUYLfi4PF
-         +XDCMH4ZzTXyLmL0h0Lgjq8GnhSAxK7Hrd+IEFL6k5mdAx6WLv+s2sMDgaIefLyfUo7r
-         ReBTMLuLTeI86Xc85ZxnjRWI0NYif0OGHZp6i8JKhM8KzsrT+u4JKCHYJogSPC/ZLaOn
-         SPdv2zXSppvLHR2AAWfo45cbmnphljs8/pAR1bwNU6vx3f2bB/OmZE/0/gXY8AH1mE0q
-         tx7C6QXFu3x3LCko+j5C9znuIa2mrMRldRtBcEo2T4LZIZGedJcyM8Ew21bDIj8OFPcG
-         g40w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHRyU74a+uYwoJ++eJOpBa20myEHnpVIdeXarLJu0kuUJMB3eXx9Ts3vdiIO1oIukgVAGn7geWUH9AFFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw40Yd1tBFDwfC1Z+wB7P9Rwo2m0tP5uteYXQgVKvDw2dU4NsR5
-	yG/Au/Lkk6pzAnYUYhoDtzfNtmo+J4COnjHqsdks338WPR2pti4wvy9xh84COg==
-X-Google-Smtp-Source: AGHT+IE1VIEMCSR8cLm1M3rxDDHOUlkMLKyknpICPyCdtFc8sq9xlWb37UQ4n8+4Chs8FcACC/rknQ==
-X-Received: by 2002:a05:600c:4450:b0:431:4f5e:1f61 with SMTP id 5b1f17b1804b1-4317caac4f1mr23454345e9.14.1729604458607;
-        Tue, 22 Oct 2024 06:40:58 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:9c:201:54b8:5e1b:8507:5f75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fdb2sm88081445e9.20.2024.10.22.06.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 06:40:57 -0700 (PDT)
-Date: Tue, 22 Oct 2024 15:40:52 +0200
-From: Marco Elver <elver@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, paulmck@kernel.org
-Cc: Alexander Potapenko <glider@google.com>,
-	syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>,
-	audit@vger.kernel.org, eparis@redhat.com,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
-Message-ID: <ZxerZIxg8kAMCvYc@elver.google.com>
-References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com>
- <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
- <20241022113131.GD16066@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1729604460; x=1730209260;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SfKItWQUZx73+PacVcMxGJfBO/K3tCWg/hGLlJ6Cx/E=;
+        b=MJ269YCp6IUytpv95BeW196zRN6mnfBPoYE03gjDkE4ze+++fF9C+csmhlo5vJkWKG
+         UDVXTPAtFX8JAHMCjpEav7bo9uMHBe389x2v6jRiiJL563mIO1/UoV3GRFJyiI7RdoHx
+         Uk+F3jHGDNV5wGSII/kdr0ZZFYhBGRqLT2ieB3r1XU+bcbznecP+fbZ7FuaZdGp+Kb2T
+         KaqIhG77nmRJaGHeiPMblNW5KNw0vDjetPRygZhAUZueMpYfFjiDnAWihDFpzrxiS2E6
+         h0Qt8J8yG6VgccfzMy1SBaH1WZDx0PYsih7tHO5xph2WgmT0B/+kd6fkHdBrKhXBXJgR
+         9Enw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3YKqRnnvUSkQTSfcqWKcW5abNNda6T40/WaF0gD+2ZxlbtEqQVCQDwJqJCritHrYwlhRHteIsVtYZyD/t@vger.kernel.org, AJvYcCUxUSKwnUyy8vaHL05QITuT/UEJ33zVNo3qbKkuF1008uX+lG1yGbm1AN3Bw0VLUoczQUEYMy3mI07xjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf3GdHRUIv0dRB1HykvvqV7yx2z56zX+ta4BAQDWIJD8N9a25U
+	qKM6OY/8yMfIE5qkxjm6wiQVZDbCZBE9E5AUWMNZ3I16CEjWjfeH1x0Tew==
+X-Google-Smtp-Source: AGHT+IGkwA982N++bVwNeezp1PgWJoM9VWLHxnVhoatXhk75PGwXZ3DQBAHbwC8dPkp9X7vV0vZrLg==
+X-Received: by 2002:a05:6a21:3a94:b0:1d9:21c7:5af7 with SMTP id adf61e73a8af0-1d92c4e0698mr21643709637.15.1729604460347;
+        Tue, 22 Oct 2024 06:41:00 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407f3csm4705988b3a.211.2024.10.22.06.40.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 06:40:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <300383ee-3ead-439e-893e-895f3ed49805@roeck-us.net>
+Date: Tue, 22 Oct 2024 06:40:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] hwmon: (it87) Add support for IT8625E
+To: Frank Crawford <frank@crawford.emu.id.au>, Ai Chao <aichao@kylinos.cn>,
+ jdelvare@suse.com, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241022091319.82503-1-aichao@kylinos.cn>
+ <6cab565f05820eb2e1a1c55644be057427ecdf2e.camel@crawford.emu.id.au>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <6cab565f05820eb2e1a1c55644be057427ecdf2e.camel@crawford.emu.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241022113131.GD16066@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Tue, Oct 22, 2024 at 01:31PM +0200, Peter Zijlstra wrote:
-> On Tue, Oct 22, 2024 at 10:06:23AM +0200, Alexander Potapenko wrote:
-> > On Fri, Sep 27, 2024 at 4:57 PM syzbot
-> > <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15f07a80580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=86254f9e0a8f2c98
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=0ec1e96c2cdf5c0e512a
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/1be80941df60/disk-075dbe9f.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/494a9ac89c09/vmlinux-075dbe9f.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/919788d8c731/bzImage-075dbe9f.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com
-[...]
-> > +PeterZ, who added the KCSAN assertion.
+On 10/22/24 03:13, Frank Crawford wrote:
+> On Tue, 2024-10-22 at 17:13 +0800, Ai Chao wrote:
+>> Add support for IT8625E on Centerm P410.
+>>
+>> Signed-off-by: Ai Chao <aichao@kylinos.cn>
+>> ---
+>> change for v2
+>>   - Move IT8625E_DEVID after IT8623E_DEVID
+>> ---
+>>   drivers/hwmon/it87.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/hwmon/it87.c b/drivers/hwmon/it87.c
+>> index e233aafa8856..4aeb09f3bfdf 100644
+>> --- a/drivers/hwmon/it87.c
+>> +++ b/drivers/hwmon/it87.c
+>> @@ -15,6 +15,7 @@
+>>    *            IT8620E  Super I/O chip w/LPC interface
+>>    *            IT8622E  Super I/O chip w/LPC interface
+>>    *            IT8623E  Super I/O chip w/LPC interface
+>> + *            IT8625E  Super I/O chip w/LPC interface
+>>    *            IT8628E  Super I/O chip w/LPC interface
+>>    *            IT8705F  Super I/O chip w/LPC interface
+>>    *            IT8712F  Super I/O chip w/LPC interface
+>> @@ -161,6 +162,7 @@ static inline void superio_exit(int ioreg, bool noexit)
+>>   #define IT8620E_DEVID 0x8620
+>>   #define IT8622E_DEVID 0x8622
+>>   #define IT8623E_DEVID 0x8623
+>> +#define IT8625E_DEVID 0x8625
+>>   #define IT8628E_DEVID 0x8628
+>>   #define IT87952E_DEVID 0x8695
+>>   
+>> @@ -2782,6 +2784,7 @@ static int __init it87_find(int sioaddr, unsigned short *address,
+>>    case IT8622E_DEVID:
+>>    sio_data->type = it8622;
+>>    break;
+>> + case IT8625E_DEVID:
+>>    case IT8628E_DEVID:
+>>    sio_data->type = it8628;
+>>    break;
 > 
-> Well, PaulMck did in d6111cf45c57 ("sched: Use WRITE_ONCE() for
-> p->on_rq"), I just moved it around in e8901061ca0c ("sched: Split
-> DEQUEUE_SLEEP from deactivate_task()").
+> Can I just add that it isn't a good idea to use the same type for
+> different chips.  There are some specific differences between the
+> chips, which mean that it should have its own entry in
 > 
-> I'm not at all sure I have any inkling as to what the annotation does
-> nor what KCSAN is trying to tell us above.
+> static const struct it87_devices it87_devices[]
+> 
+> even if currently they are very similar.
+> 
 
-ASSERT_EXCLUSIVE_WRITER(var) is to say that that there should be no
-concurrent writes to var; other readers are allowed. If KCSAN is
-enabled, it then goes and reports any violations of that assertion.
-Main usecase is for already marked accesses where concurrent accesses
-are _not_ data races, but the algorithm does not assume concurrent
-writers regardless.
+According to the information I have, the ADC voltage is different,
+and 8628 supports PECI but 8625 doesn't. Most importantly, 8625
+has multiple register banks. There are also some differences in
+fan control; 8628 can explicitly turn fans off using register bits.
 
-In this case it seems that Paul was trying to say that there should be
-no concurrent writers to this variable. But KCSAN disproved that.
+Just mapping the chip to it8628 may be convenient, but it is not
+acceptable.
 
-> Can someone please translate?
+Guenter
 
-We can get the 2nd stack trace with:
-
-	--- a/kernel/sched/Makefile
-	+++ b/kernel/sched/Makefile
-	@@ -10,8 +10,8 @@ KCOV_INSTRUMENT := n
-
-	 # Disable KCSAN to avoid excessive noise and performance degradation. To avoid
-	 # false positives ensure barriers implied by sched functions are instrumented.
-	-KCSAN_SANITIZE := n
-	-KCSAN_INSTRUMENT_BARRIERS := y
-	+#KCSAN_SANITIZE := n
-	+#KCSAN_INSTRUMENT_BARRIERS := y
-
-Which gives us:
-
- | ==================================================================
- | BUG: KCSAN: assert: race in dequeue_entities / ttwu_do_activate
- | 
- | write (marked) to 0xffff9e100329c628 of 4 bytes by interrupt on cpu 0:
- |  activate_task kernel/sched/core.c:2064 [inline]
-
-This is this one:
-
-	void activate_task(struct rq *rq, struct task_struct *p, int flags)
-	{
-		if (task_on_rq_migrating(p))
-			flags |= ENQUEUE_MIGRATED;
-		if (flags & ENQUEUE_MIGRATED)
-			sched_mm_cid_migrate_to(rq, p);
-
-		enqueue_task(rq, p, flags);
-
-		WRITE_ONCE(p->on_rq, TASK_ON_RQ_QUEUED);
-		ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-	}
-
- |  ttwu_do_activate+0x153/0x3e0 kernel/sched/core.c:3671
- |  ttwu_queue kernel/sched/core.c:3944 [inline]
- |  try_to_wake_up+0x60f/0xaf0 kernel/sched/core.c:4270
- |  default_wake_function+0x25/0x30 kernel/sched/core.c:7009
- |  __pollwake fs/select.c:205 [inline]
- |  pollwake+0xc0/0x100 fs/select.c:215
- |  __wake_up_common kernel/sched/wait.c:89 [inline]
- |  __wake_up_common_lock kernel/sched/wait.c:106 [inline]
- |  __wake_up_sync_key+0x85/0xc0 kernel/sched/wait.c:173
- |  sock_def_readable+0x6f/0x180 net/core/sock.c:3442
- |  tcp_data_ready+0x194/0x230 net/ipv4/tcp_input.c:5193
- |  tcp_data_queue+0x1052/0x2710 net/ipv4/tcp_input.c:5283
- |  tcp_rcv_established+0x7e3/0xd60 net/ipv4/tcp_input.c:6237
- |  tcp_v4_do_rcv+0x545/0x600 net/ipv4/tcp_ipv4.c:1915
- |  tcp_v4_rcv+0x159c/0x1890 net/ipv4/tcp_ipv4.c:2350
- |  ip_protocol_deliver_rcu+0x2d8/0x620 net/ipv4/ip_input.c:205
- |  ip_local_deliver_finish+0x11a/0x150 net/ipv4/ip_input.c:233
- |  NF_HOOK include/linux/netfilter.h:314 [inline]
- |  ip_local_deliver+0xce/0x1a0 net/ipv4/ip_input.c:254
- |  dst_input include/net/dst.h:460 [inline]
- |  ip_sublist_rcv_finish net/ipv4/ip_input.c:580 [inline]
- |  ip_list_rcv_finish net/ipv4/ip_input.c:630 [inline]
- |  ip_sublist_rcv+0x43d/0x520 net/ipv4/ip_input.c:638
- |  ip_list_rcv+0x262/0x2a0 net/ipv4/ip_input.c:672
- |  __netif_receive_skb_list_ptype net/core/dev.c:5709 [inline]
- |  __netif_receive_skb_list_core+0x4fc/0x520 net/core/dev.c:5756
- |  __netif_receive_skb_list net/core/dev.c:5808 [inline]
- |  netif_receive_skb_list_internal+0x46d/0x5e0 net/core/dev.c:5899
- |  gro_normal_list include/net/gro.h:515 [inline]
- |  napi_complete_done+0x161/0x3a0 net/core/dev.c:6250
- |  e1000_clean+0x7c7/0x1a70 drivers/net/ethernet/intel/e1000/e1000_main.c:3808
- |  __napi_poll+0x66/0x360 net/core/dev.c:6775
- |  napi_poll net/core/dev.c:6844 [inline]
- |  net_rx_action+0x3d9/0x820 net/core/dev.c:6966
- |  handle_softirqs+0xe6/0x2d0 kernel/softirq.c:554
- |  __do_softirq kernel/softirq.c:588 [inline]
- |  invoke_softirq kernel/softirq.c:428 [inline]
- |  __irq_exit_rcu+0x45/0xc0 kernel/softirq.c:637
- |  common_interrupt+0x4f/0xc0 arch/x86/kernel/irq.c:278
- |  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
- | 
- | assert no writes to 0xffff9e100329c628 of 4 bytes by task 10571 on cpu 3:
- |  __block_task kernel/sched/sched.h:2770 [inline]
-
-And that's:
-
-	static inline void __block_task(struct rq *rq, struct task_struct *p)
-	{
-		WRITE_ONCE(p->on_rq, 0);
-		ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-		if (p->sched_contributes_to_load)
-			rq->nr_uninterruptible++;
-
- |  dequeue_entities+0xd83/0xe70 kernel/sched/fair.c:7177
- |  pick_next_entity kernel/sched/fair.c:5627 [inline]
- |  pick_task_fair kernel/sched/fair.c:8856 [inline]
- |  pick_next_task_fair+0xaf/0x710 kernel/sched/fair.c:8876
- |  __pick_next_task kernel/sched/core.c:5955 [inline]
- |  pick_next_task kernel/sched/core.c:6477 [inline]
- |  __schedule+0x47a/0x1130 kernel/sched/core.c:6629
- |  __schedule_loop kernel/sched/core.c:6752 [inline]
- |  schedule+0x7b/0x130 kernel/sched/core.c:6767
- |  do_nanosleep+0xdb/0x310 kernel/time/hrtimer.c:2032
- |  hrtimer_nanosleep+0xa0/0x180 kernel/time/hrtimer.c:2080
- |  common_nsleep+0x52/0x70 kernel/time/posix-timers.c:1365
- |  __do_sys_clock_nanosleep kernel/time/posix-timers.c:1411 [inline]
- |  __se_sys_clock_nanosleep+0x1b2/0x1f0 kernel/time/posix-timers.c:1388
- |  __x64_sys_clock_nanosleep+0x55/0x70 kernel/time/posix-timers.c:1388
- |  x64_sys_call+0x2612/0x2f00 arch/x86/include/generated/asm/syscalls_64.h:231
- |  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- |  do_syscall_64+0xd0/0x1a0 arch/x86/entry/common.c:83
- |  entry_SYSCALL_64_after_hwframe+0x77/0x7f
- | 
- | Reported by Kernel Concurrency Sanitizer on:
- | CPU: 3 UID: 0 PID: 10571 Comm: syz.3.1083 Not tainted 6.12.0-rc2-00003-g44423ac48780-dirty #7
- | Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
- | ==================================================================
 
