@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-376403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951129AB0EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D72609AB0E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8081C228B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126881C225F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666481A0B0C;
-	Tue, 22 Oct 2024 14:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA661A0BCA;
+	Tue, 22 Oct 2024 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qq34XOCz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pKfWqgqh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GRGLOJjx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4761A19D060;
-	Tue, 22 Oct 2024 14:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35AD193409;
+	Tue, 22 Oct 2024 14:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729607497; cv=none; b=CmKLtD5i5CZUDXcAYBIv0Jp2Ax8eok7BzkWob+yb4HY7hdGwIAc6gXxIyUXuIMPaievkk83EeNSjTZAzQud0acIkDZSoT4doo2i1bAuEoMw7Ocs5APyvewQgwdj98ChvO13Y4GSvQAbQgVjHUT0VDfcjD3l2F2FitOEh13kwadc=
+	t=1729607489; cv=none; b=pEf9ttB6qk87H0+9CEedX/rHTc39lt8yeV+Yi1+FBpv7G5C/kGSj0XCsVU/YAQhd8KNSztEQZo7nEvePpmsPe6KKiuPa0xrmhPBl2oNDsSnsAQUcxAlDvRvGUKYPsF8x/G7T6li1GlevEY5wgB/827Io8FB3RixmJq3gAZiQHFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729607497; c=relaxed/simple;
-	bh=LpgT8Yd7zrkaCPtkZnHUcp+Mj4CWRueHn/5O6SrjW3o=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=BSKUcyN7TEGDqyfD1k+7hNBero27+A8plYknLgk2Otct4Jm4BlmXAowWr3fWmNZGRz3Yp/8wseHNL+Z/wYmD3J4wTytvF5syTGtICnqSHAP/LIJPMnk7iW1j8pt4IU99CwZ79W7iRPEWmoPZIrS/nIymsYhbZCgPj8+2Sduw0L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qq34XOCz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pKfWqgqh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729607494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=I9+4TXaziuIvZZF1dq0RG29aOHytEa0AUdL0KSv7OOc=;
-	b=qq34XOCzWRsOQx80barfal50qwKN1CTLM7/miQyL+TNGjJNulre+RySeM0Jk9+n8s6thDq
-	h6ldicKpQp5TD/ccuYu4j88aqowb0flw/hifRKvYgMGKzpjvBMVyJDZ/vzDrL3tTLEibxf
-	h071JeV5T1lI7tZF6GwVTjGkNAKdU9REjZr1WBUIicYyKajXaA9KCInNn2rJ+u9ckl6kR6
-	O4HeyeeBGkN/n6Ux6FOpGOEC4HXUJPs9upf8MnFiOMwiTlFHB43UxKyTTIzzqTeosp4B9p
-	ZPfu2jeFEg59C9NVtpRvSVl5II2cudF8cTRPhHWKdBke0YbaFUUvlWxAjuG66A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729607494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=I9+4TXaziuIvZZF1dq0RG29aOHytEa0AUdL0KSv7OOc=;
-	b=pKfWqgqhtCfWd2p695IUzbtSyYIbddIxypBKi87GgP5I9Tc2arlh+KUBMdNXUrI/9l2PZH
-	fNO/zMVoeBsaIhCA==
-To: Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>, Greg
- KH <greg@kroah.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
- bryan.whitehead@microchip.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, frederic@kernel.org, richardcochran@gmail.com,
- johnstul@us.ibm.com, UNGLinuxDriver@microchip.com, jstultz@google.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 RESEND 1/2] posix-clock: Fix missing timespec64 check
- in pc_clock_settime()
-In-Reply-To: <ZxeLMu1Hy2VCqzJ6@duo.ucw.cz>
-Date: Tue, 22 Oct 2024 16:31:33 +0200
-Message-ID: <87ttd45hve.fsf@somnus>
+	s=arc-20240116; t=1729607489; c=relaxed/simple;
+	bh=fZXbOxyaHdvHUYh+ECDwoOfE5XM+s7pGRSfNL5VSMws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T9D+JULCbvsLcIiBJ1fN2hemEgCC8hitXy9nsBbNP3bwSG2Jx84/xReVYyk228MBy/u6mryIL2DrMksW8lZllLXDcvnt4KizYCvd2CEc+byUgja+hzlH7e/7mc2slq3nY+yfdtdlCYRxhwnvxBGzYtepJwr/rAy+EaXTxOQ+Bzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GRGLOJjx; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729607488; x=1761143488;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fZXbOxyaHdvHUYh+ECDwoOfE5XM+s7pGRSfNL5VSMws=;
+  b=GRGLOJjx8WSe3/yknZw/L7zGEFaKywU6J6698ch398lG1X6nbGQ/bYKn
+   /1e/Qt404ggrSqUSCcoU9CnTZ7o3Ck/UxPJa/lN5BSI1We5PUQxbGZA0L
+   AwqIMIegoDB/8dBnmgqpUKwVaFQEBobjS/sEFtsRwtcjOD5Z+TLZ1tdr6
+   5CDQcdyBztpn2m2i9I7hp77wPBKqDvdv391sUNIGZBC3UGlTe55zCnjt2
+   sR/5MqByuksdPiAJNYug75WKMEMeIYhPuV2XJdK+Plo8+zhxKDZ0FQLBf
+   3XA3uB+Ab5rXHNy3v0gYhuadZgittG7BmNd8bBXC/cALJm74aU2HX9e1b
+   Q==;
+X-CSE-ConnectionGUID: 6EcSRm9rTWKSsapDb2Y45Q==
+X-CSE-MsgGUID: tYU6ZCPeQfe5WviZTnV+ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="46632523"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="46632523"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 07:31:27 -0700
+X-CSE-ConnectionGUID: 4Ug4VnKATU6YqzzbJEGGyg==
+X-CSE-MsgGUID: xRM+iuBnQeuiw+dAWv1hwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="84680540"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by orviesa005.jf.intel.com with ESMTP; 22 Oct 2024 07:31:25 -0700
+Message-ID: <118041cf-07b1-457c-ad59-b9c8d48342b9@linux.intel.com>
+Date: Tue, 22 Oct 2024 17:33:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] xhci: Fix Link TRB DMA in command ring stopped
+ completion event
+To: Faisal Hassan <quic_faisalh@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mathias Nyman <mathias.nyman@intel.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241021131904.20678-1-quic_faisalh@quicinc.com>
+ <51a0598a-2618-4501-af40-f1e9a1463bca@linux.intel.com>
+ <07744fc7-633f-477e-96e9-8f498a3b40e8@quicinc.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <07744fc7-633f-477e-96e9-8f498a3b40e8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Pavel Machek <pavel@ucw.cz> writes:
+On 22.10.2024 15.34, Faisal Hassan wrote:
+> Hi Mathias,
+> 
+>> Do we in this COMP_COMMAND_RING_STOPPED case even need to check if
+>> cmd_dma != (u64)cmd_dequeue_dma, or if command ring stopped on a link TRB?
+>>
+>> Could we just move the COMP_COMMAND_RING_STOPPED handling a bit earlier?
+>>
+>> if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
+>>      complete_all(&xhci->cmd_ring_stop_completion);
+>>          return;
+>> }
+>>
+>> If I remember correctly it should just turn aborted command TRBs into
+>> no-ops,
+>> and restart the command ring
+>>
+> 
+> Thanks for reviewing the changes!
+> 
+> Yes, you’re right. As part of restarting the command ring, we just ring
+> the doorbell.
+> 
+> If we move the event handling without validating the dequeue pointer,
+> wouldn’t it be a risk if we don’t check what the xHC is holding in its
+> dequeue pointer? If we are not setting it, it starts from wherever it
+> stopped. What if the dequeue pointer got corrupted or is not pointing to
+> any of the TRBs in the command ring?
 
-> Hi!
->
->> >> > I'm guessing we can push this into 6.12-rc and the other patch into
->> >> > net-next. I'll toss it into net on Monday unless someone objects.  
->> >> 
->> >> Can you folks please at least wait until the maintainers of the code in
->> >> question had a look ?
->> >
->> > You are literally quoting the text where I say I will wait 3 more days.
->> > Unfortunately "until the maintainers respond" leads to waiting forever
->> > 50% of the time, and even when we cap at 3 working days we have 300
->> > patches in the queue (292 right now, and I already spent 2 hours
->> > reviewing today). Hope you understand.
->> 
->> I understand very well, but _I_ spent the time to review the earlier
->> variants of these patches and to debate with the submitter up to rev
->> 5.
->> 
->> Now you go and apply a patch to a subsystem you do not even maintain just
->> because I did not have the bandwidth to look at it within the time
->> limit you defined? Seriously?
->> 
->> This problem is there for years, so a few days +/- are absolutely not
->> relevant.
->> 
->> > Sorry if we applied too early, please review, I'll revert if it's no
->> > good.
->
-> It is no good :-( and it is now in stable.
->
-> It needs to goto out in the error case, to permit cleanups.
+For that to happen the xHC host would have to corrupt its internal command
+ring dequeue pointer. Not impossible, but an unlikely HW flaw, and a separate
+issue. A case like that could be solved by writing the address of the next valid
+(non-aborted) command to the CRCR register in xhci_handle_stopped_cmd_ring() before
+ringing the doorbell.
 
-The check needs to be done before taking the lock. There is already a
-patch around which solves it:
+The case you found where a command abort is not handled properly due to stopping
+on a link TRB is a real xhci driver issue that would be nice to get solved.
 
-https://lore.kernel.org/r/20241018100748.706462-1-ruanjinjie@huawei.com/
+For the COMP_COMMAND_RING_STOPPED case we don't really care that much
+on which command it stopped, for other commands we do.
 
-Thanks,
-
-	Anna-Maria
+Thanks
+Mathias
 
 
