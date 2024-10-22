@@ -1,218 +1,214 @@
-Return-Path: <linux-kernel+bounces-376454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EE69AB1D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01979AB1D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB8E1F21D55
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07F81C22554
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7671A2C21;
-	Tue, 22 Oct 2024 15:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C2F1A2C21;
+	Tue, 22 Oct 2024 15:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ia0qI+D1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VucLLaoM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051CD1A0AF2;
-	Tue, 22 Oct 2024 15:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0453171066;
+	Tue, 22 Oct 2024 15:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729610321; cv=none; b=HmBPqyiJ5oh5bcTqm0CDHQ0fXsX/f/iODjJANCemtgmx9+milRPWPBScxl5a+oLxNsg6FVTUaBTvgcQoHttMfYnP0q+4JX0FN4ZInjn22AdrmifzBRMEbZKh7UCxStId+XPf+xi9B7vYuqpuxR5V8UK0Y1YFFPmKzlLWZl4LS6w=
+	t=1729610344; cv=none; b=Rz4mhgDxNR3KudvOfGcIXI8DJiPBNZqdNKWH95//YwVOROz/03ZFNsJdZD8ivrITE/LI8LklfNRcEg9COUo2hnp9yQU8WzDNEJ0j4xcJjaRyDG2W+RXGWPktmliSug+sKeQeKKqHHI/4Fo3ZbSrthibiZo2j2Mpxw3//2ORuK90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729610321; c=relaxed/simple;
-	bh=CSfYJ73PoiHlK1B0hKxExTw/zBdaJ8h97t83JEP4vOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqsmIwyrVnxVdqcX6rtPcKnYZHiyL8rq7C5JRr4H0RF3vDvgor3IKeSb8M3DLWjDZ33AF0+Ocb8z2KVaiOAfQA8RNZRpqapTq5kRW/xEfgbJNlHH+Blq5WKIhHapIpz2+T9MPn8ylKOSg7g0zExyxLUIOZEtioZRtkA4VkuaGI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ia0qI+D1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8E7C4CEC3;
-	Tue, 22 Oct 2024 15:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729610320;
-	bh=CSfYJ73PoiHlK1B0hKxExTw/zBdaJ8h97t83JEP4vOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ia0qI+D1EDfyaNJVL+fRWbBSkEXT/Hf4e/YmdoysJc0jMwlVAOiZgbnsZSlZ7vaYP
-	 pePNKvK1friTwMrZwjbixyog/B8cku6tVImzqRz7NJsP5LqZsDeDBxTfWjkkcdOAj9
-	 5+YOovUpAoj8qU4mghPGrs1bOUjZ2PPjwXA3ur2oh/iqLtmcwYH1RG+nM7VDXMsOSk
-	 mSaByG0Sill0fXVbYEkyjBbMmWvE/jwpKsEIQE5bH4LOWAYpa2PDTKanrNrhoFxB1Y
-	 TecH9QD+2l+3oe6pJNSYgKErAIKTffRavwQqSdusSy6uRlhT6sHk+b5iemBzGvkDHk
-	 x8PtTFGYwvtSw==
-Date: Tue, 22 Oct 2024 12:18:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
- syscall ids in syscalltbl->entries
-Message-ID: <ZxfCTG76hvFaSxzi@x1>
-References: <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
- <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
- <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
- <ZwgAzde-jVyo4cSu@google.com>
- <ZwgBenahw7EImQLk@google.com>
- <ZwhA1SL706f60ynd@x1>
- <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
- <ZxLeS7CQFIR8lTmo@x1>
- <ZxLglVIivPk05c97@x1>
- <744634f0-5010-4465-85cd-0df79506f5d9@kernel.org>
+	s=arc-20240116; t=1729610344; c=relaxed/simple;
+	bh=Fp8/GOXGb3EmY3MB66TvaSjOBlWEw4kZ+DVZ6o1Miyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EBbx+3UM7I1N6PFqnYrqmXNrBk33TkiRmh6sem5q5t2IjKb3mKP4cUqI7t2ALoJ/nWzSYjKdAhL4et1e5ZaPOVZGTL221WfYBLx1DCWDmMldgHv0Xube9jrlKkviu4O+VNVYJEeu20rXteeNicKSrU17bi6TjoyE25LQQswyNds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VucLLaoM; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729610319; x=1730215119; i=w_armin@gmx.de;
+	bh=+LRGaDe+Stgy5CCZ/3A3Mnw1RHXr59PL8Vt6Ku7+Ll0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VucLLaoMPq/xGUr20kHB9InIobOyL3z8y0L9dafS7/zBOqi8m7QOqEpR11cZts1C
+	 HCdMyxPEznUk69/fx//jcDSok9JhVfcOp3vsPC87Af00gUTJ245CeAnaZOGx8s0g1
+	 2Zi2wA96mxitzxVcFG+Ce02POYltVbXMTHgWX1bLe+54vN8V6jwBz9HyDHcVbUyMN
+	 mFnrjDeGS5JVTwFfipTlv5ZKSRep3M1PPYNdVtaC4oK5BUlCBYSpD/Tu10sDnCLaT
+	 XVIcXUMlMfzg8ARXhJ5C/meihdQVdw+6HCi5qIqT1KHhu763Wx3lzsKKy4XoMs1Fh
+	 2Z5Y4tpQuPeSFEudEw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MmUHp-1tkt9423RR-00iPmB; Tue, 22
+ Oct 2024 17:18:39 +0200
+Message-ID: <35a98b67-d1eb-4aa9-9d3f-025c94cd6b0f@gmx.de>
+Date: Tue, 22 Oct 2024 17:18:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <744634f0-5010-4465-85cd-0df79506f5d9@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+ <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZeIZAH2Xu1nwYxtwU8UI4KY9oDAHTf0p1g29jRN8fyzdBMETX4n
+ mk5s8AY6A5dF9aXWRVF1gwiaCNKzuHN2ZPK7bTh2DHfBFkW7yhojONZtMUpBpS4dayHt1sx
+ iTdexFwaMHE9Akiv7L77FRn/eYUb5vgg74h4VteC/z6C3LnKeEvbqLSEBnxGlXaoUmUdvnx
+ ZIq9wRgXbm5jkSJ621g9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:48MQsRlI0js=;IwlaPd5r16YHo3FdR4hUaxQxxtq
+ fhAbL+vhyAE3oBU2VGU+TBdFFk9TXv4Z0ElfK4hpQXxWvykuQIGB5nqpbFERO9wMVOSv6W+xn
+ PfQmDqtdTx/jZl7B2Nuv2hqwFeLjaLO3yHpcklkx7hy6mwHZl2FnZNq/cPZJFAeLKMZmsyVmd
+ UWgLstw+3dcZACrXs8cR38yHBaR36/laycp3q2XwKDUAJ3lFmVPbFHTNFsKzC6SG5c2Z80SA4
+ dQYJRJuWIWvPBP34XITmuhWShXekmtNO40pNxhuQqTja8d1mhFTqq517pYd/SLUGMz2eT0Ebo
+ hJbhlNoKGr8hT0ZS9moAUMnzU8UTB8m6ISQ2poVjBm/SvgxXsj5bEr1a6MX5JX8Abl8Oo7At/
+ 1j+KDEffTcxyE0hjY6rMiNC3wb02l/ghhKLaZwgg1JCxldLBANjPfCH/g+V1Iz+9nUFHyyOWJ
+ lO+NIxvBMSzc2PPTmixvwp3gMeKlf9ZjaUj7mvBxXkGHVcD4hTpKw71GpmaorZANhvZcHMu7L
+ loXcsjpREp/O/Xsk2GyesKQbMsK1yIUOac93N2G3C3Tab49sloUHvYibDJe665tXf7Iw7X17t
+ Pd8zpTh2xVJkBKQ265XhZL9OgN8Lnmj7PAY7yNokk7x5iHswOejcGNmYL2h1Sf0oSpWg7NIO4
+ CVOBSjTyjWojQPbmsxg0XUEoKz9XsC13mqv0xoSsDoDzIF4XyCjztGSW+Ul+acBgTKvmIbGJJ
+ rrVF4i2AyM0t8qPPDnq8OG97lyOlEcwvIlBrOwvp9+ByJR2MkEAY+b4EzOW+UlzQtTbmEWI13
+ LljQW5s9wOSnQKqEzvoyFidg==
 
-On Mon, Oct 21, 2024 at 07:43:50AM +0200, Jiri Slaby wrote:
-> On 19. 10. 24, 0:26, Arnaldo Carvalho de Melo wrote:
-> > root@aquarius:~# ls -la /sys/kernel/debug/tracing/events/syscalls
-> > ls: cannot access '/sys/kernel/debug/tracing/events/syscalls': No such file or directory
-> 
-> Doesn't 5.10 have /sys/kernel/tracing/events/syscalls yet?
+Am 22.10.24 um 11:47 schrieb Pavel Machek:
 
-The config for rpi doesn't have, I had to install bookworm, 6.6 based
-kernel, then rebuild it after enabling DWARF, BTF,
-CONFIG_FTRACE_SYSCALLS and then it works, I was able to do some initial
-testing of my patch:
+> Hi!
+>
+>>> Sorry for taking a bit long to respond.
+>>>
+>>> This "illumination" subsystem would (from my perspective) act like som=
+e sort of LED subsystem
+>>> for devices with a high count of LEDs, like some RGB keyboards.
+>>>
+>>> This would allow us too:
+>>> - provide an abstract interface for userspace applications like OpenRG=
+B
+>>> - provide an generic LED subsystem emulation on top of the illuminatio=
+n device (optional)
+>>> - support future RGB controllers in a generic way
+>>>
+>>> Advanced features like RGB effects, etc can be added later should the =
+need arise.
+>>>
+>>> I would suggest that we model it after the HID LampArray interface:
+>>>
+>>> - interface for querying:
+>>>  =C2=A0- number of LEDs
+>>>  =C2=A0- supported colors, etc of those LEDs
+>>>  =C2=A0- position of those LEDs if available
+>>>  =C2=A0- kind (keyboard, ...)
+>>>  =C2=A0- latency, etc
+>>> - interface for setting multiple LEDs at once
+>>> - interface for setting a range of LEDs at once
+> How are LEDs ordered? I don't believe range makes much sense.
 
-root@raspberrypi:~# ~acme/bin/perf trace -e write,read cat /etc/passwd |& tail
-saned:x:109:120::/var/lib/saned:/usr/sbin/nologin
-vnc:x:992:992:vnc:/nonexistent:/usr/sbin/nologin
-colord:x:110:121:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
-hplip:x:111:7:HPLIP system user,,,:/run/hplip:/bin/false
-acme:x:1000:1000:,,,:/home/acme:/bin/bash
-     0.000 ( 0.035 ms): read(fd: 3, buf: 0x7efde570, count: 512)                              = 512
-     0.256 ( 0.011 ms): read(fd: 3, buf: 0x7efde108, count: 512)                              = 512
-     1.153 ( 0.019 ms): read(fd: 3, buf: 0x76939000, count: 131072)                           = 1851
-     1.179 ( 0.043 ms): write(fd: 1, buf: , count: 1851)                                      = 1851
-     1.227 ( 0.006 ms): read(fd: 3, buf: 0x76939000, count: 131072)                           = 0
-root@raspberrypi:~#
+Range would allow for efficiently changing the color of all LEDs. But i ag=
+ree
+that this can be considered optional and can be added later.
 
-root@raspberrypi:~# ~acme/bin/perf --version
-perf version 6.12.rc3.g0f709a2d7be1
+Should we ever prototype such an interface, then providing a method for se=
+tting
+multiple LEDs at once would be enough.
 
-root@raspberrypi:~# ls -la /sys/kernel/tracing/events/syscalls/
-Display all 760 possibilities? (y or n)^C
-root@raspberrypi:~# uname -a
-Linux raspberrypi 6.6.57-v7+ #1 SMP Mon Oct 21 20:55:20 -03 2024 armv7l GNU/Linux
-root@raspberrypi:~# head /etc/debian_version 
-12.7
-root@raspberrypi:~#
+>>> I do not know if mixing sysfs (for controller attributes like number o=
+f LEDs, etc) and IOCTL
+>>> (for setting/getting LED colors) is a good idea, any thoughts?
+>> I wonder what the advantage of this approach is over simply using HID L=
+ampArray
+>> (emulation), openRGB is already going to support HID LampArray and sinc=
+e Microsoft
+>> is pushing this we will likely see it getting used more and more.
+> There's nothing simple about "HID LampArray". Specification is long
+> ang ugly... and we don't want to be stuck with with OpenRGB (links to QT=
+!).
 
-Now I'm back dabbling with the BPF verifier in various kernels,
-including this 6.6 arm7 32-bit one:
+And HID LampArray its not easily extendable.
 
-root@raspberrypi:~# clang --version
-Raspbian clang version 14.0.6
-Target: arm-unknown-linux-gnueabihf
-Thread model: posix
-InstalledDir: /usr/bin
-root@raspberrypi:~# 
+>
+>> Using HID LampArray also has the advantage that work has landed and is =
+landing
+>> to allow safely handing over raw HID access to userspace programs or ev=
+en
+>> individual graphical apps with the option to revoke that access when it=
+ is
+>> no longer desired for the app to have access.
+> HID raw is not suitable kernel interface.
 
-root@raspberrypi:~# ~acme/bin/perf trace -e clock_nanosleep,nanosleep sleep 1.23456 |& tail -20
-83: (bf) r1 = r9                      ; R1_w=scalar(id=13,umax=4294967295,var_off=(0x0; 0xffffffff)) R9_w=scalar(id=13,umax=4294967295,var_off=(0x0; 0xffffffff))
-84: (07) r1 += -1                     ; R1_w=scalar(smin=-1,smax=4294967294)
-85: (67) r1 <<= 32                    ; R1_w=scalar(smax=9223372032559808512,umax=18446744069414584320,var_off=(0x0; 0xffffffff00000000),s32_min=0,s32_max=0,u32_max=0)
-86: (77) r1 >>= 32                    ; R1=scalar(umax=4294967295,var_off=(0x0; 0xffffffff))
-87: (25) if r1 > 0xfff goto pc+23     ; R1=scalar(umax=4095,var_off=(0x0; 0xfff))
-; if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, size, arg))
-88: (79) r1 = *(u64 *)(r10 -16)       ; R1_w=map_value(off=112,ks=4,vs=24688,imm=0) R10=fp0 fp-16=map_value
-89: (bf) r2 = r9                      ; R2_w=scalar(id=13,umax=4294967295,var_off=(0x0; 0xffffffff)) R9=scalar(id=13,umax=4294967295,var_off=(0x0; 0xffffffff))
-90: (85) call bpf_probe_read_user#112
-R2 unbounded memory access, use 'var &= const' or 'if (var < const)'
-processed 490 insns (limit 1000000) max_states_per_insn 2 total_states 23 peak_states 23 mark_read 15
--- END PROG LOAD LOG --
-libbpf: prog 'sys_enter': failed to load: -13
-libbpf: failed to load object 'augmented_raw_syscalls_bpf'
-libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-     0.000 (1234.739 ms): clock_nanosleep(rqtp: 0x7ea35adc, rmtp: 0x7ea35ad4)                   = 0
-root@raspberrypi:~#
+I agree, using HID raw in this case would be like amdgpu emulating a i915 =
+GPU to
+support applications working with a i915 GPU.
 
-So the original problem, that you reported, i.e. not being able to build
-on 32-bit arm seems to be mostly gone, I need to do some more tests with
-globbing, i.e.:
+>> Personally I really like the idea to just emulate a HID LampArray devic=
+e
+>> for this instead or rolling our own API.  I believe there need to be
+>> strong arguments to go with some alternative NIH API and I have not
+>> heard such arguments yet.
+> If you don't want "some alternative API", we already have perfectly
+> working API for 2D arrays of LEDs. I believe I mentioned it before
+> :-). Senzrohssre.
+>
+> 								Pavel
 
-root@raspberrypi:~# ~acme/bin/perf trace -e *anosleep sleep 1.23456 |& tail
-processed 490 insns (limit 1000000) max_states_per_insn 2 total_states 23 peak_states 23 mark_read 15
--- END PROG LOAD LOG --
-libbpf: prog 'sys_enter': failed to load: -13
-libbpf: failed to load object 'augmented_raw_syscalls_bpf'
-libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-     0.000 (1234.730 ms): clock_nanosleep(rqtp: 0x7ef0cadc, rmtp: 0x7ef0cad4)                   = 0
-root@raspberrypi:~#
+We may have to support 3D arrays of LEDs, so using a simple framebuffer
+would likely cause trouble.
 
-Ah, it is working, lets try something else:
+I think of something like this:
 
-root@raspberrypi:~# ~acme/bin/perf trace -e open*
-<BIG SNIP>
-  6245.506 ( 0.018 ms): (udev-worker)/14286 openat(dfd: 13, filename: 0xd6bac0, flags: RDONLY|CLOEXEC|LARGEFILE|PATH|0x20000) = 6
-  6245.570 ( 0.018 ms): (udev-worker)/14286 openat(dfd: 6, filename: 0xd6bac0, flags: RDONLY|CLOEXEC|LARGEFILE|PATH|0x20000) = 13
-  6245.713 ( 0.017 ms): (udev-worker)/14286 openat(dfd: CWD, filename: 0x5097c0, flags: RDONLY|CLOEXEC|DIRECTORY|PATH|0x20000) = 6
-  6245.755 ( 0.016 ms): (udev-worker)/14286 openat(dfd: 6, filename: 0xceb5d8, flags: RDONLY|CLOEXEC|LARGEFILE|PATH|0x20000) = 13
-  6245.815 ( 0.018 ms): (udev-worker)/14286 openat(dfd: 13, filename: 0xceb5d8, flags: RDONLY|CLOEXEC|LARGEFILE|PATH|0x20000) = 6
-  6246.269 ( 0.049 ms): (udev-worker)/14286 openat(dfd: CWD, filename: 0x7eb10620, flags: RDONLY|CLOEXEC|NOCTTY|0x20000) = 6
-  6246.466 ( 0.032 ms): (udev-worker)/14286 openat(dfd: CWD, filename: 0x7eb10630, flags: RDONLY|CLOEXEC|0x20000) = 6
-^Croot@raspberrypi:~# 
+illumination class:
 
-Yeah, works.
+sysfs attrs:
 
-So to summarize: the patch I sent and you filled in the missing bits,
-that is in perf-tools/tmp.perf-tools was tested on arm v7, 32-bit, on a
-Raspberry PI 3 and it builds and then when tested, works:
+  - lamp_count
+  - kind (optional)
+  - width, height, length (all optional)
+  - latency (optional)
+  - driver-defined attributes like firmware_version, ... (optional)
 
-acme@raspberrypi:~/git/linux $ git log --oneline torvalds/master..
-0f709a2d7be1 (HEAD -> perf-tools, perf-tools/perf-tools) perf trace arm32: Fix iteration of syscall ids in syscalltbl->entries
-2c881b312117 perf trace augmented_raw_syscalls: Add more checks to pass the verifier
-6a6c689b7540 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
-44c1d54d4d26 perf build: Change the clang check back to 12.0.1
-39c6a356201e perf trace: The return from 'write' isn't a pid
-ab8aaab874c4 tools headers UAPI: Sync linux/const.h with the kernel headers
-acme@raspberrypi:~/git/linux $
+ioctl interface:
 
-Now I need to go back to the augmented_raw_syscall.bpf.o problems here
-and there, probably will just push what I have (listed above) and leave
-it soak in linux-next so that I can send to Linus, as it improves the
-current situation.
+  - get LED info (id, supported colors, position (optional), key code (opt=
+ional), ...)
+  - get current color of LEDs
+  - set multiple LEDs (by ID)
 
-- Arnaldo
- 
-> Alternatively, isn't debugfs mounted elsewhere on debian? (Or mounted at
-> all?)
-> 
-> > Unsure where to find the config used to build this kernel:
-> > 
-> > root@aquarius:~# uname -a
-> > Linux aquarius 5.10.103-v7+ #1529 SMP Tue Mar 8 12:21:37 GMT 2022 armv7l GNU/Linux
-> > root@aquarius:~#
-> > 
-> > normally is in /boot/ but I'm no debian user, ideas?
-> 
-> Won't something dpkg -L linux-image tell you (I haven't used deb for years)?
-> 
-> Looking into:
-> https://ftp.debian.org/debian/pool/main/l/linux/linux-image-5.10.0-0.deb10.16-armmp_5.10.127-2~bpo10+1_armhf.deb
-> 
-> the config should really live in /boot.
-> 
-> -- 
-> js
-> suse labs
+This interface is similar the the HID LampArray interface except that:
+
+  - we can read the current color
+  - we can omit optional information
+  - we can extend the interface later (animations, etc)
+
+Thanks,
+Armin Wolf
+
 
