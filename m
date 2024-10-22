@@ -1,181 +1,103 @@
-Return-Path: <linux-kernel+bounces-375379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD02C9A953C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:03:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8E19A9543
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26E11C22A01
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DCC282ECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05A18063C;
-	Tue, 22 Oct 2024 01:03:32 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A228379
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E918063C;
+	Tue, 22 Oct 2024 01:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Tz7ikGwr"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D3213FF5;
+	Tue, 22 Oct 2024 01:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729559012; cv=none; b=sMFXve2nojkpW0vi40TweVIFAVxgBEzSmcQmVU57vrjWLF920cr7waXaK8KMr0pEvIrWAREGdfwrizBoJDHf+jqAOuBt3adqk7Wcw87BNdV7pn1TusqW5ZbiJk479/niR7AYe/wT7U9EEWaQmXpOhm/fbno4rUGKQL4/nZMqskk=
+	t=1729559420; cv=none; b=nZo7esLLFBMhLiwajw5JROfpmUlDlbryiwE3ne1RN3cmmjwo3W9VvgkFkBJVWDrYDn60xnxqt2cg5uIW1SW8iU1sg9t7YZZWEzcJgi5+RUezzWI1G98YRU8EI3NSNXVW/KObOP7jb25hfT3fxgugq+/r+Kfu8no0KUP296i2kh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729559012; c=relaxed/simple;
-	bh=EaeHWISn1cOME7j2ZxUWwoUcH4UqC8Ij7hr25rMWswg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FMjN+tuRx9fBs6PAuHSahT2dpw6OyHdl/5Wj2odewzLz/RDObFWGw1qke1Pc8sXcF4/SyJmTXbvGmNjW15guVTLTTP//VcvY3faqSWQXfECSIatUGc7ebBhxJnhgO1ekkmulRBCQMXDnR63WMTdOBhpLwdxB18zWuqFhT+MhElA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso41759455ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:03:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729559010; x=1730163810;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dzxZsfm2IDcVs092UIwNqZotbjszFdKSKjIKGExOKHQ=;
-        b=XlgUMPjPEGLniV/K10AQEhEwYIBDctKlWtyO3jSuoWEI8ChqIX3gIgG1RyNF6ZzP7/
-         ZR1wapzshc+TE9UIS7Fdh7Szn5yjPXQMYDqKhq8hojbNXhKsHvhQqOs7OsfI5JSTIxCu
-         gwW/rtzCSAPAwdzWcU6vmO0N7sWKFsaOk5gni5gLSOqMOXwDS6D3nTfDSxQ0RnMJzHv7
-         TVM3xg9mkYjGx/A31b4aQbzrLg8+oLXRt2ehxGieeYNTmRlRmvVip1rLhEhCaHZDKU5y
-         D+ssLqRdDG8zmgl7ixKJMBnfqnqRRlqrEFrx3taU8qS/Xh5BKVpV7FhjYalM8hWOF/OR
-         1MoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXTY6RIHDvvEoZOLJfwh8dmLMBtkRVkaXJPZaiXRit/wvQF4jS/DIwcT2hC5er19d44vB/Gp0k4mudwz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydI5ZwIfPXk/qOrD2NI7hyiUnH6ECjgA/LZ3/caKbFdlFE3Bm9
-	nAhXeYecTi6ZSqNhXgf7gE/IyzRBJ3vKzIcUHLOpLkdCafPFv5D+4c7Eu5ABVf36ARXnSEf63O6
-	disMNO/3IMMEakw+NrWI0fN28QbQ+cjx1xRLhd0U2YQbfIThgKdQblBE=
-X-Google-Smtp-Source: AGHT+IGJaiI+3CeH6B/sc5zINJNVNKuTkHyLjV2ol/JP/x/cS6QMfQEZb2cI4vgewyw3WSJTREG6IkvB1ezhtvebiU3Dz31jXgfK
+	s=arc-20240116; t=1729559420; c=relaxed/simple;
+	bh=ibj3h7uU1sdJL+wHMspk7cWzqnWpMrRzWC/HrPMNItg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEYtEtFvhC1g41CHgAYJTa6e/a1ILzIgkDs9yUWFIPNbWcMzL84i3NFc/9s7IEeBaGaZFSboXPgjDc34XU2tNN/o2KB01ZO9pMFZl32QfaWTX+nZXsHCjE8tJFVD1Y5A0LWop9SoGmFJyxe3bwOzlCwNNGahNax9u/vrABxO6TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Tz7ikGwr; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=yny7DH00g8qimPwt52mB/AR4FqZsA3NDX0M5M5+ipOo=;
+	b=Tz7ikGwrudkRr0lF23LZocqwgFFQvRxIV6CBGxtqvtTdpqbDyekqYSSQRbg5fW
+	3nVj+xjxVpnIUj29IluDzBKypzDFjQdiZFU0OLxFqM6dUj5tdiE3RRCUD+gjt4Al
+	DJVYdXIuIKJFLl9Ei+a+dD2j3SL+itxzKyFZhZoYyinnk=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBHv4H6+hZnE8qUAA--.5293S3;
+	Tue, 22 Oct 2024 09:08:13 +0800 (CST)
+Date: Tue, 22 Oct 2024 09:08:10 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: Re: [PATCH v3 0/4] arm64: dts: imx8mm-kontron: Add HDMI and LVDS
+ display support
+Message-ID: <Zxb6+iG7Lcrt5No1@dragon>
+References: <20241008143804.126795-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c6:b0:3a0:4a91:224f with SMTP id
- e9e14a558f8ab-3a3f40474d0mr105674435ab.1.1729559010044; Mon, 21 Oct 2024
- 18:03:30 -0700 (PDT)
-Date: Mon, 21 Oct 2024 18:03:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6716f9e2.050a0220.1e4b4d.0068.GAE@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in extent_writepage_io
-From: syzbot <syzbot+9295d5153c44d86af0aa@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008143804.126795-1-frieder@fris.de>
+X-CM-TRANSID:Ms8vCgBHv4H6+hZnE8qUAA--.5293S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOtCzUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAhKAZWcW3kZBnQAAsA
 
-Hello,
+On Tue, Oct 08, 2024 at 04:37:42PM +0200, Frieder Schrempf wrote:
+> Frieder Schrempf (4):
+...
+>   arm64: dts: imx8mm-kontron: Add support for display bridges on BL
+>     i.MX8MM
+>   arm64: dts: imx8mm-kontron: Add DL (Display-Line) overlay with LVDS
+>     support
 
-syzbot found the following issue on:
+Applied both, thanks!
 
-HEAD commit:    6efbea77b390 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11c0c240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=9295d5153c44d86af0aa
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c18c5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12186f27980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5dbbf0b1a9a5/disk-6efbea77.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fd272a84cc09/vmlinux-6efbea77.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cfcfcf079289/bzImage-6efbea77.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/504c13bf000c/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9295d5153c44d86af0aa@syzkaller.appspotmail.com
-
-assertion failed: block_start != EXTENT_MAP_HOLE, in fs/btrfs/extent_io.c:1303
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/extent_io.c:1303!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5258 Comm: syz-executor179 Not tainted 6.12.0-rc3-syzkaller-00183-g6efbea77b390 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:submit_one_sector fs/btrfs/extent_io.c:1303 [inline]
-RIP: 0010:extent_writepage_io+0xca2/0xd20 fs/btrfs/extent_io.c:1388
-Code: fe 07 90 0f 0b e8 1e 28 d9 fd 48 c7 c7 80 0d 4d 8c 48 c7 c6 60 1b 4d 8c 48 c7 c2 20 0d 4d 8c b9 17 05 00 00 e8 5f f7 fe 07 90 <0f> 0b e8 f7 27 d9 fd eb 5f e8 f0 27 d9 fd 48 c7 c7 80 0d 4d 8c 48
-RSP: 0018:ffffc90003eb6ec0 EFLAGS: 00010246
-RAX: 000000000000004e RBX: 0000000000001000 RCX: 9c772e8b3e6d6f00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90003eb7030 R08: ffffffff8174af9c R09: 1ffff920007d6d74
-R10: dffffc0000000000 R11: fffff520007d6d75 R12: fffffffffffffffd
-R13: 0000000000007000 R14: dffffc0000000000 R15: ffffea0001c3a740
-FS:  00007f6de66216c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020948000 CR3: 0000000076e7c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- extent_writepage fs/btrfs/extent_io.c:1460 [inline]
- extent_write_cache_pages fs/btrfs/extent_io.c:2130 [inline]
- btrfs_writepages+0x11c4/0x2370 fs/btrfs/extent_io.c:2261
- do_writepages+0x35d/0x870 mm/page-writeback.c:2683
- filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:398
- __filemap_fdatawrite_range mm/filemap.c:431 [inline]
- filemap_fdatawrite_range+0x11a/0x180 mm/filemap.c:449
- btrfs_fdatawrite_range+0x53/0xe0 fs/btrfs/file.c:3827
- btrfs_direct_write+0x565/0xa70 fs/btrfs/direct-io.c:961
- btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
- do_iter_readv_writev+0x600/0x880
- vfs_writev+0x376/0xba0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1215
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6de66ad5d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6de6621158 EFLAGS: 00000212 ORIG_RAX: 0000000000000148
-RAX: ffffffffffffffda RBX: 00007f6de673a6e8 RCX: 00007f6de66ad5d9
-RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00007f6de673a6e0 R08: 0000000000000000 R09: 0000000000000003
-R10: 0000000000007800 R11: 0000000000000212 R12: 00007f6de673a6ec
-R13: 000000000000006e R14: 00007fffacb4cff0 R15: 00007fffacb4d0d8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:submit_one_sector fs/btrfs/extent_io.c:1303 [inline]
-RIP: 0010:extent_writepage_io+0xca2/0xd20 fs/btrfs/extent_io.c:1388
-Code: fe 07 90 0f 0b e8 1e 28 d9 fd 48 c7 c7 80 0d 4d 8c 48 c7 c6 60 1b 4d 8c 48 c7 c2 20 0d 4d 8c b9 17 05 00 00 e8 5f f7 fe 07 90 <0f> 0b e8 f7 27 d9 fd eb 5f e8 f0 27 d9 fd 48 c7 c7 80 0d 4d 8c 48
-RSP: 0018:ffffc90003eb6ec0 EFLAGS: 00010246
-RAX: 000000000000004e RBX: 0000000000001000 RCX: 9c772e8b3e6d6f00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90003eb7030 R08: ffffffff8174af9c R09: 1ffff920007d6d74
-R10: dffffc0000000000 R11: fffff520007d6d75 R12: fffffffffffffffd
-R13: 0000000000007000 R14: dffffc0000000000 R15: ffffea0001c3a740
-FS:  00007f6de66216c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005646f9cff0b8 CR3: 0000000076e7c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
