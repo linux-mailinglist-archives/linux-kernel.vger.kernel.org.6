@@ -1,115 +1,169 @@
-Return-Path: <linux-kernel+bounces-376439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B459AB192
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:02:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F569AB197
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E23B23058
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09291F2430E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8771A2544;
-	Tue, 22 Oct 2024 15:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26D71A0BDC;
+	Tue, 22 Oct 2024 15:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XveL2wVQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="bz7VkP3a"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBF5199939;
-	Tue, 22 Oct 2024 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9AC85C5E;
+	Tue, 22 Oct 2024 15:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729609335; cv=none; b=rhqP5KEdfZqKMJyVYtj0fmsyRniR/NS8lklgv3YlTqf1XWyH8CQM6HPfO5HGppKEE7EC9sgowxMDQCFAVdbFNW661WI6oTih1O8y5xVMHfyuVmvUnl9GngSI2iXqcJqe5AUldDmw2PrPZu1esFLoX1DAK+OpDp7193jOuMr+16A=
+	t=1729609396; cv=none; b=b02jaEDY7DwvqrKbnZnM4ybkGeH+/V3lXMcdmQM9JpKa3P/+iacedslKaOf+rBIl46iD3tEvo/ieGkqN8AUMKK/seixdjFgdFuzhhQV9UKrA6Bexchs08+C9I2j7vMZpd1EltVr3s8H1mmPwGSMp8sJS5fG7A1yDc3RXGYd3CmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729609335; c=relaxed/simple;
-	bh=dk9GVXBzMcljhw5qoxyb0/4o0TGxVOKtLeB4U0yWriM=;
-	h=From:To:In-Reply-To:References:Subject:Message-ID:Date:
-	 MIME-Version:Content-Type; b=Er7Q6V8GfNqv9PGzlyA3TV1nnZ06eKLud3DUQaMaZNkxSCPjsyFl6LGMTCxt9JDPjAnJd+EUGe8wRabth6PF2rqWtKJPNei1+VKl/KXD3QpuPToFeGTbfgT2QgfZXhnjEHOYEHliFDjpbGa4eagHiI9UuhrA0KQTec3d1jdOgU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XveL2wVQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBpanH023780;
-	Tue, 22 Oct 2024 15:01:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4j0TSrcG4+GrKDdFhSudIfWhVj2QOoPGryroBU7BN2c=; b=XveL2wVQGWVvDPvc
-	byij4+QOMdto+5SsR2HsbnHIxPUFV6JZKintrjw6Z9AHPV5mofyGRQZCaYl1J6cO
-	j5JGKuPLIPhGw9XctqyhwFRUgPudXX8tJXzvuHIaaYsUIi3SkaPe9KBO/mPsW3K0
-	OItknDCyfFUmgZq16txtpdMZld42tu3/zy6pcCEWDiULZGxYMkbAzdE1ZKmcNqbv
-	zEFuWakkBVExT+MtLNeRtWkPEMqvkg73WrCDFZ6/l1WqWontnkBeF894dH23U8G0
-	gYaH2RBKaM686aHvfM5G7jVZAY4wEQ4olh+vCqW+U4BaDp4cxgamN6Pj+fUw6kTx
-	BZAyqA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42e3cgj24t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 15:01:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MF1t3R019415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 15:01:55 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 08:01:55 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: <kvalo@kernel.org>, <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jose Ignacio Tornos Martinez
-	<jtornosm@redhat.com>
-In-Reply-To: <20241017181004.199589-1-jtornosm@redhat.com>
-References: <20241017181004.199589-1-jtornosm@redhat.com>
-Subject: Re: [PATCH v4 0/2] wifi: ath12k: fix issues when unbinding
-Message-ID: <172960931548.3037585.16411259457657952070.b4-ty@quicinc.com>
-Date: Tue, 22 Oct 2024 08:01:55 -0700
+	s=arc-20240116; t=1729609396; c=relaxed/simple;
+	bh=h4PzYrDPgx/dA0UY/qsvB8n6XSfdbkTqKIvL1amIuCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CoxwHtJ/bL/9Gtb9gDCopGxKuKgeyWcWsQPCS2GCsCxlE1BKj2aBD/lj+2JRlQUxqeJbpTiPxzdu7DML5lcsIFYCAY2Y67QzngDK9t6Jww+F/UkdHcV3ExFxn0E83imsKkTjnMbYp1mjVfk2quy8mr8ezyylnGnKX54+ros0gRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=bz7VkP3a; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729609372; x=1730214172; i=w_armin@gmx.de;
+	bh=iyTVaz4YZToxUrhmRQO6zFXlT9G5B63Ll4lLI9zE4as=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bz7VkP3a3IQVdIp3zlcVTsy+Ja1vxLRTaOt9Fk6ClTJ1jpnjcsoNPOrvLaNhyTs+
+	 A2F9oLpIlpDa/tdYxImMp4FOmwDKjL15ggnt200F0MICpkkpuU7DXkfdWxUugsPeO
+	 t40x9EfYHiCLv29siKCJxN2SSaiI4rt5v2FBg7v97e23grsEZoOb8cw/w6GASQvRK
+	 CNuI12DRduFj9ij+V2lj9BOpGFlDpL/2YoNNgF8MEuiOW24WhCY+xhwc48QUwH4Uk
+	 +GwzZn1G1pn3clezQi86lycWLqNu91MQJnZP2CGv7GIL7es354gLIoAhFBEsQEgEt
+	 NU5xfR5aLeT2t+Lc/w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfYPY-1ta67A18Qq-00fzBl; Tue, 22
+ Oct 2024 17:02:52 +0200
+Message-ID: <eb829c6c-cee0-4d65-b9d6-3df7fd1096a7@gmx.de>
+Date: Tue, 22 Oct 2024 17:02:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Pavel Machek <pavel@ucw.cz>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Werner Sembach <wse@tuxedocomputers.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+ <kywhqw5ef6hioemoydwub57dcmfuu3bwqpz3vjur4pkabboydo@2hrqj3zy4txv>
+ <ZxdyQFMRIRusMD6S@duo.ucw.cz>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <ZxdyQFMRIRusMD6S@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ukR6yyaYn5pRdcw48nrbrIDbsGSgoGCJ
-X-Proofpoint-ORIG-GUID: ukR6yyaYn5pRdcw48nrbrIDbsGSgoGCJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=479
- spamscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220096
+X-Provags-ID: V03:K1:buvMcpt7UqADbxglDvv1br4rnAVjoyNl6mJL2vRW0OAmw2ePwSV
+ rf6Ll7E5y7hUFY8h+S69VdRzhAK6FJrBDkWuDKXKFhK77jdPTHe+NE9ZqHnHvQECtmI0F2z
+ /KWGhRaUwogFJg9BTpU9CdYsCV78RW+7xsu2ADL9LGmqFtOwmybulAE7KneqNomdp2w37N/
+ je1oxtigOzTX0vHYyiSYg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WfBvh+JhZ4Q=;OXt0JGNMGHC98/Pjb7oNflPVIwA
+ NVlBkaUMMzTEewvxxYGDTpVYglg1VJCqXHe9BqwG4fHQezZ1TE0NWxbUlXY5p19/Nbw7SzCHq
+ b664sJ6NDXBtMF8OD/C+mHMsPFsf/KRc2zztj+KNysD30jG/W7itgAgMp8UgzD3FSf3uP2Q/+
+ CIHLlkSBrskBey2D8UBbuZoD3JPSDtdOF2bv/TIoMnJe72Fb17VKbV1WLqaPlCQ18LSst4DYu
+ Md0nmKdIDcCqIAizHoSPe9x9a4dy+zm7AMzqdabac8Lm/gheA+RE9QK8kXiEUnUlFeXHxane/
+ YzqtWr7tyTI6gBc2k9eBCQU5KSJ5p9RI5vVaZkCHDqA8SNYsV0dp2lOBJ2/QFXNt1iRE0exPd
+ ilHSLTz/CqNRWXhbh7Q7p6OKxNU1ZNV7fjz10dk0hlNdPpUFdqJb2XqFHuJmY4bZ6ZM4bAuso
+ gcueega+td3x34j0oWL9AqohaDbhndfRIBdzAnURMrhJRLhcA5wBtmI0tpbu9NweZ+NHivSIs
+ f7ZePNOodMo99Qf2RdXph2GzeJVGsSZllc+bBp36Ad6zIz1Z8tuEq0bcxTH0ptHqXZveXxvi7
+ IKN3C+1cqTBM906T7RRnqv11FZE43F0Z+w5OM6NiKXF9tTrOhzfnrHpFWDccQglbkPevoMyry
+ 0mlCoiKGA1PrVUvS+kkxasRUtyuq1/jud3OSMdop8sYZdYDRRLgBEHjtG/gYdj3Hvcj0VrYNX
+ /jX758Mck6PLhrlispKzHqTU2ssPSdfSzu5CcIDHC03I1ZmJO47WH1bZTvYfhk9uc2xPzOaDx
+ kX8r3zY3z6MIAiJ7bZ6fyYEBmnYuLnVUSFRXRfDF7MImM=
 
+Am 22.10.24 um 11:37 schrieb Pavel Machek:
 
-On Thu, 17 Oct 2024 20:07:30 +0200, Jose Ignacio Tornos Martinez wrote:
-> wifi: ath12k: fix issues when unbinding
-> 
-> Currently, ath12k driver is not working from VMs but it cannot be unbinded
-> either from there. I would like to send these patches to fix the issues that
-> I have found in order to get the unbind operation working there, at least to
-> fix the errors found during the process when the initial error is detected.
-> 
-> [...]
+> Hi!
+>
+>>> Personally I really like the idea to just emulate a HID LampArray device
+>>> for this instead or rolling our own API.  I believe there need to be
+>>> strong arguments to go with some alternative NIH API and I have not
+>>> heard such arguments yet.
 
-Applied, thanks!
+Using a virtual HID LampArray already creates two issues:
 
-[1/2] wifi: ath12k: fix crash when unbinding
-      commit: 1304446f67863385dc4c914b6e0194f6664ee764
-[2/2] wifi: ath12k: fix warning when unbinding
-      commit: ca68ce0d9f4bcd032fd1334441175ae399642a06
+1. We have to supply device size data (length, width, height), but the driver
+cannot know this.
 
-Best regards,
--- 
-Jeff Johnson <quic_jjohnson@quicinc.com>
+2. It is very difficult to extend the HID LampArray interface, for example
+there is no way to read the current LED color from the hardware or switch
+between different modes.
+
+A sysfs- and/or ioctl-based interface would allow us to:
+
+1. Threat some data as optional.
+
+2. Extend the interface later should the need arise.
+
+Looking at the tuxedo-drivers code, it seems that the WMI interface also reports:
+
+- preset color
+- device type (touchpad, keyboard, ...)
+- keyboard type (US/UK)
+
+Making this information available through the HID LampArray protocol would be
+difficult (except for the device type information).
+
+>> Agreed on everything Hans said.
+>>
+>> I'll personnaly fight against any new "illumination" API as long as we
+>> don't have committed users. This is the same policy the DRM folks
+>>> are
+> Well, and I'll personally fight against user<->kernel protocol as
+> crazy as HID LampArray is.
+>
+> OpenRGB is not suitable hardware driver.
+> 								Pavel
+
+I agree.
+
+The point is that we need to design a userspace API since we cannot just allow
+userspace to access the raw device like with HID devices.
+
+And since we are already forced to come up with a userspace API, then maybe it would
+make sense to build a extendable userspace API or else we might end up in the exact
+same situation later should another similar driver appear.
+
+Since the HID LampArray is a hardware interface standard, we AFAIK cannot easily extend it.
+
+Also i like to point out that OpenRGB seems to be willing to use this new "illumination" API
+as long as the underlying hardware interface is properly documented so that they can implement
+support for it under Windows.
+
+I would even volunteer to write the necessary OpenRGB backend since i already contributed to
+the project in the past.
+
+Thanks,
+Armin Wolf
 
 
