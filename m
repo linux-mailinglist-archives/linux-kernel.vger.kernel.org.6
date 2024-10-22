@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-375780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A3C9A9AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A26F29A9AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE4E1F2571C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D40D1F258C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D2B14AD02;
-	Tue, 22 Oct 2024 07:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754521487FE;
+	Tue, 22 Oct 2024 07:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HihK6JEX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1q6oMpn8"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022611465BB;
-	Tue, 22 Oct 2024 07:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E7B137747
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581318; cv=none; b=R20VyTXcxoCW1FFM0NS1nzt5/1tccuveNpYqa8i4qCaNr9J3e8SmLN3We4nppmdm2x8WOzUWMV1I/JPZA5Ehhahamdf9JVu1ZzxZskp6hUSSyOafZyiIzgXxLhj31WAFewPDTx8TelGt0DpNfrgSrkZfAmUN/4s84UtC2saC/W8=
+	t=1729581370; cv=none; b=fZCjfsmpYXrDkfSqImwb03goJWW7JQei9RkykH7+NZIadAh9ViqteCMkOE7T5F0/tHiUF2FZoo+/NJXqvKPPDxt01b1oHFj6SYzJ2LJxwryPKnL0IuPnOnDEo3/+BITxkZ8sW5DqscxcvATV7EjlRg7X7fE6LlmqTfveX+aidJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581318; c=relaxed/simple;
-	bh=LoFoQKXKUVk/pCf19sC0PrOBcxYg31RRtFIIJGFy1yI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sNAltYzdKSDXPPMINCXxB/sx9ug1L/ebxdp/ZAd+Ds4DnaSbBIVUkUedXoO9nqHxX46Jyn1Y+D+CZWyExyNNfizrRFvHSkQqruqBLnISvhdl1Voswu7kE0d+yBbDZOmMOAVjENM2o1bV/jSIdGTdtjWkqqRpF8DmIi5aFMKVC+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HihK6JEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EFFC4CEC3;
-	Tue, 22 Oct 2024 07:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729581317;
-	bh=LoFoQKXKUVk/pCf19sC0PrOBcxYg31RRtFIIJGFy1yI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HihK6JEXfN3CtTHIqHzWwrpjTMyp4ZNYF1WdScEHdQo+tCovIqPPJJmx3+CNcP++4
-	 wdYJ4y7w2onq57h4U76PLrEjhTd/1loW9C1HwPnm/oLW3B9jPjfsw6SUBJNT9HUhTP
-	 AoSsg6azJHC6HQUWjQcxa6+hKJWpo6eWIN52alW5lv/zr7NLpaUFaDN5KnJrxqNQS1
-	 0csULKGhYTUrpIR92yUoynLsj/Fr65Ff6LjEmHM3foFIGpk9wSUGw9j3IbZOGNgMVs
-	 V9LQpmBuCbM+AUWP2EOp+rSxNBrqo2aSoqkNccEh25ABZ/3VezEzOm1jcuON+pjTDH
-	 5pnjXCx1Jfkeg==
-Message-ID: <bb705eb7-c61c-4da9-816e-cbb46c0c16e4@kernel.org>
-Date: Tue, 22 Oct 2024 09:15:12 +0200
+	s=arc-20240116; t=1729581370; c=relaxed/simple;
+	bh=RkG0Ike9hCJFKf87lYaZyHqL96vQEbiDxmQ6YA4RipM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CqxtFoRpkuFU4ynx07juP4aCDXhX9x9NO0mbVxw0VW7FG1Ov1mjsGWsZMbpUafIHHALICJSz4OtvhhhmPsfKtP9s9zW2kqw77OI5N6rqzNPZrEL1AXHZ+iAqxn8igxSMHFhFhXjD93WB+Fz4N3AJv2CzWUW959Rhkwl460py7rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1q6oMpn8; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431481433bdso55918085e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729581367; x=1730186167; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0U7VRMCAMM1ghAu++CV4mgxS/6bp959K4DFHz9AO5Jo=;
+        b=1q6oMpn8cNr5s0ayHJYwD5rjnToIU3taeQ8HaH/xmq9V23j78Sbi2WhPnXlaRdF+G0
+         Nm+rlqxzVujJWe41LllQqlRwlnksWA7cuDmQiaDiloSys7TUbNziG530NZOtyGcc28nh
+         vv6L9HADSbDxQHqKW9HDdQ822FPQbhJZ7d0threSTeZxgIS/KpEl7h9E1vOMUrT3p7Q7
+         jf1Fiqj9tLWaCpM9AT0bIucT7F5Sy9AZn540xHoDfTVPHl0utRAk/KEQjqj88lO4ymGb
+         a7y50fVBqZVfh+lWV/2uvE5XDx88LWwpsMQNkXNih65DrAuOU5s/99lRIq7fJx/tN7Lg
+         7pvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729581367; x=1730186167;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0U7VRMCAMM1ghAu++CV4mgxS/6bp959K4DFHz9AO5Jo=;
+        b=sZ1R5CXMnmC0zbOsQe7ZOcH8ouqk/owP6U8O43PfUzGPDeWdFLjnfCp31iqk62rnfU
+         vBSre5v8RFfhNtjlFmt2xDIDPC0DNDPZ/CRDAvuFJ3Un8y/AOno4SLhGggV9a85OcEIG
+         cjSemwDA2v4gJCIc9X2dLo0eMQYSTZqdQ3SrLCO5IM2i3Kz6oOKcRrU0/X8lr0UMHzdT
+         Z34oN8nzQzo9I2deIrVGHKO2kpoAG0gHHiDr4CknvmRtwGPw/fsf96VM+ljxJxF6oIsm
+         CmMM7dAC0yVgnKJQTJnAgO4Gq8c6ob6Fe4W9glAmkncDoZooVrdFT1QbH2adcWfMe/Hw
+         J9cQ==
+X-Gm-Message-State: AOJu0YxES3PVlMjITFt47yefVNWw3+5MlTai2AKe7yDbQDvbD/PbPJPJ
+	udcnpn0/hVPNqDoqa7/EVHhFgp55SEpqiv/PApa5zurkoh+cyj1vQNtoVZUzjT1KvNiZ4KaiZ2A
+	5
+X-Google-Smtp-Source: AGHT+IG+I31RcTT4b72YS+WEqLV1rBfMVac7CEQ9/N1GJCao/ZJjmgB2LDsywBCj+0YLSMaNn1G97Q==
+X-Received: by 2002:adf:a14f:0:b0:37d:4517:acbb with SMTP id ffacd0b85a97d-37ef214d026mr1036500f8f.17.1729581366849;
+        Tue, 22 Oct 2024 00:16:06 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9c8b:c7e5:66f5:b8f1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4aadcsm5978778f8f.40.2024.10.22.00.16.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 00:16:05 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	brgl@bgdev.pl,
+	linus.walleij@linaro.org,
+	Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpiolib: cdev: remove redundant store of debounce_period_us
+Date: Tue, 22 Oct 2024 09:16:03 +0200
+Message-ID: <172958136079.18777.9577583278910860026.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241020115238.170994-1-warthog618@gmail.com>
+References: <20241020115238.170994-1-warthog618@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: string_helpers: fix potential snprintf() output
- truncation
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-References: <20241021100421.41734-1-brgl@bgdev.pl>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
- IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
- eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
- 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
- XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
- l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
- UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
- gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
- oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
- o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
- Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
- wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
- t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
- YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
- DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
- f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
- 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
- 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
- /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
- 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
- 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
- 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
- wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
- 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
- jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
- wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
- wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
- W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
- f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
- DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
- S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <20241021100421.41734-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 21. 10. 24, 12:04, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Sun, 20 Oct 2024 19:52:38 +0800, Kent Gibson wrote:
+> debounce_setup() stores the debounce_period_us if the driver supports
+> debounce, but the debounce_period_us is also stored where debounce_setup()
+> is called, independent of whether the debounce is being perfomed by
+> hardware or software.
 > 
-> The output of ".%03u" with the unsigned int in range [0, 4294966295] may
-> get truncated if the target buffer is not 12 bytes.
-
-Perhaps, if you elaborate on how 'remainder' can become > 999?
-
-> Fixes: 3c9f3681d0b4 ("[SCSI] lib: add generic helper to print sizes rounded to the correct SI range")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   lib/string_helpers.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Remove the redundant storing of the debounce_period_us in
+> debounce_setup().
 > 
-> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-> index 4f887aa62fa0..91fa37b5c510 100644
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -57,7 +57,7 @@ int string_get_size(u64 size, u64 blk_size, const enum string_size_units units,
->   	static const unsigned int rounding[] = { 500, 50, 5 };
->   	int i = 0, j;
->   	u32 remainder = 0, sf_cap;
-> -	char tmp[8];
-> +	char tmp[12];
->   	const char *unit;
->   
->   	tmp[0] = '\0';
+> [...]
 
+Applied, thanks!
+
+[1/1] gpiolib: cdev: remove redundant store of debounce_period_us
+      commit: 9eb1e8276155b9f540281f2dbf59885efbb9f09f
+
+Best regards,
 -- 
-js
-suse labs
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
