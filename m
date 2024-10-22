@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-376116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BC09AA049
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:46:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9236D9AA04E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87A8282EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45122282FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A7D19C55F;
-	Tue, 22 Oct 2024 10:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7960F19CC17;
+	Tue, 22 Oct 2024 10:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcXjZj/H"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GzfCQBXf"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28FC18BBA9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC8519ADB0
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729593987; cv=none; b=FMaFBJdc/w21xvI9GWlwxUDFpGaZh3zVm/IUqx7z5gUU6C1UVTBYxq4z+pDv0u5FOMnNrPAICodKNnDFok5vvTOp83qj/SBwBUgboCzp679m6Y4PP3sH+HT0Pciq2mEfW3Wvrl96ALsoUHg3M/kWh2xtgLV4UeGR82ZSMLtGRpk=
+	t=1729593988; cv=none; b=YIuoACY7ml91EQYNc9sa3Xtfj/cKOeLT3jGryLFLB3HDZWPiaWxvUJJbyWBN3Pbj3c8vgK+COVzKd5Lw1YTHPwI4UesYRDCwXlrc3EvQeY03FYGq5zh4ZFKRY/kHfFxj/3ldSgxlA3NMB4V74++wY6dB/k33RcA1Rl8IjQoTxWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729593987; c=relaxed/simple;
-	bh=4VkCpW8QDcAjyN11pnkcHCM7wZTUs/xHfXdy554thg0=;
+	s=arc-20240116; t=1729593988; c=relaxed/simple;
+	bh=s5wW5s/cD5yqaf+Kj0BZH7F+fV8K110LaMpqTyExA5U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cwqLt1V0IkhkB5dxdteQMo6FLzCuZ3AlzJvuAQ8QhlwCUMgpvo+Fa3KyrzU/0gTWPtyPCo36MUjbBz33EEZCNahemPIy8g/aeOOZDz78wv7Nh8K+Iohrc2SjenXu5Z391j6xwzotp5D2t7oQFQPKrg823Ua5eASzgm146RFs5qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcXjZj/H; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=aj9/GpYKObpQaMr2LkJDJEWbeY94zTfvEb5t1UlNs2VMfIvDIsKlUcncet9M+C5+hT8vXZTs2TRFb+INH/n7Mz3tXDS8rApiEGz1A3N7dj/ftJS38WBwYrZ0hxmmuEJBorFey6GOJfnZedfS58flGEDWMqGHGrUr5qsUdpV9PXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GzfCQBXf; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so54270005e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:46:25 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431688d5127so31290725e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729593984; x=1730198784; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729593985; x=1730198785; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8Pr5xKcTInMzCbHb8CZQ01ukvXjYk9ophuY57YiAzNc=;
-        b=xcXjZj/HRLn0zuo3TNhqCaogbMjzDP6bmUZoiybYe00ToE0AmxdW8DUztbxv9bHgxC
-         lwePCzCn9HeLAARIQSkaEB6XPO6igh4PeynVP7pcc+RO4bZLXczBD7GbOS0yVx+7Q34w
-         tpoxTGmBZAE6CG+QqK4/lRonViJ+CJfNHDFEfEjIEvD/lwY/CAgw0FQnwH3M2ssp3pTf
-         zPnatsAnSeTgW4i9ARRGtS5ap4/DuFKHgCXQkl6clb7zJxFVqslipdaLKwog0U+hqD04
-         k1EsbOeNmy81aHfocPcI5S/Xb82jSpsfVGoVI8DysZqD3Scw0J3DqrwGKOl2110yxlOi
-         MCow==
+        bh=3HC6qEeTLNotxJtOJr20jgwGYguV67cZzDqq4xFtsao=;
+        b=GzfCQBXf7bmZvTWsLdpswYDinecZEiQ2rTw/C3WltjrShZPp9jyj2+xyjniqAoEVhh
+         Wcm8sBYjSPYdueXdZ0NxJ3dcLpLmeqhtM28NAzstiwlI5Cwzk83PAJdTnYmbd3toB6jo
+         N5SDAfZgEi0J+VwYFbyGROvIxGhPdgeuJPuoMnDckkqAo6XYVKrk3jjK1QjZMIYmFq/x
+         qfIgYgMKiMyqdezniFsjlG8NuLEoDqGm9+u/JoQ2UFeZy6i3lt1JlkRlcwnv1qkiFBtZ
+         EVjoKP6ux03F/RaBNud8lIsNPWUnCyC4MEhBMhOZndo0w9WcrdDc/03q8YC1FqIgRlZl
+         T40w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729593984; x=1730198784;
+        d=1e100.net; s=20230601; t=1729593985; x=1730198785;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8Pr5xKcTInMzCbHb8CZQ01ukvXjYk9ophuY57YiAzNc=;
-        b=mnep2hBXqKcsNem+B6SAjK1jdmGvcqnUyQ5zBWMMhMohMhgLxUO06OK50LJbOwiIlM
-         Q+nsU3HnfnXhSHPnCe2zbGIsR8yKx0rjka04IYWze5M+q3nQjMRv6ETjARNJC9fm6v/r
-         vHnJZA+/QKDVRjczR8XP917c1lfhsqg9c9O64vx1HSNDDvfRLnwMlveLEAicHr5dxc97
-         dwnhs6bnhSLA7JP9ZmUKhPxqweSRmqz5F/xQgnNTYHAakAZV9bAXegTtahGicuTtAJ2T
-         JNdYC1LB7xmnsHbw3hQ+tuh16AIHIMgThN8M9CjKhWej/2K2/iscmUR0WgSZTO2EFaFH
-         x/Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVxlJsMRFo6E/ts5CzSnRCnolQ9gIOLClNuOPGwSlMaSI7gVJk8FdtQN0xlyeqoedfC0iqFwO2DIOSy44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHiTJwfjHFA5E3Atr4230xUWqLf8azRFjKvsStBnTAmDqrzVFK
-	x95PDCm1HDApUl2u/tMnW412FOmWI1w+X7fqP5Q4dIaeuG0IQWUE32e874StIdI=
-X-Google-Smtp-Source: AGHT+IEsaC2eZFfrXeNE1tDR6XsrsilNtdnVYP8BgfTjCu/2CthN+sAy+qcy7xEnUJWF4B/czSgKXw==
-X-Received: by 2002:a05:600c:3b10:b0:431:58cd:b259 with SMTP id 5b1f17b1804b1-4317cb0971cmr15795465e9.31.1729593984032;
-        Tue, 22 Oct 2024 03:46:24 -0700 (PDT)
+        bh=3HC6qEeTLNotxJtOJr20jgwGYguV67cZzDqq4xFtsao=;
+        b=V/P0mNCS1/3GKE970kuK2Xvt/M409ShRZPeZizkPMPf2kASge0mts+ByMqpK9kdcUp
+         OpCn539CTBSsO0NBLH4BHyOcRtgY69WF9WYU4iG65QWhLjJ6Jlcrpon6Bsa1/hgpr2G/
+         SED1L/eagxTmjSJwkKoIvi2q8oQBoChUGQ18lXVUIHUNISyu9we9H3g5udWJetM+s1h9
+         DqwfMIb+wXh/9wOmRYTY8HJps9ab5R3jmDrzfxS0/UoQtKX6HvfWONAVlDy6BKkvEsk5
+         CAYCXAH6C9tlWKnkn+dphOXQ/GOJ4J8Wt8Zm8Bo2eYgHuxBsNgvX4snf5vvVwK2l7dw8
+         A7fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDHpzqElJ1QF0W4KupD5OB9XvXo8qMLDXceN2j/Qww+VwM4GojrGDvrrXH4oArBka/8ltin8Mk3Albwb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRF48KXqUDFZFowUaBlPFKzReEpnLGDgq9HhejkiiY0yC5r/3w
+	ZPI8M6l4YH9o79kScKdmfDwmuKlFcIyg5VTNyX/SvwNkx5MpUk33WxYpsj7nKwE=
+X-Google-Smtp-Source: AGHT+IF4EHhL/u3V1fu+puO2uNNossEwkWSRsRWHxmV+fWsZUt2jagCi/Ri9XplGyjUS89+kB4HviA==
+X-Received: by 2002:a5d:4f05:0:b0:37d:462a:9bc6 with SMTP id ffacd0b85a97d-37eb488633emr9552000f8f.36.1729593985273;
+        Tue, 22 Oct 2024 03:46:25 -0700 (PDT)
 Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37e1asm6351943f8f.20.2024.10.22.03.46.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37e1asm6351943f8f.20.2024.10.22.03.46.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 03:46:23 -0700 (PDT)
+        Tue, 22 Oct 2024 03:46:24 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 22 Oct 2024 13:46:08 +0300
-Subject: [PATCH v3 1/3] arm64: dts: qcom: x1e80100: Describe the SDHC
- controllers
+Date: Tue, 22 Oct 2024 13:46:09 +0300
+Subject: [PATCH v3 2/3] arm64: dts: qcom: x1e80100: Describe TLMM pins for
+ SDC2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-x1e80100-qcp-sdhc-v3-1-46c401e32cbf@linaro.org>
+Message-Id: <20241022-x1e80100-qcp-sdhc-v3-2-46c401e32cbf@linaro.org>
 References: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
 In-Reply-To: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -90,143 +90,83 @@ Cc: Johan Hovold <johan@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3660; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=4VkCpW8QDcAjyN11pnkcHCM7wZTUs/xHfXdy554thg0=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnF4J5qyAUVYH/Dph0+LJeRucmSPTn0Rbt2b+EK
- rNvaek0ZYGJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxeCeQAKCRAbX0TJAJUV
- VhG5EACAOGslh9f0qDBV/ozVScFaAXUGGn8xPIFIDk3/Rf7PlIu0tS80f557ZwnTD4XzoDKajJp
- ykDUKiR+nRiKCIEMcBb8FNy7ugrzsI7cBDAv6ilPKn97lo1kDVftFIOtXlJ3qxnRXro3cL6S3ry
- GJgbImKqwUqKmRMv7qedCz9wUDgNMYPIhCP5eYd0fxieUivTcxqrASCsbNHPpUbvVZdXUwegfQE
- DoQWXX2bDFhqhctoCw4SaiD0HJ99FNDKLLnWHXz5EPTABtDX+HjKzaPozai1viDP1VZCmz/oG/H
- MT223oOeUg2SMRv4pxy2dD/qGouMK/eJ1i5rLVIY1mAqeOI9dxQRYzqXlLUvegMwduLhTS9jPqX
- UewBvApR/iBHMMRfCXGRpApHobZF/8e46G7J5a9c41t7W9/eAv3c/alTyR0fpUugu8jGy9RVYzh
- QFPpzI1JcuH6e4T366DElha8fAgOxVDLFUTWE3nklQ1eLiWtXxkIkWsy16S+6+VqFYjUQe+YP+Z
- XjMuqxAdodNCa0vYAp8ifL9yBn4TAsexrS70Y9Jw2JCqtq0zeOuF/mO3VM7nZkYtiGAU4vg8SgN
- 795F/AP7HsR1DN6Dpb0XsmURLL82mNkmnG3d0sxVcD4DOHqyAOLh2Pqmx7DlRMvllKQyFNnakfn
- zmTS41M7qSm7grw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1463; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=s5wW5s/cD5yqaf+Kj0BZH7F+fV8K110LaMpqTyExA5U=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnF4J7PUJaCAZJ0pJIJeJecNygy0fQMgpvGo7cb
+ h4s5sNH1xqJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxeCewAKCRAbX0TJAJUV
+ VgoLD/9UpJuCPF/P9ccNa1Xtx5vxdUngzKAGlZBPNL16KmLSni+KKEHACAOKXxCfuXCTH2xVHF4
+ rQRft4oTWHeYDoabUOvFb8Ml2pMGTxtTQIT28rH4xQ+ilIB/TqOs3XKv/pRTRDP3QGtI+YZr7/w
+ Y2IuhfYqKG71oM/PDJRMfzbDKgPQNuuxZa7Dk2fNAtG6B5vGZteiGOLCojEDmJS8qwq1RZaE6FA
+ LUbTW7Y+6g+L3vz7yJUgqg0p9+A1PNyNjo0VOYtLaPXOqS7yotE8xDSXoe9dYyj7B3LLzVe2c6H
+ Xuw8fCI0B/muIiT9aAlGvd+ZEszsjWtxsj873LHn2F9j8rOF6Ub/QEdRNW8VMk67Q65aIipDXEM
+ pRUwZcaKTtexBVnDP9++Um/2faVrQPDnOR+EllVF61dnCoSV/+3PgtRBbCQF9dBL7BcOngY38Js
+ 23QjLrq22+NC205lHGi8PPnOgCAOCzWeQVlO2Hnie8YG1ULpiqyXktwSIj4MswaeLAO8VSf0H7F
+ JzrW33e568aX+lS2+lSFHFAY4n1HWbJWcJrXY+0kKMe2UMegdXWS4P583b4OgRXuWwa3B0MXkIQ
+ 1cNIE+b2b7I5yLBLr8nGVQApYQTgQVdNtCYGGFfRa9I89qkWlUZPM5hUeicyXNWdXZdhE9D9KMl
+ vfMpboUDBFOnJDQ==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Describe the two SHDC v5 controllers found on x1e80100 platform.
+Describe the SDC2 default and sleep state pins configuration
+in TLMM. Do this in SoC dtsi file since they will be shared
+across multiple boards.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 102 +++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 40 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 0e6802c1d2d8375987c614ec69c440e2f38d25c6..2d0befd6ba0ea11fdf2305d23c0cd8743de303dc 100644
+index 2d0befd6ba0ea11fdf2305d23c0cd8743de303dc..59cedd16b174f01d0db90caefd2555f5516c5f7a 100644
 --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
 +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -3887,6 +3887,108 @@ lpass_lpicx_noc: interconnect@7430000 {
- 			#interconnect-cells = <2>;
+@@ -5741,6 +5741,46 @@ rx-pins {
+ 					bias-disable;
+ 				};
+ 			};
++
++			sdc2_default: sdc2-default-state {
++				clk-pins {
++					pins = "sdc2_clk";
++					drive-strength = <16>;
++					bias-disable;
++				};
++
++				cmd-pins {
++					pins = "sdc2_cmd";
++					drive-strength = <10>;
++					bias-pull-up;
++				};
++
++				data-pins {
++					pins = "sdc2_data";
++					drive-strength = <10>;
++					bias-pull-up;
++				};
++			};
++
++			sdc2_sleep: sdc2-sleep-state {
++				clk-pins {
++					pins = "sdc2_clk";
++					drive-strength = <2>;
++					bias-disable;
++				};
++
++				cmd-pins {
++					pins = "sdc2_cmd";
++					drive-strength = <2>;
++					bias-pull-up;
++				};
++
++				data-pins {
++					pins = "sdc2_data";
++					drive-strength = <2>;
++					bias-pull-up;
++				};
++			};
  		};
  
-+		sdhc_2: mmc@8804000 {
-+			compatible = "qcom,x1e80100-sdhci", "qcom,sdhci-msm-v5";
-+			reg = <0 0x08804000 0 0x1000>;
-+
-+			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
-+
-+			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&gcc GCC_SDCC2_APPS_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "core", "xo";
-+			iommus = <&apps_smmu 0x520 0>;
-+			qcom,dll-config = <0x0007642c>;
-+			qcom,ddr-config = <0x80040868>;
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+			operating-points-v2 = <&sdhc2_opp_table>;
-+
-+			interconnects = <&aggre2_noc MASTER_SDCC_2 0 &mc_virt SLAVE_EBI1 0>,
-+					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDCC_2 0>;
-+			interconnect-names = "sdhc-ddr", "cpu-sdhc";
-+			bus-width = <4>;
-+			dma-coherent;
-+
-+			status = "disabled";
-+
-+			sdhc2_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-19200000 {
-+					opp-hz = /bits/ 64 <19200000>;
-+					required-opps = <&rpmhpd_opp_min_svs>;
-+				};
-+
-+				opp-50000000 {
-+					opp-hz = /bits/ 64 <50000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+				};
-+
-+				opp-100000000 {
-+					opp-hz = /bits/ 64 <100000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+				};
-+
-+				opp-202000000 {
-+					opp-hz = /bits/ 64 <202000000>;
-+					required-opps = <&rpmhpd_opp_svs_l1>;
-+				};
-+			};
-+		};
-+
-+		sdhc_4: mmc@8844000 {
-+			compatible = "qcom,x1e80100-sdhci", "qcom,sdhci-msm-v5";
-+			reg = <0 0x08844000 0 0x1000>;
-+
-+			interrupts = <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
-+
-+			clocks = <&gcc GCC_SDCC4_AHB_CLK>,
-+				 <&gcc GCC_SDCC4_APPS_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "core", "xo";
-+			iommus = <&apps_smmu 0x160 0>;
-+			qcom,dll-config = <0x0007642c>;
-+			qcom,ddr-config = <0x80040868>;
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+			operating-points-v2 = <&sdhc4_opp_table>;
-+
-+			interconnects = <&aggre2_noc MASTER_SDCC_4 0 &mc_virt SLAVE_EBI1 0>,
-+					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDCC_4 0>;
-+			interconnect-names = "sdhc-ddr", "cpu-sdhc";
-+			bus-width = <4>;
-+			dma-coherent;
-+
-+			status = "disabled";
-+
-+			sdhc4_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-19200000 {
-+					opp-hz = /bits/ 64 <19200000>;
-+					required-opps = <&rpmhpd_opp_min_svs>;
-+				};
-+
-+				opp-50000000 {
-+					opp-hz = /bits/ 64 <50000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+				};
-+
-+				opp-100000000 {
-+					opp-hz = /bits/ 64 <100000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+				};
-+
-+				opp-202000000 {
-+					opp-hz = /bits/ 64 <202000000>;
-+					required-opps = <&rpmhpd_opp_svs_l1>;
-+				};
-+			};
-+		};
-+
- 		usb_2_hsphy: phy@88e0000 {
- 			compatible = "qcom,x1e80100-snps-eusb2-phy",
- 				     "qcom,sm8550-snps-eusb2-phy";
+ 		apps_smmu: iommu@15000000 {
 
 -- 
 2.34.1
