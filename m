@@ -1,131 +1,210 @@
-Return-Path: <linux-kernel+bounces-376285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE4E9AA2AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB9D9AA2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A578228371B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A195928369F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1919DF4F;
-	Tue, 22 Oct 2024 13:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D1419DF9E;
+	Tue, 22 Oct 2024 13:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDJfnbUG"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aMgGNhVw"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFDB19D063;
-	Tue, 22 Oct 2024 13:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729602169; cv=none; b=NnaSz6FN+gJtAcnYeqFIeYlnCSZ9RzeOSKMiHivt5dfmhZIXiPDdXA8r+/8yeZgKxo5W8sLoxK0tKxZrCcJ0TAjb6Qr3KUa7rU7ucsEg1xQyz5OCkjUgr5k1kSNWSQZJ9I79Fs21YnZbZGcVT4i5M54rj+Hj9s6e7liHdYrUEOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729602169; c=relaxed/simple;
-	bh=ZSse1Eg98+LMzutfh1nuHu9lTL5IQL+O8CsCAOf6TnQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=o3iJqe7sJlNOO9sOMR7alfF3RJbOVizpTxy2wUWUp69pVcfHSqnOaXyaz6Y3LxExLF9YHtYElUfr+Xnr+yhl4Qcfh8AykeLHXZMb7CMz3zD0nEnuYrsT5oMcYy9BqLnVGXPmUzbEW+TUWXYTWSaebvkweo57Z8B/JeNA6lNokuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDJfnbUG; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20e6981ca77so39683325ad.2;
-        Tue, 22 Oct 2024 06:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729602166; x=1730206966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q90p0I1RamExvHkraCkhdLHfJUzwCzfvv1jVPeRZmCQ=;
-        b=dDJfnbUGCtLam88FBwi4u0n3635kXshDNqSmbwjbwrU0G5zXFUldW69/+uVQ9YdeZL
-         boVBuB34SVFPUMJc8UgGmOenpZH1HqJ2VjPawTtHumPB90CzXYI12DlQ1TwxYiW6SH7d
-         tKcf4oJHObOdKT1fhMAJ/k23baxqd52Vza6qnE/SYt5UErz9OCCwB9f7xIyJdFCBK1t7
-         GsFRKpajcuWSDsBTXFIkAtcYtXS19ESIY7jiYp5ABAPBRgn+8X299DMZH3hEX7pXdnO3
-         KXuCXobG5GUwQ2puZ/Sxm1OSxvfnVbThCDq2aEKsvC7gRVNljmjp7TaTo2Iuh3YtMiWl
-         yhyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729602166; x=1730206966;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q90p0I1RamExvHkraCkhdLHfJUzwCzfvv1jVPeRZmCQ=;
-        b=VJt6yikLqZZwWWyZzvRq/lSslaC41vZYC05BCwvdJx9VadONSkv00OaYO4CfyL/0+J
-         nIKzwUmE9PLQRI6UGtWIwQIXnq1ji/nS8ZbwP/qtsE8YB3C0PaBgHGCQ8UFjiOcJBfQY
-         RGsZP0OUgfIIGGfCi8qoo1zoUtWDsebwLu20TF1d4qS5+/6IsmI/oXcrPfxUmMsWXhVH
-         hUlFqZKFUT3oT1kEKMOm4CIYRXnNUDnTWFsYwzeP3OQVEJeYMr60vbIh9HiBObfGFCIg
-         LbcNL6KcYdVr46/BTbrhqle9H/ZTAlkVEupVd5r0yPI9gBl0HYszvw9mbcoSE7jmQW/0
-         Lpew==
-X-Forwarded-Encrypted: i=1; AJvYcCUE5zj5p0qnEko1BsE8B48nzyZh7cvUIkmBgI9vG9z4MmuLda1evHifzb/YuWmsMPMsFingvuMqpY8N@vger.kernel.org, AJvYcCX9IJ5EPDrgEaLsagAGTr+WCBUj8pceQbFITauwvXSVJAYtGoyzDhmCtgiOFR5CmkGfjg2mLrqtscsuuA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww7xD3dYxilRmDL22Os0IBbA+cpgPST5eliO2ptQLjelrQ8Gnu
-	X2hPSXmFok9cMnFGMCKKVoVCnY+z7VpF4ltN5cYssGieutNN4cDY
-X-Google-Smtp-Source: AGHT+IFCcz86yrNVz77sdnjYCsihCqlHFylImqt1Dq571tcbh5Glp/tYRtgDnA6h/bGZmqK8QLdFbQ==
-X-Received: by 2002:a17:902:d2cd:b0:20b:9998:e2f4 with SMTP id d9443c01a7336-20e985dbd00mr25114295ad.61.1729602165948;
-        Tue, 22 Oct 2024 06:02:45 -0700 (PDT)
-Received: from localhost (220-135-95-34.hinet-ip.hinet.net. [220.135.95.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0dba22sm42542085ad.220.2024.10.22.06.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 06:02:45 -0700 (PDT)
-Sender: AceLan Kao <acelan@gmail.com>
-From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: pciehp: Fix system hang during resume with daisy-chained hotplug controllers
-Date: Tue, 22 Oct 2024 21:02:43 +0800
-Message-ID: <20241022130243.263737-1-acelan.kao@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7870319C560;
+	Tue, 22 Oct 2024 13:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729602209; cv=fail; b=e/ok/ZFkKVM9OrfTcaJJULcQyDNZ9LxvUjsz0SzEImPLyLi7sVhvgxYLBCzp+NPsprhsGA1qWdRmL06Qhy8sYXsDL/WfRTNJOygJVZrWlIxyO7kpc0SFCx1mck3Q2R7ivkXLyJ8ympapoYCu9HaU4nHSd8XkVWGr/MupEiHghH4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729602209; c=relaxed/simple;
+	bh=qYmXf1HN21ZPhXAR0lHqhLqZ7U7AONrKV/9MDdc35dU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qXbo+hOyZqi80G9cpf7OMYH0mOtjukgFFQIw4DVIRrx6hIQPMDfdLEFknFin+BjWLLUgqYOGOcEHrlxFI4AX+rsFEifLb9jICJgBpSDnysGeQW9dox9MSCwXDu1CGV+FVxiLmLIJN/lmOrK8BphiaVRZRWPhErkyZSKaWK9/Ng0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aMgGNhVw; arc=fail smtp.client-ip=40.107.223.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MbdYz2V5L4ERKTD0FFsqSfvOdu3elBzTCcV7FQDDW0vKHDbkjc2mOjmlNlyN10uu6+yNUk5caWIFVqPY6ynMzwdVhIwW5hby1eyBpErQed+ncMRnGHp2pwG9mYrmthDeTCndJMaEdq8jGNvHb+xFJPlpDf4tmB8RrdFyJbKURhf/Nu8+mpntapan4RgSO396JW7oX53xaccoIak5bdc11Fa3ZIYV3SpaUC+r4jpmY840KeX9fIe2fJ3MMG/lgaD8csUuUDOFFgzMY/wKrEk18QCONH/QzSAiFt/d2B9imsmKD7u+fVNPIkYK/XIWNIVpH5/LwRXEks9gau3U0040mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5GDHQajzi4h2IA3ssA8WksKH4RDYRR9ms2n/bh9exq4=;
+ b=NsT1ZsTP6qpQYDsMuNUBD8LDre7N/ralCVij/W33N6uWz2HFdA7UCjze2i4OT5PJ4KZvy5Wab+weyvl1cG/dwqGDKiklgpP0rXsJWR25ScopBPcaQkZrKaZ0sZ2yMKKLdLT6lpm/tXlekZ7ybYrfVf10V1xD2ldjY9i7DgyRJlK0ac+9GhPasND09hLkxqYZ/pMkpWOkoExe7pademaKkuDN159iqzEbc7caIrPVpecM8vX/xeMl5upQRAoIiZdoOy9BPJQDNP9Sd64yz+TIfnmddls/aebKip8a9+uzlPE1xEkfV0tNLJfdZok9229nzZn3iBEBsNWC6353+jzX2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5GDHQajzi4h2IA3ssA8WksKH4RDYRR9ms2n/bh9exq4=;
+ b=aMgGNhVwlKV99azO5mjCjbzLUd8ErRpn5UNRsIApZod/hmUEBAS0WX8xGo/mSH0kKquIgTUuH2zDrz1pDbLn+EVtbSU8sgnr6QuYlib/K481o3hIe56/d85tgfFzxjf99CqNfs5XT6xoQknRyFvquGzaC6y4yXM7+VF9986xO1I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS0PR12MB7535.namprd12.prod.outlook.com (2603:10b6:8:13a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 13:03:23 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 13:03:23 +0000
+Message-ID: <5247ada7-78f1-49e3-8076-cd85386126d8@amd.com>
+Date: Tue, 22 Oct 2024 08:03:21 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/14] x86/cpufeatures: add X86_FEATURE_WORKLOAD_CLASS
+ feature bit
+To: Borislav Petkov <bp@alien8.de>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+References: <20241015213645.1476-1-mario.limonciello@amd.com>
+ <20241015213645.1476-4-mario.limonciello@amd.com>
+ <20241022124202.GHZxedmqPeFd5F3sL3@fat_crate.local>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241022124202.GHZxedmqPeFd5F3sL3@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0086.namprd13.prod.outlook.com
+ (2603:10b6:806:23::31) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB7535:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08239f8c-ae23-43f9-92ca-08dcf299e908
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Znp1dlkvRThCcWtZaDF5ekRPY3d5NVErRmlBeGpHZXFNMFZpeGRRbk5Ucmt6?=
+ =?utf-8?B?STlza0dRZUVtQ1R2YUxhZDVKZjZ3SjNkQ1VlM2tudDFXeWhEYmhwMEhxNEYw?=
+ =?utf-8?B?ZFM3b2RQSVpPcEFhUFd0bmFTZ3Q2Z0dSc05qM2FDSE55bE5pS3QzanZwQzVu?=
+ =?utf-8?B?RkZQemZhWnpRZUlBaTJlK2FQUzBmMCthL0hNY2IyZit4dlg0T3poay9IU3Zv?=
+ =?utf-8?B?TGcxUnh5aGNUbDFFTElEV2hlWS9JSTVsYWJTUmp4bFIxb1hJZnA5NFFnY2Iy?=
+ =?utf-8?B?TGdQd3dMNkRCSGxYL0xiN1hVVUZXUkl1bDJkRWt2REh6cGZsODZkaVRhRXlx?=
+ =?utf-8?B?Mm4vc2hMbktDRWF0RjJKd1hwZThaRXVpT0p0ZTBabkxraVpmQkc4Ull3QWhk?=
+ =?utf-8?B?THI3eUNKY280cGNSMGloTnIvMXFUNmVINFJKWVE2cllQenF0Ym5PWnh2aVVB?=
+ =?utf-8?B?NEZ2OWJocTVWM2FIYjJjSE9TVE9Rd0dWb2pSR0xrN28xVnE4ZFBVZEFZREpl?=
+ =?utf-8?B?UERjQXVSTnJqdkNOaExMaklvNHBUME5kbkRZdmovRmwwZkMzcm9HVWNVQ2Jt?=
+ =?utf-8?B?T0tuR21DWCtROEErOUdYTWdBVEFHdmkzekxyd1RvRmlUNERiSTNaUzF3am02?=
+ =?utf-8?B?VEhpUmRsQU9OdHNPdk9qbG1sR1dRdnVIVGJINVkzdk5DR2hTemtBbnZQblFC?=
+ =?utf-8?B?SmFwTXliUksvaTkyeWNBVXcxT0Q1WHlRL0NxQmFwaWpsak1RdE4yNTZ1aDZL?=
+ =?utf-8?B?SnRoUkNnSnJLcmV5Qm90dkE5NCtTeG1veERFVzRPTG9PbkcvUVVrQTl2NDEy?=
+ =?utf-8?B?RmJZUmY3M25ZK3piN085RkhCVVFHRXpRcGdtVy9WUmhZd0JEZ25jZlZtU0Ny?=
+ =?utf-8?B?di8yZFZDVjJkZnRpY0c4N016VkN4b0hTYzVHK3N0MlZZcGV4aXJFKzdRQmFU?=
+ =?utf-8?B?LzJySXBsM3ZoeGY3ZWlldmNVeTlJTHVZSjlZU0dkY1JVdkMrLzlWcktvRFVw?=
+ =?utf-8?B?bFhnWU5VSktzb2RyMkVMOStyb0VHckZoYWhsU0ZOYWZoandyTEJGVU1LOEp2?=
+ =?utf-8?B?dWxEbTBRV2F0Y2xxWVZENm5TUmdoVW4yaXhIZW5NU0UxSjdaTTJhdFJlNTZu?=
+ =?utf-8?B?N29EaVdvNmI2UVhoRG1kZm01ODhPQ2swdThHeGxnK1ArWFpJRFNwU29RTzd0?=
+ =?utf-8?B?ZDVtRWFoVHBHTXZuVUtSU2dFTHpRVHR6c256YVBhUkdFdEg4QzBpT0dvREhI?=
+ =?utf-8?B?ZkR0UU8yYkxTVE1YUDNkaGdFbEtTSXp5U3IvZGVSRStnTVkrWDJudHJkOXRv?=
+ =?utf-8?B?aTBoeWVDOGxZSFJ2N0RhZXdUNEtCMS9oUDU1TWRNNitpaFBXN2hJU0gzU09D?=
+ =?utf-8?B?bVpqOE05K0F0WjNCZ3l2cnJhMW1LVGxpcVB1SWRYbXVBbGkvQzY2bm9UT25a?=
+ =?utf-8?B?SWJvc2o3Zk5vSXpNWUE4TmpCWnczVForWkdWN1VPaVA1d2IrQlNYOTRmYXA5?=
+ =?utf-8?B?QS9kQzRHM05mOFBzSVlod2JwOTFiTXZocklMZ0QycDY2RHJFMit1Uk81R1F0?=
+ =?utf-8?B?alF3SVA4aFFHRGQ2aWxvaDJiNENUTCtnQVdJYUowR2ZtQVYvMzZnSFpETGVq?=
+ =?utf-8?B?V3I4TjhHa1djcnRtZW9YcHBQODRKRnk2eHp1V2tWemM3aTB1eU03ZWpacEVy?=
+ =?utf-8?B?RUFHdEJFM1hUSk16eHJqOVkzL1hrcXNCVjhBNUtxQVIwb2h4aVcrejVWcm5t?=
+ =?utf-8?Q?AztT9whU0RHSY+ob3nzS9GqluCZ3ZSeK0lCC5VD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c3N1a1Bxcm81MWxpcWdSclBYeXRmcmxrZzVESnExZTZwTU80cHdCdTg3TE1h?=
+ =?utf-8?B?ajRxdllYcDk2S2ZBcktJZnUxdjgrdlk5VE5IbWdoMU1FSDVvVzF2ZTc3ZGd5?=
+ =?utf-8?B?MThDUzQrVUlHOXJJaVFWSE1rRWgyWXNiSS9ubzJEbFVMM0VPclJMd29JT0Jq?=
+ =?utf-8?B?NThldUhCbEpZa3FxNzh0YzA2cW0ybVZ3Z0d4VHkySHFUV09lQSszR3ZnR3pp?=
+ =?utf-8?B?WjlNRlZjY1kvRzZsZHFLalN4SHA4RGpZU2NRelJ6SklsVTJtRi9wSno2cEM2?=
+ =?utf-8?B?OFE4U0twL2JQb2JYRmVzakdoa091Sk51eTBHbVZydHlWc2t4NSsyZ0UvcDl1?=
+ =?utf-8?B?cWlNa1hoUXFmZUE3ZEJzYlhNbW5JbVRMMmhmejZ2VENLbjR3TGF3NDR1cWk3?=
+ =?utf-8?B?OWhRZFVubUF2Kzdhc21sK3hOcS9sZUVvVjVyelQ0QWw3SUdMcDFhQ2FYVm1o?=
+ =?utf-8?B?dWE4WlpWUnJuTWdDUStUU0wrL1l2ZHdSdTU2ZHZod0UzYzdnUUhFbTBoL3l2?=
+ =?utf-8?B?NGxaUzdlUUxkajdBZUF4TURlS2g0ZHE3azFlTEJuQTFBSkdnQnZBUXdSWTVv?=
+ =?utf-8?B?Q3FCWlBDRnhmazdISlNLZzZDNnBRZHNtaHdUOXRRVnRYYi9Ba1ZJc0Rla3l2?=
+ =?utf-8?B?dTI1ZHNxcG1HMGo4WTRvZE5iMVQzZkcweW5VWDExNU1uZ2RnVlloY3FqUEJr?=
+ =?utf-8?B?aDJXblBMOVBGbkJvUXl1WEttdFBsRU9WN0F4QU9ITTJONldpeEE4VUpEaXpL?=
+ =?utf-8?B?YVluMEluZlI3RzRDVmxrcE91SDZpYlVBUXhVMUF1enpaM3BxOHlyNW5La01s?=
+ =?utf-8?B?QVFQQjZCUWZWTVdzYzBBaWR4SjJYeXVaSVdpM3k0R3NINnR3MzZBZXJ2UnRr?=
+ =?utf-8?B?YXBmMXRzNEsrQVFkbHJXS1dZSzdQQnFnb0Q3TzBlQTlrcEtZZ2V2dlBUeUxl?=
+ =?utf-8?B?emM1cTdCS0N5VjR3cE9uUnQyZVQvSzdLTzVrdjZQRnlFUVEyUnorcnhIamVC?=
+ =?utf-8?B?bGFLRmQ1dGpBMlhzZEhSN3JweGJtZHlYTXVaSjdkUCtyUGI0Qkp6UkFLUnhV?=
+ =?utf-8?B?M2x4NWVvbk5FbHhzMS9WQXlWSXFVTlpYMExESGJhUXg4YnBLL2hSdG5aUU9R?=
+ =?utf-8?B?ditlb21vVit1YlRQZHhwTkhQY2E1NGtBYjBGWExjRFBrTHJRT0xFR1FoN3E5?=
+ =?utf-8?B?L0dsNzdQbmtVS2xHRGk1OXZOektsTDFFaFF2WUZFTTBzanJmQUJmalBJYUI1?=
+ =?utf-8?B?U2I3UkJDRkhsbGRWNTRoR2psYXprWGJuRVErMHpIYlZYWmJxaWdnQTJ0MzRN?=
+ =?utf-8?B?SFhWZDlpNDV0RXJhZXFORERxVStRTmlxUDVUKzZPeEZEOGUwUTIxaFcvTXpn?=
+ =?utf-8?B?TDVPQmh1Q2VaTklTYkZQRCtWaWx6aFFacHoyVS8xZlhzMzlZVmlwZmtrdFYx?=
+ =?utf-8?B?cksrcVFEVmdyWHI4VmJIVTA5MVYxSkhYdjdkeHQ4cklQcFdma2Q2L3JacXZX?=
+ =?utf-8?B?SDUvbm04Y2k2SDNoRkxFWVE1V0ZYQmRwZWp4NUdmSEFPems4eDgrekFXbHdS?=
+ =?utf-8?B?dHIzRVlObnZhelBwVjVRa1JBWllBMVIzWE1oUXZ6YzFVWmJZSzg2N0RGQjRK?=
+ =?utf-8?B?V2d4Y3Y3Q29yZW9jd1NsY1lUYlkvdFliajBtZTRmOWVjV1pyN2lGVExYTjA5?=
+ =?utf-8?B?Q1BtUGY4WHBROVZobnJsSEhLQlhkaXFwZnBpdTBIb3E5RHZDZHlQK1RjU2lT?=
+ =?utf-8?B?VWtaSll3YjFqL1hUeG1BdkIzYysxMXJoL2V2NitCdWxTSjhSVTQ1VXhnaGlQ?=
+ =?utf-8?B?bjM0dXhtaTZQdk9FcWhPUTdQNzYyQi9WdE5UMmRkZDBQSTFUU1ROVW10MXNy?=
+ =?utf-8?B?cG5iWExWNUx0QVRXL3l4aUVMRnlXRVp3VXNPMkhFR0VvTExTUWFnWCtSNjBZ?=
+ =?utf-8?B?cFdFUlFqdElkUFdMelZENDIzZExGNnM0QzRhSWZ2WllJejBxR05mZ2xsQVdU?=
+ =?utf-8?B?QWJPbVZ5cWtJcVpLV3pDdkpYbGdTdWtSQ0w5Q0VIbHJKVHVrYnkrc1lqNGVi?=
+ =?utf-8?B?ajRmaXFDWjNURTE2UjNoVjA1RGl0ZjdSSWViRUVpVm84WGZuMzJrbDdDdko0?=
+ =?utf-8?Q?v72tWGR+ZZ829zyv2digfl7DE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08239f8c-ae23-43f9-92ca-08dcf299e908
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 13:03:23.5189
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tiYSjUfxJXFyJtykzRthZFCX85EVYXjRmq0R8CXmDr2KklQOuMKS5rxVrVQ9cMqvJv7h3g+S27UwHxCmf4PFkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7535
 
-A system hang occurs when multiple PCIe hotplug controllers in a daisy-chained
-setup (like a Thunderbolt dock with NVMe storage) resume from system sleep.
-This happens when both the dock and its downstream devices try to process PDC
-events at the same time through pciehp_request().
+On 10/22/2024 07:42, Borislav Petkov wrote:
+> On Tue, Oct 15, 2024 at 04:36:34PM -0500, Mario Limonciello wrote:
+>> From: Perry Yuan <perry.yuan@amd.com>
+>>
+>> Add new feature bit that indicates support for workload based
+>> heuristic feedback to OS for scheduling decisions.
+>> When the bit set, threads are classified during runtime into
+>> enumerated classes. The classes represent thread performance/power
+>> characteristics that may benefit from special scheduling behaviors.
+>>
+>> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   arch/x86/include/asm/cpufeatures.h | 1 +
+>>   arch/x86/kernel/cpu/scattered.c    | 1 +
+>>   2 files changed, 2 insertions(+)
+>>
+>> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+>> index cea1ed82aeb4..3e8e67b8ec7a 100644
+>> --- a/arch/x86/include/asm/cpufeatures.h
+>> +++ b/arch/x86/include/asm/cpufeatures.h
+>> @@ -474,6 +474,7 @@
+>>   #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
+>>   #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
+>>   #define X86_FEATURE_HETERO_CORE_TOPOLOGY	(21*32 + 6) /* Heterogeneous Core Topology */
+>> +#define X86_FEATURE_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
+> 
+> As already discussed: X86_FEATURE_AMD_WORKLOAD_CLASS
+> 
 
-This patch changes pciehp_request() to atomic_or(), which adds the PDC event to
-ctrl->pending_events atomically. This change prevents the race condition by
-making the event handling atomic across multiple hotplug controllers during
-resume.
+Yes; v4 does this.
 
-The bug was found with an Intel Thunderbolt 4 Bridge (8086:0b26) dock and a
-Phison NVMe controller (1987:5012), where the system would hang if both devices
-tried to handle presence detect changes during resume.
-
-Changes:
-  v2:
-    * Replace pciehp_request() with atomic_or() to fix race condition
-
-  v1:
-    * https://lore.kernel.org/lkml/Zvf7xYEA32VgLRJ6@wunner.de/T/
-    * Remove pci_walk_bus() call
-    * Fix appeared to work due to lower reproduction rate
-
-Fixes: 9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
-Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
----
- drivers/pci/hotplug/pciehp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-index ff458e692fed..56bf23d55c41 100644
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -332,7 +332,7 @@ static int pciehp_resume_noirq(struct pcie_device *dev)
- 			ctrl_dbg(ctrl, "device replaced during system sleep\n");
- 			pci_walk_bus(ctrl->pcie->port->subordinate,
- 				     pci_dev_set_disconnected, NULL);
--			pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
-+			atomic_or(PCI_EXP_SLTSTA_PDC, &ctrl->pending_events);
- 		}
- 	}
- 
--- 
-2.43.0
-
+https://lore.kernel.org/linux-pm/20241021180252.3531-4-mario.limonciello@amd.com/T/#u
 
