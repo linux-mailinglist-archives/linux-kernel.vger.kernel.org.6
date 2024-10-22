@@ -1,226 +1,290 @@
-Return-Path: <linux-kernel+bounces-376537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323529AB2F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738009AB346
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AAB2855EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B351F249AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3A31A2C0B;
-	Tue, 22 Oct 2024 15:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4DE1BC064;
+	Tue, 22 Oct 2024 16:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQred8AH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O4SnZaLA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D84E19B5B4;
-	Tue, 22 Oct 2024 15:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021251BBBF1;
+	Tue, 22 Oct 2024 16:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612759; cv=none; b=BNOTV48Y7JVbgdyijRo59LNYcbpVT6SFhqRPWdskeCpyfl+h7THvVtuDtWL2kb4Q/HzJnJCHQg0SloxvdwQ91/F8Mrq9DSueIRUVbT72cmTabaq3LNoV76UA6Uho+V79RC/pLWIDfbyNz9xoRbem7CCgmZvxhUxsFO30QrxfUfY=
+	t=1729612843; cv=none; b=HgiGeiPEEVGHxXrPH43McR4pMTKt4pcPPTET3PydZ8IlYBwrvJvWuv2wOg3Ml5l3LBz4m1drseyOKfeVGkWX7eMZT8jti5wmetqbjb9zPFVXqDXR+X48NV2eDJxzhsxfR2NGiSeI960zbMoBuKUsHjixg+mBRP0qL1FJchA3ba4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612759; c=relaxed/simple;
-	bh=2d/FITXGUvqwkKdRTP48peRBMO3ZgM8F25WuyBZPn7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwbuBZlgNp1EYK45nzYQvkx+TVOztXcUEPuQN5UPJ8VnZdQ2CUSilA7Oh0mtrlOcoyRE487cL1kTjFpPq3JEpVe+4Sb9HmZk2RGlp0HPfudLUbV5Q7FYwPwavto3XKz856oLCFsth2jGWufBv9xEh55APq98Mp7MjBcV0k2i8zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQred8AH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1319BC4CEC3;
-	Tue, 22 Oct 2024 15:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729612758;
-	bh=2d/FITXGUvqwkKdRTP48peRBMO3ZgM8F25WuyBZPn7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQred8AHlw1omIp76stq/mdPCQaFEIKDPP6JzTCbQq50/cZ7f821WXTcnixgg41wQ
-	 2e+Ky5RGwmX+NOyDtr5rIIBoq49ZIcQgdahavQ2XlADRJPnTMI8IrUNPBFLKMHNVsG
-	 THw4ln0uluJaWMh72QLOjMGxNovzWIVI333YbX4xL8Dif7eb5HfsjUbDPzBdlhBvEg
-	 d72Mvvf7253Fsw7pea5gWbgNk5mejV6eQ78BavyH2fZMl7qOSgvTWYsLvo02d1FHvo
-	 t1Ffmz5TrQzniyhwhMTEyj0Bk549l0rNHdAGfZ58e2q3fWJu25et4rQoBRmeGVzTU5
-	 x0nePayggNFGQ==
-Date: Tue, 22 Oct 2024 17:59:13 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Igor Pylypiv <ipylypiv@google.com>,
-	Niklas Cassel <niklas.cassel@wdc.com>, linux-ide@vger.kernel.org,
-	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ata: libata: Clear DID_TIME_OUT for ATA PT commands
- with sense data
-Message-ID: <ZxfL0Q023hSgzdI5@ryzen>
-References: <20240909154237.3656000-2-cassel@kernel.org>
- <ZxYz871I3Blsi30F@ly-workstation>
- <ZxZD-doogmnZGfRI@ryzen.lan>
- <ZxZxLK7eSQ_bwkLe@ryzen.lan>
- <Zxc7qLHYr60FJrD4@ly-workstation>
- <ZxdmxPAgNh9TNCU+@x1-carbon.wireless.wdc>
- <Zxd2hZWt1zm4eW2q@ly-workstation>
- <ZxeGqrEpdg9Df5FS@ryzen>
+	s=arc-20240116; t=1729612843; c=relaxed/simple;
+	bh=KWespt12ZpxgPDw6K3joQvQ6R1T4arlW4Liwkh6KyJc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XbIdIwOKXhIXoWcVmHut3Clfr6bmrX1zE3UDTallQhWuaaO2kw6SeY5YlMAkzyQRyTqlHrLMb9QFaoiA8Xtu5QyEWEChGV81SD1A31708oTIpRHZgB1ID/LYdGarK4aUNRqfKL21M/5Q7aphFZqcGBQOyQXbXZNwE1v5Oj+eJz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O4SnZaLA; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729612841; x=1761148841;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KWespt12ZpxgPDw6K3joQvQ6R1T4arlW4Liwkh6KyJc=;
+  b=O4SnZaLA3OFSIW2Y6Onu0p1my/J6iTVQYBed+WX8/5HjQjnVZEaW2/mo
+   ozwnsmQFErO68e+GNQDLakCbx9OM/2PqrNGk7vRsqcG9Ig5xScIMT3bwR
+   /eECt2yCpHYJIj060AB5ApJejExkf++fjFOh0CpQOmCdXv5+TwSunCgYa
+   gcwcBYQxjtEvYjCYE3drxDiIANTR4rMXg+/vXGh0sbQm6Wg79sMQXMPHt
+   mxlZCBRGicvZ30oq+3Xds/OiOaDqAya2L9nWTKpRezhqsx1TWa6Z56fI9
+   ptQuu9FStwaCa7yov5iTcnP7t3mdqey8JLxFRwgBWzjtj8r3S6zup69Th
+   Q==;
+X-CSE-ConnectionGUID: P3HqjIA5TGK92DYc85v0/w==
+X-CSE-MsgGUID: 2IK6Ok7hQYGtNZ6oQ83Hfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29271044"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="29271044"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:00:40 -0700
+X-CSE-ConnectionGUID: 3WQCNMrzRIa/F8k5So1wvw==
+X-CSE-MsgGUID: Y/SzASDFTe6WCIqjeAQATQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="79858679"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.ger.corp.intel.com) ([10.246.16.81])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 09:00:30 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH V14 07/11] perf tools: Parse aux-action
+Date: Tue, 22 Oct 2024 18:59:13 +0300
+Message-ID: <20241022155920.17511-8-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241022155920.17511-1-adrian.hunter@intel.com>
+References: <20241022155920.17511-1-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxeGqrEpdg9Df5FS@ryzen>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 01:04:10PM +0200, Niklas Cassel wrote:
-> On Tue, Oct 22, 2024 at 05:55:17PM +0800, Lai, Yi wrote:
-> > On Tue, Oct 22, 2024 at 10:48:04AM +0200, Niklas Cassel wrote:
-> > > On Tue, Oct 22, 2024 at 01:44:08PM +0800, Lai, Yi wrote:
-> > > > On Mon, Oct 21, 2024 at 05:20:12PM +0200, Niklas Cassel wrote:
-> > > > > On Mon, Oct 21, 2024 at 02:07:21PM +0200, Niklas Cassel wrote:
-> > > > > > Hello Yi Lai,
-> > > > > > 
-> > > > > > On Mon, Oct 21, 2024 at 06:58:59PM +0800, Lai, Yi wrote:
-> > > > > > > Hi Niklas Cassel,
-> > > > > > > 
-> > > > > > > Greetings!
-> > > > > > > 
-> > > > > > > I used Syzkaller and found that there is INFO: task hung in blk_mq_get_tag in v6.12-rc3
-> > > > > > > 
-> > > > > > > After bisection and the first bad commit is:
-> > > > > > > "
-> > > > > > > e5dd410acb34 ata: libata: Clear DID_TIME_OUT for ATA PT commands with sense data
-> > > > > > > "
-> > > > > > 
-> > > > > > It might be that your bisection results are accurate.
-> > > > > > 
-> > > > > > However, after looking at the stacktraces, I find it way more likely that
-> > > > > > bisection has landed on the wrong commit.
-> > > > > > 
-> > > > > > See this series that was just queued (for 6.13) a few days ago that solves a
-> > > > > > similar starvation:
-> > > > > > https://lore.kernel.org/linux-block/20241014092934.53630-1-songmuchun@bytedance.com/
-> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block
-> > > > > > 
-> > > > > > You could perhaps run with v6.14-rc4 (which should be able to trigger the bug)
-> > > > > > and then try v6.14-rc4 + that series applied, to see if you can still trigger
-> > > > > > the bug?
-> > > > >
-> > 
-> > I tried kernel linux-block
-> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
-> > branch for-6.13/block commit c97f91b1807a7966077b69b24f28c2dbcde664e9.
-> > 
-> > Issue can still be reproduced.
-> 
-> Thanks again for your testing!
-> 
-> I will try to reproduce using your reproducer (repo.c),
-> and see if I can make any sense of this.
+Add parsing for aux-action to accept "pause", "resume" or "start-paused"
+values.
 
-Hello Yi Lai,
+"start-paused" is valid only for AUX area events.
+
+"pause" and "resume" are valid only for events grouped with an AUX area
+event as the group leader.  However, like with aux-output, the events
+will be automatically grouped if they are not currently in a group, and
+the AUX area event precedes the other events.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Ian Rogers <irogers@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+---
 
 
-An important thing that I noticed is that even when I look at your good commit
-(v5.11) - the first commit you marked as as good in git bisect, it has this:
-https://github.com/laifryiee/syzkaller_logs/blob/main/241018_105830_blk_mq_get_tag/f40ddce88593482919761f74910f42f4b84c004b_dmesg.log
-
-[  300.525626]  __schedule+0xb9f/0x2eb0^M
-[  300.525843]  ? __pfx___schedule+0x10/0x10^M
-[  300.526056]  ? lock_release+0x441/0x870^M
-[  300.526286]  ? __pfx_lock_release+0x10/0x10^M
-[  300.526512]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20^M
-[  300.526801]  ? kthread_data+0x61/0xd0^M
-[  300.527007]  schedule+0xf6/0x3f0^M
-[  300.527225]  io_schedule+0xce/0x150^M
-[  300.527408]  rq_qos_wait+0x1c5/0x310^M
-[  300.527610]  ? __pfx_wbt_cleanup_cb+0x10/0x10^M
-[  300.527847]  ? __pfx_rq_qos_wait+0x10/0x10^M
-[  300.528070]  ? __pfx_lock_release+0x10/0x10^M
-[  300.528296]  ? __pfx_rq_qos_wake_function+0x10/0x10^M
-[  300.528562]  ? __pfx_wbt_inflight_cb+0x10/0x10^M
-[  300.528806]  ? do_raw_spin_unlock+0x15c/0x210^M
-[  300.529048]  wbt_wait+0x1ec/0x400^M
-
-In fact, most *_dmesg.log logs in your syzlog directory has a stack trace that
-contains a "blocked for more than 147 seconds" error.
-Many of these logs are (with the "blocked for more than 147 seconds" error)
-are commits that your bisect script has classified as "good".
+Changes in V8:
+	Fix clang warning:
+	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
+	     821 |         {NULL},
+	         |              ^
 
 
-If we look at your own dmesg with Linux 6.12-rc3 + e5dd410acb34 reverted,
-which passes your git bisect script, even if it has a
-"blocked for more than 147 seconds" error:
-https://github.com/laifryiee/syzkaller_logs/blob/main/241018_105830_blk_mq_get_tag/8e929cb546ee42c9a61d24fae60605e9e3192354_e5dd410acb34c7341a0a93b429dcf3dabf9e3323_revert_dmesg.log
-It seems that the reason is because you don't find "blk_mq_get_tag" in dmesg:
-|1019_054406|/var/www/html/bzimage/bzImage_8e929cb546ee42c9a61d24fae60605e9e3192354_e5dd410acb34c7341a0a93b429dcf3dabf9e3323_revert didn't contain blk_mq_get_tag: in dmesg, pass|
-|1019_054406|Bisect successfully! 8e929cb546ee42c9a61d24fae60605e9e3192354_e5dd410acb34c7341a0a93b429dcf3dabf9e3323_revert bzimage passed!|
+ tools/perf/Documentation/perf-record.txt |  4 ++
+ tools/perf/builtin-record.c              |  4 +-
+ tools/perf/util/auxtrace.c               | 67 ++++++++++++++++++++++--
+ tools/perf/util/auxtrace.h               |  6 ++-
+ tools/perf/util/evsel.c                  |  1 +
+ 5 files changed, 74 insertions(+), 8 deletions(-)
 
-So it seems that both v5.11 and "v6.12-rc3 + e5dd410acb34 reverted" has
-problems.
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 242223240a08..80686d590de2 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -68,6 +68,10 @@ OPTIONS
+ 		    like this: name=\'CPU_CLK_UNHALTED.THREAD:cmask=0x1\'.
+ 	  - 'aux-output': Generate AUX records instead of events. This requires
+ 			  that an AUX area event is also provided.
++	  - 'aux-action': "pause" or "resume" to pause or resume an AUX
++			  area event (the group leader) when this event occurs.
++			  "start-paused" on an AUX area event itself, will
++			  start in a paused state.
+ 	  - 'aux-sample-size': Set sample size for AUX area sampling. If the
+ 	  '--aux-sample' option has been used, set aux-sample-size=0 to disable
+ 	  AUX area sampling for the event.
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index adbaf80b398c..a7afde2fbebc 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -860,7 +860,9 @@ static int record__auxtrace_init(struct record *rec)
+ 	if (err)
+ 		return err;
+ 
+-	auxtrace_regroup_aux_output(rec->evlist);
++	err = auxtrace_parse_aux_action(rec->evlist);
++	if (err)
++		return err;
+ 
+ 	return auxtrace_parse_filters(rec->evlist);
+ }
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index ca8682966fae..4d1633d87eff 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -810,19 +810,76 @@ int auxtrace_parse_sample_options(struct auxtrace_record *itr,
+ 	return auxtrace_validate_aux_sample_size(evlist, opts);
+ }
+ 
+-void auxtrace_regroup_aux_output(struct evlist *evlist)
++static struct aux_action_opt {
++	const char *str;
++	u32 aux_action;
++	bool aux_event_opt;
++} aux_action_opts[] = {
++	{"start-paused", BIT(0), true},
++	{"pause",        BIT(1), false},
++	{"resume",       BIT(2), false},
++	{.str = NULL},
++};
++
++static const struct aux_action_opt *auxtrace_parse_aux_action_str(const char *str)
++{
++	const struct aux_action_opt *opt;
++
++	if (!str)
++		return NULL;
++
++	for (opt = aux_action_opts; opt->str; opt++)
++		if (!strcmp(str, opt->str))
++			return opt;
++
++	return NULL;
++}
++
++int auxtrace_parse_aux_action(struct evlist *evlist)
+ {
+-	struct evsel *evsel, *aux_evsel = NULL;
+ 	struct evsel_config_term *term;
++	struct evsel *aux_evsel = NULL;
++	struct evsel *evsel;
+ 
+ 	evlist__for_each_entry(evlist, evsel) {
+-		if (evsel__is_aux_event(evsel))
++		bool is_aux_event = evsel__is_aux_event(evsel);
++		const struct aux_action_opt *opt;
++
++		if (is_aux_event)
+ 			aux_evsel = evsel;
+-		term = evsel__get_config_term(evsel, AUX_OUTPUT);
++		term = evsel__get_config_term(evsel, AUX_ACTION);
++		if (!term) {
++			if (evsel__get_config_term(evsel, AUX_OUTPUT))
++				goto regroup;
++			continue;
++		}
++		opt = auxtrace_parse_aux_action_str(term->val.str);
++		if (!opt) {
++			pr_err("Bad aux-action '%s'\n", term->val.str);
++			return -EINVAL;
++		}
++		if (opt->aux_event_opt && !is_aux_event) {
++			pr_err("aux-action '%s' can only be used with AUX area event\n",
++			       term->val.str);
++			return -EINVAL;
++		}
++		if (!opt->aux_event_opt && is_aux_event) {
++			pr_err("aux-action '%s' cannot be used for AUX area event itself\n",
++			       term->val.str);
++			return -EINVAL;
++		}
++		evsel->core.attr.aux_action = opt->aux_action;
++regroup:
+ 		/* If possible, group with the AUX event */
+-		if (term && aux_evsel)
++		if (aux_evsel)
+ 			evlist__regroup(evlist, aux_evsel, evsel);
++		if (!evsel__is_aux_event(evsel__leader(evsel))) {
++			pr_err("Events with aux-action must have AUX area event group leader\n");
++			return -EINVAL;
++		}
+ 	}
++
++	return 0;
+ }
+ 
+ struct auxtrace_record *__weak
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index a1895a4f530b..208c15be9221 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -579,7 +579,7 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
+ int auxtrace_parse_sample_options(struct auxtrace_record *itr,
+ 				  struct evlist *evlist,
+ 				  struct record_opts *opts, const char *str);
+-void auxtrace_regroup_aux_output(struct evlist *evlist);
++int auxtrace_parse_aux_action(struct evlist *evlist);
+ int auxtrace_record__options(struct auxtrace_record *itr,
+ 			     struct evlist *evlist,
+ 			     struct record_opts *opts);
+@@ -800,8 +800,10 @@ int auxtrace_parse_sample_options(struct auxtrace_record *itr __maybe_unused,
+ }
+ 
+ static inline
+-void auxtrace_regroup_aux_output(struct evlist *evlist __maybe_unused)
++int auxtrace_parse_aux_action(struct evlist *evlist __maybe_unused)
+ {
++	pr_err("AUX area tracing not supported\n");
++	return -EINVAL;
+ }
+ 
+ static inline
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 8f7932cd5550..95593b55d9a7 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1105,6 +1105,7 @@ static void evsel__apply_config_terms(struct evsel *evsel,
+ 			attr->aux_output = term->val.aux_output ? 1 : 0;
+ 			break;
+ 		case EVSEL__CONFIG_TERM_AUX_ACTION:
++			/* Already applied by auxtrace */
+ 			break;
+ 		case EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE:
+ 			/* Already applied by auxtrace */
+-- 
+2.43.0
 
-
-I managed to reproduce using your reproducer, and with
-v6.12-rc4 + e5dd410acb34 reverted, I see:
-[  299.641187]  __schedule+0x1144/0x3200
-[  299.641425]  ? __pfx___schedule+0x10/0x10
-[  299.641651]  ? lock_release+0x4b0/0x870
-[  299.641868]  ? debug_smp_processor_id+0x1b/0x30
-[  299.642128]  ? __pfx_lock_release+0x10/0x10
-[  299.642362]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  299.642640]  ? lock_acquire+0x80/0xb0
-[  299.642852]  ? schedule+0x202/0x3d0
-[  299.643068]  schedule+0xe7/0x3d0
-[  299.643261]  io_schedule+0x96/0x100
-[  299.643494]  bit_wait_io+0x17/0xf0
-[  299.643703]  __wait_on_bit_lock+0x118/0x1a0
-[  299.643941]  ? __pfx_bit_wait_io+0x10/0x10
-[  299.644195]  out_of_line_wait_on_bit_lock+0xe8/0x120
-[  299.644475]  ? __pfx_out_of_line_wait_on_bit_lock+0x10/0x10
-[  299.644793]  ? __pfx_wake_bit_function+0x10/0x10
-[  299.645060]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  299.645344]  __lock_buffer+0x72/0x80
-[  299.645569]  do_get_write_access+0x7d0/0x1130
-[  299.645838]  jbd2_journal_get_write_access+0x1e9/0x270
-[  299.646136]  __ext4_journal_get_write_access+0x72/0x3b0
-[  299.646436]  ext4_reserve_inode_write+0x145/0x280
-
-So even with e5dd410acb34 reverted, we see a problem!
-
-
-
-The difference seems to be the stack trace before and after e5dd410acb34 is
-slightly different.
-Before e5dd410acb34 the stack trace often looks like one of the two above.
-After e5dd410acb34 the stack trace instead always has blk_mq_get (and seems
-to be easier to reproduce).
-
-
-I think that the stack trace that contains "blk_mq_get" actually indicates a
-new problem though, so thank you for that!
-
-I have a fix for it:
-diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
-index fa41ea57a978..3b303d4ae37a 100644
---- a/drivers/ata/libata-eh.c
-+++ b/drivers/ata/libata-eh.c
-@@ -651,6 +651,7 @@ void ata_scsi_cmd_error_handler(struct Scsi_Host *host, struct ata_port *ap,
-                        /* the scmd has an associated qc */
-                        if (!(qc->flags & ATA_QCFLAG_EH)) {
-                                /* which hasn't failed yet, timeout */
-+                               set_host_byte(scmd, DID_TIME_OUT);
-                                qc->err_mask |= AC_ERR_TIMEOUT;
-                                qc->flags |= ATA_QCFLAG_EH;
-                                nr_timedout++;
-
-
-
-I will post it as a real fix for the new problem (blk_mq_get) tomorrow.
-
-This just solves the new problem though.
-
-You probably need to do another bisection to find the problem that exists on
-v5.11 and earlier kernels.
-
-
-Kind regards,
-Niklas
 
