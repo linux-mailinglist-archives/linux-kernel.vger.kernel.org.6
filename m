@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-376238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894A79AA1FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:16:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7361F9AA200
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09E0C1F23A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E021C21609
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE5A19C56C;
-	Tue, 22 Oct 2024 12:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A50519B586;
+	Tue, 22 Oct 2024 12:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ggfX4saB"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G1iw3uS+"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA17813A89B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 12:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A94313A89B;
+	Tue, 22 Oct 2024 12:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729599361; cv=none; b=th9Ucss4300J5EufiKGrjPVsKdtAFyzA1HoYDQfzd/83MT9VGFU6wBROwhbqUiwRt/OI/6fHUuCj+FHD+P8hHo6MxpWu4gocbqZzyLMLbYepWyWloD+8Qs4zfAeepGlLMhxl3UbELsdH9EAje9M1Ao2EucqKFywXthC7va+iVmk=
+	t=1729599419; cv=none; b=fTPSFgR9h0ea6PEFtaKq//noQgHy7EUt7HN4HCJ8F5AXTd8EAIV5PjjXdD7OMls44xo/+8yixx+ZW33vHo86Hy9sS+P64504ZoUJg8ViTy5mTqrNBcF01B5xKYL95xwApBsisZW99O9Yihp+wNucpPHZY8UCK4BVqssGM28Skz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729599361; c=relaxed/simple;
-	bh=UcHGpO9lcLjMqqUEy6P77LD/fPioXokhQWlO5SxkQGI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=N2orB8SIyLrAxShFhvxYYl9Yl+ag4Lb35eVCQ6sUuatNMSrksW0qy7JjmHxiZixtKzzlWQ45jSo/e1INjk04zaNGPGFYg4T5isMLRmbe/kjCi94uHS+V++gea7+A9QgCayVK5YZ6toNOk/Ae2Xzu2RjeWw7mYl7zG7PJm/3XAhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ggfX4saB; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4314c452180so43824965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 05:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729599358; x=1730204158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hzfBBiQZO/3JmQPAp3trpD9H/FhA5SSKZP4PSmekS78=;
-        b=ggfX4saBia7aQO7WVO2E1fEpAK2YaG0SMDseigVM+oHawHdCq0i2W0Ho+Q9d4t9tI3
-         7ROFWyV/7toj6LTCyIDTWVDNx2JftkEfJIX6z89XyHdIfSDv3qKNq5/dDTg9S2ezNIB/
-         ryMm5tLH8vnU5XGXbcpgXrpbjVL2VXkXTFrC2P+VJMw3l96wYovXsi909OCzJ3xxKSU2
-         aSVZyrhAL1L2P3xJO1Mvv9B2p+IVBbsV/Y82Rs6klmQ/A1eb1vLvNhNejEBVjsKzl+g1
-         AGKLD29jzEG0kaS15h51moGpe3SxkuqWcjvwS4kBjDtwJZTovT0zV/zvddyo/38ID0//
-         Ogpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729599358; x=1730204158;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hzfBBiQZO/3JmQPAp3trpD9H/FhA5SSKZP4PSmekS78=;
-        b=dthAuDK6Vijpi/r+wKq0RxgiN0+E0N6ZuJqUfy3OWHq7i+B2AxGNuEzsEvmfwl1PRg
-         bSS9o6rxnClF9UlvV/Q4fujPUSX0bkYG0BstyfoYD4g6dzJ64UXN4nY8wR7mELU+kwKO
-         bH0bvaHOIReveahOhm/mWlYQllkCXBWwOELd24ucOe+qf7mtgP8M/zDHkcY1xM9Kf5hc
-         mGG0p2tsw+TIPFL2oYALvAzLwQfipNxWUBr+az2WW+CJerrtTiP+KY6r/PTgSknRlFCC
-         tmfkU53aduRn5lp4eODUWULJC8B8ZaT7YMCFq3oAh2C0bQQoiY50VO/72QiDotC63bYH
-         sNBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiwtqIZWR8NHsEzBPPMo1mV5vuCsEtLWqGRLfbkeCZ/gupaWwvwA10Rwc5zsk0ps58AFVcZlJ1fiVPIcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI7qJdiPNhOL8cMuwFAbrFTBNhWieGpufBEJyHg6VaWfDxqM+L
-	AzcBAda2nDBLnQH5uOc1kzeUr5pReIaK0oC8B/Xv08yRS0MUrUaciHfQ4tm1dOI=
-X-Google-Smtp-Source: AGHT+IHT8U2le7TP7Fhl0aRlnvkTfgE3DG0+6uSqVHO9u7XR2ZILafOv7A3oM9rdGHL/IP38m1XIAA==
-X-Received: by 2002:a05:600c:1d8e:b0:431:4e33:98b6 with SMTP id 5b1f17b1804b1-4317bd858camr19814435e9.5.1729599358069;
-        Tue, 22 Oct 2024 05:15:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:43af:403f:2c26:9ea7? ([2a01:e0a:982:cbb0:43af:403f:2c26:9ea7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cbe64sm86619065e9.40.2024.10.22.05.15.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 05:15:57 -0700 (PDT)
-Message-ID: <ad1d1208-fb0d-4656-80e7-1af0e8a4e421@linaro.org>
-Date: Tue, 22 Oct 2024 14:15:56 +0200
+	s=arc-20240116; t=1729599419; c=relaxed/simple;
+	bh=ljkcEWFbWomKcrEA1bSvPlxkO+WDloeeKiVJF32nTUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/FShnBL8T/mCSiKUL4hLHiNQQ/OtUHkXqSl1wV+JMAszUKMdROs7iUxu1E72aW5cTApsBvi52O0GqRsJ/BDUyyNdE3e0bBj2yPOSvn7BVYB7e9fkxmrpKeGRNcvQQRemIog7Z3hnAjRQlmEZ9y6mLaMaWEpDlII6qcvrr3NiMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G1iw3uS+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M2HEbM005798;
+	Tue, 22 Oct 2024 12:16:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=q1Fzka
+	tz3m4I/9MZsWuQNIY/B4h9f6L5HPkc0W6Pmsk=; b=G1iw3uS+IEs9Q8GeYt3fZQ
+	TPNaqNoGG5UCCuIAFz3pJVROgbP1hyn+A+0Fzy/ZRvYeuxnd+94roITclE9Kp9XC
+	NzSJzdItmYALI3Aer+PdV8ShXk8yIaTmjTRxbngSwG9J7ToO8wBgFsV14tNDFrXc
+	WF1Taat0ITQuyC3ivf2qEs/LRsFnhgCCap9m7AwRBSrml4UI+cudFcd/tec/Jysx
+	B4osSjqhzq86rWyMd+RMFA0IUZooZ2vx0XS/jk9T6CpBCp0X13PV0tsv1hO3279E
+	2UdRyMAHX2Rm15jxMUcAQlOIBRTUUgO1y4gpSsk24CcIHFueY7GGYz3V/wqEoXNg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5fcnrvj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:16:56 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49MAbQso018655;
+	Tue, 22 Oct 2024 12:16:56 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42csajavb9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 12:16:55 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49MCGqgJ34210348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Oct 2024 12:16:52 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 57BE52004B;
+	Tue, 22 Oct 2024 12:16:52 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EACA920040;
+	Tue, 22 Oct 2024 12:16:51 +0000 (GMT)
+Received: from [9.171.95.16] (unknown [9.171.95.16])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 22 Oct 2024 12:16:51 +0000 (GMT)
+Message-ID: <76f80f85-0dbb-425d-8390-521d0a74d9ee@linux.ibm.com>
+Date: Tue, 22 Oct 2024 14:16:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,88 +76,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/6] drm/bridge: add ycbcr_420_allowed support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
- <a2d20619-0724-4b16-a9a5-4a3680f21c99@linaro.org>
- <CAA8EJpoy=nYMix3m2n7KkwemCNoh_qg8FH0ENaa8VNcLtqZuww@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAA8EJpoy=nYMix3m2n7KkwemCNoh_qg8FH0ENaa8VNcLtqZuww@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] s390/uv: Retrieve UV secrets support
+To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20241018091516.2167885-1-seiden@linux.ibm.com>
+ <20241018091516.2167885-3-seiden@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20241018091516.2167885-3-seiden@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3iWUyXM6ZnytXSUUDZ-HgjKj0UZCLu-b
+X-Proofpoint-GUID: 3iWUyXM6ZnytXSUUDZ-HgjKj0UZCLu-b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=623 phishscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410220077
 
-On 21/10/2024 20:22, Dmitry Baryshkov wrote:
-> On Mon, 21 Oct 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>
->> Hi,
->>
->> On 18/10/2024 23:49, Dmitry Baryshkov wrote:
->>> One of the features that drm_bridge_connector can't handle currently is
->>> setting of the ycbcr_420_allowed flag on the connector. Add the flag to
->>> the drm_bridge struct and propagate it to the drm_connector as AND of
->>> all flags in the bridge chain.
->>>
->>> As an example of the conversion, enable the flag on the DW HDMI bridge,
->>> MSM DP bridge, display connector drivers (for DisplayPort and HDMI
->>> outputs) and AUX bridges.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>> Dmitry Baryshkov (6):
->>>         drm/display: bridge_connector: handle ycbcr_420_allowed
->>>         drm/atomic: add interlaced and ycbcr_420 flags to connector's state dump
->>>         drm/bridge: display-connector: allow YCbCr 420 for HDMI and DP
->>>         drm/bridge: aux: allow interlaced and YCbCr 420 output
->>>         drm/msm/dp: migrate the ycbcr_420_allowed to drm_bridge
->>
->> How do you plan to merge this serie ?
+On 10/18/24 11:15 AM, Steffen Eiden wrote:
+> Provide a kernel API to retrieve secrets from the UV secret store.
+> Add two new functions:
+> * `uv_get_secret_metadata` - get metadata for a given secret identifier
+> * `uv_retrieve_secret` - get the secret value for the secret index
 > 
-> Once Abhinav ack's the msm/dp change, I'd like to land it through
-> drm-misc. I think it's the most logical way to go.
-
-Yup, Abhinav acked it, LGTM
-
-Neil
-
+> With those two functions one can extract the secret for a given secret
+> id, if the secret is retrievable.
 > 
-> 
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+
+[...]
+
+> +/**
+> + * uv_secret_list_item_hdr - UV secret metadata.
+> + * @index: Index of the secret in the secret list.
+> + * @type: Type of the secret. See `enum uv_secret_types`.
+> + * @length: Length of the stored secret.
+> + */
+> +struct uv_secret_list_item_hdr {
+> +	u16 index;
+> +	u16 type;
+> +	u32 length;
+> +};
+> +
+> +#define UV_SECRET_ID_LEN 32
+> +/**
+> + * uv_secret_list_item - UV secret entry.
+> + * @hdr: The metadata of this secret.
+> + * @id: The ID of this secret, not the secret itself.
+> + */
+> +struct uv_secret_list_item {
+> +	struct uv_secret_list_item_hdr hdr;
+> +	u64 reserverd08;
+> +	u8 id[UV_SECRET_ID_LEN];
+> +};
+
+Are you skipping the size asserts since the list is asserted?
+It might still make sense to pack them, no?
+
+>   static inline int __uv_call(unsigned long r1, unsigned long r2)
+>   {
+>   	int cc;
+> @@ -383,6 +469,47 @@ static inline int uv_cmd_nodata(u64 handle, u16 cmd, u16 *rc, u16 *rrc)
+>   	return cc ? -EINVAL : 0;
+>   }
+>   
+> +/**
+> + *  uv_list_secrets() - Do a List Secrets UVC.
+> + *
+> + *  @buf: Buffer to write list into; size of one page.
+> + *  @start_idx: The smallest index that should be included in the list.
+> + *		For the fist invocation use 0.
+> + *  @rc: Pointer to store the return code or NULL.
+> + *  @rrc: Pointer to store the return reason code or NULL.
+> + *
+> + *  This function calls the List Secrets UVC. The result is written into `buf`,
+> + *  that needs to be at least one page of writable memory.
+> + *  `buf` consists of:
+> + *  * %struct uv_secret_list_hdr
+> + *  * %struct uv_secret_list_item (multiple)
+> + *
+> + *  For `start_idx` use _0_ for the first call. If there are more secrets available
+> + *  but could not fit into the page then `rc` is `UVC_RC_MORE_DATA`.
+> + *  In this case use `uv_secret_list_hdr.next_secret_idx` for `start_idx`.
+> + *
+> + *  Context: might sleep.
+> + *
+> + *  Return: The UVC condition code.
+> + */
+> +static inline int uv_list_secrets(u8 *buf, u16 start_idx, u16 *rc, u16 *rrc)
+>
+
+Why is buf (u8 *) if you have it as (struct uv_secret_list *) in 
+find_secret()?
+
+You have a second caller in list_secrets() but that can also be (struct 
+uv_secret_list *) since copy_to_user() shouldn't care and you need to 
+cast it anyway for alloc_page().
+
+If you'd be passing buf as u64 and not as a pointer it would make sense 
+but you're casting it to u64 here
 
 
