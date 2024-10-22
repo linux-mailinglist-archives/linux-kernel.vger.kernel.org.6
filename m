@@ -1,75 +1,103 @@
-Return-Path: <linux-kernel+bounces-375528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0F09A970A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:27:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D149A9707
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A3C1C23C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27603288563
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506A441760;
-	Tue, 22 Oct 2024 03:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC85113AD2F;
+	Tue, 22 Oct 2024 03:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CkdjjShL"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7A136E01;
-	Tue, 22 Oct 2024 03:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="R5wBhoMl"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9D41760;
+	Tue, 22 Oct 2024 03:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567657; cv=none; b=VVxHuKZDErqs6Kaz+ANFEEGVix5Md22wDFJn6XPwu0mbDXi6nBpehh3Bwyh3rVcPl/5tDMqsej0hTmKDx1MOizEXvl/iwWtt0HpByDHUdP1E+gURVJTVRjxJJfjrrS2XJP4csnrdq/z8xMVX2thOCBxOerzG27a2mKeUpDthQ7Y=
+	t=1729567636; cv=none; b=sE8z3JAHHoXM7hpc6+bGNAu+A2HQiWg/A3GPMzxrloiVXS+x+m7S19K7YWI28QETgInq7/7HJpTzWqOmZbmR4cIUfvQ1B4LRVgWknXaZ7rPTNm8P2IGO6//S4lLGjjFnq29WjuCnmolYn6rQUX1dKXDyP5PnaLOWRbkA73WT6mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567657; c=relaxed/simple;
-	bh=5E/MUIWR/Iyu+JIdQ/r/WMUE9ombsVBOFdb/G/DxTYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXhUMSsJf1oU01zc+FwoS/UrxeJQaoJgXOTl+g54FQw0xbnGr2eae1/jNJGesIe+ONv2P+Nl3I5fLOhEToxhW1yY4c/uGoYhIyfmGReroyvH/ivRBWvPxPyrAmRBR+tU6OGwEy0jDma0+e0Iwyd+31HFbMgpfG5Z49i7x4DUhOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CkdjjShL; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=dkDU2h6uW+xJKLl9ZR9Wm9eDWO5GXIm5Do45ucbhOLg=;
-	b=CkdjjShLW0crzKcz4i7Pe3NeRQcu5dh7LAZ9xHowsCuZYpCp8SSBNHr+1VTRV1
-	+WR5INlGK3Y0M56zBpb6q0xlSbKBDNLKhp2s3MqVXzPKLcO72J45FpqxPP6ozMk4
-	vf+I0wzHe3eLEqPNa7NVAnNTJZtq8pR0Mts/VPcA+Rnls=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnrfWCGxdnpbOUAA--.5406S3;
-	Tue, 22 Oct 2024 11:27:00 +0800 (CST)
-Date: Tue, 22 Oct 2024 11:26:58 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: robh@kernel.org, saravanak@google.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, horms@kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	philippe.schenker@toradex.com
-Subject: Re: [PATCH] arm64: dts: colibri-imx8x: Fix typo "rewritting"
-Message-ID: <ZxcbggAgGx67+xsX@dragon>
-References: <45F06B5D4CA9F444+20241018023340.47617-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1729567636; c=relaxed/simple;
+	bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GJNtE0YcNUMsMJoKAxaxilqz/upmIAg+seiHQRSM83SvpURc3E6FIdlPA7hJj04aMBEDdzyDOK1dB/q3Rj7xOfmIKDH5z4nQya1A4hpyu3fTSfRVwaCi/YMX3PpruddPeIVpqNuYdMDJ/RMw6soQCaBun/jQGntZ/pQ3HnuQQTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=R5wBhoMl; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49M3R3rE43442082, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1729567623; bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=R5wBhoMlUptSa2yRFEUDuLIKtf+11zzhmtn9WP5rmRLpH8f04K1mzP2q4fxlxnYps
+	 i3nBV/S/njdQr6vVDLmA1JU3S7jttvWluD/u/BaGVJbtpFnZ3zv39zeqap7pUIv5d8
+	 cPK2TExtliU7Fwyarqy1WZ3es3beijX9oblc/EZfGOGoAmTHmG55wh/68NobdOsQ3J
+	 jiXfE9a5p7ct6Umox1os3L/ljXoB2Rdo/9b8AK1aNo4cELD1DPOnqelZFgb2zUCUXk
+	 dfHSRSL+TMm/HS91C/Epc6+WkuHok5VOAXVG7MKE68hmFb/sdnvrYU0lQfA/fOPUPG
+	 ono0z2riL+N5Q==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49M3R3rE43442082
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
+ RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
+ 15.01.2507.035; Tue, 22 Oct 2024 11:27:03 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH next] wifi: rtw89: unlock on error path in rtw89_ops_unassign_vif_chanctx()
+Thread-Topic: [PATCH next] wifi: rtw89: unlock on error path in
+ rtw89_ops_unassign_vif_chanctx()
+Thread-Index: AQHbI5mv2pwOn3Ho/kejuy2RYL9sTrKSGuGQ
+Date: Tue, 22 Oct 2024 03:27:03 +0000
+Message-ID: <6a80d4adc51f4ea884b5e02f16d8aaed@realtek.com>
+References: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
+In-Reply-To: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45F06B5D4CA9F444+20241018023340.47617-1-wangyuli@uniontech.com>
-X-CM-TRANSID:Mc8vCgDnrfWCGxdnpbOUAA--.5406S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVco2UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxCAZWcXFXIWFAAAsr
 
-On Fri, Oct 18, 2024 at 10:33:40AM +0800, WangYuli wrote:
-> There is a spelling mistake of 'rewritting' in comments which
-> should be 'rewriting'.
-> 
-> Suggested-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>=20
+> [...]
+>
+> @@ -1373,6 +1373,7 @@ static void rtw89_ops_unassign_vif_chanctx(struct i=
+eee80211_hw
+> *hw,
+>=20
+>         rtwvif_link =3D rtwvif->links[link_conf->link_id];
+>         if (unlikely(!rtwvif_link)) {
+> +               mutex_unlock(&rtwdev->mutex);
+>                 rtw89_err(rtwdev,
+>                           "%s: rtwvif link (link_id %u) is not active\n",
+>                           __func__, link_conf->link_id);
+>
 
-Applied, thanks!
+Acked-by: Zong-Zhe Yang <kevin_yang@realtek.com>
 
+Thanks
 
