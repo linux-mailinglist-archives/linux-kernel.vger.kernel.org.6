@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-377078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279E39AB991
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:40:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F299AB99C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D745B218BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDEB28479E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657E51CDA35;
-	Tue, 22 Oct 2024 22:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F611CDFD1;
+	Tue, 22 Oct 2024 22:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AX+qs5pk"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0bGF+HB"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35F1CCEFA
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C11C8FCF;
+	Tue, 22 Oct 2024 22:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729636824; cv=none; b=Hf5hUwYUqTCbBn3N/OeL2Bl+fz8oDs5EVM6KlkZcuPBkWzm8FjJzLasP/tTmoHPopzyL+d+OloDYCezWE3W/VJLOB9YHSn3GBQyuwm9IV1IETbKTGQXQB2Sggiya0DKHLTVGZm7bGCr2yCoQrjqNNzdaYPh8belyxkiviU32WXQ=
+	t=1729637352; cv=none; b=pRWdqxBfjye4LralLrmYBZZ8ezENUZVkOoVTMsBlw5saxSA976NqRXI6uP194ATVZaHc5o8BgyTpkca+cncymI0eFLn1T/Xj+UKG6+irwlxh/6eMxCWl0g86ectcv4UuBd9J1WIyVWbH9v7xy94hVkhzOIADXysCrOIXzN2DwhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729636824; c=relaxed/simple;
-	bh=lIRTsB8/7w9aiXGwumD/5t2Ntq2v4lrXMrKQWp3Dvbk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VdHh0Wvxga/rJqhSlr7dCF64a3a6P1mYJiln+GrGzYOpi/RFlwXsX7VKfekyhJpN8KoIr9LoUBu99BJnQrNlfcY1cfVt4Xuxlvghi+u0o4LH/vv3nhTczuyraIKGqG7h/Vv8gjm54kDtsllnmtBVQorsuBYIE0TT3CXt6Eq/b5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AX+qs5pk; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so6010704276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:40:22 -0700 (PDT)
+	s=arc-20240116; t=1729637352; c=relaxed/simple;
+	bh=itz1PosXXxDzCVp3LLVXnsJCcW1EmeiHBwbSYfzPbMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZLbK1+i04YLxefsQThTKXKjeVCpxhmGfgyowg+5qyRyDTPB6VgheRgK36GxVnFz1mq4amhWcM174u0h/6+vhYpu7BRhDu+Yi17t0pT8USpcPMqDeUXzr1KE0NKreyN/ldXDApO2qddJ8axOBLXzbiPraZJSSW6UreEzlGWOJJNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0bGF+HB; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso6269740e87.2;
+        Tue, 22 Oct 2024 15:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729636822; x=1730241622; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1Ogz5IrclLTw1aKz0Jr4sQzXNdx/+9D4zH2hrfc475g=;
-        b=AX+qs5pkC8iLWioSeNcXJsbZHQZos14yxFPXunaQBtu4utumfK0EO9yRl8wuzfIR2V
-         NGMIRNxBd6+E+i3eTVfewrdVuwikgl/1w6OZ+f6rm8EeF5ltSZ4UAqzB1O5fRYz4Mu0a
-         KU/fy6q3B+DkZXTVyZs5+dvY1XRHyIYIGlUPXyg7Z3Ad4rZOo6znvtRgEth8DXJmqiqY
-         O+FHkWRwDCUGJz5KyDUuT7gER//hStrHLMDkQuXghU8Q5WwvO7BzHaX/Lam3p1H82iUK
-         dDNgWzrtI4AOBsdo+icMKbusJFIaI5GQ4aPn7AMAX/47s2xjBnRMwxeVrVwrvmpvcU7a
-         2Xcw==
+        d=gmail.com; s=20230601; t=1729637349; x=1730242149; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUHN0XnjaQQ8Lenc9CGKPJM3f0XauY2Hf0U+mcSQ1OE=;
+        b=i0bGF+HBAaq3Y65f7iH2ipNRmDqV4Pb4ARD5KHzENiQDsE9L5JgdTVZv+xpjQoGga1
+         16HQgBB5AO/s5+8YpfnrmC3k71tjVQ0HCYJBsz/6xwxj5wSziATPsIqQTuTGjxi9ky7T
+         cD8CDRh6cokAt2w/7c/jZtpr8+Ad8U09D4s3A2EFsLCxy3jyQDBfnejuF2HNo+4SsvDv
+         v4467U5+2wIXIZSKe/fMWAL7SbGvP5iwuBHd0YwTDc+/6OnAnQk6pWdvjSL/hj033ed9
+         p7zeEHbeHgLD/yq4K2SiGQqsa2c0+sj2TjuC9QeISNaL0TYV5L8qzm6Vji0ZpSP2xIGw
+         FUfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729636822; x=1730241622;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Ogz5IrclLTw1aKz0Jr4sQzXNdx/+9D4zH2hrfc475g=;
-        b=kHe/zwOuc1KF+3YqHbtynXVT2pHwfxFEDi04EjVEZU+CsmXZmaupD8w1sbv+DZhAiF
-         5W/7D6vs9zEZY0J9xPxmOZgiLnW3sktVmZj8jfS/q7w8HwnGfHMERj2w3bwKShvHPtI9
-         lr6QJKIwzmsXDp6nz5nOJZAsG48GygUJ2mgE/zc8xpVzLdDAM8T0bK5ObitEVPfqUt66
-         9tJeF1/+8SWQ9fzhut/9GE26nbOq9jeSgzx0bKjImm3+73y/c0Madh3lRv1QjVhq9B9f
-         Tgwzj3j93lptKiyL0cdnnZFS2YP1dwC0fBPanFQE1ascvVSjlxi0yKkFd0m3l5uah5MF
-         rU4A==
-X-Gm-Message-State: AOJu0YxzTIPURpWm7HY9xLJLSpjehBKVn98I1E3KlwpAAv7XtCds1yI7
-	34mQ46FDET2tqECOpDzGFZoC2Ziuwcdzy/7Tspmgb0kTiT7/TbCMxzJrDRXqdfmR8ZycxPy06ht
-	qLMpk9Qb7dGrBebGQcdcOtE0NnuhqsUqCIaoM
-X-Google-Smtp-Source: AGHT+IEmrsL2mmkfIDitJhu5hcsn1FCdFgoNp9yTZPRQ4wh8Fc5z5cgTKRA2GP4UtQ1w7pzOVlBNjul4y6nKwKhEXes=
-X-Received: by 2002:a05:6902:1246:b0:e29:2ab7:6c03 with SMTP id
- 3f1490d57ef6-e2e3a65e7a0mr461330276.33.1729636821968; Tue, 22 Oct 2024
- 15:40:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729637349; x=1730242149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KUHN0XnjaQQ8Lenc9CGKPJM3f0XauY2Hf0U+mcSQ1OE=;
+        b=AjYIInxyhwV+vfFPlbwuc6XyRMJkZBOKIlavrwMF9lIO39hftkelJLFt6lY3YVeYFF
+         cE7cqsWw8UU7hdZw+OXGUwgNbhyQTZTh7ZI8F/1eq0ut/TQ4yOc4hIe+09UuaOmOqquK
+         lXhXZJ//cjQnLxLBw4hGkkEQghSlO5RWF8TcuXFVYYtqs1ojPYaYf/hxjyQLftcnczTJ
+         Vw3WhxiOjIjKVxHggx4/jJ1Fb+FKgartz1X/sM3eImMsFu9+Z6sE2IKVAdBnYMV0lHdL
+         NNFKKTPA+lN1rU1kv+Zngxo4dCSnrf7nZTEHL4TvAfPYxspCRxfQu/Z4KQNiziVVB1QZ
+         bUpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEEetbFhESx/gyuN3aAWWr3PVvnz+mM8R7JX0OyUTyeK56ghA5qSQ9MVHna4z5RvNkUXxrgOWEAu4IHwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxseNRNarxwSYzqrjeoH+kKB1kgt03Z/qsCkKQKmGbe8quD64Tn
+	iCoxsIOlPchOEirm0HO8wfVAXUeI/ZD6/TayAlwJYlt6j5KC+UPxjfoEDA==
+X-Google-Smtp-Source: AGHT+IHJ/lPGoSVtaI/AxWlHv5OntgpiNOCFAsPJhbhs5Hxdf+5yokUO5fw32NKbhZTZfiWwzMslFA==
+X-Received: by 2002:a05:6512:114f:b0:539:88f7:d3c4 with SMTP id 2adb3069b0e04-53b1a328277mr207712e87.29.1729637348163;
+        Tue, 22 Oct 2024 15:49:08 -0700 (PDT)
+Received: from abj-NUC9VXQNX.. (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a223e595csm894881e87.14.2024.10.22.15.49.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 15:49:06 -0700 (PDT)
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+To: rust-for-linux@vger.kernel.org,
+	aliceryhl@google.com
+Cc: dakr@redhat.com,
+	linux-kernel@vger.kernel.org,
+	airlied@redhat.com,
+	miguel.ojeda.sandonis@gmail.com,
+	boqun.feng@gmail.com,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Subject: [PATCH v2 0/5] Introduce Owned type and Ownable trait (was: "rust: page: Add support for vmalloc_to_page")
+Date: Wed, 23 Oct 2024 01:44:44 +0300
+Message-ID: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 22 Oct 2024 18:40:11 -0400
-Message-ID: <CAHC9VhT5P_FgPr=k6y91HjTMM1GCQH_kcPR=p2Ux-coTYYR_EA@mail.gmail.com>
-Subject: Commit 6e90b675cf94 ("MAINTAINERS: Remove some entries due to various
- compliance requirements.")
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-If we as a community are going to drop subsystems/individuals from
-MAINTAINERS due to "compliance requirements", can we at least
-explicitly list those requirements in the commit description?  In
-addition, if we're going to provide a path back for those who have
-been dropped, can we either provide the instructions, or a link, in
-the commit description?
+Hi all,
 
+This series introduces the Owned type and Ownable trait which is the v2 of
+"rust: page: Add support for vmalloc_to_page" [0]. This series includes changes
+for firmware as well to make use of the new wrapper.
+
+Changes since v2:
+- Use Owned and Ownable types for constructing Page as suggested in [1]
+  instad of using ptr::read().
+
+[0] https://lore.kernel.org/rust-for-linux/20241007202752.3096472-1-abdiel.janulgue@gmail.com/
+[1] https://lore.kernel.org/rust-for-linux/ZwUYmunVpzpexGV8@boqun-archlinux/
+
+Abdiel Janulgue (5):
+  rust: types: add `Owned` type and `Ownable` trait
+  rust: page: Make ownership of the page pointer explicit.
+  rust: page: Extend support to vmalloc_to_page
+  rust: page: Add page_slice_to_page
+  rust: firmware: implement `Ownable` for Firmware
+
+ rust/kernel/firmware.rs |  31 ++++++-----
+ rust/kernel/page.rs     | 116 +++++++++++++++++++++++++++++++++++-----
+ rust/kernel/types.rs    |  62 +++++++++++++++++++++
+ 3 files changed, 184 insertions(+), 25 deletions(-)
+
+
+base-commit: 15541c9263ce34ff95a06bc68f45d9bc5c990bcd
 -- 
-paul-moore.com
+2.43.0
+
 
