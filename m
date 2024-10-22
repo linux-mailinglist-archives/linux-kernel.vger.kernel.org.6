@@ -1,143 +1,99 @@
-Return-Path: <linux-kernel+bounces-376463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0EE9AB1EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A029AB1EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D651F24D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933E31F24F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DCB1A2C29;
-	Tue, 22 Oct 2024 15:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E011A42A5;
+	Tue, 22 Oct 2024 15:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbANo26p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XI+6RS5Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DD319D881;
-	Tue, 22 Oct 2024 15:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9251A3BAD;
+	Tue, 22 Oct 2024 15:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729610736; cv=none; b=Div2Sy0Wbui8/OMEHZ6OgqlVivsaUhXrZJfUeuXMrDwgKPo9YOioX5CflBqt6qBLrjnFFt/DzUt6gxUGKNLQWs8BQEygt3b+ghQBjbIB1RMHe/hm9Bz5MrpkPEo5Vjt0CLB9Gbo7Xvkv4GBG9+xNgqjHWr9ot4MZt2siz0tPIF0=
+	t=1729610739; cv=none; b=ivSXrIiRQuuiP8uZm76EZE1oAI0uzwxqaIVhyXwW1+tPy24Othe2AH66hzP3fjXjQ+tmDyQY5MC/e3bK+vFbzVOfY2G2hO0walVZdO6L5dNlQf80Ud+51Rk7kSjQVylp+DkZop3vmtbQMyIABfdAbWLBMLUPdWr1iYo4GCyCDtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729610736; c=relaxed/simple;
-	bh=seJ9EZ22cEDevUVxu+OvqKQxCYUy8PExIx11DQC0kHs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SOCEwxFLkTMTuVF2VT8AiX3Lachd1SpcbxdjnhtIL9ez2Utq3qHpWuiGN5u7TMig2ogJHT7itrMvIDCM3QgrTbPZfVZ/u78IUhcU+O0IeyyC4yHiTpng2C09pYvAoD5B70lF7FMKXTNMED6WOztEt6vNHfMZK59e7oCT4LdqP9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EbANo26p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D0F11C4CEC3;
-	Tue, 22 Oct 2024 15:25:35 +0000 (UTC)
+	s=arc-20240116; t=1729610739; c=relaxed/simple;
+	bh=h34Axa/KZlQzWP+2wyFKUah+okUK83vDiQMrMkwq6CU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVT5YYJ/vr21gbFJB9A0Xzvr2OnvpQkZ99hqRzJabVJRP2XPxdP8rv/AyCmDMdLXGLdGe6EkUghmK+5Fi5dbcYQiyNY/YNd+LkP91VmhLhPc0phmUvvlq9XfKVk7GWWc4Ot1DgsS9+fJ2WZm0Z+hyKWyE8SVAmGiCLxapy7sMJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XI+6RS5Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F07BC4CEC3;
+	Tue, 22 Oct 2024 15:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729610735;
-	bh=seJ9EZ22cEDevUVxu+OvqKQxCYUy8PExIx11DQC0kHs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=EbANo26p9Mx/7/Rq1Vo2zvuXqowjBXHpSPqBVDN2EckVyWcti2CkAv2py1+AtLBms
-	 U893DqbwT5pfZ/hiUojPl2NhdBrklS4pQQVUFb9gfd/V0ODpiQyDdIBYaJ1cHeF2y2
-	 te1dsa/iqmJqtnl83emc8IvFW1ugYvNlN0mD9phS47VPA0DDXh2qpJwmrzE5XCkEXe
-	 DNa9EzzWmutx6FdLJ8lE7HXtUa/ABY3q9Kc18N81wgnvf/xFtxuo62Q9izAwSmxGQc
-	 Z84wWJy7ICT7eZBSOrZcLP/5vkpuo1ZJWSpNx/3BoHWJlXUbK9jbDeBQ2Rxt/+mI6B
-	 iNu3wfGTMrLHA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DB9D2C56D;
-	Tue, 22 Oct 2024 15:25:35 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Tue, 22 Oct 2024 20:55:32 +0530
-Subject: [PATCH] bcachefs: Add missing btree_bitmap_shift check in
- bch2_dev_btree_bitmap_marked_sectors
+	s=k20201202; t=1729610739;
+	bh=h34Axa/KZlQzWP+2wyFKUah+okUK83vDiQMrMkwq6CU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XI+6RS5YZRP3xAkJXqLyvdp1C83tAxIBS/gZhQc0lx6egdQndN9PJhxjK0ZhGrAPX
+	 el0AQsXCHahZJwm5pfk+kGwjEVtLRSqoOnYlq6/osH8ccofn7e2wHfsInd+az4Rlmh
+	 edkq7sJAfddtFbuD9pTglCDzfoDgFeTs50WJ7b3zYqa1AvI04RKkEkI+aUthRsrLiH
+	 FsSJgAp1SozSMgZ2ybeYFi6J5CGq1v36UvQWvnY8ZcQwLpvfN3JmYDG+pvEV5oqfLo
+	 Fao6x4xp9D2gTTr2EYrRpXUC8p3H/EFNsBxGBbFLq2xrw5WuXqMf5q8W5Ao7M8dm/a
+	 cpcyRtcOKMrhA==
+Date: Tue, 22 Oct 2024 16:25:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <1f167f58-ad71-492c-a5b1-23800e915b76@sirena.org.uk>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZxeEA6i_xfBMxJm4@sashalap>
+ <1e89542d-6f9e-4e85-8292-ebb49091433a@sirena.org.uk>
+ <Zxe65Zu3GRdwzXjo@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-fix-missing-cond-bcachefs-v1-1-064a40e55610@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAOvDF2cC/x2MQQqAMAzAviI9W3BFYfoV8VBnpz04ZQURxL87P
- AaSPGCSVQyG6oEsl5oeqYCrKwgbp1VQl8JADbWuIcKoN+5qpmnFcKQF58Bhk2jI3vexc+KZCUp
- /Ziny/x6n9/0A2B8oKWsAAAA=
-X-Change-ID: 20241022-fix-missing-cond-bcachefs-a889f51e8aa2
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Hongbo Li <lihongbo22@huawei.com>, linux-bcachefs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Anup Sharma <anupnewsmail@gmail.com>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729610734; l=2170;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=NGrI/M2/WyNTfN55jNdw37iuKR8z9suYfRj2qkDzA8E=;
- b=BGWbWB7uVb+YRHyrS+si0zmvjxu3ypdpqlixw+iXJ1cuktYtCNYYpc/DgJ0bIV40PN3NL1hv/
- s7C5v41YqdZBIBgcpie7iEA49J2qevrmUO/LypEiD4F+7tvvLVkOGJE
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
-
-From: Manas <manas18244@iiitd.ac.in>
-
-The syzkaller bug triggers BUG_ON assertions in
-__bch2_dev_btree_bitmap_mark. btree_bitmap_shift is checked in
-bch2_dev_btree_bitmap_marked_sectors prior to this. But only one out of
-two assertions is checked. This patch adds the other as conditional.
-
-Reported-by: syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
-The syzkaller bug[1] triggers BUG_ON assertions in
-__bch2_dev_btree_bitmap_mark.
-
-btree_bitmap_shift is checked in bch2_dev_btree_bitmap_marked_sectors
-prior to this. But only one out of two assertions is checked. This patch
-adds the other as conditional.
-
-A previous discussion about adding conditional in
-bch2_dev_btree_bitmap_marked_sectors is here[2].
-
-[1] https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
-[2] https://lore.kernel.org/all/9ec25394-3d89-41b3-b62e-2d522cdc7319@huawei.com/
----
- fs/bcachefs/sb-members.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/fs/bcachefs/sb-members.h b/fs/bcachefs/sb-members.h
-index 762083b564ee5909071eb4235c3d5cd6e72ee519..3141791491928930a707a6a16579c6d2e11e3700 100644
---- a/fs/bcachefs/sb-members.h
-+++ b/fs/bcachefs/sb-members.h
-@@ -347,12 +347,16 @@ void bch2_dev_errors_reset(struct bch_dev *);
- static inline bool bch2_dev_btree_bitmap_marked_sectors(struct bch_dev *ca, u64 start, unsigned sectors)
- {
- 	u64 end = start + sectors;
-+	u8 bitmap_shift = ca->mi.btree_bitmap_shift;
- 
--	if (end > 64ULL << ca->mi.btree_bitmap_shift)
-+	if (bitmap_shift > 57)
-+		return true;
-+
-+	if (end > 64ULL << bitmap_shift)
- 		return false;
- 
--	for (unsigned bit = start >> ca->mi.btree_bitmap_shift;
--	     (u64) bit << ca->mi.btree_bitmap_shift < end;
-+	for (unsigned bit = start >> bitmap_shift;
-+	     (u64) bit << bitmap_shift < end;
- 	     bit++)
- 		if (!(ca->mi.btree_allocated_bitmap & BIT_ULL(bit)))
- 			return false;
-
----
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-change-id: 20241022-fix-missing-cond-bcachefs-a889f51e8aa2
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="B9DONd5FGMw6Tg6Y"
+Content-Disposition: inline
+In-Reply-To: <Zxe65Zu3GRdwzXjo@sashalap>
+X-Cookie: Surprise due today.  Also the rent.
 
 
+--B9DONd5FGMw6Tg6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 22, 2024 at 10:47:01AM -0400, Sasha Levin wrote:
+
+> If folks are interested in collaborating around -next analysis and maybe
+> adding a bot/dashboard/etc, I've pushed my scripts to
+> https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/
+
+Those look interesting, it'd be good to get some licensing on the repo.
+
+--B9DONd5FGMw6Tg6Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcXw+0ACgkQJNaLcl1U
+h9AAkQf/RxmxZpiIVkHzFH2KEH+voigJm3CdzGygyR2ebCnMVzkmv6a7ms2/m5ub
+QzzQWP56731BUHNnnaXpV1OwPc1eUflcyljwSKMOHi8hdpoN8QOOXWy8dB7hSYTa
+bwt0kAKpzQg9Ml9hspiU3jinmwoeZckaVT6cWNsRUNFPQnCHjyQfNZFAD13jXGGY
+ri5x8Xos3NR8jkhCdXC/3zWFoUNQnToqkutzj0oCzxfnQWkZDjZHTwW/sF9Z0qPX
+fyjclRZS63I9duKBVWpmJrB3oaVd1amZCXU0ViqNtmuV+tp5sz65vHpALgfPRQBQ
+dhRGx+zodiKCUyZuJIhvuqT/FLhehA==
+=0xA+
+-----END PGP SIGNATURE-----
+
+--B9DONd5FGMw6Tg6Y--
 
