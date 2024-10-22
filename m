@@ -1,130 +1,86 @@
-Return-Path: <linux-kernel+bounces-377056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012329AB956
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8F09AB957
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58BE28420D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88CB1C22B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4791CCEE7;
-	Tue, 22 Oct 2024 22:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fs2O2b7r"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0D71CDA3F;
+	Tue, 22 Oct 2024 22:09:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F0413B58A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168BB1CCEC6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 22:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729634911; cv=none; b=K9/zhFcn6NMBmHiib1j/EA63lNFdvSyXYgY2ap47z0nr+Ep1IKQ6IcerG6EJ5bEA8eM5wUh8BYU/t+Ybi7vB6x4dPwtUY29+v9MC+ZJS0YrLZswJKLjFIpIE+hIohFyGo5jh5JSXbVx/I+vdl/eGR9MsV0GYWEzKo6JFDs7ROuU=
+	t=1729634944; cv=none; b=bBdeeSM19sk3dNN5W/sHTIwyWCi7+jylbvAHMECQ5MKlgF+9Wzvi6hADohZFPWarcGG9DkLCXiBP6w8nCKNPoRuu+a3kuQ9y7oTkvaS1SNUntRbsJBQWnuqdkmZMBLxOGXfBZ4e/IPbQy3PKKpmNblAwdOWgs3EuYLnFxafB97E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729634911; c=relaxed/simple;
-	bh=exrAnHLSWPpEiERh2pwZh6dYyXTEzGOqExE2DJ4x33M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kff99lmVxE86MMHLSmLSYkCuGfxnyCVLPG+fgQLv3EAIahDn/ZSqGl8gQb5e+esSJLsfXUt5iUZxPtvjvp/EUihtwpiAlBWumLDIL/eyws+wTuSVVTcKM0MlAJ+AVanZUZcQmWnF26poeCdeIsertBwJO97SmrB7i4qOv3cARG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fs2O2b7r; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-851d2a36e6dso151050241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729634909; x=1730239709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F1EdHuO8J8iAbx9XEg99EM0K+vD/8zpQZPET6Q+8S4M=;
-        b=Fs2O2b7r+Tal8UVMoPoZLSS5GDXM8bw60HLAXvfJtnI5uGrUKH2qoeE9ZQ1XAQFAfJ
-         4r3WZRG6k1zX9jA/nI8yxhi1E84J4+8KtfyhZnBLf5ItfT0LxcnSfv4gQwY58yDVl6E1
-         qhZcXwBsfKBx8MKk9Im/4oAfOUcVjzOVKrE+G7b7raEaMNsMP2THSWepUUVgZrFOndgw
-         NexAyyEE0GTpz31p+BAFtiiteCBbiXW3Xoq51tZ9X2U6gd2em6KcH0ttLFlYIK1pKjMc
-         YvsAPmefVkq1/GBKlKE6VkhSRYaDFoUkO/A1biEP8ydOFa+Ckqc4/+W6iCM8vG1OrTql
-         L9SQ==
+	s=arc-20240116; t=1729634944; c=relaxed/simple;
+	bh=7qFnZ0Os8NTrFYcTsRW2WxEhbLN0bVszViEHqACQc5c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EZFHnU1ENzbn5GHFDsIKLFR92V/ik93qjGj0GoOHtt0pstVpFrNBBVo0/4nWihyfqQ4sE2cR8W/Zuz1Bbq1zQuM+Lsnuu1IUnKSO6fB7xcSokTyd01RJMMmeIoLcLYp35we7KiNhe0EI64VjI8zosfDKenbbhxVTePMn20+N2O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so56829625ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729634909; x=1730239709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F1EdHuO8J8iAbx9XEg99EM0K+vD/8zpQZPET6Q+8S4M=;
-        b=TYN+dBkiZOK3v83HexaGdoFNmgKUfwZsZvo8HNn2UWnroLD2Zs+HDLER3Pnp6kj4mF
-         AWY7UXCeLzb2Q+jwVj3EWFWIzALciWTuekMkWxTpnyikaGJaE+KjwK4ltwgCozA5pCbW
-         abBXGmQoLbhVzq+WOa6wQWn072o++LKUjzknTkfjZ8MPPbz/Te1yrpeJfUDkSgUpqObL
-         XfD0Y0R7bHathPVOGb+UNv0aG9Ur60gIPHXL9qda2Kx5Xc+UQUS8ZD7lbyd5Si3gveQx
-         hrAiITzmM/DdS1hnKZKwAtRFW+izPcxU/JaPQUU1q+zfAoYG1rdjEzNpMVx4EmkFaPbO
-         +DgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuTaFgn8Ne8sWNE3+kZBDrmvBGCuBoPU1th/oacjnvsJma9czpPhrOdaJGHFFizghqzgnaOFdyvqymynA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6OLweMpNhXz3IDnqZJArKVft1b/gEwgqxJAKyHMl8ays9ijgD
-	qRK4jd8Mf+gUQ4PNErgk0b2q00aX0eP41uqMqgpbnJT+oQgNNvyucI0NhFwW83sXzyatZdzNRo9
-	PcLWmaBQ4K77oU5PiZhgarfPOU0E=
-X-Google-Smtp-Source: AGHT+IFR4lJPOvtab+BXMERxfYcK0NvC6Q7/68IB4+RkRk13GEKMIotK57tlpFQV51sMJcQHm8gAHnfCqqVTeH9MQa4=
-X-Received: by 2002:a05:6102:a48:b0:4a4:8a11:a3b9 with SMTP id
- ada2fe7eead31-4a740d6ae64mr3427941137.1.1729634909118; Tue, 22 Oct 2024
- 15:08:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729634942; x=1730239742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQ1ilRmzVCNdCSMlzy9bgdlmlXko8EZqRRz3Q83UCcU=;
+        b=BPHeU8MREOn5zqoouRJcGwYMGi5rXzWHyhFpwNJJxM97JQSjuUWmhMofwqkRy1EdcQ
+         wrle0LfgmTDhcCW2ztkVjYzpbUSLNhjq9UeIMQS41+bLYLUcE5oPGdydX6wq0Q0BcPBi
+         BlhPRxm6MZsWlXORIRea8gs5Xkm5CAsH2MAtP7VQDMn971oacBaqGdJZpPOCMfspM3Ki
+         BXcvdzYHuJdBTsgsknv9riLufJ4TXFhDTMHcKc/zYsXgpuQtR4bUnu/7p7cPtEuzVUna
+         QdqV92h5lyLPLicIRE1NzGmt+42q/wggtOucGb3NjOT+amwBuDMuok5Ag3ZErk2hox3x
+         AEQA==
+X-Gm-Message-State: AOJu0YwrF2Bau5PBLdPGEB6h+pDmKzDMpsKVabfbkuZVrcbIV5mCTvy1
+	B5vg6GJRQnpCswT0bGsLpu7csHZwNqgDf0cQIxWibDNMyNBn3bMWq1yVxgIfEj3s0AJz8HMfbBE
+	Fy+L2mH4vnRUFr9AVlyktdXsJvqRxX9Lm4+0ikF9aXv4TnKUAEgpJP1o=
+X-Google-Smtp-Source: AGHT+IHJU5L2OYPEaqP7Qs8JBqqg30MX7N9p81zg736bKvJWf2N+sN3KX+b9Fx0/gRNlQc1vpS12Nfd1AVUiA3LACs/UwEYVbWqX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018174114.2871880-1-Liam.Howlett@oracle.com> <20241018174114.2871880-2-Liam.Howlett@oracle.com>
-In-Reply-To: <20241018174114.2871880-2-Liam.Howlett@oracle.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Tue, 22 Oct 2024 23:08:17 +0100
-Message-ID: <CAKbZUD3YLqWOyN7t8d9x3drJBJFSQw0O9dq7reY2p-gQ-wen5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm/mremap: Clean up vma_to_resize()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, David Hildenbrand <david@redhat.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Jeff Xu <jeffxu@chromium.org>
+X-Received: by 2002:a05:6e02:19cc:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a4d59fccf1mr5273135ab.21.1729634942285; Tue, 22 Oct 2024
+ 15:09:02 -0700 (PDT)
+Date: Tue, 22 Oct 2024 15:09:02 -0700
+In-Reply-To: <c8IH934n7hOP4OxexVl1FkZewtnxm09Kgns9QF-3xW_f7GUGVd4D7_wOn8UfrXCO5gWdnY1OZcvJKd_Wmty8-9u-nnEq0ZCiKCx122GozyI=@proton.me>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6718227e.050a0220.10f4f4.017e.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] general protection fault in btree_node_iter_and_journal_peek
+From: syzbot <syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pz010001011111@proton.me, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 6:41=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> vma_to_resize() is used in two locations to find and validate the vma
-> for the mremap location.  One of the two locations already has the vma,
-> which is then re-found to validate the same vma.
->
-> This code can be simplified by moving the vma_lookup() from
-> vma_to_resize() to mremap_to() and changing the return type to an int
-> error.
->
-> Since the function now just validates the vma, the function is renamed
-> to resize_is_valid() to better reflect what it is doing.
+Hello,
 
-Small nit: Could we pick a stable naming scheme?
-I understand the kernel has historically had plenty of ways to name
-functions, including
-do_stuff
-is_stuff
-stuff_do
-stuff_is
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I thought we were starting to converge into vma_/vmi_/vms_ :(
-I would personally prefer vma_resize_is_valid/vma_resize_valid (even
-if it's a static function, so it doesn't matter _too_ much).
-Anyway, enough bikeshedding...
+Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+Tested-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
 
->
-> This commit also adds documentation about the function.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Tested on:
 
-Reviewed-by: Pedro Falcato <pedro.falcato@gmail.com>
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ab8287980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=005ef9aa519f30d97657
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1448ca5f980000
 
-This patch made me realize there's a couple of small improvements we
-can still do (maybe with a vmi) to clean up and speed up mremap (at
-least!). I'll look into those if I find some time.
-
---=20
-Pedro
+Note: testing is done by a robot and is best-effort only.
 
