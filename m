@@ -1,120 +1,126 @@
-Return-Path: <linux-kernel+bounces-376663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B9A9AB494
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA899AB499
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BE21C231F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B559285D88
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B121B5ED0;
-	Tue, 22 Oct 2024 17:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04BA126C00;
+	Tue, 22 Oct 2024 17:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ceIZXixH"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrApnhmZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4B7483
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14847483;
+	Tue, 22 Oct 2024 17:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616471; cv=none; b=OX6DqMBQKgZ+TZk1S45RCFr84+kestfAF0wHH0+5bqnLOBqJCAc9hqp2R5jJ/pWJlohLIPpjLwwfXxq7vagI8zgD4uG2Arbf/h6k1vMkdXYRCA+kT1dVyhZuXSv91YnVat3+uePt+8zFPuOcNlZgYsFCMpiGi+j46JQdhCSBYYw=
+	t=1729616475; cv=none; b=ncBWldkGp+OYO7EalIc/gIJtE+tUZyVcDoK2Jl+BnEePE9CwkFUu4vzVyQU1l1sYZ8Opo4ImQLt/F++dOfRtVC0d2qBPuCCilK+JGFeXzLESthA/YAlRmUP5netaIOy30xGtWP5bKHzMTNxH+o6BdxfOL7NmEN3Fsl1gb6VA+dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616471; c=relaxed/simple;
-	bh=ifN6cqjsbcmVpO5CYfsnF/3RQKUBqSnhMcykdzi5jb4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JMReaxDPDcviZ7Wr13n3eoD+jlR2eowJXAg+DHtLWmpmQ5Nq6b9lirEG9XZVf4FoY+FGvRKy5EWthr4cggD8k4zzuV7/0llPa8uSLKufU9DShvECwL2L0Zxw1psCLY6Yek3SMOOzhTM71r8XMJ8Lxonxu2skw3MWu38d4BRaOXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ceIZXixH; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e6ee02225so6730229b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729616469; x=1730221269; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jz6HPAUfPJFv2cSc6XtRrNpTzfpz4jKdakYIVYEvHsQ=;
-        b=ceIZXixHrUxi8vI2mg7nuMSmPm9EK4NbX9bdd3yPhNRAE/VY3ZoNnnqv/XKSdUE100
-         piaD/JVaUe5vE1Q60+kDOc0q8ljpOcP9silpkjlZeEy7M0Xc/wQr1xd8ywk3Xgh3XtZP
-         qT1QhbCYVXdSy2EekVNLsJ0td6pXFXNBvJcXMis+2eIdBvS+E3F0AJxiPENYL1++QdF/
-         CZR864Eg0SXPuv62OMkkyV8+9hZWxnoB+fTcwgaA1Ie/mtTaW/tTWaO9h4MjsYOf1mi0
-         VJn9v4aXR+B2agDDNu4zgKI2qhz9aARMzeH2HCNuw04/vEYmWI/VR0wLYtrBYzc8NPlL
-         4WPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729616469; x=1730221269;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jz6HPAUfPJFv2cSc6XtRrNpTzfpz4jKdakYIVYEvHsQ=;
-        b=M3lzOtzQNe6DA17HHzpEGjwV1De2HAxb1+TDO8kmmecfEL+mwXERze5Rqe+4f3fQ4z
-         ZCxzTX8JH5Oj0Qse3017FfQXmnCo13Ig4+unh6EUFWPPd2eJjBOFsEBv2MxXYbEN30CQ
-         Qrsmegr4maT0z/BJoBEIq7O+rY0Az59JFcR2RBPlynFWhTKwNjok7Oc4LPPvL0mDeaqo
-         YW0aIDZsxhIrT+9tOuKnpx7oqIXBJU8lpWjouFegP+4WXQhj2/7PkdPdaGupHybwm57J
-         EFbHL9CoZE/zcz3T2DyqT/kjosGPaQy2aFe+ftz2iB/vsh1c7lKVPiE/ioKFADlQpN9Q
-         vlDA==
-X-Gm-Message-State: AOJu0YwcVinqiK/ORwBhcVrr1E/269AcekGOOj4Ij2lSrfinjfcOeUCZ
-	Mg6vgdGFRR2DWYpjljo4VKsEzVQvpcaVZLfpZPg3yWwxdabDdWTwij/XXJdySB56I6ncyZLzmwt
-	EzQ==
-X-Google-Smtp-Source: AGHT+IHnyZ3xuVY7Clm+eBIYyW7Mrfkpkys2oJltNzld9dORGFnn5Yu6KuNOVHJzto/+35IL38mQWUk0W7o=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a62:b403:0:b0:71e:4ad1:b133 with SMTP id
- d2e1a72fcca58-71ea32daff6mr27874b3a.4.1729616468773; Tue, 22 Oct 2024
- 10:01:08 -0700 (PDT)
-Date: Tue, 22 Oct 2024 10:01:07 -0700
-In-Reply-To: <20241022100812.4955-1-jgross@suse.com>
+	s=arc-20240116; t=1729616475; c=relaxed/simple;
+	bh=SkxruN3qyASLBSy7ziFG5BSa8nKG0zYL2UVq2sfpF60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXj5s7XqsbJ1gp6eBizMzbaNahu8GfENlBnkuf2jgTh6l8EkL305tbSJZRpv4YW8TN8WyJl3aiCsPc9oj5Tvz1dfxCwnznwIdI+CRg2Qu+ge5bu+IzD+hheH24IKbFG60mhfsKB9zOy2WF6KGqKYEP69bJL8IgCIG89PlmWOlIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrApnhmZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1A4C4CEC7;
+	Tue, 22 Oct 2024 17:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729616474;
+	bh=SkxruN3qyASLBSy7ziFG5BSa8nKG0zYL2UVq2sfpF60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qrApnhmZAXDdZ4SSpggax2im4eSKHuqpnqC9KwoGZB/aRpyGHLEjvH+EmdQypkKux
+	 7PI5+FW3O0VLQVJxBsYG8W4p6lheqxCoB8WnZzxtV9bFCEB2Dr6NElYULTkFDqVL3+
+	 prxeH2uePahI5PJi1yKoAU1pQusy3/BZuOPcKf2+GtbKmYT8xFlSf/vJUFN2WPvF35
+	 xtNWGPIJoRF+phpOkrSsDLkJT4yqQ7RM/cNBJHK/V8kWKHVSwkYDMc+cRBGUsh995z
+	 BoHAyxw/C3LovbDIOeEpsEBXylrsyskt3Ma8lKBpFbDLnxSHrlq223m1U1gRBl8DWN
+	 6dV7HTrtJiXwA==
+Date: Tue, 22 Oct 2024 18:01:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [RFC PATCH v3 2/3] dt-bindings: crypto: Add Inside Secure
+ SafeXcel EIP-93 crypto engine
+Message-ID: <20241022-frozen-dinginess-c9b71213e11a@spud>
+References: <20241021145642.16368-1-ansuelsmth@gmail.com>
+ <20241021145642.16368-2-ansuelsmth@gmail.com>
+ <20241021-extenuate-glue-fa98a4c7f695@spud>
+ <6716883e.050a0220.3afab9.2304@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241022100812.4955-1-jgross@suse.com>
-Message-ID: <ZxfaU9cCS6556AKg@google.com>
-Subject: Re: [PATCH] kvm/x86: simplify kvm_mmu_do_page_fault() a little bit
-From: Sean Christopherson <seanjc@google.com>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WarKaUJK5icuKqW0"
+Content-Disposition: inline
+In-Reply-To: <6716883e.050a0220.3afab9.2304@mx.google.com>
 
-On Tue, Oct 22, 2024, Juergen Gross wrote:
-> Testing whether to call kvm_tdp_page_fault() or
-> vcpu->arch.mmu->page_fault() doesn't make sense, as kvm_tdp_page_fault()
-> is selected only if vcpu->arch.mmu->page_fault == kvm_tdp_page_fault.
 
-It does when retpolines are enabled and significantly inflate the cost of the
-indirect call.  This is a hot path in various scenarios, but KVM can't use
-static_call() to avoid the retpoline due to mmu->page_fault being a property of
-the current vCPU.  Only kvm_tdp_page_fault() is special cased because all other
-mmu->page_fault targets are slow-ish and/or we don't care terribly about their
-performance.
+--WarKaUJK5icuKqW0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/kvm/mmu/mmu_internal.h | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-> index c98827840e07..6eae54aa1160 100644
-> --- a/arch/x86/kvm/mmu/mmu_internal.h
-> +++ b/arch/x86/kvm/mmu/mmu_internal.h
-> @@ -322,10 +322,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->  		fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
->  	}
->  
-> -	if (IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) && fault.is_tdp)
-> -		r = kvm_tdp_page_fault(vcpu, &fault);
-> -	else
-> -		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
-> +	r = vcpu->arch.mmu->page_fault(vcpu, &fault);
->  
->  	/*
->  	 * Not sure what's happening, but punt to userspace and hope that
-> -- 
-> 2.43.0
-> 
+On Mon, Oct 21, 2024 at 06:58:35PM +0200, Christian Marangi wrote:
+> On Mon, Oct 21, 2024 at 05:50:25PM +0100, Conor Dooley wrote:
+> > On Mon, Oct 21, 2024 at 04:56:38PM +0200, Christian Marangi wrote:
+> > > Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
+> > >=20
+> > > The IP is present on Airoha SoC and on various Mediatek devices and
+> > > other SoC under different names like mtk-eip93 or PKTE.
+> > >=20
+> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > ---
+> > > Changes v3:
+> > > - Add SoC compatible with generic one
+> > > Changes v2:
+> > > - Change to better compatible
+> > > - Add description for EIP93 models
+> >=20
+> > RFC v3, but I don't see any comments explaining what you're seeking
+> > comments on.
+>=20
+> I feel comments for the DT part are finished, if Rob is ok with the
+> following compatibles.
+>=20
+> The RFC is more for the driver part and this is patch part of the series.
+
+I didn't see anything there either, that pointed out what made it an
+RFC. Please be more explicit in the future - possibly in your cover
+letter.
+
+--WarKaUJK5icuKqW0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfaVAAKCRB4tDGHoIJi
+0j2oAQCPnM+xlAU21uykbD2R+qVH/1NCqFKMuxtkcErWXY+k6AEA9XEkpZ423S/Y
+8/3Yk49clCSUaEY9pZS4S0HEdrSKqQ0=
+=1OeI
+-----END PGP SIGNATURE-----
+
+--WarKaUJK5icuKqW0--
 
