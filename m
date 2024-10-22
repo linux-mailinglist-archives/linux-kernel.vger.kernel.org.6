@@ -1,152 +1,120 @@
-Return-Path: <linux-kernel+bounces-375842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986EA9A9B93
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA4009A9B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F43EB24556
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:56:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B763B24BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A231547EE;
-	Tue, 22 Oct 2024 07:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977B4154C19;
+	Tue, 22 Oct 2024 07:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bAtSvp6M";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3EiqQYYG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bAtSvp6M";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3EiqQYYG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TOgcEJ2+"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB064132120
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA15132120
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583753; cv=none; b=nynEKn3m+JuTkLmr0/4MFLNGbyXbHeovHHW8vwDm/lGeol+fq+jPKzwtLNwgQaPNCcPEGB/V1y32XrXJFkC8DB8Ko9NXuS0ljlM0qKrbFWNkQIWbEWl7dI22vGeHgWgcaYg3zb/fJnkjm1g88qKwbvci0RK2EDoNcK2HMf/3UQk=
+	t=1729583799; cv=none; b=VBJ6wNQcT5uWhThRJ++sFQ+5mga4iCewRZHOc8cTX++0A9rLDPspA4rAe/1H8ig9OMYsLT1q574VIdJP5BK/9ZDeiYEMtXN6lx+J9erAbkOais8abVruZz9X/FOrPg8kYoRsy0zDXdyaWQ8MBhnTVIiDpNzeE0Cz4p1GvpolDZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583753; c=relaxed/simple;
-	bh=/8Er/AUYD4hj1s7+XSWDuI9wLsc8YldxLC8X8QCJho0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBAz86mPuj/ULwZXaobM+9oPvyVeiBtKEMZNUdg9s305nYJuX3XDR31uM6ZhxqlCLeam8TRuoeyOjrcUI9OkRMLSxPxZUwf3GywfFA8GthikKGiAX/l4jI3CTm68svhysPjjw/nVPF3edGSeLfoSSLAXJEjctGSpFCHgTvqa+g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bAtSvp6M; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3EiqQYYG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bAtSvp6M; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3EiqQYYG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AB6CA1FD0E;
-	Tue, 22 Oct 2024 07:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729583749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4NAbHlybu6mwcZvgKSBIXk7hxsZ4TE+ZES+Tk18EMyU=;
-	b=bAtSvp6Max7ie7ok146EvYL+n/LsZhzbG/L++zZPXnNVK4xIUOc3gSoUhiB2fUcLeOLjNM
-	+lmn85llmGBQG278tKVMt2B/NZdE+Wor/+jD/tcMcWn0SmHpYTOMVSypl18J8Dj/TF3IMF
-	0lB6+qcdYIgQSkG7lsO3KXTcnY7/kyo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729583749;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4NAbHlybu6mwcZvgKSBIXk7hxsZ4TE+ZES+Tk18EMyU=;
-	b=3EiqQYYGSDtcO0WyDquCrLp15NYNQPirQc/e5lF+nW4gzsfe9yLRfN3bY710DnRhKPIIil
-	BK5o8CXUyh+9jUAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bAtSvp6M;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3EiqQYYG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729583749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4NAbHlybu6mwcZvgKSBIXk7hxsZ4TE+ZES+Tk18EMyU=;
-	b=bAtSvp6Max7ie7ok146EvYL+n/LsZhzbG/L++zZPXnNVK4xIUOc3gSoUhiB2fUcLeOLjNM
-	+lmn85llmGBQG278tKVMt2B/NZdE+Wor/+jD/tcMcWn0SmHpYTOMVSypl18J8Dj/TF3IMF
-	0lB6+qcdYIgQSkG7lsO3KXTcnY7/kyo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729583749;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4NAbHlybu6mwcZvgKSBIXk7hxsZ4TE+ZES+Tk18EMyU=;
-	b=3EiqQYYGSDtcO0WyDquCrLp15NYNQPirQc/e5lF+nW4gzsfe9yLRfN3bY710DnRhKPIIil
-	BK5o8CXUyh+9jUAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3D10C13AC9;
-	Tue, 22 Oct 2024 07:55:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id InDAC4VaF2dRcAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 22 Oct 2024 07:55:49 +0000
-Date: Tue, 22 Oct 2024 09:55:43 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Jason Gunthorpe <jgg@nvidia.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] mm: Add missing mmu_notifier_clear_young for
- !MMU_NOTIFIER
-Message-ID: <Zxdaf9tRs3fgOPqm@localhost.localdomain>
-References: <20241021160212.9935-1-jthoughton@google.com>
+	s=arc-20240116; t=1729583799; c=relaxed/simple;
+	bh=2lRBrfehOJ15y+TfnRkQlhyh178yMK+KwtTFbjSZBHg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cD2G4yiVGWiAuj8HTUMv49Rrc0HDxImY+rqofmBBMgMhImuSzlTVQYidQoNa7viernGzy8xrYtR7mL0f2j7x9dEQGjx8gVpMsZ5ayVhEgTifn/Y61qGuvLJSbvbWSnfdhmVZT8nvK3E0waCgERQtifBQWVazul87LL0Q869RK7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TOgcEJ2+; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b1511697a5so345915185a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729583796; x=1730188596; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=udkELYM0vawU6dPIqhfuh2a9RVnQuz9+NxQBwGXq2iE=;
+        b=TOgcEJ2+O/xChpw7PWqlzjmWNNMOQ3L7iX09Qjz+fyghE2zpLG4R7LyRQ4avUqhHli
+         0QcdpVMbz81dwWqWV5Pik1+L02hX+M5SWidyMowOa+GFY8vgAGNmRozVMRBLw1wzF9RQ
+         g+WkIPfPEReFk8OfQZszgAYXZw0Lt5gl4k/L8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729583796; x=1730188596;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=udkELYM0vawU6dPIqhfuh2a9RVnQuz9+NxQBwGXq2iE=;
+        b=kelfDJ8+z3OlG1iSmgU10BdaPbh5duy+vSaAB0giwSu/dbWARsWALxksLYWebaguFJ
+         iLeUe5FFSbD6hcmjFzfJQKzYu1p9EK8+J/B7NK7CrDqvR9a6vvoeyNBP725MJjy2kExt
+         +t/R+n/DI0/qZMvS5QmIv94J6o7kc/4Q0soC4i4Wf1084xSkOAD/GLXmxKC5KZNGKD1o
+         8ZOWwvA5CGY8yMtC5oj4sXmc7iIO+7P9YQlCFCS+oYsRnLlkuDd/FQN+TpCzxk3tSOuV
+         IopVYq3tLB2Qdb9dGa5BtT70a8NbwjBZi2GKBO2GxmIN0lXELlPoZxkuW+aZmV5NYiPn
+         0hZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtunzPzyaxTkfLyTJzjDpLdld1PUjWJSoJPtF1rXR15itFguo3NWhMvlHcLqHoinyO9tFPDQlpQ6zIQXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDnIOihpvUo7Gnm5YqrhaAmg8Lc5vJprfp5S37UnMrfGJbASGH
+	oD5YxQ4tFILIqUJpnIZfgLcYF1jqUY8ezAnUvtrGAkQrLEabLmebZjnf80tRHJhRHhYscDXfl1s
+	=
+X-Google-Smtp-Source: AGHT+IE4spgDMp1wxzBzdeMtfxSIg2bUqyR3SakHTcnDpKDeUCAQMVpdjaR7jdJm5ePy9lL2yOIntg==
+X-Received: by 2002:a05:6214:3103:b0:6bf:6ef6:22d5 with SMTP id 6a1803df08f44-6cde1507dc1mr182141646d6.17.1729583796474;
+        Tue, 22 Oct 2024 00:56:36 -0700 (PDT)
+Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008fb8cfsm26486826d6.42.2024.10.22.00.56.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 00:56:36 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 22 Oct 2024 07:56:26 +0000
+Subject: [PATCH] media: vb2: Fix comment
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021160212.9935-1-jthoughton@google.com>
-X-Rspamd-Queue-Id: AB6CA1FD0E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,localhost.localdomain:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241022-vb2-comment-v1-1-8a755f3d98d3@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAKlaF2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyMj3bIkI93k/Nzc1LwS3TTTVEvj5ERDS+MUQyWgjoKi1LTMCrBp0bG
+ 1tQCUDjizXQAAAA==
+To: Tomasz Figa <tfiga@chromium.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Pawel Osciak <p.osciak@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Oct 21, 2024 at 04:02:12PM +0000, James Houghton wrote:
-> Remove the now unnecessary ifdef in mm/damon/vaddr.c as well.
-> 
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
+If V4L2_TYPE_IS_OUTPUT() the information has been initially provided by
+the user, not by the driver.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Fixes: e23ccc0ad925 ("[media] v4l: add videobuf2 Video for Linux 2 driver framework")
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 293f3d5f1c4e..9201d854dbcc 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -231,7 +231,7 @@ static int vb2_fill_vb2_v4l2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b
+ 			break;
+ 		}
+ 
+-		/* Fill in driver-provided information for OUTPUT types */
++		/* Fill in user-provided information for OUTPUT types */
+ 		if (V4L2_TYPE_IS_OUTPUT(b->type)) {
+ 			/*
+ 			 * Will have to go up to b->length when API starts
 
+---
+base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
+change-id: 20241022-vb2-comment-f5e93ca193d1
+
+Best regards,
 -- 
-Oscar Salvador
-SUSE Labs
+Ricardo Ribalda <ribalda@chromium.org>
+
 
