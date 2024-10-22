@@ -1,172 +1,215 @@
-Return-Path: <linux-kernel+bounces-376166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261B49AA107
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:19:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AAD9AA109
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558E11C2256D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56221F2410D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEB619CC00;
-	Tue, 22 Oct 2024 11:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A925219C547;
+	Tue, 22 Oct 2024 11:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="g5Lk2zvE"
-Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wq3XPbVV"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BD119C578
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4541519CC28
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729595949; cv=none; b=lUtDZxh2t/kE1LGsHOygFwBIH2Py/a1DrgqtkCJnTKmwnj0rPh6YEuDrArzSvFz/J/5eNZwQP32BbPpRfSblfgZjAmhcar6kGr13HAAx+70PQ0XFvSndTe+Xk6Z2aqNrw/ohqKfoL/kASIuu7CKH387p9xYuAATykUQRYtbCrBQ=
+	t=1729595953; cv=none; b=CAzsLvbCe+JFhUC2BiFT2AXdWnUl/BOR0ty4KDqBwxE93pCmzrKpzQx0QiEL7lA+IPDXS+EWLNLHo3ZR5QtcbbfkEpIJ2OLfG59dLTQkYKPqS5PBfynKEo4Smvj+we21xk7bk3uGzjYJCk1nFx+SuAeXthAIuE9spT2ChIHu8co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729595949; c=relaxed/simple;
-	bh=Cqe+kWq47m2XsK3kmFGisV1NfYVWgyAGcB4tUNsqNEU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gn0Eb2aYDxU4SoI9An8irhXpi5YxWg8SlmguziLHyCauaP7j6Q25LYvOGoIvvsoFWc1epbihOPAUYSo3PjFW7pZdBhSdtWVVcpY/T99d7qEqTgOhqZH/O2Tay8W+MY69v23r5h4CTDVb8HDd/9E0DWxY8dm2OTn1TOK9UnO4mJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=g5Lk2zvE; arc=none smtp.client-ip=17.58.6.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1729595947;
-	bh=J79Eu2I+ROINsSW9OWNNnHUMAZ6QbBJ6uVzFELs/tK8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=g5Lk2zvENh5Dz/D6Re01Lrv3BJYPn6JEy0JgwVI0V0USmoi+kAxHwPlurJTAYLN3N
-	 ZbLo6nm9PS4K89aw5GWskPHOxiQOJoW5KVVr7a+OxQH0v3U3WWq4HalcCAZomamqio
-	 uUTgLlOee6P8k8e89hzVbYyo3RKFC0krBmv8bP468KiLcT9Om90PjQaEaKV81RBOyd
-	 u1KwuHIDAQFyjjGy+C8IIdmUC6nIJt9WNBRofuUvZCmN35HuFwnSlb39NlKD5kqR3y
-	 cfv8KZgroUVNGYQrybZux5sXj4TrjrGB83aCWW1GzoqvditaUTNwhu72+plCSkqb0U
-	 N0p/3q6poigGw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id 9D35B4A02E5;
-	Tue, 22 Oct 2024 11:19:04 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 22 Oct 2024 19:18:02 +0800
-Subject: [PATCH RESEND v2 2/2] driver core: bus: Correct API
- bus_rescan_devices() behavior
+	s=arc-20240116; t=1729595953; c=relaxed/simple;
+	bh=Dz/ZB4lNp9lyR1xwx/BuRQkbirfZXwN2QmdkffNol5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DWA6u12rjkA1QoT6tNyhREQ9ZEQkTcAEDQbE7NQVpGx0cUJ7yFuMqwgwS2vY/mAU49mUSCPrYmWIyjtXExq65HmlzumfZiTWX6gXwbkHVVSbR/SmY6uOobvYNsdaxvrzRHirve6ZOxhiHf2SzGegMth0aKeZDP5QfDPYePIGqn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wq3XPbVV; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e2e4237da4so50325197b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729595950; x=1730200750; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MzJp5XRWFw3tagzJfYi+1NlfVG6/VmewVK1n5BPqdsg=;
+        b=Wq3XPbVV+gTNXRdpPE548MBgpBWg3hO8zYvqfgGTuPox3lSIvYX70XEV9qYiEfwdzp
+         yRPeE/1/h5/k5IH1+afOsQZ9eYrUXYaGD8nMPPmZDb78TMdtsbhb6qJvdzdHLQlzZsfR
+         nHk6jftFWtNHkHHIFVohFve7zYLgyuJVD/bPQHWLT0XVZiTXAg9osfdL1XAG4M0W/gWb
+         Fxee2rwc1CvMLn8ueJZgkGW5VrcEQ2RQFQDRUEaTjrj5zLAFAZiLwuuAYZz73aFA5puN
+         tfyhU+1/OH7OC6beLVa/2DZsejH7IPh4JcES+Yb8CnMcq7UcGJlKeKPVRpmrwEM2a/9I
+         nLwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729595950; x=1730200750;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MzJp5XRWFw3tagzJfYi+1NlfVG6/VmewVK1n5BPqdsg=;
+        b=GVZcN24iKL10TRQ0P7X5vuNrJJxa1kXKVnIffSDbxmlC6FPKAgXcjWpa/6FIVqpZUv
+         yQKUn+3NLuZiwqdpz0h2wyrUMVjiOnUGv35aYUXACOJcO34kBqGITz9KQPwrCLtmNhSg
+         rk8ULiGCXq7rSPY2ZjeN5y/790N/ruh/a023Nx9l65bw+7hQR8NR0XAClG5vRIMZpy8F
+         pAs2ehneG07cxkYg9Q6sXwJEjIf4d4lrFhoOeBNFLpoe3EZbNMBJIRsR5oAefpAeyKzL
+         L1VfjfhWtrXK/0/68Ux9iFF5qKBktlvH0a5mxckkfrirfpybgQBmgZc1Mk02SM3H94aU
+         LL2w==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ASvyxTZMjWqO/FGzMwvBj4Skwti+biKoP2vxUa10oaQZYZYy2r+5RDNyKr4+ie4tVXJLhgPEA98Evhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6YMm+BhQHnpLV/HncuXelTwavGJQ1aTIUekNbAdBLPa0LU6Dt
+	r1dXfD+ecQHixAcn/EVewXt+uLcYF3YLMeOlv75aZJO5N+nlR0H5gPtKw0w/d6SGCxuds608Dsk
+	Z0h4Y3TsQPM8PeNOeL+G+psQRbJiQeexEzJt2yA==
+X-Google-Smtp-Source: AGHT+IHxzR+VpzMk0eh95mSXUtTh66zqaFoWZe+jU+3M8XaoYrSUTlH5qGcn4JE3hwp9jxfkDs6kXsSRFaOTgLSjoxY=
+X-Received: by 2002:a05:690c:4a09:b0:6e7:e76e:5852 with SMTP id
+ 00721157ae682-6e7e76e6470mr6643617b3.32.1729595950231; Tue, 22 Oct 2024
+ 04:19:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-bus_match_unlikely-v2-2-1a6f8e6839a0@quicinc.com>
-References: <20241022-bus_match_unlikely-v2-0-1a6f8e6839a0@quicinc.com>
-In-Reply-To: <20241022-bus_match_unlikely-v2-0-1a6f8e6839a0@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: eqkGbaSvdI4MPDpxY8YmhaJvjnMIKfZf
-X-Proofpoint-ORIG-GUID: eqkGbaSvdI4MPDpxY8YmhaJvjnMIKfZf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-22_10,2024-10-22_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2410220073
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
+In-Reply-To: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 Oct 2024 13:18:34 +0200
+Message-ID: <CAPDyKFozUxHDSt6oR62EQE=gSBXifM1PBvJ_owei_MptyANEKQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] pmdomain: ti-sci: Set PD on/off state according to
+ the HW state
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kevin Hilman <khilman@baylibre.com>, vishalm@ti.com, sebin.francis@ti.com, d-gole@ti.com, 
+	Devarsh Thakkar <devarsht@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, 22 Oct 2024 at 08:41, Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> At the moment the driver sets the power state of all the PDs it creates
+> to off, regardless of the actual HW state. This has two drawbacks:
+>
+> 1) The kernel cannot disable unused PDs automatically for power saving,
+>    as it thinks they are off already
+>
+> 2) A more specific case (but perhaps applicable to other scenarios
+>    also): bootloader enabled splash-screen cannot be kept on the screen.
+>
+> The issue in 2) is that the driver framework automatically enables the
+> device's PD before calling probe() and disables it after the probe().
+> This means that when the display subsystem (DSS) driver probes, but e.g.
+> fails due to deferred probing, the DSS PD gets turned off and the driver
+> cannot do anything to affect that.
+>
+> Solving the 2) requires more changes to actually keep the PD on during
+> the boot, but a prerequisite for it is to have the correct power state
+> for the PD.
+>
+> The downside with this patch is that it takes time to call the 'is_on'
+> op, and we need to call it for each PD. In my tests with AM62 SK, using
+> defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
+> feature is valuable, so in my opinion it's worth it.
+>
+> The performance could probably be improved with a new firmware API which
+> returns the power states of all the PDs.
+>
+> There's also a related HW issue at play here: if the DSS IP is enabled
+> and active, and its PD is turned off without first disabling the DSS
+> display outputs, the DSS IP will hang and causes the kernel to halt if
+> and when the DSS driver accesses the DSS registers the next time.
+>
+> With the current upstream kernel, with this patch applied, this means
+> that if the bootloader enables the display, and the DSS driver is
+> compiled as a module, the kernel will at some point disable unused PDs,
+> including the DSS PD. When the DSS module is later loaded, it will hang
+> the kernel.
+>
+> The same issue is already there, even without this patch, as the DSS
+> driver may hit deferred probing, which causes the PD to be turned off,
+> and leading to kernel halt when the DSS driver is probed again. This
+> issue has been made quite rare with some arrangements in the DSS
+> driver's probe, but it's still there.
+>
+> So, because of the DSS hang issues, I think this patch is still an RFC.
+> Hopefully we can sort out all the issues, but this patch (or similar)
+> will be part of the solution so I'd like to get some acks/nacks/comments
+> for this. Also, this change might have side effects to other devices
+> too, if the drivers expect the PD to be on, so testing is needed.
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-API bus_rescan_devices() should ideally scan drivers for a bus's
-devices as many as possible, but it will really stop scanning for
-remaining devices even if a device encounters inconsequential errors
-such as -EPROBE_DEFER, -ENODEV and -EBUSY, fixed by ignoring such
-inconsequential errors and continue to scan drivers for next device.
+This patch seems reasonable to me, however I am deferring to apply it
+until yours and other confirmations about tests.
 
-By the way, in order to eliminate risk:
- - the API's return value is not changed by recording the first
-   error code during scanning which is returned.
- - API device_reprobe()'s existing logic is not changed as well.
+In regards to the "disable unused genpd" problem, I am working on it
+in-between all the other stuff. I do understand that it probably
+starts being annoying waiting for me, so I will try to get this
+prioritized. We really need to get this solved.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/bus.c | 38 +++++++++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 4b5958c5ee7d..fa68acd55bf8 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -58,9 +58,6 @@ static int __must_check bus_rescan_single_device(struct device *dev)
- 	return ret;
- }
- 
--static int __must_check bus_rescan_devices_helper(struct device *dev,
--						void *data);
--
- /**
-  * bus_to_subsys - Turn a struct bus_type into a struct subsys_private
-  *
-@@ -797,15 +794,23 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
- 						  void *data)
- {
- 	int ret = 0;
-+	int *first_error = data;
- 
--	if (!dev->driver) {
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_lock(dev->parent);
--		ret = device_attach(dev);
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_unlock(dev->parent);
--	}
--	return ret < 0 ? ret : 0;
-+	ret = bus_rescan_single_device(dev);
-+
-+	if (ret >= 0)
-+		return 0;
-+
-+	if (!*first_error)
-+		*first_error = ret;
-+	/*
-+	 * Ignore these inconsequential errors and continue to
-+	 * scan drivers for next device.
-+	 */
-+	if (ret == -EPROBE_DEFER || ret == -ENODEV || ret == -EBUSY)
-+		return 0;
-+
-+	return ret;
- }
- 
- /**
-@@ -818,7 +823,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
-  */
- int bus_rescan_devices(const struct bus_type *bus)
- {
--	return bus_for_each_dev(bus, NULL, NULL, bus_rescan_devices_helper);
-+	int err = 0;
-+
-+	bus_for_each_dev(bus, NULL, &err, bus_rescan_devices_helper);
-+	return err;
- }
- EXPORT_SYMBOL_GPL(bus_rescan_devices);
- 
-@@ -833,9 +841,13 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
-  */
- int device_reprobe(struct device *dev)
- {
-+	int ret;
-+
- 	if (dev->driver)
- 		device_driver_detach(dev);
--	return bus_rescan_devices_helper(dev, NULL);
-+
-+	ret = bus_rescan_single_device(dev);
-+	return ret < 0 ? ret : 0;
- }
- EXPORT_SYMBOL_GPL(device_reprobe);
- 
-
--- 
-2.34.1
-
+> ---
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index 1510d5ddae3d..14c51a395d7e 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -126,6 +126,23 @@ static bool ti_sci_pm_idx_exists(struct ti_sci_genpd_provider *pd_provider, u32
+>         return false;
+>  }
+>
+> +static bool ti_sci_pm_pd_is_on(struct ti_sci_genpd_provider *pd_provider,
+> +                              int pd_idx)
+> +{
+> +       bool is_on;
+> +       int ret;
+> +
+> +       if (!pd_provider->ti_sci->ops.dev_ops.is_on)
+> +               return false;
+> +
+> +       ret = pd_provider->ti_sci->ops.dev_ops.is_on(pd_provider->ti_sci,
+> +                                                    pd_idx, NULL, &is_on);
+> +       if (ret)
+> +               return false;
+> +
+> +       return is_on;
+> +}
+> +
+>  static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+> @@ -161,6 +178,8 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>                                 break;
+>
+>                         if (args.args_count >= 1 && args.np == dev->of_node) {
+> +                               bool is_on;
+> +
+>                                 if (args.args[0] > max_id) {
+>                                         max_id = args.args[0];
+>                                 } else {
+> @@ -189,7 +208,10 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>                                 pd->idx = args.args[0];
+>                                 pd->parent = pd_provider;
+>
+> -                               pm_genpd_init(&pd->pd, NULL, true);
+> +                               is_on = ti_sci_pm_pd_is_on(pd_provider,
+> +                                                          pd->idx);
+> +
+> +                               pm_genpd_init(&pd->pd, NULL, !is_on);
+>
+>                                 list_add(&pd->node, &pd_provider->pd_list);
+>                         }
+>
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20241022-tisci-pd-boot-state-33cf02efd378
+>
+> Best regards,
+> --
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>
 
