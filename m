@@ -1,52 +1,54 @@
-Return-Path: <linux-kernel+bounces-376208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC86A9AA19B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:00:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C659AA1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710101F22A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:00:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69E2282C0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE28619D897;
-	Tue, 22 Oct 2024 12:00:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA98419D071;
-	Tue, 22 Oct 2024 12:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D4119CC22;
+	Tue, 22 Oct 2024 12:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Kn2KVEzW"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152B4199252;
+	Tue, 22 Oct 2024 12:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729598427; cv=none; b=etFdxhX/+1UKguvpFxK42OpmKE5LdJ2d6RhfiFBThbj11U24FM4o8WVFVFvzm1ryzOZ4TPr2rB4eJhh+JSQuigRn+ghaFj08W9T1C/50oa6fvQeHc9MaScZbRUXa+ieXKzZS1Im3zcXO5Im1Fr0tt8Y7tWucfppDtPyMOL/Mre4=
+	t=1729598491; cv=none; b=HWMVh0CaNqbCuvjPwFMjZn7s8qMT2ujOHPSqEvGyeawZZ+TqIFg7KgfKcshhW9bj12zrmS7r88w5LKKsY2tUX2Cn1GJLVgtYyIa4Lc+FJIxaYqYJphxNxDifCadG/0AA2CB+CuaurzaJ/10Ua+gb0ibS7Mw2qDqKKlE4V9BOZ/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729598427; c=relaxed/simple;
-	bh=yxCUM6k+87wouGcLePOkGCF/ax0FIEz1VxC8bZNB3QA=;
+	s=arc-20240116; t=1729598491; c=relaxed/simple;
+	bh=k6koRQgSHK/ZNH8Ty7VRJhVnKM9k4p+iL9PJorNpbTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJNdd9w4o/py+C/Ndk1OWgwLeXnvh0PMpMT8yCt+0gjutY358dLwvkfAc8CuQIO/fpCztH8U6qEFxc2tPslP4NHyq/R+4RZzxNLAfA6zAeYYfe8/unTNe+pvN2f6SloyM2jsmy67egG2mVWN2xWVTgONGu7ZXdiRPSQssWaHPtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8ED7497;
-	Tue, 22 Oct 2024 05:00:52 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADA303F71E;
-	Tue, 22 Oct 2024 05:00:20 -0700 (PDT)
-Date: Tue, 22 Oct 2024 13:00:18 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
-	konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	arm-scmi@vger.kernel.org, Amir Vajid <avajid@quicinc.com>
-Subject: Re: [PATCH V4 4/5] soc: qcom: Introduce SCMI based Memlat (Memory
- Latency) governor
-Message-ID: <ZxeT0rl4LJP17LiE@pluto>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-5-quic_sibis@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eS7pGY+dJEEQX2UrnPFU+3QlKFUCfk/rhY1yH2epz4r2DawMPV+iJlQy09KPtDRVcLF90R6INA2H5jz3OgM24Ge1S4uZPRanH5dVe1j1GS6xnj6tczOkpvDusK08SpxH3/WTwBXNloKZPvE9GrPCh54JQaVFHu34ge7FAkkbLWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Kn2KVEzW; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=IEXNG0vacfLWhp9t0Eb7rxFemcKHJ2LyE/rOALbSK48=;
+	b=Kn2KVEzWNrF3CrE0Si7TEmb3dqv7iR8lR64kj1ioZ0Cls7hfayj0jea/mHJevF
+	cFCTCHJhA0r69qyOr6S1quKWO2tCB+lFsCAWP7+KXwi8+UXzhByDMrvpx2GqtWYY
+	6R8rLaEB3GQ4qu7T3PvNGBC3bPO0oewqNG4BbVlq2UfB0=
+Received: from localhost (unknown [36.33.37.152])
+	by gzsmtp3 (Coremail) with SMTP id sigvCgDn+CPmkxdn2T3yBA--.44759S2;
+	Tue, 22 Oct 2024 20:00:38 +0800 (CST)
+Date: Tue, 22 Oct 2024 20:00:38 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steven Whitehouse <swhiteho@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-next@vger.kernel.org
+Subject: [PATCH v2] KMSAN: uninit-value in inode_go_dump (5)
+Message-ID: <ZxeT5ig2gOAUC7V4@fedora>
+References: <20241022075004.3369d8ec@canb.auug.org.au>
+ <F1F8682B-9B60-4674-BF91-ADD15A429F1D@163.com>
+ <CAHc6FU4DEhijmGR+Fc-RiOeg59sO1t=XnsqmeArQmssOXfDjgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,218 +57,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007061023.1978380-5-quic_sibis@quicinc.com>
+In-Reply-To: <CAHc6FU4DEhijmGR+Fc-RiOeg59sO1t=XnsqmeArQmssOXfDjgg@mail.gmail.com>
+X-CM-TRANSID:sigvCgDn+CPmkxdn2T3yBA--.44759S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZry7AFWDtry8JF1UurWktFb_yoWDurc_Ga
+	1fXw4xu3yDAr10kw1UGFsxJrsag397ZF1xC3yUtFn8tr1jv3WDXF4DAwn3CFnI9rsxKr43
+	Jry5Wa10k34UWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbAR63UUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYB2AamcXhmzkKQAAsA
 
-On Mon, Oct 07, 2024 at 11:40:22AM +0530, Sibi Sankar wrote:
-> Introduce a client driver that uses the memlat algorithm string
-> hosted on QCOM SCMI Generic Extension Protocol to detect memory
-> latency workloads and control frequency/level of the various
-> memory buses (DDR/LLCC/DDR_QOS).
-> 
+When mounting of a corrupted disk image fails, the error message printed
+can reference uninitialized inode fields.  To prevent that from happening,
+always initialize those fields.
 
-Hi,
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+Reported-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ Changes since v1:
+ - Add Signed-off-by tag
+---
+ fs/gfs2/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-a few small remarks, down below.
+diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+index 23e3a85ab7ef..aadb83e38c17 100644
+--- a/fs/gfs2/super.c
++++ b/fs/gfs2/super.c
+@@ -1553,11 +1553,13 @@ static struct inode *gfs2_alloc_inode(struct super_block *sb)
+ 	if (!ip)
+ 		return NULL;
+ 	ip->i_no_addr = 0;
++	ip->i_no_formal_ino = 0;
+ 	ip->i_flags = 0;
+ 	ip->i_gl = NULL;
+ 	gfs2_holder_mark_uninitialized(&ip->i_iopen_gh);
+ 	memset(&ip->i_res, 0, sizeof(ip->i_res));
+ 	RB_CLEAR_NODE(&ip->i_res.rs_node);
++	ip->i_diskflags = 0;
+ 	ip->i_rahead = 0;
+ 	return &ip->i_inode;
+ }
+-- 
+2.47.0
 
-> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-> Co-developed-by: Amir Vajid <avajid@quicinc.com>
-> Signed-off-by: Amir Vajid <avajid@quicinc.com>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-
-[snip]
-
-> +static int populate_cluster_info(u32 *cluster_info)
-> +{
-> +	char name[MAX_NAME_LEN];
-> +	int i = 0;
-> +
-> +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
-> +	if (!cn)
-> +		return -ENODEV;
-
-Not sure if this is some new coding style accepted for the new cleanup.h
-fancy stuff (sincere question/doubt...so please take this with a grain of salt),
-BUT, if not, you should consider grouping this definition/initialization to
-the start of the block whose scope they are in...like:
-
-
-	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
-	struct device_node *map __free(device_node) = NULL;
-	char name[MAX_NAME_LEN];
-	int i = 0;
-
-	if (!cn)
-		return -ENODEV;
-
-	map = of_get_child_by_name(cn, "cpu-map");
-	if (!map)
-		return -ENODEV;
-
-> +
-> +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
-> +	if (!map)
-> +		return -ENODEV;
-> +
-
-As said...
-
-> +	do {
-> +		snprintf(name, sizeof(name), "cluster%d", i);
-> +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
-> +		if (!c)
-> +			break;
-> +
-> +		*(cluster_info + i) = of_get_child_count(c);
-> +		i++;
-> +	} while (1);
-> +
-> +	return 0;
-> +}
-> +
-> +static void populate_physical_mask(struct device_node *np, u32 *mask, u32 *cluster_info)
-> +{
-> +	struct device_node *dev_phandle __free(device_node);
-
-...so this cleanups on return....
-
-> +	int cpu, i = 0, physical_id;
-> +
-> +	do {
-> +		dev_phandle = of_parse_phandle(np, "cpus", i++);
-
-BUT wont this be needed to be of_put, between calls to of_parse_phandle
-inside this loop ? ... so cannot this be done like
-
-	int cpu, i = 0, physical_id;
-
-	while (1) {
-		struct device_node *dev_phandle __free(device_node) = of_parse_phandle(np, "cpus", i++);
-	
-		if (!dev_phandle)
-			break;
-
-		cpu = of_cpu_node_to_id(dev_phandle);
-		if (cpu != -ENODEV) {
-			....
-	}
-
-...not even build tested ... ah... :P
-
-
-> +		cpu = of_cpu_node_to_id(dev_phandle);
-> +		if (cpu != -ENODEV) {
-> +			physical_id = topology_core_id(cpu);
-> +			for (int j = 0; j < topology_cluster_id(cpu); j++)
-> +				physical_id += *(cluster_info + j);
-> +			*mask |= BIT(physical_id);
-> +		}
-> +	} while (dev_phandle);
-> +}
-> +
-> +static struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
-> +							    struct scmi_memory_info *memory,
-> +							    struct device_node *of_node,
-> +							    u32 *cnt)
-> +{
-> +	struct device_node *tbl_np __free(device_node), *opp_np __free(device_node);
-> +	struct cpufreq_memfreq_map *tbl;
-> +	int ret, i = 0;
-> +	u32 level, len;
-> +	u64 rate;
-> +
-> +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
-> +	if (!tbl_np)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
-> +	if (len == 0)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
-> +			   GFP_KERNEL);
-> +	if (!tbl)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for_each_available_child_of_node(tbl_np, opp_np) {
-
-This seems to lack a of+node_put at the end but possibly the scoped
-version  for_each_available_child_of_node_scoped() will do it for you...
-
-> +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
-> +		if (ret < 0)
-> +			return ERR_PTR(ret);
-> +
-> +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
-> +
-> +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
-> +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
-> +			if (ret < 0)
-> +				return ERR_PTR(ret);
-> +
-> +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
-> +		} else {
-> +			ret = of_property_read_u32(opp_np, "opp-level", &level);
-> +			if (ret < 0)
-> +				return ERR_PTR(ret);
-> +
-> +			tbl[i].memfreq_khz = level;
-> +		}
-> +
-> +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
-> +		i++;
-> +	}
-> +	*cnt = len;
-> +
-> +	return tbl;
-> +}
-> +
-> +static int process_scmi_memlat_of_node(struct scmi_device *sdev, struct scmi_memlat_info *info)
-> +{
-> +	struct scmi_monitor_info *monitor;
-> +	struct scmi_memory_info *memory;
-> +	char name[MAX_NAME_LEN];
-> +	u64 memfreq[2];
-> +	int ret;
-> +
-> +	ret = populate_cluster_info(info->cluster_info);
-> +	if (ret < 0) {
-> +		dev_err_probe(&sdev->dev, ret, "failed to populate cluster info\n");
-> +		goto err;
-> +	}
-> +
-> +	of_node_get(sdev->dev.of_node);
-
-cant you use cleanup.h magic also for this and get rid of a few gotos down below ?
-...this function seems the ideal case fot that...
-
-> +	do {
-> +		snprintf(name, sizeof(name), "memory-%d", info->memory_cnt);
-> +		struct device_node *memory_np __free(device_node) =
-> +			of_find_node_by_name(sdev->dev.of_node, name);
-> +
-> +		if (!memory_np)
-> +			break;
-> +
-> +		if (info->memory_cnt >= MAX_MEMORY_TYPES)
-
-Shouldn't the MAX_MEMORY_TYPES something discoverable at runtime through
-some command of your vendor protocol ? for better future scalability I
-mean...maybe I am overthinking... 
-
-> +			return dev_err_probe(&sdev->dev, -EINVAL,
-> +					     "failed to parse unsupported memory type\n");
-> +
-> +		memory = devm_kzalloc(&sdev->dev, sizeof(*memory), GFP_KERNEL);
-> +		if (!memory) {
-> +			ret = -ENOMEM;
-> +			goto err;
-> +		}
-> +
-
-Thanks,
-Cristian
 
