@@ -1,127 +1,186 @@
-Return-Path: <linux-kernel+bounces-376971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1442F9AB83A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4729AB843
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B24282C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD1B1C2219D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CD31CCB50;
-	Tue, 22 Oct 2024 21:09:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1251C1CC146;
-	Tue, 22 Oct 2024 21:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144B41CCEC6;
+	Tue, 22 Oct 2024 21:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="UdkfIDp1"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E6C1CBEA6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631390; cv=none; b=hjP6YSygpxNIUrGavNWgWyePzuPwLXa+bDyvfyVZAgJXsl6JDdiUv3Swrreg1izjwnAwzkb2a7e9PaUqxwnGk/4PQjc/zJEOokOfxkm7AEZJW/jVk9wzULOkl/WtWc9RYCAR61dAhqBpcykvQ33l+AXKIAGoa9OjRDU64sLB028=
+	t=1729631563; cv=none; b=msaSjOj+F7C8zpBEzTq+XGephxTzecKDvE9bCe0DeZ/q+0o+gZF346v/i2g1Mdo1VuAD7Lqsb1bPeXHGxeLkar2HyWlhkOKrjas6Cx5b3IP+GuODE+7rp1kXZhDxyQG/qDFuYpQyUhKGbzpH1CFQZ5JYfYmn3japWvY+CJuG7L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631390; c=relaxed/simple;
-	bh=kBNarLiPJW16vrWPYEyxUqfujGcxrMZwV4NYDtC3x64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eO2P7gt0GqMLc1tqytxPnoJjyRyax1O92Nz3XECbPPaRW0J0XjgL+khqGWSrPTgqHhqImgP9FuYixcXd5uE/LTMJ8RxekdxsG3CnCmIkpqHo2b4UN7rW73GpaxtJjhXn1nbNifSq8xrfQUWL2milmrEubvrwXk0uZWZtXshW8AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24DB8497;
-	Tue, 22 Oct 2024 14:10:18 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47BCB3F71E;
-	Tue, 22 Oct 2024 14:09:47 -0700 (PDT)
-Message-ID: <ea44a43b-a02f-47ca-8143-38ae21f476be@arm.com>
-Date: Tue, 22 Oct 2024 22:10:56 +0100
+	s=arc-20240116; t=1729631563; c=relaxed/simple;
+	bh=Te+RyFu7Rg6X+sYJG795/7SRNvOJxhJGi91ohHDIVv4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gi1r93FLHofMUnW6tmF95iN3Kc+5Lme3kkc0/iq7wcXSW+WXh2ae1YqtGrPGgoASq9bG79WxRmV09hgjv+jDUVCT4aL0WeeEpW/APgbDm07gghKAXYjXBefbkkH2S8oYQqY8mpeChuYmKiNMwppd3CIwfGPfs+/LaqpM4gAa1nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=UdkfIDp1; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea784aea63so2945687a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1729631561; x=1730236361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OMX9gc1p0scgCF3QJqOJTXzbE2PMMPwt5sFvxZKTl0I=;
+        b=UdkfIDp1xloy+4W33XMse/ywg3coxJyhcXGV2bxd4zRo+7ycznRAR3rvtH32GQe3tY
+         x7wSTejXrpA/fPesGX4YIpxSH0Kcez/pMXXGhJtmQucjpN4orVm3J2oUjnXStCGDbeFM
+         p0sTkTyIvcPJ/XWEPHpX/ewHGypCFYUP/N/QU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729631561; x=1730236361;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OMX9gc1p0scgCF3QJqOJTXzbE2PMMPwt5sFvxZKTl0I=;
+        b=aIc1KJbyEkzmp+Q0z+IWG7dWKhEDLHEONLOOzindT2l5Ue7WrTDmOnC6yGyxNONDBc
+         5kGtRHhFBjub3xs88bN0EVFYvR6smoYjneaXCpmpbBPDobQaaxG8myEz0lcVrTR+UdKO
+         oxxTF6N1poT9ufGHTLnxrv9oXZ4F7kMWmAELdounZ6wfLvXa3ONL4mXVyQr3t8iOLsqQ
+         aSDzhOuuf3635OK6ctttVUx6G7VeHtcXHQgz5edioMqb8t6GKCBBTNWZEcJmxE8zJmMD
+         Uak7YcKjE5wLELwtsahttYQCS+0qynjwEpxxgzaTLXyXjB2xGcllh+BryCXMY4SGNiEr
+         7JQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWK1qTCzKVAkaCKZJsfU4czyYLAip6cDa6vSDTXhrIKgSBG2i6FrVL4Z32jkOQlADV8m+shJ2Q9nQ2IzQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1zZTAaRiG+5RlIwS6+S/li2zeSuw9L14/SHdZkb2aDlpC69qa
+	ZnLAxQuFH8NEZ4Lawdi8NJ7WvzTH8aYLIN+JNokHLgDohTWyCg9k96DEqGkRyz2xDOqOY20J36L
+	H
+X-Google-Smtp-Source: AGHT+IGnHEnhTMneQ9LqXD5cZl6RxLBvruNmPl3/b4r8UU6lMQb/3OYEEgp7HkqliD+NZqBpTRuusw==
+X-Received: by 2002:a05:6a21:2d88:b0:1d9:2a8:ce10 with SMTP id adf61e73a8af0-1d978bae730mr364398637.34.1729631561291;
+        Tue, 22 Oct 2024 14:12:41 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13eb642sm5323487b3a.179.2024.10.22.14.12.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 14:12:40 -0700 (PDT)
+Date: Tue, 22 Oct 2024 14:12:38 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org, dmantipov@yandex.ru,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC iwl-net] e1000: Hold RTNL when e1000_down can be called
+Message-ID: <ZxgVRX7Ne-lTjwiJ@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	dmantipov@yandex.ru, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241022172153.217890-1-jdamato@fastly.com>
+ <ZxgEb0N0cJt1BRte@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/11] thermal: core: Call thermal_governor_update_tz()
- outside of cdev lock
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <7749552.EvYhyI6sBW@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <7749552.EvYhyI6sBW@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxgEb0N0cJt1BRte@LQ3V64L9R2>
 
+On Tue, Oct 22, 2024 at 01:00:47PM -0700, Joe Damato wrote:
+> On Tue, Oct 22, 2024 at 05:21:53PM +0000, Joe Damato wrote:
+> > e1000_down calls netif_queue_set_napi, which assumes that RTNL is held.
+> > 
+> > There are a few paths for e1000_down to be called in e1000 where RTNL is
+> > not currently being held:
+> >   - e1000_shutdown (pci shutdown)
+> >   - e1000_suspend (power management)
+> >   - e1000_reinit_locked (via e1000_reset_task delayed work)
+> > 
+> > Hold RTNL in two places to fix this issue:
+> >   - e1000_reset_task
+> >   - __e1000_shutdown (which is called from both e1000_shutdown and
+> >     e1000_suspend).
+> 
+> It looks like there's one other spot I missed:
+> 
+> e1000_io_error_detected (pci error handler) which should also hold
+> rtnl_lock:
+> 
+> +       if (netif_running(netdev)) {
+> +               rtnl_lock();
+>                 e1000_down(adapter);
+> +               rtnl_unlock();
+> +       }
+> 
+> I can send that update in the v2, but I'll wait to see if Intel has suggestions
+> on the below.
+>  
+> > The other paths which call e1000_down seemingly hold RTNL and are OK:
+> >   - e1000_close (ndo_stop)
+> >   - e1000_change_mtu (ndo_change_mtu)
+> > 
+> > I'm submitting this is as an RFC because:
+> >   - the e1000_reinit_locked issue appears very similar to commit
+> >     21f857f0321d ("e1000e: add rtnl_lock() to e1000_reset_task"), which
+> >     fixes a similar issue in e1000e
+> > 
+> > however
+> > 
+> >   - adding rtnl to e1000_reinit_locked seemingly conflicts with an
+> >     earlier e1000 commit b2f963bfaeba ("e1000: fix lockdep warning in
+> >     e1000_reset_task").
+> > 
+> > Hopefully Intel can weigh in and shed some light on the correct way to
+> > go.
 
+Regarding the above locations where rtnl_lock may need to be held,
+comparing to other intel drivers:
 
-On 10/10/24 23:12, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Holding a cooling device lock under thermal_governor_update_tz() is not
-> necessary and it may cause lockdep to complain if any governor's
-> .update_tz() callback attempts to lock a cdev.
-> 
-> For this reason, move the thermal_governor_update_tz() calls in
-> thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip() from
-> under the cdev lock.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/1921484.CQOukoFCf9@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   11 +++++------
->   1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -832,13 +832,13 @@ static int thermal_bind_cdev_to_trip(str
->   	if (!result) {
->   		list_add_tail(&dev->trip_node, &td->thermal_instances);
->   		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
-> -
-> -		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
->   	}
->   	mutex_unlock(&cdev->lock);
->   
-> -	if (!result)
-> +	if (!result) {
-> +		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
->   		return 0;
-> +	}
->   
->   	device_remove_file(&tz->device, &dev->weight_attr);
->   remove_trip_file:
-> @@ -873,9 +873,6 @@ static void thermal_unbind_cdev_from_tri
->   		if (pos->cdev == cdev) {
->   			list_del(&pos->trip_node);
->   			list_del(&pos->cdev_node);
-> -
-> -			thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
-> -
->   			mutex_unlock(&cdev->lock);
->   			goto unbind;
->   		}
-> @@ -885,6 +882,8 @@ static void thermal_unbind_cdev_from_tri
->   	return;
->   
->   unbind:
-> +	thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
-> +
->   	device_remove_file(&tz->device, &pos->weight_attr);
->   	device_remove_file(&tz->device, &pos->attr);
->   	sysfs_remove_link(&tz->device.kobj, pos->name);
-> 
-> 
-> 
+  - e1000_reset_task: it appears that igc, igb, and e100e all hold
+    rtnl_lock in their reset_task functions, so I think adding an
+    rtnl_lock / rtnl_unlock to e1000_reset_task should be OK,
+    despite the existence of commit b2f963bfaeba ("e1000: fix
+    lockdep warning in e1000_reset_task").
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+  - e1000_io_error_detected:
+      - e1000e temporarily obtains and drops rtnl in
+        e1000e_pm_freeze
+      - ixgbe holds rtnl in the same path (toward the bottom of
+        ixgbe_io_error_detected)
+      - igb does NOT hold rtnl in this path (as far as I can tell)
+      - it was suggested in another thread to hold rtnl in this path
+        for igc [1].
+       
+     Given that it will be added to igc and is held in this same
+     path in e1000e and ixgbe, I think it is safe to add it for
+     e1000, as well.
+
+ - e1000_shutdown: 
+   - igb holds rtnl in the same path,
+   - e1000e temporarily holds it in this path (via
+     e1000e_pm_freeze)
+   - ixgbe holds rtnl in the same path
+
+So based on the recommendation for igc [1], and the precedent set in
+the other Intel drivers in most cases (except igb and the io_error
+path), I think adding rtnl to all 3 locations described above is
+correct.
+
+Please let me know if you all agree. Thanks for reviewing this.
+
+[1]: https://lore.kernel.org/netdev/40242f59-139a-4b45-8949-1210039f881b@intel.com/
 
