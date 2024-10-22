@@ -1,165 +1,106 @@
-Return-Path: <linux-kernel+bounces-376812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5488B9AB626
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:50:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C529AB62D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6511F2424D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:50:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22EA3B2256D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D19C1CB309;
-	Tue, 22 Oct 2024 18:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779E1CB311;
+	Tue, 22 Oct 2024 18:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pVIqO6lu"
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDF71C9EC6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="G5UxsCEq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10951E515;
+	Tue, 22 Oct 2024 18:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729623023; cv=none; b=GppUJZSClJ+o7AIT/auyqKhp7/DJZMHB8Oq4YCAeRM6kClwhM7GX65DZoi+5lfGHGmfKz/ig65UTTKz2B6EEEt4sWT1rWcX4rU/FwZZkgeHnwsharZZuZ7AQOcWBalwSgvbAIqIWZwMdh18YL8WFNlXRv5buX/bG3zld56BK+cg=
+	t=1729623182; cv=none; b=ALeOWof7QHPatVIPPiFY807jmaLw69nHRFhJUMmK65FV30kJgpU6gNqSpsgWpy8kNZUS0+uPnMx/lw7tURL6eFwujPSsop8vV8RaZ6PfHwjTUdZty5cYdKsQIKozQ1nfUnf5zHZSKwCvCyoEJv5aLca6+Ca0A8VgThIKGGRP41w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729623023; c=relaxed/simple;
-	bh=d/zYHo3XSmvCjgghf+gjOur7TW8EivNHrBv95ozuYHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SK/2gNtM1L5LIiScDrxouaKSnEpJZoIRagTdJbez/2EwHRhLfhe8xSJ9eXY1PuGyE20U0rBmAWeTSdkGUAJCLzLm89pWuMuzIvQ92ZhndF1JE4n+yoUPUwDhBe/zcLAW5J+juOWLWY5ImCW1oLCOWSDXL+7fX4joIBJeoppVdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pVIqO6lu; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XY1T52WPJzkFQ;
-	Tue, 22 Oct 2024 20:50:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729623017;
-	bh=/wRzhAF3XCso0qp5u1K/B70PE/54SKPVK3abJpPO0fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pVIqO6luQBSM7PLDi3eLayxNMIhzxVetkUnCBSY6U8C8+5gr7Fmz979O4fjXOQ3tZ
-	 6FiwMEQqq9/4xER4syFC3Eu8ds+gdn9i4oukCsbvTLp6aANvZ/MDbFJNkAJqrOQvLp
-	 OI+l/Tqs87ynSPJmQmXiGW9/m6rf4cJW8+mtFC8A=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XY1T45cBVzV3R;
-	Tue, 22 Oct 2024 20:50:16 +0200 (CEST)
-Date: Tue, 22 Oct 2024 20:50:15 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v3 1/3] samples/landlock: Fix port parsing in sandboxer
-Message-ID: <20241022.Xi2Wiemeehai@digikod.net>
-References: <20241019151534.1400605-1-matthieu@buffet.re>
- <20241019151534.1400605-2-matthieu@buffet.re>
+	s=arc-20240116; t=1729623182; c=relaxed/simple;
+	bh=ZRajgVrhJySL80fRpZUOov5be1ZeZ5/Urojgatl320E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q010USIRL6hCumdg5CxMhXpwNonN2V2EWz54NkIaOHUQY49hr+LU5Ef4aKfdkxH1HZdQ4g4q05/V4o15TsTDIbrW9wlO69qq0xp8EN3t8VBjO/Wd95e6uGIpTnzJFu6FE2nJ9d3ojkCJjNBpNROuzyYYw7tIBN7v+Lqhdzl16iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=G5UxsCEq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.5bhznamrcrmeznzvghz2s0u2eh.xx.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 40EB7210FBBD;
+	Tue, 22 Oct 2024 11:53:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 40EB7210FBBD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729623180;
+	bh=CnXC+PCkG//lbC/zwe39ZMC1UuIDogzzgL1iMHAP9fs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G5UxsCEqY+ofsFa6AOzndZiXo+vLoQp/3s6k+sxJ7eDVaZu/OUWTa+S+aQT7m+7lD
+	 sC7ksmMmt+VBw0qWesQxwYPgW9lJp7kv64ZaX2GW9IrREZ0OvzDtabAGB2P8y5qxeO
+	 GDcMeX0kwcVtMct+M/O5OPAN8AKBQYzFYEMjG0gg=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+To: lkp@intel.com,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-bluetooth@vger.kernel.org (open list:BLUETOOTH SUBSYSTEM)
+Cc: Naman Jain <namjain@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: [PATCH 1/2] jiffies: Define secs_to_jiffies()
+Date: Tue, 22 Oct 2024 18:52:30 +0000
+Message-Id: <20241022185233.2079261-1-eahariha@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241019151534.1400605-2-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 
-Thanks! I pushed the three patches in my -next branch with minor
-changes.
+There are ~500 usages of msecs_to_jiffies() that either use a multiplier
+value of 1000 or equivalently MSEC_PER_SEC. Define secs_to_jiffies() to
+allow such code to be less clunky.
 
-On Sat, Oct 19, 2024 at 05:15:32PM +0200, Matthieu Buffet wrote:
-> If you want to specify that no port can be bind()ed, you would think
-> (looking quickly at both help message and code) that setting LL_TCP_BIND=""
-> would do it.
-> 
-> However the code splits on ":" then applies atoi(), which does not allow
-> checking for errors. Passing an empty string returns 0, which is
-> interpreted as "allow bind(0)", which means bind to any ephemeral port.
-> This bug occurs whenever passing an empty string or when leaving a
-> trailing/leading colon, making it impossible to completely deny bind().
-> 
-> To reproduce:
-> export LL_FS_RO="/" LL_FS_RW="" LL_TCP_BIND=""
-> ./sandboxer strace -e bind nc -n -vvv -l -p 0
-> Executing the sandboxed command...
-> bind(3, {sa_family=AF_INET, sin_port=htons(0),
->      sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-> Listening on 0.0.0.0 37629
-> 
-> Use strtoull(3) instead, which allows error checking. Check that the entire
-> string has been parsed correctly without overflows/underflows, but not
-> that the __u64 (the type of struct landlock_net_port_attr.port)
-> is a valid __u16 port: that is already done by the kernel.
-> 
-> Fixes: 5e990dcef12e ("samples/landlock: Support TCP restrictions")
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->  samples/landlock/sandboxer.c | 32 ++++++++++++++++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index f847e832ba14..4cbef9d2f15b 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -60,6 +60,25 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->  #define ENV_SCOPED_NAME "LL_SCOPED"
->  #define ENV_DELIMITER ":"
->  
-> +static int str2num(const char *numstr, __u64 *num_dst)
-> +{
-> +	char *endptr = NULL;
-> +	int err = 0;
-> +	__u64 num;
-> +
-> +	errno = 0;
-> +	num = strtoull(numstr, &endptr, 10);
-> +	if (errno != 0)
-> +		err = errno;
-> +	/* Was the string empty, or not entirely parsed successfully? */
-> +	else if ((*numstr == '\0') || (*endptr != '\0'))
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+---
+ include/linux/jiffies.h   | 2 ++
+ net/bluetooth/hci_event.c | 2 --
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-We cannot pass "0 " but we can still pass " 0".  I'm good with that
-though.
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 1220f0fbe5bf..50dba516fd2f 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
+ 	}
+ }
+ 
++#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * MSEC_PER_SEC)
++
+ extern unsigned long __usecs_to_jiffies(const unsigned int u);
+ #if !(USEC_PER_SEC % HZ)
+ static inline unsigned long _usecs_to_jiffies(const unsigned int u)
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 0bbad90ddd6f..7b35c58bbbeb 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -42,8 +42,6 @@
+ #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
+ 		 "\x00\x00\x00\x00\x00\x00\x00\x00"
+ 
+-#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
+-
+ /* Handle HCI Event packets */
+ 
+ static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
+-- 
+2.34.1
 
-> +		err = EINVAL;
-> +	else
-> +		*num_dst = num;
-> +
-> +	return err;
-> +}
-> +
->  static int parse_path(char *env_path, const char ***const path_list)
->  {
->  	int i, num_paths = 0;
-> @@ -160,7 +179,6 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  	char *env_port_name, *env_port_name_next, *strport;
->  	struct landlock_net_port_attr net_port = {
->  		.allowed_access = allowed_access,
-> -		.port = 0,
->  	};
->  
->  	env_port_name = getenv(env_var);
-> @@ -171,7 +189,17 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  
->  	env_port_name_next = env_port_name;
->  	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
-> -		net_port.port = atoi(strport);
-> +		__u64 port;
-> +
-> +		if (strcmp(strport, "") == 0)
-> +			continue;
-> +
-> +		if (str2num(strport, &port)) {
-> +			fprintf(stderr, "Failed to parse port at \"%s\"\n",
-> +				strport);
-> +			goto out_free_name;
-> +		}
-> +		net_port.port = port;
->  		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->  				      &net_port, 0)) {
->  			fprintf(stderr,
-> -- 
-> 2.39.5
-> 
-> 
 
