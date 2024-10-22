@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-375901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495D49A9CB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7CE9A9CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 786411C21BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B461C2089C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB7E172767;
-	Tue, 22 Oct 2024 08:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C7E175D26;
+	Tue, 22 Oct 2024 08:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t5cQM9Yo"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0c4RS/x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B727735;
-	Tue, 22 Oct 2024 08:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F9727735;
+	Tue, 22 Oct 2024 08:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585975; cv=none; b=J78uSYXZZqQK/GXIWV6FmLZooFltSYala80ddCB78BdIbmHNvlUg6K2f88SFsjN7CBiA6WEvRc6Q4KxKdGxY1o2HUXR2m1mM/DK4ylVuXEbUOaOdQzOC8wxaFddTAHuQpqtutTHCSluyOQm3pt3b4s6V3HWvP61qeVugkTvQQto=
+	t=1729586062; cv=none; b=GgD+x5EGB/tihKD6eQ0PCpc9f6KqXVhpZb5SEqYLxras3OsEmeJsfkXhRKZ2VZt511ofXup66vZBuQ9o4SRpfK2MlGpRfnf+oVfWKPrD5T/I+d9ujDEreafzd9gj0d2rdjJlMYPFqhPpgILODtfxd3+Rj2hdAPjMbu2OR7DvmcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585975; c=relaxed/simple;
-	bh=TVV7dhz9ofTn9WbVA2ODRCGehrbEseuGgv5/djMQOFc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnTyfAerKquXtqPAkvxJaK5myLq8B4e364byHrtS+wbsTvsmh9NLdpXffHlU4dKXKqdDJefzJuagVY31IJWzIs8UU1PyqSf4mRg8dKrEp+GDhOZdOSv8uJHM0MYTe2TKl9kVd4EMBKT/qsEud8rHuTWn3LsT5M6dXtqFEJxu3VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t5cQM9Yo; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1729585973; x=1761121973;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TVV7dhz9ofTn9WbVA2ODRCGehrbEseuGgv5/djMQOFc=;
-  b=t5cQM9YosvX8qmy0SMeejFsciJzaryyM258sTv35WbcCNh3d/esEFhm6
-   AO2bL8C18JgMITc7lymB/xoGs4rMM5hRNqP/j1OgVg8K4a3KgR1vMyUh7
-   2eOawgClvrmDiVfk0HCzeskEvke3ZscaFx/Si1JPtQWi+aUZZ+y6JuwUB
-   tM1dqNzZ5fvlT5mnWkQyk+xnq62kTRLmGZwlbRbGQAWcqq+KBYIkSVMMb
-   VLwbbS4dbJwjLRLI5BtWjdu2dXCbEx1R0hrad5fTu38QbrB1tHDG8m/A/
-   A17xfi8hGQQpQ7CCyz4zgRywuQLwk7cVf68+0LkCnXySStwDhh3RmElE+
-   g==;
-X-CSE-ConnectionGUID: kD08ElzXShqXZdCb41rnmQ==
-X-CSE-MsgGUID: w3cxbr4nTKustGYwDVs4VA==
-X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="200747054"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Oct 2024 01:32:45 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 22 Oct 2024 01:32:16 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 22 Oct 2024 01:32:12 -0700
-Date: Tue, 22 Oct 2024 08:32:12 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <andrew@lunn.ch>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
-	<ast@fiberby.net>, <maxime.chevallier@bootlin.com>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH net-next 14/15] net: sparx5: add compatible strings for
- lan969x and verify the target
-Message-ID: <20241022083212.mvugftw2xpoynje2@DEN-DL-M70577>
-References: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
- <20241021-sparx5-lan969x-switch-driver-2-v1-14-c8c49ef21e0f@microchip.com>
- <dj6vmcezdfrrhdofhzt4gs42pzqyd5fntdy66z76oajxvc44p4@k7fd7dhtwqos>
+	s=arc-20240116; t=1729586062; c=relaxed/simple;
+	bh=Yfb1iWGUJXstlWNlobPLhmH6H2P371QRprH0i6HollY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B0qDGyB19cTMtgp8xcvRR7u05o8im6VRnPHqtcXE11yqgYb6Dp874VYiiVf9r3Lt1KSTzUGL14PtcrLnP6y/jsvQQxT51M0ruShJvjdz80aD0u2mwm7GuBdBSgbbz8gBLK7Dx6EtxYxOJkFaQEZauk0N8mwXHCbl6Acrq7sB6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0c4RS/x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LM0pX8027018;
+	Tue, 22 Oct 2024 08:34:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	54nng32DbGhXET0Bsu60daar/Um5vwD/G2DqIS75Lg8=; b=b0c4RS/xiCH96sYo
+	XbR6PNVn6YF3qwCIJHClKvxUDUrmUUDpwNvq5dmUv+WBmlFmqeWIC66VRHe7HLHO
+	CVwUgR5/IWHt9TeEfiVVR+rmJ5R/z29BZ62V6sy1qZscafrCrdqtxdACKysVRBDz
+	b8E+evdGDx1NcTd8hUHPlcYcYXVWTwgvToVa2yB6lSCWWzve4qND22Xy7uJ3QTlY
+	B5EUic1hGMljY10b+FGgPGp7Hofj8+mSwANpudci6Jucxy7apmQDJhOWqEBynEhM
+	+9afXUE5af7TDsQwJaUSaHGw5jxAfNaN+bFXqObw8tBo3u6kkADq8tc7ecSY1XSg
+	kzrxMQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj7h0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 08:34:15 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M8YDHk008794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 08:34:13 GMT
+Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 01:34:08 -0700
+Message-ID: <d56b4e1f-ef5d-4626-8211-0cf957c8423f@quicinc.com>
+Date: Tue, 22 Oct 2024 16:34:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <dj6vmcezdfrrhdofhzt4gs42pzqyd5fntdy66z76oajxvc44p4@k7fd7dhtwqos>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
+ peripherals
+To: Krzysztof Kozlowski <krzk@kernel.org>, <quic_fenglinw@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <kernel@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com>
+ <354b544e-3799-4421-aeb3-8401dffb34d6@kernel.org>
+Content-Language: en-US
+From: Tingguo Cheng <quic_tingguoc@quicinc.com>
+In-Reply-To: <354b544e-3799-4421-aeb3-8401dffb34d6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GidZGNKd9FlZJmXXbiT3bVdVLJUl-jzK
+X-Proofpoint-ORIG-GUID: GidZGNKd9FlZJmXXbiT3bVdVLJUl-jzK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410220054
 
-Hi Krzysztof,
 
-> On Mon, Oct 21, 2024 at 03:58:51PM +0200, Daniel Machon wrote:
-> > @@ -227,6 +229,168 @@ bool is_sparx5(struct sparx5 *sparx5)
-> >       }
-> >  }
-> >
-> > +/* Set the devicetree target based on the compatible string */
-> > +static int sparx5_set_target_dt(struct sparx5 *sparx5)
-> > +{
-> > +     struct device_node *node = sparx5->pdev->dev.of_node;
-> > +
-> > +     if (is_sparx5(sparx5))
-> > +             /* For Sparx5 the devicetree target is always the chip target */
-> > +             sparx5->target_dt = sparx5->target_ct;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9691-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9691VAO;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9692-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9692VAO;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9693-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9693VAO;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9694-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9694;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9695-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9694TSN;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9696-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9696;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9697-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9696TSN;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9698-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9698;
-> > +     else if (of_device_is_compatible(node, "microchip,lan9699-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9698TSN;
-> > +     else if (of_device_is_compatible(node, "microchip,lan969a-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9694RED;
-> > +     else if (of_device_is_compatible(node, "microchip,lan969b-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9696RED;
-> > +     else if (of_device_is_compatible(node, "microchip,lan969c-switch"))
-> > +             sparx5->target_dt = SPX5_TARGET_CT_LAN9698RED;
+
+On 10/14/2024 6:45 PM, Krzysztof Kozlowski wrote:
+> On 14/10/2024 12:08, Tingguo Cheng wrote:
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index 4ef969a6af150933c72a7a83374a5a2657eebc1b..b79c22730920e3097425e1d1933e744205b3c18e 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -6,6 +6,7 @@
+>>   
+>>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>>   #include "qcs615.dtsi"
+>> +#include "qcs615-pmic.dtsi"
+>>   / {
+>>   	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>>   	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> index ac4c4c751da1fbb28865877555ba317677bc6bd2..9793161db515a2ef1df6465c8d0a04a11e71ffc1 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -517,6 +517,29 @@ sram@c3f0000 {
+>>   			reg = <0x0 0x0c3f0000 0x0 0x400>;
+>>   		};
+>>   
+>> +		spmi_bus: qcom,spmi@c440000 {
 > 
-> Do not re-implement match data.
+> Please do not send your downstream code... Don't just copy and paste
+> that stuff.
 > 
-> >
+> Rewrite it from scratch or use the upstream as template. I find it waste
+> of time to comment or fix the same issue over and over again. The
+> problem is the way you work - copying and sending downstream at us. This
+> must stop.
+We have realized the problem, and we will be more careful.For the 
+current patch, I'll upload a new one with fixing
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Thank you for your feedback.
-
-I will get rid of this function and instread create match data structs
-for each SKU.
-
-/Daniel
+-- 
+Thank you & BRs
+Tingguo
 
 
