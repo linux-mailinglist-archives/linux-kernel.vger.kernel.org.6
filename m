@@ -1,193 +1,230 @@
-Return-Path: <linux-kernel+bounces-375736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FADD9A9A2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:44:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2739A9A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E841F22CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:44:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829FEB21C24
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76438146580;
-	Tue, 22 Oct 2024 06:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC58513BAC6;
+	Tue, 22 Oct 2024 06:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFnAsAeE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9Epv+u/"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C197E3232;
-	Tue, 22 Oct 2024 06:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B829C8FE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579467; cv=none; b=Zq13bnH/K23IdWr97EViALkjMdcs/bK+d+MUlBRmKBWnsyh8EgLQMfMtMVi9Yt+imNBAOVfGzR6cWy891VjtkoLBHuVh3FqYoTOyGHZFDodq0DwLvKpun2TrvWwoNRiF81nxH3xc3wj86Gv2V1FVr091+MtzWUAxezL4644591c=
+	t=1729579587; cv=none; b=P0Ob4HyfgluLgE9fqZ8zcNLF5d9OTov8eKozrgnfQ0xAQoYye8v7itwUEREbo2bZ8Y/ACK3Z8UDeBWf9QiPOIYUY6MpSIwMNyA8GrWjDwPtibNhZhav3jU/NuMYp8P4pNgF4+ckPBVZEx3MuXXsJ9XT0u+mVNq3QhUXsuopEYsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579467; c=relaxed/simple;
-	bh=WHYtqEj6eKwKaQm6D/1FwTR37a31xmIR32wf+Ihmaz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0VSCvdv51SMZZmNgjfdNM+ukPpz1GbM/yyE5zoR4E2klv3f7FmlgWVRr472n6AvuY/90LQBQ/+o1+bC58RIo4PgkeCXw+hr6cbc2slwRnb9pYpwyNmWcI5wnwGLtNuR7sA5HyW5LFPuMrriH+uu7wi2z/SbpHSCmto/eAWkao8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFnAsAeE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B39C4CEC3;
-	Tue, 22 Oct 2024 06:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729579467;
-	bh=WHYtqEj6eKwKaQm6D/1FwTR37a31xmIR32wf+Ihmaz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFnAsAeEdY6SyMiSAgYxoAoT9xjguXn1VTQ+mZRPDFcIhyxr2cqnp3IAHLeryjOuT
-	 OEEQScV+pbQNH6bdn5UEgv+Oqn8XYHU3H+12DGOHjUXPiY8O1EmwPLHHGWNiOrjGVi
-	 xH0+A5Puuxmtj4qo2EyxpU7awfwSUdBVTOaAqAZkg2ObAyb5epWtn4Du4w7pID89f1
-	 X5dCclHvHbuF77Yel2iZ+g4KjMezOCAKqTGiaca5xXK0asrtcCbYRdtKrQaPdp87Up
-	 Y2vUX8hEYgItEBR4BRkBF+sfgW7dZrmB3hBEFisCi8vtbbYujDlyz5rQm8mklxy8Ww
-	 KDAUafJmv6XpA==
-Date: Mon, 21 Oct 2024 23:44:25 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 13/16] perf bench: Remove reference to cmd_inject
-Message-ID: <ZxdJyRpCv7dmmin9@google.com>
-References: <20241016042415.7552-1-irogers@google.com>
- <20241016042415.7552-14-irogers@google.com>
+	s=arc-20240116; t=1729579587; c=relaxed/simple;
+	bh=UqVn6pMI3tQcLwCHW0AiJNTo/yvLYcGLPXrQ5ceMbD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UMg7odOJsAmeoZrZS0Pjt7WL9xNb/8WGEMIEMtJNCQl0bPLR2VaYUEJxyujHO8HTL9Sv8JpWcy0UwnOMCvhQoiz7N+9qJ5clewD7fbC7GJsCAstTTQ+GWZaJHmQiuXaCY35VXC8mjF+luoDPqq2U0bXbo3pNXWFhInezuuragyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9Epv+u/; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84fd01c9defso1612543241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729579583; x=1730184383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mdFazzegJ/WNfhSBmiwyDVArjBaCTXYW6mDxPc7wy70=;
+        b=S9Epv+u/u6/BM6A/dPuZS8/YPj098j7D/+3b3htAyYwzGRcodXT3wT+qGmTChOosDN
+         IBRURIAi7ZSnX4wYjQKo7rmvvhIqEVDUCNJymH68apF++y+Phfh5B/Ol9Nf1knlF4q25
+         FJ0/jpigy8nsjUf49CJsw8FeVycRYtWRDiqQbCXnBEseY1dfjsxf2CMw9EBc6mKmBYjB
+         7uGjPl0kORB1+MbsEtJIIpbUKKWVH71NCLSMSgJ5+fFbMNc4Qdxv3fyAQrLXLz++bo/V
+         NsJD+/SFu3kXTnJ7B1Shgc3GQCzov4ybYRmOTO/HFRilHhRcjGtIK8PERk/BzkatG7H/
+         Hkug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729579583; x=1730184383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mdFazzegJ/WNfhSBmiwyDVArjBaCTXYW6mDxPc7wy70=;
+        b=ejA0J8mytGveKoEzfuSb13zpl0+g0Py9j+iWQuUEgwiRcIHnuey8i1IOnhnFP5Z+8G
+         hJKVScfnv2xCJHWkHm7+E7rkQJSQVAPTnLHA1POihHJiuVMSgRU0VF3C1qzW2qN1Surd
+         vZg2bDIxGEyPL+eUtKGLB9KT6t/o2/S+6mCb31mFQN/45KlbjwdI6sh4iOyoeKJ+1JMg
+         UmYuV86nppskmiXXv2rvN/0zCvce/EIk7OfnAUbTgr3uH50bIJ3p9ejQaX8RCu/iW3rf
+         NmiZ/NeKaB+rZZ/u2KIdbRPSV2QcVD2XAxaFEFgUctSBzVgbG5i7Sg1u2nlUWiYhtKUd
+         EObg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPyXOFzaF0yM5M3IVLuFAc6C82FvuV659750IDs9xedG4ChM4bcmJ/cpnZy4w3q+GfOh46/Z6+rR6BB0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ChrPB0KedubJjZIxRqeb3OvisSNN/DDYAUW2vo0K1nByTudj
+	Vg7IGOQIhUFyPFS0geadu9I+kGxLEKMufGKS9ifg/bKrJtg8hL1aRku9zdf3SeQaAgZ+MSFoUXI
+	MrlBCnjR7Uv8IbqApcQua6MBr8ZPgkCQygNlD8dI3bCs/3brvSG4=
+X-Google-Smtp-Source: AGHT+IEJndDCSfgRiJSpRxITuC3UkI7W3S6FWzHL8/AurrOrJG/3IoPI8nn8tiT/NIRA9MwS6kbOy4Ri9AaTUdlWUFM=
+X-Received: by 2002:a05:6102:c11:b0:4a3:ddc5:37a4 with SMTP id
+ ada2fe7eead31-4a5d6ae08cbmr11836034137.11.1729579583199; Mon, 21 Oct 2024
+ 23:46:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016042415.7552-14-irogers@google.com>
+References: <20241021102241.624153108@linuxfoundation.org>
+In-Reply-To: <20241021102241.624153108@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 22 Oct 2024 12:16:09 +0530
+Message-ID: <CA+G9fYtbGC1caN27L6V=NC40o0oaPCzfgvDtkb8o6qPSaiKMNA@mail.gmail.com>
+Subject: Re: [PATCH 5.10 00/52] 5.10.228-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 09:24:12PM -0700, Ian Rogers wrote:
-> Avoid `perf bench internals inject-build-id` referencing the
-> cmd_inject sub-command that requires perf-bench to backward reference
-> internals of builtins. Replace the reference to cmd_inject with a call
-> to main. To avoid python.c needing to link with something providing
-> main, drop the libperf-bench library from the python shared object.
+On Mon, 21 Oct 2024 at 16:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.228 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.228-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Looks like a clever trick!  But I guess by removing libperf-bench from
-the python object, you can remove the reference to cmd_inject, right?
 
-Thanks,
-Namhyung
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/Makefile.perf          |  7 +++++--
->  tools/perf/bench/inject-buildid.c | 13 +++++++------
->  tools/perf/util/python.c          |  6 ------
->  3 files changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 105f734b6820..e54c6953cf02 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -487,6 +487,9 @@ endif
->  EXTLIBS := $(call filter-out,$(EXCLUDE_EXTLIBS),$(EXTLIBS))
->  LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
->  
-> +PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH),$(PERFLIBS))
-> +LIBS_PY = -Wl,--whole-archive $(PERFLIBS_PY) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
-> +
->  export INSTALL SHELL_PATH
->  
->  ### Build rules
-> @@ -735,9 +738,9 @@ all: shell_compatibility_test $(ALL_PROGRAMS) $(LANG_BINDINGS) $(OTHER_PROGRAMS)
->  # Create python binding output directory if not already present
->  $(shell [ -d '$(OUTPUT)python' ] || mkdir -p '$(OUTPUT)python')
->  
-> -$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): util/python.c util/setup.py $(PERFLIBS)
-> +$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): util/python.c util/setup.py $(PERFLIBS_PY)
->  	$(QUIET_GEN)LDSHARED="$(CC) -pthread -shared" \
-> -        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBS)' \
-> +        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBS_PY)' \
->  	  $(PYTHON_WORD) util/setup.py \
->  	  --quiet build_ext; \
->  	cp $(PYTHON_EXTBUILD_LIB)perf*.so $(OUTPUT)python/
-> diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-> index a759eb2328be..f55c07e4be94 100644
-> --- a/tools/perf/bench/inject-buildid.c
-> +++ b/tools/perf/bench/inject-buildid.c
-> @@ -52,7 +52,7 @@ struct bench_dso {
->  static int nr_dsos;
->  static struct bench_dso *dsos;
->  
-> -extern int cmd_inject(int argc, const char *argv[]);
-> +extern int main(int argc, const char **argv);
->  
->  static const struct option options[] = {
->  	OPT_UINTEGER('i', "iterations", &iterations,
-> @@ -294,7 +294,7 @@ static int setup_injection(struct bench_data *data, bool build_id_all)
->  
->  	if (data->pid == 0) {
->  		const char **inject_argv;
-> -		int inject_argc = 2;
-> +		int inject_argc = 3;
->  
->  		close(data->input_pipe[1]);
->  		close(data->output_pipe[0]);
-> @@ -318,15 +318,16 @@ static int setup_injection(struct bench_data *data, bool build_id_all)
->  		if (inject_argv == NULL)
->  			exit(1);
->  
-> -		inject_argv[0] = strdup("inject");
-> -		inject_argv[1] = strdup("-b");
-> +		inject_argv[0] = strdup("perf");
-> +		inject_argv[1] = strdup("inject");
-> +		inject_argv[2] = strdup("-b");
->  		if (build_id_all)
-> -			inject_argv[2] = strdup("--buildid-all");
-> +			inject_argv[3] = strdup("--buildid-all");
->  
->  		/* signal that we're ready to go */
->  		close(ready_pipe[1]);
->  
-> -		cmd_inject(inject_argc, inject_argv);
-> +		main(inject_argc, inject_argv);
->  
->  		exit(0);
->  	}
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 91fd444615cd..c52da509ae58 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -19,7 +19,6 @@
->  #include "util/kwork.h"
->  #include "util/sample.h"
->  #include <internal/lib.h>
-> -#include "../builtin.h"
->  
->  #define _PyUnicode_FromString(arg) \
->    PyUnicode_FromString(arg)
-> @@ -1309,8 +1308,3 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
->  {
->  	return NULL;
->  }
-> -
-> -int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
-> -{
-> -	return -1;
-> -}
-> -- 
-> 2.47.0.rc1.288.g06298d1525-goog
-> 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 5.10.228-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 11656f6fe2df8ad7262fe635fd9a53f66bb23102
+* git describe: v5.10.227-53-g11656f6fe2df
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
+.227-53-g11656f6fe2df
+
+## Test Regressions (compared to v5.10.226-519-g5807510dd577)
+
+## Metric Regressions (compared to v5.10.226-519-g5807510dd577)
+
+## Test Fixes (compared to v5.10.226-519-g5807510dd577)
+
+## Metric Fixes (compared to v5.10.226-519-g5807510dd577)
+
+## Test result summary
+total: 59318, pass: 43619, fail: 1978, skip: 13654, xfail: 67
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 29 total, 29 passed, 0 failed
+* i386: 23 total, 23 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 23 total, 23 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 25 total, 25 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
