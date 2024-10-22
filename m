@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-376666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D209AB49F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B9A9AB494
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B47B23A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BE21C231F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DF11BD03F;
-	Tue, 22 Oct 2024 17:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B121B5ED0;
+	Tue, 22 Oct 2024 17:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WcEaW2gi"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ceIZXixH"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3AF1E4A4
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4B7483
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729616492; cv=none; b=HXJi9KJuypmO0dkNfynlyag7wDHB/204T9J4EEkAkAN/UvKxJoK0RGX7JCmGHIacaWPST4O1bCINcKLowxy/c5MAmX1c1+H9bqndQS+okwnTlyNCz2uw5AM1dbtGqPdTHH49DUJWoG5d2hCa9wrDR7wg/rThbxiA0AmCleB/uEY=
+	t=1729616471; cv=none; b=OX6DqMBQKgZ+TZk1S45RCFr84+kestfAF0wHH0+5bqnLOBqJCAc9hqp2R5jJ/pWJlohLIPpjLwwfXxq7vagI8zgD4uG2Arbf/h6k1vMkdXYRCA+kT1dVyhZuXSv91YnVat3+uePt+8zFPuOcNlZgYsFCMpiGi+j46JQdhCSBYYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729616492; c=relaxed/simple;
-	bh=QGuDeu8Z/KBESjJ3whFWRStG7FOWBcBfqtNWNFItQw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ys+1vjDgrKOcm+VZn4By8QOyhXQC1ksTzE0dyX9xlkQtP7K7nnLOACWZYE3lMBP2YDQ4HXO0LerJzo1cYumB8nyiQIhIR+JVptHqIA18UFVPWs0M0JYprss6tUB1pnlzC/UdI5S0aGOfMxRbcOlFl5RgWqFva/dkdpWrMKuseM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WcEaW2gi; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53a0c160b94so4591388e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:01:29 -0700 (PDT)
+	s=arc-20240116; t=1729616471; c=relaxed/simple;
+	bh=ifN6cqjsbcmVpO5CYfsnF/3RQKUBqSnhMcykdzi5jb4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JMReaxDPDcviZ7Wr13n3eoD+jlR2eowJXAg+DHtLWmpmQ5Nq6b9lirEG9XZVf4FoY+FGvRKy5EWthr4cggD8k4zzuV7/0llPa8uSLKufU9DShvECwL2L0Zxw1psCLY6Yek3SMOOzhTM71r8XMJ8Lxonxu2skw3MWu38d4BRaOXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ceIZXixH; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e6ee02225so6730229b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:01:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729616488; x=1730221288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zu485c5QOL9Uq0W8KFhjSs4H9Jf95wyVtKN5ZwvCgPo=;
-        b=WcEaW2gig1Ky8aSBMgykJB1kMGmBvgD5h4YyJGGdRg1GjedgyYTAElpbglmVESQr/d
-         MzLm62g+sR7M0PbmEpnChDfXX3npmfEIryj9zwP4MwiT2Te+5j137phQ63AXfxoXa0YT
-         /+RrcWnUjYpsNhNJiJDaVqmtO89c+7vBWdzUA=
+        d=google.com; s=20230601; t=1729616469; x=1730221269; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jz6HPAUfPJFv2cSc6XtRrNpTzfpz4jKdakYIVYEvHsQ=;
+        b=ceIZXixHrUxi8vI2mg7nuMSmPm9EK4NbX9bdd3yPhNRAE/VY3ZoNnnqv/XKSdUE100
+         piaD/JVaUe5vE1Q60+kDOc0q8ljpOcP9silpkjlZeEy7M0Xc/wQr1xd8ywk3Xgh3XtZP
+         qT1QhbCYVXdSy2EekVNLsJ0td6pXFXNBvJcXMis+2eIdBvS+E3F0AJxiPENYL1++QdF/
+         CZR864Eg0SXPuv62OMkkyV8+9hZWxnoB+fTcwgaA1Ie/mtTaW/tTWaO9h4MjsYOf1mi0
+         VJn9v4aXR+B2agDDNu4zgKI2qhz9aARMzeH2HCNuw04/vEYmWI/VR0wLYtrBYzc8NPlL
+         4WPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729616488; x=1730221288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zu485c5QOL9Uq0W8KFhjSs4H9Jf95wyVtKN5ZwvCgPo=;
-        b=brKjvoiSMLY9PPdg937Et7MsrRvItNy9YsBqdeXcAcSk8qtcak99oKWUjGD/mUjBL0
-         gXj97quyK+9296nmmwubAE6GmZ75o/3lo9zXpH+e2R2nxYDUpB3o+wUYhbeX+MslLVG7
-         bwVerL+Eo+NpwD98YS5kmdwjUI0StsqCi7+9pzFruwC1G9xa8gAlMl6HfRuiXy4HfETz
-         OxkQMx44JStq1yAcxxl5k25ax7/woX/9hV58oFwKtHemFqvwrqdb7DCWrTdCeEfw+KJX
-         aolw74qijGzg9uYeOycgqarsUn8Qat0rf+bTmTaCCxBvqfTNLW8RvNlzN/XZul8Yktqj
-         WlUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVu9VWvUmAQsRdl2IfEn2W7yKsCjxY4i4rkpkDOX6XOrzsqGyZ08akltyWjBe1M7NPEwnXv67jxUOBN3nY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUqeaUE9zoBXl4CTgfSdcJm/m8SZE9LYv6ivP+5Jt0+eAuzg/8
-	yxhLY1qlN5yRu12rZYxcUjgjKiAW6UTe1d246N9fWb2X41izJWH0Idg4Hc4B3wKOU3p8OHEvG5K
-	Jgdc3yHJsGfY44g4R/RvM53YeuCqnedEkIg4S
-X-Google-Smtp-Source: AGHT+IFk0LVKitzrieTk4+PMmay3cOKMkCi2sdX689/k1/29p+yeo4Qup0q7blMbJZfrxrvdnadXpMVuYG4zN5k7whQ=
-X-Received: by 2002:a05:6512:2208:b0:539:8fcd:51f with SMTP id
- 2adb3069b0e04-53b1921f298mr148961e87.30.1729616488343; Tue, 22 Oct 2024
- 10:01:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729616469; x=1730221269;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jz6HPAUfPJFv2cSc6XtRrNpTzfpz4jKdakYIVYEvHsQ=;
+        b=M3lzOtzQNe6DA17HHzpEGjwV1De2HAxb1+TDO8kmmecfEL+mwXERze5Rqe+4f3fQ4z
+         ZCxzTX8JH5Oj0Qse3017FfQXmnCo13Ig4+unh6EUFWPPd2eJjBOFsEBv2MxXYbEN30CQ
+         Qrsmegr4maT0z/BJoBEIq7O+rY0Az59JFcR2RBPlynFWhTKwNjok7Oc4LPPvL0mDeaqo
+         YW0aIDZsxhIrT+9tOuKnpx7oqIXBJU8lpWjouFegP+4WXQhj2/7PkdPdaGupHybwm57J
+         EFbHL9CoZE/zcz3T2DyqT/kjosGPaQy2aFe+ftz2iB/vsh1c7lKVPiE/ioKFADlQpN9Q
+         vlDA==
+X-Gm-Message-State: AOJu0YwcVinqiK/ORwBhcVrr1E/269AcekGOOj4Ij2lSrfinjfcOeUCZ
+	Mg6vgdGFRR2DWYpjljo4VKsEzVQvpcaVZLfpZPg3yWwxdabDdWTwij/XXJdySB56I6ncyZLzmwt
+	EzQ==
+X-Google-Smtp-Source: AGHT+IHnyZ3xuVY7Clm+eBIYyW7Mrfkpkys2oJltNzld9dORGFnn5Yu6KuNOVHJzto/+35IL38mQWUk0W7o=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a62:b403:0:b0:71e:4ad1:b133 with SMTP id
+ d2e1a72fcca58-71ea32daff6mr27874b3a.4.1729616468773; Tue, 22 Oct 2024
+ 10:01:08 -0700 (PDT)
+Date: Tue, 22 Oct 2024 10:01:07 -0700
+In-Reply-To: <20241022100812.4955-1-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241016060523.888804-1-patrick.rudolph@9elements.com>
- <20241016060523.888804-25-patrick.rudolph@9elements.com> <CAFLszTh4Z8p-8d8ASrpUTnNdDhmijDm8fcct-wDWR1nRFxs5JA@mail.gmail.com>
- <CALNFmy1=R4vp6S3H3a_3HTDjGufDxu+Heo-vk=GRjb0aj0z0Dg@mail.gmail.com>
- <CAFLszTjTA98Re5rWXHpMQZADXU7uLbCayxNTtugYRxHZaFUL_w@mail.gmail.com>
- <CALeDE9P04s7uX0Egq+seDbHyn_QXgz+NWPHtJ2W1CGKtATPLsw@mail.gmail.com>
- <CAFLszTgE+fjXGXFvJ0KWdw=q8CP_53kfWq0nrGZzJzyHJhdHFA@mail.gmail.com> <CALNFmy1P-K6j1q9dm92iJ87h9WnjnvnzwhC1a3jaugahFhv6ZQ@mail.gmail.com>
-In-Reply-To: <CALNFmy1P-K6j1q9dm92iJ87h9WnjnvnzwhC1a3jaugahFhv6ZQ@mail.gmail.com>
-From: Simon Glass <sjg@chromium.org>
-Date: Tue, 22 Oct 2024 19:00:49 +0200
-Message-ID: <CAFLszTiWxQjjfg4ydQDEOH2-J0_7O5rYNowFPPJB9w86QY3gXw@mail.gmail.com>
-Subject: Re: [PATCH v9 24/37] common: Enable BLOBLIST_TABLES on arm
-To: Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: Peter Robinson <pbrobinson@gmail.com>, u-boot@lists.denx.de, 
-	linux-kernel@vger.kernel.org, Tom Rini <trini@konsulko.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241022100812.4955-1-jgross@suse.com>
+Message-ID: <ZxfaU9cCS6556AKg@google.com>
+Subject: Re: [PATCH] kvm/x86: simplify kvm_mmu_do_page_fault() a little bit
+From: Sean Christopherson <seanjc@google.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Patrick,
+On Tue, Oct 22, 2024, Juergen Gross wrote:
+> Testing whether to call kvm_tdp_page_fault() or
+> vcpu->arch.mmu->page_fault() doesn't make sense, as kvm_tdp_page_fault()
+> is selected only if vcpu->arch.mmu->page_fault == kvm_tdp_page_fault.
 
-On Tue, 22 Oct 2024 at 18:18, Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
->
-> Hi Simon,
-> On Tue, Oct 22, 2024 at 2:16=E2=80=AFPM Simon Glass <sjg@chromium.org> wr=
-ote:
-> >
-> > Hi Peter,
-> >
-> > On Mon, 21 Oct 2024 at 19:57, Peter Robinson <pbrobinson@gmail.com> wro=
-te:
-> > >
-> > > > > > > Allow to use BLOBLIST_TABLES on arm to store ACPI or other ta=
-bles.
-> > > > > > >
-> > > > > > > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com=
->
-> > > > > > > Cc: Tom Rini <trini@konsulko.com>
-> > > > > > > ---
-> > > > > > > Changelog v9:
-> > > > > > > - default to BLOBLIST_ALLOC on arm
-> > > > > > > - Move default for BLOBLIST_SIZE_RELOC up
-> > > > > > > ---
-> > > > > > >  common/Kconfig |  2 ++
-> > > > > > >  lib/Kconfig    | 15 +++++++++------
-> > > > > > >  2 files changed, 11 insertions(+), 6 deletions(-)
-> > > > > > >
-> > > > > >
-> > > > > > This is fine, but please disable it for snow since it needs the=
- FIXED
-> > > > > > option for now.
-> > > > >
-> > > > > I cannot follow. What needs the FIXED option and what to disable?
-> > > > > I run this patch on the CI and test_py_sandbox tests are still wo=
-rking.
-> > > >
-> > > > I mean that snow cannot use BLOBLIST_ALLOC and needs BLOBLIST_FIXED=
- so
-> > > > if you make ALLOC the default you need to change the default for sn=
-ow.
-> > >
-> > > Simon by snow do you mean the device (configs/snow_defconfig) snow, I
-> > > think Patrick doesn't know you're referring to what I believe to be a
-> > > device config.
-> >
-> > Oh OK, yes that is what I mean. If it is too confusing I can send a
-> > fix-up patch after this series is applied.
-> >
-> Oh OK, got it.
-> I wasn't aware that BLOBLIST is already used on some ARM devices.
-> I'll send an updated version.
-> Is it possible to migrate those to BLOBLIST_ALLOC? Any reason they
-> would use a fixed address?
+It does when retpolines are enabled and significantly inflate the cost of the
+indirect call.  This is a hot path in various scenarios, but KVM can't use
+static_call() to avoid the retpoline due to mmu->page_fault being a property of
+the current vCPU.  Only kvm_tdp_page_fault() is special cased because all other
+mmu->page_fault targets are slow-ish and/or we don't care terribly about their
+performance.
 
-Not easily, since it puts the table in SRAM. But it would be possible
-to migrate snow to use the handle protocol.
-
-Regards,
-Simon
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  arch/x86/kvm/mmu/mmu_internal.h | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+> index c98827840e07..6eae54aa1160 100644
+> --- a/arch/x86/kvm/mmu/mmu_internal.h
+> +++ b/arch/x86/kvm/mmu/mmu_internal.h
+> @@ -322,10 +322,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  		fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
+>  	}
+>  
+> -	if (IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) && fault.is_tdp)
+> -		r = kvm_tdp_page_fault(vcpu, &fault);
+> -	else
+> -		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
+> +	r = vcpu->arch.mmu->page_fault(vcpu, &fault);
+>  
+>  	/*
+>  	 * Not sure what's happening, but punt to userspace and hope that
+> -- 
+> 2.43.0
+> 
 
