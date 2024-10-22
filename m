@@ -1,192 +1,109 @@
-Return-Path: <linux-kernel+bounces-376954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD9F9AB80C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C34A9AB80D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 928C71C22FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4D31C21139
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9041CCEE3;
-	Tue, 22 Oct 2024 20:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191671CCB31;
+	Tue, 22 Oct 2024 20:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ni7BJgHe"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KL1RS+6s"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383801CCB5E;
-	Tue, 22 Oct 2024 20:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173941CCB30
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 20:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729630563; cv=none; b=IvNNy+OgH8tbq8oSDPDa0Ny8yeotY4QaR9yRDyCPOea2mfDcu/fvD5I+IYdoK29fIhn4q4VadW8VhZb+IWrwC4tc9TuX/PEWczO1qEcJvwAVc3PGN0ZACAtiQqxdPnd+DBL+DUycGCHOPjyf0V/p3yuX1+GlwwORePRCV3//fb0=
+	t=1729630590; cv=none; b=Gc2uHHScV4IWmHI4LP7EDB9F2UeNcwAU+DYXHUN3QMgLiFFXuBm0idYofbc3qO+yIw7+M2/nmPfNlBGDroJOQq8Lwe7OBgnfwUBEB2KOTAnae1OVYjS5yypgwzdllf4GA1DricymvxMMkGKWRQNvWCNq2nnHVAW5U7xOzli5hdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729630563; c=relaxed/simple;
-	bh=0ESlIhjZd4HFCxmkBGZQtiRoShm8WNFaWATLsOata1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iG4SJFX7s3ZuGxie9uDMPkHNNgt3xhWieql8KdGfQzIflJGGXBHmQeh+OLfPCQmSAdzwHEOhtSSI+Q60cYnsk6N3SAtk215BNn39FFp4GiLkZrLDVYfmfUE14ofuxJRAljZKqoCWdfty+NdQKXaDMSl4ASWYQVrR/1QQ8KeXsto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ni7BJgHe; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso4982986a91.0;
-        Tue, 22 Oct 2024 13:56:01 -0700 (PDT)
+	s=arc-20240116; t=1729630590; c=relaxed/simple;
+	bh=En+AZxhoIvPdGUvI2rByJN+QSXDwdQe/en4gVzJBPBM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XioBxoOheVtHdP0teyUZpXNeuUtRcGQNe/av1/Fnuu5GyG5iF+4FNCX0kzqeQU4xfS9nY1qgCNmSdgkzsX6LI+VszBRyiPwHaGG0QO/t3XWKwWicRjnDF9CxKqGlLWlT/hy6ZmOWqiC93VRagFgZKJ5Fbu4lIfvIhgf0VscMl/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KL1RS+6s; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e355f1ff4bso109054457b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 13:56:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729630561; x=1730235361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DYqGf4Pwp6Jt9xviwyozADIX/pC+5pxs8oEKVNvbqAw=;
-        b=ni7BJgHe1IK+pjRWznXj65vo96tqEfQqL5w3iWsDBut2FhsF1rTQCnzpVsSPoNaeka
-         pMpRkKjdban7DCzfiorTS0zgepeAieMGkpMlZXZzRCsyItW5ChVUv2wPgpo3srFUfCEx
-         j2G8ibtanUfq9pG9ZX0Wgg/OQqoA6YoM4ok54EzMWU3vSlDyskunp0IaP6yxAzpqPiGi
-         UahUSxpMKaLLRDTIuoyWi3gbcQER57n4elE4FR7T21Dojxo2KdGhgQgdAJSPcaZfx3j5
-         dERy/uRIwfWJh+gpkxPzNt4+xphi7sIDyVPpqZntMnKK1GkqZj5UyhD3ZQLDy4SAXIYj
-         bLpA==
+        d=google.com; s=20230601; t=1729630588; x=1730235388; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ta+9b5++FGBmxha8thwxDd9QOf2hx71icgR85vxLNHw=;
+        b=KL1RS+6sRmCLp6Fdy3PCbXJO+RjxQ3X0UVpgSVJSEWJ73ZAugya/owynuYrNXAEMy1
+         GOkIFnMjK59pH6gKR/UbLLe/uqtnan5BaXXDzAolr6cNLApzv91w16kSEkp12gfyWRbu
+         K4cT/3YT+zvwlAzYX1+bfGPDBu70covF8y/YqUeznfzD2JKKQVqLEVo0R/xdSfELNP0a
+         5bqMK43727Ilmff6qwf7L5GNP0H79UWWwA1+IdnMJK8BoVciPoM+Hh7GS97pxDKkI7Pm
+         h2evPwbeR3lv0uRbic4TqpB3ix1BBdw/bRjzZBnRrnkcESt4pF+W0c5kXONYAVnA8UBo
+         6KFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729630561; x=1730235361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DYqGf4Pwp6Jt9xviwyozADIX/pC+5pxs8oEKVNvbqAw=;
-        b=qiQ+uAgADDUdCO/W4vNGTnlHPAus+szo665zbFjCJ9l+HMVAr3qjQ4strfYvijYLvm
-         cdTm5qmk7t38ir0W4eK2FksV2/IBBWOn3EcHJ1jcHEJGkXxePF4q7AhIxEGtUA5lvQ1G
-         DhlywhX/uRY5N28rFc2ZuuS6ZnuFibpAqkcwVpi3J6iqpqRYqAH8+KHGrDNJTbxacqei
-         Zn8xUKo6CGTA0uIUK/jliPCvA6w64XsE38mVM5GHhEQ+iMtr0cTfETsYGfhVBKg8ludV
-         2b12APar3PQAtkzbuUqniGLbfoHVik1tOy0qRgpuTF9emo9mSNrVqrdd0K7NDL2VnIaI
-         jZjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/oJ7ilCTEa0eZDqhUi0gjVewA07pV1L8kD6En+IAzcDux0CauMWCCFAEU8kZj5fA/f0+bwO1+19Vf2Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFL36EPoS1sFY40E0J/Uxavua5MZUSRKrktF7MdZS7LCwlZnLC
-	X+YRtRNB472LhXtUIDjrlE2I+poKbgIOvR8sdKqWsvGFSWXLKmpM
-X-Google-Smtp-Source: AGHT+IFcHmr9cL47HFX1FM/lsgz83ZL95h2v1Hm54hTESz1Kjk4m2VEDzmF8cdodsSHbUqKPrkWzlg==
-X-Received: by 2002:a17:90a:8c08:b0:2e2:c40c:6e8e with SMTP id 98e67ed59e1d1-2e76b70c585mr250247a91.34.1729630561339;
-        Tue, 22 Oct 2024 13:56:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:94ec:f4e5:1552:e2cc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad389139sm6747254a91.30.2024.10.22.13.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:56:00 -0700 (PDT)
-Date: Tue, 22 Oct 2024 13:55:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vojtech Pavlik <vojtech@ucw.cz>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [RFC PATCH 0/5] Removal of a few obsolete input drivers
-Message-ID: <ZxgRXmPZrhKUegon@google.com>
-References: <20240808172733.1194442-1-dmitry.torokhov@gmail.com>
- <alpine.DEB.2.21.2408090122060.61955@angie.orcam.me.uk>
- <ZrmUnaLJ5Ft0_tst@google.com>
- <alpine.DEB.2.21.2408121448250.59022@angie.orcam.me.uk>
- <Zro8fpgvqa74aki4@google.com>
- <alpine.DEB.2.21.2408131802050.59022@angie.orcam.me.uk>
+        d=1e100.net; s=20230601; t=1729630588; x=1730235388;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ta+9b5++FGBmxha8thwxDd9QOf2hx71icgR85vxLNHw=;
+        b=Flvqiv4R75wba0Hh0/MWs2T+PhYiSTiXEvBLcyDiDe9boL5cOPBOb9eMQw15CUxBlj
+         Igs10YXIlXQO6X2ZvAq0ft/goJNCfFNPyYG0WJviCKsg3VsRq/6w2MDMLBvfpoktwA3q
+         l2/oxrnoZWaylOF6IRjMwkia5edrXE0K4IMpo6C6E/2wiKD7mIOSrkvfOaEWRMBRihx+
+         zcOhwW+SWPNPfr5nvK2/ntoafBQcTMGoI0YoaefAtvd5yLVnw3DloyxTV+duTsnA4qb0
+         S0xcHhQIzpW8RzQ2BMY2kAuOTuolgBQD4aWmJmOHBiQ1gAnUhYQVKUZvHwu/0itEojmT
+         +xtg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7E22dOB0RH4LEzd+bS3gChSwNU3Lj1cMjZeviAVbxhrtswFKFOsWVeg+bDj8/pXASodABngYf+krHR4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyJ1xUWXQ+4aLJBGUCbWlPCL52hmrw9aGA5IDlsLrWp8fs65kD
+	034UsaTRBVg7nfVJEQwUKTBgDew5JGiqbF8fMIimvlVCoUXLZqtCcDsQ0EnD9ubkhYxJ5gKjHhu
+	eLa3wbyGtD2z8wRrIjtjGNw==
+X-Google-Smtp-Source: AGHT+IGon+dXZEYxGcXSPtmacn8QlE7P8CHLHHb2+HCeuXHqkcSNt/6q6VLRsLJeRjYLFhxF45PjmfdNpCSWu+RPCA==
+X-Received: from souravbig.c.googlers.com ([fda3:e722:ac3:cc00:4a:2332:ac13:d235])
+ (user=souravpanda job=sendgmr) by 2002:a05:6902:1818:b0:e2e:3131:337f with
+ SMTP id 3f1490d57ef6-e2e3a624ed7mr157276.4.1729630587656; Tue, 22 Oct 2024
+ 13:56:27 -0700 (PDT)
+Date: Tue, 22 Oct 2024 20:56:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2408131802050.59022@angie.orcam.me.uk>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241022205622.133697-1-souravpanda@google.com>
+Subject: [PATCH] mm/codetag: fix arg in pgalloc_tag_copy alloc_tag_sub
+From: Sourav Panda <souravpanda@google.com>
+To: akpm@linux-foundation.org, surenb@google.com, yuzhao@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com, 
+	weixugc@google.com
+Cc: Sourav Panda <souravpanda@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 15, 2024 at 10:20:49PM +0100, Maciej W. Rozycki wrote:
-> On Mon, 12 Aug 2024, Dmitry Torokhov wrote:
-> 
-> > > > >  Are these drivers broken, e.g. fail to compile or crash the system?  
-> > > > 
-> > > > I have no idea because I doubt that anyone has tested them since
-> > > > forever.
-> > > 
-> > >  What's the rationale for your conclusion?  How do you know nobody uses 
-> > > them?
-> > 
-> > Because they are either require ISA add-on cards and it is quite hard to
-> > find devices that still work, and are supported by the current kernel,
-> > or internal peripherals in devices that are no longer useful. Do you
-> > expect anyone using "Gateway AOL Connected Touchpad" in the year of our
-> > Lord 2024?
-> 
->  Maybe, maybe not.
-> 
->  I certainly use Linux with actual ISA hardware, i.e. systems with ISA or 
-> EISA slots and option cards within, as well as other hardware dating back 
-> to 1989.  I'm told people use Linux with m68k hardware going back in time 
-> even further.  I don't use any of the bus mice themselves though (having 
-> had perhaps a more common serial mouse instead), but if the drivers build 
-> just fine, then I fail to see a reason to dump them.
+alloc_tag_sub() takes bytes as opposed to number of pages as argument.
 
-OK, so here is an example:
+Currently pgalloc_tag_copy() passes the number of pages. This fix passes
+the current unit, which is the number of bytes allocated.
 
-https://lore.kernel.org/all/20241010194533.GA575181@bhelgaas/
+Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
+Signed-off-by: Sourav Panda <souravpanda@google.com>
+---
+ include/linux/mm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We need to cleanup PCI core and the driver uses a hack. So we need
-to patch it.
-
-> 
-> > > > The same gain that we get from removing obsolete boards and
-> > > > architectures - less maintenance burden, less work when we need to
-> > > > change some APIs, less energy burnt by 0-day and other bots, CI systems,
-> > > > etc, compiling useless drivers over and over and over.
-> > > 
-> > >  Well, you don't have do do anything about these drivers, do you?  They 
-> > > don't scream for food.  And as to the energy, well I doubt this really 
-> > > matters, the amount is noise lost in the overall consumption.
-> > 
-> > I kind of do even if they did not require much involvement.
-> > 
-> > Let me ask this: why do you want to keep them? Do you know of a large
-> > (or small) userbase of bus mice enthusiasts? Note that it would be very
-> > easy to "git revert" the removal if someone actually needs this.
-> 
->  There is burden involved as well as repo clutter from going through an 
-> apply/revert cycle though.
-
-You are assuming that somebody actually needs them and will have to
-restore them.
-
-> 
->  Sometimes we do want to discard code, because it causes burden elsewhere.  
-> It was the case with the removal of support for the original 80386 CPU due 
-> to its lack of user page write-protection in the kernel mode, which in 
-> turn required us to have explicit checks carefully sprinkled throughout 
-> and painfully maintained.  That hindered generic code and was a good 
-> argument in favour to removal as soon as 80386 became unimportant enough.
-> 
->  In this case the decision seems arbitrary, the presence of these drivers 
-> does not hurt anything else.  I agree it might well be that nobody uses 
-> them anymore (though someone may come across a relevant piece of hardware 
-> anytime and wish to try it with Linux; I do it from time to time, and I 
-> also have old stuff even I'd like to write entirely new drivers for if I 
-> ever find some time for that, i.e. I have sorted higher priority stuff), 
-> which I can sort of recognise as an argument in favour of discarding them.
-> 
->  I'm not entirely convinced it's enough of an argument by itself, however 
-> if there are other people who think otherwise, can we please at least do 
-> it in stages such as some other projects do?  That is require an explicit 
-> action for any interested party to keep the drivers enabled, say by hiding 
-> them behind CONFIG_DEPRECATED or suchlike (with clear documentation saying 
-> it's for stuff slated for removal), wait a year or two, and only if nobody 
-> speaks out during that period, then actually retire the code in question?
-
-I do not see how CONFIG_DEPRECATED help any better than revert. The
-driver will disappear, people will start looking for it and will
-complain on Linux Input/LKML. At which point we will revert either the
-config change or driver removal patch.
-
-If the argument that with config someone does not need git tree but
-rather can work with a tarball I say I really do not care for this case.
-
-> 
->  A part of the joy with Linux for me and I believe other people as well it 
-> has been the ability to do odd stuff just for the sake of it.  It used not 
-> to be business back in 1990s and it still not is, not at least entirely, 
-> for such a Linux old-timer as I have now oddly enough become.
-
-We are still willing to support old hardware, but only when it is
-actually used.
-
-Thanks.
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..2890001c8b97 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4203,7 +4203,7 @@ static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
+ 	/* Clear the old ref to the original allocation tag. */
+ 	clear_page_tag_ref(&old->page);
+ 	/* Decrement the counters of the tag on get_new_folio. */
+-	alloc_tag_sub(ref, folio_nr_pages(new));
++	alloc_tag_sub(ref, folio_size(new));
+ 
+ 	__alloc_tag_ref_set(ref, tag);
+ 
 -- 
-Dmitry
+2.47.0.105.g07ac214952-goog
+
 
