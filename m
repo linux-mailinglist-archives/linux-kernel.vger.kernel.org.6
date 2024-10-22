@@ -1,146 +1,169 @@
-Return-Path: <linux-kernel+bounces-376640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82A19AB449
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:46:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4329AB450
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD881F235A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD44B214E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261CA1BC061;
-	Tue, 22 Oct 2024 16:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B421BC9E2;
+	Tue, 22 Oct 2024 16:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JEHAGO7t"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FqnCFpoq"
+Received: from sonic310-22.consmr.mail.bf2.yahoo.com (sonic310-22.consmr.mail.bf2.yahoo.com [74.6.135.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2049256D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D551A0BE1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615573; cv=none; b=QhpqKLyyZ7W0U1YiGXCq0pyirudz9txX7iZD6tvDK+M+WrKnItii/OP9ZLk2ZsPvNg+WU7yyNVst2JTzS3pfy6SQonSG+YlyyTzLluqN2XpxhATr1CO0Rox8WZQKkzNAqgumG6+NCPlCNRNoKUmrrTVIm/Hx0A78Ihweec0VNUs=
+	t=1729615635; cv=none; b=IRMaLafC0ZwMp92FvjgbTbtHCb4ApZGJJo6ovrlbwHAqxbemZtoTLnqkrWGM5dFjmUmaYBbS4NH0aNnsNSmolvfSx+Ex041S9TnTXc3DV8reNH14n2chfCmqkVej2SVQROismxHzvOAn/Ay4U2cPXxxYosn+73V0AU4dQhhlZEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615573; c=relaxed/simple;
-	bh=Lj6PNMCNIu8hj4OyaUbUFkAeau2NGIb0esj+zs559b4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e40dwycIKeAIDhEE54mKG26JpplUbZutHAf9EYn2xYfr1MyE0RUpwC9qeFT2qBCqWXN8GFAqlDFpL+vNrGNcBLwj3pU0wnRWygaa9YDxf9vKSyMqRlE+SPpDQ0PjNEx19I2wCXX1P96WZeji5UIP0yTUGxO8F99nuiDkjhfjRUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JEHAGO7t; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e52582d0bso4460455b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729615570; x=1730220370; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pPeTnArfy3kVD9qdVEi17t1QYmpfbQ/+MP9HcRzS7Mw=;
-        b=JEHAGO7t9ZbxGNMC34L2qNsuOY6jYy5CbdJV4rHwsDt4APCLljxpPcXJDzubAdwDcg
-         Q2SUUjAAnWGodDVdBqR/R6fbV3fDZw3ffIDykc8fNZWVOl+Jq/SKh8VhFN0mYQCI6qXs
-         x3XVYG99yZaV7UUOQLrNcYudD3vHwgIrNbThgb6hxwTkmBdmgLDAtluB7MP/2EaEioyO
-         kazudFNF3wbt2r+YNpPgAwvs+jCudWdA76cMrlgng6Pf6qK6zwpRw5moH5gEIclXAeu1
-         3w21u7Jg5oeQ7q+miDvhGX6gi7uSSjJHyn/VYZqT6PX9Sz2t+J7g+VPoMnCZJ4TssW1X
-         MLfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729615570; x=1730220370;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPeTnArfy3kVD9qdVEi17t1QYmpfbQ/+MP9HcRzS7Mw=;
-        b=mmzOW4IN+J2JrkWIY1gsOE2JC1wHMB4xNjKEV+x7Sa8ULTa3GWSLiRLxJTh+xwsyUr
-         JvVVeae1etfsfjYZHI7OW1W9Z5ORLcWhEUxQ3uLopaw3qRhJl7R37MO66IdIxUAEZLvl
-         sVb8JHqoWl1+0gbQgwIeRKKVc3MBde+UX/Sfd0xUW2XkUOpwJiw+Lzgfpg1+41H81MkA
-         93NZUsq6oAYuXSMunJWnm5X9lTtr43m3CItep4mStSdtkzGYO7DgX9mOqQhDqIlxckzT
-         B5i2y+LFLx77BDEa5DTj70R687H/jXsvLBXGeje0gWfb884DbEjXYpfNUX7Nj6D/ZUac
-         fjXw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9xbNbd7kKcIwJkmfXwVGCLtJEsSkkJF3H7SCljl5YLbyqU0iSgpSazU6Uvg6OJROuHktjr9rKZ9SkgHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH2SvsixRpyTzqhlq0ClBAzscEcw89WgHxy/FgE1e4CfOgZCRe
-	MIPS6aDre54G1U5ZnFQGiQJEJS/BBlIY8M5qIK4kmZc3KsBmGtLQQ03NNEgfVg==
-X-Google-Smtp-Source: AGHT+IHTS9yyMdGSpDBkN1ZywG4L881bK6lpw9juFK/sdg8K6E7YS49sKlIWRIuG+HaxSkMO8HbgaA==
-X-Received: by 2002:aa7:88d4:0:b0:71e:b8:1930 with SMTP id d2e1a72fcca58-71ea321e7famr21475298b3a.16.1729615569937;
-        Tue, 22 Oct 2024 09:46:09 -0700 (PDT)
-Received: from thinkpad ([36.255.17.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13336d1sm4966249b3a.56.2024.10.22.09.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 09:46:09 -0700 (PDT)
-Date: Tue, 22 Oct 2024 22:16:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: kw@linux.com, bhelgaas@google.com, lpieralisi@kernel.org,
-	frank.li@nxp.com, l.stach@pengutronix.de, robh+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
-	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 2/9] PCI: imx6: Add ref clock for i.MX95 PCIe
-Message-ID: <20241022164603.gndz4vgbm2sgwtfj@thinkpad>
-References: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
- <1728981213-8771-3-git-send-email-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1729615635; c=relaxed/simple;
+	bh=LGvZfBG932kQ1YrUvUr/IcYClA07C6OSPqb3K/idqnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AN7wwz1hZ9m/91xToTmzaQ4QF+pvEN4B8mu6gYC9uA6w2vYvOHHD5zgJ+Rnk0UFNPkyVDP+w6x6ClnL9OzPVzn68TL4QDsxAm3vKN8O2pExU2i1DG9VSDadnhOqCsJg0LTkvONmVK6z/HPbiA8v6HW9tAV2FaYDDIOTQ7coQ8DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FqnCFpoq; arc=none smtp.client-ip=74.6.135.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=W+YjoM+UFsc+LXmblPgB436l9oughyTIbgOOXvBruAo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FqnCFpoq4jCFPithiMRhzrH6/bQ5DnkHF1qBy13oYrO4qV+tunzbgWpMQSbouxzN0DzGC9tVspro4/le3iFQO4VmLPPsJCAQ4zvywr2eOySFmQ0AUrSvPw5t0S4Wj0Z861cIHEc9vPng33XHQc5J6B4aKk9OBaLxCB7Ulck9ScoR4ddzfz7L551RBREZuIS2egH9hYTJPCNnxp+AKz1b2iZEvc1Xl8/vufKGziBM5EiTJ/ezWmFFnHramlaLI39n9AncgaCzHHwe450EKCDRo1bHQGOQPYQ8feeK/QM6+np54MtOmNYUjj8jGALU0HNjpbnzWR0Lr0i+0zhYTRe9Hg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=8ljbTKG1CBu5VxP3Wr9j7681FZtFjfm8i3yCvVR/QlJ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P0XBXDGHiWkYf8fBqsO1jjiuFU2PJy8pAI66/ED2pyc+3AzyGHxPZqUuS8R1L/o0qIiIZm8gNsNvtsXOWH/jwyFvsrelrz7x/L0OQL8yMt/kJZc0gs2Sg8TMjU1eJRFgitHIuDr535RNLHVAk0axb1R5iPuzKbjrnvpL/MJlVB34xZsCuSUlnABgMLOuTZdc8qLpML1ks90lLT6POrTeopYsQ158dBTaR5YzuQ1Kb2vpksVe/bgdHywr4Xy4M60CaPedcq+ZtvgKVqTg7ancNTk2Ev0IxjacndRzAoIYK2GCafcyW87r1Pvr1Ie9M8Qv++RX3PJvTahGVhe3k/8AGQ==
+X-YMail-OSG: S.gcgSEVM1mhBlYSMpGksHU3UnFXpOxOFfQ11kpgsEQ44mS6gPshQRhu44cC_TZ
+ bLrtowY2iy1ZoKBaGB2XJf8vQDAtgxdylNVpLzxYzKdfgqeObMLWP4NodJoiOyh3UolCCyGnG0Op
+ BVYEfXs3Oj2VOnki5cNJ.0Xy5H0X.qjThRv1eQSoe6Ykm6xyyi6w0_z.CSIqkgZUo6aeDeLKMa3A
+ g64PLIvdQmbqscPkDrS.5lq1GNgJ3VYU.M6sE6HCSkIUomRUVlqP5_MzHE_UE9ckeuKPep3rwwTd
+ ET2.wQWFZSNK84SRqHoER0vww.8jxfVVef.YLwC2_ald4dCtDA_UAI9_9gffQYZWLPbTJVHIAOOi
+ fNTSTDf4EbaP8wDgqY_wvYjgSnc7c0jnzizqebZ47_xi4ZpIoCc2srV_.wH4yU4I_1PSMcAKIntg
+ b8NBv0B8OkrBlz_QPZXRPzmFoAIxxqXVasnw5hKv5djFHIRjFE0uCeB6NFQuF9DceiDkAQ7IQInm
+ qJpTDhwsNKdnhN7A521cyxy13Ix9zRPQWja7hheeLJ8MWHXmxetb5dqOoF_u5PLiShJW9pvY9vc9
+ _wgt_SLecosY.Z9BEtaF8V_b4L9dMqWvfevM3_OOZ6s9zWjUcWqKzPQMwoOXExfyErPRIrNb99Ow
+ JvWTRUtXIFvcTq.llSknRayxy9DFOPzzxNkkkCWme.UkQyt6loXVmafhvvV3SYEQtrDayKrswAQi
+ hUcAwFet.msF1poOLI0IF54sYZhe3RGX0zAt5pzFJWmbaSE_dOQcEiqxDHPYMS5pVq37wSDTfcv5
+ sTscDBC6LGo6imhe5y0OO0E1IdOsFYy7h_RyEHfS6PaC8TfTjmqmkWMWZp7LJI..NtXHX7R6pX6p
+ bUQhxCPiJsMFQPwrB2jXFe_7IW8mGxXTGHCaUU3jM6dWrc4cyMpKrLU0PO9aFX1GaJbdOnD4DIbF
+ uRLtFP2BzS0bdXk0fb4sXjnqtsh7X9Ao26PZfbgET02BUcsL0c7hcXGi50XkPVTYMkpr.wysgjMr
+ fyB6C.2FFT.qt5RcsEUv3Uu3EqsSVZlSXHgp202dEqgXv.btqKQr3SqMpdGZz2pWvrJPvypIYy2s
+ 1eyj83RK8oZCit9c3QuneekVol_KF68h7gthX_FP1XJJbcSCgjZAReVrg7FMSca.ZY_L3ZUUvI5m
+ vN0fd.gYWoqOSXykbZl_iZr3gYlPor_ujRpi21MYWqeQvUaxL13j7tKxaoChbyJh_sROwMMc.gC6
+ jl_LIMosVWAO9z8SO_ohfYEp5W6GHSDRTjuU_QwEP8JQAymkEcYTXxwUJCh4cqUDe.hvLJX0sjl1
+ N31MLFBJZO9hqh_7jWqErDEsAmoEi_dyngqWrZgBXdux2GV8tL5WtG9PBW1zXYswNQNoBMFZRIPh
+ s5fNcKkX3YMMzDz9TWNM1Wr6rojNVBkxMAT2WPav0RRTsdlS7yj_mPEngouIJXXDZ73SpavN3yS4
+ .Cw96yAep9OtN0WQYkBRVA0IItTu7VzJXdWDqy28Rv4OhAqAS1gFK5e2AeSDMn_bnCrIyiruiMq3
+ CgPFG1hblTSsgKYhdq4PtmhjD5YL81QElvtBhh7Ok5hIjJZE5LCD8OQSAyOorU2hGQpxU.iRtK3R
+ hZWzOl9SVSxfxdZIhThhqtk03F242vn3C2YDHVNco.MIP3iwItYbuziIEan3abEV3SLtFqSYvLZM
+ MOcDigr32.nTQVwb3Wc8rqOJcZnFBp4rF9RMbFUlGnEu4UCzZiTpYwyWAW8MZC4mDHgx9C26_nxt
+ 5dR7HdNeDqxUpbdVSkI6wPOC7PscMKbcIak52A0BIqFSOY.B9dASRtTdqfqJyDu4P8q.tIWK_XFK
+ z8yKzY8BLxBkUrIhHL3DDdC2oy5z2_OR4yZOyozaCmPxCN0CajPxJcLkBJI3fGr0PbZBWxpwb73Z
+ rJk6WjlnmzCCJV.n.EUqBTqlilPm4z51BUgkXXXzhEXombZyEk0DyhJxt0DfjReKr9INKyiomtgX
+ Bvo.aUICSmhoMx2U1x7ZBhvB.ec9egcK.s3MJeDR12DsQy1yfiEUyOiTWF2nyMHPWhZiGeWtpwq4
+ FCldIVTUqnW71Xu5xnRybxAgm6O3mGytqZH92EgH0pKuWlwt9pXJqYGCtnFhykpo84nbHFYX3IfJ
+ kzWoRd_xBb45psnPLUYPKZsXegO4AyuAI7H_LIckk60FkHLuDHKZ_oXF5q1C8E1Ii2XQdWt4lpHn
+ kekTNVwjcBwhKUFgV.KqOoP6mGDyH8PJxv9jGcinNZxw2mtExFZBVo7h9fsaDWjHgUiIB88ISKr.
+ C85D5HyLLGGypjUww
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: cb6630a2-79bc-4591-ab0b-03f7386e3ee5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 16:47:06 +0000
+Received: by hermes--production-gq1-5dd4b47f46-dvwsq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6a5b3f8172a524a4157cdb05ea625898;
+          Tue, 22 Oct 2024 16:46:59 +0000 (UTC)
+Message-ID: <6dc1c686-108e-41a2-bda3-8744e5f7626f@schaufler-ca.com>
+Date: Tue, 22 Oct 2024 09:46:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
+ serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+ penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
+ ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241014151450.73674-5-casey@schaufler-ca.com>
+ <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
+ <d2d34843-e23c-40a7-92ae-5ebd7c678ad4@schaufler-ca.com>
+ <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1728981213-8771-3-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Oct 15, 2024 at 04:33:26PM +0800, Richard Zhu wrote:
-> Add "ref" clock to enable reference clock.
-> 
-> If use external clock, ref clock should point to external reference.
-> 
-> If use internal clock, CREF_EN in LAST_TO_REG controls reference output,
-> which implement in drivers/clk/imx/clk-imx95-blk-ctl.c.
-> 
+On 10/22/2024 9:35 AM, Paul Moore wrote:
+> On Mon, Oct 21, 2024 at 8:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/21/2024 4:39 PM, Paul Moore wrote:
+>>> On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Replace the (secctx,seclen) pointer pair with a single lsm_context
+>>>> pointer to allow return of the LSM identifier along with the context
+>>>> and context length. This allows security_release_secctx() to know how
+>>>> to release the context. Callers have been modified to use or save the
+>>>> returned data from the new structure.
+>>>>
+>>>> Special care is taken in the NFS code, which uses the same data structure
+>>>> for its own copied labels as it does for the data which comes from
+>>>> security_dentry_init_security().  In the case of copied labels the data
+>>>> has to be freed, not released.
+>>>>
+>>>> The scaffolding funtion lsmcontext_init() is no longer needed and is
+>>>> removed.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> Cc: ceph-devel@vger.kernel.org
+>>>> Cc: linux-nfs@vger.kernel.org
+>>>> ---
+>>>>  fs/ceph/super.h               |  3 +--
+>>>>  fs/ceph/xattr.c               | 16 ++++++----------
+>>>>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
+>>>>  fs/nfs/dir.c                  |  2 +-
+>>>>  fs/nfs/inode.c                | 17 ++++++++++-------
+>>>>  fs/nfs/internal.h             |  8 +++++---
+>>>>  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
+>>>>  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
+>>>>  include/linux/lsm_hook_defs.h |  2 +-
+>>>>  include/linux/nfs4.h          |  8 ++++----
+>>>>  include/linux/nfs_fs.h        |  2 +-
+>>>>  include/linux/security.h      | 26 +++-----------------------
+>>>>  security/security.c           |  9 ++++-----
+>>>>  security/selinux/hooks.c      |  9 +++++----
+>>>>  14 files changed, 80 insertions(+), 101 deletions(-)
+> ..
+>
+>>>> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+>>>> index 039898d70954..47652d217d05 100644
+>>>> --- a/include/linux/nfs_fs.h
+>>>> +++ b/include/linux/nfs_fs.h
+>>>> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
+>>>>  {
+>>>>  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
+>>>>      if (label) {
+>>>> -            kfree(label->label);
+>>>> +            kfree(label->lsmctx.context);
+>>> Shouldn't this be a call to security_release_secctx() instead of a raw
+>>> kfree()?
+>> As mentioned in the description, the NFS data is a copy that NFS
+>> manages, so it does need to be freed, not released.
+> It does, my apologies.
+>
+> However, this makes me wonder if using the lsm_context struct for the
+> private NFS copy is the right decision.  The NFS code assumes and
+> requires a single string, ala secctx, but I think we want the ability
+> to potentially do other/additional things with lsm_context, even if
+> this patchset doesn't do that.
 
-So this means the driver won't work with old devicetrees. Am I right? Then you
-are breaking the DT compatibility.
+This came down to a choice about where the ugly code would be.
+I'll restore the old behavior.
 
-You should make the clock optional in the driver.
-
-- Mani
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 808d1f105417..52a8b2dc828a 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1480,6 +1480,7 @@ static const char * const imx8mm_clks[] = {"pcie_bus", "pcie", "pcie_aux"};
->  static const char * const imx8mq_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux"};
->  static const char * const imx6sx_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_inbound_axi"};
->  static const char * const imx8q_clks[] = {"mstr", "slv", "dbi"};
-> +static const char * const imx95_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux", "ref"};
->  
->  static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX6Q] = {
-> @@ -1593,8 +1594,8 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX95] = {
->  		.variant = IMX95,
->  		.flags = IMX_PCIE_FLAG_HAS_SERDES,
-> -		.clk_names = imx8mq_clks,
-> -		.clks_cnt = ARRAY_SIZE(imx8mq_clks),
-> +		.clk_names = imx95_clks,
-> +		.clks_cnt = ARRAY_SIZE(imx95_clks),
->  		.ltssm_off = IMX95_PE0_GEN_CTRL_3,
->  		.ltssm_mask = IMX95_PCIE_LTSSM_EN,
->  		.mode_off[0]  = IMX95_PE0_GEN_CTRL_1,
-> -- 
-> 2.37.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> I would suggest keeping the NFS private copy as sec_ctx/sec_ctxlen and
+> keep the concept of a translation between the data structures in
+> place, even though it is just a simple string duplication right now.
+>
 
