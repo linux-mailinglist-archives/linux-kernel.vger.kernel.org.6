@@ -1,81 +1,159 @@
-Return-Path: <linux-kernel+bounces-376119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987B49AA054
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:47:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5831A9AA055
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78971C20D9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153EB28361F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C73E19AD93;
-	Tue, 22 Oct 2024 10:47:01 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908F319993B;
+	Tue, 22 Oct 2024 10:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dd1qYMsn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5Hm1/5hq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dd1qYMsn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5Hm1/5hq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB241957E7
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B995198E75
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729594021; cv=none; b=WhU8WtHKNAJbtSq/kgrU4ZOAbwqoqE/KrgAFgIMVNP07r4TakxoXz7+qfxwAHiMRxFwm81aEH2rBLASyfXFLmbM4BDMqmvoRBvK0uH7y0sILQI7fw0ioN9gq6xoN+q2fbhMpd5GvMFm8gfUeXNzW81jFAMV/iCV3jd5cjBLTXT4=
+	t=1729594070; cv=none; b=TxhHNlaCgWk81RllEwJeW1b4uXpKBjreOb5LOHXwer/gH4ebOcyGe7c+Zsgoivqcy+uY8oHqRxcGtxC++lWcIFe31Ld6w4VmW4wyYpRyT0XiqGo7qV+LxspI2jAZiYoGvnrXYyw0bptpnyfjw+8C9nxHpgjSCrBL/yzQwvZw0Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729594021; c=relaxed/simple;
-	bh=jzq0HxQBYaaRd7ybL15hd4e78mW9KxaQynaZjeF088w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kmfl4sXg1AanqUWlHfRfaa6VRpmCpqwC+1F4WIb0Pvyb/dq/7Ix2YCeFkYABN1jSi+zD3bQip+E+ziWfEoqFcV6UpGnGgZbrnVCyxg/k01EeXM31PMVB9orsCFFIIR1vp0ON2O8Iw6LI99IxmC7+57jS36bdVn8WM3GHPigCwcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.70.205])
-	by sina.com (10.185.250.24) with ESMTP
-	id 6717829300002E8B; Tue, 22 Oct 2024 18:46:47 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 14791810748597
-X-SMAIL-UIID: F2832798B11445609D10B86AA394F071-20241022-184647-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Date: Tue, 22 Oct 2024 18:46:35 +0800
-Message-Id: <20241022104635.2252-1-hdanton@sina.com>
-In-Reply-To: <6709234e.050a0220.3e960.0011.GAE@google.com>
-References: 
+	s=arc-20240116; t=1729594070; c=relaxed/simple;
+	bh=UJK3iAXtp0KtFOuj4zyoXtcmuPwoV4LHGQX8Y+iZ8VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Dddqo1dgjvEa8mNL9eZngAlmPzX3CdqHVXditwClUB0A6305B8+1I5tyUT+JKS0ioEpjV7kYu1vORywzAFIaPUzribNCLWhKcoNyXvHKnY84yGTiAA94byrCQxBHCXabyR3MmH5fBsGq3Naf8d6M6t+yFbmO+pJCeySiHrlbI20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dd1qYMsn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Hm1/5hq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dd1qYMsn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Hm1/5hq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5CB9721EDE;
+	Tue, 22 Oct 2024 10:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729594067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hhORqBoElAyjPD+QsuV4UE5a/qdOiShbTdQibwv1ysg=;
+	b=Dd1qYMsnNNq2LJWeY7XQr5DVvXILtIWOYmt1uXcwvmO9h4bhwYU1n9ae7gDOR42l4M0CRM
+	wVNdnR0iIyq5ctvHKJma/G4Jnsfq8aNZqYmqaWc4Jw+UdND3a78cpvk3k6JeSGbMG+Z8/5
+	MuCmJxu0n5Z5IjACedYD2RAUh0oKzBY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729594067;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hhORqBoElAyjPD+QsuV4UE5a/qdOiShbTdQibwv1ysg=;
+	b=5Hm1/5hqNcMU6fXjD2Edj9MZ1pVZorEcEOlO6wIF3d/ynkQRu7xtnvT8HXbQC0pzqvo4w0
+	MkXVI1wh9DyuPVBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Dd1qYMsn;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="5Hm1/5hq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729594067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hhORqBoElAyjPD+QsuV4UE5a/qdOiShbTdQibwv1ysg=;
+	b=Dd1qYMsnNNq2LJWeY7XQr5DVvXILtIWOYmt1uXcwvmO9h4bhwYU1n9ae7gDOR42l4M0CRM
+	wVNdnR0iIyq5ctvHKJma/G4Jnsfq8aNZqYmqaWc4Jw+UdND3a78cpvk3k6JeSGbMG+Z8/5
+	MuCmJxu0n5Z5IjACedYD2RAUh0oKzBY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729594067;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hhORqBoElAyjPD+QsuV4UE5a/qdOiShbTdQibwv1ysg=;
+	b=5Hm1/5hqNcMU6fXjD2Edj9MZ1pVZorEcEOlO6wIF3d/ynkQRu7xtnvT8HXbQC0pzqvo4w0
+	MkXVI1wh9DyuPVBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1245113894;
+	Tue, 22 Oct 2024 10:47:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TvxuAtOCF2fFKQAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Tue, 22 Oct 2024 10:47:47 +0000
+Date: Tue, 22 Oct 2024 12:47:45 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Haibo Chen <haibo.chen@nxp.com>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH] mfd: adp5585: Drop obsolete dependency on COMPILE_TEST
+Message-ID: <20241022124745.5d8d3778@endymion.delvare>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5CB9721EDE
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	HAS_ORG_HEADER(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, 11 Oct 2024 06:08:30 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4a9fe2a8ac53 dt-bindings: usb: dwc3-imx8mp: add compatible..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1312c327980000
+Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
+is possible to test-build any driver which depends on OF on any
+architecture by explicitly selecting OF. Therefore depending on
+COMPILE_TEST as an alternative is no longer needed.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git   v6.12-rc3
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ drivers/mfd/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- x/drivers/usb/gadget/udc/dummy_hcd.c
-+++ y/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -1303,7 +1303,7 @@ static int dummy_urb_enqueue(
- 		urb->error_count = 1;		/* mark as a new urb */
- 
- 	/* kick the scheduler, it'll do the rest */
--	if (!hrtimer_active(&dum_hcd->timer))
-+	if (!hrtimer_is_queued(&dum_hcd->timer))
- 		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
- 				HRTIMER_MODE_REL_SOFT);
- 
---
+--- linux-6.12-rc4.orig/drivers/mfd/Kconfig
++++ linux-6.12-rc4/drivers/mfd/Kconfig
+@@ -25,7 +25,7 @@ config MFD_ADP5585
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	depends on I2C
+-	depends on OF || COMPILE_TEST
++	depends on OF
+ 	help
+ 	  Say yes here to add support for the Analog Devices ADP5585 GPIO
+ 	  expander, PWM and keypad controller. This includes the I2C driver and
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
 
