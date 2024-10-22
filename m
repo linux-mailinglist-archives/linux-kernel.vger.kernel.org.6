@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-376816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D719AB632
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673819AB634
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6589FB22614
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259A1284D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D0F1CB325;
-	Tue, 22 Oct 2024 18:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1641CB312;
+	Tue, 22 Oct 2024 18:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MsY4p/CA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233321C9DC5;
-	Tue, 22 Oct 2024 18:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="f6nLgZ7s"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3962919DF9E;
+	Tue, 22 Oct 2024 18:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729623242; cv=none; b=QbplQFt1kSXZVuTJ47RQhQuXCeG0J1b9tEuTfjZI8SXLEl2A2sPNNhInTGq6uIFlaAm3rtEh5005JzxIY3pELZn5B3De0daZLyTb6A3SRnqRGK/wClk+FFGwKTlMfWvc4fxc7MjFwfffb0BKGSqabdAITxz8F88ItGOf/iBMpNM=
+	t=1729623282; cv=none; b=oja3t4kriBtMyEKyxoK6jP2xxyMHJdU36bSZR/aduLlYOtQNwYkpXPg6UCdHSI5BlLUZ4FBJ2Fov7diH5N75phzSxPHoRAzBVUNJflOInpu4WSYUM87PFQzDh8V69xxehVQEes+uxowKX33wd1C2zl1ljoENckRkNL0IcwfDGhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729623242; c=relaxed/simple;
-	bh=hbwdO/HGZgXheZdv4bWPZtTJjpSjdlvgPY9dK7YgesU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ejcfe2UuACWOnCXDZQNUVMmz0mw/bmsLXjmg5dQ4Zz3/OC6r/s0EK3pKF7LN+sJnLTqtBN9zObpwmuy4srUix7LRR0ZMVEH+DI3qnATqQ/n82H6siuy6EfSjnwcVhkGHSp1A/aohEocrxkgFhWgTmFvlKX/Ek51a/sQaTlnjinE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MsY4p/CA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.5bhznamrcrmeznzvghz2s0u2eh.xx.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BEFD821112EB;
-	Tue, 22 Oct 2024 11:54:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BEFD821112EB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1729623240;
-	bh=5QmE36PovEZHStErq5Ahhyj2HI06iagMlMdubf3NbHk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MsY4p/CAcqhcO1K/nXe51W55O1LeXOV/doBBUHVdxjGDG3TLE5oxhxKKMXoNc/EWL
-	 TpMIP11dmpDnaWlpNkKPpiOfhyKOH3UFlqJlqvilXH7KEGi9Kb/XsS/HpZTzqWtbyn
-	 fjNszdUIeOQa3TgHZBap4sUR080q+K0Q1HswVpnc=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-To: lkp@intel.com,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	linux-hyperv@vger.kernel.org (open list:Hyper-V/Azure CORE AND DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Naman Jain <namjain@linux.microsoft.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>
-Subject: [PATCH 2/2] drivers: hv: Convert open-coded timeouts to secs_to_jiffies()
-Date: Tue, 22 Oct 2024 18:53:50 +0000
-Message-Id: <20241022185353.2080021-2-eahariha@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241022185353.2080021-1-eahariha@linux.microsoft.com>
-References: <20241022185353.2080021-1-eahariha@linux.microsoft.com>
+	s=arc-20240116; t=1729623282; c=relaxed/simple;
+	bh=X0JFf0OoFpP/6TpzZM2f+rDXKVrTpoRkxCNc0WWKP1w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ri58PbIK8Vxs4lm2ZFehKFO3+rF6H2tYvxyWCLZ2JFUXCnkFj9juqRErlUSm4g2Ehzif9LrfpkaSQLXsBBUq3QEQM8Qn/8PLY0sFfU1QJeOQOl6m5XvVJjN4Bi8+PR2APG6kvYt/E9x4KdoYcoIQdthOpHPR2/4cjRkHDpO+C60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=f6nLgZ7s; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBQKdd007903;
+	Tue, 22 Oct 2024 11:54:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=h/lbEB65YgsaKP04LsjTsqG
+	5K7YyvL4+cYwDHOFtq6U=; b=f6nLgZ7sMZed/oI//hvSOyPfvJOTkLgg1VDomLx
+	52nvfqDxNXeztMnlA69uFqenrFqcVfG9NFqmHeCjRY/5Ssotob5IxyN92cLjmyQL
+	YV+uHMWExgM6ajrvzVSD4NVEr5BhyKBLXxVQN0MkMCXYvo9WT0hQeaXq0N6dUZqM
+	Ku9M0jpNk5rK4QdgEnJrwoepHQ+pZoooT7a1im8gEUAD9YsJDfFz041G9bW5eV6Z
+	YP+wvRkQUUWwyAYiAKpLIhkbYBjG93Ckh6dMVeetuIMzLDksHF9TbYRa92JUrktV
+	s1GStmcAwX7Itk1R7K8Rno9B+o9WwvZz0Mcnqhyu/F8KyZA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42eb66s55p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 11:54:19 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 22 Oct 2024 11:54:18 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Oct 2024 11:54:18 -0700
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 2324B3F7075;
+	Tue, 22 Oct 2024 11:54:13 -0700 (PDT)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>,
+        <kalesh-anakkur.purayil@broadcom.com>
+CC: Sai Krishna <saikrishnag@marvell.com>
+Subject: [net-next PATCH v2 0/6] CN20K silicon with mbox support
+Date: Wed, 23 Oct 2024 00:24:04 +0530
+Message-ID: <20241022185410.4036100-1-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,110 +74,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: cv3DaQLFYFjwc33j-vvkYZe4KAOn8Vv6
+X-Proofpoint-ORIG-GUID: cv3DaQLFYFjwc33j-vvkYZe4KAOn8Vv6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-We have several places where timeouts are open-coded as N (seconds) * HZ,
-but best practice is to use the utility functions from jiffies.h. Convert
-the timeouts to be compliant. This doesn't fix any bugs, it's a simple code
-improvement.
+CN20K is the next generation silicon in the Octeon series with various
+improvements and new features.
 
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Along with other changes the mailbox communication mechanism between RVU
+(Resource virtualization Unit) SRIOV PFs/VFs with Admin function (AF) has
+also gone through some changes.
+
+Some of those changes are
+- Separate IRQs for mbox request and response/ack.
+- Configurable mbox size, default being 64KB.
+- Ability for VFs to communicate with RVU AF instead of going through
+  parent SRIOV PF.
+
+Due to more memory requirement due to configurable mbox size, mbox memory
+will now have to be allocated by
+- AF (PF0) for communicating with other PFs and all VFs in the system.
+- PF for communicating with it's child VFs.
+
+On previous silicons mbox memory was reserved and configured by firmware.
+
+This patch series add basic mbox support for AF (PF0) <=> PFs and
+PF <=> VFs. AF <=> VFs communication and variable mbox size support will
+come in later.
+
+Patch #1 Supported co-existance of bit encoding PFs and VFs in 16-bit
+         hardware pcifunc format between CN20K silicon and older octeon
+         series. Also exported PF,VF masks and shifts present in mailbox
+         module to all other modules.
+
+Patch #2 Added basic mbox operation APIs and structures to support both
+         CN20K and previous version of silicons.
+
+Patch #3 This patch adds support for basic mbox infrastructure
+         implementation for CN20K silicon in AF perspective. There are
+         few updates w.r.t MBOX ACK interrupt and offsets in CN20k.
+         
+Patch #4 Added mbox implementation between NIC PF and AF for CN20K.
+
+Patch #5 Added mbox communication support between AF and AF's VFs.
+
+Patch #6 This patch adds support for MBOX communication between NIC PF and
+         its VFs.
+
+Sai Krishna (5):
+  octeontx2-af: CN20k basic mbox operations and structures
+  octeontx2-af: CN20k mbox to support AF REQ/ACK functionality
+  octeontx2-pf: CN20K mbox REQ/ACK implementation for NIC PF
+  octeontx2-af: CN20K mbox implementation for AF's VF
+  octeontx2-pf: CN20K mbox implementation between PF-VF
+
+Subbaraya Sundeep (1):
+  octeontx2: Set appropriate PF, VF masks and shifts based on silicon
+
 ---
- drivers/hv/hv_balloon.c  | 8 ++++----
- drivers/hv/hv_kvp.c      | 4 ++--
- drivers/hv/hv_snapshot.c | 3 ++-
- drivers/hv/vmbus_drv.c   | 2 +-
- 4 files changed, 9 insertions(+), 8 deletions(-)
+v2 changes:
+	Addressed review comments given by Kalesh Anakkur Purayil
+        1. Optimized code in parts of patches, removed redundant code
+        2. Fixed sparse warning
+        3. Removed debug log, and code cleanup.
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index c38dcdfcb914..79a72e68f427 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -756,7 +756,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
- 		 * adding succeeded, it is ok to proceed even if the memory was
- 		 * not onlined in time.
- 		 */
--		wait_for_completion_timeout(&dm_device.ol_waitevent, 5 * HZ);
-+		wait_for_completion_timeout(&dm_device.ol_waitevent, secs_to_jiffies(5));
- 		post_status(&dm_device);
- 	}
- }
-@@ -1373,7 +1373,7 @@ static int dm_thread_func(void *dm_dev)
- 	struct hv_dynmem_device *dm = dm_dev;
- 
- 	while (!kthread_should_stop()) {
--		wait_for_completion_interruptible_timeout(&dm_device.config_event, 1 * HZ);
-+		wait_for_completion_interruptible_timeout(&dm_device.config_event, secs_to_jiffies(1));
- 		/*
- 		 * The host expects us to post information on the memory
- 		 * pressure every second.
-@@ -1748,7 +1748,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
- 	if (ret)
- 		goto out;
- 
--	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-+	t = wait_for_completion_timeout(&dm_device.host_event, secs_to_jiffies(5));
- 	if (t == 0) {
- 		ret = -ETIMEDOUT;
- 		goto out;
-@@ -1806,7 +1806,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
- 	if (ret)
- 		goto out;
- 
--	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-+	t = wait_for_completion_timeout(&dm_device.host_event, secs_to_jiffies(5));
- 	if (t == 0) {
- 		ret = -ETIMEDOUT;
- 		goto out;
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index d35b60c06114..29e01247a087 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -655,7 +655,7 @@ void hv_kvp_onchannelcallback(void *context)
- 		if (host_negotiatied == NEGO_NOT_STARTED) {
- 			host_negotiatied = NEGO_IN_PROGRESS;
- 			schedule_delayed_work(&kvp_host_handshake_work,
--				      HV_UTIL_NEGO_TIMEOUT * HZ);
-+						secs_to_jiffies(HV_UTIL_NEGO_TIMEOUT));
- 		}
- 		return;
- 	}
-@@ -724,7 +724,7 @@ void hv_kvp_onchannelcallback(void *context)
- 		 */
- 		schedule_work(&kvp_sendkey_work);
- 		schedule_delayed_work(&kvp_timeout_work,
--					HV_UTIL_TIMEOUT * HZ);
-+				      secs_to_jiffies(HV_UTIL_TIMEOUT));
- 
- 		return;
- 
-diff --git a/drivers/hv/hv_snapshot.c b/drivers/hv/hv_snapshot.c
-index 0d2184be1691..86d87486ed40 100644
---- a/drivers/hv/hv_snapshot.c
-+++ b/drivers/hv/hv_snapshot.c
-@@ -193,7 +193,8 @@ static void vss_send_op(void)
- 	vss_transaction.state = HVUTIL_USERSPACE_REQ;
- 
- 	schedule_delayed_work(&vss_timeout_work, op == VSS_OP_FREEZE ?
--			VSS_FREEZE_TIMEOUT * HZ : HV_UTIL_TIMEOUT * HZ);
-+				secs_to_jiffies(VSS_FREEZE_TIMEOUT) :
-+				secs_to_jiffies(HV_UTIL_TIMEOUT));
- 
- 	rc = hvutil_transport_send(hvt, vss_msg, sizeof(*vss_msg), NULL);
- 	if (rc) {
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 9b15f7daf505..7db30881e83a 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -2507,7 +2507,7 @@ static int vmbus_bus_resume(struct device *dev)
- 	vmbus_request_offers();
- 
- 	if (wait_for_completion_timeout(
--		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
-+		&vmbus_connection.ready_for_resume_event, secs_to_jiffies(10)) == 0)
- 		pr_err("Some vmbus device is missing after suspending?\n");
- 
- 	/* Reset the event for the next suspend. */
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/cn20k/api.h |  34 ++
+ .../marvell/octeontx2/af/cn20k/mbox_init.c    | 418 ++++++++++++++++++
+ .../ethernet/marvell/octeontx2/af/cn20k/reg.h |  81 ++++
+ .../marvell/octeontx2/af/cn20k/struct.h       |  40 ++
+ .../net/ethernet/marvell/octeontx2/af/mbox.c  | 129 +++++-
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  13 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   | 185 +++++---
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  52 ++-
+ .../marvell/octeontx2/af/rvu_struct.h         |   6 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |  18 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   1 +
+ .../ethernet/marvell/octeontx2/nic/cn20k.c    | 252 +++++++++++
+ .../ethernet/marvell/octeontx2/nic/cn20k.h    |  17 +
+ .../marvell/octeontx2/nic/otx2_common.h       |  35 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 145 ++++--
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h |  49 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  44 +-
+ 19 files changed, 1377 insertions(+), 147 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/api.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/mbox_init.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/reg.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+
 -- 
-2.34.1
+2.25.1
 
 
