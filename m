@@ -1,154 +1,109 @@
-Return-Path: <linux-kernel+bounces-376610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A112A9AB3C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880E19AB3C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E89B8B242B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332A61F2153D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D01BBBCD;
-	Tue, 22 Oct 2024 16:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736D11B07AE;
+	Tue, 22 Oct 2024 16:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DxdcD2ag"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMLaYi3i"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C8F1A76D1;
-	Tue, 22 Oct 2024 16:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7B31A38E4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729614118; cv=none; b=ijvpm8viKruyYfW0yZ9+NiFY6OBMhKdnNnNpPCrD2sQAlsS8+poFqfxKgY26jYUstSAnRay3CFtaeR92gazIEIQGReLLtCGqHzmxf+w+kD/K0JZDGpQZ1znD18tfVjW1p346PSMsUpsh+cXNbb6FVZUkrJLkbvboOocyXQxvxss=
+	t=1729614102; cv=none; b=RD6Faz+ab1pYGOhb/ykzh/P70WqJWO73MCLngjfP+rkKEOrE6YFv8zXZ026XaWmKBKpOX7BisAMX9H77Oou+Q4Z1C0s+K1moCMAlychEptVGMMOfQoXCGTow9HpkHUq20iUcQTepzykR0/OAURHNJ5Vn0+42Uo8Jkhc6mbUzeJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729614118; c=relaxed/simple;
-	bh=g0X8esJl5OXSo6yVG0u/hl1XuyhY3af4PbbgX2UZJcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WrPneXoGXbUe/ENdr25QP/E9f/stiFk48NLN+kdubZkhNAoS4994kMGIltt+s0P4bukE8zrVvZcu8zOC3Sj5FUI/9E1L1LkEsaWEWO4UGwwA5jfgKjlPKELvyB67Elq7UwsYMTkPJ4wcfR0cp4rm/wvng1nHH/Q3S/Lq9w85VJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DxdcD2ag; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49MGLTuM811311
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 22 Oct 2024 09:21:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49MGLTuM811311
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1729614091;
-	bh=mMa/nEHi+IJsuIgB+ctUr20GZTFdfugp1CDxj/jJrYg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DxdcD2agaLTNr8riwzxdG21klgd9KXakweVzSJ08kiapCzxErhZksXuvILgoUMX+8
-	 y6QIrTQcxV/1I/A2kG9ZZltAhW2IBe5f1PnQ5EAACWsCq4O4E6pgMS8z+a5ZwlDvz9
-	 sfw6LPIc/3xPjcckhYC7VzdbIRzP7ZTOM+SiQ5cRzzWaHWoBTBrwyk5UP+3UGCHc2b
-	 aCDju3JNJidMA9/XPFcCv+xZDHr1VCS67tNUy9Wi8PO+qFNo8K/TS5EfXtZio7QIgl
-	 pzkXFJz5k1Zhw5oqGm0RFlk4EDqMw1IivQuL+sci54lz/Oo6Fuhw4tn1WhsfacTAY7
-	 s27WZSr7BEFig==
-Message-ID: <332870de-888a-4ebc-9ca5-d4980f79b8be@zytor.com>
-Date: Tue, 22 Oct 2024 09:21:28 -0700
+	s=arc-20240116; t=1729614102; c=relaxed/simple;
+	bh=259y/NALTpfzycNQF0RX20neEB0RTLzUden805nlCPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H3x86hc1UgoyAfe7J2KQSorVQPYvnHWjd3MP5foOjFAoQA8fWxbsjAoA4ZRecmcp8mUZNr0znC0gokgbCcN/7hK2+GzFt07/s1Tru6rONJiLy5EQrm8Jwa1lBGzMjrcT5qqOLR/desyE3QuPLPAOO7Bhlul2XLfVzhUhXSZcs3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VMLaYi3i; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e305c2987bso55597877b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729614100; x=1730218900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/AB6AS7bJ5wBbcya1+n7l9nd8Ua0pFUCnTuSAh4P1Yk=;
+        b=VMLaYi3iJGV0Gt1dpwGVVk4YGW4AtAKyZ1lrESQpn/Hg8HS/Il20P3s8BoYLcbwI3H
+         E933KqNqLSnp0o6QwxCbyU9ZL6dIBINsn6ysFRxbUq2gYu70J8/joXO9RS5NrpeNH/bj
+         P+kOjJ49617zfUjSICuOq4xR5ISqs99XG5F/a8dh9Uk5l8CAGPVaEIx7jaQ2fK9n8UU2
+         wzq5vd51fHZ/fVw6ElfqrwOyPkngUO8ljlgd9uM5AjZU6BCT+OByxd+KulcAKEmiTAKk
+         QBUsfcPSo+P9xT8GwcKOAGMWzKM6/8tN+Br4+rk9lYvIDROjP/92nQ0AzCqHtKA/XYnu
+         RdCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729614100; x=1730218900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/AB6AS7bJ5wBbcya1+n7l9nd8Ua0pFUCnTuSAh4P1Yk=;
+        b=dzOOmedJMPtXYFTlIYE5l9wCKVYkqAi0CkxHv0lR49oyHxkTb38QZ9PfljL69K5P/l
+         WhZDl0nCfzPi4cM/takqWnaUy15ahgFY1SxKbQhheBMS3WqVTQeuGMbjfxVLDsn0MP8S
+         IBf6EfluC2M9GaMw93kKNouU/0wn313JUwvrrJfErHA6ewNR7K7FQQjEEwQqcy7yC/q1
+         MoU1NPR3v9hSzMfBsE9n4goMZ7ypfOns95jW0svtPsEirCQIjqHBnkZ4MrxBKnsTHgys
+         AXa5/FvW84vcuOSSLExvz7OGko8YmAV0grTx0fxXpCEybtFyiFdgMs5cC0dA/WdDGPGe
+         9lig==
+X-Forwarded-Encrypted: i=1; AJvYcCXEY8fOgMLRgEG319PADs+yI+DbIecNrARgvEF/BkofKgTpCsaZdoLL/q2vTwnC3gSCF1ZU2LgPn29c+1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3s2ylKS47MFl3lF5sKtV/KBZUgjCxBn4LV/OGVZZfacWNuscR
+	3CRy8UzSxrTQJdF6QEtWwLDpBV46a5Pzh0dW+zrNUSvKlJhg18CSzyM3Bqgj2oSSxgPnfGVS4Lf
+	xZZMWQPSBkahiUV1Xo06RwOmQ+D4=
+X-Google-Smtp-Source: AGHT+IE+TRHtfB4nMJrRi9Yp3xiRB091X4SarymBV8L4OkkaBBLISizccqEWXgEdDSpDwu8/sSxQcDkT1iKSKP2SLdk=
+X-Received: by 2002:a05:690c:6f87:b0:6dd:beee:9218 with SMTP id
+ 00721157ae682-6e7d3b848a3mr42202967b3.30.1729614100326; Tue, 22 Oct 2024
+ 09:21:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/27] KVM: VMX: Disable FRED if FRED consistency
- checks fail
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-6-xin@zytor.com> <ZxdmxC92KmMQVYNU@intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <ZxdmxC92KmMQVYNU@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241017162054.2701638-1-olvaffe@gmail.com> <20241022123052.3e0f3f17@collabora.com>
+In-Reply-To: <20241022123052.3e0f3f17@collabora.com>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Tue, 22 Oct 2024 09:21:29 -0700
+Message-ID: <CAPaKu7SbrtMpD=TvrB_y1DfhN1rNafLwAkdhX6+gzCW0ukg=0Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/syncobj: ensure progress for syncobj queries
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	faith.ekstrand@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/22/2024 1:48 AM, Chao Gao wrote:
-> On Mon, Sep 30, 2024 at 10:00:48PM -0700, Xin Li (Intel) wrote:
->> From: Xin Li <xin3.li@intel.com>
->>
->> Do not virtualize FRED if FRED consistency checks fail.
->>
->> Either on broken hardware, or when run KVM on top of another hypervisor
->> before the underlying hypervisor implements nested FRED correctly.
->>
->> Suggested-by: Chao Gao <chao.gao@intel.com>
->> Signed-off-by: Xin Li <xin3.li@intel.com>
->> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
->> Tested-by: Shan Kang <shan.kang@intel.com>
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> 
-> one nit below,
-> 
->> ---
->> arch/x86/kvm/vmx/capabilities.h | 7 +++++++
->> arch/x86/kvm/vmx/vmx.c          | 3 +++
->> 2 files changed, 10 insertions(+)
->>
->> diff --git a/arch/x86/kvm/vmx/capabilities.h b/arch/x86/kvm/vmx/capabilities.h
->> index e8f3ad0f79ee..2962a3bb9747 100644
->> --- a/arch/x86/kvm/vmx/capabilities.h
->> +++ b/arch/x86/kvm/vmx/capabilities.h
->> @@ -400,6 +400,13 @@ static inline bool vmx_pebs_supported(void)
->> 	return boot_cpu_has(X86_FEATURE_PEBS) && kvm_pmu_cap.pebs_ept;
->> }
->>
->> +static inline bool cpu_has_vmx_fred(void)
->> +{
->> +	/* No need to check FRED VM exit controls. */
-> 
-> how about:
-> 
-> 	/*
-> 	 * setup_vmcs_config() guarantees FRED VM-entry/exit controls are
-> 	 * either all set or none. So, no need to check FRED VM-exit controls.
-> 	 */
-> 
-> It is better to call out the reason.
-> 
-
-make sense!
+On Tue, Oct 22, 2024 at 3:30=E2=80=AFAM Boris Brezillon
+<boris.brezillon@collabora.com> wrote:
+>
+> On Thu, 17 Oct 2024 09:20:53 -0700
+> Chia-I Wu <olvaffe@gmail.com> wrote:
+>
+> > Userspace might poll a syncobj with the query ioctl.  Call
+> > dma_fence_enable_sw_signaling to ensure dma_fence_is_signaled returns
+> > true in finite time.
+> >
+> > ---
+> >
+> > panvk hits this issue when timeline semaphore is enabled.  It uses the
+> > transfer ioctl to propagate fences.  dma_fence_unwrap_merge converts th=
+e
+> > dma_fence_chain to a dma_fence_array.  dma_fence_array_signaled never
+> > return true unless signaling is enabled.
+>
+> Looks like a bugfix to me. Should we add Fixes+Cc-stable tags so it
+> gets backported to stable branches.
+Thanks.  v2 sent with the Fixes tag.  I did not add Cc-stable because
+I was told it was the maintainers' decision last time.
 
