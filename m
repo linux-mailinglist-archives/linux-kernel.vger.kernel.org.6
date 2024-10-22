@@ -1,202 +1,296 @@
-Return-Path: <linux-kernel+bounces-375878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8649A9C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:19:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0092C9A9C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B821F23392
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF8C1C21B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05063186E2E;
-	Tue, 22 Oct 2024 08:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694415665E;
+	Tue, 22 Oct 2024 08:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcqvT+Xv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GS2C+W2l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE9F16132F;
-	Tue, 22 Oct 2024 08:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585169; cv=none; b=XnWe8I8Jfk06TyfTbrntkvMapA034xlgY1TxW6cgO1++vxFn6wUQlITzR3mSdkNiRziBnxZPmpa5XjRfD0nU0HcCi4/H1WPsjjw7Jm0Th5gBpqzSFQ2NIUG1QDlSEntBEYQ+LK9d8udB4Wh0hESGsrys/N00qMPVcQ00MrQa7Tk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585169; c=relaxed/simple;
-	bh=rWojlmF9uqY832qw2BFfBjpjd9urFCzse7K42Knm8sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwJxghaK3bqT/d28aqcZubhzcXoYGnJxwnJ80RlDaxLChj3ItTzLZPfmfRen87Y+34aI+MwtoVzgPLmZrOlHxsI7UJYQqD03N14cUhQqNDj3RegjDyj9mxWbbQeVA/Du9/pA2eUjECF4iky4UZf23QvYlkJGsccpm7xV4VNGXXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcqvT+Xv; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD30E1494A6;
+	Tue, 22 Oct 2024 08:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729585164; cv=fail; b=Y/P7rr4di+dDlG7Iau5eU+fh+ufAtdbnT20AB4qJpjN3MONe+ute9R6P1E0fojWFsjGE8OE8PgDbDDYV/eHznBVv4pceiWVAS1frADfud0ViiVKheE7N15fNSIa6PbfC0v/iyKjowT4TA5DIeU8pSSUuukEsGjaO83TL1omo1bE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729585164; c=relaxed/simple;
+	bh=Pgot3s2ddk8YO0afePXHOxXbUo8w+39jmqCJ5euRwN4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I/n0+yCZSfpnk50fhLuXrMkBzuEEYY0xLMipS2Y+HEUL/bt0puW8UTKqjI9BHVQfBxVQ5wZYJ9w5F9GcfbJjQzwPYJyrKZxSep2DGM+fpLccdbXdECpNDy3/jgZaXKMla+xvBm3PdSnYqSQSuWd7xbJYsX0k7pCBkcLX4933ulo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GS2C+W2l; arc=fail smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729585167; x=1761121167;
+  t=1729585163; x=1761121163;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rWojlmF9uqY832qw2BFfBjpjd9urFCzse7K42Knm8sQ=;
-  b=dcqvT+XvGdJ/UHuOtiNILstJVXwT96zjDSipFqH9rk4/j3AlR00kD7cG
-   Clgt9eObcMr/a3W/XUZllfJG7RXCTgcyvR9lpvFfciuGxSx/H3cbgw6gc
-   kSlLEuAidyAl0t/1AX1T+4oWiFQQIYpatYQ2A0tVleIiT5XJVaKBGpQCv
-   WzL3VXyRX9/azIoqiu+3G8mXaUD2b/mo7F0iOyWYH5Sf+38ikmdAaBQoJ
-   O5P8PxM8f2026thYJ0vumGwzmQSAXMlmjUrrnlz710HvnAhZAw3HVmS81
-   7WP4z58u285bvaL2LCdabuM07EBGXA6TH0vY+ZyEiUut6PzPqf31aYiiz
-   w==;
-X-CSE-ConnectionGUID: LbQ364AGSUqzWZrbhhOwHg==
-X-CSE-MsgGUID: ZVmwZ6nOSgWo+Rni9nnABQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40224367"
+   in-reply-to:mime-version;
+  bh=Pgot3s2ddk8YO0afePXHOxXbUo8w+39jmqCJ5euRwN4=;
+  b=GS2C+W2l03/HhLxQznuApC+q3r0wfTemJfDl2q/J2I9NxXnH3tF5mzZj
+   MJvBl3jlsYq6cQ3JKJFjtlJfkl3XUIXZgGcnKTGroKVotHNWTd50ysO6I
+   E4La4Mss/XRR9GQ8iRB/GzOj3UIIuNukMFQOlEyr96FdH8KinzHHhzNjt
+   99TYIYoxgMoHcvSSXwkF7vmZMexEXU6eu0L2dSMtqABsJ9h2i93ZB2fsP
+   MSrozcCOVEIBD6sFHvm+5DT9RSghp4iPyH1ld9nvEcMazyLjDv4Co8KWH
+   th/6Qic2RCIjr0H+/lWoRL02GgFyAFvhCHry8vH9/H/GM43iHW7M926KF
+   A==;
+X-CSE-ConnectionGUID: lpkrVeyHSBK/tGZjTgrTZQ==
+X-CSE-MsgGUID: MQVnX5eKQ1yJnGHNgD2aNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29258081"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40224367"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:19:27 -0700
-X-CSE-ConnectionGUID: CmbChcUrRsuE4QRMaPpOKg==
-X-CSE-MsgGUID: JM69lcaGSO6hCXFknq0ezQ==
+   d="scan'208";a="29258081"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 01:19:22 -0700
+X-CSE-ConnectionGUID: 51Yf3e9kQGiTaOyBIFHEyg==
+X-CSE-MsgGUID: K44P1tNNRwqpVP5Mwh5QVw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,222,1725346800"; 
-   d="scan'208";a="117215837"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 22 Oct 2024 01:19:23 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3A6q-000TIQ-2g;
-	Tue, 22 Oct 2024 08:19:20 +0000
-Date: Tue, 22 Oct 2024 16:19:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sai Krishna <saikrishnag@marvell.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sgoutham@marvell.com, gakula@marvell.com, lcherian@marvell.com,
-	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com
-Cc: oe-kbuild-all@lists.linux.dev, Sai Krishna <saikrishnag@marvell.com>
-Subject: Re: [net-next PATCH 6/6] octeontx2-pf: CN20K mbox implementation
- between PF-VF
-Message-ID: <202410221614.07o9QVjo-lkp@intel.com>
-References: <20241018203058.3641959-7-saikrishnag@marvell.com>
+   d="scan'208";a="80598547"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Oct 2024 01:19:22 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 22 Oct 2024 01:19:21 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 22 Oct 2024 01:19:21 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 01:19:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tMQcxbbHiGLDZNieNjoVtegj6dZtLq7pSpHTAzKhhQGmYYVb3OL2Ukcl9JPKec4kghq+IRftNuX+tNiWzK8WLN936uQXbgmaMZhDpHBfJF38TEz6JQbmnd7H/Fxrl/XggeANIu8JXGSWXAtTVZnTCgQILonY1LAuE/QN4TgmZE7bWjt6xnCa8GAykRiz9lZ8dygxJs4g0m6pk8/w9nZz+1BUGlyZ8xCLNiq4D3uy+heU0rWqF7R1q3qgJcxo3ApZFVX9d15lI4Sxkx3c4DNFFM7KP2qB0LyhC5BVz0rN55M9Ubl6CHfX1Cudm78tmw21HttvCsMsEJYfj6NiSh9Lsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GaNVusM+TeQ9qtavOLmS+uW6Zv7j58P7JtDqtVuCtCg=;
+ b=qxCyg/qkdy/G69DMBG6boXm9BWAH1wx2q7QXIbyYLgL0phAZbh47BOqFcXIJV8DAjLrxfOsPSQfPMNN6cJ9bP9NFFRXHVUugzKcPrtNwq/VeAXBuKiSfkx9CZyQTMXwnSbW9FHSiXS9SGhgXbKmTkxqadxoMWTKwTJJcOwJbLL0kwf1wFFGviIRxr2SleICMq0XVeUIXk42NWrDb+bnjZ/gL/g7MTp3aLq1ervttgj7bi5xEeBqYnpNhGsjqh4SikcZnGFBVjL6VDBG3wmgs+tV7ouR8/NO1RgR/fmmjLRMswKDf+LhWyuDONMF+qB2/Y1mWswKPyf5eqD8WKruKjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com (2603:10b6:806:2f1::13)
+ by PH7PR11MB6907.namprd11.prod.outlook.com (2603:10b6:510:203::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Tue, 22 Oct
+ 2024 08:19:18 +0000
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec]) by SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec%6]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
+ 08:19:18 +0000
+Date: Tue, 22 Oct 2024 01:19:14 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Huang Ying <ying.huang@intel.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Huang Ying <ying.huang@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, David Hildenbrand <david@redhat.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alistair Popple <apopple@nvidia.com>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Baoquan He <bhe@redhat.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>
+Subject: Re: [PATCH] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+Message-ID: <6717600289c1e_2312294ab@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20241022053835.217703-1-ying.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241022053835.217703-1-ying.huang@intel.com>
+X-ClientProxiedBy: MW4PR04CA0106.namprd04.prod.outlook.com
+ (2603:10b6:303:83::21) To SA3PR11MB8118.namprd11.prod.outlook.com
+ (2603:10b6:806:2f1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018203058.3641959-7-saikrishnag@marvell.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR11MB8118:EE_|PH7PR11MB6907:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99f71a22-4777-4da3-546b-08dcf2723916
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?X2vUks3DZGlKBF4sXXchSyUZvKhCpFqhn8LjWExLcqQTIkwujwDZSidPmOYT?=
+ =?us-ascii?Q?cKjdZdnc0oSZ8h2Uou3KvJtvUeORwQ0/KVsVLdsjHuEyNZA9r+LZaZax268w?=
+ =?us-ascii?Q?STjHxK354Fvw6qEk5BgnmCdrlfMEA61aiTyyaIv0thDJcIX/NqBOAgxS4J8H?=
+ =?us-ascii?Q?zxf+75FFe/W99msoWtkTkwRZAvNO6bqnA4WSu+NIEGD6uDWqHduMmi14g1W+?=
+ =?us-ascii?Q?dTrhchKbtxoLHCpPV3bX2CQX8JFy1V7d/V60O+PQ8B+9Ygf8o5yW5maekqsV?=
+ =?us-ascii?Q?851SNhUOHdk2bg40nxwJ4jy0wlYkGQ3rkLexcOr56rdmdQppMVhLfWZcIICT?=
+ =?us-ascii?Q?z6B8XZYRjhTJM8Z0r1+0GpEoLifwd0RfiXY916RmTHDMVuLpaNZrLb3kcNEQ?=
+ =?us-ascii?Q?7frSzxZusDIqPYt4OATlJ9Bdg+aiQwiAN6ofLQvsmrAkjuv4pn0RRWRBMPNP?=
+ =?us-ascii?Q?zX1pbEuK7xHqc3AQgj4neK7VrS75DaQUvBQ1QmO8LMBEKQL5QVpOzys/MxI0?=
+ =?us-ascii?Q?0H04TDhd7lcXSYUUk8xzLMUNhGqwIun+n+dvcuX/vONlUFnG9Su0FUlta6lR?=
+ =?us-ascii?Q?6Ctz+RMJpubSUjZxbB2Q09+RMTO023zDLX2zGdQWoxRjTGewcbbzHV6ysMSP?=
+ =?us-ascii?Q?O5+HIDdQ6mYwbwtEKpoFVJsegl7AiQwSD4aLHm82cjNiiyQ23UntQQr+Ailf?=
+ =?us-ascii?Q?tPCGarulc2IDM81aaAOxmvORbkEnWOVYjoWB6gIJb2WZP5uCxckuIm96k8T6?=
+ =?us-ascii?Q?Qrt8vL3NpLkM2MYL8AJBPeDKBXgvPXmIfGn2mRWwEau6IdyIigWeipmfgJZ+?=
+ =?us-ascii?Q?MLcZBms1vTcyrByR2Ek+Gog4aholuAEth/i+Wcc2J/CSdd6Ph9tKIvjXIcil?=
+ =?us-ascii?Q?OQpJ7e+sI/SOMmlVBtFzDaNI5irRDG5tlRvZvpxRvMQpR00pEpxVbRKACsoV?=
+ =?us-ascii?Q?Hq5DBjJZhZoOAeAB3CTTdo64c8GOU/E0iijEOrS9AEpk2kHycu92KwvnrJD8?=
+ =?us-ascii?Q?jM5KVnhWBKaVT+lCLVU/+fyunlztgQXTxtJgTIUOpFMJZvA3Xw24kDWc1/Xd?=
+ =?us-ascii?Q?DOQbDKsIs29rmurY3tqZHiqx3i5bAPR7Byqy7Tt6oXnt+aVe8Q1GcipsKqj1?=
+ =?us-ascii?Q?kMifPlDCJ+VotbKB5n28l05AzrOoCiMcUg3+/QnuSGutmzcIWCNZWO6klNl9?=
+ =?us-ascii?Q?0hPv35As3sz+VOhkDYmcp83w4cYaTAO15HtD8EngfkiWmTE4bmFUBZYWsjn5?=
+ =?us-ascii?Q?UVHxkZxeuuIAl/QZH7toiq4XM/xJKr8xfFABXanN7xcgWiB1YmdROcPzNJm2?=
+ =?us-ascii?Q?hBOFiA9Z5jsKEwIMV3Ks5ADd?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8118.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ii0fUdytmnH6ApJapMbWEft9dLy1u6na2o87cWTn2ieM45vBrLO4ZROTlZEj?=
+ =?us-ascii?Q?9rhMD/nYK175gk2367DVh87Geu2Hol4adDFlP0cHuiHVavFyA7oeK9p37XRm?=
+ =?us-ascii?Q?gpBGpxwH94NIvmJiJd12AskpsSn8VSqiYPCidQc/eHgCjvK3oCRlmIqQ6Pfv?=
+ =?us-ascii?Q?2+OjaVArLFu3uxlpjxvudb3MDW007G1dYGL5hLTK9iZiqCbSHtjEd/K5WxxY?=
+ =?us-ascii?Q?OEoCIGLSFdFojxHabb4vN38dR65NR596UON8JYMBPpcifV64a4aeSNcHjjh9?=
+ =?us-ascii?Q?kwvk9gGysoJaWVKUXp2L7dhr5Sp0vap3dHyHWJlSlG7CBrqvwaZCJ1wd9DU3?=
+ =?us-ascii?Q?PbAqIWOzFMmeIQURP67RpCjg6HZCfSK5iblQfW8oydYvtOct5B4Fm0SivVdN?=
+ =?us-ascii?Q?oMAGJyRnI0Pp+JzHS65AvmrlBbLewTWwRhFs1LzPV2yBSYNaNOm6w2vWNQBQ?=
+ =?us-ascii?Q?5W2YjkG8ulbgdNIv5a0evdCftGnNXr+IpwB+mfI8P165v+UQewrD+rRsrgh2?=
+ =?us-ascii?Q?orLObeEatKD3fVpp4OXdY2Kl921bmImQoVwNVRRj8/4k1S5pr2NPrNX7HlEy?=
+ =?us-ascii?Q?tnBQStyn6U8StEIaieALt/YKKuLS+1bth+ttHwjFfrAMipM/p81L9UcJ2oHM?=
+ =?us-ascii?Q?OWkhQW3PBeLL8T69StW5ueV+glDG1PCTAWl38G7uQZjwMgJR2se2VsFATPc8?=
+ =?us-ascii?Q?FX6r4dnC+wYuJrth4LNoUG4lOIVAyeyApf0El4faI3us9q1ZEYD3ucobVZy8?=
+ =?us-ascii?Q?72Sde5F3LFMx/LrN62s9KEkk9xd1QgmeY2iD3814wlASYw9QEmzZxdobNi8t?=
+ =?us-ascii?Q?qci+fEwUhRqompbrMICaEDg/ftawCO+R+N5AVHq+E7ZnpJ2ZqyhQB+Hpo7o3?=
+ =?us-ascii?Q?qsKdHJcZEvWmEoi8KJMCvNNUsNyPhciP3eg7YJbUraias7Q5L9hSjrvDKdl2?=
+ =?us-ascii?Q?t79KWlRTF8BiUX1hdHu2aLwVMWbWRa85kWqaG6fN7rt8tEOzEm8uxf2j1Bob?=
+ =?us-ascii?Q?zHUO9beNFf7P3DZzIIRFh/piCdX2NVIcgaFlHR35QlI3aDPz9d8be7Oy/ipk?=
+ =?us-ascii?Q?2CnAb3mqkf3XqWK/GSI87wc2yERhxv3wpj8nEJAGjMQ0g1Ub5PV+WTsNwLiE?=
+ =?us-ascii?Q?tncOsf8NPJq/Cew6NeGvmmFtOvfcCdRZ5cUAlQubAmK+sosRvxDwDcK9KXsP?=
+ =?us-ascii?Q?oDPRtL/9D8NiFvkq/MyJ95ByZju/SyNIbV6NytiirHz35j9YmW6iDjNAWFYD?=
+ =?us-ascii?Q?sli/4hM8/G/zhUw8ViXgaOCpYOg8NBvUmaReZBj84VnAqY/mB5QpNqk5H79M?=
+ =?us-ascii?Q?vekl8MtiFLxoEMYh/LHDsO4oVEAAIUXFyX8K7fgL6rLQBs8pvLN0t8zdsel8?=
+ =?us-ascii?Q?ue93AKFBrrR7jwcKNGjdg0AKpTBm5eZaVEFjw3bpTNsM+SV98uT25divG9he?=
+ =?us-ascii?Q?2pXgyRpZxFL06dnZEuHbmGc2sYfJTf5DfI7Ufk8tlY5DuAVV0nOYbiYExsY7?=
+ =?us-ascii?Q?uFEd1qyTyZcBV+t8/ku0j1HTe8JZxqYCHqLMHHj7TVhVUyY3AseuD5agvUwe?=
+ =?us-ascii?Q?SgSE2g5uZOtCM+BoDbw0jpgwPCcJR6oJMADL1/zOIUWo4+TFqPbm8AMDPmca?=
+ =?us-ascii?Q?Ng=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99f71a22-4777-4da3-546b-08dcf2723916
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8118.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 08:19:17.9030
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zqhZr24TyDyQW7wuKNOEzOZn+WwgksoLEuZDkh82OGMd/R2KuCMlzW7ByTJzsWZBKe5kmCnP08+PHvjfevjKU+AlUjJgUm678G8WxSvfniY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6907
+X-OriginatorOrg: intel.com
 
-Hi Sai,
+Huang Ying wrote:
+[..]
+> For the example resource tree as follows,
+> 
+>   X
+>   |
+>   A----D----E
+>   |
+>   B--C
+> 
+> if 'A' is the overlapped but unmatched resource, original kernel
+> iterates 'B', 'C', 'D', 'E' when it walks the descendant tree.  While
+> the patched kernel iterates only 'B', 'C'.
+> 
+> It appears even better to revise for_each_resource() to traverse the
+> resource subtree under "_root" only.  But that will cause "_root" to
+> be evaluated twice, which I don't find a good way to eliminate.
+> 
+> Thanks David Hildenbrand for providing a good resource tree example.
 
-kernel test robot noticed the following build warnings:
+Should this have a Reported-by: and a Closes: tags for that report?
+Seems useful to capture that in the history.
 
-[auto build test WARNING on net-next/main]
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> ---
+> 
+> Changes:
+> 
+> RFC->v1:
+> 
+> - Revised patch description and comments, Thanks David and Andy!
+> 
+> - Link to RFC: https://lore.kernel.org/linux-mm/20241010065558.1347018-1-ying.huang@intel.com/
+> 
+> ---
+>  kernel/resource.c | 26 +++++++++++++++++++++++---
+>  1 file changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index b730bd28b422..bd217d57fb09 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -50,15 +50,34 @@ EXPORT_SYMBOL(iomem_resource);
+>  
+>  static DEFINE_RWLOCK(resource_lock);
+>  
+> -static struct resource *next_resource(struct resource *p, bool skip_children)
+> +/*
+> + * Return the next node of @p in pre-order tree traversal.  If
+> + * @skip_children is true, skip the descendant nodes of @p in
+> + * traversal.  If @p is a descendant of @subtree_root, only traverse
+> + * the subtree under @subtree_root.
+> + */
+> +static struct resource *__next_resource(struct resource *p, bool skip_children,
+> +					struct resource *subtree_root)
+>  {
+>  	if (!skip_children && p->child)
+>  		return p->child;
+> -	while (!p->sibling && p->parent)
+> +	while (!p->sibling && p->parent) {
+>  		p = p->parent;
+> +		if (p == subtree_root)
+> +			return NULL;
+> +	}
+>  	return p->sibling;
+>  }
+>  
+> +static struct resource *next_resource(struct resource *p, bool skip_children)
+> +{
+> +	return __next_resource(p, skip_children, NULL);
+> +}
+> +
+> +/*
+> + * Traverse the whole resource tree with @_root as root in pre-order.
+> + * NOTE: @_root should be the topmost node, that is, @_root->parent == NULL.
+> + */
+>  #define for_each_resource(_root, _p, _skip_children) \
+>  	for ((_p) = (_root)->child; (_p); (_p) = next_resource(_p, _skip_children))
+>  
+> @@ -572,7 +591,8 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
+>  		covered = false;
+>  		ostart = max(res.start, p->start);
+>  		oend = min(res.end, p->end);
+> -		for_each_resource(p, dp, false) {
+> +		/* Traverse the subtree under 'p'. */
+> +		for (dp = p->child; dp; dp = __next_resource(dp, false, p)) {
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sai-Krishna/octeontx2-Set-appropriate-PF-VF-masks-and-shifts-based-on-silicon/20241019-043511
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241018203058.3641959-7-saikrishnag%40marvell.com
-patch subject: [net-next PATCH 6/6] octeontx2-pf: CN20K mbox implementation between PF-VF
-config: alpha-randconfig-r122-20241022 (https://download.01.org/0day-ci/archive/20241022/202410221614.07o9QVjo-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20241022/202410221614.07o9QVjo-lkp@intel.com/reproduce)
+Perhaps a new for_each_resource_descendant() to clarify this new
+iterator from for_each_resource()?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410221614.07o9QVjo-lkp@intel.com/
+Otherwise looks good to me:
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:611:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *hwbase @@     got void * @@
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:611:24: sparse:     expected void [noderef] __iomem *hwbase
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:611:24: sparse:     got void *
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:620:56: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:671:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void *hwbase @@
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:671:35: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:671:35: sparse:     got void *hwbase
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1344:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __iomem * @@
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1344:21: sparse:     expected unsigned long long [usertype] *ptr
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1344:21: sparse:     got void [noderef] __iomem *
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1383:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __iomem * @@
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1383:21: sparse:     expected unsigned long long [usertype] *ptr
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1383:21: sparse:     got void [noderef] __iomem *
-   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c: note: in included file (through drivers/net/ethernet/marvell/octeontx2/af/mbox.h, drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h):
->> drivers/net/ethernet/marvell/octeontx2/af/common.h:61:26: sparse: sparse: cast truncates bits from constant value (10000 becomes 0)
-
-vim +611 drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-
-   584	
-   585	static int otx2_pfvf_mbox_init(struct otx2_nic *pf, int numvfs)
-   586	{
-   587		void __iomem *hwbase;
-   588		struct mbox *mbox;
-   589		int err, vf;
-   590		u64 base;
-   591	
-   592		if (!numvfs)
-   593			return -EINVAL;
-   594	
-   595		pf->mbox_pfvf = devm_kcalloc(&pf->pdev->dev, numvfs,
-   596					     sizeof(struct mbox), GFP_KERNEL);
-   597		if (!pf->mbox_pfvf)
-   598			return -ENOMEM;
-   599	
-   600		pf->mbox_pfvf_wq = alloc_workqueue("otx2_pfvf_mailbox",
-   601						   WQ_UNBOUND | WQ_HIGHPRI |
-   602						   WQ_MEM_RECLAIM, 0);
-   603		if (!pf->mbox_pfvf_wq)
-   604			return -ENOMEM;
-   605	
-   606		/* For CN20K, PF allocates mbox memory in DRAM and writes PF/VF
-   607		 * regions/offsets in RVU_PF_VF_MBOX_ADDR, the RVU_PFX_FUNC_PFAF_MBOX
-   608		 * gives the aliased address to access PF/VF mailbox regions.
-   609		 */
-   610		if (is_cn20k(pf->pdev)) {
- > 611			hwbase = cn20k_pfvf_mbox_alloc(pf, numvfs);
-   612		} else {
-   613			/* On CN10K platform, PF <-> VF mailbox region follows after
-   614			 * PF <-> AF mailbox region.
-   615			 */
-   616			if (test_bit(CN10K_MBOX, &pf->hw.cap_flag))
-   617				base = pci_resource_start(pf->pdev, PCI_MBOX_BAR_NUM) +
-   618							  MBOX_SIZE;
-   619			else
-   620				base = readq((void __iomem *)((u64)pf->reg_base +
-   621						      RVU_PF_VF_BAR4_ADDR));
-   622	
-   623			hwbase = ioremap_wc(base, MBOX_SIZE * pf->total_vfs);
-   624			if (!hwbase) {
-   625				err = -ENOMEM;
-   626				goto free_wq;
-   627			}
-   628		}
-   629	
-   630		mbox = &pf->mbox_pfvf[0];
-   631		err = otx2_mbox_init(&mbox->mbox, hwbase, pf->pdev, pf->reg_base,
-   632				     MBOX_DIR_PFVF, numvfs);
-   633		if (err)
-   634			goto free_iomem;
-   635	
-   636		err = otx2_mbox_init(&mbox->mbox_up, hwbase, pf->pdev, pf->reg_base,
-   637				     MBOX_DIR_PFVF_UP, numvfs);
-   638		if (err)
-   639			goto free_iomem;
-   640	
-   641		for (vf = 0; vf < numvfs; vf++) {
-   642			mbox->pfvf = pf;
-   643			INIT_WORK(&mbox->mbox_wrk, otx2_pfvf_mbox_handler);
-   644			INIT_WORK(&mbox->mbox_up_wrk, otx2_pfvf_mbox_up_handler);
-   645			mbox++;
-   646		}
-   647	
-   648		return 0;
-   649	
-   650	free_iomem:
-   651		if (hwbase && !(is_cn20k(pf->pdev)))
-   652			iounmap(hwbase);
-   653	free_wq:
-   654		destroy_workqueue(pf->mbox_pfvf_wq);
-   655		return err;
-   656	}
-   657	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 
