@@ -1,72 +1,173 @@
-Return-Path: <linux-kernel+bounces-377086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94B99AB9A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C6F9AB967
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1192A1C23AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCDA1C21471
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF051D042A;
-	Tue, 22 Oct 2024 22:49:25 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F7B1CF5E8;
-	Tue, 22 Oct 2024 22:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6201CCEFC;
+	Tue, 22 Oct 2024 22:22:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148D11A2547;
+	Tue, 22 Oct 2024 22:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729637364; cv=none; b=IYC9vUq7GHpISXc80tJIy3XV51Gj/wzOvTyARnpOI27q4tW/3LSrUth26zCfelYAI8Det5hKcHCGyIw3RPE8Q7sS7U7lYYuyXBACBJnUlu9EnY7M6aA+M49NJjXZXmXhv7VNZA69d6bCtfd7F0l1e/cDzxNokUuyNJjGDiXfXWY=
+	t=1729635725; cv=none; b=OyA4270gPfkMPGrov/GGG69kUqKJaIf6uiN4QwThZ9m9VFShB3jw78+D35OwKwOcg3WcosxSdIolJy3tGdrKVP/uLl2BNv4py0JsQiZle3hrkb7IveCqfZPmF4dsOUtiAlD0NJPkzT9eUsIIP3hc6972d/xNtxKoQoSm0Z42ckM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729637364; c=relaxed/simple;
-	bh=H1Lbj8kCDs1jnCOjeopWcZI5CsC1Et7PMkG+2mbQFaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhP05cUO1oRIDo+Kg37UICr33IFjlcnnF95fPyp+5yUIM2s0nxx9FHUqVhHdwMSsJrbq242fXyDGt8VjtbTe47ARMZkC2CUG8YQGyrD30Igu2Cah8ZsjLEAvpu+3TrAMLmYCjrsLCYMW4ULMAywnHq4Y1LrY4seYb3cndlN0bzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1t3MjJ-0001gl-00; Tue, 22 Oct 2024 23:47:53 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 3CCFBC01E8; Tue, 22 Oct 2024 18:20:12 +0200 (CEST)
-Date: Tue, 22 Oct 2024 18:20:12 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: David Sterba <dsterba@suse.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: export __cmpxchg_small()
-Message-ID: <ZxfQvMx2xOIeSP8N@alpha.franken.de>
-References: <20241022143914.27372-1-dsterba@suse.com>
+	s=arc-20240116; t=1729635725; c=relaxed/simple;
+	bh=8xyrjJ3jUJlSYyKe/7D6pnYkrtio2NI0cUYAyczc2J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F8ZwK8VpsYwOD7NOzWgYAvgsYW8aVUvh18aQ8AFON+yzbzbNXE0o9YR8rVPRsxEX3D2nVqF9tArmwi3CHkz96jWn0i0lhU7fBVCwZBBvB4AArlxmUuta//obOZvzkAyfJ7/GPqDAjUUJcCGW6eHLX0B1UHt0BLekJp54BebzSQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9903497;
+	Tue, 22 Oct 2024 15:22:30 -0700 (PDT)
+Received: from [10.57.56.252] (unknown [10.57.56.252])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E91B33F528;
+	Tue, 22 Oct 2024 15:21:59 -0700 (PDT)
+Message-ID: <51bdabae-6464-4a11-8017-b97d51223466@arm.com>
+Date: Tue, 22 Oct 2024 23:23:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022143914.27372-1-dsterba@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/11] thermal: core: Introduce
+ thermal_cdev_update_nocheck()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <4985597.31r3eYUQgx@rjwysocki.net>
+ <1835097.VLH7GnMWUR@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <1835097.VLH7GnMWUR@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 04:39:13PM +0200, David Sterba wrote:
-> Export the symbol __cmpxchg_small() for btrfs.ko that will use it to
-> store blk_status_t, which is u8. Reported by LKP:
+
+
+On 10/10/24 23:16, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> >> ERROR: modpost: "__cmpxchg_small" [fs/btrfs/btrfs.ko] undefined!
+> Three thermal governors call __thermal_cdev_update() under the
+> cdev lock without doing any checks, so in order to reduce the
+> related code duplication, introduce a new helper function called
+> thermal_cdev_update_nocheck() for them and make them use it.
 > 
-> Patch using the cmpxchg() https://lore.kernel.org/linux-btrfs/1d4f72f7fee285b2ddf4bf62b0ac0fd89def5417.1728575379.git.naohiro.aota@wdc.com/
+> No intentional functional impact.
 > 
-> Link: https://lore.kernel.org/all/20241016134919.GO1609@suse.cz/
-> Signed-off-by: David Sterba <dsterba@suse.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
 > 
-> I can merge it via the btrfs git tree along the fix or wait until it's
-> merged the usual way, please let me know.
+> This is a resend of
+> 
+> https://lore.kernel.org/linux-pm/3791590.MHq7AAxBmi@rjwysocki.net/
+> 
+> ---
+>   drivers/thermal/gov_bang_bang.c       |    4 +---
+>   drivers/thermal/gov_fair_share.c      |    4 +---
+>   drivers/thermal/gov_power_allocator.c |    5 ++---
+>   drivers/thermal/thermal_core.h        |    1 +
+>   drivers/thermal/thermal_helpers.c     |   13 +++++++++++++
+>   5 files changed, 18 insertions(+), 9 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/gov_bang_bang.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+> +++ linux-pm/drivers/thermal/gov_bang_bang.c
+> @@ -30,9 +30,7 @@ static void bang_bang_set_instance_targe
+>   
+>   	dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
+>   
+> -	mutex_lock(&instance->cdev->lock);
+> -	__thermal_cdev_update(instance->cdev);
+> -	mutex_unlock(&instance->cdev->lock);
+> +	thermal_cdev_update_nocheck(instance->cdev);
+>   }
+>   
+>   /**
+> Index: linux-pm/drivers/thermal/gov_fair_share.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_fair_share.c
+> +++ linux-pm/drivers/thermal/gov_fair_share.c
+> @@ -89,9 +89,7 @@ static void fair_share_throttle(struct t
+>   		}
+>   		instance->target = div_u64(dividend, divisor);
+>   
+> -		mutex_lock(&cdev->lock);
+> -		__thermal_cdev_update(cdev);
+> -		mutex_unlock(&cdev->lock);
+> +		thermal_cdev_update_nocheck(cdev);
+>   	}
+>   }
+>   
+> Index: linux-pm/drivers/thermal/gov_power_allocator.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_power_allocator.c
+> +++ linux-pm/drivers/thermal/gov_power_allocator.c
+> @@ -322,9 +322,8 @@ power_actor_set_power(struct thermal_coo
+>   		return ret;
+>   
+>   	instance->target = clamp_val(state, instance->lower, instance->upper);
+> -	mutex_lock(&cdev->lock);
+> -	__thermal_cdev_update(cdev);
+> -	mutex_unlock(&cdev->lock);
+> +
+> +	thermal_cdev_update_nocheck(cdev);
+>   
+>   	return 0;
+>   }
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -213,6 +213,7 @@ static inline bool cdev_is_power_actor(s
+>   }
+>   
+>   void thermal_cdev_update(struct thermal_cooling_device *);
+> +void thermal_cdev_update_nocheck(struct thermal_cooling_device *cdev);
+>   void __thermal_cdev_update(struct thermal_cooling_device *cdev);
+>   
+>   int get_tz_trend(struct thermal_zone_device *tz, const struct thermal_trip *trip);
+> Index: linux-pm/drivers/thermal/thermal_helpers.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_helpers.c
+> +++ linux-pm/drivers/thermal/thermal_helpers.c
+> @@ -206,6 +206,19 @@ void thermal_cdev_update(struct thermal_
+>   }
+>   
+>   /**
+> + * thermal_cdev_update_nocheck() - Unconditionally update cooling device state
+> + * @cdev: Target cooling device.
+> + */
+> +void thermal_cdev_update_nocheck(struct thermal_cooling_device *cdev)
+> +{
+> +	mutex_lock(&cdev->lock);
+> +
+> +	__thermal_cdev_update(cdev);
+> +
+> +	mutex_unlock(&cdev->lock);
+> +}
+> +
+> +/**
+>    * thermal_zone_get_slope - return the slope attribute of the thermal zone
+>    * @tz: thermal zone device with the slope attribute
+>    *
+> 
+> 
+> 
 
-just merge via btrfs tree.
 
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
