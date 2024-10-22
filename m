@@ -1,362 +1,108 @@
-Return-Path: <linux-kernel+bounces-376192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76DE9AA159
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:48:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB41C9AA161
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45111C21CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73831283B32
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DD119D07B;
-	Tue, 22 Oct 2024 11:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D1B19CC11;
+	Tue, 22 Oct 2024 11:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gm0MBwpd"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZWs795M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE9619D070
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D091945026;
+	Tue, 22 Oct 2024 11:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597700; cv=none; b=evr1qoBWyr1WvdDUcp/u/QKdreiOiVo5TgYg0n39qxSCAG8BNdJkrDvyfUoYQtb4LO8zxXTJGNL1ZO1mduk0qeZ31cin3pyFmFoH4h/Pn5nb2v47KaUM9bG/xT3cAMjw527NOsD+T4Wr++8UPf16qzLaqX424MSKCeJz6WBnXno=
+	t=1729597856; cv=none; b=QRRudxyUJ6UA2R6177b/sTjHRg1ulYfTUEthbQTrhGXkfPtw8gN7CcnbdCTVKUQfHLMnthtVfVy9BKP1ORtSBw62D5HgenbmJHyC2ChMf54CcEUDvNl9hrDmoIBeVjd89lX6/VPGoeCuZDuxKiFDIXSpmCiaH4bzGBLzp6BFdIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597700; c=relaxed/simple;
-	bh=ZuDh7T7vqb/uJ2Oh6TRsNbWExWPRw6celRvdfqKZJE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SHBZ2odzlPJ8VKTQ6ND139DgeHpWHiDGCxWAerI6FWKunQUKyX6TmVs26nq9JX2jL1BlGMnUmmh6Ufwgi/4421lLer1SXe8cO/tFmNn937gSPX/7sDvVa7+nPL0BYfusczv632nSN4X6uyrEWwlyiYA+aWGx9oqxolwNyGBgK+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gm0MBwpd; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a3dc089d8so769807666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729597696; x=1730202496; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TJFTWiRH4O8HY/U6C1bLi9fAv/VSueOH/7iJiF8HHhM=;
-        b=gm0MBwpdQ3CJ4xWRVtEV8HmXqAkAx8cQBGeh7W2iZ391eP8DKHAZucHIrnto6xm3CG
-         yWmnY6d1Ju3qQgG4yUmcDuqNkvx2b/r7tUVLWUWMUgeQwaPHTGIPavxx/zdwye5oGzDf
-         Hbq8pnA7+QYYDrdc1jjQ3kubvlsAgp0uv0x34N0NT+qfwsP4fpoe8C/CU7pZT2lJ3e2A
-         dG6ao6rcJSsp6Ab9ob8TA22PSB4CGzvpbEF6Y1aS7nqmmGtOmblm81YTzcw+9ODqEy0a
-         NYhntunA3sJwOmV/Y/AXIDxg6NyZL4e7aiuMH4PcjiyzINxgxHJPpoe+/sDPoxMBPGtV
-         ogzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729597696; x=1730202496;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJFTWiRH4O8HY/U6C1bLi9fAv/VSueOH/7iJiF8HHhM=;
-        b=rbGAsHnVJfYXadan+Y7gi+IbYpbKAeH7xZJteXuLkgoUIsuUmYwWD6iEdO5pOSpUvX
-         69lbjVJKOb2qjTysgCHZV8ppNrneen99Lyl1iSp83EUpopSTSLlmGeGxUfNH7Mt4VCMI
-         u6Goto0iBDEHAUoJ9b+QLpZhlx+g6w1gCJFWS0bCQZV2KF1AXXX1wsadB3xZ810UPIPH
-         +ciC2EUqXNVFE6hbwF/Bpb5r3NRWwGAIJjNf7Npt/jsWfHvH3Q0BX5kkuHRhkhz4sHBX
-         +fFBWoBK3r6Ax9sOObHP7Flwhy+bX8ekt2slu4pKv/bgEK6uWSXvUivrJ7A9vqjesFFG
-         3rjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW/6DTVVbCBurc+AA31jHEq1/PiY4tU7qggeyVXutt7SyGcHT+fhxgUbigKip5lpRqywv5ZFXffWoQNsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5Uawcgme3FLg/Kr+7o7FodporpFRONhDxb0qmh/Fjs5HNyQbx
-	5wTsPBfWKVqTFh9i8gq1mAapfVmaPwx1duKU2GQgagqWFs0y1TJ51OTsaoE7690=
-X-Google-Smtp-Source: AGHT+IGirT1OYLdQdwRgbtzBYUPa7HMsmRQgF+L+andwnPHiKz4xoSVTAFzmWrtDqIA/pp1+hj4X3Q==
-X-Received: by 2002:a17:906:c14a:b0:a99:40e6:157c with SMTP id a640c23a62f3a-a9a6995e2a4mr1455707166b.4.1729597696091;
-        Tue, 22 Oct 2024 04:48:16 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ee10bsm328222566b.51.2024.10.22.04.48.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 04:48:15 -0700 (PDT)
-Message-ID: <8fa10131-fae2-4052-b541-e4a6ef570d63@suse.com>
-Date: Tue, 22 Oct 2024 13:48:14 +0200
+	s=arc-20240116; t=1729597856; c=relaxed/simple;
+	bh=Sb8lVQfAJSsNdgUk7lhkAOkHqbSB9Nk8K7CiMvOOKpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QOw4t2W9Fs3AjB5ALeau5dOKwDSxJ7KTIgUA2zMGzfEt88SF7HouA4NP7I/5+XzQn4DwOG4Y/Q/5TV+DIz/9r54EDGi5YHEMlqwtS/gyEMlsWlnrZndUVcoUvQSkXZmIz+6sEDUAPJCEoDagrOmX32bYBhH1hdw4Tf67vt69LVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZWs795M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D763DC4CEC3;
+	Tue, 22 Oct 2024 11:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729597856;
+	bh=Sb8lVQfAJSsNdgUk7lhkAOkHqbSB9Nk8K7CiMvOOKpY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oZWs795MQT1w0DT6/2vpliOff8Mzn1UvpJfZNWo1wirdA7QuMtPxFoW/di5iYIB1w
+	 f/ibxuxchsGamv/70mBuIwEsleYrzQ8hwzpmCsKxJT1y3BLZ7ZgobfVGlRtQdoPt/e
+	 iufrbyO4FFHPDT+Y33rzp+qpsX++g0+87sLRoxgBADABHYJyjdvOb/FQbWt8pLK9Ho
+	 EunGArZFf85N4RH8mAiCwlB02gCR1oTNpfKYBr9muo4inIXVH6jpvdhGmEOwdqUva+
+	 N+4OHGe+a7udkNqK8XOKasDM6vOG50pmYwaHZClJXW8Wo8opqDIQc9fDkiGH7K7420
+	 LhQOQTeRUOo+Q==
+Date: Tue, 22 Oct 2024 12:50:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <1e89542d-6f9e-4e85-8292-ebb49091433a@sirena.org.uk>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZxeEA6i_xfBMxJm4@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/19] gendwarfksyms: Add symbol versioning
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20241008183823.36676-21-samitolvanen@google.com>
- <20241008183823.36676-34-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20241008183823.36676-34-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tW+KPPurF5xfWQtX"
+Content-Disposition: inline
+In-Reply-To: <ZxeEA6i_xfBMxJm4@sashalap>
+X-Cookie: Surprise due today.  Also the rent.
 
-On 10/8/24 20:38, Sami Tolvanen wrote:
-> Calculate symbol versions from the fully expanded type strings in
-> type_map, and output the versions in a genksyms-compatible format.
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Neal Gompa <neal@gompa.dev>
-> ---
->  scripts/gendwarfksyms/dwarf.c         |  25 +++++-
->  scripts/gendwarfksyms/gendwarfksyms.c |  11 ++-
->  scripts/gendwarfksyms/gendwarfksyms.h |  13 ++-
->  scripts/gendwarfksyms/symbols.c       |  59 +++++++++++++
->  scripts/gendwarfksyms/types.c         | 122 +++++++++++++++++++++++++-
->  5 files changed, 222 insertions(+), 8 deletions(-)
-> 
-> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-> index e1a9e9061b1d..a47a3a0f7a69 100644
-> --- a/scripts/gendwarfksyms/dwarf.c
-> +++ b/scripts/gendwarfksyms/dwarf.c
-> @@ -723,12 +723,33 @@ static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
->  /*
->   * Exported symbol processing
->   */
-> +static struct die *get_symbol_cache(struct state *state, Dwarf_Die *die)
-> +{
-> +	struct die *cache;
-> +
-> +	cache = die_map_get(die, DIE_SYMBOL);
-> +
-> +	if (cache->state != DIE_INCOMPLETE)
-> +		return NULL; /* We already processed a symbol for this DIE */
-> +
-> +	cache->tag = dwarf_tag(die);
-> +	return cache;
-> +}
-> +
->  static void process_symbol(struct state *state, Dwarf_Die *die,
->  			   die_callback_t process_func)
->  {
-> +	struct die *cache;
-> +
-> +	symbol_set_die(state->sym, die);
-> +
-> +	cache = get_symbol_cache(state, die);
-> +	if (!cache)
-> +		return;
-> +
->  	debug("%s", state->sym->name);
-> -	check(process_func(state, NULL, die));
-> -	state->sym->state = SYMBOL_MAPPED;
-> +	check(process_func(state, cache, die));
-> +	cache->state = DIE_SYMBOL;
->  	if (dump_dies)
->  		fputs("\n", stderr);
->  }
-> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
-> index 24c87523fc3a..e90d909d259b 100644
-> --- a/scripts/gendwarfksyms/gendwarfksyms.c
-> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
-> @@ -23,6 +23,8 @@ int dump_dies;
->  int dump_die_map;
->  /* Print out type strings (i.e. type_map) */
->  int dump_types;
-> +/* Print out expanded type strings used for symbol versions */
-> +int dump_versions;
->  /* Write a symtypes file */
->  int symtypes;
->  static const char *symtypes_file;
-> @@ -35,6 +37,7 @@ static void usage(void)
->  	      "      --dump-dies      Dump DWARF DIE contents\n"
->  	      "      --dump-die-map   Print debugging information about die_map changes\n"
->  	      "      --dump-types     Dump type strings\n"
-> +	      "      --dump-versions  Dump expanded type strings used for symbol versions\n"
->  	      "  -T, --symtypes file  Write a symtypes file\n"
->  	      "  -h, --help           Print this message\n"
->  	      "\n",
-> @@ -69,9 +72,10 @@ static int process_module(Dwfl_Module *mod, void **userdata, const char *name,
->  	} while (cu);
->  
->  	/*
-> -	 * Use die_map to expand type strings and write them to `symfile`.
-> +	 * Use die_map to expand type strings, write them to `symfile`, and
-> +	 * calculate symbol versions.
->  	 */
-> -	generate_symtypes(symfile);
-> +	generate_symtypes_and_versions(symfile);
->  	die_map_free();
->  
->  	return DWARF_CB_OK;
-> @@ -92,6 +96,7 @@ int main(int argc, char **argv)
->  				 { "dump-dies", 0, &dump_dies, 1 },
->  				 { "dump-die-map", 0, &dump_die_map, 1 },
->  				 { "dump-types", 0, &dump_types, 1 },
-> +				 { "dump-versions", 0, &dump_versions, 1 },
->  				 { "symtypes", 1, NULL, 'T' },
->  				 { "help", 0, NULL, 'h' },
->  				 { 0, 0, NULL, 0 } };
-> @@ -167,5 +172,7 @@ int main(int argc, char **argv)
->  	if (symfile)
->  		check(fclose(symfile));
->  
-> +	symbol_print_versions();
-> +
->  	return 0;
->  }
-> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
-> index e47b5e967520..814f53ef799e 100644
-> --- a/scripts/gendwarfksyms/gendwarfksyms.h
-> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
-> @@ -26,6 +26,7 @@ extern int debug;
->  extern int dump_dies;
->  extern int dump_die_map;
->  extern int dump_types;
-> +extern int dump_versions;
->  extern int symtypes;
->  
->  /*
-> @@ -98,6 +99,7 @@ static inline unsigned int addr_hash(uintptr_t addr)
->  enum symbol_state {
->  	SYMBOL_UNPROCESSED,
->  	SYMBOL_MAPPED,
-> +	SYMBOL_PROCESSED
->  };
->  
->  struct symbol_addr {
-> @@ -112,6 +114,7 @@ struct symbol {
->  	struct hlist_node name_hash;
->  	enum symbol_state state;
->  	uintptr_t die_addr;
-> +	unsigned long crc;
->  };
->  
->  typedef void (*symbol_callback_t)(struct symbol *, void *arg);
-> @@ -119,6 +122,10 @@ typedef void (*symbol_callback_t)(struct symbol *, void *arg);
->  void symbol_read_exports(FILE *file);
->  void symbol_read_symtab(int fd);
->  struct symbol *symbol_get(const char *name);
-> +void symbol_set_die(struct symbol *sym, Dwarf_Die *die);
-> +void symbol_set_crc(struct symbol *sym, unsigned long crc);
-> +void symbol_for_each(symbol_callback_t func, void *arg);
-> +void symbol_print_versions(void);
->  
->  /*
->   * die.c
-> @@ -128,7 +135,8 @@ enum die_state {
->  	DIE_INCOMPLETE,
->  	DIE_UNEXPANDED,
->  	DIE_COMPLETE,
-> -	DIE_LAST = DIE_COMPLETE
-> +	DIE_SYMBOL,
-> +	DIE_LAST = DIE_SYMBOL
->  };
->  
->  enum die_fragment_type {
-> @@ -158,6 +166,7 @@ static inline const char *die_state_name(enum die_state state)
->  	CASE_CONST_TO_STR(DIE_INCOMPLETE)
->  	CASE_CONST_TO_STR(DIE_UNEXPANDED)
->  	CASE_CONST_TO_STR(DIE_COMPLETE)
-> +	CASE_CONST_TO_STR(DIE_SYMBOL)
->  	}
->  
->  	error("unexpected die_state: %d", state);
-> @@ -245,6 +254,6 @@ void process_cu(Dwarf_Die *cudie);
->   * types.c
->   */
->  
-> -void generate_symtypes(FILE *file);
-> +void generate_symtypes_and_versions(FILE *file);
->  
->  #endif /* __GENDWARFKSYMS_H */
-> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
-> index e414257333e5..e17f11a02f6e 100644
-> --- a/scripts/gendwarfksyms/symbols.c
-> +++ b/scripts/gendwarfksyms/symbols.c
-> @@ -66,6 +66,36 @@ static unsigned int for_each(const char *name, symbol_callback_t func,
->  	return 0;
->  }
->  
-> +static void set_crc(struct symbol *sym, void *data)
-> +{
-> +	unsigned long *crc = data;
-> +
-> +	if (sym->state == SYMBOL_PROCESSED && sym->crc != *crc)
-> +		warn("overriding version for symbol %s (crc %lx vs. %lx)",
-> +		     sym->name, sym->crc, *crc);
-> +
-> +	sym->state = SYMBOL_PROCESSED;
-> +	sym->crc = *crc;
-> +}
-> +
-> +void symbol_set_crc(struct symbol *sym, unsigned long crc)
-> +{
-> +	if (for_each(sym->name, set_crc, &crc) == 0)
-> +		error("no matching symbols: '%s'", sym->name);
-> +}
-> +
-> +static void set_die(struct symbol *sym, void *data)
-> +{
-> +	sym->die_addr = (uintptr_t)((Dwarf_Die *)data)->addr;
-> +	sym->state = SYMBOL_MAPPED;
-> +}
-> +
-> +void symbol_set_die(struct symbol *sym, Dwarf_Die *die)
-> +{
-> +	if (for_each(sym->name, set_die, die) == 0)
-> +		error("no matching symbols: '%s'", sym->name);
-> +}
-> +
->  static bool is_exported(const char *name)
->  {
->  	return for_each(name, NULL, NULL) > 0;
-> @@ -120,6 +150,16 @@ struct symbol *symbol_get(const char *name)
->  	return sym;
->  }
->  
-> +void symbol_for_each(symbol_callback_t func, void *arg)
-> +{
-> +	struct hlist_node *tmp;
-> +	struct symbol *sym;
-> +
-> +	hash_for_each_safe(symbol_names, sym, tmp, name_hash) {
-> +		func(sym, arg);
-> +	}
-> +}
-> +
->  typedef void (*elf_symbol_callback_t)(const char *name, GElf_Sym *sym,
->  				      Elf32_Word xndx, void *arg);
->  
-> @@ -231,3 +271,22 @@ void symbol_read_symtab(int fd)
->  {
->  	elf_for_each_global(fd, elf_set_symbol_addr, NULL);
->  }
-> +
-> +void symbol_print_versions(void)
-> +{
-> +	struct hlist_node *tmp;
-> +	struct symbol *sym;
-> +
-> +	hash_for_each_safe(symbol_names, sym, tmp, name_hash) {
-> +		if (sym->state != SYMBOL_PROCESSED)
-> +			warn("no information for symbol %s", sym->name);
-> +
-> +		printf("#SYMVER %s 0x%08lx\n", sym->name, sym->crc);
-> +
-> +		free((void *)sym->name);
-> +		free(sym);
-> +	}
-> +
-> +	hash_init(symbol_addrs);
-> +	hash_init(symbol_names);
-> +}
 
-I had some minor comment about adjusting the name of function
-symbol_print_versions() and possibly changing sym->name to 'char *' on
-the v2 of the patch:
-https://lore.kernel.org/all/286b1cc5-1757-4f0a-bb66-0875f4608c7e@suse.com/
-Please have a look, it seems it felt through the cracks.
+--tW+KPPurF5xfWQtX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In any case, the patch looks ok to me, feel free to add:
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+On Tue, Oct 22, 2024 at 06:52:51AM -0400, Sasha Levin wrote:
+> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
 
--- 
-Thanks,
-Petr
+> The script tripped on the very first PR it looked at:
+> https://lore.kernel.org/all/20241021171728.274997-1-pbonzini@redhat.com/
+
+> And in particular, this commit: afa9b48f327c ("KVM: arm64: Shave a few
+> bytes from the EL2 idmap code")
+
+> (sorry, not trying to pick on anyone/anything, just an example...)
+
+> The commit can't be found on lore.kernel.org, it was never in -next, and
+> yet Linus pulled it promptly without questioning anything.
+
+That was on the list at least, but buried in the replies to a thread
+rather than posted separately:
+
+  https://lore.kernel.org/86msjc56mi.wl-maz@kernel.org
+
+--tW+KPPurF5xfWQtX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcXkZkACgkQJNaLcl1U
+h9CjvAf+P1Mz5Z5SXtPL7pLvag2JEpEI4h5VZsmFHbx28rkfdwor/Ra2oz9Uw2Kf
+HaU4zJpMSMw/1SxmmQTfdmblIr7qabYuhORM4Bn9EsqaT+FI+Xo5A1zBpFiNBHyY
+51OOMuRu24FX+xoDVB+3o9wbyk/iMWeiSOOXBLyIDRESiqtWJf8N7rKEC2gqe8N4
+G1NGRDnAT31A2WAN5ULycBL2ZWk+qlMsoARp82M7PQ8mpJqlRfkxHu5/Gmonc+Fj
+0CZknwg19H71EVGRoVjVWQQ1+gfK5EAaWL2vGwcSbFReA6DAv0BN9+DHpNIZxSOW
+cAl3qvMNHp6rZk0G2wBSvtUucG6h3g==
+=KI/T
+-----END PGP SIGNATURE-----
+
+--tW+KPPurF5xfWQtX--
 
