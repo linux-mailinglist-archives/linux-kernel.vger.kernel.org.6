@@ -1,232 +1,191 @@
-Return-Path: <linux-kernel+bounces-376925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F4E9AB78E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:21:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEF79AB792
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 22:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625DF1C231A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CA5284064
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17F1CB51D;
-	Tue, 22 Oct 2024 20:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C267C1CC148;
+	Tue, 22 Oct 2024 20:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XWr8RoUk"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iuFeAIg/"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2076.outbound.protection.outlook.com [40.107.103.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5858C13E41A;
-	Tue, 22 Oct 2024 20:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729628492; cv=none; b=OXhd+mv9+ayh1WV6YChNDuHheyUk+xuwdbjjnhOze53pL+n4JgMugIvdRZMyL2aZcOVFbAvAhfL+PXpUQ2SNNncdm9884WSN85Tagxu7VaSCy0aq1KlegT3Hgqcszbi9lHgoma09C93ZQ0Czg2P53ZpRL6auYcBC9QyoC+QnDQg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729628492; c=relaxed/simple;
-	bh=Bb4tE5HNy/3Q9LupdWC/qtV3X2KPMD0LdQD8kno5cqQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AO0qA4qq8oMOsebf/iL4OC21RfGM/nxm/HYJWM3vw0FDBVb5Ast8iWQ61l8NPxYmIF5GcfJT3Vu5covX2eqcX0zPQ+Dgq7gpTf3fBqG+vuVnRFHd2EWvDpQ+5DXNLzWyauGWLPPmqjiJEg2mn+M4/t/MubLgcBVK92xx8WDSWPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XWr8RoUk; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729628488; x=1729887688;
-	bh=7TAwg2NhjgC2rD2Ah41EmrFWH8kOz2HRpf/iGmgs2SE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XWr8RoUkWoKS/rcp6d/VoKQQI+xLAJPc3bQAkmmZr3qZyHP4p8Kq8DkGtDVCrvgoQ
-	 8CjhBGKwBi86UpsqVEwpU81AkdDPv/QiVyEPs78weqCoj7UQr1i0//IqKQ4NYs2HHJ
-	 qtfiLfDHgkJqNYbbMF9dGzctdheUsoBeCsID69/SJR7BP9JTXti9AOtrLESgYeYGnS
-	 Vz6dI0LHqLd5TA402dAGUOuZcV7QHfwoqXsOTeAhmAVWiynnB25JCwC6vA9G1eCJCx
-	 4IB1+JshIGLr1E91ezStRK7OXXtgG5pgSEkxpONQ3Hs5jVtCRLrq2ImBshzkN1og2K
-	 Ro+bPxy7WSCrQ==
-Date: Tue, 22 Oct 2024 20:21:24 +0000
-To: syzbot <syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_key_insert_take
-Message-ID: <HzGVLZXHcn_UkULYJTtpdjJTmVWHsXHFOUSQ54FrsFFxO6-jL6ZBUR99YbWPqEpJKYVGnr3ofRAsCuKVG3eeB29-WGiPP68MfUr1thNAmjE=@proton.me>
-In-Reply-To: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
-References: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 8c65888c2f230d8ff27f6c928231d32e4abe6c6c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0761413E41A;
+	Tue, 22 Oct 2024 20:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729628653; cv=fail; b=qyvYz4czYCqXlot/QIiDBXO/HAak7eaXu3sgxB/fAYPbAOvB8enyswj7HWsLf3f57sDiiQNrUYTIrJnDlschtbynk2oC9BIF7lQVuWegDPKs0v6iSja7YOt0qiJVklUWmc6Q4l5AZrQTZGxPQiJN7bkVl4S6s/ASEIyjPnXRtEo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729628653; c=relaxed/simple;
+	bh=lwTZdjpKh1u6ZEelloCd4cVsv1/WZr4DMz+xYETUaxM=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AkOtG0NRUUEPB4SpPIA/piM4bUCcbq8u1mhHsHPlUcqKIOGl4Ov4KFFZ+5oszqv877318Fnio5es9CbkTmPDGBRSszPKVXt8YrDlAH8vFCOcgefsLLxs3eJ0zTQZV+cN/+0bm5dHu14pW5UUI+M7EFc7rS5jwwS0uZoINNQuoow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iuFeAIg/; arc=fail smtp.client-ip=40.107.103.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U/pP0yqZmZw6otF5wonhTiUIWs1FOYZ3QWX3halct4KnAuJfaC5jAd5JoHUSdt5UH557/DbFcrZP1wpjzwnW5Qgepnirr++H5Mv2/Ek4FEXPZcd7OwLqDlAWAAvQqsqeXAgS4pWPmXLKrsAkA12VavNYEcVDkdbyTCqtkNl/bOTWYCPTozEdclCqC7MItEbsv99pyTNuirlHb1hnQGztHnzRuSqP+I4KlPb5P9E6vkrUWGmHTv4BfUbOI+2Nwyq04v1zE1FQSKW4Z2xD+KA18UZmfPZuPV2PXdG6FzP+LPpDndVwqU6mIjXIdUSDNL4Fcgm1VFQf4q5pIWvY9FXAHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=abgjQxhoXCTtMuOcz+E+nsz4LGeT2RFwZXAQPzDHl3c=;
+ b=EjUBNRf85nMdU9sVr48DoI7L6D+szFFNzBB/DZx3w3kDO71hnuB3GHGyRcxI/2LC6g7lbHFX+TEPBMrHGNggobbTQ4u2m920wnSDRPSAG/gpMaEbRbnO1AhJvAK59oAbRZxHTfifkFLYC3xq4lqeROaRmJIXLo25hl22t/cCLH98Kc5woNjNl/GqqvRnblfyNhIJQ148yBtGXCLdT/LuUZjSL5UWBX8r6TiOuc+0OuDmLJ5rFCJSxSIrAjnP+LuEZ7UT3lRhhEaeOE79Ye0RvfuoIb5kksHcEMHjsTLeOLxnOxSSImz6EvH8nhSC21tz32D51Kgdnbn+z5TqkqkHRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=abgjQxhoXCTtMuOcz+E+nsz4LGeT2RFwZXAQPzDHl3c=;
+ b=iuFeAIg/XXA5+0b6LYOEP+nx7EYXXy+ueVZQN/XBHkxBKMHsLyfOyh6ltXDIuAwLuzpN7CCJQ5WL9kavnYNQQtP8erdxx3BEEWCvYUIAAkTqK0RpCCZpa8VkcZ0bQwss1HSgWPdNFf++7adlFPyRnOfQGVaTNJGyknA72nrqs9/qVlIl1s20ZsnUx3ELUGx6GZctvkviQkY3NDFm7RR++E/Soi/sYjBhp1phIxsrZevyr1vEVmFgBl0mjB95XnOMo9yLoQLBRQeabk5w7IfRwIzqwK3AEnGIqbNk6xWSNRUmKW7oD4f24/ljMwVxCU/bCzvxYe87VHQXnMRsSmx8BQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB7901.eurprd04.prod.outlook.com (2603:10a6:102:ca::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 20:24:07 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Tue, 22 Oct 2024
+ 20:24:07 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: alexander.stein@ew.tq-group.com,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux@ew.tq-group.com (open list:TQ SYSTEMS BOARD & DRIVER SUPPORT),
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/1] arm64: dts: freescale: mba8mx: remove undocument 'data-lanes' at panel
+Date: Tue, 22 Oct 2024 16:23:41 -0400
+Message-Id: <20241022202342.1263766-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR04CA0012.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7901:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9c55f5c-044d-446f-a81f-08dcf2d77abc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VZIv+DPi50JTIpzNV40qZ6MibdaIv+WgYGQvjUrkz5LYEbzNukFBKu3cXvNW?=
+ =?us-ascii?Q?qQzfY07ym14NyQ905Oui1Vf2DAt408+vl/Kjr5bjTZ+iH5jX3AjNhn7pAvk3?=
+ =?us-ascii?Q?C2/FPZXGIodnHQ99OdzoYNJToiOzC+hSguvzk5hytom6BtokNb6UlPir40/W?=
+ =?us-ascii?Q?M4MrYfyJeOr0lSMfQchyAGyI11NdhXG5zJZ1HXUpMkb2nZt8i80gPvTT057g?=
+ =?us-ascii?Q?nApMnG6VIV72lzatbzuSaRFT6M+RWABS0bX/feS1rWr2JbhkIxCv+kK3ezPf?=
+ =?us-ascii?Q?PVQEebeyhqb7bj12e3bO2FfFZs4apLY0oHQrZbeNlyGCXr3rgq6xLJMARJIB?=
+ =?us-ascii?Q?uVtiyqNscmoTStH/H+LCutdud1//RGTJbIzYKLQu1aCfUvw8J2cq/9jshDEz?=
+ =?us-ascii?Q?CWmxobZYUkMJwHcnpkIHqRYGKEEFdsd9CqvaWxq1hJqVrIVP+qSnznMPBULa?=
+ =?us-ascii?Q?yk8btiL9gm+bCIFvwxFacDwg1dT3x/glIKB+vIMBIzxx9P282RdfmpV4ubQy?=
+ =?us-ascii?Q?VRa5EK5edc+cwGP4RgZTd4qFghX++ShzMX53NOoVFpRA/85agnEqMK2oFUyn?=
+ =?us-ascii?Q?ifz0JC83OejVu3igJEj/Q4jnBuZH2VojIQC+QA/p6JOuBZ0Phbd9bss8lfuD?=
+ =?us-ascii?Q?JFV4krGvVYlN5YjX5BBy41XEJ4yvQEgu02tHFedyZnsIc8+F2cpUOaBNmrSs?=
+ =?us-ascii?Q?QZSauaAS2UWuSzVse3Zomsfkcd9oCaGyVl0OM5a4NMKBKdeNVbg1kQx1qIhg?=
+ =?us-ascii?Q?ZNZdZtkQ1K/PO0h2ghZ8byr/SK3lwhT/325YjGqIcga25DzKEv4pkZ3Ch1lj?=
+ =?us-ascii?Q?Yrl7yoMAeBIyOHJRh7M+Ve2o9k6mULstRqdpgE5rEXkNjQNSQU5L0L1s35nR?=
+ =?us-ascii?Q?BUmJAndyRWCwlU2Ms/G6VYE0cccCjwAFbyY13sYeDP3jbemL+EikOTT+0pJo?=
+ =?us-ascii?Q?Hvvv8UIgtPlPO3+JfKtOYpmbd3Ihiri9hlcP+iYK6pIqxe302fsTKL2r5oMP?=
+ =?us-ascii?Q?7+2DoyBhUgT/4T8F7Mj9VKyAz3FPV7T0MMWfGTQgv7vkaYeLLP8LI0NUfC/E?=
+ =?us-ascii?Q?wdpot4D9IxBTSD3ojI1Ik0ZW4G8KFID4klfTAx0kb+rVaGRm0sdq3yiASo5l?=
+ =?us-ascii?Q?CG8YbSAZyZss1LqUha1y6njuFEMSBZ8Iyn1s1E7g6CKDnzdeXdhjcASDeUWp?=
+ =?us-ascii?Q?L+trLWrNhTVSCiB2jqJvegNr9xOw6+8yO+Lj1Qn4jUywSvQGA4TuhPOmKmou?=
+ =?us-ascii?Q?IgIEtMGJ8X5a3aGqQ9xSQzyAhMs8KSeZ2wWJQP0iRtSSOnopvwU1iBlEoa1f?=
+ =?us-ascii?Q?PnNFzSRwzWUKBc5YIjJjAfqAF3bP0NLPTpwXJpUvBReopg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8CM+2Be5LxiabQ4VIZ1NUp/0XjAg7MVlOSXJ2XpKQmasMVuvgt0x99OYvOr7?=
+ =?us-ascii?Q?6IIwkgt5Sj+h93LsFykzAjTDKHMsDq0DPxH50cAentG2J7lTmaUVoN7IuZAo?=
+ =?us-ascii?Q?zH/EIwUnYRx3gRMl6AsI5uc/Vv7PyzkHl+jTj/evCvaequhKChAgL3BbsF8j?=
+ =?us-ascii?Q?QBDoqYi19qgh7nn0WzHedNSorBvJzuj4CebG8vjSL9ojEwSrQHiXBcaJEvdk?=
+ =?us-ascii?Q?e4xEngwb/Mr+RoAZGHnVVaSZFHoJ6VgjK1j/JqEiH/CgEkqrHeNUJnU6hf6W?=
+ =?us-ascii?Q?bMHHeaD+ybAkJC1hJobOEDFqUx7eAJMDW8UaJVaXkLREzIfYT3KKxBE6tVDi?=
+ =?us-ascii?Q?39DWNizVgukLxjzHSfwnPIxZbfAB+MrKkPq0166tzC0stwmDrGInwX7799G+?=
+ =?us-ascii?Q?W6wnF2ab1tnaFX5/gzjMugTUdHDbW7uZtHTSw9oFWNaeVGEHrvDv2tOBI58T?=
+ =?us-ascii?Q?ml8dI5edGPI9LhAhPR/OWMSubsY0bEdffXxDs/FwPGq74cp6V7OqGUV/Ajnc?=
+ =?us-ascii?Q?oQENHFFb9dGSw6NNah1QbZ7FjFheRwDX5zOHCSsyb420Y29Di2y3K8JFKjOx?=
+ =?us-ascii?Q?SilqeF+TvqkcTyqpTtM4kgv0dotkO7P5oOqdLBcyvhiUsM8ilWjliC1I/h1j?=
+ =?us-ascii?Q?KTukm9XRcW4kt1WfCgwuYYvdcg0khHtau4j6hft/q9yOnT6j02nepi43VCtv?=
+ =?us-ascii?Q?Y0jlF9Eb0dMDka50b1zMZXIQNRJd51TBWNlvqIcsg54Vf/IL8vi+Y9FN2TYb?=
+ =?us-ascii?Q?/4CbhCz8132x7EnyTIZ/ZzaqVfGfoqy8DTbOTqKCgxvSp7F1o11LrdQlbYcH?=
+ =?us-ascii?Q?tBsgjbpOZArkHBtBSw1hDdFA8LfAmg4OwDVPDvdYOhzXygLRHqYe/dBQ4aB7?=
+ =?us-ascii?Q?3PG16Q36kGE0Yfk+yK0QAy6q80d1Sr2KZHjE22/bg23S/4i1HbLXBgB5s1OI?=
+ =?us-ascii?Q?Afy3obisCLOMJvoAbHNufww1dPfAJ+PL1BEeGuF2ZaH7TuzBcD0IeYwQpfaY?=
+ =?us-ascii?Q?/Wi5WuKPTr1/0xNfghIlThjIGBLvwlhdYgQFb+Rbd3GjYz9mgZx5YEXZ7AYp?=
+ =?us-ascii?Q?Sf/ii9Nn/cY29XUlVvaC1K5KD0mRVy9DaVvLjIBczsbULVY82hOOe4jL8c4u?=
+ =?us-ascii?Q?uqnLT2KBiabpwb5ZSL2hDECCfNwZKYJZQWKm9Tisgx3TgurWxXcUoE+Cj4eH?=
+ =?us-ascii?Q?kMis+x/XWfC9MdBPz+FzHxP9zZyiY/jYcCGx/TYfeXFmc1EPYoGfFkmVUYNZ?=
+ =?us-ascii?Q?sM3CmfPRAI8eABYKGVyqsIprZZiGaE9AyBL1ymYCGfLHuuqlO7Yt8jf77RKm?=
+ =?us-ascii?Q?R3lBsb17HT2gtMu7iIkILUTQjcssViN03PBqIigpF1DKevOAGKRJZraK5PZL?=
+ =?us-ascii?Q?1H0EEENU9aYrb2ZuCMwjzXXdwU1f/zSacZ0eYYq9GRh56c1VAtoP1RYeyTCM?=
+ =?us-ascii?Q?VVcu0ksjf6wfhBQa1nnps8lZvAwVF70W/6lOHx17xyobwC5yXGQnYIZ420Tz?=
+ =?us-ascii?Q?fsZibMMWaG3Kf85hwRhm2ec5pqTFI3N90Q/HnMq1YKOFRZgWb6OVyOyEXDVh?=
+ =?us-ascii?Q?roE5jFlZpkGWCXZgXrJeFyTsHwK5lAshZqtE70s8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9c55f5c-044d-446f-a81f-08dcf2d77abc
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 20:24:07.3815
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z84yXApz3XufRpvJWhEB3fLNdwbYLHOTjoDjHErk4UJ5IA0pCrffm4BN+19rgQ7JGCgsOR3LN8t6iEnsBX6RRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7901
 
-On Monday, October 21st, 2024 at 3:07 PM, syzbot <syzbot+47f334396d741f9cb1=
-ce@syzkaller.appspotmail.com> wrote:
+'data-lanes' is port0 of lvds bridge. Needn't set it for simple panel. Fix
+below CHECK_DTBS warning:
 
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit: 15e7d45e786a Add linux-next specific files for 20241016
-> git tree: linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D10a5c24058000=
-0
-> kernel config: https://syzkaller.appspot.com/x/.config?x=3Dc36416f1c54640=
-c0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D47f334396d741f9=
-cb1ce
-> compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2=
-.40
-> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=3D11044487980000
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=3D12815830580000
->=20
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/dis=
-k-15e7d45e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinu=
-x-15e7d45e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/b=
-zImage-15e7d45e.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/6ba77e840d=
-2c/mount_0.gz
->=20
-> The issue was bisected to:
->=20
-> commit d59f4aba096298347f0e0e5402843bb8505edc2d
-> Author: Kent Overstreet kent.overstreet@linux.dev
->=20
-> Date: Sat Oct 12 02:53:09 2024 +0000
->=20
-> bcachefs: -o norecovery now bails out of recovery earlier
->=20
-> bisection log: https://syzkaller.appspot.com/x/bisect.txt?x=3D1580c487980=
-000
-> final oops: https://syzkaller.appspot.com/x/report.txt?x=3D1780c487980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1380c48798000=
-0
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com
-> Fixes: d59f4aba0962 ("bcachefs: -o norecovery now bails out of recovery e=
-arlier")
->=20
-> ------------[ cut here ]------------
-> kernel BUG at fs/bcachefs/btree_journal_iter.c:190!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 1169 Comm: kworker/1:2 Not tainted 6.12.0-rc3-next-202=
-41016-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work (bcachefs-d=
-elete-dead-snapshots/)
-> RIP: 0010:bch2_journal_key_insert_take+0x180f/0x1830 fs/bcachefs/btree_jo=
-urnal_iter.c:190
-> Code: f1 fc ff ff e8 d2 51 78 fd 90 0f 0b e8 ca 51 78 fd 90 0f 0b e8 c2 5=
-1 78 fd 90 0f 0b e8 ba 51 78 fd 90 0f 0b e8 b2 51 78 fd 90 <0f> 0b e8 4a a1=
- af 07 e8 a5 51 78 fd 90 0f 0b e8 9d 51 78 fd 90 0f
->=20
-> RSP: 0018:ffffc9000430edc0 EFLAGS: 00010293
-> RAX: ffffffff841c909e RBX: 0000000000000040 RCX: ffff8880272b8000
-> RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-> RBP: ffffc9000430ef30 R08: ffffffff841c7a8e R09: 1ffff1100de80035
-> R10: dffffc0000000000 R11: ffffed100de80036 R12: 0000000000000000
-> R13: ffff88806f400000 R14: dffffc0000000000 R15: ffff88806f44b310
-> FS: 0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:00000000000000=
-00
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000559ab32ac530 CR3: 00000000744be000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> <TASK>
->=20
-> bch2_journal_key_insert+0xb3/0x130 fs/bcachefs/btree_journal_iter.c:260
-> do_bch2_trans_commit_to_journal_replay+0x111/0x420 fs/bcachefs/btree_tran=
-s_commit.c:1003
-> __bch2_trans_commit+0x15d9/0x9420 fs/bcachefs/btree_trans_commit.c:1039
-> bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
-> bch2_delete_dead_snapshots+0x19b6/0x5ae0 fs/bcachefs/snapshot.c:1655
-> bch2_delete_dead_snapshots_work+0x34/0x40 fs/bcachefs/snapshot.c:1730
-> process_one_work kernel/workqueue.c:3229 [inline]
-> process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-> worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-> kthread+0x2f0/0x390 kernel/kthread.c:389
-> ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-> ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> </TASK>
->=20
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:bch2_journal_key_insert_take+0x180f/0x1830 fs/bcachefs/btree_jo=
-urnal_iter.c:190
-> Cod
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
+arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx-lvds-tm070jvhg33.dtb:
+   panel-lvds: port:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
+       from schema $id: http://devicetree.org/schemas/display/panel/panel-simple.yaml#
 
-Seems this BUG is no longer being triggered. Output with 6.12-rc5:
-```
-executing program
-[   22.799942] loop0: detected capacity change from 0 to 32768
-[   22.835885] bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=
-=3Dmetadata_checksum=3Dnone,data_checksum=3Dns
-[   22.837429] bcachefs (loop0): recovering from clean shutdown, journal se=
-q 10
-[   22.843604] bcachefs (loop0): check_topology... done
-[   22.844050] bcachefs (loop0): accounting_read... done
-[   22.849861] bcachefs (loop0): alloc_read... done
-[   22.850282] bcachefs (loop0): stripes_read... done
-[   22.850738] bcachefs (loop0): snapshots_read... done
-[   22.851370] bcachefs (loop0): check_allocations...
-[   22.852430] btree ptr not marked in member info btree allocated bitmap
-[   22.852441]   u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ac6214=
-1f8dc7e261 written 24 min_key POS_MIN dg
-[   22.854503] bcachefs (loop0): Unable to continue, halting
-[   22.854977] bcachefs (loop0): bch2_gc_mark_key(): error fsck_errors_not_=
-fixed
-[   22.855673] bcachefs (loop0): bch2_gc_btree(): error fsck_errors_not_fix=
-ed
-[   22.856268] bcachefs (loop0): bch2_gc_btrees(): error fsck_errors_not_fi=
-xed
-[   22.857042] bcachefs (loop0): bch2_check_allocations(): error fsck_error=
-s_not_fixed
-[   22.857904] bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_=
-fixed
-[   22.858378] bcachefs (loop0): bch2_fs_start(): error starting filesystem=
- fsck_errors_not_fixed
-[   22.858933] bcachefs (loop0): shutting down
-[   22.863434] bcachefs (loop0): shutdown complete
-[   23.256941] bcachefs: bch2_fs_get_tree() error: fsck_errors_not_fixed
-[   23.270355] repro.elf (193) used greatest stack depth: 25792 bytes left
-```
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+I have not such hardware to test.
+Alexander Stein:
+	Can you help check it?
+---
+ arch/arm64/boot/dts/freescale/mba8mx.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-
+diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+index c60c7a9e54aff..3d26b6981c06f 100644
+--- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
++++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+@@ -100,7 +100,6 @@ panel: panel-lvds {
+ 
+ 		port {
+ 			panel_in_lvds: endpoint {
+-				data-lanes = <1 2 3 4>;
+ 				remote-endpoint = <&lvds_bridge_out>;
+ 			};
+ 		};
+-- 
+2.34.1
 
 
