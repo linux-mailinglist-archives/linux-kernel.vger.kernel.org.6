@@ -1,87 +1,135 @@
-Return-Path: <linux-kernel+bounces-375367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6AE9A950F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12EE9A9513
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0E31C21E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2470E1C22880
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137161DA32;
-	Tue, 22 Oct 2024 00:44:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A572E822;
+	Tue, 22 Oct 2024 00:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B86wTg8t"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D59322A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344E360;
+	Tue, 22 Oct 2024 00:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729557845; cv=none; b=TcfwZ3fhTe+t6uToylgq9RkAIYLRwrvw2e3kSeMdPomDlnEm9emK/Ih7K4xrtmHt0dNyED2/yv3Et/UdWY+JIqzTt3Uh29umXEiJLujLbWGsUVxUP/92aIvhQOVHcF5aHTh/yycZ94Ljqe4GBOh02XHCqbgAVx7GQ1ihfuv/BAY=
+	t=1729557932; cv=none; b=iiB035pKt+6Vc6EyGYFoO+3fCFV1cMEdRT3HgVtJLJVxYfwWPD35UQOpVDqbB/cQn6mQMWmb9E2DeIWLpzkPoaVR+q+5Wa3eTe5wb/1zdfs1AmnL5yDEr2juHqvy/gw8VWq2ZvWWdfI/qfzomETlFVZhXcyjjELB9iU/yDNl/HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729557845; c=relaxed/simple;
-	bh=PSIXcXrrc0YrhAglfgt3/FPJqu5CYSHYFjyNT8+vngw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=J80jmYbD3/Wp9JUIKEg7ITS7L3qfw/JQ60CHkTMCB4DJiel3NOfv3OCSbTj1QPBepgA/JgvZakx1t67LNZ8UOGPNSM06DEzJWzoHmKgcBZapLfL/fAeYqe6uccv+yLepEvh47WyT9R11jeHCS/5gb43Kc3T2e2BxnGICbT3UMkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so29165445ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:44:03 -0700 (PDT)
+	s=arc-20240116; t=1729557932; c=relaxed/simple;
+	bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sp2E40HyMrppgwQEO485yulKHVyQo5bVf9sjk2BteY68cF7O/KmqCxCvxu/HlXPltcgArUT3/cx7L7DApuH8KIGdKl9cEWBx+qb4+NCi4Qoj5OdK7WpXvDQV50EyvPTNG8lzBAR1W6A+RPGjJi9yY9MS2T//DmxDRFVElfLScCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B86wTg8t; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so4162874b3a.1;
+        Mon, 21 Oct 2024 17:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729557931; x=1730162731; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
+        b=B86wTg8ty3WBYLGSfHx4LHwBIUlP/Czjl004eHXuItPJ1ObpMAk9voWFnTUTrIw0bR
+         wFPK8FGtKoN72vQKjTOPYG6yftL8U1+0idZoZnI6CDItH2OE04pCYFJ6YlumRLZjdotX
+         CLZ56ZUVZqQ4J6Stlr71k4d4ol8nW6HLEtVOHNT99xcJLDDlnUNEbR9jCki5WP5F7Ya2
+         y4Mebg9FHV3t2Gb5k1JGCW1OLZBH9z8HqNFi8Q6r3OzjypornliezXD8TS8Ui8V5FGoy
+         483mQFQ+qaEsYv+QoGGzEfC3e/Mhn8io4fzxy8PEa1qwAtAg7XyCeMRqlF/Lz2stnPDU
+         oshw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729557843; x=1730162643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JyAktbuIEJEi5CtyKb3ZsZOSeiKyyn7qmkW9Dgeztj8=;
-        b=QAV5wOg8T72hRcn/0ZQRggyyNh9QKolhGiWrhewG6KjwHumkKt2dS/Z/d4ZSda1N3N
-         RCtfLpZZYTrReyXSbWz1Qo1CSHSQf0KPxZ4tJtzI1PdouqVUia6vx5TLMssS4DfgsNwR
-         U06xDIEMokyDEahmP/+aoI1ZfJUUma3JwV10WqgV0EQ9hv2RMCTzvhAdwVmxKgoZeAj6
-         f+OOvXJXxlnQ3AlQIpccqTNA1kTY19yoZXuDEd43aaIsj2KBtDiiQFTLL7Wab21lbmex
-         /nZTgmSHcwA3CJATL/7Vq5+9ggHyA30ohAic0eiKYF9GwY2gE2GbszvqR4+Rd3dH7HGl
-         sPKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrZ5ffxHP7Qvl9tnw9tNGHffRPyvLX1qgn8SC/uugY5EnMD4vSAGQ8l2R7kpIlaQqvtDGOO2i+caB8PfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG2wt8PGprtVM/FFgRF4VmO+briZWJCvAKQ7uyMj4bg/KVxq7n
-	GrtFljIGEKKlBmy/y6MqXAki4IkiY/xxyY+ayvkg8NKf8+LgWwUrDVcRNEftowuYYSGJJkgGLeQ
-	VaSvlZbe3W+61gW029VXdvD4jKhY/HJ5U/tmatbDRYtQfCdmVstCWHBs=
-X-Google-Smtp-Source: AGHT+IHpZ4PNfZmrt0ylE+E+OUWCD1A9/jAIKt2FvAYG2iUrsBulIk7xepNALMn/eodDl/vH2rCqDfh3xrZk0jst+gC+dFxjZVtD
+        d=1e100.net; s=20230601; t=1729557931; x=1730162731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
+        b=L1n8xy12xhkHyBJt8TP0KSNQaUVNHHHZ+9zZAOatzR0WY8SYtoQMSZ4yVDrVMnQqZW
+         P57O+DRxk+Yf+qgdn8uhn8mfJgDPkn1K3t+icEbJn+NGFL5HN53O/HTDVetPAyMgwFda
+         sHoYEuttBfD8pUYISt/9Ir7O9J7vNfRKYLuKiQSaHX1zO6GU6pWNfuJgNC6mvoNPRtCG
+         jwlEBHUeSgZoox1RFaTC3v0KAjW3VazvbY6z1fxjF7MNI49mPtAiSbmd/GxZLwFkvm99
+         fCcirvjdrUIpf9ZFPQxsb5zc2RZHTcaFUvj0jUVvay3mfCEEuo6KxEgpUbLIKhi+zMCR
+         RsrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH1RT4jjWiQUQogW31Zu+USfcKJHtstOyxzkSx1F42vM4nV9OIgFNAPAV9M0NyVQTw3Jl/q38FOtFEe9/EMoSUBzDtIA==@vger.kernel.org, AJvYcCWNXKUsGwJRREjgtAFdv9cCYBcUEzIFfEZqf7VyEy3d6wck4FoberjtQIYqgLpX+twt+VuS5ZIHMtM=@vger.kernel.org, AJvYcCXTOBRDpbxIRAfJDC8+JMCBoCxQuJ7m4zyLbGkIiO/eGvK490AG/xnEYIViEXg2K3fyfodSy/LIOqM=@vger.kernel.org, AJvYcCXsrPgevuPNqDhhNdFlGticfo4AEr0dHTmQBOuMalyxPd3x/Vc3gvbQE5o63Eaaj10FBQ7GmgDKDmLyfFTQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Gn9ZbrFQhY5LALGxitCgcF3ylRJW9nulhPI8IRaZh7YvsSYL
+	HBU2K68grsSqZx0JklpAXbLURZIfuZ8B9uR4RpocuWaurLZ38C2T
+X-Google-Smtp-Source: AGHT+IEaN4XZFPrN3nD/QTLshZZNGUJSk1MAp7HuzF4HK7yRgsWTvFrVsHwAp9zDfAAIOEuKojXEuQ==
+X-Received: by 2002:aa7:8e06:0:b0:71e:674b:474 with SMTP id d2e1a72fcca58-71edc15f84fmr2018208b3a.8.1729557930342;
+        Mon, 21 Oct 2024 17:45:30 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d767esm3515322b3a.114.2024.10.21.17.45.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 17:45:29 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 810F8425A747; Tue, 22 Oct 2024 07:45:26 +0700 (WIB)
+Date: Tue, 22 Oct 2024 07:45:26 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v4 01/13] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+Message-ID: <Zxb1psmK05_xSXYH@archie.me>
+References: <20241021180252.3531-1-mario.limonciello@amd.com>
+ <20241021180252.3531-2-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c6:b0:3a0:4a91:224f with SMTP id
- e9e14a558f8ab-3a3f40474d0mr105177225ab.1.1729557843276; Mon, 21 Oct 2024
- 17:44:03 -0700 (PDT)
-Date: Mon, 21 Oct 2024 17:44:03 -0700
-In-Reply-To: <96ad31d0-7b3a-468d-8525-5246124b7801@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6716f553.050a0220.1e4b4d.0067.GAE@google.com>
-Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in udf_update_tag
-From: syzbot <syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EiFZ20l18MgsAYaW"
+Content-Disposition: inline
+In-Reply-To: <20241021180252.3531-2-mario.limonciello@amd.com>
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+--EiFZ20l18MgsAYaW
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com
-Tested-by: syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com
+On Mon, Oct 21, 2024 at 01:02:40PM -0500, Mario Limonciello wrote:
+> From: Perry Yuan <Perry.Yuan@amd.com>
+>=20
+> Introduce a new documentation file, `amd_hfi.rst`, which delves into the
+> implementation details of the AMD Hardware Feedback Interface and its
+> associated driver, `amd_hfi`. This documentation describes how the
+> driver provides hint to the OS scheduling which depends on the capability
+> of core performance and efficiency ranking data.
+>=20
+> This documentation describes
+> * The design of the driver
+> * How the driver provides hints to the OS scheduling
+> * How the driver interfaces with the kernel for efficiency ranking data.
 
-Tested on:
+The doc LGTM, thanks!
 
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17cd5c87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=8743fca924afed42f93e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--EiFZ20l18MgsAYaW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxb1oQAKCRD2uYlJVVFO
+o2W5AP9eArac6T9AE3et/1yG+qIYjyEo74c7IJg5uJzRKTUa6QEAiMnYPsaLTJ1K
+92Vz9xCv2BZme+lqTyZrz1gMUbJXwgM=
+=qVoF
+-----END PGP SIGNATURE-----
+
+--EiFZ20l18MgsAYaW--
 
