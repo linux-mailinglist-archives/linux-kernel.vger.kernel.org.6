@@ -1,513 +1,185 @@
-Return-Path: <linux-kernel+bounces-375814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1A9A9B26
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A08B39A9B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 09:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33341F2379F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2531D1F236E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9388D14F108;
-	Tue, 22 Oct 2024 07:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ki4oi0Je"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A61D14F9F4;
+	Tue, 22 Oct 2024 07:35:35 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5B014B976;
-	Tue, 22 Oct 2024 07:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F98126C15
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729582533; cv=none; b=LwtYF20WFn0MNNt3/+4rGE6KrmbLKKi3Yy2tGdYC6tlgvUN07LcPybF8rRpzwK/g/a6cgZ9WwOlZUjI7EHn3/FaL/jyB+dpmP1Pz4QJnoRMxb/qw9Q4qLr0UOomvZYrzx8sJL5WRvi4zGXPkXoFY3sWjN773B57NC5f34t9YXEM=
+	t=1729582534; cv=none; b=owMI1VHzwOh98PRxdA42e6Qdmx1uGW0ksuUR1XHGX+5oS3q6YkXq6xPdU8cLkgK5e5NcMpXIbLKLc7QHRsc5LG5Vd5oJeflbaaR9gcF9se4BpMGCfQWQ8dFYvT4od0AVQlu09rQUE8SewdYxPKAjUbOOMEN3EQ+NiF0CQlQstKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729582533; c=relaxed/simple;
-	bh=Twx00RyOIpXvMPyzq3EdeMadUDtSTZ62O8y7SxMDp8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZmBdqrQPl/HX4waSw1vLoPq2RCtT/RAtp2faVWHKoTRljpFPdJnyB3NKou8PwQ3Q/SEbMRtmMkwt35pzmTpVZpQKECuywmOQJCZiKZu//eX7TfvusKPjcSY7mmCWp77l3Z2B9t/bLWgYnYK6/qY3YeKwsxvNOc60HJP0TNiXXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ki4oi0Je; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a39cabb9faso18244305ab.3;
-        Tue, 22 Oct 2024 00:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729582531; x=1730187331; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=osMWLk+ypvOOH+0rFfZT3p7MHG34DQP80IdAbXVqVMc=;
-        b=ki4oi0Jes9EjhvGBINx/Rq9zoi1sCcBn5Ux71RrvN+K//tRZFsp1/8ayfCGXM5zvF2
-         Ntrh6nlKRfT0/HuNmSWho/JwVVyN9AMt90rrGrc7RREDsbYHr8tVvMeMqVi3PxsWe6hW
-         vqzBpszKzdZeiKPa9Q+TvKbMhuREn9M/hY0NK/d6W5HEWIaXVXMT9SApHQVdZcbe0xyy
-         CHFmHRPWC0hUjG0pM5Zt3zgZH/WZzW4/tgwEuvlvb0Bofq8TIzyASr42wXy9IT0SjV3/
-         StlQFYtMU1uGn8mIFEjzw2AIuVc5GC4B3bizzEaTmphtOBV0zYApLj3MyGHZq/1ZDzYs
-         RbfQ==
+	s=arc-20240116; t=1729582534; c=relaxed/simple;
+	bh=hnR5bUjb8W/RgOEfctotjbRKClMizc8aNaiUO0M8Ck0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CuruSWrBSufMwZdtXzkbqGtWtrAaJ0NOTy5rGKIC1wUIr72sx0YR5yyTinxzd7sz7uqDlI7Lpykg/NoqMDAFkSpl6GkYtVz0oQ/rEf96sx6jJgJFAfpuerDBDQv6DSuQcPU9baunPwCaoD6pc72yKYfPeS+9y4yiiEYr/mjPcfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so52440955ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 00:35:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729582531; x=1730187331;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=osMWLk+ypvOOH+0rFfZT3p7MHG34DQP80IdAbXVqVMc=;
-        b=wMgzi6+flY45g0B9fwHYcBBqyjxyq1ojxiCVilA6ptb2o0r7yJa+bdDwtqih0WSf++
-         vOjzQx38lJm7Zkfqn3FtO0qTGkMsUeUyR/R4njD78BJqDQ/4LcXqJUbA0Suq2krFLt/w
-         s7WyTMQJui1iZhiM6ixkSza7cQbZyGWLQ9URPhc+wOuhQq90YFw/kutthAb2O5Zpx/vK
-         CnPhGNe74U2EeTUv598knDoQQ7a9n5vh6G09JWn3AJZo1HGx8KvRoZCDLXrrYXvJvNb3
-         0QNR4v9vy4EzdaDJOmF1CkHU+Up+uoysPKFfpE6/YELzumXwSM1HuTpWdM+TzQlVuGcy
-         AmMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA056sjFggjvnnH451YD0ISSXAVPjf3HTR2zGxv8KoMAOMRq06sK3T4AdbkeAWalR07WtxvkeKahd63kQ//bK7IdZJSA==@vger.kernel.org, AJvYcCWbcTRYK8cAFlbfPPVuBM/xl1lCcDeMVjlME0A6JXc9OoqumAnoqWZg+OJ152c95MFDHe1TqNEHSiGeJws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9MvZWRwryu4WU9BW0eHRhqc8CQZAfCZmh9tKSKfoZJyD43bnq
-	xOdVQ4ecsxqgikRke6ybKqod1OpmFHqy4VDUMDJnbn8VzSVLxDkUnK7TfXMO
-X-Google-Smtp-Source: AGHT+IFGo/8lcFKuj9oPvDtT1f2qAHVyWKu47fh43o5K1lbZhE9NvusHJN52YcE7eLWY/JnURj961w==
-X-Received: by 2002:a05:6e02:1908:b0:3a0:b384:219b with SMTP id e9e14a558f8ab-3a4cd81a173mr15828355ab.26.1729582530451;
-        Tue, 22 Oct 2024 00:35:30 -0700 (PDT)
-Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab48f7bsm4364631a12.39.2024.10.22.00.35.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 00:35:30 -0700 (PDT)
-Date: Tue, 22 Oct 2024 04:35:27 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v6 3/5] alienware-wmi: added platform profile support
-Message-ID: <4kf2dehri5vdjkkdxbaqrythrsjhmnbuc62zv4fj4zgv77myym@wyvone3nr7it>
-References: <20241017081211.126214-2-kuurtb@gmail.com>
- <20241017081524.127072-2-kuurtb@gmail.com>
- <8f49e3a9-e9ce-44d4-8d9a-4447202f2b61@gmx.de>
+        d=1e100.net; s=20230601; t=1729582529; x=1730187329;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4V+SKVnrENvEZwiILjJKLlu9ky5/HJRa8td+S1PL1rY=;
+        b=qN6MGxdmiFwZbhov8aY3FNA9PayKmBC38eYKXrcr4+ZjHxe5b2jZ7xaswXjlY3um2L
+         8Dljwejq67KRdL93ET9aCN18jgzmAU4DEWplsq5KzP7KTlRQPEct1/cRvhsMPO8UbFz0
+         5fw19TsfNhi5oWB5aJemTQHo15HZzaMBSY6lrWyhF1bfmUp9wj3ApD3riAHihS4rMMMy
+         nyuDE2xgknGjJ100JX+DLceBdz9k5Z93nrOtgOqKVHxydZBLcJFx/m7TtqeeQ3aupZ4h
+         I6U1yvIZsO0Q7rBHq0T+c7KIbsaY+jR1zk8wvi9RDBWeMvhxuRXp/fYJcOx7DN/EiMIW
+         T96A==
+X-Forwarded-Encrypted: i=1; AJvYcCXOKxuBG0SYPURytOUZfFGZvp+PVsbAA4+8ORSvbPEL2QMZRjG9ol/TUby1VcCzUdWqXsVRNTxIcMjR2qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjWOeFFf9UO1Kb7amaaCCMJEt7/BTCCzg8Arl/0/4W+KUKSgn6
+	6jfLiDWpWnnFQbN0qrJxb7jiEyYv6ElPXFg53Q8t9Ysf0y77R1sA3TUQaJ/6dMmNit3LTHH/m+d
+	qo3qmzj+/4/2CiHeG8S5cF/V/hgG9CYAw8KEYiAdeeymxf0VUsLiX96M=
+X-Google-Smtp-Source: AGHT+IG1mCcqKMX2Yl0wJcSjApkPOC4zcwxpLrq2/g/sRH4qni7gY8XTXbtjc0uezs3EWot9FwXJwEw+nJaioAOQEzSzc4PbaG56
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f49e3a9-e9ce-44d4-8d9a-4447202f2b61@gmx.de>
+X-Received: by 2002:a05:6e02:174b:b0:3a3:4175:79d2 with SMTP id
+ e9e14a558f8ab-3a4cd69ca27mr16542255ab.14.1729582529001; Tue, 22 Oct 2024
+ 00:35:29 -0700 (PDT)
+Date: Tue, 22 Oct 2024 00:35:28 -0700
+In-Reply-To: <66fa3eb3.050a0220.6bad9.0030.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671755c0.050a0220.1e4b4d.0071.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] general protection fault in btree_node_iter_and_journal_peek
+From: syzbot <syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 20, 2024 at 10:12:48PM +0200, Armin Wolf wrote:
-> Am 17.10.24 um 10:15 schrieb Kurt Borja:
-> 
-> > Implements platform profile support for Dell laptops with new WMAX
-> > thermal interface, present on some Alienware X-Series, Alienware
-> > M-Series and Dell's G-Series laptops.
-> > 
-> > This implementation supports three sets of thermal tables declared in
-> > enum WMAX_THERMAL_TABLE and gmode, using quirks *thermal* and *gmode*
-> > respectively. These sets are found in most Dell's devices that support
-> > WMAX's thermal interface.
-> > 
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > 
-> > ---
-> > v6:
-> >   - Fixed alignment on some function definitions
-> >   - Fixed braces on if statment
-> >   - Removed quirk thermal_ustt
-> >   - Now quirk thermal can take values defined in enum WMAX_THERMAL_TABLE.
-> >   - Proper removal of thermal_profile
-> > ---
-> >   drivers/platform/x86/dell/Kconfig         |   1 +
-> >   drivers/platform/x86/dell/alienware-wmi.c | 251 ++++++++++++++++++++++
-> >   2 files changed, 252 insertions(+)
-> > 
-> > diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-> > index 68a49788a..b06d634cd 100644
-> > --- a/drivers/platform/x86/dell/Kconfig
-> > +++ b/drivers/platform/x86/dell/Kconfig
-> > @@ -21,6 +21,7 @@ config ALIENWARE_WMI
-> >   	depends on LEDS_CLASS
-> >   	depends on NEW_LEDS
-> >   	depends on ACPI_WMI
-> > +	select ACPI_PLATFORM_PROFILE
-> >   	help
-> >   	 This is a driver for controlling Alienware BIOS driven
-> >   	 features.  It exposes an interface for controlling the AlienFX
-> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-> > index b27f3b64c..37a898273 100644
-> > --- a/drivers/platform/x86/dell/alienware-wmi.c
-> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> > @@ -8,8 +8,11 @@
-> >   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > 
-> >   #include <linux/acpi.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/bits.h>
-> >   #include <linux/module.h>
-> >   #include <linux/platform_device.h>
-> > +#include <linux/platform_profile.h>
-> >   #include <linux/dmi.h>
-> >   #include <linux/leds.h>
-> > 
-> > @@ -25,6 +28,12 @@
-> >   #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
-> >   #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
-> >   #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
-> > +#define WMAX_METHOD_THERMAL_INFORMATION	0x14
-> > +#define WMAX_METHOD_THERMAL_CONTROL	0x15
-> > +
-> > +#define WMAX_ARG_GET_CURRENT_PROF	0x0B
-> > +
-> > +#define WMAX_FAILURE_CODE		0xFFFFFFFF
-> > 
-> >   MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
-> >   MODULE_DESCRIPTION("Alienware special feature control");
-> > @@ -49,11 +58,33 @@ enum WMAX_CONTROL_STATES {
-> >   	WMAX_SUSPEND = 3,
-> >   };
-> > 
-> > +enum WMAX_THERMAL_TABLE {
-> > +	WMAX_THERMAL_TABLE_SIMPLE	= 1,
-> > +	WMAX_THERMAL_TABLE_USTT		= 2,
-> > +	WMAX_THERMAL_TABLE_USTT_COOL	= 3,
-> > +};
-> > +
-> > +enum WMAX_THERMAL_PROFILE {
-> > +	WMAX_THERMAL_QUIET			= 0x96,
-> > +	WMAX_THERMAL_BALANCED			= 0x97,
-> > +	WMAX_THERMAL_BALANCED_PERFORMANCE	= 0x98,
-> > +	WMAX_THERMAL_PERFORMANCE		= 0x99,
-> > +	WMAX_THERMAL_USTT_LOW_POWER		= 0xA5,
-> > +	WMAX_THERMAL_USTT_COOL			= 0xA2,
-> > +	WMAX_THERMAL_USTT_QUIET			= 0xA3,
-> > +	WMAX_THERMAL_USTT_BALANCED		= 0xA0,
-> > +	WMAX_THERMAL_USTT_BALANCED_PERFORMANCE	= 0xA1,
-> > +	WMAX_THERMAL_USTT_PERFORMANCE		= 0xA4,
-> > +	WMAX_THERMAL_GMODE			= 0xAB,
-> > +};
-> > +
-> >   struct quirk_entry {
-> >   	u8 num_zones;
-> >   	u8 hdmi_mux;
-> >   	u8 amplifier;
-> >   	u8 deepslp;
-> > +	u8 thermal;
-> > +	u8 gmode;
-> >   };
-> > 
-> >   static struct quirk_entry *quirks;
-> > @@ -64,6 +95,8 @@ static struct quirk_entry quirk_inspiron5675 = {
-> >   	.hdmi_mux = 0,
-> >   	.amplifier = 0,
-> >   	.deepslp = 0,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_unknown = {
-> > @@ -71,6 +104,8 @@ static struct quirk_entry quirk_unknown = {
-> >   	.hdmi_mux = 0,
-> >   	.amplifier = 0,
-> >   	.deepslp = 0,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_x51_r1_r2 = {
-> > @@ -78,6 +113,8 @@ static struct quirk_entry quirk_x51_r1_r2 = {
-> >   	.hdmi_mux = 0,
-> >   	.amplifier = 0,
-> >   	.deepslp = 0,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_x51_r3 = {
-> > @@ -85,6 +122,8 @@ static struct quirk_entry quirk_x51_r3 = {
-> >   	.hdmi_mux = 0,
-> >   	.amplifier = 1,
-> >   	.deepslp = 0,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_asm100 = {
-> > @@ -92,6 +131,8 @@ static struct quirk_entry quirk_asm100 = {
-> >   	.hdmi_mux = 1,
-> >   	.amplifier = 0,
-> >   	.deepslp = 0,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_asm200 = {
-> > @@ -99,6 +140,8 @@ static struct quirk_entry quirk_asm200 = {
-> >   	.hdmi_mux = 1,
-> >   	.amplifier = 0,
-> >   	.deepslp = 1,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static struct quirk_entry quirk_asm201 = {
-> > @@ -106,6 +149,17 @@ static struct quirk_entry quirk_asm201 = {
-> >   	.hdmi_mux = 1,
-> >   	.amplifier = 1,
-> >   	.deepslp = 1,
-> > +	.thermal = 0,
-> > +	.gmode = 0,
-> > +};
-> > +
-> > +static struct quirk_entry quirk_x15_r1 = {
-> > +	.num_zones = 2,
-> > +	.hdmi_mux = 0,
-> > +	.amplifier = 0,
-> > +	.deepslp = 0,
-> > +	.thermal = WMAX_THERMAL_TABLE_USTT,
-> > +	.gmode = 0,
-> >   };
-> > 
-> >   static int __init dmi_matched(const struct dmi_system_id *dmi)
-> > @@ -169,6 +223,15 @@ static const struct dmi_system_id alienware_quirks[] __initconst = {
-> >   		},
-> >   		.driver_data = &quirk_asm201,
-> >   	},
-> > +	{
-> > +		.callback = dmi_matched,
-> > +		.ident = "Alienware x15 R1",
-> > +		.matches = {
-> > +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> > +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R1")
-> > +		},
-> > +		.driver_data = &quirk_x15_r1,
-> > +	},
-> >   	{
-> >   		.callback = dmi_matched,
-> >   		.ident = "Dell Inc. Inspiron 5675",
-> > @@ -218,6 +281,7 @@ static struct platform_device *platform_device;
-> >   static struct device_attribute *zone_dev_attrs;
-> >   static struct attribute **zone_attrs;
-> >   static struct platform_zone *zone_data;
-> > +static struct platform_profile_handler pp_handler;
-> > 
-> >   static struct platform_driver platform_driver = {
-> >   	.driver = {
-> > @@ -761,6 +825,184 @@ static int create_deepsleep(struct platform_device *dev)
-> >   	return ret;
-> >   }
-> > 
-> > +/*
-> > + * Thermal Profile control
-> > + *  - Provides thermal profile control through the Platform Profile API
-> > + */
-> > +#define WMAX_ARGUMENT_MASK	GENMASK(15, 8)
-> > +#define WMAX_PROFILE_ACTIVATE	0x01
-> > +
-> > +static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
-> > +{
-> > +	return FIELD_PREP(WMAX_ARGUMENT_MASK, prof) | WMAX_PROFILE_ACTIVATE;
-> > +}
-> > +
-> > +static int thermal_profile_get(struct platform_profile_handler *pprof,
-> > +			       enum platform_profile_option *profile)
-> > +{
-> > +	acpi_status status;
-> > +	u32 in_args = WMAX_ARG_GET_CURRENT_PROF;
-> > +	u32 out_data;
-> > +
-> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
-> > +					WMAX_METHOD_THERMAL_INFORMATION, &out_data);
-> > +
-> > +	if (ACPI_FAILURE(status))
-> > +		return -EIO;
-> > +
-> > +	if (out_data == WMAX_FAILURE_CODE)
-> > +		return -EBADRQC;
-> > +
-> > +	switch (out_data) {
-> > +	case WMAX_THERMAL_USTT_LOW_POWER:
-> > +		*profile = PLATFORM_PROFILE_LOW_POWER;
-> > +		break;
-> > +	case WMAX_THERMAL_USTT_COOL:
-> > +		*profile = PLATFORM_PROFILE_COOL;
-> > +		break;
-> > +	case WMAX_THERMAL_QUIET:
-> > +	case WMAX_THERMAL_USTT_QUIET:
-> > +		*profile = PLATFORM_PROFILE_QUIET;
-> > +		break;
-> > +	case WMAX_THERMAL_BALANCED:
-> > +	case WMAX_THERMAL_USTT_BALANCED:
-> > +		*profile = PLATFORM_PROFILE_BALANCED;
-> > +		break;
-> > +	case WMAX_THERMAL_BALANCED_PERFORMANCE:
-> > +	case WMAX_THERMAL_USTT_BALANCED_PERFORMANCE:
-> > +		*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
-> > +		break;
-> > +	case WMAX_THERMAL_GMODE:
-> > +	case WMAX_THERMAL_PERFORMANCE:
-> > +	case WMAX_THERMAL_USTT_PERFORMANCE:
-> > +		*profile = PLATFORM_PROFILE_PERFORMANCE;
-> > +		break;
-> > +	default:
-> > +		return -ENODATA;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int thermal_profile_set(struct platform_profile_handler *pprof,
-> > +			       enum platform_profile_option profile)
-> > +{
-> > +	acpi_status status;
-> > +	u32 in_args;
-> > +	u32 out_data;
-> > +
-> > +	switch (profile) {
-> > +	case PLATFORM_PROFILE_QUIET:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_QUIET);
-> > +		break;
-> > +	case PLATFORM_PROFILE_BALANCED:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED);
-> > +		break;
-> > +	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED_PERFORMANCE);
-> > +		break;
-> > +	case PLATFORM_PROFILE_PERFORMANCE:
-> > +		if (quirks->gmode > 0)
-> > +			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
-> > +		else
-> > +			in_args = profile_to_wmax_arg(WMAX_THERMAL_PERFORMANCE);
-> > +		break;
-> > +	default:
-> > +		return -EOPNOTSUPP;
-> > +	}
-> > +
-> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
-> > +					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-> > +
-> > +	if (ACPI_FAILURE(status))
-> > +		return -EIO;
-> > +
-> > +	if (out_data == WMAX_FAILURE_CODE)
-> > +		return -EBADRQC;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int thermal_profile_set_ustt(struct platform_profile_handler *pprof,
-> > +				    enum platform_profile_option profile)
-> > +{
-> > +	acpi_status status;
-> > +	u32 in_args;
-> > +	u32 out_data;
-> > +
-> > +	switch (profile) {
-> > +	case PLATFORM_PROFILE_LOW_POWER:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_LOW_POWER);
-> > +		break;
-> > +	case PLATFORM_PROFILE_COOL:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_COOL);
-> > +		break;
-> > +	case PLATFORM_PROFILE_QUIET:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_QUIET);
-> > +		break;
-> > +	case PLATFORM_PROFILE_BALANCED:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED);
-> > +		break;
-> > +	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-> > +		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED_PERFORMANCE);
-> > +		break;
-> > +	case PLATFORM_PROFILE_PERFORMANCE:
-> > +		if (quirks->gmode > 0)
-> > +			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
-> > +		else
-> > +			in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_PERFORMANCE);
-> > +		break;
-> > +	default:
-> > +		return -EOPNOTSUPP;
-> > +	}
-> > +
-> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
-> > +					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-> > +
-> > +	if (ACPI_FAILURE(status))
-> > +		return -EIO;
-> > +
-> > +	if (out_data == WMAX_FAILURE_CODE)
-> > +		return -EBADRQC;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int create_thermal_profile(void)
-> > +{
-> > +	pp_handler.profile_get = thermal_profile_get;
-> > +
-> > +	switch (quirks->thermal) {
-> > +	case WMAX_THERMAL_TABLE_SIMPLE:
-> > +		pp_handler.profile_set = thermal_profile_set;
-> > +		break;
-> > +	case WMAX_THERMAL_TABLE_USTT:
-> > +		pp_handler.profile_set = thermal_profile_set_ustt;
-> > +		set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
-> > +		set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
-> > +		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
-> > +		break;
-> > +	case WMAX_THERMAL_TABLE_USTT_COOL:
-> > +		pp_handler.profile_set = thermal_profile_set_ustt;
-> > +		set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
-> > +		set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
-> > +		set_bit(PLATFORM_PROFILE_COOL, pp_handler.choices);
-> > +		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
-> > +		break;
-> > +	}
-> 
-> Please add a default statement here to return -EINVAL just in case.
+syzbot has found a reproducer for the following issue on:
 
-Noted.
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d8c640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=005ef9aa519f30d97657
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117f9430580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d8c640580000
 
-> 
-> Other than that:
-> 
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c9f863564593/mount_0.gz
 
-Thank you so much for your reviews. I'll won't forget to add them on v7.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
 
-> 
-> > +
-> > +	set_bit(PLATFORM_PROFILE_BALANCED, pp_handler.choices);
-> > +	set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
-> > +
-> > +	return platform_profile_register(&pp_handler);
-> > +}
-> > +
-> > +static void remove_thermal_profile(void)
-> > +{
-> > +	if (quirks->thermal > 0)
-> > +		platform_profile_remove();
-> > +}
-> > +
-> >   static int __init alienware_wmi_init(void)
-> >   {
-> >   	int ret;
-> > @@ -808,6 +1050,12 @@ static int __init alienware_wmi_init(void)
-> >   			goto fail_prep_deepsleep;
-> >   	}
-> > 
-> > +	if (quirks->thermal > 0) {
-> > +		ret = create_thermal_profile();
-> > +		if (ret)
-> > +			goto fail_prep_thermal_profile;
-> > +	}
-> > +
-> >   	ret = alienware_zone_init(platform_device);
-> >   	if (ret)
-> >   		goto fail_prep_zones;
-> > @@ -816,6 +1064,8 @@ static int __init alienware_wmi_init(void)
-> > 
-> >   fail_prep_zones:
-> >   	alienware_zone_exit(platform_device);
-> > +	remove_thermal_profile();
-> > +fail_prep_thermal_profile:
-> >   fail_prep_deepsleep:
-> >   fail_prep_amplifier:
-> >   fail_prep_hdmi:
-> > @@ -835,6 +1085,7 @@ static void __exit alienware_wmi_exit(void)
-> >   	if (platform_device) {
-> >   		alienware_zone_exit(platform_device);
-> >   		remove_hdmi(platform_device);
-> > +		remove_thermal_profile();
-> >   		platform_device_unregister(platform_device);
-> >   		platform_driver_unregister(&platform_driver);
-> >   	}
+bucket 0:41 data type btree ptr gen 0 missing in alloc btree
+while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 9aa2895aefce4bdf written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5091 Comm: syz-executor910 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_bkey_buf_reassemble fs/bcachefs/bkey_buf.h:27 [inline]
+RIP: 0010:btree_node_iter_and_journal_peek+0x260/0x1010 fs/bcachefs/btree_iter.c:886
+Code: 4c 24 18 45 89 f0 50 53 41 51 e8 2b b3 00 00 48 83 c4 18 4c 89 ff e8 8f 87 00 00 48 89 c3 49 89 d7 48 c1 e8 03 48 89 44 24 18 <42> 0f b6 04 28 84 c0 4c 89 ea 0f 85 d1 0c 00 00 48 89 5c 24 38 44
+RSP: 0018:ffffc9000b015fc0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 00000000000000ff RDI: ffffc9000b016174
+RBP: ffffc9000b016250 R08: ffffc9000b016173 R09: 0000000000000000
+R10: ffffc9000b016160 R11: fffff52001602c2f R12: ffffc9000b0161c0
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055558e598380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c63dfb7508 CR3: 000000003f50c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btree_path_down fs/bcachefs/btree_iter.c:914 [inline]
+ bch2_btree_path_traverse_one+0x1981/0x2940 fs/bcachefs/btree_iter.c:1169
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
+ __bch2_btree_iter_peek fs/bcachefs/btree_iter.c:2197 [inline]
+ bch2_btree_iter_peek_upto+0xb58/0x70e0 fs/bcachefs/btree_iter.c:2297
+ bch2_btree_iter_peek_upto_type fs/bcachefs/btree_iter.h:685 [inline]
+ bch2_gc_btree fs/bcachefs/btree_gc.c:670 [inline]
+ bch2_gc_btrees fs/bcachefs/btree_gc.c:729 [inline]
+ bch2_check_allocations+0x1a8b/0x6e80 fs/bcachefs/btree_gc.c:1123
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
+ bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
+ bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9107f3bbba
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffede58d8a8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffede58d8c0 RCX: 00007f9107f3bbba
+RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffede58d8c0
+RBP: 0000000000000004 R08: 00007ffede58d900 R09: 00000000000058d0
+R10: 0000000000010000 R11: 0000000000000282 R12: 0000000000010000
+R13: 00007ffede58d900 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_bkey_buf_reassemble fs/bcachefs/bkey_buf.h:27 [inline]
+RIP: 0010:btree_node_iter_and_journal_peek+0x260/0x1010 fs/bcachefs/btree_iter.c:886
+Code: 4c 24 18 45 89 f0 50 53 41 51 e8 2b b3 00 00 48 83 c4 18 4c 89 ff e8 8f 87 00 00 48 89 c3 49 89 d7 48 c1 e8 03 48 89 44 24 18 <42> 0f b6 04 28 84 c0 4c 89 ea 0f 85 d1 0c 00 00 48 89 5c 24 38 44
+RSP: 0018:ffffc9000b015fc0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 00000000000000ff RDI: ffffc9000b016174
+RBP: ffffc9000b016250 R08: ffffc9000b016173 R09: 0000000000000000
+R10: ffffc9000b016160 R11: fffff52001602c2f R12: ffffc9000b0161c0
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055558e598380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005594e96c70c8 CR3: 000000003f50c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	4c 24 18             	rex.WR and $0x18,%al
+   3:	45 89 f0             	mov    %r14d,%r8d
+   6:	50                   	push   %rax
+   7:	53                   	push   %rbx
+   8:	41 51                	push   %r9
+   a:	e8 2b b3 00 00       	call   0xb33a
+   f:	48 83 c4 18          	add    $0x18,%rsp
+  13:	4c 89 ff             	mov    %r15,%rdi
+  16:	e8 8f 87 00 00       	call   0x87aa
+  1b:	48 89 c3             	mov    %rax,%rbx
+  1e:	49 89 d7             	mov    %rdx,%r15
+  21:	48 c1 e8 03          	shr    $0x3,%rax
+  25:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	4c 89 ea             	mov    %r13,%rdx
+  34:	0f 85 d1 0c 00 00    	jne    0xd0b
+  3a:	48 89 5c 24 38       	mov    %rbx,0x38(%rsp)
+  3f:	44                   	rex.R
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
