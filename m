@@ -1,329 +1,217 @@
-Return-Path: <linux-kernel+bounces-376488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC6F9AB24C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB679AB24F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC381C215C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB521F228B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 15:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEA91A0730;
-	Tue, 22 Oct 2024 15:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA6A1A0BE1;
+	Tue, 22 Oct 2024 15:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="XXzh+l3M"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HB2PageK"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28CE2E406
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611645; cv=none; b=tPWQ5ugIU2Vpz4oarz2UWfFbc1ooSm9Hj3P6APdV70Om4o8t3VMrGhPcU/J/mkSc+z3iCClpUuezRglatSGfqX9MvSeT+UY9Srrf1ie9Hdxw0PDN7Ev9y8D+754nz0FnMXdzbZgcr2B+ayMi907LZgFJMSmOkyLDz1pbu/bsOdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611645; c=relaxed/simple;
-	bh=Fz/La2t94ik4/K+LIBtcmpv2qCpf5Dde6QbkFn9j73Q=;
-	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=qyZZwmBhX1KQi8QlHnsKWqJH9YgB0CiSuxJmfH74RX8xuK+YDRzIsFSOU61SYoJkQhvKbBheOutuyGPHX69MobNxSWEsBon2qn9bBBv7EQxLZbdJ/yZncMBgNREmGgkC1fea4MmGtmJojlSq1fY2r1lcIU1yKAFy0v9+B9qmZSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=XXzh+l3M; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b13ff3141aso441566785a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google; t=1729611642; x=1730216442; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:date:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aCAEp4QAEi7Oa48A7wSJlXlBhHhjC0+UmRGpFNIqQcE=;
-        b=XXzh+l3MeJfwAtUHR+1zUcQT7Po/1/9p618YmS0lExXLn7JiKQHut2jxzEYTKvAkLA
-         2HlEvfi24sc1xzn9+cic4m/vI5Ciq26IA2E3rzZTLpP+PJKp3CPN1IldaoFL62s0iyXM
-         HA6kRIEYIr8epGl8cKKU/RQaQlEz1CwYMX4bo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729611642; x=1730216442;
-        h=mime-version:message-id:subject:cc:to:date:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aCAEp4QAEi7Oa48A7wSJlXlBhHhjC0+UmRGpFNIqQcE=;
-        b=PCDkr+tE8p7hv1k+agOmVhiHZVXwDGj+69O2NXsCbNtOu7uCpZcYbvMuCWtsUYVV9C
-         DJErhd2jqh/rfZ+kVcKTPpbJRz+NMSmclHnCmAgDhT6kdjcARzYUil/yM+A9gFsBmQPP
-         Ei/tWPPV94N1nFbpOFTlJ9vP2DKJYj6C6Dxo0FTUYD3uBZbvOXauCGQFsKdW1lpxujih
-         T/QNr2z5v1o1nnteFyuZAvf8VYL+8ly+kP/WxkfzvQ12hsUOtjfnU6srMk5FBa/H6rD4
-         jGiCS2lnLD2nIzYxG8A5QF1LgVmkkW0+tqc7ZkBGgDlw7/WOo3g4EPj5/Bl4vsnXzOo4
-         HGEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKRdgSXlDuV5WeBCfWHQ/x/rxLG707UqTV/d4rs648YfTywBJRgIIsoLSiknEn9F+P5kXovvRmAh1ndFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUJ1rNehGD6QgZnUn++OlgnR2sVKE0pc7PLtRQS+f43vXqL84z
-	KmxdeN7PeMuIjHJHteQ6glrvJF9L37gK0tkK5Kbhanbdo+2rwY2PmRu4I9VeDg==
-X-Google-Smtp-Source: AGHT+IHQMjwhSP8cVy5yaUW7rStPht83UpR3a0nZdydwtHkSwUyYoxZjE/l86Jkqqy8VlMplyGWNmQ==
-X-Received: by 2002:a05:620a:4714:b0:7b1:516c:8601 with SMTP id af79cd13be357-7b1751cd329mr583889085a.20.1729611642535;
-        Tue, 22 Oct 2024 08:40:42 -0700 (PDT)
-Received: from macbook-air.local (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1659b9802sm291221285a.5.2024.10.22.08.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 08:40:41 -0700 (PDT)
-From: Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date: Tue, 22 Oct 2024 11:40:40 -0400 (EDT)
-To: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-    Arnaldo Carvalho de Melo <acme@kernel.org>, 
-    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-    Adrian Hunter <adrian.hunter@intel.com>, 
-    "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: perf_event: possible circle locking dependency
-Message-ID: <5dde8db3-ffd6-0c84-d00a-ee374fb86af0@maine.edu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D73D19D087;
+	Tue, 22 Oct 2024 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729611682; cv=fail; b=UXWIw4KUf/WVv0BE2SCYhLYW755wUSwjMrIN3iByfu1zA9O9vf/F6JrtSIDo4rBOoiMd9BWveenMSS7AYJdKsePDfbEY2f2Jn4Zv063h2LL1z8DEwOwI8CLm5giUmsBTV+5iS4TI0lTcnqKMxVCOACvvgVvzCRtXLqBNCZ/4ZxE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729611682; c=relaxed/simple;
+	bh=bo627k2HSgiy8+uP2MJ5eckn+lkDUIE5tkz+4YLh7EQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=k4NbnX4Kv2ywtha99yTTp2Y76V7rDGtgUxZfIJuBZIi1IsRrkc9EuWpAg5YgMh5/As7LldD7L7B/ciILEhlrzi3DohUHITONj2vLDkEFrCjAHAZj8KSE9+0ZiVmrLQgJGzijNNzzw6CyK81UkUkOzpbyOPxK3pHAVxOg8mbqQRQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HB2PageK; arc=fail smtp.client-ip=40.107.244.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f9/vH1jRPHrAcY1eTxzlFbtNuABqGB1062B9gVNcCv1S1Jw7sZC2McveBcimiSBQzn444jj4GbPEMKf/VnxK6HbwLYmg6QeJjqJ9aL9yI7OtHZa/GvuBdKNNauK4chcrcsNi6qPCVpDf5mAlay01E/IGFCbADWowp539a3BAlbOpim67uCLf5Hz4Bxc0Sn37t74n388f1EqGui8LAVduDzLxRtfDmhYnl61C5470lDz0AOJxN73BnGg1Gck5dl84pIuo04sSzz2GFdJjgSDvBm7toxRdOiOU2qn/f0JLWDMLHFDW6R0gaHEWZqcLDkfNbIlHfNW46630El8KuIhDSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sUIBoin29s9BV4SZIKB48PLcjw0TzkNjUrRMuU5tN5k=;
+ b=sZUidZW9BK915oVh1vzdaeuDZ1cxIM/Uj99VOKmzw2zJJGxEVrTRYdPHR301PnRYvUES44jjUF3FbxkUEUf1tIWXNtezXKMhF1/9sdbiZvUP0W7qsZyjpWs9c5DjyVzFRf89UXU/IyiIT1qz0toJamxPSVrAJO3+u4MYBnKlCAKwv0VOdbAu04cXCshFaw6C7Pa/YR/ZqS2vaEMxWmBpwUfPfcRrKJ+18Hux8imEoyKGCzxonVW3PBl5NZ+cplh1+0ga7CovOppmPNCajVLkFfH2XEW2ysPIKQznTBnZR7yqISQO4k7g6Q0xhkhbvvAmhf4CGdEI27OnhtAPrc56Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sUIBoin29s9BV4SZIKB48PLcjw0TzkNjUrRMuU5tN5k=;
+ b=HB2PageKgT4dQxpbnpMxCqL0qeSNF3YSA+sNeCTLmjx4zDfCLRuCIj9VSQDY7y0uREdCebwDdhuCUruHSBd1H3I/eK4EjoRJ+RjkhLmjrM1X11abkgzWFWqO6F/PBBf4FtqEJIPog9VMO9/Lld6XAAuoqagS0GA0xqTLm2maRwU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CYYPR12MB8961.namprd12.prod.outlook.com (2603:10b6:930:bf::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 15:41:16 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
+ 15:41:16 +0000
+Message-ID: <29c7b5b9-3a27-4b3c-85af-e08287944a00@amd.com>
+Date: Tue, 22 Oct 2024 10:41:13 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] x86/cpu: Add CPU type to struct cpuinfo_topology
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Brijesh Singh <brijesh.singh@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>, Li RongQing <lirongqing@baidu.com>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>, "open list:ACPI"
+ <linux-acpi@vger.kernel.org>,
+ "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+References: <20241022034608.32396-1-mario.limonciello@amd.com>
+ <20241022034608.32396-5-mario.limonciello@amd.com>
+ <20241022115720.GGZxeTIEqLBQwHjsiE@fat_crate.local>
+ <20241022120336.GCZxeUmHL5p6chpt0m@fat_crate.local>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241022120336.GCZxeUmHL5p6chpt0m@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0020.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:22c::21) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CYYPR12MB8961:EE_
+X-MS-Office365-Filtering-Correlation-Id: 329f5d02-d3da-4185-8b16-08dcf2aff71e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?citkMmZpbWo0K2RNS0ZLbGFldWtaeU1NSWpGYmQwcWV1NlBDT3kxVExEQzQ0?=
+ =?utf-8?B?OCtxQ3h6UFFEU2svTDVReHZNZEpQUjRXZWZCUUhTMyt4VmdjbjUveEFKQ01N?=
+ =?utf-8?B?dm9DTitpbGJzVjJUOTB6UlcyMDJuTG5lN0hXRDBiY0w1SHBsL3hzS0pHY3lj?=
+ =?utf-8?B?Ymt1ZmFJdXB4eVNObVlEWnI5TWNqc08wRTBzOG94MU5jeFBXVzA4UmsvNGZZ?=
+ =?utf-8?B?UjU5V0JzYnNSMFd6L09keEJXKzRhWm9KdVpQa2I3eWZ6VXdGSlcvVm9EY0dN?=
+ =?utf-8?B?M3R6ZmppZ1NwWkhZTHBGcm5Nczh6OHl1dkI0RkpwQTBYa0lRNFQxK08rcklG?=
+ =?utf-8?B?aHZUS2MxMkVpU1JYYUN6VEMzRHBDUThhckFDQ1AvdEVxc0NwSkxTWW9uVUE3?=
+ =?utf-8?B?WHk2ZzhNcFRVeUU3VUxHWnNNb2tTUEZWdXJrT2JHRUExcnZuVlU4U1Zab1pT?=
+ =?utf-8?B?c3hnWEdkTG9Pa1pjSWVnT3dkbnNkMUdKWEZXcVhKeGZ1aUp6b1QrWEdJVm5u?=
+ =?utf-8?B?dlBaSWEvOFZQcWlkTXBRNkJCVU9UZWFTTjhtZ1NraDA1SXh6Yzl6VlJIVlVv?=
+ =?utf-8?B?cDV3Q0t0WE9jVlFzdUVkT09vSTBCdXdwQitVMUJ4SGRHcEswSnRRTUV4NGJC?=
+ =?utf-8?B?WXFzMEtEdTFWTC83WGMyK2hrcGtQNFE5Y2EzYm54V0JpV1pDbWErWHMvdlVP?=
+ =?utf-8?B?N0ZPOVFha3hZSWZjbStSekhKWm9WK0ViSmxVK1NsUEsyZEVpUXBGYXE2SnFy?=
+ =?utf-8?B?S1ZNbTRlQU9tTldZcGFobzZwdzN1c3IwTWZ2b09qdTg1UDJyNlY5dStmaFlF?=
+ =?utf-8?B?NzVpQnJxQnMxakNmRzJiRlJQYlBpUnF4RUp1SjdyODI3emxBbDJIbzZERURW?=
+ =?utf-8?B?b3FlWjFab05oWWxFZUJ1YnJVOExzcmtqTzdEVk5hN3pRY1hsRTRGcldLc1k1?=
+ =?utf-8?B?NEMzSTNBTDNhSENEb21hVVFaZzhmKzFtMExGWG5tTFV3ZW5ER0xjYmd0OTFQ?=
+ =?utf-8?B?ejhaMFZFOUxZaGIwb2lWOTYzSStJMFBKK3B5N3RmMnpDZlJ1NjYvRk54dG9Z?=
+ =?utf-8?B?MVhSWUp0djNJelllOGpDdDFqV1AzNTlSby9IVzkxdnBSR1NFclpDazlTeWM4?=
+ =?utf-8?B?YjdxVlNwM2lKbWQ2WlFXZDlKS0NmTDA1amNJSkpscDJ1a1EydlVUcFNXV1kx?=
+ =?utf-8?B?WjA1QUFYeGJQWFNDR2c4TDVlK1VuL3NUNzdHd1VMN1RDc3dtNUpmZFBSblpP?=
+ =?utf-8?B?UHd4YUR6NTBhWmVVcHVYY2ptc1U4b3NqWDRQVEFHRWdjdU4vRGluL0MwODA5?=
+ =?utf-8?B?b1hOTlljMjRxTUJ0TUpLU3ZzbWlxUzBwUEhEMUlRRXNxQUdlcGhPODdURzV5?=
+ =?utf-8?B?b1RBR3daYkNNQzJNZ1g0aFNUQ1ZkOHU2a29sYjdHUHJlNnNNSk1kMTdlUSsv?=
+ =?utf-8?B?bTJCbjU2NXVOZDdMVHZiZm9lZWNVSk9hMkxheURiTUNGM3RBSStSamFGd24z?=
+ =?utf-8?B?aXFyc0szTnQ2QzNUWnd0Q25WbUhmQ1FKMHJqVXRiOU1xTm56WXliVnF4V0Fu?=
+ =?utf-8?B?b0lXL2UxN0QwR2xZdW5VNjRMMXhzRmJEQk5HcUtsbWpUbWU4Y0JLR3kxbzQ4?=
+ =?utf-8?B?UkM1b3BiTUxsZ3JtcXF5VHREaHdKWCs0Uzd2RTI4dFZJdGo2QXFlTS94emJh?=
+ =?utf-8?B?U3lWemtyck15V29aOVdLSHdvcHk3QVBsUVpqenF1K3ZkODM4Y2hYcnFLZEVT?=
+ =?utf-8?Q?RMhdzvjpXRvZ41pR0bKUz4yWE7Ikk3NMiqUi8jL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VjU3UVZBMUdKa1g5Um9EbCtLRDFZK05yYWlzSGhZT3ZxU1prRVgzdWM5YzNm?=
+ =?utf-8?B?Z01sNWNGMjUxV2hUdGgxajVUaWo5VXlSSTFlbTNKajIwcVlLcUhiSkNGWmR5?=
+ =?utf-8?B?VUNBVTg2NUFyKzBNd3huTFh6cVBTWkd1Zk1WSUM3NHJlaGRXb01VVkh2L25z?=
+ =?utf-8?B?T2Q3bHN5dmJtTXMrRy8rZTc4YlZUQTVVQm8wSmxyeTE1dGMzMHg5cDl3SkVq?=
+ =?utf-8?B?K09XK3crYWt4NjBxdy9VYzVINUgrVWhIcldiQjR4WjVwMXlQbWJwNUNlRDdW?=
+ =?utf-8?B?NENKL3c0MjBITnp5L1pLc3FNMUUxWDVVaC9sendJaUNGQWxGSzdrL1JRbFFC?=
+ =?utf-8?B?RENjREVYNXVsVHVDa2dBT0szOHZLMEdQYU52aVNtcEFEWVBldS9wTUVvSGM0?=
+ =?utf-8?B?c2xqMndLSVNmbUFucTZpSlRLdy9STzIwMjdRZHZjU3JjRTlUYi9sdGxRMHdz?=
+ =?utf-8?B?cDVRak5aQTdjYTdUVm8vYWFkZVZKWFQ1c3JIc3FiUVB2WEdubFNsQTdFcjlu?=
+ =?utf-8?B?anNBaTNQbEcwaHZab2w1aXpTcWhwYVFhY0NWL0gzU0grWVArNDZvK1FITUx1?=
+ =?utf-8?B?QjYzQTNGcG5jamxTYmFtcHdCcnNTNUp0b0lpRTBLclpLdmJPMWRwSVU4enZU?=
+ =?utf-8?B?eWxoL2NHUU54Q3NEbDhObjcyNXVJTzRQQ2svMXBzT0YxMGVlNWJLNUxlc1Zu?=
+ =?utf-8?B?Ty9zWTVFUXkxNlJSTXJtRWprbU40VGZhTnY4VXhYRDJuVTdaT0N3V0ozTE1R?=
+ =?utf-8?B?d1g1NFF6VnVZSkEyeHBRTmpUM0FmMTlZNFdnVSt1OFVqQm5sTFZGZEJYeE1C?=
+ =?utf-8?B?UHRHVlhHeUxhU3ZVQTQ3aTljSUwySDA5OTBEeUc5ZWwrS3Z2Q200ZlVna29x?=
+ =?utf-8?B?MTYrTndsQU1mbkRqQUtpWGpuRHhFaWh1d0pBSTB3bzVIa0FKU05hQkg1SFNj?=
+ =?utf-8?B?Zi9tdHFkSWNEeEZZSjJxSjBBK1ZmUmR2WTF2OTk4cENyS2Y2d25TakMxaC9Q?=
+ =?utf-8?B?K2VibzQrMEpQY1lSMUM1Z2JnZFVDcUlQbnU2NlBzT05jem8zelJ0emVuRi9H?=
+ =?utf-8?B?ZkgweUFOUWFXS1BUL1ROc1NvK2t5WjBHcVlNNDZ6S3YzMkh3U2RMRnNIQURE?=
+ =?utf-8?B?U1E2ZHpiaVQrU01FMUdPYVNtRjJwVTU3WFlQckZYcXlydGkxaitVN256Z05C?=
+ =?utf-8?B?cnhIVzdHSEZVelVRNlZmT1ZRbHJBdHJ1OStCZVcwK0ZkRGFJWUFaTU9GQnFt?=
+ =?utf-8?B?STFRMEJMSDlRcjgyaFF0SGIzUFdnaVIrNUhXbkRURXIvU1NPbysxY0VxUTcr?=
+ =?utf-8?B?ampTWkd2RnJNL2wrOWtCd2xNVGZkZ1k3aFd2QUZVV3d0SE1xQkR0T0VpNThD?=
+ =?utf-8?B?U285clpoellud0M4b0pWcUV3SnJmMVBLUzZsY2R4TllSOUpncHRVb2lWeDR1?=
+ =?utf-8?B?akFyMWJCSTl6azRzZnVNcG9Xemd0YjdnSkdNOGlHUDRYbTJvalMwazd1TWRF?=
+ =?utf-8?B?YSt5T1hiMDRXNzJWTTIvemtDaHdNQVJzUGQ1dEp6N2R5TDRnRFY4SjJBQ1Zy?=
+ =?utf-8?B?bTNpZWRlenRsSitqZ3VsWE14MTNLQTBUN0hPZytmS2xMcGVmby90VDh4RWdv?=
+ =?utf-8?B?eXBHRnpDeTNqUDZVK00vKzBMYk9hNEdXd09QYnB6dkhvSUsvc3hnT2FwbG9L?=
+ =?utf-8?B?Q0tCclc5U0Y0UEtReTZPbDFWdXozditmbGlhVVc4amlGSDF4S0xVOHVQMjkx?=
+ =?utf-8?B?TkdCZmVIQVA3bHFuMVgvYml5S0FaYzNTUW8vTjVaTkdITSszUzRoaTZSa0lu?=
+ =?utf-8?B?OUt2M2dtNWVYbm1ybkxtWEpYek5iTmZzWmxhWlN0eDZtclVPcGxGQ2pvbW9r?=
+ =?utf-8?B?S3BTYUhzWVY4M3prbmRic2JEUjRaMEZBc3Q0MndtOUNjWUJuZ3VFaXVGR0k2?=
+ =?utf-8?B?QzRnQk9leHZaSUtqRGpmUnZnSjZCeTJkb21EUzRJcHB3VDVFQnBZeXZlTGFP?=
+ =?utf-8?B?Nlp0U3dINEk5S1Z3V0xDVDYxeWU3a1lnaWVPK3hkRkRRVHpzNlVMMGN3Umhv?=
+ =?utf-8?B?bmJFUUtFSld3ZjRvZk9sd1Zoa0dVR0QxUzF0ZHlWcXQ5V1VYbk1pWUZud3hX?=
+ =?utf-8?Q?nywGsraI3z6bK9EIq3n2eVdJc?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 329f5d02-d3da-4185-8b16-08dcf2aff71e
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 15:41:16.4090
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: baAJvrW/WkRj0eD6opy+GGI7Vbh4ywWKIZKUc/QZUPeh9Q43ivOO7xaCLilKUBY6cWNTy4boX1pGA6ehqOpwsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8961
 
-Hello
+On 10/22/2024 07:03, Borislav Petkov wrote:
+> On Tue, Oct 22, 2024 at 01:57:20PM +0200, Borislav Petkov wrote:
+>> diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
+>> index 9a6069e7133c..38220b64c6b3 100644
+>> --- a/arch/x86/kernel/cpu/topology_common.c
+>> +++ b/arch/x86/kernel/cpu/topology_common.c
+>> @@ -27,6 +27,23 @@ void topology_set_dom(struct topo_scan *tscan, enum x86_topology_domains dom,
+>>   	}
+>>   }
+>>   
+>> +const char *get_topology_cpu_type_name(struct cpuinfo_x86 *c)
+>> +{
+>> +	enum x86_topology_cpu_type type;
+>> +
+>> +	if (c->x86_vendor == X86_VENDOR_INTEL)
+>> +		type = get_intel_cpu_type(c);
+>> +	if (c->x86_vendor == X86_VENDOR_AMD)
+>> +		type = get_amd_cpu_type(c);
+>> +
+>> +	if (type == TOPO_CPU_TYPE_PERFORMANCE)
+>> +		return "performance";
+>> +	else if (type == TOPO_CPU_TYPE_EFFICIENCY)
+>> +		return "efficiency";
+>> +	else
+>> +		return "unknown";
+>> +}
+> 
+> I guess you still need topology_cpu_type() in your next patch but that's easy
+> - you simply call it in get_topology_cpu_type_name().
+> 
+> The point being debugfs will dump the name of the core type and not some magic
+> number which no one knows.
 
-the perf_fuzzer triggered this circular locking warning on my haswell 
-fuzzing box running 6.12.0-rc2.  Not sure if people care about reports 
-like this.  Unfortunately I can't test if it's repeatable because my 
-logging box was down at the time this happened.
-
-Vince
-
-
-[1174639.971967] ======================================================
-[1174639.971970] WARNING: possible circular locking dependency detected
-[1174639.971974] 6.12.0-rc2 #7 Not tainted
-[1174639.971980] ------------------------------------------------------
-[1174639.971983] perf_fuzzer/3609323 is trying to acquire lock:
-[1174639.971988] ffffffff8339dc18 ((console_sem).lock){-...}-{2:2},
- at: down_trylock+0x11/0x50
-[1174639.972014] 
-                 but task is already holding lock:
-[1174639.972016] ffff888019527018 (&ctx->lock){-.-.}-{2:2}, at: 
-__perf_event_read+0xb4/0x3a0
-[1174639.972035] 
-                 which lock already depends on the new lock.
-
-[1174639.972038] 
-                 the existing dependency chain (in reverse order) is:
-[1174639.972040] 
-                 -> #2 (&ctx->lock){-.-.}-{2:2}:
-[1174639.972051]        _raw_spin_lock+0x2f/0x40
-[1174639.972062]        perf_tp_event+0x309/0x880
-[1174639.972071]        perf_trace_sched_wakeup_template+0x1fe/0x250
-[1174639.972083]        trace_sched_waking+0x99/0xf0
-[1174639.972092]        try_to_wake_up+0x1c4/0x8f0
-[1174639.972101]        __wake_up_common+0xc5/0x110
-[1174639.972109]        __wake_up_sync_key+0x37/0x50
-[1174639.972116]        do_notify_parent+0x47d/0x860
-[1174639.972127]        do_exit+0xd72/0x1130
-[1174639.972135]        do_group_exit+0x63/0x110
-[1174639.972143]        get_signal+0xe09/0xeb0
-[1174639.972149]        arch_do_signal_or_restart+0x82/0x3a0
-[1174639.972157]        irqentry_exit_to_user_mode+0xd3/0x130
-[1174639.972165]        asm_sysvec_reschedule_ipi+0x16/0x20
-[1174639.972174] 
-                 -> #1 (&p->pi_lock){-.-.}-{2:2}:
-[1174639.972183]        _raw_spin_lock_irqsave+0x47/0x70
-[1174639.972192]        try_to_wake_up+0x8f/0x8f0
-[1174639.972199]        up+0x4e/0x60
-[1174639.972205]        __up_console_sem+0x54/0x70
-[1174639.972211]        console_unlock+0x25f/0x2f0
-[1174639.972219]        vprintk_emit.part.0+0x33f/0x570
-[1174639.972227]        devkmsg_emit.constprop.0+0xab/0xde
-[1174639.972234]        devkmsg_write.cold+0x2d/0x5b
-[1174639.972240]        do_iter_readv_writev+0x1df/0x370
-[1174639.972248]        vfs_writev+0x211/0x700
-[1174639.972256]        do_writev+0xdf/0x200
-[1174639.972263]        do_syscall_64+0x69/0x170
-[1174639.972273]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[1174639.972280] 
-                 -> #0 ((console_sem).lock){-...}-{2:2}:
-[1174639.972290]        __lock_acquire+0x1c91/0x31b0
-[1174639.972297]        lock_acquire.part.0+0x10c/0x2d0
-[1174639.972303]        _raw_spin_lock_irqsave+0x47/0x70
-[1174639.972312]        down_trylock+0x11/0x50
-[1174639.972318]        __down_trylock_console_sem+0x2f/0xa0
-[1174639.972325]        console_trylock+0x36/0x90
-[1174639.972332]        vprintk_emit.part.0+0x336/0x570
-[1174639.972339]        _printk+0xb2/0xe5
-[1174639.972345]        lockdep_rcu_suspicious+0x87/0x180
-[1174639.972355]        get_callchain_entry+0x12f/0x190
-[1174639.972361]        get_perf_callchain+0x9d/0x2d0
-[1174639.972367]        perf_callchain+0xc9/0xe0
-[1174639.972374]        setup_pebs_fixed_sample_data+0x6ae/0x820
-[1174639.972382]        intel_pmu_drain_pebs_nhm+0x795/0x9f0
-[1174639.972389]        intel_pmu_drain_pebs_buffer+0x8c/0xd0
-[1174639.972400]        intel_pmu_auto_reload_read+0x3f/0x60
-[1174639.972407]        __perf_event_read+0x308/0x3a0
-[1174639.972415]        __flush_smp_call_function_queue+0x154/0x370
-[1174639.972427]        __sysvec_call_function_single+0x4c/0x1f0
-[1174639.972438]        sysvec_call_function_single+0x4c/0xc0
-[1174639.972449]        asm_sysvec_call_function_single+0x16/0x20
-[1174639.972456] 
-                 other info that might help us debug this:
-
-[1174639.972459] Chain exists of:
-                   (console_sem).lock --> &p->pi_lock --> &ctx->lock
-
-[1174639.972472]  Possible unsafe locking scenario:
-
-[1174639.972475]        CPU0                    CPU1
-[1174639.972477]        ----                    ----
-[1174639.972479]   lock(&ctx->lock);
-[1174639.972485]                                lock(&p->pi_lock);
-[1174639.972490]                                lock(&ctx->lock);
-[1174639.972496]   lock((console_sem).lock);
-[1174639.972501] 
-                  *** DEADLOCK ***
-
-[1174639.972503] 1 lock held by perf_fuzzer/3609323:
-[1174639.972508]  #0: ffff888019527018 (&ctx->lock){-.-.}-{2:2}, at: __perf_event_read+0xb4/0x3a0
-[1174639.972527] 
-                 stack backtrace:
-[1174639.972531] CPU: 0 UID: 1000 PID: 3609323 Comm: perf_fuzzer Not tainted 6.12.0-rc2 #7
-[1174639.972540] Hardware name: LENOVO 10AM000AUS/SHARKBAY, BIOS FBKT72AUS 01/26/2014
-[1174639.972545] Call Trace:
-[1174639.972549]  <TASK>
-[1174639.972553]  dump_stack_lvl+0x68/0x90
-[1174639.972566]  print_circular_bug.cold+0x193/0x1e2
-[1174639.972582]  check_noncircular+0x24a/0x290
-[1174639.972595]  ? __pfx_check_noncircular+0x10/0x10
-[1174639.972605]  ? __pfx__prb_read_valid+0x10/0x10
-[1174639.972618]  ? lockdep_lock+0xb1/0x160
-[1174639.972627]  ? __pfx_lockdep_lock+0x10/0x10
-[1174639.972640]  __lock_acquire+0x1c91/0x31b0
-[1174639.972658]  ? __pfx___lock_acquire+0x10/0x10
-[1174639.972667]  ? vprintk_store+0x543/0x610
-[1174639.972679]  lock_acquire.part.0+0x10c/0x2d0
-[1174639.972687]  ? down_trylock+0x11/0x50
-[1174639.972697]  ? __pfx_lock_acquire.part.0+0x10/0x10
-[1174639.972705]  ? rcu_is_watching+0x34/0x60
-[1174639.972717]  ? trace_lock_acquire+0x110/0x140
-[1174639.972729]  ? lock_acquire+0x3b/0x90
-[1174639.972735]  ? down_trylock+0x11/0x50
-[1174639.972746]  _raw_spin_lock_irqsave+0x47/0x70
-[1174639.972755]  ? down_trylock+0x11/0x50
-[1174639.972763]  down_trylock+0x11/0x50
-[1174639.972770]  ? vprintk_emit.part.0+0x336/0x570
-[1174639.972779]  __down_trylock_console_sem+0x2f/0xa0
-[1174639.972788]  console_trylock+0x36/0x90
-[1174639.972796]  vprintk_emit.part.0+0x336/0x570
-[1174639.972806]  ? __pfx_vprintk_emit.part.0+0x10/0x10
-[1174639.972817]  ? __lock_acquire+0x94b/0x31b0
-[1174639.972829]  _printk+0xb2/0xe5
-[1174639.972836]  ? __pfx__printk+0x10/0x10
-[1174639.972846]  ? __pfx___lock_acquire+0x10/0x10
-[1174639.972855]  ? find_held_lock+0x83/0xa0
-[1174639.972863]  ? nbcon_cpu_emergency_enter+0x20/0x30
-[1174639.972873]  lockdep_rcu_suspicious+0x87/0x180
-[1174639.972887]  get_callchain_entry+0x12f/0x190
-[1174639.972896]  get_perf_callchain+0x9d/0x2d0
-[1174639.972905]  ? __pfx_get_perf_callchain+0x10/0x10
-[1174639.972916]  ? lock_is_held_type+0xd5/0x130
-[1174639.972923]  ? __rcu_read_unlock+0x4e/0x2a0
-[1174639.972933]  ? perf_event_update_userpage+0x2a4/0x450
-[1174639.972945]  perf_callchain+0xc9/0xe0
-[1174639.972956]  setup_pebs_fixed_sample_data+0x6ae/0x820
-[1174639.972971]  intel_pmu_drain_pebs_nhm+0x795/0x9f0
-[1174639.972990]  ? __pfx_intel_pmu_drain_pebs_nhm+0x10/0x10
-[1174639.973000]  ? __lock_acquire+0x94b/0x31b0
-[1174639.973014]  ? find_held_lock+0x83/0xa0
-[1174639.973024]  ? lock_release+0x28f/0x430
-[1174639.973033]  ? mark_lock+0x101/0xcd0
-[1174639.973049]  ? wp_page_reuse+0xdb/0xf0
-[1174639.973071]  intel_pmu_drain_pebs_buffer+0x8c/0xd0
-[1174639.973085]  ? __pfx_intel_pmu_drain_pebs_buffer+0x10/0x10
-[1174639.973098]  ? __pfx___lock_acquire+0x10/0x10
-[1174639.973106]  ? __pfx_mark_lock+0x10/0x10
-[1174639.973117]  ? lock_acquire.part.0+0x10c/0x2d0
-[1174639.973126]  ? lock_acquire.part.0+0x11c/0x2d0
-[1174639.973134]  ? __pfx_lock_acquire.part.0+0x10/0x10
-[1174639.973142]  ? rcu_is_watching+0x34/0x60
-[1174639.973152]  ? do_raw_spin_lock+0x10c/0x1a0
-[1174639.973163]  ? lock_is_held_type+0xd5/0x130
-[1174639.973173]  ? intel_pmu_lbr_disable_all+0x3c/0xe0
-[1174639.973184]  intel_pmu_auto_reload_read+0x3f/0x60
-[1174639.973193]  __perf_event_read+0x308/0x3a0
-[1174639.973202]  ? rcu_is_watching+0x34/0x60
-[1174639.973213]  ? __pfx___perf_event_read+0x10/0x10
-[1174639.973221]  __flush_smp_call_function_queue+0x154/0x370
-[1174639.973231]  ? __pfx___perf_event_read+0x10/0x10
-[1174639.973242]  __sysvec_call_function_single+0x4c/0x1f0
-[1174639.973254]  sysvec_call_function_single+0x4c/0xc0
-[1174639.973265]  asm_sysvec_call_function_single+0x16/0x20
-[1174639.973274] RIP: 0033:0x5616fdc38bd7
-[1174639.973281] Code: 0f 1f 00 48 89 d1 31 c0 48 89 f2 89 fe bf 41 01 00 00 e9 9c 06 ff ff 66 2e 0f 1f 84 00 00 00 00 00 66 90 31 c9 b9 1f a1 07 00 <ff> c9 75 fc 31 c0 c3 66 90 48 8b 05 99 a0 00 00 48 89 44 24 f8 b9
-[1174639.973289] RSP: 002b:00007ffeffe6f0b8 EFLAGS: 00000202
-[1174639.973296] RAX: 0000000000000000 RBX: 000000000000000d RCX: 000000000005c0b0
-[1174639.973302] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-[1174639.973306] RBP: 00007ffeffe6f0d0 R08: 0000000000000000 R09: 00007fef59807740
-[1174639.973311] R10: 00007fef59a540b8 R11: 0000000000000246 R12: 0000000000000000
-[1174639.973316] R13: 00007ffeffe71528 R14: 00007fef59a53000 R15: 00005616fdc45dd8
-[1174639.973333]  </TASK>
-[1174640.764359] =============================
-[1174640.768560] WARNING: suspicious RCU usage
-[1174640.772765] 6.12.0-rc2 #7 Not tainted
-[1174640.776620] -----------------------------
-[1174640.780825] kernel/events/callchain.c:162 suspicious rcu_dereference_check() usage!
-[1174640.788672] 
-                 other info that might help us debug this:
-
-[1174640.797209] 
-                 rcu_scheduler_active = 2, debug_locks = 1
-[1174640.804097] 1 lock held by perf_fuzzer/3609323:
-[1174640.808817]  #0: ffff888019527018 (&ctx->lock){-.-.}-{2:2}, at: __perf_event_read+0xb4/0x3a0
-[1174640.817452]                  stack backtrace:
-[1174640.822176] CPU: 0 UID: 1000 PID: 3609323 Comm: perf_fuzzer Not tainted 6.12.0-rc2 #7
-[1174640.830192] Hardware name: LENOVO 10AM000AUS/SHARKBAY, BIOS FBKT72AUS 01/26/2014
-[1174640.837775] Call Trace:
-[1174640.840416]  <TASK>
-[1174640.842713]  dump_stack_lvl+0x68/0x90
-[1174640.846569]  lockdep_rcu_suspicious.cold+0x4e/0xad
-[1174640.851555]  get_callchain_entry+0x12f/0x190
-[1174640.856016]  get_perf_callchain+0x9d/0x2d0
-[1174640.860306]  ? __pfx_get_perf_callchain+0x10/0x10
-[1174640.865205]  ? lock_is_held_type+0xd5/0x130
-[1174640.869581]  ? __rcu_read_unlock+0x4e/0x2a0
-[1174640.873959]  ? perf_event_update_userpage+0x2a4/0x450
-[1174640.879205]  perf_callchain+0xc9/0xe0
-[1174640.883057]  setup_pebs_fixed_sample_data+0x6ae/0x820
-[1174640.888307]  intel_pmu_drain_pebs_nhm+0x795/0x9f0
-[1174640.893214]  ? __pfx_intel_pmu_drain_pebs_nhm+0x10/0x10
-[1174640.898633]  ? __lock_acquire+0x94b/0x31b0
-[1174640.902922]  ? find_held_lock+0x83/0xa0
-[1174640.906951]  ? lock_release+0x28f/0x430
-[1174640.910984]  ? mark_lock+0x101/0xcd0
-[1174640.914754]  ? wp_page_reuse+0xdb/0xf0
-[1174640.918699]  intel_pmu_drain_pebs_buffer+0x8c/0xd0
-[1174640.923691]  ? __pfx_intel_pmu_drain_pebs_buffer+0x10/0x10
-[1174640.929372]  ? __pfx___lock_acquire+0x10/0x10
-[1174640.933924]  ? __pfx_mark_lock+0x10/0x10
-[1174640.938042]  ? lock_acquire.part.0+0x10c/0x2d0
-[1174640.942675]  ? lock_acquire.part.0+0x11c/0x2d0
-[1174640.947311]  ? __pfx_lock_acquire.part.0+0x10/0x10
-[1174640.952290]  ? rcu_is_watching+0x34/0x60
-[1174640.956404]  ? do_raw_spin_lock+0x10c/0x1a0
-[1174640.960782]  ? lock_is_held_type+0xd5/0x130
-[1174640.965157]  ? intel_pmu_lbr_disable_all+0x3c/0xe0
-[1174640.970140]  intel_pmu_auto_reload_read+0x3f/0x60
-[1174640.975037]  __perf_event_read+0x308/0x3a0
-[1174640.979329]  ? rcu_is_watching+0x34/0x60
-[1174640.983443]  ? __pfx___perf_event_read+0x10/0x10
-[1174640.988247]  __flush_smp_call_function_queue+0x154/0x370
-[1174640.993748]  ? __pfx___perf_event_read+0x10/0x10
-[1174640.998548]  __sysvec_call_function_single+0x4c/0x1f0
-[1174641.003795]  sysvec_call_function_single+0x4c/0xc0
-[1174641.008776]  asm_sysvec_call_function_single+0x16/0x20
-[1174641.014105] RIP: 0033:0x5616fdc38bd7
-[1174641.017873] Code: 0f 1f 00 48 89 d1 31 c0 48 89 f2 89 fe bf 41 01 00 00 e9 9c 06 ff ff 66 2e 0f 1f 84 00 00 00 00 00 66 90 31 c9 b9 1f a1 07 00 <ff> c9 75 fc 31 c0 c3 66 90 48 8b 05 99 a0 00 00 48 89 44 24 f8 b9
-[1174641.036825] RSP: 002b:00007ffeffe6f0b8 EFLAGS: 00000202
-[1174641.042245] RAX: 0000000000000000 RBX: 000000000000000d RCX: 000000000005c0b0
-[1174641.049573] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-[1174641.056894] RBP: 00007ffeffe6f0d0 R08: 0000000000000000 R09: 00007fef59807740
-[1174641.064218] R10: 00007fef59a540b8 R11: 0000000000000246 R12: 0000000000000000
-[1174641.071541] R13: 00007ffeffe71528 R14: 00007fef59a53000 R15: 00005616fdc45dd8
-[1174641.078870]  </TASK>
+Yeah; makes sense.  I'll pull your suggestions in.
 
 
