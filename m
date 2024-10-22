@@ -1,193 +1,209 @@
-Return-Path: <linux-kernel+bounces-377098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4609AB9C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:00:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D347D9AB9CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E802822B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EC19B209E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44171CDA3B;
-	Tue, 22 Oct 2024 23:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A6A1CEAB3;
+	Tue, 22 Oct 2024 23:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="zP0hOuJ/"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EF0198846
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoXnp6mT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C0615CD52;
+	Tue, 22 Oct 2024 23:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729638034; cv=none; b=kPj/OWtVYrq8ULJoSvQpdPwS6d4YXhpzMPwe+0mPiQTbLk6R/ITSRE48wO5OmLP3QjdN6LmH5taKl3rleZCNO6DHUXZS8dIaR6UzWfSHEi+iUMALNbnu5WwO6gmjLyjCGJJIUC+FGH4gakAckND6gjS1RLg0HbzkbbSdOw7m2KU=
+	t=1729638233; cv=none; b=agUZZeEnyrjZctA0yR2nrgb1xy2RgWoJYM2ZLiZbilcgyOHHQGsFW8rFNkN5ykNDXxr4jGOuEURZH5tvPb66FZdUDtH1AL3zCsTOU6abkXUD/C9ozGgTxIbT5IP1Guzy2ZVVtuKXzyS9ErGEDi5fhjrrwjFZGYVs3fkAyyLenBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729638034; c=relaxed/simple;
-	bh=JYYT6NWVKVJy521RVnpBOsTsaJ9xWTminJzbGkzYAz4=;
+	s=arc-20240116; t=1729638233; c=relaxed/simple;
+	bh=n8lD8DCqOlH73Gu9VQdGu1O0WqrfAycD1MpavnIEgK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvUZU2qYTKJPGHX2cvu9UEaJ2LkjOkfVkbor8IidTmbKz4pX6FlgjQvGvTAA6NG1XxeJo0FvKSNgiOloFawZtmKqp28Nm95+d2RGD11gAUkgjxZjOHTnUZlfIISIt8PvnPGn0vcWuFqAqnqenR6OvQA+YUSWN3/JfHhU8tPdFEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=zP0hOuJ/; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id D9E7C14C1E1;
-	Wed, 23 Oct 2024 01:00:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729638024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+PhWiLsE/ON3mjmkRzMiGc9kBu8+BamSMdruYQygqY=;
-	b=zP0hOuJ/+I+kvxnPXTKILVZTmq9uW8IIrcrjnp80IaKnWS5i0IhCUKrro+bqGxoZqsEcwj
-	KBt499xq3KuVUaW78haSqWdXWgAs4BQ2Hz8QHw+MuPUGoxdkfSvGtZ5ItmtAfrVCbkdX84
-	kjroIim/F30dRDmisbgE866fgYzQKxxY9A6oah6jXXAXXu2THwEaIDuoAGWcnHAJb/p5ba
-	Vzo3niNheJlOyIxE5Mp90DGhMRSWbnqX/vkytJrOsYa7tGHoGMV+QHfigYuK6X6ySSEGCB
-	otqfiC7i7PH76WHSgVW1jbaQA3aNwNPXM2GaOc2gpRbnFNLEwxQl10mWibMFtg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1226a4ff;
-	Tue, 22 Oct 2024 23:00:19 +0000 (UTC)
-Date: Wed, 23 Oct 2024 08:00:04 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Will Deacon <will@kernel.org>, ericvh@kernel.org
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, lucho@ionkov.net,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
-	keirf@google.com, regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <ZxgudMCSgbDOEjpD@codewreck.org>
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
- <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
- <Zw-J0DdrCFLYpT5y@codewreck.org>
- <20241022150149.GA27397@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MwGvUbJSVUOXhQ8B03vY6MNx+Lu3EZ/UO36MHZ3B1fq11MqFgolGX7QPQpUeaVY/Xukv3FXWBGRpHkNRSOd3CntRDuSXXllTQgid3+0qE8hh3C3hLcJMRmxg4uDpHx2rqAkNsQuS4yPjKsTT9tyZkjy3yqoD+42CwhGfTHeJOoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoXnp6mT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF69C4CEC3;
+	Tue, 22 Oct 2024 23:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729638232;
+	bh=n8lD8DCqOlH73Gu9VQdGu1O0WqrfAycD1MpavnIEgK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JoXnp6mT6m+lDTaXdvJEIlJtW4bAiMGbBfY/KkVwxf/niiZWtXDh0jwsmIk0RF2aC
+	 Dtphi9WPKduVkHpN62lAgTa6Ub9xTP/3kNB3SEAQIsaDfFG8sHqhY4KazThi9FOGo5
+	 JK8clH2eVpGpkOfp3jryMK3iC2Fo6E5AqrPljxT1H+1LwX4NU/3RvDyzizRvtcxXBG
+	 ksKfCJ8DF+0Af7abdCQZCCLNOfOXZLKxOkn+Qht4fLCx1tI8BC6zYFbP2P5jyBE2xd
+	 3CEujJ53dLqFyCKADwqeknKlNmE0gfX4vT0xxIEANkP4YBDzjAMbNQeEZYP71IO9mD
+	 KYxb2xfmv/w8g==
+Date: Tue, 22 Oct 2024 18:03:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 14/16] rust: of: add `of::DeviceId` abstraction
+Message-ID: <20241022230351.GA1848992-robh@kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-15-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022150149.GA27397@willie-the-truck>
+In-Reply-To: <20241022213221.2383-15-dakr@kernel.org>
 
-Will Deacon wrote on Tue, Oct 22, 2024 at 04:01:49PM +0100:
-> > One note though he did sent a patch that seems related and wasn't sent
-> > for merge:
-> > https://lore.kernel.org/all/CAFkjPTn7JAbmKYASaeBNVpumOncPaReiPbc4Ph6ik3nNf8UTNg@mail.gmail.com/T/#u
-> >
-> > Will, perhaps you can try it? I'm pretty sure the setup to reproduce
-> > this is easy enough that I'll be able to reproduce in less than an hour
-> > (export two tmpfs [sequential inode number fs] wthin the same 9p mount
-> > in qemu without 'multidevs=remap'), but I don't even have that time
-> > right now.
-> > 
-> > (I didn't even read the patch properly and it might not help at all,
-> > sorry in this case)
+On Tue, Oct 22, 2024 at 11:31:51PM +0200, Danilo Krummrich wrote:
+> `of::DeviceId` is an abstraction around `struct of_device_id`.
 > 
-> I think this patch landed upsteam as d05dcfdf5e16 (" fs/9p: mitigate
-> inode collisions") and so I can confirm that it doesn't help with the
-> issue.
-
-Ugh, yes, sorry I'm blind it's there alright (you even listed it in your
-first post in the list of commits to revert)
-
-> > I'm not sure this really needs to get Linus involved - it's breaking a
-> > server that used to work even if qemu has been printing a warning about
-> > these duplicate qid.path for a while, and the server really is the
-> > better place to remap these inodes as we have no idea of the underlying
-> > device id as far as I know...
+> This is used by subsequent patches, in particular the platform bus
+> abstractions, to create OF device ID tables.
 > 
-> FWIW, I'm not using QEMU at all. This is with kvmtool which, for better
-> or worse, prints no such diagnostic and used to be reliable enough with
-> whatever magic the kernel had prior to v6.9.
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  MAINTAINERS                     |  1 +
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/kernel/lib.rs              |  1 +
+>  rust/kernel/of.rs               | 63 +++++++++++++++++++++++++++++++++
+>  4 files changed, 66 insertions(+)
+>  create mode 100644 rust/kernel/of.rs
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d9c512a3e72b..87eb9a7869eb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17340,6 +17340,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+>  F:	Documentation/ABI/testing/sysfs-firmware-ofw
+>  F:	drivers/of/
+>  F:	include/linux/of*.h
+> +F:	rust/kernel/of.rs
+>  F:	scripts/dtc/
+>  F:	tools/testing/selftests/dt/
+>  K:	of_overlay_notifier_
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index cd4edd6496ae..312f03cbdce9 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/firmware.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/mdio.h>
+> +#include <linux/of_device.h>
 
-Yes, that problem isn't specific to qemu, anything that re-exports
-multiple filesystems using underlying inode numbers directly has this
-risk (e.g. even diod/nfs-ganesha tcp mounts ought to reproduce if they
-don't mangle inodes); I agree we need to handle servers throwing junk at
-us.
+Technically, you don't need this for *this* patch. You need 
+mod_devicetable.h for of_device_id. Best to not rely on implicit 
+includes. I've tried removing it and it still built, so I guess there is 
+another implicit include somewhere...
 
-It's easy enough to reproduce with qemu if remapping is disabled as
-expected (I don't hit the VFS warning in d_splice_alias() but the
-behaviour is definitely wrong):
-----
-# host side
-cd /tmp/linux-test
-mkdir m1 m2
-mount -t tmpfs tmpfs m1
-mount -t tmpfs tmpfs m2
-mkdir m1/dir m2/dir
-echo foo > m1/dir/foo
-echo bar > m2/dir/bar
+>  #include <linux/pci.h>
+>  #include <linux/phy.h>
+>  #include <linux/refcount.h>
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 3ec690eb6d43..5946f59f1688 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -51,6 +51,7 @@
+>  pub mod list;
+>  #[cfg(CONFIG_NET)]
+>  pub mod net;
+> +pub mod of;
+>  pub mod page;
+>  pub mod prelude;
+>  pub mod print;
+> diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
+> new file mode 100644
+> index 000000000000..a37629997974
+> --- /dev/null
+> +++ b/rust/kernel/of.rs
+> @@ -0,0 +1,63 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Open Firmware abstractions.
 
-# guest side
-# started with -virtfs local,path=/tmp/linux-test,mount_tag=tmp,security_model=mapped-file
-mount -t 9p -o trans=virtio,debug=1 tmp /mnt/t
+s/Open Firmware/Devicetree/
 
-ls /mnt/t/m1/dir
-# foo
-ls /mnt/t/m2/dir
-# bar (works ok if directry isn't open)
+Or keep both that prior versions of this code had. Most of DT/OF today 
+is not OpenFirmware.
 
-# cd to keep first dir's inode alive
-cd /mnt/t/m1/dir
-ls /mnt/t/m2/dir
-# foo (should be bar)
-----
+> +//!
+> +//! C header: [`include/linux/of_*.h`](srctree/include/linux/of_*.h)
 
-This can also be observed with files if mounting with cache=fscache or
-similar (but interestingly even keeping the file open will properly
-disociate both files in default cache=none mode); either way we won't be
-able to properly work with hard links if we assume the server isn't
-reliable; I guess that if someone wants that we'd really need to
-implement some capability negotiation at mount time so the server can
-tell us what is supported and unless that is done assume the server
-cannot reliably assign inodes...
+I haven't quite figured out how this gets used. I guess just a link in 
+documentation? I somewhat doubt this file is going to handle all DT
+abstractions. That might become quite long. Most of of_address.h and 
+of_irq.h I actively don't want to see Rust bindings for because they 
+are mainly used by higher level interfaces (e.g. platform dev 
+resources). There's a slew of "don't add new users" APIs which I need to 
+document. Also, the main header is of.h which wasn't included here.
 
-And if we go that way then we just shouldn't ever look at the inode
-number?... Which seems to pretty much be what the old code was doing in
-the "new" path of v9fs_qid_iget(); the compare function would just
-always say the inodes are different and get a new one...
-The mitigation Eric implemented is similar enough (re-added a 'new'
-parameter, and fail if I_NEW isn't set when new was requested), but it
-looks like v9fs_fid_iget_dotl() isn't called at all when accessing the
-other overlapping directory, so that wasn't effective here as some
-higher level of caching caught the inode first.
+As of now, only the mod_devicetable.h header is used by this file, so I 
+think you should just put it until that changes. Maybe there would be 
+some savings if all of mod_devicetable.h was handled by 1 rust file?
 
+> +
+> +use crate::{bindings, device_id::RawDeviceId, prelude::*};
+> +
+> +/// An open firmware device id.
+> +#[derive(Clone, Copy)]
+> +pub struct DeviceId(bindings::of_device_id);
+> +
+> +// SAFETY:
+> +// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and does not add
+> +//   additional invariants, so it's safe to transmute to `RawType`.
+> +// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
+> +unsafe impl RawDeviceId for DeviceId {
+> +    type RawType = bindings::of_device_id;
+> +
+> +    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::of_device_id, data);
+> +
+> +    fn index(&self) -> usize {
+> +        self.0.data as _
+> +    }
+> +}
+> +
+> +impl DeviceId {
+> +    /// Create a new device id from an OF 'compatible' string.
+> +    pub const fn new(compatible: &'static CStr) -> Self {
+> +        let src = compatible.as_bytes_with_nul();
+> +        // Replace with `bindings::of_device_id::default()` once stabilized for `const`.
+> +        // SAFETY: FFI type is valid to be zero-initialized.
+> +        let mut of: bindings::of_device_id = unsafe { core::mem::zeroed() };
+> +
+> +        let mut i = 0;
+> +        while i < src.len() {
+> +            of.compatible[i] = src[i] as _;
+> +            i += 1;
+> +        }
 
-I've also confirmed reverting the 4 commits listed by Will do fix both
-behaviors (along with a fscache warning when hitting the duplicate inode
-file, but that's expected):
-        724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
-        11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
-        10211b4a23cf "fs/9p: remove redundant pointer v9ses"
-        d05dcfdf5e16 " fs/9p: mitigate inode collisions"
+AFAICT, this loop will go away when C char maps to u8. Perhaps a note 
+to that extent or commented code implementing that.
 
+> +
+> +        Self(of)
+> +    }
+> +
+> +    /// The compatible string of the embedded `struct bindings::of_device_id` as `&CStr`.
+> +    pub fn compatible<'a>(&self) -> &'a CStr {
+> +        // SAFETY: `self.compatible` is a valid `char` pointer.
+> +        unsafe { CStr::from_char_ptr(self.0.compatible.as_ptr()) }
+> +    }
 
-> I'm happy to test patches if there's anything available, but otherwise
-> the reverts at least get us back to the old behaviour if nobody has time
-> to come up with something better.
+I don't think we need this. The usage model is checking does a node's 
+compatible string(s) match a compatible in the table. Most of the time 
+we don't even need that. We just need the match data.
 
-I think that's the sane thing to do, let's first go back to something
-that works and we can try again if/when someone has time - I've
-certainly just spent more time here than I have, and starting over is just
-a matter of reapplying the patches in a local branch so it's not like
-there's anything to lose (afaiu this was intended as code cleanup to
-make the code more maintainable rather than fixing something specific)
-
-
-
-Thorsten, is there a preferred way reverts should be done?
-In this case it'd probably make sense to squash the 4 reverts in a
-single megarevert? At the very least getting anywhere in the middle with
-the uaf isn't something one would want... And they all made it in 6.9
-together so there's no benefit in splitting them for backport either.
-
-Once that's decided I'll prepare something to send Linus in a few days,
-I don't think there's much point in sitting on this either...
-
-
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+Rob
 
