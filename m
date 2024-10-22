@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-375927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890FB9A9D5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 805B29A9D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4055D1F25C2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B021F2593B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9056187328;
-	Tue, 22 Oct 2024 08:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D189189905;
+	Tue, 22 Oct 2024 08:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBGBa00Q"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3sz6Tss"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB37155333
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CE137747;
+	Tue, 22 Oct 2024 08:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586861; cv=none; b=pkLLcEbcpZ6tvMCaF1hN9zJYoDG3RLT/A+XroePAcVlZIY6f3TvZkgeUU9qrdc3YtYNRB1ABQZctmbl9/HPR+jBo18K8ymV6oPJn4QR+2PDlpYXtnjqy/TvvyZObOTn7k59agsa3bIHrTeRKwnOwJXFekVRapNtzOy4Tnaw51eo=
+	t=1729586817; cv=none; b=sN6oDrKXNjRZhATEmkPXXRNLVFj91Zy5EKZhTRrl3OhZvvoR0fqLcNsNxWQj1BCYFI7IHuf5gG5Gy2O6yfbV9834DsxXPl2r6HtKPDVV81MeqLvVj+bXW40chl9WiB6E33VnA9yBkliP5wd5vHYWRk3/D8yFoCelKVLhSUoYYQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586861; c=relaxed/simple;
-	bh=jP0UyriYrwD9z86DKnm2ZLkHzsSCrtmBtYGrEmrhRRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZClROc9QYO8YUGa0SPaWNkE6nF1vs55MiwGeqWi8nO5wEuys9As8trz+Etg/cMwrZjS4lQ7C8WniHkTPirD+z1PfNZ4Djwtp/3OWk5fEv1nL8jgtxviplnhaHO03dBwu/aqxsnqlQEaJTvmmLgzQOANOhgR0MHyelxWZCAAwsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBGBa00Q; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cb6704ff6bso2977844a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:47:37 -0700 (PDT)
+	s=arc-20240116; t=1729586817; c=relaxed/simple;
+	bh=KoxzzeJo6etocqx2b/o+OlOXOv6uNN7rqTozMtP8LX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZEd5JBzbFyduy/ee3uvUW0eH+8AuEuZdONDvsCB2D2sR0LeBwD1UihB1CaUqmWRqHiMKTOE9SD2gF+JTyJKLDzN2FPgMm7iQchtEACxMwu9V3ZJZqLrgrkSZDrc++oAI3ANIgHLFoSxFPjuxx6auN4VPA5DumJkbSrD8wMm49Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3sz6Tss; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6e38ebcc0abso58682267b3.2;
+        Tue, 22 Oct 2024 01:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729586856; x=1730191656; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xMAQWvLlw2fKM99vhhfmIMlXgXWjc46mq6iY37iUllU=;
-        b=JBGBa00Q0JY1FNmdrM+AT6/Uhz/8RpcqZAU4Hpyzka8oKWTVc7O7+XXG4wbf/1BC1h
-         K6m1b9PBJx+pzy11zijrRpyaHF46KaovgwMQWksNiuNVUiWIAzeAB9q/VLjyQHm8ddvt
-         npc5VBOu0nIyQBYBrkagh1V7E20JIDdTxPJd+kEIv9atYxuxLGlqOh7bOeFM//DkIzMi
-         eblD9Jjy0erIFwuhHX6NfYU2S0bkpkvrYt9Z6DomuZ2FQGdBrixlW65WMuYLSotcxI/5
-         Lgn/G6W+mNiI8kRmIMX35QQmrsH4rPKyDHfI+oA4U4NTbwU45mgKtx5APZVTgc2FKAfs
-         KZqQ==
+        d=gmail.com; s=20230601; t=1729586815; x=1730191615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UUFrYT1eNOid4dqFuQyZap0oTpnRGPS1wGDonRnbV+Y=;
+        b=f3sz6TsskkMLkxbWVZYYpXmCpStSEutAQ1CfwXpPc2n3z7qjpD34HGUFgdzfmM0+H5
+         d1xhaOxB/WMFrKtc5v7oQ22aJPZsiTpT4ezSNu3d+DAxNbtgJbcCI7MTxctpeRyI9khN
+         72Vv+hxkkET9qFsvY32OAuKI4Ue8FETXAJ5KOGv1ld3J6VvvOaXkUmtcUuODc9vZj1xs
+         fT3tvaSZRNouSrtlGiLeUeaIM7NjjBoz6NAGEYaQH7Ce9YK2eFb07pkOywZBlq1X7JKx
+         Hj/bi3ALVvL7hEKIl9lElUydJx8SWDA5NG1s/kUiGe77sikehveVxW4ARCE5RpefVLo/
+         GV8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729586856; x=1730191656;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xMAQWvLlw2fKM99vhhfmIMlXgXWjc46mq6iY37iUllU=;
-        b=OuvjokzkLnYFzcF37+zbvWf6/gqfoyXzRMIcb5xFuBfwn9EDvQbEwFPgK9ZgdDNyg8
-         AhjoqlyngOVicURnNoNpwV2PZvCyT6shrwGYy/RZVgbf6Lg027boKMr3XabjyOCNW6yn
-         d/Cb6iQYwdHeRR+7uSLTz4KUz9NFfbA9uq29S95rjaPD3h6VyVEjJMp5D4NPwldMl6kR
-         69UW6P3yA6T9ljUtxKSVQJas+bUe6KG1+k6VLTkdVpX+RxWMNsOu8jkRyYEjQJKDbJ+W
-         5Yu8ywwRv1IQsb/MjvIWJI2pnjS3HZd3pKhYCnGtKAZIc9jpMJ48gzwmB2Cvh+Uu6DKa
-         TlvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUluZhIp0L1bdlDGkBgYbKmx3hSiVEKAodeymVbZvxpfF2Nf8tG2rHRkB6zPmb6EQMMGwrrR3TPA0RlyEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6GhdPNGBlA8Huy5VUtU7QcuakOca3ijqvZiXiGJU2mIhDl0NV
-	26GmdPnwkFEMgK1Isdbaa1G9RzzmI4mmguumj7ZLRb5dMfpnECtXJ6bAYo6eZwg=
-X-Google-Smtp-Source: AGHT+IEVK67koz5KXdC5G05UN1qm3EHxsMXk42XCzA+1nGcgobipSD6ab9ai9Bgvxr/zflRZofZxAA==
-X-Received: by 2002:a05:6402:3482:b0:5c9:45f2:b26a with SMTP id 4fb4d7f45d1cf-5ca0abea14fmr12004538a12.0.1729586856417;
-        Tue, 22 Oct 2024 01:47:36 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6a445sm2886708a12.41.2024.10.22.01.47.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 01:47:36 -0700 (PDT)
-Message-ID: <787bc601-e669-480e-96c7-36f6e12e3088@linaro.org>
-Date: Tue, 22 Oct 2024 09:47:34 +0100
+        d=1e100.net; s=20230601; t=1729586815; x=1730191615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UUFrYT1eNOid4dqFuQyZap0oTpnRGPS1wGDonRnbV+Y=;
+        b=rz7a8XNlCaku0RFN21CA/FsqWvIT+ArTk4hwu2gA8nLsTdntoUYajTRpJHgNd1kcLe
+         x7p0A3CjRuXCfKqB5/dSlskvUiOOuace/iwqdZZRTU7NQEpSQESJEd12Ro55aYaiuGz1
+         l3UECzvuobzhR5E/beDiVGNFgdi6T8Pjw8LgZxI2CM9B4bC44Dd1FW7hmdg/BxO6nRmZ
+         lqwOX8d0VqNeZkDTbPxEso/+25TyJnSC008J6QnM89GJ/oWyGTt61bi8dJgDcNc5s7Vn
+         dke1KJNtWfJyi2mOWqKKyyJsdvhOcQP5E0RZmbl0+BWuddB3SI7TtDU972/1NVfNXGik
+         tEdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPmTrQic0DerTIBLiAQ9AJHECtbjt2qtjDBFBopsoCscQKEFleOmGfXlQZBdK18ihPJdaLWYRe@vger.kernel.org, AJvYcCUQ9qLNq0dVtdlv/GuNam3iOuAaKARQN68umxnGwpd6ByWaqCgnaYRa3EE+D0up5Hg6KxX3xIAjhz7xxyIY@vger.kernel.org, AJvYcCW2b04eZ+Zv7LtlERuvFwbNiTSsGW6Z4EoHivUZBz8AuetNAILCo++smyF9off5EF4VgJ4=@vger.kernel.org, AJvYcCXfLWgf8fT4tK9s22jcJKOWbCFlfl2ogjhF8faQ986Kp7n+6qTJtrlXSHpaS7sgq4uu3yKotaOKJqiDahxoFQfN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMOOl7gU5iMpMziA0kcgCedhYvw+wJTc0otyRv1fhHMu+VVwyQ
+	RAV0xJn1a+W9o3bXFmXXodpTtxIAxwnZ3SlLVjMHQjLUIsLd1UyOTXSouik43dWbrrjyIXS6uXS
+	4lpcvqg1MHHML1y5jlKs47nnEcuE=
+X-Google-Smtp-Source: AGHT+IGa70DbIzj17jnQMKvxrqZzKAIwpBsupiT5kH056AnnXaak0bg1EodNANRT8iYvRLR4hMiz9fU4XeAZxEwSSaU=
+X-Received: by 2002:a05:690c:f8f:b0:6d3:f9a6:e29c with SMTP id
+ 00721157ae682-6e5bf9a0846mr134520257b3.12.1729586814908; Tue, 22 Oct 2024
+ 01:46:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] clk: qcom: rpmh: Add support for SM8750 rpmh clocks
-To: Melody Olvera <quic_molvera@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- "Satya Durga Srinivasu Prabhala --cc=linux-arm-msm @ vger . kernel . org"
- <quic_satyap@quicinc.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
- <20241021230359.2632414-3-quic_molvera@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241021230359.2632414-3-quic_molvera@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241015140800.159466-1-dongml2@chinatelecom.cn>
+ <20241015140800.159466-3-dongml2@chinatelecom.cn> <71a20e24-10e8-42a8-8509-7e704aff9c5c@redhat.com>
+In-Reply-To: <71a20e24-10e8-42a8-8509-7e704aff9c5c@redhat.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Tue, 22 Oct 2024 16:47:50 +0800
+Message-ID: <CADxym3b6gat7Xs20oN12xsYNSGM3zaJkGirzGv57jA-+Kyr7+A@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/10] net: ip: make fib_validate_source()
+ return drop reason
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org, 
+	roopa@nvidia.com, razor@blackwall.org, gnault@redhat.com, 
+	bigeasy@linutronix.de, idosch@nvidia.com, ast@kernel.org, 
+	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	bridge@lists.linux.dev, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/10/2024 00:03, Melody Olvera wrote:
-> +	{ .compatible = "qcom,sm8750-rpmh-clk", .data = &clk_rpmh_sm8750},
->   	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+On Mon, Oct 21, 2024 at 6:20=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+>
+> On 10/15/24 16:07, Menglong Dong wrote:
+> > diff --git a/include/net/ip_fib.h b/include/net/ip_fib.h
+> > index 90ff815f212b..b3f7a1562140 100644
+> > --- a/include/net/ip_fib.h
+> > +++ b/include/net/ip_fib.h
+> > @@ -452,13 +452,16 @@ int __fib_validate_source(struct sk_buff *skb, __=
+be32 src, __be32 dst,
+> >                         dscp_t dscp, int oif, struct net_device *dev,
+> >                         struct in_device *idev, u32 *itag);
+> >
+> > -static inline int
+> > +static inline enum skb_drop_reason
+> >  fib_validate_source(struct sk_buff *skb, __be32 src, __be32 dst,
+> >                   dscp_t dscp, int oif, struct net_device *dev,
+> >                   struct in_device *idev, u32 *itag)
+> >  {
+> > -     return __fib_validate_source(skb, src, dst, dscp, oif, dev, idev,
+> > -                                  itag);
+> > +     int err =3D __fib_validate_source(skb, src, dst, dscp, oif, dev, =
+idev,
+> > +                                     itag);
+> > +     if (err < 0)
+> > +             return -err;
+> > +     return SKB_NOT_DROPPED_YET;
+> >  }
+>
+> It looks like the code churn in patch 1 is not needed??? You could just
+> define here a fib_validate_source_reason() helper doing the above, and
+> replace fib_validate_source with the the new helper as needed. Would
+> that work?
+>
 
-Might be a nice opportunity to alphabetise this list if you do a V2.
+Of course, that works fine. I'm just trying to find a graceful way
+for this part. Defining a fib_validate_source_reason() here looks
+nice too, and we can ignore the 1st patch. I'll do it this way in
+the next version.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Thanks!
+Menglong Dong
+
+> > @@ -1785,9 +1785,10 @@ static int __mkroute_input(struct sk_buff *skb, =
+const struct fib_result *res,
+> >               return -EINVAL;
+> >       }
+> >
+> > -     err =3D fib_validate_source(skb, saddr, daddr, dscp, FIB_RES_OIF(=
+*res),
+> > -                               in_dev->dev, in_dev, &itag);
+> > +     err =3D __fib_validate_source(skb, saddr, daddr, dscp, FIB_RES_OI=
+F(*res),
+> > +                                 in_dev->dev, in_dev, &itag);
+> >       if (err < 0) {
+> > +             err =3D -EINVAL;
+> >               ip_handle_martian_source(in_dev->dev, in_dev, skb, daddr,
+> >                                        saddr);
+>
+> I'm sorry for not noticing this issue before, but must preserve (at
+> least) the -EXDEV error code from the unpatched version or RP Filter MIB
+> accounting in ip_rcv_finish_core() will be fooled.
+>
+> Thanks,
+>
+> Paolo
+>
 
