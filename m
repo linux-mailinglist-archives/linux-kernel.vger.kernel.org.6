@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-376391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82ED19AB0C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5F19AB0CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B241D1C2261A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE271C225FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852B1A08CC;
-	Tue, 22 Oct 2024 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ED01A08C6;
+	Tue, 22 Oct 2024 14:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EKxB/gqR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUTbZFTh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B4F83CC7
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F88983CC7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729607130; cv=none; b=uyAvGRG7TMUJ/DZMNd0SH5wkF7KzNLGHU7RjGcJyuFxK589Rvk3bSTQDc9SMkk0t31rnhUqBn3h177C8ydYuuNQmzUn9g/0QU8qqQE1EpERtOSBh7Qf63/TMO49QzGHkED+9eoL7qWEyAD2HtmO+prS2SErgaIf+H9+xLfHI2K0=
+	t=1729607150; cv=none; b=R/FN4vIaTSDG5haPsrOK5WM6x2r65FlB9weEpaFRRMSQdOpRc+FOnX+Y3cRAtQHL3GOSOMc0nYsnwcYhtHvJMKc38BHUEjWX8dpsbzqaKFDuAk+w1faXLgQ72QeXFNpMq6TCv/zX9CGYxuKsvAn+R5oo7psLtpYTVRr4dWlEYTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729607130; c=relaxed/simple;
-	bh=37Iqmo+qy+WFGzsf6uya3SA3tdIscHLZylxDIyGXIns=;
+	s=arc-20240116; t=1729607150; c=relaxed/simple;
+	bh=mmHvQnejgtDBEYiUiLY07NR+//R3gfm+20XK//h3C3A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C74Gr7o3kqeckXEy5afhlgqZJJT+qVNymz6tNvqxmx4lejXTEVx7qvE5+9Xy44zAbxVsztdVA3DFFk+uOTZkX4swOaPTMQwDg5qEjSMDWhScpcLsDLTk7MD8w0YmJ/BeIVSvvaeE3WeccX6PPWTsIUIQIiV75pQMurSRrQwRMiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EKxB/gqR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314a26002bso63074665e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729607127; x=1730211927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wehu+MEAsSEQ19L7grgHaXBLH+E5c19oiwcAV7y0Jvs=;
-        b=EKxB/gqRXY0QGZvCH3Y7XpP9rB+0yAvGxgiOjb5I4coSXdhBbJHeojYE9grevnv0C+
-         uLh2hBd+nGljQ7LPfybrJxOVk10l6UeniR5N4X6F+CfOTLuL2/Rjsxhz4OddXdlMD+LD
-         jkOYqnFZmK+WNsOiNg/K50of5Z2Rjv01hZH0QXuZEzELa8W60V/PJaylFh3kvhGAHRPO
-         XFvAmg3Iu014bfGu4v7x3o1JJpARQs5ptX28qokUMc6BXUcaReKwTLt9CeXKST0e+hx7
-         sezP5mMitepLzX1chBHJOs+eDWqpwNF0Jjh4Et/p8lfneu4I2vOC6VhDCJwuPHONmFNB
-         NWJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729607127; x=1730211927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wehu+MEAsSEQ19L7grgHaXBLH+E5c19oiwcAV7y0Jvs=;
-        b=jKxmgjoNXjGzmkxj3MPNO6uu/rq/5XcLgXCU/XEfbKIuK9HWnwVbQDWDUVpkDv9KU0
-         8eXyyTBM7nNQaDlsd5uNGqxSlVJSqdL9zVcUaXTfbIQLp7UR3EZGuVPhQNq+d/uTmRpL
-         pHyHjsQbRbjzYggCO4IyO1PTT/ifB4qcpjowCqt+u/vYLTZ1eE1SZa70voIcQa3N088J
-         KiU5u3YelME/3fiZWItQopDPyBaw3LLHJSbPBx0MrGrmNK1lcl5lVhvNwf0jQksCCryZ
-         WDIBD/3qNKmatufWknqD+OO0bvyjYDdCbp4IE/WSONO86tXYK2S7gvCg/PuVqzZo0Gu6
-         Ay7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7683seFz+Ls67TNC1iGogpd5oG6188Czd4b4tsVZopEHxdZgZPaglygBu6YgKAOc5hBXUGeHJ+Dla3o4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8oT+IRMa5eimD04qwv81oADX8Q2MTdkXqK87TsjfH/i940QZ8
-	scEkLG4P9YfdI3i1jCO/ctnJXxqrU6QxDxVSDptITcrHIDp4yVAKrrP7CuMG8g0=
-X-Google-Smtp-Source: AGHT+IG2iYYYcddme4KeFQF/W/N4hRK2Bm7CBf1vGlQL3CKnzTF08HVGCHmo4z335CAe2+S+n9JU6Q==
-X-Received: by 2002:a05:600c:1c8d:b0:431:12a8:7f1a with SMTP id 5b1f17b1804b1-4316165d3acmr142075275e9.16.1729607126945;
-        Tue, 22 Oct 2024 07:25:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58c125sm89054125e9.26.2024.10.22.07.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 07:25:25 -0700 (PDT)
-Date: Tue, 22 Oct 2024 17:25:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zicheng Qu <quzicheng@huawei.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	tanghui20@huawei.com, zhangqiao22@huawei.com,
-	judy.chenhui@huawei.com
-Subject: Re: [PATCH] drivers/staging/iio/frequency/ad9832.c: fix division by
- zero in ad9832_calc_freqreg()
-Message-ID: <6c896172-d372-442a-a61e-6b3e46b9cbb0@stanley.mountain>
-References: <20241022134354.574614-1-quzicheng@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e11PjphKEYdSaT3V1ZjWGYabc2UcjLVp5xEZ7OimBgCp3f9rQBxaafzOx7xEcYqZaKVXdeNJpq9u2ZAipj7obagjNO3O53RLC1ofl/v1i6GVYqRKL1J91zlSNIqjEq3G6JWCFvjtd8HYvRIaqjaEfAo/7eyQEu0U2KdzSNMSGJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUTbZFTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8004BC4CEC3;
+	Tue, 22 Oct 2024 14:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729607150;
+	bh=mmHvQnejgtDBEYiUiLY07NR+//R3gfm+20XK//h3C3A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FUTbZFTh9ZCU3qlApuVuOfD65CUmXOs8MqePghBuSqc965b3faXqgKbHlrkyraX1K
+	 sK1Nlyoh3iBWEONFfErAZBxuHGZmAdOgFzw8JRHSdVU+rRt5h2Z0NPZqGA/6LtLVQe
+	 xXI03hhFQW7jR13xmkQNgvYZ6vhdICvDMItov2rDIAH2Mer8nNJfE6jvgHyu/xmh8C
+	 i24t3S/PgUqXycw6cotj4vupN/QZYV0uM/LLix7geX9yJ2aTssPGGGxEbCU+f+L4M/
+	 aV8LoqsXbqjSZ+KaCPXAvYCfAcuY1QwKQL6TuBAnObPO0DUKpTXSiPAhjeXQtD6efY
+	 yTU3DnGSYd9rA==
+Date: Tue, 22 Oct 2024 16:25:47 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 10/26] posix-cpu-timers: Use dedicated flag for CPU
+ timer nanosleep
+Message-ID: <Zxe161PswCpcuiJd@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083835.850997918@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241022134354.574614-1-quzicheng@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001083835.850997918@linutronix.de>
 
-It would be better if the subject prefix were "staging: iio: ad9832:"
-
-[PATCH] staging: iio: ad9832: fix division by zero in ad9832_calc_freqreg()
-
-On Tue, Oct 22, 2024 at 01:43:54PM +0000, Zicheng Qu wrote:
-> In the ad9832_write_frequency() function, clk_get_rate() might return 0.
-> This can lead to a division by zero when calling ad9832_calc_freqreg().
-> The check if (fout > (clk_get_rate(st->mclk) / 2)) does not protect
-> against the case when fout is 0. The ad9832_write_frequency() function
-> is called from ad9832_write(), and fout is derived from a text buffer,
-> which can contain any value.
+Le Tue, Oct 01, 2024 at 10:42:13AM +0200, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
 > 
-> Link: https://lore.kernel.org/all/2024100904-CVE-2024-47663-9bdc@gregkh/
-> Fixes: ea707584bac1 ("Staging: IIO: DDS: AD9832 / AD9835 driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> POSIX CPU timer nanosleep creates a k_itimer on stack and uses the sigq
+> pointer to detect the nanosleep case in the expiry function.
+> 
+> Prepare for embedding sigqueue into struct k_itimer by using a dedicated
+> flag for nanosleep.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Otherwise it looks good.
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
