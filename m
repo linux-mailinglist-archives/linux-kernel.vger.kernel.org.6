@@ -1,182 +1,117 @@
-Return-Path: <linux-kernel+bounces-375535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9B09A971C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:30:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4EB9A971D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07264286601
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3362228642D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C943212E1CA;
-	Tue, 22 Oct 2024 03:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12714131182;
+	Tue, 22 Oct 2024 03:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBL19Mv2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJtI1/JE"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693E40BF2;
-	Tue, 22 Oct 2024 03:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7E628370
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 03:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567845; cv=none; b=SuXJxmB9RphYxu+Y7ZbBC+y2y+T7jYUo9qcHsKKeeWcBr6McFNELqgmt/DfHEtYd+s7vbnX5V2bwLnv85rE4973rX1NJdR2/Oj4g8cTRNYs70r2zmE3SYITYFpFSBlzoxus0L9LnHkQFLBy6+EY+pSIsGhLJvw8505C+YrRsabE=
+	t=1729567898; cv=none; b=n4c2BuCP+Mt8/62XgNNbSxIdWzB5EwEtX8CqVIFVWasbjPehE41t91gbKx0jH59GGwuAFPcF82567xEev5Iso7AOUVBGs+RJH+OJpNjeEQ8ftGWXYJrUETMtE1nlCDOOi8ruTbzrvRUAagH1N6hRWxYhcRCjiZoTwYOUyVyDEYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567845; c=relaxed/simple;
-	bh=vm043k6TgMA5PAnsJl3nt1ttFqSEZ5nEWOaT/UX0d+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJOUH1xXP3PrTWk/Qml1Fm73enLXpeiVfwC12GNur6+QOB6iCV8QzqAC3E0QZHnUltGI7vkix/cOMGleMV3i1uChsoqhMqUylEwQib6RqDirJisyaRPw7CArJzHoZXfoEr6InOpW7OBMs99CSWJFWmHceFcxp3jUlZxnib4HB8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBL19Mv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C6DC4CEEC;
-	Tue, 22 Oct 2024 03:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729567843;
-	bh=vm043k6TgMA5PAnsJl3nt1ttFqSEZ5nEWOaT/UX0d+o=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=mBL19Mv2pBpL8rIZjVObq9GETsoLUTL91QatXbHpzVohKWd/oMQlLz2BwIQvTzkmf
-	 iq/Hr3WpXTvGPDFTxnb1z8wcX4EmUG9Bmo6jE1ntVB/Oiyx1uXuGHopvV6PKB/rNjq
-	 3BfS7v+TayTJMtouflfWdD3g78ZydMQ63EkZlrJEC7LPj2OniSi4mgTtYyGH53tIP+
-	 ZUFgrjTQvJ48M+n7AKx/VHEQok0gGrGa9XorCOwmggKmcUZjvW+vYGbeEpi4uOnyet
-	 LqfSMApjJICVIwAQnAp1FGBhG1uInn2opxQq4vaXwh9sXqYNEFen/RGRmpk4nM6AzK
-	 nZyRsAGYjlZ9g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3136BCE0F85; Mon, 21 Oct 2024 20:30:43 -0700 (PDT)
-Date: Mon, 21 Oct 2024 20:30:43 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, peterz@infradead.org, andrii@kernel.org
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
- srcu_read_lock()
-Message-ID: <22a02204-8d14-41ae-af40-dfea79dec09d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <CAEf4BzZU4ysQznVEctzijCUyuwN0TQXsxg_C16v3mmhUOzspjQ@mail.gmail.com>
- <5fbd5ff1-8cb8-425f-be5f-7ed9fe4edf1c@paulmck-laptop>
- <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
+	s=arc-20240116; t=1729567898; c=relaxed/simple;
+	bh=E2iRMBn4vXGC8g6J44VssBZfpzZe5kCM2ZEzAfoRWN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tr7DQlgRzq+RgufJL+34g+8Z1ZcqRDWIw1SM67Wt8XqBAVpEulBcZkSM8htkh++qwB/j5nubFb5ygdFnkb08yCScAjwR/+gSl3xNrUIBrdy3/J/2L4gIzIOuYgyBSGZf5JLAAEeOewWbKAhr0lrnq93NO1rdPtR/3bPmQFKhY0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PJtI1/JE; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so54536555e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729567895; x=1730172695; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRNDAKtg23JE6+vxzUvroP0LZ1F0yJev4yH7XRh0MOs=;
+        b=PJtI1/JEUj6PvPhJj1gISZqfWN02CfPaxQ0XyeAQElCM+rKsLhPrQxMOpSOYgFaFpQ
+         vgOJezeiQGvBp/DJJfa4DnVxRkCQyE+OmVVay7IWjI7mRyVznvYgP3SGA1BMY2ObrMEq
+         5QLEUZzbKXFOH9fS4ilVpPOV+hq9Y8TBUIALgwv8CgU97F+x1MW5zGwDoPezybMkCCsG
+         Dw90FV4uaGi7WrlcM2jk55DVoX8+vKcX6F7m0GpfmM29S8yfPB3tDG3zD2WorZgfwAbY
+         Eg9HTDH/yGAGsi8VQ0/3e2S54GaDxft2Uk0Y4F1coUQZzZUWHDRyObVUxgbWDGl9tXsf
+         sfVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729567895; x=1730172695;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PRNDAKtg23JE6+vxzUvroP0LZ1F0yJev4yH7XRh0MOs=;
+        b=sd7gnFM7moxLoFRaVodPtthJFFFBn/YPhBzFEfI3Jwp6NKHOi/xyWWIMHLBRhQ6aoH
+         +pSLUw2W44nrat2OskdPBRHo+smJ98TCoLwsC6ZHF9Nl9YixqG9Ziy9vY0VcMxs8WibX
+         +0o0LV/5WLXf6RJD4jJ7eD8WonPfJxwELulmYL+BB5S1PHgpa9tjUmpCpVRtZgVj27Lx
+         ydglxgSTS8BraDJwt7LOSsXtt5Jm4Z6ylxiR2PGXoEAC42Pt6HTxduB8y/XniUcNXkE9
+         FgNxxFuxkV9s/lenZZzCSAxmbvwpNcU5y9I9li9u30loseHsgoD6pQmlyBoOpgE/tzpw
+         bZPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAkwWrkwwPm/tqfz5htRkF5UUU2vjpKQtSH4zXzgQB6AWinG/JeorsFBBuL7s9GZ4lY7o7jiiDKd5ixJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9+eCB0o8oYXVzs9uLR/eQZNJH5Ea+JQEjQSlUUdHKLtcR5IQe
+	Rfo6W7rObgXTupgbDF5oLaaYT1r6JPv7k+DPBc6LmIKNAJyf3e7VtOxZlBJ6GPw=
+X-Google-Smtp-Source: AGHT+IEu/69XGSwovBSRpqpBZi4M2aUiW0DQlzn+G8a5nHeh1xypd9CnrLif8WoStF8WP36gEFBhCg==
+X-Received: by 2002:a05:600c:1907:b0:431:1512:743b with SMTP id 5b1f17b1804b1-4317cac091bmr8472035e9.21.1729567894959;
+        Mon, 21 Oct 2024 20:31:34 -0700 (PDT)
+Received: from localhost.localdomain ([2.125.184.148])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03ea4asm4768455e9.0.2024.10.21.20.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 20:31:33 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: srinivas.kandagatla@linaro.org,
+	quic_pkumpatl@quicinc.com,
+	a39.skl@gmail.com,
+	quic_mohs@quicinc.com
+Cc: linux-sound@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	dmitry.baryshkov@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] wcd937x codec fixes
+Date: Tue, 22 Oct 2024 04:31:29 +0100
+Message-ID: <20241022033132.787416-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbX5UtS=+Np5t68n8oRE2O2qGg5iDcikNFpvCTPBZU8kg@mail.gmail.com>
 
-On Mon, Oct 21, 2024 at 07:01:02PM -0700, Andrii Nakryiko wrote:
-> On Mon, Oct 21, 2024 at 5:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Mon, Oct 21, 2024 at 04:50:44PM -0700, Andrii Nakryiko wrote:
-> > > On Mon, Oct 21, 2024 at 3:13 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > >
-> > > > For almost 20 years, the int return value from srcu_read_lock() has
-> > > > been always either zero or one.  This commit therefore documents the
-> > > > fact that it will be non-negative.
-> > > >
-> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Andrii Nakryiko <andrii@kernel.org
-> > > >
-> > > > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > > > index bab1dae3f69e6..512a8c54ba5ba 100644
-> > > > --- a/include/linux/srcu.h
-> > > > +++ b/include/linux/srcu.h
-> > > > @@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
-> > > >   * a mutex that is held elsewhere while calling synchronize_srcu() or
-> > > >   * synchronize_srcu_expedited().
-> > > >   *
-> > > > - * The return value from srcu_read_lock() must be passed unaltered
-> > > > - * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
-> > > > - * the matching srcu_read_unlock() must occur in the same context, for
-> > > > - * example, it is illegal to invoke srcu_read_unlock() in an irq handler
-> > > > - * if the matching srcu_read_lock() was invoked in process context.  Or,
-> > > > - * for that matter to invoke srcu_read_unlock() from one task and the
-> > > > - * matching srcu_read_lock() from another.
-> > > > + * The return value from srcu_read_lock() is guaranteed to be
-> > > > + * non-negative.  This value must be passed unaltered to the matching
-> > > > + * srcu_read_unlock().  Note that srcu_read_lock() and the matching
-> > > > + * srcu_read_unlock() must occur in the same context, for example, it is
-> > > > + * illegal to invoke srcu_read_unlock() in an irq handler if the matching
-> > > > + * srcu_read_lock() was invoked in process context.  Or, for that matter to
-> > > > + * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
-> > > > + * from another.
-> > >
-> > > For uprobe work I'm using __srcu_read_lock() and __srcu_read_unlock().
-> > > Presumably the same non-negative index will be returned/consumed there
-> > > as well, right? Can we add a blurb to that effect for them as well?
-> >
-> > Does the change shown below cover it?
-> 
-> Yep, looks good, thank you! You might want to fix
-> s/srcu_read_unlock/__srcu_read_unlock/, while at it, but that's
-> orthogonal.
+This sent as RFC because of the following:
 
-As long as we are in the area...  Please see below for the update.
+- regarding the LO switch patch. I've got info about that from two persons
+independently hence not sure what tags to put there and who should be
+the author. Please let me know if that needs to be corrected.
 
-Thoughts?
+- the wcd937x pdm watchdog is a problem for audio playback and needs to be
+fixed. The minimal fix would be to at least increase timeout value but
+it will still trigger in case of plenty of dbg messages or other
+delay-generating things. Unfortunately, I can't test HPHL/R outputs hence
+the patch is only for AUX. The other options would be introducing
+module parameter for debugging and using HOLD_OFF bit for that or
+adding Kconfig option.
 
-							Thanx, Paul
+Alexey Klimov (2):
+  ASoC: codecs: wcd937x: add missing LO Switch control
+  ASoC: codecs: wcd937x: relax the AUX PDM watchdog
 
-------------------------------------------------------------------------
+ sound/soc/codecs/wcd937x.c | 12 ++++++++++--
+ sound/soc/codecs/wcd937x.h |  4 ++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-commit 4433b7d3785d8d2a700f5ed5ca234c64bc63180e
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Mon Oct 21 15:09:39 2024 -0700
+-- 
+2.45.2
 
-    srcu: Guarantee non-negative return value from srcu_read_lock()
-    
-    For almost 20 years, the int return value from srcu_read_lock() has
-    been always either zero or one.  This commit therefore documents the
-    fact that it will be non-negative, and does the same for the underlying
-    __srcu_read_lock().
-    
-    [ paulmck: Apply Andrii Nakryiko feedback. ]
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index bab1dae3f69e6..512a8c54ba5ba 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -238,13 +238,14 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
-  * a mutex that is held elsewhere while calling synchronize_srcu() or
-  * synchronize_srcu_expedited().
-  *
-- * The return value from srcu_read_lock() must be passed unaltered
-- * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
-- * the matching srcu_read_unlock() must occur in the same context, for
-- * example, it is illegal to invoke srcu_read_unlock() in an irq handler
-- * if the matching srcu_read_lock() was invoked in process context.  Or,
-- * for that matter to invoke srcu_read_unlock() from one task and the
-- * matching srcu_read_lock() from another.
-+ * The return value from srcu_read_lock() is guaranteed to be
-+ * non-negative.  This value must be passed unaltered to the matching
-+ * srcu_read_unlock().  Note that srcu_read_lock() and the matching
-+ * srcu_read_unlock() must occur in the same context, for example, it is
-+ * illegal to invoke srcu_read_unlock() in an irq handler if the matching
-+ * srcu_read_lock() was invoked in process context.  Or, for that matter to
-+ * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
-+ * from another.
-  */
- static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
- {
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 07147efcb64d3..ae17c214e0de5 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -738,7 +738,8 @@ EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
- /*
-  * Counts the new reader in the appropriate per-CPU element of the
-  * srcu_struct.
-- * Returns an index that must be passed to the matching srcu_read_unlock().
-+ * Returns a guaranteed non-negative index that must be passed to the
-+ * matching __srcu_read_unlock().
-  */
- int __srcu_read_lock(struct srcu_struct *ssp)
- {
 
