@@ -1,135 +1,192 @@
-Return-Path: <linux-kernel+bounces-375368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12EE9A9513
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C38B29A9516
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2470E1C22880
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E42F61C2304B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A572E822;
-	Tue, 22 Oct 2024 00:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8810549641;
+	Tue, 22 Oct 2024 00:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B86wTg8t"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="auCu8i+p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344E360;
-	Tue, 22 Oct 2024 00:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B014A07;
+	Tue, 22 Oct 2024 00:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729557932; cv=none; b=iiB035pKt+6Vc6EyGYFoO+3fCFV1cMEdRT3HgVtJLJVxYfwWPD35UQOpVDqbB/cQn6mQMWmb9E2DeIWLpzkPoaVR+q+5Wa3eTe5wb/1zdfs1AmnL5yDEr2juHqvy/gw8VWq2ZvWWdfI/qfzomETlFVZhXcyjjELB9iU/yDNl/HY=
+	t=1729558026; cv=none; b=UH1EE1hPBoxlDtfMlTORBleoMLi5pftTbtkPdDzzks9AU4CffVLjfmGJro4vVEQH9wMS4PF0X4zNtYHeoidw9BE3xU6uJt1j8MbOiwV9gGskEuWN+37GVxs0Rb+/QisAn/0ewcmYRucWqSrcm4Vo3je1x8esUT7W/rHAU9is5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729557932; c=relaxed/simple;
-	bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
+	s=arc-20240116; t=1729558026; c=relaxed/simple;
+	bh=vbFuTYjjAQ0TvYgntMtH52VUEhpkcz61eBePH1uZ9d4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sp2E40HyMrppgwQEO485yulKHVyQo5bVf9sjk2BteY68cF7O/KmqCxCvxu/HlXPltcgArUT3/cx7L7DApuH8KIGdKl9cEWBx+qb4+NCi4Qoj5OdK7WpXvDQV50EyvPTNG8lzBAR1W6A+RPGjJi9yY9MS2T//DmxDRFVElfLScCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B86wTg8t; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so4162874b3a.1;
-        Mon, 21 Oct 2024 17:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729557931; x=1730162731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
-        b=B86wTg8ty3WBYLGSfHx4LHwBIUlP/Czjl004eHXuItPJ1ObpMAk9voWFnTUTrIw0bR
-         wFPK8FGtKoN72vQKjTOPYG6yftL8U1+0idZoZnI6CDItH2OE04pCYFJ6YlumRLZjdotX
-         CLZ56ZUVZqQ4J6Stlr71k4d4ol8nW6HLEtVOHNT99xcJLDDlnUNEbR9jCki5WP5F7Ya2
-         y4Mebg9FHV3t2Gb5k1JGCW1OLZBH9z8HqNFi8Q6r3OzjypornliezXD8TS8Ui8V5FGoy
-         483mQFQ+qaEsYv+QoGGzEfC3e/Mhn8io4fzxy8PEa1qwAtAg7XyCeMRqlF/Lz2stnPDU
-         oshw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729557931; x=1730162731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rkO4HQM7SizrGfprQ3ljcA2cJGSWdKVoqleXtchmey4=;
-        b=L1n8xy12xhkHyBJt8TP0KSNQaUVNHHHZ+9zZAOatzR0WY8SYtoQMSZ4yVDrVMnQqZW
-         P57O+DRxk+Yf+qgdn8uhn8mfJgDPkn1K3t+icEbJn+NGFL5HN53O/HTDVetPAyMgwFda
-         sHoYEuttBfD8pUYISt/9Ir7O9J7vNfRKYLuKiQSaHX1zO6GU6pWNfuJgNC6mvoNPRtCG
-         jwlEBHUeSgZoox1RFaTC3v0KAjW3VazvbY6z1fxjF7MNI49mPtAiSbmd/GxZLwFkvm99
-         fCcirvjdrUIpf9ZFPQxsb5zc2RZHTcaFUvj0jUVvay3mfCEEuo6KxEgpUbLIKhi+zMCR
-         RsrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH1RT4jjWiQUQogW31Zu+USfcKJHtstOyxzkSx1F42vM4nV9OIgFNAPAV9M0NyVQTw3Jl/q38FOtFEe9/EMoSUBzDtIA==@vger.kernel.org, AJvYcCWNXKUsGwJRREjgtAFdv9cCYBcUEzIFfEZqf7VyEy3d6wck4FoberjtQIYqgLpX+twt+VuS5ZIHMtM=@vger.kernel.org, AJvYcCXTOBRDpbxIRAfJDC8+JMCBoCxQuJ7m4zyLbGkIiO/eGvK490AG/xnEYIViEXg2K3fyfodSy/LIOqM=@vger.kernel.org, AJvYcCXsrPgevuPNqDhhNdFlGticfo4AEr0dHTmQBOuMalyxPd3x/Vc3gvbQE5o63Eaaj10FBQ7GmgDKDmLyfFTQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Gn9ZbrFQhY5LALGxitCgcF3ylRJW9nulhPI8IRaZh7YvsSYL
-	HBU2K68grsSqZx0JklpAXbLURZIfuZ8B9uR4RpocuWaurLZ38C2T
-X-Google-Smtp-Source: AGHT+IEaN4XZFPrN3nD/QTLshZZNGUJSk1MAp7HuzF4HK7yRgsWTvFrVsHwAp9zDfAAIOEuKojXEuQ==
-X-Received: by 2002:aa7:8e06:0:b0:71e:674b:474 with SMTP id d2e1a72fcca58-71edc15f84fmr2018208b3a.8.1729557930342;
-        Mon, 21 Oct 2024 17:45:30 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d767esm3515322b3a.114.2024.10.21.17.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 17:45:29 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 810F8425A747; Tue, 22 Oct 2024 07:45:26 +0700 (WIB)
-Date: Tue, 22 Oct 2024 07:45:26 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v4 01/13] Documentation: x86: Add AMD Hardware Feedback
- Interface documentation
-Message-ID: <Zxb1psmK05_xSXYH@archie.me>
-References: <20241021180252.3531-1-mario.limonciello@amd.com>
- <20241021180252.3531-2-mario.limonciello@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KfAPl4XOAmonEVd+Q+HeP8eQ1OryvgAUpBP9UpykVHz0zlwwF2X3xDJ0Hvi14bfdZizzt05LxPy6Cbfz5/NbykHnuQv8lZD/gh+5Lb69aR3DBX+YLSNZ8Wp8heVLXFji78d2Ml1/sIYBdCiWd6u/0LkkZZA/J5DUnzb0pWGsDyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=auCu8i+p; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729558024; x=1761094024;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vbFuTYjjAQ0TvYgntMtH52VUEhpkcz61eBePH1uZ9d4=;
+  b=auCu8i+p2gGZQXgbWH6YCqdfje7tH6FVgxfR+9CO5jj8ZIcb+ebDtIwg
+   PxCsURKIiLC07mERmhmaxsI9PGKO0yU5CmrZ8BbVIU0tshSGeZTj6yNY9
+   QgZMoYmlVPOnuHuUTZWWvoIovIozVQeDL1clf0nqhWnVqdwk9B5mIiN64
+   mwC1audzrXFV8oVC9AbHg/w1Wkos+9YUI7oGRnqivb/a7hvVOLLk8tRTF
+   dK48ydSFpzGCoiNleykQ8vJzEnsBKw/2kFi2b/mmUO0ArA7S2dAtSmbYN
+   JXEHCs/BNIMgjYVA+RmkcMiDyvplRAWbb9uWxZE8SZmJ/yvVfMaSvrKJf
+   A==;
+X-CSE-ConnectionGUID: aGSyZmC+SDurwK6qdEffaw==
+X-CSE-MsgGUID: JmGoPeoETBKdmhsDIHSVaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29226649"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29226649"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 17:47:03 -0700
+X-CSE-ConnectionGUID: QEbf8TR5RNGSaIrRtB69Tg==
+X-CSE-MsgGUID: Ydf4D+qTQYmUv2ErVF60Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="84298082"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 21 Oct 2024 17:47:00 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3334-000Sqe-1j;
+	Tue, 22 Oct 2024 00:46:58 +0000
+Date: Tue, 22 Oct 2024 08:46:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>,
+	Pawel Dembicki <paweldembicki@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: dsa: vsc73xx: implement transmit via
+ control interface
+Message-ID: <202410220836.TtUmbpFx-lkp@intel.com>
+References: <20241020205452.2660042-1-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EiFZ20l18MgsAYaW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021180252.3531-2-mario.limonciello@amd.com>
+In-Reply-To: <20241020205452.2660042-1-paweldembicki@gmail.com>
+
+Hi Pawel,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pawel-Dembicki/net-dsa-vsc73xx-implement-packet-reception-via-control-interface/20241021-050041
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241020205452.2660042-1-paweldembicki%40gmail.com
+patch subject: [PATCH net-next 1/3] net: dsa: vsc73xx: implement transmit via control interface
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241022/202410220836.TtUmbpFx-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241022/202410220836.TtUmbpFx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410220836.TtUmbpFx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/string.h:64,
+                    from include/linux/bitmap.h:13,
+                    from include/linux/cpumask.h:12,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/spinlock.h:63,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from include/linux/module.h:17,
+                    from drivers/net/dsa/vitesse-vsc73xx-core.c:18:
+   drivers/net/dsa/vitesse-vsc73xx-core.c: In function 'vsc73xx_inject_frame':
+>> drivers/net/dsa/vitesse-vsc73xx-core.c:766:30: warning: argument to 'sizeof' in '__builtin_memset' call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
+     766 |         memset(buf, 0, sizeof(buf));
+         |                              ^
+   arch/m68k/include/asm/string.h:49:48: note: in definition of macro 'memset'
+      49 | #define memset(d, c, n) __builtin_memset(d, c, n)
+         |                                                ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
---EiFZ20l18MgsAYaW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+vim +766 drivers/net/dsa/vitesse-vsc73xx-core.c
 
-On Mon, Oct 21, 2024 at 01:02:40PM -0500, Mario Limonciello wrote:
-> From: Perry Yuan <Perry.Yuan@amd.com>
->=20
-> Introduce a new documentation file, `amd_hfi.rst`, which delves into the
-> implementation details of the AMD Hardware Feedback Interface and its
-> associated driver, `amd_hfi`. This documentation describes how the
-> driver provides hint to the OS scheduling which depends on the capability
-> of core performance and efficiency ranking data.
->=20
-> This documentation describes
-> * The design of the driver
-> * How the driver provides hints to the OS scheduling
-> * How the driver interfaces with the kernel for efficiency ranking data.
+   750	
+   751	static int
+   752	vsc73xx_inject_frame(struct vsc73xx *vsc, int port, struct sk_buff *skb)
+   753	{
+   754		struct vsc73xx_ifh *ifh;
+   755		u32 length, i, count;
+   756		u32 *buf;
+   757		int ret;
+   758	
+   759		if (skb->len + VSC73XX_IFH_SIZE < 64)
+   760			length = 64;
+   761		else
+   762			length = skb->len + VSC73XX_IFH_SIZE;
+   763	
+   764		count = DIV_ROUND_UP(length, 8);
+   765		buf = kzalloc(count * 8, GFP_KERNEL);
+ > 766		memset(buf, 0, sizeof(buf));
+   767	
+   768		ifh = (struct vsc73xx_ifh *)buf;
+   769		ifh->frame_length = skb->len;
+   770		ifh->magic = VSC73XX_IFH_MAGIC;
+   771	
+   772		skb_copy_and_csum_dev(skb, (u8 *)(buf + 2));
+   773	
+   774		for (i = 0; i < count; i++) {
+   775			ret = vsc73xx_write_tx_fifo(vsc, port, buf[2 * i],
+   776						    buf[2 * i + 1]);
+   777			if (ret) {
+   778				/* Clear buffer after error */
+   779				vsc73xx_update_bits(vsc, VSC73XX_BLOCK_MAC, port,
+   780						    VSC73XX_MISCFIFO,
+   781						    VSC73XX_MISCFIFO_REWIND_CPU_TX,
+   782						    VSC73XX_MISCFIFO_REWIND_CPU_TX);
+   783				goto err;
+   784			}
+   785		}
+   786	
+   787		vsc73xx_write(vsc, VSC73XX_BLOCK_MAC, port, VSC73XX_MISCFIFO,
+   788			      VSC73XX_MISCFIFO_CPU_TX);
+   789	
+   790		skb_tx_timestamp(skb);
+   791	
+   792		skb->dev->stats.tx_packets++;
+   793		skb->dev->stats.tx_bytes += skb->len;
+   794	err:
+   795		kfree(buf);
+   796		return ret;
+   797	}
+   798	
 
-The doc LGTM, thanks!
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---EiFZ20l18MgsAYaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxb1oQAKCRD2uYlJVVFO
-o2W5AP9eArac6T9AE3et/1yG+qIYjyEo74c7IJg5uJzRKTUa6QEAiMnYPsaLTJ1K
-92Vz9xCv2BZme+lqTyZrz1gMUbJXwgM=
-=qVoF
------END PGP SIGNATURE-----
-
---EiFZ20l18MgsAYaW--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
