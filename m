@@ -1,299 +1,137 @@
-Return-Path: <linux-kernel+bounces-376072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799D09A9F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96D79A9F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B9728293A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E942D1C23F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE11199236;
-	Tue, 22 Oct 2024 10:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBB2198E91;
+	Tue, 22 Oct 2024 10:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ixlqDIyq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="kBiS6gJM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aENQevxc"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C9145B24;
-	Tue, 22 Oct 2024 10:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABED145B24
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729591604; cv=none; b=Qp69aQ/kDGo+qks7rNuHIKPGy16RJUWVfiU8wqS2qXBgGKpKH/YrUeRaAmyRcQoZ6tpMsYfSlVR0B+XIiZjV13GU5fDaVvhWzQF3SqKHhREaSJTLkDtYIC7+W8KEhgiITBArnDG3x60nOzocl4XstUhmYsqvnx5rr/zdJ8OW2aw=
+	t=1729591596; cv=none; b=u/BGjqAp7pZBba5PK2IIxQjeYe7iwxIP/UZ/c2vUj/6hvo9Liy7N9/sGqXjgrHoQ0/X51/KmfvmGIChlSJX4cZ4gWmGRCWFKBh/jRvXmSQaA6cOSlB4wkdPS2zAhtGBk4Eq2zvZxviJYb5N+V0ssDUW0+FEYgLU5rTNOSYah1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729591604; c=relaxed/simple;
-	bh=iYf+10kMeSBOR6aGGLTqZ8pe70W5rTjB8JNl2JJ22KA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GTJVznKahPYN7sxdiTJn8wuSKTmjOPxhT6//xM2oRvN/JHaODgaHOrclYGbbxp7JDGEiCP2W08NAVvLcMTy8UbFjpUawrhMFC7yJFwnNcq0tqYU4HaQYTMx3sBJakHE0jaPyB+sGP99j3P402e3HMknNwXT41pxXKNpf25g1zu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ixlqDIyq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LMaVW1013484;
-	Tue, 22 Oct 2024 10:06:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rCcLkvtvP8ut4/eKH4CzWfv1HSNFUWFFAHcqRVEvIDw=; b=ixlqDIyqUTp98y4t
-	fyjsbF2J52tbsphyZZBvY2spTctAWDrnGIgCSL35OLLvi3kkkLbGpLUXhBr58Qd2
-	PKyL5wHFNMY1VXIgZ9ZP58Kai6tUQpFRnZrCsS9DxqTmQ3JqyvtO4hsAVuF9hxPd
-	NB2uN5NS3gDrrzbuug425+3oGlJlh4X5C7hY8HctgkBuUUS4/wbVzRfUMVJI3QLo
-	ljG7NFzFYe5b1T1Sd0FeMew6gjZDOCPz/lO+A3LrwFxvwkkDAbgQvUQy0Au2BS6T
-	MFyH5GX/TYJCwWDdwcw8WsyLtmAACGzQfUPPL2usJb1hX02gyp1IzGVxM9YaZluu
-	mGZHgQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rbfumh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 10:06:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MA6cY4023898
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 10:06:38 GMT
-Received: from [10.218.29.219] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 03:06:34 -0700
-Message-ID: <bc72b450-4cd8-4cd4-b160-36fb6031d035@quicinc.com>
-Date: Tue, 22 Oct 2024 15:36:14 +0530
+	s=arc-20240116; t=1729591596; c=relaxed/simple;
+	bh=HTDy0LNESDiKQUdE7xjEV63uP8unleccTkzReT0fYXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Do0TgRgT6rMZotkBScollE2AeXSv+3s70N/1gWwbvWL4bzYwy2BbYLKLh/3awwb0qKRq6JZb+8GPrHkedSIYY/K5ojfnlNe/S+M7QKkGrxy3MIQBPO2ABaz4WZ37RyUFlIW5pDtxXGrCKB0niO6hMw42EXBLrtRuJvrLKSboqfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=kBiS6gJM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aENQevxc; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D7ED425400F6;
+	Tue, 22 Oct 2024 06:06:32 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 22 Oct 2024 06:06:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729591592; x=
+	1729677992; bh=5QWoIbdMUqDbjfUSfA9GFg2c/tcYnvOouZVnzt0I38I=; b=k
+	BiS6gJMzvS4e8Y6Dwjs/IAMkDNFJQXUxUITG/1C6JibfcmLIecws4cjc9jaK9frr
+	6OwJODHCIZFWM8ggPmDHbYj2hTus13Zhn0j2ayURLRd5CXVJSmPxk1HU9TmSXV0n
+	s9kt+2FI7dMuv9MTRV4W8Nh4HNLUr9EiEZe+vulfCnloKcwCTIJzC6PivT6N4HMy
+	rieg/Iy87NYnt+vv6ao0ARdzFQbhlFXC/SPv3j8pgKhmEUQo4IVlnS8nvTMDy4Ws
+	M2QWxIPQw4TDMS4P2UpOw1pxzwWo2SZDfw2LplPkDQDj+ss7R1rHsQRdnGVyvX06
+	ncREE3Pz0JLs190vvUWEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729591592; x=1729677992; bh=5QWoIbdMUqDbjfUSfA9GFg2c/tcY
+	nvOouZVnzt0I38I=; b=aENQevxca3/ONAanmj3EZj2shX2gKjZJx4EEiXMaOFtL
+	d+9IjUi+qyggpNm9TldOBIysVqWxEvF93X94+/1Zc9MwwjGt5EuL+pLi9xPc/8Kb
+	Si6Zqc91J41FQaNpTb6EqBqzhACre1sfo2qwt08uq/tVLTEii6jQxBroXIHyA6Eh
+	2m0WSx0p9GVp588ctFcE47tenDqKFdRVbG48FUKx6a21DuC2cp9T5oJZFFXZ+FBu
+	fy01MHbb3Pej2v0nUdOCtCY53XTycqqM2xiee2qeJXtadBCOga/Dkglq6T5VJkfM
+	o3yTYBlM+yb5eWeTFOreYXpZNcV386Z5RLTjYi/sUw==
+X-ME-Sender: <xms:J3kXZ_SpByc3Bcn0XhRbnixpJvADLmHACaym-pVxlDC2niEid-Apqg>
+    <xme:J3kXZwyx2g0Cu005b9Wu5gJ6QXtLTfxOf1WCQ48lIMPedLVasrY5KlCH5Pgh7RzXe
+    Xr17oBEDRDZtIpU7-Q>
+X-ME-Received: <xmr:J3kXZ02Cnvcs4wxLmcsJRRFFPfAQr3J6cF9WZwQxIv2OuPs7GrutECWFvLVX3Yd3GoYYzA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegsrgholhhinhdrfigrnhhgsehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhr
+    tghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrkh
+    hpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohephhhughhh
+    ugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtohepfigrnhhgkhgvfhgvnhhgrdifrghngheshhhurgifvghirdgtohhm
+    pdhrtghpthhtohepvddutghnsggrohesghhmrghilhdrtghomhdprhgtphhtthhopehrhi
+    grnhdrrhhosggvrhhtshesrghrmhdrtghomhdprhgtphhtthhopehiohifohhrkhgvrhdt
+    sehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:J3kXZ_AUbgEU1KZlwMk-CAuN7PSHwhlKrqdhYzyKVGCqJQROdho0qw>
+    <xmx:J3kXZ4hOMizXPv-5wpSZ1oqSXrIbj72rTfwEIfVpUTnoRA6EDG1-hg>
+    <xmx:J3kXZzo8QNrzOp5KdfKyM5Lt7aUzvBYs6S8rKQQnqld6nF2Kv_yw3g>
+    <xmx:J3kXZzhSi-chehrtmWGpQs2vMw4Z3R1Ei8EIkUKMuFnS0uIKvx3S4w>
+    <xmx:KHkXZ3SPAg0AgtwR2iaWpF_LVPag-FFa0QpcKEKw4IFiWp37zxhiV6t1>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Oct 2024 06:06:27 -0400 (EDT)
+Date: Tue, 22 Oct 2024 13:06:22 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, 
+	hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com, 
+	ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+Message-ID: <5p22lehyjjzxvohppdmt2vkkplrrd6ss6tev2px6troxyii4ab@eaphjvxiwrfc>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
+ <2c6b7456-8846-44b0-8e58-158c480aaead@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <quic_mohamull@quicinc.com>,
-        <quic_hbandi@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241010105107.30118-1-quic_janathot@quicinc.com>
- <jywgmxfhzwvoknpar7hr4ekfnajauzgk5q3bewgpdv2ghpemtw@4vvhit4jb3tm>
-Content-Language: en-US
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-In-Reply-To: <jywgmxfhzwvoknpar7hr4ekfnajauzgk5q3bewgpdv2ghpemtw@4vvhit4jb3tm>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FyBChjC-ursg6lTJ-vi57w85RpfO2jay
-X-Proofpoint-GUID: FyBChjC-ursg6lTJ-vi57w85RpfO2jay
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxlogscore=961 lowpriorityscore=0
- clxscore=1011 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c6b7456-8846-44b0-8e58-158c480aaead@linux.alibaba.com>
 
+On Tue, Oct 22, 2024 at 11:34:14AM +0800, Baolin Wang wrote:
+> IIUC, most file systems use method similar to iomap buffered IO (see
+> iomap_get_folio()) to allocate huge pages. What I mean is that, it would be
+> better to have a real use case to add a hint for allocating THP (other than
+> tmpfs).
 
+I would be nice to hear from folks who works with production what the
+actual needs are.
 
-On 10/10/2024 6:09 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 10, 2024 at 04:21:07PM GMT, Janaki Ramaiah Thota wrote:
->> Add Bluetooth and UART7 support for qcs6490-rb3gen2.
->>
->> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 122 ++++++++++++++++++-
->>   1 file changed, 121 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> index 0d45662b8028..c0bc44be7dd4 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> @@ -1,6 +1,6 @@
->>   // SPDX-License-Identifier: BSD-3-Clause
->>   /*
->> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>   
->>   /dts-v1/;
->> @@ -32,6 +32,8 @@
->>   
->>   	aliases {
->>   		serial0 = &uart5;
->> +		bluetooth0 = &bluetooth;
->> +		serial1 = &uart7;
->>   	};
->>   
->>   	chosen {
->> @@ -688,6 +690,39 @@
->>   	status = "okay";
->>   };
->>   
-> 
-> Please review the file carefully and find the right spot for these
-> parts.
-> 
+But I find asymmetry between MADV_ hints and FADV_ hints wrt huge pages
+not justified. I think it would be easy to find use-cases for
+FADV_HUGEPAGE/FADV_NOHUGEPAGE.
 
-Thanks for the review, corrected in [PATCH v3].
+Furthermore I think it would be useful to have some kind of mechanism to
+make these hints persistent: any open of a file would have these hints set
+by default based on inode metadata on backing storage. Although, I am not
+sure what the right way to archive that. xattrs?
 
->> +&qup_uart7_cts {
->> +	/*
->> +	 * Configure a bias-bus-hold on CTS to lower power
->> +	 * usage when Bluetooth is turned off. Bus hold will
->> +	 * maintain a low power state regardless of whether
->> +	 * the Bluetooth module drives the pin in either
->> +	 * direction or leaves the pin fully unpowered.
->> +	 */
->> +	bias-bus-hold;
->> +};
->> +
->> +&qup_uart7_rts {
->> +	/* We'll drive RTS, so no pull */
->> +	drive-strength = <2>;
->> +	bias-disable;
->> +};
->> +
->> +&qup_uart7_rx {
->> +	/*
->> +	 * Configure a pull-up on RX. This is needed to avoid
->> +	 * garbage data when the TX pin of the Bluetooth module is
->> +	 * in tri-state (module powered off or not driving the
->> +	 * signal yet).
->> +	 */
->> +	bias-pull-up;
->> +};
->> +
->> +&qup_uart7_tx {
->> +	/* We'll drive TX, so no pull */
->> +	drive-strength = <2>;
->> +	bias-disable;
->> +};
->> +
->>   &qupv3_id_0 {
->>   	status = "okay";
->>   };
->> @@ -719,12 +754,97 @@
->>   &tlmm {
->>   	gpio-reserved-ranges = <32 2>, /* ADSP */
->>   			       <48 4>; /* NFC */
->> +	bt_en: bt-en-state {
->> +		pins = "gpio85";
->> +		function = "gpio";
->> +		output-low;
->> +		bias-disable;
->> +	};
->> +
->> +	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
->> +		pins = "gpio28";
->> +		function = "gpio";
->> +		/*
->> +		 * Configure a bias-bus-hold on CTS to lower power
->> +		 * usage when Bluetooth is turned off. Bus hold will
->> +		 * maintain a low power state regardless of whether
->> +		 * the Bluetooth module drives the pin in either
->> +		 * direction or leaves the pin fully unpowered.
->> +		 */
->> +		bias-bus-hold;
->> +	};
->> +
->> +	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
->> +		pins = "gpio29";
->> +		function = "gpio";
->> +		/*
->> +		 * Configure pull-down on RTS. As RTS is active low
->> +		 * signal, pull it low to indicate the BT SoC that it
->> +		 * can wakeup the system anytime from suspend state by
->> +		 * pulling RX low (by sending wakeup bytes).
->> +		 */
->> +		bias-pull-down;
->> +	};
->> +
->> +	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
->> +		pins = "gpio31";
->> +		function = "gpio";
->> +		/*
->> +		 * Configure a pull-up on RX. This is needed to avoid
->> +		 * garbage data when the TX pin of the Bluetooth module
->> +		 * is floating which may cause spurious wakeups.
->> +		 */
->> +		bias-pull-up;
->> +	};
->> +
->> +	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
->> +		pins = "gpio30";
->> +		function = "gpio";
->> +		/*
->> +		 * Configure pull-up on TX when it isn't actively driven
->> +		 * to prevent BT SoC from receiving garbage during sleep.
->> +		 */
->> +		bias-pull-up;
->> +	};
->> +
->> +	sw_ctrl: sw-ctrl-state {
->> +		pins = "gpio86";
->> +		function = "gpio";
->> +		bias-pull-down;
->> +	};
->>   };
->>   
->>   &uart5 {
->>   	status = "okay";
->>   };
->>   
->> +&uart7 {
->> +	status = "okay";
->> +	/delete-property/interrupts;
->> +	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
->> +				<&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-> 
-> Why? Is it a UART interrupt? Or a BT-related interrupt?
-> 
-
-it is HS UART interrupt for BT.
-
->> +	pinctrl-names = "default", "sleep";
->> +	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
->> +			<&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
->> +
->> +	bluetooth: bluetooth {
->> +		compatible = "qcom,wcn6750-bt";
-> 
-> Please use pwrseq and define the PMU unit.
-> 
-
-we are in process of migrating to pwrseq, mean while can we merge this 
-change ?
-
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&bt_en>, <&sw_ctrl>;
->> +		enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
->> +		swctrl-gpios = <&tlmm 86 GPIO_ACTIVE_HIGH>;
->> +		vddaon-supply = <&vreg_s7b_0p972>;
->> +		vddbtcxmx-supply = <&vreg_s7b_0p972>;
->> +		vddrfacmn-supply = <&vreg_s7b_0p972>;
->> +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
->> +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
->> +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
->> +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
->> +		vddasd-supply = <&vreg_l11c_2p8>;
->> +		max-speed = <3200000>;
->> +	};
->> +};
->> +
->>   &usb_1 {
->>   	status = "okay";
->>   };
->> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-> 
-
---
-Thanks
-Janakiram
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
