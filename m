@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-376185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0644C9AA146
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399E09AA149
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 13:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC93A28334A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC331F22404
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 11:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25B219C57F;
-	Tue, 22 Oct 2024 11:42:49 +0000 (UTC)
-Received: from mail115-63.sinamail.sina.com.cn (mail115-63.sinamail.sina.com.cn [218.30.115.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337DE19CCF9;
+	Tue, 22 Oct 2024 11:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cffjGT7C"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0179199EBB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BDD19C549
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 11:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597369; cv=none; b=Al9vw50DAfp94BsoLvIZM6PfatI80j51kjJvq24IDIFDZ3QKOUwQX8UEqkY+cqmFKsGjxVHDt0uUe/KDKPlwwjWQczpr2KwbZwiVtuQsl+F7/sMh0arcAlR5BFMdBpk1VEL5OuPRfF4bjFGudESnE30CPQNwW7R76FfI/iNA7ew=
+	t=1729597370; cv=none; b=Jru1XvNILOwiabPXF+kFllw9MRIipwBb6qm33orglkCQWmCiLE3ulQ3h2yLvRBNESjv3Z8amh8/cVy7PIvnhFItYImHl3KC2HBV28TmfjqrxjIkZxiB9loU2p8MiaDAXWcDtaOQPQpJbnAUsbuhSwVcSnlDKljNigVkb/vJL8L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597369; c=relaxed/simple;
-	bh=fiLvjqiCky4scaYOA6J4GlmocifpCmL/hB2+SAwnFfo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fSEgYBNtUL1raJH4MSg0rf/rz6Pye/dDSNVMvSx2Pmp2bEZrQS+BVbLVVw8MzlrpdtAz01k14wtadyq/rcNmfcd0jaxSp0/RPERvs2dgcqmVCWEitOwT76CphB5+oRaP09J2pJNX7+A+aperHR0Zcu5IiAIDgqHCyBgpsHhbpzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.70.205])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67178FA900007C24; Tue, 22 Oct 2024 19:42:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1711477602652
-X-SMAIL-UIID: E3EC872BFAA84B73A8990DED069A75CD-20241022-194237-1
-From: Hillf Danton <hdanton@sina.com>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	stern@rowland.harvard.edu,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Date: Tue, 22 Oct 2024 19:42:25 +0800
-Message-Id: <20241022114225.2314-1-hdanton@sina.com>
-In-Reply-To: <0abd3cbd-0e8a-43b2-8cb0-6556297aa7c9@suse.com>
-References: <67153205.050a0220.1e4b4d.0048.GAE@google.com>
+	s=arc-20240116; t=1729597370; c=relaxed/simple;
+	bh=raa66sydrVS7SYiJ0GgKYuUMIZ/xbMw6qo8atNjsO8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dyBp0oBDjiWfJoPT3lK/ScPtkzQSBWgnP/i6LJrjnSBLlCa9tAspSl9E4Wq7tg6xtTvpudTjN37cuVRuxaew7UvVvd8eTQbzixlwYuZg3dBE73jQM2pIm5mQPVEj60+8u1GpOxbt+Y4HzSwjCvr7avpkAYyGR2+QMPxLHo9LWvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cffjGT7C; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso740229166b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 04:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729597367; x=1730202167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8b6GJXioy/QHHMfPsIPiSHRGT4MhlfXPQwWNMxqLwkI=;
+        b=cffjGT7C3sFd5RxxcIaS31FqZeB7ognz3qpOyWbztqtehNtX9QrPX1yTHr6dh6SLiW
+         9qFK6w3Za90hoBxMl0TojlyY937xy1JHH7w/FfR5Vr0nDF02og7PdR8yWXUh4JkXoV8L
+         bweBrzUqvudH3Q0rTUm+RIhZyTQb9yN97MH7sz0Z6KM/JtRvsjEamz0UpDwWrX5ccuE1
+         PY8YZVNU/bc5vEzOqYgAsSovUOTrX88uWcYwwT5cLVHZiXZEQZvOegCNt4wfqgBMkLFB
+         whYr4T0fIEK5u16e6Zt45W46FoR+lwJPwwUlBn+J0Jt1iGC6uDVeJsyLdGvpozp8/ZuO
+         rt2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729597367; x=1730202167;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8b6GJXioy/QHHMfPsIPiSHRGT4MhlfXPQwWNMxqLwkI=;
+        b=ajV/e2edMqSOkhy42ADrKag3S2DHbz/erWY7w2B5rAefqESiQVdCkYy3e6wJ1mcXd7
+         STSSMATflffhIS/wls/6ldkxPSGtczeuRY/jHyQD0u6Y1CB61j0KBk93q0LRawHbBovq
+         RruUWcICslJho3IY8vdqjYfO+HLSe5KjaBuFOkuSc7cqiF8PLYnFWz+uEvIN1vT1HUTo
+         QQTfIIeY8USiDp2WjrJ+2zbi28/wZ8t2cMhf/1SjGtiaH1xYkpCzmt+e/OnheQjpSLJz
+         WUmUHJVKvjOtNYnG/N2O1jfNte1HInnoLc/GFjkiTmbty3t6Ims3jns8eTwj5JmF18eO
+         cUjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW14kH4WXJk1RRDED7vGRaRQ0ibg80UqbhvSuAEKNB+ajhAIeASVwL6CQOq7fMuBVd7RZPRwVxnkC1KOLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4bn+CCwR40UWyt0rkVDo01j1JNzoZH8kczWOgbqaKTNhDcpEG
+	NMsMWTXLK8s6UmRMCFZd1CaWkjJ29rNaHWDg3tdQjgT3/wXlBcQCXeWb3aZi8m8=
+X-Google-Smtp-Source: AGHT+IG2HVAkARznKGeXSSOz3pYHmzdRrakg/LgoenOtPU5eMNDOO3eQvdGmwFfjp7NcnbHTBiLBcg==
+X-Received: by 2002:a17:907:7d9e:b0:a99:f8e2:edec with SMTP id a640c23a62f3a-a9a69a7dc95mr1691628266b.21.1729597367082;
+        Tue, 22 Oct 2024 04:42:47 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9155a1c9sm328599966b.129.2024.10.22.04.42.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 04:42:46 -0700 (PDT)
+Message-ID: <df619b5f-998a-4c6f-af80-b2923264d16c@suse.com>
+Date: Tue, 22 Oct 2024 13:42:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 09/19] gendwarfksyms: Expand structure types
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241008183823.36676-21-samitolvanen@google.com>
+ <20241008183823.36676-30-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241008183823.36676-30-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 21 Oct 2024 10:04:52 +0200 Oliver Neukum <oneukum@suse.com>
-> On 20.10.24 18:38, syzbot wrote:
->   
-> > INFO: task kworker/0:0:8 blocked for more than 143 seconds.
-> >        Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > task:kworker/0:0     state:D stack:24544 pid:8     tgid:8     ppid:2      flags:0x00004000
-> > Workqueue: pm pm_runtime_work
-> > Call Trace:
-> >   <TASK>
-> >   context_switch kernel/sched/core.c:5322 [inline]
-> >   __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
-> >   __schedule_loop kernel/sched/core.c:6759 [inline]
-> >   schedule+0xe7/0x350 kernel/sched/core.c:6774
+On 10/8/24 20:38, Sami Tolvanen wrote:
+> Recursively expand DWARF structure types, i.e. structs, unions, and
+> enums. Also include relevant DWARF attributes in type strings to
+> encode structure layout, for example.
 > 
-> And this sleeps forever. This must not happen.
-> >   usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
-> >   usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
+> Example output with --dump-dies:
 > 
-> We are changing our mind, presumably due to a timeout
-> >   usb_start_wait_urb+0x255/0x4c0 drivers/usb/core/message.c:65
+>   subprogram (
+>     formal_parameter structure_type &str {
+>       member pointer_type {
+>         base_type u8 byte_size(1) encoding(7)
+>       } data_ptr data_member_location(0) ,
+>       member base_type usize byte_size(8) encoding(7) length data_member_location(8)
+>     } byte_size(16) alignment(8) msg
+>   )
+>   -> base_type void
 > 
-> We are sending a control message, presumably to enable
-> remote wakeup
-> >   usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
-> >   usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
-> >   usb_enable_remote_wakeup drivers/usb/core/hub.c:3365 [inline]
-> >   usb_port_suspend+0x339/0xf10 drivers/usb/core/hub.c:3472
-> 
-> Suspending ...
-> >   usb_generic_driver_suspend+0xeb/0x1d0 drivers/usb/core/generic.c:302
-> >   usb_suspend_device drivers/usb/core/driver.c:1272 [inline]
-> >   usb_suspend_both+0x66d/0x9c0 drivers/usb/core/driver.c:1443
-> >   usb_runtime_suspend+0x49/0x180 drivers/usb/core/driver.c:1968
-> 
-> This very much looks like the HC driver used to run these tests
-> can hand in unlink. If that happens there is nothing usbcore
-> or a driver can do.
->
-A one-line change could survive the reproducer [1].
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Acked-by: Neal Gompa <neal@gompa.dev>
 
-[1] https://yhbt.net/lore/lkml/67178c80.050a0220.1e4b4d.0075.GAE@google.com/
+Looks ok to me, feel free to add:
+
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+
+-- Petr
 
