@@ -1,163 +1,167 @@
-Return-Path: <linux-kernel+bounces-375523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F339A96FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309AC9A96FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66EA71F246B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD02287121
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 03:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F74F13D509;
-	Tue, 22 Oct 2024 03:22:53 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150B145B22;
+	Tue, 22 Oct 2024 03:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKrHKmEI"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FF5131BDD;
-	Tue, 22 Oct 2024 03:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25BC1442E8;
+	Tue, 22 Oct 2024 03:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729567373; cv=none; b=m2sV+PV059x/zmLmlmr75MwFD7rchyB87Q0PNiWyEIqiUKbTqKsXMY+VKcbEAlpoLbPcAZAsfdzqVNbl1gQb/sUHwC97gMwZVMR18VlDA9XtjuYfPeq6vJcIlo1b88qnvfRFxDzUrxPpRvk0vt04NvwpcO8zw7pUftqVy9T7atA=
+	t=1729567412; cv=none; b=Wn4dSHJn9zER3f7uftvMpYpQqG6LVc7+JZQ2ZEzYIUgx/ZdKgsw0OzgzjWQpHISfCaEVnSRNG0YaD+2O2DMzgNyNFxa3gklghKcqhZTJnf4Gu8PPB5oEbThvd9hc+nomyCjXO54pCp8AWpbkIpLhCQoumOz8CzLKdghH+3k3v3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729567373; c=relaxed/simple;
-	bh=4WQxofcJ5PFyyEzTnDLGFHKpPbVeOo9/j6MAB8rUbvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IfrbBRsAYbkxNTuM4RFxLE/hq6SlAsepNZQfPl2LFL/iKZ6zZFJszNuJK82kAAWR8WcTvtML1khFP8ygfpW4z+lXfq5/Xd1yLSm1X18Rk9EkOVuJ5ZVmoruaGUn720mhS6fJ0+LSAHPlNTeXtSsPLXx6MiOQyIXdK8TBvYab3zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XXctw2TtSz1ynKb;
-	Tue, 22 Oct 2024 11:22:48 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 57A1814010D;
-	Tue, 22 Oct 2024 11:22:41 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Oct 2024 11:22:40 +0800
-Message-ID: <01b2539f-6560-baa2-d968-5675f0ff2815@huawei.com>
-Date: Tue, 22 Oct 2024 11:22:40 +0800
+	s=arc-20240116; t=1729567412; c=relaxed/simple;
+	bh=EUdkE/JzIkciKin0lTeyOJWE2+TwwJIscWovAjZ3EOc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=d2C7/pgy4T3Cu+//qf9fqotk/Ig/VheRhO4Wqmo96ZGX5yL39aNyU55dRVlHK83FvGuD+OTnKnJO3c4KP/7Lqz+P8kGuElolbP+o32ItdzpkSvkRGU+fszEgH/MRN/aTzLoEFlXnLRKp/yOv65OmaNBsqhRtvgVAuA0O8OjsOKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKrHKmEI; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cb47387ceso45729805ad.1;
+        Mon, 21 Oct 2024 20:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729567409; x=1730172209; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YaALaW8nzNfwR2BNGGr9dEQJgHBRoXm2vibHMuBTRx4=;
+        b=lKrHKmEI488twOVxiN98vDMpEFdW8I24Whp8048aOHJUX+7vQa1aS3KGWtxrDYf1ON
+         TppEoZxnsmCivaB0ydB4z5NpTmOtmVrQMRjg0WxYBVH017Iil3dEQA+WadK8amU5Ux5q
+         LyoIqCCX72/28qmdqps4CI2sOpwcQ7hxYBuJRE6Wqd1HWqVfySDWNNSpe0BgoC6DPZz8
+         ivG2UZmEPLi/N2HAVrW3MYX7Nf2evbrQpxDO3cdvbMMlGhvA12GaUvVq8NdB4+7G7Z7J
+         bch8JP1kb7nG5akGTMATGCiEHngTPjAT/KH+M+VZeosAwNRjTO8X/v8oofeyTTqRl6ED
+         vO+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729567409; x=1730172209;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YaALaW8nzNfwR2BNGGr9dEQJgHBRoXm2vibHMuBTRx4=;
+        b=Dpc8bwHVNYLpkUjJWTw/9xD3an1qk4Wk69aH8Av9v05iVn+zxLzIK5mnLGJE90N6Ab
+         6PFGXRTZc7LkyxqoqtrKlPOxpRcGTftevwzawF74n0C0KnmaUaWq+a5+QXG+D0lkvfy6
+         prYPXKWKHX5EyYw6HL/vvvXS21LW5RwTjIFGOyBrq7DpVPAk2bnBZhdcS9d6H3Arnvmj
+         lAdmDLtyuzMl81crgEVPj+RYoqeUbRIrim786LDjxpmaHJx70YBP8S63yNd9nNE0f01i
+         sMV/uqtpXNhjp2cJfcd/ClYLDkbnsyZITWzqGw4NFaD7+pPWNrqNvS8xAF9mBwoJoskr
+         I2ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV+hb1GFYaI1celWSDBv7sjqjDMsr9XX2T5LCk2GHu+7QLyvZCT5ij5PDp5LDeHItJiVY3iePO8lNxvDc6A@vger.kernel.org, AJvYcCX3ewhiCvaiYzHy8L685769Us0yfgtoGeKdR4Aq0Dbb7nvQK2ZoFscNT91rnVPq1hikNKQKz4X5RfrSfcXEPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUPcEmZLjNn8UqNgyCDKhspMhndmjWnxTHCPaeiiqRVYul7CXa
+	eWaRjDto6NwC/PRMgZrQ/M7FeeNWc9niS9nV5eKyLyzNF+Sttkjw
+X-Google-Smtp-Source: AGHT+IEQ9l+rgtuChT4dveBuRdRhUbq8ydAi1dTuFwuQq8ykSCTLX2Ze/ydituja7uIUStfyHuX5GA==
+X-Received: by 2002:a17:902:da8f:b0:20d:2848:2bee with SMTP id d9443c01a7336-20e5a752281mr199612745ad.16.1729567408807;
+        Mon, 21 Oct 2024 20:23:28 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0cc12sm33346855ad.95.2024.10.21.20.23.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2024 20:23:28 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH] btrfs: Fix passing 0 to ERR_PTR in
- btrfs_search_dir_index_item()
-Content-Language: en-US
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, "clm@fb.com"
-	<clm@fb.com>, "josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"dsterba@suse.com" <dsterba@suse.com>, "mpdesouza@suse.com"
-	<mpdesouza@suse.com>, "gniebler@suse.com" <gniebler@suse.com>
-CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241019092357.212439-1-yuehaibing@huawei.com>
- <7daf798c-64e1-4d22-9840-8954db354c9a@wdc.com>
-From: Yue Haibing <yuehaibing@huawei.com>
-In-Reply-To: <7daf798c-64e1-4d22-9840-8954db354c9a@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
+Date: Tue, 22 Oct 2024 11:23:14 +0800
+Cc: Jeongjun Park <aha310510@gmail.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3F346797-D10A-4A03-BE5E-6AB3FE1F64BC@gmail.com>
+References: <20241021154356.38221-1-aha310510@gmail.com>
+ <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
+ <45EF275D-8F04-41DF-9895-CCAF28D5AAAC@gmail.com>
+ <10aed636-b665-49f0-8fa3-fcb5504c13c6@huawei.com>
+To: Hongbo Li <lihongbo22@huawei.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 2024/10/21 16:25, Johannes Thumshirn wrote:
-> On 19.10.24 11:07, Yue Haibing wrote:
->> Return NULL instead of passing to ERR_PTR while ret is zero, this fix
->> smatch warnings:
->>
->> fs/btrfs/dir-item.c:353
->>   btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
->>
->> Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
->> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
->> ---
->>   fs/btrfs/dir-item.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
->> index 001c0c2f872c..cdb30ec7366a 100644
->> --- a/fs/btrfs/dir-item.c
->> +++ b/fs/btrfs/dir-item.c
->> @@ -350,7 +350,7 @@ btrfs_search_dir_index_item(struct btrfs_root *root, struct btrfs_path *path,
->>   	if (ret > 0)
->>   		ret = 0;
->>   
->> -	return ERR_PTR(ret);
->> +	return ret ? ERR_PTR(ret) : NULL;
->>   }
->>   
->>   struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle *trans,
-> 
-> The only caller to this is in btrfs_unlink_subvol(), which does the 
-> following:
-> 
-> 
->                   di = btrfs_search_dir_index_item(root, path, dir_ino,
-> 						  &fname.disk_name);
->                   if (IS_ERR_OR_NULL(di)) {
->                           if (!di)
->                                   ret = -ENOENT;
->                           else
->                                   ret = PTR_ERR(di);
->                           btrfs_abort_transaction(trans, ret);
->                           goto out;
->                   }
-> 
-> to do:
-> 
-> diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
-> index d3093eba54a5..e755228d909a 100644
-> --- a/fs/btrfs/dir-item.c
-> +++ b/fs/btrfs/dir-item.c
-> @@ -345,10 +345,7 @@ btrfs_search_dir_index_item(struct btrfs_root 
-> *root, struct btrfs_path *path,
->                          return di;
->          }
->          /* Adjust return code if the key was not found in the next leaf. */
+On Oct 22, 2024, at 11:05, Hongbo Li <lihongbo22@huawei.com> wrote:
+>=20
+>=20
+>=20
+> On 2024/10/22 10:38, Alan Huang wrote:
+>> On Oct 22, 2024, at 10:26, Hongbo Li <lihongbo22@huawei.com> wrote:
+>>>=20
+>>>=20
+>>>=20
+>>> On 2024/10/21 23:43, Jeongjun Park wrote:
+>>>> The size of a.data_type is set abnormally large, causing =
+shift-out-of-bounds.
+>>>> To fix this, we need to add validation on a.data_type in
+>>>> alloc_lru_idx_fragmentation().
+>>>> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+>>>> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
+>>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>>>> ---
+>>>>  fs/bcachefs/alloc_background.h | 3 +++
+>>>>  1 file changed, 3 insertions(+)
+>>>> diff --git a/fs/bcachefs/alloc_background.h =
+b/fs/bcachefs/alloc_background.h
+>>>> index f8e87c6721b1..163a67b97a40 100644
+>>>> --- a/fs/bcachefs/alloc_background.h
+>>>> +++ b/fs/bcachefs/alloc_background.h
+>>>> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum =
+bch_data_type type)
+>>>>  static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 =
+a,
+>>>>         struct bch_dev *ca)
+>>>>  {
+>>>> + if (a.data_type >=3D BCH_DATA_NR)
+>>>> + return 0;
+>>>> +
+>>>=20
+>>> oh, I found I have done the same thing in [1]("Re: [syzbot] =
+[bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But
+>> Your patch there is still triggering the issue.
+> Yeah, it just notify the issue and not prevent the issue. So I found =
+it should add a.data_type condition indeed. :)
+>>> in my humble opinion, the validation changes also should be added. =
+And in addition, move the condition about a.data_type into
+>> There is already the validation:
+>> bkey_fsck_err_on(alloc_data_type(a, a.data_type) !=3D a.data_type
+>=20
+> This is actually not enough. This only do some transition check. For =
+example, if a.data_type break when bch2_bucket_sectors_dirty (the data =
+corruption can lead to various situations occurring) is true, the helper =
+does noting.
+
+Make sense.
+
+>=20
+> Thanks,
+> Hongbo
+>=20
+>> And the unknown data type is already printed in bch2_prt_data_type, =
+additional validation doesn=E2=80=99t help much.
+>>> data_type_movable will be better. Just my personal opinion.:)
+>> In my personal opinion, I don=E2=80=99t think so :)
+>>>=20
+>>> [1] https://www.spinics.net/lists/kernel/msg5412619.html
+>>>=20
+>>> Thanks,
+>>> Hongbo
+>>>=20
+>>>>   if (!data_type_movable(a.data_type) ||
+>>>>       !bch2_bucket_sectors_fragmented(ca, a))
+>>>>   return 0;
+>>>> --
 
 
-ret is output variable of btrfs_for_each_slot, that return value can be 0, if a
-valid slot was found, 1 if there were no more leaves, and < 0 if there was an
-error.
-
-> -       if (ret > 0)
-> -               ret = 0;
-> -
-> -       return ERR_PTR(ret);
-> +       return ERR_PTR(-ENOENT);
-
-This overwrite other ret code, which expecting return to upstream caller
-
->   }
-> 
->   struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle 
-> *trans,
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 35f89d14c110..00602634db3a 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -4337,11 +4337,8 @@ static int btrfs_unlink_subvol(struct 
-> btrfs_trans_handle *trans,
->           */
->          if (btrfs_ino(inode) == BTRFS_EMPTY_SUBVOL_DIR_OBJECTID) {
->                  di = btrfs_search_dir_index_item(root, path, dir_ino, 
-> &fname.disk_name);
-> -               if (IS_ERR_OR_NULL(di)) {
-> -                       if (!di)
-> -                               ret = -ENOENT;
-> -                       else
-> -                               ret = PTR_ERR(di);
-> +               if (IS_ERR(di)) {
-> +                       ret = PTR_ERR(di);
->                          btrfs_abort_transaction(trans, ret);
->                          goto out;
->                  }
-> This is completely untested though and needs to be re-checked if it's 
-> even correct.
 
