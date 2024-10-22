@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-375363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC0F9A9504
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2F39A9508
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180F4284FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38CB0285578
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A1E17557;
-	Tue, 22 Oct 2024 00:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDB72233B;
+	Tue, 22 Oct 2024 00:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMptoSda"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epMbfrj4"
 Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5043481E;
-	Tue, 22 Oct 2024 00:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DCE322A;
+	Tue, 22 Oct 2024 00:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729557412; cv=none; b=B3jLfz8seMUYaiklkMPvjf2AwxtWBNa5Zr6+ZtkqHI7TApDFwKFVQHhfN0FBrx0yCiTVgwsMWcm6R+liJdvpcuKqWm45pu0Eq5vzIVOqFtGC2fus8WYx5XMHmxJjFM6ZgvNgGoRyWxtb7g9W1kwXW7AKWz0th4rJXROV2T3RoZ8=
+	t=1729557522; cv=none; b=cENjINXmSYS1D3A5/tS5RQ/Z0t7bdkby428dS+SoQ+z4bCKrCyaHmg3EqhpNXsEVscrKONTClN69cv+pq4UUYYZ6cmjZLQA051eFUp0oO+SpeyNhWUo8d/aCo6ze6YGCmMFsrgQjZpqC3bqqsheQ6FUjfnbHVfNQH3lh2nqOriw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729557412; c=relaxed/simple;
-	bh=DlvmIS0GFdouOvMkd9kxRO+6vjh3grF2nviYudtDdmc=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=VNcDtahXZZU16CaLYXM4W7BPjuSS6WujgUI2mmVa1bhkdMDLw2m4TxkLMGgNGTar4DcCkiZDIPcfbYeoBgLS5g0ro66WzWDOAynQnYYTU/0x/0aaGvVVVpkTockILSpmDta4G8KAYl3xgAcLcU4QeRReTzmr5f1Eey38Q+i56cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMptoSda; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1729557522; c=relaxed/simple;
+	bh=ljRP45hZhcU5TIdoOUX/MFdLEpvuS4DRBUh5mJBPMLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oXRWTHNInt9R378o/C3OuoJBtGVpzIAdHgOC1rtjqQTxfm/JDXrqF4ZzpnINhlrRqghysYvvOD945T5pDkbLdDOT9fTQMorCT+e5G4Dpnu4ONPGxJ7REfaHB7ytJrmYjU5O0H5zM/6DIW21x7elTXgh0ZMxMiM7HS8Da9/CcRlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epMbfrj4; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3509793b3a.2;
-        Mon, 21 Oct 2024 17:36:50 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e49ef3bb9so3565949b3a.1;
+        Mon, 21 Oct 2024 17:38:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729557409; x=1730162209; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qzofkblKFhri+Rfh3J4/u0RRkjnhDLEA166Xs/RLWQs=;
-        b=lMptoSdaovfgq0FUJo5QWHNS+94P19f8W+/1mlX52FM+P6AHwVWHRTjsWNyLTpfsOr
-         HLTpZxuUSs0sSntJRTfP4qnUDVmC8cNfq3BzKC9sjC9ILDyyqSAjSFqjYvhYgyMb08cB
-         KmsePPhBxhn1igXdiKaKEOKh59bngozX400uywnylJBL+1sDt6l9RsnreniZ71FhLkO6
-         UyaSb8TbfIVfEmW0siUZeqZzTRiJtEmH8M3qm+OaGJwtvkB6d6u4uv/D5FXQID2hQBE7
-         AOIPEWv6gULFTDAJ/T6Hv366eRKty994Z+jCQ07/zfVQxZRfrW7ey7HPAD83hE5cHrQf
-         wi4w==
+        d=gmail.com; s=20230601; t=1729557520; x=1730162320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=magtwdh/LfBPRMtVpw+N0PEp+2NPatDBY6KH3mR8XnA=;
+        b=epMbfrj4EobW0qtiilcY2/+GveoJXuBLs052AjCbRRIstSz2pjK+KRyQLRF9HCUZUG
+         n7eiP6sEqkxC1Zaw/ffLxAMG288uGUREEdbe/OF5nCkE05I4iQi80n8YrXvMVeDKk49Q
+         6WgX54wtn83NasTY11LvHoFXgcwl0Hu0R3mYQGlNmEqW+NmzgB+xdJm/9Jzv7WhU50+M
+         aLAaGt4qePFfyhl7sbLVdjpHNX0EFl4jNaOztCZP5yCqUOv8nXQQoRQGmZLkO6nrLJxK
+         vsItUze0n5ZmU+nxrgkaiGvr8362h4Clw50s1QU0Ss2qliu8A8KzO7DgfBYmxDvDpn+D
+         nhGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729557409; x=1730162209;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qzofkblKFhri+Rfh3J4/u0RRkjnhDLEA166Xs/RLWQs=;
-        b=Boe8YMHDGQkj59aFI7/pCt/778Xm3ukd8V4mZbCWhp+FJjRBLcuQhydcAC8tsLcizy
-         xy7NWH83QzuFkejPhEidAMkLqL4hsPYgiM6BqQtLOYmfYgGQV5TUVzrdIkMOM72a9fdw
-         KSvqQS4sEAgKfw+jaEa5omaOkpOVd7mNMaGMhDzO4zlh3BPNSGuYzOYBLkWmBY7gblHU
-         My91w0TGMwDAvcNbIIP3ytTFkZqCsNlBHKMT3uGpkUvpqQLWAqrkY9j54THBr8QaXrhu
-         /QbENVne79bQLO7AI5e9fGMPsbq9rnBD+pyFhEeT/7OYjiTY5AIKuYkzdU6C3F1OaAtc
-         ozjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFmJJlTNsbgkZxyhEnCNR3OY3DquB5IZvAkSZIYWazO+xX9wYi1F8RFf0+mV1m6TrzLdI1Gx9WmGtFUgE=@vger.kernel.org, AJvYcCWwXwy5KqgwKEFf4LUfzSaYEdx0YXzOJDd2Ky8QfSEO9bOTktfPhWZjD3qGFlsdjLOzk1Kv7RcuZMlVriYpBqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv6LQqAf8vTOL2Af3RSKVgxVUcCYSBgGDSxMZs9PH0u71r2Ufs
-	wOHkJzBr2yfHFmWhX00qKa6ONs7loektnFdwGxgpUQtT9kcorJfzU/l76bTq
-X-Google-Smtp-Source: AGHT+IF/nPjV5QSpmN+q0ML59khpHR/EVtZLnhERjhjNxgAmBM6yhRzL6e0Ly5IY3QtYiktXk+H27A==
-X-Received: by 2002:a05:6a00:1a94:b0:71d:f821:1981 with SMTP id d2e1a72fcca58-71ea3126119mr16470056b3a.4.1729557409053;
-        Mon, 21 Oct 2024 17:36:49 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a409:cb40:2dbb:16ed:d48d:b2b3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d76besm3520638b3a.121.2024.10.21.17.36.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 17:36:48 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+        d=1e100.net; s=20230601; t=1729557520; x=1730162320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=magtwdh/LfBPRMtVpw+N0PEp+2NPatDBY6KH3mR8XnA=;
+        b=QpHiI04MeQBNPbiK54GXkaFGX8nJxGBt3vTZ4Dkz6zTNhxUGrarjWO1CZlHLr6hQsF
+         ZG5BHJMAxGSN9W7G+ftuIR4DLCbyNP6SVhCF32nTso7u/XHfY2bv6qmAZu6w7WcijnJV
+         cRFHwGgi5yAWJjg7I+6efZLhmzKGym3EoJEqNaRPlClIUMTDNI4VWIx3R+t8Vce2w7W/
+         dgigwU/wNZo9Lm6rAHCRL1OJw9nB2e3WCALa3SbAzSqjHCR8/bJZNtpDNkI6DYOrNSdi
+         secmwVMjp6I/X7olhViErN7QdbRLbjd+VSDlb1WaPUzvqzo3MHJC54IYwPqLieEVIBK3
+         brQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbP31mEMY06ZJHgx0secsFxtP2xzGsg7/o5NO6mlb81GW0eGJkVqiS1xK5XlOGkGggH1nLIPdn6pF@vger.kernel.org, AJvYcCWhCSUPO6fT58Mu9Y04yY1W63lQtCrNn3CYrTfWyym1dMaqKA9kJXgfAbrwS4tl/eIYYUoA+gjaX/sT@vger.kernel.org, AJvYcCXFeLm4+iBTNSMAzDCKdHRvQ2EahquEKBthfNmEwGYsUENIFzY9Tb0BR/27PRw7JjhvKWfP+ZB+G2ARXDy+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq6FyfY7WkBzwVvpbLzFk3gcQfDt+rtoMwYVlI8ZeKFsopiMKK
+	y+on0S/kq2A4pGTp9EWWxye4JmME/2PGRYsxWr8oFuuhwkO9O9dg
+X-Google-Smtp-Source: AGHT+IHV8M9cBXnFbidcYyHefhv6RPjbtsN8XZLPfnMQLKyzNP9kmzIyA20Jtvdd6EaL6arRZgb+1w==
+X-Received: by 2002:a05:6a00:270f:b0:71e:591d:cb4c with SMTP id d2e1a72fcca58-71edc132de9mr2016686b3a.1.1729557519596;
+        Mon, 21 Oct 2024 17:38:39 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132ff7fsm3517619b3a.71.2024.10.21.17.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 17:38:39 -0700 (PDT)
+Date: Tue, 22 Oct 2024 08:38:04 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Inochi Amaoto <inochiama@outlook.com>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Inochi Amaoto <inochiama@gmail.com>
+Subject: Re: [PATCH v5 3/3] riscv: dts: sophgo: Add SARADC description for
+ Sophgo CV1800B
+Message-ID: <b2dtsxyae5d4pueaz2ar5pl5b3c2mjg75hvj7rljtxgfd5wxer@bkxe2uls4en4>
+References: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
+ <20240829-sg2002-adc-v5-3-aacb381e869b@bootlin.com>
+ <IA1PR20MB495323339EFB06E194204904BB902@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
-Date: Tue, 22 Oct 2024 09:36:37 +0900
-Message-Id: <1D787F7E-08E2-4F21-B7D3-68A9F345E79E@gmail.com>
-References: <172631439319.3042536.1475962432679276880.kvalo@kernel.org>
-Cc: toke@toke.dk, Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
- vasanth@atheros.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <172631439319.3042536.1475962432679276880.kvalo@kernel.org>
-To: Kalle Valo <kvalo@kernel.org>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB495323339EFB06E194204904BB902@IA1PR20MB4953.namprd20.prod.outlook.com>
 
+On Sat, Aug 31, 2024 at 08:49:22PM +0800, Inochi Amaoto wrote:
+> On Thu, Aug 29, 2024 at 02:31:52PM GMT, Thomas Bonnefille wrote:
+> > Add SARADC node for the Successive Approximation Analog to
+> > Digital Converter used in Sophgo CV1800B SoC.
+> > This patch only adds the active domain controller.
+> > 
+> > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> > ---
+> >  arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > index 891932ae470f..da1ac59e976f 100644
+> > --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > @@ -133,6 +133,28 @@ portd: gpio-controller@0 {
+> >  			};
+> >  		};
+> >  
+> > +		saradc: adc@30f0000 {
+> > +			compatible = "sophgo,cv1800b-saradc";
+> > +			reg = <0x030f0000 0x1000>;
+> > +			clocks = <&clk CLK_SARADC>;
+> > +			interrupts = <100 IRQ_TYPE_LEVEL_HIGH>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			status = "disabled";
+> > +
+> 
+> > +			channel@0 {
+> > +				reg = <0>;
+> > +			};
+> > +
+> > +			channel@1 {
+> > +				reg = <1>;
+> > +			};
+> > +
+> > +			channel@2 {
+> > +				reg = <2>;
+> > +			};
+> 
+> I think it may better to move channel definition to board file.
+> 
 
+It seems OK, let's drop my previous comment.
 
-> Kalle Valo <kvalo@kernel.org> wrote:
->=20
-> =EF=BB=BFJeongjun Park <aha310510@gmail.com> wrote:
->=20
->> I found the following bug in my fuzzer:
->>=20
->>  UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_h=
-st.c:26:51
->>  index 255 is out of range for type 'htc_endpoint [22]'
->>  CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
->>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/=
-01/2014
->>  Workqueue: events request_firmware_work_func
->>  Call Trace:
->>   <TASK>
->>   dump_stack_lvl+0x180/0x1b0
->>   __ubsan_handle_out_of_bounds+0xd4/0x130
->>   htc_issue_send.constprop.0+0x20c/0x230
->>   ? _raw_spin_unlock_irqrestore+0x3c/0x70
->>   ath9k_wmi_cmd+0x41d/0x610
->>   ? mark_held_locks+0x9f/0xe0
->>   ...
->>=20
->> Since this bug has been confirmed to be caused by insufficient verificati=
-on
->> of conn_rsp_epid, I think it would be appropriate to add a range check fo=
-r
->> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.=
+Reviewed-by: Inochi Amaoto <inochiama@gmail.com>
 
->>=20
->> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
->> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
->=20
-> Patch applied to ath-next branch of ath.git, thanks.
->=20
-
-I think this patch should be applied to the next rc version immediately
-to fix the oob vulnerability as soon as possible, and also to the=20
-stable version.
-
-Regards,
-
-Jeongjun Park
-
-> 8619593634cb wifi: ath9k: add range check for conn_rsp_epid in htc_connect=
-_service()
->=20
-> --
-> https://patchwork.kernel.org/project/linux-wireless/patch/20240909103855.6=
-8006-1-aha310510@gmail.com/
->=20
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpat=
-ches
-> https://docs.kernel.org/process/submitting-patches.html
->=20
+> > +		};
+> > +
+> >  		i2c0: i2c@4000000 {
+> >  			compatible = "snps,designware-i2c";
+> >  			reg = <0x04000000 0x10000>;
+> > 
+> > -- 
+> > 2.46.0
+> > 
 
