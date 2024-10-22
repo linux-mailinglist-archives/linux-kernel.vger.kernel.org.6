@@ -1,196 +1,182 @@
-Return-Path: <linux-kernel+bounces-376758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA28E9AB591
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33499AB5AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 20:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A33F1F238A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5ACB28354B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319651C9B74;
-	Tue, 22 Oct 2024 17:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1A1C8FA2;
+	Tue, 22 Oct 2024 18:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G6POZJ8I"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJV104Kz"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A2B1C8FD5;
-	Tue, 22 Oct 2024 17:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729619811; cv=fail; b=VEclm0seM1zbVns41rhxXUtlzAUiF4mZzNJQTW0hJJky1MaBukY3wRQMWlh+V07Fh99QESqi16Sh0/TMsCqYoV1LXcX8tqRhZLFzvibOR89IPihx4ceqRVB9YpZXqWYeMI4ifYrIg7rZhBIiLRp0mht8UpJPRJrWyuLb2SEiyhg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729619811; c=relaxed/simple;
-	bh=5aAfI986Vu7nkmddVdKrTh52JyDtm9qsT7CH/nCME3k=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=EQTLt+QDm9xPj0ykX1jfgtugJ0fYzdq9kMEm/QpymjKUo7wiBTtpyqKZUK9Owgbrm2tg4GoDBjygxSTsC/PCDjmfLAWFays1Uqfkw/Oxmm3vACQ0NI4BvIMyGzg1RYWgOGXcHK/QLWh1VUd5JddvVLoingWWL5IIez0jM1I6EKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G6POZJ8I; arc=fail smtp.client-ip=40.107.244.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NU8N4nArlEQ5aoZI01AP+IJ/PFifZTB4RUl+lg3522ih16/+O7PMD6fvTQull6DLgnXB2fbEGco0xT7NjwQ520/KSXyiBcu4H2VX/N6BeqAEi3v1DVgG9KD6VFOqQ+NDHcaHs7ymZVhqkcT4CHgK66O2b8Qc0ZNhH9x2XTJvcV4x/ZLJxjBMuKccYFf3fRq63QOTfQwJuILm95u6SuvVZ0CLQ7RTqjcTtT9aa7JE7/DO68PkhllLf96dmGTQvsis1bARF69GyNjBjEf4q3iNYFZmlLRatQ1RK1I03Y8ZVtMwZyEh7fwM1q/GUAcJbM6v3yrFbHk8NKN9MJrlqJIPNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TK0BgIm7fx6fzoR1zXJq5XPlARf7BiKD8jP+0L57Pgg=;
- b=d3C1DAF6hvHGNqB8fqW52MhzmxP8k4IvUF8Wm6Blpwxsh4vI+v3Nlq2uGfKWbfrROY+im/e0jE517kczc5mnkLUT+rMh4gHd6Z9khZA4GW4zrKm8kjGqgSmiJMYFMM9cAYWMeUuFH41jnvj2DcElJSUNZcgB+Qqqc4CgXzPls2dwRLFTCd2nCQqKTOeSn4oaxgYRok4OxDkIiowZhtaGQiQhGYnlAPaUxQIpI5Lv1wTWrNxUZy4YoqYHhdJppoWITRflw0W5WtfIqUT2nAU0mMHO6LS50x/eO8L1Xrw+ErC52WAYkWCjwoB+6K6Vsrhbe8Tkg1SPDoVzmyyYX5cprw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TK0BgIm7fx6fzoR1zXJq5XPlARf7BiKD8jP+0L57Pgg=;
- b=G6POZJ8IpKBpj83gRrLb4Psif16xTMigR1IIxmK/J4A3Fv7R2WYL7UxbkDUwl+0l4cyMfjz6Wvh9uYwyh3VZ2M4W4k+jZcy00OVbx+knBIveQxYg5QiX2wtGXG1S9c6uoUf3NjpAvUtCiA7ThPwivXh2kLGS3SRZ4KS60TqpYv6QtAhW+TcTHJpFTqw3/zPOM1e0QyxRbTt4/A1T3jLTlgfEAWT91eTo2ezPgosMig59q7r/58HVKKjcae0n3fc7paXOSRNmTz2SoznzNA+9yqBj8xY9b9NTnQxdcJI1EMbKozGq2o+baijqeB5QdA19MObzvTYWDRh9TKtp2M+FpQ==
-Received: from CH0PR03CA0280.namprd03.prod.outlook.com (2603:10b6:610:e6::15)
- by SA1PR12MB6678.namprd12.prod.outlook.com (2603:10b6:806:251::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
- 2024 17:56:46 +0000
-Received: from CH1PEPF0000AD7E.namprd04.prod.outlook.com
- (2603:10b6:610:e6:cafe::17) by CH0PR03CA0280.outlook.office365.com
- (2603:10b6:610:e6::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29 via Frontend
- Transport; Tue, 22 Oct 2024 17:56:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD7E.mail.protection.outlook.com (10.167.244.87) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.14 via Frontend Transport; Tue, 22 Oct 2024 17:56:45 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
- 2024 10:56:25 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
- 2024 10:56:24 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 22 Oct 2024 10:56:24 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
-References: <20241021102259.324175287@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8572513B58A;
+	Tue, 22 Oct 2024 18:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729620102; cv=none; b=WNjqxdk1/Ga7MEfxJBYr3v65ExP42rVJe/YJsA4r/qhJ1smjhl8svIOfnu4Iw5NhJx6oI49FYTHLSya2d5Or8gyle2nUS3z87k6+ICys/wBoNFcmdjoOUSTB8sFr1+vUBw5L9QTzR32Rrq1zESRsM7s/N6Qwv4KOCwsHUP8sF8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729620102; c=relaxed/simple;
+	bh=tyHsvaiiX1gOmmyq9/0nzpwSlEYIaTQXrkD8mzX0mLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=US1DNM6ZJJiRQ/LzyA51wPDBjjtCPwVVAcdlg0RRzUqsqoRl6vp4I3dYIUHupS6QsCCr3EmlBQpGWHLNOyoaHzQ493plV6atcw0k8pyMLV4w2iv7G95Qw71Q+gCKpXnHweAil7PneCrQfdiEkFvlvQu87jwg+4+wsX+jvhcNmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJV104Kz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fe76e802so6830992e87.1;
+        Tue, 22 Oct 2024 11:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729620099; x=1730224899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xuf72DWWMpZGasVdhPaddkSBAdQr8zMJ93ItMRBFORs=;
+        b=fJV104KzjSHy9+W2BSxGsnCNr65m0DrgH7ti6KR+D2bdkKUVk5LobHBGZOKoPDMRNL
+         cS67as7Pp4cGUvVmp/A22u6zr5vgD4kRu9ZcqQY+gSrwPGwdjpK1NhzNzEto4pMtwvFW
+         3f4HclQ7/YxTuhr/yIYUtVrnU2ys+4YUfflSz4aw5h5KSumV/3FpRVLqrfS2c/h4bqwa
+         pUMFRuapiZdcF8sux7xg8pDzMm3Wi/87od7vYFNDPX8MSafXDM7YX9pVJ+Oas0NrCIS+
+         D6qR0QMr0ZDs8nHdowfWG8+CGLRft37w58Tt93YC3ZBn94X64+vwGt4UsJO9TxBRMdRq
+         AuAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729620099; x=1730224899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xuf72DWWMpZGasVdhPaddkSBAdQr8zMJ93ItMRBFORs=;
+        b=mIwpAcS6+cpokTrQustADrkJF/fxBOh31dz5Y2yRXckzgilh3iBgS6s1aQvibkQYSw
+         EYKB0yDniiki5oCDfWYQASNE+u8t1DjDUapKvKWRmjK7KzuFNz03Xahi0mpa+1iANsXO
+         t/zk30kN3Sqc5/Ai7PAE7LeWNog3RQANs+CnRRDimDu8v/ArSpQ1vb+i+PqlFMPVi2P3
+         O6pKVdWnRw10D6MFAWAMjw7wKnJxfdnyXFATyqtII06DvhatTvyHvLoOO/2Toz2giDGY
+         +z1Gil8QriYScNJnY7ZoTXqMJeZktrl27nFQdA5lb2xxil9W9FQBeFYmdlq+Ipdyt9x0
+         lV4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQww73tHJPywjmjulJT/fRW3weUWUcDgtTkXVDl//1ZW7o1bdYFBY6vkXtGxHELRTerKlvVdEvD7xj2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgKZ5VyQ/J4CP72R3ahnYexyElivTYYZZ0Aka3a0aSv7N1wwnx
+	QMcSuRVSK+AiI0S7Rs+XXzDNBD1/3B6DGCKsOu+u9FAMG5UfuQpJ9ItEEcl99rw=
+X-Google-Smtp-Source: AGHT+IFIZ858NH+vPbozF3bg2tGl8fwekzp1tdWuXvZ9cQ/T6Tn27daJ12ikD3u5oB8Xk2zP3HLIgw==
+X-Received: by 2002:a05:6512:23a8:b0:52e:9b2f:c313 with SMTP id 2adb3069b0e04-53b19206811mr242987e87.22.1729620098280;
+        Tue, 22 Oct 2024 11:01:38 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:850c:5867:abe5:b8c9])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b18csm3355638a12.62.2024.10.22.11.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 11:01:37 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: brauner@kernel.org,
+	josef@toxicpanda.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Gianfranco Trad <gianf.trad@gmail.com>,
+	syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
+Subject: [PATCH] hfs: zero-allocate ptr and handle null root tree to mitigate KMSAN bug
+Date: Tue, 22 Oct 2024 19:56:25 +0200
+Message-ID: <20241022175624.1561349-2-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <717bd11c-92c9-4a47-a277-d1f8a7e673b7@rnnvmail201.nvidia.com>
-Date: Tue, 22 Oct 2024 10:56:24 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7E:EE_|SA1PR12MB6678:EE_
-X-MS-Office365-Filtering-Correlation-Id: c02e038a-78c4-4192-c5c9-08dcf2c2e4e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVpTd29SUDBvTDVsZ1hMK1RROEYzVE5QWWJXVk1zL2RnaC9qMVpNTXNpOUNK?=
- =?utf-8?B?TW5WR0krWHYvNVEwVzBMUW1PU0JpYkxKbTNxSytUZ3BJYkRQWEltam1aenBB?=
- =?utf-8?B?eisvTUprZGVGclhWZnFUMGVTNytXV2V5SEJTbDBROThiYzN0dUhjMkg1TkxR?=
- =?utf-8?B?V2Z0Zng4d3pEcmdiRCtqWVZuSXdYd1RQTWsxZlZobmFkS0hmZ3JzR01jbmla?=
- =?utf-8?B?MkV0aWhUYTBEdWhDdlNjUG1JcVAvTHNkRXZ6UmZRcmdTYStSaEg3OFlsMjJw?=
- =?utf-8?B?ZCtxbTc1WENRVndZeFd5dFpQZ2hTYnU0ajdrSHpiV3hibXZHK1BSZTN3a3Rq?=
- =?utf-8?B?V1U2NlhFaHpIRjU2b3ExNXRPR1pBL3BSdEMvSUlGSlNVdmh1SW8rcXFrb09X?=
- =?utf-8?B?VFg2UTl2TmdPaVhXcGo1QTZuWWpNNnd2S05NTnUza2U2TVhRc0hzT3kzOEVm?=
- =?utf-8?B?cGl6dkxCblMwY0oxb2Q2TW5qQS9WTk10QWlCR1g4ZnRjUm81NkQwTUpUdnBp?=
- =?utf-8?B?bTQ1UjVsVFNMZjFHRHVQMzBRNnc3a1hmTEIwbzVLMnJxQk1WcUpwR09HQnov?=
- =?utf-8?B?UUJITmFONGVpNmtjYUFFNTY2Q0h0RHBhNkhHYTZjTHREUTd0MU9iK2FrNVlK?=
- =?utf-8?B?UG5yZFhKZENBL2lPdW9vMS9PUmJWY2E3dkJvL3Ixd1dqc2hzTGdHSjFGdVlx?=
- =?utf-8?B?L2lCMEMwb2xMTVVRclRpTmo3di9KckEya2J5ZitFM0k4N001RXJucHZ0Z3NE?=
- =?utf-8?B?U0hXb0FhTEJqMFlUQ0tlMW8vaDVwTCtIa3JhQWlRSEVxdzdDcG12Rm1BL1pK?=
- =?utf-8?B?TWJpQkl4YXFQR2NSWFAzUjF0eHlxTVdDdy85bVBIZGNaQ1hpZUR4clZManpk?=
- =?utf-8?B?V29JdzZ0YUlzcFM4WnMwdkRockFkSGlaRzN0N0NDZlA3dGt2UU5uWjNxZFoy?=
- =?utf-8?B?ZHBLOGl3V05RTnhaMEUzZ1Z1d2doZEIzR2gzTkdwaGErWk5ObmxkODlYRW8v?=
- =?utf-8?B?RGVGeGhWSFNQc3U3M2tyd0VvQ0pVdXh2TjN4R0I4UEZkR09xNEVsMDZnaWRT?=
- =?utf-8?B?OWdQckNVM3RZUXlLOFQ1aW40RitHTFB4L25BMlE3MEcyNStockpvaEltVFBy?=
- =?utf-8?B?UjBmSUM3cTlpcmxzS3FZOGsxWHBLUS9nQWM3MkY5Ri9nRUljU1hwamNDNHJX?=
- =?utf-8?B?ZWZSRzYvQk9YMXJ4bjlVMFA3VE1oa0ZWOW56Q09KQzUyVkRsU0FzS1VqNklR?=
- =?utf-8?B?VDlCdVRrSkdsNGl5djZDbFNFL2FhaTJpNjlQRDg1Z1VGZC8xYkJ3NktDa3N2?=
- =?utf-8?B?emNwclh5T1o2SDVwVncrUGlybE54YkpSRDN6c2VzaFQvTHV1ZnZzYXVqZjk0?=
- =?utf-8?B?R1lMZUM5c2Z0aGJkVVVEMm81QUJ3L0RvTE1hck50ZWRpdWlBY3VEcnYxSmkv?=
- =?utf-8?B?MHBtZG9Ja04wb3o1SEZPNE1wQkUwKzVtWkdLWjBoZkVyWmttbzY5cHYyTXV1?=
- =?utf-8?B?L0RmLzJ5bzB3SERlWWVRWFA1NDFGTVd0YXZjNi82ZDdieCt4bmtoWGk4NEoz?=
- =?utf-8?B?eGNtcENONlhXWTdsWld0aDhDaEtoeXQ2RE9zV1dPOS9JWFJvOEhhajhrdU9R?=
- =?utf-8?B?OVh6aXNCVVRrdS93eUp0NmFpdDZEbFh0KzgwMjdpbzFGR1Npdko1Um92R3RU?=
- =?utf-8?B?M3lwM2lVWFdHZ0toZEhhbm16WmRTZDViTzg1UGtNa3M4VUd3cDNQOVhvZi9N?=
- =?utf-8?B?QUlkZUFyN1V5azBYajBoWmhFRXYzL3NTTXoxL2JVU1VHRWVmWkZkY0RCdlIy?=
- =?utf-8?B?UHMvaGVEcFNTaXlmMjVhSnovVWNRVnNVMjhtOW1RR1I3cWR0Y2JQT3B3dFVu?=
- =?utf-8?B?cE1RaTcxNDhySFRnTS9YQTlwTmYvOW0vd3NuOWRhUnNFTkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 17:56:45.5562
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c02e038a-78c4-4192-c5c9-08dcf2c2e4e0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD7E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6678
+Content-Transfer-Encoding: 8bit
 
-On Mon, 21 Oct 2024 12:22:36 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.5 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Syzbot reports a KMSAN uninit-value bug in __hfs_cache_extent [1].
 
-All tests passing for Tegra ...
+Crash report is as such:
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
+ __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+ __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
+ hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+ hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
+ __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
 
-Linux version:	6.11.5-rc1-g96563e3507d7
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Which comes from ptr not being zero-initialized before assigning it
+to fd->search_key. Hence, use kzalloc in hfs_find_init().
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+However, this is not enough as by re-running reproducer the following
+crash report is produced:
 
-Jon
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+ __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+ __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+[...]
+Local variable fd.i created at:
+hfs_ext_read_extent fs/hfs/extent.c:193 [inline]
+hfs_get_block+0x295/0xf50 fs/hfs/extent.c:366
+__block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+
+This condition is triggered by a non-handled escape path in
+bdinf.c:__hfs_brec_find() which do not initialize the remaining fields in fd:
+
+hfs_ext_read_extent -> __hfs_ext_read_extent() -> hfs_brec_find().
+
+In hfs_brec_find():  !ndix branch -> -ENOENT returned 
+without initializing the remaining fd fields in the 
+subsequent __hfs_brec_find() helper call.
+
+Once returning to __hfs_ext_read_extent() ensure that this escape path is
+handled to mitigate use of uninit fd fields causing the KMSAN bug.
+
+Reproducer does not trigger KMSAN bug anymore [2], but rather a 
+kernel BUG at fs/hfs/inode.c:444:
+
+default:
+			BUG();
+			return -EIO;
+
+which seems unrelated to the initial KMSAN bug reported, rather to
+subsequent write operations tried by the reproducer with other faulty options,
+immediately raising macro BUG() instead of just returning -EIO.
+
+[1] https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
+[2] https://syzkaller.appspot.com/x/report.txt?x=12922640580000
+
+Reported-by: syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
+
+ fs/hfs/bfind.c  | 2 +-
+ fs/hfs/extent.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+index ef9498a6e88a..69f93200366d 100644
+--- a/fs/hfs/bfind.c
++++ b/fs/hfs/bfind.c
+@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+ 
+ 	fd->tree = tree;
+ 	fd->bnode = NULL;
+-	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
++	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 	fd->search_key = ptr;
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 4a0ce131e233..14fd0a7bca14 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -160,6 +160,8 @@ static inline int __hfs_ext_read_extent(struct hfs_find_data *fd, struct hfs_ext
+ 	if (fd->key->ext.FNum != fd->search_key->ext.FNum ||
+ 	    fd->key->ext.FkType != fd->search_key->ext.FkType)
+ 		return -ENOENT;
++	if (!fd->tree->root && res == -ENOENT)
++		return -ENOENT;
+ 	if (fd->entrylength != sizeof(hfs_extent_rec))
+ 		return -EIO;
+ 	hfs_bnode_read(fd->bnode, extent, fd->entryoffset, sizeof(hfs_extent_rec));
+-- 
+2.43.0
+
 
