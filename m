@@ -1,175 +1,135 @@
-Return-Path: <linux-kernel+bounces-376685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6479AB4DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D519AB4E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F231C2261B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6811D1C22897
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4623E1BD03C;
-	Tue, 22 Oct 2024 17:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDEB1BD4E2;
+	Tue, 22 Oct 2024 17:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hT0FzQ6Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QxjpZ8VZ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9220C6EB7C;
-	Tue, 22 Oct 2024 17:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9934B1BE245
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729617665; cv=none; b=A66l5zWhonNxgaoLAAchugVwkz8CeZ24bpIndxrxCVtlRGo+VgVkRmtrdSYyddeckxAHgwUvOykCvK42gegXye2cLV6LR5PRM2EwpluQp2GM8v01VnyJwF923+h0F5Vwgr3nRSb9ivcnuPrcS4aeoXD7Sibu/kyPb788k/2egI8=
+	t=1729617682; cv=none; b=dsIgPP/cO2tPAceuN9xxgJ6hjdnK/2HOXTWpo6atvh+62G5KfxDoKH3HIpmdIP2vAMHFRuwMS4RqwqXTyZJQ9xUtwRsAXKWVpN9E4UfACVHHuYVFlRD9EJQChkXQsttsmzL0dRXNbVvCc8Wy2B9rRDCIOfgPPuJUrRJxbSU+GoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729617665; c=relaxed/simple;
-	bh=Xk5gutzTyy9L+8sDdGxf/MzDuFdHh5gkcje73KuaIRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKopxsFbYnK9Gi6YQlbptwoBlWcHmp5DliAhZVbsSruK89OyN2bpQdxSRDL6QdcJy/Yc6Q9ve0VKQmPE0yC/uDzpyPwoVcQJidy+My3VcE8DeesInvbKmHBT2L7A5dcvFe9at+XO+GWtm0VVV4AyN0ZboC/6L+laNMdQDSRAXZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hT0FzQ6Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4229BC4CEC3;
-	Tue, 22 Oct 2024 17:21:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729617665;
-	bh=Xk5gutzTyy9L+8sDdGxf/MzDuFdHh5gkcje73KuaIRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hT0FzQ6YIEMJNGQzYZNKdjjwqU79Ti/1vFNNSM6CODsVVxtwmqF1/YamfNLhCJRUu
-	 bO+riaCDdp4e/8lD1qBrC5EBtQUjlGj69uIyEFPqvpto5jDfZidVa1iIBVIjsHDVaT
-	 MebM3jkzBExC/931UEAbxA09OUyyvsyXhqACc7JhVHSvMU8qpsniG0ZL0zLG+wIiUP
-	 ICPDijJVqWWFaYOwePSMNSTgMkwrXVxW7jUgb0QiHCg0CXFSwZYnAsOca4grEReFJe
-	 A4GostZVrnzTU9XHCrjVMwK4SnZ3G7Pr2c+2D5LC55ZCDDk0Eoiy/8U3c5U29HhQtX
-	 UUmkcUR68MGTw==
-Date: Tue, 22 Oct 2024 18:21:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dlechner@baylibre.com,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
-Message-ID: <20241022-napped-labored-6956ce18d986@spud>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
- <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
- <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
+	s=arc-20240116; t=1729617682; c=relaxed/simple;
+	bh=b1CGs5gpBNBkiTDp2Q1qyoLrLUaK244tosMToWA6kRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H//kRxKFoucgZpEDSH1SNiF9XX3HD9BvIK/FHNPw4cEJhaLykS88MxP5LmPMfjdYn2ZoV6YerNqEgPG0YER9oVPn7TWy85ppnlIGWM8XyV8pVWnj2Z98v9/W48934pGC73H8lknFpYO19ONjOvhBhFQvQExspzTMQr9HQ6DQau4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QxjpZ8VZ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca4877690so9295ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729617679; x=1730222479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZM6LcuJUHveMyLMVTScG2H/Hgd1xFmDZWDJH7F3T90=;
+        b=QxjpZ8VZ8zuOOfzNt3XlufbVHbyarZLMVnUOehiazHgWmW/kjQ9w7PaKKKxlhIVuHb
+         kpyttd/mI2wHl4DZMXW/yED3XXB1OsWST5BsQMjaslzuE54rmoztmw5Nux0xQK7ox5pN
+         gzvYydYF3Le32Fq4N/Rk0QA9n3TKBT8Ugp148vJ2kpDZgCIkCuRSO+blBUKt2g69SiM7
+         XlEU5bY6+grCpJOLYKpFp4nt7Qp6eJGKR2MXLb/T+DlGInrToEQ4hIm3KNy56YLy8YkN
+         Hb6ANq+1HRJoWf85riS/Fx6E9S4E6qTIqG8mwRnTg8YD7HLvK6CtGcOVXfUOb20+E5Tb
+         1LZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729617679; x=1730222479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bZM6LcuJUHveMyLMVTScG2H/Hgd1xFmDZWDJH7F3T90=;
+        b=r6y9XaVD74sC+uj3PbsPN4ntc9qu7uqkNYTModr8wCkcaGyaWjUE4bTf+/ihZlq3Aj
+         xUruLFup77BjKNXB0mNxNOAUNFwzPd3mLESxxLlHpUTxGqCPc47hP1jgg22rSFAq1vzm
+         ul39rPDQS8UsmRrcIDeEdAzino7WCNehbD6KvUkHgIvJci7lZsRQJtMGY3TXYGgbISnd
+         OVTVj1DI1feKLLizCGGq6Ns4Y2LlQzlxgJZxBe7Dk9h9FrlWN7W6ZAumWs8K5g5+JZ89
+         x0mLYZQlSp+c0JL/zzCrb62URqkeOtJcmItjSqrJUoKDdQvo6mAPQEvacBWNWp0+ZnAj
+         9YYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoPwkEo6tERqPAycUfXV8nMV8w5oyAA4LR4ZOHfOiYW6DWck/zAGfbulGsQMJAO95uEEcwggfXGtZLaXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfoyj2Q+ggZhlul1i7V0Vi53yUVf64LEd7s64RSbfLOVZEv+iX
+	IiahbOrhB8x5yVWf5kLu41r/KUlW2h4YlmhXlrkr4l2ye3BJrJD4vbBl8ZZmwgI3O7yAj7jOsNU
+	2MQqxLKZ4Qu36jZC2rSw6a4y5CqWl0PtfKmaX
+X-Google-Smtp-Source: AGHT+IHS9uM8Xo1yuRSba82XgJ86Gi1EmrgIM4rxPyqQKJRmoDr44vwEofb9Y65MfBbw6NLyhZffbqJpvx8ZTBHl3x4=
+X-Received: by 2002:a17:902:ea0e:b0:20c:bb35:dafe with SMTP id
+ d9443c01a7336-20f80c9f411mr31535ad.0.1729617678531; Tue, 22 Oct 2024 10:21:18
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GEYcqo5TSMEtxtrT"
-Content-Disposition: inline
-In-Reply-To: <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
-
-
---GEYcqo5TSMEtxtrT
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20241016042415.7552-1-irogers@google.com> <20241016042415.7552-8-irogers@google.com>
+ <Zxc-bFLNAh7nrVQC@google.com>
+In-Reply-To: <Zxc-bFLNAh7nrVQC@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Oct 2024 10:21:06 -0700
+Message-ID: <CAP-5=fVNwx7D4N42hDeBQMopCuoW-Q4BUch6am8X_jJDeFDy7w@mail.gmail.com>
+Subject: Re: [PATCH v2 07/16] perf stat: Move stat_config into config.c
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno S=E1 wrote:
-> On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> >=20
-> > Extend AXI-DAC backend with new features required to interface
-> > to the ad3552r DAC. Mainly, a new compatible string is added to
-> > support the ad3552r-axi DAC IP, very similar to the generic DAC
-> > IP but with some customizations to work with the ad3552r.
-> >=20
-> > Then, a series of generic functions has been added to match with
-> > ad3552r needs. Function names has been kept generic as much as
-> > possible, to allow re-utilization from other frontend drivers.
-> >=20
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
->=20
-> Looks mostly good,
->=20
-> one minor thing that (I think) could be improved
-> > =A0drivers/iio/dac/adi-axi-dac.c | 269 ++++++++++++++++++++++++++++++++=
-+++++++--
-> > -
-> > =A01 file changed, 255 insertions(+), 14 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-da=
-c.c
-> > index 04193a98616e..9d6809fe7a67 100644
-> > --- a/drivers/iio/dac/adi-axi-dac.c
-> > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > @@ -46,9 +46,28 @@
-> > =A0#define AXI_DAC_CNTRL_1_REG			0x0044
-> > =A0#define=A0=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
-> > =A0#define AXI_DAC_CNTRL_2_REG			0x0048
-> > +#define=A0=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
-> > +#define=A0=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
-> > =A0#define=A0=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
-> > +#define=A0=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
-> > +#define AXI_DAC_STATUS_1_REG			0x0054
-> > +#define AXI_DAC_STATUS_2_REG			0x0058
-> > =A0#define AXI_DAC_DRP_STATUS_REG			0x0074
-> > =A0#define=A0=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
-> > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
-> > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
-> > +#define=A0=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
-> > +#define=A0=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
-> > +#define AXI_DAC_UI_STATUS_REG			0x0088
-> > +#define=A0=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
-> > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
-> > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
-> > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
-> > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
-> > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
->=20
-> ...
-> =A0
-> > =A0static int axi_dac_probe(struct platform_device *pdev)
-> > =A0{
-> > -	const unsigned int *expected_ver;
-> > =A0	struct axi_dac_state *st;
-> > =A0	void __iomem *base;
-> > =A0	unsigned int ver;
-> > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device *=
-pdev)
-> > =A0	if (!st)
-> > =A0		return -ENOMEM;
-> > =A0
-> > -	expected_ver =3D device_get_match_data(&pdev->dev);
-> > -	if (!expected_ver)
-> > +	st->info =3D device_get_match_data(&pdev->dev);
-> > +	if (!st->info)
-> > =A0		return -ENODEV;
-> > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-> > +	if (IS_ERR(clk)) {
->=20
-> If clock-names is not given, then we'll get -EINVAL. Hence we could assum=
-e that:
->=20
-> 		if (PTR_ERR(clk) !=3D -EINVAL)
-> 			return dev_err_probe();
+On Mon, Oct 21, 2024 at 10:55=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Tue, Oct 15, 2024 at 09:24:06PM -0700, Ian Rogers wrote:
+> > stat_config is accessed by config.c via helper functions, but declared
+> > in builtin-stat. Move to util/config.c so that stub functions aren't
+> > needed in python.c which doesn't link against the builtin files.
+> >
+> > To avoid name conflicts change builtin-script to use the same
+> > stat_config as builtin-stat. Rename local variables in tests to avoid
+> > shadow declaration warnings.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+[snip]
+> > diff --git a/tools/perf/util/path.c b/tools/perf/util/path.c
+> > index 00adf872bf00..9712466c51e2 100644
+> > --- a/tools/perf/util/path.c
+> > +++ b/tools/perf/util/path.c
+> > @@ -68,6 +68,16 @@ bool is_directory(const char *base_path, const struc=
+t dirent *dent)
+> >       return S_ISDIR(st.st_mode);
+> >  }
+> >
+> > +bool is_directory_at(int dir_fd, const char *path)
+> > +{
+> > +     struct stat st;
+> > +
+> > +     if (fstatat(dir_fd, path, &st, /*flags=3D*/0))
+> > +             return false;
+> > +
+> > +     return S_ISDIR(st.st_mode);
+> > +}
+> > +
+>
+> It looks like an unrelated change.
 
-clock-names isn't a required property, but the driver code effectively
-makes it one. Doesn't this lookup need to be by index, unless
-clock-names is made required for this variant?
+Yep. Should have been part of the previous (patch 6) change.
 
---GEYcqo5TSMEtxtrT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxfe/AAKCRB4tDGHoIJi
-0i2sAP45YDFwtSt/GUcsoW7PROW5pXqdvmVSpehhlInslpVBmQEAlwHiLUeV0efe
-1vfCEwKCvA6j0s7TcoFcKzkvkvTgFgE=
-=HtA6
------END PGP SIGNATURE-----
-
---GEYcqo5TSMEtxtrT--
+Thanks,
+Ian
 
