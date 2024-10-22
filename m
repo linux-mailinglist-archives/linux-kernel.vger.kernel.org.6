@@ -1,77 +1,128 @@
-Return-Path: <linux-kernel+bounces-376970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2A29AB837
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AB19AB83D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2025C28235B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F23071F23917
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F8A1CCB47;
-	Tue, 22 Oct 2024 21:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794821CCECC;
+	Tue, 22 Oct 2024 21:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSJAMfGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mTVPp93X"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B245159B71;
-	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B831C9ED4;
+	Tue, 22 Oct 2024 21:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631367; cv=none; b=pBpP9U3UYKS3sv6dPhSn0qLqse/DfBgzV8usOxJd0qLb7u4gHR67ywwhXroKkrPOD5xfOgG+6giyZnvMNMEw9FTfvhtd+QF1zOE0C5q2g/xJ1dT0RHBqeQqTJltfNB8+FZ6hlzwZK5OGyV8diE9ylo2YclOSp5GkJePdTOjOxu0=
+	t=1729631459; cv=none; b=hi328+A0tHnCnJnZMnM1/vyByitCWYOgVUO8pxPU+qnrMD8qgroIH0Q86zLqQE9UC84K+G3L7munbh8CERpfs0rak33PojLVtgZw11bKDHPf/a2PRKv9fatswxAO0z6vvhUQdGm2i1+xyck997HxXUKhUKfFl8izUdsRt/VQmyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631367; c=relaxed/simple;
-	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=E4icZ7eRLwQ8BWv2wAaPZGfTZn9i6wdnTtor5n04yjdLWomFDWgNFSsbEpOADcbmQsfIF38ISiqXDBQ5llTyzXbjRGu6St+Hs5ED2a/Sy5uMEz4/gy/KWCfa8W0E0m9ag+j/y87dF/DndK8ekw1ZRsZqXwNodWz5nqBGASSV78k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSJAMfGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101FC4CEC3;
-	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729631367;
-	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=RSJAMfGhQrKDPT45L8i5kDgaULY/+o2Nqeiaha4MSQYd65jS+YZJMioOtE0iyZ3N3
-	 BpwOPho81mMqIhou/O6F5XFec2S5kEHEzODmjjcTSdYfQDhjZ8/+En8iWyVcCBpLbE
-	 HjtxXrBQRzRVunjG9uDb6J/7DWrKvq9zJloYnri36yqUbNe2WRo4GBbMw9HPvvP8YY
-	 7MDZWKbNvjH+7Y+SVWhySMb1RTNdTHnUYclYrUElA0FAV9MOokbNjATIQMFRCmxZkA
-	 vvlIWTDVvSJABNjDVVaiUbX/tzYQSuTzV5Jb76Eb1Z6DzqIPQAPg3EJ8R2JwY3C9id
-	 MhaS0jQUNdSrg==
-Message-ID: <8b284963604b070970e37a438b137146.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729631459; c=relaxed/simple;
+	bh=dc/em9XLGr0IMWGi6gCdSPRtcojc9lJvnQ6IDEZddIs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=tPJAvdNh+iIssfCRp5lyN/GwI0otSnoT3j47d+vDBacWmQbufDZyyq5Ny6RZYnJT0NfdrRk8QmENNAz9+/dhmYo+GxXWwzxthrqf1iUuJEmWoE1fxOV3QyKoCmn/6D8wh1Kn09uB+dHAclIvJIT9dtY1tVyUE1urk3TDRK5CC/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=fail smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mTVPp93X; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241016212738.897691-1-sboyd@kernel.org>
-References: <20241016212738.897691-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: Allow kunit tests to run without OF_OVERLAY enabled
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 22 Oct 2024 14:09:25 -0700
-User-Agent: alot/0.10
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1729631455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DpG8Gwq6DbfDSJARi+S9yYQYQPhocfObsOfqzRoEGDY=;
+	b=mTVPp93X6kCWd1yaOPgEeTFZ2CVITdBz2tY14CSzFXNCbLtcpymcrjaKZsvkKNduxny/r1
+	4PbQjeFI4AOqProBKrgeYoLad9UlkBhEdMCjHKXJGAzYBGZi2B7BtOE05QQkqDXJ7EgbrL
+	NsxsV6QWbf2TfeudtzwmlYdDZZEL3I3zU4ZtgKNgQ5quj1ranStuvTW+c50F/qUksoS/6Y
+	MfpJHX2rzwAD10wKrs5T2RyrfkBetgzg6jmKQNOzunh7cFhvI40CXQbDdaXYJ3mw0mAD6f
+	Ca2ILEKbkzwgZ/AQ9IuXlDUTciTroNbXScfriME5a8/bt90layqsKEB8mFY/2Q==
+Date: Tue, 22 Oct 2024 23:10:55 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-sunxi@lists.linux.dev
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, wens@csie.org,
+ jernej.skrabec@gmail.com, samuel@sholland.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Ondrej Jirman <megi@xff.cz>, Andrey Skvortsov
+ <andrej.skvortzov@gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
+ accelerometer
+In-Reply-To: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
+References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
+Message-ID: <bef0570137358c6c4a55f59e7a4977c4@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Quoting Stephen Boyd (2024-10-16 14:27:37)
-> Some configurations want to enable CONFIG_KUNIT without enabling
-> CONFIG_OF_OVERLAY. The kunit overlay code already skips if
-> CONFIG_OF_OVERLAY isn't enabled, so these selects here aren't really
-> doing anything besides making it easier to run the tests without them
-> skipping. Remove the select and move the config setting to the
-> drivers/clk/.kunitconfig file so that the clk tests can be run with or
-> without CONFIG_OF_OVERLAY set to test either behavior.
->=20
-> Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type")
-> Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struc=
-t clk_parent_data")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Hello,
+
+On 2024-09-19 21:15, Dragan Simic wrote:
+> The way InvenSense MPU-6050 accelerometer is mounted on the user-facing 
+> side
+> of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees 
+> counter-
+> clockwise, [1] requires the accelerometer's x- and y-axis to be 
+> swapped, and
+> the direction of the accelerometer's y-axis to be inverted.
+> 
+> Rectify this by adding a mount-matrix to the accelerometer definition 
+> in the
+> Pine64 PinePhone dtsi file.
+> 
+> [1] 
+> https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
+> 
+> Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
+> Pine64 PinePhone")
+> Cc: stable@vger.kernel.org
+> Helped-by: Ondrej Jirman <megi@xff.cz>
+> Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+
+Just a brief reminder about this patch...  Please, let me know if some
+further work is needed for it to become accepted.
+
 > ---
-
-Applied to clk-next
+> 
+> Notes:
+>     See also the linux-sunxi thread [2] that has led to this patch, 
+> which
+>     provides a rather detailed analysis with additional details and 
+> pictures.
+>     This patch effectively replaces the patch submitted in that thread.
+> 
+>     [2] 
+> https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
+> 
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> index 6eab61a12cd8..b844759f52c0 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> @@ -212,6 +212,9 @@ accelerometer@68 {
+>  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+>  		vdd-supply = <&reg_dldo1>;
+>  		vddio-supply = <&reg_dldo1>;
+> +		mount-matrix = "0", "1", "0",
+> +			       "-1", "0", "0",
+> +			       "0", "0", "1";
+>  	};
+>  };
 
