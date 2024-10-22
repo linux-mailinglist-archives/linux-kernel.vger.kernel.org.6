@@ -1,199 +1,77 @@
-Return-Path: <linux-kernel+bounces-376968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE719AB831
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2A29AB837
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 23:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D59EB22A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2025C28235B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 21:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCFF1CCB47;
-	Tue, 22 Oct 2024 21:08:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6C59B71;
-	Tue, 22 Oct 2024 21:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F8A1CCB47;
+	Tue, 22 Oct 2024 21:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSJAMfGh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B245159B71;
+	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631287; cv=none; b=LHMa2gB4UuEMhZslHQsr7XP8axyIoYwCzJW3JOgAo0Qbck9sfV0wsSFWr4B0FZ6FWWRwAh10tjnBV3b8X0TWXl3rHL2PeLeRhXKnRyeVh2ydowH/yMknO+5kBkIJhQFyc6TEo1DsqCOwBzj8LAfA2BSysjuBZ1vSvXn/autVwEc=
+	t=1729631367; cv=none; b=pBpP9U3UYKS3sv6dPhSn0qLqse/DfBgzV8usOxJd0qLb7u4gHR67ywwhXroKkrPOD5xfOgG+6giyZnvMNMEw9FTfvhtd+QF1zOE0C5q2g/xJ1dT0RHBqeQqTJltfNB8+FZ6hlzwZK5OGyV8diE9ylo2YclOSp5GkJePdTOjOxu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631287; c=relaxed/simple;
-	bh=QfoauWacdRH4fKFWbPd349kvSGamjARqD6Cm+EFlUJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QdwoXym78940GVX0Pu8GyPizoP3Nd2sVwOTv3mTUMLrxQ669KCotcWorpByHgmYFVOnXzaz/MtkkPmzQB1qUa0AhTVjJfvFN1ATmgEIRQWb4paEltA2tyRjrtVnqhbUFj+7AxY9VvGhFah/XbqNYaEGF3E133pK4xFzdf9W+ACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D94F497;
-	Tue, 22 Oct 2024 14:08:33 -0700 (PDT)
-Received: from [10.57.56.252] (unknown [10.57.56.252])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D45B13F71E;
-	Tue, 22 Oct 2024 14:08:01 -0700 (PDT)
-Message-ID: <d62d6745-678f-4168-964e-6c8366c128da@arm.com>
-Date: Tue, 22 Oct 2024 22:09:11 +0100
+	s=arc-20240116; t=1729631367; c=relaxed/simple;
+	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=E4icZ7eRLwQ8BWv2wAaPZGfTZn9i6wdnTtor5n04yjdLWomFDWgNFSsbEpOADcbmQsfIF38ISiqXDBQ5llTyzXbjRGu6St+Hs5ED2a/Sy5uMEz4/gy/KWCfa8W0E0m9ag+j/y87dF/DndK8ekw1ZRsZqXwNodWz5nqBGASSV78k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSJAMfGh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101FC4CEC3;
+	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729631367;
+	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RSJAMfGhQrKDPT45L8i5kDgaULY/+o2Nqeiaha4MSQYd65jS+YZJMioOtE0iyZ3N3
+	 BpwOPho81mMqIhou/O6F5XFec2S5kEHEzODmjjcTSdYfQDhjZ8/+En8iWyVcCBpLbE
+	 HjtxXrBQRzRVunjG9uDb6J/7DWrKvq9zJloYnri36yqUbNe2WRo4GBbMw9HPvvP8YY
+	 7MDZWKbNvjH+7Y+SVWhySMb1RTNdTHnUYclYrUElA0FAV9MOokbNjATIQMFRCmxZkA
+	 vvlIWTDVvSJABNjDVVaiUbX/tzYQSuTzV5Jb76Eb1Z6DzqIPQAPg3EJ8R2JwY3C9id
+	 MhaS0jQUNdSrg==
+Message-ID: <8b284963604b070970e37a438b137146.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] thermal: core: Separate code running under
- thermal_list_lock
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
- <10572828.nUPlyArG6x@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <10572828.nUPlyArG6x@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241016212738.897691-1-sboyd@kernel.org>
+References: <20241016212738.897691-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: Allow kunit tests to run without OF_OVERLAY enabled
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 22 Oct 2024 14:09:25 -0700
+User-Agent: alot/0.10
 
-
-
-On 10/10/24 23:09, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> To prepare for a subsequent change that will switch over the thermal
-> core to using a mutex guard for thermal_list_lock management, move the
-> code running under thermal_list_lock during the initialization and
-> unregistration of cooling devices into separate functions.
-> 
-> While at it, drop some comments that do not add value.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Quoting Stephen Boyd (2024-10-16 14:27:37)
+> Some configurations want to enable CONFIG_KUNIT without enabling
+> CONFIG_OF_OVERLAY. The kunit overlay code already skips if
+> CONFIG_OF_OVERLAY isn't enabled, so these selects here aren't really
+> doing anything besides making it easier to run the tests without them
+> skipping. Remove the select and move the config setting to the
+> drivers/clk/.kunitconfig file so that the clk tests can be run with or
+> without CONFIG_OF_OVERLAY set to test either behavior.
+>=20
+> Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type")
+> Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struc=
+t clk_parent_data")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
-> 
-> This is a resend of
-> 
-> https://lore.kernel.org/linux-pm/1822468.VLH7GnMWUR@rjwysocki.net/
-> 
-> ---
->   drivers/thermal/thermal_core.c |   64 +++++++++++++++++++++++------------------
->   1 file changed, 36 insertions(+), 28 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -965,6 +965,20 @@ static void thermal_zone_cdev_bind(struc
->   		__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
->   }
->   
-> +static void thermal_cooling_device_init_complete(struct thermal_cooling_device *cdev)
-> +{
-> +	struct thermal_zone_device *tz;
-> +
-> +	mutex_lock(&thermal_list_lock);
-> +
-> +	list_add(&cdev->node, &thermal_cdev_list);
-> +
-> +	list_for_each_entry(tz, &thermal_tz_list, node)
-> +		thermal_zone_cdev_bind(tz, cdev);
-> +
-> +	mutex_unlock(&thermal_list_lock);
-> +}
-> +
->   /**
->    * __thermal_cooling_device_register() - register a new thermal cooling device
->    * @np:		a pointer to a device tree node.
-> @@ -987,7 +1001,6 @@ __thermal_cooling_device_register(struct
->   				  const struct thermal_cooling_device_ops *ops)
->   {
->   	struct thermal_cooling_device *cdev;
-> -	struct thermal_zone_device *pos;
->   	unsigned long current_state;
->   	int id, ret;
->   
-> @@ -1054,16 +1067,7 @@ __thermal_cooling_device_register(struct
->   	if (current_state <= cdev->max_state)
->   		thermal_debug_cdev_add(cdev, current_state);
->   
-> -	/* Add 'this' new cdev to the global cdev list */
-> -	mutex_lock(&thermal_list_lock);
-> -
-> -	list_add(&cdev->node, &thermal_cdev_list);
-> -
-> -	/* Update binding information for 'this' new cdev */
-> -	list_for_each_entry(pos, &thermal_tz_list, node)
-> -		thermal_zone_cdev_bind(pos, cdev);
-> -
-> -	mutex_unlock(&thermal_list_lock);
-> +	thermal_cooling_device_init_complete(cdev);
->   
->   	return cdev;
->   
-> @@ -1274,38 +1278,42 @@ static void thermal_zone_cdev_unbind(str
->   	__thermal_zone_cdev_unbind(tz, cdev);
->   }
->   
-> -/**
-> - * thermal_cooling_device_unregister - removes a thermal cooling device
-> - * @cdev:	the thermal cooling device to remove.
-> - *
-> - * thermal_cooling_device_unregister() must be called when a registered
-> - * thermal cooling device is no longer needed.
-> - */
-> -void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
-> +static bool thermal_cooling_device_exit(struct thermal_cooling_device *cdev)
->   {
->   	struct thermal_zone_device *tz;
-> -
-> -	if (!cdev)
-> -		return;
-> -
-> -	thermal_debug_cdev_remove(cdev);
-> +	bool ret = true;
->   
->   	mutex_lock(&thermal_list_lock);
->   
->   	if (!thermal_cooling_device_present(cdev)) {
-> -		mutex_unlock(&thermal_list_lock);
-> -		return;
-> +		ret = false;
-> +		goto unlock;
->   	}
->   
->   	list_del(&cdev->node);
->   
-> -	/* Unbind all thermal zones associated with 'this' cdev */
->   	list_for_each_entry(tz, &thermal_tz_list, node)
->   		thermal_zone_cdev_unbind(tz, cdev);
->   
-> +unlock:
->   	mutex_unlock(&thermal_list_lock);
->   
-> -	device_unregister(&cdev->device);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * thermal_cooling_device_unregister() - removes a thermal cooling device
-> + * @cdev: Thermal cooling device to remove.
-> + */
-> +void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
-> +{
-> +	if (!cdev)
-> +		return;
-> +
-> +	thermal_debug_cdev_remove(cdev);
-> +
-> +	if (thermal_cooling_device_exit(cdev))
-> +		device_unregister(&cdev->device);
->   }
->   EXPORT_SYMBOL_GPL(thermal_cooling_device_unregister);
->   
-> 
-> 
-> 
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Applied to clk-next
 
