@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-375374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60C39A9524
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB939A9529
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 02:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915F3283184
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7616A1C229BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0131C86131;
-	Tue, 22 Oct 2024 00:47:48 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2040.outbound.protection.outlook.com [40.92.103.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9B82AE7C;
+	Tue, 22 Oct 2024 00:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiFOO6Qe"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40707A15A;
-	Tue, 22 Oct 2024 00:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729558067; cv=fail; b=ClvMpVklH6yuhyWBnwKzIzKtJ+6Xe5eDyJSADmTbjLeJm0aE+CXFWIg1tJHsXQl4VL6ToNmhq27sMBsf7+hUILxk1B1uqxqHNnvdgVMBBFxX+EPWJnL4iFWJ6Z/W0JNMyqREZsosq3amm/Yd8tYwZqZmNHBXGEH97jfvuiIWJng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729558067; c=relaxed/simple;
-	bh=ktMpXPEN3cn0BlwAum8KPYSIBbwWZW99xOS9KEwXHtI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eQXcXmvV9bGrtiLDOGiTv2whhElBr0TzWrOi8n32yhNLXx+VUaAImuScgdvIDSaXgevuIkjz/vJ5vpXs7kMkLA6r2ydLZ/JGZZt/cKNO1toVgvLP9OXpuuU8QnvuYm8mfLVz9pGYJVqflR3yEr1Ao4JjiZKvFnK9k0PevRQwPc4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; arc=fail smtp.client-ip=40.92.103.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lwNK0QG+9WD7tR59SDlKNlSvRrPI9lTr3QvkVuQ4ZFjbZIdV05f+Z3BnXaURjvnclw+3+ErFl1zWBBjDjUSRY/+nGtKUo410O7BA+GobipJYE2t//gLjQObUy34XK8tUt162GixT5LuoHhKHQy42wOe59uzj3iGbjOfowSR7m/uGjyJDDTJhQPCNucgEs0D47qwVCTmrO4XulCYp41CzB7SaO7ZMPQykxBAKJVggKKwQCnr7SXzRttHfIQs/vNjrDZJO+q+yv/6SQhUOV0oiwh6oUeaXOUH7A1eDLfeRfHU89Dkah0THztdfMQ1kfW/p1gZ2NOZiM61ZZOZvyEmaoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ktMpXPEN3cn0BlwAum8KPYSIBbwWZW99xOS9KEwXHtI=;
- b=IFSfTj3GULCYVCDQRRTB2JCjRet1c+4uAnH27908CfLRw+4Z2eCI5l+lH/ZEd8c6ZAlO/2sfEmC/prCda/PyThWeF8JKenC/BYwVLO9liF00RjM0eVIvw0VBSePFl7anRAAkAPmAS1MpPqBhibO/Q//KPo3O0Dh7nGp07OWg/elRA2k0jembz5GrdwS/o8yB1KrKdu2PdyW8NG4B7rlLwOQcXmEnnB84AsDVrRa8Ms+auNANaaCw0+OvQKDBqUcsbMOMMzQeILLxzzkWyDPtYfb1mEJCZi5Gw2oNxZ0mN7RQC4JvDfcAo8f+JyHAoFDsnlpO4UvuJ2zuA/iKWYe5mA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2PPF99355ADDE.INDP287.PROD.OUTLOOK.COM (2603:1096:c04:1::137) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 22 Oct
- 2024 00:47:33 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 00:47:33 +0000
-Message-ID:
- <MA0P287MB2822C943624A02C54E9A62C9FE4C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 22 Oct 2024 08:47:28 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-To: Inochi Amaoto <inochiama@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20241021103617.653386-5-inochiama@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::14) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <087c1882-3cdb-4518-bf5e-1654bca3def8@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8A335C7;
+	Tue, 22 Oct 2024 00:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729558134; cv=none; b=uNRmifora9w1ni+2J7f0J3T0sl60GUqrocytv7qFiIubw4xEEdbXt7mh4TUeSTAqgKNWb9F/wkbRuxhSK7bTVpS1fkNcCmDhkSmoHHGtJmIZFrIINPs7xW/9p3YI7ZXLXnzxCIBPZ9CeTlz90iz/TlfgAwHLyGIVk+pnomuPsSI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729558134; c=relaxed/simple;
+	bh=7F8DbQEbrxckIUC5fjLbZWDIn7DchAKhdMVow5F9+9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E43KqkHZ5VUSyqKBlw4dxgP+G7ZAsFxpoGxaK0YRpCgoU6miimC0e3IUPRhwqY4Ji64yc7bA2OVAU34aKC+biQvAlnpt/OqHEEc3xd9U9T7CNn4oLL/jxqRaCFV35gDXxPdxf/KZxnZD8gLV/NbeCGYofK9Wx4jaId29cI/Bnjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiFOO6Qe; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e60d3adecbso1197762b6e.2;
+        Mon, 21 Oct 2024 17:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729558132; x=1730162932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ho9z0/EYibqNU6D6zg4eN1k82sn+fVQ2QwMUjuMq4Kc=;
+        b=eiFOO6QeXiE62/DFsbf7SeOSQaoW01hqH0lNB7BOiRN+XcxBLmDQcPpHNyv3NEAKBU
+         BFxcKFY2KALrmMYtuYkz6jUbFHwqn89ce0iyJbRa6ucIs18dmB7xYTiy597OkFD5njFM
+         LafQoarUd9qz4gSciaW06Vo3AQ3j+IT6diJd7ThibnZ4e7zkjtpsMSZSsPKvKT9gFw++
+         +EF1BATdnWUOnW+x5F7Fl5KkeAyUw3KVQRilQrMdjv2VNFF2Plyb1zaWYlQ8IHk7XcOD
+         t3nYP9l8RCxOsXupzU4ELabvz1cbu2n58pWLR14OR0J7I9wFG4LwX3yKr+logoVgJeVj
+         q3DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729558132; x=1730162932;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ho9z0/EYibqNU6D6zg4eN1k82sn+fVQ2QwMUjuMq4Kc=;
+        b=WPYKWS224QiUjrwCYT7g8iUBt2FOg2BJe0RcxWbbVFInVQf8ne+TbF7G7rllrX6w53
+         zWfEqQq5DElcoDyQ+dtUicZuL9Tv6AddDLDIc6uD4iJRtvMTynMui9ICjiFgWkZufeKd
+         KWtiDbUHMXye46E4IU/j9F+7/vrHEfLUL2jVrarzqo14i/vyx/hCf/QT/u8Z7LUx12xX
+         /KVMcYa3f//swm9ToRotzc2MAIVlORq76LbO0RGBnbBe11inq3m6iVluxXmd1DaLSlqQ
+         gMAHdgmeyKdWfdUNbn6I6jqc531RhxrFkVWqO9N7E/8i4txRKN/aTD/agl68/duXfcGv
+         OdVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpOq1ceSyPS8X4JmXENPbJzVQlj91ScdpCMwFhJF9mdQax4hIMM5kYhBvUNeWffJ7PXtdKpzHXVK+w@vger.kernel.org, AJvYcCW0M8SOZSP9bSJkLwk87vfW+mr+DVtyoCjd9Vk20wo3v09PuinQhVpy8VLOyWCso7P3KklNcrV3rG+CcIdj@vger.kernel.org, AJvYcCXtA3MEzL8esjzgJeUg8cQ2+h+EKpBuOmR6rowxSzoqn3ud7mlaf0VeaGKKONX7g5CBQBTzKuf36Wol@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSDSDVv9CfbW1RMcOaAsKbzbV/zC2gnV9GwI0KksrL93F7FUc5
+	ZH/b2sdtlHpIOUyDutTThCdv1J+h4Y66bVF9YraIBJDCrd0taLoR
+X-Google-Smtp-Source: AGHT+IHR8vksB3qvtmCF54R+Y3XoqQ3hLdiVVfiCsrYy9GdmGCJexTpDrdDYjcOCmNRujUWqNNrwiQ==
+X-Received: by 2002:a05:6808:2020:b0:3e5:d8b9:fcff with SMTP id 5614622812f47-3e602da1233mr8951179b6e.42.1729558132067;
+        Mon, 21 Oct 2024 17:48:52 -0700 (PDT)
+Received: from localhost ([121.250.214.124])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab48f46sm3785613a12.41.2024.10.21.17.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 17:48:51 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: (subset) [PATCH v5 0/3] Add SARADC support on Sophgo CV18XX series
+Date: Tue, 22 Oct 2024 08:48:30 +0800
+Message-ID: <172955777486.235966.17435293788419031097.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
+References: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2PPF99355ADDE:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30ce1516-4972-47f0-de33-08dcf2331dad
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|461199028|5072599009|6090799003|8060799006|7092599003|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	mcP6pv9DMARQwpZIQu3wK55uU1NCVHvTdANbLRu0vr6g3Q8gXA/TMLdYiT87tj5tne2VmIbTa6cxkMF9mbbGmfgyqO1KXGwJfGpa1p8lMpAUwycaW4CpGks9WXUWzqGjRk81cwfXRSd17l2UjV6lO9IKEg+uQKrKq4h0HiwCMUj94+ZnTGg0Xuo+eJAozdbHqV3883/2uWwlzOFPNMW7p40ZTf/g1j7jTDmbJeiG0T93cMCXJVDalYuAgZPWHdqV+mOKC7siB9qWfVZDzo4Pwxt8Uum3FgAogjxvZpub5uV7IZYglCs4lxKlKLAu8/eCI8IB5ER71gOf38Icti+pSqM2rmjnRDxucJuw5mTsFTIGrB5bcBzsIXVtMpEEubVpDVzbcvfxsJRm1gNaYnYdV1agqU8LQzJYV2NpvOvqMEHG0HR1OTsNR0MoLGXx+6wa05SaBCGSMcCXe8Kjone9MHbKRPHgWvr70IVj6J46ucFxMaA/UkoF6lyH0x+wQiAX8utFOtCpAurIKgRndJzpS3WLEk9T5oy4LK6b7BkrRMTwjyqhkcr5u9bSlesTsGO3TgHbzcRm0qqRhOTI1bHaWUW/VDxBkmf4LU7VxeYpgDC0xXNk30yrzjWB07sppXnAdMwOtaTRigytKKgqC3gdscJGJ9r7il/ZSJREqRvVVfzD0dtDP1a7HjiESt+NItTXs/PJ5Ed/OonqCWisb8GRNpfESDlR1pnFgV1cWRVRhdsgDQEkBy8Xe8KKKsW1hMjxwW3cRXCojZwIQFFXaONe9Q==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VDk2WjVnRXZSdVRpUnhGMlY1UE14TGxiQ1ZqS01WVFR4dks3MWdCS2RNY3Zj?=
- =?utf-8?B?dGZGMzlybmZBLy9iUjlXcVBWdTRtY0lkUjJQRmhlY04rU0xYMG9zMnFzZjlj?=
- =?utf-8?B?VGlOU0xrN3hDM2FNWXRHcEpaeVhBSG9zQ2pEWGJoK1QvQlpVNndGcmhkTUdZ?=
- =?utf-8?B?WGdQY3NuSjZRdXc5bkFENUhxSUZ3VG05VEx3T1ZVa1BlSGZZRUV2MDZUWURT?=
- =?utf-8?B?VjMzYnE3TC96eVZOWjBkZ1phcVNyUWVDMVk3M3E5SWgva3NwZ1ZVSGppbXU0?=
- =?utf-8?B?WnJ5MnpSSU9OVmpMQURUNlFvTnFtNnUyMkRaYitNSEt2UzhHc1FsYWNuOUpy?=
- =?utf-8?B?SUlFa2NsRkNjbVlrQ0QxNnlUZlAxTmY0MEdCbWplSVp2NTlqeUtSaThMK0c3?=
- =?utf-8?B?NEV5RjlQNlNKbWtRYXJhYVVUUVZNbDY4VjJVajNXdDBScDNaR3dhTWd4Vktq?=
- =?utf-8?B?T1pBR2FXZEtoeWNpYnVzRjBsclM2K3hZZ2RveHl6MXc2czhyUVMrcVAwQXRj?=
- =?utf-8?B?VHdDM2R0bWNjdzdMVDZaTEkxRlN6clBubnU5WEpCRE94czVaRWFsT2w5UjB0?=
- =?utf-8?B?RVVSYUZpb2lKOGZvQWF5dHBCelJQN25ORm1DMVpoTGZLUytQVkVtSmMxZk1Y?=
- =?utf-8?B?SHd0YzM1bEk4SVVsNWQ1OVJ1K2JhbnptbFAxazJWMkNIb0VYYVd1UklzUHVl?=
- =?utf-8?B?bGk2TFowZ1hYWHAzWncycHFReWtRcTVBWExaRGhtb2RBbFJGK0ZvdmdmV3FT?=
- =?utf-8?B?TTJvVCtGSnZiZG9vVERkcTlhZCs2b3d0WVBVQVBQNCtDOHROclM4SE00UnhR?=
- =?utf-8?B?VFhBUkVqeHhCbkxMb3d0R3NReGd0WmlLbXpSejVvRFh1aXhzeVA0aU84dzIz?=
- =?utf-8?B?ZkdzSkNmZFpZR0JXN3ZqUEttMnVjTnRHTzhhd2FlMU1qZjFYQWNJa3hoOGo0?=
- =?utf-8?B?eXR0N2lGUFpwV2xiUCsxZFNGNG1KbXVjdTlBUzZQQ0FUdTFOUlVzT0txRGpk?=
- =?utf-8?B?NWhxRklMTXVHS3diT2ZPTGN4RnNscU56aXZ4WU9zOVp3NWgzWVAzay9QbFRk?=
- =?utf-8?B?TDhVb1FzQnY4NkE5V2ZtdlBSVmp2QWFsN0xiTE1vWUZsUmtNMXNabXNNN2hN?=
- =?utf-8?B?aU1ZWTZhN1ZacUJCUkQyd2IvTytCTHZvTXFpMEZXQmxsNTVGbUVMMGFYR3hh?=
- =?utf-8?B?WDZUaEt1ejdNQnFBbXZzWVp4ekNlZzZUUENOaFVQczVYdFNRNGRIWHNUTUhE?=
- =?utf-8?B?KzhROVVkakU0R3JqQjQ5RERpMjAxWVlNdmhYYzZ0cTdNNTJFTzMyWk9XVmJr?=
- =?utf-8?B?WS9NTEdxYkduUCtTTXJiUTR6ZXhyeWFCZXc4LzlPMWZVbk91ak54RyswdXV5?=
- =?utf-8?B?eVljK3Jxbi9Jb0hjNlJVOUhuUjFxN3VoVkFVR3UyTmVQNk9EaFBraTBCK05o?=
- =?utf-8?B?d2lhRDE4RGlOeCtxcU1XSTRjQWJsSlk4MjRLOVp5Y1hmQW9PZ2VOZVR4K3h6?=
- =?utf-8?B?bExBSElVdFQveFhxa25FcldXd09WYldMMVBTTE1CN0M2aWJ5OSt1a1dWRk1Z?=
- =?utf-8?B?OTBMZUtvRjh5MVJhUmZ2Q3B2UFh6aHBzMzNSc1UxOGVScVIvNlZLRitUa01E?=
- =?utf-8?B?N3lYdzZtYXFLeGNoVHhXTVQrRERzTW04bUxqV0ZIRVdvdk9BL3d5V0YwcXlR?=
- =?utf-8?Q?97vk2OP717J+MuF7Al+K?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30ce1516-4972-47f0-de33-08dcf2331dad
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 00:47:33.6697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPF99355ADDE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Thu, 29 Aug 2024 14:31:49 +0200, Thomas Bonnefille wrote:
+> This patchset adds initial ADC support for Sophgo CV18XX series SoC. This driver can
+> work with or without interrupt.
+> 
+> Link: https://github.com/sophgo/sophgo-doc/releases/download/sg2002-trm-v1.0/sg2002_trm_en.pdf
+> 
+> 
 
-On 2024/10/21 18:36, Inochi Amaoto wrote:
-[......]
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
-> new file mode 100644
-> index 000000000000..83c67c061182
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
-> @@ -0,0 +1,132 @@
-[......]
-> +module_platform_driver(sophgo_dwmac_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Sophgo DWMAC platform driver");
+Applied to for-next, thanks!
 
-Missing MODULE_AUTHOR ......
+[3/3] riscv: dts: sophgo: Add SARADC description for Sophgo CV1800B
+      https://github.com/sophgo/linux/commit/45a544a62ef7cac9ecc69585a90da72ca68af898
 
+Thanks,
+Inochi
 
 
