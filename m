@@ -1,59 +1,56 @@
-Return-Path: <linux-kernel+bounces-375640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C389A9884
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:34:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C4B9A9888
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 07:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F701F23AB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D24283717
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 05:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1441494B2;
-	Tue, 22 Oct 2024 05:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B1414A60A;
+	Tue, 22 Oct 2024 05:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFPjyQ7g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6OfitfW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7A1311A7;
-	Tue, 22 Oct 2024 05:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF99C13664E;
+	Tue, 22 Oct 2024 05:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729575155; cv=none; b=lsuwLrRtM6Y22N4BtP/SGJTuo16K17FiknQ2SsXt/wX1O/nowSPIgld2K2JM6ggx7RlYEQAC+6d2QCXij5tk+MSg9hqTMehD9oSbJSvsYgOBItvUD3ziXjRh6Csve6W97okxqXooGWtJmAS0MteQZMJSURm5kBMn4kYYuuPR0BY=
+	t=1729575164; cv=none; b=kz0vX91sF5EGNZPbMUr6Up+RL6/W9mrSxo2cq3iNzVOF7q//16XrpgGDPmju8N3BOj/sRr5rOp0yHfhsAhofztgeLNX8USwyavbGlK3483S0ctmlv2h4w2hhN9CBMOiaBdznEvYTF+OtqkQPxAMxo44IpThpjMU98hOT2q9XwEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729575155; c=relaxed/simple;
-	bh=B9keYMouUTRP6Cr9AkKbSL9SmgGvWcUNob9kTza48ps=;
+	s=arc-20240116; t=1729575164; c=relaxed/simple;
+	bh=LQmRQVLyBjyaDESGZpvscgdg5HdPKWGlhEVGHcB4LkI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=toplSPA/2ufbIZdABfCuSpWB0NAvbaYtY+xpUp+P14rO0holsUK+JdO2f0T8SV1k8usoPdrRfPT7AjR+2udfmgz4ATRY7sFnAqeC8bpz6v3AO3HfrQCmtkPOvPm8p0CNiNkJSvDhVimOXbA+y9bw7aSPDHElNiykIeBx/+eV1gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFPjyQ7g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E547CC4CEC3;
-	Tue, 22 Oct 2024 05:32:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jiAykHHxzLKHDEppVIEX7H2pYaLJwNi1MwhmDgB+FcP2Ua7NZH4Wk0P+ku9iJPpVYPGpqAbxovKdyLtvegXslOPRPCCkf11T0sga+5sHz3AZKHrMId9mboK04w0w+ZlupkBFAvJL+rsqvV50X1y7AYh2jN33bprg9JBp1MLSJsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6OfitfW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C3CC4CEC3;
+	Tue, 22 Oct 2024 05:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729575154;
-	bh=B9keYMouUTRP6Cr9AkKbSL9SmgGvWcUNob9kTza48ps=;
+	s=k20201202; t=1729575164;
+	bh=LQmRQVLyBjyaDESGZpvscgdg5HdPKWGlhEVGHcB4LkI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jFPjyQ7gq5bIHNZ2mb4BO8mUkNktSs2Y3hN24MkOGlBxpwdDov5bGDcw6ox01I8cC
-	 YlyH3hXto/nRPYg16vEfUzSmeUZ6NrUTkvYKO1+oBNxIbMY8o5AQW30f5skGDg88ed
-	 4tvj5r9L7KmAO/tfcUqmZPPThMh3pNe/pBxE9wJlziw0emxY7tFpkaLv7ICupgjLdG
-	 b+bg4qdB5FgqMlRV+syN9PnuzyeAifI2IZ2piOxKR6d3qrlp6677OnOB0zMh/UiM5l
-	 tTIfcbqcIxoxNlXNx/vUZZSdQP2KAHzXNuM0Fe09BulnkXPvlyEVS7xrsnyDeU43C3
-	 6cAGZ6RP7XMgA==
+	b=S6OfitfWTAZbLDu9ZZgCsfsmPBCC6s3faq018SpS9cKC0j11FEhF7GkcKz+tvv6ic
+	 Hz/oCnEYijb7eKO2QDrHp5uZjnjU6VtblyjmEFF0PoBZNgs/xiQhtyoGDpmRRL9vX2
+	 ZwRRdI69U7V+nE6CxidNFLw7+/ySvvcBju1AxCa65csdfyhDjBTo0HdMUZtDvwlh6i
+	 aFKOlvVCSY+BniIZwV/AH1Q0L7nhN3zx9ufs319K08+SY9MLzvx/s/RZe24KeGxldS
+	 lxcv6p1FP0UV3XsgjfYd+HWnNFGURWjYBPX4DeRLrs1ZDxF9MicBsv29XnWoiVNKsG
+	 B1OBtKHSno43Q==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-In-Reply-To: <20240903-topic-qmp_typo-v1-1-781e81799992@quicinc.com>
-References: <20240903-topic-qmp_typo-v1-1-781e81799992@quicinc.com>
-Subject: Re: [PATCH] phy: qcom: qmp: Fix lecacy-legacy typo
-Message-Id: <172957515183.488852.18123973313954304086.b4-ty@kernel.org>
-Date: Tue, 22 Oct 2024 11:02:31 +0530
+To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
+ Mikhail Arkhipov <m.arhipov@rosa.ru>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lvc-project@linuxtesting.org
+In-Reply-To: <20240923193703.36645-1-m.arhipov@rosa.ru>
+References: <20240923193703.36645-1-m.arhipov@rosa.ru>
+Subject: Re: [PATCH] dmaengine: ti: edma: Check return value of
+ of_dma_controller_register
+Message-Id: <172957516287.489012.10792417455228330513.b4-ty@kernel.org>
+Date: Tue, 22 Oct 2024 11:02:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,16 +62,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 03 Sep 2024 13:13:10 +0200, Konrad Dybcio wrote:
-> Introduced in Commit b3982f2144e1 ("phy: qcom-qmp-combo: restructure
-> PHY creation"). No functional changes.
+On Mon, 23 Sep 2024 22:37:03 +0300, Mikhail Arkhipov wrote:
+> If of_dma_controller_register() fails within the edma_probe() function,
+> the driver does not check the return value or log the failure. This
+> oversight can cause other drivers that rely on this DMA controller to fail
+> during their probe phase. Specifically, when other drivers call
+> of_dma_request_slave_channel(), they may receive an error code
+> -EPROBE_DEFER, causing their initialization to be delayed or fail without
+> clear logging of the root cause.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] phy: qcom: qmp: Fix lecacy-legacy typo
-      commit: 32f4a76b8e7cedec9f9aedbfc43626536bba8350
+[1/1] dmaengine: ti: edma: Check return value of of_dma_controller_register
+      commit: 83158a3a712ad6ebdebd470d25af04c66c4e2223
 
 Best regards,
 -- 
