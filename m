@@ -1,179 +1,377 @@
-Return-Path: <linux-kernel+bounces-376733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D8A9AB542
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:39:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EC59AB545
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 19:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533B0285FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 784C8B217AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 17:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E610F1BE857;
-	Tue, 22 Oct 2024 17:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107A11BE85B;
+	Tue, 22 Oct 2024 17:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VlLe/KFg"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PUT3UAyh"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC221BDAA5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFCD1BC078
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729618761; cv=none; b=Niq1ZetExUx3uB8G6kBDOLxEy3gAvZYHieSHVxp+KwLI+WbPhZJZNmCa6LNCxL8A0sOTUGJeQuSTIu/bd255SFVo+X8JEEhgZ8wBLQ1YLSDwb+v9HKUBQOvkCQ5JgLXjJdhheIajpzm1umDzMT5/3NGdErd2ezWJMUTOIZ4Eee0=
+	t=1729618791; cv=none; b=H50eEzlKSeAvyorWRd65hqe1VQlrtimR56Jvro9rcsoWUKUejH4iWI2SSGIgkeOsRyw2dsXaTw8kRdXQU4fjfpbpu7Z5uFgkjwGwE30YALnECcmUObW852l6JIJNv7E099ho1kQtAK5RdCK1+luxwkrCDMQRo46Gatp1Z9RV550=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729618761; c=relaxed/simple;
-	bh=5nYBuq8flg0IclcEtqjui0Y8ymtQtA0o/gQ3AaI5Ayk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l3GnHR+K6OrRGX8V5xHCG0KM2pzWTb+3oeQYHisAVyoXHrR+PHeym7xtzmW1yHwx3ttV88qUN7Y6owlI3K2gVwdaQDdYJ2YqaWTr2GSsD71+RujuEE4NAVc0PNTXD8LK0jbM1jk4pxxoNyTAFvsR2w2ItaltYpUhtSobu5wpcaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VlLe/KFg; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 13:39:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729618756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=nFfwM9REuPvTQaQq5UTnE7bd6ms89tAFZaS8hK6Mt6w=;
-	b=VlLe/KFggxObBc8y8RewF50LrIxdfpQZsKaHN1dbMAz2mBQub0lPVBcVUWpJcNLEn0T9D3
-	ykp/d7VQtIXsXVyrXA1m0JFY7HomLjB7Rx9b0vzY3XXb2mMS/604lEuxSG2uGFfJ8YW483
-	lX3RW0nuDC0dXZTpN4oiG+Lw8D27Sx0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+	s=arc-20240116; t=1729618791; c=relaxed/simple;
+	bh=tfqcQLTeImNqZ/dTSL8rjfpyWnAv3T+qgbr+HElPBqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pnJO6yh2YXmclxZK5vL83Rbo8CyxB/Ua2rnGJ3HvBm75TEnWwHUZxqzKRa+g0iNttixqP5XC7ZGI8znchcMzcBMd4b49D/83AwuhUbW1r/x8Qko+w+7NwCJuDoa1hniXDJlARxFpIlvf0VK6tfwf8jSixxvIYx4h1MNESXJCwgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PUT3UAyh; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4608dddaa35so30681cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 10:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729618788; x=1730223588; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDHRg8NIKJDTLo9xK8tFgj2qyUrzM0Z23IToFFRvpbY=;
+        b=PUT3UAyh519bmoskdp1LMVypaivA/3g6Sxw7MXvd7f2zhHt3/V3NUgNDDHCQ1F32c5
+         SGO//nfInqy8ylAfNPuRe45Ew8Sg21vuEo7+jPvTrDxKgBj8ZF3czZ5x6dfEtt07F8K5
+         Fa28jGZVDAKEtgcZ5SFqFUKlxb8YKPlRJHCieObGwwX1lEevAR3OmoLyVS3A3ihYVK9O
+         WI+5zaq9KB8Wu5YOZ+tOSsSveS2R03zB6PqLxI6VUzpzjD8X9vaSUvZS0MN/s96XRtsR
+         JRTLFpfWkm7VQkQHV9Ueqid12/fQOEkGYOyoTNEht8i8/OyG39+R9ZIGWyFYleidWX3r
+         Yzkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729618788; x=1730223588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YDHRg8NIKJDTLo9xK8tFgj2qyUrzM0Z23IToFFRvpbY=;
+        b=IRDMcpG22KRBt0nVlGibzsUF9ke2RmC2qBbUJ8Ehw5Y17Py+GaTvwx+e/kHHu7cm6H
+         n6Av+ytMKH0WOrDZlAKXIT6l3fxek93F5JSjfljseSmhmTgvyw1KkzIgZYYgMfrpZi/t
+         Lb+IDJbzbwyKMmZt/VHcWcy/L+4qRVkz4tln/7rTFt3aAn2JNwQx5gnjk42/S/Sr7J3T
+         zgFnh3y0DQtUaimuxmrLf/6tDB7vlzZKDzylPDDMpbcdf4IyzZT5zsaT+oGTQZHFc1Y1
+         MNSbgl1TFne4LV8WAnL4bHc7jKchKjwMwmHjhtFcUSnIOGI8sh5rh/rRNQ1kgbI2ZwBy
+         bDEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGv1Dm69CNX8KaIXjLcoZWUV3Jjl5Da40NuF8k7hYC5dVJI3pf4HWB35WeCgvctqJBcFoj04w3TMHAXR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIai/otkS1mn4A4Os13S6kZw7fAO6kIdQ8G9gKnf0k8wiPnb1I
+	6e+re1w0YmSMe0n1hnLg+mGJRoytuR9UFO2krs/KxtQZ48gVis+GpfY6UVEt/V/YCKh1sVjnFMp
+	BGI+yLh75aet6cQPeb06vSW8mv+Qs3fQVDKMB
+X-Google-Smtp-Source: AGHT+IF8WqI392dhZO4Ni0adr9KA7j3Duz+98CmVrJXy3V3O1PWAWFk7qSL3uTdgZCEIB3FTgY1BKDnlhAXH5bCgGHo=
+X-Received: by 2002:a05:622a:1443:b0:460:e2d9:b745 with SMTP id
+ d75a77b69052e-4610247e0ffmr4211801cf.3.1729618787827; Tue, 22 Oct 2024
+ 10:39:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <20241018055627.1005723-1-irogers@google.com> <Zxc6_jZdDcWgtEom@google.com>
+In-Reply-To: <Zxc6_jZdDcWgtEom@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Oct 2024 10:39:36 -0700
+Message-ID: <CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com>
+Subject: Re: [PATCH v2] perf check: Add sanitizer feature and use to avoid
+ test failure
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 21, 2024 at 10:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Thu, Oct 17, 2024 at 10:56:27PM -0700, Ian Rogers wrote:
+> > Sanitizer builds can break expectations for test disassembly,
+> > particularly in the annotate test. Add features for the different
+> > sanitizer options seen in the source tree. Use the added sanitizer
+> > feature to skip the annotate test when sanitizers are in use.
+>
+> Can you please split the perf check changes from the test change?
+> It's good to add an example output (of perf version --build-options)
+> with new sanitizer features.
 
-The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
+Okay, will split/add in v3.
 
-  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
+> Also it might be helpful if you share how the test fails.  I don't
+> think the disasm format is changed.  Then it probably missed to find
+> the target symbol in the first 250 lines for some reason.
 
-are available in the Git repository at:
+Sure, the reproduction is trivial, just add -fsanitize=3Daddress, so I'm
+surprised you're not already seeing it:
+```
+$ perf test annotate -v
+--- start ---
+test child forked, pid 444258
+ 68e8a0-68e96b l noploop
+perf does have symbol 'noploop'
+Basic perf annotate test
+         : 0      0x68e8a0 <noploop>:
+    0.00 :   68e8a0:       pushq   %rbp
+    0.00 :   68e8a1:       movq    %rsp, %rbp
+    0.00 :   68e8a4:       subq    $0x30, %rsp
+    0.00 :   68e8a8:       movq    %fs:0x28, %rax
+    0.00 :   68e8b1:       movq    %rax, -8(%rbp)
+    0.00 :   68e8b5:       movl    %edi, -0xc(%rbp)
+    0.00 :   68e8b8:       movq    %rsi, -0x18(%rbp)
+    0.00 :   68e8bc:       movl    $1, -0x1c(%rbp)
+    0.00 :   68e8c3:       cmpl    $0, -0xc(%rbp)
+    0.00 :   68e8c7:       jle     0x68e8fe
+    0.00 :   68e8cd:       movq    -0x18(%rbp), %rax
+    0.00 :   68e8d1:       movq    %rax, -0x28(%rbp)
+    0.00 :   68e8d5:       shrq    $3, %rax
+    0.00 :   68e8d9:       cmpb    $0, 0x7fff8000(%rax)
+    0.00 :   68e8e0:       je      0x68e8ef
+    0.00 :   68e8e6:       movq    -0x28(%rbp), %rdi
+    0.00 :   68e8ea:       callq   0x2adea0
+    0.00 :   68e8ef:       movq    -0x28(%rbp), %rax
+    0.00 :   68e8f3:       movq    (%rax), %rdi
+    0.00 :   68e8f6:       callq   0x28fac0
+    0.00 :   68e8fb:       movl    %eax, -0x1c(%rbp)
+    0.00 :   68e8fe:       movl    $2, %edi
+    0.00 :   68e903:       leaq    0x66(%rip), %rsi     # 68e970 <sighandle=
+r>
+    0.00 :   68e90a:       callq   0x27e650
+    0.00 :   68e90f:       movl    $0xe, %edi
+    0.00 :   68e914:       leaq    0x55(%rip), %rsi     # 68e970 <sighandle=
+r>
+    0.00 :   68e91b:       callq   0x27e650
+    0.00 :   68e920:       movl    -0x1c(%rbp), %edi
+    0.00 :   68e923:       callq   0x2086e0
+    0.03 :   68e928:       movl    0x18aca72(%rip), %eax        #
+1f3b3a0 <buildid_dir+0xa0>
+    0.00 :   68e92e:       cmpl    $0, %eax
+    0.00 :   68e931:       setne   %al
+   50.02 :   68e934:       xorb    $0xff, %al
+    0.00 :   68e936:       testb   $1, %al
+   41.28 :   68e938:       jne     0x68e943
+    0.00 :   68e93e:       jmp     0x68e948
+    8.67 :   68e943:       jmp     0x68e928
+    0.00 :   68e948:       movq    %fs:0x28, %rax
+    0.00 :   68e951:       movq    -8(%rbp), %rcx
+    0.00 :   68e955:       cmpq    %rcx, %rax
+    0.00 :   68e958:       jne     0x68e966
+    0.00 :   68e95e:       xorl    %eax, %eax
+    0.00 :   68e960:       addq    $0x30, %rsp
+    0.00 :   68e964:       popq    %rbp
+    0.00 :   68e965:       retq
+    0.00 :   68e966:       callq   0x2086f0
+    0.00 :   2d6910:       endbr64
+    0.00 :   2d6914:       pushq   %rbp
+    0.00 :   2d6915:       pushq   %r15
+    0.00 :   2d6917:       pushq   %r14
+    0.00 :   2d6919:       pushq   %r13
+    0.00 :   2d691b:       pushq   %r12
+    0.00 :   2d691d:       pushq   %rbx
+    0.00 :   2d691e:       subq    $0x48, %rsp
+    0.00 :   2d6922:       movq    %rdx, 0x20(%rsp)
+    0.00 :   2d6927:       movq    %r8, 0x30(%rsp)
+    0.00 :   2d692c:       leal    -1(%r8), %eax
+    0.00 :   2d6930:       cmpl    $2, %eax
+    0.00 :   2d6933:       jae     0x2d6b2c
+    0.00 :   2d6939:       movq    %rsi, %r9
+    0.00 :   2d693c:       movq    %rdi, %r12
+    0.00 :   2d693f:       cmpb    $0, 0x1c5f99c(%rip)  # 1f362e2
+<cpu_bitmap+0x122>
+    0.00 :   2d6946:       movl    $8, %eax
+    0.00 :   2d694b:       movl    $1, %ebx
+    0.00 :   2d6950:       cmoveq  %rax, %rbx
+    0.00 :   2d6954:       cmpb    $0, 0x1c5f989(%rip)  # 1f362e4
+<cpu_bitmap+0x124>
+    0.00 :   2d695b:       movq    %rsi, 0x28(%rsp)
+    0.00 :   2d6960:       je      0x2d697e
+    0.00 :   2d6962:       leaq    0x8e9708(%rip), %rdi
+    0.00 :   2d6969:       movq    %rcx, %rsi
+    0.00 :   2d696c:       movq    %r12, %rdx
+    0.00 :   2d696f:       movq    %r9, %rcx
+    0.00 :   2d6972:       xorl    %eax, %eax
+    0.00 :   2d6974:       callq   0x2c18c0
+    0.00 :   2d6979:       movq    0x28(%rsp), %r9
+    0.00 :   2d697e:       leaq    -1(%rbx), %rax
+    0.00 :   2d6982:       andq    %r12, %rax
+    0.00 :   2d6985:       leaq    (%rbx, %r12), %r13
+    0.00 :   2d6989:       subq    %rax, %r13
+    0.00 :   2d698c:       testq   %rax, %rax
+    0.00 :   2d698f:       cmoveq  %r12, %r13
+    0.00 :   2d6993:       leaq    8(%r13), %rax
+    0.00 :   2d6997:       cmpq    %r9, %rax
+    0.00 :   2d699a:       jbe     0x2d69ab
+    0.00 :   2d699c:       addq    $0x48, %rsp
+    0.00 :   2d69a0:       popq    %rbx
+    0.00 :   2d69a1:       popq    %r12
+    0.00 :   2d69a3:       popq    %r13
+    0.00 :   2d69a5:       popq    %r14
+    0.00 :   2d69a7:       popq    %r15
+    0.00 :   2d69a9:       popq    %rbp
+    0.00 :   2d69aa:       retq
+    0.00 :   2d69ab:       movabsq $0x7fffffffbfff, %r15
+    0.00 :   2d69b5:       leaq    0x40(%rsp), %rbp
+    0.00 :   2d69ba:       movq    %r12, 0x38(%rsp)
+    0.00 :   2d69bf:       jmp     0x2d69ea
+    0.00 :   2d69c1:       nopw    %cs:(%rax, %rax)
+    0.00 :   2d69d0:       movq    0x38(%rsp), %r12
+    0.00 :   2d69d5:       movq    0x28(%rsp), %r9
+    0.00 :   2d69da:       leaq    (%rbx, %r13), %rax
+    0.00 :   2d69de:       addq    $8, %rax
+    0.00 :   2d69e2:       addq    %rbx, %r13
+    0.00 :   2d69e5:       cmpq    %r9, %rax
+    0.00 :   2d69e8:       ja      0x2d699c
+    0.00 :   2d69ea:       movq    (%r13), %r14
+    0.00 :   2d69ee:       leaq    -0x4000(%r14), %rax
+    0.00 :   2d69f5:       cmpq    %r15, %rax
+   55.45 :   2d69f8:       ja      0x2d69da
+    0.00 :   2d69fa:       movq    %r14, %rdi
+   44.55 :   2d69fd:       callq   0x20df90
+    0.00 :   2d6a02:       movq    %rax, 0x18(%rsp)
+    0.00 :   2d6a07:       testq   %rax, %rax
+    0.00 :   2d6a0a:       je      0x2d69d5
+    0.00 :   2d6a0c:       cmpq    %r12, %rax
+    0.00 :   2d6a0f:       je      0x2d69d5
+    0.00 :   2d6a11:       movq    %rbp, %r12
+    0.00 :   2d6a14:       movq    %rbp, %rdi
+    0.00 :   2d6a17:       movq    %rax, %rsi
+    0.00 :   2d6a1a:       callq   0x20e190
+    0.00 :   2d6a1f:       movq    %rbp, %rdi
+    0.00 :   2d6a22:       callq   0x20e1d0
+    0.00 :   2d6a27:       cmpl    $2, %eax
+    0.00 :   2d6a2a:       je      0x2d69d0
+    0.00 :   2d6a2c:       movq    %rbp, %rdi
+    0.00 :   2d6a2f:       callq   0x20e1d0
+    0.00 :   2d6a34:       cmpl    $3, %eax
+    0.00 :   2d6a37:       je      0x2d69d0
+    0.00 :   2d6a39:       cmpb    $0, 0x1c5f8a3(%rip)  # 1f362e3
+<cpu_bitmap+0x123>
+    0.00 :   2d6a40:       jne     0x2d6aab
+    0.00 :   2d6a42:       movq    %r13, %rdi
+    0.00 :   2d6a45:       callq   0x2a9030
+    0.00 :   2d6a4a:       testb   %al, %al
+    0.00 :   2d6a4c:       je      0x2d6aab
+    0.00 :   2d6a4e:       cmpb    $0, 0x1c5f88f(%rip)  # 1f362e4
+<cpu_bitmap+0x124>
+    0.00 :   2d6a55:       je      0x2d69d0
+    0.00 :   2d6a5b:       movq    0x18(%rsp), %rax
+    0.00 :   2d6a60:       movq    %rax, 8(%rsp)
+    0.00 :   2d6a65:       movq    %rbp, %r12
+    0.00 :   2d6a68:       movq    %rbp, %rdi
+    0.00 :   2d6a6b:       callq   0x20e210
+    0.00 :   2d6a70:       movq    8(%rsp), %rcx
+    0.00 :   2d6a75:       addq    %rcx, %rax
+    0.00 :   2d6a78:       movq    %rax, 0x10(%rsp)
+    0.00 :   2d6a7d:       movq    %rbp, %rdi
+    0.00 :   2d6a80:       callq   0x20e210
+    0.00 :   2d6a85:       leaq    0x8e95ff(%rip), %rdi
+    0.00 :   2d6a8c:       movq    %r13, %rsi
+    0.00 :   2d6a8f:       movq    %r14, %rdx
+    0.00 :   2d6a92:       movq    8(%rsp), %rcx
+    0.00 :   2d6a97:       movq    0x10(%rsp), %r8
+    0.00 :   2d6a9c:       movq    %rax, %r9
+    0.00 :   2d6a9f:       xorl    %eax, %eax
+    0.00 :   2d6aa1:       callq   0x2c18c0
+    0.00 :   2d6aa6:       jmp     0x2d69d0
+    0.00 :   2d6aab:       movq    %rbp, %r12
+    0.00 :   2d6aae:       movq    %rbp, %rdi
+    0.00 :   2d6ab1:       movq    0x30(%rsp), %rsi
+    0.00 :   2d6ab6:       callq   0x20e1f0
+    0.00 :   2d6abb:       cmpb    $0, 0x1c5f822(%rip)  # 1f362e4
+<cpu_bitmap+0x124>
+    0.00 :   2d6ac2:       je      0x2d6b0c
+    0.00 :   2d6ac4:       movq    0x18(%rsp), %rax
+    0.00 :   2d6ac9:       movq    %rax, 8(%rsp)
+    0.00 :   2d6ace:       movq    %r12, %rdi
+    0.00 :   2d6ad1:       callq   0x20e210
+    0.00 :   2d6ad6:       movq    8(%rsp), %rcx
+    0.00 :   2d6adb:       addq    %rcx, %rax
+    0.00 :   2d6ade:       movq    %rax, 0x10(%rsp)
+    0.00 :   2d6ae3:       movq    %r12, %rdi
+    0.00 :   2d6ae6:       callq   0x20e210
+    0.00 :   2d6aeb:       leaq    0x8e95dd(%rip), %rdi
+    0.00 :   2d6af2:       movq    %r13, %rsi
+    0.00 :   2d6af5:       movq    %r14, %rdx
+    0.00 :   2d6af8:       movq    8(%rsp), %rcx
+    0.00 :   2d6afd:       movq    0x10(%rsp), %r8
+    0.00 :   2d6b02:       movq    %rax, %r9
+    0.00 :   2d6b05:       xorl    %eax, %eax
+    0.00 :   2d6b07:       callq   0x2c18c0
+    0.00 :   2d6b0c:       cmpq    $0, 0x20(%rsp)
+    0.00 :   2d6b12:       je      0x2d69d0
+    0.00 :   2d6b18:       movq    0x20(%rsp), %rdi
+    0.00 :   2d6b1d:       leaq    0x18(%rsp), %rsi
+    0.00 :   2d6b22:       callq   0x2b45a0
+    0.00 :   2d6b27:       jmp     0x2d69d0
+    0.00 :   2d6b2c:       leaq    0x8e94cf(%rip), %rdi
+    0.00 :   2d6b33:       leaq    0x8e94fe(%rip), %rdx
+    0.00 :   2d6b3a:       movl    $0x128, %esi
+    0.00 :   2d6b3f:       xorl    %ecx, %ecx
+    0.00 :   2d6b41:       xorl    %r8d, %r8d
+    0.00 :   2d6b44:       callq   0x2c77f0
+    0.00 :   9200:       pushq   %r15
+    0.00 :   9202:       pushq   %r14
+    0.00 :   9204:       pushq   %r13
+    0.00 :   9206:       pushq   %r12
+    0.00 :   9208:       pushq   %rbp
+    0.00 :   9209:       pushq   %rbx
+    0.00 :   920a:       subq    $0x88, %rsp
+    0.00 :   9211:       movq    %rdi, 8(%rsp)
+    0.00 :   9216:       movl    8(%r9), %edi
+    0.00 :   921a:       movq    %r8, 0x20(%rsp)
+    0.00 :   921f:       movq    0xc0(%rsp), %rbp
+    0.00 :   9227:       movq    %rdx, 0x28(%rsp)
+    0.00 :   922c:       movq    0xd8(%rsp), %r8
+    0.00 :   9234:       movq    %rdi, %r10
+    0.00 :   9237:       movq    %rcx, 0x10(%rsp)
+    0.00 :   923c:       movq    0xe8(%rsp), %r11
+    0.00 :   9244:       movq    (%r9), %r13
+    0.00 :   9247:       movl    %esi, %eax
+    0.00 :   9249:       movl    0xe0(%rsp), %r9d
+    0.00 :   9251:       movl    %esi, %r15d
+    0.00 :   9254:       shrl    $6, %eax
+    0.00 :   9257:       movq    %r8, %r12
+    0.00 :   925a:       movl    %eax, 0x18(%rsp)
+    0.00 :   925e:       andl    $2, %r9d
+    0.00 :   9262:       jmp     0x92ff
+    0.00 :   9267:       nopw    (%rax, %rax)
+    0.00 :   9270:       movl    0x30c(%rbx), %edi
+    0.00 :   9276:       testl   %edi, %edi
+    0.00 :   9278:       je      0x92f2
+    0.00 :   927a:       movq    0x70(%rbx), %rax
+    0.00 :   927e:       movl    $0, 0x74(%rsp)
+    0.00 :   9286:       movq    $0, 0x78(%rsp)
+    0.00 :   928f:       movq    8(%rax), %rsi
+    0.00 :   9293:       xorl    %eax, %eax
+    0.00 :   9295:       testb   $0x20, 0x336(%rbx)
+    0.00 :   929c:       je      0x92a4
+    0.00 :   929e:       movq    (%rbx), %rax
+    0.00 :   92a1:       addq    %rax, %rsi
+    0.00 :   92a4:       movq    0x68(%rbx), %rdx
+    0.00 :   92a8:       addq    8(%rdx), %rax
+    0.00 :   92ac:       movq    0x318(%rbx), %rdx
+    0.00 :   92b3:       movq    %rax, %r8
+    0.00 :   92b6:       testq   %rdx, %rdx
+    0.00 :   92b9:       je      0x93b0
+    0.00 :   92bf:       movl    0x314(%rbx), %ecx
+    0.00 :   92c5:       movl    0x18(%rsp), %eax
+   13.66 :   92c9:       andl    0x310(%rbx), %eax
+   16.28 :   92cf:       movq    (%rdx, %rax, 8), %rax
+    0.00 :   92d3:       movl    %r15d, %edx
+    0.00 :   92d6:       shrl    %cl, %edx
+    0.00 :   92d8:       movl    %edx, %ecx
+    0.00 :   92da:       movq    %rax, %rdx
+Basic annotate [Failed: missing disasm output when specifying the target sy=
+mbol]
+---- end(-1) ----
+ 77: perf annotate basic tests                                       : FAIL=
+ED!
+```
 
-  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
-
-for you to fetch changes up to a069f014797fdef8757f3adebc1c16416271a599:
-
-  bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path (2024-10-20 18:09:09 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc5
-
-Lots of hotfixes:
-- transaction restart injection has been shaking out a few things
-
-- fix a data corruption in the buffered write path on -ENOSPC, found by
-  xfstests generic/299
-
-- Some small show_options fixes
-
-- Repair mismatches in inode hash type, seed: different snapshot
-  versions of an inode must have the same hash/type seed, used for
-  directory entries and xattrs. We were checking the hash seed, but not
-  the type, and a user contributed a filesystem where the hash type on
-  one inode had somehow been flipped; these fixes allow his filesystem
-  to repair.
-
-  Additionally, the hash type flip made some directory entries
-  invisible, which were then recreated by userspace; so the hash check
-  code now checks for duplicate non dangling dirents, and renames one of
-  them if necessary.
-
-- Don't use wait_event_interruptible() in recovery: this fixes some
-  filesystems failing to mount with -ERESTARTSYS
-
-- Workaround for kvmalloc not supporting > INT_MAX allocations, causing
-  an -ENOMEM when allocating the sorted array of journal keys: this
-  allows a 75 TB filesystem to mount
-
-- Make sure bch_inode_unpacked.bi_snapshot is set in the old inode
-  compat path: this alllows Marcin's filesystem (in use since before
-  6.7) to repair and mount.
-
-----------------------------------------------------------------
-Hongbo Li (2):
-      bcachefs: fix incorrect show_options results
-      bcachefs: skip mount option handle for empty string.
-
-Kent Overstreet (24):
-      bcachefs: fix restart handling in bch2_rename2()
-      bcachefs: fix bch2_hash_delete() error path
-      bcachefs: fix restart handling in bch2_fiemap()
-      bcachefs: fix missing restart handling in bch2_read_retry_nodecode()
-      bcachefs: fix restart handling in bch2_do_invalidates_work()
-      bcachefs: fix restart handling in bch2_alloc_write_key()
-      bcachefs: fix restart handling in __bch2_resume_logged_op_finsert()
-      bcachefs: handle restarts in bch2_bucket_io_time_reset()
-      bcachefs: Don't use commit_do() unnecessarily
-      bcachefS: ec: fix data type on stripe deletion
-      bcachefs: fix disk reservation accounting in bch2_folio_reservation_get()
-      bcachefs: bch2_folio_reservation_get_partial() is now better behaved
-      bcachefs: Fix data corruption on -ENOSPC in buffered write path
-      bcachefs: Run in-kernel offline fsck without ratelimit errors
-      bcachefs: INODE_STR_HASH() for bch_inode_unpacked
-      bcachefs: Add hash seed, type to inode_to_text()
-      bcachefs: Repair mismatches in inode hash seed, type
-      bcachefs: bch2_hash_set_or_get_in_snapshot()
-      bcachefs: fsck: Improve hash_check_key()
-      bcachefs: Fix __bch2_fsck_err() warning
-      bcachefs: Don't use wait_event_interruptible() in recovery
-      bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-      bcachefs: Mark more errors as AUTOFIX
-      bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
-
- fs/bcachefs/alloc_background.c      |  37 +++--
- fs/bcachefs/alloc_foreground.c      |   2 +-
- fs/bcachefs/btree_gc.c              |  12 +-
- fs/bcachefs/btree_io.c              |   2 +-
- fs/bcachefs/btree_iter.h            |   2 +
- fs/bcachefs/btree_update.c          |   4 +-
- fs/bcachefs/btree_update.h          |   2 +-
- fs/bcachefs/btree_update_interior.c |   4 +-
- fs/bcachefs/buckets.c               |   7 +-
- fs/bcachefs/buckets.h               |  12 +-
- fs/bcachefs/chardev.c               |   1 +
- fs/bcachefs/darray.c                |  15 +-
- fs/bcachefs/dirent.c                |   7 -
- fs/bcachefs/dirent.h                |   7 +
- fs/bcachefs/disk_accounting.c       |   6 +-
- fs/bcachefs/ec.c                    |  22 +--
- fs/bcachefs/error.c                 |   5 +-
- fs/bcachefs/fs-io-buffered.c        |   6 +
- fs/bcachefs/fs-io-pagecache.c       |  70 +++++----
- fs/bcachefs/fs-io.c                 |   2 +-
- fs/bcachefs/fs.c                    |  18 +--
- fs/bcachefs/fsck.c                  | 281 +++++++++++++++++++++++++++++-------
- fs/bcachefs/inode.c                 |  27 ++--
- fs/bcachefs/inode.h                 |   1 +
- fs/bcachefs/inode_format.h          |   6 +-
- fs/bcachefs/io_misc.c               |   2 +-
- fs/bcachefs/io_read.c               |   8 +-
- fs/bcachefs/io_write.c              |   4 +-
- fs/bcachefs/journal.c               |  10 +-
- fs/bcachefs/journal.h               |   2 +-
- fs/bcachefs/opts.c                  |   6 +-
- fs/bcachefs/opts.h                  |   3 +-
- fs/bcachefs/quota.c                 |   2 +-
- fs/bcachefs/rebalance.c             |   4 +-
- fs/bcachefs/recovery.c              |   2 +-
- fs/bcachefs/sb-errors_format.h      |   4 +-
- fs/bcachefs/str_hash.h              |  60 +++++---
- fs/bcachefs/subvolume.c             |   7 +-
- fs/bcachefs/super.c                 |   2 +-
- fs/bcachefs/tests.c                 |   4 +-
- fs/bcachefs/xattr.c                 |   2 +-
- 41 files changed, 475 insertions(+), 205 deletions(-)
+Thanks,
+Ian
 
