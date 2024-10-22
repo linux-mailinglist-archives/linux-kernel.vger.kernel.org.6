@@ -1,221 +1,177 @@
-Return-Path: <linux-kernel+bounces-376253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1809AA22E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:35:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F789AA224
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87C0BB21975
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E7A2813AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 12:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6612319D890;
-	Tue, 22 Oct 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6237F19D097;
+	Tue, 22 Oct 2024 12:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HytuyHtL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKC6Ky+k"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4677196DA2;
-	Tue, 22 Oct 2024 12:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A70196DA2;
+	Tue, 22 Oct 2024 12:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729600493; cv=none; b=iJBnaoBmiKgpDlKRCy/rZyvCvQs0lMpCaVuxq/MhqO4QKlTMQruVBdImHLrIERXhhfoEhyO++KleYZvpc86aBebqauFjJXA5AvvtYKP/hRGJn0ndL7UAfWwmGkTyr3ou+IxH7Zy8s/l+DDj/8ZSrM94IKncOMfQEVcpD+PsemJg=
+	t=1729600350; cv=none; b=Vre4FIlGGqi9ixgQoPaoDImDl7cY79IN8zAtOZvRdtLEMOQ83qblnpLolQgpqZt7ydCAwXC/YRPUkiBpKws3i+6EWzI8Z5s8kvaoZselJiRf8e09MxY8IM2t6c/etcQd2kDgjfd1hEGAWxb9Xtovf3QSoZ34RhZQ33VdMhoh6ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729600493; c=relaxed/simple;
-	bh=97uomaLB7yZNzX/ZjdKxgN95mOMRvgyTl2H1lwFRh3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NDlJfu/xjKt95SGzPb0k/kMdM8tp2XZYZh+s2otsb6gyh+GcWJxMzHI+MoCPggCPoTnj7QzZhSbnsLPH6cLwm3e2MfW9/Wskzv8usb87V06eTi4cB0Afwutc1sb477Titpo2jVIXWur5wgnTmM7KOtcg4UtvJfTPBoOkteBj4KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HytuyHtL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M6ug8b019356;
-	Tue, 22 Oct 2024 12:34:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qEcYoP34s/5lkGWzYfdtvlYJgT9GtRSNKTn8S2tmwcw=; b=HytuyHtLH5WQ6hp+
-	RqSeJt3FClHAq4t4c4RO9JM6EiRMQibwegDc9qYTlFlb3EEa3XmOQv8Bum/iFeu8
-	8ZNiinsPqvEUbhptt/dPtqHtbL0NoPW0ziPMhKaJnRJPZKrtV0Q0n17SpqJd2yyu
-	KP74UFnr+4YBfmj5D6j/sjKgLXgxfHhFOJ3HPCr4PuD3OHa4vQu+ljl3P3iYgWmL
-	yRqd1Yut6xir6d0RZHz9+eJbmle32zGGC82xZSwIFZfkXxbygy3/x1awwMFi4osM
-	9YVqW/gTETRDmR2DTLbEKhLNCxUbVnPvEaEhrxp40z6UsDkeWdmpb1rn+7T/BBgo
-	L6PylQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42e77pgyxt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 12:34:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49MCYjLa001444
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 12:34:45 GMT
-Received: from [10.218.25.132] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 05:34:43 -0700
-Message-ID: <07744fc7-633f-477e-96e9-8f498a3b40e8@quicinc.com>
-Date: Tue, 22 Oct 2024 18:04:41 +0530
+	s=arc-20240116; t=1729600350; c=relaxed/simple;
+	bh=k+jpDQnahPrkSggAQOSFvwgBzXb2YgGE8Ftt9blvxBA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dvNRmJEAG2SFY8phs09rraRUQG49QbMt1GOh06V2bX4J3vHzaD173b2LH7JGuRaLXW48tlOPxZd8H8+MhAdkT/TyEjJBKf5GQSX98LaqG8y78ugpuyfSkvQNcwC/FOUNkoILrysR392ePY9OfBpPx63hZeMXlMJNENc0uz9TEEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKC6Ky+k; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso55826395e9.0;
+        Tue, 22 Oct 2024 05:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729600347; x=1730205147; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y8fcMdOyAYaIN7KKTKRLuuBVSda70TZz4y7GMjXOwZ4=;
+        b=RKC6Ky+k4Q1k1p/buYbKvSauwPQ8QotLvRTs1w3xw/iIZNrlYbGN5koal+wKDxF5k4
+         554uPXjMAdc7SdAztpwCAs5oNAm/aHFJNnmCDEGc9SiTg8m3KcDjrm39cf4tw67j1ZiS
+         hfK65OnM/mTJM+JMaTL5GP/motp7kohOBig1g7RjKs10ezAH/JcbYa1VUz2D1Iczr1gZ
+         PfV3/cEGv1ACX1JmNgTyWiTbzpQyxS5XvMxJUhBU4CN0z2Efm9NmnquKGxNiylLd/VZq
+         nfDMfhtKbsYBNhUP+wYKA1+5e0OskMSARCfUWV8CJmyk5LasEwIsFRhHFVfsfr6PkD4H
+         aDKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729600347; x=1730205147;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8fcMdOyAYaIN7KKTKRLuuBVSda70TZz4y7GMjXOwZ4=;
+        b=IlI2D7hDDkfmddihJwlqP4s04Kd4npLcNC95oGdFqHkeKDjWFD6/acDWLGYd04prxR
+         +VTpJRyyjwfZf/xaAu26vW0gLnlK7obMTRAtyEUBaT3vYy1qAaICUk9MDxsaCcJ9XnAx
+         yiRzW8RrglbN0ArygPhHANoYQWzxClTTJHGfJX/N+akn5Eo5t0f7PsBcxsK6dd7UKbVE
+         1tYUItG7xlRB0JP/GEzu25nI4dFCza3zgSb4Ml6tvg5N9dcTSBRlMLMfB8DIDcYsOVLK
+         jMzLMUz+ENq2yn2edV7FJ2QipPBmcc5NyY/2MZrib0jMy4Nvn0886m9AEtPpw/blFczM
+         tosQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYqQf0ozi8BADtrl4efqnD9/PQOtVcd8ThCjxD2+/nEClszKBCVA7frVD+cr2i/dkZZDXY6gc6gHn8j7G1@vger.kernel.org, AJvYcCWGJgzCPM0Hwu2YoUiiB/DH6tHianUDptzE2c0WdwzgL5+yArtB+o9uGkZUE+0dhQOL/36F/RjI59ZX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxABG9b077TRy2o/06RGxgsTJwpOZuUCrQcD/tlmCFiYKawUybH
+	XdhcgZNnn8dSoCmZsmasmQocLyvM53NL5RAzXUHKv+oFaIB7X0j5
+X-Google-Smtp-Source: AGHT+IFu6mJ+NIedCq7KY7T+JJZIHHd///LfaBCFsHxQeK94bdigpxIE15SuHqd00PZurZMvPp4wyQ==
+X-Received: by 2002:a05:600c:1d99:b0:431:59ab:15cf with SMTP id 5b1f17b1804b1-431616595bemr106452735e9.19.1729600346965;
+        Tue, 22 Oct 2024 05:32:26 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc401sm85709325e9.43.2024.10.22.05.32.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 05:32:26 -0700 (PDT)
+Message-ID: <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
+Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich	 <Michael.Hennerich@analog.com>, Jonathan Cameron
+ <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dlechner@baylibre.com, Mark Brown
+	 <broonie@kernel.org>
+Date: Tue, 22 Oct 2024 14:36:44 +0200
+In-Reply-To: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
+References: 
+	<20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
+	 <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] xhci: Fix Link TRB DMA in command ring stopped
- completion event
-To: Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20241021131904.20678-1-quic_faisalh@quicinc.com>
- <51a0598a-2618-4501-af40-f1e9a1463bca@linux.intel.com>
-Content-Language: en-US
-From: Faisal Hassan <quic_faisalh@quicinc.com>
-In-Reply-To: <51a0598a-2618-4501-af40-f1e9a1463bca@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bLTDxxQ60xar-EkQjxwtjRbG7bVG9iYs
-X-Proofpoint-ORIG-GUID: bLTDxxQ60xar-EkQjxwtjRbG7bVG9iYs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220080
 
-Hi Mathias,
+On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Extend AXI-DAC backend with new features required to interface
+> to the ad3552r DAC. Mainly, a new compatible string is added to
+> support the ad3552r-axi DAC IP, very similar to the generic DAC
+> IP but with some customizations to work with the ad3552r.
+>=20
+> Then, a series of generic functions has been added to match with
+> ad3552r needs. Function names has been kept generic as much as
+> possible, to allow re-utilization from other frontend drivers.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
 
-On 10/21/2024 9:09 PM, Mathias Nyman wrote:
-> On 21.10.2024 16.19, Faisal Hassan wrote:
->> During the aborting of a command, the software receives a command
->> completion event for the command ring stopped, with the TRB pointing
->> to the next TRB after the aborted command.
->>
->> If the command we abort is located just before the Link TRB in the
->> command ring, then during the 'command ring stopped' completion event,
->> the xHC gives the Link TRB in the event's cmd DMA, which causes a
->> mismatch in handling command completion event.
->>
->> To handle this situation, an additional check has been added to ignore
->> the mismatch error and continue the operation.
->>
->> Fixes: 7f84eef0dafb ("USB: xhci: No-op command queueing and irq
->> handler.")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
->> ---
->> Changes in v2:
->> - Removed traversing of TRBs with in_range() API.
->> - Simplified the if condition check.
->>
->> v1 link:
->> https://lore.kernel.org/all/20241018195953.12315-1-
->> quic_faisalh@quicinc.com
->>
->>   drivers/usb/host/xhci-ring.c | 43 +++++++++++++++++++++++++++++++-----
->>   1 file changed, 38 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
->> index b2950c35c740..de375c9f08ca 100644
->> --- a/drivers/usb/host/xhci-ring.c
->> +++ b/drivers/usb/host/xhci-ring.c
->> @@ -126,6 +126,29 @@ static void inc_td_cnt(struct urb *urb)
->>       urb_priv->num_tds_done++;
->>   }
->>   +/*
->> + * Return true if the DMA is pointing to a Link TRB in the ring;
->> + * otherwise, return false.
->> + */
->> +static bool is_dma_link_trb(struct xhci_ring *ring, dma_addr_t dma)
->> +{
->> +    struct xhci_segment *seg;
->> +    union xhci_trb *trb;
->> +
->> +    seg = ring->first_seg;
->> +    do {
->> +        if (in_range(dma, seg->dma, TRB_SEGMENT_SIZE)) {
->> +            /* found the TRB, check if it's link */
->> +            trb = &seg->trbs[(dma - seg->dma) / sizeof(*trb)];
->> +            return trb_is_link(trb);
->> +        }
->> +
->> +        seg = seg->next;
->> +    } while (seg != ring->first_seg);
->> +
->> +    return false;
->> +}
->> +
->>   static void trb_to_noop(union xhci_trb *trb, u32 noop_type)
->>   {
->>       if (trb_is_link(trb)) {
->> @@ -1718,6 +1741,7 @@ static void handle_cmd_completion(struct
->> xhci_hcd *xhci,
->>         trace_xhci_handle_command(xhci->cmd_ring, &cmd_trb->generic);
->>   +    cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
->>       cmd_dequeue_dma = xhci_trb_virt_to_dma(xhci->cmd_ring->deq_seg,
->>               cmd_trb);
->>       /*
->> @@ -1725,17 +1749,26 @@ static void handle_cmd_completion(struct
->> xhci_hcd *xhci,
->>        * command.
->>        */
->>       if (!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) {
->> -        xhci_warn(xhci,
->> -              "ERROR mismatched command completion event\n");
->> -        return;
->> +        /*
->> +         * For the 'command ring stopped' completion event, there
->> +         * is a risk of a mismatch in dequeue pointers if we abort
->> +         * the command just before the link TRB in the command ring.
->> +         * In this scenario, the cmd_dma in the event would point
->> +         * to a link TRB, while the software dequeue pointer circles
->> +         * back to the start.
->> +         */
->> +        if (!(cmd_comp_code == COMP_COMMAND_RING_STOPPED &&
->> +              is_dma_link_trb(xhci->cmd_ring, cmd_dma))) {
-> 
-> 
-> Do we in this COMP_COMMAND_RING_STOPPED case even need to check if
-> cmd_dma != (u64)cmd_dequeue_dma, or if command ring stopped on a link TRB?
-> 
-> Could we just move the COMP_COMMAND_RING_STOPPED handling a bit earlier?
-> 
-> if (cmd_comp_code == COMP_COMMAND_RING_STOPPED) {
->     complete_all(&xhci->cmd_ring_stop_completion);
->         return;
-> }
-> 
-> If I remember correctly it should just turn aborted command TRBs into
-> no-ops,
-> and restart the command ring
-> 
+Looks mostly good,
 
-Thanks for reviewing the changes!
+one minor thing that (I think) could be improved
+> =C2=A0drivers/iio/dac/adi-axi-dac.c | 269 +++++++++++++++++++++++++++++++=
+++++++++--
+> -
+> =C2=A01 file changed, 255 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.=
+c
+> index 04193a98616e..9d6809fe7a67 100644
+> --- a/drivers/iio/dac/adi-axi-dac.c
+> +++ b/drivers/iio/dac/adi-axi-dac.c
+> @@ -46,9 +46,28 @@
+> =C2=A0#define AXI_DAC_CNTRL_1_REG			0x0044
+> =C2=A0#define=C2=A0=C2=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
+> =C2=A0#define AXI_DAC_CNTRL_2_REG			0x0048
+> +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
+> +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
+> =C2=A0#define=C2=A0=C2=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
+> +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
+> +#define AXI_DAC_STATUS_1_REG			0x0054
+> +#define AXI_DAC_STATUS_2_REG			0x0058
+> =C2=A0#define AXI_DAC_DRP_STATUS_REG			0x0074
+> =C2=A0#define=C2=A0=C2=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
+> +#define AXI_DAC_CUSTOM_RD_REG			0x0080
+> +#define AXI_DAC_CUSTOM_WR_REG			0x0084
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
+> +#define AXI_DAC_UI_STATUS_REG			0x0088
+> +#define=C2=A0=C2=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
+> +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
+> +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
 
-Yes, you’re right. As part of restarting the command ring, we just ring
-the doorbell.
+...
+=C2=A0
+> =C2=A0static int axi_dac_probe(struct platform_device *pdev)
+> =C2=A0{
+> -	const unsigned int *expected_ver;
+> =C2=A0	struct axi_dac_state *st;
+> =C2=A0	void __iomem *base;
+> =C2=A0	unsigned int ver;
+> @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device *pd=
+ev)
+> =C2=A0	if (!st)
+> =C2=A0		return -ENOMEM;
+> =C2=A0
+> -	expected_ver =3D device_get_match_data(&pdev->dev);
+> -	if (!expected_ver)
+> +	st->info =3D device_get_match_data(&pdev->dev);
+> +	if (!st->info)
+> =C2=A0		return -ENODEV;
+> +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+> +	if (IS_ERR(clk)) {
 
-If we move the event handling without validating the dequeue pointer,
-wouldn’t it be a risk if we don’t check what the xHC is holding in its
-dequeue pointer? If we are not setting it, it starts from wherever it
-stopped. What if the dequeue pointer got corrupted or is not pointing to
-any of the TRBs in the command ring?
+If clock-names is not given, then we'll get -EINVAL. Hence we could assume =
+that:
 
-> Thanks
-> Mathias
-> 
+		if (PTR_ERR(clk) !=3D -EINVAL)
+			return dev_err_probe();
 
-Thanks,
-Faisal
+- Nuno S=C3=A1
+
 
