@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-376426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210C69AB14D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822FD9AB151
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6A92B2474C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31E81C20D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 14:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A381A2642;
-	Tue, 22 Oct 2024 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B5E1A2C0B;
+	Tue, 22 Oct 2024 14:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFfeRZN/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QceEMfXL"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644C19D089;
-	Tue, 22 Oct 2024 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8DF1A255C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 14:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729608423; cv=none; b=OAHFntdGYB9ksgvmqHomlr5zU2KlVmFpocQRcVOAYVDRLWrOI80b/Npd5m1N1HV1ep1mE+KtC3gkQ6l2HXd+OakyAdSUwpJfbYO8ecJvxj/e1smJKkkI2oaC00TX8fMTFtwG3y4RKDG8ZqCxqPvGM4mEQf66v4glyLZJNnyr9ZQ=
+	t=1729608468; cv=none; b=tvpq/khU+IkkakB/BASQxo7DebwFutG+W41wvyQx1WDESceXJMRo24XUFSPKq3sofq0BknqACvFjEC5eYx4lXRKv/e3rtRkydgKfGOh8DIXPsRpqXJ3lX5S+rl88hWKtQrM3KKY+qv7+fVLoisurmZJEEnFEQdnz0jr3YtezmpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729608423; c=relaxed/simple;
-	bh=B+uOdsm26qWeVQQUdj+KD0IE8Tl65RK8whsElX9VGdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbpnPg+IPcgW2nmdXK4wN9v4JvMCnXxXa2ZCg+/51VCzA0nijLINz7nHu0dDOiH/Ove/l5gTErD5G8+ipo0X12OzCeSFKW2TeihNPwnCVnH/sAASht14Jhipv28jZyPQ3pwbJoRketrNu1knjFXhrXVkpHLddKah2AA2mVdNuyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFfeRZN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53A0EC4CEC3;
-	Tue, 22 Oct 2024 14:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729608422;
-	bh=B+uOdsm26qWeVQQUdj+KD0IE8Tl65RK8whsElX9VGdc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KFfeRZN/6PgpDdCwOE6UFV/Kxz+FVfrdfxwtjfRHdXfHrEtbZJXU0rlYMCIfAqVXP
-	 2dpkPUzsNXPK6U7x13Kll/h1J1yJBY//E3CjxLxR6o7FRwuOamoSnUWzl25ec/7x1v
-	 tssddtUWAN8c5nA2IgcISqJNaSIGu51+Y8zvSWKqEX9IWAw/mEYLAg1+/Pi/xiO2oC
-	 PVKsKLiLYJLZN9L79XjGD/7j67dpI7uOIAeIl5tKRsLdGvJ3oVU5VdQDgIl2/u7bG0
-	 APLlGh7IE9aMCUAgVcBF4pW2oS5WGaJop902/ZQakumIa/JAIQsYOxxcxpxwZ4EcMQ
-	 Wb/Xr7cQRL6aQ==
-Date: Tue, 22 Oct 2024 10:47:01 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <Zxe65Zu3GRdwzXjo@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org>
- <ZxeEA6i_xfBMxJm4@sashalap>
- <1e89542d-6f9e-4e85-8292-ebb49091433a@sirena.org.uk>
+	s=arc-20240116; t=1729608468; c=relaxed/simple;
+	bh=AUnKd1M3xJOmg0hqJKHoR2GCQfujvFGd8uC2lbtp0O0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=feRWF9WuNR0Lilucy52Y/0yXQUTdL7iuiVCQMztehU0AcL+SK9Fzdqyy4Vjgp7hnIZ6/ebXuoSCibzidrvmYayNyY3wGDLtDdygqWXOnbmhdoz/FxWYob5x2ozK2kGxFSh2K+AZIDGz2XJaYzIiy1wj3/qm2jleSp2rLlMtL5MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QceEMfXL; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3b7d95a11so19805075ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 07:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729608465; x=1730213265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uvAvvPqD8Vbc7iZ14dJm8AwQMGagAK8236HrKhSHbpU=;
+        b=QceEMfXLOui1NwL++tUN6xwq+ct9k0FdaM8IuzcaYfbowKPSrrVV1J17rUoqQBrk58
+         EO7Umbe7SbrPnupj5acuyQIQp9+TOKoy+poSoKICwCzkdSs6YWxVWAPD1SUriIbb1+gV
+         MOeR4hWmXIDXMjLHla4kdb0LoU8If/7ddP9OrE2ZrlXLHL3DoKpg75JpPQePQ5Fs8fnK
+         AkOwGFdQj+SQNVCxWyOnfkaDtCBEnxH9L2D7LYEvmS7JygxTWR5q5F+jN/BnPrx1Qrs4
+         YZakC9j7khvV5RwWXwaN8zZ6W0wt8DitxEClrKmnKwcTKOABzez3+E3+Ndm7SOAMwk3Y
+         Pc6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729608465; x=1730213265;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uvAvvPqD8Vbc7iZ14dJm8AwQMGagAK8236HrKhSHbpU=;
+        b=qfbQ4dtoK7ELqIpGICwvD0P+WrIqvdCpb932NvKyzu5vqd2+pU28wrA7x+41GibzEk
+         zQpxgSq9hGTE1Go+CFmQjaV1ChqaRUgpPsl5laYF2dUoxqq3MxW/BJnEMn1RWmIKfWU6
+         ZF51ltlumT56WrzMGb5b6Pv/tFXbLa9uxZakD0nhfpN7QSi69LmAm0vO4sTuH9Er+HtZ
+         SmTIKuKTVobwVq2lobg0+r/U3ws0El95Wrd4VuwWOeiKTTuUh78fz29R1ot0aKHYCeS0
+         C453xNTBdSy52IiBwzO3KYezekHLwX5Qr9IXVkBZeIr0TuVcyEq5vRJ9hvbN+papXkp0
+         Uf3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUpHeTsQWng6XlVeRbyNxbZVerYWQe7OFf5OIylkIMiWyarPhlAkavyJV1mjbV7wP1T8Ze3kxlZ0cSEhrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhW4UMf91m+IHkPxUjXg/ySuZQeIxtetamFq2PKhkpCwKL83Vs
+	XUV4mAXAO9y+X/xaKsSyxwm19mcnwyNnqBloyfKxv4JKyR/nStjZvsn9BTrFdrI=
+X-Google-Smtp-Source: AGHT+IFMA8/8XkeEa3fN1L/EdBNpDM5BgG5xlJL0Vg6Yh5CEnSh4WlfRGT4N951JDyO4WWAxrEdCjA==
+X-Received: by 2002:a05:6e02:1ca5:b0:3a3:b559:5b92 with SMTP id e9e14a558f8ab-3a3f4060be5mr155339825ab.14.1729608465688;
+        Tue, 22 Oct 2024 07:47:45 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a52fc4fsm1600289173.22.2024.10.22.07.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 07:47:45 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: tj@kernel.org, josef@toxicpanda.com, hch@lst.de, mkoutny@suse.com, 
+ Li Lingfeng <lilingfeng@huaweicloud.com>
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com, 
+ yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com, 
+ lilingfeng3@huawei.com
+In-Reply-To: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
+References: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
+Subject: Re: [PATCH v3] block: flush all throttled bios when deleting the
+ cgroup
+Message-Id: <172960846463.861462.5399495567961070618.b4-ty@kernel.dk>
+Date: Tue, 22 Oct 2024 08:47:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1e89542d-6f9e-4e85-8292-ebb49091433a@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Tue, Oct 22, 2024 at 12:50:50PM +0100, Mark Brown wrote:
->On Tue, Oct 22, 2024 at 06:52:51AM -0400, Sasha Levin wrote:
->> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
->
->> The script tripped on the very first PR it looked at:
->> https://lore.kernel.org/all/20241021171728.274997-1-pbonzini@redhat.com/
->
->> And in particular, this commit: afa9b48f327c ("KVM: arm64: Shave a few
->> bytes from the EL2 idmap code")
->
->> (sorry, not trying to pick on anyone/anything, just an example...)
->
->> The commit can't be found on lore.kernel.org, it was never in -next, and
->> yet Linus pulled it promptly without questioning anything.
->
->That was on the list at least, but buried in the replies to a thread
->rather than posted separately:
->
->  https://lore.kernel.org/86msjc56mi.wl-maz@kernel.org
 
-If folks are interested in collaborating around -next analysis and maybe
-adding a bot/dashboard/etc, I've pushed my scripts to
-https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/
+On Sat, 17 Aug 2024 15:11:08 +0800, Li Lingfeng wrote:
+> When a process migrates to another cgroup and the original cgroup is deleted,
+> the restrictions of throttled bios cannot be removed. If the restrictions
+> are set too low, it will take a long time to complete these bios.
+> 
+> Refer to the process of deleting a disk to remove the restrictions and
+> issue bios when deleting the cgroup.
+> 
+> [...]
 
-Right now they're enough to generate a histogram showing how many
-patches spent N days in -next:
+Applied, thanks!
 
-$ git log --format="%H" --no-merges origin/master..next/master | shuf | head -n500 | xargs histo.sh ~/next-analysis/db/
-Days in -next:
-----------------------------------------
-  0  |
-  1  | ████████████████████ (40)
-  2  | ███████████████████████████████ (62)
-  3  | █████████████ (27)
-  4  | █████████████ (27)
-  5  | ███████████████████ (39)
-  6  | ██████████████ (28)
-  7  | ████████ (16)
-  8  | ██████████████████ (37)
-  9  | ██████ (12)
-10  | █████████████████████ (42)
-11  | █████████████████████████ (50)
-12  | ██████ (12)
-13  | █████ (10)
-14+ | █████████████████████████████████████████████████ (98)
+[1/1] block: flush all throttled bios when deleting the cgroup
+      (no commit info)
 
-As well as find commits that did not appear on lore:
-
-$ git log --format="%H" --no-merges origin/master..next/master | shuf | head -n100 | xargs no-lore.sh ~/next-analysis/db/
-c88414f56c37f XArray: Prevent node leaks in xas_alloc()
-
+Best regards,
 -- 
-Thanks,
-Sasha
+Jens Axboe
+
+
+
 
