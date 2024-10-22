@@ -1,198 +1,162 @@
-Return-Path: <linux-kernel+bounces-375730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71C69A9A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:42:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE2A9A9A1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0379A1C2390A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC6AB22202
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 06:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6371A145B1D;
-	Tue, 22 Oct 2024 06:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8BD145A16;
+	Tue, 22 Oct 2024 06:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z1l6JpDW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="apoviP08"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A748450EE;
-	Tue, 22 Oct 2024 06:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDFE450EE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 06:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729579317; cv=none; b=k1R16Diio5fpu7pw+ygJmjsuD5hzzVoFsXu7cLgYBoM/c7RID62wkE1OruBsiW38n7HJ28fFByYvANP/IMK2QadetALnUQp7BEQNNcXV/kf6Pmc5D9AWhv39OYHOopCTgCV9fB1mRZLc39m8Oefqel04A2u9OQoncS3xlMjn3Cs=
+	t=1729579326; cv=none; b=eqyhm4N5JppC249mlKha3sk9g6/9krs9XwYESp/YV/ZnYEiPgoks9b6YBTkk2aHWYumS+HBsFt5O6zTG4KF3UHsq/UV27vc6WK1npE4EJsiEvQ/aWubx54fPUtcNlBo+KVmFjxg4NYCOBiJOE3t17j1liYrlik5/CUY+J/z0NMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729579317; c=relaxed/simple;
-	bh=Q/m6JeHkE9NHRmu3I+Eg8Y5KqSdt7FPgW1BJMS1oWLA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DrGrnTVT62L7FzTbRW5CD4iG/IqdVUCMWvRJCmuSK+6daVF9DvOGCgLCAw3YYtDkRmZP1sD/xYS9YN/snGwQGzpLkeFIc8sNnWWtV9gMUlgEHwKDWXQljqtGs7p678yQWV0GbmjfLVjb+2h2Ha9JUEUk+nRameA8Jx5Y59ZIbzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Z1l6JpDW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 215CF49E;
-	Tue, 22 Oct 2024 08:40:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729579207;
-	bh=Q/m6JeHkE9NHRmu3I+Eg8Y5KqSdt7FPgW1BJMS1oWLA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Z1l6JpDWrpUera0OMR4LUP2gafNWWrk2fX320xOmkU8YUA6Gl7QTaMhCIoZ0C2FPo
-	 YJnlkPMYfrul+89mg4RO4m/WhLYdRAxWMRHbnAzwBlu7ud1IBoePMy+w7JHin+/ys4
-	 dqS9DqHk/Hk+ZyqEJ3YL/qcyklrUFs4/NOFTbOWE=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 22 Oct 2024 09:41:30 +0300
-Subject: [PATCH RFC] pmdomain: ti-sci: Set PD on/off state according to the
- HW state
+	s=arc-20240116; t=1729579326; c=relaxed/simple;
+	bh=1thCTcH23spAhn2EXYxroeApX1m8h0dJWW4QKu3j478=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WXSOWS+IYKiCqMsuA4K7VN2xYhBKaYho+jdpKwvHVo+GLepVhO2KORNlFSjq9NXwUgTaVx5LZCuV5dGNN/cf3ZKxMIYzETa82/W+Qi3DkOz+5JFvoXFXHo1yM9fphxga8qUMpYk2WZKQwadUBqlj8ywrOvTe13eZKC83JKBZQjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=apoviP08; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d4ddd7ac1so378065f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729579323; x=1730184123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=duciRezIS4gg7ESTgVskBEGp7JBiK6GVm+jK3y4v+lo=;
+        b=apoviP08plzx+ful4dCHoV0hIwJShFFQdNJyCh57xRoYhdEZLQejQQihFOUlnK68a4
+         Mo6tqadsPYLg5pNi9ES8dTa5flf434uElZYRLrcSGr19z+m8SsXwynBHprfngJYVy9Re
+         vYxLawiP2CKzhDHehjCxxgdV6mbUf0uFZ7armdxTh0uXy1+jRWZhDsQNEK7LQ50BbOIs
+         1PnvEsWGLEbIS4lB3eO/4d71d0hQVqazQHq9lhXR8O2xuAC5cIGBK5OkQVkGr5zKH8iT
+         F+oPmDUC5uh2UpDBGqdZef8JyvXhd5TTJIFw7J4+pEoZccvnkj5EymqR8MrzhBslgVfP
+         Z0eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729579323; x=1730184123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=duciRezIS4gg7ESTgVskBEGp7JBiK6GVm+jK3y4v+lo=;
+        b=dd7vKuKZ9WGIZObZQqcj1zX9x9UJrPTIUCrWQz3rwXTdTIMKFjtpelhNp8HVaeYh+A
+         U2piLNAz57pFQtCKx3Oyvp8KPO/YRHXt4B/Ci8k8QWM7G9EY2Y78Z4HzSbGRvTlONnD4
+         gNmLJR6LZhMeJ+kVOD5iHOmYoQbeu8YD7j6+APp4prB4O9NPhL25tyXBDePfipdJDjyJ
+         5QVoYbrfzSN7KBZ2o7iUL/508pSK/8pyQCVUTsyQDhCPFvF3VljrAPZVRcmIT9ZzAID1
+         X1WC8NEcf5M9pWEqiR6moMIAKzOj0XaH+QZ08608xrkbLg0HjeWAlwkxNJ5wEhgHbty2
+         SWQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW53Sb6fkpau/CKqndflKcHrGpvP6o96GtPbdT6w06zqKODuxQkX8HJpePQ9AqG2QzMZcurSphQq8MnYt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjLauCgawSglTawx69VYuoegpjy0NMJYc6eOvFhj+VjLAJz44I
+	AMC2iyyYL3hr6UL3rfQqUZjUf3ZppAN+Xzu1il5Q/Vljv2swYOlaiOs+DKi8vJk=
+X-Google-Smtp-Source: AGHT+IELjStkZnV8uJMVd3FU3vRg2EcfcYQAty8fNGG65QLhbFCLjs2ESgMWCjfcqZNp+pmAgmQ4KA==
+X-Received: by 2002:a05:6000:1445:b0:37e:d965:46b7 with SMTP id ffacd0b85a97d-37ed96547fdmr2222045f8f.10.1729579322571;
+        Mon, 21 Oct 2024 23:42:02 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b98asm5914655f8f.61.2024.10.21.23.42.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 23:42:02 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+Subject: [PATCH] ASoC: dt-bindings: qcom: Add SM8750 LPASS macro codecs
+Date: Tue, 22 Oct 2024 08:41:55 +0200
+Message-ID: <20241022064155.22800-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIABlJF2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAyMj3ZLM4uRM3YIU3aT8/BLd4pLEklRdY+PkNAOj1LQUY3MLJaDOgqL
- UtMwKsKnRSkFuzkqxtbUAEg/EnGoAAAA=
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
- vishalm@ti.com, sebin.francis@ti.com, d-gole@ti.com, 
- Devarsh Thakkar <devarsht@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4375;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=Q/m6JeHkE9NHRmu3I+Eg8Y5KqSdt7FPgW1BJMS1oWLA=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnF0kt6AEWHMs+jTfYRAakF2U0Uqrtn+VgopsFa
- /z4rHlhUPSJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZxdJLQAKCRD6PaqMvJYe
- 9YIiD/4uByZFHf/N4T/D0FM++g4zR+G38U4XJSs9Qmc0duIglDf/zb1tTeAhXGAzXv9YTAcX1BO
- kmPU3cx68Bq5mBjuCoq7tEwGbYHx+Dzf08V3M9lGfIzVGkFLtNNe827Za3lLmdN3w8udmgK4SUH
- ubV6G9IcfyXetf0DQBXNRCoCOZPMaaThW4nyNIprkkOAg2BckN7rKd54hDtKvZjPt38z/P8VKKg
- Skj8+OKlyu8hhbfbKXonO96YUuu34hD8+P+qHlkmeXtv2fw4j1jPEwteXCSAdYk6SIP4Uzd+uVt
- 1CO+uxFEfevMH/6I3XINKl3WKmG8V6AQFibtb6TJkGM/JYxrPMYvjeGktzTUi5r6Pdv5uhDT9ls
- cwltLmKdmnNIbnNvhpsIcqGsCqsUYrmdLMLpirmYMxTu1Ne0WRUiXj2JUIVpOcYslVzDBxzKOo5
- 473KtWB+UKENRCDKjJI2XBEB0aDLdInx8naNaene4PmuDoIORX47sTVxEwYDdedWCBKiQHILPot
- uYFwuGHW3cHmA8SWI8rZ/6Z7Y6Pk6inr6qzusR+FHRnn7inISndSKsf5YC6e7/D2ZBWytQoeJyI
- QQeRahv6E2suGlg7nloqs8WYDMFQJke9nire/rCOKqHsllmaDtzZhZXgRHds0VcTudey4rVeMTb
- eLJotADLNFX5M9A==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Transfer-Encoding: 8bit
 
-At the moment the driver sets the power state of all the PDs it creates
-to off, regardless of the actual HW state. This has two drawbacks:
+Document compatibles for Qualcomm SM8750 SoC macro digital codecs (RX,
+TX, VA and WSA), compatible with previous generation (SM8550 and
+SM8650).
 
-1) The kernel cannot disable unused PDs automatically for power saving,
-   as it thinks they are off already
-
-2) A more specific case (but perhaps applicable to other scenarios
-   also): bootloader enabled splash-screen cannot be kept on the screen.
-
-The issue in 2) is that the driver framework automatically enables the
-device's PD before calling probe() and disables it after the probe().
-This means that when the display subsystem (DSS) driver probes, but e.g.
-fails due to deferred probing, the DSS PD gets turned off and the driver
-cannot do anything to affect that.
-
-Solving the 2) requires more changes to actually keep the PD on during
-the boot, but a prerequisite for it is to have the correct power state
-for the PD.
-
-The downside with this patch is that it takes time to call the 'is_on'
-op, and we need to call it for each PD. In my tests with AM62 SK, using
-defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
-feature is valuable, so in my opinion it's worth it.
-
-The performance could probably be improved with a new firmware API which
-returns the power states of all the PDs.
-
-There's also a related HW issue at play here: if the DSS IP is enabled
-and active, and its PD is turned off without first disabling the DSS
-display outputs, the DSS IP will hang and causes the kernel to halt if
-and when the DSS driver accesses the DSS registers the next time.
-
-With the current upstream kernel, with this patch applied, this means
-that if the bootloader enables the display, and the DSS driver is
-compiled as a module, the kernel will at some point disable unused PDs,
-including the DSS PD. When the DSS module is later loaded, it will hang
-the kernel.
-
-The same issue is already there, even without this patch, as the DSS
-driver may hit deferred probing, which causes the PD to be turned off,
-and leading to kernel halt when the DSS driver is probed again. This
-issue has been made quite rare with some arrangements in the DSS
-driver's probe, but it's still there.
-
-So, because of the DSS hang issues, I think this patch is still an RFC.
-Hopefully we can sort out all the issues, but this patch (or similar)
-will be part of the solution so I'd like to get some acks/nacks/comments
-for this. Also, this change might have side effects to other devices
-too, if the drivers expect the PD to be on, so testing is needed.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/pmdomain/ti/ti_sci_pm_domains.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-index 1510d5ddae3d..14c51a395d7e 100644
---- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-+++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-@@ -126,6 +126,23 @@ static bool ti_sci_pm_idx_exists(struct ti_sci_genpd_provider *pd_provider, u32
- 	return false;
- }
- 
-+static bool ti_sci_pm_pd_is_on(struct ti_sci_genpd_provider *pd_provider,
-+			       int pd_idx)
-+{
-+	bool is_on;
-+	int ret;
-+
-+	if (!pd_provider->ti_sci->ops.dev_ops.is_on)
-+		return false;
-+
-+	ret = pd_provider->ti_sci->ops.dev_ops.is_on(pd_provider->ti_sci,
-+						     pd_idx, NULL, &is_on);
-+	if (ret)
-+		return false;
-+
-+	return is_on;
-+}
-+
- static int ti_sci_pm_domain_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -161,6 +178,8 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
- 				break;
- 
- 			if (args.args_count >= 1 && args.np == dev->of_node) {
-+				bool is_on;
-+
- 				if (args.args[0] > max_id) {
- 					max_id = args.args[0];
- 				} else {
-@@ -189,7 +208,10 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
- 				pd->idx = args.args[0];
- 				pd->parent = pd_provider;
- 
--				pm_genpd_init(&pd->pd, NULL, true);
-+				is_on = ti_sci_pm_pd_is_on(pd_provider,
-+							   pd->idx);
-+
-+				pm_genpd_init(&pd->pd, NULL, !is_on);
- 
- 				list_add(&pd->node, &pd_provider->pd_list);
- 			}
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20241022-tisci-pd-boot-state-33cf02efd378
 
-Best regards,
+Cc: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml | 1 +
+ Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml | 1 +
+ Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml | 1 +
+ .../devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml          | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
+index b8540b30741e..92f95eb74b19 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
+@@ -21,6 +21,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,sm8650-lpass-rx-macro
++              - qcom,sm8750-lpass-rx-macro
+               - qcom,x1e80100-lpass-rx-macro
+           - const: qcom,sm8550-lpass-rx-macro
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
+index 3e2ae16c6aba..914798a89878 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
+@@ -22,6 +22,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,sm8650-lpass-tx-macro
++              - qcom,sm8750-lpass-tx-macro
+               - qcom,x1e80100-lpass-tx-macro
+           - const: qcom,sm8550-lpass-tx-macro
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
+index 6b483fa3c428..f41deaa6f4df 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
+@@ -21,6 +21,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,sm8650-lpass-va-macro
++              - qcom,sm8750-lpass-va-macro
+               - qcom,x1e80100-lpass-va-macro
+           - const: qcom,sm8550-lpass-va-macro
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
+index 6f5644a89feb..9082e363c709 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
+@@ -21,6 +21,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,sm8650-lpass-wsa-macro
++              - qcom,sm8750-lpass-wsa-macro
+               - qcom,x1e80100-lpass-wsa-macro
+           - const: qcom,sm8550-lpass-wsa-macro
+ 
 -- 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+2.43.0
 
 
