@@ -1,250 +1,136 @@
-Return-Path: <linux-kernel+bounces-375894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4111D9A9C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218789A9C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 10:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A9E283BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13931F23626
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 08:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579C16F8E7;
-	Tue, 22 Oct 2024 08:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93959175D26;
+	Tue, 22 Oct 2024 08:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDn73JS1"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1j4v1zMl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8MCYbWCx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325CE186E2F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 08:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA0E1487F6;
+	Tue, 22 Oct 2024 08:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585770; cv=none; b=ekseuc0yJ/qg+PimhZVWbZFG0Lbp1hWaAJYxKRnQfIlQn/WHOm7N/wmfJq4F6YJiF7/WzfPG1tK8EWmNPdlZLyBVj1W5DQlAMr65s/BFNnGH5uyWbUchttJAa5SGBNWDSVzJ70XFM+gq2ajnp+D4CFRfdBoCkTF0K4WKVPoEXe0=
+	t=1729585764; cv=none; b=dD9K1jUKBMa5TdsiIfVDSEoDpInTmYqnfc9LDy1u8PYQLL6exRumgmCxzq21Ybo1NaFM6ocWqunZiEsb++qs72RYhFI1hmpOz9XFplOttOBFfTI6rHhkZV4e1SwlnKdzOwhy5iFD0GE4jPJtBqK8ew8FBEX3Pb0pDBBEwyYPX+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585770; c=relaxed/simple;
-	bh=91JYyvnl+Fdi6fkf5FSlb8LxDeQ2IrQc7l6lvJQCgto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NyknxxS07s5CgSgM/p3dctIKB7C5SjRbVew4SNV5759tl5zfn/3cO/+cpvzU7nSpohe9QpDulUZpYaxv1kZX563x7khyiaWSQodShfE5xRrD1PCimIbKANuyBvXsbFs1GsKfiAo75gX7pj1O+yFljJXwKM+EoaZQh5bcP9MT5hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDn73JS1; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2e3e4f65dso58446857b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 01:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729585767; x=1730190567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kLQbdGQU/v5ri2hhQLOr8G4Wt+hC9tXpUHCmYp6zu9E=;
-        b=bDn73JS1EtBKgzlJeBQy5CCN1c7t6L/wCYlPyyKORbtRp0mwbvBstkNX0ZFt6BHf65
-         1xPZ/ZFKGnE/ijpOuHdNyNoTuMLjxw3iC3jjaIh4AC9HCgGyrqWias73WeIKaTb/VDxm
-         RH0paKJaPmdWH32FlRpOBhparSZhaenb3EVxJLT0L8zuMspRdV0SUdeQw6OfjrNjvUfe
-         n7iemOKlWt6BZtbvT8bFigZrOEUfGbNS48zkLjuk0RPidimy0pBZRt3jEAFgwfeIr50f
-         0LdHnaLhxRnubMLl8vAGty/0T71JKl5LR/lRXt9E6cNhAXf/0QYxOaZTGTZHrPTAbaYM
-         9+4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729585767; x=1730190567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kLQbdGQU/v5ri2hhQLOr8G4Wt+hC9tXpUHCmYp6zu9E=;
-        b=qcl21veN/Mt14g20WrmdJHpw3GHt8Op8+6FTRI5gO/MB+RafksuavwWNk38aLGj/oL
-         9xCqHgPzDy0mqmI+BRVwVSLRXAHYKsNXQYBGBjnX53NA+pk4Jt7qhotn6RjcHCMybGj4
-         2JFNRyWFAlSoRxw2LQeJ26/iSI+yj/nuMi9GwhcDCnhG3F3trmVYcWPho2/T3sfzjZN8
-         YsppBxANhCOTo+4e6la+keygia5E5TvXtMrAr/oSYAWqIRhKzwdzbomO7yG8ewYtPIym
-         i+ySZeYvonFGGGz26P/5w4EwP7lsOX3I7C1Olnm/knxAxS6Tns7ISYg1ZZeu7FGcEh9T
-         BhQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViJMp+MZT78OQzx4ixbTP3weE6k6BYWulXIW8vmnQOLus7UqbKWNUXZ94Ab485V82JhNZrjgZB8uQWnz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJwvl7R0HG9b4iE+J1VDkXkfZm3XN0aSquJ8pD3dZjQT97iOqe
-	/up34cRGeHmlP2YAIz7ZM+lXTY5rp/+tH2JdDwTg08uP5VGI5q91C1JmLCd2RhAkSfglXE3dtRj
-	6VLheRiEr2Vhbidn+Pz+Vd9+aqRgmQOM7+vXbt1wnjE972O87SoQ=
-X-Google-Smtp-Source: AGHT+IG9Q3YEuJr8VKnJyP4ALVy/0ok/SYBCMzoi2I9bl8cdDzUPuqepo05ucF6AILKeMjf8mXd/KxO/YrS7ZIa3T0w=
-X-Received: by 2002:a05:690c:4907:b0:6e5:de2d:39e0 with SMTP id
- 00721157ae682-6e5de2d5659mr108655877b3.42.1729585767136; Tue, 22 Oct 2024
- 01:29:27 -0700 (PDT)
+	s=arc-20240116; t=1729585764; c=relaxed/simple;
+	bh=HFosTYhyKr+C+KLkXWCYor4oOAgCwvU/aasxydfeY9s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LtLHt2rELx6ZxnIVo0nUy08R+4+xD11Iu858xXD0X4FIwioM8EiVuw85eF5nb4qZHI1wZpFUvthWvVq6Jd5RcgbiOvgdJwAhFY0sEFykS2oV+gICdyFKdh9QZaM9XwLR/8SvNNjDzw+lJBZ+2ZjG6g099I6/Xn2Jg9qQxM5QrtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1j4v1zMl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8MCYbWCx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729585758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FUaoNmgtEABq6PFpi80zajqfsG/YF1uho79gaK6YFOE=;
+	b=1j4v1zMluN5LxCrABzknAZ3WGgIW/x1m3aAL97biAdN48M/0sabhTnAZXCjt3IpxkOhzOZ
+	4lRU9tWP2x27tLz5YfAfx2njUEcwbnASQc9wylOKqRV8GT0E+4KiSEkNXukU7NXhfnMG11
+	gQs4Zmm9zM7vZtUxJmlPl5C7W3mydpBz9+wQt2G7rFs/1gEcSykHdfGCSyH99swiO317mK
+	TnEAgJLC6wv823Ol9aNMx+oYF80sHWNAgIZWBZrXjatZMRRfgwb9qSreXTCOdb289NVBVm
+	6seMvF5dADRFOUPvr1gALXcjE8vjQbzK1pJ8qNJtbxyRso5PdzvbG6aM9SZQMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729585758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FUaoNmgtEABq6PFpi80zajqfsG/YF1uho79gaK6YFOE=;
+	b=8MCYbWCxL1cLd2QpHH58FCEptlpHqIc4p8X11Ooh2WgYVaigyykOxThbxJ8trr1jwf0nNq
+	+6sbJGkBhWTVoECA==
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Woojung Huh
+ <woojung.huh@microchip.com>, "maintainer:MICROCHIP KSZ SERIES ETHERNET
+ SWITCH DRIVER" <UNGLinuxDriver@microchip.com>, =?utf-8?Q?Cl=C3=A9ment_L?=
+ =?utf-8?Q?=C3=A9ger?=
+ <clement.leger@bootlin.com>, George McCollister
+ <george.mccollister@gmail.com>, Simon Horman <horms@kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, "open list:RENESAS RZ/N1 A5PSW SWITCH
+ DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: dsa: use ethtool string helpers
+In-Reply-To: <20241021235535.603253-1-rosenp@gmail.com>
+References: <20241021235535.603253-1-rosenp@gmail.com>
+Date: Tue, 22 Oct 2024 10:29:16 +0200
+Message-ID: <87bjzcmtgj.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014060130.1162629-1-haibo.chen@nxp.com> <20241014060130.1162629-3-haibo.chen@nxp.com>
- <CAPDyKFr37wLYxdFJ-Lgbq7PbWyiQz+CuwMxwgeeP3QpMvdyjqg@mail.gmail.com>
- <DU0PR04MB949604108991809742E83E5D90402@DU0PR04MB9496.eurprd04.prod.outlook.com>
- <DU0PR04MB9496801A4571142F914BBF4990402@DU0PR04MB9496.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9496801A4571142F914BBF4990402@DU0PR04MB9496.eurprd04.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 22 Oct 2024 10:28:49 +0200
-Message-ID: <CAPDyKFpectKosHEU7cm7uNCNwHZaT0XCSn674dGtu8Y+hmf_Pw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the system PM logic
-To: Bough Chen <haibo.chen@nxp.com>
-Cc: "adrian.hunter@intel.com" <adrian.hunter@intel.com>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, dl-S32 <S32@nxp.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Oct 2024 at 05:20, Bough Chen <haibo.chen@nxp.com> wrote:
+On Mon Oct 21 2024, Rosen Penev wrote:
+> These are the preferred way to copy ethtool strings.
 >
-> > -----Original Message-----
-> > From: Bough Chen
-> > Sent: 2024=E5=B9=B410=E6=9C=8818=E6=97=A5 9:23
-> > To: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: adrian.hunter@intel.com; linux-mmc@vger.kernel.org; imx@lists.linux=
-.dev;
-> > shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
-> > festevam@gmail.com; dl-S32 <S32@nxp.com>;
-> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: RE: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the syste=
-m PM
-> > logic
-> >
-> > > -----Original Message-----
-> > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Sent: 2024=E5=B9=B410=E6=9C=8817=E6=97=A5 21:07
-> > > To: Bough Chen <haibo.chen@nxp.com>
-> > > Cc: adrian.hunter@intel.com; linux-mmc@vger.kernel.org;
-> > > imx@lists.linux.dev; shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > > kernel@pengutronix.de; festevam@gmail.com; dl-S32 <S32@nxp.com>;
-> > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the
-> > > system PM logic
-> > >
-> > > On Mon, 14 Oct 2024 at 08:00, <haibo.chen@nxp.com> wrote:
-> > > >
-> > > > From: Haibo Chen <haibo.chen@nxp.com>
-> > > >
-> > > > Current suspend/resume logic has one issue. in suspend, will config
-> > > > register when call sdhci_suspend_host(), but at this time, can't
-> > > > guarantee host in runtime resume state. if not, the per clock is
-> > > > gate off, access register will hung.
-> > > >
-> > > > Now use pm_runtime_force_suspend/resume() in
-> > NOIRQ_SYSTEM_SLEEP_PM,
-> > > > add in NOIRQ stage can cover SDIO wakeup feature, because in
-> > > > interrupt handler, there is register access, need the per clock on.
-> > > >
-> > > > In sdhci_esdhc_suspend/sdhci_esdhc_resume, remove
-> > > > sdhci_suspend_host() and sdhci_resume_host(), all are handled in
-> > > > runtime PM callbacks except the wakeup irq setting.
-> > > >
-> > > > Remove pinctrl_pm_select_default_state() in sdhci_esdhc_resume,
-> > > > because
-> > > > pm_runtime_force_resume() already config the pinctrl state accordin=
-g
-> > > > to ios timing, and here config the default pinctrl state again is
-> > > > wrong for
-> > > > SDIO3.0 device if it keep power in suspend.
-> > >
-> > > I had a look at the code - and yes, there are certainly several
-> > > problems with PM support in this driver.
-> > >
-> > > >
-> > > > Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> > > > ---
-> > > >  drivers/mmc/host/sdhci-esdhc-imx.c | 39
-> > > > +++++++++++++++---------------
-> > > >  1 file changed, 19 insertions(+), 20 deletions(-)
-> > > >
-> > > > diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
-> > > > b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > > > index c7582ad45123..18febfeb60cf 100644
-> > > > --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> > > > +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > > > @@ -1871,11 +1871,13 @@ static int sdhci_esdhc_suspend(struct devic=
-e
-> > > *dev)
-> > > >         struct pltfm_imx_data *imx_data =3D sdhci_pltfm_priv(pltfm_=
-host);
-> > > >         int ret;
-> > > >
-> > > > -       if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> > > > -               ret =3D cqhci_suspend(host->mmc);
-> > > > -               if (ret)
-> > > > -                       return ret;
-> > > > -       }
-> > > > +       /*
-> > > > +        * Switch to runtime resume for two reasons:
-> > > > +        * 1, there is register access, so need to make sure gate o=
-n ipg
-> > clock.
-> > >
-> > > You are right that we need to call pm_runtime_get_sync() for this rea=
-son.
-> > >
-> > > However, the real question is rather; Under what circumstances do we
-> > > really need to make a register access beyond this point?
-> > >
-> > > If the device is already runtime suspended, I am sure we could just
-> > > leave it in that state without having to touch any of its registers.
-> > >
-> > > As I understand it, there are mainly two reasons why the device may b=
-e
-> > > runtime resumed at this point:
-> > > *) The runtime PM usage count has been bumped in
-> > > sdhci_enable_sdio_irq(), since the SDIO irqs are enabled and it's
-> > > likely that we will configure them for system wakeup too.
-> > > *) The device has been used, but nothing really prevents it from bein=
-g
-> > > put into a low power state via the ->runtime_suspend() callback.
-> > >
-> > > > +        * 2, make sure the pm_runtime_force_suspend() in NOIRQ
-> > > > + stage
-> > > really
-> > > > +        *    invoke its ->runtime_suspend callback.
-> > > > +        */
-> > >
-> > > Rather than using the *noirq-callbacks, we should be able to call
-> > > pm_runtime_force_suspend() from sdhci_esdhc_suspend(). And vice versa
-> > > for sdhci_esdhc_resume().
-> > >
-> > > Although, according to my earlier comment above, we also need to take
-> > > into account the SDIO irq. If it's being enabled for system wakeup, w=
-e
-> > > must not put the controller into low power mode by calling
-> > > pm_runtime_force_suspend(), otherwise we will not be able to deliver =
-the
-> > wakeup, right?
-> >
-> > Thanks for your careful review!
-> > Yes, I agree.
+> Avoids incrementing pointers all over the place.
 >
-> Hi Ulf,
->
-> Sorry, I maybe give the wrong answer.
->
-> I double check the IP, usdhc can support sdio irq wakeup even when usdhc =
-clock gate off.
-
-Okay, so there is some out-band logic that can manage the SDIO irq,
-even when the controller has been runtime suspended?
-
-In these cases, we use dev_pm_set_dedicated_wake_irq* to manage that
-wake-irq. There are other mmc host drivers that implement support for
-this too.
-
-If you are referring to solely clock gating, that is not going to
-work. A runtime suspended controller is not supposed to deliver
-in-band irqs.
-
-> So to save power, need to call pm_runtime_force_suspend() to gate off the=
- clock when enable sdio irq for system wakeup.
-> This is the main reason I involve pm_runtime_force_suspend in noirq stage=
-, because in sdhci_irq, there is register access, need gate on clock.
-
-In summary, to support the out-band irq as a wakeup for runtime and
-system suspend, dev_pm_set_dedicated_wake_irq* should be used.
-
-To move things forward, I suggest you start simple and add support for
-the out-band irq as a step on top.
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
 [...]
 
-Kind regards
-Uffe
+> diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hir=
+schmann/hellcreek.c
+> index d798f17cf7ea..283ec5a6e23c 100644
+> --- a/drivers/net/dsa/hirschmann/hellcreek.c
+> +++ b/drivers/net/dsa/hirschmann/hellcreek.c
+> @@ -294,12 +294,8 @@ static void hellcreek_get_strings(struct dsa_switch =
+*ds, int port,
+>  {
+>  	int i;
+>=20=20
+> -	for (i =3D 0; i < ARRAY_SIZE(hellcreek_counter); ++i) {
+> -		const struct hellcreek_counter *counter =3D &hellcreek_counter[i];
+> -
+> -		strscpy(data + i * ETH_GSTRING_LEN,
+> -			counter->name, ETH_GSTRING_LEN);
+> -	}
+> +	for (i =3D 0; i < ARRAY_SIZE(hellcreek_counter); ++i)
+> +		ethtool_puts(&data, hellcreek_counter[i].name);
+>  }
+
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de> # hellcreek
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmcXYlwTHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzghZPD/94PqWHwk/0A8LkS9wnc6YHwk7itehK
+omHBEh+6eyV66ftKXbI3rdf2t/KZBPicy9mQynZNh1tMMwWKJBgM4q7abIlCm6vk
+M3fdYHYoPz2OLq7j2T+Ca0jFYDrILPDivDUYKpPBK7iTd+8bx/83yUoS+vYOumZf
+Q6JyvpAvHPnDfI9cKfT2Y7C0ksU/+seSBmq+zg6lxJ9m8uO+OvJzsyrmRjHEO0Dh
+644kSWN1MuovY7goQBvMkoW0WnfOunXMsLD8qzPz2EakmCkQMAAwxN4I+tFoL62D
+3FGq4bmCBINav0MGUAFK8hEW+dmhWhzRQmGEYr9fEyhYunVDfNJY/hC/owDnjvx6
+nQahMIapVpTturT4huLYcWdeT0HgP9hqOv/PFva0Ir/auQziTSVxEqp9GbG++yh0
+3LWQJAeUQwZYPHDiApicAI13RJIc876AvICBGhCNZeHC0U4iLokHpQTV+mBiU/32
+MX7x3p8Gxs8i+G3NQEOgx04gUmNbh2bLh3rJhFc3PJIg4nlzh0kYPk3UKbqQDJp4
+3b5biLD6aQPPMDyOsAK/BoXoN3Rs/8+lsSra6knn1OBXtJWvVw0NKbAiZFQXY8aS
+J4F9rJtZ0M9bk2xktt0/P9nvjbeHcY4fxXjerO+OLQdKvax8g8o1JKdVy7BJBAPp
+sXzABhmEtcUdFg==
+=biYy
+-----END PGP SIGNATURE-----
+--=-=-=--
 
