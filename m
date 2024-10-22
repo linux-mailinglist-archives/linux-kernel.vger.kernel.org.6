@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-376602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-376603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9CC9AB3AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801719AB3AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 18:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8751F22954
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:18:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4207128580B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 16:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872341B14FA;
-	Tue, 22 Oct 2024 16:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68911B1D61;
+	Tue, 22 Oct 2024 16:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhrT3cZZ"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="CeS/wrvB"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD0E136345
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A734C1A01D4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 16:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729613925; cv=none; b=QkCtvPltf8H8BZxhc3Mv1mk/DYxXCbI9svod0BMMniGtVX2to1wHBmiZtE9au1nCDdlFw8J5ZjLh7/Mbn9uu6Q1SkWAZDn390+U0bRvV8FOS/HUMf6AnsFODpWWNPYgxIqRaemPk7VhpJGvk7+Zec+7zOxVRnl3w6+LbR170QAc=
+	t=1729613935; cv=none; b=j5owBTJffjxol/NxHWJBwGPnQzZdF60JmbhH8Oi0GgfBufqF/ahyWoYSMS+FtH6vFNf4Sj7v3nLh7fnOdcUe9vCUyJFOTkFaYVq6NlGVpKBTWHrbdsmKR2GPIN+1PEQMws99P6+fCLr0HMD0j98E0YWn4s2LYzhFz0IBonriDow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729613925; c=relaxed/simple;
-	bh=5DF4+/ZWmhv5I5biiLVNcoyN7Q3dxQulKY9UzYfUC1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sztr+5m4WZ+N/0NxiceYbiYn48NINn+Kw/gSIOa23dIAKg5OgtfcSc851XG1qYanv3S4Ji4y/4h3Fg88pzrN2GDSiKPAMsiypfT5hEV6r1npgycSUbXk6X0H9iOJxmC4rPNaTbV27zw4tDFllC+mxH2aanKFr75k69hSVX86i+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhrT3cZZ; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so4164772b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:18:43 -0700 (PDT)
+	s=arc-20240116; t=1729613935; c=relaxed/simple;
+	bh=oBId0kI6eEzRj3jTKyuBQgHhTLTvTJesdqczSyP4k4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sMEZ27jO2uZHII2JSbDZzTAcabfpBkwlHGAbl6vHfu2fMTv9ch9RHdU0BS7TKqqrTlM1LSHFUsxN9bBGBKHf6yDbErBKAZAnM7xmUGQltNyylTyN0Pc2/ajiWkPua4QTW9DWEZGQ0YA7JCh95cuMs2wM8zpPRJkc23Cd+PlE1uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=CeS/wrvB; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e28fea0f5b8so5508603276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 09:18:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729613923; x=1730218723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSXH4Gm2YkCG5jqOLZfgl1YXuWNP9Yfv+roVsfCw4LI=;
-        b=WhrT3cZZMsVwB2ZzBbcZUb47gDVYPApyLCF4T23rH3/0sRo6MgAgooprThSiyEkc0I
-         sAPkpRMMOT3Rn/6HBftY7ARscaqlCqsKFDE5A5Caj4rIvfAekmRVou1bP954dXcr/h96
-         MY+a2WbZ05pnUfi+buekdAD5IkbIWpgUC8GStPj2gg5hWprGyk2Vtt/dpoURSaHf9JRm
-         9H6nhND7ariWvI95d0u8h64K91cVrLlK3Bq3tZpsisDDibXG6Vplvk/8XW6PHpxYGsWB
-         bS2Du3ykHhMn8eyKLrD8nhoL3ItQUNMblO5jesmR6JfBjao+Lk7ymnSMP7Rq9osLE+8U
-         dXcg==
+        d=9elements.com; s=google; t=1729613932; x=1730218732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r81rhV0o+emtYbyrljevH5DCZbwXNnbaI/GO5rjGZ2Q=;
+        b=CeS/wrvBOodR3YC3MBtf2X+mLcwb+KwivDl3lI8mCS6qDS4UKCnISlRsu4E1NZUGqo
+         xPZb9FXaWiMxqpnAeKtyfz/rFEXp0pYkT7YT+fdQS+7i+/ZgzURlnQZYd2s3aAI8EnIM
+         JBxlLEbSgXMH942OHtPyfhp/8+Y2SrvhlGHM97FU4FxSsXdSniTPLH1b4eXtkIkiGmNM
+         KukjD2PbP7xm3RVWbHQldlxX/M4YahuMoyPxrhnR/+wOsEs9E/H41AlnNTs4y9nVRcpg
+         2jTVuW+gm6aad9LDKP3YxsqSQJoaUEWFpEXooJSLwtpSOoFATxEZoaXQ0mnpIBCGNR2n
+         MhGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729613923; x=1730218723;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DSXH4Gm2YkCG5jqOLZfgl1YXuWNP9Yfv+roVsfCw4LI=;
-        b=Ebp1pWBkFmLf6L3BHKzJVm/l9sA9t//wSG2Eu05QWj/5lUu3+jteZPNCARF8bCa0qX
-         BFN+IFWsj+zcPxzlWd9NiHMlug25xgPVXdxdIXjM1iOxphlkMC0LK3F3tZczdwjpW48V
-         IT4q0yeN7thBFrTqhNJOGmncU1q+blBF5Fr4/H5MXURMZVBPNkqj9My5imY1/zkihJjM
-         98ZSOxhqICV4ChXA8QN1hy4Qn0wybOfWVmUmRxAdW1jSjrpDp/5NCdSJL5opdHuuWvEr
-         ywFEGvAi81zow4mBFk7hQFAV3liXD0hIZaf3lMsOWhaExZoOrSi+Z1kZoA89woABoyfF
-         MANw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ7leLvMilr8wC5DDWc0yptzQCixgF9t7okhNWdocAm5+iICfNSneWQn3BQlmwTqxCry5WB8MrGEXhCBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBxEqpWFtVxon/4uGTFj5Wrerq8620chquE+z/Ar3tiDPMNd+u
-	dU9mIA92Y/sA/+Gr2zMQ993kACOrKYLcuc1HwIMCHp4v0rup/qcm
-X-Google-Smtp-Source: AGHT+IHQyzAjc0meceXpnMSob+rxgdiAsthihq0A0o40myz27LC+W3+w2lz2hV72240cPH71b29JYA==
-X-Received: by 2002:a05:6a21:350d:b0:1d9:ea5:19da with SMTP id adf61e73a8af0-1d96b6b6ed5mr3806414637.17.1729613922722;
-        Tue, 22 Oct 2024 09:18:42 -0700 (PDT)
-Received: from localhost (134.90.125.34.bc.googleusercontent.com. [34.125.90.134])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec14088fesm4894285b3a.200.2024.10.22.09.18.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 09:18:42 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: boris.brezillon@collabora.com,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Chunming Zhou <david1.zhou@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: faith.ekstrand@collabora.com
-Subject: [PATCH v2] drm/syncobj: ensure progress for syncobj queries
-Date: Tue, 22 Oct 2024 09:18:24 -0700
-Message-ID: <20241022161825.228278-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+        d=1e100.net; s=20230601; t=1729613932; x=1730218732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r81rhV0o+emtYbyrljevH5DCZbwXNnbaI/GO5rjGZ2Q=;
+        b=A1pDBt4auKrvJ0C91rjf7DtlVfZ9VR63y90FtvVUtal3dR2mdcu97YKWa2LfMC3UwE
+         1EmggpSpMa63A1jOPl5e/zsRkvLwb8lvbHzsmxkPIZ+nTdEbPrqWLMC+laHhx3guJvZZ
+         yCuENLX+WFnKqaG/JuIE7f5cHg34NPoXShZHO/jnNlAmAWvgFZTe+EpORSJpA1ZfwUy3
+         fIohLIjGMghM8H1nOM5vTCTp97ShqHJ+MIUWCGWbWYuBt2/+lXxIEP+WeZcgEm1P5xiA
+         9fH6YfqRGZfi7BS2gYmF7pNp/5OaAI3lh1hFdf+OP8COgWpyx16Bga8r55phMmftW88Y
+         jimw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGfis5Eiws1rAgzvXIcF3ERuPyRSbdKmH/gX8IbBP30LHpoIJwNd78xM2RhGewGCr2Nuf1y1YXp5X2ojs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+aggyG5xyFD/pH4g6oDpL5n9BywnuPFoYKlZzsgPpj2TPwVV
+	RPjDV3L9s0jf5HTQ1lpk8gu4mNKUi7K1gz0c30u8FAHo7iwIyQ+/cMw9uX0mAPXN/1C3VLiiU43
+	YiVrKYYYbAKQynm0Lois+MiLDzCPM1EwACi1pUQ==
+X-Google-Smtp-Source: AGHT+IH0UpfHIQhpnW5gYZvm6J/H5tiIErVcZHLNG/AaqKaTsThrGzBI/QVNP98Z178HLwL6pTc9ogjN74jcT5gby3I=
+X-Received: by 2002:a05:6902:20c3:b0:e2b:a26c:b800 with SMTP id
+ 3f1490d57ef6-e2bb130aa1dmr13596162276.20.1729613932534; Tue, 22 Oct 2024
+ 09:18:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241016060523.888804-1-patrick.rudolph@9elements.com>
+ <20241016060523.888804-25-patrick.rudolph@9elements.com> <CAFLszTh4Z8p-8d8ASrpUTnNdDhmijDm8fcct-wDWR1nRFxs5JA@mail.gmail.com>
+ <CALNFmy1=R4vp6S3H3a_3HTDjGufDxu+Heo-vk=GRjb0aj0z0Dg@mail.gmail.com>
+ <CAFLszTjTA98Re5rWXHpMQZADXU7uLbCayxNTtugYRxHZaFUL_w@mail.gmail.com>
+ <CALeDE9P04s7uX0Egq+seDbHyn_QXgz+NWPHtJ2W1CGKtATPLsw@mail.gmail.com> <CAFLszTgE+fjXGXFvJ0KWdw=q8CP_53kfWq0nrGZzJzyHJhdHFA@mail.gmail.com>
+In-Reply-To: <CAFLszTgE+fjXGXFvJ0KWdw=q8CP_53kfWq0nrGZzJzyHJhdHFA@mail.gmail.com>
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Date: Tue, 22 Oct 2024 18:18:41 +0200
+Message-ID: <CALNFmy1P-K6j1q9dm92iJ87h9WnjnvnzwhC1a3jaugahFhv6ZQ@mail.gmail.com>
+Subject: Re: [PATCH v9 24/37] common: Enable BLOBLIST_TABLES on arm
+To: Simon Glass <sjg@chromium.org>
+Cc: Peter Robinson <pbrobinson@gmail.com>, u-boot@lists.denx.de, 
+	linux-kernel@vger.kernel.org, Tom Rini <trini@konsulko.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Userspace might poll a syncobj with the query ioctl.  Call
-dma_fence_enable_sw_signaling to ensure dma_fence_is_signaled returns
-true in finite time.
+Hi Simon,
+On Tue, Oct 22, 2024 at 2:16=E2=80=AFPM Simon Glass <sjg@chromium.org> wrot=
+e:
+>
+> Hi Peter,
+>
+> On Mon, 21 Oct 2024 at 19:57, Peter Robinson <pbrobinson@gmail.com> wrote=
+:
+> >
+> > > > > > Allow to use BLOBLIST_TABLES on arm to store ACPI or other tabl=
+es.
+> > > > > >
+> > > > > > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> > > > > > Cc: Tom Rini <trini@konsulko.com>
+> > > > > > ---
+> > > > > > Changelog v9:
+> > > > > > - default to BLOBLIST_ALLOC on arm
+> > > > > > - Move default for BLOBLIST_SIZE_RELOC up
+> > > > > > ---
+> > > > > >  common/Kconfig |  2 ++
+> > > > > >  lib/Kconfig    | 15 +++++++++------
+> > > > > >  2 files changed, 11 insertions(+), 6 deletions(-)
+> > > > > >
+> > > > >
+> > > > > This is fine, but please disable it for snow since it needs the F=
+IXED
+> > > > > option for now.
+> > > >
+> > > > I cannot follow. What needs the FIXED option and what to disable?
+> > > > I run this patch on the CI and test_py_sandbox tests are still work=
+ing.
+> > >
+> > > I mean that snow cannot use BLOBLIST_ALLOC and needs BLOBLIST_FIXED s=
+o
+> > > if you make ALLOC the default you need to change the default for snow=
+.
+> >
+> > Simon by snow do you mean the device (configs/snow_defconfig) snow, I
+> > think Patrick doesn't know you're referring to what I believe to be a
+> > device config.
+>
+> Oh OK, yes that is what I mean. If it is too confusing I can send a
+> fix-up patch after this series is applied.
+>
+Oh OK, got it.
+I wasn't aware that BLOBLIST is already used on some ARM devices.
+I'll send an updated version.
+Is it possible to migrate those to BLOBLIST_ALLOC? Any reason they
+would use a fixed address?
 
-Fixes: 27b575a9aa2f ("drm/syncobj: add timeline payload query ioctl v6")
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-
----
-
-v2: add Signed-off-by and Fixes tags
----
- drivers/gpu/drm/drm_syncobj.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-index 4fcfc0b9b386c..58c5593c897a2 100644
---- a/drivers/gpu/drm/drm_syncobj.c
-+++ b/drivers/gpu/drm/drm_syncobj.c
-@@ -1689,6 +1689,9 @@ int drm_syncobj_query_ioctl(struct drm_device *dev, void *data,
- 			    DRM_SYNCOBJ_QUERY_FLAGS_LAST_SUBMITTED) {
- 				point = fence->seqno;
- 			} else {
-+				/* ensure forward progress */
-+				dma_fence_enable_sw_signaling(fence);
-+
- 				dma_fence_chain_for_each(iter, fence) {
- 					if (iter->context != fence->context) {
- 						dma_fence_put(iter);
--- 
-2.47.0.105.g07ac214952-goog
-
+> Regards,
+> SImon
 
