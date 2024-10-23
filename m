@@ -1,185 +1,194 @@
-Return-Path: <linux-kernel+bounces-377546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D860B9AC04C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:32:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D45F9AC05E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E724CB23E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:32:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0148B24399
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3A9156883;
-	Wed, 23 Oct 2024 07:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80304154457;
+	Wed, 23 Oct 2024 07:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rnzPosid"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="juK//rR2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F19F156644
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB673451;
+	Wed, 23 Oct 2024 07:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668736; cv=none; b=i4KbmVBab/8CW+OElArK06K8ljjK1grYeWCdcmN0XbSFuuuzhXHfHFyBnb7zDo7UY1qNWFDmS1YU11o+o7wOSk8+Vh87ka63A8k3RRSsHg7Mi9YdU+Hu4pXmqyZM3t22r9SiHA494led3Dq9MQ5XKnHjIKj7FnpAAi17UK0wmpc=
+	t=1729668814; cv=none; b=G3tHnI3zHonIUeoHEV7dwBga2NgM5fs9wP+S9eaATf8A4/FJjXQg75cHrjgOVOxv2p5TwImtj9LH+swql5h5eec2nT+eOpBwGJl/y5002B62pgsJV1WmnUz5MePLF2IEYD+Uw0e+KqCxb+XwLOH1zlKN2PYWRLqf0Ls9oaCLJDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668736; c=relaxed/simple;
-	bh=UG6ihVAcJ5pYreWh3xW3jBvz7qOrrWyU52nZm6ikEK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fmq1R4CKmWNCirshG3EfgW/hp5ma70ruhL5rxwaHel4EbRjlxNRfUFljLvSCN9FrvUNR59qWXeYbmdLOIM8YMpzi+69aglPYSUm2euQKL3d7IR35RplbZU9fjvWa6+HdZuIDYzyvYMsrJDxhuT3t0FW39qpRA53yb5qev36S7KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rnzPosid; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso5121337f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729668732; x=1730273532; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ByOuflTVuw6FqNFCU6UPV6W286vup+uWGJ9ZYP4mkM=;
-        b=rnzPosidsZfkKP9K0Lvs+r9sC6NLuAmZf0Bz99r3WvVrlT3tJt1Um0S/JhhOL2DBmi
-         UfpsTzFMXricAvlVtD95Ra5TetnGrGG9nuQqO70H4idTM3rTtqe8LN8gvYex/qa5b36M
-         6zuOEWgrzeYOWvLDJmeBp4O9mfK8dl9JebGzIj+cbg4jQ7zwjoRVF7hd6bEL0dlex+mp
-         +CAGNr5eDHPuJBRwnV1Y9lFuFImrgXK07ZJiEGw/AOyKUp4mAN1k6FAehreau6PQG24K
-         jbpe12thcixDm9hTbxLc4DgQqJdZ7iEUciDfabUXTPZURSGhZWS7JELA8pOZyagWMRNC
-         eQrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729668732; x=1730273532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ByOuflTVuw6FqNFCU6UPV6W286vup+uWGJ9ZYP4mkM=;
-        b=aSoh3ws1L5YN1f7H6GT1uRRxkLIf5FFVbrEQ73dEpRukuXTYJdI0ODrKUqNpXrBX1a
-         5Gs9JnVsPStVYLmYhequX46BhnlxkgJ24NA1FRvuMkrg/1jQhjJO6LbHqbgGQV3gD+jp
-         Odg/Esn2/i3T4wZCjcAa4kfAGGo+owEr1K1cY4r8wR7aQJFxP94vnFcaqL8WHZjuj5ao
-         0T/07UFWQSZl56PK6Z4cUMmFly9EAQuBboZJd+WvxYZVolefLJUqmge95BEsrO3rKg3w
-         illNfs+iEFSanKLj7xg9sI5921wA5k5DIoRvB81fFEosOF2Jy+Urakv9b0ouQ1vk3ydq
-         W1ag==
-X-Forwarded-Encrypted: i=1; AJvYcCW8QbEZz08NPmrUt1MLafUwQglJ9GPAVG2FTBEal23VpB/40w3WIwihu5SMHRaWGD5PsddJKfhtGv0Vf8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvslNnj814F38lztIvzAHBMAJKwHVa7wiao9I5zfIyPSJiWk7z
-	lrRqAZ3Nh8M6jyoHB9BV5r8rkuZet3xTpKN52Kv4JvfXNwQrOGhDbGyA7F8MC/1O1h9mzbWelp0
-	D
-X-Google-Smtp-Source: AGHT+IHjIA8gmyjHXms77rT5Sn14lEAq7Alni4DB4J5+vDcwterfp4ljbKgcAnTOfUwgEtKEJq9FJA==
-X-Received: by 2002:adf:ea46:0:b0:37d:529f:ac1e with SMTP id ffacd0b85a97d-37efcf9c1a9mr938910f8f.53.1729668732225;
-        Wed, 23 Oct 2024 00:32:12 -0700 (PDT)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4ac2esm8276357f8f.44.2024.10.23.00.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 00:32:11 -0700 (PDT)
-Date: Wed, 23 Oct 2024 10:32:09 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <ZximeTNi7huc95te@linaro.org>
-References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
- <20241004-x1e80100-ps8830-v2-2-5cd8008c8c40@linaro.org>
- <Zw5oEyMj6cPGFDEI@hovoldconsulting.com>
- <Zxdp2vHzREJAFkwj@linaro.org>
- <Zxif6vmh8BE_C-_n@hovoldconsulting.com>
+	s=arc-20240116; t=1729668814; c=relaxed/simple;
+	bh=hjrh+N7pG6QkaiT1Rq5synmi4FTXHv4iBa3jgHNJ1Fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H2lXFoLtwjsBYgeDiBCmHdq+1JhNwZtQl1faoXRKtFHwI5ponR1HCsd5fyevgqy6mO+tvebcNwyxBugPkE2d9sDNQcKQa04GcbOgmGoUhXP/LGIYzVRpFKix3mYagplD4D1CSsFKTEAb4eH/Z7LI9fcqlIPwrfKkYWZp/B8c5Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=juK//rR2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N3ew016718;
+	Wed, 23 Oct 2024 07:33:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=+14j3B
+	s1y17Qe/TmSl9HqlcusnpTT/37DpsFx8amwoA=; b=juK//rR2e6I+SU7MGdx86V
+	OORqc5gb3uipO/CCQZO2z13oeKk5/H/q4jbdV105vdR7RZ61bubyKkiCEfvnBEW0
+	klUiRD/HdfRCWG10lIEXfAGgUr1sjbbWeEsRHXx9xuuu/xfkhwxl7UEBPN6dfeOi
+	aqH3jJ086YHkTWWFJpyAykWTY0BpHD9QaHbLn0pO/qH8qp//sERvAB7gvQGgWx2Y
+	eOq9l+p2Eol6W8BeKxR+ZKAISLEuw29D7yH4fjozsMfC5NNedVmOhm1r5YeIqBzL
+	wwoMBFKKJpCsi3oK/jwhFhXyS8206r1NHli4ToiwpLgvK8tHuVThScF3sjThsKJQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajht6e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:33:17 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49N7UwCG012410;
+	Wed, 23 Oct 2024 07:33:16 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajht68-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:33:16 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7TX3w008791;
+	Wed, 23 Oct 2024 07:33:15 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkahrx8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:33:15 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49N7XCRn17105252
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 07:33:12 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1618E20043;
+	Wed, 23 Oct 2024 07:33:12 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF79F20040;
+	Wed, 23 Oct 2024 07:33:11 +0000 (GMT)
+Received: from [9.152.212.137] (unknown [9.152.212.137])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 23 Oct 2024 07:33:11 +0000 (GMT)
+Message-ID: <7234670b-b119-44c2-9465-dd4d9451aae7@linux.ibm.com>
+Date: Wed, 23 Oct 2024 09:33:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxif6vmh8BE_C-_n@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] perf/core: Export perf_exclude_event()
+To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland
+ <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Ravi Bangoria <ravi.bangoria@amd.com>,
+        Sandipan Das <sandipan.das@amd.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+References: <20241023000928.957077-1-namhyung@kernel.org>
+ <20241023000928.957077-3-namhyung@kernel.org>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20241023000928.957077-3-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Zxrj1CMsiVQ9VCHWXHBRQiTHjJUHo6MH
+X-Proofpoint-GUID: CPcuLdcL4WMafYnVbigjxFqDoFUbO5VD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410230042
 
-On 24-10-23 09:04:10, Johan Hovold wrote:
-> On Tue, Oct 22, 2024 at 12:01:14PM +0300, Abel Vesa wrote:
-> > On 24-10-15 15:03:15, Johan Hovold wrote:
-> > > On Fri, Oct 04, 2024 at 04:57:38PM +0300, Abel Vesa wrote:
+On 10/23/24 02:09, Namhyung Kim wrote:
+> And increase the dropped_sample count when it returns 1.  Now it can
+> track how many samples are dropped due to the privilege filters in
+> software events.
 > 
-> > > > +	ret = ps8830_get_vregs(retimer);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	retimer->xo_clk = devm_clk_get(dev, "xo");
-> > > > +	if (IS_ERR(retimer->xo_clk))
-> > > > +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
-> > > > +				     "failed to get xo clock\n");
-> > > > +
-> > > > +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> > > 
-> > > The reset line is active low and should be described as such in DT. So
-> > > here you want to request it as logically low if you want to deassert
-> > > reset.
-> > 
-> > This is being reworked in v3 as we need to support cases where the
-> > retimer has been left enabled and initialized by bootloader and we want
-> > to keep that state until unplug event for the cold-plug orientation
-> > to work properly.
-> > 
-> > On top of that, we don't want to deassert the reset here. We do that
-> > via gpiod_set_value() call below, after the clocks and regulators have
-> > been enabled.
+> While at it, rename the same function in s390 cpum_sf PMU and also count
+> the dropped samples.
 > 
-> Ok, but you should generally not drive an input high before powering on
-> the device as that can damage the IC (more below).
-
-This is just not true, generally. Think of top level XTALs which feed in
-clocks (and can't be disabled) before ICs are enabled.
-
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  arch/s390/kernel/perf_cpum_sf.c |  8 +++++---
+>  include/linux/perf_event.h      |  6 ++++++
+>  kernel/events/core.c            | 11 +++++++----
+>  3 files changed, 18 insertions(+), 7 deletions(-)
 > 
-> That is, in this case, you should not deassert reset before making sure
-> the supplies are enabled.
+> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+> index 5b765e3ccf0cadc8..ff9e694f2be45c6b 100644
+> --- a/arch/s390/kernel/perf_cpum_sf.c
+> +++ b/arch/s390/kernel/perf_cpum_sf.c
+> @@ -996,7 +996,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
+>  	cpuhw->flags &= ~PMU_F_ENABLED;
+>  }
+>  
+> -/* perf_exclude_event() - Filter event
+> +/* perf_event_exclude() - Filter event
+>   * @event:	The perf event
+>   * @regs:	pt_regs structure
+>   * @sde_regs:	Sample-data-entry (sde) regs structure
+> @@ -1005,7 +1005,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
+>   *
+>   * Return non-zero if the event shall be excluded.
+>   */
+> -static int perf_exclude_event(struct perf_event *event, struct pt_regs *regs,
+> +static int perf_event_exclude(struct perf_event *event, struct pt_regs *regs,
+>  			      struct perf_sf_sde_regs *sde_regs)
+>  {
+>  	if (event->attr.exclude_user && user_mode(regs))
+> @@ -1088,8 +1088,10 @@ static int perf_push_sample(struct perf_event *event,
+>  	data.tid_entry.pid = basic->hpp & LPP_PID_MASK;
+>  
+>  	overflow = 0;
+> -	if (perf_exclude_event(event, &regs, sde_regs))
+> +	if (perf_event_exclude(event, &regs, sde_regs)) {
+> +		atomic64_inc(&event->dropped_samples);
+>  		goto out;
+> +	}
+>  	if (perf_event_overflow(event, &data, &regs)) {
+>  		overflow = 1;
+>  		event->pmu->stop(event, 0);
 
-Wrong. Even the data sheet of this retimer shows in the timigs plot the
-reset as being asserted before the supplies are enabled.
+For the s390 part:
 
-And generally speaking, the reset needs to be asserted before the
-supplies are up, so that the IC doesn't start doing any work until
-the SW decides it needs to.
+Acked-by: Thomas Richter <tmricht@linux.ibm.com>
 
-> 
-> > > > +	ret = clk_prepare_enable(retimer->xo_clk);
-> > > > +	if (ret) {
-> > > > +		dev_err(dev, "failed to enable XO: %d\n", ret);
-> > > > +		goto err_retimer_unregister;
-> > > > +	}
-> > > 
-> > > Should you really enable the clock before the regulators?
-> > 
-> > So maybe in this case it might not really matter. But in principle,
-> > the HW might be affected by clock glitches and such when IP block
-> > is powered up but unclocked. Even more so if the clock enabling
-> > (prepare, to be more exact) involves switching to a new PLL.
-> > 
-> > So clock first, then power up. At least that's my understanding of HW
-> > in general.
-> 
-> I think you got that backwards as inputs are typically rated for some
-> maximum voltage based on the supply voltage. 
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-Yes, but that's done at board design stage.
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-> That applies also to the
-> reset line as I also mentioned above.
-> 
-> What does the datasheet say?
+Geschäftsführung: David Faller
 
-As mentioned above, datasheet shows reset asserted before the supplies
-are being enabled.
-
-> 
-> > > > +
-> > > > +	ret = ps8830_enable_vregs(retimer);
-> > > > +	if (ret)
-> > > > +		goto err_clk_disable;
-> 
-> Johan
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
