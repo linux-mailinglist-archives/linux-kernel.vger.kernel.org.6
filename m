@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-378041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45379ACA8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BDC9ACA93
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191682841E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595DB284F8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBC71ADFE3;
-	Wed, 23 Oct 2024 12:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869AC1ADFE2;
+	Wed, 23 Oct 2024 12:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DADASAtJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dO+uRDE9"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDD31ABEA6;
-	Wed, 23 Oct 2024 12:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4565A1AB50C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729687856; cv=none; b=LbOrQklUQOh5dL7JrJuR5ckpCnoAUyso/JV0IhVC9lrYYmapSQDRNtsvBZrsZVpjVAv2psyRflx7gmUgtHqKwWZliFgI1UrVNOF+FJ/0Y0Gb5q0OoTIPZhC5XNS+5CLcE7l9+cGxcaFf5Tb/nf3iA5z7DyZ+aV7vGBHv1jSP/Ks=
+	t=1729687896; cv=none; b=QG+2tRrBIxEyejLYiKvr0sBcqUZrZc4yZzC8kZFs06wp6UEpTcAl7NIHfof7FmeFIY15DbWhCmfvChw1sadOzJG6NIN/c1WTpDNAA0gEY/S9pmk3BqLNP5ZQ4hmEMPuxlxMGb4weUKH7lc0HNN6ARWuvPowfr/N87PXJ/Nbx5uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729687856; c=relaxed/simple;
-	bh=JtM8ltX+fqK4vxdQbbSOAOvMmJXmUSffw/WgXG3DogU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YP+6oG+CHFlLpWkKeIgWLVU3YNzJP2dI5yMkce24mIczsO7YJCYF+gdpfd8kmrR7kQiLI7m33V0R7VaFI2Gm2TYVjR5OulXElabdx9GktoSxcpOGeuDK4Di86eYSEXsaBrhg8N2014BGmQgj7tYjFawY1KFiJPR7vFXdOZ/PKp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DADASAtJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19CDC4CEC6;
-	Wed, 23 Oct 2024 12:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729687855;
-	bh=JtM8ltX+fqK4vxdQbbSOAOvMmJXmUSffw/WgXG3DogU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DADASAtJhDYG2hCdAzXX4YGeLaO6INDAuceJzBnrUGJfNFhobLH4HQG8J/gTMtVCY
-	 cpQd4skHvcsg/fuwCFDqqyeDLcHr2tL4e9+F28xJfL7iVy8hMHrbdsl8VDMWiI/csQ
-	 pXeguNC2tu/07OvHucEVmZLwQAao5+cQc5OLLPfds6x3nxAYSib6WHBqyCRri6FTyA
-	 ZaQbhFPvgHfpxHlmTExvnRNjWSZmg1WdDeQ8z3ittIjSVMERkCrXsyQuiY9rXHWWOo
-	 3IcXZGfgn4+ly10BhKIxIy9UANN+7TS8DRYr3Sj6OWnz4gTKQP3CaGsf+vMsWg9fE7
-	 9xAvS4gTP2JIg==
-Date: Wed, 23 Oct 2024 14:50:48 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	hare@suse.de, martin.petersen@oracle.com, catherine.hoang@oracle.com, 
-	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com, hch@lst.de, 
-	brauner@kernel.org, djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	dchinner@redhat.com
-Subject: Re: (subset) [PATCH v10 0/8] block atomic writes for xfs
-Message-ID: <7wpad2i544hgmqp5ebjbmsosfreqwnmsazczazga622om6gaxi@ye27ugrsqfig>
-References: <20241019125113.369994-1-john.g.garry@oracle.com>
- <172937817079.551422.12024377336706116119.b4-ty@kernel.dk>
- <d6d920c6-9a8c-49b7-8d4a-fbeacd6906f0@kernel.dk>
- <e8a3a228-0367-43da-8cad-caaaa207f0e6@oracle.com>
+	s=arc-20240116; t=1729687896; c=relaxed/simple;
+	bh=TovBOQATkiwwKIxO4H3TUcSLMe8jpyrG3L3TRxI6sN0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=j8KwtXSdd7/ip7jrJCjo8wq3w6udrfYovNbbj/OyQVwLbvufWvusQKXK03rhTGH8MgWJtLNr8ULC7zFW/rTNzDtXsRbDEPGMqo8afn7JWDe/mSlrwMR9idrrhxMxb0sT10dHac/Rq3RqEnPJ+tDEzzOseDCOEJi40S5qRTCYDOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dO+uRDE9; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso779328466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:51:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1729687892; x=1730292692; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TovBOQATkiwwKIxO4H3TUcSLMe8jpyrG3L3TRxI6sN0=;
+        b=dO+uRDE9xNiDQO7H7Reu+TWtK++ZdJ2olE1jOGob5rlsM9Oh0zgo/BGHl8jMxySy/C
+         juDOeV/zGF0bt1/lRkKTiTkprgy61FLAOezhxALpTM2fjuOXIznwwIo4xTBl8Icyj0L+
+         qd0f7sOWe6tFsVrZO4P4uXOccxBfxeOyfQJQVw84QJuBs8+I8IvZIWJ4JPbalsIMsVX/
+         tM2G4jCoDzilRK0Ysb2r29sCIcJhKLxbmT8BymHo708NLHOMxk1tSIcSGJ6m4zMAeCGS
+         1AC0LbEp3iUevvCp8E6pBvaTSHv70y7Gc572BquLp50mBLydcAAXxjveMRok4vg0yBSy
+         4EoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729687892; x=1730292692;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TovBOQATkiwwKIxO4H3TUcSLMe8jpyrG3L3TRxI6sN0=;
+        b=RQC8Z5xTIh+DJjhVo3aKGlAE0Ep4BIQXyBKLquM8z8znC+j4d78jhpLuRs6oyNzSFf
+         HKLtcDqflxcFkQ5NtmMP2tVyZmYqh/uIdCkhcwCuZ6aNMs4NZvqGHihxnUeBOpakgBvk
+         YBGWB7JBtL1wX/Qi4v5dZM5JvcWbbShaNfXK9amhmC6M9bSnlyY+hzVipxGGk5jT6i/s
+         BKFekL+j0oCAe5w5kUTFq+1t23iFkqLgTTlC1NzXeen1s9o8XzdkjnDz86gbQwOolDLI
+         D0Ij90a83wg+qtrxArZLsGGx8w+I8PwTYRcYrnuR8Rb+zLPZv3mMFcgVC/K6rVryyDsH
+         R69A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCRsdxxpYI7Putk5ig9hYNSqYPZ0AywNeqMweZjBjqU5mmtjYDojayBNw+k/sCE57+v/Q4B8SisV8U3B0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg2BmV7dla3cazInHDknv1sf52vpHOXOj4dY2CgS8DuevvAMrk
+	whotTAubqzUes5nIFkpHoQhnO04klARQos2qsRigDPMgDwF1hzvER0vERHBtj6Y=
+X-Google-Smtp-Source: AGHT+IHrjgt4Dkx3BECaxc7v3qZRq6Rtql9zV1QQu5ZkLvd+JW8V+GyN3sCO1/kMf+Iws8Ie9m0gSA==
+X-Received: by 2002:a17:907:7b85:b0:a99:7676:ceb7 with SMTP id a640c23a62f3a-a9abf86e15emr233239366b.26.1729687892600;
+        Wed, 23 Oct 2024 05:51:32 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:506b:2432::39b:12])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6597sm486590666b.14.2024.10.23.05.51.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 05:51:31 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Ruan Bonan <bonan.ruan@u.nus.edu>
+Cc: "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+  "davem@davemloft.net" <davem@davemloft.net>,  "edumazet@google.com"
+ <edumazet@google.com>,  "kuba@kernel.org" <kuba@kernel.org>,
+  "pabeni@redhat.com" <pabeni@redhat.com>,  "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>,  "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Subject: Re: [BUG] general protection fault in sock_map_link_update_prog -
+ Reproducible with Syzkaller
+In-Reply-To: <TYZPR06MB680739AC616DD61587BE380AD94C2@TYZPR06MB6807.apcprd06.prod.outlook.com>
+	(Ruan Bonan's message of "Tue, 22 Oct 2024 02:36:23 +0000")
+References: <TYZPR06MB680739AC616DD61587BE380AD94C2@TYZPR06MB6807.apcprd06.prod.outlook.com>
+Date: Wed, 23 Oct 2024 14:51:30 +0200
+Message-ID: <877c9z9e3x.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8a3a228-0367-43da-8cad-caaaa207f0e6@oracle.com>
+Content-Type: text/plain
 
-On Wed, Oct 23, 2024 at 01:42:24PM GMT, John Garry wrote:
-> On 19/10/2024 23:50, Jens Axboe wrote:
-> > > On Sat, 19 Oct 2024 12:51:05 +0000, John Garry wrote:
-> > > > This series expands atomic write support to filesystems, specifically
-> > > > XFS.
-> > > > 
-> > > > Initially we will only support writing exactly 1x FS block atomically.
-> > > > 
-> > > > Since we can now have FS block size > PAGE_SIZE for XFS, we can write
-> > > > atomically 4K+ blocks on x86.
-> > > > 
-> > > > [...]
-> > > Applied, thanks!
-> > > 
-> > > [1/8] block/fs: Pass an iocb to generic_atomic_write_valid()
-> > >        commit: 9a8dbdadae509e5717ff6e5aa572ca0974d2101d
-> > > [2/8] fs/block: Check for IOCB_DIRECT in generic_atomic_write_valid()
-> > >        commit: c3be7ebbbce5201e151f17e28a6c807602f369c9
-> > > [3/8] block: Add bdev atomic write limits helpers
-> > >        commit: 1eadb157947163ca72ba8963b915fdc099ce6cca
-> 
-> Thanks Jens
-> 
-> > These are now sitting in:
-> > 
-> > git://git.kernel.dk/linux for-6.13/block-atomic
-> > 
-> > and can be pulled in by the fs/xfs people.
-> 
-> Carlos, can you kindly consider merging that branch and picking up the iomap
-> + xfs changes?
+On Tue, Oct 22, 2024 at 02:36 AM GMT, Ruan Bonan wrote:
+> I used Syzkaller and found that there is KASAN: null-ptr-deref (general protection fault in
+> sock_map_link_update_prog) in net/core/sock_map.c in v6.12.0-rc2, which also causes a KASAN:
+> slab-use-after-free at the same time. It looks like a concurrency bug in the BPF related subsystems. The
+> reproducer is available, and I have reproduced this bug with it manually. Currently I can only reproduce this
+> bug with root privilege.
+>
+> The detailed reports, config file, and reproducer program are attached in this e-mail. If you need further
+> details, please let me know.
 
-yup, I'll queue them up for 6.12 merge window
+Thanks for the report. I was also able to reproduce the KASAN splat with
+the attached repro locally and will investigate futher.
 
-Carlos
+I have a small ask - please use plain text for mailing the list in the
+future - https://useplaintext.email/
 
-> 
-> Cheers
-> 
-> 
+-jkbs
 
