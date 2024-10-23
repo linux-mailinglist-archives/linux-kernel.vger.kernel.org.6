@@ -1,111 +1,286 @@
-Return-Path: <linux-kernel+bounces-378614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FEE9AD332
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:47:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0DB9AD32F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB60B21907
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB450283212
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700CD1D079C;
-	Wed, 23 Oct 2024 17:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15DC1C9EBA;
+	Wed, 23 Oct 2024 17:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MohkiKZc"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZWaYWvd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4455D1D016F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B4B83CDA;
+	Wed, 23 Oct 2024 17:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729705614; cv=none; b=GhCl22dp4GKzAlU+7I3TXceLlrgjeIyDUp7PElObV0UzGP0dkVCjGA3ZJ0u1m7pbQElVDw/C4DjQEVmiKnDEXTklzRcQA32r0Uw0YOULESHRVFcuMKAKdvgtXNDzxxBjTyWT/Vdl2m9wJxEiRLpDd3EYpRkx11n1UVQiX5F/AYo=
+	t=1729705609; cv=none; b=GUekV45372FWoxuiA1Ua+0MUCcvU2hv6suQ2qWzzv9fUx0M91IoQJg2qDWGo2ITYsLC4NoT0UT9eHi6y/NmMLAI7XUhNqIywo9nBupAgaeb/CTmnYLLn83+mo1AK6Mb0d0FaFsDiI13p/VUYmUZmsmBUrbg2q2hBDMDiyv1GgWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729705614; c=relaxed/simple;
-	bh=i+7ZAlfoQfuCxLYaegZtLOps7LaYlV1n5wy00nEl8Ng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4vDbq/ZINa6Zaxcq9mAl5SqS8ETLj752HpFGKnph9E+qkAab1tkYDRrd3Max/S/K1y2hgrjth8EfKN+kNhYeVYAzIxX41OElv9UZHcFUou6zOUDyC59aMqQgrtxM89GCve2mIJGglZyhDXEGRxfS+YPYAbnWQaapFavqQrKGwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MohkiKZc; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43153c6f70aso264195e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729705611; x=1730310411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i+7ZAlfoQfuCxLYaegZtLOps7LaYlV1n5wy00nEl8Ng=;
-        b=MohkiKZcZfLdETBGeL3NBfyNfaFWtugAsSQZDFk0g9qYeWCAR3g3QFyTJgazYqggu7
-         yeKUpefqUeuBCao0j63DH/Usnp8U6h7a4AAz20bcy9Wc+P6H5WhLi6ie2ai30c0Z2za6
-         lsvEcgxBqzpW3QKTP7qAobHDGHocks8rYbhL6IWDqzMhnIt72GZSZTYhBSlzdYcaLxaW
-         T26p+j+oPfBZjM+XGeaUN6ALEsUE68zIKsg8QzOnaO6voaU+TaeHn7zn7yhqy0cn5joX
-         DdHtSgDTrWuRFhzeUXBILpXEn1/WIktJNWxzr+4QaYzWXc19cvlvEF3jGsH7emKj6DUF
-         6dJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729705611; x=1730310411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i+7ZAlfoQfuCxLYaegZtLOps7LaYlV1n5wy00nEl8Ng=;
-        b=VTYQpiMXFeO0mrYhLTMigPIjrTdfD5iQKqf3Ph//LY1BE0tqzl+8dHsACMfhZ/JByf
-         NHAAizqFoI4Rg7KRas3hFw0uTz3RRoOrYO6CNs1OdhAHIwS3GxGycjkQf25BF/JOhJw4
-         6LHZ00bjj3dVFipKSmgyRs1Tzubogk8r63s0y6q8ObwZTLDfRvLbIyHwEtzhrxi9A/IG
-         Nd7ywhtQrwOcygoxNoaJDI2EPG/Xh0IPQ3kQsbGbsBYq/9T2tAKd7wPfrYXufalwhgXC
-         c/dDtugxqEXOXzQmwFQkkAOl+x8D+jPTv38Tma9oQGuH3dAqtLDkrrEJoT6aefmD2z6U
-         wo/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKwe903ZDMkoDPD5t+Wyxc2t23lzkX0y0Y1Zc5aMVUtnHmt5WxlzMh2KyNxvRd5+bzsMXDik3dpgpcRfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEj4iiKS4DK73ePwMmMXlVkVz+RsscFuS7431ua3JBX51wBsFp
-	w/cx9GFgiVOKJ0CPfbuN0zMNhOFXrLWguY9nWJ7d9Ej6dp5Jd7C/EMebUHdkFcLYfDDhk/+vvgP
-	Pz+cksCFHEaFSWHyEMghEO4Fub+1uWhtJN9S1
-X-Google-Smtp-Source: AGHT+IGczg9abDGpX4ppjcVsgb3ui7YwoWlv9yFaws8RHe1ZuuGKPzBA2axsxRP2DJ+N1UUksoNEjs6hJSoRSIvhZtM=
-X-Received: by 2002:a05:600c:3d0c:b0:431:416b:9ecf with SMTP id
- 5b1f17b1804b1-4318a55bcccmr78525e9.6.1729705611429; Wed, 23 Oct 2024 10:46:51
- -0700 (PDT)
+	s=arc-20240116; t=1729705609; c=relaxed/simple;
+	bh=DU8+bg5SNI4oXTTw77GkxJG0vawcjUiseS+OAiYnRYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RrLVmMpDil8Fz0CtTzxKbBovGXjR0d07FkE930k6gMPHv4O0v3JoC3d9vnw8oALiTCKTDpuS0VnJugEMzz1QtxjbxrepfFdFWWCECyP4rmJeA4ZzSprDh0kajitgS+azifLtRw+NYIQ8OdkluUfbkVKdGrouvh77T8nnLmdZ6mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZWaYWvd; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729705608; x=1761241608;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DU8+bg5SNI4oXTTw77GkxJG0vawcjUiseS+OAiYnRYc=;
+  b=ZZWaYWvdueaYV9murWrfg2Rzu2GJVLSdcsGCZFETrV4UrzI59+kMd3F6
+   rX/LpVI26QODsz91ijLDOxgDzT5rq0QQrQEBqHKXZHRuN7y5HeGaF7nju
+   UZDjyHtNTYUDdyg/rFrjQvaVF6dcKREDf9MTjg/lMU0M0tBnaoD2H7paA
+   +2nExkyFPJrl6lxeuf8AptIjpFUdWNVwaG+Upu302JaY0dt3bHJsxIQdO
+   hjn5U0ZpXuvcMC93TiL87DWFLf6pKNVWN3J4N9VlKFwV2d8D8cymyDwAc
+   D2j2Psvn6O/tDrZ7PDUE+PpXtxWxaR5Sy/D9W23SfbPdxODsNi0aNPwNF
+   A==;
+X-CSE-ConnectionGUID: ITExNTphRJSae/Tgbx1Lrg==
+X-CSE-MsgGUID: CIfB3vqHS9aUp5+vVXwbQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29411200"
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="29411200"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 10:46:47 -0700
+X-CSE-ConnectionGUID: oPOVRNMHTgSh+ktrEkYgWQ==
+X-CSE-MsgGUID: 1YzJA9nUTgieXeZJSAhBQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="84288042"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 10:46:47 -0700
+Received: from [10.212.27.194] (kliang2-mobl1.ccr.corp.intel.com [10.212.27.194])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 5080620CFED2;
+	Wed, 23 Oct 2024 10:46:45 -0700 (PDT)
+Message-ID: <eb552133-829d-4935-87e9-101e052fd40c@linux.intel.com>
+Date: Wed, 23 Oct 2024 13:46:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008183823.36676-21-samitolvanen@google.com>
- <20241008183823.36676-34-samitolvanen@google.com> <8fa10131-fae2-4052-b541-e4a6ef570d63@suse.com>
-In-Reply-To: <8fa10131-fae2-4052-b541-e4a6ef570d63@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 23 Oct 2024 10:46:14 -0700
-Message-ID: <CABCJKufGTitE6bWwoY-5Pr6MfHnPu2m+RVk4UcZMik=Nri-=kQ@mail.gmail.com>
-Subject: Re: [PATCH v4 13/19] gendwarfksyms: Add symbol versioning
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
-	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] perf: Generic hotplug support for a PMU with a scope
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, irogers@google.com, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+ <20240802151643.1691631-2-kan.liang@linux.intel.com>
+ <f856d105-5463-4b8b-8715-0e6871165616@kernel.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <f856d105-5463-4b8b-8715-0e6871165616@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Petr,
 
-On Tue, Oct 22, 2024 at 4:48=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
-ote:
->
-> I had some minor comment about adjusting the name of function
-> symbol_print_versions() and possibly changing sym->name to 'char *' on
-> the v2 of the patch:
-> https://lore.kernel.org/all/286b1cc5-1757-4f0a-bb66-0875f4608c7e@suse.com=
-/
-> Please have a look, it seems it felt through the cracks.
 
-Sorry, I missed that somehow. I can split this into two functions to
-avoid confusion. Also I'm using const char * to make it obvious that
-the name shouldn't be modified by users of struct symbol. This does
-require a cast when freeing the string, which isn't ideal, but I feel
-it's overall not a terrible trade-off.
+On 2024-10-23 1:09 p.m., Matthieu Baerts wrote:
+> Hi Kan Liang,
+> 
+> (+ cc Perf ML)
+> 
+> On 02/08/2024 17:16, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> The perf subsystem assumes that the counters of a PMU are per-CPU. So
+>> the user space tool reads a counter from each CPU in the system wide
+>> mode. However, many PMUs don't have a per-CPU counter. The counter is
+>> effective for a scope, e.g., a die or a socket. To address this, a
+>> cpumask is exposed by the kernel driver to restrict to one CPU to stand
+>> for a specific scope. In case the given CPU is removed,
+>> the hotplug support has to be implemented for each such driver.
+>>
+>> The codes to support the cpumask and hotplug are very similar.
+>> - Expose a cpumask into sysfs
+>> - Pickup another CPU in the same scope if the given CPU is removed.
+>> - Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
+>> - In event init, always set the CPU in the cpumask to event->cpu
+>>
+>> Similar duplicated codes are implemented for each such PMU driver. It
+>> would be good to introduce a generic infrastructure to avoid such
+>> duplication.
+>>
+>> 5 popular scopes are implemented here, core, die, cluster, pkg, and
+>> the system-wide. The scope can be set when a PMU is registered. If so, a
+>> "cpumask" is automatically exposed for the PMU.
+>>
+>> The "cpumask" is from the perf_online_<scope>_mask, which is to track
+>> the active CPU for each scope. They are set when the first CPU of the
+>> scope is online via the generic perf hotplug support. When a
+>> corresponding CPU is removed, the perf_online_<scope>_mask is updated
+>> accordingly and the PMU will be moved to a new CPU from the same scope
+>> if possible.
+> 
+> Thank you for the patch.
+> 
+> It looks like this modification causes the following warning on my side
+> when shutting down a VM running a kernel built with a debug config
+> including CONFIG_PROVE_RCU_LIST=y (and CONFIG_RCU_EXPERT=y):
+> 
+> 
+>> # /usr/lib/klibc/bin/poweroff
+>>
+>> =============================
+>> WARNING: suspicious RCU usage
+>> 6.12.0-rc3+ #3 Not tainted
+>> -----------------------------
+>> kernel/events/core.c:13962 RCU-list traversed in non-reader section!!
+>>
+>> other info that might help us debug this:
+>>
+>>
+>> rcu_scheduler_active = 2, debug_locks = 1
+>> 3 locks held by poweroff/11748:
+>>  #0: ffffffff9b441e28 (system_transition_mutex){+.+.}-{3:3}, at: __do_sys_reboot (kernel/reboot.c:770)
+>>  #1: ffffffff9b43eab0 ((reboot_notifier_list).rwsem){++++}-{3:3}, at: blocking_notifier_call_chain (kernel/notifier.c:388)
+>>  #2: ffffffff9b6d06c8 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context (kernel/events/core.c:13983)
+>>
+>> stack backtrace:
+>> CPU: 0 UID: 0 PID: 11748 Comm: poweroff Not tainted 6.12.0-rc3+ #3
+>> Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+>> Call Trace:
+>>  <TASK>
+>>  dump_stack_lvl (lib/dump_stack.c:123)
+>>  lockdep_rcu_suspicious (kernel/locking/lockdep.c:6822)
+>>  perf_event_clear_cpumask (kernel/events/core.c:13962 (discriminator 9))
+>>  ? __pfx_perf_event_clear_cpumask (kernel/events/core.c:13939)
+>>  ? acpi_execute_simple_method (drivers/acpi/utils.c:679)
+>>  ? __pfx_acpi_execute_simple_method (drivers/acpi/utils.c:679)
+>>  ? md_notify_reboot (drivers/md/md.c:9860)
+>>  perf_event_exit_cpu_context (kernel/events/core.c:13984 (discriminator 1))
+>>  perf_reboot (kernel/events/core.c:14066 (discriminator 3))
+>>  ? trace_notifier_run (include/trace/events/notifier.h:59 (discriminator 2))
+>>  notifier_call_chain (kernel/notifier.c:93)
+>>  blocking_notifier_call_chain (kernel/notifier.c:389)
+>>  kernel_power_off (kernel/reboot.c:294)
+>>  __do_sys_reboot (kernel/reboot.c:771)
+>>  ? __pfx___do_sys_reboot (kernel/reboot.c:717)
+>>  ? __pfx_ksys_sync (fs/sync.c:98)
+>>  do_syscall_64 (arch/x86/entry/common.c:52 (discriminator 1))
+>>  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> 
+> 
+> It is very easy for me to reproduce it: simply by stopping the VM. Just
+> in case, here are the steps I used to have the same VM:
+> 
+>   $ cd [kernel source code]
+>   $ echo true > .virtme-exec-run
+>   $ docker run -v "${PWD}:${PWD}:rw" -w "${PWD}" --privileged --rm -it \
+>         --pull always mptcp/mptcp-upstream-virtme-docker:latest \
+>         auto-debug -e RCU_EXPERT -e PROVE_RCU_LIST
+> 
+> 
+> I have one question below about the modification you did here.
+> 
+> (...)
+> 
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index aa3450bdc227..5e1877c4cb4c 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+> 
+> (...)
+> 
+>> @@ -13730,6 +13816,40 @@ static void __perf_event_exit_context(void *__info)
+>>  	raw_spin_unlock(&ctx->lock);
+>>  }
+>>  
+>> +static void perf_event_clear_cpumask(unsigned int cpu)
+>> +{
+>> +	int target[PERF_PMU_MAX_SCOPE];
+>> +	unsigned int scope;
+>> +	struct pmu *pmu;
+>> +
+>> +	cpumask_clear_cpu(cpu, perf_online_mask);
+>> +
+>> +	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
+>> +		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(scope, cpu);
+>> +		struct cpumask *pmu_cpumask = perf_scope_cpumask(scope);
+>> +
+>> +		target[scope] = -1;
+>> +		if (WARN_ON_ONCE(!pmu_cpumask || !cpumask))
+>> +			continue;
+>> +
+>> +		if (!cpumask_test_and_clear_cpu(cpu, pmu_cpumask))
+>> +			continue;
+>> +		target[scope] = cpumask_any_but(cpumask, cpu);
+>> +		if (target[scope] < nr_cpu_ids)
+>> +			cpumask_set_cpu(target[scope], pmu_cpumask);
+>> +	}
+>> +
+>> +	/* migrate */
+>> +	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
+> 
+> 
+> Here is the line causing the warning, because rcu_read_lock() is not
+> used before.
+> 
+> I don't know this code, but I guess you are not only doing read
+> operations here if you are migrating something, right? This operation is
+> done under the "pmus_lock", maybe the "_rcu" variant is not needed here?
+> 
+> So just using this instead is maybe enough?
+> 
+>   list_for_each_entry(pmu, &pmus, entry) {
 
-Sami
+Yes, it's good enough. A patch has been proposed, but haven't been
+merged yet.
+
+https://lore.kernel.org/lkml/20240913162340.2142976-1-kan.liang@linux.intel.com/
+
+Thanks,
+Kan
+> 
+> 
+>> +		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
+>> +		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
+>> +			continue;
+>> +
+>> +		if (target[pmu->scope] >= 0 && target[pmu->scope] < nr_cpu_ids)
+>> +			perf_pmu_migrate_context(pmu, cpu, target[pmu->scope]);
+>> +	}
+>> +}
+>> +
+>>  static void perf_event_exit_cpu_context(int cpu)
+>>  {
+>>  	struct perf_cpu_context *cpuctx;
+>> @@ -13737,6 +13857,11 @@ static void perf_event_exit_cpu_context(int cpu)
+>>  
+>>  	// XXX simplify cpuctx->online
+>>  	mutex_lock(&pmus_lock);
+>> +	/*
+>> +	 * Clear the cpumasks, and migrate to other CPUs if possible.
+>> +	 * Must be invoked before the __perf_event_exit_context.
+>> +	 */
+>> +	perf_event_clear_cpumask(cpu);
+>>  	cpuctx = per_cpu_ptr(&perf_cpu_context, cpu);
+>>  	ctx = &cpuctx->ctx;
+>>  
+>> @@ -13744,7 +13869,6 @@ static void perf_event_exit_cpu_context(int cpu)
+>>  	smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
+>>  	cpuctx->online = 0;
+>>  	mutex_unlock(&ctx->mutex);
+>> -	cpumask_clear_cpu(cpu, perf_online_mask);
+>>  	mutex_unlock(&pmus_lock);
+>>  }
+>>  #else
+> (...)
+> 
+> Cheers,
+> Matt
+
 
