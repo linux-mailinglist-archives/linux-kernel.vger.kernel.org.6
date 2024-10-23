@@ -1,133 +1,186 @@
-Return-Path: <linux-kernel+bounces-377673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7CC9AC220
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3B69AC221
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A691C26DB3
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7639E283663
 	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B2915DBAB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B3D15E5BB;
 	Wed, 23 Oct 2024 08:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCa7dn6p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObHgILwX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7DA15886D;
-	Wed, 23 Oct 2024 08:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C78861FF2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673355; cv=none; b=jCMG0QuXyXflRPRAiOUoP5Zt/jDWhE0tkmMi8l9pQshC75QRCpRAa5tC6Y6dQnSf6Flvvfp3qhvXRRIA65rhlz6TOxx2mnrMJ9pieQyMU+BxfKAqmWwLs24Qq3BdoHO2FyPlCXvpcfPuK+XTuX3KZ4rYrWMw+htA3c/WllJuhIU=
+	t=1729673355; cv=none; b=EaF0/OqhjoRRgDPLpI7tuNZd+UdLJ+bcUxDuFnDu9VvykanlMa1gvAyAF22EF1hYQQYQXBT5flX3VyIzbX/y0+E6tCVCKoBbXbnRENc1dwsu9N6kuMCOUpexL0BONntKwW/16teZuuvD640CFS/av5ifL5kTGS+Ta8ukUphHT7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729673355; c=relaxed/simple;
-	bh=7NhjULpJR19EvTFu6kukQjms/KFY1lUVI61YeGXteK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQqB4kH020Bodtlbwdt5AlzX+9bRhPETERWQnYMv/WrhkUOlRQjKXASUEHd2Ns5urTu5/ESsRySYz4DnQYVRZ1E8c3AIL8eQw6B8y9N9hUjvyWDuDGrjbbJ9EilsdYH5FGWTB8WlJ4yO/u9qt+x9/I96RYDb44MtbYRqAgAaE+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCa7dn6p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC8DC4CEC6;
-	Wed, 23 Oct 2024 08:49:12 +0000 (UTC)
+	bh=aR0cBNJNvx0pC7rUSs2+VJJ+53XLheSlUDQRnOTIgzk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n0ZzeLfN0YhgpbtQZheDkJ1wAqSA8TfXKgZEiQkufl9v9efsM9swrrslzs9tlP0p8Lz6M34giSwEZLT8b2rKeh6CC9V7nZT2PzMoALpAqSPy4t6nULsY7FDn2qIAebK9Y1CPUbbLHKPITA7/hQg0GId+a3gb8alygU7bezkQu1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObHgILwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30902C4CEC7;
+	Wed, 23 Oct 2024 08:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1729673355;
-	bh=7NhjULpJR19EvTFu6kukQjms/KFY1lUVI61YeGXteK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mCa7dn6prblg2R6KnQjb+AXq101pO4zTQ6kdNO0cGMRoSxe4p8mcSY11kut/o4ARa
-	 VIb3+v0Ulxo4NjOxCI69dz3NnHfyMuLr5lUiqauOKBRGtmpjo85QQfoOkC/cvvbOq/
-	 nNafENibQaC0pa/HBqLQku9SGDNagfPnOFHMa28Dm+8nzXTSZQEwRZTdCnHMd7sfLx
-	 Vn04n7/iJ0IeP/lcMgNlGbsEUsvemJANyJVFPQrp5+D8yNtayXxm9X7ilTIqRotpLs
-	 bB1EuQxYmNO/KtQ9wtLYYD/uAmHQD5WePX+P/GW2Ogbm1QTbREYOVHB+XoPZWvhBWH
-	 oLU+MCJztxvCQ==
-Date: Wed, 23 Oct 2024 09:49:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Furong Xu <0x1207@gmail.com>
-Cc: 2694439648@qq.com, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	hailong.fan@siengine.com
-Subject: Re: [PATCH v1] net: stmmac: enable MAC after MTL configuring
-Message-ID: <20241023084910.GL402847@kernel.org>
-References: <tencent_CCC29C4F562F2DEFE48289DB52F4D91BDE05@qq.com>
- <20241021130554.00005cf5@gmail.com>
+	bh=aR0cBNJNvx0pC7rUSs2+VJJ+53XLheSlUDQRnOTIgzk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ObHgILwXNR82AnJ4xg1/nF6/fZ6ryTPGPghZMb3V3D3ksSOm8f1OAgnTWy4MJP8oF
+	 nFKKhaRKXCDTsQMGYkkC0ee0tHoKHj+Xnsa43lxJaAD2Hv4eAatfZ3Oe49qKFhySAU
+	 ENMcHIxQRvP+KEBY41KUAMlMWyyIxEBU49yX52E5sfxb+C3vy/w3+/Ak8i7b85UWFU
+	 1wT1FX5TovDn+aBfBQnAkacfyMgKvkG0uP60t8TDqKnW2FVbYcb74iWj20AcYtimfM
+	 4z9WYNjyzjxZaOf3svI5iNdxyKru//+ZxQwDvAGGSTpmbvRhYgEF4pgVqAUv+oaqtc
+	 2V5sqbYD7mmZw==
+Received: from [104.132.45.109] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t3X3I-0062U1-Rh;
+	Wed, 23 Oct 2024 09:49:12 +0100
+Date: Wed, 23 Oct 2024 09:49:12 +0100
+Message-ID: <87wmhztd9z.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kunkun Jiang <jiangkunkun@huawei.com>
+Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
+In-Reply-To: <aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
+References: <20241002204959.2051709-1-maz@kernel.org>
+	<aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021130554.00005cf5@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 104.132.45.109
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, jiangkunkun@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Oct 21, 2024 at 01:05:54PM +0800, Furong Xu wrote:
-> On Mon, 21 Oct 2024 09:03:05 +0800, 2694439648@qq.com wrote:
+Hi Zenghui,
+
+On Tue, 22 Oct 2024 08:45:17 +0100,
+Zenghui Yu <yuzenghui@huawei.com> wrote:
 > 
-> > From: "hailong.fan" <hailong.fan@siengine.com>
-> > 
-> > DMA maybe block while ETH is opening,
-> > Adjust the enable sequence, put the MAC enable last
-> > 
-> > For example, ETH is directly connected to the switch,
-> > which never power down and sends broadcast packets at regular intervals.
-> > During the process of opening ETH, data may flow into the MTL FIFO,
-> > once MAC RX is enabled. and then, MTL will be set, such as FIFO size.
-> > Once enable DMA, There is a certain probability that DMA will read
-> > incorrect data from MTL FIFO, causing DMA to hang up.
-> > By read DMA_Debug_Status, you can be observed that the RPS remains at
-> > a certain value forever. The correct process should be to configure
-> > MAC/MTL/DMA before enabling DMA/MAC
-> > 
-> > Signed-off-by: hailong.fan <hailong.fan@siengine.com>
-> > 
+> Hi Marc,
 > 
-> A Fixes: tag should be added.
-
-Also, as this patch is a fix for net, that target should be noted in the
-subject.
-
-  Subject: [PATCH v2 net] ...
-
-Please address this and the issues raised by Furong Xu and post a v3.
-
-> >  static void dwxgmac2_dma_stop_rx(struct stmmac_priv *priv, void __iomem *ioaddr,
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > index e21404822..c19ca62a4 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > @@ -3437,9 +3437,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
-> >  		priv->hw->rx_csum = 0;
-> >  	}
+> On 2024/10/3 4:49, Marc Zyngier wrote:
+> > Kunkun Jiang reports that there is a small window of opportunity for
+> > userspace to force a change of affinity for a VPE while the VPE has
+> > already been unmapped, but the corresponding doorbell interrupt still
+> > visible in /proc/irq/.
+> > 
+> > Plug the race by checking the value of vmapp_count, which tracks whether
+> > the VPE is mapped ot not, and returning an error in this case.
+> > 
+> > This involves making vmapp_count common to both GICv4.1 and its v4.0
+> > ancestor.
+> > 
+> > Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
+> > ---
+> >  drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++------
+> >  include/linux/irqchip/arm-gic-v4.h |  4 +++-
+> >  2 files changed, 15 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> > index fdec478ba5e7..ab597e74ba08 100644
+> > --- a/drivers/irqchip/irq-gic-v3-its.c
+> > +++ b/drivers/irqchip/irq-gic-v3-its.c
+> > @@ -797,8 +797,8 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
+> >  	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
 > >  
-> > -	/* Enable the MAC Rx/Tx */
-> > -	stmmac_mac_set(priv, priv->ioaddr, true);
-> > -
-> >  	/* Set the HW DMA mode and the COE */
-> >  	stmmac_dma_operation_mode(priv);
+> >  	if (!desc->its_vmapp_cmd.valid) {
+> > +		alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
+> >  		if (is_v4_1(its)) {
+> > -			alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
+> >  			its_encode_alloc(cmd, alloc);
+> >  			/*
+> >  			 * Unmapping a VPE is self-synchronizing on GICv4.1,
+> > @@ -817,13 +817,13 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
+> >  	its_encode_vpt_addr(cmd, vpt_addr);
+> >  	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
 > >  
-> > @@ -3523,6 +3520,9 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
-> >  	/* Start the ball rolling... */
-> >  	stmmac_start_all_dma(priv);
-> >  
-> > +	/* Enable the MAC Rx/Tx */
-> > +	stmmac_mac_set(priv, priv->ioaddr, true);
+> > +	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
 > > +
-> 
-> This sequence fix should be applied to stmmac_xdp_open() too.
-> 
-> >  	stmmac_set_hw_vlan_mode(priv, priv->hw);
+> >  	if (!is_v4_1(its))
+> >  		goto out;
 > >  
-> >  	return 0;
+> >  	vconf_addr = virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
+> >  
+> > -	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
+> > -
+> >  	its_encode_alloc(cmd, alloc);
+> >  
+> >  	/*
+> > @@ -3806,6 +3806,13 @@ static int its_vpe_set_affinity(struct irq_data *d,
+> >  	struct cpumask *table_mask;
+> >  	unsigned long flags;
+> >  
+> > +	/*
+> > +	 * Check if we're racing against a VPE being destroyed, for
+> > +	 * which we don't want to allow a VMOVP.
+> > +	 */
+> > +	if (!atomic_read(&vpe->vmapp_count))
+> > +		return -EINVAL;
 > 
-> It is better to split this patch into individual patches, since you are
-> trying to fix an issue related to several previous commits:
-> dwmac4, dwxgmac2, stmmac_hw_setup() and stmmac_xdp_open()
+> We lazily map the vPE so that vmapp_count is likely to be 0 on GICv4.0
+> implementations with the ITSList feature. Seems that that implementation
+> is not affected by the reported race and we don't need to check
+> vmapp_count for that.
 
-And each patch should have an appropriate Fixes tag.
+Indeed, the ITSList guards the sending of VMOVP in that case, and we
+avoid the original issue in that case. However, this still translates
+in the doorbell being moved for no reason (see its_vpe_db_proxy_move).
+
+How about something like this?
+
+Thanks,
+
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index ab597e74ba08..ac8ed56f1e48 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3810,8 +3810,17 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	 * Check if we're racing against a VPE being destroyed, for
+ 	 * which we don't want to allow a VMOVP.
+ 	 */
+-	if (!atomic_read(&vpe->vmapp_count))
+-		return -EINVAL;
++	if (!atomic_read(&vpe->vmapp_count)) {
++		if (gic_requires_eager_mapping())
++			return -EINVAL;
++
++		/*
++		 * If we lazily map the VPEs, this isn't an error, and
++		 * we exit cleanly.
++		 */
++		irq_data_update_effective_affinity(d, cpumask_of(cpu));
++		return IRQ_SET_MASK_OK_DONE;
++	}
+ 
+ 	/*
+ 	 * Changing affinity is mega expensive, so let's be as lazy as
 
 -- 
-pw-bot: changes-requested
+Without deviation from the norm, progress is not possible.
 
