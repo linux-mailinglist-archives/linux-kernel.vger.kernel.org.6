@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-378800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D7D9AD59D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:38:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B789AD5B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2FE1F262D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121C32838D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA711E25FC;
-	Wed, 23 Oct 2024 20:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B92010F0;
+	Wed, 23 Oct 2024 20:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zd8XRgGr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8Lqb+J2K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FChnjELD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zP41KkCq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FChnjELD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zP41KkCq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD8775809;
-	Wed, 23 Oct 2024 20:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156FB200C8E;
+	Wed, 23 Oct 2024 20:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729715922; cv=none; b=uvuq0UYj601qhh+bLTb/NKGlR3e2As5bULq29VbCgCU4PSmuB4OLgjf8Cp4OFXh6pLQ2Df6bex/R3jLvEFSBAGkpG+TsIzoACc1JexYcwAUORu7Xz2sI+A0dDEKiWeBj5zKOxE0KAPeWfSPqz7XUQTvQCLarYu1Un4FJl0BH35E=
+	t=1729715995; cv=none; b=V8/Flw1cKxgO8V7YkL1npOqQu/SXMwSHmNPESL4098iTOQCkf4GylI1zuknfC4VMWvpnXb4SIk5U2Wd99XFzgYAVmXtzoRI3NXwt9yKNjROQvN/XM3zTGdtsYGQSn5pimef3TGoJkLMa4M2l2Ex2t+KFFhnAORAMKp5K+lWUb1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729715922; c=relaxed/simple;
-	bh=JdrT2r/Q/HPycslCFnBZ4KhvLhXIEgfQ7+uUpB3QpbQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g7ktPFOt/EMIoUhYRQ9l9b5QVr00cs1gQUWrNKde9L/ODaohrygUiy4OeZFOvmekXR0jhKBnDnyygFVZbQfEAP8rFDcn3fJLeNPGFfULxL6UY4rAa6obgcFvOvHgHbHtgqEpIYIOHW9Ki/f0fh+ZJ9vY1aHu6816MWHr1Q5dgpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zd8XRgGr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8Lqb+J2K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729715918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1729715995; c=relaxed/simple;
+	bh=ov4azDVRaPZ2oKYDM8O9TvZytt2u/+KuICEs+PW3zKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+6VY5aNCWgFRPEUhydzGHZNVOOWolDJRg87oigjONW32QNBrnVzC7t47LOo92XbOd+aPA4KEUakG0RQ/xezvfP2t+8Hbmmmf68SnrkYy3D4Y+Dh/1PoF/O361Q3zyskuUz3mq3gIiBVI4Bgq8pae+D1ge4Pp0vuw/+c0NU0zN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FChnjELD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zP41KkCq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FChnjELD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zP41KkCq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 295CF21D9A;
+	Wed, 23 Oct 2024 20:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729715992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ggPhMfQ4JszMhC7vaO8txWnmkqgZW1AsAbNGNIyZnUg=;
-	b=Zd8XRgGrKYpxyVsod6djUebAh+0CqsLLhNgTkR0Mah4+sxeZATJFpJonZAw5XohxwvRtMm
-	HzyydIh5EuHvOXrMEe/mtdnv6C3kgN+9NscBpz2+dvv2LiQGnhcxl1K1PKUG0e/LE6LQw9
-	TkQe9R6KJh0gO9onlMXSLlsjasdgTamTRZ7vDA3WamFd/NrNuEJz16CA+kCpe7xe9YZEWW
-	o7UXbO6MuZ7uYoXkUK1oiW7kTe+1l6C+nmjcGjkx72Ryw6I3OkVCFZMDZ6LqOP26cqtsr0
-	CT4rdwO+RJYCxv8B9Sp+ZG7uIC72GfogF6aHjkOsMA08qR/lA/X7nuJD3oh6+g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729715918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=2x44n91pzkFE6swZtLXGYQHAvHmEHeGzQyvr4Is80N0=;
+	b=FChnjELDUd7QoyIstoqnZr8VJFZLF3aN5nDCK9JR8ReAs9wZqOlkphAn0o0LR9REBZABhV
+	6x5V5Z9XmegJbkEaVtTnINOJwPZtOqaaxsk+HBsf/yqaTPS4cPuWrD+4WpbrmPL2FobY2G
+	aKUqvIM3fsYQPHtFZzO8eV1GnEj4N2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729715992;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ggPhMfQ4JszMhC7vaO8txWnmkqgZW1AsAbNGNIyZnUg=;
-	b=8Lqb+J2KM3OlJ/TPqzoHsxKKMNbW1oTj84++qCMtHgOIzWHWDlUzZrtFx3bxRsIOj54iEU
-	26xg0wufahhu20Bw==
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Dirk Behme <dirk.behme@gmail.com>,
- Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Danilo
- Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar
- <mingo@redhat.com>, will@kernel.org, Waiman Long <longman@redhat.com>,
- linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, wedsonaf@gmail.com, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- aliceryhl@google.com, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-In-Reply-To: <20241023195152.GE11151@noisy.programming.kicks-ass.net>
-References: <20241018055125.2784186-2-boqun.feng@gmail.com>
- <87a5eu7gvw.ffs@tglx>
- <20241023195152.GE11151@noisy.programming.kicks-ass.net>
-Date: Wed, 23 Oct 2024 22:38:38 +0200
-Message-ID: <877c9y7dwx.ffs@tglx>
+	bh=2x44n91pzkFE6swZtLXGYQHAvHmEHeGzQyvr4Is80N0=;
+	b=zP41KkCqtWsz/r03+0v2C4G61eZQZB3bgb7PlJ0RqKJ/FkVAReiKjObYz6Lhsmr2XIDFxF
+	djq1JP7cMVNmH0Aw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FChnjELD;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zP41KkCq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729715992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2x44n91pzkFE6swZtLXGYQHAvHmEHeGzQyvr4Is80N0=;
+	b=FChnjELDUd7QoyIstoqnZr8VJFZLF3aN5nDCK9JR8ReAs9wZqOlkphAn0o0LR9REBZABhV
+	6x5V5Z9XmegJbkEaVtTnINOJwPZtOqaaxsk+HBsf/yqaTPS4cPuWrD+4WpbrmPL2FobY2G
+	aKUqvIM3fsYQPHtFZzO8eV1GnEj4N2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729715992;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2x44n91pzkFE6swZtLXGYQHAvHmEHeGzQyvr4Is80N0=;
+	b=zP41KkCqtWsz/r03+0v2C4G61eZQZB3bgb7PlJ0RqKJ/FkVAReiKjObYz6Lhsmr2XIDFxF
+	djq1JP7cMVNmH0Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14FDD13AD3;
+	Wed, 23 Oct 2024 20:39:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bvIdBRhfGWdefwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 23 Oct 2024 20:39:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BCECBA08A2; Wed, 23 Oct 2024 22:39:51 +0200 (CEST)
+Date: Wed, 23 Oct 2024 22:39:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: v6.12-rc workqueue lockups
+Message-ID: <20241023203951.unvxg2claww4s2x5@quack3>
+References: <63d6ceeb-a22f-4dee-bc9d-8687ce4c7355@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63d6ceeb-a22f-4dee-bc9d-8687ce4c7355@oracle.com>
+X-Rspamd-Queue-Id: 295CF21D9A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Wed, Oct 23 2024 at 21:51, Peter Zijlstra wrote:
-> On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
->> On Thu, Oct 17 2024 at 22:51, Boqun Feng wrote:
->> Ideally you make that part of the preemption count. Bit 24-30 are free
->> (or we can move them around as needed). That's deep enough and you get
->> the debug sanity checking of the preemption counter for free (might need
->> some extra debug for this...)
->
-> Urgh, so we've already had trouble that nested spinlocks bust through
-> the 0xff preempt mask (because lunacy).
+On Wed 23-10-24 11:19:24, John Garry wrote:
+> Hi All,
+> 
+> I have been seeing lockups reliably occur on v6.12-rc1, 3, 4 and linus'
+> master branch:
+> 
+> Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
+> Oct 22 09:07:15 ...
+>  kernel:watchdog: BUG: soft lockup - CPU#12 stuck for 26s! [khugepaged:154]
 
-Seriously? Such overflow should just panic the kernel. That's broken by
-definition.
+BTW, can you please share logs which would contain full stacktraces that
+this softlockup reports produce? The attached dmesg is just from fresh
+boot...  Thanks!
 
-> You sure you want to be this stingy with bits?
-
-Anything above 64 nest levels is beyond insane.
-
-But if we want to support insanity then we make preempt count 64 bit and
-be done with it. But no, I don't think that encouraging insanity is a
-good thing.
-
-> We still have a few holes in pcpu_hot iirc.
-
-On x86. Sure.
-
-But that's still an extra conditional while when you stick it into
-preemption count it's _ONE_ conditional for both and not _TWO_
-
-It actually makes a lot of sense even for the non rust case to avoid
-local_irq_save/restore. We discussed that for years and I surely have
-some half finished patch set to implement it somewhere in the poison
-cabinet.
-
-The reason why we did not go for it is that we wanted to implement a
-lazy interrupt disable scheme back then, i.e. just rely on the counter
-and when the interrupt comes in, disable interrupts for real and then
-reinject them when the counter goes to zero. That turned out to be
-horribly complex and not worth the trouble.
-
-But this scheme is different as it only avoids nested irq_save() and
-allows to use guards with the locking scheme Bogun pointed out.
-
-It's even a win in C because you don't have to worry about lock_irq()
-vs. lock_irqsave() anymore and just use lock_irq_disable() or whatever
-the bike shed painting debate will decide on.
-
-Thanks,
-
-        tglx
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
