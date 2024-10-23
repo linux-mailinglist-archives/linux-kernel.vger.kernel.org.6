@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-378982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE929AD81C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A528B9AD81E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EC01F22C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47721C2189B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857E91EBFE0;
-	Wed, 23 Oct 2024 22:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42FF1A0BE5;
+	Wed, 23 Oct 2024 22:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCr++ZRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SV2UoLYT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71454D599;
-	Wed, 23 Oct 2024 22:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DE51A0BC4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729724234; cv=none; b=hk2rHv8EU92LrjZHWuUbFZXm7Xe97NP7eMVR0QFhJ8AXOLeE1Wfah3b0J0FVRiopCL0RyCn1Q7eN9o4wLRbociH07hxKTTNjCRWQ5zMXINz2DAy2PDAEGiXzt+pdnBeU45qbbBJJmG5DIC6G8I6C4x+/4GpwkFLSUArvofp9ybo=
+	t=1729724247; cv=none; b=K9xmSzLf2KX/GNw/OR2FZPCZpHNDW1v8HCPHQTABoE2Nm55XL9AfwCGIUZkw3bcdT6ZocSRIRQDnkgOoqAeDhPOlbR/rpIx+qWu/950bZ0pI9vqo/4R5Vk6jC+wnC+hjOp7xcXf2Cvg0+HFsLM+S1GgN5Z+oIOkoWfYe4PbjLQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729724234; c=relaxed/simple;
-	bh=v2QkCIqU8GCdpfjR3qsNEiGrKMT2MRsQMJlgtLNW8fg=;
+	s=arc-20240116; t=1729724247; c=relaxed/simple;
+	bh=XQXk+It6cqZrXhHUXXAtXR0ZZZqStInBATuN5lci9Fs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqjnJem/0CbjX3fkzqTmNWX2c4Ub/ctYiZo2v8uxSy/XLx4F2mRy0In8kVXngE+jGcVKmQ2bnPMXSky/YRx7zLu16anPKqsJ4g9112A22G6iQBlJuodOE04qDiT5AvQyXrx0eAPqC2Aypd+yfYhPmmOIbtBME8F5yst9fxFd7zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCr++ZRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA33C4CEC6;
-	Wed, 23 Oct 2024 22:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729724234;
-	bh=v2QkCIqU8GCdpfjR3qsNEiGrKMT2MRsQMJlgtLNW8fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QCr++ZRxC/3jA3oOAO53kISWC6u8L/P5EZUSEwbTTYfUOFnX2oJ3CuPhmHtfoUVs/
-	 MKS3iHyEOJ+l7dNUhZBXfTHH5XviVvYL7ODLHVMa4AA0iD2U+HZzsGWLKUrzcDYbsj
-	 E+S+wSuJZ4F8c8KHPJ+8S9gdqHoTX+iAkzeweccgK5jToFRNsokfn99Jtd5kPidVqq
-	 sFSMQAEGYrmDybga81mpY2KxNEBSUpD1V1iPxBAF/jKfHrEsr0k603GJ6hT2FoG8Nv
-	 tnAsKW+eLZ/yp9OA2FtW26wmbMm+mb7DMUHQXpVpmgV2RnQPxOA81wOo79q6XzHAjT
-	 TM40Hqf0yZYjA==
-Date: Wed, 23 Oct 2024 15:57:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] Run tests in parallel showing number of tests
- running
-Message-ID: <Zxl_SGGuIrYcmMA9@google.com>
-References: <20241018054719.1004128-1-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PcBso2TiOT+wvftPVZtWmujLiVgnkONYZCHlfwEX1zchM9tj/l8AUAaKzWitBxka5YMS/hsGJxx4Sd84LLT0w5w3pBIsC6KOjlTYqiydt7XF9iEPn/p16en1sgqNn4Yl2OAc5L3r3BJiGahdJratRgK9VcGtaXsoNkhQmbpYPi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SV2UoLYT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729724245; x=1761260245;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XQXk+It6cqZrXhHUXXAtXR0ZZZqStInBATuN5lci9Fs=;
+  b=SV2UoLYTWP45Gm/P3oV7q1mNmh51gIVca0f82keuu+Mcfvh54BEpAd9Z
+   YwDkT9bl1KoERO3d/O/WwY5ge1d9ga3z/FnQ8ZHu66jg9OSI5k9e+mE0r
+   pTy9/mZ5h7bwy+ZALBty6k2wzz0/TEX4y49sL2igHGOtLWiHQR+UAqea/
+   YKUDFX8CEkxjAvYwuvzr8w9wYgp8Gh/2+3tHx05/wQI1+NDkq/QLewOKj
+   hQt16PNSPSARmHJJ8v/ZhFaCNySS8QabonHSCIl9+fZdvbyfGO5mketgx
+   qvQYElr5MTcKupbCUB+RMiP/G+MRWwHqBmKsMrQsSctL/rHKrSl7glI9S
+   A==;
+X-CSE-ConnectionGUID: r0k59Tx1Tc2KE6mV/O4CZg==
+X-CSE-MsgGUID: BWIBp8MYQdq+uQFg7nx12g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29199720"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29199720"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 15:57:25 -0700
+X-CSE-ConnectionGUID: Qimsdc3sS5SqCvGC6dyF1g==
+X-CSE-MsgGUID: 7VhNUX0WQKWYYkX82FPRsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="84970092"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 23 Oct 2024 15:57:21 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3kI3-000Vgm-2P;
+	Wed, 23 Oct 2024 22:57:19 +0000
+Date: Thu, 24 Oct 2024 06:57:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuanchu Xie <yuanchu@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev, Wei Liu <liuwe@microsoft.com>,
+	Rob Bradford <rbradford@rivosinc.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	virtualization@lists.linux.dev, dev@lists.cloudhypervisor.org,
+	Yuanchu Xie <yuanchu@google.com>
+Subject: Re: [PATCH v4 1/2] virt: pvmemcontrol: control guest physical memory
+ properties
+Message-ID: <202410240605.Hr0JFxmp-lkp@intel.com>
+References: <20241021204849.1580384-1-yuanchu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018054719.1004128-1-irogers@google.com>
+In-Reply-To: <20241021204849.1580384-1-yuanchu@google.com>
 
-On Thu, Oct 17, 2024 at 10:47:10PM -0700, Ian Rogers wrote:
-> Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
-> to read them for display. When running on a color terminal, display
-> the number of running tests (1 if sequential). To avoid previous
-> flicker, only delete and refresh the display line when it changes. An
-> earlier version of this code is here:
-> https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
-> 
-> Add a signal handler for perf tests so that unexpected signals are
-> displayed and test clean up is possible.
-> 
-> In perf test add an "exclusive" flag that causes a test to be run with
-> no other test. Set this flag manually for C tests and via a
-> "(exclusive)" in the test description for shell tests. Add the flag to
-> shell tests that may fail when run with other tests.
-> 
-> Change the perf test loop to run in two passes. For parallel
-> execution, the first pass runs all tests that can be run in parallel
-> then the 2nd runs remaining tests sequentially. This causes the
-> "exclusive" tests to be run last and with test numbers moderately out
-> of alignment.
-> 
-> Change the default to be to run tests in parallel. Running tests in
-> parallel brings the execution time down to less than half.
+Hi Yuanchu,
 
-Can you renumber the tests so that the numbers can be continuous?
+kernel test robot noticed the following build errors:
 
-Also, it doesn't apply to the current perf-tools-next, please rebase.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12-rc4 next-20241023]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Namhyung
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuanchu-Xie/virt-pvmemcontrol-add-Yuanchu-and-Pasha-as-maintainers/20241022-045035
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241021204849.1580384-1-yuanchu%40google.com
+patch subject: [PATCH v4 1/2] virt: pvmemcontrol: control guest physical memory properties
+config: powerpc-randconfig-002-20241024 (https://download.01.org/0day-ci/archive/20241024/202410240605.Hr0JFxmp-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410240605.Hr0JFxmp-lkp@intel.com/reproduce)
 
-> 
-> v3: Mark additional shell tests as "(exclusive)" to avoid issues with
->     shared resources suggested by Namhyung. Add dependent signal
->     handler change so that kill/ctrl-C don't leave lots of processes,
->     previously sent here:
->     https://lore.kernel.org/lkml/20241017052137.225514-1-irogers@google.com/
-> 
-> v2: Fix inaccurate remaining counts when running specific
->     tests. Rename "remaining" to "active" to better reflect the
->     testing behavior. Move the exclusive flag to test cases and not
->     entire suites. Add more "(exclusive)" flags to test as
->     suggested-by James Clark. Remove "(exclusive)" flag from test
->     descriptions to keep the command line output more concise. Add
->     James Clark's tested-by.
-> 
-> Ian Rogers (9):
->   tools subcmd: Add non-waitpid check_if_command_finished()
->   perf test: Display number of active running tests
->   perf test: Reduce scope of parallel variable
->   perf test: Avoid list test blocking on writing to stdout
->   perf test: Tag parallel failing shell tests with "(exclusive)"
->   perf test: Add a signal handler around running a test
->   perf test: Run parallel tests in two passes
->   perf test: Make parallel testing the default
->   perf test: Add a signal handler to kill forked child processes
-> 
->  tools/lib/subcmd/run-command.c                |  33 ++
->  tools/perf/tests/builtin-test.c               | 304 ++++++++++++------
->  .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
->  .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
->  .../coresight/thread_loop_check_tid_10.sh     |   2 +-
->  .../coresight/thread_loop_check_tid_2.sh      |   2 +-
->  .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
->  tools/perf/tests/shell/list.sh                |   5 +-
->  .../tests/shell/perftool-testsuite_report.sh  |   2 +-
->  tools/perf/tests/shell/probe_vfs_getname.sh   |   2 +-
->  .../shell/record+script_probe_vfs_getname.sh  |   2 +-
->  tools/perf/tests/shell/record.sh              |   2 +-
->  tools/perf/tests/shell/record_lbr.sh          |   2 +-
->  tools/perf/tests/shell/record_offcpu.sh       |   2 +-
->  tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
->  tools/perf/tests/shell/stat_bpf_counters.sh   |   2 +-
->  tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
->  .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
->  tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
->  tools/perf/tests/shell/test_data_symbol.sh    |   2 +-
->  tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
->  .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
->  .../tests/shell/trace+probe_vfs_getname.sh    |   2 +-
->  tools/perf/tests/task-exit.c                  |   9 +-
->  tools/perf/tests/tests-scripts.c              |   7 +-
->  tools/perf/tests/tests.h                      |   9 +
->  tools/perf/util/color.h                       |   1 +
->  27 files changed, 293 insertions(+), 115 deletions(-)
-> 
-> -- 
-> 2.47.0.105.g07ac214952-goog
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410240605.Hr0JFxmp-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/virt/pvmemcontrol/pvmemcontrol.c:455:1: warning: data definition has no type or storage class
+     455 | module_pci_driver(pvmemcontrol_pci_driver);
+         | ^~~~~~~~~~~~~~~~~
+>> drivers/virt/pvmemcontrol/pvmemcontrol.c:455:1: error: type defaults to 'int' in declaration of 'module_pci_driver' [-Wimplicit-int]
+>> drivers/virt/pvmemcontrol/pvmemcontrol.c:455:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+>> drivers/virt/pvmemcontrol/pvmemcontrol.c:449:26: warning: 'pvmemcontrol_pci_driver' defined but not used [-Wunused-variable]
+     449 | static struct pci_driver pvmemcontrol_pci_driver = {
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +455 drivers/virt/pvmemcontrol/pvmemcontrol.c
+
+   448	
+ > 449	static struct pci_driver pvmemcontrol_pci_driver = {
+   450		.name = "pvmemcontrol",
+   451		.id_table = pvmemcontrol_pci_id_tbl,
+   452		.probe = pvmemcontrol_pci_probe,
+   453		.remove = pvmemcontrol_pci_remove,
+   454	};
+ > 455	module_pci_driver(pvmemcontrol_pci_driver);
+   456	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
